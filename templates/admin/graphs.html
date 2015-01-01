@@ -1,0 +1,168 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div id="solves-graph"></div>
+        <div id="keys-pie-graph"></div>
+        <div id="categories-pie-graph"></div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <style>
+        #solves-graph{
+            margin-left: -50px;
+        }
+        #solves-graph > svg{
+            overflow: visible;
+            padding: 10px 50px 0 50px;
+            margin-right: 20px;
+        }
+        text {
+            font-size: 0.8em;
+        }
+        #solves-graph rect {
+            width: 90%;
+        }
+    </style>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.js"></script>
+    <script type="text/javascript">
+        // $.distint(array)
+        // Unique elements in array
+        $.extend({
+            distinct : function(anArray) {
+               var result = [];
+               $.each(anArray, function(i,v){
+                   if ($.inArray(v, result) == -1) result.push(v);
+               });
+               return result;
+            }
+        });
+
+        // Praise Resig: http://ejohn.org/blog/fast-javascript-maxmin/
+        Array.max = function( array ){
+            return Math.max.apply( Math, array );
+        };
+
+        function colorhash (x) {
+            color = ""
+            for (var i = 20; i <= 60; i+=20){
+                x += i
+                x *= i
+                color += x.toString(16)
+            };
+            return "#" + color.substring(0, 6)
+        }
+
+        function solves_graph() {
+            $.get('/admin/graphs/solves', function(data){
+                solves = $.parseJSON(JSON.stringify(data));
+                chals = []
+                counts = ['Challenges']
+                colors = []
+                i = 1
+                $.each(solves, function(key, value){
+                    chals.push(key)
+                    counts.push(value)
+                    colors.push(colorhash(i++))
+                });
+
+                var chart = c3.generate({
+                    bindto: '#solves-graph',
+                    size: {
+                        width: 1000,
+                        height: 500
+                    },
+                    data: {
+                        columns: [
+                            counts
+                        ],
+                        type: 'bar',
+                        labels: true
+                    },
+                    axis: {
+                        y: {
+                            max: null,
+                            min: 0,
+                            show: false
+                        },
+                        x: {
+                            type: 'categorized',
+                            categories: chals,
+                            show: false
+                        },
+                        rotated: true
+                    }
+                });
+            });
+        }
+        
+        function keys_percentage_graph(){
+            // Solves and Fails pie chart
+            $.get('/admin/fails/all', function(data){
+                res = $.parseJSON(JSON.stringify(data));
+                solves = res['solves']
+                fails = res['fails']
+                total = solves+fails
+
+                var chart = c3.generate({
+                    bindto: '#keys-pie-graph',
+                    data: {
+                        columns: [
+                            ['Solves', solves],
+                            ['Fails', fails],
+                        ],
+                        type : 'donut'
+                    },
+                    color: {
+                            pattern: ["#00D140", "#CF2600"]
+                    },
+                    donut: {
+                        title: "Solves vs Fails"
+                    }
+                });
+            });
+        }
+        
+        function category_breakdown_graph(){
+            $.get('/admin/graphs/categories', function(data){
+                res = $.parseJSON(JSON.stringify(data));
+                res = res['categories']
+
+                data = []
+                for (var i = 0; i < res.length; i++) {
+                    temp = []
+                    temp.push(res[i].category)
+                    temp.push(res[i].count)
+                    data.push(temp)
+                };
+
+                var chart = c3.generate({
+                    bindto: '#categories-pie-graph',
+                    data: {
+                        columns: data,
+                        type : 'donut',
+                        labels: true
+                    },
+                    donut: {
+                        title: "Category Breakdown"
+                    }
+                });
+            });
+        }
+
+        function update(){
+            solves_graph()
+            keys_percentage_graph()
+            category_breakdown_graph()
+        }
+
+        $(function() {
+            update()
+        });
+
+        setInterval(update, 300000);
+        
+    </script>
+{% endblock %}

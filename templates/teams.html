@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
+
+<div class="row">
+    <p></p>
+    <table id="teamsboard">
+        <thead>
+            <tr>
+                <td><b>Team</b></td>
+                <td><b>Website</b></td>
+                <td><b>Affiliation</b></td>
+                <td><b>Country</b></td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for team in teams %}
+            <tr>
+                <td><a href="/team/{{ team.id }}">{{ team.name }}</a></td>
+                <td><a href="{{ team.website }}">{% if team.website %}{{ team.website }}{% endif %}</a></td>
+                <td><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span></td>
+                <td><span>{% if team.country %}{{ team.country }}{% endif %}</span></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

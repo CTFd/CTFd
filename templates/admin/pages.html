@@ -1,0 +1,28 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="row">
+    <br>
+    <table id="pages">
+        <thead>
+            <tr>
+                <td><b>Route</b></td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for route in routes %}
+            <tr>
+                <td><a href="/admin/pages/{{ route.route }}">{{ route.route }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <form method="POST">
+        <input name='nonce' type='hidden' value="{{ nonce }}">
+        <button class="radius" type='submit'>New Page</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

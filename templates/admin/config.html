@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="row">
+    <br>
+    <h1>Config</h1>
+    <form method="POST">
+        <input name='nonce' type='hidden' value="{{ nonce }}">
+        <strong>Start Date:</strong>
+        <input name='start' type='text' placeholder="Start Date (UTC timestamp)" {% if start is defined and start != None %}value="{{ start }}"{% endif %}>
+
+        <strong>End Date:</strong>
+        <input name='end' type='text' placeholder="End Date (UTC timestamp)" {% if end is defined and end != None %}value="{{ end }}"{% endif %}>
+
+        <button class="radius" type='submit'>Submit</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

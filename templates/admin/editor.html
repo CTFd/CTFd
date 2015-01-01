@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.css">
+<div class="row">
+    <div class="row">
+    {% for error in errors %}
+        <div class="large-8 large-centered columns">
+            <div data-alert class="alert-box alert radius centered text-center">
+                <span>{{ error }}</span>
+                <a href="#" class="close">×</a>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    
+    <form id="page-edit" method="POST">
+        <br>
+        <strong>Route: </strong><input name='nonce' type='hidden' value="{{ nonce }}">
+        <input class="radius" id="route" type="text" name="route" value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
+        <strong>HTML: </strong><textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
+        <button class="radius" type='submit'>Create</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js"></script>
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("admin-pages-editor"), {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "text/html"
+    });
+    $('#page-edit').submit(function (e){
+        $(this).attr('action', '/admin/pages/'+$('#route').val());
+    });
+</script>
+{% endblock %}

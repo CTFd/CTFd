@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
+
+<div class="row">
+    <br/>
+    {% for error in errors %}
+    <h1>{{ error }}</h1>
+    {% endfor %}
+    <form method="POST">
+        <span>Team Name</span>
+            <input class="radius" type="text" name="name" placeholder="Team Name" value="{{name}}">
+
+        <span>Email Address</span>
+            <input class="radius" type="text" name="email" placeholder="Email Address" value="{{email}}">
+        <br/>
+        <hr/>
+        <br/>
+        <span>Old Password</span>
+            <input class="radius" type="password" name="confirm" placeholder="Old Password">
+
+        <span>Password</span>
+            <input class="radius" type="password" name="password" placeholder="Password">
+        <br/>
+        <hr/>
+        <br/>
+        <span>Website</span>
+            <input class="radius" type="text" name="website" placeholder="Website" value="{% if website %}{{website}}{% endif %}">
+        <span>Affiliation</span>
+            <input class="radius" type="text" name="affiliation" placeholder="Affiliation" value="{% if affiliation %}{{affiliation}}{% endif %}">
+        <span>Country</span>
+            <input class="radius" type="text" name="country" placeholder="Country" value="{% if country %}{{country}}{% endif %}">
+            <input type="hidden" name="nonce" value="{{nonce}}">
+            <button class="radius">Update</button>
+    </form>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.js"></script>
+    <script src="/static/js/team.js"></script>
+{% endblock %}

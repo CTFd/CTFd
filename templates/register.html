@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+<h1>Register</h1>
+
+<div class="row">
+{% for error in errors %}
+    <div class="large-8 large-centered columns">
+        <div data-alert class="alert-box alert radius centered text-center">
+            <span>{{ error }}</span>
+            <a href="#" class="close">×</a>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+<form method="POST">
+    <input type='text' class="radius" name='name' placeholder='Team Name' {% if name %}value="{{ name }}"{% endif %}><br/>
+    <input type='text' class="radius" name='email' placeholder='Email' {% if email %}value="{{ email }}"{% endif %}><br/>
+    <input type='password' class="radius" name='password' placeholder='Password'  {% if password %}value="{{ password }}"{% endif %}><br/>
+    <button class="radius" type='submit'>Register</button>
+</form>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+	if (window.location.hash == "#frame"){
+		$('.top-bar').hide()
+	}
+</script>
+{% endblock %}

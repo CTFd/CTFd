@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.css">
+<div class="row">
+    <h1>Setup</h1>
+
+    <div class="row">
+    {% for error in errors %}
+        <div class="large-8 large-centered columns">
+            <div data-alert class="alert-box alert radius centered text-center">
+                <span>{{ error }}</span>
+                <a href="#" class="close">×</a>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+
+    <form method="POST">
+        <strong>Username</strong>
+        <input class="radius" type='text' name='name' placeholder='Name'><br/>
+
+        <strong>Email</strong>
+        <input class="radius" type='text' name='email' placeholder='Email'><br/>
+
+        <strong>Password</strong>
+        <input class="radius" type='password' name='password' placeholder='Password'><br/>
+        <strong>Index Page</strong>
+        <textarea id="pages-editor" name="html">
+<div class="row">
+    <img class="logo" src="/static/img/logo.png">
+    <h3 class="text-center">Welcome to a cool CTF framwork written by <a href="https://github.com/ColdHeat">Kevin Chung</a> of <a href="https://github.com/isislab">@isislab</a></h3>
+
+    <h4 class="text-center"><a href="/admin">Click here</a> to login and setup your CTF</h4>
+</div>
+        </textarea><br>
+        <button class="radius" type='submit'>Login</button>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js"></script>
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("pages-editor"), {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "text/html"
+    });
+</script>
+{% endblock %}
