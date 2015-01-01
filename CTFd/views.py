@@ -4,8 +4,9 @@ from CTFd.utils import authed, ip2long, long2ip, is_setup
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 
 from jinja2.exceptions import TemplateNotFound
-
+from passlib.hash import bcrypt_sha256
 from collections import OrderedDict
+
 import logging
 import os
 import re
