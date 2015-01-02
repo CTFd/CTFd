@@ -28,6 +28,7 @@ def create_app(subdomain, username="", password=""):
         app.db = db
         # app.setup = True
 
+        global mail
         mail = Mail(app)
 
         Session(app)

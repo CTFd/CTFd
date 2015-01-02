@@ -1,5 +1,4 @@
-from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for
-from CTFd import session
+from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for, session
 from CTFd.utils import authed, ip2long, long2ip, is_setup
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 

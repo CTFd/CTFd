@@ -1,5 +1,4 @@
-from flask import current_app as app
-from CTFd import session, render_template, jsonify
+from flask import current_app as app, session, render_template, jsonify
 from CTFd.utils import unix_time
 from CTFd.models import db, Teams, Solves, Challenges
 
