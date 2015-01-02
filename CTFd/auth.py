@@ -1,5 +1,5 @@
-from CTFd import render_template, request, redirect, abort, jsonify, url_for, session
-from CTFd.utils import sha512, is_safe_url, authed, mailserver
+from flask import render_template, request, redirect, abort, jsonify, url_for, session
+from CTFd.utils import sha512, is_safe_url, authed, mailserver, sendmail
 from CTFd.models import db, Teams
 
 from itsdangerous import TimedSerializer, BadTimeSignature

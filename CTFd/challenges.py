@@ -1,10 +1,11 @@
-from flask import current_app as app, render_template, request, redirect, abort, jsonify, json as json_mod, url_for
+from flask import current_app as app, render_template, request, redirect, abort, jsonify, json as json_mod, url_for, session
 
-from CTFd import session, logging
 from CTFd.utils import ctftime, authed, unix_time, get_kpm
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys
 
 import time
+import re
+import logging
 
 def init_challenges(app):
     @app.route('/challenges', methods=['GET'])

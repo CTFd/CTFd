@@ -1,4 +1,4 @@
-from CTFd import render_template, request, redirect, abort, jsonify, url_for, session
+from flask import render_template, request, redirect, abort, jsonify, url_for, session
 from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 from itsdangerous import TimedSerializer, BadTimeSignature
@@ -45,17 +45,12 @@ def init_admin(app):
     @admins_only
     def admin_config():
         if request.method == "POST":
-            start = request.form['start']
-            end = request.form['end']
-
-            if not start:
+            try:
+                start = int(request.form['start'])
+                end = int(request.form['end'])
+            except (ValueError, TypeError):
                 start = None
-            else:
-                start = int(start)
-            if not end:
                 end = None
-            else:
-                end = int(end)
 
             print repr(start), repr(end)
 
@@ -243,7 +238,7 @@ def init_admin(app):
     @admins_only
     def ban(teamid):
         user = Teams.query.filter_by(id=teamid).first()
-        user.banned = 1;
+        user.banned = 1
         db.session.commit()
         return redirect('/scoreboard')
 
@@ -251,7 +246,7 @@ def init_admin(app):
     @admins_only
     def unban(teamid):
         user = Teams.query.filter_by(id=teamid).first()
-        user.banned = None;
+        user.banned = None
         db.session.commit()
         return redirect('/scoreboard')
 
