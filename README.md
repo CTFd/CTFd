@@ -9,4 +9,7 @@ Install:
  3. Use `python serve.py` in a terminal to drop into debug mode.
  4. [Here](http://flask.pocoo.org/docs/0.10/deploying/) are some Flask deployment options
 
+Live Demo:
+[https://demo.ctfd.io/](https://demo.ctfd.io/)
+
 Logo by [Laura Barbera](http://www.laurabb.com/)
