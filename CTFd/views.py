@@ -118,10 +118,6 @@ def init_views(app):
 
                 name = request.form.get('name')
                 email = request.form.get('email')
-
-                if 'password' in request.form.keys() and not len(request.form['password']) == 0:
-                    password = request.form.get('password')
-
                 website = request.form.get('website')
                 affiliation = request.form.get('affiliation')
                 country = request.form.get('country')
@@ -149,7 +145,8 @@ def init_views(app):
                     team = Teams.query.filter_by(id=session['id']).first()
                     team.name = name
                     team.email = email
-                    team.password = bcrypt_sha256.encrypt(password)
+                    if 'password' in request.form.keys() and not len(request.form['password']) == 0:
+                        team.password = bcrypt_sha256.encrypt(request.form.get('password'))
                     team.website = website
                     team.affiliation = affiliation
                     team.country = country
