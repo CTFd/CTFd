@@ -61,7 +61,8 @@ Did you initiate a password reset?
             name_len = len(request.form['name']) == 0
             names = Teams.query.add_columns('name', 'id').filter_by(name=request.form['name']).first()
             emails = Teams.query.add_columns('email', 'id').filter_by(email=request.form['email']).first()
-            pass_len = len(request.form['password']) == 0
+            pass_short = len(request.form['password']) == 0
+            pass_long = len(request.form['password']) > 128
             valid_email = re.match("[^@]+@[^@]+\.[^@]+", request.form['email'])
 
             if not valid_email:
@@ -70,12 +71,16 @@ Did you initiate a password reset?
                 errors.append('That team name is already taken')
             if emails:
                 errors.append('That email has already been used')
-            if pass_len:
+            if pass_short:
                 errors.append('Pick a longer password')
+            if pass_long:
+                errors.append('Pick a shorter password')
             if name_len:
                 errors.append('Pick a longer team name')
 
-            if not errors:
+            if len(errors) > 0:
+                return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
+            else:
                 with app.app_context():
                     team = Teams(request.form['name'], request.form['email'], request.form['password'])
                     db.session.add(team)
@@ -84,8 +89,6 @@ Did you initiate a password reset?
                     sendmail(request.form['email'], "You've successfully registered for the CTF")
             
             db.session.close()
-            if len(errors) > 0:
-                return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
 
             logger = logging.getLogger('regs')
             logger.warn("[{0}] {1} registered with {2}".format(time.strftime("%m/%d/%Y %X"), request.form['name'], request.form['email']))            
