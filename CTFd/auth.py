@@ -91,7 +91,7 @@ Did you initiate a password reset?
             db.session.close()
 
             logger = logging.getLogger('regs')
-            logger.warn("[{0}] {1} registered with {2}".format(time.strftime("%m/%d/%Y %X"), request.form['name'], request.form['email']))            
+            logger.warn("[{0}] {1} registered with {2}".format(time.strftime("%m/%d/%Y %X"), request.form['name'].encode('utf-8'), request.form['email'].encode('utf-8')))
             return redirect('/login')
         else:
             return render_template('register.html')
@@ -111,7 +111,7 @@ Did you initiate a password reset?
                 db.session.close()
 
                 logger = logging.getLogger('logins')
-                logger.warn("[{0}] {1} logged in".format(time.strftime("%m/%d/%Y %X"), session['username']))    
+                logger.warn("[{0}] {1} logged in".format(time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8')))    
 
                 # if request.args.get('next') and is_safe_url(request.args.get('next')):
                 #     return redirect(request.args.get('next'))

@@ -83,7 +83,7 @@ def init_challenges(app):
             return redirect('/')
         if authed():
             logger = logging.getLogger('keys')
-            data = (time.strftime("%m/%d/%Y %X"), session['username'], request.form['key'], get_kpm(session['id']))
+            data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'), get_kpm(session['id']))
             print "[{0}] {1} submitted {2} with kpm {3}".format(*data)
             if get_kpm(session['id']) > 10:
                 wrong = WrongKeys(session['id'], chalid, request.form['key'])
