@@ -6,11 +6,21 @@
     <h1>Config</h1>
     <form method="POST">
         <input name='nonce' type='hidden' value="{{ nonce }}">
-        <strong>Start Date:</strong>
-        <input name='start' type='text' placeholder="Start Date (UTC timestamp)" {% if start is defined and start != None %}value="{{ start }}"{% endif %}>
 
-        <strong>End Date:</strong>
-        <input name='end' type='text' placeholder="End Date (UTC timestamp)" {% if end is defined and end != None %}value="{{ end }}"{% endif %}>
+        <div class="row">
+            <label for="start">Start Date:</label>
+            <input id='start' name='start' type='text' placeholder="Start Date (UTC timestamp)" {% if start is defined and start != None %}value="{{ start }}"{% endif %}>
+        </div>
+
+        <div class="row">
+            <label for="end">End Date:</label>
+            <input id='end' name='end' type='text' placeholder="End Date (UTC timestamp)" {% if end is defined and end != None %}value="{{ end }}"{% endif %}>
+        </div>
+
+        <div class="row">
+            <input id="view_challenges_unregistered" name="view_challenges_unregistered" type="checkbox" {% if view_challenges_unregistered %}checked{% endif %}>
+            <label for="view_challenges_unregistered">Unregistered users can view challenges</label>
+        </div>
 
         <button class="radius" type='submit'>Submit</button>
     </form>

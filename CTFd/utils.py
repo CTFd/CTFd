@@ -83,6 +83,9 @@ def ctftime():
 
     return False
 
+def can_view_challenges():
+    return authed() or (Config.query.filter_by(key="view_challenges_unregistered").first().value == '1');
+
 def unix_time(dt):
     epoch = datetime.datetime.utcfromtimestamp(0)
     delta = dt - epoch

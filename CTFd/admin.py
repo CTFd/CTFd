@@ -52,7 +52,12 @@ def init_admin(app):
                 start = None
                 end = None
 
-            print repr(start), repr(end)
+            try:
+                view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
+            except (ValueError, TypeError):
+                view_challenges_unregistered = None
+
+            print repr(start), repr(end), repr(view_challenges_unregistered)
 
             db_start = Config.query.filter_by(key='start').first()
             db_start.value = start
@@ -60,14 +65,19 @@ def init_admin(app):
             db_end = Config.query.filter_by(key='end').first()
             db_end.value = end
 
+            db_view_challenges_unregistered = Config.query.filter_by(key='view_challenges_unregistered').first()
+            db_view_challenges_unregistered.value = view_challenges_unregistered
+
             db.session.add(db_start)
             db.session.add(db_end)
+            db.session.add(db_view_challenges_unregistered)
 
             db.session.commit()
             return redirect('/admin/config')
         start = Config.query.filter_by(key="start").first().value
         end = Config.query.filter_by(key="end").first().value
-        return render_template('admin/config.html', start=start, end=end)
+        view_challenges_unregistered = (Config.query.filter_by(key='view_challenges_unregistered').first().value == '1')
+        return render_template('admin/config.html', start=start, end=end, view_challenges_unregistered=view_challenges_unregistered)
 
     @app.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
     @app.route('/admin/pages/<route>', methods=['GET', 'POST'])

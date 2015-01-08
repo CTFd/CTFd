@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, json as json_mod, url_for, session
 
-from CTFd.utils import ctftime, authed, unix_time, get_kpm
+from CTFd.utils import ctftime, authed, unix_time, get_kpm, can_view_challenges
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys
 
 import time
@@ -12,7 +12,7 @@ def init_challenges(app):
     def challenges():
         if not ctftime():
             return redirect('/')
-        if authed():
+        if can_view_challenges():
             return render_template('chals.html')
         else:
             return redirect(url_for('login', next="challenges"))
@@ -21,7 +21,7 @@ def init_challenges(app):
     def chals():
         if not ctftime():
             return redirect('/')
-        if authed():
+        if can_view_challenges():
             chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
             
             json = {'game':[]}
@@ -37,7 +37,7 @@ def init_challenges(app):
 
     @app.route('/chals/solves')
     def chals_per_solves():
-        if authed():
+        if can_view_challenges():
             solves = Solves.query.add_columns(db.func.count(Solves.chalid)).group_by(Solves.chalid).all()
             json = {}        
             for chal, count in solves:
@@ -52,7 +52,7 @@ def init_challenges(app):
             if authed():
                 solves = Solves.query.filter_by(teamid=session['id']).all()
             else:
-                return redirect('/login')
+                abort(401)
         else:
             solves = Solves.query.filter_by(teamid=teamid).all()
         db.session.close()
