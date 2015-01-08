@@ -79,6 +79,7 @@ function submitkey(chal, key, nonce) {
     }, function (data) {
         if (data == -1){
           window.location="/login"
+          return
         }
         else if (data == 0){ // Incorrect key
           $('#submit-key').text('Incorrect, sorry')
