@@ -224,15 +224,41 @@ def init_admin(app):
         user = Teams.query.filter_by(id=teamid).first()
         solves = Solves.query.filter_by(teamid=teamid).all()
         addrs = Tracking.query.filter_by(team=teamid).group_by(Tracking.ip).all()
-        db.session.close()
 
         if request.method == 'GET':
             return render_template('admin/team.html', solves=solves, team=user, addrs=addrs)
         elif request.method == 'POST':
-            json = {'solves':[]}
-            for x in solves:
-                json['solves'].append({'id':x.id, 'chal':x.chalid, 'team':x.teamid})
-            return jsonify(json)
+            name = request.form.get('name', None)
+            password = request.form.get('password', None)
+            email = request.form.get('email', None)
+            website = request.form.get('website', None)
+            affiliation = request.form.get('affiliation', None)
+            country = request.form.get('country', None)
+
+            errors = []
+
+            name_used = Teams.query.filter(Teams.name == name).first()
+            if name_used and int(name_used.id) != int(teamid):
+                errors.append('That name is taken')
+
+            email_used = Teams.query.filter(Teams.email == email).first()
+            if email_used and int(email_used.id) != int(teamid):
+                errors.append('That email is taken')
+
+            if errors:
+                db.session.close()
+                return jsonify({'data':errors})
+            else:
+                user.name = name
+                user.email = email
+                if password:
+                    user.password = bcrypt_sha256(password)
+                user.website = website
+                user.affiliation = affiliation
+                user.country = country
+                db.session.commit()
+                db.session.close()
+                return jsonify({'data':['success']})
 
     @app.route('/admin/team/<teamid>/ban', methods=['POST'])
     @admins_only
