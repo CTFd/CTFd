@@ -136,12 +136,12 @@ $('#update-user').click(function(e){
 
 $('.fa-pencil-square-o').click(function(){
     var elem = $(this).parent().parent().parent();
-    var id = elem.find('.team-id').text();
-    var name = elem.find('.team-name').text();
-    var email = elem.find('.team-email').text();
-    var website = elem.find('.team-website').text();
-    var affiliation = elem.find('.team-affiliation').text();
-    var country = elem.find('.team-country').text();
+    var id = elem.find('.team-id').text().trim();
+    var name = elem.find('.team-name').text().trim();
+    var email = elem.find('.team-email').text().trim();
+    var website = elem.find('.team-website').text().trim();
+    var affiliation = elem.find('.team-affiliation').text().trim();
+    var country = elem.find('.team-country').text().trim();
 
     load_modal(id, name, email, website, affiliation, country);
 })
