@@ -54,10 +54,10 @@ def init_admin(app):
 
             try:
                 view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
+                prevent_registration = bool(request.form.get('prevent_registration', None))
             except (ValueError, TypeError):
                 view_challenges_unregistered = None
-
-            print repr(start), repr(end), repr(view_challenges_unregistered)
+                prevent_registration = None
 
             db_start = Config.query.filter_by(key='start').first()
             db_start.value = start
@@ -68,9 +68,13 @@ def init_admin(app):
             db_view_challenges_unregistered = Config.query.filter_by(key='view_challenges_unregistered').first()
             db_view_challenges_unregistered.value = view_challenges_unregistered
 
+            db_prevent_registration = Config.query.filter_by(key='prevent_registration').first()
+            db_prevent_registration.value = prevent_registration
+
             db.session.add(db_start)
             db.session.add(db_end)
             db.session.add(db_view_challenges_unregistered)
+            db.session.add(db_prevent_registration)
 
             db.session.commit()
             return redirect('/admin/config')
@@ -96,10 +100,18 @@ def init_admin(app):
             view_challenges_unregistered = Config('view_challenges_unregistered', None)
             db.session.add(view_challenges_unregistered)
 
+        prevent_registration = Config.query.filter_by(key='prevent_registration').first()
+        if prevent_registration:
+            prevent_registration = (prevent_registration.value == '1')
+        else:
+            prevent_registration = Config('prevent_registration', None)
+            db.session.add(prevent_registration)
+
         db.session.commit()
         db.session.close()
 
-        return render_template('admin/config.html', start=start, end=end, view_challenges_unregistered=view_challenges_unregistered)
+        return render_template('admin/config.html', start=start, end=end, view_challenges_unregistered=view_challenges_unregistered, 
+            prevent_registration=prevent_registration)
 
     @app.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
     @app.route('/admin/pages/<route>', methods=['GET', 'POST'])

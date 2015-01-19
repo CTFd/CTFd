@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session
-from CTFd.utils import sha512, is_safe_url, authed, mailserver, sendmail
+from CTFd.utils import sha512, is_safe_url, authed, mailserver, sendmail, can_register
 from CTFd.models import db, Teams
 
 from itsdangerous import TimedSerializer, BadTimeSignature
@@ -56,6 +56,8 @@ Did you initiate a password reset?
 
     @app.route('/register', methods=['POST', 'GET'])
     def register():
+        if not can_register():
+            return redirect('/login')
         if request.method == 'POST':
             errors = []
             name_len = len(request.form['name']) == 0

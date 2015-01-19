@@ -37,6 +37,7 @@
             </li>
             {%else %}
             <li class="has-form">
+              {% if can_register() %} 
               <li class="has-dropdown">
                 <a href="/register">Register</a>
                 <ul class="dropdown">
@@ -48,7 +49,7 @@
                   </form>
                 </ul>
               </li>
-
+              {% endif %}
               <li class="has-dropdown">
                 <a href="/login">Login</a>
                 <ul class="dropdown">

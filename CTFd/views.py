@@ -66,6 +66,9 @@ def init_views(app):
                 ## Challenges cannot be viewed by unregistered users
                 view_challenges_unregistered = Config('view_challenges_unregistered', None)
 
+                ## Allow/Disallow registration
+                prevent_registration = Config('prevent_registration', None)
+
                 setup = Config('setup', True)
 
                 db.session.add(admin)
@@ -73,6 +76,7 @@ def init_views(app):
                 db.session.add(start)
                 db.session.add(end)
                 db.session.add(view_challenges_unregistered)
+                db.session.add(prevent_registration)
                 db.session.add(setup)
                 db.session.commit()
                 app.setup = False

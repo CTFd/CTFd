@@ -22,7 +22,12 @@
             <label for="view_challenges_unregistered">Unregistered users can view challenges</label>
         </div>
 
-        <button class="radius" type='submit'>Submit</button>
+        <div class="row">
+            <input id="prevent_registration" name="prevent_registration" type="checkbox" {% if prevent_registration %}checked{% endif %}>
+            <label for="prevent_registration">Prevent public registration</label>
+        </div>
+
+        <button class="radius" type='submit'>Update</button>
     </form>
 </div>
 {% endblock %}
