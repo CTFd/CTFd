@@ -286,6 +286,14 @@ def init_admin(app):
         db.session.commit()
         return redirect('/scoreboard')
 
+    @app.route('/admin/team/<teamid>/delete', methods=['POST'])
+    @admins_only
+    def delete_team(teamid):
+        user = Teams.query.filter_by(id=teamid).first()
+        db.session.delete(user)
+        db.session.commit()
+        return '1'
+
 
     @app.route('/admin/graphs/<graph_type>')
     @admins_only
