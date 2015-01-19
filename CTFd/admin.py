@@ -385,7 +385,6 @@ def init_admin(app):
         db.session.commit()
         
         teams_registered = db.session.query(db.func.count(Teams.id)).first()[0]
-        site_hits = db.session.query(db.func.count(Tracking.id)).first()[0]
         wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
         solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
         challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
@@ -395,7 +394,6 @@ def init_admin(app):
         db.session.close()
 
         return render_template('admin/statistics.html', team_count=teams_registered,
-            hit_count=site_hits, 
             wrong_count=wrong_count, 
             solve_count=solve_count, 
             challenge_count=challenge_count,
