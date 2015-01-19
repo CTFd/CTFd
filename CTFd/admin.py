@@ -74,9 +74,31 @@ def init_admin(app):
 
             db.session.commit()
             return redirect('/admin/config')
-        start = Config.query.filter_by(key="start").first().value
-        end = Config.query.filter_by(key="end").first().value
-        view_challenges_unregistered = (Config.query.filter_by(key='view_challenges_unregistered').first().value == '1')
+
+        start = Config.query.filter_by(key="start").first()
+        if start:
+            start = start.value
+        else:
+            start = Config('start', None)
+            db.session.add(start)
+
+        end = Config.query.filter_by(key="end").first()
+        if end:
+            end = end.value
+        else:
+            end = Config('end', None)
+            db.session.add(end)
+
+        view_challenges_unregistered = Config.query.filter_by(key='view_challenges_unregistered').first()
+        if view_challenges_unregistered:
+            view_challenges_unregistered = (view_challenges_unregistered.value == '1')
+        else:
+            view_challenges_unregistered = Config('view_challenges_unregistered', None)
+            db.session.add(view_challenges_unregistered)
+
+        db.session.commit()
+        db.session.close()
+
         return render_template('admin/config.html', start=start, end=end, view_challenges_unregistered=view_challenges_unregistered)
 
     @app.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
