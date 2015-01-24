@@ -11,7 +11,7 @@ from struct import unpack, pack
 import time
 import datetime
 import hashlib
-import json
+import digitalocean
 
 def init_utils(app):
     app.jinja_env.filters['unix_time'] = unix_time
@@ -39,6 +39,7 @@ def is_admin():
         return session['admin']
     else:
         return False
+
 
 def can_register():
     config = Config.query.filter_by(key='prevent_registration').first()
@@ -111,6 +112,23 @@ def get_kpm(teamid): # keys per minute
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
     return len(db.session.query(WrongKeys).filter(WrongKeys.team == teamid, WrongKeys.date >= one_min_ago).all())
 
+def get_config(key):
+    config = Config.query.filter_by(key=key).first()
+    if config:
+        return config.value
+    else:
+        return None
+
+def set_config(key, value):
+    config = Config.query.filter_by(key=key).first()
+    if config:
+        config.value = value
+    else:
+        config = Config(key, value)
+        db.session.add(config)
+        db.session.commit()
+        return config
+
 
 def mailserver():
     if app.config['MAIL_SERVER'] and app.config['MAIL_PORT'] and app.config['ADMINS']:
@@ -133,3 +151,10 @@ def is_safe_url(target):
 
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
+
+def get_digitalocean():
+    token = get_config('do_api_key')
+    if token:
+        return digitalocean.Manager(token=token)
+    else:
+        return False

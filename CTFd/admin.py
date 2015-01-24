@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session
-from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis
+from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, get_digitalocean
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 from itsdangerous import TimedSerializer, BadTimeSignature
 from werkzeug.utils import secure_filename
@@ -59,6 +59,8 @@ def init_admin(app):
                 view_challenges_unregistered = None
                 prevent_registration = None
 
+            do_api_key = set_config("do_api_key", request.form.get('do_api_key', None))
+
             db_start = Config.query.filter_by(key='start').first()
             db_start.value = start
 
@@ -79,39 +81,31 @@ def init_admin(app):
             db.session.commit()
             return redirect('/admin/config')
 
-        start = Config.query.filter_by(key="start").first()
-        if start:
-            start = start.value
-        else:
-            start = Config('start', None)
-            db.session.add(start)
+        do_api_key = get_config('do_api_key')
+        if not do_api_key:
+            set_config('do_api_key', None)
 
-        end = Config.query.filter_by(key="end").first()
-        if end:
-            end = end.value
-        else:
-            end = Config('end', None)
-            db.session.add(end)
+        start = get_config('start')
+        if not start:
+            set_config('start', None)
 
-        view_challenges_unregistered = Config.query.filter_by(key='view_challenges_unregistered').first()
-        if view_challenges_unregistered:
-            view_challenges_unregistered = (view_challenges_unregistered.value == '1')
-        else:
-            view_challenges_unregistered = Config('view_challenges_unregistered', None)
-            db.session.add(view_challenges_unregistered)
+        end = get_config('end')
+        if not end:
+            set_config('end', None)
 
-        prevent_registration = Config.query.filter_by(key='prevent_registration').first()
-        if prevent_registration:
-            prevent_registration = (prevent_registration.value == '1')
-        else:
-            prevent_registration = Config('prevent_registration', None)
-            db.session.add(prevent_registration)
+        view_challenges_unregistered = get_config('view_challenges_unregistered') == '1'
+        if not view_challenges_unregistered:
+            set_config('view_challenges_unregistered', None)
+
+        prevent_registration = get_config('prevent_registration') == '1'
+        if not prevent_registration:
+            set_config('prevent_registration', None)
 
         db.session.commit()
         db.session.close()
 
         return render_template('admin/config.html', start=start, end=end, view_challenges_unregistered=view_challenges_unregistered, 
-            prevent_registration=prevent_registration)
+            prevent_registration=prevent_registration, do_api_key=do_api_key)
 
     @app.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
     @app.route('/admin/pages/<route>', methods=['GET', 'POST'])
@@ -148,7 +142,18 @@ def init_admin(app):
     @app.route('/admin/hosts', methods=['GET'])
     @admins_only
     def admin_hosts():
-        return render_template('admin/hosts.html')
+        m = get_digitalocean()
+        errors = []
+        if not m:
+            errors.append("Your Digital Ocean API key is not set")
+            return render_template('admin/hosts.html', errors=errors)
+
+        hosts = m.get_all_droplets()
+        slugs = m.get_all_sizes()
+        images = m.get_all_images()
+        regions = m.get_all_regions()
+
+        return render_template('admin/hosts.html', hosts=hosts, slugs=slugs, images=images, regions=regions)
 
     @app.route('/admin/chals', methods=['POST', 'GET'])
     @admins_only
