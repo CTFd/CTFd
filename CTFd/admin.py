@@ -54,10 +54,10 @@ def init_admin(app):
 
             try:
                 view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
+                prevent_registration = bool(request.form.get('prevent_registration', None))
             except (ValueError, TypeError):
                 view_challenges_unregistered = None
-
-            print repr(start), repr(end), repr(view_challenges_unregistered)
+                prevent_registration = None
 
             db_start = Config.query.filter_by(key='start').first()
             db_start.value = start
@@ -68,16 +68,50 @@ def init_admin(app):
             db_view_challenges_unregistered = Config.query.filter_by(key='view_challenges_unregistered').first()
             db_view_challenges_unregistered.value = view_challenges_unregistered
 
+            db_prevent_registration = Config.query.filter_by(key='prevent_registration').first()
+            db_prevent_registration.value = prevent_registration
+
             db.session.add(db_start)
             db.session.add(db_end)
             db.session.add(db_view_challenges_unregistered)
+            db.session.add(db_prevent_registration)
 
             db.session.commit()
             return redirect('/admin/config')
-        start = Config.query.filter_by(key="start").first().value
-        end = Config.query.filter_by(key="end").first().value
-        view_challenges_unregistered = (Config.query.filter_by(key='view_challenges_unregistered').first().value == '1')
-        return render_template('admin/config.html', start=start, end=end, view_challenges_unregistered=view_challenges_unregistered)
+
+        start = Config.query.filter_by(key="start").first()
+        if start:
+            start = start.value
+        else:
+            start = Config('start', None)
+            db.session.add(start)
+
+        end = Config.query.filter_by(key="end").first()
+        if end:
+            end = end.value
+        else:
+            end = Config('end', None)
+            db.session.add(end)
+
+        view_challenges_unregistered = Config.query.filter_by(key='view_challenges_unregistered').first()
+        if view_challenges_unregistered:
+            view_challenges_unregistered = (view_challenges_unregistered.value == '1')
+        else:
+            view_challenges_unregistered = Config('view_challenges_unregistered', None)
+            db.session.add(view_challenges_unregistered)
+
+        prevent_registration = Config.query.filter_by(key='prevent_registration').first()
+        if prevent_registration:
+            prevent_registration = (prevent_registration.value == '1')
+        else:
+            prevent_registration = Config('prevent_registration', None)
+            db.session.add(prevent_registration)
+
+        db.session.commit()
+        db.session.close()
+
+        return render_template('admin/config.html', start=start, end=end, view_challenges_unregistered=view_challenges_unregistered, 
+            prevent_registration=prevent_registration)
 
     @app.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
     @app.route('/admin/pages/<route>', methods=['GET', 'POST'])
@@ -291,6 +325,14 @@ def init_admin(app):
         db.session.commit()
         return redirect('/scoreboard')
 
+    @app.route('/admin/team/<teamid>/delete', methods=['POST'])
+    @admins_only
+    def delete_team(teamid):
+        user = Teams.query.filter_by(id=teamid).first()
+        db.session.delete(user)
+        db.session.commit()
+        return '1'
+
 
     @app.route('/admin/graphs/<graph_type>')
     @admins_only
@@ -348,7 +390,6 @@ def init_admin(app):
         db.session.commit()
         
         teams_registered = db.session.query(db.func.count(Teams.id)).first()[0]
-        site_hits = db.session.query(db.func.count(Tracking.id)).first()[0]
         wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
         solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
         challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
@@ -358,7 +399,6 @@ def init_admin(app):
         db.session.close()
 
         return render_template('admin/statistics.html', team_count=teams_registered,
-            hit_count=site_hits,
             wrong_count=wrong_count,
             solve_count=solve_count,
             challenge_count=challenge_count,

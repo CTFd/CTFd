@@ -5,8 +5,20 @@
 
 <div class="row">
     <br>
+    <div id="confirm" class="reveal-modal" data-reveal>
+        <h2 class="text-center">Delete User</h2>
+        <form method="POST">
+            <input type="hidden" name="id">
+            <input type="hidden" name="nonce" value="{{ nonce }}">
+            <div class="small-6 small-centered text-center columns">
+                <p>Are you sure you want to delete <strong id="confirm-team-name"></strong>?</p>
+                <button type="button" class="button alert radius" onclick="$('#confirm').foundation('reveal', 'close');">No</button>
+                <button type="button" id="delete-user" class="button success radius">Yes</button>
+            </div>
+        </form>
+    </div>
     <div id="user" class="reveal-modal" data-reveal>
-        <h2>Edit User</h2>
+        <h2 class="text-center">Edit User</h2>
         <form method="POST" action="/admin/teams/">
             <div class="row">
                 <input type="hidden" name="nonce" value="{{ nonce }}">
@@ -97,7 +109,7 @@
 {% block scripts %}
 <script>
 
-function load_modal(id, name, email, website, affiliation, country){
+function load_update_modal(id, name, email, website, affiliation, country){
     var modal_form = $('#user form');
     
     modal_form.find('input[name=name]').val(name)
@@ -132,7 +144,19 @@ $('#update-user').click(function(e){
             }
         };
     })
-})
+});
+
+$('#delete-user').click(function(e){
+    e.preventDefault();
+    var id = $('#confirm input[name="id"]').val()
+    var user_data = $('#confirm form').serializeArray()
+    $.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "1"){
+            location.reload()
+        }
+    })
+});
 
 $('.fa-pencil-square-o').click(function(){
     var elem = $(this).parent().parent().parent();
@@ -143,7 +167,23 @@ $('.fa-pencil-square-o').click(function(){
     var affiliation = elem.find('.team-affiliation').text().trim();
     var country = elem.find('.team-country').text().trim();
 
-    load_modal(id, name, email, website, affiliation, country);
+    load_update_modal(id, name, email, website, affiliation, country);
 })
+
+function load_confirm_modal(id, name){
+    var modal = $('#confirm')
+    modal.find('input[name=id]').val(id)
+    modal.find('#confirm-team-name').text(name)
+    $('#confirm form').attr('action', '/admin/team/'+id+'/delete');
+    $('#confirm').foundation('reveal', 'open');
+}
+
+$('.fa-times').click(function(){
+    var elem = $(this).parent().parent().parent();
+    var id = elem.find('.team-id').text().trim();
+    var name = elem.find('.team-name').text().trim();
+    load_confirm_modal(id, name)
+})
+
 </script>
 {% endblock %}

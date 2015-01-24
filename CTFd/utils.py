@@ -18,18 +18,14 @@ def init_utils(app):
     app.jinja_env.filters['unix_time_millis'] = unix_time_millis
     app.jinja_env.filters['long2ip'] = long2ip
     app.jinja_env.globals.update(pages=pages)
+    app.jinja_env.globals.update(can_register=can_register)
 
 def pages():
     pages = Pages.query.filter(Pages.route!="index").all()
     return pages
 
 def authed():
-    try:
-        if session['id']:
-            return True
-    except KeyError:
-        pass
-    return False
+    return bool(session.get('id', False))
 
 def is_setup():
     setup = Config.query.filter_by(key='setup').first()
@@ -43,6 +39,13 @@ def is_admin():
         return session['admin']
     else:
         return False
+
+def can_register():
+    config = Config.query.filter_by(key='prevent_registration').first()
+    if config:
+        return config.value != '1'
+    else:
+        return True
 
 def admins_only(f):
     @wraps(f)
@@ -84,7 +87,11 @@ def ctftime():
     return False
 
 def can_view_challenges():
-    return authed() or (Config.query.filter_by(key="view_challenges_unregistered").first().value == '1');
+    config = Config.query.filter_by(key="view_challenges_unregistered").first()
+    if config:
+        return authed() or config.value == '1'
+    else:
+        return authed()
 
 def unix_time(dt):
     epoch = datetime.datetime.utcfromtimestamp(0)
