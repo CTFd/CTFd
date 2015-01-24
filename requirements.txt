@@ -8,3 +8,4 @@ passlib==1.6.2
 py-bcrypt==0.4
 six==1.8.0
 itsdangerous
+dop

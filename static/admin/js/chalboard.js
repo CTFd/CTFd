@@ -135,7 +135,7 @@ function loadchals(){
         };
 
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
-            $('#' + challenges['game'][i].category.replace(/ /g,"-")).append($('<button value="' + challenges['game'][i].id + '">' + challenges['game'][i].value + '</button>'));
+            $('#' + challenges['game'][i].category.replace(/ /g,"-")).append($('<button class="radius" value="' + challenges['game'][i].id + '">' + challenges['game'][i].value + '</button>'));
         };
 
         $('#challenges button').click(function (e) {
@@ -145,7 +145,7 @@ function loadchals(){
             loadfiles(this.value);
         });
 
-        $('tr').append('<button class="create-challenge"><i class="fa fa-plus"></i></button>');
+        $('tr').append('<button class="radius create-challenge"><i class="fa fa-plus"></i></button>');
 
         $('.create-challenge').click(function (e) {
             $('#new-chal-category').val($($(this).siblings()[0]).text().trim())

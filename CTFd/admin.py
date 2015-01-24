@@ -111,6 +111,11 @@ def init_admin(app):
         return render_template('admin/pages.html', routes=pages)
 
 
+    @app.route('/admin/hosts', methods=['GET'])
+    @admins_only
+    def admin_hosts():
+        return render_template('admin/hosts.html')
+
     @app.route('/admin/chals', methods=['POST', 'GET'])
     @admins_only
     def admin_chals():
@@ -353,12 +358,12 @@ def init_admin(app):
         db.session.close()
 
         return render_template('admin/statistics.html', team_count=teams_registered,
-            hit_count=site_hits, 
-            wrong_count=wrong_count, 
-            solve_count=solve_count, 
+            hit_count=site_hits,
+            wrong_count=wrong_count,
+            solve_count=solve_count,
             challenge_count=challenge_count,
             most_solved=most_solved_chal,
-            least_solved = least_solved_chal
+            least_solved=least_solved_chal
             )
 
 
