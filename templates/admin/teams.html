@@ -24,7 +24,8 @@
             <input type="hidden" name="id">
             <input type="hidden" name="nonce" value="{{ nonce }}">
             <textarea name="msg" placeholder="Enter your message here" rows="15"></textarea>
-            <input type="submit" class="radius button" value="Send Message"></button></a>
+            <div id="email-user-errors"></div>
+            <button type="button" id="send-user-email">Send Message</button>
         </form>
         <a class="close-reveal-modal">&#215;</a>
     </div>
@@ -157,6 +158,20 @@ $('#update-user').click(function(e){
     })
 });
 
+$('#send-user-email').click(function(e){
+    e.preventDefault();
+    var id = $('#email-user input[name="id"]').val();
+    var email_data = $('#email-user form').serializeArray();
+    $.post($('#email-user form').attr('action'), $('#email-user form').serialize(), function(data){
+        if (data == "1"){
+            $('#email-user').foundation('reveal', 'close');
+        }
+        else{
+            $('#email-user-errors').append("<b>Failed to send email</b>");
+        }
+    });
+});
+
 $('#delete-user').click(function(e){
     e.preventDefault();
     var id = $('#confirm input[name="id"]').val()
@@ -198,7 +213,9 @@ $('.fa-times').click(function(){
 
 function load_email_modal(id){
     var modal = $('#email-user')
+    modal.find('textarea').val("")
     modal.find('input[name=id]').val(id)
+    $('#email-user-errors').empty()
     $('#email-user form').attr('action', '/admin/team/'+id+'/mail');
     $('#email-user').foundation('reveal', 'open');
 }
