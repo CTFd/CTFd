@@ -1,6 +1,13 @@
 {% extends "admin/base.html" %}
 
 {% block content %}
+<div id="create-droplet-modal" class="reveal-modal" data-reveal>
+    <h2 class="text-center">Create Droplet</h2>
+
+    <p>Finally, if your modal summons another Reveal modal, the plugin will handle that for you gracefully.</p>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
 <div class="row">
     <br>
     <h1>Hosts</h1>
@@ -28,6 +35,8 @@
                 </td>
                 <td><b>Disk</b>
                 </td>
+                <td><b>Settings</b>
+                </td>
             </tr>
         </thead>
         <tbody>
@@ -39,10 +48,17 @@
                 <td>{{ host.ip_address }}</td>
                 <td>{{ host.memory }} <sub>MB</sub></td>
                 <td>{{ host.disk }} <sub>GB</sub></td>
+                <td>
+                    <span>
+                        <i class="fa fa-pencil-square-o"></i>
+                        <i class="fa fa-times"></i>
+                    </span>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    <a href="#" data-reveal-id="create-droplet-modal" class="radius button">Create New Host</a>
 </div>
 {% endblock %}
 

@@ -19,6 +19,8 @@ def init_utils(app):
     app.jinja_env.filters['long2ip'] = long2ip
     app.jinja_env.globals.update(pages=pages)
     app.jinja_env.globals.update(can_register=can_register)
+    app.jinja_env.globals.update(mailserver=mailserver)
+
 
 def pages():
     pages = Pages.query.filter(Pages.route!="index").all()

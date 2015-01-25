@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session
-from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, get_digitalocean
+from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, get_digitalocean, sendmail
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 from itsdangerous import TimedSerializer, BadTimeSignature
 from werkzeug.utils import secure_filename
@@ -158,7 +158,6 @@ def init_admin(app):
     @app.route('/admin/chals', methods=['POST', 'GET'])
     @admins_only
     def admin_chals():
-        # if authed():
         if request.method == 'POST':
             chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
             
@@ -313,6 +312,17 @@ def init_admin(app):
                 db.session.commit()
                 db.session.close()
                 return jsonify({'data':['success']})
+
+    @app.route('/admin/team/<teamid>/mail', methods=['POST'])
+    @admins_only
+    def email_user(teamid):
+        message = request.form.get('msg', None)
+        team = Teams.query.filter(Teams.id == teamid).first()
+        if message and team:
+            if sendmail(team.email, message):
+                return "1"
+        return "0"
+
 
     @app.route('/admin/team/<teamid>/ban', methods=['POST'])
     @admins_only

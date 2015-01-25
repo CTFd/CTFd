@@ -16,6 +16,17 @@
                 <button type="button" id="delete-user" class="button success radius">Yes</button>
             </div>
         </form>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <div id="email-user" class="reveal-modal" data-reveal>
+        <h2 class="text-center">Email User</h2>
+        <form method="POST">
+            <input type="hidden" name="id">
+            <input type="hidden" name="nonce" value="{{ nonce }}">
+            <textarea name="msg" placeholder="Enter your message here" rows="15"></textarea>
+            <input type="submit" class="radius button" value="Send Message"></button></a>
+        </form>
+        <a class="close-reveal-modal">&#215;</a>
     </div>
     <div id="user" class="reveal-modal" data-reveal>
         <h2 class="text-center">Edit User</h2>
@@ -84,7 +95,7 @@
             {% for team in teams %}
             <tr name="{{ team.id }}">
                 <td class="team-id">{{ team.id }}</td>
-                <td class="team-name"><a href="/team/{{ team.id }}">{{ team.name }}</a>
+                <td class="team-name"><a href="/admin/team/{{ team.id }}">{{ team.name }}</a>
                 </td>
                 <td class="team-email">{{ team.email }}</td>
                 <td class="team-website"><a href="{{ team.website }}">{% if team.website %}{{ team.website }}{% endif %}</a>
@@ -95,7 +106,7 @@
                 </td>
                 <td><span>
                     <i class="fa fa-pencil-square-o"></i>
-                    <i class="fa fa-envelope"></i>
+                    {% if mailserver() %}<i class="fa fa-envelope"></i>{% endif %}
                     <i class="fa fa-times"></i>
                 </span>
                 </td>
@@ -168,7 +179,7 @@ $('.fa-pencil-square-o').click(function(){
     var country = elem.find('.team-country').text().trim();
 
     load_update_modal(id, name, email, website, affiliation, country);
-})
+});
 
 function load_confirm_modal(id, name){
     var modal = $('#confirm')
@@ -183,7 +194,19 @@ $('.fa-times').click(function(){
     var id = elem.find('.team-id').text().trim();
     var name = elem.find('.team-name').text().trim();
     load_confirm_modal(id, name)
-})
+});
 
+function load_email_modal(id){
+    var modal = $('#email-user')
+    modal.find('input[name=id]').val(id)
+    $('#email-user form').attr('action', '/admin/team/'+id+'/mail');
+    $('#email-user').foundation('reveal', 'open');
+}
+
+$('.fa-envelope').click(function(){
+    var elem = $(this).parent().parent().parent();
+    var id = elem.find('.team-id').text().trim();
+    load_email_modal(id);
+});
 </script>
 {% endblock %}
