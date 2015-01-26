@@ -330,7 +330,7 @@ def init_admin(app):
         user = Teams.query.filter_by(id=teamid).first()
         user.banned = 1
         db.session.commit()
-        return redirect('/scoreboard')
+        return redirect('/admin/scoreboard')
 
     @app.route('/admin/team/<teamid>/unban', methods=['POST'])
     @admins_only
@@ -338,7 +338,7 @@ def init_admin(app):
         user = Teams.query.filter_by(id=teamid).first()
         user.banned = None
         db.session.commit()
-        return redirect('/scoreboard')
+        return redirect('/admin/scoreboard')
 
     @app.route('/admin/team/<teamid>/delete', methods=['POST'])
     @admins_only
