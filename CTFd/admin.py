@@ -277,9 +277,11 @@ def init_admin(app):
         user = Teams.query.filter_by(id=teamid).first()
         solves = Solves.query.filter_by(teamid=teamid).all()
         addrs = Tracking.query.filter_by(team=teamid).group_by(Tracking.ip).all()
+        score = user.score()
+        place = user.place()
 
         if request.method == 'GET':
-            return render_template('admin/team.html', solves=solves, team=user, addrs=addrs)
+            return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, place=place)
         elif request.method == 'POST':
             name = request.form.get('name', None)
             password = request.form.get('password', None)

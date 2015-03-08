@@ -7,7 +7,7 @@ import logging
 import os
 import sqlalchemy
 
-def create_app(subdomain, username="", password=""):
+def create_app(subdomain="", username="", password=""):
     app = Flask("CTFd", static_folder="../static", template_folder="../templates")
     with app.app_context():
         app.config.from_object('CTFd.config')

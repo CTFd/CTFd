@@ -5,6 +5,18 @@
 
 <div class="row">
     <h1 id="team-id">{{ team.name }}</h1>
+    <h2 id="team-place" class="text-center">
+        {%if place %}
+            {{ place }} <small>place</small>
+        {% endif %}
+    </h2>
+    <h2 id="team-score" class="text-center">
+        {%if score %}
+            {{ score }} <small>points</small>
+        {% endif %}
+    </h2>
+
+    <br>
 
     <div id="keys-pie-graph"></div>
     <div id="categories-pie-graph"></div>

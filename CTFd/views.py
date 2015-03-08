@@ -106,10 +106,12 @@ def init_views(app):
     def team(teamid):
         user = Teams.query.filter_by(id=teamid).first()
         solves = Solves.query.filter_by(teamid=teamid).all()
+        score = user.score()
+        place = user.place()
         db.session.close()
 
         if request.method == 'GET':
-            return render_template('team.html', solves=solves, team=user)
+            return render_template('team.html', solves=solves, team=user, score=score, place=place)
         elif request.method == 'POST':
             json = {'solves':[]}
             for x in solves:
