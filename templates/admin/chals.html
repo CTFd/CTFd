@@ -52,8 +52,9 @@
     <div id="delete-chal" class="reveal-modal" data-reveal>
         <form method="POST" action="/admin/chal/delete">
             <input name="nonce" type="hidden" value="{{ nonce }}" />
+            <input id="tags-chal" name='id' type='hidden'>
             <h3>Are you sure?</h3> 
-            <button href="#" type="submit" class="button alert">Delete</button>
+            <button type="submit" class="alert">Delete</button>
             <a class="close-reveal-modal">&#215;</a>
         </form>
     </div>

@@ -7,6 +7,9 @@ from socket import inet_aton, inet_ntoa
 from passlib.hash import bcrypt_sha256
 from flask import current_app as app
 
+#For deleting files
+import shutil
+
 import logging
 import hashlib
 import time
@@ -475,6 +478,47 @@ def init_admin(app):
 
         db.session.commit()
         db.session.close()
+        return redirect('/admin/chals')
+
+    @app.route('/admin/chal/delete', methods=['POST'])
+    def admin_delete_chal():
+        challenge=Challenges.query.filter_by(id=request.form['id']).first()
+        if challenge is not None:
+            #print challenge, " id: ", challenge.id
+            #Clean up wrong keys
+            #wrong_keys=WrongKeys.query.filter(chal=challenge.id).all()
+            wrong_keys= db.session.query(WrongKeys, Challenges).filter(Challenges.id==WrongKeys.id, Challenges.id==challenge.id).all()
+            for curr_wrong_key, corresponding_challenge in wrong_keys:
+                #print "removing wrong_key ", curr, " ", curr.flag
+                db.session.delete(curr_wrong_key)
+            #keys
+            keys = db.session.query(Keys, Challenges).filter(Challenges.id==Keys.id, Challenges.id==challenge.id).all()
+            for curr_key, corresponding_challenge in keys:
+                #print "removing key ", curr, " ", curr.flag
+                db.session.delete(curr_key)
+            #solves
+            solves = db.session.query(Solves, Challenges).filter(Challenges.id==Solves.chalid, Challenges.id==challenge.id).all()
+            for curr_solve, corresponding_challenge in solves:
+                #print "removing solve ", curr, " from: ", curr.ip
+                db.session.delete(curr_solve)
+            #files
+            files = db.session.query(Files, Challenges).filter(Challenges.id==Files.chal, Challenges.id==challenge.id).all()
+            for curr_file, corresponding_challenge in files:
+                tree_to_delete = '/'.join(curr_file.location.split('/')[:-1])
+                try:
+                    shutil.rmtree(tree_to_delete)
+
+                #!!!Design decision!!! - if the dir is a symlink, it is non-standard and I don't touch it, but still delete the dir
+                except OSError, e:
+                    pass
+                    
+                print "removing file %s: %s %s" % (repr(curr_file), curr_file.location, tree_to_delete)
+
+                db.session.delete(curr_file)
+
+            db.session.delete(challenge)
+            #db.session.commit()
+            db.session.close()
         return redirect('/admin/chals')
 
     @app.route('/admin/chal/update', methods=['POST'])
