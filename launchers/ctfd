@@ -1,0 +1,29 @@
+#!/bin/sh
+
+daemon_user="ctfd"
+daemon_flags=" serve.py"
+daemon="/usr/local/bin/python2.7"
+
+pid_file="/var/run/ctfd.pid"
+run_dir="/ctf/CTFd"
+
+. /etc/rc.d/rc.subr
+
+rc_start() {
+    old_dir=`pid`
+    cd ${run_dir}
+    ${daemon} ${daemon_flags} &
+    echo $! | tee ${pid_file}
+
+    cd ${old_dir}
+}
+
+rc_stop() {
+    kill `cat ${pid_file}`
+}
+rc_restart() {
+    rc_stop
+    rc_start
+}
+
+rc_cmd $1
