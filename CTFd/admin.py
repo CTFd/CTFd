@@ -512,7 +512,7 @@ def init_admin(app):
                 except OSError, e:
                     pass
                     
-                print "removing file %s: %s %s" % (repr(curr_file), curr_file.location, tree_to_delete)
+                #print "removing file %s: %s %s" % (repr(curr_file), curr_file.location, tree_to_delete)
 
                 db.session.delete(curr_file)
 
