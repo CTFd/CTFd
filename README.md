@@ -1,15 +1,6 @@
 ![](https://github.com/isislab/CTFd/blob/master/static/img/logo.png)
 ====
 
-CTFd is a CTF in a can. Easily modifiable and has everything you need to run a jeopardy style CTF.
+This is a FORK of the original repository! Credit should go to here:
 
-Install: 
- 1. `./prepare.sh` to install dependencies using apt.
- 2. Modify [CTFd/config.py](https://github.com/isislab/CTFd/blob/master/CTFd/config.py) to your liking.
- 3. Use `python serve.py` in a terminal to drop into debug mode.
- 4. [Here](http://flask.pocoo.org/docs/0.10/deploying/) are some Flask deployment options
-
-Live Demo:
-[https://demo.ctfd.io/](https://demo.ctfd.io/)
-
-Logo by [Laura Barbera](http://www.laurabb.com/)
+https://github.com/isislab/CTFd
