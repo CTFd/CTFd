@@ -517,7 +517,7 @@ def init_admin(app):
                 db.session.delete(curr_file)
 
             db.session.delete(challenge)
-            #db.session.commit()
+            db.session.commit()
             db.session.close()
         return redirect('/admin/chals')
 
