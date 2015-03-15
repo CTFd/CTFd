@@ -23,6 +23,12 @@ def init_utils(app):
     app.jinja_env.globals.update(pages=pages)
     app.jinja_env.globals.update(can_register=can_register)
     app.jinja_env.globals.update(mailserver=mailserver)
+    app.jinja_env.globals.update(ctf_name=ctf_name())
+
+
+def ctf_name():
+    name = get_config('ctf_name')
+    return name if name else 'CTF'
 
 
 def pages():
