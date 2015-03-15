@@ -487,7 +487,6 @@ def init_admin(app):
             Solves.query.filter_by(chalid=challenge.id).delete()
             Keys.query.filter_by(chal=challenge.id).delete()
             files = Files.query.filter_by(chal=challenge.id).all()
-            print files
             Files.query.filter_by(chal=challenge.id).delete()
             for file in files:
                 folder = os.path.dirname(file.location)
