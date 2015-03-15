@@ -13,6 +13,7 @@ import datetime
 import hashlib
 import digitalocean
 import shutil
+import requests
 
 
 def init_utils(app):
@@ -147,18 +148,31 @@ def set_config(key, value):
 
 
 def mailserver():
-    if app.config['MAIL_SERVER'] and app.config['MAIL_PORT'] and app.config['ADMINS']:
+    if get_config('mg_api_key') or (app.config['MAIL_SERVER'] and app.config['MAIL_PORT'] and app.config['ADMINS']):
         return True
     return False
 
 
 def sendmail(addr, text):
-    try:
-        msg = Message("Message from {0}".format(app.config['CTF_NAME']), sender = app.config['ADMINS'][0], recipients = [addr])
-        msg.body = text
-        mail.send(msg)
-        return True
-    except:
+    if get_config('mg_api_key'):
+        ctf_name = get_config('ctf_name')
+        mg_api_key = get_config('mg_api_key')
+        return requests.post(
+            "https://api.mailgun.net/v2/mail"+app.config['HOST']+"/messages",
+            auth=("api", mg_api_key),
+            data={"from": "{} Admin <noreply@ctfd.io>".format(ctf_name),
+                  "to": [addr],
+                  "subject": "Message from {0}".format(ctf_name),
+                  "text": text})
+    elif app.config['MAIL_SERVER'] and app.config['MAIL_PORT'] and app.config['ADMINS']:
+        try:
+            msg = Message("Message from {0}".format(get_config('ctf_name')), sender=app.config['ADMINS'][0], recipients=[addr])
+            msg.body = text
+            mail.send(msg)
+            return True
+        except:
+            return False
+    else:
         return False
 
 

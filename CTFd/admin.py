@@ -62,6 +62,8 @@ def init_admin(app):
                 view_challenges_unregistered = None
                 prevent_registration = None
 
+            ctf_name = set_config("ctf_name", request.form.get('ctf_name', None))
+            mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
             do_api_key = set_config("do_api_key", request.form.get('do_api_key', None))
 
             db_start = Config.query.filter_by(key='start').first()
@@ -83,6 +85,14 @@ def init_admin(app):
 
             db.session.commit()
             return redirect('/admin/config')
+
+        ctf_name = get_config('ctf_name')
+        if not ctf_name:
+            set_config('do_api_key', None)
+
+        mg_api_key = get_config('do_api_key')
+        if not mg_api_key:
+            set_config('do_api_key', None)
 
         do_api_key = get_config('do_api_key')
         if not do_api_key:
@@ -107,8 +117,9 @@ def init_admin(app):
         db.session.commit()
         db.session.close()
 
-        return render_template('admin/config.html', start=start, end=end, view_challenges_unregistered=view_challenges_unregistered, 
-            prevent_registration=prevent_registration, do_api_key=do_api_key)
+        return render_template('admin/config.html', ctf_name=ctf_name, start=start, end=end,
+                               view_challenges_unregistered=view_challenges_unregistered,
+                               prevent_registration=prevent_registration, do_api_key=do_api_key, mg_api_key=mg_api_key)
 
     @app.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
     @app.route('/admin/pages/<route>', methods=['GET', 'POST'])

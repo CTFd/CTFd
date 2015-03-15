@@ -9,3 +9,4 @@ bcrypt
 six==1.8.0
 itsdangerous
 python-digitalocean
+requests

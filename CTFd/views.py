@@ -48,6 +48,9 @@ def init_views(app):
 
         if not is_setup():
             if request.method == 'POST':
+                ctf_name = request.form['ctf_name']
+                ctf_name = Config('ctf_name', ctf_name)
+
                 ## Admin user
                 name = request.form['name']
                 email = request.form['email']
@@ -71,6 +74,7 @@ def init_views(app):
 
                 setup = Config('setup', True)
 
+                db.session.add(ctf_name)
                 db.session.add(admin)
                 db.session.add(page)
                 db.session.add(start)

@@ -8,7 +8,7 @@ SESSION_COOKIE_HTTPONLY = True
 HOST = ".ctfd.io"
 UPLOAD_FOLDER = os.path.normpath('static/uploads')
 
-##### EMAIL #####
+##### EMAIL (if not using Mailgun) #####
 CTF_NAME = ''
 MAIL_SERVER = ''
 MAIL_PORT = 0
