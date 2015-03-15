@@ -49,6 +49,16 @@
         </form>
     </div>
 
+    <div id="delete-chal" class="reveal-modal" data-reveal>
+        <form method="POST" action="/admin/chal/delete">
+            <input name="nonce" type="hidden" value="{{ nonce }}" />
+            <input id="tags-chal" name='id' type='hidden'>
+            <h3>Are you sure?</h3> 
+            <button type="submit" class="alert">Delete</button>
+            <a class="close-reveal-modal">&#215;</a>
+        </form>
+    </div>
+
     <div id="update-keys" class="reveal-modal" data-reveal>
         <form method="POST" action="/admin/keys">
             <h3>Keys</h3>
@@ -109,6 +119,7 @@
             <a href="#" data-reveal-id="update-tags" class="secondary button">Tags</a>
             <a href="#" data-reveal-id="update-files" class="secondary button">Files</a>
             <a href="#" data-reveal-id="update-keys" class="secondary button">Keys</a>
+	    <a href="#" data-reveal-id="delete-chal" class="secondary alert button">Delete</a>
             <button type='submit'>Update</button>
             <a class="close-reveal-modal">&#215;</a>
         </form>
