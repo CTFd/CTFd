@@ -1,5 +1,5 @@
 from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for, session
-from CTFd.utils import authed, ip2long, long2ip, is_setup
+from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 
 from jinja2.exceptions import TemplateNotFound
@@ -151,6 +151,8 @@ def init_views(app):
                     errors.append('That email has already been used')
                 if name_len:
                     errors.append('Pick a longer team name')
+                if not validate_url(website):
+                    errors.append("That doesn't look like a valid URL")
 
                 if len(errors) > 0:
                     return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation, country=country, errors=errors)

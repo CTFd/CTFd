@@ -99,7 +99,7 @@
                 <td class="team-name"><a href="/admin/team/{{ team.id }}">{{ team.name }}</a>
                 </td>
                 <td class="team-email">{{ team.email }}</td>
-                <td class="team-website"><a href="{{ team.website }}">{% if team.website %}{{ team.website }}{% endif %}</a>
+                <td class="team-website">{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}
                 </td>
                 <td class="team-affiliation"><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span>
                 </td>
