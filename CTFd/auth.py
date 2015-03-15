@@ -105,7 +105,10 @@ Did you initiate a password reset?
             # team = Teams.query.filter_by(name=request.form['name'], password=sha512(request.form['password'])).first()
             team = Teams.query.filter_by(name=request.form['name']).first()
             if team and bcrypt_sha256.verify(request.form['password'], team.password):
-                # session.regenerate() # NO SESSION FIXATION FOR YOU
+                try:
+                    session.regenerate() # NO SESSION FIXATION FOR YOU
+                except:
+                    pass # TODO: Some session objects don't implement regenerate :(
                 session['username'] = team.name
                 session['id'] = team.id
                 session['admin'] = team.admin

@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session
-from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, get_digitalocean, sendmail
+from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, get_digitalocean, sendmail, rmdir
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 from itsdangerous import TimedSerializer, BadTimeSignature
 from werkzeug.utils import secure_filename
@@ -23,7 +23,10 @@ def init_admin(app):
 
             admin = Teams.query.filter_by(name=request.form['name'], admin=True).first()
             if admin and bcrypt_sha256.verify(request.form['password'], admin.password):
-                session.regenerate() # NO SESSION FIXATION FOR YOU
+                try:
+                    session.regenerate() # NO SESSION FIXATION FOR YOU
+                except:
+                    pass # TODO: Some session objects dont implement regenerate :(
                 session['username'] = admin.name
                 session['id'] = admin.id
                 session['admin'] = True
@@ -445,7 +448,6 @@ def init_admin(app):
 
     @app.route('/admin/chal/new', methods=['POST'])
     def admin_create_chal():
-
         files = request.files.getlist('files[]')
 
         # Create challenge
@@ -466,20 +468,39 @@ def init_admin(app):
 
             md5hash = hashlib.md5(filename).hexdigest()
 
-            if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], md5hash)):
-                os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], md5hash))
+            if not os.path.exists(os.path.join(os.path.normpath(app.config['UPLOAD_FOLDER']), md5hash)):
+                os.makedirs(os.path.join(os.path.normpath(app.config['UPLOAD_FOLDER']), md5hash))
 
-            f.save(os.path.join(app.config['UPLOAD_FOLDER'], md5hash, filename))
-            db_f = Files(chal.id, os.path.join(app.config['UPLOAD_FOLDER'], md5hash, filename))
+            f.save(os.path.join(os.path.normpath(app.config['UPLOAD_FOLDER']), md5hash, filename))
+            db_f = Files(chal.id, os.path.join(os.path.normpath(app.config['UPLOAD_FOLDER']), md5hash, filename))
             db.session.add(db_f)
 
         db.session.commit()
         db.session.close()
         return redirect('/admin/chals')
 
+    @app.route('/admin/chal/delete', methods=['POST'])
+    def admin_delete_chal():
+        challenge = Challenges.query.filter_by(id=request.form['id']).first()
+        if challenge:
+            WrongKeys.query.filter_by(chal=challenge.id).delete()
+            Solves.query.filter_by(chalid=challenge.id).delete()
+            Keys.query.filter_by(chal=challenge.id).delete()
+            files = Files.query.filter_by(chal=challenge.id).all()
+            print files
+            Files.query.filter_by(chal=challenge.id).delete()
+            for file in files:
+                folder = os.path.dirname(file.location)
+                rmdir(folder)
+            Tags.query.filter_by(chal=challenge.id).delete()
+            Challenges.query.filter_by(id=challenge.id).delete()
+            db.session.commit()
+            db.session.close()
+        return '1'
+
     @app.route('/admin/chal/update', methods=['POST'])
     def admin_update_chal():
-        challenge=Challenges.query.filter_by(id=request.form['id']).first()
+        challenge = Challenges.query.filter_by(id=request.form['id']).first()
         challenge.name = request.form['name']
         challenge.description = request.form['desc']
         challenge.value = request.form['value']

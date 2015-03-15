@@ -5,7 +5,7 @@ Flask-SQLAlchemy==2.0
 Flask-Session==0.1.1
 SQLAlchemy==0.9.8
 passlib==1.6.2
-py-bcrypt==0.4
+bcrypt
 six==1.8.0
 itsdangerous
 python-digitalocean

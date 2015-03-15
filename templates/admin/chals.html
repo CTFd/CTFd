@@ -15,7 +15,7 @@
         <h3>New Challenge</h3>
         <input type='text' name='name' placeholder='Name'><br/>
         <textarea name='desc' placeholder='Description'></textarea><br/>
-        <input type='text' name='value' placeholder='Value'><br/>
+        <input type='number' name='value' placeholder='Value'><br/>
         <input type='text' name='key' placeholder='Key'><br/>
         <input type="radio" name="key_type[0]" value="0">Static
         <input type="radio" name="key_type[0]" value="1">Regex
@@ -33,7 +33,7 @@
             <input name='nonce' type='hidden' value="{{ nonce }}">
             <input type='text' name='name' placeholder='Name'><br/>
             <textarea class="textbox" name='desc' placeholder='Description'></textarea><br/>
-            <input type='text' name='value' placeholder='Value'><br/>
+            <input type='number' name='value' placeholder='Value'><br/>
             <input id="new-chal-category" type="hidden" name="category">
             <input type='text' name='key' placeholder='Key'><br/>
 
@@ -47,6 +47,21 @@
             <button type='submit'>Create</button>
             <a class="close-reveal-modal">&#215;</a>
         </form>
+    </div>
+
+    <div id="delete-chal" class="reveal-modal" data-reveal>
+        <h2 class="text-center">Delete Challenge</h2>
+        <form method="POST" action="/admin/chal/delete">
+            <input type="hidden" name="nonce" value="{{ nonce }}">
+            <input type="hidden" name="id" class="chal-id">
+            <div class="small-6 small-centered text-center columns">
+                <p>Are you sure you want to delete this challenge?</p>
+                <p>Solves, wrong keys, files, tags will all be deleted.</p>
+                <button type="button" class="button alert radius" onclick="$('#delete-chal').foundation('reveal', 'close');">No</button>
+                <button type="submit" id="delete-user" class="button success radius">Yes</button>
+            </div>
+        </form>
+        <a class="close-reveal-modal">&#215;</a>
     </div>
 
     <div id="update-keys" class="reveal-modal" data-reveal>
@@ -100,7 +115,7 @@
             <input name='nonce' type='hidden' value="{{ nonce }}">
             <input class="chal-name" type='text' name='name' placeholder='Name'><br/>
             <textarea class="chal-desc textbox" name='desc' placeholder='Description'></textarea><br/>
-            <input class="chal-value" type='text' name='value' placeholder='Value'><br/>
+            <input class="chal-value" type='number' name='value' placeholder='Value'><br/>
             <select class="chal-category" name="category">
                 <option>-</option>
             </select>
@@ -109,6 +124,7 @@
             <a href="#" data-reveal-id="update-tags" class="secondary button">Tags</a>
             <a href="#" data-reveal-id="update-files" class="secondary button">Files</a>
             <a href="#" data-reveal-id="update-keys" class="secondary button">Keys</a>
+            <a href="#" data-reveal-id="delete-chal" class="secondary alert button">Delete</a>
             <button type='submit'>Update</button>
             <a class="close-reveal-modal">&#215;</a>
         </form>

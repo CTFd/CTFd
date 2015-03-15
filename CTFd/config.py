@@ -6,7 +6,7 @@ SESSION_TYPE = "filesystem"
 SESSION_FILE_DIR = "/tmp/flask_session"
 SESSION_COOKIE_HTTPONLY = True
 HOST = ".ctfd.io"
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = os.path.normpath('static/uploads')
 
 ##### EMAIL #####
 CTF_NAME = ''

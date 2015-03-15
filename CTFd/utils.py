@@ -12,6 +12,8 @@ import time
 import datetime
 import hashlib
 import digitalocean
+import shutil
+
 
 def init_utils(app):
     app.jinja_env.filters['unix_time'] = unix_time
@@ -26,8 +28,10 @@ def pages():
     pages = Pages.query.filter(Pages.route!="index").all()
     return pages
 
+
 def authed():
     return bool(session.get('id', False))
+
 
 def is_setup():
     setup = Config.query.filter_by(key='setup').first()
@@ -35,6 +39,7 @@ def is_setup():
         return setup.value
     else:
         return False
+
 
 def is_admin():
     if authed():
@@ -49,6 +54,7 @@ def can_register():
         return config.value != '1'
     else:
         return True
+
 
 def admins_only(f):
     @wraps(f)
@@ -89,6 +95,7 @@ def ctftime():
 
     return False
 
+
 def can_view_challenges():
     config = Config.query.filter_by(key="view_challenges_unregistered").first()
     if config:
@@ -96,23 +103,29 @@ def can_view_challenges():
     else:
         return authed()
 
+
 def unix_time(dt):
     epoch = datetime.datetime.utcfromtimestamp(0)
     delta = dt - epoch
     return int(delta.total_seconds())
 
+
 def unix_time_millis(dt):
     return unix_time(dt) * 1000
+
 
 def long2ip(ip_int):
     return inet_ntoa(pack('!I', ip_int))
 
+
 def ip2long(ip):
     return unpack('!I', inet_aton(ip))[0]
+
 
 def get_kpm(teamid): # keys per minute
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
     return len(db.session.query(WrongKeys).filter(WrongKeys.team == teamid, WrongKeys.date >= one_min_ago).all())
+
 
 def get_config(key):
     config = Config.query.filter_by(key=key).first()
@@ -120,6 +133,7 @@ def get_config(key):
         return config.value
     else:
         return None
+
 
 def set_config(key, value):
     config = Config.query.filter_by(key=key).first()
@@ -137,6 +151,7 @@ def mailserver():
         return True
     return False
 
+
 def sendmail(addr, text):
     try:
         msg = Message("Message from {0}".format(app.config['CTF_NAME']), sender = app.config['ADMINS'][0], recipients = [addr])
@@ -146,13 +161,19 @@ def sendmail(addr, text):
     except:
         return False
 
+
+def rmdir(dir):
+    shutil.rmtree(dir, ignore_errors=True)
+
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
+
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
+
 
 def get_digitalocean():
     token = get_config('do_api_key')

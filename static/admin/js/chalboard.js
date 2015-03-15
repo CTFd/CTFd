@@ -4,14 +4,14 @@ function loadchal(id) {
     obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
     })[0]
-    $('#update-challenge .chal-name').val(obj.name)
-    $('#update-challenge .chal-desc').html(obj.description)
-    $('#update-challenge .chal-value').val(obj.value)
-    $('#update-challenge .chal-category').val(obj.category)
-    $('#update-challenge .chal-id').val(obj.id)
-    $('#update-challenge .chal-delete').attr({
-        'href': '/admin/chal/close/' + (id + 1)
-    })
+    $('.chal-name').val(obj.name);
+    $('.chal-desc').html(obj.description);
+    $('.chal-value').val(obj.value);
+    $('.chal-category').val(obj.category);
+    $('.chal-id').val(obj.id);
+    //$('#update-challenge .chal-delete').attr({
+    //    'href': '/admin/chal/close/' + (id + 1)
+    //})
     $('#update-challenge').foundation('reveal', 'open');
 
 }
@@ -27,14 +27,14 @@ function submitkey(chal, key) {
 
 function loadkeys(chal){
     $.get('/admin/keys/' + chal, function(data){
-        $('#keys-chal').val(chal)
+        $('#keys-chal').val(chal);
         keys = $.parseJSON(JSON.stringify(data));
-        keys = keys['keys']
-        $('#current-keys').empty()
+        keys = keys['keys'];
+        $('#current-keys').empty();
         for(x=0; x<keys.length; x++){
-            $('#current-keys').append($("<input class='current-key' type='text'>").val(keys[x].key))
-            $('#current-keys').append('<input type="radio" name="key_type['+x+']" value="0">Static')
-            $('#current-keys').append('<input type="radio" name="key_type['+x+']" value="1">Regex')
+            $('#current-keys').append($("<input class='current-key' type='text'>").val(keys[x].key));
+            $('#current-keys').append('<input type="radio" name="key_type['+x+']" value="0">Static');
+            $('#current-keys').append('<input type="radio" name="key_type['+x+']" value="1">Regex');
             $('#current-keys input[name="key_type['+x+']"][value="'+keys[x].type+'"]').prop('checked',true);
         }
     });
@@ -76,6 +76,10 @@ function deletetag(tagid){
     $.post('/admin/tags/'+tagid+'/delete', {'nonce': $('#nonce').val()});
 }
 
+function deletechal(chalid){
+    $.post('/admin/chal/delete', {'nonce':$('#nonce').val(), 'id':chalid});
+}
+
 function updatetags(){
     tags = [];
     chal = $('#tags-chal').val()
@@ -115,6 +119,7 @@ function deletefile(chal, file, elem){
 
 
 function loadchals(){
+    $('#challenges').empty();
     $.post("/admin/chals", {
         'nonce': $('#nonce').val()
     }, function (data) {
@@ -169,6 +174,20 @@ $('#submit-tags').click(function (e) {
     updatetags()
 });
 
+$('#delete-chal > form').submit(function(e){
+    e.preventDefault();
+    $.post('/admin/chal/delete', $(this).serialize(), function(data){
+        console.log(data)
+        if (data){
+            loadchals();
+            $('#delete-chal').foundation('reveal', 'close');
+        }
+        else {
+            alert('There was an error');
+        }
+    })
+});
+
 $(".tag-insert").keyup(function (e) {
     if (e.keyCode == 13) {
         tag = $('.tag-insert').val()
@@ -184,14 +203,14 @@ $(".tag-insert").keyup(function (e) {
 $('.create-category').click(function (e) {
     $('#new-category').foundation('reveal', 'open');
 });
-count = 1
+count = 1;
 $('#create-key').click(function (e) {
     $('#current-keys').append("<input class='current-key' type='text' placeholder='Blank Key'>");
     $('#current-keys').append('<input type="radio" name="key_type['+count+']" value="0">Static');
     $('#current-keys').append('<input type="radio" name="key_type['+count+']" value="1">Regex');
-    count++
+    count++;
 });
 
 $(function(){
-  loadchals()
+    loadchals();
 })
