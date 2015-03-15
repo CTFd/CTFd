@@ -18,7 +18,7 @@
         {% for team in teams %}
             <tr>
                 <td><a href="/team/{{ team.id }}">{{ team.name }}</a></td>
-                <td><a href="{{ team.website }}">{% if team.website %}{{ team.website }}{% endif %}</a></td>
+                <td>{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}</td>
                 <td><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span></td>
                 <td><span>{% if team.country %}{{ team.country }}{% endif %}</span></td>
             </tr>
