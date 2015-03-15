@@ -111,18 +111,23 @@ class Teams(db.Model):
 
     def score(self):
         score = db.func.sum(Challenges.value).label('score')
-        stuff = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.banned == None, Teams.id==self.id).group_by(Solves.teamid).one()
-        print stuff
-        return stuff[1] if stuff[1] else 0
+        team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.banned == None, Teams.id==self.id).group_by(Solves.teamid).first()
+        if team:
+            return team.score
+        else:
+            return 0
 
     def place(self):
         score = db.func.sum(Challenges.value).label('score')
         quickest = db.func.max(Solves.date).label('quickest')
         teams = db.session.query(Solves.teamid).join(Teams).join(Challenges).filter(Teams.banned == None).group_by(Solves.teamid).order_by(score.desc(), quickest).all()
         #http://codegolf.stackexchange.com/a/4712
-        i = teams.index((self.id,)) + 1
-        k = i%10
-        return "%d%s"%(i,"tsnrhtdd"[(i/10%10!=1)*(k<4)*k::4])
+        try:
+            i = teams.index((self.id,)) + 1
+            k = i % 10
+            return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
+        except ValueError:
+            return 0
 
 class Solves(db.Model):
     __table_args__ = (db.UniqueConstraint('chalid', 'teamid'), {})
