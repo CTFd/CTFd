@@ -56,3 +56,4 @@ target/
 *.db
 *.log
 .idea/
+static/uploads

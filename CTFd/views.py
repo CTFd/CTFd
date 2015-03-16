@@ -135,13 +135,16 @@ def init_views(app):
                 affiliation = request.form.get('affiliation')
                 country = request.form.get('country')
 
+                user = Teams.query.filter_by(id=session['id']).first()
+
                 names = Teams.query.filter_by(name=name).first()
                 emails = Teams.query.filter_by(email=email).first()
                 valid_email = re.match("[^@]+@[^@]+\.[^@]+", email)
                 
                 name_len = len(request.form['name']) == 0
 
-                if not bcrypt_sha256.verify(request.form.get('confirm').strip(), names.password):
+                if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
+                        (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):
                     errors.append("Your old password doesn't match what we have.")
                 if not valid_email:
                     errors.append("That email doesn't look right")
@@ -151,7 +154,7 @@ def init_views(app):
                     errors.append('That email has already been used')
                 if name_len:
                     errors.append('Pick a longer team name')
-                if not validate_url(website):
+                if website.strip() and not validate_url(website):
                     errors.append("That doesn't look like a valid URL")
 
                 if len(errors) > 0:
@@ -160,6 +163,8 @@ def init_views(app):
                     team = Teams.query.filter_by(id=session['id']).first()
                     team.name = name
                     team.email = email
+                    session['username'] = name
+
                     if 'password' in request.form.keys() and not len(request.form['password']) == 0:
                         team.password = bcrypt_sha256.encrypt(request.form.get('password'))
                     team.website = website

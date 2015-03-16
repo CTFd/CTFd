@@ -60,11 +60,15 @@ Did you initiate a password reset?
             return redirect('/login')
         if request.method == 'POST':
             errors = []
-            name_len = len(request.form['name']) == 0
-            names = Teams.query.add_columns('name', 'id').filter_by(name=request.form['name']).first()
-            emails = Teams.query.add_columns('email', 'id').filter_by(email=request.form['email']).first()
-            pass_short = len(request.form['password']) == 0
-            pass_long = len(request.form['password']) > 128
+            name = request.form['name']
+            email = request.form['email']
+            password = request.form['password']
+
+            name_len = len(name) == 0
+            names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
+            emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
+            pass_short = len(password) == 0
+            pass_long = len(password) > 128
             valid_email = re.match("[^@]+@[^@]+\.[^@]+", request.form['email'])
 
             if not valid_email:
@@ -84,7 +88,7 @@ Did you initiate a password reset?
                 return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
             else:
                 with app.app_context():
-                    team = Teams(request.form['name'], request.form['email'], request.form['password'])
+                    team = Teams(name, email, password)
                     db.session.add(team)
                     db.session.commit()
                 if mailserver():
@@ -102,8 +106,9 @@ Did you initiate a password reset?
     def login():
         if request.method == 'POST':
             errors = []
+            name = request.form['name']
             # team = Teams.query.filter_by(name=request.form['name'], password=sha512(request.form['password'])).first()
-            team = Teams.query.filter_by(name=request.form['name']).first()
+            team = Teams.query.filter_by(name=name).first()
             if team and bcrypt_sha256.verify(request.form['password'], team.password):
                 try:
                     session.regenerate() # NO SESSION FIXATION FOR YOU

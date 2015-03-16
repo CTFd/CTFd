@@ -120,7 +120,6 @@
 
 {% block scripts %}
 <script>
-
 function load_update_modal(id, name, email, website, affiliation, country){
     var modal_form = $('#user form');
     
@@ -144,11 +143,17 @@ $('#update-user').click(function(e){
         for (var i = 0; i < data['data'].length; i++) {
             if (data['data'][i] == 'success'){
                 var row = $('tr[name='+id+']')
-                row.find('.team-name').text( $.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'] )
-                row.find('.team-email').text( $.grep(user_data, function(e){ return e.name == 'email'; })[0]['value'] )
-                row.find('.team-website').attr('href', $.grep(user_data, function(e){ return e.name == 'website'; })[0]['value'] )
-                row.find('.team-affiliation').text( $.grep(user_data, function(e){ return e.name == 'affiliation'; })[0]['value'] )
-                row.find('.team-country').text( $.grep(user_data, function(e){ return e.name == 'country'; })[0]['value'] )
+                console.log($.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'])
+                console.log(row.find('.team-name > a'))
+                row.find('.team-name > a').text( $.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'] );
+                row.find('.team-email').text( $.grep(user_data, function(e){ return e.name == 'email'; })[0]['value'] );
+
+                row.find('.team-website > a').empty()
+                var website = $.grep(user_data, function(e){ return e.name == 'website'; })[0]['value']
+                row.find('.team-website').append($('<a>').attr('href', website).text(website));
+
+                row.find('.team-affiliation').text( $.grep(user_data, function(e){ return e.name == 'affiliation'; })[0]['value'] );
+                row.find('.team-country').text( $.grep(user_data, function(e){ return e.name == 'country'; })[0]['value'] );
                 $('#user').foundation('reveal', 'close');
             }
             else{

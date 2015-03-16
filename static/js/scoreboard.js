@@ -9,12 +9,16 @@ String.prototype.format = String.prototype.f = function() {
     return s;
 };
 
+function htmlentities(string) {
+    return $('<div/>').text(string).html();
+}
+
 function updatescores () {
   $.get('/scores', function( data ) {
     teams = $.parseJSON(JSON.stringify(data));
     $('#scoreboard > tbody').empty()
     for (var i = 0; i < teams['teams'].length; i++) {
-      row = "<tr><td>{0}</td><td><a href='/team/{1}'>{2}</a></td><td>{3}</td></tr>".format(i+1, teams['teams'][i].id, teams['teams'][i].name, teams['teams'][i].score)
+      row = "<tr><td>{0}</td><td><a href='/team/{1}'>{2}</a></td><td>{3}</td></tr>".format(i+1, teams['teams'][i].id, htmlentities(teams['teams'][i].name), teams['teams'][i].score)
       $('#scoreboard > tbody').append(row)
     };
   });

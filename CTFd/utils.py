@@ -75,8 +75,8 @@ def admins_only(f):
 def ctftime():
     """ Checks whether it's CTF time or not. """
 
-    start = Config.query.filter_by(key="start").first().value
-    end = Config.query.filter_by(key="end").first().value
+    start = get_config("start")
+    end = get_config("end")
 
     if start:
         start = int(start)
@@ -84,7 +84,7 @@ def ctftime():
         end = int(end)
 
     if start and end:
-        if start < time.time() and time.time() < end: 
+        if start < time.time() < end:
             # Within the two time bounds
             return True
 
