@@ -7,6 +7,6 @@ SQLAlchemy==0.9.8
 passlib==1.6.2
 bcrypt
 six==1.8.0
-itsdangerous
-python-digitalocean
-requests
+itsdangerous==0.24
+python-digitalocean==1.4.2
+requests==2.3.0
