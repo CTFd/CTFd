@@ -154,19 +154,19 @@ def set_config(key, value):
 
 
 def mailserver():
-    if get_config('mg_api_key') or (app.config['MAIL_SERVER'] and app.config['MAIL_PORT'] and app.config['ADMINS']):
+    if (get_config('mg_api_key') and app.config['ADMINS']) or (app.config['MAIL_SERVER'] and app.config['MAIL_PORT'] and app.config['ADMINS']):
         return True
     return False
 
 
 def sendmail(addr, text):
-    if get_config('mg_api_key'):
+    if get_config('mg_api_key') and app.config['ADMINS']:
         ctf_name = get_config('ctf_name')
         mg_api_key = get_config('mg_api_key')
         return requests.post(
             "https://api.mailgun.net/v2/mail"+app.config['HOST']+"/messages",
             auth=("api", mg_api_key),
-            data={"from": "{} Admin <noreply@ctfd.io>".format(ctf_name),
+            data={"from": "{} Admin <{}>".format(ctf_name, app.config['ADMINS'][0]),
                   "to": [addr],
                   "subject": "Message from {0}".format(ctf_name),
                   "text": text})
