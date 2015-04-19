@@ -9,7 +9,7 @@
         <h2 class="text-center">Delete User</h2>
         <form method="POST">
             <input type="hidden" name="id">
-            <input type="hidden" name="nonce" value="{{ nonce }}">
+            <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
             <div class="small-6 small-centered text-center columns">
                 <p>Are you sure you want to delete <strong id="confirm-team-name"></strong>?</p>
                 <button type="button" class="button alert radius" onclick="$('#confirm').foundation('reveal', 'close');">No</button>
@@ -68,6 +68,13 @@
                 <div id="results">
 
                 </div>
+                <div class="large-12 columns">
+                    <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="admin"> Admin
+                        </label>
+                  </div>
+                </div>
                 <button id="update-user" class="radius" type="submit">Update</button>
             </div>
         </form>
@@ -76,19 +83,21 @@
     <table id="teamsboard">
         <thead>
             <tr>
-                <td><b>ID</b>
+                <td class="text-center"><b>ID</b>
                 </td>
-                <td><b>Team</b>
+                <td class="text-center"><b>Team</b>
                 </td>
-                <td><b>Email</b>
+                <td class="text-center"><b>Email</b>
                 </td>
-                <td><b>Website</b>
+                <td class="text-center"><b>Website</b>
                 </td>
-                <td><b>Affiliation</b>
+                <td class="text-center"><b>Affiliation</b>
                 </td>
-                <td><b>Country</b>
+                <td class="text-center"><b>Country</b>
                 </td>
-                <td><b>Settings</b>
+                <td class="text-center"><b>Admin</b>
+                </td>
+                <td class="text-center"><b>Settings</b>
                 </td>
             </tr>
         </thead>
@@ -105,7 +114,12 @@
                 </td>
                 <td class="team-country"><span>{% if team.country %}{{ team.country }}{% endif %}</span>
                 </td>
-                <td><span>
+                <td class="team-admin">
+                    <div class="center-block checkbox text-center">
+                        <input type="checkbox" {% if team.admin %}checked{% endif %}>
+                    </div>
+                </td>
+                <td class="text-center"><span>
                     <i class="fa fa-pencil-square-o"></i>
                     {% if mailserver() %}<i class="fa fa-envelope"></i>{% endif %}
                     <i class="fa fa-times"></i>
@@ -162,6 +176,16 @@ $('#update-user').click(function(e){
         };
     })
 });
+
+$('.team-admin input').on('change', function(){
+    var elem = $(this).parent().parent().parent();
+    var id = elem.find('.team-id').text().trim();
+    var admin = $(this).prop('checked')
+    var nonce = $('#nonce').val()
+    console.log(admin)
+
+    $.post('/admin/team/'+id, {'admin':admin, 'nonce':nonce});
+})
 
 $('#send-user-email').click(function(e){
     e.preventDefault();

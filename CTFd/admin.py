@@ -301,6 +301,13 @@ def init_admin(app):
         if request.method == 'GET':
             return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, place=place)
         elif request.method == 'POST':
+            admin = request.form.get('admin', "false")
+            admin = 1 if admin == "true" else 0
+            if admin:
+                user.admin = 1
+                db.session.commit()
+                return jsonify({'data': ['success']})
+
             name = request.form.get('name', None)
             password = request.form.get('password', None)
             email = request.form.get('email', None)
@@ -342,7 +349,6 @@ def init_admin(app):
             if sendmail(team.email, message):
                 return "1"
         return "0"
-
 
     @app.route('/admin/team/<teamid>/ban', methods=['POST'])
     @admins_only
