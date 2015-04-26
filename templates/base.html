@@ -6,69 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/css/normalize.min.css" />
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/css/foundation.min.css" />
+    <link rel="stylesheet" href="/static/css/materialize.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/railscasts.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 </head>
 <body>
-    <nav class="top-bar" data-topbar>
-      <ul class="title-area">
-        <li class="name">
-          <h1><a href="/">{{ ctf_name() }}</a></h1>
-        </li>
-        <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
-      </ul>
-
-      <section class="top-bar-section">
-        <!-- Right Nav Section -->
-        <ul class="right">
-            {% if username is defined %}
-            <li class="has-dropdown">
-              <a href="/team/{{ id }}">{{ username }} {% if admin %} (ADMIN) {% endif %}</a>
-              <ul class="dropdown">
-                {% if admin %}
-                <li><a href="/admin">Admin</a></li>
-                {% endif %}
-                <li><a href="/team/{{ id }}">Team</a></li>
-                <li><a href="/profile">Account</a></li>
-                <li><a href="/logout">Logout</a></li>
-              </ul>
-            </li>
-            {%else %}
-            <li class="has-form">
-              {% if can_register() %} 
-              <li class="has-dropdown">
-                <a href="/register">Register</a>
-                <ul class="dropdown">
-                  <form method="POST" action="/register">
-                    <li><input type='text' name='name' placeholder='Name'></li>
-                    <li><input type='text' name='email' placeholder='Email'></li>
-                    <li><input type='password' name='password' placeholder='Password'></li>
-                    <li><button type='submit'>Register</button></li>
-                  </form>
-                </ul>
-              </li>
-              {% endif %}
-              <li class="has-dropdown">
-                <a href="/login">Login</a>
-                <ul class="dropdown">
-                  <form method="POST" action="/login">
-                  <li><input type='text' name='name' placeholder='Name'></li>
-                  <li><input type='password' name='password' placeholder='Password'></li>
-                  <li><button type='submit'>Login</button></li>
-                  <li><a href="/reset_password" class="text-center">Forgot?</a></li>
-                  </form>
-                </ul>
-              </li>
-              {% endif %}
-            </li>
-        </ul>
-
-        <!-- Left Nav Section -->
-        <ul class="left">
+    <nav>
+      <div class="nav-wrapper">
+        <a href="/" class="brand-logo center">{{ ctf_name() }}</a>
+        <a href="#" data-activates="mobile-nav-overlay" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
           {% for page in pages() %}
             <li><a href="/{{ page.route }}">{{ page.route|title }}</a></li>
           {% endfor %}
@@ -76,20 +25,43 @@
           <li><a href="/scoreboard">Scoreboard</a></li>
           <li><a href="/challenges">Challenges</a></li>
         </ul>
-      </section>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          {% if username is defined %}
+            <ul id="user-dropdown" class="dropdown-content">
+                {% if admin %}
+                <li><a href="/admin">Admin</a></li>
+                <li class="divider"></li>
+                {% endif %}
+                <li><a href="/team/{{ id }}">Team</a></li>
+                <li><a href="/profile">Account</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+            <li>
+              <a class="dropdown-button" href="#!" data-activates="user-dropdown">
+                {{ username }} {% if admin %} (ADMIN) {% endif %}
+                <i class="mdi-navigation-arrow-drop-down right"></i>
+              </a>
+            </li>
+          {%else %}
+            {% if can_register() %} 
+            <li><a href="/register">Register</a></li>
+            {% endif %}
+            <li><a href="/login">Login</a></li>
+          {% endif %}
+        </ul>
+      </div>
     </nav>
 
-    {% block content %}
-    {% endblock %}
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/vendor/jquery.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/vendor/modernizr.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/foundation.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/foundation/foundation.topbar.min.js"></script>
-    <script>
-      $(document).foundation();
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/js/materialize.min.js"></script>
     {% block scripts %}
     {% endblock %}
 </body>
