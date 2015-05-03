@@ -10,7 +10,7 @@
     {% endfor %}
     <form method="POST">
         <span>Team Name</span>
-            <input class="radius" type="text" name="name" placeholder="Team Name" value="{{name}}">
+            <input class="radius" type="text" name="name" placeholder="Team Name" value="{{name}}" {% if prevent_name_change %}disabled{% endif %}>
 
         <span>Email Address</span>
             <input class="radius" type="text" name="email" placeholder="Email Address" value="{{email}}">

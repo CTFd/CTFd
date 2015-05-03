@@ -1,5 +1,5 @@
 from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for, session
-from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url
+from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url, get_config
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 
 from jinja2.exceptions import TemplateNotFound
@@ -158,10 +158,12 @@ def init_views(app):
                     errors.append("That doesn't look like a valid URL")
 
                 if len(errors) > 0:
-                    return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation, country=country, errors=errors)
+                    return render_template('profile.html', name=name, email=email, website=website,
+                                           affiliation=affiliation, country=country, errors=errors)
                 else:
                     team = Teams.query.filter_by(id=session['id']).first()
-                    team.name = name
+                    if not get_config('prevent_name_change'):
+                        team.name = name
                     team.email = email
                     session['username'] = name
 
@@ -180,6 +182,8 @@ def init_views(app):
                 website = user.website
                 affiliation = user.affiliation
                 country = user.country
-                return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation, country=country)
+                prevent_name_change = get_config('prevent_name_change')
+                return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
+                                       country=country, prevent_name_change=prevent_name_change)
         else:
             return redirect('/login')

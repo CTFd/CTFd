@@ -58,9 +58,15 @@ def init_admin(app):
             try:
                 view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
                 prevent_registration = bool(request.form.get('prevent_registration', None))
+                prevent_name_change = bool(request.form.get('prevent_name_change', None))
             except (ValueError, TypeError):
                 view_challenges_unregistered = None
                 prevent_registration = None
+                prevent_name_change = None
+            finally:
+                view_challenges_unregistered = set_config('view_challenges_unregistered', view_challenges_unregistered)
+                prevent_registration = set_config('prevent_registration', prevent_registration)
+                prevent_name_change = set_config('prevent_name_change', prevent_name_change)
 
             ctf_name = set_config("ctf_name", request.form.get('ctf_name', None))
             mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
@@ -72,16 +78,8 @@ def init_admin(app):
             db_end = Config.query.filter_by(key='end').first()
             db_end.value = end
 
-            db_view_challenges_unregistered = Config.query.filter_by(key='view_challenges_unregistered').first()
-            db_view_challenges_unregistered.value = view_challenges_unregistered
-
-            db_prevent_registration = Config.query.filter_by(key='prevent_registration').first()
-            db_prevent_registration.value = prevent_registration
-
             db.session.add(db_start)
             db.session.add(db_end)
-            db.session.add(db_view_challenges_unregistered)
-            db.session.add(db_prevent_registration)
 
             db.session.commit()
             return redirect('/admin/config')
@@ -114,12 +112,17 @@ def init_admin(app):
         if not prevent_registration:
             set_config('prevent_registration', None)
 
+        prevent_name_change = get_config('prevent_name_change') == '1'
+        if not prevent_name_change:
+            set_config('prevent_name_change', None)
+
         db.session.commit()
         db.session.close()
 
         return render_template('admin/config.html', ctf_name=ctf_name, start=start, end=end,
                                view_challenges_unregistered=view_challenges_unregistered,
-                               prevent_registration=prevent_registration, do_api_key=do_api_key, mg_api_key=mg_api_key)
+                               prevent_registration=prevent_registration, do_api_key=do_api_key, mg_api_key=mg_api_key,
+                               prevent_name_change=prevent_name_change)
 
     @app.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
     @app.route('/admin/pages/<route>', methods=['GET', 'POST'])
