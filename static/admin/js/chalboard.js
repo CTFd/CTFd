@@ -100,7 +100,7 @@ function loadfiles(chal){
         for(x=0; x<files.length; x++){
             filename = files[x].file.split('/')
             filename = filename[filename.length - 1]
-            $('#current-files').append('<div data-alert class="alert-box info radius">'+filename+'<a href="#" onclick="deletefile('+chal+','+files[x].id+', $(this))" value="'+files[x].id+'" style="float:right;">Delete</a></div>')
+            $('#current-files').append('<div data-alert class="alert-box info radius">'+'<a href='+files[x].file+'>'+filename+'</a><a href="#" onclick="deletefile('+chal+','+files[x].id+', $(this))" value="'+files[x].id+'" style="float:right;">Delete</a></div>')
         }
     });
 }
