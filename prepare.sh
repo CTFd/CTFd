@@ -5,8 +5,7 @@ pip install -r requirements.txt
 
 # Requirements for SASS
 sudo apt-get install ruby -y
-sudo gem install sass
+sudo gem install sass bootstrap-sass compass
+compass compile 
 
-# Start watching for changes to SASS
-mkdir log
-nohup sass --watch static/sass/materialize.scss:static/css/materialize.css > log/$(/bin/date +%Y%m%d.%H%M).sass_watch.log 2>&1 &
+nohup compass watch static/sass &

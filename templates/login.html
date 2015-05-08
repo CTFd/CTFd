@@ -1,29 +1,53 @@
 {% extends "base.html" %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="/static/css/input.css">
+{% endblock %}
+
 {% block content %}
-<div class="row">
-    <h1>Login</h1>
-
-    <div class="row">
-    {% for error in errors %}
-        <div class="large-8 large-centered columns">
-            <div data-alert class="alert-box alert radius centered text-center">
-                <span>{{ error }}</span>
-                <a href="#" class="close">×</a>
-            </div>
-        </div>
-    {% endfor %}
+<div class="jumbotron home">
+    <div class="container">
+        <h1>Login</h1>
     </div>
-
-    <form method="POST">
-        <input class="radius" type='text' name='name' placeholder='Name'><br/>
-        <input class="radius" type='password' name='password' placeholder='Password'><br/>
-        <p><a href="/reset_password">Forgot your password?</a></p>
-        <button class="radius" type='submit'>Login</button>
-    </form>
 </div>
-
+<div class="container main-container">
+    <div class="row">
+        <div id="login-container" class="col-md-6 col-md-offset-3">
+            {% for error in errors %}
+            <div class="submit-row">
+                <div class="alert alert-danger alert-dismissable" role="alert">
+                  <span class="sr-only">Error:</span>
+                  {{ error }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+            </div>
+            {% endfor %}
+            <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+                <span class="input input--yoshiko">
+                    <input class="input__field input__field--yoshiko" type="text" name="name" id="name-input" />
+                    <label class="input__label input__label--yoshiko" for="name-input">
+                        <span class="input__label-content input__label-content--yoshiko" data-content="Team Name">Team Name</span>
+                    </label>
+                </span>
+                <span class="input input--yoshiko">
+                    <input class="input__field input__field--yoshiko" type="password" name="password" id="password-input" />
+                    <label class="input__label input__label--yoshiko" for="password-input">
+                        <span class="input__label-content input__label-content--yoshiko" data-content="Password">Password</span>
+                    </label>
+                </span>
+                <br/>
+                <div class="submit-row">
+                    <a class="pull-left align-text-to-button" href="/reset_password">Forgot your password?</a>
+                    <button type="submit" id="submit" tabindex="5" class="btn btn-md btn-theme btn-outlined pull-right">Submit</button>
+                </div>
+            </form>         
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
+    <script src="/static/js/classie.js"></script>
+    <script src="/static/js/input.js"></script>
 {% endblock %}
+

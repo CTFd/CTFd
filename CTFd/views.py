@@ -31,7 +31,7 @@ def init_views(app):
 
     @app.before_request
     def redirect_setup():
-        if request.path == "/static/css/style.css":
+        if request.path.startswith("/static/css/"):
             return
         if not is_setup() and request.path != "/setup":
             return redirect('/setup')
@@ -172,7 +172,7 @@ def init_views(app):
                     team.country = country
                     db.session.commit()
                     db.session.close()
-                    return redirect('/profile')
+                    return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation, country=country, success=True)
             else:
                 user = Teams.query.filter_by(id=session['id']).first()
                 name = user.name

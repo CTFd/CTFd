@@ -1,3 +1,5 @@
+var openDialog = null;
+
 //http://stackoverflow.com/a/2648463 - wizardry!
 String.prototype.format = String.prototype.f = function() {
     var s = this,
@@ -20,25 +22,25 @@ function loadchal(id) {
         return e.id == id;
     })[0]
     window.location.hash = obj.name
-    $('#chal-window .chal-name').text(obj.name)
-    $('#chal-window .chal-desc').html(marked(obj.description, {'gfm':true, 'breaks':true}))
+    $('#chal-window').find('.chal-name').text(obj.name)
+    $('#chal-window').find('.chal-desc').html(marked(obj.description, {'gfm':true, 'breaks':true}))
 
     for (var i = 0; i < obj.files.length; i++) {
         filename = obj.files[i].split('/')
         filename = filename[filename.length - 1]
-        $('#chal-window .chal-desc').append("<a href='"+obj.files[i]+"'>"+filename+"</a><br/>")
+        $('#chal-window').find('.chal-desc').append("<a href='"+obj.files[i]+"'>"+filename+"</a><br/>")
     };
 
-    $('#chal-window .chal-value').text(obj.value)
-    $('#chal-window .chal-category').text(obj.category)
-    $('#chal-window #chal-id').val(obj.id)
-    $('#chal-window .chal-solves').text(obj.solves + " solves")
+    $('#chal-window').find('.chal-value').text(obj.value)
+    $('#chal-window').find('.chal-category').text(obj.category)
+    $('#chal-window').find('#chal-id').val(obj.id)
+    var solves = obj.solves == 1 ? " Solve" : " Solves";
+    $('#chal-window').find('.chal-solves').text(obj.solves + solves)
     $('#answer').val("")
 
     $('pre code').each(function(i, block) {
         hljs.highlightBlock(block);
     });
-    $('#chal-window').foundation('reveal', 'open');
 }
 
 function loadchalbyname(chalname) {
@@ -52,24 +54,22 @@ function loadchalbyname(chalname) {
   for (var i = 0; i < obj.files.length; i++) {
       filename = obj.files[i].split('/')
       filename = filename[filename.length - 1]
-      $('#chal-window .chal-desc').append("<a href='"+obj.files[i]+"'>"+filename+"</a><br/>")
+      $('#chal-window .chal-desc').append("<a href='{0}'>{1}</a><br/>".format(obj.files[i], filename))
   };
 
   $('#chal-window .chal-value').text(obj.value)
   $('#chal-window .chal-category').text(obj.category)
   $('#chal-window #chal-id').val(obj.id)
   $('#chal-window .chal-solves').text(obj.solves + " solves")
-  $('#answer').val("")
+  $('#answer-input').val("")
 
   $('pre code').each(function(i, block) {
       hljs.highlightBlock(block);
   });
-  
-  $('#chal-window').foundation('reveal', 'open');
 }
 
 
-$("#answer").keyup(function(event){
+$("#answer-input").keyup(function(event){
     if(event.keyCode == 13){
         $("#submit-key").click();
     }
@@ -77,6 +77,8 @@ $("#answer").keyup(function(event){
 
 
 function submitkey(chal, key, nonce) {
+    $('#submit-key').addClass("disabled-button");
+    $('#submit-key').prop('disabled', true);
     $.post("/chal/" + chal, {
         key: key, 
         nonce: nonce
@@ -86,31 +88,24 @@ function submitkey(chal, key, nonce) {
           return
         }
         else if (data == 0){ // Incorrect key
-          $('#submit-key').text('Incorrect, sorry')
-          $('#submit-key').css('background-color', 'red')
-          $('#submit-key').prop('disabled', true)
+            $("#incorrect-key").slideDown();
         }
         else if (data == 1){ // Challenge Solved
-          $('#submit-key').text('Correct!')
-          $('#submit-key').css('background-color', 'green')
-          $('#submit-key').prop('disabled', true)
+            $("#correct-key").slideDown();
           $('#chal-window .chal-solves').text( (parseInt($('#chal-window .chal-solves').text().split(" ")[0]) + 1 +  " solves") )
         }
         else if (data == 2){ // Challenge already solved
-          $('#submit-key').text('You already solved this')
-          $('#submit-key').prop('disabled', true)
+            $("#already-solved").slideDown();
         }
         else if (data == 3){ // Keys per minute too high
-          $('#submit-key').text("You're submitting keys too fast. Slow down.")
-          $('#submit-key').css('background-color', '#e18728')
-          $('#submit-key').prop('disabled', true)
+            $("#too-fast").slideDown();
         }
         marksolves()
         updatesolves()
         setTimeout(function(){
-          $('#submit-key').text('Submit')
-          $('#submit-key').prop('disabled', false)
-          $('#submit-key').css('background-color', '#007095')
+          $('.alert').slideUp();
+          $('#submit-key').removeClass("disabled-button");
+          $('#submit-key').prop('disabled', false);
         }, 3000);
     })
 }
@@ -119,9 +114,9 @@ function marksolves() {
     $.get('/solves', function (data) {
         solves = $.parseJSON(JSON.stringify(data));
         for (var i = solves['solves'].length - 1; i >= 0; i--) {
-            id = solves['solves'][i].chalid
-            $('#challenges button[value="' + id + '"]').addClass('secondary')
-            $('#challenges button[value="' + id + '"]').css('opacity', '0.3')
+            id = solves['solves'][i].chalid;
+            $('button[value="' + id + '"]').removeClass('theme-background');
+            $('button[value="' + id + '"]').addClass('solved-challenge');
         };
         if (window.location.hash.length > 0){
           loadchalbyname(window.location.hash.substring(1))
@@ -158,36 +153,65 @@ function getsolves(id){
   });
 }
 
+function updateDialogs() {
+    $("[data-dialog]").each(function() {
+        var chaldialog = document.getElementById( $(this).data('dialog') ),
+        dlg = new DialogFx( chaldialog );
+        $(this).click(dlg.toggle.bind(dlg));
+    });
+}
+
 function loadchals() {
 
     $.get("/chals", function (data) {
+        console.log(data);
         categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
 
+        $('#challenges-board').html("");
 
         for (var i = challenges['game'].length - 1; i >= 0; i--) {
             challenges['game'][i].solves = 0
             if ($.inArray(challenges['game'][i].category, categories) == -1) {
-                categories.push(challenges['game'][i].category)
-                $('#challenges').append($('<tr id="' + challenges['game'][i].category.replace(/ /g,"-") + '"><td class="large-2"><h4>' + challenges['game'][i].category + '</h4></td></tr>'))
+                var category = challenges['game'][i].category;
+                categories.push(category);
+
+                var categoryid = category.replace(/ /g,"-");
+                var categoryrow = $('<div id="{0}-row" class="row"><div class="category-header col-md-2"></div><div class="category-challenges col-md-9"><div class="row"></div></div></div>'.format(categoryid));
+                categoryrow.find(".category-header").append($("<h2>"+ category +"</h2>"));
+
+                $('#challenges-board').append(categoryrow);
             }
         };
 
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
-            $('#' + challenges['game'][i].category.replace(/ /g,"-")).append($('<button value="' + challenges['game'][i].id + '">' + challenges['game'][i].value + '</button>'));
-        };
-        updatesolves()
-        marksolves()
+            chalinfo = challenges['game'][i];
+            challenge = chalinfo.category.replace(/ /g,"-");
+            var chalid = chalinfo.name.replace(/ /g,"-");
+            var catid = chalinfo.category.replace(/ /g,"-");
+            var chalwrap = $("<div id='{0}' class='challenge-wrapper col-md-2'></div>".format(chalid));
+            var chalbutton = $("<button class='challenge-button trigger theme-background' data-dialog='chal-window' value='{0}'></div>".format(chalinfo.id));
+            var chalheader = $("<h5>{0}</h5>".format(chalinfo.name));
+            var chalscore = $("<span>{0}</span>".format(chalinfo.value));
+            chalbutton.append(chalheader);
+            chalbutton.append(chalscore);
+            chalwrap.append(chalbutton);
 
-        $('#challenges button').click(function (e) {
+            $("#"+ catid +"-row").find(".category-challenges > .row").append(chalwrap);
+        };
+
+        updateDialogs();
+        updatesolves();
+        marksolves();
+
+        $('.challenge-button').click(function (e) {
             loadchal(this.value);
         });
-
     });
 }
 
 $('#submit-key').click(function (e) {
-    submitkey($('#chal-id').val(), $('#answer').val(), $('#nonce').val())
+    submitkey($('#chal-id').val(), $('#answer-input').val(), $('#nonce').val())
 });
 
 $('.chal-solves').click(function (e) {
@@ -205,6 +229,7 @@ $.extend({
        return result;
     }
 });
+
 function colorhash (x) {
     color = ""
     for (var i = 20; i <= 60; i+=20){
@@ -236,14 +261,18 @@ $(document).on('close', '[data-reveal]', function () {
 // }
 
 function update(){
-    $('#challenges').empty()
     loadchals()
     solves_graph()
 }
 
 $(function() {
-    loadchals()
+    loadchals();
     // solves_graph()
 });
+
+$('.nav-tabs a').click(function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})
 
 setInterval(update, 300000);

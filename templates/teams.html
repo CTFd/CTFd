@@ -1,11 +1,17 @@
 {% extends "base.html" %}
 
-{% block content %}
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
+{% endblock %}
 
-<div class="row">
-    <br>
-    <table id="teamsboard">
+{% block content %}
+<div class="jumbotron home">
+    <div class="container">
+        <h1>Teams</h1>
+    </div>
+</div>
+<div class="container main-container">
+    <table id="teamsboard" class="table table-striped">
         <thead>
             <tr>
                 <td><b>Team</b></td>
@@ -18,7 +24,7 @@
         {% for team in teams %}
             <tr>
                 <td><a href="/team/{{ team.id }}">{{ team.name }}</a></td>
-                <td>{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}</td>
+                <td>{% if team.website and team.website.startswith('http://') %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}</td>
                 <td><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span></td>
                 <td><span>{% if team.country %}{{ team.country }}{% endif %}</span></td>
             </tr>

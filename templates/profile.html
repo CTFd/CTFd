@@ -1,46 +1,102 @@
 {% extends "base.html" %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
+    <link rel="stylesheet" href="/static/css/input.css">
+{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
-
-<div class="row">
-    <br/>
-    {% for error in errors %}
-    <h1>{{ error }}</h1>
-    {% endfor %}
-    <form method="POST">
-        <span>Team Name</span>
-            <input class="radius" type="text" name="name" placeholder="Team Name" value="{{name}}">
-
-        <span>Email Address</span>
-            <input class="radius" type="text" name="email" placeholder="Email Address" value="{{email}}">
-        <br/>
-        <hr/>
-        <br/>
-        <span>Old Password</span>
-            <input class="radius" type="password" name="confirm" placeholder="Old Password">
-
-        <span>Password</span>
-            <input class="radius" type="password" name="password" placeholder="Password">
-        <br/>
-        <hr/>
-        <br/>
-        <span>Website</span>
-            <input class="radius" type="text" name="website" placeholder="Website" value="{% if website %}{{website}}{% endif %}">
-        <span>Affiliation</span>
-            <input class="radius" type="text" name="affiliation" placeholder="Affiliation" value="{% if affiliation %}{{affiliation}}{% endif %}">
-        <span>Country</span>
-            <input class="radius" type="text" name="country" placeholder="Country" value="{% if country %}{{country}}{% endif %}">
-            <input type="hidden" name="nonce" value="{{nonce}}">
-            <button class="radius">Update</button>
-    </form>
+<div class="jumbotron home">
+    <div class="container">
+        <h1>Profile</h1>
+    </div>
 </div>
+<div class="container main-container">
 
-
+    <div class="row">
+        <div id="login-container" class="col-md-6 col-md-offset-3">
+            {% if success %}
+            <div class="submit-row">
+                <div class="alert alert-success alert-dismissable submit-row" role="alert">
+                    <strong>Success!</strong>
+                    Your profile has been updated
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+            </div>
+            {% else %}
+                {% for error in errors %}
+                <div class="submit-row">
+                    <div class="alert alert-danger alert-dismissable" role="alert">
+                      <span class="sr-only">Error:</span>
+                      {{ error }}
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                  </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+            <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+                <span class="input input--yoshiko">
+                    <input class="input__field input__field--yoshiko" type="text" name="name" id="name-input" value="{{name}}"/>
+                    <label class="input__label input__label--yoshiko" for="name-input">
+                        <span class="input__label-content input__label-content--yoshiko" data-content="Team Name">Team Name</span>
+                    </label>
+                </span>
+                <span class="input input--yoshiko">
+                    <input class="input__field input__field--yoshiko" type="text" name="email" id="email-input" value="{{email}}"/>
+                    <label class="input__label input__label--yoshiko" for="email-input">
+                        <span class="input__label-content input__label-content--yoshiko" data-content="Email">Email</span>
+                    </label>
+                </span>
+                <div class="row">
+                    <div class="col-md-6">
+                        <span class="input input--yoshiko no-margin-right">
+                            <input class="input__field input__field--yoshiko" type="password" name="confirm" id="confirm-input" />
+                            <label class="input__label input__label--yoshiko" for="confirm-input">
+                                <span class="input__label-content input__label-content--yoshiko" data-content="Password">Password</span>
+                            </label>
+                        </span>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="input input--yoshiko no-margin-left">
+                            <input class="input__field input__field--yoshiko" type="password" name="password" id="password-input" />
+                            <label class="input__label input__label--yoshiko" for="password-input">
+                                <span class="input__label-content input__label-content--yoshiko" data-content="New Password">New Password</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <span class="input input--yoshiko">
+                    <input class="input__field input__field--yoshiko" type="text" name="website" id="website-input" value="{% if website %}{{website}}{% endif %}" />
+                    <label class="input__label input__label--yoshiko" for="website-input">
+                        <span class="input__label-content input__label-content--yoshiko" data-content="Website">Website</span>
+                    </label>
+                </span>
+                <span class="input input--yoshiko">
+                    <input class="input__field input__field--yoshiko" type="text" name="affiliation" id="affiliation-input" value="{% if affiliation %}{{affiliation}}{% endif %}" />
+                    <label class="input__label input__label--yoshiko" for="affiliation-input">
+                        <span class="input__label-content input__label-content--yoshiko" data-content="Affiliation">Affiliation</span>
+                    </label>
+                </span>
+                <span class="input input--yoshiko">
+                    <input class="input__field input__field--yoshiko" type="text" name="country" id="country-input" value="{% if country %}{{country}}{% endif %}" />
+                    <label class="input__label input__label--yoshiko" for="country-input">
+                        <span class="input__label-content input__label-content--yoshiko" data-content="Country">Country</span>
+                    </label>
+                </span>
+                <input type="hidden" name="nonce" value="{{ nonce }}">
+                <div class="submit-row">
+                    <button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-theme btn-outlined pull-right">Submit</button>
+                </div>
+            </form>         
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.js"></script>
     <script src="/static/js/team.js"></script>
+    <script src="/static/js/classie.js"></script>
+    <script src="/static/js/input.js"></script>
 {% endblock %}

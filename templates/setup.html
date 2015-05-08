@@ -1,10 +1,16 @@
 {% extends "base.html" %}
 
-{% block content %}
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.css">
-<div class="row">
-    <h1>Setup</h1>
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.css">
+{% endblock %}
 
+{% block content %}
+<div class="jumbotron home">
+    <div class="container">
+        <h1>Setup</h1>
+    </div>
+</div>
+<div class="container main-container">
     <div class="row">
     {% for error in errors %}
         <div class="large-8 large-centered columns">
