@@ -33,6 +33,8 @@ def init_views(app):
     def redirect_setup():
         if request.path.startswith("/static/css/"):
             return
+        if request.path.startswith("/static/js/"):
+            return
         if not is_setup() and request.path != "/setup":
             return redirect('/setup')
 

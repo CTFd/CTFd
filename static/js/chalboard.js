@@ -24,11 +24,11 @@ function loadchal(id) {
     window.location.hash = obj.name
     $('#chal-window').find('.chal-name').text(obj.name)
     $('#chal-window').find('.chal-desc').html(marked(obj.description, {'gfm':true, 'breaks':true}))
-
+    $('#chal-window').find('.chal-files').empty();
     for (var i = 0; i < obj.files.length; i++) {
         filename = obj.files[i].split('/')
         filename = filename[filename.length - 1]
-        $('#chal-window').find('.chal-desc').append("<a href='"+obj.files[i]+"'>"+filename+"</a><br/>")
+        $('#chal-window').find('.chal-files').append("<div class='col-md-3 challenge-wrapper file-wrapper'><a class='file-button' href='"+obj.files[i]+"'>"+filename+"</a></div>")
     };
 
     $('#chal-window').find('.chal-value').text(obj.value)
@@ -92,7 +92,7 @@ function submitkey(chal, key, nonce) {
         }
         else if (data == 1){ // Challenge Solved
             $("#correct-key").slideDown();
-          $('#chal-window .chal-solves').text( (parseInt($('#chal-window .chal-solves').text().split(" ")[0]) + 1 +  " solves") )
+          $('.chal-solves').text((parseInt($('.chal-solves').text().split(" ")[0]) + 1 +  " Solves") )
         }
         else if (data == 2){ // Challenge already solved
             $("#already-solved").slideDown();
@@ -164,7 +164,6 @@ function updateDialogs() {
 function loadchals() {
 
     $.get("/chals", function (data) {
-        console.log(data);
         categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
 

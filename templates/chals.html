@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.min.js">
     <link rel="stylesheet" href="/static/css/modal.css">
     <link rel="stylesheet" href="/static/css/input.css">
+    <link rel="stylesheet" href="/static/css/button.css">
 <style>
     .alert {display: none}
     .category-header {text-align: center}
@@ -12,31 +13,18 @@
     .challenge-button {width: 100%}
     .submit-row {padding-top: 20px}
     #submit-key {padding: 10px 20px}
-    .disabled-button  {background-color: #EEEEEE}
+    .disabled-button {background-color: #EEEEEE}
 
-    .close-text {
-        color: #ccc;
-        position: relative;
-        top: -25px;
-        right: -15px;
-        cursor: pointer;
-    }
+    .file-row {margin-top: 30px; padding-left: 30px; padding-right: 30px;}
+    .file-button {text-decoration: none; color: #fff;}
+    .file-button:hover {text-decoration: none; color: #fff;}
+    .file-wrapper {background-color: #0E83CD; padding: 20px; transition: all 0.5s ease; cursor: pointer;}
+    .file-wrapper:hover {background-color: #0E63AD;}
 
-    .chal-desc {
-        padding-left: 40px;
-        padding-right: 40px;
-    }
-
-    .key-submit {
-        padding-top: 14px;
-        position: relative;
-        top: -1px;
-    }
-
-    .notification-row {
-        padding-left: 45px;
-        padding-right: 45px;
-    }
+    .close-text {color: #ccc;position: relative;top: -25px;right: -15px;cursor: pointer;}
+    .chal-desc {padding-left: 40px;padding-right: 40px;}
+    .key-submit {padding-top: 14px;position: relative;top: 1px;}
+    .notification-row {padding-left: 45px;padding-right: 45px;}
 </style>
 {% endblock %}
 
@@ -48,9 +36,6 @@
 </div>
 <div class="container main-container">
     <div id='challenges-board' class="row">
-    </div>
-    <hr />
-    <div id='challenges-isotope' class="row">
     </div>
     <div id="solves-graph" style="width: 90%; height: 400px; margin: 0 auto"></div>
 </div>
@@ -76,6 +61,8 @@
                             <h3 class='chal-name'></h3>
                             <h4 class="chal-value"></h4>
                             <p class="chal-desc"></p>
+                            <div class="chal-files file-row">
+                            </div>
 
                             <div class="row submit-row">
                                 <div class="col-md-9">
