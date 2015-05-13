@@ -79,8 +79,8 @@ function scoregraph () {
             data: {
                 xs: xs_data,
                 columns: column_data,
-                type: "step",
-                labels: true
+                type: "step"
+                // labels: true
             },
             axis : {
                 x : {
@@ -97,9 +97,9 @@ function scoregraph () {
                     }
                 }
             },
-            // zoom : {
-            //   enabled: true
-            // }
+            zoom : {
+              enabled: true
+            }
         });
     });
 }
