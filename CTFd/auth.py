@@ -30,7 +30,7 @@ def init_auth(app):
             except BadTimeSignature:
                 return render_template('reset_password.html', errors=['Your link has expired'])
             team = Teams.query.filter_by(name=name).first()
-            team.password = sha512(request.form['password'].strip())
+            team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
             db.session.commit()
             db.session.close()
             return redirect('/login')
@@ -107,7 +107,6 @@ Did you initiate a password reset?
         if request.method == 'POST':
             errors = []
             name = request.form['name']
-            # team = Teams.query.filter_by(name=request.form['name'], password=sha512(request.form['password'])).first()
             team = Teams.query.filter_by(name=name).first()
             if team and bcrypt_sha256.verify(request.form['password'], team.password):
                 try:
