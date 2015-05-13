@@ -335,7 +335,7 @@ def init_admin(app):
                 user.name = name
                 user.email = email
                 if password:
-                    user.password = bcrypt_sha256(password)
+                    user.password = bcrypt_sha256.encrypt(password)
                 user.website = website
                 user.affiliation = affiliation
                 user.country = country
