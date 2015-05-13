@@ -85,6 +85,7 @@ function scoregraph () {
             axis : {
                 x : {
                     tick: {
+                        count: 10,
                         format: function (x) { 
                             return moment(x*1000).local().format('LLL');
                         }
