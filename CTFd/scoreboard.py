@@ -8,13 +8,11 @@ def init_scoreboard(app):
         score = db.func.sum(Challenges.value).label('score')
         quickest = db.func.max(Solves.date).label('quickest')
         teams = db.session.query(Solves.teamid, Teams.name, score).join(Teams).join(Challenges).filter(Teams.banned == None).group_by(Solves.teamid).order_by(score.desc(), quickest)
-        #teams = db.engine.execute("SELECT solves.teamid, teams.id, teams.name, SUM(value) as score, MAX(solves.date) as quickest FROM solves JOIN teams ON solves.teamid=teams.id INNER JOIN challenges ON solves.chalid=challenges.id WHERE teams.banned IS NULL GROUP BY solves.teamid ORDER BY score DESC, quickest ASC;")
         db.session.close()
         return render_template('scoreboard.html', teams=teams)
 
     @app.route('/scores')
     def scores():
-        #teams = db.engine.execute("SELECT solves.teamid, teams.id, teams.name, SUM(value) as score, MAX(solves.date) as quickest FROM solves JOIN teams ON solves.teamid=teams.id INNER JOIN challenges ON solves.chalid=challenges.id WHERE teams.banned IS NULL GROUP BY solves.teamid ORDER BY score DESC, quickest ASC;")
         score = db.func.sum(Challenges.value).label('score')
         quickest = db.func.max(Solves.date).label('quickest')
         teams = db.session.query(Solves.teamid, Teams.name, score).join(Teams).join(Challenges).filter(Teams.banned == None).group_by(Solves.teamid).order_by(score.desc(), quickest)
@@ -35,10 +33,9 @@ def init_scoreboard(app):
 
         json = {'scores':{}}
 
-        #teams = db.engine.execute("SELECT solves.teamid, teams.id, teams.name, SUM(value) as score, MAX(solves.date) as quickest FROM solves JOIN teams ON solves.teamid=teams.id INNER JOIN challenges ON solves.chalid=challenges.id WHERE teams.banned IS NULL GROUP BY solves.teamid ORDER BY score DESC, quickest ASC LIMIT {0};".format(count))
         score = db.func.sum(Challenges.value).label('score')
-        teams = db.session.query(Solves.teamid, Teams.name, score, db.func.max(Solves.date).label('quickest')).join(Teams).join(Challenges).filter(Teams.banned == None).group_by(Solves.teamid).order_by(score.desc(), Solves.date).limit(count)
-
+        quickest = db.func.max(Solves.date).label('quickest')
+        teams = db.session.query(Solves.teamid, Teams.name, score).join(Teams).join(Challenges).filter(Teams.banned == None).group_by(Solves.teamid).order_by(score.desc(), quickest).limit(count)
 
         for team in teams:
             solves = Solves.query.filter_by(teamid=team.teamid).all()
