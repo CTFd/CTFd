@@ -96,6 +96,11 @@ def init_admin(app):
         if not do_api_key:
             set_config('do_api_key', None)
 
+        allow_view_after_end = get_config('allow_view_after_end')
+        if not allow_view_after_end:
+            set_config('allow_view_after_end', 0)
+            allow_view_after_end = 0
+
         start = get_config('start')
         if not start:
             set_config('start', None)
@@ -122,7 +127,8 @@ def init_admin(app):
         return render_template('admin/config.html', ctf_name=ctf_name, start=start, end=end,
                                view_challenges_unregistered=view_challenges_unregistered,
                                prevent_registration=prevent_registration, do_api_key=do_api_key, mg_api_key=mg_api_key,
-                               prevent_name_change=prevent_name_change)
+                               prevent_name_change=prevent_name_change,
+                               allow_view_after_end=allow_view_after_end)
 
     @app.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
     @app.route('/admin/pages/<route>', methods=['GET', 'POST'])

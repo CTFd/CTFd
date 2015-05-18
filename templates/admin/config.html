@@ -33,6 +33,11 @@
         </div>
 
         <div class="row">
+            <input id="allow_view_after_end" name="allow_view_after_end" type="checkbox" {% if allow_view_after_end %}checked{% endif %}>
+            <label for="end">Allow challenges to be viewed after CTF end:</label>
+        </div>
+
+        <div class="row">
             <input id="view_challenges_unregistered" name="view_challenges_unregistered" type="checkbox" {% if view_challenges_unregistered %}checked{% endif %}>
             <label for="view_challenges_unregistered">Unregistered users can view challenges</label>
         </div>

@@ -72,7 +72,38 @@ def admins_only(f):
     return decorated_function
 
 
-def ctftime():
+def ctftime_view():
+    """ Checks whether it's CTF time or not. """
+
+    start = get_config("start")
+    end = get_config("end")
+    allow_view_after_end = get_config("allow_view_after_end")
+
+    if start:
+        start = int(start)
+    if end:
+        end = int(end)
+
+    if start and end:
+        if start < time.time() and (time.time() < end or allow_view_after_end):
+            # Within the two time bounds
+            return True
+
+    if start < time.time() and end is None: 
+        # CTF starts on a date but never ends
+        return True
+
+    if start is None and (time.time() < end or allow_view_after_end): 
+        # CTF started but ends at a date
+        return True
+
+    if start is None and end is None:
+        # CTF has no time requirements
+        return True
+
+    return False
+
+def ctftime_submit():
     """ Checks whether it's CTF time or not. """
 
     start = get_config("start")
@@ -99,7 +130,7 @@ def ctftime():
     if start is None and end is None:
         # CTF has no time requirements
         return True
-
+        
     return False
 
 
