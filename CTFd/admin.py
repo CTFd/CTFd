@@ -155,6 +155,13 @@ def init_admin(app):
         pages = Pages.query.all()
         return render_template('admin/pages.html', routes=pages)
 
+    @app.route('/admin/page/<pageroute>/delete', methods=['POST'])
+    @admins_only
+    def delete_page(pageroute):
+        page = Pages.query.filter_by(route=pageroute).first()
+        db.session.delete(page)
+        db.session.commit()
+        return '1'
 
     @app.route('/admin/hosts', methods=['GET'])
     @admins_only
