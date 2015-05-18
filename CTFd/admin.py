@@ -71,6 +71,7 @@ def init_admin(app):
             ctf_name = set_config("ctf_name", request.form.get('ctf_name', None))
             mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
             do_api_key = set_config("do_api_key", request.form.get('do_api_key', None))
+            max_tries = set_config("max_tries", request.form.get('max_tries', None))
 
             db_start = Config.query.filter_by(key='start').first()
             db_start.value = start
@@ -96,6 +97,11 @@ def init_admin(app):
         if not do_api_key:
             set_config('do_api_key', None)
 
+        max_tries = get_config('max_tries')
+        if not max_tries:
+            set_config('max_tries', 0)
+            max_tries = 0
+
         start = get_config('start')
         if not start:
             set_config('start', None)
@@ -120,6 +126,7 @@ def init_admin(app):
         db.session.close()
 
         return render_template('admin/config.html', ctf_name=ctf_name, start=start, end=end,
+                               max_tries=max_tries,
                                view_challenges_unregistered=view_challenges_unregistered,
                                prevent_registration=prevent_registration, do_api_key=do_api_key, mg_api_key=mg_api_key,
                                prevent_name_change=prevent_name_change)

@@ -105,6 +105,12 @@ function submitkey(chal, key, nonce) {
           $('#submit-key').css('background-color', '#e18728')
           $('#submit-key').prop('disabled', true)
         }
+        else if (data == 4){ // too many incorrect solves
+          $('#submit-key').text('Too many attempts.')
+          $('#submit-key').css('background-color', 'red')
+          $('#submit-key').prop('disabled', true)
+        }
+        marktoomanyattempts()
         marksolves()
         updatesolves()
         setTimeout(function(){
@@ -122,6 +128,20 @@ function marksolves() {
             id = solves['solves'][i].chalid
             $('#challenges button[value="' + id + '"]').addClass('secondary')
             $('#challenges button[value="' + id + '"]').css('opacity', '0.3')
+        };
+        if (window.location.hash.length > 0){
+          loadchalbyname(window.location.hash.substring(1))
+        }
+    });
+}
+
+function marktoomanyattempts() {
+    $.get('/maxattempts', function (data) {
+        maxattempts = $.parseJSON(JSON.stringify(data));
+        for (var i = maxattempts['maxattempts'].length - 1; i >= 0; i--) {
+            id = maxattempts['maxattempts'][i].chalid
+            $('#challenges button[value="' + id + '"]').addClass('secondary')
+            $('#challenges button[value="' + id + '"]').css('background-color', '#FF9999')
         };
         if (window.location.hash.length > 0){
           loadchalbyname(window.location.hash.substring(1))
@@ -177,6 +197,7 @@ function loadchals() {
             $('#' + challenges['game'][i].category.replace(/ /g,"-")).append($('<button value="' + challenges['game'][i].id + '">' + challenges['game'][i].value + '</button>'));
         };
         updatesolves()
+        marktoomanyattempts()
         marksolves()
 
         $('#challenges button').click(function (e) {
