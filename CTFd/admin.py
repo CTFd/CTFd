@@ -438,7 +438,7 @@ def init_admin(app):
         solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
         challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
         most_solved_chal = Solves.query.add_columns(db.func.count(Solves.chalid).label('solves')).group_by(Solves.chalid).order_by('solves DESC').first()
-        least_solved_chal = Solves.query.add_columns(db.func.count(Solves.chalid).label('solves')).group_by(Solves.chalid).order_by('solves ASC').first()
+        least_solved_chal = Challenges.query.add_columns(db.func.count(Solves.chalid).label('solves')).outerjoin(Solves).group_by(Challenges.id).order_by('solves ASC').first()
 
         db.session.close()
 
