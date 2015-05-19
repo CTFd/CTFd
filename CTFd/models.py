@@ -135,15 +135,17 @@ class Solves(db.Model):
     chalid = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
     ip = db.Column(db.Integer)
+    flag = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     team = db.relationship('Teams', foreign_keys="Solves.teamid", lazy='joined')
     chal = db.relationship('Challenges', foreign_keys="Solves.chalid", lazy='joined')
     # value = db.Column(db.Integer) 
 
-    def __init__(self, chalid, teamid, ip):
+    def __init__(self, chalid, teamid, ip, flag):
         self.ip = ip2long(ip)
         self.chalid = chalid
         self.teamid = teamid
+        self.flag = flag
         # self.value = value
 
     def __repr__(self):

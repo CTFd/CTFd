@@ -428,6 +428,15 @@ def init_admin(app):
             json['solves'].append({'id':x.id, 'chal':x.chal.name, 'chalid':x.chalid,'team':x.teamid, 'value': x.chal.value, 'category':x.chal.category, 'time':unix_time(x.date)})
         return jsonify(json)
 
+
+    @app.route('/admin/solves/<teamid>/<chalid>/delete', methods=['POST'])
+    @admins_only
+    def delete_solve(teamid, chalid):
+        solve = Solves.query.filter_by(teamid=teamid, chalid=chalid).first()
+        db.session.delete(solve)
+        db.session.commit()
+        return '1'
+
     @app.route('/admin/statistics', methods=['GET'])
     @admins_only
     def admin_stats():
@@ -475,7 +484,7 @@ def init_admin(app):
         page_start = results_per_page * (page - 1)
         page_end = results_per_page * (page - 1) + results_per_page
 
-        solves = Solves.query.add_columns(Solves.teamid, Solves.date,\
+        solves = Solves.query.add_columns(Solves.chalid, Solves.teamid, Solves.date, Solves.flag, \
                     Challenges.name.label('chal_name'), Teams.name.label('team_name')).\
                     join(Challenges).join(Teams).order_by('team_name ASC').slice(page_start, page_end).all()
 

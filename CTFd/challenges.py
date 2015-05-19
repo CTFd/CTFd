@@ -99,7 +99,7 @@ def init_challenges(app):
                 for x in keys:
                     if x.key_type == 0: #static key
                         if x.flag.strip().lower() == key:
-                            solve = Solves(chalid=chalid, teamid=session['id'], ip=request.remote_addr)
+                            solve = Solves(chalid=chalid, teamid=session['id'], ip=request.remote_addr, flag=key)
                             db.session.add(solve)
                             db.session.commit()
                             db.session.close()
@@ -108,7 +108,7 @@ def init_challenges(app):
                     elif x.key_type == 1: #regex 
                         res = re.match(str(x), key, re.IGNORECASE)
                         if res and res.group() == key:
-                            solve = Solves(chalid=chalid, teamid=session['id'], ip=request.remote_addr)
+                            solve = Solves(chalid=chalid, teamid=session['id'], ip=request.remote_addr, flag=key)
                             db.session.add(solve)
                             db.session.commit()
                             db.session.close()

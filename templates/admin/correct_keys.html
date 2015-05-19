@@ -4,6 +4,18 @@
 
 <div class="row">
     <h1>Correct Key Submissions</h1>
+    <div id="confirm" class="reveal-modal" data-reveal>
+        <h2 class="text-center">Delete Key</h2>
+        <form method="POST">
+            <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+            <div class="small-6 small-centered text-center columns">
+                <p>Are you sure you want to delete successful key submission for team: <strong id="confirm-team-name"></strong> in challenge: <strong id="confirm-chal-name"></strong>?</p>
+                <button type="button" class="button alert radius" onclick="$('#confirm').foundation('reveal', 'close');">No</button>
+                <button type="button" id="delete-solve" class="button success radius">Yes</button>
+            </div>
+        </form>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
     <table id="teamsboard">
         <thead>
             <tr>
@@ -13,15 +25,21 @@
                 </td>
                 <td class="text-center"><b>Date</b>
                 </td>
+                <td class="text-center"><b>Key Submitted</b>
+                </td>
+                <td class="text-center"><b>Delete</b>
+                </td>
             </tr>
         </thead>
         <tbody>
             {% for solve in solves %}
             <tr>
-                <td class="text-center"><a href="/admin/team/{{ solve.teamid }}">{{ solve.team_name }}</a>
-                <td class="text-center">{{ solve.chal_name }}</td>
-                <td class="text-center">{{ solve.date }}</td>              
-                </td>
+                <td class="text-center team" id="{{ solve.teamid }}"><a href="/admin/team/{{ solve.teamid }}">{{ solve.team_name }}</a>
+                <td class="text-center chal" id="{{ solve.chalid }}">{{ solve.chal_name }}</td>
+                <td class="text-center">{{ solve.date }}</td>
+                <td class="text-center">{{ solve.flag }}</td>
+                <td class="text-center"><i class="fa fa-times"></i></td>
+
             </tr>
             {% endfor %}
         </tbody>
@@ -39,4 +57,33 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+$('#delete-solve').click(function(e){
+    e.preventDefault();
+    var solve = $('#confirm input[name="solve"]').val()
+    $.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "1"){
+            location.reload()
+        }
+    })
+});
+
+function load_confirm_modal(team, chal, team_name, chal_name){
+    var modal = $('#confirm')
+    modal.find('#confirm-team-name').text(team_name)
+    modal.find('#confirm-chal-name').text(chal_name)
+    $('#confirm form').attr('action', '/admin/solves/'+team+'/'+chal+'/delete');
+    $('#confirm').foundation('reveal', 'open');
+}
+
+$('.fa-times').click(function(){
+    var elem = $(this).parent().parent();
+    var chal = elem.find('.chal').attr('id');
+    var chal_name = elem.find('.chal').text().trim();
+    var team = elem.find('.team').attr('id');
+    var team_name = elem.find('.team').text().trim();
+    load_confirm_modal(team, chal, team_name, chal_name)
+});
+</script>
 {% endblock %}
