@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <h1>Correct Key Submissions</h1>
+    <table id="teamsboard">
+        <thead>
+            <tr>
+                <td class="text-center"><b>Team</b>
+                </td>
+                <td class="text-center"><b>Challenge</b>
+                </td>
+                <td class="text-center"><b>Date</b>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solve in solves %}
+            <tr>
+                <td class="text-center"><a href="/admin/team/{{ solve.teamid }}">{{ solve.team_name }}</a>
+                <td class="text-center">{{ solve.chal_name }}</td>
+                <td class="text-center">{{ solve.date }}</td>              
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if pages > 1 %}
+    <div class="text-center">Page
+        <br>
+        {% for page in range(1, pages + 1) %}
+        <a href="{{ page }}">{{ page }}</a>  
+        {% endfor %}
+    <a href="">
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

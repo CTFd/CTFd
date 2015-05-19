@@ -450,7 +450,39 @@ def init_admin(app):
             least_solved=least_solved_chal
             )
 
+    @app.route('/admin/wrong_keys/<page>', methods=['GET'])
+    @admins_only
+    def admin_wrong_key(page='1'):
+        page = abs(int(page))
+        results_per_page = 50
+        page_start = results_per_page * ( page - 1 )
+        page_end = results_per_page * ( page - 1 ) + results_per_page
 
+        wrong_keys = WrongKeys.query.add_columns(WrongKeys.flag, WrongKeys.team, WrongKeys.date,\
+                    Challenges.name.label('chal_name'), Teams.name.label('team_name')).\
+                    join(Challenges).join(Teams).order_by('team_name ASC').slice(page_start, page_end).all()
+
+        wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
+        pages = int(wrong_count / results_per_page) + (wrong_count % results_per_page > 0)
+
+        return render_template('admin/wrong_keys.html', wrong_keys=wrong_keys, pages=pages)
+
+    @app.route('/admin/correct_keys/<page>', methods=['GET'])
+    @admins_only
+    def admin_correct_key(page='1'):
+        page = abs(int(page))
+        results_per_page = 50
+        page_start = results_per_page * (page - 1)
+        page_end = results_per_page * (page - 1) + results_per_page
+
+        solves = Solves.query.add_columns(Solves.teamid, Solves.date,\
+                    Challenges.name.label('chal_name'), Teams.name.label('team_name')).\
+                    join(Challenges).join(Teams).order_by('team_name ASC').slice(page_start, page_end).all()
+
+        solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
+        pages = int(solve_count / results_per_page) + (solve_count % results_per_page > 0)
+
+        return render_template('admin/correct_keys.html', solves=solves, pages=pages)
 
     @app.route('/admin/fails/<teamid>', methods=['GET'])
     @admins_only

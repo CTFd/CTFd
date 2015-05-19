@@ -1,0 +1,45 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <h1>Incorrect Key Submissions</h1>
+    <table id="teamsboard">
+        <thead>
+            <tr>
+                <td class="text-center"><b>Team</b>
+                </td>
+                <td class="text-center"><b>Challenge</b>
+                </td>
+                <td class="text-center"><b>Date</b>
+                </td>
+                <td class="text-center"><b>Submitted Key</b>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for wrong_key in wrong_keys %}
+            <tr>
+                <td class="text-center"><a href="/admin/team/{{ wrong_key.team }}">{{ wrong_key.team_name }}</a>
+                <td class="text-center">{{ wrong_key.chal_name }}</td>
+                <td class="text-center">{{ wrong_key.date }}</td>
+                <td class="text-center">{{ wrong_key.flag }}</td>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if pages > 1 %}
+    <div class="text-center">Page
+        <br>
+        {% for page in range(1, pages + 1) %}
+        <a href="{{ page }}">{{ page }}</a>  
+        {% endfor %}
+    <a href="">
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

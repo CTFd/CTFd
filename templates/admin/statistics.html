@@ -6,8 +6,8 @@
     <h1>Statistics</h1>
 
     <h3><b>{{ team_count }}</b> teams registered</h3>
-    <h3><b>{{ wrong_count }}</b> wrong keys submitted</h3>
-    <h3><b>{{ solve_count }}</b> right keys submitted</h3>
+    <h3><b>{{ wrong_count }}</b> <a href="wrong_keys/1">wrong keys</a> submitted</h3>
+    <h3><b>{{ solve_count }}</b> <a href="correct_keys/1">right keys</a> submitted</h3>
     <h3><b>{{ challenge_count }}</b> challenges</h3>
     {% if most_solved %}
         <h3>Most solved: <b>{{ most_solved[0].chal.name }}</b> with {{ most_solved[1] }}</b> solves</h3>
