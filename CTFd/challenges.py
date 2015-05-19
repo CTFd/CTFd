@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, json as json_mod, url_for, session
 
-from CTFd.utils import ctftime, authed, unix_time, get_kpm, can_view_challenges, is_admin
+from CTFd.utils import ctftime, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys
 
 import time
@@ -58,7 +58,17 @@ def init_challenges(app):
         db.session.close()
         json = {'solves':[]}
         for x in solves:
-            json['solves'].append({'id':x.id, 'chal':x.chal.name, 'chalid':x.chalid,'team':x.teamid, 'value': x.chal.value, 'category':x.chal.category, 'time':unix_time(x.date)})
+            json['solves'].append({ 'chal':x.chal.name, 'chalid':x.chalid,'team':x.teamid, 'value': x.chal.value, 'category':x.chal.category, 'time':unix_time(x.date)})
+        return jsonify(json)
+
+    @app.route('/maxattempts')
+    def attempts():
+        chals = Challenges.query.add_columns('id').all()
+        json = {'maxattempts':[]}
+        for chal, chalid in chals:
+            fails = WrongKeys.query.filter_by(team=session['id'], chal=chalid).count()
+            if fails >= int(get_config("max_tries")) and int(get_config("max_tries")) > 0:
+                json['maxattempts'].append({'chalid':chalid})
         return jsonify(json)
 
     @app.route('/fails/<teamid>', methods=['GET'])
@@ -82,9 +92,12 @@ def init_challenges(app):
         if not ctftime():
             return redirect('/')
         if authed():
+            fails = WrongKeys.query.filter_by(team=session['id'],chal=chalid).count()
             logger = logging.getLogger('keys')
             data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'), get_kpm(session['id']))
             print "[{0}] {1} submitted {2} with kpm {3}".format(*data)
+            if fails >= int(get_config("max_tries")) and int(get_config("max_tries")) > 0:
+                return "4" #too many tries on this challenge
             if get_kpm(session['id']) > 10:
                 wrong = WrongKeys(session['id'], chalid, request.form['key'])
                 db.session.add(wrong)
