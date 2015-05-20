@@ -74,6 +74,7 @@ def init_admin(app):
             ctf_name = set_config("ctf_name", request.form.get('ctf_name', None))
             mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
             do_api_key = set_config("do_api_key", request.form.get('do_api_key', None))
+            max_tries = set_config("max_tries", request.form.get('max_tries', None))
 
 
             db_start = Config.query.filter_by(key='start').first()
@@ -99,6 +100,11 @@ def init_admin(app):
         do_api_key = get_config('do_api_key')
         if not do_api_key:
             set_config('do_api_key', None)
+
+        max_tries = get_config('max_tries')
+        if not max_tries:
+            set_config('max_tries', 0)
+            max_tries = 0
 
         view_after_ctf = get_config('view_after_ctf') == '1'
         if not view_after_ctf:
@@ -129,6 +135,7 @@ def init_admin(app):
         db.session.close()
 
         return render_template('admin/config.html', ctf_name=ctf_name, start=start, end=end,
+                               max_tries=max_tries,
                                view_challenges_unregistered=view_challenges_unregistered,
                                prevent_registration=prevent_registration, do_api_key=do_api_key, mg_api_key=mg_api_key,
                                prevent_name_change=prevent_name_change,
@@ -165,6 +172,13 @@ def init_admin(app):
         pages = Pages.query.all()
         return render_template('admin/pages.html', routes=pages)
 
+    @app.route('/admin/page/<pageroute>/delete', methods=['POST'])
+    @admins_only
+    def delete_page(pageroute):
+        page = Pages.query.filter_by(route=pageroute).first()
+        db.session.delete(page)
+        db.session.commit()
+        return '1'
 
     @app.route('/admin/hosts', methods=['GET'])
     @admins_only
@@ -448,7 +462,7 @@ def init_admin(app):
         solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
         challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
         most_solved_chal = Solves.query.add_columns(db.func.count(Solves.chalid).label('solves')).group_by(Solves.chalid).order_by('solves DESC').first()
-        least_solved_chal = Solves.query.add_columns(db.func.count(Solves.chalid).label('solves')).group_by(Solves.chalid).order_by('solves ASC').first()
+        least_solved_chal = Challenges.query.add_columns(db.func.count(Solves.chalid).label('solves')).outerjoin(Solves).group_by(Challenges.id).order_by('solves ASC').first()
 
         db.session.close()
 

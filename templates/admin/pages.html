@@ -3,16 +3,31 @@
 {% block content %}
 <div class="row">
     <br>
+    <div id="confirm" class="reveal-modal" data-reveal>
+        <h2 class="text-center">Delete Page</h2>
+        <form method="POST">
+            <input type="hidden" name="route">
+            <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+            <div class="small-6 small-centered text-center columns">
+                <p>Are you sure you want to delete <strong id="confirm-route-name"></strong>?</p>
+                <button type="button" class="button alert radius" onclick="$('#confirm').foundation('reveal', 'close');">No</button>
+                <button type="button" id="delete-route" class="button success radius">Yes</button>
+            </div>
+        </form>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
     <table id="pages">
         <thead>
             <tr>
                 <td><b>Route</b></td>
+                <td class="text-center" style="width: 150px;"><b>Settings</b></td>
             </tr>
         </thead>
         <tbody>
         {% for route in routes %}
-            <tr>
-                <td><a href="/admin/pages/{{ route.route }}">{{ route.route }}</a></td>
+            <tr name="{{ route.route }}">
+                <td class="route-name"><a href="/admin/pages/{{ route.route }}">{{ route.route }}</a></td>
+                <td class="text-center"><i class="fa fa-times"></i></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -25,4 +40,30 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+$('#delete-route').click(function(e){
+    e.preventDefault();
+    var route = $('#confirm input[name="route"]').val()
+    $.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "1"){
+            location.reload()
+        }
+    })
+});
+
+function load_confirm_modal(route){
+    var modal = $('#confirm')
+    modal.find('input[name=route]').val(route)
+    modal.find('#confirm-route-name').text(route)
+    $('#confirm form').attr('action', '/admin/page/'+route+'/delete');
+    $('#confirm').foundation('reveal', 'open');
+}
+
+$('.fa-times').click(function(){
+    var elem = $(this).parent().parent();
+    var name = elem.find('.route-name').text().trim();
+    load_confirm_modal(name)
+});
+</script>
 {% endblock %}

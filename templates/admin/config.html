@@ -13,6 +13,11 @@
         </div>
 
         <div class="row">
+            <label for="max_tries">Maximum Attempts Per Challenge (0 to disable):</label>
+            <input id='max_tries' name='max_tries' type='text' placeholder="0" {% if max_tries is defined and max_tries != None %}value="{{ max_tries }}"{% endif %}>
+        </div>
+
+        <div class="row">
             <label for="start">Mailgun API Key:</label>
             <input id='mg_api_key' name='mg_api_key' type='text' placeholder="Mailgun API Key" {% if mg_api_key is defined and mg_api_key != None %}value="{{ mg_api_key }}"{% endif %}>
         </div>
