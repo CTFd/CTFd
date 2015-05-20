@@ -59,18 +59,22 @@ def init_admin(app):
                 view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
                 prevent_registration = bool(request.form.get('prevent_registration', None))
                 prevent_name_change = bool(request.form.get('prevent_name_change', None))
+                view_after_ctf = bool(request.form.get('view_after_ctf', None))
             except (ValueError, TypeError):
                 view_challenges_unregistered = None
                 prevent_registration = None
                 prevent_name_change = None
+                view_after_ctf = None
             finally:
                 view_challenges_unregistered = set_config('view_challenges_unregistered', view_challenges_unregistered)
                 prevent_registration = set_config('prevent_registration', prevent_registration)
                 prevent_name_change = set_config('prevent_name_change', prevent_name_change)
+                view_after_ctf = set_config('view_after_ctf', view_after_ctf)
 
             ctf_name = set_config("ctf_name", request.form.get('ctf_name', None))
             mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
             do_api_key = set_config("do_api_key", request.form.get('do_api_key', None))
+
 
             db_start = Config.query.filter_by(key='start').first()
             db_start.value = start
@@ -95,6 +99,11 @@ def init_admin(app):
         do_api_key = get_config('do_api_key')
         if not do_api_key:
             set_config('do_api_key', None)
+
+        view_after_ctf = get_config('view_after_ctf') == '1'
+        if not view_after_ctf:
+            set_config('view_after_ctf', 0)
+            view_after_ctf = 0
 
         start = get_config('start')
         if not start:
@@ -122,7 +131,8 @@ def init_admin(app):
         return render_template('admin/config.html', ctf_name=ctf_name, start=start, end=end,
                                view_challenges_unregistered=view_challenges_unregistered,
                                prevent_registration=prevent_registration, do_api_key=do_api_key, mg_api_key=mg_api_key,
-                               prevent_name_change=prevent_name_change)
+                               prevent_name_change=prevent_name_change,
+                               view_after_ctf=view_after_ctf)
 
     @app.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
     @app.route('/admin/pages/<route>', methods=['GET', 'POST'])

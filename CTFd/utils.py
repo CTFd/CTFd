@@ -72,6 +72,12 @@ def admins_only(f):
     return decorated_function
 
 
+def view_after_ctf():
+    if get_config('view_after_ctf') == '1' and get_config("end") > time.time:
+        return True
+    else:
+        return False
+
 def ctftime():
     """ Checks whether it's CTF time or not. """
 

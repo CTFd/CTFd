@@ -26,10 +26,11 @@
         <h4 class="chal-value"></h4>
         <p><i><a data-reveal-id="chal-solves-window" class="chal-solves"></a></i></p>
         <p class="chal-desc"></p>
-
+        {% if ctftime %}
         <input id="answer" type="text" placeholder="Key">
         <input type="hidden" id="nonce" name="nonce" value={{ nonce }}>
         <button id="submit-key">Submit</button>
+        {% endif %}
         <input id="chal-id" type="hidden">
     </div>
     <a class="close-reveal-modal">&#215;</a>
