@@ -146,6 +146,13 @@ def init_views(app):
                 if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
                         (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):
                     errors.append("Your old password doesn't match what we have.")
+                else:
+                    team = Teams.query.filter_by(id=session['id']).first()
+                    team.password = bcrypt_sha256.encrypt(request.form.get('password'))
+                    db.session.commit()
+                    db.session.close()
+                    return redirect('/profile')
+
                 if not valid_email:
                     errors.append("That email doesn't look right")
                 if names and name!=session['username']: 
