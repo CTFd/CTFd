@@ -142,33 +142,27 @@ def init_views(app):
 
                 user = Teams.query.filter_by(id=session['id']).first()
 
-                names = Teams.query.filter_by(name=name).first()
+                if not get_config('prevent_name_change'):
+                    names = Teams.query.filter_by(name=name).first()
+                    name_len = len(request.form['name']) == 0
+
                 emails = Teams.query.filter_by(email=email).first()
                 valid_email = re.match("[^@]+@[^@]+\.[^@]+", email)
                 
-                name_len = len(request.form['name']) == 0
-
                 if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
                         (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):
                     errors.append("Your old password doesn't match what we have.")
-                else:
-                    team = Teams.query.filter_by(id=session['id']).first()
-                    team.password = bcrypt_sha256.encrypt(request.form.get('password'))
-                    db.session.commit()
-                    db.session.close()
-                    return redirect('/profile')
-
                 if not valid_email:
                     errors.append("That email doesn't look right")
-                if names and name!=session['username']: 
+                if not get_config('prevent_name_change') and names and name!=session['username']: 
                     errors.append('That team name is already taken')
                 if emails and emails.id != session['id']:
                     errors.append('That email has already been used')
-                if name_len:
+                if not get_config('prevent_name_change') and name_len:
                     errors.append('Pick a longer team name')
                 if website.strip() and not validate_url(website):
                     errors.append("That doesn't look like a valid URL")
-
+                
                 if len(errors) > 0:
                     return render_template('profile.html', name=name, email=email, website=website,
                                            affiliation=affiliation, country=country, errors=errors)
@@ -177,7 +171,7 @@ def init_views(app):
                     if not get_config('prevent_name_change'):
                         team.name = name
                     team.email = email
-                    session['username'] = name
+                    session['username'] = team.name
 
                     if 'password' in request.form.keys() and not len(request.form['password']) == 0:
                         team.password = bcrypt_sha256.encrypt(request.form.get('password'))
