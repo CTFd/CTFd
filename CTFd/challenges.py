@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, json as json_mod, url_for, session
 
-from CTFd.utils import ctftime, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config
+from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys
 
 import time
@@ -10,16 +10,16 @@ import logging
 def init_challenges(app):
     @app.route('/challenges', methods=['GET'])
     def challenges():
-        if not is_admin() and not ctftime():
+        if not is_admin() and not ctftime() and not view_after_ctf():
             return redirect('/')
         if can_view_challenges():
-            return render_template('chals.html')
+            return render_template('chals.html', ctftime=ctftime())
         else:
             return redirect(url_for('login', next="challenges"))
 
     @app.route('/chals', methods=['GET'])
     def chals():
-        if not is_admin() and not ctftime():
+        if not is_admin() and not ctftime() and not view_after_ctf():
             return redirect('/')
         if can_view_challenges():
             chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
@@ -90,7 +90,7 @@ def init_challenges(app):
     @app.route('/chal/<chalid>', methods=['POST'])
     def chal(chalid):
         if not ctftime():
-            return redirect('/')
+            return redirect('/challenges')
         if authed():
             fails = WrongKeys.query.filter_by(team=session['id'],chal=chalid).count()
             logger = logging.getLogger('keys')
