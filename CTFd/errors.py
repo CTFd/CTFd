@@ -10,5 +10,9 @@ def init_errors(app):
         return render_template('errors/403.html'), 403
 
     @app.errorhandler(500)
-    def forbidden(error):
+    def general_error(error):
         return render_template('errors/500.html'), 500
+    
+    @app.errorhandler(502)
+    def gateway_error(error):
+        return render_template('errors/502.html'), 502
