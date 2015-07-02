@@ -43,7 +43,7 @@ def init_auth(app):
             s = TimedSerializer(app.config['SECRET_KEY'])
             token = s.dumps(team.name)
             text = """
-Did you initiate a password reset? 
+Did you initiate a password reset?
 
 {0}/reset_password/{1}
 
@@ -73,7 +73,7 @@ Did you initiate a password reset?
 
             if not valid_email:
                 errors.append("That email doesn't look right")
-            if names: 
+            if names:
                 errors.append('That team name is already taken')
             if emails:
                 errors.append('That email has already been used')
@@ -93,12 +93,20 @@ Did you initiate a password reset?
                     db.session.commit()
                 if mailserver():
                     sendmail(request.form['email'], "You've successfully registered for the CTF")
-            
+                # Get the team we commited for registered user
+                team = Teams.query.filter_by(name=name).first()
+
+                # Set his session accordingly
+                session['username'] = team.name
+                session['id'] = team.id
+                session['admin'] = team.admin
+                session['nonce'] = sha512(os.urandom(10))
+
             db.session.close()
 
             logger = logging.getLogger('regs')
             logger.warn("[{0}] {1} registered with {2}".format(time.strftime("%m/%d/%Y %X"), request.form['name'].encode('utf-8'), request.form['email'].encode('utf-8')))
-            return redirect('/login')
+            return redirect('/team/{0}'.format(session['id']))
         else:
             return render_template('register.html')
 
@@ -120,7 +128,7 @@ Did you initiate a password reset?
                 db.session.close()
 
                 logger = logging.getLogger('logins')
-                logger.warn("[{0}] {1} logged in".format(time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8')))    
+                logger.warn("[{0}] {1} logged in".format(time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8')))
 
                 # if request.args.get('next') and is_safe_url(request.args.get('next')):
                 #     return redirect(request.args.get('next'))
