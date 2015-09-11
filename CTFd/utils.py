@@ -73,7 +73,7 @@ def admins_only(f):
 
 
 def view_after_ctf():
-    if get_config('view_after_ctf') == '1' and get_config("end") > time.time:
+    if get_config('view_after_ctf') == '1' and time.time() > int(get_config("end")):
         return True
     else:
         return False

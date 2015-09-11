@@ -10,8 +10,12 @@ import logging
 def init_challenges(app):
     @app.route('/challenges', methods=['GET'])
     def challenges():
-        if not is_admin() and not ctftime() and not view_after_ctf():
-            return redirect('/')
+        if not is_admin():
+            if not ctftime():
+                if view_after_ctf():
+                    pass
+                else:
+                    return redirect('/')
         if can_view_challenges():
             return render_template('chals.html', ctftime=ctftime())
         else:
@@ -19,8 +23,12 @@ def init_challenges(app):
 
     @app.route('/chals', methods=['GET'])
     def chals():
-        if not is_admin() and not ctftime() and not view_after_ctf():
-            return redirect('/')
+        if not is_admin():
+            if not ctftime():
+                if view_after_ctf():
+                    pass
+                else:
+                    return redirect('/')
         if can_view_challenges():
             chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
             
