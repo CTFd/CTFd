@@ -37,6 +37,7 @@
     <h4 class="text-center"><a href="/admin">Click here</a> to login and setup your CTF</h4>
 </div>
         </textarea><br>
+        <input type="hidden" name="nonce" value="{{nonce}}"> {# This nonce is implemented specially in the route itself #}
         <button class="radius" type='submit'>Login</button>
     </form>
 </div>

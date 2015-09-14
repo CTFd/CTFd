@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/railscasts.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/user.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 </head>
 <body>
@@ -40,29 +41,9 @@
             {%else %}
             <li class="has-form">
               {% if can_register() %} 
-              <li class="has-dropdown">
-                <a href="/register">Register</a>
-                <ul class="dropdown">
-                  <form method="POST" action="/register">
-                    <li><input type='text' name='name' placeholder='Name'></li>
-                    <li><input type='text' name='email' placeholder='Email'></li>
-                    <li><input type='password' name='password' placeholder='Password'></li>
-                    <li><button type='submit'>Register</button></li>
-                  </form>
-                </ul>
-              </li>
+              <li><a href="/register">Register</a></li>
               {% endif %}
-              <li class="has-dropdown">
-                <a href="/login">Login</a>
-                <ul class="dropdown">
-                  <form method="POST" action="/login">
-                  <li><input type='text' name='name' placeholder='Name'></li>
-                  <li><input type='password' name='password' placeholder='Password'></li>
-                  <li><button type='submit'>Login</button></li>
-                  <li><a href="/reset_password" class="text-center">Forgot?</a></li>
-                  </form>
-                </ul>
-              </li>
+              <li><a href="/login">Login</a></li>
               {% endif %}
             </li>
         </ul>

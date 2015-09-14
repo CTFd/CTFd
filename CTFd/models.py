@@ -1,4 +1,3 @@
-#from CTFd import db
 from flask.ext.sqlalchemy import SQLAlchemy
 
 from socket import inet_aton, inet_ntoa
@@ -78,7 +77,6 @@ class Keys(db.Model):
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     key_type = db.Column(db.Integer)
     flag = db.Column(db.Text)
-
 
     def __init__(self, chal, flag, key_type):
         self.chal = chal
@@ -180,6 +178,7 @@ class Tracking(db.Model):
 
     def __repr__(self):
         return '<ip %r>' % self.team
+
 
 class Config(db.Model):
     id = db.Column(db.Integer, primary_key=True)

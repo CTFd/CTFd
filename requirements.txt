@@ -8,5 +8,4 @@ passlib==1.6.2
 bcrypt
 six==1.8.0
 itsdangerous==0.24
-python-digitalocean==1.4.2
 requests==2.3.0

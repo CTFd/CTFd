@@ -23,11 +23,6 @@
         </div>
 
         <div class="row">
-            <label for="start">Digital Ocean API Key:</label>
-            <input id='do_api_key' name='do_api_key' type='text' placeholder="Digital Ocean API Key" {% if do_api_key is defined and do_api_key != None %}value="{{ do_api_key }}"{% endif %}>
-        </div>
-
-        <div class="row">
             <label for="start">Start Date:</label>
             <input id='start' name='start' type='text' placeholder="Start Date (UTC timestamp)" {% if start is defined and start != None %}value="{{ start }}"{% endif %}>
         </div>
