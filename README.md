@@ -1,4 +1,4 @@
-![](https://github.com/isislab/CTFd/blob/master/static/img/logo.png)
+![](https://raw.githubusercontent.com/isislab/CTFd/master/CTFd/static/img/logo.png)
 ====
 
 CTFd is a CTF in a can. Easily modifiable and has everything you need to run a jeopardy style CTF.
