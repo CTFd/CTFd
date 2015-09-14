@@ -99,8 +99,10 @@ Did you initiate a password reset?
             logger = logging.getLogger('regs')
             logger.warn("[{0}] {1} registered with {2}".format(time.strftime("%m/%d/%Y %X"), request.form['name'].encode('utf-8'), request.form['email'].encode('utf-8')))
             return redirect('/login')
-        else:
+        if not authed():
             return render_template('register.html')
+        else:
+            return redirect('/')
 
     @app.route('/login', methods=['POST', 'GET'])
     def login():
