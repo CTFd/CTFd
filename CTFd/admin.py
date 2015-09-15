@@ -547,6 +547,7 @@ def admin_fails(teamid='all'):
 
 
 @admin.route('/admin/chal/new', methods=['POST'])
+@admins_only
 def admin_create_chal():
     files = request.files.getlist('files[]')
 
@@ -581,6 +582,7 @@ def admin_create_chal():
 
 
 @admin.route('/admin/chal/delete', methods=['POST'])
+@admins_only
 def admin_delete_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first()
     if challenge:
@@ -600,6 +602,7 @@ def admin_delete_chal():
 
 
 @admin.route('/admin/chal/update', methods=['POST'])
+@admins_only
 def admin_update_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first()
     challenge.name = request.form['name']
