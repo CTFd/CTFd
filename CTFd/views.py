@@ -47,6 +47,8 @@ def setup():
         # admin = Teams.query.filter_by(admin=True).first()
 
     if not is_setup():
+        if not session.get('nonce'):
+            session['nonce'] = sha512(os.urandom(10))
         if request.method == 'POST':
             ctf_name = request.form['ctf_name']
             ctf_name = Config('ctf_name', ctf_name)
