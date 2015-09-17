@@ -29,6 +29,8 @@ def tracker():
 @views.before_request
 def csrf():
     if request.method == "POST":
+        print(session)
+        print(request.form.get('nonce'))
         if session['nonce'] != request.form.get('nonce'):
             abort(403)
 
@@ -62,6 +64,7 @@ def setup():
             password = request.form['password']
             admin = Teams(name, email, password)
             admin.admin = True
+            admin.banned = True
 
             ## Index page
             html = request.form['html']
@@ -96,6 +99,7 @@ def setup():
             db.session.commit()
             app.setup = False
             return redirect('/')
+        print(session.get('nonce'))
         return render_template('setup.html', nonce=session.get('nonce'))
     return redirect('/')
 
@@ -120,11 +124,19 @@ def static_html(template):
             abort(404)
 
 
-@views.route('/teams')
-def teams():
-    teams = Teams.query.all()
-    return render_template('teams.html', teams=teams)
+@views.route('/teams', defaults={'page':'1'})
+@views.route('/teams/<page>')
+def teams(page):
+    page = abs(int(page))
+    results_per_page = 50
+    page_start = results_per_page * ( page - 1 )
+    page_end = results_per_page * ( page - 1 ) + results_per_page
 
+    teams = Teams.query.slice(page_start, page_end).all()
+    count = db.session.query(db.func.count(Teams.id)).first()[0]
+    print(count)
+    pages = int(count / results_per_page) + (count % results_per_page > 0)
+    return render_template('teams.html', teams=teams, team_pages=pages)
 
 @views.route('/team/<teamid>', methods=['GET', 'POST'])
 def team(teamid):

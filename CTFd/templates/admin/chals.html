@@ -2,47 +2,31 @@
 
 {% block content %}
     <input type="hidden" value="{{ nonce }}" id="nonce">
-    <div id="new-category" class="reveal-modal" data-reveal>
-        <form method="POST" action="/admin/chal/new" enctype="multipart/form-data">
-            <h3>New Category</h3>
-            <input name='nonce' type='hidden' value="{{ nonce }}">
-            <input type='text' name='category' placeholder='Category'><br/>
-            <a href="#" data-reveal-id="create-challenge" class="button">Create</a>
-        <a class="close-reveal-modal">&#215;</a>
-    </div>
 
     <div id="create-challenge" class="reveal-modal" data-reveal>
         <h3>New Challenge</h3>
-        <input type='text' name='name' placeholder='Name'><br/>
-        <textarea name='desc' placeholder='Description'></textarea><br/>
-        <input type='number' name='value' placeholder='Value'><br/>
-        <input type='text' name='key' placeholder='Key'><br/>
-        <input type="radio" name="key_type[0]" value="0">Static
-        <input type="radio" name="key_type[0]" value="1">Regex
-        <br/>
-        <input type="file" name="files[]" multiple="multiple">
-
-        <button type='submit'>Create</button>
-        <a class="close-reveal-modal">&#215;</a>
-        </form>
-    </div>
-
-    <div id="new-challenge" class="reveal-modal" data-reveal>
         <form method="POST" action="/admin/chal/new" enctype="multipart/form-data">
-            <h3><span id="new-chal-title"></span> challenge</h3>
-            <input name='nonce' type='hidden' value="{{ nonce }}">
             <input type='text' name='name' placeholder='Name'><br/>
-            <textarea class="textbox" name='desc' placeholder='Description'></textarea><br/>
-            <input type='number' name='value' placeholder='Value'><br/>
-            <input id="new-chal-category" type="hidden" name="category">
-            <input type='text' name='key' placeholder='Key'><br/>
+            <input type='text' name='category' placeholder='Category'><br/>
 
-            <input type="file" name="files[]" multiple="multiple">
-            
-            <br/>
+            <ul id="new-desc-edit" class="tabs" data-tab>
+                <li class="tab-title active"><a href="#new-desc-write" style="padding: 0 2rem;">Write</a></li>
+                <li class="tab-title"><a href="#new-desc-preview" style="padding: 0 2rem;">Preview</a></li>
+            </ul>
+            <div class="tabs-content">
+                <div class="content active" id="new-desc-write">
+                    <textarea id="new-desc-editor" class="new-chal-desc" name='desc' placeholder='Description' rows="10"></textarea><br>
+                </div>
+                <div class="content" id="new-desc-preview">
+                </div>
+            </div>
+
+            <input type='number' name='value' placeholder='Value'><br/>
+            <input type='text' name='key' placeholder='Key'><br/>
             <input type="radio" name="key_type[0]" value="0">Static
             <input type="radio" name="key_type[0]" value="1">Regex
             <br/>
+            <input type="file" name="files[]" multiple="multiple">
 
             <button type='submit'>Create</button>
             <a class="close-reveal-modal">&#215;</a>
@@ -111,15 +95,26 @@
 
     <div id="update-challenge" class="reveal-modal" data-reveal>
         <form method="POST" action="/admin/chal/update">
-            <h3>Update Challenge</h3>
+            <h3 class="chal-title text-center"></h3>
             <input name='nonce' type='hidden' value="{{ nonce }}">
-            <input class="chal-name" type='text' name='name' placeholder='Name'><br/>
-            <textarea class="chal-desc textbox" name='desc' placeholder='Description'></textarea><br/>
-            <input class="chal-value" type='number' name='value' placeholder='Value'><br/>
-            <select class="chal-category" name="category">
-                <option>-</option>
-            </select>
-            <input class="chal-id" type='hidden' name='id' placeholder='ID'><br/>
+            Name: <input class="chal-name" type='text' name='name' placeholder='Name'><br>
+            Category: <input class="chal-category" type="text" name="category" placeholder="Category"><br>
+            Description: 
+            
+            <ul id="desc-edit" class="tabs" data-tab>
+                <li class="tab-title active"><a href="#desc-write" style="padding: 0 2rem;">Write</a></li>
+                <li class="tab-title"><a href="#desc-preview" style="padding: 0 2rem;">Preview</a></li>
+            </ul>
+            <div class="tabs-content">
+                <div class="content active" id="desc-write">
+                    <textarea id="desc-editor" class="chal-desc" name='desc' placeholder='Description' rows="10"></textarea><br>
+                </div>
+                <div class="content" id="desc-preview">
+                </div>
+            </div>
+            
+            Value: <input class="chal-value" type='number' name='value' placeholder='Value'><br>
+            <input class="chal-id" type='hidden' name='id' placeholder='ID'>
 
             <a href="#" data-reveal-id="update-tags" class="secondary button">Tags</a>
             <a href="#" data-reveal-id="update-files" class="secondary button">Files</a>
@@ -130,14 +125,13 @@
         </form>
     </div>
 
-
-    <div class="row">
-        <h1>CTF</h1>
+    <div>
+        <h1 class="text-center">Challenges</h1>
 
         <div>
             <table id='challenges'>
             </table>
-            <button style="width:100%;" class="radius create-category">New Category</button>
+            <button style="width:100%;" class="radius create-challenge">New Challenge</button>
         </div>
     </div>
 {% endblock %}

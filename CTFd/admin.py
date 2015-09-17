@@ -147,7 +147,6 @@ def admin_css():
     if request.method == 'POST':
         css = request.form['css']
         css = set_config('css', css)
-        print css
         return "1"
     return "0"
 
@@ -198,12 +197,12 @@ def admin_chals():
     if request.method == 'POST':
         chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
         
-        json = {'game':[]}
+        json_data = {'game':[]}
         for x in chals:
-            json['game'].append({'id':x[1], 'name':x[2], 'value':x[3], 'description':x[4], 'category':x[5]})
+            json_data['game'].append({'id':x[1], 'name':x[2], 'value':x[3], 'description':x[4], 'category':x[5]})
 
         db.session.close()
-        return jsonify(json)
+        return jsonify(json_data)
     else:
         return render_template('admin/chals.html')
 
@@ -212,21 +211,25 @@ def admin_chals():
 @admins_only
 def admin_keys(chalid):
     if request.method == 'GET':
-        keys = Keys.query.filter_by(chal=chalid).all()
-        json = {'keys':[]}
-        for x in keys:
-            json['keys'].append({'id':x.id, 'key':x.flag, 'type':x.key_type})
-        return jsonify(json)
+        chal = Challenges.query.filter_by(id=chalid).first_or_404()
+        json_data = {'keys':[]}
+        flags = json.loads(chal.flags)
+        for i, x in enumerate(flags):
+            json_data['keys'].append({'id':i, 'key':x['flag'], 'type':x['type']})
+        return jsonify(json_data)
     elif request.method == 'POST':
-        keys = Keys.query.filter_by(chal=chalid).all()
-        for x in keys:
-            db.session.delete(x)
+        chal = Challenges.query.filter_by(id=chalid).first()
 
         newkeys = request.form.getlist('keys[]')
         newvals = request.form.getlist('vals[]')
+        print(list(zip(newkeys, newvals)))
+        flags = []
         for flag, val in zip(newkeys, newvals):
-            key = Keys(chalid, flag, val)
-            db.session.add(key)
+            flag_dict = {'flag':flag, 'type':int(val)}
+            flags.append(flag_dict)
+        json_data = json.dumps(flags)
+       
+        chal.flags = json_data
 
         db.session.commit()
         db.session.close()
@@ -238,10 +241,10 @@ def admin_keys(chalid):
 def admin_tags(chalid):
     if request.method == 'GET':
         tags = Tags.query.filter_by(chal=chalid).all()
-        json = {'tags':[]}
+        json_data = {'tags':[]}
         for x in tags:
-             json['tags'].append({'id':x.id, 'chal':x.chal, 'tag':x.tag})
-        return jsonify(json)
+             json_data['tags'].append({'id':x.id, 'chal':x.chal, 'tag':x.tag})
+        return jsonify(json_data)
 
     elif request.method == 'POST':
         newtags = request.form.getlist('tags[]')
@@ -269,10 +272,10 @@ def admin_delete_tags(tagid):
 def admin_files(chalid):
     if request.method == 'GET':
         files = Files.query.filter_by(chal=chalid).all()
-        json = {'files':[]}
+        json_data = {'files':[]}
         for x in files:
-            json['files'].append({'id':x.id, 'file':x.location})
-        return jsonify(json)
+            json_data['files'].append({'id':x.id, 'file':x.location})
+        return jsonify(json_data)
     if request.method == 'POST':
         if request.form['method'] == "delete":
             f = Files.query.filter_by(id=request.form['file']).first_or_404()
@@ -305,11 +308,20 @@ def admin_files(chalid):
             return redirect('/admin/chals')
 
 
-@admin.route('/admin/teams')
+@admin.route('/admin/teams', defaults={'page':'1'})
+@admin.route('/admin/teams/<page>')
 @admins_only
-def admin_teams():
-    teams = Teams.query.all()
-    return render_template('admin/teams.html', teams=teams)
+def admin_teams(page):
+    page = abs(int(page))
+    results_per_page = 50
+    page_start = results_per_page * ( page - 1 )
+    page_end = results_per_page * ( page - 1 ) + results_per_page
+
+    teams = Teams.query.slice(page_start, page_end).all()
+    count = db.session.query(db.func.count(Teams.id)).first()[0]
+    print(count)
+    pages = int(count / results_per_page) + (count % results_per_page > 0)
+    return render_template('admin/teams.html', teams=teams, pages=pages)
 
 
 @admin.route('/admin/team/<teamid>', methods=['GET', 'POST'])
@@ -317,17 +329,19 @@ def admin_teams():
 def admin_team(teamid):
     user = Teams.query.filter_by(id=teamid).first()
     solves = Solves.query.filter_by(teamid=teamid).all()
-    addrs = Tracking.query.filter_by(team=teamid).group_by(Tracking.ip).all()
+    addrs = Tracking.query.filter_by(team=teamid).order_by(Tracking.date.desc()).group_by(Tracking.ip).all()
+    wrong_keys = WrongKeys.query.filter_by(team=teamid).order_by(WrongKeys.date.desc()).all()
     score = user.score()
     place = user.place()
 
     if request.method == 'GET':
-        return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, place=place)
+        return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, place=place, wrong_keys=wrong_keys)
     elif request.method == 'POST':
         admin_user = request.form.get('admin', "false")
         admin_user = 1 if admin_user == "true" else 0
         if admin:
             user.admin = 1
+            user.banned = 1
             db.session.commit()
             return jsonify({'data': ['success']})
 
@@ -407,16 +421,16 @@ def delete_team(teamid):
 def admin_graph(graph_type):
     if graph_type == 'categories':
         categories = db.session.query(Challenges.category, db.func.count(Challenges.category)).group_by(Challenges.category).all()
-        json = {'categories':[]}
+        json_data = {'categories':[]}
         for category, count in categories:
-            json['categories'].append({'category':category, 'count':count})
-        return jsonify(json)
+            json_data['categories'].append({'category':category, 'count':count})
+        return jsonify(json_data)
     elif graph_type == "solves":
         solves = Solves.query.add_columns(db.func.count(Solves.chalid)).group_by(Solves.chalid).all()
-        json = {}        
+        json_data = {}        
         for chal, count in solves:
-            json[chal.chal.name] = count
-        return jsonify(json)
+            json_data[chal.chal.name] = count
+        return jsonify(json_data)
 
 
 @admin.route('/admin/scoreboard')
@@ -436,10 +450,10 @@ def admin_scores():
     quickest = db.func.max(Solves.date).label('quickest')
     teams = db.session.query(Solves.teamid, Teams.name, score).join(Teams).join(Challenges).filter(Teams.banned == None).group_by(Solves.teamid).order_by(score.desc(), quickest)
     db.session.close()
-    json = {'teams':[]}
+    json_data = {'teams':[]}
     for i, x in enumerate(teams):
-        json['teams'].append({'place':i+1, 'id':x.teamid, 'name':x.name,'score':int(x.score)})
-    return jsonify(json)
+        json_data['teams'].append({'place':i+1, 'id':x.teamid, 'name':x.name,'score':int(x.score)})
+    return jsonify(json_data)
 
 
 @admin.route('/admin/solves/<teamid>', methods=['GET'])
@@ -450,10 +464,10 @@ def admin_solves(teamid="all"):
     else:
         solves = Solves.query.filter_by(teamid=teamid).all()
     db.session.close()
-    json = {'solves':[]}
+    json_data = {'solves':[]}
     for x in solves:
-        json['solves'].append({'id':x.id, 'chal':x.chal.name, 'chalid':x.chalid,'team':x.teamid, 'value': x.chal.value, 'category':x.chal.category, 'time':unix_time(x.date)})
-    return jsonify(json)
+        json_data['solves'].append({'id':x.id, 'chal':x.chal.name, 'chalid':x.chalid,'team':x.teamid, 'value': x.chal.value, 'category':x.chal.category, 'time':unix_time(x.date)})
+    return jsonify(json_data)
 
 
 @admin.route('/admin/solves/<teamid>/<chalid>/delete', methods=['POST'])
@@ -531,14 +545,14 @@ def admin_fails(teamid='all'):
         fails = WrongKeys.query.count()
         solves = Solves.query.count()
         db.session.close()
-        json = {'fails':str(fails), 'solves': str(solves)}
-        return jsonify(json)
+        json_data = {'fails':str(fails), 'solves': str(solves)}
+        return jsonify(json_data)
     else:
         fails = WrongKeys.query.filter_by(team=teamid).count()
         solves = Solves.query.filter_by(teamid=teamid).count()
         db.session.close()
-        json = {'fails':str(fails), 'solves': str(solves)}
-        return jsonify(json)
+        json_data = {'fails':str(fails), 'solves': str(solves)}
+        return jsonify(json_data)
 
 
 @admin.route('/admin/chal/new', methods=['POST'])
@@ -546,14 +560,12 @@ def admin_fails(teamid='all'):
 def admin_create_chal():
     files = request.files.getlist('files[]')
 
-    # Create challenge
-    chal = Challenges(request.form['name'], request.form['desc'], request.form['value'], request.form['category'])
-    db.session.add(chal)
-    db.session.commit()
+    ## TODO: Expand to support multiple flags
+    flags = [{'flag':request.form['key'], 'type':int(request.form['key_type[0]'])}]
 
-    # Add keys
-    key = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
-    db.session.add(key)
+    # Create challenge
+    chal = Challenges(request.form['name'], request.form['desc'], request.form['value'], request.form['category'], flags)
+    db.session.add(chal)
     db.session.commit()
 
     for f in files:
@@ -562,7 +574,7 @@ def admin_create_chal():
         if len(filename) <= 0:
             continue
 
-        md5hash = hashlib.md5(filename).hexdigest()
+        md5hash = hashlib.md5(os.urandom(64)).hexdigest()
 
         if not os.path.exists(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash)):
             os.makedirs(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash))
@@ -581,7 +593,7 @@ def admin_create_chal():
 def admin_delete_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first()
     if challenge:
-        WrongKeys.query.filter_by(chal=challenge.id).delete()
+        WrongKeys.query.filter_by(chalid=challenge.id).delete()
         Solves.query.filter_by(chalid=challenge.id).delete()
         Keys.query.filter_by(chal=challenge.id).delete()
         files = Files.query.filter_by(chal=challenge.id).all()

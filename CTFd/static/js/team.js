@@ -1,6 +1,6 @@
 function teamid (){
     loc = window.location.pathname
-    return loc.substring(loc.lastIndexOf('/')+1, loc.length);
+    return parseInt(loc.substring(loc.lastIndexOf('/')+1, loc.length));
 }
 
 function colorhash (x) {

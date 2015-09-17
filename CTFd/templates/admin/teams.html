@@ -76,7 +76,7 @@
     <table id="teamsboard">
         <thead>
             <tr>
-                <td class="text-center"><b>ID</b>
+                <td width="10px" class="text-center"><b>ID</b>
                 </td>
                 <td class="text-center"><b>Team</b>
                 </td>
@@ -98,12 +98,12 @@
             {% for team in teams %}
             <tr name="{{ team.id }}">
                 <td class="team-id">{{ team.id }}</td>
-                <td class="team-name"><a href="/admin/team/{{ team.id }}">{{ team.name }}</a>
+                <td class="team-name"><a href="/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
                 </td>
-                <td class="team-email">{{ team.email }}</td>
-                <td class="team-website">{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}
+                <td class="team-email">{{ team.email | truncate(32) }}</td>
+                <td class="team-website">{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website | truncate(32) }}</a>{% endif %}
                 </td>
-                <td class="team-affiliation"><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span>
+                <td class="team-affiliation"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
                 </td>
                 <td class="team-country"><span>{% if team.country %}{{ team.country }}{% endif %}</span>
                 </td>
@@ -122,6 +122,15 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if pages > 1 %}
+    <div class="text-center">Page
+        <br>
+        {% for page in range(1, pages + 1) %}
+        <a href="/admin/teams/{{ page }}">{{ page }}</a>  
+        {% endfor %}
+    <a href="">
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 

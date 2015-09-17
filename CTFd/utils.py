@@ -1,7 +1,7 @@
 from CTFd.models import db, WrongKeys, Pages, Config
 from CTFd import mail
 
-from urlparse import urlparse, urljoin
+from six.moves.urllib.parse import urlparse, urljoin 
 from functools import wraps
 from flask import current_app as app, g, request, redirect, url_for, session, render_template
 from flask.ext.mail import Message
@@ -140,7 +140,7 @@ def admins_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('admin', None) is None:
-            return redirect(url_for('login', next=request.url))
+            return redirect('/login')
         return f(*args, **kwargs)
     return decorated_function
 
@@ -159,23 +159,27 @@ def ctftime():
 
     if start:
         start = int(start)
+    else:
+        start = 0
     if end:
         end = int(end)
+    else:
+        end = 0
 
     if start and end:
         if start < time.time() < end:
             # Within the two time bounds
             return True
 
-    if start < time.time() and end is None: 
+    if start < time.time() and end == 0: 
         # CTF starts on a date but never ends
         return True
 
-    if start is None and time.time() < end: 
+    if start == 0 and time.time() < end: 
         # CTF started but ends at a date
         return True
 
-    if start is None and end is None:
+    if start == 0 and end == 0:
         # CTF has no time requirements
         return True
 
