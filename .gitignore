@@ -57,6 +57,3 @@ target/
 *.log
 .idea/
 static/uploads
-
-# Virtual env
-ctfd_venv/
