@@ -276,8 +276,8 @@ def admin_files(chalid):
     if request.method == 'POST':
         if request.form['method'] == "delete":
             f = Files.query.filter_by(id=request.form['file']).first_or_404()
-            if os.path.isfile(f.location):
-                os.unlink(f.location)
+            if os.path.exists(os.path.join(app.static_folder, 'uploads', f.location)): ## Some kind of os.path.isfile issue on Windows...
+                os.unlink(os.path.join(app.static_folder, 'uploads', f.location))
             db.session.delete(f)
             db.session.commit()
             db.session.close()
@@ -297,7 +297,7 @@ def admin_files(chalid):
                     os.makedirs(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash))
 
                 f.save(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash, filename))
-                db_f = Files(chalid, os.path.join(os.path.normpath(app.static_url_path), 'uploads', md5hash, filename))
+                db_f = Files(chalid, os.path.join(md5hash, filename))
                 db.session.add(db_f)
 
             db.session.commit()
@@ -568,7 +568,7 @@ def admin_create_chal():
             os.makedirs(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash))
 
         f.save(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash, filename))
-        db_f = Files(chal.id, os.path.join(os.path.normpath(app.static_url_path), 'uploads', md5hash, filename))
+        db_f = Files(chal.id, os.path.join(md5hash, filename))
         db.session.add(db_f)
 
     db.session.commit()
