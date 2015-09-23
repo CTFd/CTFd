@@ -293,16 +293,11 @@ def admin_files(chalid):
                 
                 md5hash = hashlib.md5(os.urandom(64)).hexdigest()
 
-                # BUG NEEDS TO GO TO S3
-                base = os.path.dirname(os.path.dirname(__file__))
-                ## mod_wsgi does some sad things with cwd so the upload directory needs to be shifted a bit
-                if not os.path.exists(os.path.join(base, app.config['UPLOAD_FOLDER'], md5hash)):
-                    os.makedirs(os.path.join(base, app.config['UPLOAD_FOLDER'], md5hash))
+                if not os.path.exists(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash)):
+                    os.makedirs(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash))
 
-                f.save(os.path.join(base, app.config['UPLOAD_FOLDER'], md5hash, filename))
-
-                ## This needs to be relative to CTFd so doesn't nee base.
-                db_f = Files(chalid, os.path.join(app.config['UPLOAD_FOLDER'], md5hash, filename))
+                f.save(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash, filename))
+                db_f = Files(chalid, os.path.join(os.path.normpath(app.static_url_path), 'uploads', md5hash, filename))
                 db.session.add(db_f)
 
             db.session.commit()
@@ -569,11 +564,11 @@ def admin_create_chal():
 
         md5hash = hashlib.md5(filename).hexdigest()
 
-        if not os.path.exists(os.path.join(os.path.normpath(app.config['UPLOAD_FOLDER']), md5hash)):
-            os.makedirs(os.path.join(os.path.normpath(app.config['UPLOAD_FOLDER']), md5hash))
+        if not os.path.exists(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash)):
+            os.makedirs(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash))
 
-        f.save(os.path.join(os.path.normpath(app.config['UPLOAD_FOLDER']), md5hash, filename))
-        db_f = Files(chal.id, os.path.join(os.path.normpath(app.config['UPLOAD_FOLDER']), md5hash, filename))
+        f.save(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash, filename))
+        db_f = Files(chal.id, os.path.join(os.path.normpath(app.static_url_path), 'uploads', md5hash, filename))
         db.session.add(db_f)
 
     db.session.commit()
