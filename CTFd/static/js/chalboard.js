@@ -13,6 +13,18 @@ function htmlentities(string) {
     return $('<div/>').text(string).html();
 }
 
+//http://stackoverflow.com/a/7616484
+String.prototype.hashCode = function() {
+    var hash = 0, i, chr, len;
+    if (this.length == 0) return hash;
+    for (i = 0, len = this.length; i < len; i++) {
+        chr   = this.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
+
 var challenges;
 
 function loadchal(id) {
@@ -189,12 +201,12 @@ function loadchals() {
             challenges['game'][i].solves = 0
             if ($.inArray(challenges['game'][i].category, categories) == -1) {
                 categories.push(challenges['game'][i].category)
-                $('#challenges').append($('<tr id="' + challenges['game'][i].category.replace(/ /g,"-") + '"><td class="large-2"><h4>' + challenges['game'][i].category + '</h4></td></tr>'))
+                $('#challenges').append($('<tr id="' + challenges['game'][i].category.replace(/ /g,"-").hashCode() + '"><td class="large-2"><h4>' + challenges['game'][i].category + '</h4></td></tr>'))
             }
         };
 
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
-            $('#' + challenges['game'][i].category.replace(/ /g,"-")).append($('<button value="' + challenges['game'][i].id + '">' + challenges['game'][i].value + '</button>'));
+            $('#' + challenges['game'][i].category.replace(/ /g,"-").hashCode()).append($('<button value="' + challenges['game'][i].id + '">' + challenges['game'][i].value + '</button>'));
         };
         updatesolves()
         marktoomanyattempts()
