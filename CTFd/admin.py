@@ -24,13 +24,13 @@ def admin_view():
         password = request.form.get('password')
 
         admin_user= Teams.query.filter_by(name=request.form['name'], admin=True).first()
-        if admin_user and bcrypt_sha256.verify(request.form['password'], admin.password):
+        if admin_user and bcrypt_sha256.verify(request.form['password'], admin_user.password):
             try:
                 session.regenerate() # NO SESSION FIXATION FOR YOU
             except:
                 pass # TODO: Some session objects dont implement regenerate :(
-            session['username'] = admin.name
-            session['id'] = admin.id
+            session['username'] = admin_user.name
+            session['id'] = admin_user.id
             session['admin'] = True
             session['nonce'] = sha512(os.urandom(10))
             db.session.close()
