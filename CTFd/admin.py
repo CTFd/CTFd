@@ -297,7 +297,7 @@ def admin_files(chalid):
                     os.makedirs(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash))
 
                 f.save(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash, filename))
-                db_f = Files(chalid, os.path.join(md5hash, filename))
+                db_f = Files(chalid, os.path.join('static', 'uploads', md5hash, filename))
                 db.session.add(db_f)
 
             db.session.commit()
@@ -568,7 +568,7 @@ def admin_create_chal():
             os.makedirs(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash))
 
         f.save(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash, filename))
-        db_f = Files(chal.id, os.path.join(md5hash, filename))
+        db_f = Files(chal.id, os.path.join('static', 'uploads', md5hash, filename))
         db.session.add(db_f)
 
     db.session.commit()
