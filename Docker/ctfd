@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#Install requirements
+if [ "$1" == "prepare" ]; then
+	pip install -r /opt/ctfd/requirements.txt --target /opt/ctfd/.pip_install
+
+#Link requirements to default path and run as ctfduser
+elif [ "$1" == "run" ]; then 
+	ln -s /opt/ctfd/.pip_install/* /usr/local/lib/python2.7/dist-packages
+	chown -R ctfduser:ctfduser /opt/ctfd
+	pushd /opt/ctfd
+	sudo -u ctfduser uwsgi --http-socket :8000 -w CTFd:create_app\(\)
+
+#Defaults to open shell if not other command is given
+else
+	/bin/bash
+fi
