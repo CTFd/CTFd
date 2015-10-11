@@ -4,10 +4,12 @@
 <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
 
 <div class="row">
+    <h1>Teams</h1>
     <br>
     <table id="teamsboard">
         <thead>
             <tr>
+                <td width="10px"><b>ID</b></td>
                 <td><b>Team</b></td>
                 <td><b>Website</b></td>
                 <td><b>Affiliation</b></td>
@@ -17,7 +19,8 @@
         <tbody>
         {% for team in teams %}
             <tr>
-                <td><a href="/team/{{ team.id }}">{{ team.name }}</a></td>
+                <td class="team-id">{{ team.id }}</td>
+                <td><a href="/team/{{ team.id }}">{{ team.name | truncate(32) }}</a></td>
                 <td>{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}</td>
                 <td><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span></td>
                 <td><span>{% if team.country %}{{ team.country }}{% endif %}</span></td>
@@ -25,6 +28,15 @@
         {% endfor %}
         </tbody>
     </table>
+    {% if team_pages > 1 %}
+    <div class="text-center">Page
+        <br>
+        {% for page in range(1, team_pages + 1) %}
+        <a href="/teams/{{ page }}">{{ page }}</a>  
+        {% endfor %}
+    <a href="">
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 

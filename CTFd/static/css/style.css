@@ -56,6 +56,7 @@ table{
 
 #score-graph{
     max-height: 400px;
+    clear:both;
 }
 
 .dropdown{
@@ -91,6 +92,24 @@ table{
     display: block;
 }
 
+.chal-button{
+    width: 150px;
+}
+
+.chal-button > p{
+    font-family: monospace;
+    margin-bottom: 0px;
+    height: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chal-button > span{
+    font-size: 14px;
+}
+
 @media only screen and (min-width: 40.063em){
     .top-bar .dropdown{
         display: block;
@@ -103,3 +122,8 @@ table{
     padding: 10px;
 }
 
+.scroll-wrap{
+    height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

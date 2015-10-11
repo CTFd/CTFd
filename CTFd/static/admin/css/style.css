@@ -69,6 +69,7 @@ table{
 
 #score-graph{
     max-height: 400px;
+    clear:both;
 }
 
 #keys-pie-graph{
@@ -81,4 +82,26 @@ table{
     width: 600px;
     float: left;
     max-height: 330px;
+}
+
+.chal-button{
+    width: 150px;
+}
+
+.chal-button > p{
+    font-family: monospace;
+    margin-bottom: 0px;
+    height: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chal-button > span{
+    font-size: 14px;
+}
+
+.remove-key{
+    float:right;
 }

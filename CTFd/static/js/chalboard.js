@@ -206,7 +206,9 @@ function loadchals() {
         };
 
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
-            $('#' + challenges['game'][i].category.replace(/ /g,"-").hashCode()).append($('<button value="' + challenges['game'][i].id + '">' + challenges['game'][i].value + '</button>'));
+            var chal = challenges['game'][i]
+            var chal_button = $('<button class="chal-button" value="{0}"><p>{1}</p><span>{2}</span></button>'.format(chal.id, chal.name, chal.value))
+            $('#' + challenges['game'][i].category.replace(/ /g,"-").hashCode()).append(chal_button);
         };
         updatesolves()
         marktoomanyattempts()

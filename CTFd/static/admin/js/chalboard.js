@@ -1,3 +1,14 @@
+//http://stackoverflow.com/a/2648463 - wizardry!
+String.prototype.format = String.prototype.f = function() {
+    var s = this,
+        i = arguments.length;
+
+    while (i--) {
+        s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+    }
+    return s;
+};
+
 //http://stackoverflow.com/a/7616484
 String.prototype.hashCode = function() {
     var hash = 0, i, chr, len;
@@ -16,8 +27,9 @@ function loadchal(id) {
     obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
     })[0]
+    $('.chal-title').text(obj.name);
     $('.chal-name').val(obj.name);
-    $('.chal-desc').html(obj.description);
+    $('.chal-desc').val(obj.description);
     $('.chal-value').val(obj.value);
     $('.chal-category').val(obj.category);
     $('.chal-id').val(obj.id);
@@ -44,9 +56,13 @@ function loadkeys(chal){
         keys = keys['keys'];
         $('#current-keys').empty();
         for(x=0; x<keys.length; x++){
-            $('#current-keys').append($("<input class='current-key' type='text'>").val(keys[x].key));
-            $('#current-keys').append('<input type="radio" name="key_type['+x+']" value="0">Static');
-            $('#current-keys').append('<input type="radio" name="key_type['+x+']" value="1">Regex');
+            var elem = $('<div>');
+            elem.append($("<input class='current-key' type='text'>").val(keys[x].key));
+            elem.append('<input type="radio" name="key_type['+x+']" value="0">Static');
+            elem.append('<input type="radio" name="key_type['+x+']" value="1">Regex');
+            elem.append('<a href="#" onclick="$(this).parent().remove()" class="remove-key">Remove</a>');
+            
+            $('#current-keys').append(elem);
             $('#current-keys input[name="key_type['+x+']"][value="'+keys[x].type+'"]').prop('checked',true);
         }
     });
@@ -59,7 +75,7 @@ function updatekeys(){
     $('.current-key').each(function(){
         keys.push($(this).val());
     })
-    $('#current-keys > input[name*="key_type"]:checked').each(function(){
+    $('#current-keys input[name*="key_type"]:checked').each(function(){
         vals.push($(this).val());
     })
     $.post('/admin/keys/'+chal, {'keys':keys, 'vals':vals, 'nonce': $('#nonce').val()})
@@ -146,13 +162,10 @@ function loadchals(){
             }
         };
 
-        for (var i = categories.length - 1; i >= 0; i--) {
-            $('#new-challenge select').append('<option value="' + categories[i] + '">' + categories[i] + '</option>');
-            $('#update-challenge select').append('<option value="' + categories[i] + '">' + categories[i] + '</option>');
-        };
-
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
-            $('#' + challenges['game'][i].category.replace(/ /g,"-").hashCode()).append($('<button class="radius" value="' + challenges['game'][i].id + '">' + challenges['game'][i].value + '</button>'));
+            var chal = challenges['game'][i]
+            var chal_button = $('<button class="chal-button" value="{0}"><p>{1}</p><span>{2}</span></button>'.format(chal.id, chal.name, chal.value))
+            $('#' + challenges['game'][i].category.replace(/ /g,"-").hashCode()).append(chal_button);
         };
 
         $('#challenges button').click(function (e) {
@@ -161,8 +174,6 @@ function loadchals(){
             loadtags(this.value);
             loadfiles(this.value);
         });
-
-        $('tr').append('<button class="radius create-challenge"><i class="fa fa-plus"></i></button>');
 
         $('.create-challenge').click(function (e) {
             $('#new-chal-category').val($($(this).siblings()[0]).text().trim())
@@ -177,9 +188,7 @@ $('#submit-key').click(function (e) {
 });
 
 $('#submit-keys').click(function (e) {
-    if (confirm('Updating keys. Are you sure?')){
-        updatekeys()
-    }
+    updatekeys()
 });
 
 $('#submit-tags').click(function (e) {
@@ -212,15 +221,38 @@ $(".tag-insert").keyup(function (e) {
     }
 });
 
-$('.create-category').click(function (e) {
-    $('#new-category').foundation('reveal', 'open');
+
+
+// Markdown Preview
+$('#desc-edit').on('toggled', function (event, tab) {
+    if (tab[0].id == 'desc-preview'){
+        $(tab[0]).html(marked($('#desc-editor').val(), {'gfm':true, 'breaks':true}))
+    }
 });
-count = 1;
-$('#create-key').click(function (e) {
-    $('#current-keys').append("<input class='current-key' type='text' placeholder='Blank Key'>");
-    $('#current-keys').append('<input type="radio" name="key_type['+count+']" value="0">Static');
-    $('#current-keys').append('<input type="radio" name="key_type['+count+']" value="1">Regex');
-    count++;
+$('#new-desc-edit').on('toggled', function (event, tab) {
+    if (tab[0].id == 'new-desc-preview'){
+        $(tab[0]).html(marked($('#new-desc-editor').val(), {'gfm':true, 'breaks':true}))
+    }
+});
+
+// Open New Challenge modal when New Challenge button is clicked
+$('.create-challenge').click(function (e) {
+    $('#create-challenge').foundation('reveal', 'open');
+});
+
+
+$('#create-key').click(function(e){
+    var amt = $('#current-keys input[type=text]').length
+    // $('#current-keys').append("<input class='current-key' type='text' placeholder='Blank Key'>");
+    // $('#current-keys').append('<input type="radio" name="key_type[{0}]" value="0">Static'.format(amt));
+    // $('#current-keys').append('<input type="radio" name="key_type[{0}]" value="1">Regex'.format(amt));
+    
+    var elem = $('<div>');
+    elem.append("<input class='current-key' type='text' placeholder='Blank Key'>");
+    elem.append('<input type="radio" name="key_type[{0}]" value="0">Static'.format(amt));
+    elem.append('<input type="radio" name="key_type[{0}]" value="1">Regex'.format(amt));
+    elem.append('<a href="#" onclick="$(this).parent().remove()" class="remove-key">Remove</a>');
+    $('#current-keys').append(elem);
 });
 
 $(function(){

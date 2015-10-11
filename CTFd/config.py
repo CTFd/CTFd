@@ -1,6 +1,7 @@
 import os
 ##### SERVER SETTINGS #####
 SECRET_KEY = os.urandom(64)
+#SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:password@localhost/ctfd'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///ctfd.db'
 SESSION_TYPE = "filesystem"
 SESSION_FILE_DIR = "/tmp/flask_session"

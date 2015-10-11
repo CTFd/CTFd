@@ -5,6 +5,7 @@
 
 <div class="row">
     <h1 id="team-id">{{ team.name }}</h1>
+    <h2 id="team-email" class="text-center">{{ team.email }}</h2>
     <h2 id="team-place" class="text-center">
         {%if place %}
             {{ place }} <small>place</small>
@@ -19,11 +20,14 @@
 
     <div id="keys-pie-graph"></div>
     <div id="categories-pie-graph"></div>
+    <div id="score-graph"></div>
 
     <table>
+        <h3>Solves</h3>
         <thead>
             <tr>
                 <td><b>Challenge</b></td>
+                <td><b>Submitted</b></td>
                 <td><b>Category</b></td>
                 <td><b>Value</b></td>
                 <td><b>Time</b></td>
@@ -31,12 +35,19 @@
         </thead>
         <tbody>
         {% for solve in solves %}
-            <tr><td>{{ solve.chal.name }}</td><td>{{ solve.chal.category }}</td><td>{{ solve.chal.value }}</td><td class="solve-time">{{ solve.date|unix_time_millis }}</td></tr>
+            <tr>
+                <td>{{ solve.chal.name }}</td>
+                <td>{{ solve.flag }}</td>
+                <td>{{ solve.chal.category }}</td>
+                <td>{{ solve.chal.value }}</td>
+                <td class="solve-time">{{ solve.date|unix_time_millis }}</td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>
 
     <table>
+        <h3>IP Addresses</h3>
         <thead>
             <tr>
                 <td><b>IP Address</b></td>
@@ -50,7 +61,25 @@
         </tbody>
     </table>
 
-    <div id="score-graph"></div>
+    <table>
+        <h3>Wrong Keys</h3>
+        <thead>
+            <tr>
+                <td><b>Challenge</b></td>
+                <td><b>Submitted</b></td>
+                <td><b>Time</b></td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for wrong_key in wrong_keys %}
+            <tr>
+                <td>{{ wrong_key.chal.name }}</td>
+                <td>{{ wrong_key.flag }}</td>
+                <td class="solve-time">{{ wrong_key.date|unix_time_millis }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 

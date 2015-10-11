@@ -22,7 +22,7 @@ def create_app(config='CTFd.config'):
         global mail
         mail = Mail(app)
 
-        Session(app)
+        #Session(app)
 
         from CTFd.views import views
         from CTFd.challenges import challenges

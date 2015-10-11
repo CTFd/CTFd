@@ -9,6 +9,16 @@ String.prototype.format = String.prototype.f = function() {
     return s;
 };
 
+function colorhash (x) {
+    color = ""
+    for (var i = 20; i <= 60; i+=20){
+        x += i
+        x *= i
+        color += x.toString(16)
+    };
+    return "#" + color.substring(0, 6)
+}
+
 function htmlentities(string) {
     return $('<div/>').text(string).html();
 }
@@ -37,7 +47,6 @@ function UTCtoDate(utc){
     d.setUTCSeconds(utc)
     return d;
 }
-
 function scoregraph () {
     var times = []
     var scores = []
@@ -52,12 +61,15 @@ function scoregraph () {
 
         xs_data = {}
         column_data = []
+        colors = {}
         for (var i = 0; i < teams.length; i++) {
           times = []
           team_scores = []
           for (var x = 0; x < scores[teams[i]].length; x++) {
             times.push(scores[teams[i]][x].time)
             team_scores.push(scores[teams[i]][x].value)
+            console.log(scores[teams[i]])
+            colors[teams[i]] = colorhash(scores[teams[i]][x].id)
           };
           team_scores = cumulativesum(team_scores)
 
@@ -79,7 +91,8 @@ function scoregraph () {
             data: {
                 xs: xs_data,
                 columns: column_data,
-                type: "step"
+                type: "step",
+                colors: colors
                 // labels: true
             },
             axis : {
