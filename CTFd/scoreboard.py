@@ -20,9 +20,9 @@ def scores():
     quickest = db.func.max(Solves.date).label('quickest')
     teams = db.session.query(Solves.teamid, Teams.name, score).join(Teams).join(Challenges).filter(Teams.banned == None).group_by(Solves.teamid).order_by(score.desc(), quickest)
     db.session.close()
-    json = {'teams':[]}
+    json = {'standings':[]}
     for i, x in enumerate(teams):
-        json['teams'].append({'place':i+1, 'id':x.teamid, 'name':x.name,'score':int(x.score)})
+        json['standings'].append({'pos':i+1, 'id':x.teamid, 'name':x.name,'score':int(x.score)})
     return jsonify(json)
 
 
