@@ -1,7 +1,7 @@
 from CTFd.models import db, WrongKeys, Pages, Config
 from CTFd import mail
 
-from six.moves.urllib.parse import urlparse, urljoin 
+from six.moves.urllib.parse import urlparse, urljoin
 from functools import wraps
 from flask import current_app as app, g, request, redirect, url_for, session, render_template
 from flask.ext.mail import Message
@@ -171,11 +171,11 @@ def ctftime():
             # Within the two time bounds
             return True
 
-    if start < time.time() and end == 0: 
+    if start < time.time() and end == 0:
         # CTF starts on a date but never ends
         return True
 
-    if start == 0 and time.time() < end: 
+    if start == 0 and time.time() < end:
         # CTF started but ends at a date
         return True
 
@@ -276,9 +276,9 @@ def is_safe_url(target):
 
 
 def validate_url(url):
-    return urlparse(url).scheme.startswith('http')
+    parsed = urlparse(url)
+    return parsed.scheme.startswith('http') and '.' in parsed.netloc
 
 
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
-
