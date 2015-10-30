@@ -20,6 +20,7 @@
     } );
     function onInputFocus( ev ) {
         classie.add( ev.target.parentNode, 'input--filled' );
+        classie.add( ev.target.nextSibling, 'input--hide' );
     }
     function onInputBlur( ev ) {
         if( ev.target.value.trim() === '' ) {

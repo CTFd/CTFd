@@ -94,9 +94,4 @@
     // add to global namespace
     window.DialogFx = DialogFx;
 
-    $('[data-dialog-close]').click(function() {
-        $('.nav-tabs > li:nth-child(1)').addClass("active");
-        $('.nav-tabs > li:nth-child(2)').removeClass("active");
-        openDialog.toggle();
-    });
 })( window );

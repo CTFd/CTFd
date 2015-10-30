@@ -5,25 +5,25 @@
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.min.js">
     <link rel="stylesheet" href="/static/css/modal.css">
     <link rel="stylesheet" href="/static/css/input.css">
-    <link rel="stylesheet" href="/static/css/button.css">
 <style>
     .alert {display: none}
     .category-header {text-align: center}
     .challenge-wrapper {padding: 5px}
     .challenge-button {width: 100%}
-    .submit-row {padding-top: 20px}
+    .submit-row {padding-top: 0px}
     #submit-key {padding: 10px 20px}
     .disabled-button {background-color: #EEEEEE}
 
-    .file-row {margin-top: 30px; padding-left: 30px; padding-right: 30px;}
+    .file-row {margin: 15px 0px; padding-left: 30px; padding-right: 30px;}
     .file-button {text-decoration: none; color: #fff;}
     .file-button:hover {text-decoration: none; color: #fff;}
-    .file-wrapper {background-color: #0E83CD; padding: 20px; transition: all 0.5s ease; cursor: pointer;}
+    .file-wrapper {background-color: #0E83CD; padding: 20px; transition: all 0.5s ease; cursor: pointer; color: #fff;}
+    .file-button {cursor: pointer;}
     .file-wrapper:hover {background-color: #0E63AD;}
 
     .close-text {color: #ccc;position: relative;top: -25px;right: -15px;cursor: pointer;}
     .chal-desc {padding-left: 40px;padding-right: 40px;}
-    .key-submit {padding-top: 14px;position: relative;top: 1px;}
+    .key-submit {padding-top: 14px;}
     .notification-row {padding-left: 45px;padding-right: 45px;}
 </style>
 {% endblock %}
@@ -61,16 +61,13 @@
                             <h3 class='chal-name'></h3>
                             <h4 class="chal-value"></h4>
                             <p class="chal-desc"></p>
-                            <div class="chal-files file-row">
+                            <div class="chal-files file-row row">
                             </div>
 
                             <div class="row submit-row">
                                 <div class="col-md-9">
                                     <span class="input input--yoshiko">
-                                        <input class="input__field input__field--yoshiko" type="text" name="answer" id="answer-input" />
-                                        <label class="input__label input__label--yoshiko" for="answer-input">
-                                            <span class="input__label-content input__label-content--yoshiko" data-content="Key">Key</span>
-                                        </label>
+                                        <input class="input__field input__field--yoshiko" type="text" name="answer" id="answer-input" placeholder="Key" />
                                     </span>
                                     <input type="hidden" id="nonce" name="nonce" value={{ nonce }}>
                                     <input id="chal-id" type="hidden">
@@ -124,4 +121,12 @@
     <script src="/static/js/classie.js"></script>
     <script src="/static/js/modal.js"></script>
     <script src="/static/js/input.js"></script>
+    <script>
+    $('[data-dialog-close]').click(function() {
+        $('.nav-tabs > li:nth-child(1)').addClass("active");
+        $('.nav-tabs > li:nth-child(2)').removeClass("active");
+        openDialog.toggle();
+        window.location.hash = ""
+    });
+    </script>
 {% endblock %}
