@@ -1,4 +1,3 @@
-#from CTFd import db
 from flask.ext.sqlalchemy import SQLAlchemy
 
 from socket import inet_aton, inet_ntoa
@@ -7,6 +6,7 @@ from passlib.hash import bcrypt_sha256
 
 import datetime
 import hashlib
+import json
 
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
@@ -38,13 +38,15 @@ class Challenges(db.Model):
     description = db.Column(db.Text)
     value = db.Column(db.Integer) 
     category = db.Column(db.String(80))
-    # add open category
+    flags = db.Column(db.Text)
+    hidden = db.Column(db.Boolean)
 
-    def __init__(self, name, description, value, category):
+    def __init__(self, name, description, value, category, flags):
         self.name = name
         self.description = description
         self.value = value
         self.category = category
+        self.flags = json.dumps(flags)
 
     def __repr__(self):
         return '<chal %r>' % self.name
@@ -79,7 +81,6 @@ class Keys(db.Model):
     key_type = db.Column(db.Integer)
     flag = db.Column(db.Text)
 
-
     def __init__(self, chal, flag, key_type):
         self.chal = chal
         self.flag = flag
@@ -104,7 +105,7 @@ class Teams(db.Model):
     def __init__(self, name, email, password):
         self.name = name
         self.email = email
-        self.password = bcrypt_sha256.encrypt(password)
+        self.password = bcrypt_sha256.encrypt(str(password))
 
     def __repr__(self):
         return '<team %r>' % self.name
@@ -135,15 +136,17 @@ class Solves(db.Model):
     chalid = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
     ip = db.Column(db.Integer)
+    flag = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     team = db.relationship('Teams', foreign_keys="Solves.teamid", lazy='joined')
     chal = db.relationship('Challenges', foreign_keys="Solves.chalid", lazy='joined')
     # value = db.Column(db.Integer) 
 
-    def __init__(self, chalid, teamid, ip):
+    def __init__(self, chalid, teamid, ip, flag):
         self.ip = ip2long(ip)
         self.chalid = chalid
         self.teamid = teamid
+        self.flag = flag
         # self.value = value
 
     def __repr__(self):
@@ -152,14 +155,15 @@ class Solves(db.Model):
 
 class WrongKeys(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    chalid = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     team = db.Column(db.Integer, db.ForeignKey('teams.id'))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     flag = db.Column(db.Text)
+    chal = db.relationship('Challenges', foreign_keys="WrongKeys.chalid", lazy='joined')
 
-    def __init__(self, team, chal, flag):
+    def __init__(self, team, chalid, flag):
         self.team = team
-        self.chal = chal
+        self.chalid = chalid
         self.flag = flag
 
     def __repr__(self):
@@ -178,6 +182,7 @@ class Tracking(db.Model):
 
     def __repr__(self):
         return '<ip %r>' % self.team
+
 
 class Config(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="row">
+    <br>
+    <h1>Config</h1>
+    <form method="POST">
+        <input name='nonce' type='hidden' value="{{ nonce }}">
+
+        <div class="row">
+            <label for="start">CTF Name:</label>
+            <input id='ctf_name' name='ctf_name' type='text' placeholder="CTF Name" {% if ctf_name is defined and ctf_name != None %}value="{{ ctf_name }}"{% endif %}>
+        </div>
+
+        <div class="row">
+            <label for="max_tries">Maximum Attempts Per Challenge (0 to disable):</label>
+            <input id='max_tries' name='max_tries' type='text' placeholder="0" {% if max_tries is defined and max_tries != None %}value="{{ max_tries }}"{% endif %}>
+        </div>
+
+        <div class="row">
+            <label for="start">Mailgun API Key:</label>
+            <input id='mg_api_key' name='mg_api_key' type='text' placeholder="Mailgun API Key" {% if mg_api_key is defined and mg_api_key != None %}value="{{ mg_api_key }}"{% endif %}>
+        </div>
+
+        <div class="row">
+            <label for="start">Start Date:</label>
+            <input id='start' name='start' type='text' placeholder="Start Date (UTC timestamp)" {% if start is defined and start != None %}value="{{ start }}"{% endif %}>
+        </div>
+
+        <div class="row">
+            <label for="end">End Date:</label>
+            <input id='end' name='end' type='text' placeholder="End Date (UTC timestamp)" {% if end is defined and end != None %}value="{{ end }}"{% endif %}>
+        </div>
+
+        <div class="row">
+            <input id="view_after_ctf" name="view_after_ctf" type="checkbox" {% if view_after_ctf %}checked{% endif %}>
+            <label for="end">Allow challenges to be viewed after CTF end</label>
+        </div>
+
+        <div class="row">
+            <input id="view_challenges_unregistered" name="view_challenges_unregistered" type="checkbox" {% if view_challenges_unregistered %}checked{% endif %}>
+            <label for="view_challenges_unregistered">Unregistered users can view challenges</label>
+        </div>
+
+        <div class="row">
+            <input id="prevent_registration" name="prevent_registration" type="checkbox" {% if prevent_registration %}checked{% endif %}>
+            <label for="prevent_registration">Prevent public registration</label>
+        </div>
+
+        <div class="row">
+            <input id="prevent_name_change" name="prevent_name_change" type="checkbox" {% if prevent_name_change %}checked{% endif %}>
+            <label for="prevent_name_change">Prevent Team Name Changes</label>
+        </div>
+
+        <button class="radius" type='submit'>Update</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

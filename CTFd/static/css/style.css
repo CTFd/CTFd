@@ -1,0 +1,129 @@
+#chal > form{
+    width: 400px;
+    margin: 0 auto;
+}
+
+.reveal-modal{
+    text-align: center;
+}
+
+.chal-desc{
+    text-align: left;
+}
+
+table{
+    width: 100%;
+}
+
+/*Not sure why foundation needs these two...*/
+.top-bar input{
+    height: auto;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+    font-size: 0.75rem;
+}
+
+.top-bar .button{
+    padding-top: 0.45rem;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0;
+    font-size: 0.75rem;
+}
+
+.dropdown{
+    background-color: #333 !important;
+    padding: 5px;
+}
+
+.dropdown button{
+    padding-top: 0.45rem;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0;
+    font-size: 0.75rem;
+}
+
+#challenges button{
+    margin: 8px;
+}
+
+.row > h1{
+    text-align: center;
+}
+
+#challenges{
+    line-height: 66px;
+}
+
+#score-graph{
+    max-height: 400px;
+    clear:both;
+}
+
+.dropdown{
+    padding: 20px;
+}
+
+.dropdown input{
+    margin: 5px auto;
+    width: 95%;
+}
+
+.dropdown button{
+    margin: 10px auto;
+    width: 100%;
+}
+
+#keys-pie-graph{
+    width: 50%;
+    max-height: 330px;
+    float: left;
+}
+
+#categories-pie-graph{
+    width: 50%;
+    float: left;
+    max-height: 330px;
+}
+
+.logo{
+    margin: 0 auto;
+    width: 500px;
+    padding: 50px;
+    display: block;
+}
+
+.chal-button{
+    width: 150px;
+}
+
+.chal-button > p{
+    font-family: monospace;
+    margin-bottom: 0px;
+    height: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chal-button > span{
+    font-size: 14px;
+}
+
+@media only screen and (min-width: 40.063em){
+    .top-bar .dropdown{
+        display: block;
+        padding: 0 15px 5px;
+        width: 200% !important;
+    }
+}
+
+.top-bar input{
+    padding: 10px;
+}
+
+.scroll-wrap{
+    height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

@@ -1,0 +1,107 @@
+#submit-key{
+    display: none;
+}
+
+#chal > h1{
+    text-align: center
+}
+
+#chal > form{
+    width: 400px;
+    margin: 0 auto;
+}
+
+#chal > form > h3,h4{
+    text-align: center;
+}
+
+#chal > form > input{
+    display: none;
+}
+
+table{
+    width: 100%;
+}
+
+/*Not sure why foundation needs these two...*/
+.top-bar input{
+    height: auto;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
+    font-size: 0.75rem;
+}
+
+.top-bar .button{
+    padding-top: 0.45rem;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0;
+    font-size: 0.75rem;
+}
+
+.dropdown{
+    background-color: #333 !important;
+    padding: 5px;
+}
+
+.dropdown button{
+    padding-top: 0.45rem;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0;
+    font-size: 0.75rem;
+}
+
+#challenges button{
+    margin: 5px;
+}
+
+.row h1{
+    text-align: center;
+}
+
+
+.textbox{
+    height: 150px;
+}
+
+.chal-tag{
+    margin: 0 5px 0 5px;
+}
+
+#score-graph{
+    max-height: 400px;
+    clear:both;
+}
+
+#keys-pie-graph{
+    width: 400px;
+    max-height: 330px;
+    float: left;
+}
+
+#categories-pie-graph{
+    width: 600px;
+    float: left;
+    max-height: 330px;
+}
+
+.chal-button{
+    width: 150px;
+}
+
+.chal-button > p{
+    font-family: monospace;
+    margin-bottom: 0px;
+    height: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chal-button > span{
+    font-size: 14px;
+}
+
+.remove-key{
+    float:right;
+}

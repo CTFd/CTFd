@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <h1>Login</h1>
+
+    <div class="row">
+    {% for error in errors %}
+        <div class="large-8 large-centered columns">
+            <div data-alert class="alert-box alert radius centered text-center">
+                <span>{{ error }}</span>
+                <a href="#" class="close">×</a>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+
+    <form method="POST">
+        <input class="radius" type='text' name='name' placeholder='Name'><br/>
+        <input class="radius" type='password' name='password' placeholder='Password'><br/>
+        <p><a href="/reset_password">Forgot your password?</a></p>
+        <input type="hidden" name="nonce" value="{{nonce}}">
+        <button class="radius" type='submit'>Login</button>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

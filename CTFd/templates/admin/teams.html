@@ -1,0 +1,260 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
+
+<div class="row">
+    <br>
+    <div id="confirm" class="reveal-modal" data-reveal>
+        <h2 class="text-center">Delete User</h2>
+        <form method="POST">
+            <input type="hidden" name="id">
+            <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+            <div class="small-6 small-centered text-center columns">
+                <p>Are you sure you want to delete <strong id="confirm-team-name"></strong>?</p>
+                <button type="button" class="button alert radius" onclick="$('#confirm').foundation('reveal', 'close');">No</button>
+                <button type="button" id="delete-user" class="button success radius">Yes</button>
+            </div>
+        </form>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <div id="email-user" class="reveal-modal" data-reveal>
+        <h2 class="text-center">Email User</h2>
+        <form method="POST">
+            <input type="hidden" name="id">
+            <input type="hidden" name="nonce" value="{{ nonce }}">
+            <textarea name="msg" placeholder="Enter your message here" rows="15"></textarea>
+            <div id="email-user-errors"></div>
+            <button type="button" id="send-user-email">Send Message</button>
+        </form>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <div id="user" class="reveal-modal" data-reveal>
+        <h2 class="text-center">Edit User</h2>
+        <form method="POST" action="/admin/teams/">
+            <div class="row">
+                <input type="hidden" name="nonce" value="{{ nonce }}">
+                <input type="hidden" name="id">
+                <div class="large-12 columns">
+                    <label>Team Name
+                        <input type="text" name="name" placeholder="Enter new team name" />
+                    </label>
+                </div>
+                <div class="large-12 columns">
+                    <label>Email
+                        <input type="text" name="email" placeholder="Enter new email" />
+                    </label>
+                </div>
+                <div class="large-12 columns">
+                    <label>Password
+                        <input type="password" name="password" placeholder="Enter new password" />
+                    </label>
+                </div>
+                <div class="large-12 columns">
+                    <label>Website
+                        <input type="text" name="website" placeholder="Enter Website" />
+                    </label>
+                </div>
+                <div class="large-6 columns">
+                    <label>Affiliation
+                        <input type="text" name="affiliation" placeholder="Enter Affiliation" />
+                    </label>
+                </div>
+                <div class="large-6 columns">
+                    <label>Country
+                        <input type="text" name="country" placeholder="Enter Country" />
+                    </label>
+                </div>
+                <div id="results">
+
+                </div>
+                <button id="update-user" class="radius" type="submit">Update</button>
+            </div>
+        </form>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <table id="teamsboard">
+        <thead>
+            <tr>
+                <td width="10px" class="text-center"><b>ID</b>
+                </td>
+                <td class="text-center"><b>Team</b>
+                </td>
+                <td class="text-center"><b>Email</b>
+                </td>
+                <td class="text-center"><b>Website</b>
+                </td>
+                <td class="text-center"><b>Affiliation</b>
+                </td>
+                <td class="text-center"><b>Country</b>
+                </td>
+                <td class="text-center"><b>Admin</b>
+                </td>
+                <td class="text-center"><b>Settings</b>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for team in teams %}
+            <tr name="{{ team.id }}">
+                <td class="team-id">{{ team.id }}</td>
+                <td class="team-name"><a href="/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
+                </td>
+                <td class="team-email">{{ team.email | truncate(32) }}</td>
+                <td class="team-website">{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website | truncate(32) }}</a>{% endif %}
+                </td>
+                <td class="team-affiliation"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
+                </td>
+                <td class="team-country"><span>{% if team.country %}{{ team.country }}{% endif %}</span>
+                </td>
+                <td class="team-admin">
+                    <div class="center-block checkbox text-center">
+                        <input type="checkbox" {% if team.admin %}checked{% endif %}>
+                    </div>
+                </td>
+                <td class="text-center"><span>
+                    <i class="fa fa-pencil-square-o"></i>
+                    {% if mailserver() %}<i class="fa fa-envelope"></i>{% endif %}
+                    <i class="fa fa-times"></i>
+                </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if pages > 1 %}
+    <div class="text-center">Page
+        <br>
+        {% for page in range(1, pages + 1) %}
+        <a href="/admin/teams/{{ page }}">{{ page }}</a>  
+        {% endfor %}
+    <a href="">
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function load_update_modal(id, name, email, website, affiliation, country){
+    var modal_form = $('#user form');
+    
+    modal_form.find('input[name=name]').val(name)
+    modal_form.find('input[name=id]').val(id)
+    modal_form.find('input[name=email]').val(email)
+    modal_form.find('input[name=website]').val(website)
+    modal_form.find('input[name=affiliation]').val(affiliation)
+    modal_form.find('input[name=country]').val(country)
+    console.log(modal_form);
+    $('#user form').attr('action', '/admin/team/'+id)
+    $('#user').foundation('reveal', 'open');
+}
+
+$('#update-user').click(function(e){
+    e.preventDefault();
+    var id = $('#user input[name="id"]').val()
+    var user_data = $('#user form').serializeArray()
+    $.post($('#user form').attr('action'), $('#user form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        for (var i = 0; i < data['data'].length; i++) {
+            if (data['data'][i] == 'success'){
+                var row = $('tr[name='+id+']')
+                console.log($.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'])
+                console.log(row.find('.team-name > a'))
+                row.find('.team-name > a').text( $.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'] );
+                row.find('.team-email').text( $.grep(user_data, function(e){ return e.name == 'email'; })[0]['value'] );
+
+                row.find('.team-website > a').empty()
+                var website = $.grep(user_data, function(e){ return e.name == 'website'; })[0]['value']
+                row.find('.team-website').append($('<a>').attr('href', website).text(website));
+
+                row.find('.team-affiliation').text( $.grep(user_data, function(e){ return e.name == 'affiliation'; })[0]['value'] );
+                row.find('.team-country').text( $.grep(user_data, function(e){ return e.name == 'country'; })[0]['value'] );
+                $('#user').foundation('reveal', 'close');
+            }
+            else{
+                $('#results').append($('p').text( data['data'][i] ))
+            }
+        };
+    })
+});
+
+$('.team-admin input').on('change', function(){
+    var elem = $(this).parent().parent().parent();
+    var id = elem.find('.team-id').text().trim();
+    var admin = $(this).prop('checked')
+    var nonce = $('#nonce').val()
+    console.log(admin)
+
+    $.post('/admin/team/'+id, {'admin':admin, 'nonce':nonce});
+})
+
+$('#send-user-email').click(function(e){
+    e.preventDefault();
+    var id = $('#email-user input[name="id"]').val();
+    var email_data = $('#email-user form').serializeArray();
+    $.post($('#email-user form').attr('action'), $('#email-user form').serialize(), function(data){
+        if (data == "1"){
+            $('#email-user').foundation('reveal', 'close');
+        }
+        else{
+            $('#email-user-errors').append("<b>Failed to send email</b>");
+        }
+    });
+});
+
+$('#delete-user').click(function(e){
+    e.preventDefault();
+    var id = $('#confirm input[name="id"]').val()
+    var user_data = $('#confirm form').serializeArray()
+    $.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function(data){
+        var data = $.parseJSON(JSON.stringify(data))
+        if (data == "1"){
+            location.reload()
+        }
+    })
+});
+
+$('.fa-pencil-square-o').click(function(){
+    var elem = $(this).parent().parent().parent();
+    var id = elem.find('.team-id').text().trim();
+    var name = elem.find('.team-name').text().trim();
+    var email = elem.find('.team-email').text().trim();
+    var website = elem.find('.team-website').text().trim();
+    var affiliation = elem.find('.team-affiliation').text().trim();
+    var country = elem.find('.team-country').text().trim();
+
+    load_update_modal(id, name, email, website, affiliation, country);
+});
+
+function load_confirm_modal(id, name){
+    var modal = $('#confirm')
+    modal.find('input[name=id]').val(id)
+    modal.find('#confirm-team-name').text(name)
+    $('#confirm form').attr('action', '/admin/team/'+id+'/delete');
+    $('#confirm').foundation('reveal', 'open');
+}
+
+$('.fa-times').click(function(){
+    var elem = $(this).parent().parent().parent();
+    var id = elem.find('.team-id').text().trim();
+    var name = elem.find('.team-name').text().trim();
+    load_confirm_modal(id, name)
+});
+
+function load_email_modal(id){
+    var modal = $('#email-user')
+    modal.find('textarea').val("")
+    modal.find('input[name=id]').val(id)
+    $('#email-user-errors').empty()
+    $('#email-user form').attr('action', '/admin/team/'+id+'/mail');
+    $('#email-user').foundation('reveal', 'open');
+}
+
+$('.fa-envelope').click(function(){
+    var elem = $(this).parent().parent().parent();
+    var id = elem.find('.team-id').text().trim();
+    load_email_modal(id);
+});
+</script>
+{% endblock %}

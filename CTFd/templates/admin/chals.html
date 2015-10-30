@@ -1,0 +1,141 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <input type="hidden" value="{{ nonce }}" id="nonce">
+
+    <div id="create-challenge" class="reveal-modal" data-reveal>
+        <h3>New Challenge</h3>
+        <form method="POST" action="/admin/chal/new" enctype="multipart/form-data">
+            <input type='text' name='name' placeholder='Name'><br/>
+            <input type='text' name='category' placeholder='Category'><br/>
+
+            <ul id="new-desc-edit" class="tabs" data-tab>
+                <li class="tab-title active"><a href="#new-desc-write" style="padding: 0 2rem;">Write</a></li>
+                <li class="tab-title"><a href="#new-desc-preview" style="padding: 0 2rem;">Preview</a></li>
+            </ul>
+            <div class="tabs-content">
+                <div class="content active" id="new-desc-write">
+                    <textarea id="new-desc-editor" class="new-chal-desc" name='desc' placeholder='Description' rows="10"></textarea><br>
+                </div>
+                <div class="content" id="new-desc-preview">
+                </div>
+            </div>
+
+            <input type='number' name='value' placeholder='Value'><br/>
+            <input type='text' name='key' placeholder='Key'><br/>
+            <input type="radio" name="key_type[0]" value="0">Static
+            <input type="radio" name="key_type[0]" value="1">Regex
+            <br/>
+            <input type="file" name="files[]" multiple="multiple">
+
+            <button type='submit'>Create</button>
+            <a class="close-reveal-modal">&#215;</a>
+        </form>
+    </div>
+
+    <div id="delete-chal" class="reveal-modal" data-reveal>
+        <h2 class="text-center">Delete Challenge</h2>
+        <form method="POST" action="/admin/chal/delete">
+            <input type="hidden" name="nonce" value="{{ nonce }}">
+            <input type="hidden" name="id" class="chal-id">
+            <div class="small-6 small-centered text-center columns">
+                <p>Are you sure you want to delete this challenge?</p>
+                <p>Solves, wrong keys, files, tags will all be deleted.</p>
+                <button type="button" class="button alert radius" onclick="$('#delete-chal').foundation('reveal', 'close');">No</button>
+                <button type="submit" id="delete-user" class="button success radius">Yes</button>
+            </div>
+        </form>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
+
+    <div id="update-keys" class="reveal-modal" data-reveal>
+        <form method="POST" action="/admin/keys">
+            <h3>Keys</h3>
+            <input name='nonce' type='hidden' value="{{ nonce }}">
+            <input id="keys-chal" name='chal' type='hidden'>
+            <div id="current-keys"></div>
+            <a href="#" id="create-key" class="secondary button">New Key</a>
+            <a href="#" id="submit-keys" class="button">Update</a>
+            <a class="close-reveal-modal">&#215;</a>
+        </form>
+    </div>
+
+    <div id="update-files" class="reveal-modal" data-reveal>
+        <form method="POST" action="/admin/files" enctype="multipart/form-data">
+            <h3>Files</h3>
+            <input name='nonce' type='hidden' value="{{ nonce }}">
+            <input id="files-chal" name='chal' type='hidden'>
+
+            <div id="current-files"></div>
+            <input type="hidden" name="method" value="upload">
+            <input type="file" name="files[]" multiple="multiple">
+            <button type='submit'>Upload</button>
+            <a class="close-reveal-modal">&#215;</a>
+        </form>
+    </div>
+
+    <div id="update-tags" class="reveal-modal" data-reveal>
+        <h3>Tags</h3>
+        <input type="text" class="tag-insert" maxlength="80" placeholder="Type tag and press Enter">
+        <input name='nonce' type='hidden' value="{{ nonce }}">
+        <input id="tags-chal" name='chal' type='hidden'>
+
+        <div id="current-tags">
+
+        </div>
+        <br/>
+        <div id="chal-tags">
+            
+        </div>
+        <br/>
+
+        <a href="#" id="submit-tags" class="button">Update</a>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
+
+    <div id="update-challenge" class="reveal-modal" data-reveal>
+        <form method="POST" action="/admin/chal/update">
+            <h3 class="chal-title text-center"></h3>
+            <input name='nonce' type='hidden' value="{{ nonce }}">
+            Name: <input class="chal-name" type='text' name='name' placeholder='Name'><br>
+            Category: <input class="chal-category" type="text" name="category" placeholder="Category"><br>
+            Description: 
+            
+            <ul id="desc-edit" class="tabs" data-tab>
+                <li class="tab-title active"><a href="#desc-write" style="padding: 0 2rem;">Write</a></li>
+                <li class="tab-title"><a href="#desc-preview" style="padding: 0 2rem;">Preview</a></li>
+            </ul>
+            <div class="tabs-content">
+                <div class="content active" id="desc-write">
+                    <textarea id="desc-editor" class="chal-desc" name='desc' placeholder='Description' rows="10"></textarea><br>
+                </div>
+                <div class="content" id="desc-preview">
+                </div>
+            </div>
+            
+            Value: <input class="chal-value" type='number' name='value' placeholder='Value'><br>
+            <input class="chal-id" type='hidden' name='id' placeholder='ID'>
+
+            <a href="#" data-reveal-id="update-tags" class="secondary button">Tags</a>
+            <a href="#" data-reveal-id="update-files" class="secondary button">Files</a>
+            <a href="#" data-reveal-id="update-keys" class="secondary button">Keys</a>
+            <a href="#" data-reveal-id="delete-chal" class="secondary alert button">Delete</a>
+            <button type='submit'>Update</button>
+            <a class="close-reveal-modal">&#215;</a>
+        </form>
+    </div>
+
+    <div>
+        <h1 class="text-center">Challenges</h1>
+
+        <div>
+            <table id='challenges'>
+            </table>
+            <button style="width:100%;" class="radius create-challenge">New Challenge</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/admin/js/chalboard.js"></script>
+{% endblock %}
