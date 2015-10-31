@@ -328,20 +328,20 @@ def admin_teams(page):
 @admins_only
 def admin_team(teamid):
     user = Teams.query.filter_by(id=teamid).first()
-    solves = Solves.query.filter_by(teamid=teamid).all()
-    addrs = Tracking.query.filter_by(team=teamid).order_by(Tracking.date.desc()).group_by(Tracking.ip).all()
-    wrong_keys = WrongKeys.query.filter_by(team=teamid).order_by(WrongKeys.date.desc()).all()
-    score = user.score()
-    place = user.place()
 
     if request.method == 'GET':
+        solves = Solves.query.filter_by(teamid=teamid).all()
+        addrs = Tracking.query.filter_by(team=teamid).order_by(Tracking.date.desc()).group_by(Tracking.ip).all()
+        wrong_keys = WrongKeys.query.filter_by(team=teamid).order_by(WrongKeys.date.desc()).all()
+        score = user.score()
+        place = user.place()
         return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, place=place, wrong_keys=wrong_keys)
     elif request.method == 'POST':
-        admin_user = request.form.get('admin', "false")
-        admin_user = 1 if admin_user == "true" else 0
-        if admin:
-            user.admin = 1
-            user.banned = 1
+        admin_user = request.form.get('admin', None)
+        if admin_user:
+            admin_user = 1 if admin_user == "true" else 0
+            user.admin = admin_user
+            user.banned = admin_user
             db.session.commit()
             return jsonify({'data': ['success']})
 
