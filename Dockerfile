@@ -1,9 +1,12 @@
-FROM ubuntu:trusty
-RUN apt-get update && apt-get upgrade -y
+FROM alpine:3.2
+RUN apk update && apk upgrade
+RUN apk add git gcc musl-dev libffi-dev python python-dev py-pip
 
-RUN apt-get install git gunicorn -y
-RUN git clone https://github.com/isislab/CTFd.git /opt/CTFd && cd /opt/CTFd && ./prepare.sh
-
+RUN mkdir /opt
+RUN git clone https://github.com/isislab/CTFd.git /opt/CTFd && cd /opt/CTFd
 WORKDIR /opt/CTFd
+
+RUN pip install -r requirements.txt
+
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "-w", "4", "CTFd:create_app()"]
 EXPOSE 8000
