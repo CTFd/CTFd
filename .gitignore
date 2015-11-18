@@ -56,4 +56,5 @@ target/
 *.db
 *.log
 .idea/
-static/uploads
+CTFd/static/uploads
+.ctfd_secret_key
