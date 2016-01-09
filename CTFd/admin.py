@@ -34,10 +34,10 @@ def admin_view():
             session['admin'] = True
             session['nonce'] = sha512(os.urandom(10))
             db.session.close()
-            return redirect('/admin/graphs')
+            return redirect(url_for('admin.admin_graphs'))
 
     if is_admin():
-        return redirect('/admin/graphs')
+        return redirect(url_for('admin.admin_graphs'))
 
     return render_template('admin/login.html')
 
@@ -90,7 +90,7 @@ def admin_config():
         db.session.add(db_end)
 
         db.session.commit()
-        return redirect('/admin/config')
+        return redirect(url_for('admin.admin_config'))
 
     ctf_name = get_config('ctf_name')
     if not ctf_name:
@@ -173,11 +173,11 @@ def admin_pages(route):
             page.route = route
             page.html = html
             db.session.commit()
-            return redirect('/admin/pages')
+            return redirect(url_for('admin.admin_pages'))
         page = Pages(route, html)
         db.session.add(page)
         db.session.commit()
-        return redirect('/admin/pages')
+        return redirect(url_for('admin.admin_pages'))
     pages = Pages.query.all()
     return render_template('admin/pages.html', routes=pages, css=get_config('css'))
 
@@ -305,7 +305,7 @@ def admin_files(chalid):
 
             db.session.commit()
             db.session.close()
-            return redirect('/admin/chals')
+            return redirect(url_for('admin.admin_chals'))
 
 
 @admin.route('/admin/teams', defaults={'page':'1'})
@@ -395,7 +395,7 @@ def ban(teamid):
     user = Teams.query.filter_by(id=teamid).first()
     user.banned = 1
     db.session.commit()
-    return redirect('/admin/scoreboard')
+    return redirect(url_for('admin.admin_scoreboard'))
 
 
 @admin.route('/admin/team/<teamid>/unban', methods=['POST'])
@@ -404,7 +404,7 @@ def unban(teamid):
     user = Teams.query.filter_by(id=teamid).first()
     user.banned = None
     db.session.commit()
-    return redirect('/admin/scoreboard')
+    return redirect(url_for('admin.admin_scoreboard'))
 
 
 @admin.route('/admin/team/<teamid>/delete', methods=['POST'])
@@ -591,7 +591,7 @@ def admin_create_chal():
 
     db.session.commit()
     db.session.close()
-    return redirect('/admin/chals')
+    return redirect(url_for('admin.admin_chals'))
 
 
 @admin.route('/admin/chal/delete', methods=['POST'])
@@ -625,4 +625,4 @@ def admin_update_chal():
     db.session.add(challenge)
     db.session.commit()
     db.session.close()
-    return redirect('/admin/chals')
+    return redirect(url_for('admin.admin_chals'))
