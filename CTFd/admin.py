@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
 from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir
-from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
+from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from itsdangerous import TimedSerializer, BadTimeSignature
 from werkzeug.utils import secure_filename
 from socket import inet_aton, inet_ntoa
@@ -410,10 +410,16 @@ def unban(teamid):
 @admin.route('/admin/team/<teamid>/delete', methods=['POST'])
 @admins_only
 def delete_team(teamid):
-    user = Teams.query.filter_by(id=teamid).first()
-    db.session.delete(user)
-    db.session.commit()
-    return '1'
+    try:
+        WrongKeys.query.filter_by(team=teamid).delete()
+        Solves.query.filter_by(teamid=teamid).delete()
+        Tracking.query.filter_by(team=teamid).delete()
+        Teams.query.filter_by(id=teamid).delete()
+        db.session.commit()
+    except DatabaseError:
+        return '0'
+    else:
+        return '1'
 
 
 @admin.route('/admin/graphs/<graph_type>')

@@ -1,4 +1,5 @@
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import DatabaseError
 
 from socket import inet_aton, inet_ntoa
 from struct import unpack, pack
@@ -8,11 +9,14 @@ import datetime
 import hashlib
 import json
 
+
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
 
+
 def ip2long(ip):
     return unpack('!I', inet_aton(ip))[0]
+
 
 def long2ip(ip_int):
     return inet_ntoa(pack('!I', ip_int))
@@ -31,6 +35,7 @@ class Pages(db.Model):
 
     def __repr__(self):
         return "<Tag {0} for challenge {1}>".format(self.tag, self.chal)
+
 
 class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,6 +56,7 @@ class Challenges(db.Model):
     def __repr__(self):
         return '<chal %r>' % self.name
 
+
 class Tags(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
@@ -63,6 +69,7 @@ class Tags(db.Model):
     def __repr__(self):
         return "<Tag {0} for challenge {1}>".format(self.tag, self.chal)
 
+
 class Files(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
@@ -74,6 +81,7 @@ class Files(db.Model):
 
     def __repr__(self):
         return "<File {0} for challenge {1}>".format(self.location, self.chal)
+
 
 class Keys(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -129,6 +137,7 @@ class Teams(db.Model):
             return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
         except ValueError:
             return 0
+
 
 class Solves(db.Model):
     __table_args__ = (db.UniqueConstraint('chalid', 'teamid'), {})
