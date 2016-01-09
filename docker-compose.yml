@@ -1,0 +1,30 @@
+ctfd:
+  build: .
+  restart: always  
+  environment: 
+    - &MU MYSQL_USER=ctfd
+    - &MP MYSQL_PASSWORD=You_Should_Probably_Override_This
+    - &MD MYSQL_DATABASE=ctfd
+  command: sh docker-compose-run.sh
+  volumes_from:
+    - data:rw
+  links:
+    - db
+
+db:
+  image: mariadb
+  environment:
+    - *MU
+    - *MP
+    - *MD
+    - MYSQL_ROOT_PASSWORD=Unencrypted_Credentials_At_Rest
+  volumes_from:
+    - data:rw
+  
+data:
+  image: mariadb
+  restart: always
+  volumes:
+    - /var/lib/mysql
+    - /opt/CTFd/CTFd/logs
+  command: "tail -f /dev/null"
