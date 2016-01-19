@@ -14,17 +14,17 @@
     #submit-key {padding: 10px 20px}
     .disabled-button {background-color: #EEEEEE}
 
-    .file-row {margin: 15px 0px; padding-left: 30px; padding-right: 30px;}
+    .file-row {margin: 15px 0px; padding-left: 5px; padding-right: 5px;}
     .file-button {text-decoration: none; color: #fff;}
     .file-button:hover {text-decoration: none; color: #fff;}
-    .file-wrapper {background-color: #0E83CD; padding: 20px; transition: all 0.5s ease; cursor: pointer; color: #fff;}
+    .file-wrapper {padding: 20px; transition: all 0.5s ease; cursor: pointer; color: #fff;}
     .file-button {cursor: pointer;}
-    .file-wrapper:hover {background-color: #0E63AD;}
 
     .close-text {color: #ccc;position: relative;top: -25px;right: -15px;cursor: pointer;}
     .chal-desc {padding-left: 40px;padding-right: 40px;}
     .key-submit {padding-top: 14px;}
     .notification-row {padding-left: 45px;padding-right: 45px;}
+    .input {padding-right: 30px;}
 </style>
 {% endblock %}
 
@@ -66,8 +66,8 @@
 
                             <div class="row submit-row">
                                 <div class="col-md-9">
-                                    <span class="input input--yoshiko">
-                                        <input class="input__field input__field--yoshiko" type="text" name="answer" id="answer-input" placeholder="Key" />
+                                    <span class="input">
+                                        <input class="input-field" type="text" name="answer" id="answer-input" placeholder="Key" />
                                     </span>
                                     <input type="hidden" id="nonce" name="nonce" value={{ nonce }}>
                                     <input id="chal-id" type="hidden">

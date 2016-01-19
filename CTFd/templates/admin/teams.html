@@ -1,79 +1,103 @@
 {% extends "admin/base.html" %}
 
-{% block content %}
+{% block stylesheets %}
 <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
+<style>
+td { text-align:center; }
+.checkbox { margin: 0px !important; }
+input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
+</style>
+{% endblock %}
 
+{% block content %}
 <div class="row">
     <br>
-    <div id="confirm" class="reveal-modal" data-reveal>
-        <h2 class="text-center">Delete User</h2>
-        <form method="POST">
-            <input type="hidden" name="id">
-            <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
-            <div class="small-6 small-centered text-center columns">
-                <p>Are you sure you want to delete <strong id="confirm-team-name"></strong>?</p>
-                <button type="button" class="button alert radius" onclick="$('#confirm').foundation('reveal', 'close');">No</button>
-                <button type="button" id="delete-user" class="button success radius">Yes</button>
+    <div id="confirm" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-center">Delete User</h2>
+                </div>
+                <div class="modal-body" style="height:110px">
+                    <div class="row-fluid">
+                        <div class="col-md-12">
+                            <form method="POST">
+                                <input type="hidden" name="route">
+                                <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+                                <div class="small-6 small-centered text-center columns">
+                                    <p>Are you sure you want to delete <strong id="confirm-team-name"></strong>?</p>
+                                    <button type="button" data-dismiss="modal" class="btn btn-theme btn-outlined">No</button>
+                                    <button type="button" id="delete-user" class="btn btn-theme btn-outlined">Yes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
-        <a class="close-reveal-modal">&#215;</a>
+        </div>
     </div>
-    <div id="email-user" class="reveal-modal" data-reveal>
-        <h2 class="text-center">Email User</h2>
-        <form method="POST">
-            <input type="hidden" name="id">
-            <input type="hidden" name="nonce" value="{{ nonce }}">
-            <textarea name="msg" placeholder="Enter your message here" rows="15"></textarea>
-            <div id="email-user-errors"></div>
-            <button type="button" id="send-user-email">Send Message</button>
-        </form>
-        <a class="close-reveal-modal">&#215;</a>
+    <div id="email-user" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-center">Email User</h2>
+                </div>
+                <div class="modal-boday">
+                    <form method="POST">
+                        <input type="hidden" name="id">
+                        <input type="hidden" name="nonce" value="{{ nonce }}">
+                        <textarea name="msg" placeholder="Enter your message here" rows="15"></textarea>
+                        <div id="email-user-errors"></div>
+                        <button type="button" id="send-user-email">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="user" class="reveal-modal" data-reveal>
-        <h2 class="text-center">Edit User</h2>
-        <form method="POST" action="/admin/teams/">
-            <div class="row">
-                <input type="hidden" name="nonce" value="{{ nonce }}">
-                <input type="hidden" name="id">
-                <div class="large-12 columns">
-                    <label>Team Name
-                        <input type="text" name="name" placeholder="Enter new team name" />
-                    </label>
+    <div id="user" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-center">Edit User</h2>
                 </div>
-                <div class="large-12 columns">
-                    <label>Email
-                        <input type="text" name="email" placeholder="Enter new email" />
-                    </label>
-                </div>
-                <div class="large-12 columns">
-                    <label>Password
-                        <input type="password" name="password" placeholder="Enter new password" />
-                    </label>
-                </div>
-                <div class="large-12 columns">
-                    <label>Website
-                        <input type="text" name="website" placeholder="Enter Website" />
-                    </label>
-                </div>
-                <div class="large-6 columns">
-                    <label>Affiliation
-                        <input type="text" name="affiliation" placeholder="Enter Affiliation" />
-                    </label>
-                </div>
-                <div class="large-6 columns">
-                    <label>Country
-                        <input type="text" name="country" placeholder="Enter Country" />
-                    </label>
-                </div>
-                <div id="results">
+                <div class="modal-boday" style="padding:20px; height:525px;">
+                    <form method="POST" action="/admin/teams/">
+                        <input type="hidden" name="nonce" value="{{ nonce }}">
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label for="name">Team Name</label>
+                            <input type="text" class="form-control" name="name" id="name" placeholder="Enter new team name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="email" id="email" placeholder="Enter new email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" name="password" id="password" />
+                        </div>
+                        <div class="form-group">
+                            <label for="website">Website</label>
+                            <input type="text" class="form-control" name="website" id="website" placeholder="Enter website">
+                        </div>
+                        <div class="form-group">
+                            <label for="affiliation">Affiliation</label>
+                            <input type="text" class="form-control" name="affiliation" id="affiliation" placeholder="Enter affiliation">
+                        </div>
+                        <div class="form-group">
+                            <label for="affiliation">Country</label>
+                            <input type="text" class="form-control" name="country" id="country" placeholder="Enter country">
+                        </div>
+                        <div id="results">
 
+                        </div>
+                        <button id="update-user" type="submit" class="btn btn-theme btn-outlined pull-right">Update</button>
+                    </form>
                 </div>
-                <button id="update-user" class="radius" type="submit">Update</button>
             </div>
-        </form>
-        <a class="close-reveal-modal">&#215;</a>
+        </div>
     </div>
-    <table id="teamsboard">
+    <table id="teamsboard" class="table table-striped">
         <thead>
             <tr>
                 <td width="10px" class="text-center"><b>ID</b>
@@ -126,7 +150,7 @@
     <div class="text-center">Page
         <br>
         {% for page in range(1, pages + 1) %}
-        <a href="/admin/teams/{{ page }}">{{ page }}</a>  
+        <a href="/admin/teams/{{ page }}">{{ page }}</a>
         {% endfor %}
     <a href="">
     </div>
@@ -138,16 +162,15 @@
 <script>
 function load_update_modal(id, name, email, website, affiliation, country){
     var modal_form = $('#user form');
-    
+
     modal_form.find('input[name=name]').val(name)
     modal_form.find('input[name=id]').val(id)
     modal_form.find('input[name=email]').val(email)
     modal_form.find('input[name=website]').val(website)
     modal_form.find('input[name=affiliation]').val(affiliation)
     modal_form.find('input[name=country]').val(country)
-    console.log(modal_form);
     $('#user form').attr('action', '/admin/team/'+id)
-    $('#user').foundation('reveal', 'open');
+    $('#user').modal("show");
 }
 
 $('#update-user').click(function(e){
@@ -170,7 +193,7 @@ $('#update-user').click(function(e){
 
                 row.find('.team-affiliation').text( $.grep(user_data, function(e){ return e.name == 'affiliation'; })[0]['value'] );
                 row.find('.team-country').text( $.grep(user_data, function(e){ return e.name == 'country'; })[0]['value'] );
-                $('#user').foundation('reveal', 'close');
+                $('#user').modal();
             }
             else{
                 $('#results').append($('p').text( data['data'][i] ))
@@ -195,7 +218,7 @@ $('#send-user-email').click(function(e){
     var email_data = $('#email-user form').serializeArray();
     $.post($('#email-user form').attr('action'), $('#email-user form').serialize(), function(data){
         if (data == "1"){
-            $('#email-user').foundation('reveal', 'close');
+            $('#email-user').modal();
         }
         else{
             $('#email-user-errors').append("<b>Failed to send email</b>");
@@ -232,7 +255,7 @@ function load_confirm_modal(id, name){
     modal.find('input[name=id]').val(id)
     modal.find('#confirm-team-name').text(name)
     $('#confirm form').attr('action', '/admin/team/'+id+'/delete');
-    $('#confirm').foundation('reveal', 'open');
+    $('#confirm').modal();
 }
 
 $('.fa-times').click(function(){
@@ -248,7 +271,7 @@ function load_email_modal(id){
     modal.find('input[name=id]').val(id)
     $('#email-user-errors').empty()
     $('#email-user form').attr('action', '/admin/team/'+id+'/mail');
-    $('#email-user').foundation('reveal', 'open');
+    $('#email-user').modal();
 }
 
 $('.fa-envelope').click(function(){

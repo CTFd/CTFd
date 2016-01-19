@@ -36,7 +36,7 @@ function loadchal(id) {
     //$('#update-challenge .chal-delete').attr({
     //    'href': '/admin/chal/close/' + (id + 1)
     //})
-    $('#update-challenge').foundation('reveal', 'open');
+    $('#update-challenge').modal();
 
 }
 
@@ -61,7 +61,7 @@ function loadkeys(chal){
             elem.append('<input type="radio" name="key_type['+x+']" value="0">Static');
             elem.append('<input type="radio" name="key_type['+x+']" value="1">Regex');
             elem.append('<a href="#" onclick="$(this).parent().remove()" class="remove-key">Remove</a>');
-            
+
             $('#current-keys').append(elem);
             $('#current-keys input[name="key_type['+x+']"][value="'+keys[x].type+'"]').prop('checked',true);
         }
@@ -136,7 +136,7 @@ function loadfiles(chal){
 function deletefile(chal, file, elem){
     $.post('/admin/files/' + chal,{
         'nonce': $('#nonce').val(),
-        'method': 'delete', 
+        'method': 'delete',
         'file': file
     }, function (data){
         if (data == "1") {
@@ -158,13 +158,13 @@ function loadchals(){
         for (var i = challenges['game'].length - 1; i >= 0; i--) {
             if ($.inArray(challenges['game'][i].category, categories) == -1) {
                 categories.push(challenges['game'][i].category)
-                $('#challenges').append($('<tr id="' + challenges['game'][i].category.replace(/ /g,"-").hashCode() + '"><td class="large-2"><h3>' + challenges['game'][i].category + '</h3></td></tr>'))
+                $('#challenges').append($('<tr id="' + challenges['game'][i].category.replace(/ /g,"-").hashCode() + '"><td class="col-md-1"><h3>' + challenges['game'][i].category + '</h3></td></tr>'))
             }
         };
 
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
             var chal = challenges['game'][i]
-            var chal_button = $('<button class="chal-button" value="{0}"><p>{1}</p><span>{2}</span></button>'.format(chal.id, chal.name, chal.value))
+            var chal_button = $('<button class="chal-button col-md-2 theme-background" value="{0}"><p>{1}</p><span>{2}</span></button>'.format(chal.id, chal.name, chal.value))
             $('#' + challenges['game'][i].category.replace(/ /g,"-").hashCode()).append(chal_button);
         };
 
@@ -178,7 +178,7 @@ function loadchals(){
         $('.create-challenge').click(function (e) {
             $('#new-chal-category').val($($(this).siblings()[0]).text().trim())
             $('#new-chal-title').text($($(this).siblings()[0]).text().trim())
-            $('#new-challenge').foundation('reveal', 'open');
+            $('#new-challenge').modal();
         });
 
     });
@@ -201,7 +201,7 @@ $('#delete-chal > form').submit(function(e){
         console.log(data)
         if (data){
             loadchals();
-            $('#delete-chal').foundation('reveal', 'close');
+            $('#delete-chal').modal();
         }
         else {
             alert('There was an error');
@@ -237,7 +237,7 @@ $('#new-desc-edit').on('toggled', function (event, tab) {
 
 // Open New Challenge modal when New Challenge button is clicked
 $('.create-challenge').click(function (e) {
-    $('#create-challenge').foundation('reveal', 'open');
+    $('#create-challenge').modal();
 });
 
 
@@ -246,7 +246,7 @@ $('#create-key').click(function(e){
     // $('#current-keys').append("<input class='current-key' type='text' placeholder='Blank Key'>");
     // $('#current-keys').append('<input type="radio" name="key_type[{0}]" value="0">Static'.format(amt));
     // $('#current-keys').append('<input type="radio" name="key_type[{0}]" value="1">Regex'.format(amt));
-    
+
     var elem = $('<div>');
     elem.append("<input class='current-key' type='text' placeholder='Blank Key'>");
     elem.append('<input type="radio" name="key_type[{0}]" value="0">Static'.format(amt));

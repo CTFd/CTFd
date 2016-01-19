@@ -15,18 +15,6 @@ function htmlentities(string) {
     return $('<div/>').text(string).html();
 }
 
-//http://stackoverflow.com/a/7616484
-String.prototype.hashCode = function() {
-    var hash = 0, i, chr, len;
-    if (this.length == 0) return hash;
-    for (i = 0, len = this.length; i < len; i++) {
-        chr   = this.charCodeAt(i);
-        hash  = ((hash << 5) - hash) + chr;
-        hash |= 0; // Convert to 32bit integer
-    }
-    return hash;
-};
-
 var challenges;
 
 function loadchal(id) {
@@ -53,7 +41,7 @@ function updateChalWindow(obj) {
     for (var i = 0; i < obj.files.length; i++) {
         filename = obj.files[i].split('/')
         filename = filename[filename.length - 1]
-        $('#chal-window').find('.chal-files').append("<div class='col-md-3'><a class='file-button' href='"+obj.files[i]+"'><label class='challenge-wrapper file-wrapper'>"+filename+"</label></a></div>")
+        $('#chal-window').find('.chal-files').append("<div class='col-md-4'><a class='file-button' href='"+obj.files[i]+"'><label class='challenge-wrapper file-wrapper'>"+filename+"</label></a></div>")
     };
 
     $('#chal-window').find('.chal-value').text(obj.value)
@@ -100,12 +88,6 @@ function submitkey(chal, key, nonce) {
         else if (data == 3){ // Keys per minute too high
             $("#too-fast").slideDown();
         }
-        else if (data == 4){ // too many incorrect solves
-          $('#submit-key').text('Too many attempts.')
-          $('#submit-key').css('background-color', 'red')
-          $('#submit-key').prop('disabled', true)
-        }
-        marktoomanyattempts()
         marksolves()
         updatesolves()
         setTimeout(function(){
@@ -129,20 +111,6 @@ function marksolves() {
             var chaldialog = document.getElementById( "chal-window" );
             var dlg = new DialogFx( chaldialog );
             dlg.toggle();
-        }
-    });
-}
-
-function marktoomanyattempts() {
-    $.get('/maxattempts', function (data) {
-        maxattempts = $.parseJSON(JSON.stringify(data));
-        for (var i = maxattempts['maxattempts'].length - 1; i >= 0; i--) {
-            id = maxattempts['maxattempts'][i].chalid
-            $('#challenges button[value="' + id + '"]').addClass('secondary')
-            $('#challenges button[value="' + id + '"]').css('background-color', '#FF9999')
-        };
-        if (window.location.hash.length > 0){
-          loadchalbyname(window.location.hash.substring(1))
         }
     });
 }

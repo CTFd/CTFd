@@ -7,4 +7,5 @@ pip install -r requirements.txt
 sudo apt-get install ruby -y
 sudo gem install sass bootstrap-sass compass
 
-nohup compass watch static/sass &
+# SASS Modification Watching
+# nohup compass watch CTFd/static/sass &

@@ -1,0 +1,72 @@
+// Import Bootstrap Compass integration
+@import "bootstrap-compass";
+
+// Import custom Bootstrap variables
+@import "bootstrap-variables";
+
+// Import Bootstrap for Sass
+@import "bootstrap";
+
+.file-wrapper {
+    background-color: $file-wrapper-color;
+}
+
+.file-wrapper:hover {
+    background-color: lighten($file-wrapper-color, 5%);
+}
+
+.theme-background {
+    background-color: $theme-color !important;
+
+}
+
+.solved-challenge {
+    background-color: $success-color !important;
+}
+
+.panel-theme {
+    border-color: $theme-color;
+}
+
+.panel-theme > .panel-heading {
+    border-color: $theme-color;
+    background-color: $theme-color;
+    opacity: 1;
+    color: #FFF;
+    text-align: center;
+}
+
+.btn-outlined.btn-theme {
+    background: none;
+    color: $theme-color;
+    border-color: $theme-color;
+}
+
+.btn-outlined.btn-theme:hover,
+.btn-outlined.btn-theme:active {
+    color: #FFF;
+    background: $theme-color;
+    border-color: $theme-color;
+}
+
+.navbar-inverse {
+    background: none repeat scroll 0% 0% $theme-color;
+    border: medium none;
+    margin-bottom: 0px;
+}
+
+.jumbotron {
+    background-color: $theme-color;
+    color: #FFF;
+    padding: 0px 0px 25px;
+}
+
+.jumbotron.home {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.home h1 {
+    font-size: 48px !important;
+}
+
