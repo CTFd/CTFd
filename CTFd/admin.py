@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
 from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir
-from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
+from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from itsdangerous import TimedSerializer, BadTimeSignature
 from werkzeug.utils import secure_filename
 from socket import inet_aton, inet_ntoa
@@ -34,10 +34,10 @@ def admin_view():
             session['admin'] = True
             session['nonce'] = sha512(os.urandom(10))
             db.session.close()
-            return redirect('/admin/graphs')
+            return redirect(url_for('admin.admin_graphs'))
 
     if is_admin():
-        return redirect('/admin/graphs')
+        return redirect(url_for('admin.admin_graphs'))
 
     return render_template('admin/login.html')
 
@@ -90,7 +90,7 @@ def admin_config():
         db.session.add(db_end)
 
         db.session.commit()
-        return redirect('/admin/config')
+        return redirect(url_for('admin.admin_config'))
 
     ctf_name = get_config('ctf_name')
     if not ctf_name:
@@ -173,11 +173,11 @@ def admin_pages(route):
             page.route = route
             page.html = html
             db.session.commit()
-            return redirect('/admin/pages')
+            return redirect(url_for('admin.admin_pages'))
         page = Pages(route, html)
         db.session.add(page)
         db.session.commit()
-        return redirect('/admin/pages')
+        return redirect(url_for('admin.admin_pages'))
     pages = Pages.query.all()
     return render_template('admin/pages.html', routes=pages, css=get_config('css'))
 
@@ -305,7 +305,7 @@ def admin_files(chalid):
 
             db.session.commit()
             db.session.close()
-            return redirect('/admin/chals')
+            return redirect(url_for('admin.admin_chals'))
 
 
 @admin.route('/admin/teams', defaults={'page':'1'})
@@ -328,20 +328,20 @@ def admin_teams(page):
 @admins_only
 def admin_team(teamid):
     user = Teams.query.filter_by(id=teamid).first()
-    solves = Solves.query.filter_by(teamid=teamid).all()
-    addrs = Tracking.query.filter_by(team=teamid).order_by(Tracking.date.desc()).group_by(Tracking.ip).all()
-    wrong_keys = WrongKeys.query.filter_by(team=teamid).order_by(WrongKeys.date.desc()).all()
-    score = user.score()
-    place = user.place()
 
     if request.method == 'GET':
+        solves = Solves.query.filter_by(teamid=teamid).all()
+        addrs = Tracking.query.filter_by(team=teamid).order_by(Tracking.date.desc()).group_by(Tracking.ip).all()
+        wrong_keys = WrongKeys.query.filter_by(team=teamid).order_by(WrongKeys.date.desc()).all()
+        score = user.score()
+        place = user.place()
         return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, place=place, wrong_keys=wrong_keys)
     elif request.method == 'POST':
-        admin_user = request.form.get('admin', "false")
-        admin_user = 1 if admin_user == "true" else 0
-        if admin:
-            user.admin = 1
-            user.banned = 1
+        admin_user = request.form.get('admin', None)
+        if admin_user:
+            admin_user = 1 if admin_user == "true" else 0
+            user.admin = admin_user
+            user.banned = admin_user
             db.session.commit()
             return jsonify({'data': ['success']})
 
@@ -395,7 +395,7 @@ def ban(teamid):
     user = Teams.query.filter_by(id=teamid).first()
     user.banned = 1
     db.session.commit()
-    return redirect('/admin/scoreboard')
+    return redirect(url_for('admin.admin_scoreboard'))
 
 
 @admin.route('/admin/team/<teamid>/unban', methods=['POST'])
@@ -404,16 +404,22 @@ def unban(teamid):
     user = Teams.query.filter_by(id=teamid).first()
     user.banned = None
     db.session.commit()
-    return redirect('/admin/scoreboard')
+    return redirect(url_for('admin.admin_scoreboard'))
 
 
 @admin.route('/admin/team/<teamid>/delete', methods=['POST'])
 @admins_only
 def delete_team(teamid):
-    user = Teams.query.filter_by(id=teamid).first()
-    db.session.delete(user)
-    db.session.commit()
-    return '1'
+    try:
+        WrongKeys.query.filter_by(team=teamid).delete()
+        Solves.query.filter_by(teamid=teamid).delete()
+        Tracking.query.filter_by(team=teamid).delete()
+        Teams.query.filter_by(id=teamid).delete()
+        db.session.commit()
+    except DatabaseError:
+        return '0'
+    else:
+        return '1'
 
 
 @admin.route('/admin/graphs/<graph_type>')
@@ -585,7 +591,7 @@ def admin_create_chal():
 
     db.session.commit()
     db.session.close()
-    return redirect('/admin/chals')
+    return redirect(url_for('admin.admin_chals'))
 
 
 @admin.route('/admin/chal/delete', methods=['POST'])
@@ -619,4 +625,4 @@ def admin_update_chal():
     db.session.add(challenge)
     db.session.commit()
     db.session.close()
-    return redirect('/admin/chals')
+    return redirect(url_for('admin.admin_chals'))

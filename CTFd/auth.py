@@ -29,7 +29,7 @@ def reset_password(data=None):
         team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
         db.session.commit()
         db.session.close()
-        return redirect('/login')
+        return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
         email = request.form['email'].strip()
@@ -54,7 +54,7 @@ Did you initiate a password reset?
 @auth.route('/register', methods=['POST', 'GET'])
 def register():
     if not can_register():
-        return redirect('/login')
+        return redirect(url_for('auth.login'))
     if request.method == 'POST':
         errors = []
         name = request.form['name']
@@ -88,6 +88,13 @@ def register():
                 team = Teams(name, email, password)
                 db.session.add(team)
                 db.session.commit()
+                db.session.flush()
+
+                session['username'] = team.name
+                session['id'] = team.id
+                session['admin'] = team.admin
+                session['nonce'] = sha512(os.urandom(10))
+
             if mailserver():
                 sendmail(request.form['email'], "You've successfully registered for the CTF")
 
@@ -95,7 +102,7 @@ def register():
 
         logger = logging.getLogger('regs')
         logger.warn("[{0}] {1} registered with {2}".format(time.strftime("%m/%d/%Y %X"), request.form['name'].encode('utf-8'), request.form['email'].encode('utf-8')))
-        return redirect('/login')
+        return redirect(url_for('challenges.challenges_view'))
     else:
         return render_template('register.html')
 
@@ -120,9 +127,9 @@ def login():
             logger = logging.getLogger('logins')
             logger.warn("[{0}] {1} logged in".format(time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8')))
 
-            # if request.args.get('next') and is_safe_url(request.args.get('next')):
-            #     return redirect(request.args.get('next'))
-            return redirect('/team/{0}'.format(team.id))
+            if request.args.get('next') and is_safe_url(request.args.get('next')):
+                return redirect(request.args.get('next'))
+            return redirect(url_for('challenges.challenges_view'))
         else:
             errors.append("That account doesn't seem to exist")
             db.session.close()

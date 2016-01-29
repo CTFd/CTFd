@@ -27,6 +27,7 @@ function loadchal(id) {
     obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
     })[0]
+    $('a[href=#desc-write]').click() // Switch to Write tab
     $('.chal-title').text(obj.name);
     $('.chal-name').val(obj.name);
     $('.chal-desc').val(obj.description);
@@ -183,6 +184,7 @@ function loadchals(){
 
     });
 }
+
 $('#submit-key').click(function (e) {
     submitkey($('#chalid').val(), $('#answer').val())
 });
@@ -249,7 +251,7 @@ $('#create-key').click(function(e){
 
     var elem = $('<div>');
     elem.append("<input class='current-key' type='text' placeholder='Blank Key'>");
-    elem.append('<input type="radio" name="key_type[{0}]" value="0">Static'.format(amt));
+    elem.append('<input type="radio" name="key_type[{0}]" value="0" checked="checked">Static'.format(amt));
     elem.append('<input type="radio" name="key_type[{0}]" value="1">Regex'.format(amt));
     elem.append('<a href="#" onclick="$(this).parent().remove()" class="remove-key">Remove</a>');
     $('#current-keys').append(elem);

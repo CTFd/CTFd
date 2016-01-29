@@ -96,7 +96,7 @@ def init_utils(app):
         if request.path == '/setup' or request.path.startswith('/static'):
             return
         if not is_setup():
-            return redirect('/setup')
+            return redirect(url_for('views.setup'))
 
 
 def ctf_name():
@@ -140,7 +140,7 @@ def admins_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('admin', None) is None:
-            return redirect('/login')
+            return redirect(url_for('auth.login'))
         return f(*args, **kwargs)
     return decorated_function
 

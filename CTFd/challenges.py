@@ -22,7 +22,7 @@ def challenges_view():
     if can_view_challenges():
         return render_template('chals.html', ctftime=ctftime())
     else:
-        return redirect('/login')
+        return redirect(url_for('auth.login', next='challenges'))
 
 
 @challenges.route('/chals', methods=['GET'])
@@ -45,7 +45,7 @@ def chals():
         return jsonify(json)
     else:
         db.session.close()
-        return redirect('/login')
+        return redirect(url_for('auth.login', next='chals'))
 
 
 @challenges.route('/chals/solves')
@@ -56,7 +56,7 @@ def chals_per_solves():
         for chal, count in solves:
             json[chal.chal.name] = count
         return jsonify(json)
-    return redirect('/login')
+    return redirect(url_for('auth.login', next='chals/solves'))
 
 
 @challenges.route('/solves')
@@ -108,7 +108,7 @@ def who_solved(chalid):
 @challenges.route('/chal/<chalid>', methods=['POST'])
 def chal(chalid):
     if not ctftime():
-        return redirect('/challenges')
+        return redirect(url_for('challenges.challenges_view'))
     if authed():
         fails = WrongKeys.query.filter_by(team=session['id'], chalid=chalid).count()
         logger = logging.getLogger('keys')

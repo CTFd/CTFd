@@ -40,7 +40,7 @@ def redirect_setup():
     if request.path == "/static/css/style.css":
         return
     if not is_setup() and request.path != "/setup":
-        return redirect('/setup')
+        return redirect(url_for('views.setup'))
 
 
 @views.route('/setup', methods=['GET', 'POST'])
@@ -207,7 +207,7 @@ def profile():
                 team.country = country
                 db.session.commit()
                 db.session.close()
-                return redirect('/profile')
+                return redirect(url_for('views.profile'))
         else:
             user = Teams.query.filter_by(id=session['id']).first()
             name = user.name
@@ -219,4 +219,4 @@ def profile():
             return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
                                    country=country, prevent_name_change=prevent_name_change)
     else:
-        return redirect('/login')
+        return redirect(url_for('auth.login'))

@@ -56,5 +56,5 @@ target/
 *.db
 *.log
 .idea/
-static/uploads
-.sass-cache/
+CTFd/static/uploads
+.ctfd_secret_key
