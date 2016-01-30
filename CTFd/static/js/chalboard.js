@@ -1,4 +1,3 @@
-var openDialog = null;
 
 //http://stackoverflow.com/a/2648463 - wizardry!
 String.prototype.format = String.prototype.f = function() {
@@ -41,7 +40,7 @@ function updateChalWindow(obj) {
     for (var i = 0; i < obj.files.length; i++) {
         filename = obj.files[i].split('/')
         filename = filename[filename.length - 1]
-        $('#chal-window').find('.chal-files').append("<div class='col-md-4'><a class='file-button' href='"+obj.files[i]+"'><label class='challenge-wrapper file-wrapper'>"+filename+"</label></a></div>")
+        $('#chal-window').find('.chal-files').append("<div class='col-md-3 file-button-wrapper'><a class='file-button' href='"+obj.files[i]+"'><label class='challenge-wrapper file-wrapper hide-text'>"+filename+"</label></a></div>")
     };
 
     $('#chal-window').find('.chal-value').text(obj.value)
@@ -76,17 +75,29 @@ function submitkey(chal, key, nonce) {
         }
         else if (data == 0){ // Incorrect key
             $("#incorrect-key").slideDown();
+            $("#answer-input").addClass("wrong");
+            $("#answer-input").removeClass("correct");
+            setTimeout(function() {
+                $("#answer-input").removeClass("wrong");
+            }, 3000);
         }
         else if (data == 1){ // Challenge Solved
             $("#correct-key").slideDown();
             $('.chal-solves').text((parseInt($('.chal-solves').text().split(" ")[0]) + 1 +  " Solves") )
             $("#answer-input").val("");
+            $("#answer-input").removeClass("wrong");
+            $("#answer-input").addClass("correct");
         }
         else if (data == 2){ // Challenge already solved
             $("#already-solved").slideDown();
+            $("#answer-input").addClass("correct");
         }
         else if (data == 3){ // Keys per minute too high
             $("#too-fast").slideDown();
+            $("#answer-input").addClass("wrong");
+            setTimeout(function() {
+                $("#answer-input").removeClass("wrong");
+            }, 3000);
         }
         marksolves()
         updatesolves()
@@ -108,9 +119,7 @@ function marksolves() {
         };
         if (window.location.hash.length > 0){
           loadchalbyname(window.location.hash.substring(1))
-            var chaldialog = document.getElementById( "chal-window" );
-            var dlg = new DialogFx( chaldialog );
-            dlg.toggle();
+            $("#chal-window").modal("show");
         }
     });
 }
@@ -144,14 +153,6 @@ function getsolves(id){
   });
 }
 
-function updateDialogs() {
-    $("[data-dialog]").each(function() {
-        var chaldialog = document.getElementById( $(this).data('dialog') ),
-        dlg = new DialogFx( chaldialog );
-        $(this).click(dlg.toggle.bind(dlg));
-    });
-}
-
 function loadchals() {
 
     $.get("/chals", function (data) {
@@ -180,7 +181,7 @@ function loadchals() {
             var chalid = chalinfo.name.replace(/ /g,"-");
             var catid = chalinfo.category.replace(/ /g,"-");
             var chalwrap = $("<div id='{0}' class='challenge-wrapper col-md-2'></div>".format(chalid));
-            var chalbutton = $("<button class='challenge-button trigger theme-background' data-dialog='chal-window' value='{0}'></div>".format(chalinfo.id));
+            var chalbutton = $("<button class='challenge-button trigger theme-background hide-text' value='{0}' data-toggle='modal' data-target='#chal-window'></div>".format(chalinfo.id));
             var chalheader = $("<h5>{0}</h5>".format(chalinfo.name));
             var chalscore = $("<span>{0}</span>".format(chalinfo.value));
             chalbutton.append(chalheader);
@@ -190,7 +191,6 @@ function loadchals() {
             $("#"+ catid +"-row").find(".category-challenges > .row").append(chalwrap);
         };
 
-        updateDialogs();
         updatesolves();
         marksolves();
 
@@ -232,12 +232,10 @@ function colorhash (x) {
 
 function update(){
     loadchals()
-    solves_graph()
 }
 
 $(function() {
     loadchals();
-    // solves_graph()
 });
 
 $('.nav-tabs a').click(function (e) {

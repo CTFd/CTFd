@@ -14,6 +14,10 @@ td {
     padding: 15px !important;
 }
 
+a {
+    outline: 0;
+}
+
 .no-margin-right {
     margin-right: 0px !important;
 }

@@ -29,7 +29,7 @@ $(".input-field").bind({
         $label = $(this).siblings(".input-label");
         //$label.addClass('input--hide' );
         $label.css({
-            "transform": "translate3d(0, 0, 0)"
+            "transform": "translate3d(0, 10%, 0)"
         });
     },
     blur: function() {

@@ -21,7 +21,7 @@ String.prototype.hashCode = function() {
     return hash;
 };
 
-function loadchal(id) {
+function loadchal(id, update) {
     // $('#chal *').show()
     // $('#chal > h1').hide()
     obj = $.grep(challenges['game'], function (e) {
@@ -37,8 +37,8 @@ function loadchal(id) {
     //$('#update-challenge .chal-delete').attr({
     //    'href': '/admin/chal/close/' + (id + 1)
     //})
-    $('#update-challenge').modal();
-
+    if (typeof update === 'undefined')
+        $('#update-challenge').modal();
 }
 
 function submitkey(chal, key) {
@@ -57,11 +57,12 @@ function loadkeys(chal){
         keys = keys['keys'];
         $('#current-keys').empty();
         for(x=0; x<keys.length; x++){
-            var elem = $('<div>');
-            elem.append($("<input class='current-key' type='text'>").val(keys[x].key));
-            elem.append('<input type="radio" name="key_type['+x+']" value="0">Static');
-            elem.append('<input type="radio" name="key_type['+x+']" value="1">Regex');
-            elem.append('<a href="#" onclick="$(this).parent().remove()" class="remove-key">Remove</a>');
+            var elem = $('<div class="col-md-4">');
+
+            elem.append($("<div class='form-group'>").append($("<input class='current-key form-control' type='text'>").val(keys[x].key)));
+            elem.append('<div class="radio-inline"><input type="radio" name="key_type['+x+']" value="0">Static</div>');
+            elem.append('<div class="radio-inline"><input type="radio" name="key_type['+x+']" value="1">Regex</div>');
+            elem.append('<a href="#" onclick="$(this).parent().remove()" class="btn btn-danger key-remove-button">Remove</a>');
 
             $('#current-keys').append(elem);
             $('#current-keys input[name="key_type['+x+']"][value="'+keys[x].type+'"]').prop('checked',true);
@@ -80,7 +81,8 @@ function updatekeys(){
         vals.push($(this).val());
     })
     $.post('/admin/keys/'+chal, {'keys':keys, 'vals':vals, 'nonce': $('#nonce').val()})
-    loadchal(chal)
+    loadchal(chal, true)
+    $('#update-keys').modal('hide');
 }
 
 function loadtags(chal){
@@ -91,7 +93,7 @@ function loadtags(chal){
         tags = $.parseJSON(JSON.stringify(data))
         tags = tags['tags']
         for (var i = 0; i < tags.length; i++) {
-            tag = "<span class='secondary label chal-tag'><span>"+tags[i].tag+"</span><a name='"+tags[i].id+"'' class='delete-tag'>&#215;</a></span>"
+            tag = "<span class='label label-primary chal-tag'><span>"+tags[i].tag+"</span><a name='"+tags[i].id+"'' class='delete-tag'>&#215;</a></span>"
             $('#current-tags').append(tag)
         };
         $('.delete-tag').click(function(e){
@@ -120,7 +122,7 @@ function updatetags(){
 }
 
 function loadfiles(chal){
-    $('#update-files > form').attr('action', '/admin/files/'+chal)
+    $('#update-files form').attr('action', '/admin/files/'+chal)
     $.get('/admin/files/' + chal, function(data){
         $('#files-chal').val(chal)
         files = $.parseJSON(JSON.stringify(data));
@@ -129,7 +131,7 @@ function loadfiles(chal){
         for(x=0; x<files.length; x++){
             filename = files[x].file.split('/')
             filename = filename[filename.length - 1]
-            $('#current-files').append('<div data-alert class="alert-box info radius">'+'<a href=/'+files[x].file+'>'+filename+'</a><a href="#" onclick="deletefile('+chal+','+files[x].id+', $(this))" value="'+files[x].id+'" style="float:right;">Delete</a></div>')
+            $('#current-files').append('<div class="row" style="margin:5px 0px;">'+'<a style="position:relative;top:10px;" href=/'+files[x].file+'>'+filename+'</a><a href="#" class="btn btn-danger" onclick="deletefile('+chal+','+files[x].id+', $(this))" value="'+files[x].id+'" style="float:right;">Delete</a></div>')
         }
     });
 }
@@ -190,25 +192,28 @@ $('#submit-key').click(function (e) {
 });
 
 $('#submit-keys').click(function (e) {
+    e.preventDefault();
     updatekeys()
 });
 
 $('#submit-tags').click(function (e) {
+    e.preventDefault();
     updatetags()
 });
 
-$('#delete-chal > form').submit(function(e){
+$('#delete-chal form').submit(function(e){
     e.preventDefault();
     $.post('/admin/chal/delete', $(this).serialize(), function(data){
         console.log(data)
         if (data){
             loadchals();
-            $('#delete-chal').modal();
         }
         else {
             alert('There was an error');
         }
     })
+    $("#delete-chal").modal("hide");
+    $("#update-challenge").modal("hide");
 });
 
 $(".tag-insert").keyup(function (e) {
@@ -216,7 +221,7 @@ $(".tag-insert").keyup(function (e) {
         tag = $('.tag-insert').val()
         tag = tag.replace(/'/g, '');
         if (tag.length > 0){
-            tag = "<span class='secondary label chal-tag'><span>"+tag+"</span><a onclick='$(this).parent().remove()'>&#215;</a></span>"
+            tag = "<span class='label label-primary chal-tag'><span>"+tag+"</span><a class='delete-tag' onclick='$(this).parent().remove()'>&#215;</a></span>"
             $('#chal-tags').append(tag)
         }
         $('.tag-insert').val("")
@@ -226,14 +231,14 @@ $(".tag-insert").keyup(function (e) {
 
 
 // Markdown Preview
-$('#desc-edit').on('toggled', function (event, tab) {
-    if (tab[0].id == 'desc-preview'){
-        $(tab[0]).html(marked($('#desc-editor').val(), {'gfm':true, 'breaks':true}))
+$('#desc-edit').on('shown.bs.tab', function (event) {
+    if (event.target.hash == '#desc-preview'){
+        $(event.target.hash).html(marked($('#desc-editor').val(), {'gfm':true, 'breaks':true}))
     }
 });
-$('#new-desc-edit').on('toggled', function (event, tab) {
-    if (tab[0].id == 'new-desc-preview'){
-        $(tab[0]).html(marked($('#new-desc-editor').val(), {'gfm':true, 'breaks':true}))
+$('#new-desc-edit').on('shown.bs.tab', function (event) {
+    if (event.target.hash == '#new-desc-preview'){
+        $(event.target.hash).html(marked($('#new-desc-editor').val(), {'gfm':true, 'breaks':true}))
     }
 });
 
@@ -245,15 +250,14 @@ $('.create-challenge').click(function (e) {
 
 $('#create-key').click(function(e){
     var amt = $('#current-keys input[type=text]').length
-    // $('#current-keys').append("<input class='current-key' type='text' placeholder='Blank Key'>");
-    // $('#current-keys').append('<input type="radio" name="key_type[{0}]" value="0">Static'.format(amt));
-    // $('#current-keys').append('<input type="radio" name="key_type[{0}]" value="1">Regex'.format(amt));
 
-    var elem = $('<div>');
-    elem.append("<input class='current-key' type='text' placeholder='Blank Key'>");
-    elem.append('<input type="radio" name="key_type[{0}]" value="0" checked="checked">Static'.format(amt));
-    elem.append('<input type="radio" name="key_type[{0}]" value="1">Regex'.format(amt));
-    elem.append('<a href="#" onclick="$(this).parent().remove()" class="remove-key">Remove</a>');
+    var elem = $('<div class="col-md-4">');
+
+    elem.append($("<div class='form-group'>").append($("<input class='current-key form-control' type='text'>")));
+    elem.append('<div class="radio-inline"><input type="radio" name="key_type['+amt+']" value="0">Static</div>');
+    elem.append('<div class="radio-inline"><input type="radio" name="key_type['+amt+']" value="1">Regex</div>');
+    elem.append('<a href="#" onclick="$(this).parent().remove()" class="btn btn-danger key-remove-button">Remove</a>');
+
     $('#current-keys').append(elem);
 });
 
