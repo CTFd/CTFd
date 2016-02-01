@@ -2,14 +2,25 @@
 
 {% block content %}
     <div class="row">
-        <div id="solves-graph"></div>
-        <div id="keys-pie-graph"></div>
-        <div id="categories-pie-graph"></div>
+        <div class="col-md-6 col-md-offset-1">
+            <div id="solves-graph"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="keys-pie-graph"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="categories-pie-graph"></div>
+        </div>
     </div>
 {% endblock %}
 
 {% block scripts %}
     <style>
+        .row {
+            text-align: center;
+        }
         #solves-graph{
             margin-left: -50px;
         }
@@ -97,7 +108,7 @@
                 });
             });
         }
-        
+
         function keys_percentage_graph(){
             // Solves and Fails pie chart
             $.get('/admin/fails/all', function(data){
@@ -124,7 +135,7 @@
                 });
             });
         }
-        
+
         function category_breakdown_graph(){
             $.get('/admin/graphs/categories', function(data){
                 res = $.parseJSON(JSON.stringify(data));
@@ -163,6 +174,6 @@
         });
 
         setInterval(update, 300000);
-        
+
     </script>
 {% endblock %}

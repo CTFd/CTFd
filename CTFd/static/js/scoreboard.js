@@ -79,7 +79,7 @@ function scoregraph () {
           team_scores.unshift(teams[i])
           // team_scores.push( team_scores[team_scores.length-1] )
 
-              
+
           xs_data[teams[i]] = "x"+i
           column_data.push(times)
           column_data.push(team_scores)
@@ -99,11 +99,11 @@ function scoregraph () {
                 x : {
                     tick: {
                         count: 10,
-                        format: function (x) { 
+                        format: function (x) {
                             return moment(x*1000).local().format('LLL');
                         }
                     },
-                    
+
                 },
                 y:{
                     label: {

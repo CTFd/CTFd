@@ -73,7 +73,7 @@ table{
 }
 
 #keys-pie-graph{
-    width: 400px;
+    width: 600px;
     max-height: 330px;
     float: left;
 }
@@ -86,16 +86,14 @@ table{
 
 .chal-button{
     width: 150px;
+    color: white;
+    border: None;
 }
 
-.chal-button > p{
-    font-family: monospace;
+.chal-button > p {
     margin-bottom: 0px;
     height: 20px;
     font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .chal-button > span{

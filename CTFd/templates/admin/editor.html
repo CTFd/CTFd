@@ -1,7 +1,14 @@
 {% extends "admin/base.html" %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/theme/elegant.min.css">
+    <style>
+    .row-fluid { margin: 25px; padding-bottom: 25px; }
+    </style>
+{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.css">
 <div class="row">
     <div class="row">
     {% for error in errors %}
@@ -13,25 +20,36 @@
         </div>
     {% endfor %}
     </div>
-    
+
     <form id="page-edit" method="POST">
-        <br>
-        <strong>Route: </strong><input name='nonce' type='hidden' value="{{ nonce }}">
-        <input class="radius" id="route" type="text" name="route" value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
-        <strong>HTML: </strong><textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
-        <button class="radius" type='submit'>Create</button>
+        <div class="row-fluid">
+            <div class="col-md-12">
+                <strong>Route: </strong><input name='nonce' type='hidden' value="{{ nonce }}">
+                <input class="radius" id="route" type="text" name="route" value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="col-md-12">
+                <textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
+                <button class="btn btn-theme btn-outlined create-challenge pull-right">Create</button>
+            </div>
+        </div>
     </form>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.2.0/mode/xml/xml.min.js"></script>
 <script>
     var editor = CodeMirror.fromTextArea(document.getElementById("admin-pages-editor"), {
-      lineNumbers: true,
-      lineWrapping: true,
-      mode: "text/html"
+        lineNumbers: true,
+        lineWrapping: true,
+        mode: "xml",
+        htmlMode: true,
+        theme: 'elegant'
     });
+
     $('#page-edit').submit(function (e){
         $(this).attr('action', '/admin/pages/'+$('#route').val());
     });
