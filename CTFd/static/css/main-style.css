@@ -1,0 +1,161 @@
+
+html, body, .container {
+    height: 100% !important;
+    font-family: 'Lato', sans-serif;
+}
+
+h1, h2 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    letter-spacing: 2px;
+}
+
+td {
+    padding: 15px !important;
+}
+
+a {
+    outline: 0;
+}
+
+.no-margin-right {
+    margin-right: 0px !important;
+}
+
+.no-margin-left {
+    margin-left: -3px !important;
+}
+
+.navbar > .container {
+    padding-top: 30px;
+}
+
+.navbar .navbar-brand {
+    font-size: 24px;
+    letter-spacing: -0.04rem;
+    line-height: 15px;
+    color: #FFF;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #FFF !important;
+}
+
+.navbar li > a {
+    opacity: 0.5;
+    transition: opacity 0.08s ease-in 0s;
+    cursor: pointer;
+}
+
+.navbar li > a:hover {
+    opacity: 0.8;
+}
+
+.align-text-to-button {
+    padding-top: 16px;
+}
+
+.padded-container {
+    margin-top: 50px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.main-container {
+    margin-top: 35px;
+    margin-bottom: 25px;
+}
+
+#login-container {
+    padding-left: 70px;
+    padding-right: 70px;
+}
+
+#chal > form{
+    width: 400px;
+    margin: 0 auto;
+}
+
+.reveal-modal{
+    text-align: center;
+}
+
+.chal-desc{
+    text-align: left;
+}
+
+table{
+    width: 100%;
+}
+
+#challenges button{
+    margin: 8px;
+}
+
+.row > h1{
+    text-align: center;
+}
+
+#challenges{
+    line-height: 66px;
+}
+
+#score-graph{
+    max-height: 400px;
+}
+
+#keys-pie-graph{
+    width: 50%;
+    max-height: 330px;
+    float: left;
+}
+
+#categories-pie-graph{
+    width: 50%;
+    float: left;
+    max-height: 330px;
+}
+
+.logo{
+    margin: 0 auto;
+    width: 500px;
+    padding: 50px;
+    display: block;
+}
+
+@media only screen and (min-width: 40.063em){
+    .top-bar .dropdown{
+        display: block;
+        padding: 0 15px 5px;
+        width: 200% !important;
+    }
+}
+
+.btn {
+    letter-spacing: 1px;
+    text-decoration: none;
+    background: none;
+    -moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 0;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+    white-space: nowrap;
+    font-size:14px;
+    line-height:20px;
+    font-weight:700;
+    text-transform:uppercase;
+    border: 3px solid;
+    padding:8px 20px;
+}
+
+.btn-outlined {
+    border-radius: 0;
+    -webkit-transition: all 0.3s;
+       -moz-transition: all 0.3s;
+            transition: all 0.3s;
+}
+

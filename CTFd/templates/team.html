@@ -1,28 +1,35 @@
 {% extends "base.html" %}
 
-{% block content %}
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css">
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css">
+{% endblock %}
 
-<div class="row">
-    <h1 id="team-id">{{ team.name }}</h1>
-    <h2 id="team-place" class="text-center">
-        {%if place %}
-            {{ place }} <small>place</small>
-        {% endif %}
-    </h2>
-    <h2 id="team-score" class="text-center">
-        {%if score %}
-            {{ score }} <small>points</small>
-        {% endif %}
-    </h2>
+{% block content %}
+<div class="jumbotron home">
+    <div class="container">
+        <h1 id="team-id">{{ team.name }}</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="team-info">
+        <h2 id="team-place" class="text-center">
+            {%if place %}
+                {{ place }} <small>place</small>
+            {% endif %}
+        </h2>
+        <h2 id="team-score" class="text-center">
+            {%if score %}
+                {{ score }} <small>points</small>
+            {% endif %}
+        </h2>
+    </div>
 
     <br>
 
     <div id="keys-pie-graph"></div>
     <div id="categories-pie-graph"></div>
-    <div id="score-graph"></div>
-    
-    <table>
+
+    <table class="table table-striped">
         <thead>
             <tr>
                 <td><b>Challenge</b></td>
@@ -37,9 +44,8 @@
         {% endfor %}
         </tbody>
     </table>
+    <div id="score-graph"></div>
 </div>
-
-
 {% endblock %}
 
 {% block scripts %}

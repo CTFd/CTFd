@@ -9,16 +9,6 @@ String.prototype.format = String.prototype.f = function() {
     return s;
 };
 
-function colorhash (x) {
-    color = ""
-    for (var i = 20; i <= 60; i+=20){
-        x += i
-        x *= i
-        color += x.toString(16)
-    };
-    return "#" + color.substring(0, 6)
-}
-
 function htmlentities(string) {
     return $('<div/>').text(string).html();
 }
@@ -27,8 +17,8 @@ function updatescores () {
   $.get('/scores', function( data ) {
     teams = $.parseJSON(JSON.stringify(data));
     $('#scoreboard > tbody').empty()
-    for (var i = 0; i < teams['standings'].length; i++) {
-      row = "<tr><td>{0}</td><td><a href='/team/{1}'>{2}</a></td><td>{3}</td></tr>".format(i+1, teams['standings'][i].id, htmlentities(teams['standings'][i].name), teams['standings'][i].score)
+    for (var i = 0; i < teams['teams'].length; i++) {
+      row = "<tr><td>{0}</td><td><a href='/team/{1}'>{2}</a></td><td>{3}</td></tr>".format(i+1, teams['teams'][i].id, htmlentities(teams['teams'][i].name), teams['teams'][i].score)
       $('#scoreboard > tbody').append(row)
     };
   });
@@ -47,6 +37,7 @@ function UTCtoDate(utc){
     d.setUTCSeconds(utc)
     return d;
 }
+
 function scoregraph () {
     var times = []
     var scores = []
@@ -61,23 +52,20 @@ function scoregraph () {
 
         xs_data = {}
         column_data = []
-        colors = {}
         for (var i = 0; i < teams.length; i++) {
           times = []
           team_scores = []
           for (var x = 0; x < scores[teams[i]].length; x++) {
             times.push(scores[teams[i]][x].time)
             team_scores.push(scores[teams[i]][x].value)
-            console.log(scores[teams[i]])
-            colors[teams[i]] = colorhash(scores[teams[i]][x].id)
           };
           team_scores = cumulativesum(team_scores)
 
           times.unshift("x"+i)
-          // times.push( Math.round(new Date().getTime()/1000) )
+          times.push( Math.round(new Date().getTime()/1000) )
 
           team_scores.unshift(teams[i])
-          // team_scores.push( team_scores[team_scores.length-1] )
+          team_scores.push( team_scores[team_scores.length-1] )
 
               
           xs_data[teams[i]] = "x"+i
@@ -92,13 +80,11 @@ function scoregraph () {
                 xs: xs_data,
                 columns: column_data,
                 type: "step",
-                colors: colors
-                // labels: true
+                labels: true
             },
             axis : {
                 x : {
                     tick: {
-                        count: 10,
                         format: function (x) { 
                             return moment(x*1000).local().format('LLL');
                         }
@@ -111,9 +97,9 @@ function scoregraph () {
                     }
                 }
             },
-            zoom : {
-              enabled: true
-            }
+            // zoom : {
+            //   enabled: true
+            // }
         });
     });
 }
