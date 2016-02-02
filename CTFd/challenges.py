@@ -138,7 +138,7 @@ def chal(chalid):
             for x in keys:
                 if x['type'] == 0: #static key
                     print(x['flag'], key.strip().lower())
-                    if x['flag'] == key.strip().lower():
+                    if x['flag'] and x['flag'].strip().lower() == key.strip().lower():
                         solve = Solves(chalid=chalid, teamid=session['id'], ip=request.remote_addr, flag=key)
                         db.session.add(solve)
                         db.session.commit()
