@@ -13,3 +13,5 @@ Live Demo:
 [https://demo.ctfd.io/](https://demo.ctfd.io/)
 
 Logo by [Laura Barbera](http://www.laurabb.com/)
+
+Theme by [Christopher Thompson](https://github.com/breadchris)
