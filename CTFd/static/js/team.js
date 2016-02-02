@@ -1,6 +1,6 @@
 function teamid (){
     loc = window.location.pathname
-    return parseInt(loc.substring(loc.lastIndexOf('/')+1, loc.length));
+    return loc.substring(loc.lastIndexOf('/')+1, loc.length);
 }
 
 function colorhash (x) {
@@ -29,8 +29,6 @@ function scoregraph () {
         solves = $.parseJSON(JSON.stringify(data));
         solves = solves['solves']
 
-        console.log(solves)
-
         if (solves.length == 0)
             return
 
@@ -45,8 +43,6 @@ function scoregraph () {
 
         scores.unshift('data1')
         // scores.push( scores[scores.length-1] )
-
-        console.log(scores)
 
         var chart = c3.generate({
             bindto: "#score-graph",
@@ -70,11 +66,11 @@ function scoregraph () {
             axis : {
                 x : {
                     tick: {
-                        format: function (x) { 
+                        format: function (x) {
                             return moment(x).local().format('M/D h:mm:ss');
                         }
                     },
-                    
+
                 },
                 y:{
                     label: {

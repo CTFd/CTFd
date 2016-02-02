@@ -1,53 +1,164 @@
 {% extends "base.html" %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.0/isotope.pkgd.min.js">
+    <link rel="stylesheet" href="/static/css/input.css">
+<style>
+    .hide-text { text-overflow: ellipsis; overflow: hidden; }
+    .dialog-inner {padding-bottom: 30px;}
+    .alert {display: none}
+    .category-header {text-align: center}
+    .challenge-wrapper {padding: 5px;}
+    .challenge-button {width: 100%}
+    .submit-row {padding-top: 0px; padding-right: 0px; padding-left: 0px;}
+    .disabled-button {background-color: #EEEEEE}
+
+    .file-button {text-decoration: none; color: #fff;}
+    .file-button:hover {text-decoration: none; color: #fff;}
+    .file-wrapper {padding: 20px; transition: all 0.5s ease; cursor: pointer; color: #fff; width: 100%; text-overflow: ellipsis; overflow: hidden;}
+    .file-button {cursor: pointer;}
+    .file-button-wrapper {padding: 0px 10px;}
+
+    .close-text {color: #ccc;position: relative;top: -25px;right: -15px;cursor: pointer;}
+    .chal-desc {padding-left: 30px; padding-right: 30px;}
+    .key-submit {padding-top: 14px; padding-right: 10px;}
+    .notification-row {padding-left: 10px;padding-right: 10px;}
+    .input {padding-right: 5px;}
+    .input-field:focus + .input-field,
+    .input--filled .input-field {
+        border-color: rgb(238, 238, 238);
+    }
+    .input-field:focus + .input-field,
+    .input--filled .correct {
+        border-color: rgb(223, 240, 216);
+    }
+    .input-field:focus + .input-field,
+    .input--filled .wrong {
+        border-color: rgb(255, 190, 190);
+    }
+    a, button {
+        color: #74716D;
+        text-decoration: none;
+        outline: none;
+    }
+
+    a:hover, a:focus {
+        color: #c94e50;
+        outline: none;
+    }
+
+    button {
+        padding: 1em 2em;
+        outline: none;
+        font-weight: 600;
+        border: none;
+        color: #fff;
+        background: #c94e50;
+    }
+
+    .content {
+        max-width: 1000px;
+        padding: 2em;
+        margin: 0 auto;
+        text-align: center;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .button-wrap {
+        padding: 2.5em 0 0;
+        font-size: 1.25em;
+    }
+
+    button.trigger {
+        background: #c94e50;
+        color: #fff;
+        border: none;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
-
-<div id="chal-solves-window" class="reveal-modal" data-reveal>
-    <h3>Solved By</h3>
-    <div class="scroll-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <td><b>Name</b>
-                    </td>
-                    <td><b>Date</b>
-                    </td>
-                </tr>
-            </thead>
-            <tbody id="chal-solves-names">
-            </tbody>
-        </table>
+<div class="jumbotron home">
+    <div class="container">
+        <h1>Challenges</h1>
     </div>
-    <a class="close-reveal-modal" data-reveal-id="chal-window">&#215;</a>
+</div>
+<div class="container main-container">
+    <div id='challenges-board' class="row">
+    </div>
 </div>
 
-<div id="chal-window" class="reveal-modal" data-reveal>
-    <div class="row">
-        <h3 class='chal-name'></h3>
-        <h4 class="chal-value"></h4>
-        <p><i><a data-reveal-id="chal-solves-window" class="chal-solves"></a></i></p>
-        <p class="chal-desc"></p>
-        {% if ctftime %}
-        <input id="answer" type="text" placeholder="Key">
-        <input type="hidden" id="nonce" name="nonce" value={{ nonce }}>
-        <button id="submit-key">Submit</button>
-        {% endif %}
-        <input id="chal-id" type="hidden">
-    </div>
-    <a class="close-reveal-modal">&#215;</a>
-</div>
+<div class="modal fade" id="chal-window" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content content">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#challenge" aria-controls="challenge" role="tab">Challenge</a></li>
+                <li role="presentation"><a href="#solves" aria-controls="solves" class="chal-solves" role="tab"></a></li>
+            </ul>
+            <div class="modal-body">
+                <div role="tabpanel">
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="challenge">
+                            <h3 class='chal-name'></h3>
+                            <h4 class="chal-value"></h4>
+                            <p class="chal-desc"></p>
+                            <div class="chal-files file-row row">
+                            </div>
 
-    <div>
-        <h1 class="text-center">Challenges</h1>
-        <br>
-
-        <div class="large-12 columns">
-            <table id='challenges'>
-            </table>
+                            <div class="row submit-row">
+                                <div class="col-md-9" style="padding-right:0px;padding-left:10px;">
+                                    <span class="input">
+                                        <input class="input-field" type="text" name="answer" id="answer-input" placeholder="Key" />
+                                    </span>
+                                    <input type="hidden" id="nonce" name="nonce" value={{ nonce }}>
+                                    <input id="chal-id" type="hidden">
+                                </div>
+                                <div class="col-md-3 key-submit">
+                                    <button type="submit" id="submit-key" tabindex="5" class="btn btn-md btn-theme btn-outlined pull-right" style="height:46.375px">Submit</button>
+                                </div>
+                            </div>
+                            <div class="row notification-row">
+                                <div id="incorrect-key" class="alert alert-danger alert-dismissable" role="alert">
+                                  <strong>Incorrect</strong>
+                                </div>
+                                <div id="correct-key" class="alert alert-success alert-dismissable" role="alert">
+                                  <strong>Correct</strong>
+                                </div>
+                                <div id="already-solved" class="alert alert-info alert-dismissable" role="alert">
+                                  <strong>You already solved this</strong>
+                                </div>
+                                <div id="too-fast" class="alert alert-warning alert-dismissable" role="alert">
+                                  <strong>You're submitting keys too fast. Slow down.</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="solves">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <td><b>Name</b>
+                                        </td>
+                                        <td><b>Date</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody id="chal-solves-names">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="solves-graph" style="width: 90%; height: 400px; margin: 0 auto"></div>
     </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -55,4 +166,13 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.9/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js"></script>
     <script src="/static/js/chalboard.js"></script>
+    <script src="/static/js/input.js"></script>
+    <script>
+    $('[data-dialog-close]').click(function() {
+        $('.nav-tabs > li:nth-child(1)').addClass("active");
+        $('.nav-tabs > li:nth-child(2)').removeClass("active");
+        openDialog.toggle();
+        window.location.hash = ""
+    });
+    </script>
 {% endblock %}

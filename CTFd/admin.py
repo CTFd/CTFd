@@ -196,7 +196,7 @@ def delete_page(pageroute):
 def admin_chals():
     if request.method == 'POST':
         chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
-        
+
         json_data = {'game':[]}
         for x in chals:
             json_data['game'].append({'id':x[1], 'name':x[2], 'value':x[3], 'description':x[4], 'category':x[5]})
@@ -228,7 +228,7 @@ def admin_keys(chalid):
             flag_dict = {'flag':flag, 'type':int(val)}
             flags.append(flag_dict)
         json_data = json.dumps(flags)
-       
+
         chal.flags = json_data
 
         db.session.commit()
@@ -293,7 +293,7 @@ def admin_files(chalid):
 
                 if len(filename) <= 0:
                     continue
-                
+
                 md5hash = hashlib.md5(os.urandom(64)).hexdigest()
 
                 if not os.path.exists(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash)):
@@ -433,7 +433,7 @@ def admin_graph(graph_type):
         return jsonify(json_data)
     elif graph_type == "solves":
         solves = Solves.query.add_columns(db.func.count(Solves.chalid)).group_by(Solves.chalid).all()
-        json_data = {}        
+        json_data = {}
         for chal, count in solves:
             json_data[chal.chal.name] = count
         return jsonify(json_data)
@@ -489,7 +489,7 @@ def delete_solve(teamid, chalid):
 @admins_only
 def admin_stats():
     db.session.commit()
-    
+
     teams_registered = db.session.query(db.func.count(Teams.id)).first()[0]
     wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
     solve_count = db.session.query(db.func.count(Solves.id)).first()[0]

@@ -1,30 +1,46 @@
 {% extends "admin/base.html" %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/theme/elegant.min.css">
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <br>
-    <div id="confirm" class="reveal-modal" data-reveal>
-        <h2 class="text-center">Delete Page</h2>
-        <form method="POST">
-            <input type="hidden" name="route">
-            <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
-            <div class="small-6 small-centered text-center columns">
-                <p>Are you sure you want to delete <strong id="confirm-route-name"></strong>?</p>
-                <button type="button" class="button alert radius" onclick="$('#confirm').foundation('reveal', 'close');">No</button>
-                <button type="button" id="delete-route" class="button success radius">Yes</button>
+    <div id="confirm" class="modal fade" tabindex="-1" data-width="760">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-center">Delete Page</h2>
+                </div>
+                <div class="modal-body" style="height:110px">
+                    <div class="row-fluid">
+                        <div class="col-md-12">
+                            <form method="POST">
+                                <input type="hidden" name="route">
+                                <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+                                <div class="small-6 small-centered text-center columns">
+                                    <p>Are you sure you want to delete <strong id="confirm-route-name"></strong>?</p>
+                                    <button type="button" data-dismiss="modal" class="btn btn-theme btn-outlined">No</button>
+                                    <button type="button" id="delete-route" class="btn btn-theme btn-outlined">Yes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
-        <a class="close-reveal-modal">&#215;</a>
+        </div>
     </div>
 
-    <div class="small-6 columns">
+    <div class="col-md-9">
         <h3>CSS editor <a onclick="save_css()"><i class="fa fa-floppy-o"></i></a></h3>
-        <div style="height: 500px;" id="admin-css-editor" name="css">{{ css }}</div>
+        <textarea id="pages-editor" name="html">{{ css }}</textarea>
     </div>
 
-    <div class="small-6 columns">
+    <div class="col-md-3">
         <h3>HTML Pages <a href="/admin/pages?mode=create"><i class="fa fa-plus"></i></a></h3>
-        <table id="pages">
+        <table id="pages" class="table table-striped">
             <thead>
                 <tr>
                     <td><b>Route</b></td>
@@ -45,10 +61,17 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/theme-github.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/mode-css.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.2.0/mode/xml/xml.min.js"></script>
 <script>
+var editor = CodeMirror.fromTextArea(document.getElementById("pages-editor"), {
+    lineNumbers: true,
+    lineWrapping: true,
+    mode: "xml",
+    htmlMode: true,
+    theme: 'elegant'
+});
+
 $('#delete-route').click(function(e){
     e.preventDefault();
     var route = $('#confirm input[name="route"]').val()
@@ -65,7 +88,7 @@ function load_confirm_modal(route){
     modal.find('input[name=route]').val(route)
     modal.find('#confirm-route-name').text(route)
     $('#confirm form').attr('action', '/admin/page/'+route+'/delete');
-    $('#confirm').foundation('reveal', 'open');
+    $('#confirm').modal();
 }
 
 function save_css(){
@@ -81,10 +104,6 @@ $('.fa-times').click(function(){
     var name = elem.find('.route-name').text().trim();
     load_confirm_modal(name)
 });
-
-var editor = ace.edit("admin-css-editor");
-editor.setTheme("ace/theme/github");
-editor.getSession().setMode("ace/mode/css");
 
 </script>
 {% endblock %}

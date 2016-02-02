@@ -1,56 +1,102 @@
 {% extends "base.html" %}
 
-{% block content %}
-<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.css">
-<div class="row">
-    <h1>Setup</h1>
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.css">
+    <link rel="stylesheet" href="/static/css/input.css">
+    <link rel="stylesheet" href="/static/css/codemirror-monokai.css">
+    <style>
+        .submit-row {
+            padding-right: 15px;
+        }
+    </style>
+{% endblock %}
 
-    <div class="row">
-    {% for error in errors %}
-        <div class="large-8 large-centered columns">
-            <div data-alert class="alert-box alert radius centered text-center">
-                <span>{{ error }}</span>
-                <a href="#" class="close">×</a>
+{% block content %}
+<div class="jumbotron home">
+    <div class="container">
+        <h1>Setup</h1>
+    </div>
+</div>
+<div class="container main-container">
+    <div id="login-container" class="col-md-6 col-md-offset-3">
+        <h2 class="text-center">CTF Settings</h2>
+        {% for error in errors %}
+        <div class="submit-row">
+            <div class="alert alert-danger alert-dismissable" role="alert">
+              <span class="sr-only">Error:</span>
+              {{ error }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
             </div>
         </div>
-    {% endfor %}
+        {% endfor %}
+        <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+            <input type="hidden" name="nonce" value="{{nonce}}"> {# This nonce is implemented specially in the route itself #}
+            <span class="input">
+                <input class="input-field" type="text" name="ctf_name" id="ctf_name-input" />
+                <label class="input-label" for="ctf_name-input">
+                    <span class="label-content" data-content="CTF Name">CTF Name</span>
+                </label>
+            </span>
+            <span class="input">
+                <input class="input-field" type="text" name="name" id="username-input" />
+                <label class="input-label" for="username-input">
+                    <span class="label-content" data-content="Username">Username</span>
+                </label>
+            </span>
+            <span class="input">
+                <input class="input-field" type="email" name="email" id="email-input" />
+                <label class="input-label" for="email-input">
+                    <span class="label-content" data-content="Email">Email</span>
+                </label>
+            </span>
+            <span class="input">
+                <input class="input-field" type="password" name="password" id="password-input" />
+                <label class="input-label" for="password-input">
+                    <span class="label-content" data-content="Password">Password</span>
+                </label>
+            </span>
+            <br/>
+        </div>
     </div>
-
-    <form method="POST">
-        <strong>CTF Name</strong>
-        <input class="radius" type='text' name='ctf_name' placeholder='CTF Name'><br/>
-
-        <strong>Username</strong>
-        <input class="radius" type='text' name='name' placeholder='Name'><br/>
-
-        <strong>Email</strong>
-        <input class="radius" type='text' name='email' placeholder='Email'><br/>
-
-        <strong>Password</strong>
-        <input class="radius" type='password' name='password' placeholder='Password'><br/>
-        <strong>Index Page</strong>
+    <div class="container" style="margin-bottom:50px;">
+        <h2 class="text-center">Index Page</h2>
         <textarea id="pages-editor" name="html">
 <div class="row">
-    <img class="logo" src="/static/img/logo.png">
-    <h3 class="text-center">Welcome to a cool CTF framework written by <a href="https://github.com/ColdHeat">Kevin Chung</a> of <a href="https://github.com/isislab">@isislab</a></h3>
+    <img class="logo" src="/static/img/logo.png" />
+    <h3 class="text-center">
+        Welcome to a cool CTF framework written by <a href="https://github.com/ColdHeat">Kevin Chung</a> of <a href="https://github.com/isislab">@isislab</a>
+    </h3>
 
-    <h4 class="text-center"><a href="/login">Click here</a> to login and setup your CTF</h4>
+    <h4 class="text-center">
+        <a href="/admin">Click here</a> to login and setup your CTF
+    </h4>
 </div>
-        </textarea><br>
-        <input type="hidden" name="nonce" value="{{nonce}}"> {# This nonce is implemented specially in the route itself #}
-        <button class="radius" type='submit'>Login</button>
+        </textarea>
+    </div>
+    <div class="container main-container" style="margin-bottom:100px;">
+        <div id="login-container" class="col-md-6 col-md-offset-3">
+            <div class="submit-row text-center">
+                <button type="submit" id="submit" tabindex="5" class="btn btn-md btn-theme btn-outlined">Submit</button>
+            </div>
+        </div>
+    </div>
     </form>
 </div>
 
 {% endblock %}
 
 {% block scripts %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js"></script>
-<script>
-    var editor = CodeMirror.fromTextArea(document.getElementById("pages-editor"), {
-      lineNumbers: true,
-      lineWrapping: true,
-      mode: "text/html"
-    });
-</script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/classie/1.0.1/classie.min.js"></script>
+    <script src="/static/js/input.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.2.0/mode/xml/xml.min.js"></script>
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById("pages-editor"), {
+          lineNumbers: true,
+          lineWrapping: true,
+          mode: "xml",
+          htmlMode: true,
+          theme: 'monokai'
+        });
+    </script>
 {% endblock %}

@@ -6,72 +6,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/css/normalize.min.css" />
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/css/foundation.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/main-style.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+    <link href='//fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/railscasts.min.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
     <link rel="stylesheet" type="text/css" href="/static/user.css">
+    {% block stylesheets %}{% endblock %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
 </head>
 <body>
-    <nav class="top-bar" data-topbar>
-      <ul class="title-area">
-        <li class="name">
-          <h1><a href="/">{{ ctf_name() }}</a></h1>
-        </li>
-        <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
-      </ul>
-
-      <section class="top-bar-section">
-        <!-- Right Nav Section -->
-        <ul class="right">
-            {% if username is defined %}
-            <li class="has-dropdown">
-              <a href="/team/{{ id }}">{{ username }} {% if admin %} (ADMIN) {% endif %}</a>
-              <ul class="dropdown">
-                {% if admin %}
-                <li><a href="/admin">Admin</a></li>
-                {% endif %}
-                <li><a href="/team/{{ id }}">Team</a></li>
-                <li><a href="/profile">Account</a></li>
-                <li><a href="/logout">Logout</a></li>
-              </ul>
-            </li>
-            {%else %}
-            <li class="has-form">
-              {% if can_register() %} 
-              <li><a href="/register">Register</a></li>
-              {% endif %}
-              <li><a href="/login">Login</a></li>
-              {% endif %}
-            </li>
-        </ul>
-
-        <!-- Left Nav Section -->
-        <ul class="left">
-          {% for page in pages() %}
-            <li><a href="/{{ page.route }}">{{ page.route|title }}</a></li>
-          {% endfor %}
-          <li><a href="/teams">Teams</a></li>
-          <li><a href="/scoreboard">Scoreboard</a></li>
-          <li><a href="/challenges">Challenges</a></li>
-        </ul>
-      </section>
-    </nav>
+  <div class="body-container">
+    <div class="navbar navbar-inverse home">
+      <div class="container">
+        <div class="navbar-header">
+          <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="/" class="navbar-brand">{{ ctf_name() }}</a>
+        </div>
+        <div class="navbar-collapse collapse" aria-expanded="false" style="height: 0px">
+          <ul class="nav navbar-nav">
+            {% for page in pages() %}
+              <li><a href="/{{ page.route }}">{{ page.route|title }}</a></li>
+            {% endfor %}
+            <li><a href="/teams">Teams</a></li>
+            <li><a href="/scoreboard">Scoreboard</a></li>
+            <li><a href="/challenges">Challenges</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+          {% if username is defined %}
+            {% if admin %}
+            <li><a href="/admin">Admin</a></li>
+            {% endif %}
+            <li><a href="/team/{{ id }}">Team</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+          {% else %}
+            {% if can_register() %}
+            <li><a href="/register">Register</a></li>
+            <li><a style="padding-left:0px;padding-right:0px;">|</a></li>
+            {% endif %}
+            <li><a href="/login">Login</a></li>
+          {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
 
     {% block content %}
     {% endblock %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/vendor/jquery.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/vendor/modernizr.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/foundation.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/foundation/foundation.topbar.min.js"></script>
-    <script>
-      $(document).foundation();
-    </script>
-    {% block scripts %}
-    {% endblock %}
+
+  </div>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/vendor/jquery.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/vendor/modernizr.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  {% block scripts %}
+  {% endblock %}
 </body>
 </html>
