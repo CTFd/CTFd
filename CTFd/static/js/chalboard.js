@@ -181,7 +181,7 @@ function loadchals() {
 
                 var categoryid = category.replace(/ /g,"-").hashCode();
                 var categoryrow = $('<div id="{0}-row" class="row"><div class="category-header col-md-2"></div><div class="category-challenges col-md-9"><div class="row"></div></div></div>'.format(categoryid));
-                categoryrow.find(".category-header").append($("<h2>"+ category +"</h2>"));
+                categoryrow.find(".category-header").append($("<h3>"+ category +"</h3>"));
 
                 $('#challenges-board').append(categoryrow);
             }

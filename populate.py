@@ -11,7 +11,7 @@ import hashlib
 import os
 import sys
 
-app = create_app(sys.argv[1], sys.argv[2], sys.argv[3])
+app = create_app()
 
 USER_AMOUNT = 50
 CHAL_AMOUNT = 20
@@ -879,7 +879,8 @@ with app.app_context():
     print "GENERATING CHALLENGES"
     for x in range(CHAL_AMOUNT):
         word = gen_word()
-        db.session.add(Challenges(word, gen_sentence(), gen_value(), gen_category()))
+        flags = [{'flag':word, 'type':0}]
+        db.session.add(Challenges(word, gen_sentence(), gen_value(), gen_category(), flags))
         db.session.commit()
         db.session.add(Keys(x+1, word, 0))
         db.session.commit()
@@ -913,7 +914,7 @@ with app.app_context():
             chalid = random.randint(1,CHAL_AMOUNT)
             if chalid not in used:
                 used.append(chalid)
-                solve = Solves(chalid, x+1, '127.0.0.1')
+                solve = Solves(chalid, x+1, '127.0.0.1', gen_word())
 
                 new_base = random_date(base_time, base_time + datetime.timedelta(minutes=60))
                 solve.date = new_base
