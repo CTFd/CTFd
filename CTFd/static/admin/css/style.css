@@ -73,13 +73,13 @@ table{
 }
 
 #keys-pie-graph{
-    width: 600px;
+    width: 50%;
     max-height: 330px;
     float: left;
 }
 
 #categories-pie-graph{
-    width: 600px;
+    width: 50%;
     float: left;
     max-height: 330px;
 }
