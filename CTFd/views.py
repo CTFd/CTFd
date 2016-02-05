@@ -136,7 +136,7 @@ def teams(page):
     count = db.session.query(db.func.count(Teams.id)).first()[0]
     print(count)
     pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template('teams.html', teams=teams, team_pages=pages)
+    return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
 
 @views.route('/team/<teamid>', methods=['GET', 'POST'])
 def team(teamid):

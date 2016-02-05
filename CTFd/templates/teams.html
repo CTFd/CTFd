@@ -35,7 +35,11 @@
     <div class="text-center">Page
         <br>
         {% for page in range(1, team_pages + 1) %}
-        <a href="/teams/{{ page }}">{{ page }}</a>
+            {% if curr_page != page %}
+                <a href="/teams/{{ page }}">{{ page }}</a>
+            {% else %}
+                <b>{{page}}</b>
+            {% endif %}
         {% endfor %}
     <a href="">
     </div>
