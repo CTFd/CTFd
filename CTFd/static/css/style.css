@@ -227,6 +227,10 @@ table{
     border-radius: 0px;
 }
 
+.chal-tag {
+    margin: 0 5px 0 5px;
+}
+
 .alert {
     border-radius: 0px;
 }

@@ -1,7 +1,7 @@
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint
 
 from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config
-from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys
+from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags
 
 import time
 import re
@@ -38,8 +38,9 @@ def chals():
 
         json = {'game':[]}
         for x in chals:
+            tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=x[1]).all()]
             files = [ str(f.location) for f in Files.query.filter_by(chal=x.id).all() ]
-            json['game'].append({'id':x[1], 'name':x[2], 'value':x[3], 'description':x[4], 'category':x[5], 'files':files})
+            json['game'].append({'id':x[1], 'name':x[2], 'value':x[3], 'description':x[4], 'category':x[5], 'files':files, 'tags':tags})
 
         db.session.close()
         return jsonify(json)

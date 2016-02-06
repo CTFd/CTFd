@@ -45,22 +45,31 @@ function loadchalbyname(chalname) {
 }
 
 function updateChalWindow(obj) {
-    window.location.hash = obj.name
-    $('#chal-window').find('.chal-name').text(obj.name)
-    $('#chal-window').find('.chal-desc').html(marked(obj.description, {'gfm':true, 'breaks':true}))
-    $('#chal-window').find('.chal-files').empty();
+    window.location.hash = obj.name;
+    var chal = $('#chal-window');
+    chal.find('.chal-name').text(obj.name);
+    chal.find('.chal-desc').html(marked(obj.description, {'gfm':true, 'breaks':true}));
+    chal.find('.chal-files').empty();
     for (var i = 0; i < obj.files.length; i++) {
-        filename = obj.files[i].split('/')
-        filename = filename[filename.length - 1]
+        filename = obj.files[i].split('/');
+        filename = filename[filename.length - 1];
         $('#chal-window').find('.chal-files').append("<div class='col-md-3 file-button-wrapper'><a class='file-button' href='"+obj.files[i]+"'><label class='challenge-wrapper file-wrapper hide-text'>"+filename+"</label></a></div>")
-    };
+    }
 
-    $('#chal-window').find('.chal-value').text(obj.value)
-    $('#chal-window').find('.chal-category').text(obj.category)
-    $('#chal-window').find('#chal-id').val(obj.id)
+    var tags = chal.find('.chal-tags');
+    tags.empty();
+    var tag = "<span class='label label-primary chal-tag'>{0}</span>";
+    for (var i = 0; i < obj.tags.length; i++){
+        var data = tag.format(obj.tags[i]);
+        tags.append($(data));
+    }
+
+    chal.find('.chal-value').text(obj.value);
+    chal.find('.chal-category').text(obj.category);
+    chal.find('#chal-id').val(obj.id);
     var solves = obj.solves == 1 ? " Solve" : " Solves";
-    $('#chal-window').find('.chal-solves').text(obj.solves + solves)
-    $('#answer').val("")
+    chal.find('.chal-solves').text(obj.solves + solves);
+    $('#answer').val("");
 
     $('pre code').each(function(i, block) {
         hljs.highlightBlock(block);
@@ -168,7 +177,7 @@ function getsolves(id){
 function loadchals() {
 
     $.get("/chals", function (data) {
-        categories = [];
+        var categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
 
         $('#challenges-board').html("");
@@ -188,8 +197,8 @@ function loadchals() {
         };
 
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
-            chalinfo = challenges['game'][i];
-            challenge = chalinfo.category.replace(/ /g,"-").hashCode();
+            var chalinfo = challenges['game'][i];
+            var challenge = chalinfo.category.replace(/ /g,"-").hashCode();
             var chalid = chalinfo.name.replace(/ /g,"-").hashCode();
             var catid = chalinfo.category.replace(/ /g,"-").hashCode();
             var chalwrap = $("<div id='{0}' class='challenge-wrapper col-md-2'></div>".format(chalid));
