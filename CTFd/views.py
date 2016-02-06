@@ -1,5 +1,5 @@
 from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint, Response
-from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url, get_config, sha512
+from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url, get_config, sha512, get_ip
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 
 from jinja2.exceptions import TemplateNotFound
@@ -12,6 +12,7 @@ import re
 import sys
 import json
 import os
+import datetime
 
 views = Blueprint('views', __name__)
 
@@ -19,11 +20,15 @@ views = Blueprint('views', __name__)
 @views.before_request
 def tracker():
     if authed():
-        if not Tracking.query.filter_by(ip=ip2long(request.remote_addr)).first():
-            visit = Tracking(request.remote_addr, session['id'])
+        track = Tracking.query.filter_by(ip=ip2long(get_ip()), team=session['id']).first()
+        if not track:
+            visit = Tracking(ip=get_ip(), team=session['id'])
             db.session.add(visit)
             db.session.commit()
-            db.session.close()
+        else:
+            track.date = datetime.datetime.utcnow()
+            db.session.commit()
+        db.session.close()
 
 
 @views.before_request

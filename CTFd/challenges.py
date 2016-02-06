@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint
 
-from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config
+from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config, get_ip
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags
 
 import time
@@ -140,7 +140,7 @@ def chal(chalid):
                 if x['type'] == 0: #static key
                     print(x['flag'], key.strip().lower())
                     if x['flag'] and x['flag'].strip().lower() == key.strip().lower():
-                        solve = Solves(chalid=chalid, teamid=session['id'], ip=request.remote_addr, flag=key)
+                        solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
                         db.session.add(solve)
                         db.session.commit()
                         db.session.close()
@@ -149,7 +149,7 @@ def chal(chalid):
                 elif x['type'] == 1: #regex
                     res = re.match(str(x['flag']), key, re.IGNORECASE)
                     if res and res.group() == key:
-                        solve = Solves(chalid=chalid, teamid=session['id'], ip=request.remote_addr, flag=key)
+                        solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
                         db.session.add(solve)
                         db.session.commit()
                         db.session.close()
