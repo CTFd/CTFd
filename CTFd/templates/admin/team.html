@@ -1,9 +1,44 @@
 {% extends "admin/base.html" %}
 
+{% block stylesheets %}
+<style>
+    .btn-primary {
+        background-color: #337ab7;
+    }
+
+    .btn-danger {
+        background-color: #d9534f;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.css">
 
 <div class="row">
+
+    <div id="confirm" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h3>Delete Key</h3>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="/admin/chal/delete">
+                        <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+                        <div class="small-6 small-centered text-center columns">
+                            <p>Are you sure you want to delete <strong class="key-type">successful</strong> key submission for team: <strong
+                                    id="confirm-team-name"></strong> in challenge: <strong
+                                    id="confirm-chal-name"></strong>?</p>
+                            <a onclick="$('#confirm').modal('hide')" class="btn btn-primary">No</a>
+                            <button class="btn btn-danger" id="delete-solve" type="button">Yes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h1 id="team-id">{{ team.name }}</h1>
     <h2 id="team-email" class="text-center">{{ team.email }}</h2>
     <h2 id="team-place" class="text-center">
@@ -23,40 +58,45 @@
     <div id="score-graph"></div>
 
     <table class="table table-striped">
-        <h3>Solves</h3>
+        <h3>IP Addresses</h3>
         <thead>
-            <tr>
-                <td><b>Challenge</b></td>
-                <td><b>Submitted</b></td>
-                <td><b>Category</b></td>
-                <td><b>Value</b></td>
-                <td><b>Time</b></td>
-            </tr>
+        <tr>
+            <td class="text-center"><b>IP Address</b></td>
+            <td class="text-center"><b>Last Seen</b></td>
+        </tr>
         </thead>
         <tbody>
-        {% for solve in solves %}
+        {% for addr in addrs %}
             <tr>
-                <td>{{ solve.chal.name }}</td>
-                <td>{{ solve.flag }}</td>
-                <td>{{ solve.chal.category }}</td>
-                <td>{{ solve.chal.value }}</td>
-                <td class="solve-time">{{ solve.date|unix_time_millis }}</td>
+                <td class="text-center">{{ addr.ip|long2ip }}</td>
+                <td class="text-center solve-time">{{ addr.date|unix_time_millis }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
     <table class="table table-striped">
-        <h3>IP Addresses</h3>
+        <h3>Solves</h3>
         <thead>
             <tr>
-                <td><b>IP Address</b></td>
-                <td><b>Last Seen</b></td>
+                <td class="text-center"><b>Challenge</b></td>
+                <td class="text-center"><b>Submitted</b></td>
+                <td class="text-center"><b>Category</b></td>
+                <td class="text-center"><b>Value</b></td>
+                <td class="text-center"><b>Time</b></td>
+                <td class="text-center"><b>Delete</b></td>
             </tr>
         </thead>
         <tbody>
-        {% for addr in addrs %}
-            <tr><td>{{ addr.ip|long2ip }}</td><td class="solve-time">{{ addr.date|unix_time_millis }}</td></tr>
+        {% for solve in solves %}
+            <tr class="chal-solve">
+                <td class="text-center chal" id="{{ solve.chalid }}">{{ solve.chal.name }}</td>
+                <td class="text-center">{{ solve.flag }}</td>
+                <td class="text-center">{{ solve.chal.category }}</td>
+                <td class="text-center">{{ solve.chal.value }}</td>
+                <td class="text-center solve-time">{{ solve.date|unix_time_millis }}</td>
+                <td class="text-center"><i class="fa fa-times"></i></td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>
@@ -65,17 +105,19 @@
         <h3>Wrong Keys</h3>
         <thead>
             <tr>
-                <td><b>Challenge</b></td>
-                <td><b>Submitted</b></td>
-                <td><b>Time</b></td>
+                <td class="text-center"><b>Challenge</b></td>
+                <td class="text-center"><b>Submitted</b></td>
+                <td class="text-center"><b>Time</b></td>
+                <td class="text-center"><b>Delete</b></td>
             </tr>
         </thead>
         <tbody>
         {% for wrong_key in wrong_keys %}
-            <tr>
-                <td>{{ wrong_key.chal.name }}</td>
-                <td>{{ wrong_key.flag }}</td>
-                <td class="solve-time">{{ wrong_key.date|unix_time_millis }}</td>
+            <tr class="chal-wrong">
+                <td class="text-center chal" id="{{ wrong_key.chalid }}">{{ wrong_key.chal.name }}</td>
+                <td class="text-center">{{ wrong_key.flag }}</td>
+                <td class="text-center solve-time">{{ wrong_key.date|unix_time_millis }}</td>
+                <td class="text-center"><i class="fa fa-times"></i></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -90,4 +132,41 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.0/c3.min.js"></script>
     <script src="/static/admin/js/team.js"></script>
+    <script>
+        $('#delete-solve').click(function (e) {
+            e.preventDefault();
+            var solve = $('#confirm input[name="solve"]').val()
+            $.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function (data) {
+                var data = $.parseJSON(JSON.stringify(data))
+                if (data == "1") {
+                    location.reload()
+                }
+            })
+        });
+
+        function load_confirm_modal(type, team, chal, team_name, chal_name) {
+            var modal = $('#confirm')
+            modal.find('#confirm-team-name').text(team_name);
+            modal.find('#confirm-chal-name').text(chal_name);
+            if (type == 'chal-solve'){
+                $('.key-type').text('correct');
+                $('#confirm form').attr('action', '/admin/solves/' + team + '/' + chal + '/delete');
+            } else {
+                $('.key-type').text('incorrect');
+                $('#confirm form').attr('action', '/admin/wrong_keys/' + team + '/' + chal + '/delete');
+            }
+            $('#confirm').modal('show');
+        }
+
+        $('.fa-times').click(function () {
+
+            var elem = $(this).parent().parent();
+            var type = elem.attr('class');
+            var chal = elem.find('.chal').attr('id');
+            var chal_name = elem.find('.chal').text().trim();
+            var team = window.location.pathname.split('/').pop();
+            var team_name = $("#team-id").text();
+            load_confirm_modal(type, team, chal, team_name, chal_name)
+        });
+    </script>
 {% endblock %}

@@ -485,6 +485,15 @@ def delete_solve(teamid, chalid):
     return '1'
 
 
+@admin.route('/admin/wrong_keys/<teamid>/<chalid>/delete', methods=['POST'])
+@admins_only
+def delete_wrong_key(teamid, chalid):
+    wrong_key = WrongKeys.query.filter_by(team=teamid, chalid=chalid).first()
+    db.session.delete(wrong_key)
+    db.session.commit()
+    return '1'
+
+
 @admin.route('/admin/statistics', methods=['GET'])
 @admins_only
 def admin_stats():
@@ -516,7 +525,7 @@ def admin_wrong_key(page='1'):
     page_start = results_per_page * ( page - 1 )
     page_end = results_per_page * ( page - 1 ) + results_per_page
 
-    wrong_keys = WrongKeys.query.add_columns(WrongKeys.flag, WrongKeys.team, WrongKeys.date,\
+    wrong_keys = WrongKeys.query.add_columns(WrongKeys.chalid, WrongKeys.flag, WrongKeys.team, WrongKeys.date,\
                 Challenges.name.label('chal_name'), Teams.name.label('team_name')).\
                 join(Challenges).join(Teams).order_by('team_name ASC').slice(page_start, page_end).all()
 
