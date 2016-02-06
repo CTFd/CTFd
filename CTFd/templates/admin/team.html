@@ -101,6 +101,28 @@
         </tbody>
     </table>
 
+
+    <table class="table table-striped">
+        <h3>Missing</h3>
+        <thead>
+        <tr>
+            <td class="text-center"><b>Challenge</b></td>
+            <td class="text-center"><b>Category</b></td>
+            <td class="text-center"><b>Value</b></td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for chal in missing %}
+            <tr class="chal-solve">
+                <td class="text-center chal" id="{{ chal.chalid }}">{{ chal.name }}</td>
+                <td class="text-center">{{ chal.category }}</td>
+                <td class="text-center">{{ chal.value }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
     <table class="table table-striped">
         <h3>Wrong Keys</h3>
         <thead>

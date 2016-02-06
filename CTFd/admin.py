@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, abort, jsonify, url_for, s
 from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from itsdangerous import TimedSerializer, BadTimeSignature
+from sqlalchemy.sql import and_, or_, not_
 from werkzeug.utils import secure_filename
 from socket import inet_aton, inet_ntoa
 from passlib.hash import bcrypt_sha256
@@ -197,9 +198,21 @@ def admin_chals():
     if request.method == 'POST':
         chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
 
+        teams_with_points = db.session.query(Solves.teamid, Teams.name).join(Teams).filter(
+            Teams.banned == None).group_by(
+                Solves.teamid).count()
+
         json_data = {'game':[]}
         for x in chals:
-            json_data['game'].append({'id':x[1], 'name':x[2], 'value':x[3], 'description':x[4], 'category':x[5]})
+            solve_count = Solves.query.filter_by(chalid=x[1]).count()
+            json_data['game'].append({
+                'id': x[1],
+                'name': x[2],
+                'value': x[3],
+                'description': x[4],
+                'category': x[5],
+                'percentage_solved': (float(solve_count) / float(teams_with_points))
+            })
 
         db.session.close()
         return jsonify(json_data)
@@ -222,7 +235,6 @@ def admin_keys(chalid):
 
         newkeys = request.form.getlist('keys[]')
         newvals = request.form.getlist('vals[]')
-        print(list(zip(newkeys, newvals)))
         flags = []
         for flag, val in zip(newkeys, newvals):
             flag_dict = {'flag':flag, 'type':int(val)}
@@ -319,7 +331,6 @@ def admin_teams(page):
 
     teams = Teams.query.slice(page_start, page_end).all()
     count = db.session.query(db.func.count(Teams.id)).first()[0]
-    print(count)
     pages = int(count / results_per_page) + (count % results_per_page > 0)
     return render_template('admin/teams.html', teams=teams, pages=pages)
 
@@ -331,11 +342,14 @@ def admin_team(teamid):
 
     if request.method == 'GET':
         solves = Solves.query.filter_by(teamid=teamid).all()
+        solve_ids = [s.chalid for s in solves]
+        missing = Challenges.query.filter( not_(Challenges.id.in_(solve_ids) ) ).all()
         addrs = Tracking.query.filter_by(team=teamid).order_by(Tracking.date.desc()).group_by(Tracking.ip).all()
         wrong_keys = WrongKeys.query.filter_by(team=teamid).order_by(WrongKeys.date.desc()).all()
         score = user.score()
         place = user.place()
-        return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, place=place, wrong_keys=wrong_keys)
+        return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, missing=missing,
+                               place=place, wrong_keys=wrong_keys)
     elif request.method == 'POST':
         admin_user = request.form.get('admin', None)
         if admin_user:

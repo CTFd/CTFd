@@ -167,7 +167,7 @@ function loadchals(){
 
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
             var chal = challenges['game'][i]
-            var chal_button = $('<button class="chal-button col-md-2 theme-background" value="{0}"><p>{1}</p><span>{2}</span></button>'.format(chal.id, chal.name, chal.value))
+            var chal_button = $('<button class="chal-button col-md-2 theme-background" value="{0}"><p class="chal-name">{1}</p><p class="chal-points">{2}</p><span class="chal-percent">{3}% solved</span></button>'.format(chal.id, chal.name, chal.value, Math.round(chal.percentage_solved * 100)));
             $('#' + challenges['game'][i].category.replace(/ /g,"-").hashCode()).append(chal_button);
         };
 
@@ -179,8 +179,8 @@ function loadchals(){
         });
 
         $('.create-challenge').click(function (e) {
-            $('#new-chal-category').val($($(this).siblings()[0]).text().trim())
-            $('#new-chal-title').text($($(this).siblings()[0]).text().trim())
+            $('#new-chal-category').val($($(this).siblings()[0]).text().trim());
+            $('#new-chal-title').text($($(this).siblings()[0]).text().trim());
             $('#new-challenge').modal();
         });
 

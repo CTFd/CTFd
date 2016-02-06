@@ -29,8 +29,6 @@ def tracker():
 @views.before_request
 def csrf():
     if request.method == "POST":
-        print(session)
-        print(request.form.get('nonce'))
         if session['nonce'] != request.form.get('nonce'):
             abort(403)
 
@@ -99,7 +97,6 @@ def setup():
             db.session.commit()
             app.setup = False
             return redirect('/')
-        print(session.get('nonce'))
         return render_template('setup.html', nonce=session.get('nonce'))
     return redirect('/')
 
@@ -134,9 +131,9 @@ def teams(page):
 
     teams = Teams.query.slice(page_start, page_end).all()
     count = db.session.query(db.func.count(Teams.id)).first()[0]
-    print(count)
     pages = int(count / results_per_page) + (count % results_per_page > 0)
     return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
+
 
 @views.route('/team/<teamid>', methods=['GET', 'POST'])
 def team(teamid):

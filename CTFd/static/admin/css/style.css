@@ -90,14 +90,19 @@ table{
     border: None;
 }
 
-.chal-button > p {
+.chal-button > .chal-name {
     margin-bottom: 0px;
     height: 20px;
     font-weight: bold;
 }
 
-.chal-button > span{
-    font-size: 14px;
+.chal-button > .chal-points {
+    margin-bottom: 0px;
+    height: 20px;
+}
+
+.chal-button > .chal-percent{
+    font-size: 12px;
 }
 
 .remove-key{
