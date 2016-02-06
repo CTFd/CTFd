@@ -7,6 +7,8 @@ from flask import current_app as app, g, request, redirect, url_for, session, re
 from flask.ext.mail import Message
 from socket import inet_aton, inet_ntoa
 from struct import unpack, pack
+from sqlalchemy.engine.url import make_url
+from sqlalchemy import create_engine
 
 import time
 import datetime
@@ -202,6 +204,15 @@ def unix_time(dt):
 
 def unix_time_millis(dt):
     return unix_time(dt) * 1000
+
+
+def get_ip():
+    trusted_proxies = {'127.0.0.1'}  # define your own set
+    route = request.access_route + [request.remote_addr]
+
+    remote_addr = next((addr for addr in reversed(route)
+                        if addr not in trusted_proxies), request.remote_addr)
+    return remote_addr
 
 
 def long2ip(ip_int):
