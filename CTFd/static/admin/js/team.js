@@ -17,56 +17,27 @@ function scoregraph () {
     var scores = []
     var teamname = $('#team-id').text()
     $.get('/admin/solves/'+teamid(), function( data ) {
-        solves = $.parseJSON(JSON.stringify(data));
-        solves = solves['solves']
+        var solves = $.parseJSON(JSON.stringify(data));
+        solves = solves['solves'];
 
         if (solves.length == 0)
-            return
+            return;
 
         for (var i = 0; i < solves.length; i++) {
-            times.push(solves[i].time * 1000)
-            scores.push(solves[i].value)
-        };
-        scores = cumulativesum(scores)
+            var date = moment(solves[i].time * 1000);
+            times.push(date.format('YYYY-MM-DD hh:mm:ss'));
+            scores.push(solves[i].value);
+        }
+        scores = cumulativesum(scores);
 
-        times.unshift('x1')
-        times.push( Math.round(new Date().getTime()) )
-
-        scores.unshift('data1')
-        scores.push( scores[scores.length-1] )
-
-        var chart = c3.generate({
-            bindto: "#score-graph",
-            data: {
-                xs: {
-                    "data1": 'x1',
-                },
-                columns: [
-                    times,
-                    scores,
-                ],
-                type: "area",
-                labels: true,
-                names : {
-                    data1: teamname
-                }
-            },
-            axis : {
-                x : {
-                    tick: {
-                        format: function (x) { 
-                            return moment(x).local().format('LLL');
-                        }
-                    },
-                    
-                },
-                y:{
-                    label: {
-                        text: 'Score'
-                    }
-                }
+        var data = [
+            {
+                x: times,
+                y: scores,
+                type: 'scatter'
             }
-        });
+        ];
+        Plotly.newPlot('score-graph', data);
     });
 }
 
@@ -81,79 +52,77 @@ function adjust_times () {
 function keys_percentage_graph(){
     // Solves and Fails pie chart
     $.get('/admin/fails/'+teamid(), function(data){
-        res = $.parseJSON(JSON.stringify(data));
-        solves = res['solves']
-        fails = res['fails']
-        total = solves+fails
+        var res = $.parseJSON(JSON.stringify(data));
+        var solves = res['solves'];
+        var fails = res['fails'];
 
-        if (total == 0)
-            return
+        var data = [{
+            values: [solves, fails],
+            labels: ['Solves', 'Fails'],
+            marker: {
+                colors: [
+                    "rgb(0, 209, 64)",
+                    "rgb(207, 38, 0)"
+                ]
+            },
+            hole: .4,
+            type: 'pie'
+        }];
 
-        var chart = c3.generate({
-            bindto: '#keys-pie-graph',
-            data: {
-                columns: [
-                    ['Solves', solves],
-                    ['Fails', fails],
-                ],
-                type : 'donut'
-            },
-            color: {
-                    pattern: ["#00D140", "#CF2600"]
-            },
-            donut: {
-                title: "Solves vs Fails",
-            }
-        });
+        var layout = {
+            height: 400,
+            width: 500
+        };
+
+        Plotly.newPlot('keys-pie-graph', data, layout);
     });
 }
 
 function category_breakdown_graph(){
     $.get('/admin/solves/'+teamid(), function(data){
-        solves = $.parseJSON(JSON.stringify(data));
-        solves = solves['solves']
+        var solves = $.parseJSON(JSON.stringify(data));
+        solves = solves['solves'];
 
         if (solves.length == 0)
-            return
+            return;
 
-        categories = []
+        var categories = [];
         for (var i = 0; i < solves.length; i++) {
             categories.push(solves[i].category)
-        };
+        }
 
-        keys = categories.filter(function(elem, pos) {
+        var keys = categories.filter(function (elem, pos) {
             return categories.indexOf(elem) == pos;
-        })
+        });
 
-        data = []
+        var counts = [];
         for (var i = 0; i < keys.length; i++) {
-            temp = []
-            count = 0
+            var count = 0;
             for (var x = 0; x < categories.length; x++) {
                 if (categories[x] == keys[i]){
-                    count++
+                    count++;
                 }
-            };
-            temp.push(keys[i])
-            temp.push(count)
-            data.push(temp)
+            }
+            counts.push(count)
+        }
+
+        var data = [{
+            values: counts,
+            labels: categories,
+            hole: .4,
+            type: 'pie'
+        }];
+
+        var layout = {
+            height: 400,
+            width: 500
         };
 
-        var chart = c3.generate({
-            bindto: '#categories-pie-graph',
-            data: {
-                columns: data,
-                type : 'donut',
-                labels: true
-            },
-            donut: {
-                title: "Category Breakdown"
-            }
-        });
+        Plotly.newPlot('categories-pie-graph', data, layout);
     });
 }
 
-category_breakdown_graph()
-keys_percentage_graph()
-adjust_times()
-scoregraph()
+category_breakdown_graph();
+keys_percentage_graph();
+adjust_times();
+scoregraph();

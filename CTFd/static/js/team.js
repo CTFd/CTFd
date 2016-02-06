@@ -4,13 +4,13 @@ function teamid (){
 }
 
 function colorhash (x) {
-    color = ""
+    color = "";
     for (var i = 20; i <= 60; i+=20){
-        x += i
-        x *= i
-        color += x.toString(16)
-    };
-    return "#" + color.substring(0, 6)
+        x += i;
+        x *= i;
+        color += x.toString(16);
+    }
+    return "#" + color.substring(0, 6);
 }
 
 function cumulativesum (arr) {
@@ -21,141 +21,105 @@ function cumulativesum (arr) {
     return result
 }
 
-function scoregraph () {
+function scoregraph() {
     var times = []
     var scores = []
     var teamname = $('#team-id').text()
-    $.get('/solves/'+teamid(), function( data ) {
-        solves = $.parseJSON(JSON.stringify(data));
-        solves = solves['solves']
+    $.get('/solves/' + teamid(), function (data) {
+        var solves = $.parseJSON(JSON.stringify(data));
+        solves = solves['solves'];
 
         if (solves.length == 0)
-            return
+            return;
 
         for (var i = 0; i < solves.length; i++) {
-            times.push(solves[i].time * 1000)
-            scores.push(solves[i].value)
-        };
-        scores = cumulativesum(scores)
+            var date = moment(solves[i].time * 1000);
+            times.push(date.format('YYYY-MM-DD hh:mm:ss'));
+            scores.push(solves[i].value);
+        }
+        scores = cumulativesum(scores);
 
-        times.unshift('x1')
-        // times.push( Math.round(new Date().getTime()) )
-
-        scores.unshift('data1')
-        // scores.push( scores[scores.length-1] )
-
-        var chart = c3.generate({
-            bindto: "#score-graph",
-            data: {
-                xs: {
-                    "data1": 'x1',
-                },
-                columns: [
-                    times,
-                    scores,
-                ],
-                type: "area-step",
-                colors: {
-                    data1: colorhash(teamid()),
-                },
-                labels: true,
-                names : {
-                    data1: teamname
-                }
-            },
-            axis : {
-                x : {
-                    tick: {
-                        format: function (x) {
-                            return moment(x).local().format('M/D h:mm:ss');
-                        }
-                    },
-
-                },
-                y:{
-                    label: {
-                        text: 'Score'
-                    }
-                }
-            },
-            zoom : {
-                enabled: true
+        var data = [
+            {
+                x: times,
+                y: scores,
+                type: 'scatter'
             }
-        });
+        ];
+        Plotly.newPlot('score-graph', data);
     });
 }
 
-function keys_percentage_graph(){
+function keys_percentage_graph() {
     // Solves and Fails pie chart
-    $.get('/fails/'+teamid(), function(data){
-        res = $.parseJSON(JSON.stringify(data));
-        solves = res['solves']
-        fails = res['fails']
-        total = solves+fails
+    $.get('/fails/' + teamid(), function (data) {
+        var res = $.parseJSON(JSON.stringify(data));
+        var solves = res['solves'];
+        var fails = res['fails'];
 
-        if (total == 0)
-            return
+        var data = [{
+            values: [solves, fails],
+            labels: ['Solves', 'Fails'],
+            marker: {
+                colors: [
+                    "rgb(0, 209, 64)",
+                    "rgb(207, 38, 0)"
+                ]
+            },
+            hole: .4,
+            type: 'pie'
+        }];
 
-        var chart = c3.generate({
-            bindto: '#keys-pie-graph',
-            data: {
-                columns: [
-                    ['Solves', solves],
-                    ['Fails', fails],
-                ],
-                type : 'donut'
-            },
-            color: {
-                    pattern: ["#00D140", "#CF2600"]
-            },
-            donut: {
-                title: "Solves vs Fails",
-            }
-        });
+        //var layout = {
+        //    height: 400,
+        //    width: 500
+        //};
+
+        Plotly.newPlot('keys-pie-graph', data);
     });
 }
 
-function category_breakdown_graph(){
-    $.get('/solves/'+teamid(), function(data){
-        solves = $.parseJSON(JSON.stringify(data));
-        solves = solves['solves']
-        if (solves.length == 0)
-            return
+function category_breakdown_graph() {
+    $.get('/solves/' + teamid(), function (data) {
+        var solves = $.parseJSON(JSON.stringify(data));
+        solves = solves['solves'];
 
-        categories = []
+        if (solves.length == 0)
+            return;
+
+        var categories = [];
         for (var i = 0; i < solves.length; i++) {
             categories.push(solves[i].category)
-        };
+        }
 
-        keys = categories.filter(function(elem, pos) {
+        var keys = categories.filter(function (elem, pos) {
             return categories.indexOf(elem) == pos;
-        })
-
-        data = []
-        for (var i = 0; i < keys.length; i++) {
-            temp = []
-            count = 0
-            for (var x = 0; x < categories.length; x++) {
-                if (categories[x] == keys[i]){
-                    count++
-                }
-            };
-            temp.push(keys[i])
-            temp.push(count)
-            data.push(temp)
-        };
-
-        var chart = c3.generate({
-            bindto: '#categories-pie-graph',
-            data: {
-                columns: data,
-                type : 'donut',
-                labels: true
-            },
-            donut: {
-                title: "Category Breakdown",
-            }
         });
+
+        var counts = [];
+        for (var i = 0; i < keys.length; i++) {
+            var count = 0;
+            for (var x = 0; x < categories.length; x++) {
+                if (categories[x] == keys[i]) {
+                    count++;
+                }
+            }
+            counts.push(count)
+        }
+
+        var data = [{
+            values: counts,
+            labels: categories,
+            hole: .4,
+            type: 'pie'
+        }];
+
+        //var layout = {
+        //    height: 400,
+        //    width: 500
+        //};
+
+        Plotly.newPlot('categories-pie-graph', data);
     });
 }
 

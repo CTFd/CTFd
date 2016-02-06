@@ -101,19 +101,16 @@ table{
 }
 
 #score-graph{
-    max-height: 400px;
 }
 
 #keys-pie-graph{
     width: 50%;
-    max-height: 330px;
     float: left;
 }
 
 #categories-pie-graph{
     width: 50%;
     float: left;
-    max-height: 330px;
 }
 
 .logo{

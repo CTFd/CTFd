@@ -48,73 +48,41 @@ function UTCtoDate(utc){
     return d;
 }
 function scoregraph () {
-    var times = []
-    var scores = []
     $.get('/top/10', function( data ) {
-        scores = $.parseJSON(JSON.stringify(data));
-        scores = scores['scores']
+        var scores = $.parseJSON(JSON.stringify(data));
+        scores = scores['scores'];
         if (Object.keys(scores).length == 0 ){
             return;
         }
-        $('#score-graph').show()
-        teams = Object.keys(scores)
 
-        xs_data = {}
-        column_data = []
-        colors = {}
-        for (var i = 0; i < teams.length; i++) {
-          times = []
-          team_scores = []
-          for (var x = 0; x < scores[teams[i]].length; x++) {
-            times.push(scores[teams[i]][x].time)
-            team_scores.push(scores[teams[i]][x].value)
-            console.log(scores[teams[i]])
-            colors[teams[i]] = colorhash(scores[teams[i]][x].id)
-          };
-          team_scores = cumulativesum(team_scores)
-
-          times.unshift("x"+i)
-          // times.push( Math.round(new Date().getTime()/1000) )
-
-          team_scores.unshift(teams[i])
-          // team_scores.push( team_scores[team_scores.length-1] )
-
-
-          xs_data[teams[i]] = "x"+i
-          column_data.push(times)
-          column_data.push(team_scores)
-
-        };
-
-        var chart = c3.generate({
-            bindto: "#score-graph",
-            data: {
-                xs: xs_data,
-                columns: column_data,
-                type: "step",
-                colors: colors
-                // labels: true
-            },
-            axis : {
-                x : {
-                    tick: {
-                        count: 10,
-                        format: function (x) {
-                            return moment(x*1000).local().format('LLL');
-                        }
-                    },
-
-                },
-                y:{
-                    label: {
-                        text: 'Score'
-                    }
-                }
-            },
-            zoom : {
-              enabled: true
+        var teams = Object.keys(scores);
+        var traces = [];
+        for(var i = 0; i < teams.length; i++){
+            var team_score = [];
+            var times = [];
+            for(var j = 0; j < scores[teams[i]].length; j++){
+                team_score.push(scores[teams[i]][j].value);
+                var date = moment(scores[teams[i]][j].time * 1000);
+                times.push(date.format('YYYY-MM-DD hh:mm:ss'));
             }
-        });
+            var trace = {
+                x: times,
+                y: scores,
+                mode: 'lines+markers',
+                name: teams[i]
+            }
+            traces.push(trace);
+        }
+
+        var layout = {
+            title: 'Top 10 Teams'
+        };
+        console.log(traces);
+
+        Plotly.newPlot('score-graph', traces, layout);
+
+
+        $('#score-graph').show()
     });
 }
 

@@ -68,20 +68,17 @@ table{
 }
 
 #score-graph{
-    max-height: 400px;
     clear:both;
 }
 
 #keys-pie-graph{
     width: 50%;
-    max-height: 330px;
     float: left;
 }
 
 #categories-pie-graph{
     width: 50%;
     float: left;
-    max-height: 330px;
 }
 
 .chal-button{

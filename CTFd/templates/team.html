@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css">
 {% endblock %}
 
 {% block content %}
@@ -29,6 +28,8 @@
     <div id="keys-pie-graph"></div>
     <div id="categories-pie-graph"></div>
 
+    <div class="clearfix"></div>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -49,7 +50,6 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.9/d3.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js"></script>
+    <script src="//cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="/static/js/team.js"></script>
 {% endblock %}
