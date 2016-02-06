@@ -1,9 +1,9 @@
-from CTFd.models import db, WrongKeys, Pages, Config
+from CTFd.models import db, WrongKeys, Pages, Config, Tracking
 from CTFd import mail
 
 from six.moves.urllib.parse import urlparse, urljoin 
 from functools import wraps
-from flask import current_app as app, g, request, redirect, url_for, session, render_template
+from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
 from flask.ext.mail import Message
 from socket import inet_aton, inet_ntoa
 from struct import unpack, pack
@@ -18,6 +18,7 @@ import requests
 import logging
 import os
 import sys
+import re
 
 
 def init_logs(app):
@@ -78,6 +79,7 @@ def init_errors(app):
     def gateway_error(error):
         return render_template('errors/502.html'), 502
 
+
 def init_utils(app):
     app.jinja_env.filters['unix_time'] = unix_time
     app.jinja_env.filters['unix_time_millis'] = unix_time_millis
@@ -89,7 +91,7 @@ def init_utils(app):
 
     @app.context_processor
     def inject_user():
-        if authed():
+        if session:
             return dict(session)
         return dict()
 
@@ -99,6 +101,27 @@ def init_utils(app):
             return
         if not is_setup():
             return redirect(url_for('views.setup'))
+
+    @app.before_request
+    def tracker():
+        if authed():
+            track = Tracking.query.filter_by(ip=ip2long(get_ip()), team=session['id']).first()
+            if not track:
+                visit = Tracking(ip=get_ip(), team=session['id'])
+                db.session.add(visit)
+                db.session.commit()
+            else:
+                track.date = datetime.datetime.utcnow()
+                db.session.commit()
+            db.session.close()
+
+    @app.before_request
+    def csrf():
+        if not session.get('nonce'):
+            session['nonce'] = sha512(os.urandom(10))
+        if request.method == "POST":
+            if session['nonce'] != request.form.get('nonce'):
+                abort(403)
 
 
 def ctf_name():
@@ -207,11 +230,18 @@ def unix_time_millis(dt):
 
 
 def get_ip():
-    trusted_proxies = {'127.0.0.1'}  # define your own set
+    trusted_proxies = [
+        '^127\.0\.0\.1$',
+        '^::1$',
+        '^fc00:',
+        '^10\.',
+        '^172\.(1[6-9]|2[0-9]|3[0-1])\.',
+        '^192\.168\.'
+    ]
+    combined = "(" + ")|(".join(trusted_proxies) + ")"
     route = request.access_route + [request.remote_addr]
 
-    remote_addr = next((addr for addr in reversed(route)
-                        if addr not in trusted_proxies), request.remote_addr)
+    remote_addr = next((addr for addr in reversed(route) if re.match(combined, addr)), request.remote_addr)
     return remote_addr
 
 

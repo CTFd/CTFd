@@ -18,27 +18,6 @@ views = Blueprint('views', __name__)
 
 
 @views.before_request
-def tracker():
-    if authed():
-        track = Tracking.query.filter_by(ip=ip2long(get_ip()), team=session['id']).first()
-        if not track:
-            visit = Tracking(ip=get_ip(), team=session['id'])
-            db.session.add(visit)
-            db.session.commit()
-        else:
-            track.date = datetime.datetime.utcnow()
-            db.session.commit()
-        db.session.close()
-
-
-@views.before_request
-def csrf():
-    if request.method == "POST":
-        if session['nonce'] != request.form.get('nonce'):
-            abort(403)
-
-
-@views.before_request
 def redirect_setup():
     if request.path == "/static/css/style.css":
         return
