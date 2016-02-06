@@ -332,7 +332,7 @@ def admin_teams(page):
     teams = Teams.query.slice(page_start, page_end).all()
     count = db.session.query(db.func.count(Teams.id)).first()[0]
     pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template('admin/teams.html', teams=teams, pages=pages)
+    return render_template('admin/teams.html', teams=teams, pages=pages, curr_page=page)
 
 
 @admin.route('/admin/team/<teamid>', methods=['GET', 'POST'])
