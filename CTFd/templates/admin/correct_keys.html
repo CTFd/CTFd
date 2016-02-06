@@ -60,9 +60,15 @@
     {% if pages > 1 %}
     <div class="text-center">Page
         <br>
+        {% if curr_page != 1 %}<a href="/admin/correct_keys/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
         {% for page in range(1, pages + 1) %}
-        <a href="{{ page }}">{{ page }}</a>
+            {% if curr_page != page %}
+                <a href="/admin/wrong_keys/{{ page }}">{{ page }}</a>
+            {% else %}
+                <b>{{ page }}</b>
+            {% endif %}
         {% endfor %}
+        {% if curr_page != pages %}<a href="/admin/correct_keys/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
     <a href="">
     </div>
     {% endif %}

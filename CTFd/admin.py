@@ -546,7 +546,7 @@ def admin_wrong_key(page='1'):
     wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
     pages = int(wrong_count / results_per_page) + (wrong_count % results_per_page > 0)
 
-    return render_template('admin/wrong_keys.html', wrong_keys=wrong_keys, pages=pages)
+    return render_template('admin/wrong_keys.html', wrong_keys=wrong_keys, pages=pages, curr_page=page)
 
 
 @admin.route('/admin/correct_keys/<page>', methods=['GET'])
@@ -564,7 +564,7 @@ def admin_correct_key(page='1'):
     solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
     pages = int(solve_count / results_per_page) + (solve_count % results_per_page > 0)
 
-    return render_template('admin/correct_keys.html', solves=solves, pages=pages)
+    return render_template('admin/correct_keys.html', solves=solves, pages=pages, curr_page=page)
 
 
 @admin.route('/admin/fails/<teamid>', methods=['GET'])
