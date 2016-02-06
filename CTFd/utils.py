@@ -230,18 +230,25 @@ def unix_time_millis(dt):
 
 
 def get_ip():
-    trusted_proxies = [
-        '^127\.0\.0\.1$',
-        '^::1$',
-        '^fc00:',
-        '^10\.',
-        '^172\.(1[6-9]|2[0-9]|3[0-1])\.',
-        '^192\.168\.'
-    ]
+    """ Returns the IP address of the currently in scope request. The approach is to define a list of trusted proxies
+     (in this case the local network), and only trust the most recently defined untrusted IP address.
+     Taken from http://stackoverflow.com/a/22936947/4285524 but the generator there makes no sense.
+     The trusted_proxies regexes is taken from Ruby on Rails.
+
+     This has issues if the clients are also on the local network so you can remove proxies from config.py.
+
+     CTFd does not use IP address for anything besides cursory tracking of teams and it is ill-advised to do much
+     more than that if you do not know what you're doing.
+    """
+    trusted_proxies = app.config['TRUSTED_PROXIES']
     combined = "(" + ")|(".join(trusted_proxies) + ")"
     route = request.access_route + [request.remote_addr]
-
-    remote_addr = next((addr for addr in reversed(route) if re.match(combined, addr)), request.remote_addr)
+    for addr in reversed(route):
+        if not re.match(combined, addr): # IP is not trusted but we trust the proxies
+            remote_addr = addr
+            break
+    else:
+        remote_addr = request.remote_addr
     return remote_addr
 
 
