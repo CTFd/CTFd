@@ -189,7 +189,14 @@ function loadchals() {
                 categories.push(category);
 
                 var categoryid = category.replace(/ /g,"-").hashCode();
-                var categoryrow = $('<div id="{0}-row" class="row"><div class="category-header col-md-2"></div><div class="category-challenges col-md-9"><div class="row"></div></div></div>'.format(categoryid));
+                var categoryrow = $('' +
+                    '<div id="{0}-row">'.format(categoryid) +
+                        '<div class="category-header col-md-2">' +
+                        '</div>' +
+                        '<div class="category-challenges col-md-9">' +
+                            '<div class="chal-row"></div>' +
+                        '</div>' +
+                    '</div>');
                 categoryrow.find(".category-header").append($("<h3>"+ category +"</h3>"));
 
                 $('#challenges-board').append(categoryrow);
@@ -209,7 +216,7 @@ function loadchals() {
             chalbutton.append(chalscore);
             chalwrap.append(chalbutton);
 
-            $("#"+ catid +"-row").find(".category-challenges > .row").append(chalwrap);
+            $("#"+ catid +"-row").find(".category-challenges > .chal-row").append(chalwrap);
         };
 
         updatesolves();
