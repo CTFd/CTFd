@@ -19,6 +19,7 @@ import logging
 import os
 import sys
 import re
+import time
 
 
 def init_logs(app):
@@ -220,9 +221,7 @@ def can_view_challenges():
 
 
 def unix_time(dt):
-    epoch = datetime.datetime.utcfromtimestamp(0)
-    delta = dt - epoch
-    return int(delta.total_seconds())
+    return int(time.mktime(dt.timetuple()))
 
 
 def unix_time_millis(dt):

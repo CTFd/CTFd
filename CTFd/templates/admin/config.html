@@ -3,7 +3,15 @@
 {% block content %}
 <div class="row">
     <h1>Config</h1>
-    <div class="col-md-4 col-md-offset-4">
+    <div class="col-md-6 col-md-offset-3">
+        {% for error in errors %}
+            <div class="alert alert-danger alert-dismissable" role="alert">
+                <span class="sr-only">Error:</span>
+                {{ error }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+        {% endfor %}
         <form method="POST">
             <input name='nonce' type='hidden' value="{{ nonce }}">
 
@@ -22,14 +30,128 @@
                 <input class="form-control" id='mg_api_key' name='mg_api_key' type='text' placeholder="Mailgun API Key" {% if mg_api_key is defined and mg_api_key != None %}value="{{ mg_api_key }}"{% endif %}>
             </div>
 
-            <div class="form-group">
-                <label for="start">Start Date:</label>
-                <input class="form-control" id='start' name='start' type='text' placeholder="Start Date (UTC timestamp)" {% if start is defined and start != None %}value="{{ start }}"{% endif %}>
-            </div>
+            <div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#start-date" aria-controls="start-date" role="tab" data-toggle="tab">Start Time</a>
+                </li>
+                <li role="presentation">
+                    <a href="#end-date" aria-controls="end-date" role="tab" data-toggle="tab">End Time</a>
+                </li>
+            </ul>
 
-            <div class="form-group">
-                <label for="end">End Date:</label>
-                <input class="form-control" id='end' name='end' type='text' placeholder="End Date (UTC timestamp)" {% if end is defined and end != None %}value="{{ end }}"{% endif %}>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="start-date">
+                    <div class="row" id="start-date">
+                        <div class="form-group col-xs-3">
+                            <label for="start-month">Month:</label>
+                            <select class="form-control start-date" id="start-month">
+                                <option>--</option>
+                                {% for month in months %}
+                                    <option {% if start.month == loop.index %}selected="true"{% endif %}>{{ month }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-xs-2">
+                            <label for="start-day">Day:</label>
+                            <select class="form-control start-date" id="start-day">
+                                <option>--</option>
+                                {% for day in range(start_days) %}
+                                    {{ start.day }} {{ day }}
+                                    <option {% if start.day == day %}selected="true"{% endif %}>{{ day }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-xs-3">
+                            <label for="start-year">Year:</label>
+                            <select class="form-control start-date" id="start-year">
+                                <option>--</option>
+                                {% for i in range(5) %}
+                                    <option{% if start.year == (curr_year + i) %}
+                                        selected="true"{% endif %}>{{ curr_year + i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group col-xs-2">
+                            <label for="start-hour">Hour:</label>
+                            <select class="form-control start-date" id="start-hour">
+                                <option>--</option>
+                                {% for i in range(24) %}
+                                    <option {% if start.hour == loop.index - 1 %}selected="true"{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-xs-2">
+                            <label for="start-minute">Minute:</label>
+                            <select class="form-control start-date" id="start-minute">
+                                <option>--</option>
+                                {% for i in range(60) %}
+                                    <option {% if start.minute == loop.index - 1 %}selected="true"{% endif %}>{{ '%02d' % i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input class="form-control" id='start' name='start' type='hidden'
+                               placeholder="Start Date (UTC timestamp)"
+                               {% if start is defined and start != None %}value="{{ start }}"{% endif %}>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="end-date">
+                    <div class="row">
+                        <div class="form-group col-xs-3">
+                            <label for="end-month">Month:</label>
+                            <select class="form-control end-date" id="end-month">
+                                <option>--</option>
+                                {% for month in months %}
+                                    <option {% if end.month == loop.index %}selected="true"{% endif %}>{{ month }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-xs-2">
+                            <label for="end-day">Day:</label>
+                            <select class="form-control end-date" id="end-day">
+                                <option>--</option>
+                                {% for day in range(end_days) %}
+                                    <option{% if end.day == day %} selected="true"{% endif %}>{{ day }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-xs-3">
+                            <label for="end-year">Year:</label>
+                            <select class="form-control end-date" id="end-year">
+                                <option>--</option>
+                                {% for i in range(5) %}
+                                    <option{% if end.year == (curr_year + i) %}
+                                        selected="true"{% endif %}>{{ curr_year + i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group col-xs-2">
+                            <label for="end-hour">Hour:</label>
+                            <select class="form-control end-date" id="end-hour">
+                                <option>--</option>
+                                {% for i in range(24) %}
+                                    <option{% if end.hour == loop.index - 1 %}
+                                        selected="true"{% endif %}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-xs-2">
+                            <label for="end-minute">Minute:</label>
+                            <select class="form-control end-date" id="end-minute">
+                                <option>--</option>
+                                {% for i in range(60) %}
+                                    <option{% if end.minute == loop.index - 1 %}
+                                        selected="true"{% endif %}>{{ '%02d' % i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input class="form-control" id='end' name='end' type='hidden'
+                               placeholder="End Date (UTC timestamp)"
+                               {% if end is defined and end != None %}value="{{ end }}"{% endif %}>
+                    </div>
+                </div>
             </div>
 
             <div class="checkbox">
@@ -67,4 +189,117 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+    <script>
+        var months = {
+            'January': 1,
+            'February': 2,
+            'March': 3,
+            'April': 4,
+            'May': 5,
+            'June': 6,
+            'July': 7,
+            'August': 8,
+            'September': 9,
+            'October': 10,
+            'November': 11,
+            'December': 12,
+        };
+        function load_date_values(place){
+            if (place == 'start'){
+                console.log('Loading start')
+                var month = $('#start-month').val();
+                var day = $('#start-day').val();
+                var year = $('#start-year').val();
+                var hour = $('#start-hour').val();
+                var minute = $('#start-minute').val();
+                if (month == '--' || day == '--' || year == '--' || year == '--' || hour == '--' || minute == '--'){
+                    $('#start').val('');
+                } else {
+                    var utc = convert_date_to_moment(month, day, year, hour, minute);
+                    console.log(utc.unix());
+                    $('#start').val(utc.unix());
+                }
+            } else {
+                var month = $('#end-month').val();
+                var day = $('#end-day').val();
+                var year = $('#end-year').val();
+                var hour = $('#end-hour').val();
+                var minute = $('#end-minute').val();
+                if (month == '--' || day == '--' || year == '--' || year == '--' || hour == '--' || minute == '--') {
+                    $('#end').val('');
+                } else {
+                    var utc = convert_date_to_moment(month, day, year, hour, minute);
+                    $('#end').val(utc.unix());
+                }
+            }
+        }
+
+        function convert_date_to_moment(month, day, year, hour, minute){
+            var month_num = months[month].toString();
+            if (month_num.length == 1){
+                month_num = "0" + month_num;
+            }
+
+            var day_str = day.toString();
+            if (day_str.length == 1){
+                day_str = "0" + day_str;
+            }
+
+            // 2013-02-08 24:00
+            var date_string = year.toString() + '-' +  month_num + '-' + day_str +' ' + hour.toString() +':'+ minute.toString();
+            console.log(date_string);
+            return moment(date_string);
+        }
+
+        function add_days(place, num){
+            if (place == 'start'){
+                var elem = $('#start-day');
+            } else {
+                var elem = $('#end-day');
+            }
+            elem.empty();
+            elem.append($('<option>--</option>'));
+            for (var i = 1; i <= num; i++){
+                elem.append($('<option>'+i+'</option>'));
+            }
+        }
+
+        function month_to_num(month){
+            var month_num = months[month];
+            if (month_num == 2) {
+                var days = 28;
+            } else if (month_num % 2) {
+                var days = month_num <= 7 ? 31 : 30;
+            } else {
+                var days = month_num <= 7 ? 30 : 31;
+            }
+            return days;
+        }
+
+        $('#start-month').change(function(){
+            var curr_month = this.value;
+            var days = month_to_num(curr_month);
+            add_days('start', days);
+        });
+
+        $('#end-month').change(function () {
+            var curr_month = this.value;
+            var days = month_to_num(curr_month);
+            add_days('end', days);
+        });
+
+        $('.start-date').change(function(){
+            load_date_values('start');
+        });
+
+        $('.end-date').change(function () {
+            load_date_values('end');
+        });
+
+        $(function () {
+            load_date_values('start');
+            load_date_values('end');
+        });
+    </script>
 {% endblock %}

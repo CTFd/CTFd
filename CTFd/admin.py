@@ -14,6 +14,8 @@ import time
 import re
 import os
 import json
+import datetime
+import calendar
 
 admin = Blueprint('admin', __name__)
 
@@ -53,12 +55,14 @@ def admin_graphs():
 @admins_only
 def admin_config():
     if request.method == "POST":
-        try:
+        start = None
+        end = None
+        if request.form.get('start'):
             start = int(request.form['start'])
+        if request.form.get('end'):
             end = int(request.form['end'])
-        except (ValueError, TypeError):
-            start = None
-            end = None
+            if end < unix_time(datetime.datetime.now()):
+                end = None
 
         try:
             view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
@@ -134,12 +138,30 @@ def admin_config():
     db.session.commit()
     db.session.close()
 
+    months = [
+        'January', 'February', 'March', 'April',
+        'May', 'June', 'July', 'August',
+        'September', 'October', 'November', 'December'
+    ]
+
+    curr_year = datetime.date.today().year
+    start_days = 0
+    end_days = 0
+
+    if start:
+        start = datetime.datetime.fromtimestamp(float(start))
+        start_days = calendar.monthrange(start.year, start.month)[1]
+    if end:
+        end = datetime.datetime.fromtimestamp(float(end))
+        end_days = calendar.monthrange(end.year, end.month)[1]
+
     return render_template('admin/config.html', ctf_name=ctf_name, start=start, end=end,
                            max_tries=max_tries,
                            view_challenges_unregistered=view_challenges_unregistered,
                            prevent_registration=prevent_registration, mg_api_key=mg_api_key,
                            prevent_name_change=prevent_name_change,
-                           view_after_ctf=view_after_ctf)
+                           view_after_ctf=view_after_ctf, months=months, curr_year=curr_year, start_days=start_days,
+                           end_days=end_days)
 
 
 @admin.route('/admin/css', methods=['GET', 'POST'])
