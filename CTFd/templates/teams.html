@@ -16,7 +16,7 @@
                 <td><b>Team</b></td>
                 <td><b>Website</b></td>
                 <td><b>Affiliation</b></td>
-                <td><b>Country</b></td>
+                <td class="hidden-xs"><b>Country</b></td>
             </tr>
         </thead>
         <tbody>
@@ -25,7 +25,7 @@
                 <td><a href="/team/{{ team.id }}">{{ team.name }}</a></td>
                 <td>{% if team.website and team.website.startswith('http://') %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}</td>
                 <td><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span></td>
-                <td><span>{% if team.country %}{{ team.country }}{% endif %}</span></td>
+                <td class="hidden-xs"><span>{% if team.country %}{{ team.country }}{% endif %}</span></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -41,7 +41,7 @@
                 <b>{{page}}</b>
             {% endif %}
         {% endfor %}
-        {% if curr_page != pages %}<a href="/teams/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
+        {% if curr_page != team_pages %}<a href="/teams/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
     <a href="">
     </div>
     {% endif %}
