@@ -472,7 +472,7 @@ def admin_graph(graph_type):
             json_data['categories'].append({'category':category, 'count':count})
         return jsonify(json_data)
     elif graph_type == "solves":
-        solves = Solves.query.add_columns(db.func.count(Solves.chalid)).group_by(Solves.chalid).all()
+        solves = Solves.query.join(Teams).filter(Teams.banned==None).add_columns(db.func.count(Solves.chalid)).group_by(Solves.chalid).all()
         json_data = {}
         for chal, count in solves:
             json_data[chal.chal.name] = count
@@ -597,8 +597,8 @@ def admin_correct_key(page='1'):
 @admins_only
 def admin_fails(teamid='all'):
     if teamid == "all":
-        fails = WrongKeys.query.count()
-        solves = Solves.query.count()
+        fails = WrongKeys.query.join(Teams, WrongKeys.team == Teams.id).filter(Teams.banned==None).count()
+        solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned==None).count()
         db.session.close()
         json_data = {'fails':str(fails), 'solves': str(solves)}
         return jsonify(json_data)

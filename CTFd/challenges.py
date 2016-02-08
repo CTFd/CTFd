@@ -1,7 +1,7 @@
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint
 
 from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config, get_ip
-from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags
+from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams
 
 import time
 import re
@@ -52,7 +52,7 @@ def chals():
 @challenges.route('/chals/solves')
 def chals_per_solves():
     if can_view_challenges():
-        solves = Solves.query.add_columns(db.func.count(Solves.chalid)).group_by(Solves.chalid).all()
+        solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned==None).add_columns(db.func.count(Solves.chalid)).group_by(Solves.chalid).all()
         json = {}
         for chal, count in solves:
             json[chal.chal.name] = count
@@ -64,10 +64,12 @@ def chals_per_solves():
 @challenges.route('/solves/<teamid>')
 def solves(teamid=None):
     if teamid is None:
-        if authed():
+        if is_admin():
             solves = Solves.query.filter_by(teamid=session['id']).all()
+        elif authed():
+            solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.teamid==session['id'], Teams.banned==None).all()
         else:
-            abort(401)
+            return redirect(url_for('auth.login', next='solves'))
     else:
         solves = Solves.query.filter_by(teamid=teamid).all()
     db.session.close()
@@ -99,7 +101,7 @@ def fails(teamid):
 
 @challenges.route('/chal/<chalid>/solves', methods=['GET'])
 def who_solved(chalid):
-    solves = Solves.query.filter_by(chalid=chalid).order_by(Solves.date.asc())
+    solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid==chalid, Teams.banned==None).order_by(Solves.date.asc())
     json = {'teams':[]}
     for solve in solves:
         json['teams'].append({'id':solve.team.id, 'name':solve.team.name, 'date':solve.date})
