@@ -80,7 +80,7 @@
                           <label for="exampleInputFile">Upload challenge files</label>
                           <input type="file" name="files[]" multiple="multiple">
                         </div>
-
+                        <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
                         <div style="text-align:center">
                             <button class="btn btn-theme btn-outlined create-challenge" type="submit">Create</button>
                         </div>
@@ -136,6 +136,7 @@
                             <a href="#" data-toggle="modal" data-target="#update-keys" class="btn btn-primary">Keys</a>
                             <a href="#" data-toggle="modal" data-target="#delete-chal" class="btn btn-danger">Delete</a>
                         </div>
+                        <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
                         <div style="text-align:center">
                             <button class="btn btn-theme btn-outlined create-challenge" type="submit">Update</button>
                         </div>
@@ -180,6 +181,7 @@
                         <input id="keys-chal" name='chal' type='hidden'>
                         <div id="current-keys" class="row"></div>
                         <div class="row">
+                            <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
                             <button id="submit-keys" class="btn btn-theme btn-outlined">Update</button>
                         </div>
                     </form>
@@ -204,6 +206,7 @@
                         <input type="hidden" name="method" value="upload">
                         <input type="file" name="files[]" multiple="multiple">
                         <div class="row" style="text-align:center;margin-top:20px">
+                            <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
                             <button class="btn btn-theme btn-outlined" type="submit">Update</button>
                         </div>
                     </form>
@@ -233,6 +236,7 @@
                     <div id="chal-tags">
                     </div>
                     <div class="row" style="text-align:center;margin-top:20px">
+                        <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
                         <button class="btn btn-theme btn-outlined" id="submit-tags">Update</button>
                     </div>
                 </div>
