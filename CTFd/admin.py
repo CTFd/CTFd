@@ -226,14 +226,18 @@ def admin_chals():
 
         json_data = {'game':[]}
         for x in chals:
-            solve_count = Solves.query.filter_by(chalid=x[1]).count()
+            solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid==x[1], Teams.banned==None).count()
+            if teams_with_points > 0:
+                percentage = (float(solve_count) / float(teams_with_points))
+            else:
+                percentage = 0.0
             json_data['game'].append({
                 'id': x[1],
                 'name': x[2],
                 'value': x[3],
                 'description': x[4],
                 'category': x[5],
-                'percentage_solved': (float(solve_count) / float(teams_with_points))
+                'percentage_solved': percentage
             })
 
         db.session.close()
