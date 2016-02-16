@@ -66,7 +66,7 @@
         {% for addr in addrs %}
             <tr>
                 <td class="text-center">{{ addr.ip|long2ip }}</td>
-                <td class="text-center solve-time">{{ addr.date|unix_time_millis }}</td>
+                <td class="text-center solve-time"><script>document.write( moment({{ addr.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -91,7 +91,7 @@
                 <td class="text-center">{{ solve.flag }}</td>
                 <td class="text-center">{{ solve.chal.category }}</td>
                 <td class="text-center">{{ solve.chal.value }}</td>
-                <td class="text-center solve-time">{{ solve.date|unix_time_millis }}</td>
+                <td class="text-center solve-time"><script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
                 <td class="text-center"><i class="fa fa-times"></i></td>
             </tr>
         {% endfor %}
@@ -135,7 +135,7 @@
             <tr class="chal-wrong">
                 <td class="text-center chal" id="{{ wrong_key.chalid }}">{{ wrong_key.chal.name }}</td>
                 <td class="text-center">{{ wrong_key.flag }}</td>
-                <td class="text-center solve-time">{{ wrong_key.date|unix_time_millis }}</td>
+                <td class="text-center solve-time"><script>document.write( moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
                 <td class="text-center"><i class="fa fa-times"></i></td>
             </tr>
         {% endfor %}
