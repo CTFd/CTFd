@@ -41,14 +41,6 @@ function scoregraph () {
     });
 }
 
-function adjust_times () {
-    $.each($(".solve-time"), function(i, e){
-        $(e).text( moment(parseInt(e.innerText)).local().format('LLL') ) 
-    })
-    $(".solve-time").css('color', "#222")
-}
-
-
 function keys_percentage_graph(){
     // Solves and Fails pie chart
     $.get('/admin/fails/'+teamid(), function(data){
