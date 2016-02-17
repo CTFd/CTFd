@@ -65,9 +65,10 @@ function scoregraph () {
                 var date = moment(scores[teams[i]][j].time * 1000);
                 times.push(date.format('YYYY-MM-DD hh:mm:ss'));
             }
+            team_score = cumulativesum(team_score);
             var trace = {
                 x: times,
-                y: scores,
+                y: team_score,
                 mode: 'lines+markers',
                 name: teams[i]
             }
