@@ -1,6 +1,4 @@
-APScheduler
 Flask
-Flask-Mail
 Flask-SQLAlchemy
 Flask-Session
 SQLAlchemy

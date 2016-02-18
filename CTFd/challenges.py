@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint
 
-from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config, get_ip
+from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config, get_ip, is_verified
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams
 
 import time
@@ -19,6 +19,8 @@ def challenges_view():
                 pass
             else:
                 return redirect('/')
+        if get_config('verify_emails') and not is_verified():
+            return redirect(url_for('auth.confirm_user'))
     if can_view_challenges():
         return render_template('chals.html', ctftime=ctftime())
     else:
@@ -84,7 +86,7 @@ def attempts():
     chals = Challenges.query.add_columns('id').all()
     json = {'maxattempts':[]}
     for chal, chalid in chals:
-        fails = WrongKeys.query.filter_by(team=session['id'], chalid=chalid).count()
+        fails = WrongKeys.query.filter_by(teamid=session['id'], chalid=chalid).count()
         if fails >= int(get_config("max_tries")) and int(get_config("max_tries")) > 0:
             json['maxattempts'].append({'chalid':chalid})
     return jsonify(json)
@@ -92,7 +94,7 @@ def attempts():
 
 @challenges.route('/fails/<teamid>', methods=['GET'])
 def fails(teamid):
-    fails = WrongKeys.query.filter_by(team=teamid).count()
+    fails = WrongKeys.query.filter_by(teamid=teamid).count()
     solves = Solves.query.filter_by(teamid=teamid).count()
     db.session.close()
     json = {'fails':str(fails), 'solves': str(solves)}
@@ -113,7 +115,7 @@ def chal(chalid):
     if not ctftime():
         return redirect(url_for('challenges.challenges_view'))
     if authed():
-        fails = WrongKeys.query.filter_by(team=session['id'], chalid=chalid).count()
+        fails = WrongKeys.query.filter_by(teamid=session['id'], chalid=chalid).count()
         logger = logging.getLogger('keys')
         data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'), get_kpm(session['id']))
         print("[{0}] {1} submitted {2} with kpm {3}".format(*data))

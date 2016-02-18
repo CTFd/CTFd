@@ -49,8 +49,16 @@ def setup():
             admin.banned = True
 
             ## Index page
-            html = request.form['html']
-            page = Pages('index', html)
+            page = Pages('index', """<div class="container main-container">
+    <img class="logo" src="/static/img/logo.png" />
+    <h3 class="text-center">
+        Welcome to a cool CTF framework written by <a href="https://github.com/ColdHeat">Kevin Chung</a> of <a href="https://github.com/isislab">@isislab</a>
+    </h3>
+
+    <h4 class="text-center">
+        <a href="/admin">Click here</a> to login and setup your CTF
+    </h4>
+</div>""")
 
             #max attempts per challenge
             max_tries = Config("max_tries",0)
@@ -66,6 +74,22 @@ def setup():
             ## Allow/Disallow registration
             prevent_registration = Config('prevent_registration', None)
 
+            ## Verify emails
+            verify_emails = Config('verify_emails', None)
+
+            mail_server = Config('mail_server', None)
+            mail_port = Config('mail_port', None)
+            mail_tls = Config('mail_tls', None)
+            mail_ssl = Config('mail_ssl', None)
+            mail_username = Config('mail_username', None)
+            mail_password = Config('mail_password', None)
+            db.session.add(mail_server)
+            db.session.add(mail_port)
+            db.session.add(mail_tls)
+            db.session.add(mail_ssl)
+            db.session.add(mail_username)
+            db.session.add(mail_password)
+
             setup = Config('setup', True)
 
             db.session.add(ctf_name)
@@ -76,6 +100,7 @@ def setup():
             db.session.add(end)
             db.session.add(view_challenges_unregistered)
             db.session.add(prevent_registration)
+            db.session.add(verify_emails)
             db.session.add(css)
             db.session.add(setup)
             db.session.commit()
@@ -113,8 +138,8 @@ def teams(page):
     page_start = results_per_page * ( page - 1 )
     page_end = results_per_page * ( page - 1 ) + results_per_page
 
-    teams = Teams.query.slice(page_start, page_end).all()
-    count = db.session.query(db.func.count(Teams.id)).first()[0]
+    teams = Teams.query.filter_by(verified=True).slice(page_start, page_end).all()
+    count = len(teams)
     pages = int(count / results_per_page) + (count % results_per_page > 0)
     return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
 
@@ -178,7 +203,10 @@ def profile():
                 team = Teams.query.filter_by(id=session['id']).first()
                 if not get_config('prevent_name_change'):
                     team.name = name
-                team.email = email
+                if team.email != email.lower():
+                    team.email = email.lower()
+                    if get_config('verify_emails'):
+                        team.verified = False
                 session['username'] = team.name
 
                 if 'password' in request.form.keys() and not len(request.form['password']) == 0:
@@ -197,7 +225,8 @@ def profile():
             affiliation = user.affiliation
             country = user.country
             prevent_name_change = get_config('prevent_name_change')
+            confirm_email = not user.verified
             return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
-                                   country=country, prevent_name_change=prevent_name_change)
+                                   country=country, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
     else:
         return redirect(url_for('auth.login'))

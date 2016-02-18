@@ -32,7 +32,7 @@
         <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
             <input type="hidden" name="nonce" value="{{nonce}}"> {# This nonce is implemented specially in the route itself #}
             <span class="input">
-                <input class="input-field" type="text" name="ctf_name" id="ctf_name-input" />
+                <input class="input-field" type="text" name="ctf_name" id="ctf_name-input"/>
                 <label class="input-label" for="ctf_name-input">
                     <span class="label-content" data-content="CTF Name">CTF Name</span>
                 </label>
@@ -40,38 +40,23 @@
             <span class="input">
                 <input class="input-field" type="text" name="name" id="username-input" />
                 <label class="input-label" for="username-input">
-                    <span class="label-content" data-content="Username">Username</span>
+                    <span class="label-content" data-content="Username">Admin Username</span>
                 </label>
             </span>
             <span class="input">
                 <input class="input-field" type="email" name="email" id="email-input" />
                 <label class="input-label" for="email-input">
-                    <span class="label-content" data-content="Email">Email</span>
+                    <span class="label-content" data-content="Email">Admin Email</span>
                 </label>
             </span>
             <span class="input">
                 <input class="input-field" type="password" name="password" id="password-input" />
                 <label class="input-label" for="password-input">
-                    <span class="label-content" data-content="Password">Password</span>
+                    <span class="label-content" data-content="Password">Admin Password</span>
                 </label>
             </span>
             <br/>
         </div>
-    </div>
-    <div class="container" style="margin-bottom:50px;">
-        <h2 class="text-center">Index Page</h2>
-        <textarea id="pages-editor" name="html">
-<div class="container main-container">
-    <img class="logo" src="/static/img/logo.png" />
-    <h3 class="text-center">
-        Welcome to a cool CTF framework written by <a href="https://github.com/ColdHeat">Kevin Chung</a> of <a href="https://github.com/isislab">@isislab</a>
-    </h3>
-
-    <h4 class="text-center">
-        <a href="/admin">Click here</a> to login and setup your CTF
-    </h4>
-</div>
-        </textarea>
     </div>
     <div class="container main-container" style="margin-bottom:100px;">
         <div id="login-container" class="col-md-6 col-md-offset-3">

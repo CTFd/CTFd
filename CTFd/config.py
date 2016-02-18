@@ -28,17 +28,3 @@ TRUSTED_PROXIES = [
     '^172\.(1[6-9]|2[0-9]|3[0-1])\.',
     '^192\.168\.'
 ]
-
-##### EMAIL (Mailgun and non-Mailgun) #####
-
-# The first address will be used as the from address of messages sent from CTFd
-ADMINS = []
-
-##### EMAIL (if not using Mailgun) #####
-CTF_NAME = ''
-MAIL_SERVER = ''
-MAIL_PORT = 0
-MAIL_USE_TLS = False
-MAIL_USE_SSL = False
-MAIL_USERNAME = ''
-MAIL_PASSWORD = ''

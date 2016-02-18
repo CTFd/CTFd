@@ -1,10 +1,10 @@
-from CTFd.models import db, WrongKeys, Pages, Config, Tracking
-from CTFd import mail
+from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams
 
 from six.moves.urllib.parse import urlparse, urljoin 
 from functools import wraps
 from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
 from flask.ext.mail import Message
+from itsdangerous import Signer, BadSignature
 from socket import inet_aton, inet_ntoa
 from struct import unpack, pack
 from sqlalchemy.engine.url import make_url
@@ -20,7 +20,8 @@ import os
 import sys
 import re
 import time
-
+import smtplib
+import email
 
 def init_logs(app):
     logger_keys = logging.getLogger('keys')
@@ -138,6 +139,12 @@ def pages():
 def authed():
     return bool(session.get('id', False))
 
+def is_verified():
+    team = Teams.query.filter_by(id=session.get('id')).first()
+    if team:
+        return team.verified
+    else:
+        return False
 
 def is_setup():
     setup = Config.query.filter_by(key='setup').first()
@@ -261,14 +268,19 @@ def ip2long(ip):
 
 def get_kpm(teamid): # keys per minute
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
-    return len(db.session.query(WrongKeys).filter(WrongKeys.team == teamid, WrongKeys.date >= one_min_ago).all())
+    return len(db.session.query(WrongKeys).filter(WrongKeys.teamid == teamid, WrongKeys.date >= one_min_ago).all())
 
 
 def get_config(key):
     config = Config.query.filter_by(key=key).first()
     if config:
-        return config.value
+        value = config.value
+        if value and value.isdigit():
+            return int(value)
+        else:
+            return value
     else:
+        set_config(key, None)
         return None
 
 
@@ -284,32 +296,73 @@ def set_config(key, value):
 
 
 def mailserver():
-    if (get_config('mg_api_key') and app.config['ADMINS']) or (app.config['MAIL_SERVER'] and app.config['MAIL_PORT'] and app.config['ADMINS']):
+    if (get_config('mg_api_key')) or (get_config('mail_server') and get_config('mail_port')):
         return True
     return False
 
 
+def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None):
+    smtp = smtplib.SMTP(host, port)
+    smtp.ehlo()
+    if TLS:
+        smtp.starttls()
+        smtp.ehlo()
+    smtp.login(username, password)
+    return smtp
+
+
+
 def sendmail(addr, text):
-    if get_config('mg_api_key') and app.config['ADMINS']:
+    if get_config('mg_api_key') and get_config('mg_base_url'):
         ctf_name = get_config('ctf_name')
         mg_api_key = get_config('mg_api_key')
-        return requests.post(
-            "https://api.mailgun.net/v2/mail"+app.config['HOST']+"/messages",
+        mg_base_url = get_config('mg_base_url')
+        r = requests.post(
+            mg_base_url + '/messages',
             auth=("api", mg_api_key),
-            data={"from": "{} Admin <{}>".format(ctf_name, app.config['ADMINS'][0]),
+            data={"from": "{} Admin <{}>".format(ctf_name, 'noreply@ctfd.io'),
                   "to": [addr],
                   "subject": "Message from {0}".format(ctf_name),
                   "text": text})
-    elif app.config['MAIL_SERVER'] and app.config['MAIL_PORT'] and app.config['ADMINS']:
-        try:
-            msg = Message("Message from {0}".format(get_config('ctf_name')), sender=app.config['ADMINS'][0], recipients=[addr])
-            msg.body = text
-            mail.send(msg)
+        if r.status_code == 200:
             return True
-        except:
+        else:
             return False
+    elif get_config('mail_server') and get_config('mail_port'):
+        data = {
+            'host': get_config('mail_server'),
+            'port': int(get_config('mail_port'))
+        }
+        if get_config('mail_username'):
+            data['username'] = get_config('mail_username')
+        if get_config('mail_password'):
+            data['password'] = get_config('mail_password')
+        if get_config('mail_tls'):
+            data['TLS'] = get_config('mail_tls')
+        if get_config('mail_ssl'):
+            data['SSL'] = get_config('mail_ssl')
+
+        smtp = get_smtp(**data)
+        msg = email.mime.text.MIMEText(text)
+        msg['Subject'] = "Message from {0}".format(get_config('ctf_name'))
+        msg['From'] = 'noreply@ctfd.io'
+        msg['To'] = addr
+
+        smtp.sendmail(msg['From'], [msg['To']], msg.as_string())
+        smtp.quit()
+        return True
     else:
         return False
+
+
+def verify_email(addr):
+    s = Signer(app.config['SECRET_KEY'])
+    token = s.sign(addr)
+    text = """Please click the following link to confirm your email address for {}: {}""".format(
+        get_config('ctf_name'),
+        url_for('auth.confirm_user', _external=True) + '/' + token.encode('base64')
+    )
+    sendmail(addr, text)
 
 
 def rmdir(dir):

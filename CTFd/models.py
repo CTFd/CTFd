@@ -108,6 +108,7 @@ class Teams(db.Model):
     country = db.Column(db.String(32))
     bracket = db.Column(db.String(32))
     banned = db.Column(db.Boolean)
+    verified = db.Column(db.Boolean)
     admin = db.Column(db.Boolean)
 
     def __init__(self, name, email, password):
@@ -165,13 +166,13 @@ class Solves(db.Model):
 class WrongKeys(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chalid = db.Column(db.Integer, db.ForeignKey('challenges.id'))
-    team = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     flag = db.Column(db.Text)
     chal = db.relationship('Challenges', foreign_keys="WrongKeys.chalid", lazy='joined')
 
-    def __init__(self, team, chalid, flag):
-        self.team = team
+    def __init__(self, teamid, chalid, flag):
+        self.teamid = teamid
         self.chalid = chalid
         self.flag = flag
 

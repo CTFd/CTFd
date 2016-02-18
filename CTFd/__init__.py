@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, abort, session, jsonify, json as json_mod, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.mail import Mail, Message
 from logging.handlers import RotatingFileHandler
 from flask.ext.session import Session
 import os
@@ -18,9 +17,6 @@ def create_app(config='CTFd.config'):
         db.create_all()
 
         app.db = db
-
-        global mail
-        mail = Mail(app)
 
         #Session(app)
 

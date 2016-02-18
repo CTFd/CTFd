@@ -45,9 +45,10 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
                     <form method="POST">
                         <input type="hidden" name="id">
                         <input type="hidden" name="nonce" value="{{ nonce }}">
-                        <textarea name="msg" placeholder="Enter your message here" rows="15"></textarea>
+                        <textarea class="form-control" name="msg" placeholder="Enter your message here" rows="15"></textarea>
+                        <br>
                         <div id="email-user-errors"></div>
-                        <button type="button" id="send-user-email">Send Message</button>
+                        <button type="button" id="send-user-email" class="btn btn-theme btn-outlined">Send Message</button>
                     </form>
                 </div>
             </div>

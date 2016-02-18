@@ -69,21 +69,38 @@ def admin_config():
             prevent_registration = bool(request.form.get('prevent_registration', None))
             prevent_name_change = bool(request.form.get('prevent_name_change', None))
             view_after_ctf = bool(request.form.get('view_after_ctf', None))
+            verify_emails = bool(request.form.get('verify_emails', None))
+            mail_tls = bool(request.form.get('mail_tls', None))
+            mail_ssl = bool(request.form.get('mail_ssl', None))
         except (ValueError, TypeError):
             view_challenges_unregistered = None
             prevent_registration = None
             prevent_name_change = None
             view_after_ctf = None
+            verify_emails = None
+            mail_tls = None
+            mail_ssl = None
         finally:
             view_challenges_unregistered = set_config('view_challenges_unregistered', view_challenges_unregistered)
             prevent_registration = set_config('prevent_registration', prevent_registration)
             prevent_name_change = set_config('prevent_name_change', prevent_name_change)
             view_after_ctf = set_config('view_after_ctf', view_after_ctf)
+            verify_emails = set_config('verify_emails', verify_emails)
+            mail_tls = set_config('mail_tls', mail_tls)
+            mail_ssl = set_config('mail_ssl', mail_ssl)
+
+        mail_server = set_config("mail_server", request.form.get('mail_server', None))
+        mail_port = set_config("mail_port", request.form.get('mail_port', None))
+
+        mail_username = set_config("mail_username", request.form.get('mail_username', None))
+        mail_password = set_config("mail_password", request.form.get('mail_password', None))
 
         ctf_name = set_config("ctf_name", request.form.get('ctf_name', None))
-        mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
-        max_tries = set_config("max_tries", request.form.get('max_tries', None))
 
+        mg_base_url = set_config("mg_base_url", request.form.get('mg_base_url', None))
+        mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
+
+        max_tries = set_config("max_tries", request.form.get('max_tries', None))
 
         db_start = Config.query.filter_by(key='start').first()
         db_start.value = start
@@ -98,42 +115,30 @@ def admin_config():
         return redirect(url_for('admin.admin_config'))
 
     ctf_name = get_config('ctf_name')
-    if not ctf_name:
-        set_config('ctf_name', None)
+
+    mail_server = get_config('mail_server')
+    mail_port = get_config('mail_port')
+    mail_username = get_config('mail_username')
+    mail_password = get_config('mail_password')
 
     mg_api_key = get_config('mg_api_key')
-    if not mg_api_key:
-        set_config('mg_api_key', None)
-
+    mg_base_url = get_config('mg_base_url')
     max_tries = get_config('max_tries')
     if not max_tries:
         set_config('max_tries', 0)
         max_tries = 0
 
-    view_after_ctf = get_config('view_after_ctf') == '1'
-    if not view_after_ctf:
-        set_config('view_after_ctf', 0)
-        view_after_ctf = 0
-
+    view_after_ctf = get_config('view_after_ctf')
     start = get_config('start')
-    if not start:
-        set_config('start', None)
-
     end = get_config('end')
-    if not end:
-        set_config('end', None)
 
-    view_challenges_unregistered = get_config('view_challenges_unregistered') == '1'
-    if not view_challenges_unregistered:
-        set_config('view_challenges_unregistered', None)
+    mail_tls = get_config('mail_tls')
+    mail_ssl = get_config('mail_ssl')
 
-    prevent_registration = get_config('prevent_registration') == '1'
-    if not prevent_registration:
-        set_config('prevent_registration', None)
-
-    prevent_name_change = get_config('prevent_name_change') == '1'
-    if not prevent_name_change:
-        set_config('prevent_name_change', None)
+    view_challenges_unregistered = get_config('view_challenges_unregistered')
+    prevent_registration = get_config('prevent_registration')
+    prevent_name_change = get_config('prevent_name_change')
+    verify_emails = get_config('verify_emails')
 
     db.session.commit()
     db.session.close()
@@ -155,12 +160,27 @@ def admin_config():
         end = datetime.datetime.fromtimestamp(float(end))
         end_days = calendar.monthrange(end.year, end.month)[1]
 
-    return render_template('admin/config.html', ctf_name=ctf_name, start=start, end=end,
+    return render_template('admin/config.html',
+                           ctf_name=ctf_name,
+                           start=start,
+                           end=end,
                            max_tries=max_tries,
+                           mail_server=mail_server,
+                           mail_port=mail_port,
+                           mail_username=mail_username,
+                           mail_password=mail_password,
+                           mail_tls=mail_tls,
+                           mail_ssl=mail_ssl,
                            view_challenges_unregistered=view_challenges_unregistered,
-                           prevent_registration=prevent_registration, mg_api_key=mg_api_key,
+                           prevent_registration=prevent_registration,
+                           mg_base_url=mg_base_url,
+                           mg_api_key=mg_api_key,
                            prevent_name_change=prevent_name_change,
-                           view_after_ctf=view_after_ctf, months=months, curr_year=curr_year, start_days=start_days,
+                           verify_emails=verify_emails,
+                           view_after_ctf=view_after_ctf,
+                           months=months,
+                           curr_year=curr_year,
+                           start_days=start_days,
                            end_days=end_days)
 
 
@@ -371,7 +391,7 @@ def admin_team(teamid):
         solve_ids = [s.chalid for s in solves]
         missing = Challenges.query.filter( not_(Challenges.id.in_(solve_ids) ) ).all()
         addrs = Tracking.query.filter_by(team=teamid).order_by(Tracking.date.desc()).group_by(Tracking.ip).all()
-        wrong_keys = WrongKeys.query.filter_by(team=teamid).order_by(WrongKeys.date.desc()).all()
+        wrong_keys = WrongKeys.query.filter_by(teamid=teamid).order_by(WrongKeys.date.desc()).all()
         score = user.score()
         place = user.place()
         return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, missing=missing,
@@ -451,7 +471,7 @@ def unban(teamid):
 @admins_only
 def delete_team(teamid):
     try:
-        WrongKeys.query.filter_by(team=teamid).delete()
+        WrongKeys.query.filter_by(teamid=teamid).delete()
         Solves.query.filter_by(teamid=teamid).delete()
         Tracking.query.filter_by(team=teamid).delete()
         Teams.query.filter_by(id=teamid).delete()
@@ -565,7 +585,7 @@ def admin_wrong_key(page='1'):
     page_start = results_per_page * ( page - 1 )
     page_end = results_per_page * ( page - 1 ) + results_per_page
 
-    wrong_keys = WrongKeys.query.add_columns(WrongKeys.chalid, WrongKeys.flag, WrongKeys.team, WrongKeys.date,\
+    wrong_keys = WrongKeys.query.add_columns(WrongKeys.chalid, WrongKeys.flag, WrongKeys.teamid, WrongKeys.date,\
                 Challenges.name.label('chal_name'), Teams.name.label('team_name')).\
                 join(Challenges).join(Teams).order_by('team_name ASC').slice(page_start, page_end).all()
 
@@ -597,13 +617,13 @@ def admin_correct_key(page='1'):
 @admins_only
 def admin_fails(teamid='all'):
     if teamid == "all":
-        fails = WrongKeys.query.join(Teams, WrongKeys.team == Teams.id).filter(Teams.banned==None).count()
+        fails = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned==None).count()
         solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned==None).count()
         db.session.close()
         json_data = {'fails':str(fails), 'solves': str(solves)}
         return jsonify(json_data)
     else:
-        fails = WrongKeys.query.filter_by(team=teamid).count()
+        fails = WrongKeys.query.filter_by(teamid=teamid).count()
         solves = Solves.query.filter_by(teamid=teamid).count()
         db.session.close()
         json_data = {'fails':str(fails), 'solves': str(solves)}

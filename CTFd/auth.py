@@ -1,8 +1,8 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
-from CTFd.utils import sha512, is_safe_url, authed, mailserver, sendmail, can_register
+from CTFd.utils import sha512, is_safe_url, authed, mailserver, sendmail, can_register, get_config, verify_email
 from CTFd.models import db, Teams
 
-from itsdangerous import TimedSerializer, BadTimeSignature
+from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from passlib.hash import bcrypt_sha256
 from flask import current_app as app
 
@@ -12,6 +12,32 @@ import re
 import os
 
 auth = Blueprint('auth', __name__)
+
+
+@auth.route('/confirm', methods=['POST', 'GET'])
+@auth.route('/confirm/<data>', methods=['GET'])
+def confirm_user(data=None):
+    if not get_config('verify_emails'):
+        return redirect(url_for('challenges.challenges_view'))
+    if data and request.method == "GET":  ## User is confirming email account
+        try:
+            s = Signer(app.config['SECRET_KEY'])
+            email = s.unsign(data.decode('base64'))
+        except BadSignature:
+            return render_template('confirm.html', errors=['Your confirmation link seems wrong'])
+        team = Teams.query.filter_by(email=email).first()
+        team.verified = True
+        db.session.commit()
+        db.session.close()
+        if authed():
+            return redirect(url_for('challenges.challenges_view'))
+        return redirect(url_for('auth.login'))
+    if not data and request.method == "GET": ## User has been directed to the confirm page because his account is not verified
+        team = Teams.query.filter_by(id=session['id']).first()
+        if team.verified:
+            return redirect(url_for('views.profile'))
+        return render_template('confirm.html', team=team)
+
 
 
 @auth.route('/reset_password', methods=['POST', 'GET'])
@@ -43,7 +69,7 @@ Did you initiate a password reset?
 
 {0}/reset_password/{1}
 
-""".format(app.config['HOST'], token.encode('base64'))
+""".format(url_for('auth.reset_password', _external=True), token.encode('base64'))
 
         sendmail(email, text)
 
@@ -85,7 +111,7 @@ def register():
             return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
         else:
             with app.app_context():
-                team = Teams(name, email, password)
+                team = Teams(name, email.lower(), password)
                 db.session.add(team)
                 db.session.commit()
                 db.session.flush()
@@ -95,8 +121,11 @@ def register():
                 session['admin'] = team.admin
                 session['nonce'] = sha512(os.urandom(10))
 
-            if mailserver():
-                sendmail(request.form['email'], "You've successfully registered for the CTF")
+                if mailserver() and get_config('verify_emails'):
+                    verify_email(team.email)
+                else:
+                    if mailserver():
+                        sendmail(request.form['email'], "You've successfully registered for {}".format(get_config('ctf_name')))
 
         db.session.close()
 
