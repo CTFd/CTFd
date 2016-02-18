@@ -219,7 +219,7 @@ if __name__ == '__main__':
         db = app.db
 
         ### Generating Challenges
-        print "GENERATING CHALLENGES"
+        print("GENERATING CHALLENGES")
         for x in range(CHAL_AMOUNT):
             word = gen_word()
             flags = [{'flag': word, 'type': 0}]
@@ -229,7 +229,7 @@ if __name__ == '__main__':
             db.session.commit()
 
         ### Generating Files
-        print "GENERATING FILES"
+        print("GENERATING FILES")
         AMT_CHALS_WITH_FILES = int(CHAL_AMOUNT * (3.0 / 4.0))
         for x in range(AMT_CHALS_WITH_FILES):
             chal = random.randint(1, CHAL_AMOUNT)
@@ -239,7 +239,7 @@ if __name__ == '__main__':
         db.session.commit()
 
         ### Generating Users
-        print "GENERATING USERS"
+        print("GENERATING USERS")
         used = []
         count = 0
         while count < USER_AMOUNT:
@@ -253,7 +253,7 @@ if __name__ == '__main__':
         db.session.commit()
 
         ### Generating Solves
-        print "GENERATING SOLVES"
+        print("GENERATING SOLVES")
         for x in range(USER_AMOUNT):
             used = []
             base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
@@ -271,7 +271,7 @@ if __name__ == '__main__':
         db.session.commit()
 
         ### Generating Wrong Keys
-        print "GENERATING WRONG KEYS"
+        print("GENERATING WRONG KEYS")
         for x in range(USER_AMOUNT):
             used = []
             base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
