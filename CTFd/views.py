@@ -1,5 +1,5 @@
 from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint, Response
-from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url, get_config, sha512, get_ip
+from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url, get_config, set_config, sha512, get_ip
 from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 
 from jinja2.exceptions import TemplateNotFound
@@ -35,10 +35,10 @@ def setup():
             session['nonce'] = sha512(os.urandom(10))
         if request.method == 'POST':
             ctf_name = request.form['ctf_name']
-            ctf_name = Config('ctf_name', ctf_name)
+            ctf_name = set_config('ctf_name', ctf_name)
 
             ## CSS
-            css = Config('start', '')
+            css = set_config('start', '')
 
             ## Admin user
             name = request.form['name']
@@ -61,48 +61,32 @@ def setup():
 </div>""")
 
             #max attempts per challenge
-            max_tries = Config("max_tries",0)
-
+            max_tries = set_config("max_tries",0)
 
             ## Start time
-            start = Config('start', None)
-            end = Config('end', None)
+            start = set_config('start', None)
+            end = set_config('end', None)
 
             ## Challenges cannot be viewed by unregistered users
-            view_challenges_unregistered = Config('view_challenges_unregistered', None)
+            view_challenges_unregistered = set_config('view_challenges_unregistered', None)
 
             ## Allow/Disallow registration
-            prevent_registration = Config('prevent_registration', None)
+            prevent_registration = set_config('prevent_registration', None)
 
             ## Verify emails
-            verify_emails = Config('verify_emails', None)
+            verify_emails = set_config('verify_emails', None)
 
-            mail_server = Config('mail_server', None)
-            mail_port = Config('mail_port', None)
-            mail_tls = Config('mail_tls', None)
-            mail_ssl = Config('mail_ssl', None)
-            mail_username = Config('mail_username', None)
-            mail_password = Config('mail_password', None)
-            db.session.add(mail_server)
-            db.session.add(mail_port)
-            db.session.add(mail_tls)
-            db.session.add(mail_ssl)
-            db.session.add(mail_username)
-            db.session.add(mail_password)
+            mail_server = set_config('mail_server', None)
+            mail_port = set_config('mail_port', None)
+            mail_tls = set_config('mail_tls', None)
+            mail_ssl = set_config('mail_ssl', None)
+            mail_username = set_config('mail_username', None)
+            mail_password = set_config('mail_password', None)
 
-            setup = Config('setup', True)
-
-            db.session.add(ctf_name)
-            db.session.add(admin)
+            setup = set_config('setup', True)
+            
             db.session.add(page)
-            db.session.add(max_tries)
-            db.session.add(start)
-            db.session.add(end)
-            db.session.add(view_challenges_unregistered)
-            db.session.add(prevent_registration)
-            db.session.add(verify_emails)
-            db.session.add(css)
-            db.session.add(setup)
+            db.session.add(admin)
             db.session.commit()
             app.setup = False
             return redirect('/')
@@ -225,7 +209,7 @@ def profile():
             affiliation = user.affiliation
             country = user.country
             prevent_name_change = get_config('prevent_name_change')
-            confirm_email = not user.verified
+            confirm_email = get_config('verify_emails') and not user.verified
             return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
                                    country=country, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
     else:
