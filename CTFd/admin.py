@@ -20,29 +20,12 @@ import calendar
 admin = Blueprint('admin', __name__)
 
 
-@admin.route('/admin', methods=['GET', 'POST'])
+@admin.route('/admin', methods=['GET'])
 def admin_view():
-    if request.method == 'POST':
-        username = request.form.get('name')
-        password = request.form.get('password')
-
-        admin_user= Teams.query.filter_by(name=request.form['name'], admin=True).first()
-        if admin_user and bcrypt_sha256.verify(request.form['password'], admin_user.password):
-            try:
-                session.regenerate() # NO SESSION FIXATION FOR YOU
-            except:
-                pass # TODO: Some session objects dont implement regenerate :(
-            session['username'] = admin_user.name
-            session['id'] = admin_user.id
-            session['admin'] = True
-            session['nonce'] = sha512(os.urandom(10))
-            db.session.close()
-            return redirect(url_for('admin.admin_graphs'))
-
     if is_admin():
         return redirect(url_for('admin.admin_graphs'))
 
-    return render_template('admin/login.html')
+    return redirect(url_for('auth.login'))
 
 
 @admin.route('/admin/graphs')

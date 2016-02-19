@@ -27,7 +27,7 @@ function loadchal(id, update) {
     obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
     })[0]
-    $('a[href=#desc-write]').click() // Switch to Write tab
+    $('#desc-write-link').click() // Switch to Write tab
     $('.chal-title').text(obj.name);
     $('.chal-name').val(obj.name);
     $('.chal-desc').val(obj.description);

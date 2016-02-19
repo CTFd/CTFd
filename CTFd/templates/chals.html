@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="/static/css/input.css">
 <style>
     .hide-text { text-overflow: ellipsis; overflow: hidden; }
     .dialog-inner {padding-bottom: 30px;}
@@ -155,9 +154,8 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
     <script src="/static/js/chalboard.js"></script>
-    <script src="/static/js/input.js"></script>
+    <script src="/static/js/style.js"></script>
     <script>
     $('[data-dialog-close]').click(function() {
         $('.nav-tabs > li:nth-child(1)').addClass("active");

@@ -1,0 +1,13 @@
+/* raleway-500 - latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../../fonts/raleway/raleway-v10-latin-500.eot'); /* IE9 Compat Modes */
+  src: local('Raleway Medium'), local('Raleway-Medium'),
+       url('../../fonts/raleway/raleway-v10-latin-500.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../../fonts/raleway/raleway-v10-latin-500.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../../fonts/raleway/raleway-v10-latin-500.woff') format('woff'), /* Modern Browsers */
+       url('../../fonts/raleway/raleway-v10-latin-500.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../../fonts/raleway/raleway-v10-latin-500.svg#Raleway') format('svg'); /* Legacy iOS */
+}

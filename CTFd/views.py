@@ -84,7 +84,7 @@ def setup():
             mail_password = set_config('mail_password', None)
 
             setup = set_config('setup', True)
-            
+
             db.session.add(page)
             db.session.add(admin)
             db.session.commit()
@@ -122,7 +122,10 @@ def teams(page):
     page_start = results_per_page * ( page - 1 )
     page_end = results_per_page * ( page - 1 ) + results_per_page
 
-    teams = Teams.query.filter_by(verified=True).slice(page_start, page_end).all()
+    if get_config('verify_emails'):
+        teams = Teams.query.filter_by(verified=True).slice(page_start, page_end).all()
+    else:
+        teams = Teams.query.slice(page_start, page_end).all()
     count = len(teams)
     pages = int(count / results_per_page) + (count % results_per_page > 0)
     return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
