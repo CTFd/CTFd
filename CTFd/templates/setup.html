@@ -23,26 +23,30 @@
         {% endfor %}
         <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
             <input type="hidden" name="nonce" value="{{nonce}}"> {# This nonce is implemented specially in the route itself #}
-
-            <div class="form-group">
-                <label for="ctf_name">CTF Name</label>
-                <input class="form-control" id="ctf_name" name="ctf_name" type="text" placeholder="CTF Name">
-            </div>
-
-            <div class="form-group">
-                <label for="username-input">Admin Username</label>
-                <input class="form-control" id="username-input" name="name" type="text" placeholder="Admin Username">
-            </div>
-
-            <div class="form-group">
-                <label for="email-input">Admin Email</label>
-                <input class="form-control" id="email-input" name="email" type="text" placeholder="Admin Email">
-            </div>
-
-            <div class="form-group">
-                <label for="password-input">Admin Password</label>
-                <input class="form-control" id="password-input" name="password" type="text" placeholder="Admin Password">
-            </div>
+            <span class="input">
+                <input class="input-field" type="text" name="ctf_name" id="ctf_name-input"/>
+                <label class="input-label" for="ctf_name-input">
+                    <span class="label-content" data-content="CTF Name">CTF Name</span>
+                </label>
+            </span>
+            <span class="input">
+                <input class="input-field" type="text" name="name" id="username-input" />
+                <label class="input-label" for="username-input">
+                    <span class="label-content" data-content="Username">Admin Username</span>
+                </label>
+            </span>
+            <span class="input">
+                <input class="input-field" type="email" name="email" id="email-input" />
+                <label class="input-label" for="email-input">
+                    <span class="label-content" data-content="Email">Admin Email</span>
+                </label>
+            </span>
+            <span class="input">
+                <input class="input-field" type="password" name="password" id="password-input" />
+                <label class="input-label" for="password-input">
+                    <span class="label-content" data-content="Password">Admin Password</span>
+                </label>
+            </span>
             <br/>
         </div>
     </div>
