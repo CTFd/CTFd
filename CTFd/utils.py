@@ -3,7 +3,6 @@ from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams
 from six.moves.urllib.parse import urlparse, urljoin 
 from functools import wraps
 from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
-from flask.ext.mail import Message
 from itsdangerous import Signer, BadSignature
 from socket import inet_aton, inet_ntoa
 from struct import unpack, pack
