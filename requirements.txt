@@ -1,6 +1,7 @@
 Flask
 Flask-SQLAlchemy
 Flask-Session
+Flask-Mail
 SQLAlchemy
 passlib
 bcrypt
