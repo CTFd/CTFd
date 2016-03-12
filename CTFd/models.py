@@ -1,5 +1,6 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import DatabaseError
+from sqlalchemy.sql import func
 
 from socket import inet_aton, inet_ntoa
 from struct import unpack, pack
@@ -41,7 +42,7 @@ class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
-    value = db.Column(db.Integer) 
+    value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     flags = db.Column(db.Text)
     hidden = db.Column(db.Boolean)
@@ -55,6 +56,25 @@ class Challenges(db.Model):
 
     def __repr__(self):
         return '<chal %r>' % self.name
+
+
+class Awards(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    name = db.Column(db.String(80))
+    description = db.Column(db.Text)
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    value = db.Column(db.Integer)
+    category = db.Column(db.String(80))
+    icon = db.Column(db.Text)
+
+    def __init__(self, teamid, name, value):
+        self.teamid = teamid
+        self.name = name
+        self.value = value
+
+    def __repr__(self):
+        return '<award %r>' % self.name
 
 
 class Tags(db.Model):
@@ -150,7 +170,7 @@ class Solves(db.Model):
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     team = db.relationship('Teams', foreign_keys="Solves.teamid", lazy='joined')
     chal = db.relationship('Challenges', foreign_keys="Solves.chalid", lazy='joined')
-    # value = db.Column(db.Integer) 
+    # value = db.Column(db.Integer)
 
     def __init__(self, chalid, teamid, ip, flag):
         self.ip = ip2long(ip)

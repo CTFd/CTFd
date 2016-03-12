@@ -18,15 +18,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header text-center">
-                    <h3>Delete Key</h3>
+                    <h3 id="confirm-title">Delete Key</h3>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="/admin/chal/delete">
                         <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
                         <div class="small-6 small-centered text-center columns">
-                            <p>Are you sure you want to delete <strong class="key-type">successful</strong> key submission for team: <strong
-                                    id="confirm-team-name"></strong> in challenge: <strong
-                                    id="confirm-chal-name"></strong>?</p>
+                            <p id="confirm-description"></p>
                             <a onclick="$('#confirm').modal('hide')" class="btn btn-primary">No</a>
                             <button class="btn btn-danger" id="delete-solve" type="button">Yes</button>
                         </div>
@@ -106,14 +104,16 @@
             <td class="text-center"><b>Challenge</b></td>
             <td class="text-center"><b>Category</b></td>
             <td class="text-center"><b>Value</b></td>
+            <td class="text-center"><b>Mark Solved</b></td>
         </tr>
         </thead>
         <tbody>
         {% for chal in missing %}
             <tr class="chal-solve">
-                <td class="text-center chal" id="{{ chal.chalid }}">{{ chal.name }}</td>
+                <td class="text-center chal" id="{{ chal.id }}">{{ chal.name }}</td>
                 <td class="text-center">{{ chal.category }}</td>
                 <td class="text-center">{{ chal.value }}</td>
+                <td class="text-center"><i class="fa fa-check"></i></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -162,29 +162,96 @@
             })
         });
 
-        function load_confirm_modal(type, team, chal, team_name, chal_name) {
-            var modal = $('#confirm')
-            modal.find('#confirm-team-name').text(team_name);
-            modal.find('#confirm-chal-name').text(chal_name);
-            if (type == 'chal-solve'){
-                $('.key-type').text('correct');
-                $('#confirm form').attr('action', '/admin/solves/' + team + '/' + chal + '/delete');
-            } else {
-                $('.key-type').text('incorrect');
-                $('#confirm form').attr('action', '/admin/wrong_keys/' + team + '/' + chal + '/delete');
-            }
+        function load_confirm_modal(msg) {
+            var title = msg.title;
+            var description = msg.description;
+            var action = msg.action;
+            $('#confirm-title').text(title);
+            $('#confirm-description').html(description);
+            $('#confirm form').attr('action', action);
             $('#confirm').modal('show');
         }
 
         $('.fa-times').click(function () {
-
             var elem = $(this).parent().parent();
             var type = elem.attr('class');
             var chal = elem.find('.chal').attr('id');
             var chal_name = elem.find('.chal').text().trim();
             var team = window.location.pathname.split('/').pop();
             var team_name = $("#team-id").text();
-            load_confirm_modal(type, team, chal, team_name, chal_name)
+
+            if (type == 'chal-solve'){
+                var title = 'Delete Solve';
+                var description = "<span>Are you sure you want to delete " +
+                                    "<strong>correct</strong> " +
+                                    "key submission for team: " +
+                                    "<strong id='confirm-team-name'></strong> " +
+                                    "in challenge: " +
+                                    "<strong id='confirm-chal-name'></strong>?</span>"
+
+
+                var description = $($.parseHTML(description));
+                description.find('#confirm-team-name').text(team_name);
+                description.find('#confirm-chal-name').text(chal_name);
+                description = description.html()
+
+                var action = '/admin/solves/' + team + '/' + chal + '/delete';
+            } else {
+                var title = 'Delete Wrong Key';
+                var description = "<span>Are you sure you want to delete " +
+                                    "<strong>incorrect</strong> " +
+                                    "key submission for team: " +
+                                    "<strong id='confirm-team-name'></strong> " +
+                                    "in challenge: " +
+                                    "<strong id='confirm-chal-name'></strong>?</span>"
+
+                var description = $($.parseHTML(description));
+                description.find('#confirm-team-name').text(team_name);
+                description.find('#confirm-chal-name').text(chal_name);
+                description = description.html()
+
+                var action = '/admin/wrong_keys/' + team + '/' + chal + '/delete';
+            }
+
+            var msg = {
+                title : title,
+                description : description,
+                action : action,
+            }
+
+            load_confirm_modal(msg)
+        });
+
+        $('.fa-check').click(function () {
+            var elem = $(this).parent().parent();
+            var type = elem.attr('class');
+            var chal = elem.find('.chal').attr('id');
+            var chal_name = elem.find('.chal').text().trim();
+            var team = window.location.pathname.split('/').pop();
+            var team_name = $("#team-id").text();
+
+            var title = 'Mark '+chal_name+' Solved';
+            var description = "<span>Are you sure you want to mark " +
+                                "<strong id='confirm-chal-name'></strong> " +
+                                "as solved for team " +
+                                "<strong id='confirm-team-name'></strong> " +
+                                "?</span>";
+
+
+            var description = $($.parseHTML(description));
+            description.find('#confirm-team-name').text(team_name);
+            description.find('#confirm-chal-name').text(chal_name);
+            description = description.html()
+
+            var action = '/admin/solves/' + team + '/' + chal + '/solve';
+
+            var msg = {
+                title : title,
+                description : description,
+                action : action,
+            };
+
+            load_confirm_modal(msg);
         });
     </script>
 {% endblock %}

@@ -519,19 +519,29 @@ def admin_solves(teamid="all"):
     return jsonify(json_data)
 
 
+@admin.route('/admin/solves/<teamid>/<chalid>/solve', methods=['POST'])
+@admins_only
+def create_solve(teamid, chalid):
+    solve = Solves(chalid=chalid, teamid=teamid, ip='127.0.0.1', flag='MARKED_AS_SOLVED_BY_ADMIN')
+    db.session.add(solve)
+    db.session.commit()
+    db.session.close()
+    return '1'
+
 @admin.route('/admin/solves/<teamid>/<chalid>/delete', methods=['POST'])
 @admins_only
 def delete_solve(teamid, chalid):
     solve = Solves.query.filter_by(teamid=teamid, chalid=chalid).first()
     db.session.delete(solve)
     db.session.commit()
+    db.session.close()
     return '1'
 
 
 @admin.route('/admin/wrong_keys/<teamid>/<chalid>/delete', methods=['POST'])
 @admins_only
 def delete_wrong_key(teamid, chalid):
-    wrong_key = WrongKeys.query.filter_by(team=teamid, chalid=chalid).first()
+    wrong_key = WrongKeys.query.filter_by(teamid=teamid, chalid=chalid).first()
     db.session.delete(wrong_key)
     db.session.commit()
     return '1'
