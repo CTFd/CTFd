@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, abort, session, jso
 from flask.ext.sqlalchemy import SQLAlchemy
 from logging.handlers import RotatingFileHandler
 from flask.ext.session import Session
+from sqlalchemy_utils import database_exists, create_database
 import os
 import sqlalchemy
 
@@ -12,6 +13,10 @@ def create_app(config='CTFd.config'):
         app.config.from_object(config)
 
         from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
+
+        ## sqlite database creation is relative to the script which causes issues with serve.py
+        if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']) and not app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite'):
+            create_database(app.config['SQLALCHEMY_DATABASE_URI'])
 
         db.init_app(app)
         db.create_all()

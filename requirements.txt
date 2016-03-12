@@ -2,6 +2,7 @@ Flask
 Flask-SQLAlchemy
 Flask-Session
 SQLAlchemy
+sqlalchemy-utils
 passlib
 bcrypt
 six
