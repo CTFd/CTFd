@@ -28,7 +28,7 @@ function updatescores () {
     teams = $.parseJSON(JSON.stringify(data));
     $('#scoreboard > tbody').empty()
     for (var i = 0; i < teams['standings'].length; i++) {
-      row = "<tr><td>{0}</td><td><a href='/team/{1}'>{2}</a></td><td>{3}</td></tr>".format(i+1, teams['standings'][i].id, htmlentities(teams['standings'][i].name), teams['standings'][i].score)
+      row = "<tr><td>{0}</td><td><a href='/team/{1}'>{2}</a></td><td>{3}</td></tr>".format(i+1, teams['standings'][i].id, htmlentities(teams['standings'][i].team), teams['standings'][i].score)
       $('#scoreboard > tbody').append(row)
     };
   });

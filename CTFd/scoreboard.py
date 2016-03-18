@@ -30,7 +30,7 @@ def scores():
     db.session.close()
     json = {'standings':[]}
     for i, x in enumerate(teams):
-        json['standings'].append({'pos':i+1, 'id':x.teamid, 'name':x.name,'score':int(x.score)})
+        json['standings'].append({'pos':i+1, 'id':x.teamid, 'team':x.name,'score':int(x.score)})
     return jsonify(json)
 
 
