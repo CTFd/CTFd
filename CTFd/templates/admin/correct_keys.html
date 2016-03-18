@@ -63,7 +63,7 @@
         {% if curr_page != 1 %}<a href="/admin/correct_keys/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
         {% for page in range(1, pages + 1) %}
             {% if curr_page != page %}
-                <a href="/admin/wrong_keys/{{ page }}">{{ page }}</a>
+                <a href="/admin/correct_keys/{{ page }}">{{ page }}</a>
             {% else %}
                 <b>{{ page }}</b>
             {% endif %}
