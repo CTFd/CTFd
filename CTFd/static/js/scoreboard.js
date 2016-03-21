@@ -63,7 +63,7 @@ function scoregraph () {
             for(var j = 0; j < scores[teams[i]].length; j++){
                 team_score.push(scores[teams[i]][j].value);
                 var date = moment(scores[teams[i]][j].time * 1000);
-                times.push(date.format('YYYY-MM-DD hh:mm:ss'));
+                times.push(date.toDate());
             }
             team_score = cumulativesum(team_score);
             var trace = {
