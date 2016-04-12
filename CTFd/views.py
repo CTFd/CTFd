@@ -133,6 +133,8 @@ def teams(page):
 
 @views.route('/team/<teamid>', methods=['GET', 'POST'])
 def team(teamid):
+    if get_config('view_scoreboard_if_authed') and not authed():
+        return redirect(url_for('auth.login', next=request.path))
     user = Teams.query.filter_by(id=teamid).first()
     solves = Solves.query.filter_by(teamid=teamid).all()
     score = user.score()

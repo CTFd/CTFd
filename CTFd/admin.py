@@ -49,6 +49,7 @@ def admin_config():
 
         try:
             view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
+            view_scoreboard_if_authed = bool(request.form.get('view_scoreboard_if_authed', None))
             prevent_registration = bool(request.form.get('prevent_registration', None))
             prevent_name_change = bool(request.form.get('prevent_name_change', None))
             view_after_ctf = bool(request.form.get('view_after_ctf', None))
@@ -57,6 +58,7 @@ def admin_config():
             mail_ssl = bool(request.form.get('mail_ssl', None))
         except (ValueError, TypeError):
             view_challenges_unregistered = None
+            view_scoreboard_if_authed = None
             prevent_registration = None
             prevent_name_change = None
             view_after_ctf = None
@@ -65,6 +67,7 @@ def admin_config():
             mail_ssl = None
         finally:
             view_challenges_unregistered = set_config('view_challenges_unregistered', view_challenges_unregistered)
+            view_scoreboard_if_authed = set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
             prevent_registration = set_config('prevent_registration', prevent_registration)
             prevent_name_change = set_config('prevent_name_change', prevent_name_change)
             view_after_ctf = set_config('view_after_ctf', view_after_ctf)
@@ -119,6 +122,7 @@ def admin_config():
     mail_ssl = get_config('mail_ssl')
 
     view_challenges_unregistered = get_config('view_challenges_unregistered')
+    view_scoreboard_if_authed = get_config('view_scoreboard_if_authed')
     prevent_registration = get_config('prevent_registration')
     prevent_name_change = get_config('prevent_name_change')
     verify_emails = get_config('verify_emails')
@@ -155,6 +159,7 @@ def admin_config():
                            mail_tls=mail_tls,
                            mail_ssl=mail_ssl,
                            view_challenges_unregistered=view_challenges_unregistered,
+                           view_scoreboard_if_authed=view_scoreboard_if_authed,
                            prevent_registration=prevent_registration,
                            mg_base_url=mg_base_url,
                            mg_api_key=mg_api_key,

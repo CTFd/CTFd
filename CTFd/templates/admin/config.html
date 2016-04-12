@@ -110,6 +110,7 @@
                 <li role="presentation">
                     <a href="#end-date" aria-controls="end-date" role="tab" data-toggle="tab">End Time</a>
                 </li>
+                <sub style="float:right;">* All time fields required</sub>
             </ul>
 
             <div class="tab-content">
@@ -163,9 +164,12 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <input class="form-control" id='start' name='start' type='hidden'
+                        <div class="form-group col-xs-12">
+                            <label for="start">UTC Timestamp:</label>
+                            <input class="form-control" id='start' name='start' type='text'
                                placeholder="Start Date (UTC timestamp)"
-                               {% if start is defined and start != None %}value="{{ start }}"{% endif %}>
+                               {% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly>
+                        </div>
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="end-date">
@@ -219,9 +223,12 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <input class="form-control" id='end' name='end' type='hidden'
+                        <div class="form-group col-xs-12">
+                            <label for="end">UTC Timestamp:</label>
+                            <input class="form-control" id='end' name='end' type='text'
                                placeholder="End Date (UTC timestamp)"
-                               {% if end is defined and end != None %}value="{{ end }}"{% endif %}>
+                               {% if end is defined and end != None %}value="{{ end }}"{% endif %} readonly>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -244,6 +251,14 @@
                 <label>
                     <input id="view_challenges_unregistered" name="view_challenges_unregistered" type="checkbox" {% if view_challenges_unregistered %}checked{% endif %}>
                     Unregistered users can view challenges
+                </label>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input id="view_scoreboard_if_authed" name="view_scoreboard_if_authed" type="checkbox"
+                           {% if view_scoreboard_if_authed %}checked{% endif %}>
+                    Scoreboard can only be viewed by logged in users
                 </label>
             </div>
 
@@ -285,6 +300,7 @@
         };
         function load_date_values(place){
             if (place == 'start'){
+                $('#start').parent().hide();
                 console.log('Loading start')
                 var month = $('#start-month').val();
                 var day = $('#start-day').val();
@@ -297,8 +313,10 @@
                     var utc = convert_date_to_moment(month, day, year, hour, minute);
                     console.log(utc.unix());
                     $('#start').val(utc.unix());
+                    $('#start').parent().show();
                 }
             } else {
+                $('#end').parent().hide();
                 var month = $('#end-month').val();
                 var day = $('#end-day').val();
                 var year = $('#end-year').val();
@@ -309,6 +327,7 @@
                 } else {
                     var utc = convert_date_to_moment(month, day, year, hour, minute);
                     $('#end').val(utc.unix());
+                    $('#end').parent().show();
                 }
             }
         }

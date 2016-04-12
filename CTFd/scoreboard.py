@@ -1,5 +1,5 @@
-from flask import current_app as app, session, render_template, jsonify, Blueprint
-from CTFd.utils import unix_time
+from flask import current_app as app, session, render_template, jsonify, Blueprint, redirect, url_for, request
+from CTFd.utils import unix_time, authed, get_config
 from CTFd.models import db, Teams, Solves, Challenges
 
 scoreboard = Blueprint('scoreboard', __name__)
@@ -7,6 +7,8 @@ scoreboard = Blueprint('scoreboard', __name__)
 
 @scoreboard.route('/scoreboard')
 def scoreboard_view():
+    if get_config('view_scoreboard_if_authed') and not authed():
+        return redirect(url_for('auth.login', next=request.path))
     score = db.func.sum(Challenges.value).label('score')
     quickest = db.func.max(Solves.date).label('quickest')
     teams = db.session.query(Solves.teamid, Teams.name, score)\
@@ -20,6 +22,8 @@ def scoreboard_view():
 
 @scoreboard.route('/scores')
 def scores():
+    if get_config('view_scoreboard_if_authed') and not authed():
+        return redirect(url_for('auth.login', next=request.path))
     score = db.func.sum(Challenges.value).label('score')
     quickest = db.func.max(Solves.date).label('quickest')
     teams = db.session.query(Solves.teamid, Teams.name, score)\
@@ -36,6 +40,8 @@ def scores():
 
 @scoreboard.route('/top/<count>')
 def topteams(count):
+    if get_config('view_scoreboard_if_authed') and not authed():
+        return redirect(url_for('auth.login', next=request.path))
     try:
         count = int(count)
     except:
