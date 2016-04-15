@@ -193,7 +193,7 @@ function loadchals() {
                     '<div id="{0}-row">'.format(categoryid) +
                         '<div class="category-header col-md-2">' +
                         '</div>' +
-                        '<div class="category-challenges col-md-9">' +
+                        '<div class="category-challenges col-md-12">' +
                             '<div class="chal-row"></div>' +
                         '</div>' +
                     '</div>');
