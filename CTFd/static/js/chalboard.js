@@ -276,8 +276,13 @@ $(function() {
 });
 
 $('.nav-tabs a').click(function (e) {
-  e.preventDefault()
-  $(this).tab('show')
+    e.preventDefault()
+    $(this).tab('show')
 })
+
+$('.close').click(function() {
+    $('.nav-tabs a:first').tab('show')
+    window.location.hash = ""
+});
 
 setInterval(update, 300000);

@@ -96,7 +96,7 @@
             <div class="modal-body">
                 <div role="tabpanel">
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="challenge">
+                        <div role="tabpanel" class="tab-pane fade in active" id="challenge">
                             <h3 class='chal-name'></h3>
                             <h4 class="chal-value"></h4>
                             <div class="chal-tags"></div>
@@ -131,7 +131,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="solves">
+                        <div role="tabpanel" class="tab-pane fade" id="solves">
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
@@ -156,12 +156,4 @@
 {% block scripts %}
     <script src="/static/js/chalboard.js"></script>
     <script src="/static/js/style.js"></script>
-    <script>
-    $('[data-dialog-close]').click(function() {
-        $('.nav-tabs > li:nth-child(1)').addClass("active");
-        $('.nav-tabs > li:nth-child(2)').removeClass("active");
-        openDialog.toggle();
-        window.location.hash = ""
-    });
-    </script>
 {% endblock %}
