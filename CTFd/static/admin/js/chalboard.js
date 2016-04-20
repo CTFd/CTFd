@@ -34,6 +34,10 @@ function loadchal(id, update) {
     $('.chal-value').val(obj.value);
     $('.chal-category').val(obj.category);
     $('.chal-id').val(obj.id);
+    $('.chal-hidden').prop('checked', false);
+    if (obj.hidden) {
+        $('.chal-hidden').prop('checked', true);
+    }
     //$('#update-challenge .chal-delete').attr({
     //    'href': '/admin/chal/close/' + (id + 1)
     //})

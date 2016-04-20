@@ -76,6 +76,14 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input name="hidden" type="checkbox">
+                                Hide challenge on creation
+                            </label>
+                        </div>
+
                         <div class="form-group">
                           <label for="exampleInputFile">Upload challenge files</label>
                           <input type="file" name="files[]" multiple="multiple">
@@ -129,6 +137,13 @@
                             <input type="number" class="form-control chal-value" name="value" placeholder="Enter value">
                         </div>
                         <input class="chal-id" type='hidden' name='id' placeholder='ID'>
+
+                        <div class="checkbox">
+                            <label>
+                                <input class="chal-hidden" name="hidden" type="checkbox">
+                                Hidden
+                            </label>
+                        </div>
 
                         <div class="form-group">
                             <a href="#" data-toggle="modal" data-target="#update-tags" class="btn btn-primary">Tags</a>

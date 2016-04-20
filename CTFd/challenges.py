@@ -36,7 +36,7 @@ def chals():
             else:
                 return redirect('/')
     if can_view_challenges():
-        chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
+        chals = Challenges.query.filter(Challenges.hidden!=True).add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
 
         json = {'game':[]}
         for x in chals:
