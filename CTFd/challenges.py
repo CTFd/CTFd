@@ -3,6 +3,8 @@ from flask import current_app as app, render_template, request, redirect, abort,
 from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config, get_ip, is_verified
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams
 
+from sqlalchemy.sql import and_, or_, not_
+
 import time
 import re
 import logging
@@ -36,7 +38,7 @@ def chals():
             else:
                 return redirect('/')
     if can_view_challenges():
-        chals = Challenges.query.filter(Challenges.hidden!=True).add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
+        chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
 
         json = {'game':[]}
         for x in chals:
