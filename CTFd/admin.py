@@ -101,6 +101,7 @@ def admin_config():
         return redirect(url_for('admin.admin_config'))
 
     ctf_name = get_config('ctf_name')
+    max_tries = get_config('max_tries')
 
     mail_server = get_config('mail_server')
     mail_port = get_config('mail_port')
@@ -109,7 +110,6 @@ def admin_config():
 
     mg_api_key = get_config('mg_api_key')
     mg_base_url = get_config('mg_base_url')
-    max_tries = get_config('max_tries')
     if not max_tries:
         set_config('max_tries', 0)
         max_tries = 0
@@ -226,7 +226,7 @@ def delete_page(pageroute):
 @admins_only
 def admin_chals():
     if request.method == 'POST':
-        chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
+        chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category', 'hidden').order_by(Challenges.value).all()
 
         teams_with_points = db.session.query(Solves.teamid, Teams.name).join(Teams).filter(
             Teams.banned == None).group_by(
@@ -240,11 +240,12 @@ def admin_chals():
             else:
                 percentage = 0.0
             json_data['game'].append({
-                'id': x[1],
-                'name': x[2],
-                'value': x[3],
-                'description': x[4],
-                'category': x[5],
+                'id': x.id,
+                'name': x.name,
+                'value': x.value,
+                'description': x.description,
+                'category': x.category,
+                'hidden': x.hidden,
                 'percentage_solved': percentage
             })
 
@@ -638,6 +639,10 @@ def admin_create_chal():
 
     # Create challenge
     chal = Challenges(request.form['name'], request.form['desc'], request.form['value'], request.form['category'], flags)
+    if 'hidden' in request.form:
+        chal.hidden = True
+    else:
+        chal.hidden = False
     db.session.add(chal)
     db.session.commit()
 
@@ -689,6 +694,7 @@ def admin_update_chal():
     challenge.description = request.form['desc']
     challenge.value = request.form['value']
     challenge.category = request.form['category']
+    challenge.hidden = 'hidden' in request.form
     db.session.add(challenge)
     db.session.commit()
     db.session.close()
