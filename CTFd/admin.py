@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
 from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir
-from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
+from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from itsdangerous import TimedSerializer, BadTimeSignature
 from sqlalchemy.sql import and_, or_, not_
 from werkzeug.utils import secure_filename
@@ -380,11 +380,12 @@ def admin_team(teamid):
         solve_ids = [s.chalid for s in solves]
         missing = Challenges.query.filter( not_(Challenges.id.in_(solve_ids) ) ).all()
         addrs = Tracking.query.filter_by(team=teamid).order_by(Tracking.date.desc()).group_by(Tracking.ip).all()
-        wrong_keys = WrongKeys.query.filter_by(teamid=teamid).order_by(WrongKeys.date.desc()).all()
+        wrong_keys = WrongKeys.query.filter_by(teamid=teamid).order_by(WrongKeys.date.asc()).all()
+        awards = Awards.query.filter_by(teamid=teamid).order_by(Awards.date.asc()).all()
         score = user.score()
         place = user.place()
         return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, missing=missing,
-                               place=place, wrong_keys=wrong_keys)
+                               place=place, wrong_keys=wrong_keys, awards=awards)
     elif request.method == 'POST':
         admin_user = request.form.get('admin', None)
         if admin_user:
@@ -496,6 +497,57 @@ def admin_scoreboard():
     teams = db.session.query(Solves.teamid, Teams.name, Teams.banned, score).join(Teams).join(Challenges).group_by(Solves.teamid).order_by(score.desc(), quickest)
     db.session.close()
     return render_template('admin/scoreboard.html', teams=teams)
+
+
+@admin.route('/admin/teams/<teamid>/awards', methods=['GET'])
+@admins_only
+def admin_awards(teamid):
+    awards = Awards.query.filter_by(teamid=teamid).all()
+
+    awards_list = []
+    for award in awards:
+        awards_list.append({
+                'id':award.id,
+                'name':award.name,
+                'description':award.description,
+                'date':award.date,
+                'value':award.value,
+                'category':award.category,
+                'icon':award.icon
+            })
+    json_data = {'awards':awards_list}
+    return jsonify(json_data)
+
+
+@admin.route('/admin/awards/add', methods=['POST'])
+@admins_only
+def create_award():
+    try:
+        teamid = request.form['teamid']
+        name = request.form.get('name', 'Award')
+        value = request.form.get('value', 0)
+        award = Awards(teamid, name, value)
+        award.description = request.form.get('description')
+        award.category = request.form.get('category')
+        db.session.add(award)
+        db.session.commit()
+        return "1"
+    except Exception as e:
+        print e
+        return "0"
+
+
+@admin.route('/admin/awards/<award_id>/delete', methods=['POST'])
+@admins_only
+def delete_award(award_id):
+    try:
+        award = Awards.query.filter_by(id=award_id).first()
+        db.session.delete(award)
+        db.session.commit()
+        return '1'
+    except Exception as e:
+        print e
+        return "0"
 
 
 @admin.route('/admin/scores')

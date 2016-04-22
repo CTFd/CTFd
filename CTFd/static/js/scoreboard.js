@@ -1,28 +1,3 @@
-//http://stackoverflow.com/a/2648463 - wizardry!
-String.prototype.format = String.prototype.f = function() {
-    var s = this,
-        i = arguments.length;
-
-    while (i--) {
-        s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
-    }
-    return s;
-};
-
-function colorhash (x) {
-    color = ""
-    for (var i = 20; i <= 60; i+=20){
-        x += i
-        x *= i
-        color += x.toString(16)
-    };
-    return "#" + color.substring(0, 6)
-}
-
-function htmlentities(string) {
-    return $('<div/>').text(string).html();
-}
-
 function updatescores () {
   $.get('/scores', function( data ) {
     teams = $.parseJSON(JSON.stringify(data));

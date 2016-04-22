@@ -142,8 +142,10 @@ class Teams(db.Model):
     def score(self):
         score = db.func.sum(Challenges.value).label('score')
         team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.banned == None, Teams.id==self.id).group_by(Solves.teamid).first()
+        award_score = db.func.sum(Awards.value).label('award_score')
+        award = db.session.query(award_score).filter_by(teamid=self.id).first()
         if team:
-            return team.score
+            return int(team.score or 0) + int(award.award_score or 0)
         else:
             return 0
 

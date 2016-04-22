@@ -12,6 +12,7 @@ with open('.ctfd_secret_key', 'a+') as secret:
 ##### SERVER SETTINGS #####
 SECRET_KEY = key
 SQLALCHEMY_DATABASE_URI = 'sqlite:///ctfd.db'
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 SESSION_TYPE = "filesystem"
 SESSION_FILE_DIR = "/tmp/flask_session"
 SESSION_COOKIE_HTTPONLY = True
