@@ -132,10 +132,7 @@ table{
 .btn {
     letter-spacing: 1px;
     text-decoration: none;
-    background: none;
     -moz-user-select: none;
-    background-image: none;
-    border: 1px solid transparent;
     border-radius: 0;
     cursor: pointer;
     display: inline-block;
@@ -146,7 +143,6 @@ table{
     line-height:20px;
     font-weight:700;
     text-transform:uppercase;
-    border: 3px solid;
     padding:8px 20px;
 }
 
@@ -190,6 +186,8 @@ table{
     background: none;
     color: #545454;
     border-color: #545454;
+    background-image: none;
+    border: 3px solid;
 }
 
 .btn-outlined.btn-theme:hover,
