@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint, Response
 from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url, get_config, set_config, sha512, get_ip
-from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
+from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 
 from jinja2.exceptions import TemplateNotFound
 from passlib.hash import bcrypt_sha256
@@ -136,13 +136,14 @@ def team(teamid):
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
     user = Teams.query.filter_by(id=teamid).first()
-    solves = Solves.query.filter_by(teamid=teamid).all()
+    solves = Solves.query.filter_by(teamid=teamid)
+    awards = Awards.query.filter_by(teamid=teamid).all()
     score = user.score()
     place = user.place()
     db.session.close()
 
     if request.method == 'GET':
-        return render_template('team.html', solves=solves, team=user, score=score, place=place)
+        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place)
     elif request.method == 'POST':
         json = {'solves':[]}
         for x in solves:

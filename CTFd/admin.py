@@ -3,6 +3,7 @@ from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from itsdangerous import TimedSerializer, BadTimeSignature
 from sqlalchemy.sql import and_, or_, not_
+from sqlalchemy.sql.expression import union_all
 from werkzeug.utils import secure_filename
 from socket import inet_aton, inet_ntoa
 from passlib.hash import bcrypt_sha256
@@ -493,10 +494,26 @@ def admin_graph(graph_type):
 @admins_only
 def admin_scoreboard():
     score = db.func.sum(Challenges.value).label('score')
-    quickest = db.func.max(Solves.date).label('quickest')
-    teams = db.session.query(Solves.teamid, Teams.name, Teams.banned, score).join(Teams).join(Challenges).group_by(Solves.teamid).order_by(score.desc(), quickest)
+    scores = db.session.query(Solves.teamid.label('teamid'), Teams.name.label('name'), score, Solves.date.label('date')) \
+        .join(Teams) \
+        .join(Challenges) \
+        .filter(Teams.banned == None) \
+        .group_by(Solves.teamid)
+
+    awards = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'),
+                              db.func.sum(Awards.value).label('score'), Awards.date.label('date')) \
+        .filter(Teams.id == Awards.teamid) \
+        .group_by(Teams.id)
+
+    results = union_all(scores, awards)
+
+    standings = db.session.query(results.columns.teamid, results.columns.name,
+                                 db.func.sum(results.columns.score).label('score')) \
+        .group_by(results.columns.teamid) \
+        .order_by(db.func.sum(results.columns.score).desc(), db.func.max(results.columns.date)) \
+        .all()
     db.session.close()
-    return render_template('admin/scoreboard.html', teams=teams)
+    return render_template('admin/scoreboard.html', teams=standings)
 
 
 @admin.route('/admin/teams/<teamid>/awards', methods=['GET'])
