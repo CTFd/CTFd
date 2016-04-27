@@ -227,7 +227,7 @@ def can_view_challenges():
 
 
 def unix_time(dt):
-    return int(time.mktime(dt.timetuple()))
+    return int((dt - datetime.datetime(1970, 1, 1)).total_seconds())
 
 
 def unix_time_millis(dt):
