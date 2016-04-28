@@ -29,3 +29,4 @@ TRUSTED_PROXIES = [
     '^172\.(1[6-9]|2[0-9]|3[0-1])\.',
     '^192\.168\.'
 ]
+HIDE_ADMIN_TEAMS = False
