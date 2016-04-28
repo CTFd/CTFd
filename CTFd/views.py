@@ -126,6 +126,9 @@ def teams(page):
         teams = Teams.query.filter_by(verified=True).slice(page_start, page_end).all()
     else:
         teams = Teams.query.slice(page_start, page_end).all()
+    for team in teams:
+        if team.admin:
+            teams.remove(team)
     count = len(teams)
     pages = int(count / results_per_page) + (count % results_per_page > 0)
     return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
