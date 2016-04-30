@@ -63,9 +63,13 @@ function scoregraph () {
 }
 
 function update(){
-  updatescores()
-  scoregraph()
+  updatescores();
+  scoregraph();
 }
 
 setInterval(update, 300000); // Update scores every 5 minutes
-scoregraph()
+scoregraph();
+
+window.onresize = function () {
+    Plotly.Plots.resize(document.getElementById('score-graph'));
+};

@@ -101,6 +101,9 @@ table{
 }
 
 #score-graph{
+    height: 450px;
+    display: block;
+    clear: both;
 }
 
 #keys-pie-graph{

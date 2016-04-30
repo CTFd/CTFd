@@ -2,15 +2,13 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-md-6 col-md-offset-1">
             <div id="solves-graph"></div>
-        </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div>
             <div id="keys-pie-graph"></div>
         </div>
-        <div class="col-md-6">
+        <div>
             <div id="categories-pie-graph"></div>
         </div>
     </div>
@@ -19,7 +17,16 @@
 {% block scripts %}
     <style>
         #solves-graph{
-            width:100%;
+            display: block;
+            height: 500px;
+        }
+        #keys-pie-graph{
+            height: 400px;
+            display: block;
+        }
+        #categories-pie-graph{
+            height: 400px;
+            display: block;
         }
     </style>
     <script src="/static/js/vendor/plotly.min.js"></script>
@@ -73,8 +80,7 @@
                 }];
 
                 var layout = {
-                    height: 600,
-                    width: 960
+                    title: 'Score Counts'
                 };
 
                 Plotly.newPlot('solves-graph', data, layout);
@@ -102,8 +108,7 @@
                 }];
 
                 var layout = {
-                    height: 400,
-                    width: 500
+                    title: 'Key Percentages'
                 };
 
                 Plotly.newPlot('keys-pie-graph', data, layout);
@@ -130,8 +135,7 @@
                 }];
 
                 var layout = {
-                    height: 400,
-                    width: 500
+                    title: 'Category Breakdown'
                 };
 
                 Plotly.newPlot('categories-pie-graph', data, layout);
@@ -146,6 +150,12 @@
 
         $(function() {
             update();
+            window.onresize = function () {
+                console.log('resizing')
+                Plotly.Plots.resize(document.getElementById('keys-pie-graph'));
+                Plotly.Plots.resize(document.getElementById('categories-pie-graph'));
+                Plotly.Plots.resize(document.getElementById('solves-graph'));
+            };
         });
 
         setInterval(update, 300000);

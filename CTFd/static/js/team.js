@@ -46,7 +46,12 @@ function scoregraph() {
                 type: 'scatter'
             }
         ];
-        Plotly.newPlot('score-graph', data);
+
+        var layout = {
+            title: 'Score over Time'
+        };
+
+        Plotly.newPlot('score-graph', data, layout);
     });
 }
 
@@ -70,12 +75,12 @@ function keys_percentage_graph() {
             type: 'pie'
         }];
 
-        //var layout = {
-        //    height: 400,
-        //    width: 500
-        //};
+        var layout = {
+            title: 'Key Percentages'
+        };
 
-        Plotly.newPlot('keys-pie-graph', data);
+
+        Plotly.newPlot('keys-pie-graph', data, layout);
     });
 }
 
@@ -114,15 +119,21 @@ function category_breakdown_graph() {
             type: 'pie'
         }];
 
-        //var layout = {
-        //    height: 400,
-        //    width: 500
-        //};
+        var layout = {
+            title: 'Category Breakdown'
+        };
 
-        Plotly.newPlot('categories-pie-graph', data);
+        Plotly.newPlot('categories-pie-graph', data, layout);
     });
 }
 
-category_breakdown_graph()
-keys_percentage_graph()
-scoregraph()
+category_breakdown_graph();
+keys_percentage_graph();
+scoregraph();
+
+
+window.onresize = function () {
+    Plotly.Plots.resize(document.getElementById('keys-pie-graph'));
+    Plotly.Plots.resize(document.getElementById('categories-pie-graph'));
+    Plotly.Plots.resize(document.getElementById('score-graph'));
+};

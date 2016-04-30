@@ -76,24 +76,43 @@ def topteams(count):
     json = {'scores':{}}
 
     score = db.func.sum(Challenges.value).label('score')
-    quickest = db.func.max(Solves.date).label('quickest')
-    teams = db.session.query(Solves.teamid, Teams.name, score)\
-        .join(Teams)\
-        .join(Challenges)\
-        .filter(Teams.banned == None)\
-        .group_by(Solves.teamid).order_by(score.desc(), quickest)\
-        .limit(count)
+    scores = db.session.query(Solves.teamid.label('teamid'), Teams.name.label('name'), score, Solves.date.label('date')) \
+        .join(Teams) \
+        .join(Challenges) \
+        .filter(Teams.banned == None) \
+        .group_by(Solves.teamid)
 
-    for team in teams:
+    awards = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'),
+                              db.func.sum(Awards.value).label('score'), Awards.date.label('date')) \
+        .filter(Teams.id == Awards.teamid) \
+        .group_by(Teams.id)
+
+    results = union_all(scores, awards)
+
+    standings = db.session.query(results.columns.teamid, results.columns.name,
+                                 db.func.sum(results.columns.score).label('score')) \
+        .group_by(results.columns.teamid) \
+        .order_by(db.func.sum(results.columns.score).desc(), db.func.max(results.columns.date)) \
+        .limit(count).all()
+
+    for team in standings:
         solves = Solves.query.filter_by(teamid=team.teamid).all()
+        awards = Awards.query.filter_by(teamid=team.teamid).all()
         json['scores'][team.name] = []
+        scores = []
         for x in solves:
             json['scores'][team.name].append({
-                'id': x.teamid,
                 'chal': x.chalid,
                 'team': x.teamid,
                 'value': x.chal.value,
                 'time': unix_time(x.date)
             })
-
+        for award in awards:
+            json['scores'][team.name].append({
+                'chal': None,
+                'team': award.teamid,
+                'value': award.value,
+                'time': unix_time(award.date)
+            })
+        json['scores'][team.name] = sorted(json['scores'][team.name], key=lambda k: k['time'])
     return jsonify(json)
