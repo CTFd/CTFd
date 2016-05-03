@@ -1,0 +1,87 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="modal fade" id="create-container-modal" tabindex="-1" role="dialog" aria-labelledby="container-modal-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="container-modal-label">Create Container</h4>
+            </div>
+            <form method="POST" action="/admin/containers/new" enctype="multipart/form-data">
+                <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" name="name" placeholder="Enter container name">
+                        </div>
+                        <div class="form-group">
+                            <label for="buildfile-editor" class="control-label">Build File</label>
+                            <textarea id="buildfile-editor" class="form-control" name="buildfile" rows="10"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="container-files">File input</label>
+                            <input type="file" name="files[]" id="container-files" multiple>
+                            <p class="help-block">These files are uploaded alongside your buildfile</p>
+                        </div>
+                        <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <br>
+    <div style="text-align:center">
+        <h1>Containers</h1>
+        <button class="btn btn-theme btn-outlined create-challenge" data-toggle="modal" data-target="#create-container-modal">
+            New Container
+        </button>
+    </div>
+    <br>
+{% if containers %}
+    <table id="teamsboard">
+        <thead>
+            <tr>
+                <td><b>Status</b>
+                </td>
+                <td><b>Name</b>
+                </td>
+                <td><b>IP Address</b>
+                </td>
+                <td><b>Memory</b>
+                </td>
+                <td><b>Disk</b>
+                </td>
+                <td><b>Settings</b>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for c in containers %}
+            <tr>
+                <td>{{ c.name }}</td>
+                <td>{{ c.status }}</td>
+                <td>{{ c.ip_address }}</td>
+                <td>{{ c.memory }} <sub>MB</sub></td>
+                <td>{{ c.disk }} <sub>GB</sub></td>
+                <td>
+                    <span>
+                        <i class="fa fa-pencil-square-o"></i>
+                        <i class="fa fa-times"></i>
+                    </span>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

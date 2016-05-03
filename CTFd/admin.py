@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
-from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir
-from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
+from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir, create_container
+from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from itsdangerous import TimedSerializer, BadTimeSignature
 from sqlalchemy.sql import and_, or_, not_
 from sqlalchemy.sql.expression import union_all
@@ -221,6 +221,26 @@ def delete_page(pageroute):
     db.session.delete(page)
     db.session.commit()
     return '1'
+
+
+@admin.route('/admin/containers', methods=['GET'])
+@admins_only
+def list_container():
+    containers = Containers.query.all()
+    return render_template('admin/containers.html', containers=containers)
+
+
+@admin.route('/admin/containers/new', methods=['POST'])
+@admins_only
+def new_container():
+    name = request.form.get('name')
+    buildfile = request.form.get('buildfile')
+    files = request.files.getlist('files[]')
+    print name
+    print buildfile
+    print files
+    create_container(name=name, buildfile=buildfile, files=files)
+
 
 
 @admin.route('/admin/chals', methods=['POST', 'GET'])

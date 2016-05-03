@@ -1,6 +1,7 @@
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams
 
-from six.moves.urllib.parse import urlparse, urljoin 
+from six.moves.urllib.parse import urlparse, urljoin
+from werkzeug.utils import secure_filename
 from functools import wraps
 from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
 from itsdangerous import Signer, BadSignature
@@ -21,6 +22,8 @@ import re
 import time
 import smtplib
 import email
+import tempfile
+import subprocess
 
 def init_logs(app):
     logger_keys = logging.getLogger('keys')
@@ -381,3 +384,30 @@ def validate_url(url):
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
 
+
+def can_create_container():
+    try:
+        output = subprocess.check_output(['docker', 'version'])
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
+def create_container(name, buildfile, files):
+    if not can_create_container():
+        return False
+    folder = tempfile.mkdtemp(prefix='ctfd')
+    tmpfile = tempfile.NamedTemporaryFile(dir=folder, delete=False)
+    tmpfile.write(buildfile)
+    tmpfile.close()
+
+    for f in files:
+        filename = os.path.basename(f.filename)
+        f.save(os.path.join(folder, filename))
+
+    # docker build -f tmpfile.name -t name
+    try:
+        subprocess.call(['docker', 'build', '-f', tmpfile.name, '-t', name])
+        return True
+    except subprocess.CalledProcessError:
+        return False
