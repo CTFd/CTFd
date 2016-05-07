@@ -135,9 +135,7 @@ def teams(page):
 def team(teamid):
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
-    user = Teams.query.filter_by(id=teamid).first()
-    if not user:
-        abort(404)
+    user = Teams.query.filter_by(id=teamid).first_or_404()
     solves = Solves.query.filter_by(teamid=teamid)
     awards = Awards.query.filter_by(teamid=teamid).all()
     score = user.score()

@@ -67,6 +67,8 @@ def chals_per_solves():
 @challenges.route('/solves')
 @challenges.route('/solves/<teamid>')
 def solves(teamid=None):
+    solves = None
+    awards = None
     if teamid is None:
         if is_admin():
             solves = Solves.query.filter_by(teamid=session['id']).all()

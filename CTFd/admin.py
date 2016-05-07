@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
-from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir, create_container
+from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, container_stop, container_start
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from itsdangerous import TimedSerializer, BadTimeSignature
 from sqlalchemy.sql import and_, or_, not_
@@ -227,7 +227,47 @@ def delete_page(pageroute):
 @admins_only
 def list_container():
     containers = Containers.query.all()
+    for c in containers:
+        c.status = container_status(c.name)
+        c.ports = ", ".join(container_ports(c.name, verbose=True))
     return render_template('admin/containers.html', containers=containers)
+
+
+@admin.route('/admin/containers/<container_id>/stop', methods=['POST'])
+@admins_only
+def stop_container(container_id):
+    container = Containers.query.filter_by(id=container_id).first_or_404()
+    if container_stop(container.name):
+        return '1'
+    else:
+        return '0'
+
+
+@admin.route('/admin/containers/<container_id>/start', methods=['POST'])
+@admins_only
+def run_container(container_id):
+    container = Containers.query.filter_by(id=container_id).first_or_404()
+    if container_status(container.name) == 'missing':
+        if run_image(container.name):
+            return '1'
+        else:
+            return '0'
+    else:
+        if container_start(container.name):
+            return '1'
+        else:
+            return '0'
+
+
+@admin.route('/admin/containers/<container_id>/delete', methods=['POST'])
+@admins_only
+def delete_container(container_id):
+    container = Containers.query.filter_by(id=container_id).first_or_404()
+    if delete_image(container.name):
+        db.session.delete(container)
+        db.session.commit()
+        db.session.close()
+    return '1'
 
 
 @admin.route('/admin/containers/new', methods=['POST'])
@@ -236,10 +276,9 @@ def new_container():
     name = request.form.get('name')
     buildfile = request.form.get('buildfile')
     files = request.files.getlist('files[]')
-    print name
-    print buildfile
-    print files
-    create_container(name=name, buildfile=buildfile, files=files)
+    create_image(name=name, buildfile=buildfile, files=files)
+    run_image(name)
+    return redirect('/admin/containers')
 
 
 

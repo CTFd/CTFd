@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from functools import wraps
 from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
 from itsdangerous import Signer, BadSignature
-from socket import inet_aton, inet_ntoa
+from socket import inet_aton, inet_ntoa, socket
 from struct import unpack, pack
 from sqlalchemy.engine.url import make_url
 from sqlalchemy import create_engine
@@ -24,6 +24,7 @@ import smtplib
 import email
 import tempfile
 import subprocess
+import json
 
 def init_logs(app):
     logger_keys = logging.getLogger('keys')
@@ -92,6 +93,7 @@ def init_utils(app):
     app.jinja_env.globals.update(can_register=can_register)
     app.jinja_env.globals.update(mailserver=mailserver)
     app.jinja_env.globals.update(ctf_name=ctf_name)
+    app.jinja_env.globals.update(can_create_container=can_create_container)
 
     @app.context_processor
     def inject_user():
@@ -206,11 +208,11 @@ def ctftime():
             # Within the two time bounds
             return True
 
-    if start < time.time() and end == 0: 
+    if start < time.time() and end == 0:
         # CTF starts on a date but never ends
         return True
 
-    if start == 0 and time.time() < end: 
+    if start == 0 and time.time() < end:
         # CTF started but ends at a date
         return True
 
@@ -393,7 +395,16 @@ def can_create_container():
         return False
 
 
-def create_container(name, buildfile, files):
+def is_port_free(port):
+    s = socket()
+    result = s.connect_ex(('127.0.0.1', port))
+    if result == 0:
+        s.close()
+        return False
+    return True
+
+
+def create_image(name, buildfile, files):
     if not can_create_container():
         return False
     folder = tempfile.mkdtemp(prefix='ctfd')
@@ -404,10 +415,12 @@ def create_container(name, buildfile, files):
     for f in files:
         filename = os.path.basename(f.filename)
         f.save(os.path.join(folder, filename))
-
+    # repository name component must match "[a-z0-9](?:-*[a-z0-9])*(?:[._][a-z0-9](?:-*[a-z0-9])*)*"
     # docker build -f tmpfile.name -t name
     try:
-        subprocess.call(['docker', 'build', '-f', tmpfile.name, '-t', name])
+        cmd = ['docker', 'build', '-f', tmpfile.name, '-t', name, folder]
+        print cmd
+        subprocess.call(cmd)
         container = Containers(name, buildfile)
         db.session.add(container)
         db.session.commit()
@@ -415,3 +428,83 @@ def create_container(name, buildfile, files):
         return True
     except subprocess.CalledProcessError:
         return False
+
+
+def delete_image(name):
+    try:
+        subprocess.call(['docker', 'rm', name])
+        subprocess.call(['docker', 'rmi', name])
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
+def run_image(name):
+    try:
+        info = json.loads(subprocess.check_output(['docker', 'inspect', '--type=image', name]))
+
+        ports_asked = info[0]['Config']['ExposedPorts'].keys()
+        ports_asked = [int(re.sub('[A-Za-z/]+', '', port)) for port in ports_asked]
+
+        cmd = ['docker', 'run', '-d']
+        for port in ports_asked:
+            if is_port_free(port):
+                cmd.append('-p')
+                cmd.append('{}:{}'.format(port, port))
+            else:
+                cmd.append('-p')
+                ports_used.append('{}'.format(port))
+        cmd += ['--name', name, name]
+        print cmd
+        subprocess.call(cmd)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
+def container_start(name):
+    try:
+        cmd = ['docker', 'start', name]
+        subprocess.call(cmd)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
+def container_stop(name):
+    try:
+        cmd = ['docker', 'stop', name]
+        subprocess.call(cmd)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
+def container_status(name):
+    try:
+        data = json.loads(subprocess.check_output(['docker', 'inspect', '--type=container', name]))
+        status = data[0]["State"]["Status"]
+        return status
+    except subprocess.CalledProcessError:
+        return 'missing'
+
+
+def container_ports(name, verbose=False):
+    try:
+        info = json.loads(subprocess.check_output(['docker', 'inspect', '--type=container', name]))
+        if verbose:
+            ports = info[0]["NetworkSettings"]["Ports"]
+            if not ports:
+                return []
+            final = []
+            for port in ports.keys():
+                final.append("".join([ports[port][0]["HostPort"], '->', port]))
+            return final
+        else:
+            ports = info[0]['Config']['ExposedPorts'].keys()
+            if not ports:
+                return []
+            ports = [int(re.sub('[A-Za-z/]+', '', port)) for port in ports_asked]
+            return ports
+    except subprocess.CalledProcessError:
+        return []

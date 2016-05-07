@@ -35,7 +35,9 @@
             <li><a href="/admin/pages">Pages</a></li>
             <li><a href="/admin/teams">Teams</a></li>
             <li><a href="/admin/scoreboard">Scoreboard</a></li>
-              <li><a href="/admin/containers">Containers</a></li>
+            {% if can_create_container() %}
+            <li><a href="/admin/containers">Containers</a></li>
+            {% endif %}
             <li><a href="/admin/chals">Challenges</a></li>
             <li><a href="/admin/statistics">Statistics</a></li>
             <li><a href="/admin/config">Config</a></li>
