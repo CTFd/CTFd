@@ -1,4 +1,4 @@
-from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams
+from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Containers
 
 from six.moves.urllib.parse import urlparse, urljoin
 from werkzeug.utils import secure_filename
@@ -408,6 +408,10 @@ def create_container(name, buildfile, files):
     # docker build -f tmpfile.name -t name
     try:
         subprocess.call(['docker', 'build', '-f', tmpfile.name, '-t', name])
+        container = Containers(name, buildfile)
+        db.session.add(container)
+        db.session.commit()
+        db.session.close()
         return True
     except subprocess.CalledProcessError:
         return False
