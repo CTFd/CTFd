@@ -182,6 +182,7 @@ def admin_css():
         return "1"
     return "0"
 
+
 @admin.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
 @admin.route('/admin/pages/<route>', methods=['GET', 'POST'])
 @admins_only
@@ -274,6 +275,8 @@ def delete_container(container_id):
 @admins_only
 def new_container():
     name = request.form.get('name')
+    if not name.isalpha():
+        return redirect('/admin/containers')
     buildfile = request.form.get('buildfile')
     files = request.files.getlist('files[]')
     create_image(name=name, buildfile=buildfile, files=files)

@@ -413,8 +413,9 @@ def create_image(name, buildfile, files):
     tmpfile.close()
 
     for f in files:
-        filename = os.path.basename(f.filename)
-        f.save(os.path.join(folder, filename))
+        if f.filename.strip():
+            filename = os.path.basename(f.filename)
+            f.save(os.path.join(folder, filename))
     # repository name component must match "[a-z0-9](?:-*[a-z0-9])*(?:[._][a-z0-9](?:-*[a-z0-9])*)*"
     # docker build -f tmpfile.name -t name
     try:
@@ -425,6 +426,7 @@ def create_image(name, buildfile, files):
         db.session.add(container)
         db.session.commit()
         db.session.close()
+        rmdir(folder)
         return True
     except subprocess.CalledProcessError:
         return False
@@ -443,8 +445,11 @@ def run_image(name):
     try:
         info = json.loads(subprocess.check_output(['docker', 'inspect', '--type=image', name]))
 
-        ports_asked = info[0]['Config']['ExposedPorts'].keys()
-        ports_asked = [int(re.sub('[A-Za-z/]+', '', port)) for port in ports_asked]
+        try:
+            ports_asked = info[0]['Config']['ExposedPorts'].keys()
+            ports_asked = [int(re.sub('[A-Za-z/]+', '', port)) for port in ports_asked]
+        except KeyError:
+            ports_asked = []
 
         cmd = ['docker', 'run', '-d']
         for port in ports_asked:
