@@ -14,7 +14,7 @@ def scoreboard_view():
     scores = db.session.query(Solves.teamid.label('teamid'), Teams.name.label('name'), score, Solves.date.label('date')) \
         .join(Teams) \
         .join(Challenges) \
-        .filter(Teams.banned == None) \
+        .filter(Teams.banned == False) \
         .group_by(Solves.teamid)
 
     awards = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'),
@@ -41,7 +41,7 @@ def scores():
     scores = db.session.query(Solves.teamid.label('teamid'), Teams.name.label('name'), score, Solves.date.label('date')) \
         .join(Teams) \
         .join(Challenges) \
-        .filter(Teams.banned == None) \
+        .filter(Teams.banned == False) \
         .group_by(Solves.teamid)
 
     awards = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), db.func.sum(Awards.value).label('score'), Awards.date.label('date'))\
@@ -79,7 +79,7 @@ def topteams(count):
     scores = db.session.query(Solves.teamid.label('teamid'), Teams.name.label('name'), score, Solves.date.label('date')) \
         .join(Teams) \
         .join(Challenges) \
-        .filter(Teams.banned == None) \
+        .filter(Teams.banned == False) \
         .group_by(Solves.teamid)
 
     awards = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'),

@@ -292,12 +292,12 @@ def admin_chals():
         chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category', 'hidden').order_by(Challenges.value).all()
 
         teams_with_points = db.session.query(Solves.teamid, Teams.name).join(Teams).filter(
-            Teams.banned == None).group_by(
+            Teams.banned == False).group_by(
                 Solves.teamid).count()
 
         json_data = {'game':[]}
         for x in chals:
-            solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid==x[1], Teams.banned==None).count()
+            solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == x[1], Teams.banned == False).count()
             if teams_with_points > 0:
                 percentage = (float(solve_count) / float(teams_with_points))
             else:
@@ -506,7 +506,7 @@ def email_user(teamid):
 @admins_only
 def ban(teamid):
     user = Teams.query.filter_by(id=teamid).first()
-    user.banned = 1
+    user.banned = True
     db.session.commit()
     return redirect(url_for('admin.admin_scoreboard'))
 
@@ -515,7 +515,7 @@ def ban(teamid):
 @admins_only
 def unban(teamid):
     user = Teams.query.filter_by(id=teamid).first()
-    user.banned = None
+    user.banned = False
     db.session.commit()
     return redirect(url_for('admin.admin_scoreboard'))
 
@@ -545,7 +545,7 @@ def admin_graph(graph_type):
             json_data['categories'].append({'category':category, 'count':count})
         return jsonify(json_data)
     elif graph_type == "solves":
-        solves = Solves.query.join(Teams).filter(Teams.banned==None).add_columns(db.func.count(Solves.chalid)).group_by(Solves.chalid).all()
+        solves = Solves.query.join(Teams).filter(Teams.banned == False).add_columns(db.func.count(Solves.chalid)).group_by(Solves.chalid).all()
         json_data = {}
         for chal, count in solves:
             json_data[chal.chal.name] = count
@@ -633,7 +633,7 @@ def delete_award(award_id):
 def admin_scores():
     score = db.func.sum(Challenges.value).label('score')
     quickest = db.func.max(Solves.date).label('quickest')
-    teams = db.session.query(Solves.teamid, Teams.name, score).join(Teams).join(Challenges).filter(Teams.banned == None).group_by(Solves.teamid).order_by(score.desc(), quickest)
+    teams = db.session.query(Solves.teamid, Teams.name, score).join(Teams).join(Challenges).filter(Teams.banned == False).group_by(Solves.teamid).order_by(score.desc(), quickest)
     db.session.close()
     json_data = {'teams':[]}
     for i, x in enumerate(teams):
@@ -765,8 +765,8 @@ def admin_correct_key(page='1'):
 @admins_only
 def admin_fails(teamid='all'):
     if teamid == "all":
-        fails = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned==None).count()
-        solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned==None).count()
+        fails = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned == False).count()
+        solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).count()
         db.session.close()
         json_data = {'fails':str(fails), 'solves': str(solves)}
         return jsonify(json_data)
