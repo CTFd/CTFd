@@ -391,7 +391,7 @@ def can_create_container():
     try:
         output = subprocess.check_output(['docker', 'version'])
         return True
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, OSError):
         return False
 
 
