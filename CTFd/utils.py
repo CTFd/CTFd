@@ -277,7 +277,7 @@ def get_kpm(teamid): # keys per minute
 
 def get_config(key):
     config = Config.query.filter_by(key=key).first()
-    if config:
+    if config and config.value:
         value = config.value
         if value and value.isdigit():
             return int(value)
@@ -300,7 +300,9 @@ def set_config(key, value):
 
 
 def mailserver():
-    if (get_config('mg_api_key')) or (get_config('mail_server') and get_config('mail_port')):
+    if app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_BASE_URL'):
+        return True
+    if (get_config('mg_api_key') and get_config('mg_base_url')) or (get_config('mail_server') and get_config('mail_port')):
         return True
     return False
 
@@ -315,12 +317,11 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None):
     return smtp
 
 
-
 def sendmail(addr, text):
-    if get_config('mg_api_key') and get_config('mg_base_url'):
+    if mailserver():
         ctf_name = get_config('ctf_name')
-        mg_api_key = get_config('mg_api_key')
-        mg_base_url = get_config('mg_base_url')
+        mg_api_key = app.config.get('MAILGUN_API_KEY') or get_config('mg_api_key')
+        mg_base_url = app.config.get('MAILGUN_BASE_URL') or get_config('mg_base_url')
         r = requests.post(
             mg_base_url + '/messages',
             auth=("api", mg_api_key),
