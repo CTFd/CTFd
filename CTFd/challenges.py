@@ -90,15 +90,16 @@ def solves(teamid=None):
             'category': solve.chal.category,
             'time': unix_time(solve.date)
         })
-    for award in awards:
-        json['solves'].append({
-            'chal': award.name,
-            'chalid': None,
-            'team': award.teamid,
-            'value': award.value,
-            'category': award.category,
-            'time': unix_time(award.date)
-        })
+    if awards:
+        for award in awards:
+            json['solves'].append({
+                'chal': award.name,
+                'chalid': None,
+                'team': award.teamid,
+                'value': award.value,
+                'category': award.category,
+                'time': unix_time(award.date)
+            })
     json['solves'].sort(key=lambda k: k['time'])
     return jsonify(json)
 
