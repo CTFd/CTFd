@@ -320,8 +320,8 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None):
 def sendmail(addr, text):
     if mailserver():
         ctf_name = get_config('ctf_name')
-        mg_api_key = app.config.get('MAILGUN_API_KEY') or get_config('mg_api_key')
-        mg_base_url = app.config.get('MAILGUN_BASE_URL') or get_config('mg_base_url')
+        mg_api_key = get_config('mg_api_key') or app.config.get('MAILGUN_API_KEY')
+        mg_base_url = get_config('mg_base_url') or app.config.get('MAILGUN_BASE_URL')
         r = requests.post(
             mg_base_url + '/messages',
             auth=("api", mg_api_key),
