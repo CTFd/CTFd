@@ -252,7 +252,7 @@ $('.nav-tabs a').click(function (e) {
     $(this).tab('show')
 })
 
-$('.close').click(function() {
+$('#chal-window').on('hidden.bs.modal', function() {
     $('.nav-tabs a:first').tab('show')
     window.location.hash = ""
 });
