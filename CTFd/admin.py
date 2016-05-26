@@ -566,7 +566,7 @@ def admin_scoreboard():
         .filter(Teams.id == Awards.teamid) \
         .group_by(Teams.id)
 
-    results = union_all(scores, awards)
+    results = union_all(scores, awards).alias('results')
 
     standings = db.session.query(results.columns.teamid, results.columns.name, results.columns.banned,
                                  db.func.sum(results.columns.score).label('score')) \
