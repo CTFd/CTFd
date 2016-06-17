@@ -62,7 +62,7 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
                     <h2 class="text-center">Edit User</h2>
                 </div>
                 <div class="modal-body" style="padding:20px; height:525px;">
-                    <form method="POST" action="/admin/teams/">
+                    <form method="POST" action="{{ request.script_root }}/admin/teams/">
                         <input type="hidden" name="nonce" value="{{ nonce }}">
                         <input type="hidden" name="id">
                         <div class="form-group">
@@ -123,7 +123,7 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
             {% for team in teams %}
             <tr name="{{ team.id }}">
                 <td class="team-id">{{ team.id }}</td>
-                <td class="team-name"><a href="/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
+                <td class="team-name"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
                 </td>
                 <td class="team-email">{{ team.email | truncate(32) }}</td>
                 <td class="team-website">{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website | truncate(32) }}</a>{% endif %}
@@ -150,15 +150,15 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
     {% if pages > 1 %}
     <div class="text-center">Page
         <br>
-        {% if curr_page != 1 %}<a href="/admin/teams/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
+        {% if curr_page != 1 %}<a href="{{ request.script_root }}/admin/teams/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
         {% for page in range(1, pages + 1) %}
             {% if curr_page != page %}
-                <a href="/admin/teams/{{ page }}">{{ page }}</a>
+                <a href="{{ request.script_root }}/admin/teams/{{ page }}">{{ page }}</a>
             {% else %}
                 <b>{{ page }}</b>
             {% endif %}
         {% endfor %}
-        {% if curr_page != pages %}<a href="/admin/teams/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
+        {% if curr_page != pages %}<a href="{{ request.script_root }}/admin/teams/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
     </div>
     {% endif %}
 </div>
@@ -175,7 +175,7 @@ function load_update_modal(id, name, email, website, affiliation, country){
     modal_form.find('input[name=website]').val(website)
     modal_form.find('input[name=affiliation]').val(affiliation)
     modal_form.find('input[name=country]').val(country)
-    $('#user form').attr('action', '/admin/team/'+id)
+    $('#user form').attr('action', '{{ request.script_root }}/admin/team/'+id)
     $('#user').modal("show");
 }
 
@@ -215,7 +215,7 @@ $('.team-admin input').on('change', function(){
     var nonce = $('#nonce').val()
     console.log(admin)
 
-    $.post('/admin/team/'+id, {'admin':admin, 'nonce':nonce});
+    $.post('{{ request.script_root }}/admin/team/'+id, {'admin':admin, 'nonce':nonce});
 })
 
 $('#send-user-email').click(function(e){
@@ -260,7 +260,7 @@ function load_confirm_modal(id, name){
     var modal = $('#confirm')
     modal.find('input[name=id]').val(id)
     modal.find('#confirm-team-name').text(name)
-    $('#confirm form').attr('action', '/admin/team/'+id+'/delete');
+    $('#confirm form').attr('action', '{{ request.script_root }}/admin/team/'+id+'/delete');
     $('#confirm').modal();
 }
 
@@ -276,7 +276,7 @@ function load_email_modal(id){
     modal.find('textarea').val("")
     modal.find('input[name=id]').val(id)
     $('#email-user-errors').empty()
-    $('#email-user form').attr('action', '/admin/team/'+id+'/mail');
+    $('#email-user form').attr('action', '{{ request.script_root }}/admin/team/'+id+'/mail');
     $('#email-user').modal();
 }
 

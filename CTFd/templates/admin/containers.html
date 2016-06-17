@@ -9,7 +9,7 @@
                         aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="container-modal-label">Create Container</h4>
             </div>
-            <form method="POST" action="/admin/containers/new" enctype="multipart/form-data">
+            <form method="POST" action="{{ request.script_root }}/admin/containers/new" enctype="multipart/form-data">
                 <div class="modal-body">
                         <div class="form-group">
                             <label for="name">Name</label>

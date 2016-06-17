@@ -46,7 +46,7 @@ function loadchal(id, update) {
 }
 
 function submitkey(chal, key) {
-    $.post("/admin/chal/" + chal, {
+    $.post(script_root + "/admin/chal/" + chal, {
         key: key,
         nonce: $('#nonce').val()
     }, function (data) {
@@ -55,7 +55,7 @@ function submitkey(chal, key) {
 }
 
 function loadkeys(chal){
-    $.get('/admin/keys/' + chal, function(data){
+    $.get(script_root + '/admin/keys/' + chal, function(data){
         $('#keys-chal').val(chal);
         keys = $.parseJSON(JSON.stringify(data));
         keys = keys['keys'];
@@ -84,7 +84,7 @@ function updatekeys(){
     $('#current-keys input[name*="key_type"]:checked').each(function(){
         vals.push($(this).val());
     })
-    $.post('/admin/keys/'+chal, {'keys':keys, 'vals':vals, 'nonce': $('#nonce').val()})
+    $.post(script_root + '/admin/keys/'+chal, {'keys':keys, 'vals':vals, 'nonce': $('#nonce').val()})
     loadchal(chal, true)
     $('#update-keys').modal('hide');
 }
@@ -93,7 +93,7 @@ function loadtags(chal){
     $('#tags-chal').val(chal)
     $('#current-tags').empty()
     $('#chal-tags').empty()
-    $.get('/admin/tags/'+chal, function(data){
+    $.get(script_root + '/admin/tags/'+chal, function(data){
         tags = $.parseJSON(JSON.stringify(data))
         tags = tags['tags']
         for (var i = 0; i < tags.length; i++) {
@@ -108,11 +108,11 @@ function loadtags(chal){
 }
 
 function deletetag(tagid){
-    $.post('/admin/tags/'+tagid+'/delete', {'nonce': $('#nonce').val()});
+    $.post(script_root + '/admin/tags/'+tagid+'/delete', {'nonce': $('#nonce').val()});
 }
 
 function deletechal(chalid){
-    $.post('/admin/chal/delete', {'nonce':$('#nonce').val(), 'id':chalid});
+    $.post(script_root + '/admin/chal/delete', {'nonce':$('#nonce').val(), 'id':chalid});
 }
 
 function updatetags(){
@@ -121,13 +121,13 @@ function updatetags(){
     $('#chal-tags > span > span').each(function(i, e){
         tags.push($(e).text())
     });
-    $.post('/admin/tags/'+chal, {'tags':tags, 'nonce': $('#nonce').val()})
+    $.post(script_root + '/admin/tags/'+chal, {'tags':tags, 'nonce': $('#nonce').val()})
     loadchal(chal)
 }
 
 function loadfiles(chal){
-    $('#update-files form').attr('action', '/admin/files/'+chal)
-    $.get('/admin/files/' + chal, function(data){
+    $('#update-files form').attr('action', script_root+'/admin/files/'+chal)
+    $.get(script_root + '/admin/files/' + chal, function(data){
         $('#files-chal').val(chal)
         files = $.parseJSON(JSON.stringify(data));
         files = files['files']
@@ -141,7 +141,7 @@ function loadfiles(chal){
 }
 
 function deletefile(chal, file, elem){
-    $.post('/admin/files/' + chal,{
+    $.post(script_root + '/admin/files/' + chal,{
         'nonce': $('#nonce').val(),
         'method': 'delete',
         'file': file
@@ -155,7 +155,7 @@ function deletefile(chal, file, elem){
 
 function loadchals(){
     $('#challenges').empty();
-    $.post("/admin/chals", {
+    $.post(script_root + "/admin/chals", {
         'nonce': $('#nonce').val()
     }, function (data) {
         categories = [];
@@ -207,7 +207,7 @@ $('#submit-tags').click(function (e) {
 
 $('#delete-chal form').submit(function(e){
     e.preventDefault();
-    $.post('/admin/chal/delete', $(this).serialize(), function(data){
+    $.post(script_root + '/admin/chal/delete', $(this).serialize(), function(data){
         console.log(data)
         if (data){
             loadchals();

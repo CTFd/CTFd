@@ -172,4 +172,4 @@ def login():
 def logout():
     if authed():
         session.clear()
-    return redirect('/')
+    return redirect(url_for('views.static_html'))

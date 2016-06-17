@@ -5,15 +5,18 @@
     <title>Admin Panel</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/static/css/vendor/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/css/vendor/font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link href='/static/css/vendor/lato.css' rel='stylesheet' type='text/css'>
-    <link href='/static/css/vendor/raleway.css' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="/static/admin/css/style.css">
-    <script src="/static/js/vendor/moment.min.js"></script>
+    <link rel="shortcut icon" href="{{ request.script_root }}/static/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="{{ request.script_root }}/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ request.script_root }}/static/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ request.script_root }}/static/css/vendor/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="{{ request.script_root }}/static/css/style.css">
+    <link href='{{ request.script_root }}/static/css/vendor/lato.css' rel='stylesheet' type='text/css'>
+    <link href='{{ request.script_root }}/static/css/vendor/raleway.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{{ request.script_root }}/static/admin/css/style.css">
+    <script src="{{ request.script_root }}/static/js/vendor/moment.min.js"></script>
+    <script type="text/javascript">
+        var script_root = "{{ request.script_root }}";
+    </script>
     {% block stylesheets %} {% endblock %}
 </head>
 
@@ -27,20 +30,20 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="/" class="navbar-brand">CTFd</a>
+          <a href="{{ request.script_root }}/" class="navbar-brand">CTFd</a>
         </div>
         <div class="navbar-collapse collapse" aria-expanded="false" style="height: 0px">
           <ul class="nav navbar-nav navbar-nav-right">
-            <li><a href="/admin/graphs">Graphs</a></li>
-            <li><a href="/admin/pages">Pages</a></li>
-            <li><a href="/admin/teams">Teams</a></li>
-            <li><a href="/admin/scoreboard">Scoreboard</a></li>
+            <li><a href="{{ request.script_root }}/admin/graphs">Graphs</a></li>
+            <li><a href="{{ request.script_root }}/admin/pages">Pages</a></li>
+            <li><a href="{{ request.script_root }}/admin/teams">Teams</a></li>
+            <li><a href="{{ request.script_root }}/admin/scoreboard">Scoreboard</a></li>
             {% if can_create_container() %}
-            <li><a href="/admin/containers">Containers</a></li>
+            <li><a href="{{ request.script_root }}/admin/containers">Containers</a></li>
             {% endif %}
-            <li><a href="/admin/chals">Challenges</a></li>
-            <li><a href="/admin/statistics">Statistics</a></li>
-            <li><a href="/admin/config">Config</a></li>
+            <li><a href="{{ request.script_root }}/admin/chals">Challenges</a></li>
+            <li><a href="{{ request.script_root }}/admin/statistics">Statistics</a></li>
+            <li><a href="{{ request.script_root }}/admin/config">Config</a></li>
           </ul>
         </div>
       </div>
@@ -50,9 +53,9 @@
         {% block content %} {% endblock %}
     </div>
 </div>
-    <script src="/static/js/vendor/jquery.min.js"></script>
-    <script src="/static/js/vendor/marked.min.js"></script>
-    <script src="/static/js/vendor/bootstrap.min.js"></script>
+    <script src="{{ request.script_root }}/static/js/vendor/jquery.min.js"></script>
+    <script src="{{ request.script_root }}/static/js/vendor/marked.min.js"></script>
+    <script src="{{ request.script_root }}/static/js/vendor/bootstrap.min.js"></script>
     {% block scripts %} {% endblock %}
 </body>
 

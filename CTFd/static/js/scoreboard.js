@@ -1,5 +1,5 @@
 function updatescores () {
-  $.get('/scores', function( data ) {
+  $.get(script_root + '/scores', function( data ) {
     teams = $.parseJSON(JSON.stringify(data));
     $('#scoreboard > tbody').empty()
     for (var i = 0; i < teams['standings'].length; i++) {
@@ -23,7 +23,7 @@ function UTCtoDate(utc){
     return d;
 }
 function scoregraph () {
-    $.get('/top/10', function( data ) {
+    $.get(script_root + '/top/10', function( data ) {
         var scores = $.parseJSON(JSON.stringify(data));
         scores = scores['scores'];
         if (Object.keys(scores).length == 0 ){

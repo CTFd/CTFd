@@ -22,7 +22,7 @@
         <h4 class="modal-title" id="create-award-label">Create Award</h4>
       </div>
       <div class="modal-body">
-        <form id="award-create-form" method="POST" action="/admin/awards/add">
+        <form id="award-create-form" method="POST" action="{{ request.script_root }}/admin/awards/add">
           <div class="form-group">
             <label for="award-name-input">Name</label>
             <input type="text" class="form-control" id="award-name-input" name="name" placeholder="Enter award name">
@@ -62,7 +62,7 @@
                     <h3 id="confirm-title">Delete Key</h3>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/admin/chal/delete">
+                    <form method="POST" action="{{ request.script_root }}/admin/chal/delete">
                         <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
                         <div class="small-6 small-centered text-center columns">
                             <p id="confirm-description"></p>
@@ -104,8 +104,8 @@
         <tbody>
         {% for addr in addrs %}
             <tr>
-                <td class="text-center">{{ addr.ip|long2ip }}</td>
-                <td class="text-center solve-time"><script>document.write( moment({{ addr.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
+                <td class="text-center">{{ addr[0]|long2ip }}</td>
+                <td class="text-center solve-time"><script>document.write( moment({{ addr[1]|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -221,10 +221,10 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="/static/js/vendor/moment.min.js"></script>
-    <script src="/static/js/vendor/plotly.min.js"></script>
-    <script src="/static/js/utils.js"></script>
-    <script src="/static/admin/js/team.js"></script>
+    <script src="{{ request.script_root }}/static/js/vendor/moment.min.js"></script>
+    <script src="{{ request.script_root }}/static/js/vendor/plotly.min.js"></script>
+    <script src="{{ request.script_root }}/static/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/admin/js/team.js"></script>
     <script>
         $('#delete-solve').click(function (e) {
             e.preventDefault();
@@ -270,7 +270,7 @@
                 description.find('#confirm-chal-name').text(chal_name);
                 description = description.html()
 
-                var action = '/admin/solves/' + team + '/' + chal + '/delete';
+                var action = '{{ request.script_root }}/admin/solves/' + team + '/' + chal + '/delete';
             } else if (type == 'chal-wrong') {
                 var title = 'Delete Wrong Key';
                 var description = "<span>Are you sure you want to delete " +
@@ -285,12 +285,12 @@
                 description.find('#confirm-chal-name').text(chal_name);
                 description = description.html()
 
-                var action = '/admin/wrong_keys/' + team + '/' + chal + '/delete';
+                var action = '{{ request.script_root }}/admin/wrong_keys/' + team + '/' + chal + '/delete';
             } else if (type == 'award-row') {
                 var title = 'Delete Award';
                 var description = "<span>Are you sure you want to delete the " +
                                   "<strong>{0}</strong> award?</span>".format(chal_name);
-                var action = '/admin/awards/{0}/delete'.format(chal);
+                var action = '{{ request.script_root }}/admin/awards/{0}/delete'.format(chal);
             } 
 
             var msg = {
@@ -323,7 +323,7 @@
             description.find('#confirm-chal-name').text(chal_name);
             description = description.html()
 
-            var action = '/admin/solves/' + team + '/' + chal + '/solve';
+            var action = '{{request.script_root }}/admin/solves/' + team + '/' + chal + '/solve';
 
             var msg = {
                 title : title,

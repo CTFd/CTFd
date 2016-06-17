@@ -17,16 +17,16 @@
         {% for team in teams %}
             <tr>
                 <td>{{ loop.index }}</td>
-                <td><a href="/admin/team/{{ team.teamid }}">{{ team.name }}</a></td>
+                <td><a href="{{ request.script_root }}/admin/team/{{ team.teamid }}">{{ team.name }}</a></td>
                 <td>{{ team.score }}</td>
                 <td>
                 {% if not team.banned %}
-                <form method="POST" style="margin:0;" action="/admin/team/{{ team.teamid }}/ban">
+                <form method="POST" style="margin:0;" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/ban">
                     <a onclick="$(this).parent().submit()">Ban</a>
                     <input type="hidden" value="{{ nonce }}" name="nonce">
                 </form>
                 {%else %}
-                <form method="POST" style="margin:0;" action="/admin/team/{{ team.teamid }}/unban">
+                <form method="POST" style="margin:0;" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/unban">
                     <a onclick="$(this).parent().submit()">Unban</a>
                     <input type="hidden" value="{{ nonce }}" name="nonce">
                 </form>

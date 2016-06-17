@@ -4,16 +4,19 @@
     <title>{{ ctf_name() }}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/static/css/vendor/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/css/vendor/font-awesome/css/font-awesome.min.css" />
-    <link href='/static/css/vendor/lato.css' rel='stylesheet' type='text/css'>
-    <link href='/static/css/vendor/raleway.css' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" type="text/css" href="/static/user.css">
+    <link rel="shortcut icon" href="{{ request.script_root }}/static/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="{{ request.script_root }}/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{{ request.script_root }}/static/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ request.script_root }}/static/css/vendor/font-awesome/css/font-awesome.min.css" />
+    <link href='{{ request.script_root }}/static/css/vendor/lato.css' rel='stylesheet' type='text/css'>
+    <link href='{{ request.script_root }}/static/css/vendor/raleway.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{{ request.script_root }}/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="{{ request.script_root }}/static/user.css">
     {% block stylesheets %}{% endblock %}
-    <script src="/static/js/vendor/moment.min.js"></script>
+    <script src="{{ request.script_root }}/static/js/vendor/moment.min.js"></script>
+    <script type="text/javascript">
+        var script_root = "{{ request.script_root }}";
+    </script>
 </head>
 <body>
   <div class="body-container">
@@ -25,31 +28,31 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="/" class="navbar-brand">{{ ctf_name() }}</a>
+          <a href="{{ request.script_root }}/" class="navbar-brand">{{ ctf_name() }}</a>
         </div>
         <div class="navbar-collapse collapse" aria-expanded="false" style="height: 0px">
           <ul class="nav navbar-nav">
             {% for page in pages() %}
-              <li><a href="/{{ page.route }}">{{ page.route|title }}</a></li>
+              <li><a href="{{ request.script_root }}/{{ page.route }}">{{ page.route|title }}</a></li>
             {% endfor %}
-            <li><a href="/teams">Teams</a></li>
-            <li><a href="/scoreboard">Scoreboard</a></li>
-            <li><a href="/challenges">Challenges</a></li>
+            <li><a href="{{ request.script_root }}/teams">Teams</a></li>
+            <li><a href="{{ request.script_root }}/scoreboard">Scoreboard</a></li>
+            <li><a href="{{ request.script_root }}/challenges">Challenges</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
           {% if username is defined %}
             {% if admin %}
-            <li><a href="/admin">Admin</a></li>
+            <li><a href="{{ request.script_root }}/admin">Admin</a></li>
             {% endif %}
-            <li><a href="/team/{{ id }}">Team</a></li>
-            <li><a href="/profile">Profile</a></li>
-            <li><a href="/logout">Logout</a></li>
+            <li><a href="{{ request.script_root }}/team/{{ id }}">Team</a></li>
+            <li><a href="{{ request.script_root }}/profile">Profile</a></li>
+            <li><a href="{{ request.script_root }}/logout">Logout</a></li>
           {% else %}
             {% if can_register() %}
-            <li><a href="/register">Register</a></li>
+            <li><a href="{{ request.script_root }}/register">Register</a></li>
             <li><a style="padding-left:0px;padding-right:0px;">|</a></li>
             {% endif %}
-            <li><a href="/login">Login</a></li>
+            <li><a href="{{ request.script_root }}/login">Login</a></li>
           {% endif %}
           </ul>
         </div>
@@ -60,9 +63,9 @@
     {% endblock %}
 
   </div>
-  <script src="/static/js/vendor/jquery.min.js"></script>
-  <script src="/static/js/vendor/marked.min.js"></script>
-  <script src="/static/js/vendor/bootstrap.min.js"></script>
+  <script src="{{ request.script_root }}/static/js/vendor/jquery.min.js"></script>
+  <script src="{{ request.script_root }}/static/js/vendor/marked.min.js"></script>
+  <script src="{{ request.script_root }}/static/js/vendor/bootstrap.min.js"></script>
   {% block scripts %}
   {% endblock %}
 </body>
