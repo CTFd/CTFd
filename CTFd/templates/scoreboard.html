@@ -23,7 +23,7 @@
         </thead>
         <tbody>
         {% for team in teams %}
-            <tr><td>{{ loop.index }}</td><td><a href="/team/{{ team.teamid }}">{{ team.name }}</a></td><td>{{ team.score }}</td></tr>
+            <tr><td>{{ loop.index }}</td><td><a href="{{ request.script_root }}/team/{{ team.teamid }}">{{ team.name }}</a></td><td>{{ team.score }}</td></tr>
         {% endfor %}
         </tbody>
     </table>
@@ -31,7 +31,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="/static/js/vendor/plotly.min.js"></script>
-    <script src="/static/js/utils.js"></script>
-    <script src="/static/js/scoreboard.js"></script>
+    <script src="{{ request.script_root }}/static/js/vendor/plotly.min.js"></script>
+    <script src="{{ request.script_root }}/static/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/js/scoreboard.js"></script>
 {% endblock %}

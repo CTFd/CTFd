@@ -69,7 +69,7 @@
             <tbody>
             {% for solve in solves %}
                 <tr>
-                    <td><a href="/challenges#{{ solve.chal.name }}">{{ solve.chal.name }}</a></td>
+                    <td><a href="{{ request.script_root }}/challenges#{{ solve.chal.name }}">{{ solve.chal.name }}</a></td>
                     <td class="hidden-xs">{{ solve.chal.category }}</td><td>{{ solve.chal.value }}</td>
                     <td class="solve-time"><script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
                 </tr>
@@ -81,7 +81,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="/static/js/vendor/plotly.min.js"></script>
-    <script src="/static/js/utils.js"></script>
-    <script src="/static/js/team.js"></script>
+    <script src="{{ request.script_root }}/static/js/vendor/plotly.min.js"></script>
+    <script src="{{ request.script_root }}/static/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/js/team.js"></script>
 {% endblock %}

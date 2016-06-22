@@ -16,7 +16,7 @@ function scoregraph () {
     var times = []
     var scores = []
     var teamname = $('#team-id').text()
-    $.get('/admin/solves/'+teamid(), function( data ) {
+    $.get(script_root + '/admin/solves/'+teamid(), function( data ) {
         var solves = $.parseJSON(JSON.stringify(data));
         solves = solves['solves'];
 
@@ -48,7 +48,7 @@ function scoregraph () {
 
 function keys_percentage_graph(){
     // Solves and Fails pie chart
-    $.get('/admin/fails/'+teamid(), function(data){
+    $.get(script_root + '/admin/fails/'+teamid(), function(data){
         var res = $.parseJSON(JSON.stringify(data));
         var solves = res['solves'];
         var fails = res['fails'];
@@ -75,7 +75,7 @@ function keys_percentage_graph(){
 }
 
 function category_breakdown_graph(){
-    $.get('/admin/solves/'+teamid(), function(data){
+    $.get(script_root + '/admin/solves/'+teamid(), function(data){
         var solves = $.parseJSON(JSON.stringify(data));
         solves = solves['solves'];
 

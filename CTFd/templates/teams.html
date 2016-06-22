@@ -22,7 +22,7 @@
         <tbody>
         {% for team in teams %}
             <tr>
-                <td><a href="/team/{{ team.id }}">{{ team.name }}</a></td>
+                <td><a href="{{ request.script_root }}/team/{{ team.id }}">{{ team.name }}</a></td>
                 <td>{% if team.website and team.website.startswith('http://') %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}</td>
                 <td><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span></td>
                 <td class="hidden-xs"><span>{% if team.country %}{{ team.country }}{% endif %}</span></td>
@@ -33,16 +33,16 @@
     {% if team_pages > 1 %}
     <div class="text-center">Page
         <br>
-        {% if curr_page != 1 %}<a href="/teams/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
+        {% if curr_page != 1 %}<a href="{{ request.script_root }}/teams/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
         {% for page in range(1, team_pages + 1) %}
             {% if curr_page != page %}
-                <a href="/teams/{{ page }}">{{ page }}</a>
+                <a href="{{ request.script_root }}/teams/{{ page }}">{{ page }}</a>
             {% else %}
                 <b>{{page}}</b>
             {% endif %}
         {% endfor %}
-        {% if curr_page != team_pages %}<a href="/teams/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
-    <a href="">
+        {% if curr_page != team_pages %}<a href="{{ request.script_root }}/teams/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
+    <a href="{{ request.script_root }}">
     </div>
     {% endif %}
 </div>

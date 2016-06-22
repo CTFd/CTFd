@@ -154,7 +154,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="/static/js/utils.js"></script>
-    <script src="/static/js/chalboard.js"></script>
-    <script src="/static/js/style.js"></script>
+    <script src="{{ request.script_root }}/static/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/js/chalboard.js"></script>
+    <script src="{{ request.script_root }}/static/js/style.js"></script>
 {% endblock %}

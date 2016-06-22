@@ -31,7 +31,7 @@
                     <h3>New Challenge</h3>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/admin/chal/new" enctype="multipart/form-data">
+                    <form method="POST" action="{{ request.script_root }}/admin/chal/new" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input type="text" class="form-control" name="name" placeholder="Enter challenge name">
@@ -105,7 +105,7 @@
                     <h3 class="chal-title text-center"></h3>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/admin/chal/update">
+                    <form method="POST" action="{{ request.script_root }}/admin/chal/update">
                         <input name='nonce' type='hidden' value="{{ nonce }}">
 
                         <div class="form-group">
@@ -168,7 +168,7 @@
                     <h3>Delete Challenge</h3>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/admin/chal/delete">
+                    <form method="POST" action="{{ request.script_root }}/admin/chal/delete">
                         <input type="hidden" name="nonce" value="{{ nonce }}">
                         <input type="hidden" name="id" class="chal-id">
                         <div class="small-6 small-centered text-center columns">
@@ -190,7 +190,7 @@
                     <h3>Keys</h3>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/admin/keys" style="text-align:center">
+                    <form method="POST" action="{{ request.script_root }}/admin/keys" style="text-align:center">
                         <a href="#" id="create-key" class="btn btn-primary" style="margin-bottom:15px;">New Key</a>
                         <input name='nonce' type='hidden' value="{{ nonce }}">
                         <input id="keys-chal" name='chal' type='hidden'>
@@ -212,7 +212,7 @@
                     <h3>Files</h3>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/admin/files/" enctype="multipart/form-data">
+                    <form method="POST" action="{{ request.script_root }}/admin/files/" enctype="multipart/form-data">
                         <input name='nonce' type='hidden' value="{{ nonce }}">
                         <input id="files-chal" name='chal' type='hidden'>
                         <input name='method' type='hidden' value='upload'>
@@ -298,7 +298,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="/static/js/utils.js"></script>
-    <script src="/static/admin/js/multi-modal.js"></script>
-    <script src="/static/admin/js/chalboard.js"></script>
+    <script src="{{ request.script_root }}/static/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/admin/js/multi-modal.js"></script>
+    <script src="{{ request.script_root }}/static/admin/js/chalboard.js"></script>
 {% endblock %}

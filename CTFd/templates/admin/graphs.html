@@ -29,7 +29,7 @@
             display: block;
         }
     </style>
-    <script src="/static/js/vendor/plotly.min.js"></script>
+    <script src="{{ request.script_root }}/static/js/vendor/plotly.min.js"></script>
     <script type="text/javascript">
         // $.distint(array)
         // Unique elements in array
@@ -59,7 +59,7 @@
         }
 
         function solves_graph() {
-            $.get('/admin/graphs/solves', function(data){
+            $.get('{{ request.script_root }}/admin/graphs/solves', function(data){
                 var solves = $.parseJSON(JSON.stringify(data));
                 var chals = [];
                 var counts = [];
@@ -89,7 +89,7 @@
 
         function keys_percentage_graph(){
             // Solves and Fails pie chart
-            $.get('/admin/fails/all', function(data){
+            $.get('{{ request.script_root }}/admin/fails/all', function(data){
                 var res = $.parseJSON(JSON.stringify(data));
                 var solves = res['solves'];
                 var fails = res['fails'];
@@ -116,7 +116,7 @@
         }
 
         function category_breakdown_graph(){
-            $.get('/admin/graphs/categories', function(data){
+            $.get('{{ request.script_root }}/admin/graphs/categories', function(data){
                 res = $.parseJSON(JSON.stringify(data));
                 res = res['categories']
 

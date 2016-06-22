@@ -56,7 +56,7 @@
         <tbody>
             {% for wrong_key in wrong_keys %}
             <tr>
-                <td class="text-center team" id="{{ wrong_key.team }}"><a href="/admin/team/{{ wrong_key.team }}">{{ wrong_key.team_name }}</a>
+                <td class="text-center team" id="{{ wrong_key.team }}"><a href="{{ request.script_root }}/admin/team/{{ wrong_key.team }}">{{ wrong_key.team_name }}</a>
                 <td class="text-center chal" id="{{ wrong_key.chalid }}">{{ wrong_key.chal_name }}</td>
                 <td class="text-center solve-time"><script>document.write( moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
                 <td class="text-center">{{ wrong_key.flag }}</td>
@@ -68,24 +68,24 @@
     {% if pages > 1 %}
     <div class="text-center">Page
         <br>
-        {% if curr_page != 1 %}<a href="/admin/wrong_keys/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
+        {% if curr_page != 1 %}<a href="{{ request.script_root }}/admin/wrong_keys/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
         {% for page in range(1, pages + 1) %}
             {% if curr_page != page %}
-                <a href="/admin/wrong_keys/{{ page }}">{{ page }}</a>
+                <a href="{{ request.script_root }}/admin/wrong_keys/{{ page }}">{{ page }}</a>
             {% else %}
                 <b>{{ page }}</b>
             {% endif %}
         {% endfor %}
-        {% if curr_page != pages %}<a href="/admin/wrong_keys/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
-    <a href="">
+        {% if curr_page != pages %}<a href="{{ request.script_root }}/admin/wrong_keys/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
+    <a href="{{ request.script_root }}">
     </div>
     {% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="/static/js/utils.js"></script>
-    <script src="/static/admin/js/team.js"></script>
+    <script src="{{ request.script_root }}/static/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/admin/js/team.js"></script>
     <script>
         $('#delete-solve').click(function (e) {
             e.preventDefault();
@@ -102,7 +102,7 @@
             var modal = $('#confirm')
             modal.find('#confirm-team-name').text(team_name);
             modal.find('#confirm-chal-name').text(chal_name);
-            $('#confirm form').attr('action', '/admin/wrong_keys/' + team + '/' + chal + '/delete');
+            $('#confirm form').attr('action', '{{ request.script_root }}/admin/wrong_keys/' + team + '/' + chal + '/delete');
             $('#confirm').modal('show');
         }
 

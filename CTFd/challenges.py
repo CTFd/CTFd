@@ -20,7 +20,7 @@ def challenges_view():
             if view_after_ctf():
                 pass
             else:
-                return redirect('/')
+                return redirect(url_for('views.static_html'))
         if get_config('verify_emails') and not is_verified():
             return redirect(url_for('auth.confirm_user'))
     if can_view_challenges():
@@ -36,7 +36,7 @@ def chals():
             if view_after_ctf():
                 pass
             else:
-                return redirect('/')
+                return redirect(url_for('views.static_html'))
     if can_view_challenges():
         chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
 
@@ -56,10 +56,13 @@ def chals():
 @challenges.route('/chals/solves')
 def chals_per_solves():
     if can_view_challenges():
-        solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).add_columns(db.func.count(Solves.chalid)).group_by(Solves.chalid).all()
+        solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves')).join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).group_by(Solves.chalid).subquery()
+        solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves, Challenges.name) \
+            .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
         json = {}
-        for chal, count in solves:
-            json[chal.chal.name] = count
+        for chal, count, name in solves:
+            json[name] = count
+        db.session.close()
         return jsonify(json)
     return redirect(url_for('auth.login', next='chals/solves'))
 

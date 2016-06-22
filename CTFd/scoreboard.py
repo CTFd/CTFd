@@ -5,31 +5,37 @@ from sqlalchemy.sql.expression import union_all
 
 scoreboard = Blueprint('scoreboard', __name__)
 
+def get_standings(admin=False, count=None):
+    score = db.func.sum(Challenges.value).label('score')
+    date = db.func.max(Solves.date).label('date')
+    scores = db.session.query(Solves.teamid.label('teamid'), score, date).join(Challenges).group_by(Solves.teamid)
+    awards = db.session.query(Awards.teamid.label('teamid'), db.func.sum(Awards.value).label('score'), db.func.max(Awards.date).label('date')) \
+        .group_by(Awards.teamid)
+    results = union_all(scores, awards).alias('results')
+    sumscores = db.session.query(results.columns.teamid, db.func.sum(results.columns.score).label('score'), db.func.max(results.columns.date).label('date')) \
+        .group_by(results.columns.teamid).subquery()
+    if admin:
+        standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), Teams.banned, sumscores.columns.score) \
+            .join(sumscores, Teams.id == sumscores.columns.teamid) \
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+    else:
+        standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), sumscores.columns.score) \
+            .join(sumscores, Teams.id == sumscores.columns.teamid) \
+            .filter(Teams.banned == False) \
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+    if count is not None:
+        standings = standings_query.all()
+    else:
+        standings = standings_query.limit(count).all()
+    db.session.close()
+    return standings
+
 
 @scoreboard.route('/scoreboard')
 def scoreboard_view():
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
-    score = db.func.sum(Challenges.value).label('score')
-    scores = db.session.query(Solves.teamid.label('teamid'), Teams.name.label('name'), score, Solves.date.label('date')) \
-        .join(Teams) \
-        .join(Challenges) \
-        .filter(Teams.banned == False) \
-        .group_by(Solves.teamid)
-
-    awards = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'),
-                              db.func.sum(Awards.value).label('score'), Awards.date.label('date')) \
-        .filter(Teams.id == Awards.teamid) \
-        .group_by(Teams.id)
-
-    results = union_all(scores, awards).alias('results')
-
-    standings = db.session.query(results.columns.teamid, results.columns.name,
-                                 db.func.sum(results.columns.score).label('score')) \
-        .group_by(results.columns.teamid) \
-        .order_by(db.func.sum(results.columns.score).desc(), db.func.max(results.columns.date)) \
-        .all()
-    db.session.close()
+    standings = get_standings()
     return render_template('scoreboard.html', teams=standings)
 
 
@@ -37,25 +43,7 @@ def scoreboard_view():
 def scores():
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
-    score = db.func.sum(Challenges.value).label('score')
-    scores = db.session.query(Solves.teamid.label('teamid'), Teams.name.label('name'), score, Solves.date.label('date')) \
-        .join(Teams) \
-        .join(Challenges) \
-        .filter(Teams.banned == False) \
-        .group_by(Solves.teamid)
-
-    awards = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), db.func.sum(Awards.value).label('score'), Awards.date.label('date'))\
-        .filter(Teams.id==Awards.teamid)\
-        .group_by(Teams.id)
-
-    results = union_all(scores, awards).alias('results')
-
-    standings = db.session.query(results.columns.teamid, results.columns.name, db.func.sum(results.columns.score).label('score'))\
-        .group_by(results.columns.teamid)\
-        .order_by(db.func.sum(results.columns.score).desc(), db.func.max(results.columns.date))\
-        .all()
-
-    db.session.close()
+    standings = get_standings()
     json = {'standings':[]}
     for i, x in enumerate(standings):
         json['standings'].append({'pos':i+1, 'id':x.teamid, 'team':x.name,'score':int(x.score)})
@@ -74,26 +62,7 @@ def topteams(count):
         count = 10
 
     json = {'scores':{}}
-
-    score = db.func.sum(Challenges.value).label('score')
-    scores = db.session.query(Solves.teamid.label('teamid'), Teams.name.label('name'), score, Solves.date.label('date')) \
-        .join(Teams) \
-        .join(Challenges) \
-        .filter(Teams.banned == False) \
-        .group_by(Solves.teamid)
-
-    awards = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'),
-                              db.func.sum(Awards.value).label('score'), Awards.date.label('date')) \
-        .filter(Teams.id == Awards.teamid) \
-        .group_by(Teams.id)
-
-    results = union_all(scores, awards).alias('results')
-
-    standings = db.session.query(results.columns.teamid, results.columns.name,
-                                 db.func.sum(results.columns.score).label('score')) \
-        .group_by(results.columns.teamid) \
-        .order_by(db.func.sum(results.columns.score).desc(), db.func.max(results.columns.date)) \
-        .limit(count).all()
+    standings = get_standings(count=count)
 
     for team in standings:
         solves = Solves.query.filter_by(teamid=team.teamid).all()

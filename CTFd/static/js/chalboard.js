@@ -58,7 +58,7 @@ $("#answer-input").keyup(function(event){
 function submitkey(chal, key, nonce) {
     $('#submit-key').addClass("disabled-button");
     $('#submit-key').prop('disabled', true);
-    $.post("/chal/" + chal, {
+    $.post(script_root + "/chal/" + chal, {
         key: key,
         nonce: nonce
     }, function (data) {
@@ -103,7 +103,7 @@ function submitkey(chal, key, nonce) {
 }
 
 function marksolves() {
-    $.get('/solves', function (data) {
+    $.get(script_root + '/solves', function (data) {
         solves = $.parseJSON(JSON.stringify(data));
         for (var i = solves['solves'].length - 1; i >= 0; i--) {
             id = solves['solves'][i].chalid;
@@ -118,7 +118,7 @@ function marksolves() {
 }
 
 function updatesolves(){
-    $.get('/chals/solves', function (data) {
+    $.get(script_root + '/chals/solves', function (data) {
       solves = $.parseJSON(JSON.stringify(data));
       chals = Object.keys(solves);
 
@@ -133,7 +133,7 @@ function updatesolves(){
 }
 
 function getsolves(id){
-  $.get('/chal/'+id+'/solves', function (data) {
+  $.get(script_root + '/chal/'+id+'/solves', function (data) {
     var teams = data['teams'];
     var box = $('#chal-solves-names');
     box.empty();
@@ -147,8 +147,7 @@ function getsolves(id){
 }
 
 function loadchals() {
-
-    $.get("/chals", function (data) {
+    $.get(script_root + "/chals", function (data) {
         var categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
 
