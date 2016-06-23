@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, abort, session, jsonify, json as json_mod, url_for
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from logging.handlers import RotatingFileHandler
-from flask.ext.session import Session
+from flask_session import Session
 from sqlalchemy_utils import database_exists, create_database
 import os
 import sqlalchemy
