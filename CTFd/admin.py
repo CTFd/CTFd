@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
 from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, container_stop, container_start
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
+from CTFd.scoreboard import get_standings
 from itsdangerous import TimedSerializer, BadTimeSignature
 from sqlalchemy.sql import and_, or_, not_
 from sqlalchemy.sql.expression import union_all
@@ -18,8 +19,6 @@ import os
 import json
 import datetime
 import calendar
-
-from scoreboard import get_standings
 
 admin = Blueprint('admin', __name__)
 
@@ -445,9 +444,11 @@ def admin_team(teamid):
         solves = Solves.query.filter_by(teamid=teamid).all()
         solve_ids = [s.chalid for s in solves]
         missing = Challenges.query.filter( not_(Challenges.id.in_(solve_ids) ) ).all()
-        addrs = db.session.query(Tracking.ip, db.func.max(Tracking.date)) \
+        last_seen = db.func.max(Tracking.date).label('last_seen')
+        addrs = db.session.query(Tracking.ip, last_seen) \
                 .filter_by(team=teamid) \
-                .group_by(Tracking.ip).all()
+                .group_by(Tracking.ip) \
+                .order_by(last_seen.desc()).all()
         wrong_keys = WrongKeys.query.filter_by(teamid=teamid).order_by(WrongKeys.date.asc()).all()
         awards = Awards.query.filter_by(teamid=teamid).order_by(Awards.date.asc()).all()
         score = user.score()

@@ -92,7 +92,7 @@ function load_confirm_modal(route){
 function save_css(){
     var css = editor.getValue();
     var nonce = $('#nonce').val();
-    $.post('/admin/css', {'css':css, 'nonce':nonce}, function(){
+    $.post(script_root + '/admin/css', {'css':css, 'nonce':nonce}, function(){
         console.log('saved');
     });
 }
