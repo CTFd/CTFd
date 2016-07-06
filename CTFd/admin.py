@@ -1,5 +1,7 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
-from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, container_stop, container_start
+from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, \
+    set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
+    container_stop, container_start, get_themes
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 from itsdangerous import TimedSerializer, BadTimeSignature
@@ -85,6 +87,7 @@ def admin_config():
         mail_password = set_config("mail_password", request.form.get('mail_password', None))
 
         ctf_name = set_config("ctf_name", request.form.get('ctf_name', None))
+        ctf_theme = set_config("ctf_theme", request.form.get('ctf_theme', None))
 
         mg_base_url = set_config("mg_base_url", request.form.get('mg_base_url', None))
         mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
@@ -104,6 +107,7 @@ def admin_config():
         return redirect(url_for('admin.admin_config'))
 
     ctf_name = get_config('ctf_name')
+    ctf_theme = get_config('ctf_theme')
     max_tries = get_config('max_tries')
 
     mail_server = get_config('mail_server')
@@ -150,8 +154,12 @@ def admin_config():
         end = datetime.datetime.fromtimestamp(float(end))
         end_days = calendar.monthrange(end.year, end.month)[1]
 
+    themes = get_themes()
+    themes.remove(ctf_theme)
+
     return render_template('admin/config.html',
                            ctf_name=ctf_name,
+                           ctf_theme=ctf_theme,
                            start=start,
                            end=end,
                            max_tries=max_tries,
@@ -172,7 +180,8 @@ def admin_config():
                            months=months,
                            curr_year=curr_year,
                            start_days=start_days,
-                           end_days=end_days)
+                           end_days=end_days,
+                           themes=themes)
 
 
 @admin.route('/admin/css', methods=['GET', 'POST'])

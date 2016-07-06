@@ -275,6 +275,12 @@ def get_kpm(teamid): # keys per minute
     return len(db.session.query(WrongKeys).filter(WrongKeys.teamid == teamid, WrongKeys.date >= one_min_ago).all())
 
 
+def get_themes():
+    dir = os.path.join(app.root_path, app.template_folder)
+    return [name for name in os.listdir(dir)
+            if os.path.isdir(os.path.join(dir, name))]
+
+
 def get_config(key):
     config = Config.query.filter_by(key=key).first()
     if config and config.value:

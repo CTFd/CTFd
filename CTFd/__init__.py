@@ -11,7 +11,7 @@ import sqlalchemy
 
 class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
-        theme = get_config('theme')
+        theme = get_config('ctf_theme')
         template = "/".join([theme, template])
         return super(ThemeLoader, self).get_source(environment, template)
 
@@ -33,8 +33,8 @@ def create_app(config='CTFd.config'):
 
         app.db = db
 
-        if not get_config('theme'):
-            set_config('theme', 'original')
+        if not get_config('ctf_theme'):
+            set_config('ctf_theme', 'original')
 
         #Session(app)
 
