@@ -3,14 +3,24 @@ from flask_sqlalchemy import SQLAlchemy
 from logging.handlers import RotatingFileHandler
 from flask_session import Session
 from sqlalchemy_utils import database_exists, create_database
+from jinja2 import FileSystemLoader, TemplateNotFound
+from utils import get_config, set_config
 import os
 import sqlalchemy
 
 
+class ThemeLoader(FileSystemLoader):
+    def get_source(self, environment, template):
+        theme = get_config('theme')
+        template = os.path.join(theme, template)
+        return super(ThemeLoader, self).get_source(environment, template)
+
+
 def create_app(config='CTFd.config'):
-    app = Flask("CTFd")
+    app = Flask(__name__)
     with app.app_context():
         app.config.from_object(config)
+        app.jinja_loader = ThemeLoader(os.path.join(app.root_path, app.template_folder))
 
         from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
 
@@ -22,6 +32,9 @@ def create_app(config='CTFd.config'):
         db.create_all()
 
         app.db = db
+
+        if not get_config('theme'):
+            set_config('theme', 'original')
 
         #Session(app)
 
