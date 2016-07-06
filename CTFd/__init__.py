@@ -12,7 +12,7 @@ import sqlalchemy
 class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
         theme = get_config('theme')
-        template = os.path.join(theme, template)
+        template = "/".join([theme, template])
         return super(ThemeLoader, self).get_source(environment, template)
 
 
@@ -20,7 +20,7 @@ def create_app(config='CTFd.config'):
     app = Flask(__name__)
     with app.app_context():
         app.config.from_object(config)
-        app.jinja_loader = ThemeLoader(os.path.join(app.root_path, app.template_folder))
+        app.jinja_loader = ThemeLoader(os.path.join(app.root_path, app.template_folder), followlinks=True)
 
         from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
 
