@@ -104,6 +104,7 @@ def admin_config():
         db.session.add(db_end)
 
         db.session.commit()
+        db.session.close()
         return redirect(url_for('admin.admin_config'))
 
     ctf_name = get_config('ctf_name')
@@ -217,10 +218,12 @@ def admin_pages(route):
             page.route = route
             page.html = html
             db.session.commit()
+            db.session.close()
             return redirect(url_for('admin.admin_pages'))
         page = Pages(route, html)
         db.session.add(page)
         db.session.commit()
+        db.session.close()
         return redirect(url_for('admin.admin_pages'))
     pages = Pages.query.all()
     return render_template('admin/pages.html', routes=pages, css=get_config('css'))
@@ -232,6 +235,7 @@ def delete_page(pageroute):
     page = Pages.query.filter_by(route=pageroute).first()
     db.session.delete(page)
     db.session.commit()
+    db.session.close()
     return '1'
 
 
@@ -525,6 +529,7 @@ def ban(teamid):
     user = Teams.query.filter_by(id=teamid).first()
     user.banned = True
     db.session.commit()
+    db.session.close()
     return redirect(url_for('admin.admin_scoreboard'))
 
 
@@ -534,6 +539,7 @@ def unban(teamid):
     user = Teams.query.filter_by(id=teamid).first()
     user.banned = False
     db.session.commit()
+    db.session.close()
     return redirect(url_for('admin.admin_scoreboard'))
 
 
@@ -546,6 +552,7 @@ def delete_team(teamid):
         Tracking.query.filter_by(team=teamid).delete()
         Teams.query.filter_by(id=teamid).delete()
         db.session.commit()
+        db.session.close()
     except DatabaseError:
         return '0'
     else:
@@ -612,6 +619,7 @@ def create_award():
         award.category = request.form.get('category')
         db.session.add(award)
         db.session.commit()
+        db.session.close()
         return "1"
     except Exception as e:
         print e
@@ -625,6 +633,7 @@ def delete_award(award_id):
         award = Awards.query.filter_by(id=award_id).first()
         db.session.delete(award)
         db.session.commit()
+        db.session.close()
         return '1'
     except Exception as e:
         print e
@@ -702,14 +711,13 @@ def delete_wrong_key(teamid, chalid):
     wrong_key = WrongKeys.query.filter_by(teamid=teamid, chalid=chalid).first()
     db.session.delete(wrong_key)
     db.session.commit()
+    db.session.close()
     return '1'
 
 
 @admin.route('/admin/statistics', methods=['GET'])
 @admins_only
 def admin_stats():
-    db.session.commit()
-
     teams_registered = db.session.query(db.func.count(Teams.id)).first()[0]
     wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
     solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
@@ -725,7 +733,8 @@ def admin_stats():
     least_solved_chal = Challenges.query.add_columns(solves_cnt) \
         .outerjoin(solves_sub, solves_sub.columns.chalid == Challenges.id) \
         .order_by(solves_cnt.asc()).first()
-    
+
+    db.session.commit()
     db.session.close()
 
     return render_template('admin/statistics.html', team_count=teams_registered,

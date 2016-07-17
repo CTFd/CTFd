@@ -88,6 +88,7 @@ def setup():
             db.session.add(page)
             db.session.add(admin)
             db.session.commit()
+            db.session.close()
             app.setup = False
             return redirect(url_for('views.static_html'))
         return render_template('setup.html', nonce=session.get('nonce'))
