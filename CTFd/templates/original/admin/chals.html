@@ -298,7 +298,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ request.script_root }}/static/js/utils.js"></script>
-    <script src="{{ request.script_root }}/static/admin/js/multi-modal.js"></script>
-    <script src="{{ request.script_root }}/static/admin/js/chalboard.js"></script>
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/admin/js/multi-modal.js"></script>
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/admin/js/chalboard.js"></script>
 {% endblock %}

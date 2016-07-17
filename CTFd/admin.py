@@ -160,7 +160,7 @@ def admin_config():
 
     return render_template('admin/config.html',
                            ctf_name=ctf_name,
-                           ctf_theme=ctf_theme,
+                           ctf_theme_config=ctf_theme,
                            start=start,
                            end=end,
                            max_tries=max_tries,

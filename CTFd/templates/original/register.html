@@ -63,7 +63,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ request.script_root }}/static/js/style.js"></script>
+<script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/style.js"></script>
 <script>
 	if (window.location.hash == "#frame"){
 		$('.top-bar').hide()
