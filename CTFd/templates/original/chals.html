@@ -34,6 +34,11 @@
     .input--filled .wrong {
         border-color: rgb(255, 190, 190);
     }
+
+    .input-field:focus + .input-field,
+    .input--filled .too-fast {
+        border-color: rgb(252, 248, 227);
+    }
     a, button {
         color: #74716D;
         text-decoration: none;
@@ -117,17 +122,8 @@
                                 </div>
                             </div>
                             <div class="row notification-row">
-                                <div id="incorrect-key" class="alert alert-danger alert-dismissable" role="alert">
-                                  <strong>Incorrect</strong>
-                                </div>
-                                <div id="correct-key" class="alert alert-success alert-dismissable" role="alert">
-                                  <strong>Correct</strong>
-                                </div>
-                                <div id="already-solved" class="alert alert-info alert-dismissable" role="alert">
-                                  <strong>You already solved this</strong>
-                                </div>
-                                <div id="too-fast" class="alert alert-warning alert-dismissable" role="alert">
-                                  <strong>You're submitting keys too fast. Slow down.</strong>
+                                <div id="result-notification" class="alert alert-dismissable" role="alert">
+                                  <strong id="result-message"></strong>
                                 </div>
                             </div>
                         </div>

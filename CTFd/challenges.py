@@ -146,10 +146,6 @@ def chal(chalid):
         data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'), get_kpm(session['id']))
         print("[{0}] {1} submitted {2} with kpm {3}".format(*data))
 
-        # Hit max attempts
-        if fails >= int(get_config("max_tries")) and int(get_config("max_tries")) > 0:
-            return "4" #too many tries on this challenge
-
         # Anti-bruteforce / submitting keys too quickly
         if get_kpm(session['id']) > 10:
             wrong = WrongKeys(session['id'], chalid, request.form['key'])
@@ -157,7 +153,8 @@ def chal(chalid):
             db.session.commit()
             db.session.close()
             logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
-            return "3" # Submitting too fast
+            # return "3" # Submitting too fast
+            return jsonify({'status': '3', 'message': "You're submitting keys too fast. Slow down."})
 
         solves = Solves.query.filter_by(teamid=session['id'], chalid=chalid).first()
 
@@ -166,6 +163,15 @@ def chal(chalid):
             chal = Challenges.query.filter_by(id=chalid).first()
             key = str(request.form['key'].strip().lower())
             keys = json.loads(chal.flags)
+
+            # Hit max attempts
+            max_tries = int(get_config("max_tries"))
+            if fails >= max_tries > 0:
+                return jsonify({
+                    'status': '0',
+                    'message': "You have 0 tries remaining"
+                })
+
             for x in keys:
                 if x['type'] == 0: #static key
                     print(x['flag'], key.strip().lower())
@@ -175,7 +181,8 @@ def chal(chalid):
                         db.session.commit()
                         db.session.close()
                         logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
-                        return "1" # key was correct
+                        # return "1" # key was correct
+                        return jsonify({'status':'1', 'message':'Correct'})
                 elif x['type'] == 1: #regex
                     res = re.match(str(x['flag']), key, re.IGNORECASE)
                     if res and res.group() == key:
@@ -184,18 +191,29 @@ def chal(chalid):
                         db.session.commit()
                         db.session.close()
                         logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
-                        return "1" # key was correct
+                        # return "1" # key was correct
+                        return jsonify({'status': '1', 'message': 'Correct'})
 
             wrong = WrongKeys(session['id'], chalid, request.form['key'])
             db.session.add(wrong)
             db.session.commit()
             db.session.close()
             logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
-            return '0' # key was wrong
+            # return '0' # key was wrong
+            if max_tries:
+                attempts_left = max_tries - fails
+                tries_str = 'tries'
+                if attempts_left == 1:
+                    tries_str = 'try'
+                return jsonify({'status': '0', 'message': 'Incorrect. You have {} {} remaining.'.format(attempts_left, tries_str)})
+            else:
+                return jsonify({'status': '0', 'message': 'Incorrect'})
+
 
         # Challenge already solved
         else:
             logger.info("{0} submitted {1} with kpm {2} [ALREADY SOLVED]".format(*data))
-            return "2" # challenge was already solved
+            # return "2" # challenge was already solved
+            return jsonify({'status': '2', 'message': 'You already solved this'})
     else:
         return "-1"
