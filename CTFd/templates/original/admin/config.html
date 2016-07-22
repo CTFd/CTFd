@@ -22,6 +22,16 @@
             </div>
 
             <div class="form-group">
+                <label for="ctf_theme">Theme:</label>
+                <select class="form-control" id="ctf_theme" name="ctf_theme">
+                    <option>{{ ctf_theme_config }}</option>
+                    {% for theme in themes %}
+                        <option>{{ theme }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="max_tries">Maximum Attempts Per Challenge (0 to disable):</label>
                 <input class="form-control" id='max_tries' name='max_tries' type='text' placeholder="0" {% if max_tries is defined and max_tries != None %}value="{{ max_tries }}"{% endif %}>
             </div>

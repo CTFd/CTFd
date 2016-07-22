@@ -26,6 +26,7 @@ import tempfile
 import subprocess
 import json
 
+
 def init_logs(app):
     logger_keys = logging.getLogger('keys')
     logger_logins = logging.getLogger('logins')
@@ -93,6 +94,7 @@ def init_utils(app):
     app.jinja_env.globals.update(can_register=can_register)
     app.jinja_env.globals.update(mailserver=mailserver)
     app.jinja_env.globals.update(ctf_name=ctf_name)
+    app.jinja_env.globals.update(ctf_theme=ctf_theme)
     app.jinja_env.globals.update(can_create_container=can_create_container)
 
     @app.context_processor
@@ -135,6 +137,11 @@ def ctf_name():
     return name if name else 'CTFd'
 
 
+def ctf_theme():
+    theme = get_config('ctf_theme')
+    return theme if theme else ''
+
+
 def pages():
     pages = Pages.query.filter(Pages.route!="index").all()
     return pages
@@ -143,12 +150,14 @@ def pages():
 def authed():
     return bool(session.get('id', False))
 
+
 def is_verified():
     team = Teams.query.filter_by(id=session.get('id')).first()
     if team:
         return team.verified
     else:
         return False
+
 
 def is_setup():
     setup = Config.query.filter_by(key='setup').first()
@@ -187,6 +196,7 @@ def view_after_ctf():
         return True
     else:
         return False
+
 
 def ctftime():
     """ Checks whether it's CTF time or not. """
@@ -273,6 +283,12 @@ def ip2long(ip):
 def get_kpm(teamid): # keys per minute
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
     return len(db.session.query(WrongKeys).filter(WrongKeys.teamid == teamid, WrongKeys.date >= one_min_ago).all())
+
+
+def get_themes():
+    dir = os.path.join(app.root_path, app.template_folder)
+    return [name for name in os.listdir(dir)
+            if os.path.isdir(os.path.join(dir, name))]
 
 
 def get_config(key):

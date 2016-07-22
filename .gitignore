@@ -53,6 +53,8 @@ docs/_build/
 # PyBuilder
 target/
 
+.DS_Store
+
 *.db
 *.log
 .idea/

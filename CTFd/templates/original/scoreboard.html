@@ -31,7 +31,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ request.script_root }}/static/js/vendor/plotly.min.js"></script>
-    <script src="{{ request.script_root }}/static/js/utils.js"></script>
-    <script src="{{ request.script_root }}/static/js/scoreboard.js"></script>
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/vendor/plotly.min.js"></script>
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/scoreboard.js"></script>
 {% endblock %}

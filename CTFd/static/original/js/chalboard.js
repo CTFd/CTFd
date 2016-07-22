@@ -62,34 +62,51 @@ function submitkey(chal, key, nonce) {
         key: key,
         nonce: nonce
     }, function (data) {
-        if (data == -1){
+        var result = $.parseJSON(JSON.stringify(data));
+
+        var result_message = $('#result-message');
+        var result_notification = $('#result-notification');
+        var answer_input = $("#answer-input");
+        result_notification.removeClass();
+        result_message.text(result.message);
+
+        if (result.status == -1){
           window.location="/login"
           return
         }
-        else if (data == 0){ // Incorrect key
-            $("#incorrect-key").slideDown();
-            $("#answer-input").addClass("wrong");
-            $("#answer-input").removeClass("correct");
-            setTimeout(function() {
-                $("#answer-input").removeClass("wrong");
+        else if (result.status == 0){ // Incorrect key
+            result_notification.addClass('alert alert-danger alert-dismissable');
+            result_notification.slideDown();
+
+            answer_input.removeClass("correct");
+            answer_input.addClass("wrong");
+            setTimeout(function () {
+                answer_input.removeClass("wrong");
             }, 3000);
         }
-        else if (data == 1){ // Challenge Solved
-            $("#correct-key").slideDown();
-            $('.chal-solves').text((parseInt($('.chal-solves').text().split(" ")[0]) + 1 +  " Solves") )
-            $("#answer-input").val("");
-            $("#answer-input").removeClass("wrong");
-            $("#answer-input").addClass("correct");
+        else if (result.status == 1){ // Challenge Solved
+            result_notification.addClass('alert alert-success alert-dismissable');
+            result_notification.slideDown();
+
+            $('.chal-solves').text((parseInt($('.chal-solves').text().split(" ")[0]) + 1 +  " Solves") );
+
+            answer_input.val("");
+            answer_input.removeClass("wrong");
+            answer_input.addClass("correct");
         }
-        else if (data == 2){ // Challenge already solved
-            $("#already-solved").slideDown();
-            $("#answer-input").addClass("correct");
+        else if (result.status == 2){ // Challenge already solved
+            result_notification.addClass('alert alert-info alert-dismissable');
+            result_notification.slideDown();
+
+            answer_input.addClass("correct");
         }
-        else if (data == 3){ // Keys per minute too high
-            $("#too-fast").slideDown();
-            $("#answer-input").addClass("wrong");
+        else if (result.status == 3){ // Keys per minute too high
+            result_notification.addClass('alert alert-warning alert-dismissable');
+            result_notification.slideDown();
+
+            answer_input.addClass("too-fast");
             setTimeout(function() {
-                $("#answer-input").removeClass("wrong");
+                answer_input.removeClass("too-fast");
             }, 3000);
         }
         marksolves()

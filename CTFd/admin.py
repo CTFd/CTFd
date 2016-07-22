@@ -1,5 +1,7 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
-from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, container_stop, container_start
+from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, \
+    set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
+    container_stop, container_start, get_themes
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 from itsdangerous import TimedSerializer, BadTimeSignature
@@ -85,6 +87,7 @@ def admin_config():
         mail_password = set_config("mail_password", request.form.get('mail_password', None))
 
         ctf_name = set_config("ctf_name", request.form.get('ctf_name', None))
+        ctf_theme = set_config("ctf_theme", request.form.get('ctf_theme', None))
 
         mg_base_url = set_config("mg_base_url", request.form.get('mg_base_url', None))
         mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
@@ -101,9 +104,11 @@ def admin_config():
         db.session.add(db_end)
 
         db.session.commit()
+        db.session.close()
         return redirect(url_for('admin.admin_config'))
 
     ctf_name = get_config('ctf_name')
+    ctf_theme = get_config('ctf_theme')
     max_tries = get_config('max_tries')
 
     mail_server = get_config('mail_server')
@@ -150,8 +155,12 @@ def admin_config():
         end = datetime.datetime.fromtimestamp(float(end))
         end_days = calendar.monthrange(end.year, end.month)[1]
 
+    themes = get_themes()
+    themes.remove(ctf_theme)
+
     return render_template('admin/config.html',
                            ctf_name=ctf_name,
+                           ctf_theme_config=ctf_theme,
                            start=start,
                            end=end,
                            max_tries=max_tries,
@@ -172,7 +181,8 @@ def admin_config():
                            months=months,
                            curr_year=curr_year,
                            start_days=start_days,
-                           end_days=end_days)
+                           end_days=end_days,
+                           themes=themes)
 
 
 @admin.route('/admin/css', methods=['GET', 'POST'])
@@ -208,10 +218,12 @@ def admin_pages(route):
             page.route = route
             page.html = html
             db.session.commit()
+            db.session.close()
             return redirect(url_for('admin.admin_pages'))
         page = Pages(route, html)
         db.session.add(page)
         db.session.commit()
+        db.session.close()
         return redirect(url_for('admin.admin_pages'))
     pages = Pages.query.all()
     return render_template('admin/pages.html', routes=pages, css=get_config('css'))
@@ -223,6 +235,7 @@ def delete_page(pageroute):
     page = Pages.query.filter_by(route=pageroute).first()
     db.session.delete(page)
     db.session.commit()
+    db.session.close()
     return '1'
 
 
@@ -516,6 +529,7 @@ def ban(teamid):
     user = Teams.query.filter_by(id=teamid).first()
     user.banned = True
     db.session.commit()
+    db.session.close()
     return redirect(url_for('admin.admin_scoreboard'))
 
 
@@ -525,6 +539,7 @@ def unban(teamid):
     user = Teams.query.filter_by(id=teamid).first()
     user.banned = False
     db.session.commit()
+    db.session.close()
     return redirect(url_for('admin.admin_scoreboard'))
 
 
@@ -537,6 +552,7 @@ def delete_team(teamid):
         Tracking.query.filter_by(team=teamid).delete()
         Teams.query.filter_by(id=teamid).delete()
         db.session.commit()
+        db.session.close()
     except DatabaseError:
         return '0'
     else:
@@ -603,6 +619,7 @@ def create_award():
         award.category = request.form.get('category')
         db.session.add(award)
         db.session.commit()
+        db.session.close()
         return "1"
     except Exception as e:
         print e
@@ -616,6 +633,7 @@ def delete_award(award_id):
         award = Awards.query.filter_by(id=award_id).first()
         db.session.delete(award)
         db.session.commit()
+        db.session.close()
         return '1'
     except Exception as e:
         print e
@@ -693,14 +711,13 @@ def delete_wrong_key(teamid, chalid):
     wrong_key = WrongKeys.query.filter_by(teamid=teamid, chalid=chalid).first()
     db.session.delete(wrong_key)
     db.session.commit()
+    db.session.close()
     return '1'
 
 
 @admin.route('/admin/statistics', methods=['GET'])
 @admins_only
 def admin_stats():
-    db.session.commit()
-
     teams_registered = db.session.query(db.func.count(Teams.id)).first()[0]
     wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
     solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
@@ -716,7 +733,8 @@ def admin_stats():
     least_solved_chal = Challenges.query.add_columns(solves_cnt) \
         .outerjoin(solves_sub, solves_sub.columns.chalid == Challenges.id) \
         .order_by(solves_cnt.asc()).first()
-    
+
+    db.session.commit()
     db.session.close()
 
     return render_template('admin/statistics.html', team_count=teams_registered,

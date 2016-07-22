@@ -19,6 +19,7 @@ SESSION_COOKIE_HTTPONLY = True
 PERMANENT_SESSION_LIFETIME = 604800 # 7 days in seconds
 HOST = ".ctfd.io"
 UPLOAD_FOLDER = os.path.normpath('static/uploads')
+TEMPLATES_AUTO_RELOAD = True
 TRUSTED_PROXIES = [
     '^127\.0\.0\.1$',
     ## Remove the following proxies if you do not trust the local network

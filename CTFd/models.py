@@ -39,7 +39,7 @@ class Pages(db.Model):
         self.html = html
 
     def __repr__(self):
-        return "<Tag {0} for challenge {1}>".format(self.tag, self.chal)
+        return "<Pages {0} for challenge {1}>".format(self.tag, self.chal)
 
 
 class Containers(db.Model):

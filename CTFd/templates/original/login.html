@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+    <style>
+    #login-container {
+        padding-left:  60px;
+        padding-right: 60px;
+    }
+
+    .done-row {
+        padding-top: 15px;
+        margin: 0px;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron home">
+    <div class="container">
+        <h1>Login</h1>
+    </div>
+</div>
+<div class="container main-container">
+    <div class="row">
+        <div id="login-container" class="col-md-6 col-md-offset-3">
+            {% for error in errors %}
+                <div class="alert alert-danger alert-dismissable" role="alert">
+                  <span class="sr-only">Error:</span>
+                  {{ error }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+            {% endfor %}
+            <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="input">
+                            <input class="input-field" type="text" name="name" id="name-input" />
+                            <label class="input-label" for="name-input">
+                                <span class="label-content">Team Name</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="input">
+                            <input class="input-field" type="password" name="password" id="password-input" />
+                            <label class="input-label" for="password-input">
+                                <span class="label-content" data-content="Password">Password</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <div class="done-row row">
+                    <div class="col-md-6" style="padding-left:0px">
+                        <a class="pull-left align-text-to-button" href="{{ request.script_root }}/reset_password">Forgot your password?</a>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" id="submit" tabindex="5" class="btn btn-md btn-theme btn-outlined pull-right">Submit</button>
+                    </div>
+                </div>
+                <input type="hidden" name="nonce" value="{{ nonce }}">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/style.js"></script>
+{% endblock %}
+
