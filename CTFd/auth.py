@@ -67,7 +67,7 @@ def reset_password(data=None):
         text = """
 Did you initiate a password reset? 
 
-{0}/reset_password/{1}
+{0}/{1}
 
 """.format(url_for('auth.reset_password', _external=True), token.encode('base64'))
 
