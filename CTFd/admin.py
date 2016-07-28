@@ -733,7 +733,8 @@ def admin_stats():
     least_solved_chal = Challenges.query.add_columns(solves_cnt) \
         .outerjoin(solves_sub, solves_sub.columns.chalid == Challenges.id) \
         .order_by(solves_cnt.asc()).first()
-
+        
+    db.session.expunge_all()
     db.session.commit()
     db.session.close()
 
