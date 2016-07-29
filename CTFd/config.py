@@ -18,6 +18,7 @@ SESSION_FILE_DIR = "/tmp/flask_session"
 SESSION_COOKIE_HTTPONLY = True
 PERMANENT_SESSION_LIFETIME = 604800 # 7 days in seconds
 HOST = ".ctfd.io"
+MAILFROM_ADDR = "noreply@ctfd.io"
 UPLOAD_FOLDER = os.path.normpath('static/uploads')
 TEMPLATES_AUTO_RELOAD = True
 TRUSTED_PROXIES = [

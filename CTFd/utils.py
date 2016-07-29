@@ -92,7 +92,7 @@ def init_utils(app):
     app.jinja_env.filters['long2ip'] = long2ip
     app.jinja_env.globals.update(pages=pages)
     app.jinja_env.globals.update(can_register=can_register)
-    app.jinja_env.globals.update(mailserver=mailserver)
+    app.jinja_env.globals.update(can_send_mail=can_send_mail)
     app.jinja_env.globals.update(ctf_name=ctf_name)
     app.jinja_env.globals.update(ctf_theme=ctf_theme)
     app.jinja_env.globals.update(can_create_container=can_create_container)
@@ -315,10 +315,19 @@ def set_config(key, value):
     return config
 
 
-def mailserver():
+def can_send_mail():
+    return mailgun() or mailserver()
+
+
+def mailgun():
     if app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_BASE_URL'):
         return True
-    if (get_config('mg_api_key') and get_config('mg_base_url')) or (get_config('mail_server') and get_config('mail_port')):
+    if (get_config('mg_api_key') and get_config('mg_base_url')):
+        return True
+    return False
+
+def mailserver():
+    if (get_config('mail_server') and get_config('mail_port')):
         return True
     return False
 
@@ -334,14 +343,15 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None):
 
 
 def sendmail(addr, text):
-    if mailserver():
+    if mailgun():
         ctf_name = get_config('ctf_name')
         mg_api_key = get_config('mg_api_key') or app.config.get('MAILGUN_API_KEY')
         mg_base_url = get_config('mg_base_url') or app.config.get('MAILGUN_BASE_URL')
+        mailfrom_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
         r = requests.post(
             mg_base_url + '/messages',
             auth=("api", mg_api_key),
-            data={"from": "{} Admin <{}>".format(ctf_name, 'noreply@ctfd.io'),
+            data={"from": "{} Admin <{}>".format(ctf_name, mailfrom_addr),
                   "to": [addr],
                   "subject": "Message from {0}".format(ctf_name),
                   "text": text})
@@ -349,7 +359,7 @@ def sendmail(addr, text):
             return True
         else:
             return False
-    elif get_config('mail_server') and get_config('mail_port'):
+    elif mailserver():
         data = {
             'host': get_config('mail_server'),
             'port': int(get_config('mail_port'))

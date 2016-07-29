@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
-from CTFd.utils import sha512, is_safe_url, authed, mailserver, sendmail, can_register, get_config, verify_email
+from CTFd.utils import sha512, is_safe_url, authed, can_send_mail, sendmail, can_register, get_config, verify_email
 from CTFd.models import db, Teams
 
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
@@ -121,10 +121,10 @@ def register():
                 session['admin'] = team.admin
                 session['nonce'] = sha512(os.urandom(10))
 
-                if mailserver() and get_config('verify_emails'):
+                if can_send_mail() and get_config('verify_emails'):
                     verify_email(team.email)
                 else:
-                    if mailserver():
+                    if can_send_mail():
                         sendmail(request.form['email'], "You've successfully registered for {}".format(get_config('ctf_name')))
 
         db.session.close()

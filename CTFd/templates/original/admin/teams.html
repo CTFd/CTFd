@@ -139,7 +139,7 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
                 </td>
                 <td class="text-center"><span>
                     <i class="fa fa-pencil-square-o"></i>
-                    {% if mailserver() %}<i class="fa fa-envelope"></i>{% endif %}
+                    {% if can_send_mail() %}<i class="fa fa-envelope"></i>{% endif %}
                     <i class="fa fa-times"></i>
                 </span>
                 </td>
@@ -199,7 +199,7 @@ $('#update-user').click(function(e){
 
                 row.find('.team-affiliation').text( $.grep(user_data, function(e){ return e.name == 'affiliation'; })[0]['value'] );
                 row.find('.team-country').text( $.grep(user_data, function(e){ return e.name == 'country'; })[0]['value'] );
-                $('#user').modal();
+                $('#user').modal('hide');
             }
             else{
                 $('#results').append($('p').text( data['data'][i] ))
@@ -224,7 +224,7 @@ $('#send-user-email').click(function(e){
     var email_data = $('#email-user form').serializeArray();
     $.post($('#email-user form').attr('action'), $('#email-user form').serialize(), function(data){
         if (data == "1"){
-            $('#email-user').modal();
+            $('#email-user').modal('hide');
         }
         else{
             $('#email-user-errors').append("<b>Failed to send email</b>");
