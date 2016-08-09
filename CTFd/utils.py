@@ -273,7 +273,7 @@ def get_ip():
 
 
 def long2ip(ip_int):
-    return inet_ntoa(pack('!I', ip_int))
+    return inet_ntoa(pack('!I', ip_int&0xFFFFFFFF))
 
 
 def ip2long(ip):
