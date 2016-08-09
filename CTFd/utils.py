@@ -1,4 +1,4 @@
-from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Containers
+from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Containers, ip2long, long2ip
 
 from six.moves.urllib.parse import urlparse, urljoin
 from werkzeug.utils import secure_filename
@@ -6,7 +6,7 @@ from functools import wraps
 from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
 from itsdangerous import Signer, BadSignature
 from socket import inet_aton, inet_ntoa, socket
-from struct import unpack, pack
+from struct import unpack, pack, error
 from sqlalchemy.engine.url import make_url
 from sqlalchemy import create_engine
 
@@ -270,14 +270,6 @@ def get_ip():
     else:
         remote_addr = request.remote_addr
     return remote_addr
-
-
-def long2ip(ip_int):
-    return inet_ntoa(pack('!I', ip_int))
-
-
-def ip2long(ip):
-    return unpack('!I', inet_aton(ip))[0]
 
 
 def get_kpm(teamid): # keys per minute
