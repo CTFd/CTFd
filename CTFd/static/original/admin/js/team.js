@@ -25,7 +25,7 @@ function scoregraph () {
 
         for (var i = 0; i < solves.length; i++) {
             var date = moment(solves[i].time * 1000);
-            times.push(date.format('YYYY-MM-DD hh:mm:ss'));
+            times.push(date.toDate());
             scores.push(solves[i].value);
         }
         scores = cumulativesum(scores);
