@@ -186,9 +186,9 @@ def admins_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('admin'):
-            return redirect(url_for('auth.login'))
-        else:
             return f(*args, **kwargs)
+        else:
+            return redirect(url_for('auth.login'))
     return decorated_function
 
 
