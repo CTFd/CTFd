@@ -185,9 +185,10 @@ def can_register():
 def admins_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get('admin', None) is None:
+        if session.get('admin'):
             return redirect(url_for('auth.login'))
-        return f(*args, **kwargs)
+        else:
+            return f(*args, **kwargs)
     return decorated_function
 
 
