@@ -124,10 +124,11 @@ def teams(page):
     page_end = results_per_page * ( page - 1 ) + results_per_page
 
     if get_config('verify_emails'):
+        count = Teams.query.filter_by(verified=True).count()
         teams = Teams.query.filter_by(verified=True).slice(page_start, page_end).all()
     else:
+        count = Teams.query.count()
         teams = Teams.query.slice(page_start, page_end).all()
-    count = len(teams)
     pages = int(count / results_per_page) + (count % results_per_page > 0)
     return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
 
