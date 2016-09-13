@@ -98,11 +98,11 @@
             })
         });
 
-        function load_confirm_modal(keyId, team_name, chal_name) {
+        function load_confirm_modal(key_id, team_name, chal_name) {
             var modal = $('#confirm')
             modal.find('#confirm-team-name').text(team_name);
             modal.find('#confirm-chal-name').text(chal_name);
-            $('#confirm form').attr('action', '{{ request.script_root }}/admin/wrong_keys/' + keyId + '/delete');
+            $('#confirm form').attr('action', '{{ request.script_root }}/admin/wrong_keys/' + key_id + '/delete');
             $('#confirm').modal('show');
         }
 
@@ -112,8 +112,8 @@
             var chal_name = elem.find('.chal').text().trim();
             var team = elem.find('.team').attr('id');
             var team_name = elem.find('.team').text().trim();
-            var keyId = elem.find('.flag').attr('id');
-            load_confirm_modal(keyId, team_name, chal_name);
+            var key_id = elem.find('.flag').attr('id');
+            load_confirm_modal(key_id, team_name, chal_name);
         });
     </script>
 {% endblock %}

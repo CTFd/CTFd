@@ -708,9 +708,7 @@ def delete_solve(teamid, chalid):
 @admin.route('/admin/wrong_keys/<keyid>/delete', methods=['POST'])
 @admins_only
 def delete_wrong_key(keyid):
-    wrong_key = WrongKeys.query.filter_by(id=keyid).first()
-    if (wrong_key == None):
-        return '0'
+    wrong_key = WrongKeys.query.filter_by(id=keyid).first_or_404()
     db.session.delete(wrong_key)
     db.session.commit()
     db.session.close()
