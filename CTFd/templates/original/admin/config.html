@@ -354,8 +354,13 @@
                 day_str = "0" + day_str;
             }
 
+            var hour_str = hour.toString();
+            if (hour_str.length == 1) {
+                hour_str = "0" + hour_str;
+            }
+
             // 2013-02-08 24:00
-            var date_string = year.toString() + '-' +  month_num + '-' + day_str +' ' + hour.toString() +':'+ minute.toString();
+            var date_string = year.toString() + '-' +  month_num + '-' + day_str +' ' + hour_str +':'+ minute.toString();
             console.log(date_string);
             return moment(date_string);
         }
