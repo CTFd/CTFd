@@ -161,7 +161,7 @@
         {% for solve in solves %}
             <tr class="chal-solve">
                 <td class="text-center chal" id="{{ solve.chalid }}">{{ solve.chal.name }}</td>
-                <td class="text-center">{{ solve.flag }}</td>
+                <td class="text-center flag" id="{{ solve.id }}">{{ solve.flag }}</td>
                 <td class="text-center">{{ solve.chal.category }}</td>
                 <td class="text-center">{{ solve.chal.value }}</td>
                 <td class="text-center solve-time"><script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
@@ -208,7 +208,7 @@
         {% for wrong_key in wrong_keys %}
             <tr class="chal-wrong">
                 <td class="text-center chal" id="{{ wrong_key.chalid }}">{{ wrong_key.chal.name }}</td>
-                <td class="text-center">{{ wrong_key.flag }}</td>
+                <td class="text-center flag" id="{{ wrong_key.id }}">{{ wrong_key.flag }}</td>
                 <td class="text-center solve-time"><script>document.write( moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
                 <td class="text-center"><i class="fa fa-times"></i></td>
             </tr>
@@ -250,10 +250,9 @@
         $('.fa-times').click(function () {
             var elem = $(this).parent().parent();
             var type = elem.attr('class');
-            var chal = elem.find('.chal').attr('id');
             var chal_name = elem.find('.chal').text().trim();
-            var team = window.location.pathname.split('/').pop();
             var team_name = $("#team-id").text();
+            var key_id = elem.find('.flag').attr('id');
 
             if (type == 'chal-solve'){
                 var title = 'Delete Solve';
@@ -270,7 +269,7 @@
                 description.find('#confirm-chal-name').text(chal_name);
                 description = description.html()
 
-                var action = '{{ request.script_root }}/admin/solves/' + team + '/' + chal + '/delete';
+                var action = '{{ request.script_root }}/admin/solves/' + key_id + '/delete';
             } else if (type == 'chal-wrong') {
                 var title = 'Delete Wrong Key';
                 var description = "<span>Are you sure you want to delete " +
@@ -285,7 +284,7 @@
                 description.find('#confirm-chal-name').text(chal_name);
                 description = description.html()
 
-                var action = '{{ request.script_root }}/admin/wrong_keys/' + team + '/' + chal + '/delete';
+                var action = '{{ request.script_root }}/admin/wrong_keys/' + key_id + '/delete';
             } else if (type == 'award-row') {
                 var title = 'Delete Award';
                 var description = "<span>Are you sure you want to delete the " +
