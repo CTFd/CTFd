@@ -695,24 +695,25 @@ def create_solve(teamid, chalid):
     db.session.close()
     return '1'
 
-@admin.route('/admin/solves/<teamid>/<chalid>/delete', methods=['POST'])
+@admin.route('/admin/solves/<keyid>/delete', methods=['POST'])
 @admins_only
-def delete_solve(teamid, chalid):
-    solve = Solves.query.filter_by(teamid=teamid, chalid=chalid).first()
+def delete_solve(keyid):
+    solve = Solves.query.filter_by(id=keyid).first_or_404()
     db.session.delete(solve)
     db.session.commit()
     db.session.close()
     return '1'
 
 
-@admin.route('/admin/wrong_keys/<teamid>/<chalid>/delete', methods=['POST'])
+@admin.route('/admin/wrong_keys/<keyid>/delete', methods=['POST'])
 @admins_only
-def delete_wrong_key(teamid, chalid):
-    wrong_key = WrongKeys.query.filter_by(teamid=teamid, chalid=chalid).first()
+def delete_wrong_key(keyid):
+    wrong_key = WrongKeys.query.filter_by(id=keyid).first_or_404()
     db.session.delete(wrong_key)
     db.session.commit()
     db.session.close()
     return '1'
+
 
 
 @admin.route('/admin/statistics', methods=['GET'])
@@ -755,7 +756,7 @@ def admin_wrong_key(page='1'):
     page_start = results_per_page * ( page - 1 )
     page_end = results_per_page * ( page - 1 ) + results_per_page
 
-    wrong_keys = WrongKeys.query.add_columns(WrongKeys.chalid, WrongKeys.flag, WrongKeys.teamid, WrongKeys.date,\
+    wrong_keys = WrongKeys.query.add_columns(WrongKeys.id, WrongKeys.chalid, WrongKeys.flag, WrongKeys.teamid, WrongKeys.date,\
                 Challenges.name.label('chal_name'), Teams.name.label('team_name')).\
                 join(Challenges).join(Teams).order_by('team_name ASC').slice(page_start, page_end).all()
 
@@ -773,7 +774,7 @@ def admin_correct_key(page='1'):
     page_start = results_per_page * (page - 1)
     page_end = results_per_page * (page - 1) + results_per_page
 
-    solves = Solves.query.add_columns(Solves.chalid, Solves.teamid, Solves.date, Solves.flag, \
+    solves = Solves.query.add_columns(Solves.id, Solves.chalid, Solves.teamid, Solves.date, Solves.flag, \
                 Challenges.name.label('chal_name'), Teams.name.label('team_name')).\
                 join(Challenges).join(Teams).order_by('team_name ASC').slice(page_start, page_end).all()
 
