@@ -11,7 +11,7 @@ with open('.ctfd_secret_key', 'a+') as secret:
 
 ##### SERVER SETTINGS #####
 SECRET_KEY = key
-SQLALCHEMY_DATABASE_URI = 'sqlite:///ctfd.db'
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///ctfd.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SESSION_TYPE = "filesystem"
 SESSION_FILE_DIR = "/tmp/flask_session"
@@ -31,3 +31,7 @@ TRUSTED_PROXIES = [
     '^172\.(1[6-9]|2[0-9]|3[0-1])\.',
     '^192\.168\.'
 ]
+
+CACHE_TYPE = "simple"
+if CACHE_TYPE == 'redis':
+    CACHE_REDIS_URL = os.environ.get('REDIS_URL')

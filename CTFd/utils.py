@@ -1,9 +1,11 @@
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Containers, ip2long, long2ip
 
 from six.moves.urllib.parse import urlparse, urljoin
+import six
 from werkzeug.utils import secure_filename
 from functools import wraps
 from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
+from flask_cache import Cache
 from itsdangerous import Signer, BadSignature
 from socket import inet_aton, inet_ntoa, socket
 from struct import unpack, pack, error
@@ -24,7 +26,10 @@ import smtplib
 import email
 import tempfile
 import subprocess
+import urllib
 import json
+
+cache = Cache()
 
 
 def init_logs(app):
@@ -132,11 +137,13 @@ def init_utils(app):
                 abort(403)
 
 
+@cache.memoize()
 def ctf_name():
     name = get_config('ctf_name')
     return name if name else 'CTFd'
 
 
+@cache.memoize()
 def ctf_theme():
     theme = get_config('ctf_theme')
     return theme if theme else ''
@@ -152,13 +159,17 @@ def authed():
 
 
 def is_verified():
-    team = Teams.query.filter_by(id=session.get('id')).first()
-    if team:
-        return team.verified
+    if get_config('verify_emails'):
+        team = Teams.query.filter_by(id=session.get('id')).first()
+        if team:
+            return team.verified
+        else:
+            return False
     else:
-        return False
+        return True
 
 
+@cache.memoize()
 def is_setup():
     setup = Config.query.filter_by(key='setup').first()
     if setup:
@@ -174,12 +185,9 @@ def is_admin():
         return False
 
 
+@cache.memoize()
 def can_register():
-    config = Config.query.filter_by(key='prevent_registration').first()
-    if config:
-        return config.value != '1'
-    else:
-        return True
+    return not bool(get_config('prevent_registration'))
 
 
 def admins_only(f):
@@ -192,11 +200,9 @@ def admins_only(f):
     return decorated_function
 
 
+@cache.memoize()
 def view_after_ctf():
-    if get_config('view_after_ctf') == '1' and time.time() > int(get_config("end")):
-        return True
-    else:
-        return False
+    return bool(get_config('view_after_ctf'))
 
 
 def ctftime():
@@ -234,10 +240,19 @@ def ctftime():
     return False
 
 
-def can_view_challenges():
-    config = Config.query.filter_by(key="view_challenges_unregistered").first()
+def ctf_started():
+    return time.time() > int(get_config("start") or 0)
+
+
+def ctf_ended():
+    return time.time() > int(get_config("end") or 0)
+
+
+def user_can_view_challenges():
+    config = bool(get_config('view_challenges_unregistered'))
+    verify_emails = bool(get_config('verify_emails'))
     if config:
-        return authed() or config.value == '1'
+        return authed() or config
     else:
         return authed()
 
@@ -284,14 +299,20 @@ def get_themes():
             if os.path.isdir(os.path.join(dir, name))]
 
 
+@cache.memoize()
 def get_config(key):
     config = Config.query.filter_by(key=key).first()
     if config and config.value:
         value = config.value
         if value and value.isdigit():
             return int(value)
-        else:
-            return value
+        elif value and isinstance(value, six.string_types):
+            if value.lower() == 'true':
+                return True
+            elif value.lower() == 'false':
+                return False
+            else:
+                return value
     else:
         set_config(key, None)
         return None
@@ -308,10 +329,12 @@ def set_config(key, value):
     return config
 
 
+@cache.memoize()
 def can_send_mail():
     return mailgun() or mailserver()
 
 
+@cache.memoize()
 def mailgun():
     if app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_BASE_URL'):
         return True
@@ -319,6 +342,8 @@ def mailgun():
         return True
     return False
 
+
+@cache.memoize()
 def mailserver():
     if (get_config('mail_server') and get_config('mail_port')):
         return True
@@ -384,7 +409,7 @@ def verify_email(addr):
     token = s.sign(addr)
     text = """Please click the following link to confirm your email address for {}: {}""".format(
         get_config('ctf_name'),
-        url_for('auth.confirm_user', _external=True) + '/' + token.encode('base64')
+        url_for('auth.confirm_user', _external=True) + '/' + urllib.quote_plus(token.encode('base64'))
     )
     sendmail(addr, text)
 
@@ -407,6 +432,7 @@ def sha512(string):
     return hashlib.sha512(string).hexdigest()
 
 
+@cache.memoize()
 def can_create_container():
     try:
         output = subprocess.check_output(['docker', 'version'])

@@ -80,6 +80,17 @@
 {% endblock %}
 
 {% block content %}
+
+{% if errors %}
+<div class="container main-container">
+    <div id='errors' class="row">
+{% for error in errors %}
+        <h1>{{ error }}</h1>
+{% endfor %}
+    </div>
+</div>
+{% else %}
+
 <div class="jumbotron home">
     <div class="container">
         <h1>Challenges</h1>
@@ -147,10 +158,11 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
     <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/utils.js"></script>
-    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/chalboard.js"></script>
+    {% if not errors %}<script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/chalboard.js"></script>{% endif %}
     <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/style.js"></script>
 {% endblock %}

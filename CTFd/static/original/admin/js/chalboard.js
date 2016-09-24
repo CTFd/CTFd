@@ -258,7 +258,7 @@ $('#create-key').click(function(e){
     var elem = $('<div class="col-md-4">');
 
     elem.append($("<div class='form-group'>").append($("<input class='current-key form-control' type='text'>")));
-    elem.append('<div class="radio-inline"><input type="radio" name="key_type['+amt+']" value="0">Static</div>');
+    elem.append('<div class="radio-inline"><input type="radio" name="key_type['+amt+']" value="0" checked>Static</div>');
     elem.append('<div class="radio-inline"><input type="radio" name="key_type['+amt+']" value="1">Regex</div>');
     elem.append('<a href="#" onclick="$(this).parent().remove()" class="btn btn-danger key-remove-button">Remove</a>');
 

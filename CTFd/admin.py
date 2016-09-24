@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
 from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, \
     set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes
+    container_stop, container_start, get_themes, cache
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 from itsdangerous import TimedSerializer, BadTimeSignature
@@ -105,8 +105,12 @@ def admin_config():
 
         db.session.commit()
         db.session.close()
+        with app.app_context():
+            cache.clear()
         return redirect(url_for('admin.admin_config'))
 
+    with app.app_context():
+        cache.clear()
     ctf_name = get_config('ctf_name')
     ctf_theme = get_config('ctf_theme')
     max_tries = get_config('max_tries')
@@ -758,7 +762,7 @@ def admin_wrong_key(page='1'):
 
     wrong_keys = WrongKeys.query.add_columns(WrongKeys.id, WrongKeys.chalid, WrongKeys.flag, WrongKeys.teamid, WrongKeys.date,\
                 Challenges.name.label('chal_name'), Teams.name.label('team_name')).\
-                join(Challenges).join(Teams).order_by('team_name ASC').slice(page_start, page_end).all()
+                join(Challenges).join(Teams).order_by(WrongKeys.date.desc()).slice(page_start, page_end).all()
 
     wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
     pages = int(wrong_count / results_per_page) + (wrong_count % results_per_page > 0)
@@ -776,7 +780,7 @@ def admin_correct_key(page='1'):
 
     solves = Solves.query.add_columns(Solves.id, Solves.chalid, Solves.teamid, Solves.date, Solves.flag, \
                 Challenges.name.label('chal_name'), Teams.name.label('team_name')).\
-                join(Challenges).join(Teams).order_by('team_name ASC').slice(page_start, page_end).all()
+                join(Challenges).join(Teams).order_by(Solves.date.desc()).slice(page_start, page_end).all()
 
     solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
     pages = int(solve_count / results_per_page) + (solve_count % results_per_page > 0)

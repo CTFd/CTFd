@@ -4,9 +4,11 @@ from logging.handlers import RotatingFileHandler
 from flask_session import Session
 from sqlalchemy_utils import database_exists, create_database
 from jinja2 import FileSystemLoader, TemplateNotFound
-from utils import get_config, set_config
+from utils import get_config, set_config, cache
 import os
 import sqlalchemy
+from sqlalchemy.engine.url import make_url
+from sqlalchemy.exc import OperationalError
 
 
 class ThemeLoader(FileSystemLoader):
@@ -24,14 +26,25 @@ def create_app(config='CTFd.config'):
 
         from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
 
-        ## sqlite database creation is relative to the script which causes issues with serve.py
-        if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']) and not app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite'):
-            create_database(app.config['SQLALCHEMY_DATABASE_URI'])
+        url = make_url(app.config['SQLALCHEMY_DATABASE_URI'])
+        if url.drivername == 'postgres':
+            url.drivername = 'postgresql'
 
         db.init_app(app)
-        db.create_all()
+
+        try:
+            if not database_exists(url):
+                create_database(url)
+            db.create_all()
+        except OperationalError:
+            db.create_all()
+        else:
+            db.create_all()
 
         app.db = db
+
+        cache.init_app(app)
+        app.cache = cache
 
         if not get_config('ctf_theme'):
             set_config('ctf_theme', 'original')

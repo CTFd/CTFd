@@ -147,6 +147,7 @@ class Teams(db.Model):
     banned = db.Column(db.Boolean, default=False)
     verified = db.Column(db.Boolean, default=False)
     admin = db.Column(db.Boolean, default=False)
+    joined = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, name, email, password):
         self.name = name

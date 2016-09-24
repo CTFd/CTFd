@@ -58,7 +58,7 @@
 
                         <div class="form-group">
                             <label for="value">Value</label>
-                            <input type="number" class="form-control" name="value" placeholder="Enter value">
+                            <input type="number" class="form-control" name="value" placeholder="Enter value" required>
                         </div>
                         <div class="form-group" style="height:75px">
                             <div class="col-md-9" style="padding-left:0px">
@@ -90,7 +90,7 @@
                         </div>
                         <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
                         <div style="text-align:center">
-                            <button class="btn btn-theme btn-outlined create-challenge" type="submit">Create</button>
+                            <button class="btn btn-theme btn-outlined create-challenge-submit" type="submit">Create</button>
                         </div>
                     </form>
                 </div>
@@ -134,7 +134,7 @@
 
                         <div class="form-group">
                             <label for="value">Value</label>
-                            <input type="number" class="form-control chal-value" name="value" placeholder="Enter value">
+                            <input type="number" class="form-control chal-value" name="value" placeholder="Enter value" required>
                         </div>
                         <input class="chal-id" type='hidden' name='id' placeholder='ID'>
 
@@ -153,7 +153,7 @@
                         </div>
                         <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
                         <div style="text-align:center">
-                            <button class="btn btn-theme btn-outlined create-challenge" type="submit">Update</button>
+                            <button class="btn btn-theme btn-outlined update-challenge-submit" type="submit">Update</button>
                         </div>
                     </form>
                 </div>

@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint
 
-from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, can_view_challenges, is_admin, get_config, get_ip, is_verified
+from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, user_can_view_challenges, is_admin, get_config, get_ip, is_verified, ctf_started, ctf_ended, ctf_name
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards
 
 from sqlalchemy.sql import and_, or_, not_
@@ -15,16 +15,26 @@ challenges = Blueprint('challenges', __name__)
 
 @challenges.route('/challenges', methods=['GET'])
 def challenges_view():
-    if not is_admin():
+    errors = []
+    start = get_config('start') or 0
+    end = get_config('end') or 0
+    if not is_admin(): # User is not an admin
         if not ctftime():
-            if view_after_ctf():
+            # It is not CTF time
+            if view_after_ctf(): # But we are allowed to view after the CTF ends
                 pass
-            else:
+            else:  # We are NOT allowed to view after the CTF ends
+                errors.append('{} has ended'.format(ctf_name()))
+                return render_template('chals.html', errors=errors, start=int(start), end=int(end))
                 return redirect(url_for('views.static_html'))
-        if get_config('verify_emails') and not is_verified():
+        if get_config('verify_emails') and not is_verified(): # User is not confirmed
             return redirect(url_for('auth.confirm_user'))
-    if can_view_challenges():
-        return render_template('chals.html', ctftime=ctftime())
+    if user_can_view_challenges(): # Do we allow unauthenticated users?
+        if get_config('start') and not ctf_started():
+            errors.append('{} has not started yet'.format(ctf_name()))
+        if (get_config('end') and ctf_ended()) and not view_after_ctf():
+            errors.append('{} has ended'.format(ctf_name()))
+        return render_template('chals.html', errors=errors, start=int(start), end=int(end))
     else:
         return redirect(url_for('auth.login', next='challenges'))
 
@@ -37,7 +47,7 @@ def chals():
                 pass
             else:
                 return redirect(url_for('views.static_html'))
-    if can_view_challenges():
+    if user_can_view_challenges():
         chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
 
         json = {'game':[]}
@@ -55,21 +65,24 @@ def chals():
 
 @challenges.route('/chals/solves')
 def chals_per_solves():
-    if can_view_challenges():
-        solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves')).join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).group_by(Solves.chalid).subquery()
-        solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves, Challenges.name) \
-            .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
-        json = {}
-        for chal, count, name in solves:
-            json[name] = count
-        db.session.close()
-        return jsonify(json)
-    return redirect(url_for('auth.login', next='chals/solves'))
+    if not user_can_view_challenges():
+        return redirect(url_for('auth.login', next=request.path))
+    solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves')).join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).group_by(Solves.chalid).subquery()
+    solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves, Challenges.name) \
+        .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
+    json = {}
+    for chal, count, name in solves:
+        json[name] = count
+    db.session.close()
+    return jsonify(json)
+
 
 
 @challenges.route('/solves')
 @challenges.route('/solves/<teamid>')
 def solves(teamid=None):
+    if not user_can_view_challenges():
+        return redirect(url_for('auth.login', next=request.path))
     solves = None
     awards = None
     if teamid is None:
@@ -109,6 +122,8 @@ def solves(teamid=None):
 
 @challenges.route('/maxattempts')
 def attempts():
+    if not user_can_view_challenges():
+        return redirect(url_for('auth.login', next=request.path))
     chals = Challenges.query.add_columns('id').all()
     json = {'maxattempts':[]}
     for chal, chalid in chals:
@@ -120,6 +135,8 @@ def attempts():
 
 @challenges.route('/fails/<teamid>', methods=['GET'])
 def fails(teamid):
+    if not user_can_view_challenges():
+        return redirect(url_for('auth.login', next=request.path))
     fails = WrongKeys.query.filter_by(teamid=teamid).count()
     solves = Solves.query.filter_by(teamid=teamid).count()
     db.session.close()
@@ -129,6 +146,8 @@ def fails(teamid):
 
 @challenges.route('/chal/<chalid>/solves', methods=['GET'])
 def who_solved(chalid):
+    if not user_can_view_challenges():
+        return redirect(url_for('auth.login', next=request.path))
     solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid, Teams.banned == False).order_by(Solves.date.asc())
     json = {'teams':[]}
     for solve in solves:
@@ -138,9 +157,11 @@ def who_solved(chalid):
 
 @challenges.route('/chal/<chalid>', methods=['POST'])
 def chal(chalid):
-    if not ctftime():
+    if ctf_ended() and not view_after_ctf():
         return redirect(url_for('challenges.challenges_view'))
-    if authed():
+    if not user_can_view_challenges():
+        return redirect(url_for('auth.login', next=request.path))
+    if authed() and is_verified() and (ctf_started() or view_after_ctf()):
         fails = WrongKeys.query.filter_by(teamid=session['id'], chalid=chalid).count()
         logger = logging.getLogger('keys')
         data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'), get_kpm(session['id']))
@@ -148,10 +169,11 @@ def chal(chalid):
 
         # Anti-bruteforce / submitting keys too quickly
         if get_kpm(session['id']) > 10:
-            wrong = WrongKeys(session['id'], chalid, request.form['key'])
-            db.session.add(wrong)
-            db.session.commit()
-            db.session.close()
+            if ctftime():
+                wrong = WrongKeys(session['id'], chalid, request.form['key'])
+                db.session.add(wrong)
+                db.session.commit()
+                db.session.close()
             logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
             # return "3" # Submitting too fast
             return jsonify({'status': '3', 'message': "You're submitting keys too fast. Slow down."})
@@ -176,28 +198,31 @@ def chal(chalid):
                 if x['type'] == 0: #static key
                     print(x['flag'], key.strip().lower())
                     if x['flag'] and x['flag'].strip().lower() == key.strip().lower():
-                        solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
-                        db.session.add(solve)
-                        db.session.commit()
-                        db.session.close()
+                        if ctftime():
+                            solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
+                            db.session.add(solve)
+                            db.session.commit()
+                            db.session.close()
                         logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
                         # return "1" # key was correct
                         return jsonify({'status':'1', 'message':'Correct'})
                 elif x['type'] == 1: #regex
                     res = re.match(str(x['flag']), key, re.IGNORECASE)
                     if res and res.group() == key:
-                        solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
-                        db.session.add(solve)
-                        db.session.commit()
-                        db.session.close()
+                        if ctftime():
+                            solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
+                            db.session.add(solve)
+                            db.session.commit()
+                            db.session.close()
                         logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
                         # return "1" # key was correct
                         return jsonify({'status': '1', 'message': 'Correct'})
 
-            wrong = WrongKeys(session['id'], chalid, request.form['key'])
-            db.session.add(wrong)
-            db.session.commit()
-            db.session.close()
+            if ctftime():
+                wrong = WrongKeys(session['id'], chalid, request.form['key'])
+                db.session.add(wrong)
+                db.session.commit()
+                db.session.close()
             logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
             # return '0' # key was wrong
             if max_tries:

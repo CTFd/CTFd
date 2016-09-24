@@ -1,5 +1,5 @@
 from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint, Response
-from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url, get_config, set_config, sha512, get_ip
+from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url, get_config, set_config, sha512, get_ip, cache
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 
 from jinja2.exceptions import TemplateNotFound
@@ -90,6 +90,8 @@ def setup():
             db.session.commit()
             db.session.close()
             app.setup = False
+            with app.app_context():
+                cache.clear()
             return redirect(url_for('views.static_html'))
         return render_template('setup.html', nonce=session.get('nonce'))
     return redirect(url_for('views.static_html'))
@@ -110,7 +112,7 @@ def static_html(template):
     except TemplateNotFound:
         page = Pages.query.filter_by(route=template).first()
         if page:
-            return render_template_string('{% extends "base.html" %}{% block content %}' + page.html + '{% endblock %}')
+            return render_template('page.html', content=page.html)
         else:
             abort(404)
 
