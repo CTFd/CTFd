@@ -5,7 +5,7 @@ import six
 from werkzeug.utils import secure_filename
 from functools import wraps
 from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
-from flask_cache import Cache
+from flask_caching import Cache
 from itsdangerous import Signer, BadSignature
 from socket import inet_aton, inet_ntoa, socket
 from struct import unpack, pack, error

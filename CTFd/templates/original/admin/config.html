@@ -57,13 +57,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="start">Mail Server Address:</label>
-                        <input class="form-control" id='mail_server' name='mail_server' type='text'
-                               placeholder="Mail Server Address"
-                               {% if mail_server is defined and mail_server != None %}value="{{ mail_server }}"{% endif %}>
-                    </div>
-
-                    <div class="form-group">
                         <label for="start">Mail Server Port:</label>
                         <input class="form-control" id='mail_port' name='mail_port' type='text'
                                placeholder="Mail Server Port"
@@ -95,6 +88,14 @@
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="mailgun">
+
+                    <div class="form-group">
+                        <label for="start">Mail Server Address:</label>
+                        <input class="form-control" id='mail_server' name='mail_server' type='text'
+                               placeholder="Mail Server Address"
+                               {% if mail_server is defined and mail_server != None %}value="{{ mail_server }}"{% endif %}>
+                    </div>
+
                     <div class="form-group">
                         <label for="start">Mailgun API Base URL:</label>
                         <input class="form-control" id='mg_base_url' name='mg_base_url' type='text'
