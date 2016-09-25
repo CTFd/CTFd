@@ -89,6 +89,7 @@ def admin_config():
         ctf_name = set_config("ctf_name", request.form.get('ctf_name', None))
         ctf_theme = set_config("ctf_theme", request.form.get('ctf_theme', None))
 
+        mailfrom_addr = set_config("mailfrom_addr", request.form.get('mailfrom_addr', None))
         mg_base_url = set_config("mg_base_url", request.form.get('mg_base_url', None))
         mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
 
