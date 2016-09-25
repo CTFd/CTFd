@@ -56,7 +56,7 @@
         <tbody>
             {% for wrong_key in wrong_keys %}
             <tr>
-                <td class="text-center team" id="{{ wrong_key.teamid }}"><a href="{{ request.script_root }}/admin/team/{{ wrong_key.team }}">{{ wrong_key.team_name }}</a>
+                <td class="text-center team" id="{{ wrong_key.teamid }}"><a href="{{ request.script_root }}/admin/team/{{ wrong_key.teamid }}">{{ wrong_key.team_name }}</a>
                 <td class="text-center chal" id="{{ wrong_key.chalid }}">{{ wrong_key.chal_name }}</td>
                 <td class="text-center solve-time"><script>document.write( moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
                 <td class="text-center flag" id="{{ wrong_key.id }}">{{ wrong_key.flag }}</td>
