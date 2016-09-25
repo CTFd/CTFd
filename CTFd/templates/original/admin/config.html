@@ -46,15 +46,15 @@
                 </li>
             </ul>
 
+            <div class="form-group">
+                <label for="start">Mail From Address:</label>
+                <input class="form-control" id='mailfrom_addr' name='mailfrom_addr' type='text'
+                       placeholder="Email address used to send email"
+                       {% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
+            </div>
+
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="mailserver">
-
-                    <div class="form-group">
-                        <label for="start">Mail From Address:</label>
-                        <input class="form-control" id='maifrom_addr' name='maifrom_addr' type='text'
-                               placeholder="Email address used to send email"
-                               {% if maifrom_addr is defined and maifrom_addr != None %}value="{{ maifrom_addr }}"{% endif %}>
-                    </div>
 
                     <div class="form-group">
                         <label for="start">Mail Server Address:</label>
@@ -95,13 +95,6 @@
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="mailgun">
-
-                    <div class="form-group">
-                        <label for="start">Mail From Address:</label>
-                        <input class="form-control" id='maifrom_addr' name='maifrom_addr' type='text'
-                               placeholder="Email address used to send email"
-                               {% if maifrom_addr is defined and maifrom_addr != None %}value="{{ maifrom_addr }}"{% endif %}>
-                    </div>
 
                     <div class="form-group">
                         <label for="start">Mailgun API Base URL:</label>

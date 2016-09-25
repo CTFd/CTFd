@@ -121,6 +121,7 @@ def admin_config():
     mail_username = get_config('mail_username')
     mail_password = get_config('mail_password')
 
+    mailfrom_addr = get_config('mailfrom_addr')
     mg_api_key = get_config('mg_api_key')
     mg_base_url = get_config('mg_base_url')
     if not max_tries:
@@ -178,6 +179,7 @@ def admin_config():
                            view_challenges_unregistered=view_challenges_unregistered,
                            view_scoreboard_if_authed=view_scoreboard_if_authed,
                            prevent_registration=prevent_registration,
+                           mailfrom_addr=mailfrom_addr,
                            mg_base_url=mg_base_url,
                            mg_api_key=mg_api_key,
                            prevent_name_change=prevent_name_change,
