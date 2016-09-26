@@ -245,7 +245,9 @@ def ctf_started():
 
 
 def ctf_ended():
-    return time.time() > int(get_config("end") or 0)
+    if int(get_config("end") or 0):
+        return time.time() > int(get_config("end") or 0)
+    return False
 
 
 def user_can_view_challenges():
