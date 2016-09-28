@@ -17,7 +17,7 @@ function loadchalbyname(chalname) {
 }
 
 function updateChalWindow(obj) {
-    window.location.replace(window.location.href + '#' + obj.name);
+    window.location.replace(window.location.href.split('#')[0] + '#' + obj.name);
     var chal = $('#chal-window');
     chal.find('.chal-name').text(obj.name);
     chal.find('.chal-desc').html(marked(obj.description, {'gfm':true, 'breaks':true}));
@@ -127,10 +127,6 @@ function marksolves() {
             $('button[value="' + id + '"]').removeClass('theme-background');
             $('button[value="' + id + '"]').addClass('solved-challenge');
         };
-        if (window.location.hash.length > 0){
-          loadchalbyname(window.location.hash.substring(1))
-            $("#chal-window").modal("show");
-        }
     });
 }
 
@@ -209,6 +205,11 @@ function loadchals() {
 
         updatesolves();
         marksolves();
+
+        if (window.location.hash.length > 0) {
+            loadchalbyname(window.location.hash.substring(1));
+            $("#chal-window").modal("show");
+        }
 
         $('.challenge-button').click(function (e) {
             loadchal(this.value);
