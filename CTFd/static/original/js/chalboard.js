@@ -271,7 +271,7 @@ $('.nav-tabs a').click(function (e) {
 
 $('#chal-window').on('hidden.bs.modal', function() {
     $('.nav-tabs a:first').tab('show');
-    history.pushState("", document.title, window.location.pathname + window.location.search);
+    window.location.replace(window.location.href.split('#')[0] + '#');
 });
 
 setInterval(update, 300000);
