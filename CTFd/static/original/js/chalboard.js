@@ -17,7 +17,7 @@ function loadchalbyname(chalname) {
 }
 
 function updateChalWindow(obj) {
-    window.location.hash = obj.name;
+    window.location.replace(window.location.href + '#' + obj.name);
     var chal = $('#chal-window');
     chal.find('.chal-name').text(obj.name);
     chal.find('.chal-desc').html(marked(obj.description, {'gfm':true, 'breaks':true}));
@@ -270,7 +270,7 @@ $('.nav-tabs a').click(function (e) {
 
 $('#chal-window').on('hidden.bs.modal', function() {
     $('.nav-tabs a:first').tab('show');
-    window.history.back(1);
+    history.pushState("", document.title, window.location.pathname + window.location.search);
 });
 
 setInterval(update, 300000);
