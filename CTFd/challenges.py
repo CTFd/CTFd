@@ -81,8 +81,6 @@ def chals_per_solves():
 @challenges.route('/solves')
 @challenges.route('/solves/<teamid>')
 def solves(teamid=None):
-    if not user_can_view_challenges():
-        return redirect(url_for('auth.login', next=request.path))
     solves = None
     awards = None
     if teamid is None:
@@ -135,8 +133,6 @@ def attempts():
 
 @challenges.route('/fails/<teamid>', methods=['GET'])
 def fails(teamid):
-    if not user_can_view_challenges():
-        return redirect(url_for('auth.login', next=request.path))
     fails = WrongKeys.query.filter_by(teamid=teamid).count()
     solves = Solves.query.filter_by(teamid=teamid).count()
     db.session.close()
