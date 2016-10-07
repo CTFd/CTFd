@@ -9,6 +9,7 @@ import time
 import re
 import logging
 import json
+import hashlib
 
 challenges = Blueprint('challenges', __name__)
 
@@ -179,7 +180,7 @@ def chal(chalid):
         # Challange not solved yet
         if not solves:
             chal = Challenges.query.filter_by(id=chalid).first()
-            key = str(request.form['key'].strip().lower())
+            key = str(request.form['key'].strip())
             keys = json.loads(chal.flags)
 
             # Hit max attempts
@@ -192,6 +193,7 @@ def chal(chalid):
 
             for x in keys:
                 if x['type'] == 0: #static key
+                    key = key.lower()
                     print(x['flag'], key.strip().lower())
                     if x['flag'] and x['flag'].strip().lower() == key.strip().lower():
                         if ctftime():
@@ -202,7 +204,8 @@ def chal(chalid):
                         logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
                         # return "1" # key was correct
                         return jsonify({'status':'1', 'message':'Correct'})
-                elif x['type'] == 1: #regex
+                elif x['type'] == 1: #regexi
+                    key = key.lower()
                     res = re.match(str(x['flag']), key, re.IGNORECASE)
                     if res and res.group() == key:
                         if ctftime():
@@ -210,6 +213,18 @@ def chal(chalid):
                             db.session.add(solve)
                             db.session.commit()
                             db.session.close()
+                        logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
+                        # return "1" # key was correct
+                        return jsonify({'status': '1', 'message': 'Correct'})
+                elif x['type'] == 2: #hashi
+                     hash = app.config['SHA256_SALT']+key
+                     hash_object = hashlib.sha256(hash.encode())
+                     hex_dig = hash_object.hexdigest()
+                     if hex_dig == x['flag']:
+                        solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
+                        db.session.add(solve)
+                        db.session.commit()
+                        db.session.close()
                         logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
                         # return "1" # key was correct
                         return jsonify({'status': '1', 'message': 'Correct'})

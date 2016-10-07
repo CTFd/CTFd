@@ -9,8 +9,18 @@ with open('.ctfd_secret_key', 'a+') as secret:
         secret.write(key)
         secret.flush()
 
+##### GENERATE SECRET KEY #####
+with open('.ctfd_sha256_salt', 'a+') as secret:
+    secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
+    salt = secret.read()
+    if not salt:
+        salt = os.urandom(64)
+        secret.write(salt)
+        secret.flush()
+
 ##### SERVER SETTINGS #####
 SECRET_KEY = key
+SHA256_SALT = salt
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///ctfd.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SESSION_TYPE = "filesystem"
