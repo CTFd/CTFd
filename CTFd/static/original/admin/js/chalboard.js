@@ -66,7 +66,7 @@ function loadkeys(chal){
             elem.append($("<div class='form-group'>").append($("<input class='current-key form-control' type='text'>").val(keys[x].key)));
             elem.append('<div class="radio-inline"><input type="radio" name="key_type['+x+']" value="0">Static</div>');
             elem.append('<div class="radio-inline"><input type="radio" name="key_type['+x+']" value="1">Regex</div>');
-            elem.append('<div class="radio-inline"><input type="radio" name="key_type['+x+']" value="1">Hashed</div>');
+            elem.append('<div class="radio-inline"><input type="radio" name="key_type['+x+']" value="2">Hashed</div>');
             elem.append('<a href="#" onclick="$(this).parent().remove()" class="btn btn-danger key-remove-button">Remove</a>');
 
             $('#current-keys').append(elem);
