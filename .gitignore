@@ -60,3 +60,4 @@ target/
 .idea/
 CTFd/static/uploads
 .ctfd_secret_key
+.ctfd_sha256_salt
