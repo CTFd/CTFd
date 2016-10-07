@@ -9,7 +9,7 @@ with open('.ctfd_secret_key', 'a+') as secret:
         secret.write(key)
         secret.flush()
 
-##### GENERATE SECRET KEY #####
+##### GENERATE SALT #####
 with open('.ctfd_sha256_salt', 'a+') as secret:
     secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
     salt = secret.read()
