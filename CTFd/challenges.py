@@ -218,7 +218,13 @@ def chal(chalid):
                         # return "1" # key was correct
                         return jsonify({'status': '1', 'message': 'Correct'})
                 elif x['type'] == 2: #hash
-                     if bcrypt_sha256.verify(key,x['flag']):
+                     # We want to catch ValueError in case x['flag']
+                     # isn't in the right hash format.
+                     try:
+                        hash = bcrypt_sha256.verify(key,x['flag'])
+                     except ValueError:
+                        hash = False
+                     if hash:
                         solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
                         db.session.add(solve)
                         db.session.commit()
