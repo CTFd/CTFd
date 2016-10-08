@@ -3,13 +3,14 @@ from flask import current_app as app, render_template, request, redirect, abort,
 from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, user_can_view_challenges, is_admin, get_config, get_ip, is_verified, ctf_started, ctf_ended, ctf_name
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards
 
+from passlib.hash import bcrypt_sha256
+
 from sqlalchemy.sql import and_, or_, not_
 
 import time
 import re
 import logging
 import json
-import hashlib
 
 challenges = Blueprint('challenges', __name__)
 
@@ -204,7 +205,7 @@ def chal(chalid):
                         logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
                         # return "1" # key was correct
                         return jsonify({'status':'1', 'message':'Correct'})
-                elif x['type'] == 1: #regexi
+                elif x['type'] == 1: #regex
                     key = key.lower()
                     res = re.match(str(x['flag']), key, re.IGNORECASE)
                     if res and res.group() == key:
@@ -216,11 +217,8 @@ def chal(chalid):
                         logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
                         # return "1" # key was correct
                         return jsonify({'status': '1', 'message': 'Correct'})
-                elif x['type'] == 2: #hashi
-                     hash = app.config['SHA256_SALT']+key
-                     hash_object = hashlib.sha256(hash.encode())
-                     hex_dig = hash_object.hexdigest()
-                     if hex_dig == x['flag']:
+                elif x['type'] == 2: #hash
+                     if bcrypt_sha256.verify(key,x['flag']):
                         solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
                         db.session.add(solve)
                         db.session.commit()
