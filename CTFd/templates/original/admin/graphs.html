@@ -59,15 +59,28 @@
         }
 
         function solves_graph() {
-            $.get('{{ request.script_root }}/admin/graphs/solves', function(data){
+            $.get('{{ request.script_root }}/admin/graphs/solves', function (data) {
                 var solves = $.parseJSON(JSON.stringify(data));
                 var chals = [];
                 var counts = [];
                 var colors = [];
+                var annotations = [];
                 var i = 1;
-                $.each(solves, function(key, value){
-                    chals.push(key);
-                    counts.push(value);
+                solves_order = Object.keys(solves).sort(function (a, b) {
+                    return solves[b] - solves[a]
+                });
+                $.each(solves_order, function (key, value) {
+                    chals.push(value);
+                    counts.push(solves[value]);
+                    var result = {
+                        x: value,
+                        y: solves[value],
+                        text: solves[value],
+                        xanchor: 'center',
+                        yanchor: 'bottom',
+                        showarrow: false
+                    };
+                    annotations.push(result);
                     colors.push(colorhash(i++));
                 });
 
@@ -80,7 +93,8 @@
                 }];
 
                 var layout = {
-                    title: 'Score Counts'
+                    title: 'Score Counts',
+                    annotations: annotations
                 };
 
                 Plotly.newPlot('solves-graph', data, layout);

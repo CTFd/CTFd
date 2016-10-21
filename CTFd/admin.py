@@ -730,17 +730,18 @@ def admin_stats():
     wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
     solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
     challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
-    
-    solves_raw = db.func.count(Solves.chalid).label('solves_raw')
-    solves_sub = db.session.query(Solves.chalid, solves_raw) \
+
+    solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves_cnt')) \
+        .join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False) \
         .group_by(Solves.chalid).subquery()
-    solves_cnt = coalesce(solves_sub.columns.solves_raw, 0).label('solves_cnt')
-    most_solved_chal = Challenges.query.add_columns(solves_cnt) \
-        .outerjoin(solves_sub, solves_sub.columns.chalid == Challenges.id) \
-        .order_by(solves_cnt.desc()).first()
-    least_solved_chal = Challenges.query.add_columns(solves_cnt) \
-        .outerjoin(solves_sub, solves_sub.columns.chalid == Challenges.id) \
-        .order_by(solves_cnt.asc()).first()
+    solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves_cnt, Challenges.name) \
+        .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
+    solve_data = {}
+    for chal, count, name in solves:
+        solve_data[name] = count
+
+    most_solved = max(solve_data, key=solve_data.get)
+    least_solved = min(solve_data, key=solve_data.get)
         
     db.session.expunge_all()
     db.session.commit()
@@ -750,8 +751,9 @@ def admin_stats():
         wrong_count=wrong_count,
         solve_count=solve_count,
         challenge_count=challenge_count,
-        most_solved=most_solved_chal,
-        least_solved=least_solved_chal
+        solve_data=solve_data,
+        most_solved=most_solved,
+        least_solved=least_solved
         )
 
 

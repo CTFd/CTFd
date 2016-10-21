@@ -126,11 +126,11 @@ def teams(page):
     page_end = results_per_page * ( page - 1 ) + results_per_page
 
     if get_config('verify_emails'):
-        count = Teams.query.filter_by(verified=True).count()
-        teams = Teams.query.filter_by(verified=True).slice(page_start, page_end).all()
+        count = Teams.query.filter_by(verified=True, banned=False).count()
+        teams = Teams.query.filter_by(verified=True, banned=False).slice(page_start, page_end).all()
     else:
-        count = Teams.query.count()
-        teams = Teams.query.slice(page_start, page_end).all()
+        count = Teams.query.filter_by(banned=False).count()
+        teams = Teams.query.filter_by(banned=False).slice(page_start, page_end).all()
     pages = int(count / results_per_page) + (count % results_per_page > 0)
     return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
 
@@ -174,7 +174,7 @@ def profile():
                 name_len = len(request.form['name']) == 0
 
             emails = Teams.query.filter_by(email=email).first()
-            valid_email = re.match("[^@]+@[^@]+\.[^@]+", email)
+            valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
 
             if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
                     (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):

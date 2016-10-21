@@ -23,11 +23,11 @@ def confirm_user(data=None):
     if data and request.method == "GET":  ## User is confirming email account
         try:
             s = Signer(app.config['SECRET_KEY'])
-            email = s.unsign(urllib.unquote(data.decode('base64')))
+            email = s.unsign(urllib.unquote_plus(data.decode('base64')))
         except BadSignature:
             return render_template('confirm.html', errors=['Your confirmation link seems wrong'])
         except:
-            return render_template('reset_password.html', errors=['Your link appears broken, please try again.'])
+            return render_template('confirm.html', errors=['Your link appears broken, please try again.'])
         team = Teams.query.filter_by(email=email).first()
         team.verified = True
         db.session.commit()
@@ -57,9 +57,11 @@ def reset_password(data=None):
     if data is not None and request.method == "POST":
         try:
             s = TimedSerializer(app.config['SECRET_KEY'])
-            name = s.loads(urllib.unquote(data.decode('base64')), max_age=1800)
+            name = s.loads(urllib.unquote_plus(data.decode('base64')), max_age=1800)
         except BadTimeSignature:
             return render_template('reset_password.html', errors=['Your link has expired'])
+        except:
+            return render_template('reset_password.html', errors=['Your link appears broken, please try again.'])
         team = Teams.query.filter_by(name=name).first()
         team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
         db.session.commit()
@@ -70,7 +72,7 @@ def reset_password(data=None):
         email = request.form['email'].strip()
         team = Teams.query.filter_by(email=email).first()
         if not team:
-            return render_template('reset_password.html', errors=['Check your email'])
+            return render_template('reset_password.html', errors=['If that account exists you will receive an email, please check your inbox'])
         s = TimedSerializer(app.config['SECRET_KEY'])
         token = s.dumps(team.name)
         text = """
@@ -78,11 +80,11 @@ Did you initiate a password reset?
 
 {0}/{1}
 
-""".format(url_for('auth.reset_password', _external=True), token.encode('base64'))
+""".format(url_for('auth.reset_password', _external=True), urllib.quote_plus(token.encode('base64')))
 
         sendmail(email, text)
 
-        return render_template('reset_password.html', errors=['Check your email'])
+        return render_template('reset_password.html', errors=['If that account exists you will receive an email, please check your inbox'])
     return render_template('reset_password.html')
 
 
@@ -175,7 +177,7 @@ def login():
                     return redirect(request.args.get('next'))
                 return redirect(url_for('challenges.challenges_view'))
             else: # This user exists but the password is wrong
-                errors.append("That account doesn't seem to exist")
+                errors.append("Your username or password is incorrect")
                 db.session.close()
                 return render_template('login.html', errors=errors)
         else:  # This user just doesn't exist
