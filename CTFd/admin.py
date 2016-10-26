@@ -740,8 +740,11 @@ def admin_stats():
     for chal, count, name in solves:
         solve_data[name] = count
 
-    most_solved = max(solve_data, key=solve_data.get)
-    least_solved = min(solve_data, key=solve_data.get)
+    most_solved = None
+    least_solved = None
+    if len(solve_data):
+        most_solved = max(solve_data, key=solve_data.get)
+        least_solved = min(solve_data, key=solve_data.get)
         
     db.session.expunge_all()
     db.session.commit()
