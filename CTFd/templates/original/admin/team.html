@@ -289,7 +289,7 @@
                 var title = 'Delete Award';
                 var description = "<span>Are you sure you want to delete the " +
                                   "<strong>{0}</strong> award?</span>".format(chal_name);
-                var action = '{{ request.script_root }}/admin/awards/{0}/delete'.format(chal);
+                var action = '{{ request.script_root }}/admin/awards/{0}/delete'.format(chal_name);
             } 
 
             var msg = {
