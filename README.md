@@ -13,6 +13,8 @@ CTFd is a CTF in a can. Easily modifiable and has everything you need to run a j
 If you just want to try CTFd with mysql and don't want to deal with setting up a database, you can use docker for it!
  1. Install docker via `apt-get install docker.io` or get it via the official installer script (recommended)
  2. Execute the follwing command to create a mysql container:
+    
+    ```
     sudo docker run \
         -d \
         --net=host \
@@ -20,6 +22,7 @@ If you just want to try CTFd with mysql and don't want to deal with setting up a
         -v $PWD/ctfd-data:/var/lib/mysql \
         -e MYSQL_ROOT_PASSWORD=changeme \
         mysql:latest
+    ```
     
     This will instaniate the mysql container with persistent storage in the folder $PWD/ctfd-data.
  3. Edit the config file `CTFd/config.py` accordingly (Use mysql, set to localhost and set the root password for mysql)
