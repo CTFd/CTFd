@@ -287,9 +287,10 @@
                 var action = '{{ request.script_root }}/admin/wrong_keys/' + key_id + '/delete';
             } else if (type == 'award-row') {
                 var title = 'Delete Award';
+                var award_id = elem.find('.chal').attr('id');
                 var description = "<span>Are you sure you want to delete the " +
                                   "<strong>{0}</strong> award?</span>".format(chal_name);
-                var action = '{{ request.script_root }}/admin/awards/{0}/delete'.format(chal_name);
+                var action = '{{ request.script_root }}/admin/awards/{0}/delete'.format(award_id);
             } 
 
             var msg = {
