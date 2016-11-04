@@ -33,7 +33,7 @@ def create_app(config='CTFd.config'):
         db.init_app(app)
 
         try:
-            if not database_exists(url):
+            if not (url.drivername.startswith('sqlite') or database_exists(url)):
                 create_database(url)
             db.create_all()
         except OperationalError:
