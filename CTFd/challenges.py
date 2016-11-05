@@ -26,7 +26,6 @@ def challenges_view():
             else:  # We are NOT allowed to view after the CTF ends
                 errors.append('{} has ended'.format(ctf_name()))
                 return render_template('chals.html', errors=errors, start=int(start), end=int(end))
-                return redirect(url_for('views.static_html'))
         if get_config('verify_emails') and not is_verified(): # User is not confirmed
             return redirect(url_for('auth.confirm_user'))
     if user_can_view_challenges(): # Do we allow unauthenticated users?
@@ -47,7 +46,7 @@ def chals():
                 pass
             else:
                 return redirect(url_for('views.static_html'))
-    if user_can_view_challenges():
+    if user_can_view_challenges() and (ctf_started() or is_admin()):
         chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
 
         json = {'game':[]}
