@@ -68,4 +68,8 @@ def create_app(config='CTFd.config'):
         app.register_blueprint(auth)
         app.register_blueprint(admin)
 
+        from CTFd.plugins import init_plugins
+
+        init_plugins(app)
+
         return app

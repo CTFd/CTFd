@@ -500,6 +500,7 @@ def run_image(name):
             ports_asked = []
 
         cmd = ['docker', 'run', '-d']
+        ports_used = []
         for port in ports_asked:
             if is_port_free(port):
                 cmd.append('-p')
