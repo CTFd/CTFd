@@ -59,4 +59,5 @@ target/
 *.log
 .idea/
 CTFd/static/uploads
+CTFd/uploads
 .ctfd_secret_key

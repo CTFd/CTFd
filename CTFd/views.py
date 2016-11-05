@@ -1,5 +1,6 @@
-from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint, Response
-from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url, get_config, set_config, sha512, get_ip, cache
+from flask import current_app as app, render_template, render_template_string, request, redirect, abort, jsonify, json as json_mod, url_for, session, Blueprint, Response, send_file
+from CTFd.utils import authed, ip2long, long2ip, is_setup, validate_url, get_config, set_config, sha512, get_ip, cache, ctftime, view_after_ctf, ctf_started, \
+    is_admin
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
 
 from jinja2.exceptions import TemplateNotFound
@@ -224,3 +225,17 @@ def profile():
                                    country=country, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
     else:
         return redirect(url_for('auth.login'))
+
+
+@views.route('/files', defaults={'path': ''})
+@views.route('/files/<path:path>')
+def file_handler(path):
+    f = Files.query.filter_by(location=path).first_or_404()
+    if f.chal:
+        if not is_admin():
+            if not ctftime():
+                if view_after_ctf() and ctf_started():
+                    pass
+                else:
+                    abort(403)
+    return send_file(os.path.join(app.root_path, 'uploads', f.location))

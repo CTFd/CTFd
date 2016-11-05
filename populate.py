@@ -235,7 +235,7 @@ if __name__ == '__main__':
             chal = random.randint(1, CHAL_AMOUNT)
             filename = gen_file()
             md5hash = hashlib.md5(filename).hexdigest()
-            db.session.add(Files(chal, os.path.join('static/uploads', md5hash, filename)))
+            db.session.add(Files(chal, md5hash + '/' + filename))
         db.session.commit()
 
         ### Generating Users

@@ -25,7 +25,7 @@ function updateChalWindow(obj) {
     for (var i = 0; i < obj.files.length; i++) {
         filename = obj.files[i].split('/');
         filename = filename[filename.length - 1];
-        $('#chal-window').find('.chal-files').append("<div class='col-md-3 file-button-wrapper'><a class='file-button' href='"+obj.files[i]+"'><label class='challenge-wrapper file-wrapper hide-text'>"+filename+"</label></a></div>")
+        $('#chal-window').find('.chal-files').append("<div class='col-md-3 file-button-wrapper'><a class='file-button' href='" + script_root + '/files/' + obj.files[i] + "'><label class='challenge-wrapper file-wrapper hide-text'>" + filename + "</label></a></div>")
     }
 
     var tags = chal.find('.chal-tags');

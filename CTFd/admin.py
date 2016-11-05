@@ -411,8 +411,8 @@ def admin_files(chalid):
     if request.method == 'POST':
         if request.form['method'] == "delete":
             f = Files.query.filter_by(id=request.form['file']).first_or_404()
-            if os.path.exists(os.path.join(app.static_folder, 'uploads', f.location)): ## Some kind of os.path.isfile issue on Windows...
-                os.unlink(os.path.join(app.static_folder, 'uploads', f.location))
+            if os.path.exists(os.path.join(app.root_path, 'uploads', f.location)): ## Some kind of os.path.isfile issue on Windows...
+                os.unlink(os.path.join(app.root_path, 'uploads', f.location))
             db.session.delete(f)
             db.session.commit()
             db.session.close()
@@ -428,11 +428,11 @@ def admin_files(chalid):
 
                 md5hash = hashlib.md5(os.urandom(64)).hexdigest()
 
-                if not os.path.exists(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash)):
-                    os.makedirs(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash))
+                if not os.path.exists(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash)):
+                    os.makedirs(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash))
 
-                f.save(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash, filename))
-                db_f = Files(chalid, os.path.join('static', 'uploads', md5hash, filename))
+                f.save(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash, filename))
+                db_f = Files(chalid, (md5hash + '/' + filename))
                 db.session.add(db_f)
 
             db.session.commit()
@@ -838,11 +838,11 @@ def admin_create_chal():
 
         md5hash = hashlib.md5(os.urandom(64)).hexdigest()
 
-        if not os.path.exists(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash)):
-            os.makedirs(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash))
+        if not os.path.exists(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash)):
+            os.makedirs(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash))
 
-        f.save(os.path.join(os.path.normpath(app.static_folder), 'uploads', md5hash, filename))
-        db_f = Files(chal.id, os.path.join('static', 'uploads', md5hash, filename))
+        f.save(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash, filename))
+        db_f = Files(chal.id, (md5hash + '/' + filename))
         db.session.add(db_f)
 
     db.session.commit()
@@ -861,7 +861,7 @@ def admin_delete_chal():
         files = Files.query.filter_by(chal=challenge.id).all()
         Files.query.filter_by(chal=challenge.id).delete()
         for file in files:
-            folder = os.path.dirname(file.location)
+            folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), 'uploads', file.location))
             rmdir(folder)
         Tags.query.filter_by(chal=challenge.id).delete()
         Challenges.query.filter_by(id=challenge.id).delete()
