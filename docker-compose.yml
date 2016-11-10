@@ -1,28 +1,24 @@
 ctfd:
   build: .
-  restart: always  
+  restart: always 
+  ports:
+    - "8000:8000" 
   environment: 
-    - &MU MYSQL_USER=ctfd
-    - &MP MYSQL_PASSWORD=You_Should_Probably_Override_This
-    - &MD MYSQL_DATABASE=ctfd
-  command: sh docker-compose-run.sh
+    - DATABASE_URL=mysql+pymysql://root@db/ctfd
   volumes_from:
     - data:rw
   links:
-    - db
+    - db:db
 
 db:
-  image: mariadb
+  image: mysql
   environment:
-    - *MU
-    - *MP
-    - *MD
-    - MYSQL_ROOT_PASSWORD=Unencrypted_Credentials_At_Rest
+    - MYSQL_ALLOW_EMPTY_PASSWORD=yes
   volumes_from:
     - data:rw
   
 data:
-  image: mariadb
+  image: mysql
   restart: always
   volumes:
     - /var/lib/mysql
