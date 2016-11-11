@@ -49,8 +49,6 @@ def admin_config():
             start = int(request.form['start'])
         if request.form.get('end'):
             end = int(request.form['end'])
-            if end < unix_time(datetime.datetime.now()):
-                end = None
 
         try:
             view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
@@ -144,23 +142,6 @@ def admin_config():
     db.session.commit()
     db.session.close()
 
-    months = [
-        'January', 'February', 'March', 'April',
-        'May', 'June', 'July', 'August',
-        'September', 'October', 'November', 'December'
-    ]
-
-    curr_year = datetime.date.today().year
-    start_days = 0
-    end_days = 0
-
-    if start:
-        start = datetime.datetime.fromtimestamp(float(start))
-        start_days = calendar.monthrange(start.year, start.month)[1]
-    if end:
-        end = datetime.datetime.fromtimestamp(float(end))
-        end_days = calendar.monthrange(end.year, end.month)[1]
-
     themes = get_themes()
     themes.remove(ctf_theme)
 
@@ -185,10 +166,6 @@ def admin_config():
                            prevent_name_change=prevent_name_change,
                            verify_emails=verify_emails,
                            view_after_ctf=view_after_ctf,
-                           months=months,
-                           curr_year=curr_year,
-                           start_days=start_days,
-                           end_days=end_days,
                            themes=themes)
 
 
