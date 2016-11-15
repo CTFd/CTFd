@@ -463,6 +463,14 @@ def admin_team(teamid):
             db.session.close()
             return jsonify({'data': ['success']})
 
+        verified = request.form.get('verified', None)
+        if verified:
+            verified = True if verified == 'true' else False
+            user.verified = verified
+            db.session.commit()
+            db.session.close()
+            return jsonify({'data': ['success']})
+
         name = request.form.get('name', None)
         password = request.form.get('password', None)
         email = request.form.get('email', None)

@@ -115,6 +115,8 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
                 </td>
                 <td class="text-center"><b>Admin</b>
                 </td>
+                <td class="text-center"><b>Verified</b>
+                </td>
                 <td class="text-center"><b>Settings</b>
                 </td>
             </tr>
@@ -135,6 +137,11 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
                 <td class="team-admin">
                     <div class="center-block checkbox text-center">
                         <input type="checkbox" {% if team.admin %}checked{% endif %}>
+                    </div>
+                </td>
+                <td class="team-verified">
+                    <div class="center-block checkbox text-center">
+                        <input type="checkbox" {% if team.verified %}checked{% endif %}>
                     </div>
                 </td>
                 <td class="text-center"><span>
@@ -211,11 +218,21 @@ $('#update-user').click(function(e){
 $('.team-admin input').on('change', function(){
     var elem = $(this).parent().parent().parent();
     var id = elem.find('.team-id').text().trim();
-    var admin = $(this).prop('checked')
-    var nonce = $('#nonce').val()
-    console.log(admin)
+    var admin = $(this).prop('checked');
+    var nonce = $('#nonce').val();
+    console.log(admin);
 
     $.post('{{ request.script_root }}/admin/team/'+id, {'admin':admin, 'nonce':nonce});
+});
+
+$('.team-verified input').on('change', function () {
+    var elem = $(this).parent().parent().parent();
+    var id = elem.find('.team-id').text().trim();
+    var verified = $(this).prop('checked');
+    var nonce = $('#nonce').val();
+    console.log(verified);
+
+    $.post('{{ request.script_root }}/admin/team/' + id, {'verified': verified, 'nonce': nonce});
 })
 
 $('#send-user-email').click(function(e){
