@@ -321,11 +321,12 @@
             if (typeof timestamp == "string"){
                 var timestamp = parseInt(timestamp);
             }
-            var m = moment(timestamp * 1000)
-            console.log(timestamp);
-            console.log(m.toISOString());
+            var m = moment(timestamp * 1000);
             if (place == 'start'){
-                console.log('Loading start')
+                console.log('Loading start');
+                console.log(timestamp);
+                console.log(m.toISOString());
+                console.log(m.unix());
                 var month = $('#start-month').val(m.month() + 1); // Months are zero indexed (http://momentjs.com/docs/#/get-set/month/)
                 var day = $('#start-day').val(m.date());
                 var year = $('#start-year').val(m.year());
@@ -333,8 +334,12 @@
                 var minute = $('#start-minute').val(m.minute());
                 load_date_values('start');
             } else if (place == 'end'){
+                console.log('Loading end');
+                console.log(timestamp);
+                console.log(m.toISOString());
+                console.log(m.unix());
                 var month = $('#end-month').val(m.month() + 1);
-                var day = $('#end-day').val(m.day());
+                var day = $('#end-day').val(m.date());
                 var year = $('#end-year').val(m.year());
                 var hour = $('#end-hour').val(m.hour());
                 var minute = $('#end-minute').val(m.minute());
@@ -408,6 +413,7 @@
         $(function () {
             var start = $('#start').val();
             var end = $('#end').val();
+            console.log(start);
             console.log(end);
             if (start){
                 load_timestamp('start', start);

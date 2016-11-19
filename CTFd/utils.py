@@ -298,7 +298,7 @@ def get_kpm(teamid): # keys per minute
 def get_themes():
     dir = os.path.join(app.root_path, app.template_folder)
     return [name for name in os.listdir(dir)
-            if os.path.isdir(os.path.join(dir, name))]
+            if os.path.isdir(os.path.join(dir, name)) and name != 'admin']
 
 
 @cache.memoize()

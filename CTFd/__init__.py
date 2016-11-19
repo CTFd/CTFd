@@ -13,6 +13,8 @@ from sqlalchemy.exc import OperationalError
 
 class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
+        if template.startswith('admin/'):
+            return super(ThemeLoader, self).get_source(environment, template)
         theme = get_config('ctf_theme')
         template = "/".join([theme, template])
         return super(ThemeLoader, self).get_source(environment, template)
