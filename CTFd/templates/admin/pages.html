@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" type="text/css" href="{{ request.script_root }}/static/{{ ctf_theme() }}/css/vendor/codemirror.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ request.script_root }}/static/admin/css/vendor/codemirror.min.css">
 {% endblock %}
 
 {% block content %}
@@ -60,7 +60,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/vendor/codemirror.min.js"></script>
+<script src="{{ request.script_root }}/static/admin/js/vendor/codemirror.min.js"></script>
 <script>
 var editor = CodeMirror.fromTextArea(document.getElementById("pages-editor"), {
     lineNumbers: true,
