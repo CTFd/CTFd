@@ -1,7 +1,7 @@
 var challenges;
 
 function loadchal(id) {
-    obj = $.grep(challenges['game'], function (e) {
+    var obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
     })[0];
 
@@ -9,7 +9,7 @@ function loadchal(id) {
 }
 
 function loadchalbyname(chalname) {
-    obj = $.grep(challenges['game'], function (e) {
+    var obj = $.grep(challenges['game'], function (e) {
       return e.name == chalname;
     })[0];
 
@@ -23,7 +23,7 @@ function updateChalWindow(obj) {
     chal.find('.chal-desc').html(marked(obj.description, {'gfm':true, 'breaks':true}));
     chal.find('.chal-files').empty();
     for (var i = 0; i < obj.files.length; i++) {
-        filename = obj.files[i].split('/');
+        var filename = obj.files[i].split('/');
         filename = filename[filename.length - 1];
         $('#chal-window').find('.chal-files').append("<div class='col-md-3 file-button-wrapper'><a class='file-button' href='" + script_root + '/files/' + obj.files[i] + "'><label class='challenge-wrapper file-wrapper hide-text'>" + filename + "</label></a></div>")
     }
@@ -109,8 +109,8 @@ function submitkey(chal, key, nonce) {
                 answer_input.removeClass("too-fast");
             }, 3000);
         }
-        marksolves()
-        updatesolves()
+        marksolves();
+        updatesolves();
         setTimeout(function(){
           $('.alert').slideUp();
           $('#submit-key').removeClass("disabled-button");
@@ -119,29 +119,34 @@ function submitkey(chal, key, nonce) {
     })
 }
 
-function marksolves() {
+function marksolves(cb) {
     $.get(script_root + '/solves', function (data) {
-        solves = $.parseJSON(JSON.stringify(data));
+        var solves = $.parseJSON(JSON.stringify(data));
         for (var i = solves['solves'].length - 1; i >= 0; i--) {
-            id = solves['solves'][i].chalid;
+            var id = solves['solves'][i].chalid;
             $('button[value="' + id + '"]').removeClass('theme-background');
             $('button[value="' + id + '"]').addClass('solved-challenge');
         };
+        if (cb) {
+            cb();
+        }
     });
 }
 
-function updatesolves(){
+function updatesolves(cb){
     $.get(script_root + '/chals/solves', function (data) {
-      solves = $.parseJSON(JSON.stringify(data));
-      chals = Object.keys(solves);
+        var solves = $.parseJSON(JSON.stringify(data));
+        var chals = Object.keys(solves);
 
-      for (var i = 0; i < chals.length; i++) {
-        obj = $.grep(challenges['game'], function (e) {
-            return e.name == chals[i];
-        })[0]
-        obj.solves = solves[chals[i]]
-      };
-
+        for (var i = 0; i < chals.length; i++) {
+            var obj = $.grep(challenges['game'], function (e) {
+                return e.name == chals[i];
+            })[0];
+            obj.solves = solves[chals[i]]
+        };
+        if (cb) {
+            cb();
+        }
     });
 }
 
@@ -203,13 +208,15 @@ function loadchals() {
             $("#"+ catid +"-row").find(".category-challenges > .chal-row").append(chalwrap);
         };
 
-        updatesolves();
-        marksolves();
+        var load_location_hash = function () {
+            if (window.location.hash.length > 0) {
+                loadchalbyname(window.location.hash.substring(1));
+                $("#chal-window").modal("show");
+            }
+        };
 
-        if (window.location.hash.length > 0) {
-            loadchalbyname(window.location.hash.substring(1));
-            $("#chal-window").modal("show");
-        }
+        updatesolves(load_location_hash);
+        marksolves();
 
         $('.challenge-button').click(function (e) {
             loadchal(this.value);
@@ -247,17 +254,17 @@ $.extend({
 });
 
 function colorhash (x) {
-    color = ""
+    color = "";
     for (var i = 20; i <= 60; i+=20){
-        x += i
-        x *= i
+        x += i;
+        x *= i;
         color += x.toString(16)
     };
-    return "#" + color.substring(0, 6)
+    return "#" + color.substring(0, 6);
 }
 
 function update(){
-    loadchals()
+    loadchals();
 }
 
 $(function() {
@@ -265,7 +272,7 @@ $(function() {
 });
 
 $('.nav-tabs a').click(function (e) {
-    e.preventDefault()
+    e.preventDefault();
     $(this).tab('show')
 })
 
