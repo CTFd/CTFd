@@ -181,7 +181,7 @@ def chal(chalid):
         # Challange not solved yet
         if not solves:
             chal = Challenges.query.filter_by(id=chalid).first()
-            key = str(request.form['key'].strip().lower())
+            key = unicode(request.form['key'].strip().lower())
             keys = json.loads(chal.flags)
 
             # Hit max attempts
@@ -205,7 +205,7 @@ def chal(chalid):
                         # return "1" # key was correct
                         return jsonify({'status':'1', 'message':'Correct'})
                 elif x['type'] == 1: #regex
-                    res = re.match(str(x['flag']), key, re.IGNORECASE)
+                    res = re.match(x['flag'], key, re.IGNORECASE)
                     if res and res.group() == key:
                         if ctftime():
                             solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
