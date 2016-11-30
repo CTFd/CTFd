@@ -363,11 +363,12 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None):
 
 
 def sendmail(addr, text):
+    ctf_name = get_config('ctf_name')
+    mailfrom_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
     if mailgun():
-        ctf_name = get_config('ctf_name')
         mg_api_key = get_config('mg_api_key') or app.config.get('MAILGUN_API_KEY')
         mg_base_url = get_config('mg_base_url') or app.config.get('MAILGUN_BASE_URL')
-        mailfrom_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+        
         r = requests.post(
             mg_base_url + '/messages',
             auth=("api", mg_api_key),
@@ -395,8 +396,8 @@ def sendmail(addr, text):
 
         smtp = get_smtp(**data)
         msg = email.mime.text.MIMEText(text)
-        msg['Subject'] = "Message from {0}".format(get_config('ctf_name'))
-        msg['From'] = 'noreply@ctfd.io'
+        msg['Subject'] = "Message from {0}".format(ctf_name)
+        msg['From'] = mailfrom_addr
         msg['To'] = addr
 
         smtp.sendmail(msg['From'], [msg['To']], msg.as_string())
