@@ -74,7 +74,7 @@ def chals_per_solves():
         .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
     json = {}
     for chal, count, name in solves:
-        json[name] = count
+        json[chal] = count
     db.session.close()
     return jsonify(json)
 

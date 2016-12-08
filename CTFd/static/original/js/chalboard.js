@@ -136,13 +136,13 @@ function marksolves(cb) {
 function updatesolves(cb){
     $.get(script_root + '/chals/solves', function (data) {
         var solves = $.parseJSON(JSON.stringify(data));
-        var chals = Object.keys(solves);
+        var chalids = Object.keys(solves);
 
-        for (var i = 0; i < chals.length; i++) {
+        for (var i = 0; i < chalids.length; i++) {
             var obj = $.grep(challenges['game'], function (e) {
-                return e.name == chals[i];
+                return e.id == chalids[i];
             })[0];
-            obj.solves = solves[chals[i]]
+            obj.solves = solves[chalids[i]]
         };
         if (cb) {
             cb();
