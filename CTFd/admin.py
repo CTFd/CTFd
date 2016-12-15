@@ -1,7 +1,7 @@
-from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
+from flask import render_template, render_template_string, request, redirect, abort, jsonify, url_for, session, Blueprint
 from CTFd.utils import sha512, is_safe_url, authed, admins_only, is_admin, unix_time, unix_time_millis, get_config, \
     set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes, cache
+    container_stop, container_start, get_themes, cache, get_configurable_plugins
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 from itsdangerous import TimedSerializer, BadTimeSignature
@@ -868,3 +868,17 @@ def admin_update_chal():
     db.session.commit()
     db.session.close()
     return redirect(url_for('admin.admin_chals'))
+
+
+@admin.route('/admin/plugins/<plugin>', methods=['GET', 'POST'])
+@admins_only
+def admin_plugin_config(plugin):
+    if request.method == 'GET':
+        if plugin in get_configurable_plugins():
+            config = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
+            return render_template_string(config)
+        abort(404)
+    elif request.method == 'POST':
+        for k, v in request.form.items():
+            set_config(k, v)
+        return '1'

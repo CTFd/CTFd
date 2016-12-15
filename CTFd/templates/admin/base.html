@@ -45,6 +45,14 @@
             <li><a href="{{ request.script_root }}/admin/chals">Challenges</a></li>
             <li><a href="{{ request.script_root }}/admin/statistics">Statistics</a></li>
             <li><a href="{{ request.script_root }}/admin/config">Config</a></li>
+            <li>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plugins <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                  {% for plugin in get_configurable_plugins() %}
+                      <li><a href="{{ request.script_root }}/admin/plugins/{{ plugin }}">{{ plugin }}</a></li>
+                  {% endfor %}
+              </ul>
+            </li>
           </ul>
         </div>
       </div>

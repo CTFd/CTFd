@@ -101,6 +101,8 @@ def init_utils(app):
     app.jinja_env.globals.update(ctf_name=ctf_name)
     app.jinja_env.globals.update(ctf_theme=ctf_theme)
     app.jinja_env.globals.update(can_create_container=can_create_container)
+    app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
+    app.jinja_env.globals.update(get_config=get_config)
 
     @app.context_processor
     def inject_user():
@@ -299,6 +301,12 @@ def get_themes():
     dir = os.path.join(app.root_path, app.template_folder)
     return [name for name in os.listdir(dir)
             if os.path.isdir(os.path.join(dir, name)) and name != 'admin']
+
+
+def get_configurable_plugins():
+    dir = os.path.join(app.root_path, 'plugins')
+    return [name for name in os.listdir(dir)
+            if os.path.isdir(os.path.join(dir, name))]
 
 
 @cache.memoize()
