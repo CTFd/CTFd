@@ -1,9 +1,11 @@
-from flask import current_app as app, session, render_template, jsonify, Blueprint, redirect, url_for, request
-from CTFd.utils import unix_time, authed, get_config
-from CTFd.models import db, Teams, Solves, Awards, Challenges
+from flask import render_template, jsonify, Blueprint, redirect, url_for, request
 from sqlalchemy.sql.expression import union_all
 
+from CTFd.utils import unix_time, authed, get_config
+from CTFd.models import db, Teams, Solves, Awards, Challenges
+
 scoreboard = Blueprint('scoreboard', __name__)
+
 
 def get_standings(admin=False, count=None):
     score = db.func.sum(Challenges.value).label('score')
@@ -16,13 +18,13 @@ def get_standings(admin=False, count=None):
         .group_by(results.columns.teamid).subquery()
     if admin:
         standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), Teams.banned, sumscores.columns.score) \
-            .join(sumscores, Teams.id == sumscores.columns.teamid) \
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+                                    .join(sumscores, Teams.id == sumscores.columns.teamid) \
+                                    .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
     else:
         standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), sumscores.columns.score) \
-            .join(sumscores, Teams.id == sumscores.columns.teamid) \
-            .filter(Teams.banned == False) \
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+                                    .join(sumscores, Teams.id == sumscores.columns.teamid) \
+                                    .filter(Teams.banned == False) \
+                                    .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
     if count is None:
         standings = standings_query.all()
     else:
@@ -44,9 +46,9 @@ def scores():
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
     standings = get_standings()
-    json = {'standings':[]}
+    json = {'standings': []}
     for i, x in enumerate(standings):
-        json['standings'].append({'pos':i+1, 'id':x.teamid, 'team':x.name,'score':int(x.score)})
+        json['standings'].append({'pos': i + 1, 'id': x.teamid, 'team': x.name, 'score': int(x.score)})
     return jsonify(json)
 
 
@@ -61,14 +63,13 @@ def topteams(count):
     if count > 20 or count < 0:
         count = 10
 
-    json = {'scores':{}}
+    json = {'scores': {}}
     standings = get_standings(count=count)
 
     for team in standings:
         solves = Solves.query.filter_by(teamid=team.teamid).all()
         awards = Awards.query.filter_by(teamid=team.teamid).all()
         json['scores'][team.name] = []
-        scores = []
         for x in solves:
             json['scores'][team.name].append({
                 'chal': x.chalid,

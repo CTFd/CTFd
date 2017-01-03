@@ -1,15 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
-from CTFd import create_app
-from random import randint
-
 import datetime
-import random
 import hashlib
-import os
-import sys
+import random
+
+from CTFd import create_app
+from CTFd.models import Teams, Solves, Challenges, WrongKeys, Keys, Files
 
 app = create_app()
 
@@ -211,14 +208,14 @@ def gen_file():
 
 def random_date(start, end):
     return start + datetime.timedelta(
-        seconds=randint(0, int((end - start).total_seconds())))
+        seconds=random.randint(0, int((end - start).total_seconds())))
 
 
 if __name__ == '__main__':
     with app.app_context():
         db = app.db
 
-        ### Generating Challenges
+        # Generating Challenges
         print("GENERATING CHALLENGES")
         for x in range(CHAL_AMOUNT):
             word = gen_word()
@@ -228,7 +225,7 @@ if __name__ == '__main__':
             db.session.add(Keys(x + 1, word, 0))
             db.session.commit()
 
-        ### Generating Files
+        # Generating Files
         print("GENERATING FILES")
         AMT_CHALS_WITH_FILES = int(CHAL_AMOUNT * (3.0 / 4.0))
         for x in range(AMT_CHALS_WITH_FILES):
@@ -236,9 +233,10 @@ if __name__ == '__main__':
             filename = gen_file()
             md5hash = hashlib.md5(filename).hexdigest()
             db.session.add(Files(chal, md5hash + '/' + filename))
+
         db.session.commit()
 
-        ### Generating Users
+        # Generating Users
         print("GENERATING USERS")
         used = []
         count = 0
@@ -250,9 +248,10 @@ if __name__ == '__main__':
                 team.verified = True
                 db.session.add(team)
                 count += 1
+
         db.session.commit()
 
-        ### Generating Solves
+        # Generating Solves
         print("GENERATING SOLVES")
         for x in range(USER_AMOUNT):
             used = []
@@ -268,9 +267,10 @@ if __name__ == '__main__':
                     base_time = new_base
 
                     db.session.add(solve)
+
         db.session.commit()
 
-        ### Generating Wrong Keys
+        # Generating Wrong Keys
         print("GENERATING WRONG KEYS")
         for x in range(USER_AMOUNT):
             used = []
@@ -286,5 +286,6 @@ if __name__ == '__main__':
                     base_time = new_base
 
                     db.session.add(wrong)
+
         db.session.commit()
         db.session.close()

@@ -1,6 +1,7 @@
 import os
 
 ##### GENERATE SECRET KEY #####
+
 with open('.ctfd_secret_key', 'a+') as secret:
     secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
     key = secret.read()
@@ -104,8 +105,8 @@ solely on IP addresses.
 '''
 TRUSTED_PROXIES = [
     '^127\.0\.0\.1$',
-    ## Remove the following proxies if you do not trust the local network
-    ## For example if you are running a CTF on your laptop and the teams are all on the same network
+    # Remove the following proxies if you do not trust the local network
+    # For example if you are running a CTF on your laptop and the teams are all on the same network
     '^::1$',
     '^fc00:',
     '^10\.',

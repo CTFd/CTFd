@@ -1,8 +1,6 @@
-from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Containers, ip2long, long2ip
-from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
-import os
-import importlib
 import glob
+import importlib
+import os
 
 
 def init_plugins(app):
@@ -12,4 +10,4 @@ def init_plugins(app):
             module = '.' + os.path.basename(module)
             module = importlib.import_module(module, package='CTFd.plugins')
             module.load(app)
-            print " * Loaded module,", module
+            print(" * Loaded module, %s" % module)
