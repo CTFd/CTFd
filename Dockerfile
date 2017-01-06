@@ -1,8 +1,11 @@
-FROM alpine:3.2
-RUN apk update && apk upgrade
-RUN apk add git gcc musl-dev libffi-dev python python-dev py-pip
+FROM ubuntu:latest
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install build-essential python-dev python-pip libffi-dev -y
 
-RUN mkdir /opt
+VOLUME ["/opt/CTFd"]
+
+RUN mkdir -p /opt/CTFd
 COPY . /opt/CTFd
 WORKDIR /opt/CTFd
 

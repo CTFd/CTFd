@@ -1,26 +1,21 @@
-ctfd:
-  build: .
-  restart: always 
-  ports:
-    - "8000:8000" 
-  environment: 
-    - DATABASE_URL=mysql+pymysql://root@db/ctfd
-  volumes_from:
-    - data:rw
-  links:
-    - db:db
+version: '2'
 
-db:
-  image: mysql
-  environment:
-    - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-  volumes_from:
-    - data:rw
-  
-data:
-  image: mysql
-  restart: always
-  volumes:
-    - /var/lib/mysql
-    - /opt/CTFd/CTFd/logs
-  command: "tail -f /dev/null"
+services:
+  ctfd:
+    build: .
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql+pymysql://root@db/ctfd
+    volumes:
+      - .data/CTFd/logs:/opt/CTFd/CTFd/logs
+    links:
+      - db:db
+
+  db:
+    image: mysql
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - .data/mysql:/var/lib/mysql
