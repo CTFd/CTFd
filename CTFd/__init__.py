@@ -40,6 +40,8 @@ def create_app(config='CTFd.config'):
             db.create_all()
         except OperationalError:
             db.create_all()
+        except ProgrammingError:  ## Database already exists
+            pass
         else:
             db.create_all()
 
