@@ -18,7 +18,7 @@ class ThemeLoader(FileSystemLoader):
         return super(ThemeLoader, self).get_source(environment, template)
 
 
-def create_app(config='CTFd.config'):
+def create_app(config='CTFd.config.Config'):
     app = Flask(__name__)
     with app.app_context():
         app.config.from_object(config)

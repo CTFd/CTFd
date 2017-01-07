@@ -2,11 +2,9 @@ from CTFd import create_app
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.engine.url import make_url
 
+
 def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password"):
-    app = create_app()
-    app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = False
-    app.config['TESTING'] = True
-    app.config['DEBUG'] = True
+    app = create_app('CTFd.config.TestingConfig')
 
     url = make_url(app.config['SQLALCHEMY_DATABASE_URI'])
     if url.drivername == 'postgres':
@@ -15,7 +13,8 @@ def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="
     if database_exists(url):
         drop_database(url)
         create_database(url)
-        app.db.create_all()
+        with app.app_context():
+            app.db.create_all()
 
     with app.app_context():
         with app.test_client() as client:

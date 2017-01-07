@@ -20,6 +20,36 @@ def test_register_user():
         assert team_count == 2  # There's the admin user and the created user
 
 
+def test_register_duplicate_teamname():
+    """A user shouldn't be able to use and already registered team name"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(app, name="user1", email="user2@ctfd.io", password="password")
+        team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
+        assert team_count == 2  # There's the admin user and the first created user
+
+
+def test_register_duplicate_email():
+    """A user shouldn't be able to use an already registered email address"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(app, name="user2", email="user1@ctfd.io", password="password")
+        team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
+        assert team_count == 2  # There's the admin user and the first created user
+
+
+def test_user_bad_login():
+    """A user should not be able to login with an incorrect password"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app, name="user", password="wrong_password")
+        r = client.get('/profile')
+        assert r.location.startswith("http://localhost/login")  # We got redirected to login
+
+
 def test_user_login():
     """Can a registered user can login"""
     app = create_ctfd()
@@ -72,6 +102,16 @@ def test_user_get_scores():
         assert r.status_code == 200
 
 
+def test_user_get_topteams():
+    """Can a registered user can load /top/10"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/top/10')
+        assert r.status_code == 200
+
+
 def test_user_get_challenges():
     """Can a registered user can load /challenges"""
     app = create_ctfd()
@@ -89,6 +129,26 @@ def test_user_get_chals():
         register_user(app)
         client = login_as_user(app)
         r = client.get('/chals')
+        assert r.status_code == 200
+
+
+def test_user_get_solves_per_chal():
+    """Can a registered user can load /chals/solves"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/chals/solves')
+        assert r.status_code == 200
+
+
+def test_user_get_solves():
+    """Can a registered user can load /solves"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/solves')
         assert r.status_code == 200
 
 

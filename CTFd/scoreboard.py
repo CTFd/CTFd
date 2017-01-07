@@ -58,7 +58,7 @@ def topteams(count):
         return redirect(url_for('auth.login', next=request.path))
     try:
         count = int(count)
-    except:
+    except ValueError:
         count = 10
     if count > 20 or count < 0:
         count = 10
