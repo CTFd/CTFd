@@ -12,7 +12,7 @@ def test_index():
 
 
 def test_register_user():
-    """Tests whether a user can be registered"""
+    """Can a user can be registered"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -21,7 +21,7 @@ def test_register_user():
 
 
 def test_user_login():
-    """Tests to see if a registered user can login"""
+    """Can a registered user can login"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -32,7 +32,7 @@ def test_user_login():
 
 
 def test_user_isnt_admin():
-    """Tests to see if a registered user cannot access admin pages"""
+    """A registered user cannot access admin pages"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -40,3 +40,95 @@ def test_user_isnt_admin():
         r = client.get('/admin/graphs')
         assert r.location == "http://localhost/login"
         assert r.status_code == 302
+
+
+def test_user_get_teams():
+    """Can a registered user can load /teams"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/teams')
+        assert r.status_code == 200
+
+
+def test_user_get_scoreboard():
+    """Can a registered user can load /scoreboard"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/scoreboard')
+        assert r.status_code == 200
+
+
+def test_user_get_scores():
+    """Can a registered user can load /scores"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/scores')
+        assert r.status_code == 200
+
+
+def test_user_get_challenges():
+    """Can a registered user can load /challenges"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/challenges')
+        assert r.status_code == 200
+
+
+def test_user_get_chals():
+    """Can a registered user can load /chals"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/chals')
+        assert r.status_code == 200
+
+
+def test_user_get_team_page():
+    """Can a registered user can load their public profile (/team/2)"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/team/2')
+        assert r.status_code == 200
+
+
+def test_user_get_profile():
+    """Can a registered user can load their private profile (/profile)"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/profile')
+        assert r.status_code == 200
+
+
+def test_user_get_logout():
+    """Can a registered user can load /logout"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        client.get('/logout', follow_redirects=True)
+        r = client.get('/challenges')
+        assert r.location == "http://localhost/login?next=challenges"
+        assert r.status_code == 302
+
+
+def test_user_get_reset_password():
+    """Can an unregistered user can load /reset_password"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = app.test_client()
+        r = client.get('/reset_password')
+        assert r.status_code == 200
