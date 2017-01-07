@@ -1,14 +1,12 @@
-from flask import Flask, render_template, request, redirect, abort, session, jsonify, json as json_mod, url_for
-from flask_sqlalchemy import SQLAlchemy
-from logging.handlers import RotatingFileHandler
-from flask_session import Session
-from sqlalchemy_utils import database_exists, create_database
-from jinja2 import FileSystemLoader, TemplateNotFound
-from utils import get_config, set_config, cache
 import os
-import sqlalchemy
+
+from flask import Flask
+from jinja2 import FileSystemLoader
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import OperationalError
+from sqlalchemy_utils import database_exists, create_database
+
+from utils import get_config, set_config, cache
 
 
 class ThemeLoader(FileSystemLoader):

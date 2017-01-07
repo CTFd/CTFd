@@ -1,16 +1,15 @@
-from flask import render_template, request, redirect, abort, jsonify, url_for, session, Blueprint
-from CTFd.utils import sha512, is_safe_url, authed, can_send_mail, sendmail, can_register, get_config, verify_email
-from CTFd.models import db, Teams
+import logging
+import os
+import re
+import time
+import urllib
 
+from flask import current_app as app, render_template, request, redirect, url_for, session, Blueprint
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from passlib.hash import bcrypt_sha256
-from flask import current_app as app
 
-import logging
-import time
-import re
-import os
-import urllib
+from CTFd.utils import sha512, is_safe_url, authed, can_send_mail, sendmail, can_register, get_config, verify_email
+from CTFd.models import db, Teams
 
 auth = Blueprint('auth', __name__)
 
@@ -20,7 +19,7 @@ auth = Blueprint('auth', __name__)
 def confirm_user(data=None):
     if not get_config('verify_emails'):
         return redirect(url_for('challenges.challenges_view'))
-    if data and request.method == "GET":  ## User is confirming email account
+    if data and request.method == "GET": # User is confirming email account
         try:
             s = Signer(app.config['SECRET_KEY'])
             email = s.unsign(urllib.unquote_plus(data.decode('base64')))
@@ -37,7 +36,7 @@ def confirm_user(data=None):
         if authed():
             return redirect(url_for('challenges.challenges_view'))
         return redirect(url_for('auth.login'))
-    if not data and request.method == "GET":  ## User has been directed to the confirm page because his account is not verified
+    if not data and request.method == "GET": # User has been directed to the confirm page because his account is not verified
         if not authed():
             return redirect(url_for('auth.login'))
         team = Teams.query.filter_by(id=session['id']).first()
@@ -46,7 +45,6 @@ def confirm_user(data=None):
         else:
             verify_email(team.email)
         return render_template('confirm.html', team=team)
-
 
 
 @auth.route('/reset_password', methods=['POST', 'GET'])
@@ -76,7 +74,7 @@ def reset_password(data=None):
         s = TimedSerializer(app.config['SECRET_KEY'])
         token = s.dumps(team.name)
         text = """
-Did you initiate a password reset? 
+Did you initiate a password reset?
 
 {0}/{1}
 
@@ -132,15 +130,15 @@ def register():
                 session['admin'] = team.admin
                 session['nonce'] = sha512(os.urandom(10))
 
-                if can_send_mail() and get_config('verify_emails'): ## Confirming users is enabled and we can send email.
+                if can_send_mail() and get_config('verify_emails'): # Confirming users is enabled and we can send email.
                     db.session.close()
                     logger = logging.getLogger('regs')
                     logger.warn("[{0}] {1} registered (UNCONFIRMED) with {2}".format(time.strftime("%m/%d/%Y %X"),
-                                                                       request.form['name'].encode('utf-8'),
-                                                                       request.form['email'].encode('utf-8')))
+                                                                                     request.form['name'].encode('utf-8'),
+                                                                                     request.form['email'].encode('utf-8')))
                     return redirect(url_for('auth.confirm_user'))
-                else: ## Don't care about confirming users
-                    if can_send_mail(): ## We want to notify the user that they have registered.
+                else: # Don't care about confirming users
+                    if can_send_mail(): # We want to notify the user that they have registered.
                         sendmail(request.form['email'], "You've successfully registered for {}".format(get_config('ctf_name')))
 
         db.session.close()
