@@ -37,7 +37,7 @@ def confirm_user(data=None):
         if authed():
             return redirect(url_for('challenges.challenges_view'))
         return redirect(url_for('auth.login'))
-    if not data and request.method == "GET":  ## User has been directed to the confirm page because his account is not verified
+    if not data and request.method == "GET":  ## User has been directed to the confirm page because their account is not verified
         if not authed():
             return redirect(url_for('auth.login'))
         team = Teams.query.filter_by(id=session['id']).first()
