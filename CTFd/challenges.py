@@ -86,7 +86,7 @@ def solves(teamid=None):
     if teamid is None:
         if is_admin():
             solves = Solves.query.filter_by(teamid=session['id']).all()
-        elif authed():
+        elif user_can_view_challenges():
             solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.teamid == session['id'], Teams.banned == False).all()
         else:
             return redirect(url_for('auth.login', next='solves'))
