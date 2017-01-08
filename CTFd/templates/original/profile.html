@@ -96,7 +96,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <span class="input">
-                            <input class="input-field" type="text" name="affiliation" id="affiliation-input" value="{% if affiliation %}{{affiliation}}{% endif %}" />
+                            <input class="input-field" type="text" name="affiliation" id="affiliation-input" value="{{affiliation}}" />
                             <label class="input-label" for="affiliation-input">
                                 <span class="label-content" data-content="Affiliation">Affiliation</span>
                             </label>
@@ -106,7 +106,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <span class="input">
-                            <input class="input-field" type="text" name="website" id="website-input" value="{% if website %}{{website}}{% endif %}" />
+                            <input class="input-field" type="text" name="website" id="website-input" value="{{website}}" />
                             <label class="input-label" for="website-input">
                                 <span class="label-content" data-content="Website">Website</span>
                             </label>
@@ -116,7 +116,11 @@
                 <div class="row">
                     <div class="col-md-12">
                         <span class="input">
-                            <input class="input-field" type="text" name="country" id="country-input" value="{% if country %}{{country}}{% endif %}" />
+                            <select class="form-control" name="country" id="country-input">
+                                {% for c in countries.all %}
+                                    <option value="{{ c.1 }}"{% if country == c.1 %}selected="selected"{% endif %}>{{ c.0 }}</option>
+                                {% endfor %}
+                            </select>
                             <label class="input-label" for="country-input">
                                 <span class="label-content" data-content="Country">Country</span>
                             </label>

@@ -24,8 +24,8 @@
             <tr>
                 <td><a href="{{ request.script_root }}/team/{{ team.id }}">{{ team.name }}</a></td>
                 <td>{% if team.website and team.website.startswith('http://') %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}</td>
-                <td><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span></td>
-                <td class="hidden-xs"><span>{% if team.country %}{{ team.country }}{% endif %}</span></td>
+                <td>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</td>
+                <td>{% if team.country %}<img src="{{ request.script_root }}/static/{{ ctf_theme() }}/img/flags/{{ team.country }}.png">{% endif %}</td>
             </tr>
         {% endfor %}
         </tbody>

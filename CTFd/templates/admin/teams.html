@@ -86,8 +86,12 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
                             <input type="text" class="form-control" name="affiliation" id="affiliation" placeholder="Enter affiliation">
                         </div>
                         <div class="form-group">
-                            <label for="affiliation">Country</label>
-                            <input type="text" class="form-control" name="country" id="country" placeholder="Enter country">
+                            <label for="country">Country</label>
+                            <select class="form-control" name="country" id="country">
+                                {% for c in countries.all %}
+                                    <option value="{{ c.1 }}">{{ c.0 }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div id="results">
 
@@ -101,39 +105,26 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
     <table id="teamsboard" class="table table-striped">
         <thead>
             <tr>
-                <td width="10px" class="text-center"><b>ID</b>
-                </td>
-                <td class="text-center"><b>Team</b>
-                </td>
-                <td class="text-center"><b>Email</b>
-                </td>
-                <td class="text-center"><b>Website</b>
-                </td>
-                <td class="text-center"><b>Affiliation</b>
-                </td>
-                <td class="text-center"><b>Country</b>
-                </td>
-                <td class="text-center"><b>Admin</b>
-                </td>
-                <td class="text-center"><b>Verified</b>
-                </td>
-                <td class="text-center"><b>Settings</b>
-                </td>
+                <td width="10px" class="text-center"><b>ID</b></td>
+                <td class="text-center"><b>Team</b></td>
+                <td class="text-center"><b>Email</b></td>
+                <td class="text-center"><b>Website</b></td>
+                <td class="text-center"><b>Affiliation</b></td>
+                <td class="text-center"><b>Country</b></td>
+                <td class="text-center"><b>Admin</b></td>
+                <td class="text-center"><b>Verified</b></td>
+                <td class="text-center"><b>Settings</b></td>
             </tr>
         </thead>
         <tbody>
             {% for team in teams %}
             <tr name="{{ team.id }}">
                 <td class="team-id">{{ team.id }}</td>
-                <td class="team-name"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
-                </td>
+                <td class="team-name"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a></td>
                 <td class="team-email">{{ team.email | truncate(32) }}</td>
-                <td class="team-website">{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website | truncate(32) }}</a>{% endif %}
-                </td>
-                <td class="team-affiliation"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
-                </td>
-                <td class="team-country"><span>{% if team.country %}{{ team.country }}{% endif %}</span>
-                </td>
+                <td class="team-website">{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website | truncate(32) }}</a>{% endif %}</td>
+                <td class="team-affiliation"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span></td>
+                <td class="team-country">{% if team.country %}<img src="{{ request.script_root }}/static/{{ ctf_theme() }}/img/flags/{{ team.country }}.png">{% endif %}</td>
                 <td class="team-admin">
                     <div class="center-block checkbox text-center">
                         <input type="checkbox" {% if team.admin %}checked{% endif %}>
@@ -181,7 +172,7 @@ function load_update_modal(id, name, email, website, affiliation, country){
     modal_form.find('input[name=email]').val(email)
     modal_form.find('input[name=website]').val(website)
     modal_form.find('input[name=affiliation]').val(affiliation)
-    modal_form.find('input[name=country]').val(country)
+    modal_form.find('select[name=country]').val(country)
     $('#user form').attr('action', '{{ request.script_root }}/admin/team/'+id)
     $('#user').modal("show");
 }
@@ -194,18 +185,24 @@ $('#update-user').click(function(e){
         var data = $.parseJSON(JSON.stringify(data))
         for (var i = 0; i < data['data'].length; i++) {
             if (data['data'][i] == 'success'){
-                var row = $('tr[name='+id+']')
-                console.log($.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'])
-                console.log(row.find('.team-name > a'))
-                row.find('.team-name > a').text( $.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'] );
-                row.find('.team-email').text( $.grep(user_data, function(e){ return e.name == 'email'; })[0]['value'] );
+                var row = $('tr[name='+id+']');
+                var name = $.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'];
+                var email = $.grep(user_data, function(e){ return e.name == 'email'; })[0]['value'];
+                var website = $.grep(user_data, function(e){ return e.name == 'website'; })[0]['value'];
+                var affiliation = $.grep(user_data, function(e){ return e.name == 'affiliation'; })[0]['value'];
+                var country = $.grep(user_data, function(e){ return e.name == 'country'; })[0]['value'];
 
-                row.find('.team-website > a').empty()
-                var website = $.grep(user_data, function(e){ return e.name == 'website'; })[0]['value']
+                row.find('.team-name > a').text(name);
+                row.find('.team-email').text(email);
+
+                row.find('.team-website').empty();
                 row.find('.team-website').append($('<a>').attr('href', website).text(website));
 
-                row.find('.team-affiliation').text( $.grep(user_data, function(e){ return e.name == 'affiliation'; })[0]['value'] );
-                row.find('.team-country').text( $.grep(user_data, function(e){ return e.name == 'country'; })[0]['value'] );
+                row.find('.team-affiliation').text(affiliation);
+
+                row.find('.team-country').empty();
+                row.find('.team-country').append($('<img>').attr('src', '{{ request.script_root }}/static/{{ ctf_theme() }}/img/flags/' + country + '.png'));
+
                 $('#user').modal('hide');
             }
             else{
@@ -268,7 +265,7 @@ $('.fa-pencil-square-o').click(function(){
     var email = elem.find('.team-email').text().trim();
     var website = elem.find('.team-website').text().trim();
     var affiliation = elem.find('.team-affiliation').text().trim();
-    var country = elem.find('.team-country').text().trim();
+    var country = elem.find('.team-country img').attr('src').split('/').pop().substr(0, 2);
 
     load_update_modal(id, name, email, website, affiliation, country);
 });

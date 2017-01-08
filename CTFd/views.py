@@ -8,6 +8,7 @@ from passlib.hash import bcrypt_sha256
 from CTFd.utils import authed, is_setup, validate_url, get_config, set_config, sha512, cache, ctftime, view_after_ctf, ctf_started, \
     is_admin
 from CTFd.models import db, Teams, Solves, Awards, Files, Pages
+from CTFd import countries
 
 views = Blueprint('views', __name__)
 
@@ -184,10 +185,12 @@ def profile():
                 errors.append('Pick a longer team name')
             if website.strip() and not validate_url(website):
                 errors.append("That doesn't look like a valid URL")
+            if country not in countries.keys:
+                errors.append('Invalid country')
 
             if len(errors) > 0:
                 return render_template('profile.html', name=name, email=email, website=website,
-                                       affiliation=affiliation, country=country, errors=errors)
+                                       affiliation=affiliation, country=country, countries=countries, errors=errors)
             else:
                 team = Teams.query.filter_by(id=session['id']).first()
                 if not get_config('prevent_name_change'):
@@ -216,7 +219,7 @@ def profile():
             prevent_name_change = get_config('prevent_name_change')
             confirm_email = get_config('verify_emails') and not user.verified
             return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
-                                   country=country, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
+                                   country=country, countries=countries, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
     else:
         return redirect(url_for('auth.login'))
 

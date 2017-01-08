@@ -8,8 +8,9 @@ from flask import current_app as app, render_template, request, redirect, url_fo
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from passlib.hash import bcrypt_sha256
 
-from CTFd.utils import sha512, is_safe_url, authed, can_send_mail, sendmail, can_register, get_config, verify_email
+from CTFd.utils import sha512, is_safe_url, authed, can_send_mail, sendmail, can_register, get_config, verify_email, validate_url
 from CTFd.models import db, Teams
+from CTFd import countries
 
 auth = Blueprint('auth', __name__)
 
@@ -95,6 +96,9 @@ def register():
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
+        website = request.form['website']
+        affiliation = request.form['affiliation']
+        country = request.form['country']
 
         name_len = len(name) == 0
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
@@ -115,12 +119,16 @@ def register():
             errors.append('Pick a shorter password')
         if name_len:
             errors.append('Pick a longer team name')
+        if website.strip() and not validate_url(website):
+            errors.append("That doesn't look like a valid URL")
+        if country not in countries.keys:
+            errors.append('Invalid country')
 
         if len(errors) > 0:
-            return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
+            return render_template('register.html', errors=errors, name=name, email=email, password=password, website=website, affiliation=affiliation, country=country, countries=countries)
         else:
             with app.app_context():
-                team = Teams(name, email.lower(), password)
+                team = Teams(name, email.lower(), password, website, affiliation, country)
                 db.session.add(team)
                 db.session.commit()
                 db.session.flush()
@@ -147,7 +155,9 @@ def register():
         logger.warn("[{0}] {1} registered with {2}".format(time.strftime("%m/%d/%Y %X"), request.form['name'].encode('utf-8'), request.form['email'].encode('utf-8')))
         return redirect(url_for('challenges.challenges_view'))
     else:
-        return render_template('register.html')
+        return render_template('register.html',
+                               country='wo', # default: Multiple Countries
+                               countries=countries)
 
 
 @auth.route('/login', methods=['POST', 'GET'])

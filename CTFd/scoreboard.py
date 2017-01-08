@@ -17,11 +17,11 @@ def get_standings(admin=False, count=None):
     sumscores = db.session.query(results.columns.teamid, db.func.sum(results.columns.score).label('score'), db.func.max(results.columns.date).label('date')) \
         .group_by(results.columns.teamid).subquery()
     if admin:
-        standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), Teams.banned, sumscores.columns.score) \
+        standings_query = db.session.query(Teams.id.label('teamid'), Teams.name, Teams.country, Teams.banned, sumscores.columns.score) \
                                     .join(sumscores, Teams.id == sumscores.columns.teamid) \
                                     .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
     else:
-        standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), sumscores.columns.score) \
+        standings_query = db.session.query(Teams.id.label('teamid'), Teams.name, Teams.country, sumscores.columns.score) \
                                     .join(sumscores, Teams.id == sumscores.columns.teamid) \
                                     .filter(Teams.banned == False) \
                                     .order_by(sumscores.columns.score.desc(), sumscores.columns.date)

@@ -8,7 +8,8 @@
         <thead>
             <tr>
                 <td width="10px"><b>Place</b></td>
-                <td><b>Team</b></td>
+                <td width="60%"><b>Team</b></td>
+                <td><b>Country</b></td>
                 <td><b>Score</b></td>
                 <td><b>Status</b></td>
             </tr>
@@ -18,6 +19,7 @@
             <tr>
                 <td>{{ loop.index }}</td>
                 <td><a href="{{ request.script_root }}/admin/team/{{ team.teamid }}">{{ team.name }}</a></td>
+                <td>{% if team.country %}<img src="{{ request.script_root }}/static/{{ ctf_theme() }}/img/flags/{{ team.country }}.png">{% endif %}</td>
                 <td>{{ team.score }}</td>
                 <td>
                 {% if not team.banned %}

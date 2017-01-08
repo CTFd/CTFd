@@ -12,6 +12,7 @@ from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
     container_stop, container_start, get_themes, cache
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
+from CTFd import countries
 
 admin = Blueprint('admin', __name__)
 
@@ -420,7 +421,7 @@ def admin_teams(page):
     teams = Teams.query.order_by(Teams.id.asc()).slice(page_start, page_end).all()
     count = db.session.query(db.func.count(Teams.id)).first()[0]
     pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template('admin/teams.html', teams=teams, pages=pages, curr_page=page)
+    return render_template('admin/teams.html', teams=teams, pages=pages, curr_page=page, countries=countries)
 
 
 @admin.route('/admin/team/<teamid>', methods=['GET', 'POST'])
