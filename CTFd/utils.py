@@ -1,33 +1,29 @@
-from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Containers, ip2long, long2ip
-
-from six.moves.urllib.parse import urlparse, urljoin
-import six
-from werkzeug.utils import secure_filename
-from functools import wraps
-from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
-from flask_caching import Cache
-from itsdangerous import Signer, BadSignature
-from socket import inet_aton, inet_ntoa, socket
-from struct import unpack, pack, error
-from sqlalchemy.engine.url import make_url
-from sqlalchemy import create_engine
-
-import time
 import datetime
-import hashlib
-import shutil
-import requests
-import logging
-import os
-import sys
-import re
-import time
-import smtplib
 import email
-import tempfile
-import subprocess
-import urllib
+import functools
+import hashlib
 import json
+import logging
+import logging.handlers
+import os
+import re
+import requests
+import shutil
+import smtplib
+import socket
+import subprocess
+import sys
+import tempfile
+import time
+import urllib
+
+from flask import current_app as app, request, redirect, url_for, session, render_template, abort
+from flask_caching import Cache
+from itsdangerous import Signer
+import six
+from six.moves.urllib.parse import urlparse, urljoin
+
+from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Containers, ip2long, long2ip
 
 cache = Cache()
 
@@ -150,7 +146,7 @@ def ctf_theme():
 
 
 def pages():
-    pages = Pages.query.filter(Pages.route!="index").all()
+    pages = Pages.query.filter(Pages.route != "index").all()
     return pages
 
 
@@ -191,7 +187,7 @@ def can_register():
 
 
 def admins_only(f):
-    @wraps(f)
+    @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('admin'):
             return f(*args, **kwargs)
@@ -368,7 +364,7 @@ def sendmail(addr, text):
     if mailgun():
         mg_api_key = get_config('mg_api_key') or app.config.get('MAILGUN_API_KEY')
         mg_base_url = get_config('mg_base_url') or app.config.get('MAILGUN_BASE_URL')
-        
+
         r = requests.post(
             mg_base_url + '/messages',
             auth=("api", mg_api_key),
@@ -438,14 +434,14 @@ def sha512(string):
 @cache.memoize()
 def can_create_container():
     try:
-        output = subprocess.check_output(['docker', 'version'])
+        subprocess.check_output(['docker', 'version'])
         return True
     except (subprocess.CalledProcessError, OSError):
         return False
 
 
 def is_port_free(port):
-    s = socket()
+    s = socket.socket()
     result = s.connect_ex(('127.0.0.1', port))
     if result == 0:
         s.close()
@@ -469,7 +465,7 @@ def create_image(name, buildfile, files):
     # docker build -f tmpfile.name -t name
     try:
         cmd = ['docker', 'build', '-f', tmpfile.name, '-t', name, folder]
-        print cmd
+        print(cmd)
         subprocess.call(cmd)
         container = Containers(name, buildfile)
         db.session.add(container)
@@ -510,7 +506,7 @@ def run_image(name):
                 cmd.append('-p')
                 ports_used.append('{}'.format(port))
         cmd += ['--name', name, name]
-        print cmd
+        print(cmd)
         subprocess.call(cmd)
         return True
     except subprocess.CalledProcessError:

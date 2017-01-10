@@ -36,7 +36,14 @@
         <div class="navbar-collapse collapse" aria-expanded="false" style="height: 0px">
           <ul class="nav navbar-nav navbar-nav-right">
             <li><a href="{{ request.script_root }}/admin/graphs">Graphs</a></li>
-            <li><a href="{{ request.script_root }}/admin/pages">Pages</a></li>
+            <li>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">Pages <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ request.script_root }}/admin/pages">All Pages</a></li>
+                    <li><a href="{{ request.script_root }}/admin/pages?mode=create">New Page</a></li>
+                </ul>
+            </li>
             <li><a href="{{ request.script_root }}/admin/teams">Teams</a></li>
             <li><a href="{{ request.script_root }}/admin/scoreboard">Scoreboard</a></li>
             {% if can_create_container() %}

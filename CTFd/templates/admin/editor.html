@@ -23,14 +23,23 @@
     <form id="page-edit" method="POST">
         <div class="row-fluid">
             <div class="col-md-12">
-                <strong>Route: </strong><input name='nonce' type='hidden' value="{{ nonce }}">
-                <input class="radius" id="route" type="text" name="route" value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
+                <h3>Route: </h3>
+                <input name='nonce' type='hidden' value="{{ nonce }}">
+                <input class="form-control radius" id="route" type="text" name="route" value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
             </div>
         </div>
+        <br>
         <div class="row-fluid">
             <div class="col-md-12">
+                <h3>Content: </h3>
                 <textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
-                <button class="btn btn-theme btn-outlined create-challenge pull-right">Create</button>
+                <button class="btn btn-theme btn-outlined create-challenge pull-right">
+                    {% if page is defined %}
+                        Update
+                    {% else %}
+                        Create
+                    {% endif %}
+                </button>
             </div>
         </div>
     </form>
