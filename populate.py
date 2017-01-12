@@ -6,12 +6,13 @@ import hashlib
 import random
 
 from CTFd import create_app
-from CTFd.models import Teams, Solves, Challenges, WrongKeys, Keys, Files
+from CTFd.models import Teams, Solves, Challenges, WrongKeys, Keys, Files, Awards
 
 app = create_app()
 
 USER_AMOUNT = 50
 CHAL_AMOUNT = 20
+AWARDS_AMOUNT = 5
 
 categories = [
     'Exploitation',
@@ -267,6 +268,20 @@ if __name__ == '__main__':
                     base_time = new_base
 
                     db.session.add(solve)
+
+        db.session.commit()
+
+        # Generating Awards
+        print("GENERATING AWARDS")
+        for x in range(USER_AMOUNT):
+            base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
+            for _ in range(random.randint(0, AWARDS_AMOUNT)):
+                award = Awards(x + 1, gen_word(), random.randint(-10, 10))
+                new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
+                award.date = new_base
+                base_time = new_base
+
+                db.session.add(award)
 
         db.session.commit()
 
