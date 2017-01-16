@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron home">
+    <div class="container">
+        <h1>Teams</h1>
+    </div>
+</div>
+<div class="container main-container">
+    <table id="teamsboard" class="table table-striped">
+        <thead>
+            <tr>
+                <td><b>Team</b></td>
+                <td><b>Website</b></td>
+                <td><b>Affiliation</b></td>
+                <td class="hidden-xs"><b>Country</b></td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for team in teams %}
+            <tr>
+                <td><a href="{{ request.script_root }}/team/{{ team.id }}">{{ team.name }}</a></td>
+                <td>{% if team.website and team.website.startswith('http://') %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}</td>
+                <td><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span></td>
+                <td class="hidden-xs"><span>{% if team.country %}{{ team.country }}{% endif %}</span></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if team_pages > 1 %}
+    <div class="text-center">Page
+        <br>
+        {% if curr_page != 1 %}<a href="{{ request.script_root }}/teams/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
+        {% for page in range(1, team_pages + 1) %}
+            {% if curr_page != page %}
+                <a href="{{ request.script_root }}/teams/{{ page }}">{{ page }}</a>
+            {% else %}
+                <b>{{page}}</b>
+            {% endif %}
+        {% endfor %}
+        {% if curr_page != team_pages %}<a href="{{ request.script_root }}/teams/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
+    <a href="{{ request.script_root }}">
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

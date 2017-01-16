@@ -1,0 +1,140 @@
+ {% extends "base.html" %}
+
+{% block stylesheets %}
+    <style>
+    hr {
+        margin-top: 0px;
+        padding-bottom: 10px;
+    }
+    .row {
+        margin-bottom: 10px;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron home">
+    <div class="container">
+        <h1>Profile</h1>
+    </div>
+</div>
+<div class="container main-container">
+
+    <div class="row">
+        <div id="login-container" class="col-md-6 col-md-offset-3">
+            {% if success %}
+                <div class="alert alert-success alert-dismissable submit-row" role="alert">
+                    <strong>Success!</strong>
+                    Your profile has been updated
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+            {% else %}
+                {% for error in errors %}
+                <div class="submit-row">
+                    <div class="alert alert-danger alert-dismissable" role="alert">
+                      <span class="sr-only">Error:</span>
+                      {{ error }}
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                  </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% if confirm_email %}
+                <div class="alert alert-info alert-dismissable submit-row" role="alert">
+                    Your email address isn't confirmed!
+                    Please check your email to confirm your email address.
+                    <br>
+                    <br>
+                    To have the confirmation email resent please <a href="{{ request.script_root }}/confirm">click
+                    here.</a>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                </div>
+            {% endif %}
+            <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="input">
+                            <input class="input-field" type="text" name="name" id="name-input" value="{{name}}"/>
+                            <label class="input-label" for="name-input">
+                                <span class="label-content" data-content="Team Name">Team Name</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="input">
+                            <input class="input-field" type="text" name="email" id="email-input" value="{{email}}"/>
+                            <label class="input-label" for="email-input">
+                                <span class="label-content" data-content="Email">Email</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="input">
+                            <input class="input-field" type="password" name="confirm" id="confirm-input" />
+                            <label class="input-label" for="confirm-input">
+                                <span class="label-content" data-content="Password">Current Password</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="input">
+                            <input class="input-field" type="password" name="password" id="password-input" />
+                            <label class="input-label" for="password-input">
+                                <span class="label-content" data-content="New Password">New Password</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="input">
+                            <input class="input-field" type="text" name="affiliation" id="affiliation-input" value="{% if affiliation %}{{affiliation}}{% endif %}" />
+                            <label class="input-label" for="affiliation-input">
+                                <span class="label-content" data-content="Affiliation">Affiliation</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="input">
+                            <input class="input-field" type="text" name="website" id="website-input" value="{% if website %}{{website}}{% endif %}" />
+                            <label class="input-label" for="website-input">
+                                <span class="label-content" data-content="Website">Website</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="input">
+                            <input class="input-field" type="text" name="country" id="country-input" value="{% if country %}{{country}}{% endif %}" />
+                            <label class="input-label" for="country-input">
+                                <span class="label-content" data-content="Country">Country</span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="submit-row">
+                        <button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-theme btn-outlined pull-right">Submit</button>
+                    </div>
+                </div>
+                <input type="hidden" name="nonce" value="{{ nonce }}">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/style.js"></script>
+{% endblock %}

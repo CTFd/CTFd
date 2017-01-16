@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+<style>
+    .hide-text { text-overflow: ellipsis; overflow: hidden; }
+    .dialog-inner {padding-bottom: 30px;}
+    .alert {display: none}
+    .category-header {text-align: center}
+    .challenge-wrapper {padding: 5px;}
+    .challenge-button {width: 100%; height:100px;}
+    .submit-row {padding-top: 0px; padding-right: 0px; padding-left: 0px;}
+    .disabled-button {background-color: #EEEEEE}
+
+    .file-button {text-decoration: none; color: #fff;}
+    .file-button:hover {text-decoration: none; color: #fff;}
+    .file-wrapper {padding: 20px; transition: all 0.5s ease; cursor: pointer; color: #fff; width: 100%; text-overflow: ellipsis; overflow: hidden;}
+    .file-button {cursor: pointer;}
+    .file-button-wrapper {padding: 0px 10px;}
+
+    .close-text {color: #ccc;position: relative;top: -25px;right: -15px;cursor: pointer;}
+    .chal-desc {padding-left: 30px; padding-right: 30px;}
+    .key-submit {padding-top: 14px; padding-right: 10px;}
+    .notification-row {padding-left: 10px;padding-right: 10px;}
+    .input {padding-right: 5px;}
+    .input-field:focus + .input-field,
+    .input--filled .input-field {
+        border-color: rgb(238, 238, 238);
+    }
+    .input-field:focus + .input-field,
+    .input--filled .correct {
+        border-color: rgb(223, 240, 216);
+    }
+    .input-field:focus + .input-field,
+    .input--filled .wrong {
+        border-color: rgb(255, 190, 190);
+    }
+
+    .input-field:focus + .input-field,
+    .input--filled .too-fast {
+        border-color: rgb(252, 248, 227);
+    }
+    a, button {
+        color: #74716D;
+        text-decoration: none;
+        outline: none;
+    }
+
+    a:hover, a:focus {
+        color: #c94e50;
+        outline: none;
+    }
+
+    button {
+        padding: 1em 2em;
+        outline: none;
+        font-weight: 600;
+        border: none;
+        color: #fff;
+        background: #c94e50;
+    }
+
+    .content {
+        max-width: 1000px;
+        padding: 2em;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .button-wrap {
+        padding: 2.5em 0 0;
+        font-size: 1.25em;
+    }
+
+    button.trigger {
+        background: #c94e50;
+        color: #fff;
+        border: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% if errors %}
+<div class="container main-container">
+    <div id='errors' class="row">
+{% for error in errors %}
+        <h1>{{ error }}</h1>
+{% endfor %}
+    </div>
+</div>
+{% else %}
+
+<div class="jumbotron home">
+    <div class="container">
+        <h1>Challenges</h1>
+    </div>
+</div>
+<div class="container main-container">
+    <div id='challenges-board' class="row">
+    </div>
+</div>
+
+<div class="modal fade" id="chal-window" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content content">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#challenge" aria-controls="challenge" role="tab">Challenge</a></li>
+                <li role="presentation"><a href="#solves" aria-controls="solves" class="chal-solves" role="tab"></a></li>
+            </ul>
+            <div class="modal-body">
+                <div role="tabpanel">
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="challenge">
+                            <h3 class='chal-name'></h3>
+                            <h4 class="chal-value"></h4>
+                            <div class="chal-tags"></div>
+                            <p class="chal-desc"></p>
+                            <div class="chal-files file-row row">
+                            </div>
+
+                            <div class="row submit-row">
+                                <div class="col-md-9" style="padding-right:0px;padding-left:10px;">
+                                    <span class="input">
+                                        <input class="input-field" type="text" name="answer" id="answer-input" placeholder="Key" />
+                                    </span>
+                                    <input type="hidden" id="nonce" name="nonce" value={{ nonce }}>
+                                    <input id="chal-id" type="hidden">
+                                </div>
+                                <div class="col-md-3 key-submit">
+                                    <button type="submit" id="submit-key" tabindex="5" class="btn btn-md btn-theme btn-outlined pull-right" style="height:46.375px">Submit</button>
+                                </div>
+                            </div>
+                            <div class="row notification-row">
+                                <div id="result-notification" class="alert alert-dismissable" role="alert">
+                                  <strong id="result-message"></strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="solves">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <td><b>Name</b>
+                                        </td>
+                                        <td><b>Date</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody id="chal-solves-names">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/utils.js"></script>
+    {% if not errors %}<script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/chalboard.js"></script>{% endif %}
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/style.js"></script>
+{% endblock %}

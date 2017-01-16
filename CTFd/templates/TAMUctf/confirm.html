@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+    <style>
+        #login-container {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+
+        .done-row {
+            padding-top: 15px;
+            margin: 0px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="jumbotron home">
+        <div class="container">
+            <h1>Confirm</h1>
+        </div>
+    </div>
+    <div class="container main-container">
+        <div class="row">
+            <div id="login-container" class="col-md-6 col-md-offset-3">
+                {% for error in errors %}
+                    <div class="alert alert-danger alert-dismissable" role="alert">
+                        <span class="sr-only">Error:</span>
+                        {{ error }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">×</span></button>
+                    </div>
+                {% endfor %}
+                <h3 class="text-center">
+                    We've sent a confirmation email to {{ team.email }}
+                </h3>
+
+                <h3 class="text-center">
+                    Please click the link in that email to confirm your account and access the rest of the CTF.
+                </h3>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/style.js"></script>
+{% endblock %}
+
