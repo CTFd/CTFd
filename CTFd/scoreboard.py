@@ -52,7 +52,7 @@ def scores():
     return jsonify(json)
 
 
-@scoreboard.route('/top/<count>')
+@scoreboard.route('/top/<int:count>')
 def topteams(count):
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
