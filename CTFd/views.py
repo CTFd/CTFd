@@ -105,11 +105,8 @@ def static_html(template):
     try:
         return render_template('%s.html' % template)
     except TemplateNotFound:
-        page = Pages.query.filter_by(route=template).first()
-        if page:
-            return render_template('page.html', content=page.html)
-        else:
-            abort(404)
+        page = Pages.query.filter_by(route=template).first_or_404()
+        return render_template('page.html', content=page.html)
 
 
 @views.route('/teams', defaults={'page': '1'})
