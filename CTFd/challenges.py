@@ -79,7 +79,7 @@ def solves_per_chal():
 
 
 @challenges.route('/solves')
-@challenges.route('/solves/<teamid>')
+@challenges.route('/solves/<int:teamid>')
 def solves(teamid=None):
     solves = None
     awards = None
@@ -131,7 +131,7 @@ def attempts():
     return jsonify(json)
 
 
-@challenges.route('/fails/<teamid>', methods=['GET'])
+@challenges.route('/fails/<int:teamid>', methods=['GET'])
 def fails(teamid):
     fails = WrongKeys.query.filter_by(teamid=teamid).count()
     solves = Solves.query.filter_by(teamid=teamid).count()
@@ -140,7 +140,7 @@ def fails(teamid):
     return jsonify(json)
 
 
-@challenges.route('/chal/<chalid>/solves', methods=['GET'])
+@challenges.route('/chal/<int:chalid>/solves', methods=['GET'])
 def who_solved(chalid):
     if not user_can_view_challenges():
         return redirect(url_for('auth.login', next=request.path))
@@ -151,7 +151,7 @@ def who_solved(chalid):
     return jsonify(json)
 
 
-@challenges.route('/chal/<chalid>', methods=['POST'])
+@challenges.route('/chal/<int:chalid>', methods=['POST'])
 def chal(chalid):
     if ctf_ended() and not view_after_ctf():
         return redirect(url_for('challenges.challenges_view'))
