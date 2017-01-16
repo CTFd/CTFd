@@ -178,7 +178,7 @@ def chal(chalid):
 
         # Challange not solved yet
         if not solves:
-            chal = Challenges.query.filter_by(id=chalid).first()
+            chal = Challenges.query.filter_by(id=chalid).first_or_404()
             key = unicode(request.form['key'].strip().lower())
             keys = json.loads(chal.flags)
 
