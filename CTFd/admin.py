@@ -5,11 +5,10 @@ import os
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
-from werkzeug.utils import secure_filename
 
 from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
     set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes, cache
+    container_stop, container_start, get_themes, cache, upload_file
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 
@@ -391,19 +390,7 @@ def admin_files(chalid):
             files = request.files.getlist('files[]')
 
             for f in files:
-                filename = secure_filename(f.filename)
-
-                if len(filename) <= 0:
-                    continue
-
-                md5hash = hashlib.md5(os.urandom(64)).hexdigest()
-
-                if not os.path.exists(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash)):
-                    os.makedirs(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash))
-
-                f.save(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash, filename))
-                db_f = Files(chalid, (md5hash + '/' + filename))
-                db.session.add(db_f)
+                upload_file(file=f, chalid=chalid)
 
             db.session.commit()
             db.session.close()
@@ -819,19 +806,7 @@ def admin_create_chal():
     db.session.commit()
 
     for f in files:
-        filename = secure_filename(f.filename)
-
-        if len(filename) <= 0:
-            continue
-
-        md5hash = hashlib.md5(os.urandom(64)).hexdigest()
-
-        if not os.path.exists(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash)):
-            os.makedirs(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash))
-
-        f.save(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash, filename))
-        db_f = Files(chal.id, (md5hash + '/' + filename))
-        db.session.add(db_f)
+        upload_file(file=f, chalid=chal.id)
 
     db.session.commit()
     db.session.close()
