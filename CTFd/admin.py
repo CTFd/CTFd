@@ -209,7 +209,7 @@ def admin_pages(route):
 @admin.route('/admin/page/<pageroute>/delete', methods=['POST'])
 @admins_only
 def delete_page(pageroute):
-    page = Pages.query.filter_by(route=pageroute).first()
+    page = Pages.query.filter_by(route=pageroute).first_or_404()
     db.session.delete(page)
     db.session.commit()
     db.session.close()
@@ -313,16 +313,15 @@ def admin_chals():
 @admin.route('/admin/keys/<int:chalid>', methods=['POST', 'GET'])
 @admins_only
 def admin_keys(chalid):
+    chal = Challenges.query.filter_by(id=chalid).first_or_404()
+
     if request.method == 'GET':
-        chal = Challenges.query.filter_by(id=chalid).first_or_404()
         json_data = {'keys': []}
         flags = json.loads(chal.flags)
         for i, x in enumerate(flags):
             json_data['keys'].append({'id': i, 'key': x['flag'], 'type': x['type']})
         return jsonify(json_data)
     elif request.method == 'POST':
-        chal = Challenges.query.filter_by(id=chalid).first()
-
         newkeys = request.form.getlist('keys[]')
         newvals = request.form.getlist('vals[]')
         flags = []
@@ -428,7 +427,7 @@ def admin_teams(page):
 @admin.route('/admin/team/<int:teamid>', methods=['GET', 'POST'])
 @admins_only
 def admin_team(teamid):
-    user = Teams.query.filter_by(id=teamid).first()
+    user = Teams.query.filter_by(id=teamid).first_or_404()
 
     if request.method == 'GET':
         solves = Solves.query.filter_by(teamid=teamid).all()
@@ -511,7 +510,7 @@ def email_user(teamid):
 @admin.route('/admin/team/<int:teamid>/ban', methods=['POST'])
 @admins_only
 def ban(teamid):
-    user = Teams.query.filter_by(id=teamid).first()
+    user = Teams.query.filter_by(id=teamid).first_or_404()
     user.banned = True
     db.session.commit()
     db.session.close()
@@ -521,7 +520,7 @@ def ban(teamid):
 @admin.route('/admin/team/<int:teamid>/unban', methods=['POST'])
 @admins_only
 def unban(teamid):
-    user = Teams.query.filter_by(id=teamid).first()
+    user = Teams.query.filter_by(id=teamid).first_or_404()
     user.banned = False
     db.session.commit()
     db.session.close()
@@ -614,15 +613,11 @@ def create_award():
 @admin.route('/admin/awards/<int:award_id>/delete', methods=['POST'])
 @admins_only
 def delete_award(award_id):
-    try:
-        award = Awards.query.filter_by(id=award_id).first()
-        db.session.delete(award)
-        db.session.commit()
-        db.session.close()
-        return '1'
-    except Exception as e:
-        print(e)
-        return '0'
+    award = Awards.query.filter_by(id=award_id).first_or_404()
+    db.session.delete(award)
+    db.session.commit()
+    db.session.close()
+    return '1'
 
 
 @admin.route('/admin/scores')
@@ -841,27 +836,26 @@ def admin_create_chal():
 @admin.route('/admin/chal/delete', methods=['POST'])
 @admins_only
 def admin_delete_chal():
-    challenge = Challenges.query.filter_by(id=request.form['id']).first()
-    if challenge:
-        WrongKeys.query.filter_by(chalid=challenge.id).delete()
-        Solves.query.filter_by(chalid=challenge.id).delete()
-        Keys.query.filter_by(chal=challenge.id).delete()
-        files = Files.query.filter_by(chal=challenge.id).all()
-        Files.query.filter_by(chal=challenge.id).delete()
-        for file in files:
-            folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), 'uploads', file.location))
-            rmdir(folder)
-        Tags.query.filter_by(chal=challenge.id).delete()
-        Challenges.query.filter_by(id=challenge.id).delete()
-        db.session.commit()
-        db.session.close()
+    challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
+    WrongKeys.query.filter_by(chalid=challenge.id).delete()
+    Solves.query.filter_by(chalid=challenge.id).delete()
+    Keys.query.filter_by(chal=challenge.id).delete()
+    files = Files.query.filter_by(chal=challenge.id).all()
+    Files.query.filter_by(chal=challenge.id).delete()
+    for file in files:
+        folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), 'uploads', file.location))
+        rmdir(folder)
+    Tags.query.filter_by(chal=challenge.id).delete()
+    Challenges.query.filter_by(id=challenge.id).delete()
+    db.session.commit()
+    db.session.close()
     return '1'
 
 
 @admin.route('/admin/chal/update', methods=['POST'])
 @admins_only
 def admin_update_chal():
-    challenge = Challenges.query.filter_by(id=request.form['id']).first()
+    challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
     challenge.name = request.form['name']
     challenge.description = request.form['desc']
     challenge.value = request.form['value']
