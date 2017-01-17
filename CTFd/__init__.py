@@ -1,13 +1,15 @@
 import os
 
+from distutils.version import StrictVersion
 from flask import Flask
 from jinja2 import FileSystemLoader
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import OperationalError
 from sqlalchemy_utils import database_exists, create_database
 
-from utils import get_config, set_config, cache
+from utils import get_config, set_config, cache, migrate, migrate_upgrade
 
+__version__ = '1.0.0'
 
 class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
@@ -45,13 +47,22 @@ def create_app(config='CTFd.config.Config'):
 
         app.db = db
 
+        migrate.init_app(app, db)
+
         cache.init_app(app)
         app.cache = cache
 
+        version = get_config('ctf_version')
+
+        if not version: ## Upgrading from an unversioned CTFd
+            set_config('ctf_version', __version__)
+
+        if version and (StrictVersion(version) < StrictVersion(__version__)): ## Upgrading from an older version of CTFd
+            migrate_upgrade()
+            set_config('ctf_version', __version__)
+            
         if not get_config('ctf_theme'):
             set_config('ctf_theme', 'original')
-
-        #Session(app)
 
         from CTFd.views import views
         from CTFd.challenges import challenges

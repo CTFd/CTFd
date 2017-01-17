@@ -2,6 +2,7 @@ Flask
 Flask-SQLAlchemy
 Flask-Session
 Flask-Caching
+Flask-Migrate
 SQLAlchemy
 sqlalchemy-utils
 passlib

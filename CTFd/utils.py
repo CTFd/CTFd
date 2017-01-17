@@ -19,6 +19,7 @@ import urllib
 
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort
 from flask_caching import Cache
+from flask_migrate import Migrate, upgrade as migrate_upgrade
 from itsdangerous import Signer
 import six
 from six.moves.urllib.parse import urlparse, urljoin
@@ -27,6 +28,7 @@ from werkzeug.utils import secure_filename
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, Containers, ip2long, long2ip
 
 cache = Cache()
+migrate = Migrate()
 
 
 def init_logs(app):
