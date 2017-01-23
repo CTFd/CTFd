@@ -3,6 +3,15 @@ function teamid (){
     return loc.substring(loc.lastIndexOf('/')+1, loc.length);
 }
 
+function colorhash (x) {
+    color = "";
+    for (var i = 20; i <= 60; i+=20){
+        x += i;
+        x *= i;
+        color += x.toString(16);
+    }
+    return "#" + color.substring(0, 6);
+}
 
 function cumulativesum (arr) {
     var result = arr.concat();
@@ -12,11 +21,11 @@ function cumulativesum (arr) {
     return result
 }
 
-function scoregraph () {
+function scoregraph() {
     var times = []
     var scores = []
     var teamname = $('#team-id').text()
-    $.get(script_root + '/admin/solves/'+teamid(), function( data ) {
+    $.get(script_root + '/solves/' + teamid(), function (data) {
         var solves = $.parseJSON(JSON.stringify(data));
         solves = solves['solves'];
 
@@ -46,9 +55,9 @@ function scoregraph () {
     });
 }
 
-function keys_percentage_graph(){
+function keys_percentage_graph() {
     // Solves and Fails pie chart
-    $.get(script_root + '/admin/fails/'+teamid(), function(data){
+    $.get(script_root + '/fails/' + teamid(), function (data) {
         var res = $.parseJSON(JSON.stringify(data));
         var solves = res['solves'];
         var fails = res['fails'];
@@ -70,12 +79,13 @@ function keys_percentage_graph(){
             title: 'Key Percentages'
         };
 
+
         Plotly.newPlot('keys-pie-graph', data, layout);
     });
 }
 
-function category_breakdown_graph(){
-    $.get(script_root + '/admin/solves/'+teamid(), function(data){
+function category_breakdown_graph() {
+    $.get(script_root + '/solves/' + teamid(), function (data) {
         var solves = $.parseJSON(JSON.stringify(data));
         solves = solves['solves'];
 
@@ -95,7 +105,7 @@ function category_breakdown_graph(){
         for (var i = 0; i < keys.length; i++) {
             var count = 0;
             for (var x = 0; x < categories.length; x++) {
-                if (categories[x] == keys[i]){
+                if (categories[x] == keys[i]) {
                     count++;
                 }
             }
@@ -110,7 +120,7 @@ function category_breakdown_graph(){
         }];
 
         var layout = {
-            title:'Category Breakdown'
+            title: 'Category Breakdown'
         };
 
         Plotly.newPlot('categories-pie-graph', data, layout);

@@ -165,7 +165,7 @@ table{
 }
 
 .theme-background {
-    background-color: #9E6E6E !important;
+    background-color: #545454 !important;
 
 }
 
@@ -174,12 +174,12 @@ table{
 }
 
 .panel-theme {
-    border-color: #9E6E6E;
+    border-color: #545454;
 }
 
 .panel-theme > .panel-heading {
-    border-color: #9E6E6E;
-    background-color: #9E6E6E;
+    border-color: #545454;
+    background-color: #545454;
     opacity: 1;
     color: #FFF;
     text-align: center;
@@ -187,8 +187,8 @@ table{
 
 .btn-outlined.btn-theme {
     background: none;
-    color: #9E6E6E;
-    border-color: #9E6E6E;
+    color: #545454;
+    border-color: #545454;
     background-image: none;
     border: 3px solid;
 }
@@ -196,18 +196,18 @@ table{
 .btn-outlined.btn-theme:hover,
 .btn-outlined.btn-theme:active {
     color: #FFF;
-    background: #9E6E6E;
-    border-color: #9E6E6E;
+    background: #545454;
+    border-color: #545454;
 }
 
 .navbar-inverse {
-    background: none repeat scroll 0% 0% #9E6E6E;
+    background: none repeat scroll 0% 0% #545454;
     border: medium none;
     margin-bottom: 0px;
 }
 
 .jumbotron {
-    background-color: #9E6E6E;
+    background-color: #545454;
     color: #FFF;
     padding: 0px 0px 25px;
 }
@@ -369,113 +369,3 @@ table{
 }
 
 /* END OF INPUT CSS */
-
-/* ADMIN CSS */
-
-#submit-key{
-    display: none;
-}
-
-#chal > h1{
-    text-align: center
-}
-
-#chal > form{
-    width: 400px;
-    margin: 0 auto;
-}
-
-#chal > form > h3,h4{
-    text-align: center;
-}
-
-#chal > form > input{
-    display: none;
-}
-
-table{
-    width: 100%;
-}
-
-/*Not sure why foundation needs these two...*/
-.top-bar input{
-    height: auto;
-    padding-top: 0.35rem;
-    padding-bottom: 0.35rem;
-    font-size: 0.75rem;
-}
-
-.top-bar .button{
-    padding-top: 0.45rem;
-    padding-bottom: 0.35rem;
-    margin-bottom: 0;
-    font-size: 0.75rem;
-}
-
-.dropdown{
-    background-color: #333 !important;
-    padding: 5px;
-}
-
-.dropdown button{
-    padding-top: 0.45rem;
-    padding-bottom: 0.35rem;
-    margin-bottom: 0;
-    font-size: 0.75rem;
-}
-
-#challenges button{
-    margin: 5px;
-}
-
-.row h1{
-    text-align: center;
-}
-
-
-.textbox{
-    height: 150px;
-}
-
-.chal-tag{
-    margin: 0 5px 0 5px;
-}
-
-#score-graph{
-    clear:both;
-}
-
-#keys-pie-graph{
-    width: 50%;
-    float: left;
-}
-
-#categories-pie-graph{
-    width: 50%;
-    float: left;
-}
-
-.chal-button{
-    width: 150px;
-    color: white;
-    border: None;
-}
-
-.chal-button > .chal-name {
-    margin-bottom: 0px;
-    height: 20px;
-    font-weight: bold;
-}
-
-.chal-button > .chal-points {
-    margin: -20px 0 0 0;
-    height: 20px;
-}
-
-.chal-button > .chal-percent{
-    font-size: 12px;
-}
-
-.remove-key{
-    float:right;
-}
