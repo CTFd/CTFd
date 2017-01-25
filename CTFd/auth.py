@@ -27,7 +27,7 @@ def confirm_user(data=None):
             return render_template('confirm.html', errors=['Your confirmation link seems wrong'])
         except:
             return render_template('confirm.html', errors=['Your link appears broken, please try again.'])
-        team = Teams.query.filter_by(email=email).first()
+        team = Teams.query.filter_by(email=email).first_or_404()
         team.verified = True
         db.session.commit()
         db.session.close()
@@ -39,7 +39,7 @@ def confirm_user(data=None):
     if not data and request.method == "GET": # User has been directed to the confirm page because his account is not verified
         if not authed():
             return redirect(url_for('auth.login'))
-        team = Teams.query.filter_by(id=session['id']).first()
+        team = Teams.query.filter_by(id=session['id']).first_or_404()
         if team.verified:
             return redirect(url_for('views.profile'))
         else:
@@ -60,7 +60,7 @@ def reset_password(data=None):
             return render_template('reset_password.html', errors=['Your link has expired'])
         except:
             return render_template('reset_password.html', errors=['Your link appears broken, please try again.'])
-        team = Teams.query.filter_by(name=name).first()
+        team = Teams.query.filter_by(name=name).first_or_404()
         team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
         db.session.commit()
         db.session.close()

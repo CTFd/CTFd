@@ -19,13 +19,16 @@ import urllib
 
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort
 from flask_caching import Cache
+from flask_migrate import Migrate, upgrade as migrate_upgrade
 from itsdangerous import Signer
 import six
 from six.moves.urllib.parse import urlparse, urljoin
+from werkzeug.utils import secure_filename
 
-from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Containers, ip2long, long2ip
+from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, Containers, ip2long, long2ip
 
 cache = Cache()
+migrate = Migrate()
 
 
 def init_logs(app):
@@ -295,6 +298,24 @@ def get_themes():
     dir = os.path.join(app.root_path, app.template_folder)
     return [name for name in os.listdir(dir)
             if os.path.isdir(os.path.join(dir, name)) and name != 'admin']
+
+
+def upload_file(file, chalid):
+    filename = secure_filename(file.filename)
+
+    if len(filename) <= 0:
+        return False
+
+    md5hash = hashlib.md5(os.urandom(64)).hexdigest()
+
+    if not os.path.exists(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash)):
+        os.makedirs(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash))
+
+    file.save(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash, filename))
+    db_f = Files(chalid, (md5hash + '/' + filename))
+    db.session.add(db_f)
+    db.session.commit()
+    return True
 
 
 @cache.memoize()

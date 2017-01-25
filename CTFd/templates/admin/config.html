@@ -429,6 +429,18 @@
         });
 
         $(function () {
+
+            var hash = window.location.hash;
+            if (hash) {
+                hash = hash.replace("<>[]'\"", "");
+                $('ul.nav a[href="' + hash + '"]').tab('show');
+            }
+
+            $('.nav-pills a').click(function (e) {
+                $(this).tab('show');
+                window.location.hash = this.hash;
+            });
+
             var start = $('#start').val();
             var end = $('#end').val();
             console.log(start);

@@ -173,7 +173,7 @@ def test_user_get_profile():
 
 
 def test_user_get_logout():
-    """Can a registered user can load /logout"""
+    """Can a registered user load /logout"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -185,7 +185,7 @@ def test_user_get_logout():
 
 
 def test_user_get_reset_password():
-    """Can an unregistered user can load /reset_password"""
+    """Can an unregistered user load /reset_password"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)

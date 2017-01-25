@@ -85,7 +85,8 @@
                         </div>
 
                         <div class="form-group">
-                          <label for="exampleInputFile">Upload challenge files</label>
+                          <label>Upload challenge files</label>
+                          <sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
                           <input type="file" name="files[]" multiple="multiple">
                         </div>
                         <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
@@ -220,6 +221,7 @@
                         <div id="current-files"></div>
                         <input type="hidden" name="method" value="upload">
                         <input type="file" name="files[]" multiple="multiple">
+                        <sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
                         <div class="row" style="text-align:center;margin-top:20px">
                             <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
                             <button class="btn btn-theme btn-outlined" type="submit">Update</button>

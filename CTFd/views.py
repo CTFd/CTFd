@@ -105,15 +105,12 @@ def static_html(template):
     try:
         return render_template('%s.html' % template)
     except TemplateNotFound:
-        page = Pages.query.filter_by(route=template).first()
-        if page:
-            return render_template('page.html', content=page.html)
-        else:
-            abort(404)
+        page = Pages.query.filter_by(route=template).first_or_404()
+        return render_template('page.html', content=page.html)
 
 
 @views.route('/teams', defaults={'page': '1'})
-@views.route('/teams/<page>')
+@views.route('/teams/<int:page>')
 def teams(page):
     page = abs(int(page))
     results_per_page = 50
@@ -130,7 +127,7 @@ def teams(page):
     return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
 
 
-@views.route('/team/<teamid>', methods=['GET', 'POST'])
+@views.route('/team/<int:teamid>', methods=['GET', 'POST'])
 def team(teamid):
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))

@@ -5,11 +5,10 @@ import os
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
-from werkzeug.utils import secure_filename
 
 from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
     set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes, cache
+    container_stop, container_start, get_themes, cache, upload_file
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 
@@ -209,7 +208,7 @@ def admin_pages(route):
 @admin.route('/admin/page/<pageroute>/delete', methods=['POST'])
 @admins_only
 def delete_page(pageroute):
-    page = Pages.query.filter_by(route=pageroute).first()
+    page = Pages.query.filter_by(route=pageroute).first_or_404()
     db.session.delete(page)
     db.session.commit()
     db.session.close()
@@ -226,7 +225,7 @@ def list_container():
     return render_template('admin/containers.html', containers=containers)
 
 
-@admin.route('/admin/containers/<container_id>/stop', methods=['POST'])
+@admin.route('/admin/containers/<int:container_id>/stop', methods=['POST'])
 @admins_only
 def stop_container(container_id):
     container = Containers.query.filter_by(id=container_id).first_or_404()
@@ -236,7 +235,7 @@ def stop_container(container_id):
         return '0'
 
 
-@admin.route('/admin/containers/<container_id>/start', methods=['POST'])
+@admin.route('/admin/containers/<int:container_id>/start', methods=['POST'])
 @admins_only
 def run_container(container_id):
     container = Containers.query.filter_by(id=container_id).first_or_404()
@@ -252,7 +251,7 @@ def run_container(container_id):
             return '0'
 
 
-@admin.route('/admin/containers/<container_id>/delete', methods=['POST'])
+@admin.route('/admin/containers/<int:container_id>/delete', methods=['POST'])
 @admins_only
 def delete_container(container_id):
     container = Containers.query.filter_by(id=container_id).first_or_404()
@@ -310,19 +309,18 @@ def admin_chals():
         return render_template('admin/chals.html')
 
 
-@admin.route('/admin/keys/<chalid>', methods=['POST', 'GET'])
+@admin.route('/admin/keys/<int:chalid>', methods=['POST', 'GET'])
 @admins_only
 def admin_keys(chalid):
+    chal = Challenges.query.filter_by(id=chalid).first_or_404()
+
     if request.method == 'GET':
-        chal = Challenges.query.filter_by(id=chalid).first_or_404()
         json_data = {'keys': []}
         flags = json.loads(chal.flags)
         for i, x in enumerate(flags):
             json_data['keys'].append({'id': i, 'key': x['flag'], 'type': x['type']})
         return jsonify(json_data)
     elif request.method == 'POST':
-        chal = Challenges.query.filter_by(id=chalid).first()
-
         newkeys = request.form.getlist('keys[]')
         newvals = request.form.getlist('vals[]')
         flags = []
@@ -338,7 +336,7 @@ def admin_keys(chalid):
         return '1'
 
 
-@admin.route('/admin/tags/<chalid>', methods=['GET', 'POST'])
+@admin.route('/admin/tags/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_tags(chalid):
     if request.method == 'GET':
@@ -358,7 +356,7 @@ def admin_tags(chalid):
         return '1'
 
 
-@admin.route('/admin/tags/<tagid>/delete', methods=['POST'])
+@admin.route('/admin/tags/<int:tagid>/delete', methods=['POST'])
 @admins_only
 def admin_delete_tags(tagid):
     if request.method == 'POST':
@@ -369,7 +367,7 @@ def admin_delete_tags(tagid):
         return '1'
 
 
-@admin.route('/admin/files/<chalid>', methods=['GET', 'POST'])
+@admin.route('/admin/files/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_files(chalid):
     if request.method == 'GET':
@@ -391,19 +389,7 @@ def admin_files(chalid):
             files = request.files.getlist('files[]')
 
             for f in files:
-                filename = secure_filename(f.filename)
-
-                if len(filename) <= 0:
-                    continue
-
-                md5hash = hashlib.md5(os.urandom(64)).hexdigest()
-
-                if not os.path.exists(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash)):
-                    os.makedirs(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash))
-
-                f.save(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash, filename))
-                db_f = Files(chalid, (md5hash + '/' + filename))
-                db.session.add(db_f)
+                upload_file(file=f, chalid=chalid)
 
             db.session.commit()
             db.session.close()
@@ -411,7 +397,7 @@ def admin_files(chalid):
 
 
 @admin.route('/admin/teams', defaults={'page': '1'})
-@admin.route('/admin/teams/<page>')
+@admin.route('/admin/teams/<int:page>')
 @admins_only
 def admin_teams(page):
     page = abs(int(page))
@@ -425,10 +411,10 @@ def admin_teams(page):
     return render_template('admin/teams.html', teams=teams, pages=pages, curr_page=page)
 
 
-@admin.route('/admin/team/<teamid>', methods=['GET', 'POST'])
+@admin.route('/admin/team/<int:teamid>', methods=['GET', 'POST'])
 @admins_only
 def admin_team(teamid):
-    user = Teams.query.filter_by(id=teamid).first()
+    user = Teams.query.filter_by(id=teamid).first_or_404()
 
     if request.method == 'GET':
         solves = Solves.query.filter_by(teamid=teamid).all()
@@ -497,7 +483,7 @@ def admin_team(teamid):
             return jsonify({'data': ['success']})
 
 
-@admin.route('/admin/team/<teamid>/mail', methods=['POST'])
+@admin.route('/admin/team/<int:teamid>/mail', methods=['POST'])
 @admins_only
 def email_user(teamid):
     message = request.form.get('msg', None)
@@ -508,27 +494,27 @@ def email_user(teamid):
     return '0'
 
 
-@admin.route('/admin/team/<teamid>/ban', methods=['POST'])
+@admin.route('/admin/team/<int:teamid>/ban', methods=['POST'])
 @admins_only
 def ban(teamid):
-    user = Teams.query.filter_by(id=teamid).first()
+    user = Teams.query.filter_by(id=teamid).first_or_404()
     user.banned = True
     db.session.commit()
     db.session.close()
     return redirect(url_for('admin.admin_scoreboard'))
 
 
-@admin.route('/admin/team/<teamid>/unban', methods=['POST'])
+@admin.route('/admin/team/<int:teamid>/unban', methods=['POST'])
 @admins_only
 def unban(teamid):
-    user = Teams.query.filter_by(id=teamid).first()
+    user = Teams.query.filter_by(id=teamid).first_or_404()
     user.banned = False
     db.session.commit()
     db.session.close()
     return redirect(url_for('admin.admin_scoreboard'))
 
 
-@admin.route('/admin/team/<teamid>/delete', methods=['POST'])
+@admin.route('/admin/team/<int:teamid>/delete', methods=['POST'])
 @admins_only
 def delete_team(teamid):
     try:
@@ -572,7 +558,7 @@ def admin_scoreboard():
     return render_template('admin/scoreboard.html', teams=standings)
 
 
-@admin.route('/admin/teams/<teamid>/awards', methods=['GET'])
+@admin.route('/admin/teams/<int:teamid>/awards', methods=['GET'])
 @admins_only
 def admin_awards(teamid):
     awards = Awards.query.filter_by(teamid=teamid).all()
@@ -611,18 +597,14 @@ def create_award():
         return '0'
 
 
-@admin.route('/admin/awards/<award_id>/delete', methods=['POST'])
+@admin.route('/admin/awards/<int:award_id>/delete', methods=['POST'])
 @admins_only
 def delete_award(award_id):
-    try:
-        award = Awards.query.filter_by(id=award_id).first()
-        db.session.delete(award)
-        db.session.commit()
-        db.session.close()
-        return '1'
-    except Exception as e:
-        print(e)
-        return '0'
+    award = Awards.query.filter_by(id=award_id).first_or_404()
+    db.session.delete(award)
+    db.session.commit()
+    db.session.close()
+    return '1'
 
 
 @admin.route('/admin/scores')
@@ -671,7 +653,7 @@ def admin_solves(teamid="all"):
     return jsonify(json_data)
 
 
-@admin.route('/admin/solves/<teamid>/<chalid>/solve', methods=['POST'])
+@admin.route('/admin/solves/<int:teamid>/<int:chalid>/solve', methods=['POST'])
 @admins_only
 def create_solve(teamid, chalid):
     solve = Solves(chalid=chalid, teamid=teamid, ip='127.0.0.1', flag='MARKED_AS_SOLVED_BY_ADMIN')
@@ -681,7 +663,7 @@ def create_solve(teamid, chalid):
     return '1'
 
 
-@admin.route('/admin/solves/<keyid>/delete', methods=['POST'])
+@admin.route('/admin/solves/<int:keyid>/delete', methods=['POST'])
 @admins_only
 def delete_solve(keyid):
     solve = Solves.query.filter_by(id=keyid).first_or_404()
@@ -691,7 +673,7 @@ def delete_solve(keyid):
     return '1'
 
 
-@admin.route('/admin/wrong_keys/<keyid>/delete', methods=['POST'])
+@admin.route('/admin/wrong_keys/<int:keyid>/delete', methods=['POST'])
 @admins_only
 def delete_wrong_key(keyid):
     wrong_key = WrongKeys.query.filter_by(id=keyid).first_or_404()
@@ -737,9 +719,10 @@ def admin_stats():
                            least_solved=least_solved)
 
 
-@admin.route('/admin/wrong_keys/<page>', methods=['GET'])
+@admin.route('/admin/wrong_keys', defaults={'page': '1'}, methods=['GET'])
+@admin.route('/admin/wrong_keys/<int:page>', methods=['GET'])
 @admins_only
-def admin_wrong_key(page='1'):
+def admin_wrong_key(page):
     page = abs(int(page))
     results_per_page = 50
     page_start = results_per_page * (page - 1)
@@ -759,9 +742,10 @@ def admin_wrong_key(page='1'):
     return render_template('admin/wrong_keys.html', wrong_keys=wrong_keys, pages=pages, curr_page=page)
 
 
-@admin.route('/admin/correct_keys/<page>', methods=['GET'])
+@admin.route('/admin/correct_keys', defaults={'page': '1'}, methods=['GET'])
+@admin.route('/admin/correct_keys/<int:page>', methods=['GET'])
 @admins_only
-def admin_correct_key(page='1'):
+def admin_correct_key(page):
     page = abs(int(page))
     results_per_page = 50
     page_start = results_per_page * (page - 1)
@@ -781,9 +765,10 @@ def admin_correct_key(page='1'):
     return render_template('admin/correct_keys.html', solves=solves, pages=pages, curr_page=page)
 
 
-@admin.route('/admin/fails/<teamid>', methods=['GET'])
+@admin.route('/admin/fails/all', defaults={'teamid': 'all'}, methods=['GET'])
+@admin.route('/admin/fails/<int:teamid>', methods=['GET'])
 @admins_only
-def admin_fails(teamid='all'):
+def admin_fails(teamid):
     if teamid == "all":
         fails = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned == False).count()
         solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).count()
@@ -816,19 +801,7 @@ def admin_create_chal():
     db.session.commit()
 
     for f in files:
-        filename = secure_filename(f.filename)
-
-        if len(filename) <= 0:
-            continue
-
-        md5hash = hashlib.md5(os.urandom(64)).hexdigest()
-
-        if not os.path.exists(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash)):
-            os.makedirs(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash))
-
-        f.save(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash, filename))
-        db_f = Files(chal.id, (md5hash + '/' + filename))
-        db.session.add(db_f)
+        upload_file(file=f, chalid=chal.id)
 
     db.session.commit()
     db.session.close()
@@ -838,27 +811,26 @@ def admin_create_chal():
 @admin.route('/admin/chal/delete', methods=['POST'])
 @admins_only
 def admin_delete_chal():
-    challenge = Challenges.query.filter_by(id=request.form['id']).first()
-    if challenge:
-        WrongKeys.query.filter_by(chalid=challenge.id).delete()
-        Solves.query.filter_by(chalid=challenge.id).delete()
-        Keys.query.filter_by(chal=challenge.id).delete()
-        files = Files.query.filter_by(chal=challenge.id).all()
-        Files.query.filter_by(chal=challenge.id).delete()
-        for file in files:
-            folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), 'uploads', file.location))
-            rmdir(folder)
-        Tags.query.filter_by(chal=challenge.id).delete()
-        Challenges.query.filter_by(id=challenge.id).delete()
-        db.session.commit()
-        db.session.close()
+    challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
+    WrongKeys.query.filter_by(chalid=challenge.id).delete()
+    Solves.query.filter_by(chalid=challenge.id).delete()
+    Keys.query.filter_by(chal=challenge.id).delete()
+    files = Files.query.filter_by(chal=challenge.id).all()
+    Files.query.filter_by(chal=challenge.id).delete()
+    for file in files:
+        folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), 'uploads', file.location))
+        rmdir(folder)
+    Tags.query.filter_by(chal=challenge.id).delete()
+    Challenges.query.filter_by(id=challenge.id).delete()
+    db.session.commit()
+    db.session.close()
     return '1'
 
 
 @admin.route('/admin/chal/update', methods=['POST'])
 @admins_only
 def admin_update_chal():
-    challenge = Challenges.query.filter_by(id=request.form['id']).first()
+    challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
     challenge.name = request.form['name']
     challenge.description = request.form['desc']
     challenge.value = request.form['value']
