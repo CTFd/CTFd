@@ -8,6 +8,7 @@ from sqlalchemy.sql import or_
 
 from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, user_can_view_challenges, is_admin, get_config, get_ip, is_verified, ctf_started, ctf_ended, ctf_name
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Tags, Teams, Awards
+from CTFd.plugins.keys import get_key_function
 
 challenges = Blueprint('challenges', __name__)
 
@@ -179,8 +180,8 @@ def chal(chalid):
         # Challange not solved yet
         if not solves:
             chal = Challenges.query.filter_by(id=chalid).first_or_404()
-            key = unicode(request.form['key'].strip().lower())
-            keys = json.loads(chal.flags)
+            provided_key = unicode(request.form['key'].strip())
+            saved_keys = json.loads(chal.flags)
 
             # Hit max attempts
             max_tries = int(get_config("max_tries"))
@@ -190,32 +191,20 @@ def chal(chalid):
                     'message': "You have 0 tries remaining"
                 })
 
-            for x in keys:
-                if x['type'] == 0: # static key
-                    print(x['flag'], key.strip().lower())
-                    if x['flag'] and x['flag'].strip().lower() == key.strip().lower():
-                        if ctftime():
-                            solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
-                            db.session.add(solve)
-                            db.session.commit()
-                            db.session.close()
-                        logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
-                        # return '1' # key was correct
-                        return jsonify({'status': '1', 'message': 'Correct'})
-                elif x['type'] == 1: # regex
-                    res = re.match(x['flag'], key, re.IGNORECASE)
-                    if res and res.group() == key:
-                        if ctftime():
-                            solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=key)
-                            db.session.add(solve)
-                            db.session.commit()
-                            db.session.close()
-                        logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
-                        # return '1' # key was correct
-                        return jsonify({'status': '1', 'message': 'Correct'})
+            for saved_key in saved_keys:
+                compare_func = get_key_function(saved_key.get('type'))
+                result = compare_func(saved_key.get('flag'), provided_key)
+                if result:
+                    if ctftime():
+                        solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=provided_key)
+                        db.session.add(solve)
+                        db.session.commit()
+                        db.session.close()
+                    logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
+                    return jsonify({'status': '1', 'message': 'Correct'})
 
             if ctftime():
-                wrong = WrongKeys(session['id'], chalid, request.form['key'])
+                wrong = WrongKeys(teamid=session['id'], chalid=chalid, flag=provided_key)
                 db.session.add(wrong)
                 db.session.commit()
                 db.session.close()
