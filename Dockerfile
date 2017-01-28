@@ -12,5 +12,5 @@ WORKDIR /opt/CTFd
 RUN pip install -r requirements.txt
 RUN pip install pymysql
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "-w", "4", "CTFd:create_app()"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "-w", "4", "CTFd:create_app()", "--access-logfile", "/opt/CTFd/CTFd/logs/access.log", "--error-logfile", "/opt/CTFd/CTFd/logs/error.log"]
 EXPOSE 8000
