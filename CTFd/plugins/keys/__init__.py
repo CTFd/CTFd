@@ -3,22 +3,41 @@ import string
 import hmac
 
 
-def ctfd_static_key_compare(saved, provided):
-    return hmac.compare_digest(saved.lower(), provided.lower())
+class BaseKey(object):
+    id = None
+    name = None
 
-def ctfd_regex_key_compare(saved, provided):
-    res = re.match(saved, provided, re.IGNORECASE)
-    return res and res.group() == provided
+    @staticmethod
+    def compare(self, saved, provided):
+        return True
+
+class CTFdStaticKey(BaseKey):
+    id = 0
+    name = "static"
+
+    @staticmethod
+    def compare(saved, provided):
+        return hmac.compare_digest(saved.lower(), provided.lower())
 
 
-KEY_FUNCTIONS = {
-    0 : ctfd_static_key_compare,
-    1 : ctfd_regex_key_compare
+class CTFdRegexKey(BaseKey):
+    id = 1
+    name = "regex"
+
+    @staticmethod
+    def compare(saved, provided):
+        res = re.match(saved, provided, re.IGNORECASE)
+        return res and res.group() == provided
+
+
+KEY_CLASSES = {
+    0 : CTFdStaticKey,
+    1 : CTFdRegexKey
 }
 
 
-def get_key_function(func_id):
-    func = KEY_FUNCTIONS.get(func_id)
-    if func is None:
+def get_key_class(class_id):
+    cls = KEY_CLASSES.get(class_id)
+    if cls is None:
         raise KeyError
-    return func
+    return cls

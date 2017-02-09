@@ -4,7 +4,7 @@ from distutils.version import StrictVersion
 from flask import Flask
 from jinja2 import FileSystemLoader
 from sqlalchemy.engine.url import make_url
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy_utils import database_exists, create_database
 
 from utils import get_config, set_config, cache, migrate, migrate_upgrade
@@ -60,7 +60,7 @@ def create_app(config='CTFd.config.Config'):
         if version and (StrictVersion(version) < StrictVersion(__version__)): ## Upgrading from an older version of CTFd
             migrate_upgrade()
             set_config('ctf_version', __version__)
-            
+
         if not get_config('ctf_theme'):
             set_config('ctf_theme', 'original')
 

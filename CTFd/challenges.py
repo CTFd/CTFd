@@ -7,8 +7,8 @@ from flask import render_template, request, redirect, jsonify, url_for, session,
 from sqlalchemy.sql import or_
 
 from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, user_can_view_challenges, is_admin, get_config, get_ip, is_verified, ctf_started, ctf_ended, ctf_name
-from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Tags, Teams, Awards
-from CTFd.plugins.keys import get_key_function
+from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards
+from CTFd.plugins.keys import get_key_class
 
 challenges = Blueprint('challenges', __name__)
 
@@ -112,7 +112,7 @@ def solves(teamid=None):
                 'chalid': None,
                 'team': award.teamid,
                 'value': award.value,
-                'category': award.category,
+                'category': award.category or "Award",
                 'time': unix_time(award.date)
             })
     json['solves'].sort(key=lambda k: k['time'])
@@ -181,7 +181,7 @@ def chal(chalid):
         if not solves:
             chal = Challenges.query.filter_by(id=chalid).first_or_404()
             provided_key = unicode(request.form['key'].strip())
-            saved_keys = json.loads(chal.flags)
+            saved_keys = Keys.query.filter_by(chal=chal.id).all()
 
             # Hit max attempts
             max_tries = int(get_config("max_tries"))
@@ -192,8 +192,8 @@ def chal(chalid):
                 })
 
             for saved_key in saved_keys:
-                compare_func = get_key_function(saved_key.get('type'))
-                result = compare_func(saved_key.get('flag'), provided_key)
+                compare_class = get_key_class(saved_key.key_type)
+                result = compare_class.compare(saved_key.flag, provided_key)
                 if result:
                     if ctftime():
                         solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=provided_key)

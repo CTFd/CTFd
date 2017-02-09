@@ -11,6 +11,7 @@ from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
     container_stop, container_start, get_themes, cache, upload_file
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
+from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 
 admin = Blueprint('admin', __name__)
 
@@ -309,28 +310,57 @@ def admin_chals():
         return render_template('admin/chals.html')
 
 
-@admin.route('/admin/keys/<int:chalid>', methods=['POST', 'GET'])
+@admin.route('/admin/key_types', methods=['GET'])
 @admins_only
-def admin_keys(chalid):
-    chal = Challenges.query.filter_by(id=chalid).first_or_404()
+def admin_key_types():
+    data = {}
+    for class_id in KEY_CLASSES:
+        data[class_id] = KEY_CLASSES.get(class_id).name
 
+    return jsonify(data)
+
+@admin.route('/admin/keys', defaults={'keyid': None}, methods=['POST', 'GET'])
+@admin.route('/admin/keys/<int:keyid>', methods=['POST', 'GET'])
+@admins_only
+def admin_keys(keyid):
+    print repr(keyid)
     if request.method == 'GET':
-        json_data = {'keys': []}
-        flags = json.loads(chal.flags)
-        for i, x in enumerate(flags):
-            json_data['keys'].append({'id': i, 'key': x['flag'], 'type': x['type']})
-        return jsonify(json_data)
+        if keyid:
+            saved_key = Keys.query.filter_by(id=keyid).first_or_404()
+
+            json_data = {
+                'id': saved_key.id,
+                'key': saved_key.flag,
+                'chal': saved_key.chal,
+                'type': saved_key.key_type,
+                'type_name': get_key_class(saved_key.key_type).name
+            }
+
+            return jsonify(json_data)
     elif request.method == 'POST':
-        newkeys = request.form.getlist('keys[]')
-        newvals = request.form.getlist('vals[]')
-        flags = []
-        for flag, val in zip(newkeys, newvals):
-            flag_dict = {'flag': flag, 'type': int(val)}
-            flags.append(flag_dict)
-        json_data = json.dumps(flags)
+        chal = request.form.get('chal')
+        flag = request.form.get('key')
+        key_type = int(request.form.get('key_type'))
+        if not keyid:
+            k = Keys(chal, flag, key_type)
+            db.session.add(k)
+        else:
+            k = Keys.query.filter_by(id=keyid).first()
+            k.chal = chal
+            k.flag = flag
+            k.key_type = key_type
+        db.session.commit()
+        db.session.close()
+        return '1'
 
-        chal.flags = json_data
 
+
+@admin.route('/admin/keys/<int:keyid>/delete', methods=['POST'])
+@admins_only
+def admin_delete_keys(keyid):
+    if request.method == 'POST':
+        key = Keys.query.filter_by(id=keyid).first_or_404()
+        db.session.delete(key)
         db.session.commit()
         db.session.close()
         return '1'
@@ -646,7 +676,7 @@ def admin_solves(teamid="all"):
             'chalid': None,
             'team': award.teamid,
             'value': award.value,
-            'category': award.category,
+            'category': award.category or "Award",
             'time': unix_time(award.date)
         })
     json_data['solves'].sort(key=lambda k: k['time'])
@@ -783,21 +813,43 @@ def admin_fails(teamid):
         return jsonify(json_data)
 
 
+@admin.route('/admin/chal/<int:chalid>/<prop>', methods=['GET'])
+@admins_only
+def admin_get_values(chalid, prop):
+    challenge = Challenges.query.filter_by(id=chalid).first_or_404()
+    if prop == 'keys':
+        chal_keys = Keys.query.filter_by(chal=challenge.id).all()
+        json_data = {'keys': []}
+        for x in chal_keys:
+            json_data['keys'].append({'id': x.id, 'key': x.flag, 'type': x.key_type, 'type_name': get_key_class(x.key_type).name})
+        return jsonify(json_data)
+    elif prop == 'tags':
+        tags = Tags.query.filter_by(chal=chalid).all()
+        json_data = {'tags': []}
+        for x in tags:
+            json_data['tags'].append({'id': x.id, 'chal': x.chal, 'tag': x.tag})
+        return jsonify(json_data)
+
+
 @admin.route('/admin/chal/new', methods=['POST'])
 @admins_only
 def admin_create_chal():
     files = request.files.getlist('files[]')
 
     # TODO: Expand to support multiple flags
-    flags = [{'flag': request.form['key'], 'type':int(request.form['key_type[0]'])}]
+    # flags = [{'flag': request.form['key'], 'type':int(request.form['key_type[0]'])}]
 
     # Create challenge
-    chal = Challenges(request.form['name'], request.form['desc'], request.form['value'], request.form['category'], flags)
+    chal = Challenges(request.form['name'], request.form['desc'], request.form['value'], request.form['category'])
     if 'hidden' in request.form:
         chal.hidden = True
     else:
         chal.hidden = False
     db.session.add(chal)
+
+    db.session.flush()
+    flag = Keys(chal.id, request.form['key'], int(request.form['key_type[0]']))
+
     db.session.commit()
 
     for f in files:
