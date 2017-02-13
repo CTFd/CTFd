@@ -1,0 +1,48 @@
+meta:
+    ctf_name: My CTF
+    ctf_theme: original
+    #max attempts per challenge
+    max_tries: 0
+    ## Challenges cannot be viewed by unregistered users
+    view_challenges_unregistered: True
+    ## Allow/Disallow registration
+    prevent_registration: False
+    ## Verify emails
+    verify_emails: False
+    prevent_name_change: True
+    # Mail Settings
+    mail_server: None
+    mail_port: None
+    mail_tls: None
+    mail_ssl: None
+    mail_username: None
+    mail_password: None
+
+    url: "http://localhost:8080"
+    admin:
+        username: admin
+        email: admin@local.host
+        password: admin
+        admin: True
+
+    homepage: |
+        <div class="container main-container">
+            <img class="logo" src="/static/original/img/logo.png" />
+            <h3 class="text-center">
+                Welcome to a cool CTF framework written by <a href="https://github.com/ColdHeat">Kevin Chung</a> of <a href="https://github.com/isislab">@isislab</a>
+            </h3>
+
+            <h4 class="text-center">
+                <a href="/admin">Click here</a> to login and setup your CTF
+            </h4>
+        </div>
+
+challenges:
+  - title: Hello, World
+    description: Simple "Hello, World" problem
+    category: intro
+    points: 10
+    flag: myctf{hello_world!}
+    key: hello-world
+    body: |
+      Try entering the flag `myctf{hello_world!}`

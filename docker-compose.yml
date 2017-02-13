@@ -11,7 +11,7 @@ services:
       CTFD_YAML_FILE: /data.yml
     volumes:
       - .data/CTFd/logs:/opt/CTFd/CTFd/logs
-      - .data/data.yml:/data.yml
+      - .sample.yml:/data.yml
     links:
       - db:db
 

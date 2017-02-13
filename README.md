@@ -31,4 +31,4 @@ The container can be auto-configured (admin things as well as challenges) via a
 yaml file mounted inside the container, leading to reproducible deployments of
 CTFd which do not require any manual intervention.
 
-An example of the file required is provided in `.data/data.yml`
+An example of the file required is provided in `.sample.yml`
