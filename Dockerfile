@@ -7,7 +7,8 @@ COPY . /opt/CTFd
 WORKDIR /opt/CTFd
 VOLUME ["/opt/CTFd"]
 
-RUN pip install -r requirements.txt
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "-w", "4", "CTFd:create_app()"]
+RUN pip install -r requirements.txt pyyaml
 EXPOSE 8000
+
+ENTRYPOINT ["/opt/CTFd/docker-entrypoint.sh"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "-w", "4", "CTFd:create_app()"]

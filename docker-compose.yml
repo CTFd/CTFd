@@ -7,9 +7,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=mysql+pymysql://root@db/ctfd
+      DATABASE_URL: mysql+pymysql://root@db/ctfd
+      CTFD_YAML_FILE: /data.yml
     volumes:
       - .data/CTFd/logs:/opt/CTFd/CTFd/logs
+      - .data/data.yml:/data.yml
     links:
       - db:db
 

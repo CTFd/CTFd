@@ -20,3 +20,15 @@ https://reversing.ctfd.io/
 Logo by [Laura Barbera](http://www.laurabb.com/)
 
 Theme by [Christopher Thompson](https://github.com/breadchris)
+
+Docker
+------
+
+A docker container is available as part of this repository. The
+docker-compose.yml is probably the easiest way to use the images.
+
+The container can be auto-configured (admin things as well as challenges) via a
+yaml file mounted inside the container, leading to reproducible deployments of
+CTFd which do not require any manual intervention.
+
+An example of the file required is provided in `.data/data.yml`
