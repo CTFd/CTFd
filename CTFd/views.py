@@ -229,4 +229,5 @@ def file_handler(path):
                     pass
                 else:
                     abort(403)
-    return send_file(os.path.join(app.root_path, 'uploads', f.location))
+    upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+    return send_file(os.path.join(upload_folder, f.location))
