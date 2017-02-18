@@ -82,10 +82,10 @@ class Config(object):
 
     '''
     UPLOAD_FOLDER is the location where files are uploaded.
-    The default destination is the CTFd/static/uploads folder. If you need Amazon S3 files
+    The default destination is the CTFd/uploads folder. If you need Amazon S3 files
     you can use the CTFd S3 plugin: https://github.com/ColdHeat/CTFd-S3-plugin
     '''
-    UPLOAD_FOLDER = os.path.normpath('static/uploads')
+    UPLOAD_FOLDER = os.path.normpath('uploads')
 
 
     '''
