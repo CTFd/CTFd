@@ -5,7 +5,7 @@ import os
 
 def init_plugins(app):
     modules = glob.glob(os.path.dirname(__file__) + "/*")
-    blacklist = {'keys'}
+    blacklist = {'keys', 'challenges'}
     for module in modules:
         module_name = os.path.basename(module)
         if os.path.isdir(module) and module_name not in blacklist:

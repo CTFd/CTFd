@@ -101,62 +101,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="chal-window" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content content">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active"><a href="#challenge" aria-controls="challenge" role="tab">Challenge</a></li>
-                <li role="presentation"><a href="#solves" aria-controls="solves" class="chal-solves" role="tab"></a></li>
-            </ul>
-            <div class="modal-body">
-                <div role="tabpanel">
-                    <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade in active" id="challenge">
-                            <h3 class='chal-name'></h3>
-                            <h4 class="chal-value"></h4>
-                            <div class="chal-tags"></div>
-                            <p class="chal-desc"></p>
-                            <div class="chal-files file-row row">
-                            </div>
+<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
 
-                            <div class="row submit-row">
-                                <div class="col-md-9" style="padding-right:0px;padding-left:10px;">
-                                    <span class="input">
-                                        <input class="input-field" type="text" name="answer" id="answer-input" placeholder="Key" />
-                                    </span>
-                                    <input type="hidden" id="nonce" name="nonce" value={{ nonce }}>
-                                    <input id="chal-id" type="hidden">
-                                </div>
-                                <div class="col-md-3 key-submit">
-                                    <button type="submit" id="submit-key" tabindex="5" class="btn btn-md btn-theme btn-outlined pull-right" style="height:46.375px">Submit</button>
-                                </div>
-                            </div>
-                            <div class="row notification-row">
-                                <div id="result-notification" class="alert alert-dismissable" role="alert">
-                                  <strong id="result-message"></strong>
-                                </div>
-                            </div>
-                        </div>
-                        <div role="tabpanel" class="tab-pane fade" id="solves">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <td><b>Name</b>
-                                        </td>
-                                        <td><b>Date</b>
-                                        </td>
-                                    </tr>
-                                </thead>
-                                <tbody id="chal-solves-names">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="modal fade" id="chal-window" tabindex="-1" role="dialog">
 </div>
 {% endif %}
 {% endblock %}

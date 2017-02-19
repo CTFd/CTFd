@@ -125,6 +125,7 @@ class Keys(db.Model):
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     key_type = db.Column(db.Integer)
     flag = db.Column(db.Text)
+    data = db.Column(db.Text)
 
     def __init__(self, chal, flag, key_type):
         self.chal = chal

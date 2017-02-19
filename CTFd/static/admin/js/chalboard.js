@@ -22,7 +22,7 @@ String.prototype.hashCode = function() {
 };
 
 function load_edit_key_modal(key_id, key_type_name) {
-    $.get(script_root + '/static/admin/js/templates/keys/edit-' + key_type_name + '-modal.hbs', function(template_data){
+    $.get(script_root + '/static/admin/js/templates/keys/'+key_type_name+'/edit-'+key_type_name+'-modal.hbs', function(template_data){
         $.get(script_root + '/admin/keys/' + key_id, function(key_data){
             $('#edit-keys').empty();
             var template = Handlebars.compile(template_data);
@@ -234,11 +234,11 @@ function loadchals(){
             loadfiles(this.value);
         });
 
-        $('.create-challenge').click(function (e) {
-            $('#new-chal-category').val($($(this).siblings()[0]).text().trim());
-            $('#new-chal-title').text($($(this).siblings()[0]).text().trim());
-            $('#new-challenge').modal();
-        });
+        // $('.create-challenge').click(function (e) {
+        //     $('#new-chal-category').val($($(this).siblings()[0]).text().trim());
+        //     $('#new-chal-title').text($($(this).siblings()[0]).text().trim());
+        //     $('#new-challenge').modal();
+        // });
 
     });
 }
@@ -299,9 +299,9 @@ $('#new-desc-edit').on('shown.bs.tab', function (event) {
 });
 
 // Open New Challenge modal when New Challenge button is clicked
-$('.create-challenge').click(function (e) {
-    $('#create-challenge').modal();
-});
+// $('.create-challenge').click(function (e) {
+//     $('#create-challenge').modal();
+// });
 
 
 $('#create-key').click(function(e){
@@ -320,7 +320,7 @@ $('#create-key').click(function(e){
 $('#create-keys-select').change(function(){
     var key_type_name = $(this).find("option:selected").text();
 
-    $.get(script_root + '/static/admin/js/templates/keys/' + key_type_name + '.hbs', function(template_data){
+    $.get(script_root + '/static/admin/js/templates/keys/'+key_type_name +'/'+key_type_name+'.hbs', function(template_data){
         var template = Handlebars.compile(template_data);
         $("#create-keys-entry-div").html(template());
         $("#create-keys-button-div").show();

@@ -1,4 +1,11 @@
 var challenges;
+var templates = {};
+
+Handlebars.registerHelper('splitSlash', function(filename) {
+    var filename = filename.split("/");
+    filename = filename[filename.length - 1];
+    return filename;
+});
 
 function loadchal(id) {
     var obj = $.grep(challenges['game'], function (e) {
@@ -17,34 +24,61 @@ function loadchalbyname(chalname) {
 }
 
 function updateChalWindow(obj) {
-    window.location.replace(window.location.href.split('#')[0] + '#' + obj.name);
-    var chal = $('#chal-window');
-    chal.find('.chal-name').text(obj.name);
-    chal.find('.chal-desc').html(marked(obj.description, {'gfm':true, 'breaks':true}));
-    chal.find('.chal-files').empty();
-    for (var i = 0; i < obj.files.length; i++) {
-        var filename = obj.files[i].split('/');
-        filename = filename[filename.length - 1];
-        $('#chal-window').find('.chal-files').append("<div class='col-md-3 file-button-wrapper'><a class='file-button' href='" + script_root + '/files/' + obj.files[i] + "'><label class='challenge-wrapper file-wrapper hide-text'>" + filename + "</label></a></div>")
-    }
+    $.get(script_root + '/static/original/js/templates/challenges/'+obj.type+'/'+obj.type+'-challenge-modal.hbs', function(template_data){
+        $('#chal-window').empty();
+        templates[obj.type] = template_data;
+        var template_data = templates[obj.type];
+        var template = Handlebars.compile(template_data);
+        var solves = obj.solves == 1 ? " Solve" : " Solves";
+        solves = obj.solves + solves;
 
-    var tags = chal.find('.chal-tags');
-    tags.empty();
-    var tag = "<span class='label label-primary chal-tag'>{0}</span>";
-    for (var i = 0; i < obj.tags.length; i++){
-        var data = tag.format(obj.tags[i]);
-        tags.append($(data));
-    }
+        var nonce = $('#nonce').val();
+        var wrapper  = {
+            id: obj.id,
+            name: obj.name,
+            value: obj.value,
+            tags: obj.tags,
+            desc: marked(obj.description, {'gfm':true, 'breaks':true}),
+            solves: solves,
+            files: obj.files,
+        };
 
-    chal.find('.chal-value').text(obj.value);
-    chal.find('.chal-category').text(obj.category);
-    chal.find('#chal-id').val(obj.id);
-    var solves = obj.solves == 1 ? " Solve" : " Solves";
-    chal.find('.chal-solves').text(obj.solves + solves);
-    $('#answer').val("");
+        $.getScript(script_root + '/static/original/js/templates/challenges/'+obj.type+'/'+obj.type+'-challenge-script.js',
+            function() {
+                $('#chal-window').append(template(wrapper));
 
-    $('pre code').each(function(i, block) {
-        hljs.highlightBlock(block);
+                // Handle Solves tab
+                $('.chal-solves').click(function (e) {
+                    getsolves($('#chal-id').val())
+                });
+                $('.nav-tabs a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show')
+                });
+
+                // Handle submission input
+                $('#submit-key').click(function (e) {
+                    e.preventDefault();
+                    submitkey($('#chal-id').val(), $('#answer-input').val(), $('#nonce').val())
+                });
+
+                // Handle modal toggling
+                $('#chal-window').on('hide.bs.modal', function (event) {
+                    $("#answer-input").removeClass("wrong");
+                    $("#answer-input").removeClass("correct");
+                    $("#incorrect-key").slideUp();
+                    $("#correct-key").slideUp();
+                    $("#already-solved").slideUp();
+                    $("#too-fast").slideUp();
+                });
+
+                // $('pre code').each(function(i, block) {
+                //     hljs.highlightBlock(block);
+                // });
+
+                window.location.replace(window.location.href.split('#')[0] + '#' + obj.name);
+                $('#chal-window').modal();
+        });
     });
 }
 

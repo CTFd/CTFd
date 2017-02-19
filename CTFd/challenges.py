@@ -9,6 +9,7 @@ from sqlalchemy.sql import or_
 from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, user_can_view_challenges, is_admin, get_config, get_ip, is_verified, ctf_started, ctf_ended, ctf_name
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards
 from CTFd.plugins.keys import get_key_class
+from CTFd.plugins.challenges import get_chal_class
 
 challenges = Blueprint('challenges', __name__)
 
@@ -50,13 +51,22 @@ def chals():
             else:
                 return redirect(url_for('views.static_html'))
     if user_can_view_challenges() and (ctf_started() or is_admin()):
-        chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).add_columns('id', 'name', 'value', 'description', 'category').order_by(Challenges.value).all()
-
+        chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).order_by(Challenges.value).all()
         json = {'game': []}
         for x in chals:
-            tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=x[1]).all()]
+            tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=x.id).all()]
             files = [str(f.location) for f in Files.query.filter_by(chal=x.id).all()]
-            json['game'].append({'id': x[1], 'name': x[2], 'value': x[3], 'description': x[4], 'category': x[5], 'files': files, 'tags': tags})
+            chal_type = get_chal_class(x.type)
+            json['game'].append({
+                'id': x.id,
+                'type': chal_type.name,
+                'name': x.name,
+                'value': x.value,
+                'description': x.description,
+                'category': x.category,
+                'files': files,
+                'tags': tags
+            })
 
         db.session.close()
         return jsonify(json)
@@ -191,17 +201,15 @@ def chal(chalid):
                     'message': "You have 0 tries remaining"
                 })
 
-            for saved_key in saved_keys:
-                compare_class = get_key_class(saved_key.key_type)
-                result = compare_class.compare(saved_key.flag, provided_key)
-                if result:
-                    if ctftime():
-                        solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=provided_key)
-                        db.session.add(solve)
-                        db.session.commit()
-                        db.session.close()
-                    logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
-                    return jsonify({'status': '1', 'message': 'Correct'})
+            chal_class = get_chal_class(chal.type)
+            if chal_class.solve(chal, provided_key):
+                if ctftime():
+                    solve = Solves(chalid=chalid, teamid=session['id'], ip=get_ip(), flag=provided_key)
+                    db.session.add(solve)
+                    db.session.commit()
+                    db.session.close()
+                logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
+                return jsonify({'status': '1', 'message': 'Correct'})
 
             if ctftime():
                 wrong = WrongKeys(teamid=session['id'], chalid=chalid, flag=provided_key)
