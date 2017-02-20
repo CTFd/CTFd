@@ -5,6 +5,7 @@ from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
+import os
 
 admin_challenges = Blueprint('admin_challenges', __name__)
 
