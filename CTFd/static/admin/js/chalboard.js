@@ -177,6 +177,25 @@ function updatetags(){
     loadchal(chal)
 }
 
+function updatefiles(){
+    chal = $('#files-chal').val();
+    var form = $('#update-files form')[0];
+    var formData = new FormData(form);
+    $.ajax({
+        url: script_root + '/admin/files/'+chal,
+        data: formData,
+        type: 'POST',
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(data){
+            form.reset();
+            loadfiles(chal);
+            $('#update-files').modal('hide');
+        }
+    });
+}
+
 function loadfiles(chal){
     $('#update-files form').attr('action', script_root+'/admin/files/'+chal)
     $.get(script_root + '/admin/files/' + chal, function(data){
@@ -255,6 +274,11 @@ $('#submit-keys').click(function (e) {
 $('#submit-tags').click(function (e) {
     e.preventDefault();
     updatetags()
+});
+
+$('#submit-files').click(function (e) {
+    e.preventDefault();
+    updatefiles()
 });
 
 $('#delete-chal form').submit(function(e){
