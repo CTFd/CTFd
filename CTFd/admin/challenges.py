@@ -110,7 +110,7 @@ def admin_files(chalid):
 
             db.session.commit()
             db.session.close()
-            return redirect(url_for('admin_challenges.admin_chals'))
+            return '1'
 
 
 @admin_challenges.route('/admin/chal/<int:chalid>/<prop>', methods=['GET'])
