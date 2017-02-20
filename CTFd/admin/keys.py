@@ -28,7 +28,7 @@ def admin_keys_view(keyid):
             json_data = {
                 'id': saved_key.id,
                 'key': saved_key.flag,
-                'data': saved_key.flag,
+                'data': saved_key.data,
                 'chal': saved_key.chal,
                 'type': saved_key.key_type,
                 'type_name': get_key_class(saved_key.key_type).name
