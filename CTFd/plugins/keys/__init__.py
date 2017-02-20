@@ -17,7 +17,12 @@ class CTFdStaticKey(BaseKey):
 
     @staticmethod
     def compare(saved, provided):
-        return hmac.compare_digest(saved.lower(), provided.lower())
+        if len(saved) != len(provided):
+            return False
+        result = 0
+        for x, y in zip(saved, provided):
+            result |= ord(x) ^ ord(y)
+        return result == 0
 
 
 class CTFdRegexKey(BaseKey):
