@@ -43,10 +43,9 @@ function updateChalWindow(obj) {
             files: obj.files,
         };
 
+        $('#chal-window').append(template(wrapper));
         $.getScript(script_root + '/static/original/js/templates/challenges/'+obj.type+'/'+obj.type+'-challenge-script.js',
             function() {
-                $('#chal-window').append(template(wrapper));
-
                 // Handle Solves tab
                 $('.chal-solves').click(function (e) {
                     getsolves($('#chal-id').val())
