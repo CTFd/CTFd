@@ -1,4 +1,6 @@
+$('#submit-key').unbind('click');
 $('#submit-key').click(function (e) {
+    e.preventDefault();
     submitkey($('#chal-id').val(), $('#answer-input').val(), $('#nonce').val())
 });
 

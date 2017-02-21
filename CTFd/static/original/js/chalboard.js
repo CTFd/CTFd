@@ -55,12 +55,6 @@ function updateChalWindow(obj) {
                     $(this).tab('show')
                 });
 
-                // Handle submission input
-                $('#submit-key').click(function (e) {
-                    e.preventDefault();
-                    submitkey($('#chal-id').val(), $('#answer-input').val(), $('#nonce').val())
-                });
-
                 // Handle modal toggling
                 $('#chal-window').on('hide.bs.modal', function (event) {
                     $("#answer-input").removeClass("wrong");
