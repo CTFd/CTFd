@@ -191,7 +191,7 @@ function getsolves(id){
   });
 }
 
-function loadchals() {
+function loadchals(refresh) {
     $.get(script_root + "/chals", function (data) {
         var categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
@@ -242,7 +242,9 @@ function loadchals() {
             }
         };
 
-        updatesolves(load_location_hash);
+        if (!refresh){
+            updatesolves(load_location_hash);
+        }
         marksolves();
 
         $('.challenge-button').click(function (e) {
@@ -291,7 +293,7 @@ function colorhash (x) {
 }
 
 function update(){
-    loadchals();
+    loadchals(true);
 }
 
 $(function() {
