@@ -1,6 +1,8 @@
 from flask import render_template, jsonify, Blueprint, redirect, url_for, request
 from sqlalchemy.sql.expression import union_all
 
+from datetime import datetime
+
 from CTFd.utils import unix_time, authed, get_config
 from CTFd.models import db, Teams, Solves, Awards, Challenges
 
@@ -8,23 +10,48 @@ scoreboard = Blueprint('scoreboard', __name__)
 
 
 def get_standings(admin=False, count=None):
-    score = db.func.sum(Challenges.value).label('score')
-    date = db.func.max(Solves.date).label('date')
-    scores = db.session.query(Solves.teamid.label('teamid'), score, date).join(Challenges).group_by(Solves.teamid)
-    awards = db.session.query(Awards.teamid.label('teamid'), db.func.sum(Awards.value).label('score'), db.func.max(Awards.date).label('date')) \
-        .group_by(Awards.teamid)
+    scores = db.session.query(
+                Solves.teamid.label('teamid'),
+                db.func.sum(Challenges.value).label('score'),
+                db.func.max(Solves.date).label('date')
+            ).join(Challenges).group_by(Solves.teamid)
+
+    freeze = get_config('freeze')
+    if not admin and freeze:
+        scores = scores.filter(Solves.date < datetime.fromtimestamp(freeze))
+
+    awards = db.session.query(
+                Awards.teamid.label('teamid'),
+                db.func.sum(Awards.value).label('score'),
+                db.func.max(Awards.date).label('date')
+            ).group_by(Awards.teamid)
+
     results = union_all(scores, awards).alias('results')
-    sumscores = db.session.query(results.columns.teamid, db.func.sum(results.columns.score).label('score'), db.func.max(results.columns.date).label('date')) \
-        .group_by(results.columns.teamid).subquery()
+
+    sumscores = db.session.query(
+                    results.columns.teamid,
+                    db.func.sum(results.columns.score).label('score'),
+                    db.func.max(results.columns.date).label('date')
+                ).group_by(results.columns.teamid).subquery()
+
     if admin:
-        standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), Teams.banned, sumscores.columns.score) \
-                                    .join(sumscores, Teams.id == sumscores.columns.teamid) \
-                                    .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+        standings_query = db.session.query(
+                            Teams.id.label('teamid'),
+                            Teams.name.label('name'),
+                            Teams.banned, sumscores.columns.score
+                        )\
+                        .join(sumscores, Teams.id == sumscores.columns.teamid) \
+                        .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
     else:
-        standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), sumscores.columns.score) \
-                                    .join(sumscores, Teams.id == sumscores.columns.teamid) \
-                                    .filter(Teams.banned == False) \
-                                    .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+        standings_query = db.session.query(
+                            Teams.id.label('teamid'),
+                            Teams.name.label('name'),
+                            sumscores.columns.score
+                        )\
+                        .join(sumscores, Teams.id == sumscores.columns.teamid) \
+                        .filter(Teams.banned == False) \
+                        .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+
     if count is None:
         standings = standings_query.all()
     else:

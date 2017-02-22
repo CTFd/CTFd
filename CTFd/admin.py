@@ -35,10 +35,13 @@ def admin_config():
     if request.method == "POST":
         start = None
         end = None
+        freeze = None
         if request.form.get('start'):
             start = int(request.form['start'])
         if request.form.get('end'):
             end = int(request.form['end'])
+        if request.form.get('freeze'):
+            freeze = int(request.form['freeze'])
 
         try:
             view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
@@ -89,6 +92,8 @@ def admin_config():
         db_end = Config.query.filter_by(key='end').first()
         db_end.value = end
 
+        set_config('freeze', freeze)
+
         db.session.add(db_start)
         db.session.add(db_end)
 
@@ -119,6 +124,7 @@ def admin_config():
     view_after_ctf = get_config('view_after_ctf')
     start = get_config('start')
     end = get_config('end')
+    freeze = get_config('freeze')
 
     mail_tls = get_config('mail_tls')
     mail_ssl = get_config('mail_ssl')
@@ -140,6 +146,7 @@ def admin_config():
                            ctf_theme_config=ctf_theme,
                            start=start,
                            end=end,
+                           freeze=freeze,
                            max_tries=max_tries,
                            mail_server=mail_server,
                            mail_port=mail_port,
@@ -556,6 +563,15 @@ def admin_graph(graph_type):
 def admin_scoreboard():
     standings = get_standings(admin=True)
     return render_template('admin/scoreboard.html', teams=standings)
+
+@admin.route('/admin/scoreboard/raw')
+@admins_only
+def admin_raw_scoreboard():
+    standings = get_standings(admin=True)
+    json = {'standings': []}
+    for i, x in enumerate(standings):
+        json['standings'].append({'pos': i + 1, 'id': x.teamid, 'team': x.name, 'score': int(x.score)})
+    return jsonify(json)
 
 
 @admin.route('/admin/teams/<int:teamid>/awards', methods=['GET'])
