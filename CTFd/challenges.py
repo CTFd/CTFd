@@ -98,7 +98,10 @@ def solves(teamid=None):
         if is_admin():
             solves = Solves.query.filter_by(teamid=session['id']).all()
         elif user_can_view_challenges():
-            solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.teamid == session['id'], Teams.banned == False).all()
+            if authed():
+                solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.teamid == session['id'], Teams.banned == False).all()
+            else:
+                return jsonify({'solves': []})
         else:
             return redirect(url_for('auth.login', next='solves'))
     else:
@@ -233,4 +236,7 @@ def chal(chalid):
             # return '2' # challenge was already solved
             return jsonify({'status': '2', 'message': 'You already solved this'})
     else:
-        return '-1'
+        return jsonify({
+            'status': '-1',
+            'message': "You must be logged in to solve a challenge"
+        })

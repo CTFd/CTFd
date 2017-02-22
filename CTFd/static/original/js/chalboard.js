@@ -98,7 +98,7 @@ function submitkey(chal, key, nonce) {
         result_message.text(result.message);
 
         if (result.status == -1){
-          window.location="/login"
+          window.location = script_root + "/login?next=" + script_root + window.location.pathname + window.location.hash
           return
         }
         else if (result.status == 0){ // Incorrect key
