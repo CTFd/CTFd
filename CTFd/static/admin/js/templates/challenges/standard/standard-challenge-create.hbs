@@ -34,16 +34,21 @@
                     <label for="key">Key</label>
                     <input type="text" class="form-control" name="key" placeholder="Enter key">
                 </div>
-                <div class="col-md-2">
-                    <label class="radio-inline">
-                        <input type="radio" name="key_type[0]" value="0" checked>
-                        Static
-                    </label>
-                </div>
-                <div class="col-md-2">
-                    <label class="radio-inline">
-                        <input type="radio" name="key_type[0]" value="1"> Regex
-                    </label>
+                <div class="form-vertical">
+                    <div class="col-md-2">
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="key_type[0]" value="0" checked>
+                                Static
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="key_type[0]" value="1">
+                                Regex
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
