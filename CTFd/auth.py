@@ -30,9 +30,9 @@ def confirm_user(data=None):
         team = Teams.query.filter_by(email=email).first_or_404()
         team.verified = True
         db.session.commit()
-        db.session.close()
         logger = logging.getLogger('regs')
         logger.warn("[{0}] {1} confirmed {2}".format(time.strftime("%m/%d/%Y %X"), team.name.encode('utf-8'), team.email.encode('utf-8')))
+        db.session.close()
         if authed():
             return redirect(url_for('challenges.challenges_view'))
         return redirect(url_for('auth.login'))

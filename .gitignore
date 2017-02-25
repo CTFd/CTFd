@@ -60,6 +60,5 @@ target/
 .idea/
 CTFd/static/uploads
 CTFd/uploads
-CTFd/plugins
 .data/
 .ctfd_secret_key

@@ -21,6 +21,22 @@ String.prototype.hashCode = function() {
     return hash;
 };
 
+function load_edit_key_modal(key_id, key_type_name) {
+    $.get(script_root + '/static/admin/js/templates/keys/'+key_type_name+'/edit-'+key_type_name+'-modal.hbs', function(template_data){
+        $.get(script_root + '/admin/keys/' + key_id, function(key_data){
+            $('#edit-keys').empty();
+            var template = Handlebars.compile(template_data);
+            $('#edit-keys').append(template(key_data));
+            $('#key-id').val(key_id);
+            $('#submit-keys').click(function (e) {
+                e.preventDefault();
+                updatekey()
+            });
+            $('#edit-keys').modal();
+        });
+    });
+}
+
 function loadchal(id, update) {
     // $('#chal *').show()
     // $('#chal > h1').hide()
@@ -54,23 +70,31 @@ function submitkey(chal, key) {
     })
 }
 
+function create_key(chal, key, key_type) {
+    $.post(script_root + "/admin/keys", {
+        chal: chal,
+        key: key,
+        key_type: key_type,
+        nonce: $('#nonce').val()
+    }, function (data) {
+        if (data == "1"){
+            loadkeys(chal);
+            $("#create-keys").modal('toggle');
+        }
+    });
+}
+
 function loadkeys(chal){
-    $.get(script_root + '/admin/keys/' + chal, function(data){
+    $.get(script_root + '/admin/chal/' + chal + '/keys', function(data){
         $('#keys-chal').val(chal);
         keys = $.parseJSON(JSON.stringify(data));
         keys = keys['keys'];
         $('#current-keys').empty();
-        for(x=0; x<keys.length; x++){
-            var elem = $('<div class="col-md-4">');
-
-            elem.append($("<div class='form-group'>").append($("<input class='current-key form-control' type='text'>").val(keys[x].key)));
-            elem.append('<div class="radio-inline"><input type="radio" name="key_type['+x+']" value="0">Static</div>');
-            elem.append('<div class="radio-inline"><input type="radio" name="key_type['+x+']" value="1">Regex</div>');
-            elem.append('<a href="#" onclick="$(this).parent().remove()" class="btn btn-danger key-remove-button">Remove</a>');
-
-            $('#current-keys').append(elem);
-            $('#current-keys input[name="key_type['+x+']"][value="'+keys[x].type+'"]').prop('checked',true);
-        }
+        $.get(script_root + "/static/admin/js/templates/admin-keys-table.hbs", function(data){
+            var template = Handlebars.compile(data);
+            var wrapper  = {keys: keys};
+            $('#current-keys').append(template(wrapper));
+        });
     });
 }
 
@@ -87,6 +111,34 @@ function updatekeys(){
     $.post(script_root + '/admin/keys/'+chal, {'keys':keys, 'vals':vals, 'nonce': $('#nonce').val()})
     loadchal(chal, true)
     $('#update-keys').modal('hide');
+}
+
+
+function deletekey(key_id){
+    $.post(script_root + '/admin/keys/'+key_id+'/delete', {'nonce': $('#nonce').val()}, function(data){
+        if (data == "1") {
+            $('tr[name={0}]'.format(key_id)).remove();
+        }
+    });
+}
+
+function updatekey(){
+    var key_id = $('#key-id').val();
+    var chal = $('#keys-chal').val();
+    var key_data = $('#key-data').val();
+    var key_type = $('#key-type').val();
+    var nonce = $('#nonce').val();
+    $.post(script_root + '/admin/keys/'+key_id, {
+        'chal':chal,
+        'key':key_data,
+        'key_type': key_type,
+        'nonce': nonce
+    }, function(data){
+        if (data == "1") {
+            loadkeys(chal);
+            $('#edit-keys').modal('toggle');
+        }
+    })
 }
 
 function loadtags(chal){
@@ -123,6 +175,25 @@ function updatetags(){
     });
     $.post(script_root + '/admin/tags/'+chal, {'tags':tags, 'nonce': $('#nonce').val()})
     loadchal(chal)
+}
+
+function updatefiles(){
+    chal = $('#files-chal').val();
+    var form = $('#update-files form')[0];
+    var formData = new FormData(form);
+    $.ajax({
+        url: script_root + '/admin/files/'+chal,
+        data: formData,
+        type: 'POST',
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(data){
+            form.reset();
+            loadfiles(chal);
+            $('#update-files').modal('hide');
+        }
+    });
 }
 
 function loadfiles(chal){
@@ -182,11 +253,11 @@ function loadchals(){
             loadfiles(this.value);
         });
 
-        $('.create-challenge').click(function (e) {
-            $('#new-chal-category').val($($(this).siblings()[0]).text().trim());
-            $('#new-chal-title').text($($(this).siblings()[0]).text().trim());
-            $('#new-challenge').modal();
-        });
+        // $('.create-challenge').click(function (e) {
+        //     $('#new-chal-category').val($($(this).siblings()[0]).text().trim());
+        //     $('#new-chal-title').text($($(this).siblings()[0]).text().trim());
+        //     $('#new-challenge').modal();
+        // });
 
     });
 }
@@ -203,6 +274,11 @@ $('#submit-keys').click(function (e) {
 $('#submit-tags').click(function (e) {
     e.preventDefault();
     updatetags()
+});
+
+$('#submit-files').click(function (e) {
+    e.preventDefault();
+    updatefiles()
 });
 
 $('#delete-chal form').submit(function(e){
@@ -247,22 +323,41 @@ $('#new-desc-edit').on('shown.bs.tab', function (event) {
 });
 
 // Open New Challenge modal when New Challenge button is clicked
-$('.create-challenge').click(function (e) {
-    $('#create-challenge').modal();
-});
+// $('.create-challenge').click(function (e) {
+//     $('#create-challenge').modal();
+// });
 
 
 $('#create-key').click(function(e){
-    var amt = $('#current-keys input[type=text]').length
+    $.get(script_root + '/admin/key_types', function(data){
+        $("#create-keys-select").empty();
+        var option = "<option> -- </option>";
+        $("#create-keys-select").append(option);
+        for (var key in data){
+            var option = "<option value='{0}'>{1}</option>".format(key, data[key]);
+            $("#create-keys-select").append(option);
+        }
+        $("#create-keys").modal();
+    });
+});
 
-    var elem = $('<div class="col-md-4">');
+$('#create-keys-select').change(function(){
+    var key_type_name = $(this).find("option:selected").text();
 
-    elem.append($("<div class='form-group'>").append($("<input class='current-key form-control' type='text'>")));
-    elem.append('<div class="radio-inline"><input type="radio" name="key_type['+amt+']" value="0" checked>Static</div>');
-    elem.append('<div class="radio-inline"><input type="radio" name="key_type['+amt+']" value="1">Regex</div>');
-    elem.append('<a href="#" onclick="$(this).parent().remove()" class="btn btn-danger key-remove-button">Remove</a>');
+    $.get(script_root + '/static/admin/js/templates/keys/'+key_type_name +'/'+key_type_name+'.hbs', function(template_data){
+        var template = Handlebars.compile(template_data);
+        $("#create-keys-entry-div").html(template());
+        $("#create-keys-button-div").show();
+    });
+});
 
-    $('#current-keys').append(elem);
+
+$('#create-keys-submit').click(function (e) {
+    e.preventDefault();
+    var chalid = $('#create-keys').find('.chal-id').val();
+    var key_data = $('#create-keys').find('input[name=key]').val();
+    var key_type = $('#create-keys-select').val();
+    create_key(chalid, key_data, key_type);
 });
 
 $(function(){

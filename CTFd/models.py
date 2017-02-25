@@ -60,15 +60,16 @@ class Challenges(db.Model):
     description = db.Column(db.Text)
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
-    flags = db.Column(db.Text)
+    type = db.Column(db.Integer)
     hidden = db.Column(db.Boolean)
 
-    def __init__(self, name, description, value, category, flags):
+    def __init__(self, name, description, value, category, type=0):
         self.name = name
         self.description = description
         self.value = value
         self.category = category
-        self.flags = json.dumps(flags)
+        self.type = type
+        # self.flags = json.dumps(flags)
 
     def __repr__(self):
         return '<chal %r>' % self.name
@@ -124,6 +125,7 @@ class Keys(db.Model):
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     key_type = db.Column(db.Integer)
     flag = db.Column(db.Text)
+    data = db.Column(db.Text)
 
     def __init__(self, chal, flag, key_type):
         self.chal = chal
@@ -131,7 +133,7 @@ class Keys(db.Model):
         self.key_type = key_type
 
     def __repr__(self):
-        return self.flag
+        return "<Flag {0} for challenge {1}>".format(self.flag, self.chal)
 
 
 class Teams(db.Model):
