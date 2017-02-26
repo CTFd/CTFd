@@ -124,15 +124,15 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
         <tbody>
             {% for team in teams %}
             <tr name="{{ team.id }}">
-                <td class="team-id">{{ team.id }}</td>
-                <td class="team-name"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
+                <td class="team-id" value="{{ team.id }}">{{ team.id }}</td>
+                <td class="team-name" value="{{ team.name }}"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
                 </td>
                 <td class="team-email">{{ team.email | truncate(32) }}</td>
-                <td class="team-website">{% if team.website and team.website.startswith('http') %}<a href="{{ team.website }}">{{ team.website | truncate(32) }}</a>{% endif %}
+                <td class="team-website">{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}<a href="{{ team.website }}">{{ team.website | truncate(32) }}</a>{% endif %}
                 </td>
-                <td class="team-affiliation"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
+                <td class="team-affiliation" value="{{ team.affiliation if team.affiliation is not none }}"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
                 </td>
-                <td class="team-country"><span>{% if team.country %}{{ team.country }}{% endif %}</span>
+                <td class="team-country" value="{{ team.country if team.country is not none }}"><span>{% if team.country %}{{ team.country }}{% endif %}</span>
                 </td>
                 <td class="team-admin">
                     <div class="center-block checkbox text-center">
@@ -263,12 +263,12 @@ $('#delete-user').click(function(e){
 
 $('.fa-pencil-square-o').click(function(){
     var elem = $(this).parent().parent().parent();
-    var id = elem.find('.team-id').text().trim();
-    var name = elem.find('.team-name').text().trim();
-    var email = elem.find('.team-email').text().trim();
-    var website = elem.find('.team-website').text().trim();
-    var affiliation = elem.find('.team-affiliation').text().trim();
-    var country = elem.find('.team-country').text().trim();
+    var id = elem.find('.team-id').attr('value') || '';
+    var name = elem.find('.team-name').attr('value')  || '';
+    var email = elem.find('.team-email').attr('value')  || '';
+    var website = elem.find('.team-website > a').attr('href')  || '';
+    var affiliation = elem.find('.team-affiliation').attr('value')  || '';
+    var country = elem.find('.team-country').attr('value')  || '';
 
     load_update_modal(id, name, email, website, affiliation, country);
 });

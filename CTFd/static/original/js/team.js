@@ -114,7 +114,7 @@ function category_breakdown_graph() {
 
         var data = [{
             values: counts,
-            labels: categories,
+            labels: keys,
             hole: .4,
             type: 'pie'
         }];

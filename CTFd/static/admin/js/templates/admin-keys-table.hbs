@@ -1,0 +1,22 @@
+<table id="keysboard" class="table table-striped">
+    <thead>
+        <tr>
+            <td class="text-center"><b>Type</b></td>
+            <td class="text-center"><b>Key</b></td>
+            <td class="text-center"><b>Settings</b></td>
+        </tr>
+    </thead>
+    <tbody>
+    {{#each keys}}
+        <tr name="{{this.id}}">
+            <td class="key-type">{{this.type_name}}</td>
+            <td class="key-value">{{this.key}}</td>
+            <td class="text-center"><span>
+                <i role="button" class="fa fa-pencil-square-o" onclick="javascript:load_edit_key_modal({{this.id}}, '{{this.type_name}}')"></i>
+                <i role="button" class="fa fa-times" onclick="javascript:deletekey({{this.id}})"></i>
+            </span>
+            </td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>

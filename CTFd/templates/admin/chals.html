@@ -184,6 +184,34 @@
         </div>
     </div>
 
+    <div id="create-keys" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <input type="hidden" class="chal-id" name="chal-id">
+                <div class="modal-header text-center">
+                    <h3>Create Key</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="create-keys-select-div">
+                        <label for="create-keys-select" class="control-label">Choose Key Type</label>
+                        <select class="form-control" id="create-keys-select">
+                        </select>
+                    </div>
+                    <br>
+                    <div id="create-keys-entry-div">
+                    </div>
+                    <br>
+                    <div style="text-align:center;display:none;" id="create-keys-button-div">
+                       <button id="create-keys-submit" class="btn btn-theme btn-outlined">Create Key</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-keys" class="modal fade" tabindex="-1">
+    </div>
+
     <div id="update-keys" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -224,7 +252,7 @@
                         <sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
                         <div class="row" style="text-align:center;margin-top:20px">
                             <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
-                            <button class="btn btn-theme btn-outlined" type="submit">Update</button>
+                            <button class="btn btn-theme btn-outlined" id="submit-files">Update</button>
                         </div>
                     </form>
                 </div>
@@ -291,7 +319,7 @@
     <div style="text-align:center">
         <br>
         <h1 class="text-center">Challenges</h1>
-        <button class="btn btn-theme btn-outlined create-challenge">New Challenge</button>
+        <a class="btn btn-theme btn-outlined create-challenge" href="{{ request.script_root }}/admin/chal/new" role="button">New Challenge</a>
         <div>
             <table id='challenges'>
             </table>
