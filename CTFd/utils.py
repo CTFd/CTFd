@@ -100,6 +100,7 @@ def init_utils(app):
     app.jinja_env.globals.update(ctf_name=ctf_name)
     app.jinja_env.globals.update(ctf_theme=ctf_theme)
     app.jinja_env.globals.update(can_create_container=can_create_container)
+    app.jinja_env.globals.update(hide_scores=hide_scores)
 
     @app.context_processor
     def inject_user():
@@ -146,6 +147,11 @@ def ctf_name():
 def ctf_theme():
     theme = get_config('ctf_theme')
     return theme if theme else ''
+
+
+@cache.memoize()
+def hide_scores():
+    return get_config('hide_scores')
 
 
 def pages():

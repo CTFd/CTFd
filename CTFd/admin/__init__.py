@@ -47,6 +47,7 @@ def admin_config():
         try:
             view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
             view_scoreboard_if_authed = bool(request.form.get('view_scoreboard_if_authed', None))
+            hide_scores = bool(request.form.get('hide_scores', None))
             prevent_registration = bool(request.form.get('prevent_registration', None))
             prevent_name_change = bool(request.form.get('prevent_name_change', None))
             view_after_ctf = bool(request.form.get('view_after_ctf', None))
@@ -56,6 +57,7 @@ def admin_config():
         except (ValueError, TypeError):
             view_challenges_unregistered = None
             view_scoreboard_if_authed = None
+            hide_scores = None
             prevent_registration = None
             prevent_name_change = None
             view_after_ctf = None
@@ -65,6 +67,7 @@ def admin_config():
         finally:
             view_challenges_unregistered = set_config('view_challenges_unregistered', view_challenges_unregistered)
             view_scoreboard_if_authed = set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
+            hide_scores = set_config('hide_scores', hide_scores)
             prevent_registration = set_config('prevent_registration', prevent_registration)
             prevent_name_change = set_config('prevent_name_change', prevent_name_change)
             view_after_ctf = set_config('view_after_ctf', view_after_ctf)
@@ -107,6 +110,7 @@ def admin_config():
     ctf_name = get_config('ctf_name')
     ctf_theme = get_config('ctf_theme')
     max_tries = get_config('max_tries')
+    hide_scores = get_config('hide_scores')
 
     mail_server = get_config('mail_server')
     mail_port = get_config('mail_port')
@@ -144,6 +148,7 @@ def admin_config():
                            ctf_theme_config=ctf_theme,
                            start=start,
                            end=end,
+                           hide_scores=hide_scores,
                            max_tries=max_tries,
                            mail_server=mail_server,
                            mail_port=mail_port,
