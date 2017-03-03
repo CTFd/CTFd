@@ -37,7 +37,9 @@
               <li><a href="{{ request.script_root }}/{{ page.route }}">{{ page.route|title }}</a></li>
             {% endfor %}
             <li><a href="{{ request.script_root }}/teams">Teams</a></li>
+            {% if not hide_scores() %}
             <li><a href="{{ request.script_root }}/scoreboard">Scoreboard</a></li>
+            {% endif %}
             <li><a href="{{ request.script_root }}/challenges">Challenges</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">

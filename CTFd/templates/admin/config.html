@@ -50,6 +50,13 @@
                             {% endfor %}
                         </select>
                     </div>
+
+                    <div class="checkbox">
+                        <label>
+                            <input id="hide_scores" name="hide_scores" type="checkbox" {% if hide_scores %}checked{% endif %}>
+                            Hide Scores from public view
+                        </label>
+                    </div>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="accounts-section">
                     <div class="form-group">
