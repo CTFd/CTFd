@@ -97,8 +97,9 @@ def admin_files(chalid):
     if request.method == 'POST':
         if request.form['method'] == "delete":
             f = Files.query.filter_by(id=request.form['file']).first_or_404()
-            if os.path.exists(os.path.join(app.root_path, 'uploads', f.location)): # Some kind of os.path.isfile issue on Windows...
-                os.unlink(os.path.join(app.root_path, 'uploads', f.location))
+            upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+            if os.path.exists(os.path.join(upload_folder, f.location)): # Some kind of os.path.isfile issue on Windows...
+                os.unlink(os.path.join(upload_folder, f.location))
             db.session.delete(f)
             db.session.commit()
             db.session.close()
@@ -174,7 +175,8 @@ def admin_delete_chal():
     files = Files.query.filter_by(chal=challenge.id).all()
     Files.query.filter_by(chal=challenge.id).delete()
     for file in files:
-        folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), 'uploads', file.location))
+        upload_folder = app.config['UPLOAD_FOLDER']
+        folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), upload_folder, file.location))
         rmdir(folder)
     Tags.query.filter_by(chal=challenge.id).delete()
     Challenges.query.filter_by(id=challenge.id).delete()

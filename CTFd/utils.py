@@ -308,10 +308,11 @@ def upload_file(file, chalid):
 
     md5hash = hashlib.md5(os.urandom(64)).hexdigest()
 
-    if not os.path.exists(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash)):
-        os.makedirs(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash))
+    upload_folder = os.path.join(os.path.normpath(app.root_path), app.config['UPLOAD_FOLDER'])
+    if not os.path.exists(os.path.join(upload_folder, md5hash)):
+        os.makedirs(os.path.join(upload_folder, md5hash))
 
-    file.save(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash, filename))
+    file.save(os.path.join(upload_folder, md5hash, filename))
     db_f = Files(chalid, (md5hash + '/' + filename))
     db.session.add(db_f)
     db.session.commit()
