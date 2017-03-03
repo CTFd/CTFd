@@ -20,7 +20,6 @@ def admin_key_types():
 @admin_keys.route('/admin/keys/<int:keyid>', methods=['POST', 'GET'])
 @admins_only
 def admin_keys_view(keyid):
-    print repr(keyid)
     if request.method == 'GET':
         if keyid:
             saved_key = Keys.query.filter_by(id=keyid).first_or_404()

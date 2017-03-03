@@ -26,6 +26,7 @@ function load_edit_key_modal(key_id, key_type_name) {
         $.get(script_root + '/admin/keys/' + key_id, function(key_data){
             $('#edit-keys').empty();
             var template = Handlebars.compile(template_data);
+            key_data['script_root'] = script_root;
             $('#edit-keys').append(template(key_data));
             $('#key-id').val(key_id);
             $('#submit-keys').click(function (e) {
@@ -92,7 +93,7 @@ function loadkeys(chal){
         $('#current-keys').empty();
         $.get(script_root + "/static/admin/js/templates/admin-keys-table.hbs", function(data){
             var template = Handlebars.compile(data);
-            var wrapper  = {keys: keys};
+            var wrapper  = {keys: keys, script_root: script_root};
             $('#current-keys').append(template(wrapper));
         });
     });
