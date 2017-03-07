@@ -12,7 +12,10 @@ Install:
  4. [Here](https://github.com/isislab/CTFd/wiki/Deployment) are some deployment options
 
 Live Demo:
-[https://demo.ctfd.io/](https://demo.ctfd.io/)
+https://demo.ctfd.io/
+
+Reverse Engineering Module:
+https://reversing.ctfd.io/
 
 Logo by [Laura Barbera](http://www.laurabb.com/)
 

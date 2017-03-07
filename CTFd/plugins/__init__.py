@@ -1,15 +1,15 @@
-from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Containers, ip2long, long2ip
-from flask import current_app as app, g, request, redirect, url_for, session, render_template, abort
-import os
-import importlib
 import glob
+import importlib
+import os
 
 
 def init_plugins(app):
     modules = glob.glob(os.path.dirname(__file__) + "/*")
+    blacklist = {'keys', 'challenges'}
     for module in modules:
-        if os.path.isdir(module):
-            module = '.' + os.path.basename(module)
+        module_name = os.path.basename(module)
+        if os.path.isdir(module) and module_name not in blacklist:
+            module = '.' + module_name
             module = importlib.import_module(module, package='CTFd.plugins')
             module.load(app)
-            print " * Loaded module,", module
+            print(" * Loaded module, %s" % module)

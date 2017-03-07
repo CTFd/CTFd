@@ -1,14 +1,12 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import DatabaseError
-from sqlalchemy.sql import func
-
-from socket import inet_aton, inet_ntoa
-from struct import unpack, pack, error as struct_error
-from passlib.hash import bcrypt_sha256
-
 import datetime
 import hashlib
 import json
+from socket import inet_aton, inet_ntoa
+from struct import unpack, pack, error as struct_error
+
+from flask_sqlalchemy import SQLAlchemy
+from passlib.hash import bcrypt_sha256
+from sqlalchemy.exc import DatabaseError
 
 
 def sha512(string):
@@ -25,6 +23,7 @@ def long2ip(ip_int):
     except struct_error:
         # Backwards compatibility with old CTFd databases
         return inet_ntoa(pack('!I', ip_int))
+
 
 db = SQLAlchemy()
 
@@ -61,15 +60,16 @@ class Challenges(db.Model):
     description = db.Column(db.Text)
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
-    flags = db.Column(db.Text)
+    type = db.Column(db.Integer)
     hidden = db.Column(db.Boolean)
 
-    def __init__(self, name, description, value, category, flags):
+    def __init__(self, name, description, value, category, type=0):
         self.name = name
         self.description = description
         self.value = value
         self.category = category
-        self.flags = json.dumps(flags)
+        self.type = type
+        # self.flags = json.dumps(flags)
 
     def __repr__(self):
         return '<chal %r>' % self.name
@@ -125,6 +125,7 @@ class Keys(db.Model):
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     key_type = db.Column(db.Integer)
     flag = db.Column(db.Text)
+    data = db.Column(db.Text)
 
     def __init__(self, chal, flag, key_type):
         self.chal = chal
@@ -132,7 +133,7 @@ class Keys(db.Model):
         self.key_type = key_type
 
     def __repr__(self):
-        return self.flag
+        return "<Flag {0} for challenge {1}>".format(self.flag, self.chal)
 
 
 class Teams(db.Model):
@@ -159,7 +160,7 @@ class Teams(db.Model):
 
     def score(self):
         score = db.func.sum(Challenges.value).label('score')
-        team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.banned == False, Teams.id==self.id).group_by(Solves.teamid).first()
+        team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.banned == False, Teams.id == self.id).group_by(Solves.teamid).first()
         award_score = db.func.sum(Awards.value).label('award_score')
         award = db.session.query(award_score).filter_by(teamid=self.id).first()
         if team:
@@ -171,7 +172,7 @@ class Teams(db.Model):
         score = db.func.sum(Challenges.value).label('score')
         quickest = db.func.max(Solves.date).label('quickest')
         teams = db.session.query(Solves.teamid).join(Teams).join(Challenges).filter(Teams.banned == False).group_by(Solves.teamid).order_by(score.desc(), quickest).all()
-        #http://codegolf.stackexchange.com/a/4712
+        # http://codegolf.stackexchange.com/a/4712
         try:
             i = teams.index((self.id,)) + 1
             k = i % 10

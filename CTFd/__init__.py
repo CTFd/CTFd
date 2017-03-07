@@ -1,15 +1,15 @@
-from flask import Flask, render_template, request, redirect, abort, session, jsonify, json as json_mod, url_for
-from flask_sqlalchemy import SQLAlchemy
-from logging.handlers import RotatingFileHandler
-from flask_session import Session
-from sqlalchemy_utils import database_exists, create_database
-from jinja2 import FileSystemLoader, TemplateNotFound
-from utils import get_config, set_config, cache
 import os
-import sqlalchemy
-from sqlalchemy.engine.url import make_url
-from sqlalchemy.exc import OperationalError
 
+from distutils.version import StrictVersion
+from flask import Flask
+from jinja2 import FileSystemLoader
+from sqlalchemy.engine.url import make_url
+from sqlalchemy.exc import OperationalError, ProgrammingError
+from sqlalchemy_utils import database_exists, create_database
+
+from utils import get_config, set_config, cache, migrate, migrate_upgrade
+
+__version__ = '1.0.0'
 
 class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
@@ -20,7 +20,7 @@ class ThemeLoader(FileSystemLoader):
         return super(ThemeLoader, self).get_source(environment, template)
 
 
-def create_app(config='CTFd.config'):
+def create_app(config='CTFd.config.Config'):
     app = Flask(__name__)
     with app.app_context():
         app.config.from_object(config)
@@ -40,24 +40,35 @@ def create_app(config='CTFd.config'):
             db.create_all()
         except OperationalError:
             db.create_all()
+        except ProgrammingError:  ## Database already exists
+            pass
         else:
             db.create_all()
 
         app.db = db
 
+        migrate.init_app(app, db)
+
         cache.init_app(app)
         app.cache = cache
 
+        version = get_config('ctf_version')
+
+        if not version: ## Upgrading from an unversioned CTFd
+            set_config('ctf_version', __version__)
+
+        if version and (StrictVersion(version) < StrictVersion(__version__)): ## Upgrading from an older version of CTFd
+            migrate_upgrade()
+            set_config('ctf_version', __version__)
+
         if not get_config('ctf_theme'):
             set_config('ctf_theme', 'original')
-
-        #Session(app)
 
         from CTFd.views import views
         from CTFd.challenges import challenges
         from CTFd.scoreboard import scoreboard
         from CTFd.auth import auth
-        from CTFd.admin import admin
+        from CTFd.admin import admin, admin_statistics, admin_challenges, admin_pages, admin_scoreboard, admin_containers, admin_keys, admin_teams
         from CTFd.utils import init_utils, init_errors, init_logs
 
         init_utils(app)
@@ -68,7 +79,15 @@ def create_app(config='CTFd.config'):
         app.register_blueprint(challenges)
         app.register_blueprint(scoreboard)
         app.register_blueprint(auth)
+
         app.register_blueprint(admin)
+        app.register_blueprint(admin_statistics)
+        app.register_blueprint(admin_challenges)
+        app.register_blueprint(admin_teams)
+        app.register_blueprint(admin_scoreboard)
+        app.register_blueprint(admin_keys)
+        app.register_blueprint(admin_containers)
+        app.register_blueprint(admin_pages)
 
         from CTFd.plugins import init_plugins
 

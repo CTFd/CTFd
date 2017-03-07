@@ -1,0 +1,72 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+<style>
+.btn-primary { background-color: #337ab7; }
+.btn-danger { background-color: #d9534f; }
+.col-md-4 { margin-bottom: 15px; }
+.key-remove-button { margin-top: 10px; }
+.delete-tag { color: white; margin-left: 3px; cursor: pointer; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="create-challenge" class="container main-container">
+    <h1 class="text-center">Create Challenge</h1>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="create-chals-select-div">
+                <label for="create-chals-select" class="control-label">Choose Challenge Type</label>
+                <select class="form-control" id="create-chals-select">
+                </select>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div id="create-chal-entry-div">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.script_root }}/static/admin/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/admin/js/vendor/codemirror.min.js"></script>
+    <script>
+
+    function load_chal_template(chal_type_name){
+        $.get(script_root + '/static/admin/js/templates/challenges/'+ chal_type_name +'/' + chal_type_name + '-challenge-create.hbs', function(template_data){
+            var template = Handlebars.compile(template_data);
+            $("#create-chal-entry-div").html(template({'nonce':nonce, 'script_root':script_root}));
+            $.getScript(script_root + '/static/admin/js/templates/challenges/'+chal_type_name+'/'+chal_type_name+'-challenge-create.js', function(){
+                console.log('loaded');
+            });
+        });
+    }
+
+
+    nonce = "{{ nonce }}";
+    $.get(script_root + '/admin/chal_types', function(data){
+        console.log(data);
+        $("#create-chals-select").empty();
+        var chal_type_amt = Object.keys(data).length;
+        if (chal_type_amt > 1){
+            var option = "<option> -- </option>";
+            $("#create-chals-select").append(option);
+            for (var key in data){
+                var option = "<option value='{0}'>{1}</option>".format(key, data[key]);
+                $("#create-chals-select").append(option);
+            }
+        } else if (chal_type_amt == 1) {
+            var key = Object.keys(data)[0];
+            $("#create-chals-select").parent().parent().parent().empty();
+            load_chal_template(data[key]);
+        }
+    });
+    $('#create-chals-select').change(function(){
+        var chal_type_name = $(this).find("option:selected").text();
+        load_chal_template(chal_type_name);
+    });
+    </script>
+{% endblock %}

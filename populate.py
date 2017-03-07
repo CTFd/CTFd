@@ -1,20 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
-from CTFd import create_app
-from random import randint
-
 import datetime
-import random
 import hashlib
-import os
-import sys
+import random
+
+from CTFd import create_app
+from CTFd.models import Teams, Solves, Challenges, WrongKeys, Keys, Files, Awards
 
 app = create_app()
 
 USER_AMOUNT = 50
 CHAL_AMOUNT = 20
+AWARDS_AMOUNT = 5
 
 categories = [
     'Exploitation',
@@ -211,24 +209,23 @@ def gen_file():
 
 def random_date(start, end):
     return start + datetime.timedelta(
-        seconds=randint(0, int((end - start).total_seconds())))
+        seconds=random.randint(0, int((end - start).total_seconds())))
 
 
 if __name__ == '__main__':
     with app.app_context():
         db = app.db
 
-        ### Generating Challenges
+        # Generating Challenges
         print("GENERATING CHALLENGES")
         for x in range(CHAL_AMOUNT):
             word = gen_word()
-            flags = [{'flag': word, 'type': 0}]
-            db.session.add(Challenges(word, gen_sentence(), gen_value(), gen_category(), flags))
+            db.session.add(Challenges(word, gen_sentence(), gen_value(), gen_category()))
             db.session.commit()
             db.session.add(Keys(x + 1, word, 0))
             db.session.commit()
 
-        ### Generating Files
+        # Generating Files
         print("GENERATING FILES")
         AMT_CHALS_WITH_FILES = int(CHAL_AMOUNT * (3.0 / 4.0))
         for x in range(AMT_CHALS_WITH_FILES):
@@ -236,9 +233,10 @@ if __name__ == '__main__':
             filename = gen_file()
             md5hash = hashlib.md5(filename).hexdigest()
             db.session.add(Files(chal, md5hash + '/' + filename))
+
         db.session.commit()
 
-        ### Generating Users
+        # Generating Users
         print("GENERATING USERS")
         used = []
         count = 0
@@ -250,9 +248,10 @@ if __name__ == '__main__':
                 team.verified = True
                 db.session.add(team)
                 count += 1
+
         db.session.commit()
 
-        ### Generating Solves
+        # Generating Solves
         print("GENERATING SOLVES")
         for x in range(USER_AMOUNT):
             used = []
@@ -268,9 +267,24 @@ if __name__ == '__main__':
                     base_time = new_base
 
                     db.session.add(solve)
+
         db.session.commit()
 
-        ### Generating Wrong Keys
+        # Generating Awards
+        print("GENERATING AWARDS")
+        for x in range(USER_AMOUNT):
+            base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
+            for _ in range(random.randint(0, AWARDS_AMOUNT)):
+                award = Awards(x + 1, gen_word(), random.randint(-10, 10))
+                new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
+                award.date = new_base
+                base_time = new_base
+
+                db.session.add(award)
+
+        db.session.commit()
+
+        # Generating Wrong Keys
         print("GENERATING WRONG KEYS")
         for x in range(USER_AMOUNT):
             used = []
@@ -286,5 +300,6 @@ if __name__ == '__main__':
                     base_time = new_base
 
                     db.session.add(wrong)
+
         db.session.commit()
         db.session.close()
