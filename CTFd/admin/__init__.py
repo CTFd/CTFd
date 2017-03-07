@@ -2,13 +2,14 @@ import hashlib
 import json
 import os
 
-from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
+from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint, \
+    abort, render_template_string
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
 
 from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
     set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes, cache, upload_file
+    container_stop, container_start, get_themes, cache, upload_file, get_configurable_plugins
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
@@ -31,6 +32,20 @@ def admin_view():
         return redirect(url_for('admin_statistics.admin_graphs'))
 
     return redirect(url_for('auth.login'))
+
+
+@admin.route('/admin/plugins/<plugin>', methods=['GET', 'POST'])
+@admins_only
+def admin_plugin_config(plugin):
+    if request.method == 'GET':
+        if plugin in get_configurable_plugins():
+            config = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
+            return render_template('admin/page.html', content=config)
+        abort(404)
+    elif request.method == 'POST':
+        for k, v in request.form.items():
+            set_config(k, v)
+        return '1'
 
 
 @admin.route('/admin/config', methods=['GET', 'POST'])
