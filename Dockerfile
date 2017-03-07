@@ -1,7 +1,13 @@
-FROM ubuntu:latest
-RUN apt-get update -y
-RUN apt-get upgrade -y
-RUN apt-get install build-essential python-dev python-pip libffi-dev mysql-client -y
+FROM ubuntu:16.04
+
+RUN apt update && \
+    apt install -y \
+        build-essential \
+        libffi-dev \
+        mysql-client \
+        python-dev \
+        python-pip && \
+    rm -rf /var/lib/apt/lists/*
 
 VOLUME ["/opt/CTFd"]
 
