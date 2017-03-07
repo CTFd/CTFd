@@ -305,9 +305,9 @@ def get_themes():
 def get_configurable_plugins():
     dir = os.path.join(app.root_path, 'plugins')
     return [name for name in os.listdir(dir)
-            if os.path.isdir(os.path.join(dir, name))]
+            if os.path.isfile(os.path.join(dir, name, 'config.html'))]
 
-    
+
 def upload_file(file, chalid):
     filename = secure_filename(file.filename)
 
