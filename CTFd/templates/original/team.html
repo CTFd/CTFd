@@ -10,6 +10,13 @@
     </div>
 </div>
 <div class="container">
+    {% if errors %}
+            <div id='errors' class="row">
+        {% for error in errors %}
+                <h1>{{ error }}</h1>
+        {% endfor %}
+            </div>
+    {% else %}
     <div class="team-info">
         <h2 id="team-place" class="text-center">
             {%if place %}
@@ -76,6 +83,7 @@
             </tbody>
         </table>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
 

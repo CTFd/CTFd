@@ -22,7 +22,13 @@
         <tbody>
         {% for team in teams %}
             <tr>
-                <td><a href="{{ request.script_root }}/team/{{ team.id }}">{{ team.name }}</a></td>
+                <td>
+                {% if hide_scores() %}
+                    <span>{{ team.name }}</span>
+                {% else %}
+                    <a href="{{ request.script_root }}/team/{{ team.id }}">{{ team.name }}</a>
+                {% endif %}
+                </td>
                 <td>{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}<a href="{{ team.website }}">{{ team.website }}</a>{% endif %}</td>
                 <td><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span></td>
                 <td class="hidden-xs"><span>{% if team.country %}{{ team.country }}{% endif %}</span></td>

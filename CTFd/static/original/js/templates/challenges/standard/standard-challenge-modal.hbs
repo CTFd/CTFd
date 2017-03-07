@@ -3,7 +3,10 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#challenge" aria-controls="challenge" role="tab">Challenge</a></li>
+            {{#if_eq solves '-1 Solves'}}
+            {{else}}
             <li role="presentation"><a href="#solves" aria-controls="solves" class="chal-solves" role="tab">{{solves}}</a></li>
+            {{/if_eq}}
         </ul>
         <div class="modal-body">
             <div role="tabpanel">
