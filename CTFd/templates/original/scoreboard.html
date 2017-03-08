@@ -7,6 +7,15 @@
     </div>
 </div>
 <div class="container main-container">
+    {% if errors %}
+    <div class="container main-container">
+        <div id='errors' class="row">
+    {% for error in errors %}
+            <h1>{{ error }}</h1>
+    {% endfor %}
+        </div>
+    </div>
+    {% else %}
     <div id="score-graph"></div>
     <br>
 
@@ -27,6 +36,7 @@
         {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 </div>
 {% endblock %}
 
