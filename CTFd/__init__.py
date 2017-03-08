@@ -7,7 +7,7 @@ from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy_utils import database_exists, create_database
 
-from utils import get_config, set_config, cache, migrate, migrate_upgrade
+from CTFd.utils import get_config, set_config, cache, migrate, migrate_upgrade
 
 __version__ = '1.0.0'
 

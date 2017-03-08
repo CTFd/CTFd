@@ -10,7 +10,7 @@ from sqlalchemy.exc import DatabaseError
 
 
 def sha512(string):
-    return hashlib.sha512(string).hexdigest()
+    return str(hashlib.sha512(string).hexdigest())
 
 
 def ip2long(ip):

@@ -2,7 +2,7 @@ import os
 
 ##### GENERATE SECRET KEY #####
 
-with open('.ctfd_secret_key', 'a+') as secret:
+with open('.ctfd_secret_key', 'a+b') as secret:
     secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
     key = secret.read()
     if not key:
@@ -23,7 +23,7 @@ class Config(object):
 
     http://flask.pocoo.org/docs/0.11/quickstart/#sessions
     '''
-    SECRET_KEY = key
+    SECRET_KEY = os.environ.get('SECRET_KEY') or key
 
 
     '''
