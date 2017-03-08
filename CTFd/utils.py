@@ -19,7 +19,7 @@ import urllib
 
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort
 from flask_caching import Cache
-from flask_migrate import Migrate, upgrade as migrate_upgrade
+from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
 from itsdangerous import Signer
 import six
 from six.moves.urllib.parse import urlparse, urljoin
