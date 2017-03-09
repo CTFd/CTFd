@@ -1,6 +1,7 @@
 ![](https://raw.githubusercontent.com/isislab/CTFd/master/CTFd/static/original/img/logo.png)
 ====
 
+[![Build Status](https://travis-ci.org/isislab/CTFd.svg?branch=master)](https://travis-ci.org/isislab/CTFd)
 [![CTFd Slack](https://slack.ctfd.io/badge.svg)](https://slack.ctfd.io/)
 
 CTFd is a CTF in a can. Easily modifiable and has everything you need to run a jeopardy style CTF.
