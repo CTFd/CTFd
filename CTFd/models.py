@@ -58,6 +58,7 @@ class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
+    max_attempts = db.Column(db.Integer)
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     type = db.Column(db.Integer)
