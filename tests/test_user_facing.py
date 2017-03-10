@@ -1,4 +1,4 @@
-from helpers import create_ctfd, register_user, login_as_user
+from CTFd.tests.helpers import create_ctfd, register_user, login_as_user
 from CTFd.models import Teams
 
 
