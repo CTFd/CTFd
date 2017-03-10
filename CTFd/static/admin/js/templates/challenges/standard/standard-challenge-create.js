@@ -14,5 +14,6 @@ $("#solve-attempts-checkbox").change(function() {
         $('#solve-attempts-input').show();
     } else {
         $('#solve-attempts-input').hide();
+        $('#max_attempts').val('');
     }
 });

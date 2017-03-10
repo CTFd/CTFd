@@ -197,8 +197,8 @@ def admin_update_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
     challenge.name = request.form['name']
     challenge.description = request.form['desc']
-    challenge.value = request.form['value']
-    challenge.max_attempts = request.form['max_attempts'] or 0
+    challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
+    challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
     challenge.category = request.form['category']
     challenge.hidden = 'hidden' in request.form
     db.session.add(challenge)
