@@ -4,4 +4,5 @@ python:
 install:
     - pip install -r development.txt
 script:
+    - pep8 --ignore E501 CTFd/ tests/
     - nosetests

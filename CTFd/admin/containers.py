@@ -6,6 +6,7 @@ from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, Wrong
 
 admin_containers = Blueprint('admin_containers', __name__)
 
+
 @admin_containers.route('/admin/containers', methods=['GET'])
 @admins_only
 def list_container():

@@ -11,6 +11,7 @@ class BaseKey(object):
     def compare(self, saved, provided):
         return True
 
+
 class CTFdStaticKey(BaseKey):
     id = 0
     name = "static"
@@ -36,8 +37,8 @@ class CTFdRegexKey(BaseKey):
 
 
 KEY_CLASSES = {
-    0 : CTFdStaticKey,
-    1 : CTFdRegexKey
+    0: CTFdStaticKey,
+    1: CTFdRegexKey
 }
 
 

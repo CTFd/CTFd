@@ -1,6 +1,6 @@
 import os
 
-##### GENERATE SECRET KEY #####
+# GENERATE SECRET KEY
 
 with open('.ctfd_secret_key', 'a+b') as secret:
     secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
@@ -10,7 +10,8 @@ with open('.ctfd_secret_key', 'a+b') as secret:
         secret.write(key)
         secret.flush()
 
-##### SERVER SETTINGS #####
+# SERVER SETTINGS
+
 
 class Config(object):
     '''
@@ -25,7 +26,6 @@ class Config(object):
     '''
     SECRET_KEY = os.environ.get('SECRET_KEY') or key
 
-
     '''
     SQLALCHEMY_DATABASE_URI is the URI that specifies the username, password, hostname, port, and database of the server
     used to hold the CTFd database.
@@ -34,13 +34,11 @@ class Config(object):
     '''
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///ctfd.db'
 
-
     '''
     SQLALCHEMY_TRACK_MODIFICATIONS is automatically disabled to suppress warnings and save memory. You should only enable
     this if you need it.
     '''
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
 
     '''
     SESSION_TYPE is a configuration value used for Flask-Session. It is currently unused in CTFd.
@@ -48,37 +46,31 @@ class Config(object):
     '''
     SESSION_TYPE = "filesystem"
 
-
     '''
     SESSION_FILE_DIR is a configuration value used for Flask-Session. It is currently unused in CTFd.
     http://pythonhosted.org/Flask-Session/#configuration
     '''
     SESSION_FILE_DIR = "/tmp/flask_session"
 
-
     '''
     SESSION_COOKIE_HTTPONLY controls if cookies should be set with the HttpOnly flag.
     '''
     SESSION_COOKIE_HTTPONLY = True
 
-
     '''
     PERMANENT_SESSION_LIFETIME is the lifetime of a session.
     '''
-    PERMANENT_SESSION_LIFETIME = 604800 # 7 days in seconds
-
+    PERMANENT_SESSION_LIFETIME = 604800  # 7 days in seconds
 
     '''
     HOST specifies the hostname where the CTFd instance will exist. It is currently unused.
     '''
     HOST = ".ctfd.io"
 
-
     '''
     MAILFROM_ADDR is the email address that emails are sent from if not overridden in the configuration panel.
     '''
     MAILFROM_ADDR = "noreply@ctfd.io"
-
 
     '''
     UPLOAD_FOLDER is the location where files are uploaded.
@@ -87,13 +79,11 @@ class Config(object):
     '''
     UPLOAD_FOLDER = os.path.normpath('uploads')
 
-
     '''
     TEMPLATES_AUTO_RELOAD specifies whether Flask should check for modifications to templates and
     reload them automatically
     '''
     TEMPLATES_AUTO_RELOAD = True
-
 
     '''
     TRUSTED_PROXIES defines a set of regular expressions used for finding a user's IP address if the CTFd instance
@@ -113,7 +103,6 @@ class Config(object):
         '^172\.(1[6-9]|2[0-9]|3[0-1])\.',
         '^192\.168\.'
     ]
-
 
     '''
     CACHE_TYPE specifies how CTFd should cache configuration values. If CACHE_TYPE is set to 'redis', CTFd will make use
