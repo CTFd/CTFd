@@ -205,8 +205,8 @@ def chal(chalid):
             saved_keys = Keys.query.filter_by(chal=chal.id).all()
 
             # Hit max attempts
-            max_tries = int(get_config("max_tries"))
-            if fails >= max_tries > 0:
+            max_tries = chal.max_attempts
+            if max_tries and fails >= max_tries > 0:
                 return jsonify({
                     'status': '0',
                     'message': "You have 0 tries remaining"
@@ -230,7 +230,7 @@ def chal(chalid):
             logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
             # return '0' # key was wrong
             if max_tries:
-                attempts_left = max_tries - fails
+                attempts_left = max_tries - fails - 1 ## Off by one since fails has changed since it was gotten
                 tries_str = 'tries'
                 if attempts_left == 1:
                     tries_str = 'try'
