@@ -591,7 +591,7 @@ def container_ports(name, verbose=False):
             ports = info[0]['Config']['ExposedPorts'].keys()
             if not ports:
                 return []
-            ports = [int(re.sub('[A-Za-z/]+', '', port)) for port in ports_asked]
+            ports = [int(re.sub('[A-Za-z/]+', '', port)) for port in ports]
             return ports
     except subprocess.CalledProcessError:
         return []
