@@ -83,10 +83,17 @@ def setup():
             db.session.add(page)
             db.session.add(admin)
             db.session.commit()
+
+            session['username'] = admin.name
+            session['id'] = admin.id
+            session['admin'] = admin.admin
+            session['nonce'] = sha512(os.urandom(10))
+
             db.session.close()
             app.setup = False
             with app.app_context():
                 cache.clear()
+
             return redirect(url_for('views.static_html'))
         return render_template('setup.html', nonce=session.get('nonce'))
     return redirect(url_for('views.static_html'))
