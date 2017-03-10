@@ -6,6 +6,7 @@ from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, Wrong
 
 admin_pages = Blueprint('admin_pages', __name__)
 
+
 @admin_pages.route('/admin/css', methods=['GET', 'POST'])
 @admins_only
 def admin_css():

@@ -27,12 +27,12 @@ def admin_chals():
         chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category', 'hidden', 'max_attempts').order_by(Challenges.value).all()
 
         teams_with_points = db.session.query(Solves.teamid).join(Teams).filter(
-            Teams.banned == False).group_by(Solves.teamid).count()
+            not Teams.banned).group_by(Solves.teamid).count()
 
         json_data = {'game': []}
         for x in chals:
             solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(
-                Solves.chalid == x[1], Teams.banned == False).count()
+                Solves.chalid == x[1], not Teams.banned).count()
             if teams_with_points > 0:
                 percentage = (float(solve_count) / float(teams_with_points))
             else:
@@ -99,7 +99,7 @@ def admin_files(chalid):
         if request.form['method'] == "delete":
             f = Files.query.filter_by(id=request.form['file']).first_or_404()
             upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-            if os.path.exists(os.path.join(upload_folder, f.location)): # Some kind of os.path.isfile issue on Windows...
+            if os.path.exists(os.path.join(upload_folder, f.location)):  # Some kind of os.path.isfile issue on Windows...
                 os.unlink(os.path.join(upload_folder, f.location))
             db.session.delete(f)
             db.session.commit()

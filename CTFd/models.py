@@ -1,6 +1,5 @@
 import datetime
 import hashlib
-import json
 from socket import inet_aton, inet_ntoa
 from struct import unpack, pack, error as struct_error
 
@@ -161,7 +160,7 @@ class Teams(db.Model):
 
     def score(self):
         score = db.func.sum(Challenges.value).label('score')
-        team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.banned == False, Teams.id == self.id).group_by(Solves.teamid).first()
+        team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(not Teams.banned, Teams.id == self.id).group_by(Solves.teamid).first()
         award_score = db.func.sum(Awards.value).label('award_score')
         award = db.session.query(award_score).filter_by(teamid=self.id).first()
         if team:
@@ -172,7 +171,7 @@ class Teams(db.Model):
     def place(self):
         score = db.func.sum(Challenges.value).label('score')
         quickest = db.func.max(Solves.date).label('quickest')
-        teams = db.session.query(Solves.teamid).join(Teams).join(Challenges).filter(Teams.banned == False).group_by(Solves.teamid).order_by(score.desc(), quickest).all()
+        teams = db.session.query(Solves.teamid).join(Teams).join(Challenges).filter(not Teams.banned).group_by(Solves.teamid).order_by(score.desc(), quickest).all()
         # http://codegolf.stackexchange.com/a/4712
         try:
             i = teams.index((self.id,)) + 1
