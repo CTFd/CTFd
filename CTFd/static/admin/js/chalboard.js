@@ -49,6 +49,11 @@ function loadchal(id, update) {
     $('.chal-name').val(obj.name);
     $('.chal-desc').val(obj.description);
     $('.chal-value').val(obj.value);
+    if (parseInt(obj.max_attempts) > 0){
+        $('.chal-attempts').val(obj.max_attempts);
+        $('#limit_max_attempts').prop('checked', true);
+        $('#chal-attempts-group').show();
+    }
     $('.chal-category').val(obj.category);
     $('.chal-id').val(obj.id);
     $('.chal-hidden').prop('checked', false);
@@ -309,7 +314,14 @@ $(".tag-insert").keyup(function (e) {
     }
 });
 
-
+$('#limit_max_attempts').change(function() {
+    if(this.checked) {
+        $('#chal-attempts-group').show();
+    } else {
+        $('#chal-attempts-group').hide();
+        $('#chal-attempts-input').val('');
+    }
+});
 
 // Markdown Preview
 $('#desc-edit').on('shown.bs.tab', function (event) {

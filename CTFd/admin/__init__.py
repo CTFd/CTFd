@@ -103,8 +103,6 @@ def admin_config():
         mg_base_url = set_config("mg_base_url", request.form.get('mg_base_url', None))
         mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
 
-        max_tries = set_config("max_tries", request.form.get('max_tries', None))
-
         db_start = Config.query.filter_by(key='start').first()
         db_start.value = start
 
@@ -124,7 +122,6 @@ def admin_config():
         cache.clear()
     ctf_name = get_config('ctf_name')
     ctf_theme = get_config('ctf_theme')
-    max_tries = get_config('max_tries')
     hide_scores = get_config('hide_scores')
 
     mail_server = get_config('mail_server')
@@ -135,9 +132,6 @@ def admin_config():
     mailfrom_addr = get_config('mailfrom_addr')
     mg_api_key = get_config('mg_api_key')
     mg_base_url = get_config('mg_base_url')
-    if not max_tries:
-        set_config('max_tries', 0)
-        max_tries = 0
 
     view_after_ctf = get_config('view_after_ctf')
     start = get_config('start')
@@ -164,7 +158,6 @@ def admin_config():
                            start=start,
                            end=end,
                            hide_scores=hide_scores,
-                           max_tries=max_tries,
                            mail_server=mail_server,
                            mail_port=mail_port,
                            mail_username=mail_username,

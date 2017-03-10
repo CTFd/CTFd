@@ -24,7 +24,7 @@ def admin_chal_types():
 @admins_only
 def admin_chals():
     if request.method == 'POST':
-        chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category', 'hidden').order_by(Challenges.value).all()
+        chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category', 'hidden', 'max_attempts').order_by(Challenges.value).all()
 
         teams_with_points = db.session.query(Solves.teamid).join(Teams).filter(
             Teams.banned == False).group_by(Solves.teamid).count()
@@ -45,6 +45,7 @@ def admin_chals():
                 'description': x.description,
                 'category': x.category,
                 'hidden': x.hidden,
+                'max_attempts': x.max_attempts,
                 'percentage_solved': percentage
             })
 
@@ -145,6 +146,11 @@ def admin_create_chal():
             chal.hidden = True
         else:
             chal.hidden = False
+
+        max_attempts = request.form.get('max_attempts')
+        if max_attempts and max_attempts.isdigit():
+            chal.max_attempts = int(max_attempts)
+
         db.session.add(chal)
         db.session.flush()
 
@@ -192,6 +198,7 @@ def admin_update_chal():
     challenge.name = request.form['name']
     challenge.description = request.form['desc']
     challenge.value = request.form['value']
+    challenge.max_attempts = request.form['max_attempts'] or 0
     challenge.category = request.form['category']
     challenge.hidden = 'hidden' in request.form
     db.session.add(challenge)

@@ -59,10 +59,6 @@
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="accounts-section">
-                    <div class="form-group">
-                        <label for="max_tries">Maximum Attempts Per Challenge (0 to disable):</label>
-                        <input class="form-control" id='max_tries' name='max_tries' type='text' placeholder="0" {% if max_tries is defined and max_tries != None %}value="{{ max_tries }}"{% endif %}>
-                    </div>
                     <div class="checkbox">
                         <label>
                             <input id="verify_emails" name="verify_emails" type="checkbox" {% if verify_emails %}checked{% endif %}>
