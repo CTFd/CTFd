@@ -23,7 +23,7 @@ def get_standings(admin=False, count=None):
     else:
         standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), sumscores.columns.score) \
                                     .join(sumscores, Teams.id == sumscores.columns.teamid) \
-                                    .filter(not Teams.banned) \
+                                    .filter(Teams.banned == False) \
                                     .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
     if count is None:
         standings = standings_query.all()

@@ -6,12 +6,10 @@ from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, Wrong
 
 admin_statistics = Blueprint('admin_statistics', __name__)
 
-
 @admin_statistics.route('/admin/graphs')
 @admins_only
 def admin_graphs():
     return render_template('admin/graphs.html')
-
 
 @admin_statistics.route('/admin/graphs/<graph_type>')
 @admins_only
@@ -24,7 +22,7 @@ def admin_graph(graph_type):
         return jsonify(json_data)
     elif graph_type == "solves":
         solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves_cnt')) \
-                               .join(Teams, Solves.teamid == Teams.id).filter(not Teams.banned) \
+                               .join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False) \
                                .group_by(Solves.chalid).subquery()
         solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves_cnt, Challenges.name) \
                            .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
@@ -32,7 +30,6 @@ def admin_graph(graph_type):
         for chal, count, name in solves:
             json_data[name] = count
         return jsonify(json_data)
-
 
 @admin_statistics.route('/admin/statistics', methods=['GET'])
 @admins_only
@@ -43,7 +40,7 @@ def admin_stats():
     challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
 
     solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves_cnt')) \
-                           .join(Teams, Solves.teamid == Teams.id).filter(not Teams.banned) \
+                           .join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False) \
                            .group_by(Solves.chalid).subquery()
     solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves_cnt, Challenges.name) \
                        .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
@@ -69,7 +66,6 @@ def admin_stats():
                            most_solved=most_solved,
                            least_solved=least_solved)
 
-
 @admin_statistics.route('/admin/wrong_keys', defaults={'page': '1'}, methods=['GET'])
 @admin_statistics.route('/admin/wrong_keys/<int:page>', methods=['GET'])
 @admins_only
@@ -81,11 +77,11 @@ def admin_wrong_key(page):
 
     wrong_keys = WrongKeys.query.add_columns(WrongKeys.id, WrongKeys.chalid, WrongKeys.flag, WrongKeys.teamid, WrongKeys.date,
                                              Challenges.name.label('chal_name'), Teams.name.label('team_name')) \
-        .join(Challenges) \
-        .join(Teams) \
-        .order_by(WrongKeys.date.desc()) \
-        .slice(page_start, page_end) \
-        .all()
+                                .join(Challenges) \
+                                .join(Teams) \
+                                .order_by(WrongKeys.date.desc()) \
+                                .slice(page_start, page_end) \
+                                .all()
 
     wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
     pages = int(wrong_count / results_per_page) + (wrong_count % results_per_page > 0)
@@ -104,11 +100,11 @@ def admin_correct_key(page):
 
     solves = Solves.query.add_columns(Solves.id, Solves.chalid, Solves.teamid, Solves.date, Solves.flag,
                                       Challenges.name.label('chal_name'), Teams.name.label('team_name')) \
-        .join(Challenges) \
-        .join(Teams) \
-        .order_by(Solves.date.desc()) \
-        .slice(page_start, page_end) \
-        .all()
+                         .join(Challenges) \
+                         .join(Teams) \
+                         .order_by(Solves.date.desc()) \
+                         .slice(page_start, page_end) \
+                         .all()
 
     solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
     pages = int(solve_count / results_per_page) + (solve_count % results_per_page > 0)

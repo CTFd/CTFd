@@ -1,4 +1,6 @@
+import json
 import logging
+import re
 import time
 
 from flask import render_template, request, redirect, jsonify, url_for, session, Blueprint
@@ -17,10 +19,10 @@ def challenges_view():
     errors = []
     start = get_config('start') or 0
     end = get_config('end') or 0
-    if not is_admin():  # User is not an admin
+    if not is_admin(): # User is not an admin
         if not ctftime():
             # It is not CTF time
-            if view_after_ctf():  # But we are allowed to view after the CTF ends
+            if view_after_ctf(): # But we are allowed to view after the CTF ends
                 pass
             else:  # We are NOT allowed to view after the CTF ends
                 if get_config('start') and not ctf_started():
@@ -28,9 +30,9 @@ def challenges_view():
                 if (get_config('end') and ctf_ended()) and not view_after_ctf():
                     errors.append('{} has ended'.format(ctf_name()))
                 return render_template('chals.html', errors=errors, start=int(start), end=int(end))
-        if get_config('verify_emails') and not is_verified():  # User is not confirmed
+        if get_config('verify_emails') and not is_verified(): # User is not confirmed
             return redirect(url_for('auth.confirm_user'))
-    if user_can_view_challenges():  # Do we allow unauthenticated users?
+    if user_can_view_challenges(): # Do we allow unauthenticated users?
         if get_config('start') and not ctf_started():
             errors.append('{} has not started yet'.format(ctf_name()))
         if (get_config('end') and ctf_ended()) and not view_after_ctf():
@@ -49,7 +51,7 @@ def chals():
             else:
                 return redirect(url_for('views.static_html'))
     if user_can_view_challenges() and (ctf_started() or is_admin()):
-        chals = Challenges.query.filter(or_(not Challenges.hidden, Challenges.hidden is None)).order_by(Challenges.value).all()
+        chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).order_by(Challenges.value).all()
         json = {'game': []}
         for x in chals:
             tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=x.id).all()]
@@ -78,7 +80,7 @@ def solves_per_chal():
     if not user_can_view_challenges():
         return redirect(url_for('auth.login', next=request.path))
 
-    solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves')).join(Teams, Solves.teamid == Teams.id).filter(not Teams.banned).group_by(Solves.chalid).subquery()
+    solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves')).join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).group_by(Solves.chalid).subquery()
     solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves, Challenges.name) \
                        .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
     json = {}
@@ -102,7 +104,7 @@ def solves(teamid=None):
             solves = Solves.query.filter_by(teamid=session['id']).all()
         elif user_can_view_challenges():
             if authed():
-                solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.teamid == session['id'], not Teams.banned).all()
+                solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.teamid == session['id'], Teams.banned == False).all()
             else:
                 return jsonify({'solves': []})
         else:
@@ -165,7 +167,7 @@ def who_solved(chalid):
     json = {'teams': []}
     if hide_scores():
         return jsonify(json)
-    solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid, not Teams.banned).order_by(Solves.date.asc())
+    solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid, Teams.banned == False).order_by(Solves.date.asc())
     for solve in solves:
         json['teams'].append({'id': solve.team.id, 'name': solve.team.name, 'date': solve.date})
     return jsonify(json)
@@ -228,7 +230,7 @@ def chal(chalid):
             logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
             # return '0' # key was wrong
             if max_tries:
-                attempts_left = max_tries - fails - 1  # Off by one since fails has changed since it was gotten
+                attempts_left = max_tries - fails - 1 ## Off by one since fails has changed since it was gotten
                 tries_str = 'tries'
                 if attempts_left == 1:
                     tries_str = 'try'

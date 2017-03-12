@@ -289,7 +289,7 @@ def get_ip():
     combined = "(" + ")|(".join(trusted_proxies) + ")"
     route = request.access_route + [request.remote_addr]
     for addr in reversed(route):
-        if not re.match(combined, addr):  # IP is not trusted but we trust the proxies
+        if not re.match(combined, addr): # IP is not trusted but we trust the proxies
             remote_addr = addr
             break
     else:
@@ -297,7 +297,7 @@ def get_ip():
     return remote_addr
 
 
-def get_kpm(teamid):  # keys per minute
+def get_kpm(teamid): # keys per minute
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
     return len(db.session.query(WrongKeys).filter(WrongKeys.teamid == teamid, WrongKeys.date >= one_min_ago).all())
 

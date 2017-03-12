@@ -12,9 +12,7 @@ from CTFd.utils import get_config, set_config, cache, migrate, migrate_upgrade, 
 
 __version__ = '1.0.1'
 
-
 class ThemeLoader(FileSystemLoader):
-
     def get_source(self, environment, template):
         if template.startswith('admin/'):
             return super(ThemeLoader, self).get_source(environment, template)
@@ -43,7 +41,7 @@ def create_app(config='CTFd.config.Config'):
             db.create_all()
         except OperationalError:
             db.create_all()
-        except ProgrammingError:  # Database already exists
+        except ProgrammingError:  ## Database already exists
             pass
         else:
             db.create_all()
@@ -57,10 +55,10 @@ def create_app(config='CTFd.config.Config'):
 
         version = get_config('ctf_version')
 
-        if not version:  # Upgrading from an unversioned CTFd
+        if not version: ## Upgrading from an unversioned CTFd
             set_config('ctf_version', __version__)
 
-        if version and (StrictVersion(version) < StrictVersion(__version__)):  # Upgrading from an older version of CTFd
+        if version and (StrictVersion(version) < StrictVersion(__version__)): ## Upgrading from an older version of CTFd
             print("/*\\ CTFd has updated and must update the database! /*\\")
             print("/*\\ Please backup your database before proceeding! /*\\")
             print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")
