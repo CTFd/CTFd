@@ -274,7 +274,7 @@ $('#submit-key').click(function (e) {
 
 $('#submit-keys').click(function (e) {
     e.preventDefault();
-    updatekeys()
+    $('#update-keys').modal('hide');
 });
 
 $('#submit-tags').click(function (e) {
