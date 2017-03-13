@@ -1,10 +1,10 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
-    set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes, cache, upload_file
+from CTFd.utils import admins_only, is_admin, cache
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
+
+from CTFd import utils
 
 admin_teams = Blueprint('admin_teams', __name__)
 
@@ -84,7 +84,8 @@ def admin_team(teamid):
             return jsonify({'data': errors})
         else:
             user.name = name
-            user.email = email
+            if email:
+                user.email = email
             if password:
                 user.password = bcrypt_sha256.encrypt(password)
             user.website = website
@@ -101,7 +102,7 @@ def email_user(teamid):
     message = request.form.get('msg', None)
     team = Teams.query.filter(Teams.id == teamid).first()
     if message and team:
-        if sendmail(team.email, message):
+        if utils.sendmail(team.email, message):
             return '1'
     return '0'
 
@@ -160,7 +161,7 @@ def admin_solves(teamid="all"):
             'team': x.teamid,
             'value': x.chal.value,
             'category': x.chal.category,
-            'time': unix_time(x.date)
+            'time': utils.unix_time(x.date)
         })
     for award in awards:
         json_data['solves'].append({
@@ -169,7 +170,7 @@ def admin_solves(teamid="all"):
             'team': award.teamid,
             'value': award.value,
             'category': award.category or "Award",
-            'time': unix_time(award.date)
+            'time': utils.unix_time(award.date)
         })
     json_data['solves'].sort(key=lambda k: k['time'])
     return jsonify(json_data)

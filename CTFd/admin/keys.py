@@ -1,9 +1,9 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
-    set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes, cache, upload_file
+from CTFd.utils import admins_only, is_admin, cache
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
+
+from CTFd import utils
 
 admin_keys = Blueprint('admin_keys', __name__)
 

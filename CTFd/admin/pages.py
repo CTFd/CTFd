@@ -1,8 +1,8 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
-    set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes, cache, upload_file
+from CTFd.utils import admins_only, is_admin, cache
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
+
+from CTFd import utils
 
 admin_pages = Blueprint('admin_pages', __name__)
 
@@ -11,7 +11,7 @@ admin_pages = Blueprint('admin_pages', __name__)
 def admin_css():
     if request.method == 'POST':
         css = request.form['css']
-        css = set_config('css', css)
+        css = utils.set_config('css', css)
         with app.app_context():
             cache.clear()
         return '1'
@@ -49,7 +49,7 @@ def admin_pages_view(route):
         db.session.close()
         return redirect(url_for('admin_pages.admin_pages_view'))
     pages = Pages.query.all()
-    return render_template('admin/pages.html', routes=pages, css=get_config('css'))
+    return render_template('admin/pages.html', routes=pages, css=utils.get_config('css'))
 
 
 @admin_pages.route('/admin/page/<pageroute>/delete', methods=['POST'])

@@ -198,8 +198,10 @@ $('#update-user').click(function(e){
                 console.log($.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'])
                 console.log(row.find('.team-name > a'))
                 row.find('.team-name > a').text( $.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'] );
-                row.find('.team-email').text( $.grep(user_data, function(e){ return e.name == 'email'; })[0]['value'] );
-
+                var new_email = $.grep(user_data, function(e){ return e.name == 'email'; })[0]['value'];
+                if (new_email){
+                    row.find('.team-email').text( new_email );
+                }
                 row.find('.team-website > a').empty()
                 var website = $.grep(user_data, function(e){ return e.name == 'website'; })[0]['value']
                 row.find('.team-website').append($('<a>').attr('href', website).text(website));

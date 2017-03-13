@@ -7,9 +7,7 @@ from flask import current_app as app, render_template, request, redirect, jsonif
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
 
-from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
-    set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes, cache, upload_file, get_configurable_plugins
+from CTFd.utils import admins_only, is_admin, cache
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
@@ -21,6 +19,8 @@ from CTFd.admin.pages import admin_pages
 from CTFd.admin.containers import admin_containers
 from CTFd.admin.keys import admin_keys
 from CTFd.admin.teams import admin_teams
+
+from CTFd import utils
 
 
 admin = Blueprint('admin', __name__)
@@ -38,13 +38,13 @@ def admin_view():
 @admins_only
 def admin_plugin_config(plugin):
     if request.method == 'GET':
-        if plugin in get_configurable_plugins():
+        if plugin in utils.get_configurable_plugins():
             config = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
             return render_template('admin/page.html', content=config)
         abort(404)
     elif request.method == 'POST':
         for k, v in request.form.items():
-            set_config(k, v)
+            utils.set_config(k, v)
         return '1'
 
 
@@ -80,28 +80,28 @@ def admin_config():
             mail_tls = None
             mail_ssl = None
         finally:
-            view_challenges_unregistered = set_config('view_challenges_unregistered', view_challenges_unregistered)
-            view_scoreboard_if_authed = set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
-            hide_scores = set_config('hide_scores', hide_scores)
-            prevent_registration = set_config('prevent_registration', prevent_registration)
-            prevent_name_change = set_config('prevent_name_change', prevent_name_change)
-            view_after_ctf = set_config('view_after_ctf', view_after_ctf)
-            verify_emails = set_config('verify_emails', verify_emails)
-            mail_tls = set_config('mail_tls', mail_tls)
-            mail_ssl = set_config('mail_ssl', mail_ssl)
+            view_challenges_unregistered = utils.set_config('view_challenges_unregistered', view_challenges_unregistered)
+            view_scoreboard_if_authed = utils.set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
+            hide_scores = utils.set_config('hide_scores', hide_scores)
+            prevent_registration = utils.set_config('prevent_registration', prevent_registration)
+            prevent_name_change = utils.set_config('prevent_name_change', prevent_name_change)
+            view_after_ctf = utils.set_config('view_after_ctf', view_after_ctf)
+            verify_emails = utils.set_config('verify_emails', verify_emails)
+            mail_tls = utils.set_config('mail_tls', mail_tls)
+            mail_ssl = utils.set_config('mail_ssl', mail_ssl)
 
-        mail_server = set_config("mail_server", request.form.get('mail_server', None))
-        mail_port = set_config("mail_port", request.form.get('mail_port', None))
+        mail_server = utils.set_config("mail_server", request.form.get('mail_server', None))
+        mail_port = utils.set_config("mail_port", request.form.get('mail_port', None))
 
-        mail_username = set_config("mail_username", request.form.get('mail_username', None))
-        mail_password = set_config("mail_password", request.form.get('mail_password', None))
+        mail_username = utils.set_config("mail_username", request.form.get('mail_username', None))
+        mail_password = utils.set_config("mail_password", request.form.get('mail_password', None))
 
-        ctf_name = set_config("ctf_name", request.form.get('ctf_name', None))
-        ctf_theme = set_config("ctf_theme", request.form.get('ctf_theme', None))
+        ctf_name = utils.set_config("ctf_name", request.form.get('ctf_name', None))
+        ctf_theme = utils.set_config("ctf_theme", request.form.get('ctf_theme', None))
 
-        mailfrom_addr = set_config("mailfrom_addr", request.form.get('mailfrom_addr', None))
-        mg_base_url = set_config("mg_base_url", request.form.get('mg_base_url', None))
-        mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
+        mailfrom_addr = utils.set_config("mailfrom_addr", request.form.get('mailfrom_addr', None))
+        mg_base_url = utils.set_config("mg_base_url", request.form.get('mg_base_url', None))
+        mg_api_key = utils.set_config("mg_api_key", request.form.get('mg_api_key', None))
 
         db_start = Config.query.filter_by(key='start').first()
         db_start.value = start
@@ -120,36 +120,36 @@ def admin_config():
 
     with app.app_context():
         cache.clear()
-    ctf_name = get_config('ctf_name')
-    ctf_theme = get_config('ctf_theme')
-    hide_scores = get_config('hide_scores')
+    ctf_name = utils.get_config('ctf_name')
+    ctf_theme = utils.get_config('ctf_theme')
+    hide_scores = utils.get_config('hide_scores')
 
-    mail_server = get_config('mail_server')
-    mail_port = get_config('mail_port')
-    mail_username = get_config('mail_username')
-    mail_password = get_config('mail_password')
+    mail_server = utils.get_config('mail_server')
+    mail_port = utils.get_config('mail_port')
+    mail_username = utils.get_config('mail_username')
+    mail_password = utils.get_config('mail_password')
 
-    mailfrom_addr = get_config('mailfrom_addr')
-    mg_api_key = get_config('mg_api_key')
-    mg_base_url = get_config('mg_base_url')
+    mailfrom_addr = utils.get_config('mailfrom_addr')
+    mg_api_key = utils.get_config('mg_api_key')
+    mg_base_url = utils.get_config('mg_base_url')
 
-    view_after_ctf = get_config('view_after_ctf')
-    start = get_config('start')
-    end = get_config('end')
+    view_after_ctf = utils.get_config('view_after_ctf')
+    start = utils.get_config('start')
+    end = utils.get_config('end')
 
-    mail_tls = get_config('mail_tls')
-    mail_ssl = get_config('mail_ssl')
+    mail_tls = utils.get_config('mail_tls')
+    mail_ssl = utils.get_config('mail_ssl')
 
-    view_challenges_unregistered = get_config('view_challenges_unregistered')
-    view_scoreboard_if_authed = get_config('view_scoreboard_if_authed')
-    prevent_registration = get_config('prevent_registration')
-    prevent_name_change = get_config('prevent_name_change')
-    verify_emails = get_config('verify_emails')
+    view_challenges_unregistered = utils.get_config('view_challenges_unregistered')
+    view_scoreboard_if_authed = utils.get_config('view_scoreboard_if_authed')
+    prevent_registration = utils.get_config('prevent_registration')
+    prevent_name_change = utils.get_config('prevent_name_change')
+    verify_emails = utils.get_config('verify_emails')
 
     db.session.commit()
     db.session.close()
 
-    themes = get_themes()
+    themes = utils.get_themes()
     themes.remove(ctf_theme)
 
     return render_template('admin/config.html',

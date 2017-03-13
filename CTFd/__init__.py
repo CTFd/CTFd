@@ -8,7 +8,8 @@ from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
-from CTFd.utils import get_config, set_config, cache, migrate, migrate_upgrade, migrate_stamp
+from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
+from CTFd import utils
 
 __version__ = '1.0.1'
 
@@ -16,7 +17,7 @@ class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
         if template.startswith('admin/'):
             return super(ThemeLoader, self).get_source(environment, template)
-        theme = get_config('ctf_theme')
+        theme = utils.get_config('ctf_theme')
         template = "/".join([theme, template])
         return super(ThemeLoader, self).get_source(environment, template)
 
@@ -53,10 +54,10 @@ def create_app(config='CTFd.config.Config'):
         cache.init_app(app)
         app.cache = cache
 
-        version = get_config('ctf_version')
+        version = utils.get_config('ctf_version')
 
         if not version: ## Upgrading from an unversioned CTFd
-            set_config('ctf_version', __version__)
+            utils.set_config('ctf_version', __version__)
 
         if version and (StrictVersion(version) < StrictVersion(__version__)): ## Upgrading from an older version of CTFd
             print("/*\\ CTFd has updated and must update the database! /*\\")
@@ -65,13 +66,13 @@ def create_app(config='CTFd.config.Config'):
             if input('Run database migrations (Y/N)').lower().strip() == 'y':
                 migrate_stamp()
                 migrate_upgrade()
-                set_config('ctf_version', __version__)
+                utils.set_config('ctf_version', __version__)
             else:
                 print('/*\\ Ignored database migrations... /*\\')
                 exit()
 
-        if not get_config('ctf_theme'):
-            set_config('ctf_theme', 'original')
+        if not utils.get_config('ctf_theme'):
+            utils.set_config('ctf_theme', 'original')
 
         from CTFd.views import views
         from CTFd.challenges import challenges
