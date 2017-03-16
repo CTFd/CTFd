@@ -26,6 +26,7 @@ function load_edit_key_modal(key_id, key_type_name) {
         $.get(script_root + '/admin/keys/' + key_id, function(key_data){
             $('#edit-keys').empty();
             var template = Handlebars.compile(template_data);
+            key_data['script_root'] = script_root;
             $('#edit-keys').append(template(key_data));
             $('#key-id').val(key_id);
             $('#submit-keys').click(function (e) {
@@ -48,6 +49,11 @@ function loadchal(id, update) {
     $('.chal-name').val(obj.name);
     $('.chal-desc').val(obj.description);
     $('.chal-value').val(obj.value);
+    if (parseInt(obj.max_attempts) > 0){
+        $('.chal-attempts').val(obj.max_attempts);
+        $('#limit_max_attempts').prop('checked', true);
+        $('#chal-attempts-group').show();
+    }
     $('.chal-category').val(obj.category);
     $('.chal-id').val(obj.id);
     $('.chal-hidden').prop('checked', false);
@@ -92,7 +98,7 @@ function loadkeys(chal){
         $('#current-keys').empty();
         $.get(script_root + "/static/admin/js/templates/admin-keys-table.hbs", function(data){
             var template = Handlebars.compile(data);
-            var wrapper  = {keys: keys};
+            var wrapper  = {keys: keys, script_root: script_root};
             $('#current-keys').append(template(wrapper));
         });
     });
@@ -268,7 +274,7 @@ $('#submit-key').click(function (e) {
 
 $('#submit-keys').click(function (e) {
     e.preventDefault();
-    updatekeys()
+    $('#update-keys').modal('hide');
 });
 
 $('#submit-tags').click(function (e) {
@@ -308,7 +314,14 @@ $(".tag-insert").keyup(function (e) {
     }
 });
 
-
+$('#limit_max_attempts').change(function() {
+    if(this.checked) {
+        $('#chal-attempts-group').show();
+    } else {
+        $('#chal-attempts-group').hide();
+        $('#chal-attempts-input').val('');
+    }
+});
 
 // Markdown Preview
 $('#desc-edit').on('shown.bs.tab', function (event) {

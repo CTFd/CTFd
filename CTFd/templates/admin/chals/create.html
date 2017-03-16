@@ -38,7 +38,7 @@
     function load_chal_template(chal_type_name){
         $.get(script_root + '/static/admin/js/templates/challenges/'+ chal_type_name +'/' + chal_type_name + '-challenge-create.hbs', function(template_data){
             var template = Handlebars.compile(template_data);
-            $("#create-chal-entry-div").html(template({'nonce':nonce}));
+            $("#create-chal-entry-div").html(template({'nonce':nonce, 'script_root':script_root}));
             $.getScript(script_root + '/static/admin/js/templates/challenges/'+chal_type_name+'/'+chal_type_name+'-challenge-create.js', function(){
                 console.log('loaded');
             });

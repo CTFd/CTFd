@@ -2,13 +2,14 @@ import hashlib
 import json
 import os
 
-from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
+from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint, \
+    abort, render_template_string
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
 
 from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
     set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes, cache, upload_file
+    container_stop, container_start, get_themes, cache, upload_file, get_configurable_plugins
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
@@ -33,6 +34,20 @@ def admin_view():
     return redirect(url_for('auth.login'))
 
 
+@admin.route('/admin/plugins/<plugin>', methods=['GET', 'POST'])
+@admins_only
+def admin_plugin_config(plugin):
+    if request.method == 'GET':
+        if plugin in get_configurable_plugins():
+            config = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
+            return render_template('admin/page.html', content=config)
+        abort(404)
+    elif request.method == 'POST':
+        for k, v in request.form.items():
+            set_config(k, v)
+        return '1'
+
+
 @admin.route('/admin/config', methods=['GET', 'POST'])
 @admins_only
 def admin_config():
@@ -50,6 +65,7 @@ def admin_config():
         try:
             view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
             view_scoreboard_if_authed = bool(request.form.get('view_scoreboard_if_authed', None))
+            hide_scores = bool(request.form.get('hide_scores', None))
             prevent_registration = bool(request.form.get('prevent_registration', None))
             prevent_name_change = bool(request.form.get('prevent_name_change', None))
             view_after_ctf = bool(request.form.get('view_after_ctf', None))
@@ -59,6 +75,7 @@ def admin_config():
         except (ValueError, TypeError):
             view_challenges_unregistered = None
             view_scoreboard_if_authed = None
+            hide_scores = None
             prevent_registration = None
             prevent_name_change = None
             view_after_ctf = None
@@ -68,6 +85,7 @@ def admin_config():
         finally:
             view_challenges_unregistered = set_config('view_challenges_unregistered', view_challenges_unregistered)
             view_scoreboard_if_authed = set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
+            hide_scores = set_config('hide_scores', hide_scores)
             prevent_registration = set_config('prevent_registration', prevent_registration)
             prevent_name_change = set_config('prevent_name_change', prevent_name_change)
             view_after_ctf = set_config('view_after_ctf', view_after_ctf)
@@ -87,8 +105,6 @@ def admin_config():
         mailfrom_addr = set_config("mailfrom_addr", request.form.get('mailfrom_addr', None))
         mg_base_url = set_config("mg_base_url", request.form.get('mg_base_url', None))
         mg_api_key = set_config("mg_api_key", request.form.get('mg_api_key', None))
-
-        max_tries = set_config("max_tries", request.form.get('max_tries', None))
 
         db_freeze = set_config("freeze", freeze)
 
@@ -111,7 +127,7 @@ def admin_config():
         cache.clear()
     ctf_name = get_config('ctf_name')
     ctf_theme = get_config('ctf_theme')
-    max_tries = get_config('max_tries')
+    hide_scores = get_config('hide_scores')
 
     mail_server = get_config('mail_server')
     mail_port = get_config('mail_port')
@@ -121,9 +137,6 @@ def admin_config():
     mailfrom_addr = get_config('mailfrom_addr')
     mg_api_key = get_config('mg_api_key')
     mg_base_url = get_config('mg_base_url')
-    if not max_tries:
-        set_config('max_tries', 0)
-        max_tries = 0
 
     view_after_ctf = get_config('view_after_ctf')
     start = get_config('start')
@@ -151,7 +164,7 @@ def admin_config():
                            start=start,
                            end=end,
                            freeze=freeze,
-                           max_tries=max_tries,
+                           hide_scores=hide_scores,
                            mail_server=mail_server,
                            mail_port=mail_port,
                            mail_username=mail_username,

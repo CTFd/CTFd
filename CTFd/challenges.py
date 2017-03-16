@@ -6,7 +6,7 @@ import time
 from flask import render_template, request, redirect, jsonify, url_for, session, Blueprint
 from sqlalchemy.sql import or_
 
-from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, user_can_view_challenges, is_admin, get_config, get_ip, is_verified, ctf_started, ctf_ended, ctf_name
+from CTFd.utils import ctftime, view_after_ctf, authed, unix_time, get_kpm, user_can_view_challenges, is_admin, get_config, get_ip, is_verified, ctf_started, ctf_ended, ctf_name, hide_scores
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards
 from CTFd.plugins.keys import get_key_class
 from CTFd.plugins.challenges import get_chal_class
@@ -79,12 +79,17 @@ def chals():
 def solves_per_chal():
     if not user_can_view_challenges():
         return redirect(url_for('auth.login', next=request.path))
+
     solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves')).join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).group_by(Solves.chalid).subquery()
     solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves, Challenges.name) \
                        .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
     json = {}
-    for chal, count, name in solves:
-        json[chal] = count
+    if hide_scores():
+        for chal, count, name in solves:
+            json[chal] = -1
+    else:
+        for chal, count, name in solves:
+            json[chal] = count
     db.session.close()
     return jsonify(json)
 
@@ -158,8 +163,11 @@ def fails(teamid):
 def who_solved(chalid):
     if not user_can_view_challenges():
         return redirect(url_for('auth.login', next=request.path))
-    solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid, Teams.banned == False).order_by(Solves.date.asc())
+
     json = {'teams': []}
+    if hide_scores():
+        return jsonify(json)
+    solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid, Teams.banned == False).order_by(Solves.date.asc())
     for solve in solves:
         json['teams'].append({'id': solve.team.id, 'name': solve.team.name, 'date': solve.date})
     return jsonify(json)
@@ -197,8 +205,8 @@ def chal(chalid):
             saved_keys = Keys.query.filter_by(chal=chal.id).all()
 
             # Hit max attempts
-            max_tries = int(get_config("max_tries"))
-            if fails >= max_tries > 0:
+            max_tries = chal.max_attempts
+            if max_tries and fails >= max_tries > 0:
                 return jsonify({
                     'status': '0',
                     'message': "You have 0 tries remaining"
@@ -222,7 +230,7 @@ def chal(chalid):
             logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
             # return '0' # key was wrong
             if max_tries:
-                attempts_left = max_tries - fails
+                attempts_left = max_tries - fails - 1 ## Off by one since fails has changed since it was gotten
                 tries_str = 'tries'
                 if attempts_left == 1:
                     tries_str = 'try'

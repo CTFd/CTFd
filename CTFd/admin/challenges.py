@@ -24,7 +24,7 @@ def admin_chal_types():
 @admins_only
 def admin_chals():
     if request.method == 'POST':
-        chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category', 'hidden').order_by(Challenges.value).all()
+        chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category', 'hidden', 'max_attempts').order_by(Challenges.value).all()
 
         teams_with_points = db.session.query(Solves.teamid).join(Teams).filter(
             Teams.banned == False).group_by(Solves.teamid).count()
@@ -45,6 +45,7 @@ def admin_chals():
                 'description': x.description,
                 'category': x.category,
                 'hidden': x.hidden,
+                'max_attempts': x.max_attempts,
                 'percentage_solved': percentage
             })
 
@@ -97,8 +98,9 @@ def admin_files(chalid):
     if request.method == 'POST':
         if request.form['method'] == "delete":
             f = Files.query.filter_by(id=request.form['file']).first_or_404()
-            if os.path.exists(os.path.join(app.root_path, 'uploads', f.location)): # Some kind of os.path.isfile issue on Windows...
-                os.unlink(os.path.join(app.root_path, 'uploads', f.location))
+            upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+            if os.path.exists(os.path.join(upload_folder, f.location)): # Some kind of os.path.isfile issue on Windows...
+                os.unlink(os.path.join(upload_folder, f.location))
             db.session.delete(f)
             db.session.commit()
             db.session.close()
@@ -144,6 +146,11 @@ def admin_create_chal():
             chal.hidden = True
         else:
             chal.hidden = False
+
+        max_attempts = request.form.get('max_attempts')
+        if max_attempts and max_attempts.isdigit():
+            chal.max_attempts = int(max_attempts)
+
         db.session.add(chal)
         db.session.flush()
 
@@ -174,7 +181,8 @@ def admin_delete_chal():
     files = Files.query.filter_by(chal=challenge.id).all()
     Files.query.filter_by(chal=challenge.id).delete()
     for file in files:
-        folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), 'uploads', file.location))
+        upload_folder = app.config['UPLOAD_FOLDER']
+        folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), upload_folder, file.location))
         rmdir(folder)
     Tags.query.filter_by(chal=challenge.id).delete()
     Challenges.query.filter_by(id=challenge.id).delete()
@@ -189,7 +197,8 @@ def admin_update_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
     challenge.name = request.form['name']
     challenge.description = request.form['desc']
-    challenge.value = request.form['value']
+    challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
+    challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
     challenge.category = request.form['category']
     challenge.hidden = 'hidden' in request.form
     db.session.add(challenge)

@@ -103,6 +103,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h3 class="chal-title text-center"></h3>
                 </div>
                 <div class="modal-body">
@@ -136,6 +137,18 @@
                         <div class="form-group">
                             <label for="value">Value</label>
                             <input type="number" class="form-control chal-value" name="value" placeholder="Enter value" required>
+                        </div>
+
+                        <div class="checkbox">
+                            <label>
+                                <input class="chal-attempts-checkbox" id="limit_max_attempts" name="limit_max_attempts" type="checkbox">
+                                Limit challenge attempts
+                            </label>
+                        </div>
+
+                        <div class="form-group" id="chal-attempts-group" style="display:none;">
+                            <label for="value">Max Attempts</label>
+                            <input type="number" class="form-control chal-attempts" id="chal-attempts-input" name="max_attempts" placeholder="Enter value">
                         </div>
                         <input class="chal-id" type='hidden' name='id' placeholder='ID'>
 
@@ -216,6 +229,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header text-center">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h3>Keys</h3>
                 </div>
                 <div class="modal-body">
@@ -238,6 +252,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header text-center">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h3>Files</h3>
                 </div>
                 <div class="modal-body">
@@ -264,6 +279,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header text-center">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h3>Tags</h3>
                 </div>
                 <div class="modal-body">

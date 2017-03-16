@@ -1,9 +1,7 @@
 from flask import render_template, jsonify, Blueprint, redirect, url_for, request
 from sqlalchemy.sql.expression import union_all
 
-from datetime import datetime
-
-from CTFd.utils import unix_time, authed, get_config
+from CTFd.utils import unix_time, unix_time_to_utc, authed, get_config, hide_scores
 from CTFd.models import db, Teams, Solves, Awards, Challenges
 
 scoreboard = Blueprint('scoreboard', __name__)
@@ -18,7 +16,7 @@ def get_standings(admin=False, count=None):
 
     freeze = get_config('freeze')
     if not admin and freeze:
-        scores = scores.filter(Solves.date < datetime.fromtimestamp(freeze))
+        scores = scores.filter(Solves.date < unix_time_to_utc(freeze))
 
     awards = db.session.query(
                 Awards.teamid.label('teamid'),
@@ -64,16 +62,22 @@ def get_standings(admin=False, count=None):
 def scoreboard_view():
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
+    if hide_scores():
+        return render_template('scoreboard.html', errors=['Scores are currently hidden'])
     standings = get_standings()
     return render_template('scoreboard.html', teams=standings)
 
 
 @scoreboard.route('/scores')
 def scores():
+    json = {'standings': []}
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
+    if hide_scores():
+        return jsonify(json)
+
     standings = get_standings()
-    json = {'standings': []}
+
     for i, x in enumerate(standings):
         json['standings'].append({'pos': i + 1, 'id': x.teamid, 'team': x.name, 'score': int(x.score)})
     return jsonify(json)
@@ -81,21 +85,32 @@ def scores():
 
 @scoreboard.route('/top/<int:count>')
 def topteams(count):
+    json = {'scores': {}}
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
-    try:
-        count = int(count)
-    except ValueError:
-        count = 10
+    if hide_scores():
+        return jsonify(json)
+
     if count > 20 or count < 0:
         count = 10
 
-    json = {'scores': {}}
     standings = get_standings(count=count)
 
     for team in standings:
-        solves = Solves.query.filter_by(teamid=team.teamid).all()
-        awards = Awards.query.filter_by(teamid=team.teamid).all()
+        solves = Solves.query.filter_by(teamid=team.teamid)
+        awards = Awards.query.filter_by(teamid=team.teamid)
+
+
+        freeze = get_config('freeze')
+
+        if freeze:
+            solves = solves.filter(Solves.date < unix_time_to_utc(freeze))
+            awards = awards.filter(Awards.date < unix_time_to_utc(freeze))
+
+        solves = solves.all()
+        awards = awards.all()
+
+
         json['scores'][team.name] = []
         for x in solves:
             json['scores'][team.name].append({

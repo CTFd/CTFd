@@ -6,10 +6,11 @@ from jinja2 import FileSystemLoader
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy_utils import database_exists, create_database
+from six.moves import input
 
-from utils import get_config, set_config, cache, migrate, migrate_upgrade
+from CTFd.utils import get_config, set_config, cache, migrate, migrate_upgrade, migrate_stamp
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
@@ -58,8 +59,16 @@ def create_app(config='CTFd.config.Config'):
             set_config('ctf_version', __version__)
 
         if version and (StrictVersion(version) < StrictVersion(__version__)): ## Upgrading from an older version of CTFd
-            migrate_upgrade()
-            set_config('ctf_version', __version__)
+            print("/*\\ CTFd has updated and must update the database! /*\\")
+            print("/*\\ Please backup your database before proceeding! /*\\")
+            print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")
+            if input('Run database migrations (Y/N)').lower().strip() == 'y':
+                migrate_stamp()
+                migrate_upgrade()
+                set_config('ctf_version', __version__)
+            else:
+                print('/*\\ Ignored database migrations... /*\\')
+                exit()
 
         if not get_config('ctf_theme'):
             set_config('ctf_theme', 'original')

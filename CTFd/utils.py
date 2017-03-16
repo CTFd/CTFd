@@ -19,7 +19,7 @@ import urllib
 
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort
 from flask_caching import Cache
-from flask_migrate import Migrate, upgrade as migrate_upgrade
+from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
 from itsdangerous import Signer
 import six
 from six.moves.urllib.parse import urlparse, urljoin
@@ -100,6 +100,9 @@ def init_utils(app):
     app.jinja_env.globals.update(ctf_name=ctf_name)
     app.jinja_env.globals.update(ctf_theme=ctf_theme)
     app.jinja_env.globals.update(can_create_container=can_create_container)
+    app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
+    app.jinja_env.globals.update(get_config=get_config)
+    app.jinja_env.globals.update(hide_scores=hide_scores)
 
     @app.context_processor
     def inject_user():
@@ -146,6 +149,11 @@ def ctf_name():
 def ctf_theme():
     theme = get_config('ctf_theme')
     return theme if theme else ''
+
+
+@cache.memoize()
+def hide_scores():
+    return get_config('hide_scores')
 
 
 def pages():
@@ -266,6 +274,10 @@ def unix_time_millis(dt):
     return unix_time(dt) * 1000
 
 
+def unix_time_to_utc(t):
+    return datetime.datetime.utcfromtimestamp(t)
+
+
 def get_ip():
     """ Returns the IP address of the currently in scope request. The approach is to define a list of trusted proxies
      (in this case the local network), and only trust the most recently defined untrusted IP address.
@@ -300,6 +312,12 @@ def get_themes():
             if os.path.isdir(os.path.join(dir, name)) and name != 'admin']
 
 
+def get_configurable_plugins():
+    dir = os.path.join(app.root_path, 'plugins')
+    return [name for name in os.listdir(dir)
+            if os.path.isfile(os.path.join(dir, name, 'config.html'))]
+
+
 def upload_file(file, chalid):
     filename = secure_filename(file.filename)
 
@@ -308,10 +326,11 @@ def upload_file(file, chalid):
 
     md5hash = hashlib.md5(os.urandom(64)).hexdigest()
 
-    if not os.path.exists(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash)):
-        os.makedirs(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash))
+    upload_folder = os.path.join(os.path.normpath(app.root_path), app.config['UPLOAD_FOLDER'])
+    if not os.path.exists(os.path.join(upload_folder, md5hash)):
+        os.makedirs(os.path.join(upload_folder, md5hash))
 
-    file.save(os.path.join(os.path.normpath(app.root_path), 'uploads', md5hash, filename))
+    file.save(os.path.join(upload_folder, md5hash, filename))
     db_f = Files(chalid, (md5hash + '/' + filename))
     db.session.add(db_f)
     db.session.commit()
@@ -576,7 +595,7 @@ def container_ports(name, verbose=False):
             ports = info[0]['Config']['ExposedPorts'].keys()
             if not ports:
                 return []
-            ports = [int(re.sub('[A-Za-z/]+', '', port)) for port in ports_asked]
+            ports = [int(re.sub('[A-Za-z/]+', '', port)) for port in ports]
             return ports
     except subprocess.CalledProcessError:
         return []

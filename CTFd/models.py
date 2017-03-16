@@ -10,7 +10,7 @@ from sqlalchemy.exc import DatabaseError
 
 
 def sha512(string):
-    return hashlib.sha512(string).hexdigest()
+    return str(hashlib.sha512(string).hexdigest())
 
 
 def ip2long(ip):
@@ -58,6 +58,7 @@ class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
+    max_attempts = db.Column(db.Integer, default=0)
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     type = db.Column(db.Integer)

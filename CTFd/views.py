@@ -6,7 +6,7 @@ from jinja2.exceptions import TemplateNotFound
 from passlib.hash import bcrypt_sha256
 
 from CTFd.utils import authed, is_setup, validate_url, get_config, set_config, sha512, cache, ctftime, view_after_ctf, ctf_started, \
-    is_admin
+    is_admin, hide_scores
 from CTFd.models import db, Teams, Solves, Awards, Files, Pages
 
 views = Blueprint('views', __name__)
@@ -83,10 +83,17 @@ def setup():
             db.session.add(page)
             db.session.add(admin)
             db.session.commit()
+
+            session['username'] = admin.name
+            session['id'] = admin.id
+            session['admin'] = admin.admin
+            session['nonce'] = sha512(os.urandom(10))
+
             db.session.close()
             app.setup = False
             with app.app_context():
                 cache.clear()
+
             return redirect(url_for('views.static_html'))
         return render_template('setup.html', nonce=session.get('nonce'))
     return redirect(url_for('views.static_html'))
@@ -131,12 +138,19 @@ def teams(page):
 def team(teamid):
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
+    errors = []
     user = Teams.query.filter_by(id=teamid).first_or_404()
     solves = Solves.query.filter_by(teamid=teamid)
     awards = Awards.query.filter_by(teamid=teamid).all()
     score = user.score()
     place = user.place()
     db.session.close()
+
+    if hide_scores() and teamid != session.get('id'):
+        errors.append('Scores are currently hidden')
+
+    if errors:
+        return render_template('team.html', team=user, errors=errors)
 
     if request.method == 'GET':
         return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place)
@@ -229,4 +243,5 @@ def file_handler(path):
                     pass
                 else:
                     abort(403)
-    return send_file(os.path.join(app.root_path, 'uploads', f.location))
+    upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+    return send_file(os.path.join(upload_folder, f.location))

@@ -28,6 +28,7 @@ function updateChalWindow(obj) {
         $('#chal-window').empty();
         templates[obj.type] = template_data;
         var template_data = templates[obj.type];
+        template_data['script_root'] = script_root;
         var template = Handlebars.compile(template_data);
         var solves = obj.solves == 1 ? " Solve" : " Solves";
         solves = obj.solves + solves;
