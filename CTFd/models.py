@@ -159,20 +159,34 @@ class Teams(db.Model):
     def __repr__(self):
         return '<team %r>' % self.name
 
-    def score(self):
+    def score(self, date_filter=None):
         score = db.func.sum(Challenges.value).label('score')
-        team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.banned == False, Teams.id == self.id).group_by(Solves.teamid).first()
+        team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.banned == False, Teams.id == self.id)
         award_score = db.func.sum(Awards.value).label('award_score')
-        award = db.session.query(award_score).filter_by(teamid=self.id).first()
+        award = db.session.query(award_score).filter_by(teamid=self.id)
+
+        if date_filter:
+            team = team.filter(Solves.date < date_filter)
+            award = award.filter(Awards.date < date_filter)
+
+        team = team.group_by(Solves.teamid).first()
+        award = award.first()
+
         if team:
             return int(team.score or 0) + int(award.award_score or 0)
         else:
             return 0
 
-    def place(self):
+    def place(self, date_filter=None):
         score = db.func.sum(Challenges.value).label('score')
         quickest = db.func.max(Solves.date).label('quickest')
-        teams = db.session.query(Solves.teamid).join(Teams).join(Challenges).filter(Teams.banned == False).group_by(Solves.teamid).order_by(score.desc(), quickest).all()
+        teams = db.session.query(Solves.teamid).join(Teams).join(Challenges).filter(Teams.banned == False)
+
+        if date_filter:
+            teams = teams.filter(Solves.date < date_filter)
+
+        teams = teams.group_by(Solves.teamid).order_by(score.desc(), quickest).all()
+
         # http://codegolf.stackexchange.com/a/4712
         try:
             i = teams.index((self.id,)) + 1

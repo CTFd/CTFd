@@ -6,7 +6,7 @@ from jinja2.exceptions import TemplateNotFound
 from passlib.hash import bcrypt_sha256
 
 from CTFd.utils import authed, is_setup, validate_url, get_config, set_config, sha512, cache, ctftime, view_after_ctf, ctf_started, \
-    is_admin, hide_scores
+    is_admin, hide_scores, unix_time_to_utc
 from CTFd.models import db, Teams, Solves, Awards, Files, Pages
 
 views = Blueprint('views', __name__)
@@ -139,11 +139,20 @@ def team(teamid):
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
     errors = []
+    freeze = get_config('freeze')
     user = Teams.query.filter_by(id=teamid).first_or_404()
     solves = Solves.query.filter_by(teamid=teamid)
-    awards = Awards.query.filter_by(teamid=teamid).all()
-    score = user.score()
-    place = user.place()
+    awards = Awards.query.filter_by(teamid=teamid)
+    if freeze:
+        freeze = unix_time_to_utc(freeze)
+        solves = solves.filter(Solves.date < freeze)
+        awards = awards.filter(Awards.date < freeze)
+
+    solves = solves.all()
+    awards = awards.all()
+
+    score = user.score(freeze)
+    place = user.place(freeze)
     db.session.close()
 
     if hide_scores() and teamid != session.get('id'):
