@@ -143,16 +143,25 @@ def team(teamid):
     user = Teams.query.filter_by(id=teamid).first_or_404()
     solves = Solves.query.filter_by(teamid=teamid)
     awards = Awards.query.filter_by(teamid=teamid)
+
+    place = None
+    score = None
+
     if freeze:
         freeze = unix_time_to_utc(freeze)
-        solves = solves.filter(Solves.date < freeze)
-        awards = awards.filter(Awards.date < freeze)
+
+        if teamid != session.get('id'):
+            solves = solves.filter(Solves.date < freeze)
+            awards = awards.filter(Awards.date < freeze)
+            score = user.score(freeze)
+        else:
+            score = user.score()
+
+        place = user.place(freeze)
 
     solves = solves.all()
     awards = awards.all()
 
-    score = user.score(freeze)
-    place = user.place(freeze)
     db.session.close()
 
     if hide_scores() and teamid != session.get('id'):
