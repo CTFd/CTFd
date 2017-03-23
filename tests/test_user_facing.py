@@ -1,5 +1,6 @@
-from tests.helpers import create_ctfd, register_user, login_as_user
+from tests.helpers import create_ctfd, register_user, login_as_user, gen_challenge
 from CTFd.models import Teams
+import json
 
 
 def test_index():
@@ -192,3 +193,15 @@ def test_user_get_reset_password():
         client = app.test_client()
         r = client.get('/reset_password')
         assert r.status_code == 200
+
+
+def test_viewing_challenges():
+    """Test that users can see added challenges"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        gen_challenge(app.db)
+        r = client.get('/chals')
+        chals = json.loads(r.data)
+        assert len(chals['game']) == 1

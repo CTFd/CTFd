@@ -1,10 +1,11 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, unix_time, get_config, \
-    set_config, sendmail, rmdir, create_image, delete_image, run_image, container_status, container_ports, \
-    container_stop, container_start, get_themes, cache, upload_file
+from CTFd.utils import admins_only, is_admin, cache
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
+
+from CTFd import utils
+
 import os
 
 admin_challenges = Blueprint('admin_challenges', __name__)
@@ -109,7 +110,7 @@ def admin_files(chalid):
             files = request.files.getlist('files[]')
 
             for f in files:
-                upload_file(file=f, chalid=chalid)
+                utils.upload_file(file=f, chalid=chalid)
 
             db.session.commit()
             db.session.close()
@@ -162,7 +163,7 @@ def admin_create_chal():
         db.session.commit()
 
         for f in files:
-            upload_file(file=f, chalid=chal.id)
+            utils.upload_file(file=f, chalid=chal.id)
 
         db.session.commit()
         db.session.close()
@@ -183,7 +184,7 @@ def admin_delete_chal():
     for file in files:
         upload_folder = app.config['UPLOAD_FOLDER']
         folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), upload_folder, file.location))
-        rmdir(folder)
+        utils.rmdir(folder)
     Tags.query.filter_by(chal=challenge.id).delete()
     Challenges.query.filter_by(id=challenge.id).delete()
     db.session.commit()
