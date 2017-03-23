@@ -111,8 +111,18 @@ def solves(teamid=None):
         else:
             return redirect(url_for('auth.login', next='solves'))
     else:
-        solves = Solves.query.filter_by(teamid=teamid).all()
-        awards = Awards.query.filter_by(teamid=teamid).all()
+        solves = Solves.query.filter_by(teamid=teamid)
+        awards = Awards.query.filter_by(teamid=teamid)
+
+        freeze = utils.get_config('freeze')
+        if freeze:
+            freeze = utils.unix_time_to_utc(freeze)
+            if teamid != session.get('id'):
+                solves = solves.filter(Solves.date < freeze)
+                awards = awards.filter(Awards.date < freeze)
+
+        solves = solves.all()
+        awards = awards.all()
     db.session.close()
     json = {'solves': []}
     for solve in solves:

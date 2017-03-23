@@ -145,24 +145,14 @@ def team(teamid):
     solves = Solves.query.filter_by(teamid=teamid)
     awards = Awards.query.filter_by(teamid=teamid)
 
-    place = None
-    score = None
+    place = user.place()
+    score = user.score()
 
     if freeze:
         freeze = utils.unix_time_to_utc(freeze)
-
         if teamid != session.get('id'):
             solves = solves.filter(Solves.date < freeze)
             awards = awards.filter(Awards.date < freeze)
-            score = user.score(freeze)
-        else:
-            score = user.score()
-
-        place = user.place(freeze)
-
-    else:
-        place = user.place()
-        score = user.score()
 
     solves = solves.all()
     awards = awards.all()

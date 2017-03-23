@@ -159,15 +159,18 @@ class Teams(db.Model):
     def __repr__(self):
         return '<team %r>' % self.name
 
-    def score(self, date_filter=None):
+    def score(self, admin=False):
         score = db.func.sum(Challenges.value).label('score')
         team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.banned == False, Teams.id == self.id)
         award_score = db.func.sum(Awards.value).label('award_score')
         award = db.session.query(award_score).filter_by(teamid=self.id)
 
-        if date_filter:
-            team = team.filter(Solves.date < date_filter)
-            award = award.filter(Awards.date < date_filter)
+        if not admin:
+            freeze = int(Config.query.filter_by(key='freeze').first().value)
+            if freeze:
+                freeze = datetime.datetime.utcfromtimestamp(freeze)
+                team = team.filter(Solves.date < freeze)
+                award = award.filter(Awards.date < freeze)
 
         team = team.group_by(Solves.teamid).first()
         award = award.first()
@@ -177,13 +180,16 @@ class Teams(db.Model):
         else:
             return 0
 
-    def place(self, date_filter=None):
+    def place(self, admin=False):
         score = db.func.sum(Challenges.value).label('score')
         quickest = db.func.max(Solves.date).label('quickest')
         teams = db.session.query(Solves.teamid).join(Teams).join(Challenges).filter(Teams.banned == False)
 
-        if date_filter:
-            teams = teams.filter(Solves.date < date_filter)
+        if not admin:
+            freeze = int(Config.query.filter_by(key='freeze').first().value)
+            if freeze:
+                freeze = datetime.datetime.utcfromtimestamp(freeze)
+                teams = teams.filter(Solves.date < freeze)
 
         teams = teams.group_by(Solves.teamid).order_by(score.desc(), quickest).all()
 
