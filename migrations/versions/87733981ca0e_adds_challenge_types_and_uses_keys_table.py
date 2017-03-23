@@ -64,7 +64,11 @@ def upgrade():
 
     ## Drop flags from challenges
     print("Dropping flags column from challenges")
-    op.drop_column('challenges', 'flags')
+    try:
+        op.drop_column('challenges', 'flags')
+    except sa.exc.OperationalError:
+        print "Failed to drop flags. Likely due to SQLite"
+
 
     print("Finished")
     # ### end Alembic commands ###

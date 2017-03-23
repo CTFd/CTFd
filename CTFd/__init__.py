@@ -34,22 +34,16 @@ def create_app(config='CTFd.config.Config'):
         if url.drivername == 'postgres':
             url.drivername = 'postgresql'
 
+        ## Creates database if the database is not SQLite and the database does not exist
+        if not (url.drivername.startswith('sqlite') or database_exists(url)):
+            create_database(url)
+
         db.init_app(app)
 
-        try:
-            if not (url.drivername.startswith('sqlite') or database_exists(url)):
-                create_database(url)
-            db.create_all()
-        except OperationalError:
-            db.create_all()
-        except ProgrammingError:  ## Database already exists
-            pass
-        else:
-            db.create_all()
+        migrate.init_app(app, db)
+        migrate_upgrade() ## This creates tables instead of db.create_all()
 
         app.db = db
-
-        migrate.init_app(app, db)
 
         cache.init_app(app)
         app.cache = cache
