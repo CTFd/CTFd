@@ -138,10 +138,10 @@ def admin_config():
     mg_api_key = utils.get_config('mg_api_key')
     mg_base_url = utils.get_config('mg_base_url')
 
-    view_after_ctf = get_config('view_after_ctf')
-    start = get_config('start')
-    end = get_config('end')
-    freeze = get_config('freeze')
+    view_after_ctf = utils.get_config('view_after_ctf')
+    start = utils.get_config('start')
+    end = utils.get_config('end')
+    freeze = utils.get_config('freeze')
 
     mail_tls = utils.get_config('mail_tls')
     mail_ssl = utils.get_config('mail_ssl')

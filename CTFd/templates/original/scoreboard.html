@@ -16,6 +16,15 @@
         </div>
     </div>
     {% else %}
+
+        {% if score_frozen %}
+        <div class="container main-container">
+            <div class="row">
+                <h1>Scoreboard has been frozen.</h1>
+            </div>
+        </div>
+        {% endif %}
+
     <div id="score-graph"></div>
     <br>
 

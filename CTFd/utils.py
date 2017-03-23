@@ -212,6 +212,18 @@ def view_after_ctf():
     return bool(get_config('view_after_ctf'))
 
 
+def is_scoreboard_frozen():
+    freeze = get_config('freeze')
+
+    if freeze:
+        freeze = int(freeze)
+        if freeze < time.time():
+            return True
+
+    return False
+
+
+
 def ctftime():
     """ Checks whether it's CTF time or not. """
 

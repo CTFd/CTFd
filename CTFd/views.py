@@ -166,7 +166,7 @@ def team(teamid):
         return render_template('team.html', team=user, errors=errors)
 
     if request.method == 'GET':
-        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place)
+        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place, score_frozen=utils.is_scoreboard_frozen())
     elif request.method == 'POST':
         json = {'solves': []}
         for x in solves:

@@ -66,7 +66,7 @@ def scoreboard_view():
     if utils.hide_scores():
         return render_template('scoreboard.html', errors=['Scores are currently hidden'])
     standings = get_standings()
-    return render_template('scoreboard.html', teams=standings)
+    return render_template('scoreboard.html', teams=standings, score_frozen=utils.is_scoreboard_frozen())
 
 
 @scoreboard.route('/scores')

@@ -166,8 +166,9 @@ class Teams(db.Model):
         award = db.session.query(award_score).filter_by(teamid=self.id)
 
         if not admin:
-            freeze = int(Config.query.filter_by(key='freeze').first().value)
-            if freeze:
+            freeze = Config.query.filter_by(key='freeze').first()
+            if freeze and freeze.value:
+                freeze = int(freeze.value)
                 freeze = datetime.datetime.utcfromtimestamp(freeze)
                 team = team.filter(Solves.date < freeze)
                 award = award.filter(Awards.date < freeze)
@@ -186,8 +187,9 @@ class Teams(db.Model):
         teams = db.session.query(Solves.teamid).join(Teams).join(Challenges).filter(Teams.banned == False)
 
         if not admin:
-            freeze = int(Config.query.filter_by(key='freeze').first().value)
-            if freeze:
+            freeze = Config.query.filter_by(key='freeze').first()
+            if freeze and freeze.value:
+                freeze = int(freeze.value)
                 freeze = datetime.datetime.utcfromtimestamp(freeze)
                 teams = teams.filter(Solves.date < freeze)
 
