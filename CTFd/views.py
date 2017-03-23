@@ -159,6 +159,10 @@ def team(teamid):
 
         place = user.place(freeze)
 
+    else:
+        place = user.place()
+        score = user.score()
+
     solves = solves.all()
     awards = awards.all()
 
