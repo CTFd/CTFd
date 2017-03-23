@@ -1,8 +1,9 @@
 from flask import render_template, jsonify, Blueprint, redirect, url_for, request
 from sqlalchemy.sql.expression import union_all
 
-from CTFd.utils import unix_time, unix_time_to_utc, authed, get_config, hide_scores
 from CTFd.models import db, Teams, Solves, Awards, Challenges
+
+from CTFd import utils
 
 scoreboard = Blueprint('scoreboard', __name__)
 
@@ -60,9 +61,9 @@ def get_standings(admin=False, count=None):
 
 @scoreboard.route('/scoreboard')
 def scoreboard_view():
-    if get_config('view_scoreboard_if_authed') and not authed():
+    if utils.get_config('view_scoreboard_if_authed') and not utils.authed():
         return redirect(url_for('auth.login', next=request.path))
-    if hide_scores():
+    if utils.hide_scores():
         return render_template('scoreboard.html', errors=['Scores are currently hidden'])
     standings = get_standings()
     return render_template('scoreboard.html', teams=standings)
@@ -71,9 +72,9 @@ def scoreboard_view():
 @scoreboard.route('/scores')
 def scores():
     json = {'standings': []}
-    if get_config('view_scoreboard_if_authed') and not authed():
+    if utils.get_config('view_scoreboard_if_authed') and not utils.authed():
         return redirect(url_for('auth.login', next=request.path))
-    if hide_scores():
+    if utils.hide_scores():
         return jsonify(json)
 
     standings = get_standings()
@@ -86,9 +87,9 @@ def scores():
 @scoreboard.route('/top/<int:count>')
 def topteams(count):
     json = {'scores': {}}
-    if get_config('view_scoreboard_if_authed') and not authed():
+    if utils.get_config('view_scoreboard_if_authed') and not utils.authed():
         return redirect(url_for('auth.login', next=request.path))
-    if hide_scores():
+    if utils.hide_scores():
         return jsonify(json)
 
     if count > 20 or count < 0:
@@ -117,14 +118,14 @@ def topteams(count):
                 'chal': x.chalid,
                 'team': x.teamid,
                 'value': x.chal.value,
-                'time': unix_time(x.date)
+                'time': utils.unix_time(x.date)
             })
         for award in awards:
             json['scores'][team.name].append({
                 'chal': None,
                 'team': award.teamid,
                 'value': award.value,
-                'time': unix_time(award.date)
+                'time': utils.unix_time(award.date)
             })
         json['scores'][team.name] = sorted(json['scores'][team.name], key=lambda k: k['time'])
     return jsonify(json)
