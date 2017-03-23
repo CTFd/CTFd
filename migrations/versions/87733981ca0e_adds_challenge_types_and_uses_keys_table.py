@@ -67,7 +67,7 @@ def upgrade():
     try:
         op.drop_column('challenges', 'flags')
     except sa.exc.OperationalError:
-        print "Failed to drop flags. Likely due to SQLite"
+        print("Failed to drop flags. Likely due to SQLite")
 
 
     print("Finished")
