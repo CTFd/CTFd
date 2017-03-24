@@ -203,5 +203,5 @@ def test_viewing_challenges():
         client = login_as_user(app)
         gen_challenge(app.db)
         r = client.get('/chals')
-        chals = json.loads(r.data)
+        chals = json.loads(r.get_data(as_text=True))
         assert len(chals['game']) == 1
