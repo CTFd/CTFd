@@ -15,15 +15,16 @@ def get_standings(admin=False, count=None):
                 db.func.max(Solves.date).label('date')
             ).join(Challenges).group_by(Solves.teamid)
 
-    freeze = utils.get_config('freeze')
-    if not admin and freeze:
-        scores = scores.filter(Solves.date < utils.unix_time_to_utc(freeze))
-
     awards = db.session.query(
                 Awards.teamid.label('teamid'),
                 db.func.sum(Awards.value).label('score'),
                 db.func.max(Awards.date).label('date')
             ).group_by(Awards.teamid)
+
+    freeze = utils.get_config('freeze')
+    if not admin and freeze:
+        scores = scores.filter(Solves.date < utils.unix_time_to_utc(freeze))
+        awards = awards.filter(Awards.date < utils.unix_time_to_utc(freeze))
 
     results = union_all(scores, awards).alias('results')
 
