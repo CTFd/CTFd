@@ -54,10 +54,13 @@ def admin_config():
     if request.method == "POST":
         start = None
         end = None
+        freeze = None
         if request.form.get('start'):
             start = int(request.form['start'])
         if request.form.get('end'):
             end = int(request.form['end'])
+        if request.form.get('freeze'):
+            freeze = int(request.form['freeze'])
 
         try:
             view_challenges_unregistered = bool(request.form.get('view_challenges_unregistered', None))
@@ -103,6 +106,8 @@ def admin_config():
         mg_base_url = utils.set_config("mg_base_url", request.form.get('mg_base_url', None))
         mg_api_key = utils.set_config("mg_api_key", request.form.get('mg_api_key', None))
 
+        db_freeze = utils.set_config("freeze", freeze)
+
         db_start = Config.query.filter_by(key='start').first()
         db_start.value = start
 
@@ -136,6 +141,7 @@ def admin_config():
     view_after_ctf = utils.get_config('view_after_ctf')
     start = utils.get_config('start')
     end = utils.get_config('end')
+    freeze = utils.get_config('freeze')
 
     mail_tls = utils.get_config('mail_tls')
     mail_ssl = utils.get_config('mail_ssl')
@@ -157,6 +163,7 @@ def admin_config():
                            ctf_theme_config=ctf_theme,
                            start=start,
                            end=end,
+                           freeze=freeze,
                            hide_scores=hide_scores,
                            mail_server=mail_server,
                            mail_port=mail_port,

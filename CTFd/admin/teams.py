@@ -39,8 +39,8 @@ def admin_team(teamid):
                           .order_by(last_seen.desc()).all()
         wrong_keys = WrongKeys.query.filter_by(teamid=teamid).order_by(WrongKeys.date.asc()).all()
         awards = Awards.query.filter_by(teamid=teamid).order_by(Awards.date.asc()).all()
-        score = user.score()
-        place = user.place()
+        score = user.score(admin=True)
+        place = user.place(admin=True)
         return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, missing=missing,
                                place=place, wrong_keys=wrong_keys, awards=awards)
     elif request.method == 'POST':

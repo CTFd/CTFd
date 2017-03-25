@@ -56,11 +56,12 @@ def setup():
 </div>""".format(request.script_root))
 
             # max attempts per challenge
-            max_tries = utils.set_config("max_tries", 0)
+            max_tries = utils.set_config('max_tries', 0)
 
             # Start time
             start = utils.set_config('start', None)
             end = utils.set_config('end', None)
+            freeze = utils.set_config('freeze', None)
 
             # Challenges cannot be viewed by unregistered users
             view_challenges_unregistered = utils.set_config('view_challenges_unregistered', None)
@@ -102,7 +103,7 @@ def setup():
 # Custom CSS handler
 @views.route('/static/user.css')
 def custom_css():
-    return Response(utils.get_config("css"), mimetype='text/css')
+    return Response(utils.get_config('css'), mimetype='text/css')
 
 
 # Static HTML files
@@ -139,11 +140,23 @@ def team(teamid):
     if utils.get_config('view_scoreboard_if_utils.authed') and not utils.authed():
         return redirect(url_for('auth.login', next=request.path))
     errors = []
+    freeze = utils.get_config('freeze')
     user = Teams.query.filter_by(id=teamid).first_or_404()
     solves = Solves.query.filter_by(teamid=teamid)
-    awards = Awards.query.filter_by(teamid=teamid).all()
-    score = user.score()
+    awards = Awards.query.filter_by(teamid=teamid)
+
     place = user.place()
+    score = user.score()
+
+    if freeze:
+        freeze = utils.unix_time_to_utc(freeze)
+        if teamid != session.get('id'):
+            solves = solves.filter(Solves.date < freeze)
+            awards = awards.filter(Awards.date < freeze)
+
+    solves = solves.all()
+    awards = awards.all()
+
     db.session.close()
 
     if utils.hide_scores() and teamid != session.get('id'):
@@ -153,7 +166,7 @@ def team(teamid):
         return render_template('team.html', team=user, errors=errors)
 
     if request.method == 'GET':
-        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place)
+        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place, score_frozen=utils.is_scoreboard_frozen())
     elif request.method == 'POST':
         json = {'solves': []}
         for x in solves:

@@ -179,6 +179,9 @@
                         <li role="presentation">
                             <a href="#end-date" aria-controls="end-date" role="tab" data-toggle="tab">End Time</a>
                         </li>
+                        <li role="presentation">
+                            <a href="#freeze-date" aria-controls="freeze-date" role="tab" data-toggle="tab">Freeze Time</a>
+                        </li>
                         <sub style="float:right;">* All time fields required</sub>
                     </ul>
 
@@ -307,6 +310,70 @@
                                 </div>
                             </div>
                         </div>
+                        <div role="tabpanel" class="tab-pane" id="freeze-date">
+                            <div class="row" id="freeze-date">
+                                <div class="form-group col-xs-2">
+                                    <label for="freeze-month">Month:</label>
+                                    <input class="form-control freeze-date" id='freeze-month' name='freeze-month' min="1" max="12"
+                                           type='number'>
+                                </div>
+
+                                <div class="form-group col-xs-2">
+                                    <label for="freeze-day">Day:</label>
+                                    <input class="form-control freeze-date" id='freeze-day' name='freeze-day' min="1" max="31"
+                                           type='number'>
+                                </div>
+
+                                <div class="form-group col-xs-2">
+                                    <label for="freeze-year">Year:</label>
+                                    <input class="form-control freeze-date" id='freeze-year' name='freeze-year' type='number'>
+                                </div>
+
+                                <div class="form-group col-xs-2">
+                                    <label for="freeze-hour">Hour:</label>
+                                    <input class="form-control freeze-date" id='freeze-hour' name='freeze-hour' min="0" max="23"
+                                           type='number'>
+                                </div>
+
+                                <div class="form-group col-xs-2">
+                                    <label for="freeze-minute">Minute:</label>
+                                    <input class="form-control freeze-date" id='freeze-minute' name='freeze-minute' min="0"
+                                           max="59" type='number'>
+                                </div>
+
+                                <div class="form-group col-xs-4">
+                                    <label for="freeze-timezone">Timezone:</label>
+                                    <select class="form-control freeze-date" id="freeze-timezone">
+                                        <script>
+                                            document.write('<option>' + moment.tz.guess() + '</option>');
+                                            var tz_names = moment.tz.names();
+                                            for (var i = 0; i < tz_names.length; i++) {
+                                                document.write('<option>' + tz_names[i] + '</option>');
+                                            }
+                                        </script>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-xs-12">
+                                    <label for="freeze-local">Local Time:</label>
+                                    <input class="form-control" id='freeze-local' type='text'
+                                           placeholder="Freeze Date (Local Time)" readonly>
+                                </div>
+
+                                <div class="form-group col-xs-12">
+                                    <label for="freeze-zonetime">Timezone Time:</label>
+                                    <input class="form-control" id='freeze-zonetime' type='text'
+                                           placeholder="Freeze Date (Timezone Time)" readonly>
+                                </div>
+
+                                <div class="form-group col-xs-12">
+                                    <label for="freeze">UTC Timestamp:</label>
+                                    <input class="form-control" id='freeze' name='freeze' type='text'
+                                           placeholder="Freeze Date (UTC timestamp)"
+                                           {% if freeze is defined and freeze != None %}value="{{ freeze }}"{% endif %} readonly>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="checkbox">
@@ -343,57 +410,30 @@
                 var timestamp = parseInt(timestamp);
             }
             var m = moment(timestamp * 1000);
-            if (place == 'start'){
-                console.log('Loading start');
-                console.log(timestamp);
-                console.log(m.toISOString());
-                console.log(m.unix());
-                var month = $('#start-month').val(m.month() + 1); // Months are zero indexed (http://momentjs.com/docs/#/get-set/month/)
-                var day = $('#start-day').val(m.date());
-                var year = $('#start-year').val(m.year());
-                var hour = $('#start-hour').val(m.hour());
-                var minute = $('#start-minute').val(m.minute());
-                load_date_values('start');
-            } else if (place == 'end'){
-                console.log('Loading end');
-                console.log(timestamp);
-                console.log(m.toISOString());
-                console.log(m.unix());
-                var month = $('#end-month').val(m.month() + 1);
-                var day = $('#end-day').val(m.date());
-                var year = $('#end-year').val(m.year());
-                var hour = $('#end-hour').val(m.hour());
-                var minute = $('#end-minute').val(m.minute());
-                load_date_values('end');
-            }
+            console.log('Loading ' + place);
+            console.log(timestamp);
+            console.log(m.toISOString());
+            console.log(m.unix());
+            var month = $('#' + place + '-month').val(m.month() + 1); // Months are zero indexed (http://momentjs.com/docs/#/get-set/month/)
+            var day = $('#' + place + '-day').val(m.date());
+            var year = $('#' + place + '-year').val(m.year());
+            var hour = $('#' + place + '-hour').val(m.hour());
+            var minute = $('#' + place + '-minute').val(m.minute());
+            load_date_values(place);
         }
 
         function load_date_values(place){
-            if (place == "start"){
-                var month = $('#start-month').val();
-                var day = $('#start-day').val();
-                var year = $('#start-year').val();
-                var hour = $('#start-hour').val();
-                var minute = $('#start-minute').val();
-                var timezone = $('#start-timezone').val();
-            } else if (place == "end") {
-                var month = $('#end-month').val();
-                var day = $('#end-day').val();
-                var year = $('#end-year').val();
-                var hour = $('#end-hour').val();
-                var minute = $('#end-minute').val();
-                var timezone = $('#end-timezone').val();
-            }
+            var month = $('#' + place + '-month').val();
+            var day = $('#' + place + '-day').val();
+            var year = $('#' + place + '-year').val();
+            var hour = $('#' + place + '-hour').val();
+            var minute = $('#' + place + '-minute').val();
+            var timezone = $('#' + place + '-timezone').val();
+
             var utc = convert_date_to_moment(month, day, year, hour, minute, timezone);
-            if (place == "start") {
-                $('#start').val(utc.unix());
-                $('#start-local').val(utc.local().format("dddd, MMMM Do YYYY, h:mm:ss a zz"));
-                $('#start-zonetime').val(utc.tz(timezone).format("dddd, MMMM Do YYYY, h:mm:ss a zz"));
-            } else if (place == "end") {
-                $('#end').val(utc.unix());
-                $('#end-local').val(utc.local().format("dddd, MMMM Do YYYY, h:mm:ss a zz"));
-                $('#end-zonetime').val(utc.tz(timezone).format("dddd, MMMM Do YYYY, h:mm:ss a zz"));
-            }
+            $('#' + place).val(utc.unix());
+            $('#' + place + '-local').val(utc.local().format("dddd, MMMM Do YYYY, h:mm:ss a zz"));
+            $('#' + place + '-zonetime').val(utc.tz(timezone).format("dddd, MMMM Do YYYY, h:mm:ss a zz"));
         }
 
         function convert_date_to_moment(month, day, year, hour, minute, timezone){
@@ -431,6 +471,10 @@
             load_date_values('end');
         });
 
+        $('.freeze-date').change(function () {
+            load_date_values('freeze');
+        });
+
         $(function () {
 
             var hash = window.location.hash;
@@ -446,6 +490,7 @@
 
             var start = $('#start').val();
             var end = $('#end').val();
+            var freeze = $('#freeze').val();
             console.log(start);
             console.log(end);
             if (start){
@@ -453,6 +498,9 @@
             }
             if (end){
                 load_timestamp('end', end);
+            }
+            if (freeze) {
+                load_timestamp('freeze', freeze);
             }
         });
     </script>
