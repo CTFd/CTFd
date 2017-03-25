@@ -106,7 +106,7 @@ def admin_config():
         mg_base_url = utils.set_config("mg_base_url", request.form.get('mg_base_url', None))
         mg_api_key = utils.set_config("mg_api_key", request.form.get('mg_api_key', None))
 
-        db_freeze = set_config("freeze", freeze)
+        db_freeze = utils.set_config("freeze", freeze)
 
         db_start = Config.query.filter_by(key='start').first()
         db_start.value = start
