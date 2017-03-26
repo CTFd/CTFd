@@ -87,7 +87,7 @@ def admin_delete_tags(tagid):
         return '1'
 
 
-@admin_challenges.route('/admin/hints', defaults={'hintid': None}, methods=['OPTIONS', 'POST', 'GET'])
+@admin_challenges.route('/admin/hints', defaults={'hintid': None}, methods=['POST', 'GET'])
 @admin_challenges.route('/admin/hints/<int:hintid>', methods=['GET', 'POST', 'DELETE'])
 @admins_only
 def admin_hints(hintid):
@@ -145,10 +145,6 @@ def admin_hints(hintid):
                 }
             db.session.close()
             return jsonify(json_data)
-        elif request.method == 'OPTIONS':
-            return jsonify({
-                    'methods' : request.methods
-                })
 
 
 @admin_challenges.route('/admin/files/<int:chalid>', methods=['GET', 'POST'])
