@@ -99,7 +99,6 @@ def admin_hints(hintid):
             hint.chal = int(request.form.get('chal'))
             hint.cost = int(request.form.get('cost'))
             db.session.commit()
-            db.session.close()
 
         elif request.method == 'DELETE':
             db.session.delete(hint)
@@ -114,6 +113,7 @@ def admin_hints(hintid):
             'cost': hint.cost,
             'id': hint.id
         }
+        db.session.close()
         return jsonify(json_data)
     else:
         if request.method == 'GET':

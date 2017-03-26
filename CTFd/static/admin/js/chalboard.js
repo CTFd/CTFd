@@ -38,6 +38,25 @@ function load_edit_key_modal(key_id, key_type_name) {
     });
 }
 
+function load_hint_modal(method, hintid){
+    $('#hint-modal-hint').val('');
+    $('#hint-modal-cost').val('');
+    if (method == 'create'){
+        $('#hint-modal-submit').attr('action', '/admin/hints');
+        $('#hint-modal-title').text('Create Hint');
+        $("#hint-modal").modal();
+    } else if (method == 'update'){
+        $.get(script_root + '/admin/hints/' + hintid, function(data){
+            $('#hint-modal-submit').attr('action', '/admin/hints/' + hintid);
+            $('#hint-modal-hint').val(data.hint);
+            $('#hint-modal-cost').val(data.cost);
+            $('#hint-modal-title').text('Update Hint');
+            $("#hint-modal-button").text('Update Hint');
+            $("#hint-modal").modal();
+        });
+    }
+}
+
 function loadchal(id, update) {
     // $('#chal *').show()
     // $('#chal > h1').hide()
@@ -170,6 +189,13 @@ function deletetag(tagid){
 }
 
 
+function edithint(hintid){
+    $.get(script_root + '/admin/hints/' + hintid, function(data){
+        console.log(data);
+    })
+}
+
+
 function deletehint(hintid){
     $.delete(script_root + '/admin/hints/' + hintid, function(data, textStatus, jqXHR){
         if (jqXHR.status == 204){
@@ -190,7 +216,7 @@ function loadhints(chal){
             "<td class='hint-entry'>{0}</td>".format(hint.hint) +
             "<td class='hint-cost'>{0}</td>".format(hint.cost) +
             "<td class='hint-settings'><span>" +
-                "<i role='button' class='fa fa-pencil-square-o'></i>"+
+                "<i role='button' class='fa fa-pencil-square-o' onclick=javascript:load_hint_modal('update',{0})></i>".format(hint.id)+
                 "<i role='button' class='fa fa-times' onclick=javascript:deletehint({0})></i>".format(hint.id)+
                 "</span></td>" +
             "</tr>";
@@ -408,19 +434,19 @@ $('#create-keys-submit').click(function (e) {
 
 $('#create-hint').click(function(e){
     e.preventDefault();
-    $("#create-hints").modal();
+    load_hint_modal('create');
 });
 
-$('#create-hints-submit').submit(function (e) {
+$('#hint-modal-submit').submit(function (e) {
     e.preventDefault();
     var params = {}
     $(this).serializeArray().map(function(x){
         params[x.name] = x.value;
     });
-    $.post(script_root + '/admin/hints', params, function(data){
+    $.post(script_root + $(this).attr('action'), params, function(data){
         loadhints(params['chal']);
     });
-    $("#create-hints").modal('hide');
+    $("#hint-modal").modal('hide');
 });
 
 
