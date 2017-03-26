@@ -256,14 +256,16 @@ function loadchals(refresh) {
 }
 
 function loadhint(hintid){
-    $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function(data){
-        if (data.errors){
-            alert(data.errors);
-        } else {
-            $('#hint-modal-body').html(marked(data.hint, {'gfm':true, 'breaks':true}));
-            $('#hint-modal').modal();
-        }
-    });
+    if (confirm("Are you sure you want to open this hint?")){
+        $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function(data){
+            if (data.errors){
+                alert(data.errors);
+            } else {
+                $('#hint-modal-body').html(marked(data.hint, {'gfm':true, 'breaks':true}));
+                $('#hint-modal').modal();
+            }
+        });
+    }
 }
 
 $('#submit-key').click(function (e) {

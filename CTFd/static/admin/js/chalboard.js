@@ -171,7 +171,12 @@ function deletetag(tagid){
 
 
 function deletehint(hintid){
-    $.post()
+    $.delete(script_root + '/admin/hints/' + hintid, function(data, textStatus, jqXHR){
+        if (jqXHR.status == 204){
+            var chalid = $('.chal-id').val();
+            loadhints(chalid);
+        }
+    });
 }
 
 
@@ -186,7 +191,7 @@ function loadhints(chal){
             "<td class='hint-cost'>{0}</td>".format(hint.cost) +
             "<td class='hint-settings'><span>" +
                 "<i role='button' class='fa fa-pencil-square-o'></i>"+
-                "<i role='button' class='fa fa-times'></i>"+
+                "<i role='button' class='fa fa-times' onclick=javascript:deletehint({0})></i>".format(hint.id)+
                 "</span></td>" +
             "</tr>";
             table.append(hint_row);
