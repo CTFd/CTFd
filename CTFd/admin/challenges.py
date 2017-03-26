@@ -130,14 +130,15 @@ def admin_hints(hintid):
             hint = Hints(chal=chalid, hint=hint, cost=cost)
             db.session.add(hint)
             db.session.commit()
-            db.session.close()
-            return jsonify({
+            json_data = {
                     'hint': hint.hint,
                     'type': hint.type,
                     'chal': hint.chal,
                     'cost': hint.cost,
                     'id': hint.id
-                })
+                }
+            db.session.close()
+            return jsonify(json_data)
         elif request.method == 'OPTIONS':
             return jsonify({
                     'methods' : request.methods
@@ -182,13 +183,34 @@ def admin_get_values(chalid, prop):
         chal_keys = Keys.query.filter_by(chal=challenge.id).all()
         json_data = {'keys': []}
         for x in chal_keys:
-            json_data['keys'].append({'id': x.id, 'key': x.flag, 'type': x.key_type, 'type_name': get_key_class(x.key_type).name})
+            json_data['keys'].append({
+                'id': x.id,
+                'key': x.flag,
+                'type': x.key_type,
+                'type_name': get_key_class(x.key_type).name
+                })
         return jsonify(json_data)
     elif prop == 'tags':
         tags = Tags.query.filter_by(chal=chalid).all()
         json_data = {'tags': []}
         for x in tags:
-            json_data['tags'].append({'id': x.id, 'chal': x.chal, 'tag': x.tag})
+            json_data['tags'].append({
+                'id': x.id,
+                'chal': x.chal,
+                'tag': x.tag
+                })
+        return jsonify(json_data)
+    elif prop == 'hints':
+        hints = Hints.query.filter_by(chal=chalid)
+        json_data = {'hints': []}
+        for hint in hints:
+            json_data['hints'].append({
+                    'hint': hint.hint,
+                    'type': hint.type,
+                    'chal': hint.chal,
+                    'cost': hint.cost,
+                    'id': hint.id
+                })
         return jsonify(json_data)
 
 

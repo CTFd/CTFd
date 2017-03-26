@@ -103,6 +103,19 @@
 
 <input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
 
+<div class="modal fade" id="hint-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3>Hint</h3>
+            </div>
+            <div class="modal-body" id="hint-modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="chal-window" tabindex="-1" role="dialog">
 </div>
 {% endif %}
@@ -110,6 +123,7 @@
 
 {% block scripts %}
     <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/multi-modal.js"></script>
     {% if not errors %}<script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/chalboard.js"></script>{% endif %}
     <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/style.js"></script>
 {% endblock %}

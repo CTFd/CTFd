@@ -169,6 +169,32 @@ function deletetag(tagid){
     $.post(script_root + '/admin/tags/'+tagid+'/delete', {'nonce': $('#nonce').val()});
 }
 
+
+function deletehint(hintid){
+    $.post()
+}
+
+
+function loadhints(chal){
+    $.get(script_root + '/admin/chal/{0}/hints'.format(chal), function(data){
+        var table = $('#hintsboard > tbody');
+        table.empty();
+        for (var i = 0; i < data.hints.length; i++) {
+            var hint = data.hints[i]
+            var hint_row = "<tr>" +
+            "<td class='hint-entry'>{0}</td>".format(hint.hint) +
+            "<td class='hint-cost'>{0}</td>".format(hint.cost) +
+            "<td class='hint-settings'><span>" +
+                "<i role='button' class='fa fa-pencil-square-o'></i>"+
+                "<i role='button' class='fa fa-times'></i>"+
+                "</span></td>" +
+            "</tr>";
+            table.append(hint_row);
+        }
+    });
+}
+
+
 function deletechal(chalid){
     $.post(script_root + '/admin/chal/delete', {'nonce':$('#nonce').val(), 'id':chalid});
 }
@@ -255,6 +281,7 @@ function loadchals(){
         $('#challenges button').click(function (e) {
             loadchal(this.value);
             loadkeys(this.value);
+            loadhints(this.value);
             loadtags(this.value);
             loadfiles(this.value);
         });
@@ -372,6 +399,25 @@ $('#create-keys-submit').click(function (e) {
     var key_type = $('#create-keys-select').val();
     create_key(chalid, key_data, key_type);
 });
+
+
+$('#create-hint').click(function(e){
+    e.preventDefault();
+    $("#create-hints").modal();
+});
+
+$('#create-hints-submit').submit(function (e) {
+    e.preventDefault();
+    var params = {}
+    $(this).serializeArray().map(function(x){
+        params[x.name] = x.value;
+    });
+    $.post(script_root + '/admin/hints', params, function(data){
+        loadhints(params['chal']);
+    });
+    $("#create-hints").modal('hide');
+});
+
 
 $(function(){
     loadchals();

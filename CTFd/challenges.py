@@ -33,17 +33,29 @@ def hints_view(hintid):
                 })
     elif request.method == 'POST':
         if not unlock:
+            team = Teams.query.filter_by(id=session['id']).first()
+            if team.score() < hint.cost:
+                return jsonify({'errors': 'Not enough points'})
             unlock = Unlocks(model='hints', teamid=session['id'], itemid=hint.id)
             award = Awards(teamid=session['id'], name='Hint for {}'.format(chal.name), value=(-hint.cost))
             db.session.add(unlock)
             db.session.add(award)
             db.session.commit()
-            db.session.close()
-            return jsonify({
+            json_data = {
                     'hint': hint.hint,
                     'chal': hint.chal,
                     'cost': hint.cost
-                })
+                }
+            db.session.close()
+            return jsonify(json_data)
+        else:
+            json_data = {
+                    'hint': hint.hint,
+                    'chal': hint.chal,
+                    'cost': hint.cost
+                }
+            db.session.close()
+            return jsonify(json_data)
 
 
 @challenges.route('/challenges', methods=['GET'])
@@ -88,7 +100,14 @@ def chals():
         for x in chals:
             tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=x.id).all()]
             files = [str(f.location) for f in Files.query.filter_by(chal=x.id).all()]
-            hints = [{'id':hint.id, 'cost':hint.cost} for hint in Hints.query.filter_by(chal=x.id).all()]
+            unlocked_hints = set([u.itemid for u in Unlocks.query.filter_by(model='hints', teamid=session['id'])])
+            hints = []
+            for hint in Hints.query.filter_by(chal=x.id).all():
+                if hint.id in unlocked_hints:
+                    hints.append({'id':hint.id, 'cost':hint.cost, 'hint':hint.hint})
+                else:
+                    hints.append({'id':hint.id, 'cost':hint.cost})
+            # hints = [{'id':hint.id, 'cost':hint.cost} for hint in Hints.query.filter_by(chal=x.id).all()]
             chal_type = get_chal_class(x.type)
             json['game'].append({
                 'id': x.id,

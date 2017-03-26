@@ -28,6 +28,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h3>New Challenge</h3>
                 </div>
                 <div class="modal-body">
@@ -162,6 +163,7 @@
                         <div class="form-group">
                             <a href="#" data-toggle="modal" data-target="#update-tags" class="btn btn-primary">Tags</a>
                             <a href="#" data-toggle="modal" data-target="#update-files" class="btn btn-primary">Files</a>
+                            <a href="#" data-toggle="modal" data-target="#update-hints" class="btn btn-primary">Hints</a>
                             <a href="#" data-toggle="modal" data-target="#update-keys" class="btn btn-primary">Keys</a>
                             <a href="#" data-toggle="modal" data-target="#delete-chal" class="btn btn-danger">Delete</a>
                         </div>
@@ -179,6 +181,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header text-center">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h3>Delete Challenge</h3>
                 </div>
                 <div class="modal-body">
@@ -202,6 +205,7 @@
             <div class="modal-content">
                 <input type="hidden" class="chal-id" name="chal-id">
                 <div class="modal-header text-center">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h3>Create Key</h3>
                 </div>
                 <div class="modal-body">
@@ -275,6 +279,61 @@
         </div>
     </div>
 
+    <div id="create-hints" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3>Create Hint</h3>
+                </div>
+                <div class="modal-body">
+                    <form id="create-hints-submit" method='POST'>
+                        <input type="hidden" class="chal-id" name="chal">
+                        <div class="form-group">
+                            <textarea type="text" class="form-control" name="hint" placeholder="Hint"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" class="form-control" name="cost" placeholder="Cost">
+                        </div>
+                        <div class="row" style="text-align:center;margin-top:20px">
+                            <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+                            <button class="btn btn-theme btn-outlined" id="submit-files">Add Hint</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="update-hints" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3>Hints</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="text-align:center">
+                        <a href="#" id="create-hint" class="btn btn-primary" style="margin-bottom:15px;">New Hint</a>
+                    </div>
+                    <div class='current-hints'>
+                        <table id="hintsboard" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <td class="text-center"><b>Hint</b></td>
+                                    <td class="text-center"><b>Cost</b></td>
+                                    <td class="text-center"><b>Settings</b></td>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="update-tags" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -300,33 +359,6 @@
                         <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
                         <button class="btn btn-theme btn-outlined" id="submit-tags">Update</button>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="email-user" class="modal fade" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header text-center">
-                    <h3>Tags</h3>
-                </div>
-                <div class="modal-body">
-                    <input type="text" class="tag-insert" maxlength="80" placeholder="Type tag and press Enter">
-                    <input name='nonce' type='hidden' value="{{ nonce }}">
-                    <input id="tags-chal" name='chal' type='hidden'>
-
-                    <div id="current-tags">
-
-                    </div>
-                    <br/>
-                    <div id="chal-tags">
-
-                    </div>
-                    <br/>
-
-                    <a href="#" id="submit-tags" class="button">Update</a>
-                    <a class="close-reveal-modal">&#215;</a>
                 </div>
             </div>
         </div>
