@@ -76,6 +76,23 @@ class Challenges(db.Model):
         return '<chal %r>' % self.name
 
 
+class Hints(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Integer, default=0)
+    chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    hint = db.Column(db.Text)
+    cost = db.Column(db.Integer, default=0)
+
+    def __init__(self, chal, hint, cost=0, type=0):
+        self.chal = chal
+        self.hint = hint
+        self.cost = cost
+        self.type = type
+
+    def __repr__(self):
+        return '<hint %r>' % self.hint
+
+
 class Awards(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
@@ -242,6 +259,22 @@ class WrongKeys(db.Model):
 
     def __repr__(self):
         return '<wrong %r>' % self.flag
+
+
+class Unlocks(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    itemid = db.Column(db.Integer)
+    model = db.Column(db.String(32))
+
+    def __init__(self, model, teamid, itemid):
+        self.model = model
+        self.teamid = teamid
+        self.itemid = itemid
+
+    def __repr__(self):
+        return '<unlock %r>' % self.teamid
 
 
 class Tracking(db.Model):

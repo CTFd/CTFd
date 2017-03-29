@@ -6,13 +6,56 @@ import time
 from flask import render_template, request, redirect, jsonify, url_for, session, Blueprint
 from sqlalchemy.sql import or_
 
-from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards
+from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards, Hints, Unlocks
 from CTFd.plugins.keys import get_key_class
 from CTFd.plugins.challenges import get_chal_class
 
 from CTFd import utils
 
 challenges = Blueprint('challenges', __name__)
+
+@challenges.route('/hints/<int:hintid>', methods=['GET', 'POST'])
+def hints_view(hintid):
+    hint = Hints.query.filter_by(id=hintid).first_or_404()
+    chal = Challenges.query.filter_by(id=hint.chal).first()
+    unlock = Unlocks.query.filter_by(model='hints', itemid=hintid, teamid=session['id']).first()
+    if request.method == 'GET':
+        if unlock:
+            return jsonify({
+                    'hint': hint.hint,
+                    'chal': hint.chal,
+                    'cost': hint.cost
+                })
+        else:
+            return jsonify({
+                    'chal': hint.chal,
+                    'cost': hint.cost
+                })
+    elif request.method == 'POST':
+        if not unlock:
+            team = Teams.query.filter_by(id=session['id']).first()
+            if team.score() < hint.cost:
+                return jsonify({'errors': 'Not enough points'})
+            unlock = Unlocks(model='hints', teamid=session['id'], itemid=hint.id)
+            award = Awards(teamid=session['id'], name='Hint for {}'.format(chal.name), value=(-hint.cost))
+            db.session.add(unlock)
+            db.session.add(award)
+            db.session.commit()
+            json_data = {
+                    'hint': hint.hint,
+                    'chal': hint.chal,
+                    'cost': hint.cost
+                }
+            db.session.close()
+            return jsonify(json_data)
+        else:
+            json_data = {
+                    'hint': hint.hint,
+                    'chal': hint.chal,
+                    'cost': hint.cost
+                }
+            db.session.close()
+            return jsonify(json_data)
 
 
 @challenges.route('/challenges', methods=['GET'])
@@ -57,6 +100,14 @@ def chals():
         for x in chals:
             tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=x.id).all()]
             files = [str(f.location) for f in Files.query.filter_by(chal=x.id).all()]
+            unlocked_hints = set([u.itemid for u in Unlocks.query.filter_by(model='hints', teamid=session['id'])])
+            hints = []
+            for hint in Hints.query.filter_by(chal=x.id).all():
+                if hint.id in unlocked_hints:
+                    hints.append({'id':hint.id, 'cost':hint.cost, 'hint':hint.hint})
+                else:
+                    hints.append({'id':hint.id, 'cost':hint.cost})
+            # hints = [{'id':hint.id, 'cost':hint.cost} for hint in Hints.query.filter_by(chal=x.id).all()]
             chal_type = get_chal_class(x.type)
             json['game'].append({
                 'id': x.id,
@@ -66,7 +117,8 @@ def chals():
                 'description': x.description,
                 'category': x.category,
                 'files': files,
-                'tags': tags
+                'tags': tags,
+                'hints': hints
             })
 
         db.session.close()

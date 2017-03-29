@@ -42,6 +42,7 @@ function updateChalWindow(obj) {
             desc: marked(obj.description, {'gfm':true, 'breaks':true}),
             solves: solves,
             files: obj.files,
+            hints: obj.hints
         };
 
         $('#chal-window').append(template(wrapper));
@@ -226,7 +227,7 @@ function loadchals(refresh) {
             var chalid = chalinfo.name.replace(/ /g,"-").hashCode();
             var catid = chalinfo.category.replace(/ /g,"-").hashCode();
             var chalwrap = $("<div id='{0}' class='challenge-wrapper col-md-2'></div>".format(chalid));
-            var chalbutton = $("<button class='challenge-button trigger theme-background hide-text' value='{0}' data-toggle='modal' data-target='#chal-window'></div>".format(chalinfo.id));
+            var chalbutton = $("<button class='challenge-button trigger theme-background hide-text' value='{0}'></div>".format(chalinfo.id));
             var chalheader = $("<h5>{0}</h5>".format(chalinfo.name));
             var chalscore = $("<span>{0}</span>".format(chalinfo.value));
             chalbutton.append(chalheader);
@@ -252,6 +253,19 @@ function loadchals(refresh) {
             loadchal(this.value);
         });
     });
+}
+
+function loadhint(hintid){
+    if (confirm("Are you sure you want to open this hint?")){
+        $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function(data){
+            if (data.errors){
+                alert(data.errors);
+            } else {
+                $('#hint-modal-body').html(marked(data.hint, {'gfm':true, 'breaks':true}));
+                $('#hint-modal').modal();
+            }
+        });
+    }
 }
 
 $('#submit-key').click(function (e) {

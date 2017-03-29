@@ -34,22 +34,25 @@ def create_app(config='CTFd.config.Config'):
         if url.drivername == 'postgres':
             url.drivername = 'postgresql'
 
+        ## Creates database if the database database does not exist
+        if not database_exists(url):
+            create_database(url)
+
+        ## Register database
         db.init_app(app)
 
-        try:
-            if not (url.drivername.startswith('sqlite') or database_exists(url)):
-                create_database(url)
-            db.create_all()
-        except OperationalError:
-            db.create_all()
-        except ProgrammingError:  ## Database already exists
-            pass
-        else:
+        ## Register Flask-Migrate
+        migrate.init_app(app, db)
+
+        ## This creates tables instead of db.create_all()
+        ## Allows migrations to happen properly
+        migrate_upgrade()
+
+        ## Alembic sqlite support is lacking so we should just create_all anyway
+        if url.drivername.startswith('sqlite'):
             db.create_all()
 
         app.db = db
-
-        migrate.init_app(app, db)
 
         cache.init_app(app)
         app.cache = cache
