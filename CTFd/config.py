@@ -32,7 +32,6 @@ class Config(object):
 
     http://flask-sqlalchemy.pocoo.org/2.1/config/#configuration-keys
     '''
-    print
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(__file__))
 
 
