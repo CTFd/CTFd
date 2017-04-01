@@ -39,7 +39,7 @@ function updateChalWindow(obj) {
             name: obj.name,
             value: obj.value,
             tags: obj.tags,
-            desc: marked(obj.description, {'gfm':true, 'breaks':true}),
+            desc: obj.description,
             solves: solves,
             files: obj.files,
             hints: obj.hints

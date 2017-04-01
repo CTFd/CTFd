@@ -23,3 +23,5 @@ $(".input-field").bind({
         }
     }
 });
+
+$('.chal-desc').html(marked($('.chal-desc').html(), {'gfm':true, 'breaks':true}));
