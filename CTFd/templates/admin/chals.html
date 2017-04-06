@@ -35,19 +35,7 @@
         </div>
     </div>
 
-    <div id="update-challenge" class="modal fade" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h3 class="chal-title text-center"></h3>
-                </div>
-                <div id="update-chal-entry-div" class="modal-body">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="modals-entry-div">
+    <div id="update-modals-entry-div">
     </div>
 
     <div style="text-align:center">
@@ -63,6 +51,6 @@
 
 {% block scripts %}
     <script src="{{ request.script_root }}/static/admin/js/utils.js"></script>
-    <script src="{{ request.script_root }}/static/admin/js/multi-modal.js"></script>
     <script src="{{ request.script_root }}/static/admin/js/chalboard.js"></script>
+    <script src="{{ request.script_root }}/static/admin/js/multi-modal.js"></script>
 {% endblock %}

@@ -44,10 +44,9 @@ function load_chal_template(id, success_cb){
     })[0]
     $.get(script_root + '/static/admin/js/templates/challenges/'+ obj['type_name'] +'/' + obj['type_name'] + '-challenge-update.hbs', function(template_data){
         var template = Handlebars.compile(template_data);
-        $("#update-chal-entry-div").html(template({'nonce':$('#nonce').val(), 'script_root':script_root}));
         $.get(script_root + '/static/admin/js/templates/challenges/'+ obj['type_name'] +'/' + obj['type_name'] + '-challenge-modals.hbs', function(template_data){
             var template = Handlebars.compile(template_data);
-            $("#modals-entry-div").html(template({'nonce':$('#nonce').val(), 'script_root':script_root}));
+            $("#update-modals-entry-div").html(template({'nonce':$('#nonce').val(), 'script_root':script_root}));
         });
         $.ajax({
           url: script_root + '/static/admin/js/templates/challenges/'+obj['type_name']+'/'+obj['type_name']+'-challenge-update.js',
