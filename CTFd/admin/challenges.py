@@ -163,11 +163,8 @@ def admin_files(chalid):
         return jsonify(json_data)
     if request.method == 'POST':
         if request.form['method'] == "delete":
-            f = Files.query.filter_by(id=request.form['file']).first_or_404()
-            upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-            if os.path.exists(os.path.join(upload_folder, f.location)): # Some kind of os.path.isfile issue on Windows...
-                os.unlink(os.path.join(upload_folder, f.location))
-            db.session.delete(f)
+            utils.delete_file(request.form['file'])
+
             db.session.commit()
             db.session.close()
             return '1'
