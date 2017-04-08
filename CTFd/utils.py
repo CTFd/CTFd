@@ -349,8 +349,8 @@ def upload_file(file, chalid):
     return True
 
 
-def delete_file(filename):
-    f = Files.query.filter_by(id=filename).first_or_404()
+def delete_file(file_id):
+    f = Files.query.filter_by(id=file_id).first_or_404()
     upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
     if os.path.exists(os.path.join(upload_folder, f.location)): # Some kind of os.path.isfile issue on Windows...
         os.unlink(os.path.join(upload_folder, f.location))

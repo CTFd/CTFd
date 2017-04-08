@@ -263,11 +263,9 @@ def admin_delete_chal():
     Solves.query.filter_by(chalid=challenge.id).delete()
     Keys.query.filter_by(chal=challenge.id).delete()
     files = Files.query.filter_by(chal=challenge.id).all()
+    for f in files:
+        utils.delete_file(f.id)
     Files.query.filter_by(chal=challenge.id).delete()
-    for file in files:
-        upload_folder = app.config['UPLOAD_FOLDER']
-        folder = os.path.dirname(os.path.join(os.path.normpath(app.root_path), upload_folder, file.location))
-        utils.rmdir(folder)
     Tags.query.filter_by(chal=challenge.id).delete()
     Challenges.query.filter_by(id=challenge.id).delete()
     db.session.commit()
