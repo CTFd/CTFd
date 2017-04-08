@@ -25,7 +25,7 @@ def admin_chal_types():
 @admins_only
 def admin_chals():
     if request.method == 'POST':
-        chals = Challenges.query.add_columns('id', 'name', 'value', 'description', 'category', 'hidden', 'max_attempts').order_by(Challenges.value).all()
+        chals = Challenges.query.add_columns('id', 'type', 'name', 'value', 'description', 'category', 'hidden', 'max_attempts').order_by(Challenges.value).all()
 
         teams_with_points = db.session.query(Solves.teamid).join(Teams).filter(
             Teams.banned == False).group_by(Solves.teamid).count()
@@ -39,6 +39,9 @@ def admin_chals():
             else:
                 percentage = 0.0
 
+            type_class = CHALLENGE_CLASSES.get(x.type)
+            type_name = type_class.name if type_class else None
+
             json_data['game'].append({
                 'id': x.id,
                 'name': x.name,
@@ -47,6 +50,8 @@ def admin_chals():
                 'category': x.category,
                 'hidden': x.hidden,
                 'max_attempts': x.max_attempts,
+                'type': x.type,
+                'type_name': type_name,
                 'percentage_solved': percentage
             })
 

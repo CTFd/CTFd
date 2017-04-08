@@ -62,3 +62,4 @@ CTFd/static/uploads
 CTFd/uploads
 .data/
 .ctfd_secret_key
+.*.swp
