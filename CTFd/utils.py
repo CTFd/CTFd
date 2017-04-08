@@ -349,6 +349,16 @@ def upload_file(file, chalid):
     return True
 
 
+def delete_file(filename):
+    f = Files.query.filter_by(id=filename).first_or_404()
+    upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+    if os.path.exists(os.path.join(upload_folder, f.location)): # Some kind of os.path.isfile issue on Windows...
+        os.unlink(os.path.join(upload_folder, f.location))
+    db.session.delete(f)
+    db.session.commit()
+    return True
+
+
 @cache.memoize()
 def get_config(key):
     config = Config.query.filter_by(key=key).first()
