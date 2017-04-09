@@ -16,6 +16,9 @@ import sys
 import tempfile
 import time
 import urllib
+import dataset
+import zipfile
+import io
 
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort
 from flask_caching import Cache
@@ -633,3 +636,32 @@ def container_ports(name, verbose=False):
             return ports
     except subprocess.CalledProcessError:
         return []
+
+
+def export_ctf():
+    db = dataset.connect(get_config('SQLALCHEMY_DATABASE_URI'))
+
+    ## Backup database
+    backup = io.BytesIO()
+    backup_zip = zipfile.ZipFile(backup, 'w')
+    for table in db.tables:
+        print table
+        result = db[table].all()
+        result_file = io.BytesIO()
+        dataset.freeze(result, format='json', fileobj=result_file)
+        result_file.seek(0)
+        backup_zip.writestr('db/{}.json'.format(table), result_file.read())
+
+    ## Backup uploads
+    upload_folder = os.path.join(os.path.normpath(app.root_path), get_config('UPLOAD_FOLDER'))
+    for root, dirs, files in os.walk(upload_folder):
+        for file in files:
+            parent_dir = os.path.basename(root)
+            backup_zip.write(os.path.join(root, file), arcname=os.path.join('uploads', parent_dir, file))
+
+    backup_zip.close()
+    backup.seek(0)
+    return backup
+
+def import_ctf():
+    pass
