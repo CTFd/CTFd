@@ -645,7 +645,6 @@ def export_ctf():
     backup = io.BytesIO()
     backup_zip = zipfile.ZipFile(backup, 'w')
     for table in db.tables:
-        print table
         result = db[table].all()
         result_file = io.BytesIO()
         dataset.freeze(result, format='json', fileobj=result_file)
