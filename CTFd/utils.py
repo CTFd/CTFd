@@ -662,5 +662,48 @@ def export_ctf():
     backup.seek(0)
     return backup
 
-def import_ctf():
-    pass
+
+def import_ctf(backup, segments=None):
+    db = dataset.connect(get_config('SQLALCHEMY_DATABASE_URI'))
+    if segments is None:
+        segments = ['challenges', 'teams', 'both', 'metadata']
+
+    groups = {
+        'challenges': [
+            'challenges',
+            'files',
+            'tags',
+            'keys',
+            'hints',
+        ],
+        'teams': [
+            'teams',
+            'tracking',
+            'awards',
+        ],
+        'both': [
+            'solves',
+            'wrong_keys',
+            'unlocks',
+        ],
+        'metadata': [
+            'alembic_version',
+            'config',
+            'pages',
+            'containers',
+        ]
+    }
+
+    for segment in segments:
+        group = groups[segment]
+        for item in group:
+            table = db[item]
+            path = "db/{}.json".format(item)
+            data = backup.open(path).read()
+            if data:
+                saved = json.loads(data)
+                for entry in saved['results']:
+                    entry_id = entry.pop('id', None)
+                    table.insert(entry)
+            else:
+                continue
