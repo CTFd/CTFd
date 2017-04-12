@@ -640,16 +640,47 @@ def container_ports(name, verbose=False):
 
 def export_ctf(segments=None):
     db = dataset.connect(get_config('SQLALCHEMY_DATABASE_URI'))
+    if segments is None:
+        segments = ['challenges', 'teams', 'both', 'metadata']
+
+    groups = {
+        'challenges': [
+            'challenges',
+            'files',
+            'tags',
+            'keys',
+            'hints',
+        ],
+        'teams': [
+            'teams',
+            'tracking',
+            'awards',
+        ],
+        'both': [
+            'solves',
+            'wrong_keys',
+            'unlocks',
+        ],
+        'metadata': [
+            'alembic_version',
+            'config',
+            'pages',
+            'containers',
+        ]
+    }
 
     ## Backup database
     backup = io.BytesIO()
     backup_zip = zipfile.ZipFile(backup, 'w')
-    for table in db.tables:
-        result = db[table].all()
-        result_file = io.BytesIO()
-        dataset.freeze(result, format='json', fileobj=result_file)
-        result_file.seek(0)
-        backup_zip.writestr('db/{}.json'.format(table), result_file.read())
+
+    for segment in segments:
+        group = groups[segment]
+        for item in group:
+            result = db[item].all()
+            result_file = io.BytesIO()
+            dataset.freeze(result, format='json', fileobj=result_file)
+            result_file.seek(0)
+            backup_zip.writestr('db/{}.json'.format(item), result_file.read())
 
     ## Backup uploads
     upload_folder = os.path.join(os.path.normpath(app.root_path), get_config('UPLOAD_FOLDER'))
@@ -663,7 +694,7 @@ def export_ctf(segments=None):
     return backup
 
 
-def import_ctf(backup, segments=None):
+def import_ctf(backup, segments=None, erase=False):
     db = dataset.connect(get_config('SQLALCHEMY_DATABASE_URI'))
     if segments is None:
         segments = ['challenges', 'teams', 'both', 'metadata']
@@ -671,7 +702,11 @@ def import_ctf(backup, segments=None):
     if not zipfile.is_zipfile(backup):
         raise TypeError
 
+    print segments
+
     backup = zipfile.ZipFile(backup)
+
+    print backup.printdir()
 
     groups = {
         'challenges': [
@@ -700,9 +735,8 @@ def import_ctf(backup, segments=None):
     }
 
     ## Need special handling of metadata
-    metadata = segments.get('metadata')
-    if metadata:
-        pass
+    if 'metadata' in segments:
+        segments.remove('metadata')
 
     for segment in segments:
         group = groups[segment]

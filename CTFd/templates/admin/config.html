@@ -35,7 +35,7 @@
                             aria-hidden="true">×</span></button>
                 </div>
             {% endfor %}
-            <input name='nonce' type='hidden' value="{{ nonce }}">
+            <input id="nonce" name='nonce' type='hidden' value="{{ nonce }}">
 
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="appearance-section">
@@ -401,22 +401,22 @@
                                 <div class="form-group col-xs-8">
                                     <div class="checkbox">
                                         <label>
-                                            <input id="export-challenges" type="checkbox" checked>Challenges
+                                            <input class="export-config" value="challenges" type="checkbox" checked>Challenges
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
-                                            <input id="export-challenges" type="checkbox" checked>Teams
+                                            <input class="export-config" value="teams" type="checkbox" checked>Teams
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
-                                            <input id="export-challenges" type="checkbox" checked>Solves, Wrong Keys, Unlocks
+                                            <input class="export-config" value="both" type="checkbox" checked>Solves, Wrong Keys, Unlocks
                                         </label>
                                     </div>
                                     <div class="checkbox">
                                         <label>
-                                            <input id="export-challenges" type="checkbox" checked>Configuration
+                                            <input class="export-config" value="metadata" type="checkbox" checked>Configuration
                                         </label>
                                     </div>
 
@@ -425,39 +425,37 @@
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="import-ctf">
-                            <div class="row">
-                                <form method="POST" action="{{ request.script_root }}/admin/import">
-                                    <br>
-                                    <div class="form-group col-xs-8">
-                                        <label for="container-files">Import File
-                                            <input type="file" name="backup" id="backup-file" accept=".zip">
+                            <div class="row" id="import-div">
+                                <br>
+                                <div class="form-group col-xs-8">
+                                    <label for="container-files">Import File
+                                        <input type="file" name="backup" id="import-file" accept=".zip">
+                                    </label>
+                                </div>
+
+                                <div class="form-group col-xs-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="import-config" value="challenges" type="checkbox" checked>Challenges
                                         </label>
                                     </div>
-
-                                    <div class="form-group col-xs-8">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input id="export-challenges" type="checkbox" checked>Challenges
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input id="export-challenges" type="checkbox" checked>Teams
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input id="export-challenges" type="checkbox" checked>Solves, Wrong Keys, Unlocks
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input id="export-challenges" type="checkbox" checked>Configuration
-                                            </label>
-                                        </div>
-                                        <input type="submit" class="btn btn-default" value="Import">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="import-config" value="teams" type="checkbox" checked>Teams
+                                        </label>
                                     </div>
-                                </form>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="import-config" value="both" type="checkbox" checked>Solves, Wrong Keys, Unlocks
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="import-config" value="metadata" type="checkbox" checked>Configuration
+                                        </label>
+                                    </div>
+                                    <input id="import-button" type="submit" class="btn btn-default" value="Import">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -552,6 +550,47 @@
 
         $('.freeze-date').change(function () {
             load_date_values('freeze');
+        });
+
+        $('#export-button').click(function(e){
+            e.preventDefault();
+            var segments = [];
+            $.each($('.export-config:checked'), function(key, value){
+                segments.push($(value).val());
+            });
+            segments = segments.join(',');
+            var href = script_root + '/admin/export';
+            $('#export-button').attr('href', href+'?segments='+segments);
+            window.location.href = $('#export-button').attr('href');
+        });
+
+        $('#import-button').click(function(e){
+            e.preventDefault();
+            var segments = [];
+            $.each($('.import-config:checked'), function(key, value){
+                segments.push($(value).val());
+            });
+            segments = segments.join(',');
+            console.log(segments);
+
+            var import_file = document.getElementById('import-file').files[0];
+            var nonce = $('#nonce').val();
+
+            var form_data = new FormData();
+            form_data.append('segments', segments);
+            form_data.append('backup', import_file);
+            form_data.append('nonce', nonce);
+
+            $.ajax({
+                url : script_root + '/admin/import',
+                type : 'POST',
+                data : form_data,
+                processData: false,
+                contentType: false,
+                success : function(data) {
+                    window.location.reload()
+                }
+            });
         });
 
         $(function () {

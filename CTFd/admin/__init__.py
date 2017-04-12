@@ -53,15 +53,20 @@ def admin_plugin_config(plugin):
 @admins_only
 def admin_import_ctf():
     backup = request.files['backup']
-    segments = request.post.get('tables')
+    segments = request.form.get('segments')
     errors = []
     try:
-        import_ctf(backup, segments=segments)
+        if segments:
+            import_ctf(backup, segments=segments.split(','))
+        else:
+            import_ctf(backup)
     except TypeError:
-        errors.append['The backup file is invalid']
+        errors.append('The backup file is invalid')
+    except:
+        errors.append('An unknown error occurred.')
 
     if errors:
-        return ""
+        return "", 500
     else:
         return redirect(url_for('admin.admin_config'))
 
@@ -78,7 +83,6 @@ def admin_export_ctf():
     day = datetime.datetime.now().strftime("%Y-%m-%d")
     full_name = "{}.{}.zip".format(ctf_name, day)
     return send_file(backup, as_attachment=True, attachment_filename=full_name)
-
 
 
 @admin.route('/admin/config', methods=['GET', 'POST'])
