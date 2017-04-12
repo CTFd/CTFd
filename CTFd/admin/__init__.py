@@ -49,14 +49,36 @@ def admin_plugin_config(plugin):
         return '1'
 
 
+@admin.route('/admin/import', methods=['GET', 'POST'])
+@admins_only
+def admin_import_ctf():
+    backup = request.files['backup']
+    segments = request.post.get('tables')
+    errors = []
+    try:
+        import_ctf(backup, segments=segments)
+    except TypeError:
+        errors.append['The backup file is invalid']
+
+    if errors:
+        return ""
+    else:
+        return redirect(url_for('admin.admin_config'))
+
+
 @admin.route('/admin/export', methods=['GET', 'POST'])
 @admins_only
 def admin_export_ctf():
-    backup = export_ctf()
+    tables = request.args.get('tables')
+    if tables:
+        backup = export_ctf(tables.split(','))
+    else:
+        backup = export_ctf()
     ctf_name = utils.ctf_name()
     day = datetime.datetime.now().strftime("%Y-%m-%d")
     full_name = "{}.{}.zip".format(ctf_name, day)
     return send_file(backup, as_attachment=True, attachment_filename=full_name)
+
 
 
 @admin.route('/admin/config', methods=['GET', 'POST'])

@@ -638,7 +638,7 @@ def container_ports(name, verbose=False):
         return []
 
 
-def export_ctf():
+def export_ctf(segments=None):
     db = dataset.connect(get_config('SQLALCHEMY_DATABASE_URI'))
 
     ## Backup database
@@ -668,6 +668,11 @@ def import_ctf(backup, segments=None):
     if segments is None:
         segments = ['challenges', 'teams', 'both', 'metadata']
 
+    if not zipfile.is_zipfile(backup):
+        raise TypeError
+
+    backup = zipfile.ZipFile(backup)
+
     groups = {
         'challenges': [
             'challenges',
@@ -693,6 +698,11 @@ def import_ctf(backup, segments=None):
             'containers',
         ]
     }
+
+    ## Need special handling of metadata
+    metadata = segments.get('metadata')
+    if metadata:
+        pass
 
     for segment in segments:
         group = groups[segment]

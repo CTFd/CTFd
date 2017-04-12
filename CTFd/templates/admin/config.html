@@ -19,6 +19,9 @@
                 <li role="presentation">
                     <a href="#ctftime-section" aria-controls="ctftime-section" role="tab" data-toggle="tab">CTF Time</a>
                 </li>
+                <li role="presentation">
+                    <a href="#backup-section" aria-controls="backup-section" role="tab" data-toggle="tab">Backup</a>
+                </li>
             </ul>
             <br><br>
             <button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-theme btn-outlined pull-left">Update</button>
@@ -171,7 +174,6 @@
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="ctftime-section">
-                    <div>
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active">
                             <a href="#start-date" aria-controls="start-date" role="tab" data-toggle="tab">Start Time</a>
@@ -381,6 +383,83 @@
                             <input id="view_after_ctf" name="view_after_ctf" type="checkbox" {% if view_after_ctf %}checked{% endif %}>
                             Allow challenges to be viewed after CTF end
                         </label>
+                    </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane" id="backup-section">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#export-ctf" aria-controls="export-ctf" role="tab" data-toggle="tab">Export</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#import-ctf" aria-controls="import-ctf" role="tab" data-toggle="tab">Import</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="export-ctf">
+                            <div class="row">
+                                <div class="form-group col-xs-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input id="export-challenges" type="checkbox" checked>Challenges
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input id="export-challenges" type="checkbox" checked>Teams
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input id="export-challenges" type="checkbox" checked>Solves, Wrong Keys, Unlocks
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input id="export-challenges" type="checkbox" checked>Configuration
+                                        </label>
+                                    </div>
+
+                                    <a href="{{ request.script_root }}/admin/export" id="export-button" class="btn btn-default">Export</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="import-ctf">
+                            <div class="row">
+                                <form method="POST" action="{{ request.script_root }}/admin/import">
+                                    <br>
+                                    <div class="form-group col-xs-8">
+                                        <label for="container-files">Import File
+                                            <input type="file" name="backup" id="backup-file" accept=".zip">
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group col-xs-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input id="export-challenges" type="checkbox" checked>Challenges
+                                            </label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input id="export-challenges" type="checkbox" checked>Teams
+                                            </label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input id="export-challenges" type="checkbox" checked>Solves, Wrong Keys, Unlocks
+                                            </label>
+                                        </div>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input id="export-challenges" type="checkbox" checked>Configuration
+                                            </label>
+                                        </div>
+                                        <input type="submit" class="btn btn-default" value="Import">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
