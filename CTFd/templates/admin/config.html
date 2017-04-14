@@ -19,6 +19,9 @@
                 <li role="presentation">
                     <a href="#ctftime-section" aria-controls="ctftime-section" role="tab" data-toggle="tab">CTF Time</a>
                 </li>
+                <li role="presentation">
+                    <a href="#backup-section" aria-controls="backup-section" role="tab" data-toggle="tab">Backup</a>
+                </li>
             </ul>
             <br><br>
             <button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-theme btn-outlined pull-left">Update</button>
@@ -32,7 +35,7 @@
                             aria-hidden="true">×</span></button>
                 </div>
             {% endfor %}
-            <input name='nonce' type='hidden' value="{{ nonce }}">
+            <input id="nonce" name='nonce' type='hidden' value="{{ nonce }}">
 
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="appearance-section">
@@ -171,7 +174,6 @@
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="ctftime-section">
-                    <div>
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active">
                             <a href="#start-date" aria-controls="start-date" role="tab" data-toggle="tab">Start Time</a>
@@ -383,6 +385,81 @@
                         </label>
                     </div>
                 </div>
+
+                <div role="tabpanel" class="tab-pane" id="backup-section">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#export-ctf" aria-controls="export-ctf" role="tab" data-toggle="tab">Export</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#import-ctf" aria-controls="import-ctf" role="tab" data-toggle="tab">Import</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="export-ctf">
+                            <div class="row">
+                                <div class="form-group col-xs-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="export-config" value="challenges" type="checkbox" checked>Challenges
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="export-config" value="teams" type="checkbox" checked>Teams
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="export-config" value="both" type="checkbox" checked>Solves, Wrong Keys, Unlocks
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="export-config" value="metadata" type="checkbox" checked>Configuration
+                                        </label>
+                                    </div>
+
+                                    <a href="{{ request.script_root }}/admin/export" id="export-button" class="btn btn-default">Export</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="import-ctf">
+                            <div class="row" id="import-div">
+                                <br>
+                                <div class="form-group col-xs-8">
+                                    <label for="container-files">Import File
+                                        <input type="file" name="backup" id="import-file" accept=".zip">
+                                    </label>
+                                </div>
+
+                                <div class="form-group col-xs-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="import-config" value="challenges" type="checkbox" checked>Challenges
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="import-config" value="teams" type="checkbox" checked>Teams
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="import-config" value="both" type="checkbox" checked>Solves, Wrong Keys, Unlocks
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input class="import-config" value="metadata" type="checkbox" checked>Configuration
+                                        </label>
+                                    </div>
+                                    <input id="import-button" type="submit" class="btn btn-default" value="Import">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
@@ -473,6 +550,53 @@
 
         $('.freeze-date').change(function () {
             load_date_values('freeze');
+        });
+
+        $('#export-button').click(function(e){
+            e.preventDefault();
+            var segments = [];
+            $.each($('.export-config:checked'), function(key, value){
+                segments.push($(value).val());
+            });
+            segments = segments.join(',');
+            var href = script_root + '/admin/export';
+            $('#export-button').attr('href', href+'?segments='+segments);
+            window.location.href = $('#export-button').attr('href');
+        });
+
+        $('#import-button').click(function(e){
+            e.preventDefault();
+            var segments = [];
+            $.each($('.import-config:checked'), function(key, value){
+                segments.push($(value).val());
+            });
+            segments = segments.join(',');
+            console.log(segments);
+
+            var import_file = document.getElementById('import-file').files[0];
+            var nonce = $('#nonce').val();
+
+            var form_data = new FormData();
+            form_data.append('segments', segments);
+            form_data.append('backup', import_file);
+            form_data.append('nonce', nonce);
+
+            $.ajax({
+                url : script_root + '/admin/import',
+                type : 'POST',
+                data : form_data,
+                processData: false,
+                contentType: false,
+                statusCode: {
+                        500: function(resp) {
+                            console.log(resp.responseText);
+                            alert(resp.responseText);
+                        }
+                },
+                success : function(data) {
+                    window.location.reload()
+                }
+            });
         });
 
         $(function () {

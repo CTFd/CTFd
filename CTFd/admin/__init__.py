@@ -1,13 +1,15 @@
 import hashlib
 import json
 import os
+import datetime
 
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint, \
-    abort, render_template_string
+    abort, render_template_string, send_file
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
+from sqlalchemy.exc import IntegrityError
 
-from CTFd.utils import admins_only, is_admin, cache
+from CTFd.utils import admins_only, is_admin, cache, export_ctf, import_ctf
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
@@ -46,6 +48,44 @@ def admin_plugin_config(plugin):
         for k, v in request.form.items():
             utils.set_config(k, v)
         return '1'
+
+
+@admin.route('/admin/import', methods=['GET', 'POST'])
+@admins_only
+def admin_import_ctf():
+    backup = request.files['backup']
+    segments = request.form.get('segments')
+    errors = []
+    try:
+        if segments:
+            import_ctf(backup, segments=segments.split(','))
+        else:
+            import_ctf(backup)
+    except TypeError:
+        errors.append('The backup file is invalid')
+    except IntegrityError as e:
+        errors.append(e.message)
+    except Exception as e:
+        errors.append(type(e).__name__)
+
+    if errors:
+        return errors[0], 500
+    else:
+        return redirect(url_for('admin.admin_config'))
+
+
+@admin.route('/admin/export', methods=['GET', 'POST'])
+@admins_only
+def admin_export_ctf():
+    segments = request.args.get('segments')
+    if segments:
+        backup = export_ctf(segments.split(','))
+    else:
+        backup = export_ctf()
+    ctf_name = utils.ctf_name()
+    day = datetime.datetime.now().strftime("%Y-%m-%d")
+    full_name = "{}.{}.zip".format(ctf_name, day)
+    return send_file(backup, as_attachment=True, attachment_filename=full_name)
 
 
 @admin.route('/admin/config', methods=['GET', 'POST'])
