@@ -7,6 +7,7 @@ from flask import current_app as app, render_template, request, redirect, jsonif
     abort, render_template_string, send_file
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
+from sqlalchemy.exc import IntegrityError
 
 from CTFd.utils import admins_only, is_admin, cache, export_ctf, import_ctf
 from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
@@ -62,11 +63,13 @@ def admin_import_ctf():
             import_ctf(backup)
     except TypeError:
         errors.append('The backup file is invalid')
-    except:
-        errors.append('An unknown error occurred.')
+    except IntegrityError as e:
+        errors.append(e.message)
+    except Exception as e:
+        errors.append(type(e).__name__)
 
     if errors:
-        return "", 500
+        return errors[0], 500
     else:
         return redirect(url_for('admin.admin_config'))
 
@@ -74,9 +77,9 @@ def admin_import_ctf():
 @admin.route('/admin/export', methods=['GET', 'POST'])
 @admins_only
 def admin_export_ctf():
-    tables = request.args.get('tables')
-    if tables:
-        backup = export_ctf(tables.split(','))
+    segments = request.args.get('segments')
+    if segments:
+        backup = export_ctf(segments.split(','))
     else:
         backup = export_ctf()
     ctf_name = utils.ctf_name()

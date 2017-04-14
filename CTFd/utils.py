@@ -695,18 +695,14 @@ def export_ctf(segments=None):
 
 
 def import_ctf(backup, segments=None, erase=False):
-    db = dataset.connect(get_config('SQLALCHEMY_DATABASE_URI'))
+    side_db = dataset.connect(get_config('SQLALCHEMY_DATABASE_URI'))
     if segments is None:
         segments = ['challenges', 'teams', 'both', 'metadata']
 
     if not zipfile.is_zipfile(backup):
         raise TypeError
 
-    print segments
-
     backup = zipfile.ZipFile(backup)
-
-    print backup.printdir()
 
     groups = {
         'challenges': [
@@ -736,12 +732,55 @@ def import_ctf(backup, segments=None, erase=False):
 
     ## Need special handling of metadata
     if 'metadata' in segments:
+        meta = groups['metadata']
         segments.remove('metadata')
+        meta.remove('alembic_version')
+
+        for item in meta:
+            table = side_db[item]
+            path = "db/{}.json".format(item)
+            data = backup.open(path).read()
+
+            ## Some JSON files will be empty
+            if data:
+                if item == 'config':
+                    saved = json.loads(data)
+                    for entry in saved['results']:
+                        key = entry['key']
+                        value = entry['value']
+                        set_config(key, value)
+
+                elif item == 'pages':
+                    saved = json.loads(data)
+                    for entry in saved['results']:
+                        route = entry['route']
+                        html = entry['html']
+                        page = Pages.query.filter_by(route=route).first()
+                        if page:
+                            page.html = html
+                        else:
+                            page = Pages(route, html)
+                            db.session.add(page)
+                        db.session.commit()
+
+                elif item == 'containers':
+                    saved = json.loads(data)
+                    for entry in saved['results']:
+                        name = entry['name']
+                        buildfile = entry['buildfile']
+                        container = Containers.query.filter_by(name=name).first()
+                        if container:
+                            container.buildfile = buildfile
+                        else:
+                            container =  Containers(name, buildfile)
+                            db.session.add(container)
+                        db.session.commit()
+
 
     for segment in segments:
         group = groups[segment]
         for item in group:
-            table = db[item]
+            table = side_db[item]
             path = "db/{}.json".format(item)
             data = backup.open(path).read()
             if data:
