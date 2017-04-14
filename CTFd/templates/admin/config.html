@@ -587,6 +587,12 @@
                 data : form_data,
                 processData: false,
                 contentType: false,
+                statusCode: {
+                        500: function(resp) {
+                            console.log(resp.responseText);
+                            alert(resp.responseText);
+                        }
+                },
                 success : function(data) {
                     window.location.reload()
                 }
