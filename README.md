@@ -6,18 +6,18 @@
 
 CTFd is a CTF in a can. Easily modifiable and has everything you need to run a jeopardy style CTF.
 
-Install: 
+## Install
  1. `./prepare.sh` to install dependencies using apt.
  2. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
  3. Use `python serve.py` in a terminal to drop into debug mode.
  4. [Here](https://github.com/CTFd/CTFd/wiki/Deployment) are some deployment options
 
-Live Demo:
+## Live Demo
 https://demo.ctfd.io/
 
-Reverse Engineering Module:
+## Reverse Engineering Module
 https://reversing.ctfd.io/
 
-Logo by [Laura Barbera](http://www.laurabb.com/)
-
-Theme by [Christopher Thompson](https://github.com/breadchris)
+## Credits
+* Logo by [Laura Barbera](http://www.laurabb.com/)
+* Theme by [Christopher Thompson](https://github.com/breadchris)
