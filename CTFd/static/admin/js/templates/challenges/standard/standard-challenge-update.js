@@ -105,7 +105,7 @@ function updatekey(){
             loadkeys(chal);
             $('#edit-keys').modal('toggle');
         }
-    })
+    });
 }
 
 function loadtags(chal){
@@ -387,4 +387,4 @@ function openchal(id){
     loadtags(id);
     loadfiles(id);
 }
- 
+

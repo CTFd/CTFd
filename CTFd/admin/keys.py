@@ -45,7 +45,6 @@ def admin_keys_view(keyid):
             db.session.add(k)
         else:
             k = Keys.query.filter_by(id=keyid).first()
-            k.chal = chal
             k.flag = flag
             k.data = data
             k.key_type = key_type

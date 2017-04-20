@@ -6,7 +6,7 @@
         <div class="modal-body">
             <form method="POST" action="{{ script_root }}/admin/keys/{{id}}" style="text-align:center">
                 <input type="text" id="key-data" class="form-control" name="key" value="{{key}}" placeholder="Enter regex key data">
-                <input type="hidden" id="key-type" value="1">
+                <input type="hidden" id="key-type" name="key_type" value="1">
                 <input type="hidden" id="key-id">
                 <hr>
                 <div class="row">
