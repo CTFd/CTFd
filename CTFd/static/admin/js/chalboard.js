@@ -27,6 +27,7 @@ function load_edit_key_modal(key_id, key_type_name) {
             $('#edit-keys').empty();
             var template = Handlebars.compile(template_data);
             key_data['script_root'] = script_root;
+            key_data['nonce'] = $('#nonce').val();
             $('#edit-keys').append(template(key_data));
             $('#key-id').val(key_id);
             $('#submit-keys').click(function (e) {
