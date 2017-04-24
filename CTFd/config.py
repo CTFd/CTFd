@@ -71,13 +71,13 @@ class Config(object):
     '''
     HOST specifies the hostname where the CTFd instance will exist. It is currently unused.
     '''
-    HOST = ".ctfd.io"
+    HOST = ""
 
 
     '''
     MAILFROM_ADDR is the email address that emails are sent from if not overridden in the configuration panel.
     '''
-    MAILFROM_ADDR = "noreply@ctfd.io"
+    MAILFROM_ADDR = ""
 
 
     '''
