@@ -73,7 +73,6 @@ class Config(object):
     '''
     HOST = os.environ.get('CTFD_HOST')
 
-
     '''
     MAILFROM_ADDR is the email address that emails are sent from if not overridden in the configuration panel.
     '''
