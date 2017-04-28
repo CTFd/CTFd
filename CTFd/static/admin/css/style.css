@@ -479,3 +479,11 @@ table{
 .remove-key{
     float:right;
 }
+
+.footer {
+    position: absolute;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}

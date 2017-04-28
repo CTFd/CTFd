@@ -368,4 +368,12 @@ table{
     margin: 0px;
 }
 
+.footer {
+    position: absolute;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
 /* END OF INPUT CSS */
