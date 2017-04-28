@@ -18,6 +18,11 @@ a {
     outline: 0;
 }
 
+.body-container {
+    min-height: 100%;
+    position: relative;
+}
+
 .no-margin-right {
     margin-right: 0px !important;
 }
@@ -64,6 +69,7 @@ a {
 .main-container {
     margin-top: 35px;
     margin-bottom: 25px;
+    padding-bottom: 100px;
 }
 
 #login-container {
@@ -371,6 +377,7 @@ table{
 .footer {
     position: absolute;
     left: 0;
+    bottom: 0;
     padding: 0;
     margin: 0;
     width: 100%;
