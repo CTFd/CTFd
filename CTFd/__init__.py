@@ -11,7 +11,7 @@ from six.moves import input
 from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
 from CTFd import utils
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
