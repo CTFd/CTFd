@@ -43,17 +43,16 @@ class Config(object):
 
 
     '''
-    SESSION_TYPE is a configuration value used for Flask-Session. It is currently unused in CTFd.
-    http://pythonhosted.org/Flask-Session/#configuration
+    SESSION_TYPE and SESSION_REDIS are configuration values used for Flask-Session.
     '''
-    SESSION_TYPE = "filesystem"
-
-
-    '''
-    SESSION_FILE_DIR is a configuration value used for Flask-Session. It is currently unused in CTFd.
-    http://pythonhosted.org/Flask-Session/#configuration
-    '''
-    SESSION_FILE_DIR = "/tmp/flask_session"
+    from redis import StrictRedis
+    SESSION_TYPE = 'redis'
+    SESSION_REDIS = StrictRedis(
+                                    host=os.environ.get('REDIS_HOST'), 
+                                    port=os.environ.get('REDIS_PORT'),
+                                    password=os.environ.get('REDIS_PASSWORD'),
+                                    db=os.environ.get('REDIS_DB')
+                                )
 
 
     '''
@@ -117,16 +116,15 @@ class Config(object):
 
     '''
     CACHE_TYPE specifies how CTFd should cache configuration values. If CACHE_TYPE is set to 'redis', CTFd will make use
-    of the REDIS_URL specified in environment variables. You can also choose to hardcode the REDIS_URL here.
-
-    CACHE_REDIS_URL is the URL to connect to Redis server.
-    Example: redis://user:password@localhost:6379/2.
+    of the REDIS_* values specified in environment variables.
 
     http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     '''
-    CACHE_TYPE = "simple"
-    if CACHE_TYPE == 'redis':
-        CACHE_REDIS_URL = os.environ.get('REDIS_URL')
+    CACHE_TYPE = 'redis'
+    CACHE_REDIS_HOST=os.environ.get('REDIS_HOST'), 
+    CACHE_REDIS_PORT=os.environ.get('REDIS_PORT'),
+    CACHE_REDIS_PASSWORD=os.environ.get('REDIS_PASSWORD'),
+    CACHE_REDIS_DB=os.environ.get('REDIS_DB')
 
 
 class TestingConfig(Config):

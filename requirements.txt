@@ -13,3 +13,4 @@ requests==2.13.0
 psycopg2==2.7.1
 gunicorn==19.7.0
 dataset==0.8.0
+redis==2.10.5

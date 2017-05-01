@@ -1,0 +1,85 @@
+version: "2"
+
+services:
+  ctfd:
+    restart: always
+    container_name: ctfd
+    build: ../CTFd
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run
+      - /opt/CTFd/CTFd/logs
+      - /opt/CTFd/CTFd/uploads
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - REDIS_PASSWORD
+      - REDIS_HOST
+      - REDIS_PORT
+      - REDIS_DB
+    expose:
+      - "8000"
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - db
+      - cache
+
+  proxy:
+    restart: always
+    container_name: proxy
+    image: nginx:alpine
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run
+      - /var/run
+      - /var/cache/nginx
+    ports:
+      - "127.0.0.1:80:8080/tcp"
+      - "127.0.0.1:443:8443/tcp"
+    networks:
+      - frontend
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - ctfd
+
+  db:
+    restart: always
+    container_name: ${POSTGRES_HOST}
+    image: postgres:alpine
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run
+      - /var/lib/postgresql
+      - /var/run/postgresql
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - POSTGRES_DB
+    expose:
+      - "${POSTGRES_PORT}"
+    networks:
+      - backend
+
+  cache:
+    restart: always
+    container_name: ${REDIS_HOST}
+    image: redis:alpine
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run
+    expose:
+      - "${REDIS_PORT}"
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:
