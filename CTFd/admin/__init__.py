@@ -160,11 +160,13 @@ def admin_config():
         db.session.commit()
         db.session.close()
         with app.app_context():
-            cache.clear()
+            try:
+                cache.clear()
         return redirect(url_for('admin.admin_config'))
 
     with app.app_context():
-        cache.clear()
+        try:
+            cache.clear()
     ctf_name = utils.get_config('ctf_name')
     ctf_theme = utils.get_config('ctf_theme')
     hide_scores = utils.get_config('hide_scores')
