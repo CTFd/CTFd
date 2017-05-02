@@ -119,7 +119,7 @@ def init_utils(app):
 
     @app.before_request
     def needs_setup():
-        if request.path == '/setup' or request.path.startswith('/static'):
+        if request.path == '/setup' or request.path.startswith('/static') or request.path == '/healthcheck':
             return
         if not is_setup():
             return redirect(url_for('views.setup'))
