@@ -12,20 +12,24 @@ from CTFd import utils
 views = Blueprint('views', __name__)
 
 
-@views.before_request
-def redirect_setup():
-    if request.path.startswith("/static"):
-        return
-    if not utils.is_setup() and request.path != "/setup":
-        return redirect(url_for('views.setup'))
+# @views.before_request
+# def redirect_setup():
+#     if request.path.startswith("/static") or request.endpoint == "healthcheck":
+#         return
+#     if not utils.is_setup() and request.path != "/setup":
+#         return redirect(url_for('views.setup'))
 
+# Health check endpoint for ELB
+@views.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    return Response('OK', 200)
 
 @views.route('/setup', methods=['GET', 'POST'])
 def setup():
     # with app.app_context():
         # admin = Teams.query.filter_by(admin=True).first()
 
-    if not utils.is_setup():
+    if not utils.is_setup() and request.path != "/healthcheck":
         if not session.get('nonce'):
             session['nonce'] = utils.sha512(os.urandom(10))
         if request.method == 'POST':
@@ -104,11 +108,6 @@ def setup():
 @views.route('/static/user.css')
 def custom_css():
     return Response(utils.get_config('css'), mimetype='text/css')
-
-# Health check endpoint for ELB
-@views.route("/healthcheck")
-def healthcheck():
-    return Response('OK', 200)
 
 # Static HTML files
 @views.route("/", defaults={'template': 'index'})
