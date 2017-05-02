@@ -105,6 +105,10 @@ def setup():
 def custom_css():
     return Response(utils.get_config('css'), mimetype='text/css')
 
+# Health check endpoint for ELB
+@views.route("/healthcheck")
+def healthcheck():
+    return Response('OK', 200)
 
 # Static HTML files
 @views.route("/", defaults={'template': 'index'})

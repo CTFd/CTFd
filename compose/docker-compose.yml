@@ -4,7 +4,7 @@ services:
   ctfd:
     restart: always
     container_name: ctfd
-    build: ../CTFd
+    build: ..
     read_only: true
     tmpfs:
       - /tmp
