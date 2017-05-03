@@ -22,8 +22,11 @@ def redirect_setup():
 # Health check endpoint for ELB
 @views.route('/healthcheck', methods=['GET'])
 def healthcheck():
-    session.clear()
-    return Response("OK", 200)
+    if request.user_agent.string == 'ELB-HealthChecker/1.0':
+        session.clear()
+        return Response("OK", 200)
+    else:
+        return redirect(url_for('views.static_html'))
 
 @views.route('/setup', methods=['GET', 'POST'])
 def setup():
