@@ -66,3 +66,4 @@ CTFd/uploads
 
 compose/ctfd_data/
 compose/postgres_data/
+compose/.env
