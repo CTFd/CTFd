@@ -12,6 +12,7 @@ services:
       - /opt/CTFd/CTFd/logs
       - /opt/CTFd/CTFd/uploads
     environment:
+      - CTFD_SECRET_KEY
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       - REDIS_PASSWORD
       - REDIS_HOST
