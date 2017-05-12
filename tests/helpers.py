@@ -106,6 +106,7 @@ def gen_solve(db, chalid, teamid, ip='127.0.0.1', flag='rightkey'):
     db.session.commit()
     return solve
 
+
 def gen_wrongkey(db, teamid, chalid, flag='wrongkey'):
     wrongkey = WrongKeys(teamid, chalid, flag)
     db.session.add(wrongkey)
