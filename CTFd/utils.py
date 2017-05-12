@@ -226,7 +226,6 @@ def is_scoreboard_frozen():
     return False
 
 
-
 def ctftime():
     """ Checks whether it's CTF time or not. """
 
@@ -308,7 +307,7 @@ def get_ip():
     combined = "(" + ")|(".join(trusted_proxies) + ")"
     route = request.access_route + [request.remote_addr]
     for addr in reversed(route):
-        if not re.match(combined, addr): # IP is not trusted but we trust the proxies
+        if not re.match(combined, addr):  # IP is not trusted but we trust the proxies
             remote_addr = addr
             break
     else:
@@ -316,7 +315,7 @@ def get_ip():
     return remote_addr
 
 
-def get_kpm(teamid): # keys per minute
+def get_kpm(teamid):  # keys per minute
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
     return len(db.session.query(WrongKeys).filter(WrongKeys.teamid == teamid, WrongKeys.date >= one_min_ago).all())
 
@@ -355,7 +354,7 @@ def upload_file(file, chalid):
 def delete_file(file_id):
     f = Files.query.filter_by(id=file_id).first_or_404()
     upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-    if os.path.exists(os.path.join(upload_folder, f.location)): # Some kind of os.path.isfile issue on Windows...
+    if os.path.exists(os.path.join(upload_folder, f.location)):  # Some kind of os.path.isfile issue on Windows...
         os.unlink(os.path.join(upload_folder, f.location))
     db.session.delete(f)
     db.session.commit()
@@ -669,7 +668,7 @@ def export_ctf(segments=None):
         ]
     }
 
-    ## Backup database
+    # Backup database
     backup = io.BytesIO()
     backup_zip = zipfile.ZipFile(backup, 'w')
 
@@ -682,7 +681,7 @@ def export_ctf(segments=None):
             result_file.seek(0)
             backup_zip.writestr('db/{}.json'.format(item), result_file.read())
 
-    ## Backup uploads
+    # Backup uploads
     upload_folder = os.path.join(os.path.normpath(app.root_path), get_config('UPLOAD_FOLDER'))
     for root, dirs, files in os.walk(upload_folder):
         for file in files:
@@ -730,7 +729,7 @@ def import_ctf(backup, segments=None, erase=False):
         ]
     }
 
-    ## Need special handling of metadata
+    # Need special handling of metadata
     if 'metadata' in segments:
         meta = groups['metadata']
         segments.remove('metadata')
@@ -741,7 +740,7 @@ def import_ctf(backup, segments=None, erase=False):
             path = "db/{}.json".format(item)
             data = backup.open(path).read()
 
-            ## Some JSON files will be empty
+            # Some JSON files will be empty
             if data:
                 if item == 'config':
                     saved = json.loads(data)
@@ -772,10 +771,9 @@ def import_ctf(backup, segments=None, erase=False):
                         if container:
                             container.buildfile = buildfile
                         else:
-                            container =  Containers(name, buildfile)
+                            container = Containers(name, buildfile)
                             db.session.add(container)
                         db.session.commit()
-
 
     for segment in segments:
         group = groups[segment]
@@ -791,20 +789,20 @@ def import_ctf(backup, segments=None, erase=False):
             else:
                 continue
 
-    ## Extracting files
+    # Extracting files
     files = [f for f in backup.namelist() if f.startswith('uploads/')]
     upload_folder = app.config.get('UPLOAD_FOLDER')
     for f in files:
         filename = f.split(os.sep, 1)
 
-        if len(filename) < 2: ## just an empty uploads directory (e.g. uploads/)
+        if len(filename) < 2:  # just an empty uploads directory (e.g. uploads/)
             continue
 
-        filename = filename[1] ## Get the second entry in the list (the actual filename)
+        filename = filename[1]  # Get the second entry in the list (the actual filename)
         full_path = os.path.join(upload_folder, filename)
         dirname = os.path.dirname(full_path)
 
-        ## Create any parent directories for the file
+        # Create any parent directories for the file
         if not os.path.exists(dirname):
             os.makedirs(dirname)
 
