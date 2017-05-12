@@ -48,7 +48,6 @@ def test_user_bad_login():
         register_user(app)
         client = login_as_user(app, name="user", password="wrong_password")
         r = client.get('/profile')
-        print r.location
         assert r.location.startswith("http://localhost/login")  # We got redirected to login
 
 
