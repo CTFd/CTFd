@@ -5,7 +5,7 @@
 [![CTFd Slack](https://slack.ctfd.io/badge.svg)](https://slack.ctfd.io/)
 
 ## What is CTFd?
-CTFd is a Capture The Flag in a can. It's easy to customize with plugins and themes but has everything you need to run a jeopardy style CTF.
+CTFd is a Capture The Flag in a can. It's easy to customize with plugins and themes and has everything you need to run a jeopardy style CTF.
 
 ![CTFd is a CTF in a can.](https://github.com/CTFd/CTFd/raw/master/CTFd/static/original/img/scoreboard.png?raw=true)
 
