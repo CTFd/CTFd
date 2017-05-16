@@ -6,6 +6,8 @@
 
 CTFd is a CTF in a can. Easily modifiable and has everything you need to run a jeopardy style CTF.
 
+![CTFd is a CTF in a can. Easily modifiable and has everything you need to run a jeopardy style CTF.](https://github.com/CTFd/CTFd/raw/master/CTFd/static/original/img/scoreboard.png?raw=true "Optional Title")
+
 ## Install
  1. `./prepare.sh` to install dependencies using apt.
  2. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
