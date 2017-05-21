@@ -1,3 +1,8 @@
+import sys
+if sys.version_info[0] < 3:
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
+
 import os
 
 from distutils.version import StrictVersion

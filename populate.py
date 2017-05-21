@@ -231,7 +231,7 @@ if __name__ == '__main__':
         for x in range(AMT_CHALS_WITH_FILES):
             chal = random.randint(1, CHAL_AMOUNT)
             filename = gen_file()
-            md5hash = hashlib.md5(filename).hexdigest()
+            md5hash = hashlib.md5(filename.encode('utf-8')).hexdigest()
             db.session.add(Files(chal, md5hash + '/' + filename))
 
         db.session.commit()
