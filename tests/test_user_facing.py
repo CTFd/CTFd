@@ -225,7 +225,7 @@ def test_submitting_correct_flag():
             }
         r = client.post('/chal/{}'.format(chal.id), data=data)
         assert r.status_code == 200
-        resp = json.loads(r.data)
+        resp = json.loads(r.data.decode('utf8'))
         assert resp.get('status') == 1 and resp.get('message') == "Correct"
 
 
@@ -244,7 +244,7 @@ def test_submitting_incorrect_flag():
             }
         r = client.post('/chal/{}'.format(chal.id), data=data)
         assert r.status_code == 200
-        resp = json.loads(r.data)
+        resp = json.loads(r.data.decode('utf8'))
         assert resp.get('status') == 0 and resp.get('message') == "Incorrect"
 
 
@@ -264,5 +264,5 @@ def test_submitting_unicode_flag():
             }
         r = client.post('/chal/{}'.format(chal.id), data=data)
         assert r.status_code == 200
-        resp = json.loads(r.data)
+        resp = json.loads(r.data.decode('utf8'))
         assert resp.get('status') == 1 and resp.get('message') == "Correct"
