@@ -16,7 +16,8 @@ from six.moves import input
 from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
 from CTFd import utils
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
+
 
 class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
@@ -39,21 +40,21 @@ def create_app(config='CTFd.config.Config'):
         if url.drivername == 'postgres':
             url.drivername = 'postgresql'
 
-        ## Creates database if the database database does not exist
+        # Creates database if the database database does not exist
         if not database_exists(url):
             create_database(url)
 
-        ## Register database
+        # Register database
         db.init_app(app)
 
-        ## Register Flask-Migrate
+        # Register Flask-Migrate
         migrate.init_app(app, db)
 
-        ## This creates tables instead of db.create_all()
-        ## Allows migrations to happen properly
+        # This creates tables instead of db.create_all()
+        # Allows migrations to happen properly
         migrate_upgrade()
 
-        ## Alembic sqlite support is lacking so we should just create_all anyway
+        # Alembic sqlite support is lacking so we should just create_all anyway
         if url.drivername.startswith('sqlite'):
             db.create_all()
 
@@ -64,10 +65,10 @@ def create_app(config='CTFd.config.Config'):
 
         version = utils.get_config('ctf_version')
 
-        if not version: ## Upgrading from an unversioned CTFd
+        if not version:  # Upgrading from an unversioned CTFd
             utils.set_config('ctf_version', __version__)
 
-        if version and (StrictVersion(version) < StrictVersion(__version__)): ## Upgrading from an older version of CTFd
+        if version and (StrictVersion(version) < StrictVersion(__version__)):  # Upgrading from an older version of CTFd
             print("/*\\ CTFd has updated and must update the database! /*\\")
             print("/*\\ Please backup your database before proceeding! /*\\")
             print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")

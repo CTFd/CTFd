@@ -14,6 +14,7 @@ from CTFd import utils
 
 challenges = Blueprint('challenges', __name__)
 
+
 @challenges.route('/hints/<int:hintid>', methods=['GET', 'POST'])
 def hints_view(hintid):
     hint = Hints.query.filter_by(id=hintid).first_or_404()
@@ -22,15 +23,15 @@ def hints_view(hintid):
     if request.method == 'GET':
         if unlock:
             return jsonify({
-                    'hint': hint.hint,
-                    'chal': hint.chal,
-                    'cost': hint.cost
-                })
+                'hint': hint.hint,
+                'chal': hint.chal,
+                'cost': hint.cost
+            })
         else:
             return jsonify({
-                    'chal': hint.chal,
-                    'cost': hint.cost
-                })
+                'chal': hint.chal,
+                'cost': hint.cost
+            })
     elif request.method == 'POST':
         if not unlock:
             team = Teams.query.filter_by(id=session['id']).first()
@@ -42,18 +43,18 @@ def hints_view(hintid):
             db.session.add(award)
             db.session.commit()
             json_data = {
-                    'hint': hint.hint,
-                    'chal': hint.chal,
-                    'cost': hint.cost
-                }
+                'hint': hint.hint,
+                'chal': hint.chal,
+                'cost': hint.cost
+            }
             db.session.close()
             return jsonify(json_data)
         else:
             json_data = {
-                    'hint': hint.hint,
-                    'chal': hint.chal,
-                    'cost': hint.cost
-                }
+                'hint': hint.hint,
+                'chal': hint.chal,
+                'cost': hint.cost
+            }
             db.session.close()
             return jsonify(json_data)
 
@@ -63,10 +64,10 @@ def challenges_view():
     errors = []
     start = utils.get_config('start') or 0
     end = utils.get_config('end') or 0
-    if not utils.is_admin(): # User is not an admin
+    if not utils.is_admin():  # User is not an admin
         if not utils.ctftime():
             # It is not CTF time
-            if utils.view_after_ctf(): # But we are allowed to view after the CTF ends
+            if utils.view_after_ctf():  # But we are allowed to view after the CTF ends
                 pass
             else:  # We are NOT allowed to view after the CTF ends
                 if utils.get_config('start') and not utils.ctf_started():
@@ -74,9 +75,9 @@ def challenges_view():
                 if (utils.get_config('end') and utils.ctf_ended()) and not utils.view_after_ctf():
                     errors.append('{} has ended'.format(utils.ctf_name()))
                 return render_template('chals.html', errors=errors, start=int(start), end=int(end))
-        if utils.get_config('verify_emails') and not utils.is_verified(): # User is not confirmed
+        if utils.get_config('verify_emails') and not utils.is_verified():  # User is not confirmed
             return redirect(url_for('auth.confirm_user'))
-    if utils.user_can_view_challenges(): # Do we allow unauthenticated users?
+    if utils.user_can_view_challenges():  # Do we allow unauthenticated users?
         if utils.get_config('start') and not utils.ctf_started():
             errors.append('{} has not started yet'.format(utils.ctf_name()))
         if (utils.get_config('end') and utils.ctf_ended()) and not utils.view_after_ctf():
@@ -104,9 +105,9 @@ def chals():
             hints = []
             for hint in Hints.query.filter_by(chal=x.id).all():
                 if hint.id in unlocked_hints:
-                    hints.append({'id':hint.id, 'cost':hint.cost, 'hint':hint.hint})
+                    hints.append({'id': hint.id, 'cost': hint.cost, 'hint': hint.hint})
                 else:
-                    hints.append({'id':hint.id, 'cost':hint.cost})
+                    hints.append({'id': hint.id, 'cost': hint.cost})
             # hints = [{'id':hint.id, 'cost':hint.cost} for hint in Hints.query.filter_by(chal=x.id).all()]
             chal_type = get_chal_class(x.type)
             json['game'].append({
@@ -293,7 +294,7 @@ def chal(chalid):
             logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
             # return '0' # key was wrong
             if max_tries:
-                attempts_left = max_tries - fails - 1 ## Off by one since fails has changed since it was gotten
+                attempts_left = max_tries - fails - 1  # Off by one since fails has changed since it was gotten
                 tries_str = 'tries'
                 if attempts_left == 1:
                     tries_str = 'try'

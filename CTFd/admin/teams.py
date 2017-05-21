@@ -8,6 +8,7 @@ from CTFd import utils
 
 admin_teams = Blueprint('admin_teams', __name__)
 
+
 @admin_teams.route('/admin/teams', defaults={'page': '1'})
 @admin_teams.route('/admin/teams/<int:page>')
 @admins_only
@@ -225,6 +226,7 @@ def delete_wrong_key(keyid):
     db.session.close()
     return '1'
 
+
 @admin_teams.route('/admin/awards/<int:award_id>/delete', methods=['POST'])
 @admins_only
 def delete_award(award_id):
@@ -233,6 +235,7 @@ def delete_award(award_id):
     db.session.commit()
     db.session.close()
     return '1'
+
 
 @admin_teams.route('/admin/teams/<int:teamid>/awards', methods=['GET'])
 @admins_only
