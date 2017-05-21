@@ -86,7 +86,7 @@ def gen_file():
     pass
 
 
-def gen_key(db, chal, flag='flag', key_type=0):
+def gen_flag(db, chal, flag='flag', key_type=0):
     key = Keys(chal, flag, key_type)
     db.session.add(key)
     db.session.commit()

@@ -1,3 +1,4 @@
+import sys
 import os
 
 from distutils.version import StrictVersion
@@ -10,6 +11,11 @@ from six.moves import input
 
 from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
 from CTFd import utils
+
+# Hack to support Unicode in Python 2 properly
+if sys.version_info[0] < 3:
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
 
 __version__ = '1.0.2'
 
