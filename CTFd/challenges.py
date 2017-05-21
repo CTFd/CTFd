@@ -257,21 +257,21 @@ def chal(chalid):
                 db.session.close()
             logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
             # return '3' # Submitting too fast
-            return jsonify({'status': '3', 'message': "You're submitting keys too fast. Slow down."})
+            return jsonify({'status': 3, 'message': "You're submitting keys too fast. Slow down."})
 
         solves = Solves.query.filter_by(teamid=session['id'], chalid=chalid).first()
 
         # Challange not solved yet
         if not solves:
             chal = Challenges.query.filter_by(id=chalid).first_or_404()
-            provided_key = unicode(request.form['key'].strip())
+            provided_key = request.form['key'].strip()
             saved_keys = Keys.query.filter_by(chal=chal.id).all()
 
             # Hit max attempts
             max_tries = chal.max_attempts
             if max_tries and fails >= max_tries > 0:
                 return jsonify({
-                    'status': '0',
+                    'status': 0,
                     'message': "You have 0 tries remaining"
                 })
 
@@ -283,7 +283,7 @@ def chal(chalid):
                     db.session.commit()
                     db.session.close()
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
-                return jsonify({'status': '1', 'message': 'Correct'})
+                return jsonify({'status': 1, 'message': 'Correct'})
 
             if utils.ctftime():
                 wrong = WrongKeys(teamid=session['id'], chalid=chalid, flag=provided_key)
@@ -297,17 +297,17 @@ def chal(chalid):
                 tries_str = 'tries'
                 if attempts_left == 1:
                     tries_str = 'try'
-                return jsonify({'status': '0', 'message': 'Incorrect. You have {} {} remaining.'.format(attempts_left, tries_str)})
+                return jsonify({'status': 0, 'message': 'Incorrect. You have {} {} remaining.'.format(attempts_left, tries_str)})
             else:
-                return jsonify({'status': '0', 'message': 'Incorrect'})
+                return jsonify({'status': 0, 'message': 'Incorrect'})
 
         # Challenge already solved
         else:
             logger.info("{0} submitted {1} with kpm {2} [ALREADY SOLVED]".format(*data))
             # return '2' # challenge was already solved
-            return jsonify({'status': '2', 'message': 'You already solved this'})
+            return jsonify({'status': 2, 'message': 'You already solved this'})
     else:
         return jsonify({
-            'status': '-1',
+            'status': -1,
             'message': "You must be logged in to solve a challenge"
         })

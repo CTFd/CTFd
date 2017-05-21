@@ -1,4 +1,7 @@
-from tests.helpers import create_ctfd, register_user, login_as_user, gen_challenge
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from tests.helpers import *
 from CTFd.models import Teams
 import json
 
@@ -205,3 +208,61 @@ def test_viewing_challenges():
         r = client.get('/chals')
         chals = json.loads(r.get_data(as_text=True))
         assert len(chals['game']) == 1
+
+
+def test_submitting_correct_flag():
+    """Test that correct flags are correct"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        flag = gen_flag(app.db, chal=chal.id, flag='flag')
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 200
+        resp = json.loads(r.data)
+        assert resp.get('status') == 1 and resp.get('message') == "Correct"
+
+
+def test_submitting_incorrect_flag():
+    """Test that incorrect flags are incorrect"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        flag = gen_flag(app.db, chal=chal.id, flag='flag')
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'notflag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 200
+        resp = json.loads(r.data)
+        assert resp.get('status') == 0 and resp.get('message') == "Incorrect"
+
+
+def test_submitting_unicode_flag():
+    """Test that users can submit a unicode flag"""
+    print("Test that users can submit a flag")
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        flag = gen_flag(app.db, chal=chal.id, flag=u'你好')
+        with client.session_transaction() as sess:
+            data = {
+                "key": '你好',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 200
+        resp = json.loads(r.data)
+        assert resp.get('status') == 1 and resp.get('message') == "Correct"
