@@ -250,7 +250,6 @@ def test_submitting_incorrect_flag():
 
 def test_submitting_unicode_flag():
     """Test that users can submit a unicode flag"""
-    print("Test that users can submit a flag")
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -266,3 +265,17 @@ def test_submitting_unicode_flag():
         assert r.status_code == 200
         resp = json.loads(r.data.decode('utf8'))
         assert resp.get('status') == 1 and resp.get('message') == "Correct"
+
+
+def test_pages_routing_and_rendering():
+    """Test that pages are routing and rendering"""
+    app = create_ctfd()
+    with app.app_context():
+        html = '''##The quick brown fox jumped over the lazy dog'''
+        route = 'test'
+        page = gen_page(app.db, route, html)
+
+        with app.test_client() as client:
+            r = client.get('/test')
+            output = r.get_data(as_text=True)
+            assert "<h2>The quick brown fox jumped over the lazy dog</h2>" in output
