@@ -6,7 +6,7 @@ from jinja2.exceptions import TemplateNotFound
 from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Teams, Solves, Awards, Files, Pages
-from CTFd.utils import cache
+from CTFd.utils import cache, markdown
 from CTFd import utils
 
 views = Blueprint('views', __name__)
@@ -118,7 +118,7 @@ def static_html(template):
         return render_template('%s.html' % template)
     except TemplateNotFound:
         page = Pages.query.filter_by(route=template).first_or_404()
-        return render_template('page.html', content=page.html)
+        return render_template('page.html', content=markdown(page.html))
 
 
 @views.route('/teams', defaults={'page': '1'})

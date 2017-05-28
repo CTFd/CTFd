@@ -5,6 +5,7 @@ import hashlib
 import json
 import logging
 import logging.handlers
+import mistune
 import os
 import re
 import requests
@@ -32,6 +33,7 @@ from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, Co
 
 cache = Cache()
 migrate = Migrate()
+markdown = mistune.Markdown()
 
 
 def init_logs(app):
