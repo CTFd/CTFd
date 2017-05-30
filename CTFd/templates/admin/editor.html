@@ -32,17 +32,32 @@
         <br>
         <div class="row-fluid">
             <div class="col-md-12">
+
                 <h3>Content: </h3>
                 <p class="help-block">This is the HTML content of your page</p>
-                <textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
-                <button class="btn btn-theme btn-outlined create-challenge pull-right">
-                    {% if page is defined %}
-                        Update
-                    {% else %}
-                        Create
-                    {% endif %}
-                </button>
+
+                <ul class="nav nav-tabs" role="tablist" id="content-edit">
+                    <li role="presentation" class="active"><a href="#content-write" aria-controls="home" role="tab" data-toggle="tab">Write</a></li>
+                    <li role="presentation"><a href="#content-preview" aria-controls="home" role="tab" data-toggle="tab">Preview</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="content-write" style="height:400px">
+                        <div class="form-group">
+                            <textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane content" id="content-preview" style="height:400px">
+                    </div>
+                </div>
             </div>
+            <button class="btn btn-theme btn-outlined create-challenge pull-right">
+                {% if page is defined %}
+                    Update
+                {% else %}
+                    Create
+                {% endif %}
+            </button>
         </div>
     </form>
 </div>
@@ -61,6 +76,13 @@
 
     $('#page-edit').submit(function (e){
         $(this).attr('action', '{{ request.script_root }}/admin/pages/'+$('#route').val());
+    });
+
+    // Markdown Preview
+    $('#content-edit').on('shown.bs.tab', function (event) {
+        if (event.target.hash == '#content-preview'){
+            $(event.target.hash).html(marked(editor.getValue(), {'gfm':true, 'breaks':true}));
+        }
     });
 </script>
 {% endblock %}
