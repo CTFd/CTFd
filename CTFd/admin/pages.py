@@ -53,6 +53,31 @@ def admin_pages_view(route):
     return render_template('admin/pages.html', routes=pages, css=utils.get_config('css'))
 
 
+@admin_pages.route('/admin/media', methods=['GET', 'POST', 'DELETE'])
+@admins_only
+def admin_pages_media():
+    if request.method == 'POST':
+        files = request.files.getlist('files[]')
+
+        uploaded = []
+        for f in files:
+            data = utils.upload_file(file=f, chalid=None)
+            if data:
+                uploaded.append({'id':data[0], 'location':data[1]})
+        return jsonify({'results': uploaded})
+
+    elif request.method == 'DELETE':
+        file_ids = request.form.getlist('file_ids[]')
+        for file_id in file_ids:
+            utils.delete_file(file_id)
+        return True
+
+    else:
+        files = [{'id':f.id, 'location':f.location} for f in Files.query.filter_by(chal=None).all()]
+        return jsonify({'results': files})
+
+
+
 @admin_pages.route('/admin/page/<pageroute>/delete', methods=['POST'])
 @admins_only
 def delete_page(pageroute):

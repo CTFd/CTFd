@@ -350,7 +350,7 @@ def upload_file(file, chalid):
     db_f = Files(chalid, (md5hash + '/' + filename))
     db.session.add(db_f)
     db.session.commit()
-    return True
+    return db_f.id, (md5hash + '/' + filename)
 
 
 def delete_file(file_id):

@@ -4,10 +4,47 @@
     <link rel="stylesheet" type="text/css" href="{{ request.script_root }}/static/admin/css/vendor/codemirror.min.css">
     <style>
     .row-fluid { margin: 25px; padding-bottom: 25px; }
+    .media-item-wrapper { width: 100px; height: 100px; margin: 5px; float: left; border: 1px solid #eee; text-align: center;}
+    .media-item-wrapper > a > i {line-height: 100px;}
     </style>
 {% endblock %}
 
 {% block content %}
+
+<div id="media-modal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="text-center">Media Library</h3>
+
+                <div class="row" id="media-library-list">
+
+                </div>
+
+                <hr>
+
+                <form id="media-library-upload">
+                    <div class="form-group">
+                        <label for="media-files">Upload Files
+                        </label>
+                        <input type="file" name="files[]" id="media-files" multiple>
+                        <sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
+                    </div>
+                    <input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+                </form>
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-primary" onclick="uploadfiles();">Upload</button>
+                </div>
+
+            </div>
+<!--             <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Insert</button>
+            </div> -->
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="row">
     {% for error in errors %}
@@ -44,6 +81,15 @@
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="content-write" style="height:400px">
                         <div class="form-group">
+                            <br>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-default" id="media-button"><i class="fa fa-camera-retro" aria-hidden="true"></i> Add Media</button>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+
                             <textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
                         </div>
                     </div>
@@ -64,8 +110,109 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ request.script_root }}/static/admin/js/utils.js"></script>
 <script src="{{ request.script_root }}/static/admin/js/vendor/codemirror.min.js"></script>
 <script>
+    function uploadfiles(){
+        var form = $('#media-library-upload')[0];
+        var formData = new FormData(form);
+        console.log(formData);
+        $.ajax({
+            url: script_root + '/admin/media',
+            data: formData,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(data){
+                refreshfiles(data);
+                form.reset();
+            }
+        });
+    }
+
+    function refreshfiles(data){
+        var data = data.results;
+        var list = $('#media-library-list');
+        var mapping = {
+            // Image Files
+            'png': 'fa-file-image-o',
+            'jpg': 'fa-file-image-o',
+            'jpeg': 'fa-file-image-o',
+            'gif': 'fa-file-image-o',
+            'bmp': 'fa-file-image-o',
+            'svg': 'fa-file-image-o',
+
+            // Text Files
+            'txt': 'fa-file-text-o',
+
+            // Video Files
+            'mov': 'fa-file-video-o',
+            'mp4': 'fa-file-video-o',
+            'wmv': 'fa-file-video-o',
+            'flv': 'fa-file-video-o',
+            'mkv': 'fa-file-video-o',
+            'avi': 'fa-file-video-o',
+
+            // PDF Files
+            'pdf': 'fa-file-pdf-o',
+
+            // Audio Files
+            'mp3': 'fa-file-sound-o',
+            'wav': 'fa-file-sound-o',
+            'aac': 'fa-file-sound-o',
+
+            // Archive Files
+            'zip': 'fa-file-archive-o',
+            'gz': 'fa-file-archive-o',
+            'tar': 'fa-file-archive-o',
+            '7z': 'fa-file-archive-o',
+            'rar': 'fa-file-archive-o',
+
+            // Code Files
+            'py': 'fa-file-code-o',
+            'c': 'fa-file-code-o',
+            'cpp': 'fa-file-code-o',
+            'html': 'fa-file-code-o',
+            'js': 'fa-file-code-o',
+            'rb': 'fa-file-code-o',
+            'go': 'fa-file-code-o',
+        }
+        for (var i = 0; i < data.length; i++) {
+            var f = data[i];
+            var ext = f.location.split('.').pop();
+
+            var wrapper = $('<div>').attr('class', 'media-item-wrapper')
+
+            if (mapping[ext] == 'fa-file-image-o'){
+                var obj = $('<img>');
+                obj.attr('src', script_root + '/files/' + f.location);
+                obj.attr('data-id', f.id);
+                obj.attr('height', '100px');
+                wrapper.attr('data-location',  script_root + '/files/' + f.location);
+                wrapper.attr('data-id',  f.id);
+                wrapper.append(obj);
+                list.append(wrapper);
+            } else if (mapping[ext] == undefined){
+                var link = $('<a>');
+                link.attr('href', script_root + '/files/' + f.location);
+                link.append('<i class="fa fa-file-o fa-4x" aria-hidden="true"></i>'.format(mapping[ext]));
+                wrapper.append(link);
+                wrapper.attr('data-location',  script_root + '/files/' + f.location);
+                wrapper.attr('data-id',  f.id);
+                list.append(wrapper);
+            } else {
+                var link = $('<a>');
+                link.attr('href', script_root + '/files/' + f.location);
+                link.append('<i class="fa {0} fa-4x" aria-hidden="true"></i>'.format(mapping[ext]));
+                wrapper.append(link);
+                wrapper.attr('data-location',  script_root + '/files/' + f.location);
+                wrapper.attr('data-id',  f.id);
+                list.append(wrapper);
+            }
+        }
+    }
+
     var editor = CodeMirror.fromTextArea(document.getElementById("admin-pages-editor"), {
         lineNumbers: true,
         lineWrapping: true,
@@ -84,5 +231,13 @@
             $(event.target.hash).html(marked(editor.getValue(), {'gfm':true, 'breaks':true}));
         }
     });
+
+    $('#media-button').click(function(){
+        $.get(script_root + '/admin/media', function(data){
+            $('#media-library-list').empty();
+            refreshfiles(data);
+            $('#media-modal').modal();
+        });
+    })
 </script>
 {% endblock %}
