@@ -63,19 +63,16 @@ def admin_pages_media():
         for f in files:
             data = utils.upload_file(file=f, chalid=None)
             if data:
-                uploaded.append({'id':data[0], 'location':data[1]})
+                uploaded.append({'id': data[0], 'location': data[1]})
         return jsonify({'results': uploaded})
-
     elif request.method == 'DELETE':
         file_ids = request.form.getlist('file_ids[]')
         for file_id in file_ids:
             utils.delete_file(file_id)
         return True
-
     else:
-        files = [{'id':f.id, 'location':f.location} for f in Files.query.filter_by(chal=None).all()]
+        files = [{'id': f.id, 'location': f.location} for f in Files.query.filter_by(chal=None).all()]
         return jsonify({'results': files})
-
 
 
 @admin_pages.route('/admin/page/<pageroute>/delete', methods=['POST'])
