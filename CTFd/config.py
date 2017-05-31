@@ -128,6 +128,20 @@ class Config(object):
     if CACHE_TYPE == 'redis':
         CACHE_REDIS_URL = os.environ.get('REDIS_URL')
 
+    '''
+    Configuration for S3 for attachments
+
+    S3_ATTACHMENTS_ACCESS_KEY_ID is your AWS Access Key. If you do not provide this, it will try to use an IAM role or credentials file.
+
+    S3_ATTACHMENTS_SECRET_ACCESS_KEY is your AWS Secret Key. If you do not provide this, it will try to use an IAM role or credentials file.
+
+    S3_ATTACHMENTS_BUCKET is the name of your Amazon S3 bucket.
+
+    adapted from CTFd-S3-plugin https://github.com/CTFd/CTFd-S3-plugin
+    '''
+    S3_ATTACHMENTS_ACCESS_KEY_ID = os.environ.get('S3_ATTACHMENTS_ACCESS_KEY_ID')
+    S3_ATTACHMENTS_SECRET_ACCESS_KEY = os.environ.get('S3_ATTACHMENTS_SECRET_ACCESS_KEY')
+    S3_ATTACHMENTS_BUCKET = os.environ.get('S3_ATTACHMENTS_BUCKET')
 
 class TestingConfig(Config):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
