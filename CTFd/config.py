@@ -138,8 +138,17 @@ class Config(object):
 
     http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     '''
+'''
+    CACHE_TYPE specifies how CTFd should cache configuration values. If CACHE_TYPE is set to 'redis', CTFd will make use
+    of the REDIS_* values specified in environment variables.
+
+    http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
+    '''
     CACHE_TYPE = os.environ.get('CTFD_CACHE_TYPE')
-    CACHE_REDIS_URL = os.environ.get('CTFD_CACHE_REDIS_URL')
+    CACHE_REDIS_HOST=os.environ.get('CTFD_REDIS_HOST'),
+    CACHE_REDIS_PORT=os.environ.get('CTFD_REDIS_PORT'),
+    CACHE_REDIS_PASSWORD=os.environ.get('CTFD_REDIS_PASSWORD'),
+    CACHE_REDIS_DB=os.environ.get('CTFD_REDIS_DB')
 
 
 class TestingConfig(Config):
