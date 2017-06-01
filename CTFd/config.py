@@ -2,13 +2,13 @@ import os
 
 ##### GENERATE SECRET KEY #####
 
-with open('.ctfd_secret_key', 'a+b') as secret:
-    secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
-    key = secret.read()
-    if not key:
-        key = os.urandom(64)
-        secret.write(key)
-        secret.flush()
+# with open('.ctfd_secret_key', 'a+b') as secret:
+#     secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
+#     key = secret.read()
+#     if not key:
+#         key = os.urandom(64)
+#         secret.write(key)
+#         secret.flush()
 
 ##### SERVER SETTINGS #####
 
@@ -23,7 +23,7 @@ class Config(object):
 
     http://flask.pocoo.org/docs/0.11/quickstart/#sessions
     '''
-    SECRET_KEY = os.environ.get('SECRET_KEY') or key
+    SECRET_KEY = os.environ.get('CTFD_SECRET_KEY')# or key
 
 
     '''
@@ -32,7 +32,7 @@ class Config(object):
 
     http://flask-sqlalchemy.pocoo.org/2.1/config/#configuration-keys
     '''
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(__file__))
+    SQLALCHEMY_DATABASE_URI = os.environ.get('CTFD_DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(__file__))
 
 
     '''
@@ -46,14 +46,14 @@ class Config(object):
     SESSION_TYPE is a configuration value used for Flask-Session. It is currently unused in CTFd.
     http://pythonhosted.org/Flask-Session/#configuration
     '''
-    SESSION_TYPE = "filesystem"
+    SESSION_TYPE = os.environ.get('CTFD_SESSION_TYPE')
 
 
     '''
     SESSION_FILE_DIR is a configuration value used for Flask-Session. It is currently unused in CTFd.
     http://pythonhosted.org/Flask-Session/#configuration
     '''
-    SESSION_FILE_DIR = "/tmp/flask_session"
+    SESSION_FILE_DIR = "/tmp/flask_session" if SESSION_TYPE == "filesystem" else None
 
 
     '''
@@ -71,21 +71,35 @@ class Config(object):
     '''
     HOST specifies the hostname where the CTFd instance will exist. It is currently unused.
     '''
-    HOST = ".ctfd.io"
+    HOST = os.environ.get('CTFD_HOST')
 
 
     '''
     MAILFROM_ADDR is the email address that emails are sent from if not overridden in the configuration panel.
     '''
-    MAILFROM_ADDR = "noreply@ctfd.io"
+    MAILFROM_ADDR = os.environ.get('CTFD_MAILFROM_ADDR')
 
+    '''
+    Configuration for S3 for attachments
+
+    S3_ATTACHMENTS_ACCESS_KEY_ID is your AWS Access Key. If you do not provide this, it will try to use an IAM role or credentials file.
+
+    S3_ATTACHMENTS_SECRET_ACCESS_KEY is your AWS Secret Key. If you do not provide this, it will try to use an IAM role or credentials file.
+
+    S3_ATTACHMENTS_BUCKET is the name of your Amazon S3 bucket.
+
+    adapted from CTFd-S3-plugin https://github.com/CTFd/CTFd-S3-plugin
+    '''
+    S3_ATTACHMENTS_ACCESS_KEY_ID = os.environ.get('CTFD_S3_ATTACHMENTS_ACCESS_KEY_ID')
+    S3_ATTACHMENTS_SECRET_ACCESS_KEY = os.environ.get('CTFD_S3_ATTACHMENTS_SECRET_ACCESS_KEY')
+    S3_ATTACHMENTS_BUCKET = os.environ.get('CTFD_S3_ATTACHMENTS_BUCKET')
 
     '''
     UPLOAD_FOLDER is the location where files are uploaded.
     The default destination is the CTFd/uploads folder. If you need Amazon S3 files
     you can use the CTFd S3 plugin: https://github.com/ColdHeat/CTFd-S3-plugin
     '''
-    UPLOAD_FOLDER = os.path.normpath('uploads')
+    UPLOAD_FOLDER = os.path.normpath('uploads') # @@@TODO set via env var once we make S3 configurable
 
 
     '''
@@ -124,24 +138,9 @@ class Config(object):
 
     http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     '''
-    CACHE_TYPE = "simple"
-    if CACHE_TYPE == 'redis':
-        CACHE_REDIS_URL = os.environ.get('REDIS_URL')
+    CACHE_TYPE = os.environ.get('CTFD_CACHE_TYPE')
+    CACHE_REDIS_URL = os.environ.get('CTFD_CACHE_REDIS_URL')
 
-    '''
-    Configuration for S3 for attachments
-
-    S3_ATTACHMENTS_ACCESS_KEY_ID is your AWS Access Key. If you do not provide this, it will try to use an IAM role or credentials file.
-
-    S3_ATTACHMENTS_SECRET_ACCESS_KEY is your AWS Secret Key. If you do not provide this, it will try to use an IAM role or credentials file.
-
-    S3_ATTACHMENTS_BUCKET is the name of your Amazon S3 bucket.
-
-    adapted from CTFd-S3-plugin https://github.com/CTFd/CTFd-S3-plugin
-    '''
-    S3_ATTACHMENTS_ACCESS_KEY_ID = os.environ.get('S3_ATTACHMENTS_ACCESS_KEY_ID')
-    S3_ATTACHMENTS_SECRET_ACCESS_KEY = os.environ.get('S3_ATTACHMENTS_SECRET_ACCESS_KEY')
-    S3_ATTACHMENTS_BUCKET = os.environ.get('S3_ATTACHMENTS_BUCKET')
 
 class TestingConfig(Config):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
