@@ -1,12 +1,13 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils import admins_only, is_admin, cache
-from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
+from CTFd.models import db, Teams, Solves, Awards, Unlocks, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
 
 from CTFd import utils
 
 admin_teams = Blueprint('admin_teams', __name__)
+
 
 @admin_teams.route('/admin/teams', defaults={'page': '1'})
 @admin_teams.route('/admin/teams/<int:page>')
@@ -131,6 +132,8 @@ def unban(teamid):
 @admins_only
 def delete_team(teamid):
     try:
+        Unlocks.query.filter_by(teamid=teamid).delete()
+        Awards.query.filter_by(teamid=teamid).delete()
         WrongKeys.query.filter_by(teamid=teamid).delete()
         Solves.query.filter_by(teamid=teamid).delete()
         Tracking.query.filter_by(team=teamid).delete()
@@ -223,6 +226,7 @@ def delete_wrong_key(keyid):
     db.session.close()
     return '1'
 
+
 @admin_teams.route('/admin/awards/<int:award_id>/delete', methods=['POST'])
 @admins_only
 def delete_award(award_id):
@@ -231,6 +235,7 @@ def delete_award(award_id):
     db.session.commit()
     db.session.close()
     return '1'
+
 
 @admin_teams.route('/admin/teams/<int:teamid>/awards', methods=['GET'])
 @admins_only

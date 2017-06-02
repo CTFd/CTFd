@@ -86,7 +86,7 @@ def gen_file():
     pass
 
 
-def gen_key(db, chal, flag='flag', key_type=0):
+def gen_flag(db, chal, flag='flag', key_type=0):
     key = Keys(chal, flag, key_type)
     db.session.add(key)
     db.session.commit()
@@ -105,6 +105,7 @@ def gen_solve(db, chalid, teamid, ip='127.0.0.1', flag='rightkey'):
     db.session.add(solve)
     db.session.commit()
     return solve
+
 
 def gen_wrongkey(db, teamid, chalid, flag='wrongkey'):
     wrongkey = WrongKeys(teamid, chalid, flag)

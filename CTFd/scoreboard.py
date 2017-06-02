@@ -10,16 +10,16 @@ scoreboard = Blueprint('scoreboard', __name__)
 
 def get_standings(admin=False, count=None):
     scores = db.session.query(
-                Solves.teamid.label('teamid'),
-                db.func.sum(Challenges.value).label('score'),
-                db.func.max(Solves.date).label('date')
-            ).join(Challenges).group_by(Solves.teamid)
+        Solves.teamid.label('teamid'),
+        db.func.sum(Challenges.value).label('score'),
+        db.func.max(Solves.date).label('date')
+    ).join(Challenges).group_by(Solves.teamid)
 
     awards = db.session.query(
-                Awards.teamid.label('teamid'),
-                db.func.sum(Awards.value).label('score'),
-                db.func.max(Awards.date).label('date')
-            ).group_by(Awards.teamid)
+        Awards.teamid.label('teamid'),
+        db.func.sum(Awards.value).label('score'),
+        db.func.max(Awards.date).label('date')
+    ).group_by(Awards.teamid)
 
     freeze = utils.get_config('freeze')
     if not admin and freeze:
@@ -29,28 +29,28 @@ def get_standings(admin=False, count=None):
     results = union_all(scores, awards).alias('results')
 
     sumscores = db.session.query(
-                    results.columns.teamid,
-                    db.func.sum(results.columns.score).label('score'),
-                    db.func.max(results.columns.date).label('date')
-                ).group_by(results.columns.teamid).subquery()
+        results.columns.teamid,
+        db.func.sum(results.columns.score).label('score'),
+        db.func.max(results.columns.date).label('date')
+    ).group_by(results.columns.teamid).subquery()
 
     if admin:
         standings_query = db.session.query(
-                            Teams.id.label('teamid'),
-                            Teams.name.label('name'),
-                            Teams.banned, sumscores.columns.score
-                        )\
-                        .join(sumscores, Teams.id == sumscores.columns.teamid) \
-                        .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+            Teams.id.label('teamid'),
+            Teams.name.label('name'),
+            Teams.banned, sumscores.columns.score
+        )\
+            .join(sumscores, Teams.id == sumscores.columns.teamid) \
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
     else:
         standings_query = db.session.query(
-                            Teams.id.label('teamid'),
-                            Teams.name.label('name'),
-                            sumscores.columns.score
-                        )\
-                        .join(sumscores, Teams.id == sumscores.columns.teamid) \
-                        .filter(Teams.banned == False) \
-                        .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+            Teams.id.label('teamid'),
+            Teams.name.label('name'),
+            sumscores.columns.score
+        )\
+            .join(sumscores, Teams.id == sumscores.columns.teamid) \
+            .filter(Teams.banned == False) \
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
 
     if count is None:
         standings = standings_query.all()
@@ -102,7 +102,6 @@ def topteams(count):
         solves = Solves.query.filter_by(teamid=team.teamid)
         awards = Awards.query.filter_by(teamid=team.teamid)
 
-
         freeze = utils.get_config('freeze')
 
         if freeze:
@@ -111,7 +110,6 @@ def topteams(count):
 
         solves = solves.all()
         awards = awards.all()
-
 
         json['scores'][team.name] = []
         for x in solves:

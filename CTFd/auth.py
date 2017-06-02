@@ -19,7 +19,7 @@ auth = Blueprint('auth', __name__)
 def confirm_user(data=None):
     if not utils.get_config('verify_emails'):
         return redirect(url_for('challenges.challenges_view'))
-    if data and request.method == "GET": # User is confirming email account
+    if data and request.method == "GET":  # User is confirming email account
         try:
             s = Signer(app.config['SECRET_KEY'])
             email = s.unsign(urllib.unquote_plus(data.decode('base64')))
@@ -36,7 +36,7 @@ def confirm_user(data=None):
         if utils.authed():
             return redirect(url_for('challenges.challenges_view'))
         return redirect(url_for('auth.login'))
-    if not data and request.method == "GET": # User has been directed to the confirm page because his account is not verified
+    if not data and request.method == "GET":  # User has been directed to the confirm page because his account is not verified
         if not utils.authed():
             return redirect(url_for('auth.login'))
         team = Teams.query.filter_by(id=session['id']).first_or_404()
@@ -130,15 +130,15 @@ def register():
                 session['admin'] = team.admin
                 session['nonce'] = utils.sha512(os.urandom(10))
 
-                if utils.can_send_mail() and utils.get_config('verify_emails'): # Confirming users is enabled and we can send email.
+                if utils.can_send_mail() and utils.get_config('verify_emails'):  # Confirming users is enabled and we can send email.
                     db.session.close()
                     logger = logging.getLogger('regs')
                     logger.warn("[{0}] {1} registered (UNCONFIRMED) with {2}".format(time.strftime("%m/%d/%Y %X"),
                                                                                      request.form['name'].encode('utf-8'),
                                                                                      request.form['email'].encode('utf-8')))
                     return redirect(url_for('auth.confirm_user'))
-                else: # Don't care about confirming users
-                    if utils.can_send_mail(): # We want to notify the user that they have registered.
+                else:  # Don't care about confirming users
+                    if utils.can_send_mail():  # We want to notify the user that they have registered.
                         utils.sendmail(request.form['email'], "You've successfully registered for {}".format(utils.get_config('ctf_name')))
 
         db.session.close()
@@ -159,9 +159,9 @@ def login():
         if team:
             if team and bcrypt_sha256.verify(request.form['password'], team.password):
                 try:
-                    session.regenerate() # NO SESSION FIXATION FOR YOU
+                    session.regenerate()  # NO SESSION FIXATION FOR YOU
                 except:
-                    pass # TODO: Some session objects don't implement regenerate :(
+                    pass  # TODO: Some session objects don't implement regenerate :(
                 session['username'] = team.name
                 session['id'] = team.id
                 session['admin'] = team.admin
@@ -174,7 +174,7 @@ def login():
                 if request.args.get('next') and utils.is_safe_url(request.args.get('next')):
                     return redirect(request.args.get('next'))
                 return redirect(url_for('challenges.challenges_view'))
-            else: # This user exists but the password is wrong
+            else:  # This user exists but the password is wrong
                 errors.append("Your username or password is incorrect")
                 db.session.close()
                 return render_template('login.html', errors=errors)

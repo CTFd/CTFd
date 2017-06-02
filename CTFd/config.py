@@ -1,6 +1,6 @@
 import os
 
-##### GENERATE SECRET KEY #####
+''' GENERATE SECRET KEY '''
 
 # with open('.ctfd_secret_key', 'a+b') as secret:
 #     secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
@@ -10,7 +10,8 @@ import os
 #         secret.write(key)
 #         secret.flush()
 
-##### SERVER SETTINGS #####
+''' SERVER SETTINGS '''
+
 
 class Config(object):
     '''
@@ -25,15 +26,13 @@ class Config(object):
     '''
     SECRET_KEY = os.environ.get('CTFD_SECRET_KEY')# or key
 
-
     '''
     SQLALCHEMY_DATABASE_URI is the URI that specifies the username, password, hostname, port, and database of the server
     used to hold the CTFd database.
 
     http://flask-sqlalchemy.pocoo.org/2.1/config/#configuration-keys
     '''
-    SQLALCHEMY_DATABASE_URI = os.environ.get('CTFD_DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(__file__))
-
+    SQLALCHEMY_DATABASE_URI = os.environ.get('CTFD_DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(os.path.abspath(__file__)))
 
     '''
     SQLALCHEMY_TRACK_MODIFICATIONS is automatically disabled to suppress warnings and save memory. You should only enable
@@ -64,12 +63,10 @@ class Config(object):
     '''
     SESSION_COOKIE_HTTPONLY = True
 
-
     '''
     PERMANENT_SESSION_LIFETIME is the lifetime of a session.
     '''
-    PERMANENT_SESSION_LIFETIME = 604800 # 7 days in seconds
-
+    PERMANENT_SESSION_LIFETIME = 604800  # 7 days in seconds
 
     '''
     HOST specifies the hostname where the CTFd instance will exist. It is currently unused.
@@ -84,6 +81,7 @@ class Config(object):
     '''
     Configuration for S3 for attachments
 
+<<<<<<< HEAD
     S3_ATTACHMENTS_ACCESS_KEY_ID is your AWS Access Key. If you do not provide this, it will try to use an IAM role or credentials file.
 
     S3_ATTACHMENTS_SECRET_ACCESS_KEY is your AWS Secret Key. If you do not provide this, it will try to use an IAM role or credentials file.
@@ -101,15 +99,13 @@ class Config(object):
     The default destination is the CTFd/uploads folder. If you need Amazon S3 files
     you can use the CTFd S3 plugin: https://github.com/ColdHeat/CTFd-S3-plugin
     '''
-    UPLOAD_FOLDER = os.path.normpath('uploads') # @@@TODO set via env var once we make S3 configurable
-
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')  # @@@TODO set via env var once we make S3 configurable
 
     '''
     TEMPLATES_AUTO_RELOAD specifies whether Flask should check for modifications to templates and
     reload them automatically
     '''
     TEMPLATES_AUTO_RELOAD = True
-
 
     '''
     TRUSTED_PROXIES defines a set of regular expressions used for finding a user's IP address if the CTFd instance

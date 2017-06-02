@@ -7,6 +7,7 @@ from CTFd import utils
 
 admin_scoreboard = Blueprint('admin_scoreboard', __name__)
 
+
 @admin_scoreboard.route('/admin/scoreboard')
 @admins_only
 def admin_scoreboard_view():

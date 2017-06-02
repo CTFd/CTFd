@@ -4,7 +4,10 @@
 [![Build Status](https://travis-ci.org/CTFd/CTFd.svg?branch=master)](https://travis-ci.org/CTFd/CTFd)
 [![CTFd Slack](https://slack.ctfd.io/badge.svg)](https://slack.ctfd.io/)
 
-CTFd is a CTF in a can. Easily modifiable and has everything you need to run a jeopardy style CTF.
+## What is CTFd?
+CTFd is a Capture The Flag in a can. It's easy to customize with plugins and themes and has everything you need to run a jeopardy style CTF.
+
+![CTFd is a CTF in a can.](https://github.com/CTFd/CTFd/raw/master/CTFd/static/original/img/scoreboard.png?raw=true)
 
 ## Install
  1. `./prepare.sh` to install dependencies using apt.

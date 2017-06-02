@@ -53,13 +53,17 @@ def setup():
 
             # Index page
             page = Pages('index', """<div class="container main-container">
-    <img class="logo" src="{0}/static/original/img/logo.png" />
+    <img class="logo" src="static/original/img/logo.png" />
     <h3 class="text-center">
-        Welcome to a cool CTF framework written by <a href="https://github.com/ColdHeat">Kevin Chung</a> of <a href="https://github.com/isislab">@isislab</a>
+        <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
+        <p>Follow us on social media:</p>
+        <a href="https://twitter.com/ctfdio"><i class="fa fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
+        <a href="https://facebook.com/ctfdio"><i class="fa fa-facebook-official fa-2x" aria-hidden="true"></i></a>&nbsp;
+        <a href="https://github.com/ctfd"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>
     </h3>
-
+    <br>
     <h4 class="text-center">
-        <a href="{0}/admin">Click here</a> to login and setup your CTF
+        <a href="admin">Click here</a> to login and setup your CTF
     </h4>
 </div>""".format(request.script_root))
 

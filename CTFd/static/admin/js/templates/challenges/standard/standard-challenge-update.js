@@ -178,8 +178,8 @@ function updatetags(){
     $('#chal-tags > span > span').each(function(i, e){
         tags.push($(e).text())
     });
-    $.post(script_root + '/admin/tags/'+chal, {'tags':tags, 'nonce': $('#nonce').val()})
-    loadchal(chal)
+    $.post(script_root + '/admin/tags/'+chal, {'tags':tags, 'nonce': $('#nonce').val()});
+    $('#update-tags').modal('toggle');
 }
 
 function updatefiles(){

@@ -1,4 +1,7 @@
-from tests.helpers import create_ctfd, register_user, login_as_user, gen_challenge
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from tests.helpers import *
 from CTFd.models import Teams
 import json
 
@@ -22,7 +25,7 @@ def test_register_user():
 
 
 def test_register_duplicate_teamname():
-    """A user shouldn't be able to use and already registered team name"""
+    """A user shouldn't be able to use an already registered team name"""
     app = create_ctfd()
     with app.app_context():
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
@@ -74,7 +77,7 @@ def test_user_isnt_admin():
 
 
 def test_user_get_teams():
-    """Can a registered user can load /teams"""
+    """Can a registered user load /teams"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -84,7 +87,7 @@ def test_user_get_teams():
 
 
 def test_user_get_scoreboard():
-    """Can a registered user can load /scoreboard"""
+    """Can a registered user load /scoreboard"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -94,7 +97,7 @@ def test_user_get_scoreboard():
 
 
 def test_user_get_scores():
-    """Can a registered user can load /scores"""
+    """Can a registered user load /scores"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -104,7 +107,7 @@ def test_user_get_scores():
 
 
 def test_user_get_topteams():
-    """Can a registered user can load /top/10"""
+    """Can a registered user load /top/10"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -114,7 +117,7 @@ def test_user_get_topteams():
 
 
 def test_user_get_challenges():
-    """Can a registered user can load /challenges"""
+    """Can a registered user load /challenges"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -124,7 +127,7 @@ def test_user_get_challenges():
 
 
 def test_user_get_chals():
-    """Can a registered user can load /chals"""
+    """Can a registered user load /chals"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -134,7 +137,7 @@ def test_user_get_chals():
 
 
 def test_user_get_solves_per_chal():
-    """Can a registered user can load /chals/solves"""
+    """Can a registered user load /chals/solves"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -144,7 +147,7 @@ def test_user_get_solves_per_chal():
 
 
 def test_user_get_solves():
-    """Can a registered user can load /solves"""
+    """Can a registered user load /solves"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -154,7 +157,7 @@ def test_user_get_solves():
 
 
 def test_user_get_team_page():
-    """Can a registered user can load their public profile (/team/2)"""
+    """Can a registered user load their public profile (/team/2)"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -164,7 +167,7 @@ def test_user_get_team_page():
 
 
 def test_user_get_profile():
-    """Can a registered user can load their private profile (/profile)"""
+    """Can a registered user load their private profile (/profile)"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -205,3 +208,61 @@ def test_viewing_challenges():
         r = client.get('/chals')
         chals = json.loads(r.get_data(as_text=True))
         assert len(chals['game']) == 1
+
+
+def test_submitting_correct_flag():
+    """Test that correct flags are correct"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        flag = gen_flag(app.db, chal=chal.id, flag='flag')
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 200
+        resp = json.loads(r.data.decode('utf8'))
+        assert resp.get('status') == 1 and resp.get('message') == "Correct"
+
+
+def test_submitting_incorrect_flag():
+    """Test that incorrect flags are incorrect"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        flag = gen_flag(app.db, chal=chal.id, flag='flag')
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'notflag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 200
+        resp = json.loads(r.data.decode('utf8'))
+        assert resp.get('status') == 0 and resp.get('message') == "Incorrect"
+
+
+def test_submitting_unicode_flag():
+    """Test that users can submit a unicode flag"""
+    print("Test that users can submit a flag")
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        flag = gen_flag(app.db, chal=chal.id, flag=u'你好')
+        with client.session_transaction() as sess:
+            data = {
+                "key": '你好',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 200
+        resp = json.loads(r.data.decode('utf8'))
+        assert resp.get('status') == 1 and resp.get('message') == "Correct"
