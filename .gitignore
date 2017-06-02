@@ -63,3 +63,7 @@ CTFd/uploads
 .data/
 .ctfd_secret_key
 .*.swp
+
+compose/ctfd_data/
+compose/postgres_data/
+compose/.env

@@ -5,7 +5,7 @@ from flask import current_app as app, render_template, request, redirect, abort,
 from jinja2.exceptions import TemplateNotFound
 from passlib.hash import bcrypt_sha256
 
-from CTFd.models import db, Teams, Solves, Awards, Files, Pages
+from CTFd.models import db, Teams, Solves, Awards, Files, Pages, Challenges
 from CTFd.utils import cache
 from CTFd import utils
 
@@ -14,11 +14,19 @@ views = Blueprint('views', __name__)
 
 @views.before_request
 def redirect_setup():
-    if request.path.startswith("/static"):
+    if request.path.startswith("/static") or request.path == "/healthcheck":
         return
     if not utils.is_setup() and request.path != "/setup":
         return redirect(url_for('views.setup'))
 
+# Health check endpoint for ELB
+@views.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    if request.user_agent.string == 'ELB-HealthChecker/1.0':
+        session.clear()
+        return Response("OK", 200)
+    else:
+        return redirect(url_for('views.static_html'))
 
 @views.route('/setup', methods=['GET', 'POST'])
 def setup():
@@ -108,7 +116,6 @@ def setup():
 @views.route('/static/user.css')
 def custom_css():
     return Response(utils.get_config('css'), mimetype='text/css')
-
 
 # Static HTML files
 @views.route("/", defaults={'template': 'index'})
@@ -251,14 +258,47 @@ def profile():
 
 @views.route('/files', defaults={'path': ''})
 @views.route('/files/<path:path>')
+
+# S3 file_handler function adapted from ctfd-s3-plugin https://github.com/CTFd/CTFd-S3-plugin
+
 def file_handler(path):
     f = Files.query.filter_by(location=path).first_or_404()
-    if f.chal:
-        if not utils.is_admin():
-            if not utils.ctftime():
-                if utils.view_after_ctf() and utils.ctf_started():
-                    pass
-                else:
-                    abort(403)
-    upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-    return send_file(os.path.join(upload_folder, f.location))
+    chal = Challenges.query.filter_by(id=f.chal).first()
+
+    s3, bucket = utils.get_s3_conn(app)
+    if utils.is_admin():
+        key = f.location
+        url = s3.generate_presigned_url('get_object', Params = {
+            'Bucket': bucket,
+            'Key': key, })
+        return redirect(url)
+
+    if utils.user_can_view_challenges():
+        if not utils.ctftime():
+            if not utils.view_after_ctf():
+                abort(403)
+
+        if chal.hidden:
+            abort(403)
+
+        key = f.location
+        url = s3.generate_presigned_url('get_object', Params = {
+            'Bucket': bucket,
+            'Key': key, })
+        return redirect(url)
+    else:
+        return redirect(url_for('auth.login'))
+
+# default file_handler function
+
+# def file_handler(path):
+#     f = Files.query.filter_by(location=path).first_or_404()
+#     if f.chal:
+#         if not utils.is_admin():
+#             if not utils.ctftime():
+#                 if utils.view_after_ctf() and utils.ctf_started():
+#                     pass
+#                 else:
+#                     abort(403)
+#     upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
+#     return send_file(os.path.join(upload_folder, f.location))

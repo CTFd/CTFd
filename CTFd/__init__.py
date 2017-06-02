@@ -9,7 +9,7 @@ from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
-from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
+from CTFd.utils import sess, cache, migrate, migrate_upgrade, migrate_stamp
 from CTFd import utils
 
 # Hack to support Unicode in Python 2 properly
@@ -63,6 +63,9 @@ def create_app(config='CTFd.config.Config'):
 
         cache.init_app(app)
         app.cache = cache
+
+        sess.init_app(app)
+        app.sess = sess
 
         version = utils.get_config('ctf_version')
 
