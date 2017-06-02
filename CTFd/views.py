@@ -14,11 +14,19 @@ views = Blueprint('views', __name__)
 
 @views.before_request
 def redirect_setup():
-    if request.path.startswith("/static"):
+    if request.path.startswith("/static") or request.path == "/healthcheck":
         return
     if not utils.is_setup() and request.path != "/setup":
         return redirect(url_for('views.setup'))
 
+# Health check endpoint for ELB
+@views.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    if request.user_agent.string == 'ELB-HealthChecker/1.0':
+        session.clear()
+        return Response("OK", 200)
+    else:
+        return redirect(url_for('views.static_html'))
 
 @views.route('/setup', methods=['GET', 'POST'])
 def setup():
@@ -104,7 +112,6 @@ def setup():
 @views.route('/static/user.css')
 def custom_css():
     return Response(utils.get_config('css'), mimetype='text/css')
-
 
 # Static HTML files
 @views.route("/", defaults={'template': 'index'})

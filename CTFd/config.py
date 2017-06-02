@@ -41,20 +41,23 @@ class Config(object):
     '''
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-
     '''
-    SESSION_TYPE is a configuration value used for Flask-Session. It is currently unused in CTFd.
-    http://pythonhosted.org/Flask-Session/#configuration
+    SESSION_TYPE and SESSION_REDIS are configuration values used for Flask-Session.
     '''
     SESSION_TYPE = os.environ.get('CTFD_SESSION_TYPE')
-
+    from redis import StrictRedis
+    SESSION_REDIS = StrictRedis(
+                                    host=os.environ.get('REDIS_HOST'), 
+                                    port=os.environ.get('REDIS_PORT'),
+                                    password=os.environ.get('REDIS_PASSWORD'),
+                                    db=os.environ.get('REDIS_DB')
+                                )
 
     '''
     SESSION_FILE_DIR is a configuration value used for Flask-Session. It is currently unused in CTFd.
     http://pythonhosted.org/Flask-Session/#configuration
     '''
     SESSION_FILE_DIR = "/tmp/flask_session" if SESSION_TYPE == "filesystem" else None
-
 
     '''
     SESSION_COOKIE_HTTPONLY controls if cookies should be set with the HttpOnly flag.
@@ -72,7 +75,6 @@ class Config(object):
     HOST specifies the hostname where the CTFd instance will exist. It is currently unused.
     '''
     HOST = os.environ.get('CTFD_HOST')
-
 
     '''
     MAILFROM_ADDR is the email address that emails are sent from if not overridden in the configuration panel.
@@ -128,27 +130,17 @@ class Config(object):
         '^192\.168\.'
     ]
 
-
     '''
-    CACHE_TYPE specifies how CTFd should cache configuration values. If CACHE_TYPE is set to 'redis', CTFd will make use
-    of the REDIS_URL specified in environment variables. You can also choose to hardcode the REDIS_URL here.
-
-    CACHE_REDIS_URL is the URL to connect to Redis server.
-    Example: redis://user:password@localhost:6379/2.
-
-    http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
-    '''
-'''
     CACHE_TYPE specifies how CTFd should cache configuration values. If CACHE_TYPE is set to 'redis', CTFd will make use
     of the REDIS_* values specified in environment variables.
 
     http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     '''
     CACHE_TYPE = os.environ.get('CTFD_CACHE_TYPE')
-    CACHE_REDIS_HOST=os.environ.get('CTFD_REDIS_HOST'),
-    CACHE_REDIS_PORT=os.environ.get('CTFD_REDIS_PORT'),
-    CACHE_REDIS_PASSWORD=os.environ.get('CTFD_REDIS_PASSWORD'),
-    CACHE_REDIS_DB=os.environ.get('CTFD_REDIS_DB')
+    CACHE_REDIS_HOS = os.environ.get('CTFD_REDIS_HOST'),
+    CACHE_REDIS_PORT = os.environ.get('CTFD_REDIS_PORT'),
+    CACHE_REDIS_PASSWORD = os.environ.get('CTFD_REDIS_PASSWORD'),
+    CACHE_REDIS_DB = os.environ.get('CTFD_REDIS_DB')
 
 
 class TestingConfig(Config):
