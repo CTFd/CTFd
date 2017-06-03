@@ -119,3 +119,10 @@ def gen_tracking(db, ip, team):
     db.session.add(tracking)
     db.session.commit()
     return tracking
+
+
+def gen_page(db, route, html):
+    page = Pages(route, html)
+    db.session.add(page)
+    db.session.commit()
+    return page
