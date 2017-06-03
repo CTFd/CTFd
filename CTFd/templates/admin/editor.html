@@ -4,8 +4,11 @@
     <link rel="stylesheet" type="text/css" href="{{ request.script_root }}/static/admin/css/vendor/codemirror.min.css">
     <style>
     .row-fluid { margin: 25px; padding-bottom: 25px; }
-    .media-item-wrapper { width: 100px; height: 100px; margin: 5px; float: left; border: 1px solid #eee; text-align: center;}
-    .media-item-wrapper > a > i {line-height: 100px;}
+    .media-item-wrapper { height: 120px; margin: 5px;
+        float: left; border: 1px solid #eee; text-align: center; text-overflow: ellipsis; overflow: hidden;}
+    .media-item-wrapper > a > i {line-height: 90px;}
+    .media-item-title{ font-size: 10px; }
+    #media-item{display: none;}
     </style>
 {% endblock %}
 
@@ -18,8 +21,27 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h3 class="text-center">Media Library</h3>
 
-                <div class="row" id="media-library-list">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-1" id="media-library-list">
+                    </div>
+                    <div class="col-md-2">
+                        <h4 class="text-center">Media Details</h4>
+                        <div id="media-item">
+                            <div class="row text-center" id="media-icon">
+                            </div>
+                            <br>
+                            <div class="row text-center" id="media-filename">
+                            </div>
+                            <br>
+                            <div class="row form-group">
+                                Link: <input class="form-control" type="text" id="media-link">
+                            </div>
 
+                            <div class="row form-group text-center">
+                                <button class="btn btn-success" id="media-insert">Insert</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <hr>
@@ -84,7 +106,7 @@
                             <br>
                             <div class="btn-group btn-group-sm" role="group" aria-label="...">
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-default" id="media-button"><i class="fa fa-camera-retro" aria-hidden="true"></i> Add Media</button>
+                                    <button type="button" class="btn btn-default" id="media-button"><i class="fa fa-camera-retro" aria-hidden="true"></i> Media Library</button>
                                 </div>
                             </div>
                             <br>
@@ -181,35 +203,42 @@
         for (var i = 0; i < data.length; i++) {
             var f = data[i];
             var ext = f.location.split('.').pop();
+            var fname = f.location.split('/')[1];
 
-            var wrapper = $('<div>').attr('class', 'media-item-wrapper')
+            var wrapper = $('<div>').attr('class', 'media-item-wrapper col-md-2')
 
-            if (mapping[ext] == 'fa-file-image-o'){
-                var obj = $('<img>');
-                obj.attr('src', script_root + '/files/' + f.location);
-                obj.attr('data-id', f.id);
-                obj.attr('height', '100px');
-                wrapper.attr('data-location',  script_root + '/files/' + f.location);
-                wrapper.attr('data-id',  f.id);
-                wrapper.append(obj);
-                list.append(wrapper);
-            } else if (mapping[ext] == undefined){
-                var link = $('<a>');
-                link.attr('href', script_root + '/files/' + f.location);
+            var link = $('<a>');
+            link.attr('href', '#');
+
+            if (mapping[ext] == undefined)
                 link.append('<i class="fa fa-file-o fa-4x" aria-hidden="true"></i>'.format(mapping[ext]));
-                wrapper.append(link);
-                wrapper.attr('data-location',  script_root + '/files/' + f.location);
-                wrapper.attr('data-id',  f.id);
-                list.append(wrapper);
-            } else {
-                var link = $('<a>');
-                link.attr('href', script_root + '/files/' + f.location);
+            else
                 link.append('<i class="fa {0} fa-4x" aria-hidden="true"></i>'.format(mapping[ext]));
-                wrapper.append(link);
-                wrapper.attr('data-location',  script_root + '/files/' + f.location);
-                wrapper.attr('data-id',  f.id);
-                list.append(wrapper);
-            }
+
+            link.click(function(e){
+                var media_div = $(this).parent();
+                var icon = $(this).find('.fa')[0];
+                var f_loc = media_div.attr('data-location');
+                var fname = media_div.attr('data-filename');
+                $('#media-link').val(f_loc);
+                $('#media-filename').text(fname);
+
+                $('#media-icon').empty()
+                if ($(icon).hasClass('fa-file-image-o')){
+                    $('#media-icon').append($('<img>').attr('src', f_loc).attr('width', '100%'));
+                } else {
+                    // icon is empty so we need to pull outerHTML
+                    $('#media-icon').append(icon.outerHTML);
+                }
+                $('#media-item').show();
+            });
+            wrapper.append(link);
+            wrapper.attr('data-location',  script_root + '/files/' + f.location);
+            wrapper.attr('data-id',  f.id);
+            wrapper.attr('data-filename',  fname);
+            list.append(wrapper);
+
+            wrapper.append($('<span>').attr('class', 'media-item-title').text(fname));
         }
     }
 
@@ -219,6 +248,26 @@
         mode: "xml",
         htmlMode: true,
         theme: 'elegant'
+    });
+
+    function insert_at_cursor(editor, text) {
+        var doc = editor.getDoc();
+        var cursor = doc.getCursor();
+        doc.replaceRange(text, cursor);
+    }
+
+    $('#media-insert').click(function(e){
+        var tag = $('#media-icon').children()[0].nodeName.toLowerCase();
+        console.log(tag);
+        var link = $('#media-link').val();
+        var fname = $('#media-filename').text();
+        if (tag == 'img'){
+            var entry = '![{0}]({1})'.format(fname, link);
+        } else if (tag == 'i'){
+            var entry = '[{0}]({1})'.format(fname, link);
+        }
+
+        insert_at_cursor(editor, entry);
     });
 
     $('#page-edit').submit(function (e){
