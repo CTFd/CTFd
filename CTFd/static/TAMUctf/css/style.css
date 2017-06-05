@@ -1,0 +1,371 @@
+
+html, body, .container {
+    height: 100% !important;
+    font-family: 'Lato', sans-serif;
+}
+
+h1, h2 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    letter-spacing: 2px;
+}
+
+td {
+    padding: 15px !important;
+}
+
+a {
+    outline: 0;
+}
+
+.no-margin-right {
+    margin-right: 0px !important;
+}
+
+.no-margin-left {
+    margin-left: -3px !important;
+}
+
+.navbar > .container {
+    padding-top: 30px;
+}
+
+.navbar .navbar-brand {
+    font-size: 24px;
+    letter-spacing: -0.04rem;
+    line-height: 15px;
+    color: #FFF;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #FFF !important;
+}
+
+.navbar li > a {
+    opacity: 0.5;
+    transition: opacity 0.08s ease-in 0s;
+    cursor: pointer;
+}
+
+.navbar li > a:hover {
+    opacity: 0.8;
+}
+
+.align-text-to-button {
+    padding-top: 16px;
+}
+
+.padded-container {
+    margin-top: 50px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.main-container {
+    margin-top: 35px;
+    margin-bottom: 25px;
+}
+
+#login-container {
+    padding-left: 70px;
+    padding-right: 70px;
+}
+
+#chal > form{
+    width: 400px;
+    margin: 0 auto;
+}
+
+.reveal-modal{
+    text-align: center;
+}
+
+.chal-desc{
+    text-align: left;
+}
+
+table{
+    width: 100%;
+}
+
+#challenges button{
+    margin: 8px;
+}
+
+.row > h1{
+    text-align: center;
+}
+
+#challenges{
+    line-height: 66px;
+}
+
+#score-graph{
+    height: 450px;
+    display: block;
+    clear: both;
+}
+
+#keys-pie-graph{
+    width: 50%;
+    float: left;
+}
+
+#categories-pie-graph{
+    width: 50%;
+    float: left;
+}
+
+.logo{
+    margin: 0 auto;
+    width: 100%;
+    max-width: 500px;
+    padding: 50px;
+    display: block;
+}
+
+@media only screen and (min-width: 40.063em){
+    .top-bar .dropdown{
+        display: block;
+        padding: 0 15px 5px;
+        width: 200% !important;
+    }
+}
+
+.btn {
+    letter-spacing: 1px;
+    text-decoration: none;
+    -moz-user-select: none;
+    border-radius: 0;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+    white-space: nowrap;
+    font-size:14px;
+    line-height:20px;
+    font-weight:700;
+    text-transform:uppercase;
+    padding:8px 20px;
+}
+
+.btn-outlined {
+    border-radius: 0;
+    -webkit-transition: all 0.3s;
+       -moz-transition: all 0.3s;
+            transition: all 0.3s;
+}
+
+.file-wrapper {
+    background-color: #5B7290;
+}
+
+.file-wrapper:hover {
+    background-color: #747474;
+}
+
+.theme-background {
+    background-color: #545454 !important;
+
+}
+
+.solved-challenge {
+    background-color: #8EDC9D !important;
+}
+
+.panel-theme {
+    border-color: #545454;
+}
+
+.panel-theme > .panel-heading {
+    border-color: #545454;
+    background-color: #545454;
+    opacity: 1;
+    color: #FFF;
+    text-align: center;
+}
+
+.btn-outlined.btn-theme {
+    background: none;
+    color: #545454;
+    border-color: #545454;
+    background-image: none;
+    border: 3px solid;
+}
+
+.btn-outlined.btn-theme:hover,
+.btn-outlined.btn-theme:active {
+    color: #FFF;
+    background: #545454;
+    border-color: #545454;
+}
+
+.navbar-inverse {
+    background: none repeat scroll 0% 0% #545454;
+    border: medium none;
+    margin-bottom: 0px;
+}
+
+.jumbotron {
+    background-color: #545454;
+    color: #FFF;
+    padding: 0px 0px 25px;
+}
+
+.jumbotron.home {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.home h1 {
+    font-size: 48px !important;
+}
+
+.navbar {
+    border-radius: 0px;
+}
+
+.modal-content {
+    border-radius: 0px;
+}
+
+.chal-tag {
+    margin: 0 5px 0 5px;
+}
+
+.alert {
+    border-radius: 0px;
+}
+
+/* INPUT CSS */
+
+.submit-row {
+    padding-left: 15px;
+    padding-right: 30px;
+}
+
+.input {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    margin: 1em 0em;
+    vertical-align: top;
+}
+
+.input-field {
+    position: relative;
+    display: block;
+    float: right;
+    padding: 0.8em;
+    width: 60%;
+    border: none;
+    border-radius: 0;
+    background: #f0f0f0;
+    color: #aaa;
+    font-weight: 400;
+    font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-appearance: none; /* for box shadows to show on iOS */
+}
+
+.input-field:focus {
+    outline: none;
+}
+
+.input-label {
+    display: inline-block;
+    float: right;
+    padding: 0 1em;
+    width: 40%;
+    color: #6a7989;
+    font-weight: bold;
+    font-size: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin: 0 0 0 0 !important;
+}
+
+.label-content {
+    position: relative;
+    display: block;
+    padding: 1.6em 0;
+    width: 100%;
+}
+
+.graphic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    fill: none;
+}
+
+.icon {
+    color: #ddd;
+    font-size: 150%;
+}
+
+.input-field {
+    width: 100%;
+    background-color: #eee;
+    border: 2px solid transparent;
+    -webkit-transition: background-color 0.3s, border-color 0.3s;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.input-label {
+    width: 100%;
+    text-align: left;
+    position: absolute;
+    bottom: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    padding: 0 1.25em;
+}
+
+.label-content {
+    color: #8B8C8B;
+    padding: 0.25em 0;
+    -webkit-transition: -webkit-transform 0.3s;
+    transition: transform 0.3s;
+}
+
+.label-content::after {
+    content: attr(data-content);
+    position: absolute;
+    font-weight: 800;
+    bottom: 100%;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    color: #a3d39c;
+    padding: 0.25em 0;
+    letter-spacing: 1px;
+    font-size: 0.85em;
+}
+
+.input-field:focus + .input-field,
+.input--filled .input-field {
+    background-color: transparent;
+    border-color: #a3d39c;
+}
+
+.input--hide {
+    display: none;
+}
+
+#submit {
+    position: relative;
+    right: -15px;
+}
+
+.done-row {
+    margin: 0px;
+}
+
+/* END OF INPUT CSS */

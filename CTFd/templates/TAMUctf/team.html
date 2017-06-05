@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron home">
+    <div class="container">
+        <h1 id="team-id">{{ team.name }}</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="team-info">
+        <h2 id="team-place" class="text-center">
+            {%if place %}
+                {{ place }} <small>place</small>
+            {% endif %}
+        </h2>
+        <h2 id="team-score" class="text-center">
+            {%if score %}
+                {{ score }} <small>points</small>
+            {% endif %}
+        </h2>
+    </div>
+
+    <br>
+
+    <div id="keys-pie-graph"></div>
+    <div id="categories-pie-graph"></div>
+    <br>
+    <div id="score-graph"></div>
+
+    <div class="clearfix"></div>
+
+    {% if awards %}
+    <div class="row">
+        <h3>Awards</h3>
+            {% set count = awards|length %}
+            {% set rem = awards|length % 4 %}
+            {% for award in awards %}
+                {% if count >= 4 %}
+                    <div class="col-xs-3 col-md-3">
+                {% else %}
+                    <div class="col-xs-{{ (12//rem)|string }} col-md-{{ (12//rem)|string }}">
+                {% endif %}
+                        <p class="text-center"><strong>{{ award.name }}</strong></p>
+                        {% if award.category %}<p class="text-center">{{ award.category }}</p>{% endif %}
+                        <p class="text-center">{{ award.description }}</p>
+                        <p class="text-center">{{ award.value }}</p>
+                    </div>
+                {% set count = count - 1 %}
+            {% endfor %}
+    </div>
+
+    <br>
+    {% endif %}
+
+    <div class="row">
+        <h3>Solves</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td><b>Challenge</b></td>
+                    <td class="hidden-xs"><b>Category</b></td>
+                    <td><b>Value</b></td>
+                    <td><b>Time</b></td>
+                </tr>
+            </thead>
+            <tbody>
+            {% for solve in solves %}
+                <tr>
+                    <td><a href="{{ request.script_root }}/challenges#{{ solve.chal.name }}">{{ solve.chal.name }}</a></td>
+                    <td class="hidden-xs">{{ solve.chal.category }}</td><td>{{ solve.chal.value }}</td>
+                    <td class="solve-time"><script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/vendor/plotly.min.js"></script>
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/utils.js"></script>
+    <script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/team.js"></script>
+{% endblock %}
