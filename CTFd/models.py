@@ -1,7 +1,7 @@
 import datetime
 import hashlib
 import json
-from socket import inet_aton, inet_ntoa
+from socket import inet_pton, inet_ntop, AF_INET, AF_INET6
 from struct import unpack, pack, error as struct_error
 
 from flask_sqlalchemy import SQLAlchemy
@@ -14,15 +14,24 @@ def sha512(string):
 
 
 def ip2long(ip):
-    return unpack('!i', inet_aton(ip))[0]
+    '''Converts a user's IP address into an integer/long'''
+    if '.' in ip:
+        # ipv4
+        return unpack('!i', inet_pton(AF_INET, ip))[0]
+    else:
+        # ipv6
+        hi, lo = unpack('!QQ', inet_pton(AF_INET6, ip))
+        return (hi << 64) | lo
 
 
 def long2ip(ip_int):
-    try:
-        return inet_ntoa(pack('!i', ip_int))
-    except struct_error:
-        # Backwards compatibility with old CTFd databases
-        return inet_ntoa(pack('!I', ip_int))
+    '''Converts a saved IP address back into an integer/long'''
+    if ip_int < 4294967296:
+        # ipv4
+        return inet_ntop(AF_INET, pack('!i', ip_int))
+    else:
+        # ipv6
+        return inet_ntop(AF_INET6, pack('!QQ', ip_int >> 64, ip_int & 0xffffffffffffffff))
 
 
 db = SQLAlchemy()
