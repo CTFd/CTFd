@@ -96,6 +96,7 @@ def init_errors(app):
 
 
 def init_utils(app):
+    app.jinja_env.filters['markdown'] = markdown
     app.jinja_env.filters['unix_time'] = unix_time
     app.jinja_env.filters['unix_time_millis'] = unix_time_millis
     app.jinja_env.filters['long2ip'] = long2ip
