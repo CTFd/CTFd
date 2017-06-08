@@ -21,7 +21,7 @@
                         </div>
                         <div class="form-group">
                             <label for="container-files">Associated Files
-                                <i class="fa fa-question-circle" title="These files are uploaded alongside your buildfile"></i>
+                                <i class="fa fa-question-circle gray-text" data-toggle="tooltip" data-placement="right" title="These files are uploaded alongside your buildfile"></i>
                             </label>
                             <input type="file" name="files[]" id="container-files" multiple>
                             <sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
@@ -153,6 +153,10 @@ $('.fa-stop').click(function(){
     var container = elem.attr('id');
     var container_name = elem.text().trim();
     load_confirm_modal('Stop', '/admin/containers/'+container+'/stop', container_name)
+});
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
 });
 
 </script>

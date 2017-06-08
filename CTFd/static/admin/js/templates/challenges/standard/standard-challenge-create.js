@@ -17,3 +17,7 @@ $("#solve-attempts-checkbox").change(function() {
         $('#max_attempts').val('');
     }
 });
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
