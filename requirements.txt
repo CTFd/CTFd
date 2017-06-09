@@ -14,3 +14,4 @@ PyMySQL==0.7.10
 gunicorn==19.7.0
 dataset==0.8.0
 mistune==0.7.4
+win_inet_pton
