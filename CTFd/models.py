@@ -1,12 +1,18 @@
 import datetime
 import hashlib
 import json
-from socket import inet_pton, inet_ntop, AF_INET, AF_INET6
+from socket import AF_INET, AF_INET6
 from struct import unpack, pack, error as struct_error
 
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.exc import DatabaseError
+
+import sys
+if sys.platform == 'win32':
+    from win_inet_pton import inet_ntop, inet_pton
+else:
+    from socket import inet_pton, inet_ntop
 
 
 def sha512(string):
