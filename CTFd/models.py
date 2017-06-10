@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 import json
+import netaddr
 from socket import inet_pton, inet_ntop, AF_INET, AF_INET6
 from struct import unpack, pack, error as struct_error
 
@@ -15,23 +16,12 @@ def sha512(string):
 
 def ip2long(ip):
     '''Converts a user's IP address into an integer/long'''
-    if '.' in ip:
-        # ipv4
-        return unpack('!i', inet_pton(AF_INET, ip))[0]
-    else:
-        # ipv6
-        hi, lo = unpack('!QQ', inet_pton(AF_INET6, ip))
-        return (hi << 64) | lo
+    return int(netaddr.IPAddress(ip))
 
 
 def long2ip(ip_int):
-    '''Converts a saved IP address back into an integer/long'''
-    if ip_int < 4294967296:
-        # ipv4
-        return inet_ntop(AF_INET, pack('!i', ip_int))
-    else:
-        # ipv6
-        return inet_ntop(AF_INET6, pack('!QQ', ip_int >> 64, ip_int & 0xffffffffffffffff))
+    '''Converts a saved integer/long back into an IP address'''
+    return str(netaddr.IPAddress(ip_int))
 
 
 db = SQLAlchemy()
