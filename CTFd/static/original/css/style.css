@@ -18,6 +18,10 @@ a {
     outline: 0;
 }
 
+img {
+    max-width: 100%;
+}
+
 .body-container {
     min-height: 100%;
     position: relative;
