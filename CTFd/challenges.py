@@ -17,6 +17,8 @@ challenges = Blueprint('challenges', __name__)
 
 @challenges.route('/hints/<int:hintid>', methods=['GET', 'POST'])
 def hints_view(hintid):
+    if not utils.ctf_started():
+        abort(403)
     hint = Hints.query.filter_by(id=hintid).first_or_404()
     chal = Challenges.query.filter_by(id=hint.chal).first()
     unlock = Unlocks.query.filter_by(model='hints', itemid=hintid, teamid=session['id']).first()
