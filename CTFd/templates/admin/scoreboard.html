@@ -22,12 +22,12 @@
 				<td>
 				{% if not team.banned %}
 				<form method="POST" style="margin:0;" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/ban">
-					<a onclick="$(this).parent().submit()">Ban</a>
+					<a onclick="$(this).parent().submit()">Hide</a>
 					<input type="hidden" value="{{ nonce }}" name="nonce">
 				</form>
 				{%else %}
 				<form method="POST" style="margin:0;" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/unban">
-					<a onclick="$(this).parent().submit()">Unban</a>
+					<a onclick="$(this).parent().submit()">Unhide</a>
 					<input type="hidden" value="{{ nonce }}" name="nonce">
 				</form>
 				{% endif %}

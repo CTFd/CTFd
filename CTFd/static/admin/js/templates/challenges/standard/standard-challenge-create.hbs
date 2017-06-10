@@ -32,7 +32,7 @@
 
         <div class="form-group">
             <label for="value">Value
-                <i class="fa fa-question-circle gray-text" data-toggle="tooltip" data-placement="right" title="This is how many points teams will receive once they solve this challenge."></i>
+                <i class="fa fa-question-circle gray-text" data-toggle="tooltip" data-placement="right" title="This is how many points are rewarded for solving this challenge."></i>
             </label>
             <input type="number" class="form-control" name="value" placeholder="Enter value" required>
         </div>
@@ -84,7 +84,9 @@
                 </label>
             </div>
             <div id="solve-attempts-input" style="display: none;">
-                <label for="max_attempts">Maximum Attempts</label>
+                <label for="max_attempts">Maximum Attempts
+                    <i class="fa fa-question-circle gray-text" data-toggle="tooltip" data-placement="right" title="How many attempts should a user have for this challenge? For unlimited attempts, use the value 0"></i>
+                </label>
                 <input class="form-control" id='max_attempts' name='max_attempts' type='number' placeholder="0">
             </div>
         </div>
@@ -92,7 +94,9 @@
         <div class="row">
             <div class="form-group">
                 <div class="col-md-9">
-                    <label>Upload challenge files</label>
+                    <label>Upload Challenge Files
+                        <i class="fa fa-question-circle gray-text" data-toggle="tooltip" data-placement="right" title="Challenges files are provided to users for download alongside your challenge description"></i>
+                    </label>
                     <sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
                     <input type="file" name="files[]" multiple="multiple">
                 </div>

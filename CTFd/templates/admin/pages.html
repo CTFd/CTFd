@@ -68,7 +68,7 @@
 	<div class="col-md-6">
 		<h3>CSS editor</h3>
 		<form method="POST">
-			<textarea id="pages-editor" name="css" style="padding-left:20px;">{{ css }}</textarea>
+			<textarea id="pages-editor" name="css" style="padding-left:20px; visibility: hidden;">{{ css }}</textarea>
 			<button onclick="save_css()" type="button" id="submit" class="btn btn-md btn-primary btn-theme btn-outlined">
 				Update CSS
 			</button>
@@ -83,8 +83,8 @@
 var editor = CodeMirror.fromTextArea(document.getElementById("pages-editor"), {
 	lineNumbers: true,
 	lineWrapping: true,
-	mode: "xml",
-	htmlMode: true,
+	mode: "css",
+	htmlMode: false,
 	theme: 'elegant'
 });
 
@@ -111,7 +111,7 @@ function save_css(){
 	var css = editor.getValue();
 	var nonce = $('#nonce').val();
 	$.post(script_root + '/admin/css', {'css':css, 'nonce':nonce}, function(){
-		console.log('saved');
+		location.reload();
 	});
 }
 

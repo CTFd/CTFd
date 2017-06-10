@@ -16,6 +16,7 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
 					<h2 class="text-center">Delete User</h2>
 				</div>
 				<div class="modal-body" style="height:110px">
@@ -40,6 +41,7 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
 					<h2 class="text-center">Email User</h2>
 				</div>
 				<div class="modal-body">
@@ -59,6 +61,7 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
 					<h2 class="text-center">Edit User</h2>
 				</div>
 				<div class="modal-body" style="padding:20px; height:525px;">
@@ -145,9 +148,9 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 					</div>
 				</td>
 				<td class="text-center"><span>
-					<i class="fa fa-pencil-square-o"></i>
+					<i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="top" title="Modify {{ team.name }}"></i>
 					{% if can_send_mail() %}<i class="fa fa-envelope"></i>{% endif %}
-					<i class="fa fa-times"></i>
+					<i class="fa fa-times" data-toggle="tooltip" data-placement="top" title="Delete {{ team.name }}"></i>
 				</span>
 				</td>
 			</tr>
