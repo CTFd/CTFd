@@ -37,7 +37,7 @@ class Pages(db.Model):
         self.html = html
 
     def __repr__(self):
-        return "<Pages {0} for challenge {1}>".format(self.tag, self.chal)
+        return "<Pages route {0}>".format(self.route)
 
 
 class Containers(db.Model):
