@@ -33,7 +33,7 @@ def hints_view(hintid):
                 'cost': hint.cost
             })
     elif request.method == 'POST':
-        if not unlock:
+        if not unlock and utils.ctftime():
             team = Teams.query.filter_by(id=session['id']).first()
             if team.score() < hint.cost:
                 return jsonify({'errors': 'Not enough points'})
@@ -42,6 +42,14 @@ def hints_view(hintid):
             db.session.add(unlock)
             db.session.add(award)
             db.session.commit()
+            json_data = {
+                'hint': hint.hint,
+                'chal': hint.chal,
+                'cost': hint.cost
+            }
+            db.session.close()
+            return jsonify(json_data)
+        elif utils.ctf_ended():
             json_data = {
                 'hint': hint.hint,
                 'chal': hint.chal,
@@ -104,7 +112,7 @@ def chals():
             unlocked_hints = set([u.itemid for u in Unlocks.query.filter_by(model='hints', teamid=session['id'])])
             hints = []
             for hint in Hints.query.filter_by(chal=x.id).all():
-                if hint.id in unlocked_hints:
+                if hint.id in unlocked_hints or utils.ctf_ended():
                     hints.append({'id': hint.id, 'cost': hint.cost, 'hint': hint.hint})
                 else:
                     hints.append({'id': hint.id, 'cost': hint.cost})
