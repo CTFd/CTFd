@@ -1,0 +1,94 @@
+<div class="modal-dialog" role="document">
+    <div class="modal-content content">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#challenge" aria-controls="challenge" role="tab">Challenge</a></li>
+            {{#if_eq solves '-1 Solves'}}
+            {{else}}
+            <li role="presentation"><a href="#solves" aria-controls="solves" class="chal-solves" role="tab">{{solves}}</a></li>
+            {{/if_eq}}
+        </ul>
+        <div class="modal-body">
+            <div role="tabpanel">
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in active" id="challenge">
+                        <h3 class='chal-name'>{{ name }}</h3>
+                        <h4 class="chal-value">{{ value }}</h4>
+                        <div class="chal-tags">
+                        {{#each tags }}
+                            <span class='label label-primary chal-tag'>{{this}}</span>
+                        {{/each}}
+                        </div>
+                        <span class="chal-desc">{{{ desc }}}</span>
+                        <div class="chal-hints file-row row">
+                            {{#each hints}}
+                            <div class='col-md-12 file-button-wrapper'>
+                                <a onclick="javascript:loadhint({{this.id}})">
+                                    {{#if this.hint }}
+                                        <label class='challenge-wrapper file-wrapper hide-text'>
+                                        View Hint
+                                        </label>
+                                    {{else}}
+                                        {{#if this.cost}}
+                                            <label class='challenge-wrapper file-wrapper hide-text'>
+                                            Unlock Hint for {{this.cost}} points
+                                            </label>
+                                        {{else}}
+                                            <label class='challenge-wrapper file-wrapper hide-text'>
+                                            View Hint
+                                            </label>
+                                        {{/if}}
+                                    {{/if}}
+                                </a>
+                            </div>
+                            {{/each}}
+                        </div>
+                        <div class="chal-files file-row row">
+                            {{#each files}}
+                            <div class='col-md-3 file-button-wrapper'>
+                                <a class='file-button' href='/files/{{this}}'>
+                                    <label class='challenge-wrapper file-wrapper hide-text'>
+                                    {{splitSlash this}}
+                                    </label>
+                                </a>
+                            </div>
+                            {{/each}}
+                        </div>
+
+                        <div class="row submit-row">
+                            <div class="col-md-9" style="padding-right:0px;padding-left:10px;">
+                                <span class="input">
+                                    <input class="input-field" type="text" name="answer" id="answer-input" placeholder="Key" />
+                                </span>
+
+                                <input id="chal-id" type="hidden" value="{{id}}">
+                            </div>
+                            <div class="col-md-3 key-submit">
+                                <button type="submit" id="submit-key" tabindex="5" class="btn btn-md btn-theme btn-outlined pull-right" style="height:46.375px">Submit</button>
+                            </div>
+                        </div>
+                        <div class="row notification-row">
+                            <div id="result-notification" class="alert alert-dismissable" role="alert">
+                              <strong id="result-message"></strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="solves">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <td><b>Name</b>
+                                    </td>
+                                    <td><b>Date</b>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody id="chal-solves-names">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

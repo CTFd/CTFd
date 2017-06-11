@@ -1,0 +1,61 @@
+.chal-grid {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 0 0 -15px;
+
+  .chal-item-container {
+    padding-left: 15px;
+    padding-bottom: 15px;
+    height: 156px;
+    width: 20%;
+    position: relative;
+
+    .chal-item {
+      cursor: pointer;
+      background: #FFFFFF;
+      color: #95989A;
+      padding: 15px;
+      height: 100%;
+      width: 100%;
+      text-align: center;
+      overflow: hidden;
+      animation: 0.2s fadeUpIn;
+
+      .chal-title {
+        display: block;
+        margin-bottom: 5px;
+        color: #484654;
+        font-weight: 600;
+        font-size: 16px;
+      }
+
+      .chal-name {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        align-items: center;
+        height: 56px;
+        margin-bottom: 5px;
+        overflow: hidden;
+        position: relative; 
+      }
+
+      .chal-points {
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+@keyframes fadeUpIn {
+  0% {
+    opacity: 0;
+    // transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

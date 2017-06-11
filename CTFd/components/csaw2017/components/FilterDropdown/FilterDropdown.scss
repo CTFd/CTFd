@@ -1,0 +1,25 @@
+.filter-dropdown {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  color: #484654;
+  padding: 15px;
+  position: relative;
+
+  &.active {
+    font-weight: 600;
+  }
+
+  &.position-left {
+    border-right: 1px solid #E9E7EB;
+  }
+
+  &.position-right {
+    border-left: 1px solid #E9E7EB;
+  }
+
+  i {
+    margin-left: 5px;
+  }
+}

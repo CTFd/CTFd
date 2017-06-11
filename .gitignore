@@ -63,3 +63,7 @@ CTFd/uploads
 .data/
 .ctfd_secret_key
 .*.swp
+
+
+# Assets
+node_modules/

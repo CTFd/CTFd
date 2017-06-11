@@ -1,0 +1,43 @@
+{
+  "name": "ctfd",
+  "version": "1.0.0",
+  "description": "![](https://raw.githubusercontent.com/CTFd/CTFd/master/CTFd/static/original/img/logo.png)\r ====",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cd ./CTFd/components/csaw2017 && webpack",
+    "build-watch": "cd ./CTFd/components/csaw2017 && webpack -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nolanleung/ctfd.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nolanleung/ctfd/issues"
+  },
+  "homepage": "https://github.com/nolanleung/ctfd#readme",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "classnames": "^2.2.5",
+    "inferno": "^3.4.3",
+    "inferno-component": "^3.4.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-inferno": "^3.2.0",
+    "babel-preset-env": "^1.5.2",
+    "babel-preset-es2015": "^6.24.1",
+    "css-loader": "^0.28.4",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.5",
+    "style-loader": "^0.18.2",
+    "webpack": "^2.6.1"
+  }
+}

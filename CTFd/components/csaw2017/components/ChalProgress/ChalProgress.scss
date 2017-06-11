@@ -1,0 +1,35 @@
+.chal-progress {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  color: #484654;
+  padding: 15px 8px;
+  width: 100%;
+  position: relative;
+
+  .progress-pct {
+    font-weight: 600;
+    margin-right: 5px;
+  }
+
+  .progress-bar-bg {
+    display: block;
+    position: absolute;
+    background: #D9EEDC;
+    height: 5px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+  }
+
+  .progress-bar {
+    display: block;
+    position: absolute;
+    background: #5CC67C;
+    height: 5px;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    transition: all 0.2s ease-in-out;
+  }
+}
