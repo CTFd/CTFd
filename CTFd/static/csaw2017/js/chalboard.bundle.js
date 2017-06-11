@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 33);
+/******/ 	return __webpack_require__(__webpack_require__.s = 35);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,7 +73,7 @@
 "use strict";
 
 
-module.exports = __webpack_require__(53);
+module.exports = __webpack_require__(55);
 module.exports.default = module.exports;
 
 /***/ }),
@@ -86,7 +86,7 @@ module.exports.default = module.exports;
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var bind = __webpack_require__(21);
-var isBuffer = __webpack_require__(61);
+var isBuffer = __webpack_require__(63);
 
 /*global toString:true*/
 
@@ -588,8 +588,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
 var VNodes_1 = __webpack_require__(5);
-var constants_1 = __webpack_require__(10);
-var mounting_1 = __webpack_require__(11);
+var constants_1 = __webpack_require__(11);
+var mounting_1 = __webpack_require__(12);
 var unmounting_1 = __webpack_require__(15);
 // We need EMPTY_OBJ defined in one place.
 // Its used for comparison so we cant inline it into shared
@@ -993,16 +993,26 @@ exports.isVNode = isVNode;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+module.exports = __webpack_require__(62).default;
+module.exports.default = module.exports;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
 var VNodes_1 = __webpack_require__(5);
-var constants_1 = __webpack_require__(10);
-var delegation_1 = __webpack_require__(54);
-var mounting_1 = __webpack_require__(11);
-var rendering_1 = __webpack_require__(8);
+var constants_1 = __webpack_require__(11);
+var delegation_1 = __webpack_require__(56);
+var mounting_1 = __webpack_require__(12);
+var rendering_1 = __webpack_require__(9);
 var unmounting_1 = __webpack_require__(15);
 var utils_1 = __webpack_require__(3);
 var processElement_1 = __webpack_require__(16);
@@ -1754,17 +1764,89 @@ function removeProp(prop, lastValue, dom, nextFlags) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(60).default;
-module.exports.default = module.exports;
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function (useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if (item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function (modules, mediaQuery) {
+		if (typeof modules === "string") modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for (var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if (typeof id === "number") alreadyImportedModules[id] = true;
+		}
+		for (i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if (typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if (mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if (mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1774,9 +1856,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
 var VNodes_1 = __webpack_require__(5);
-var hydration_1 = __webpack_require__(56);
-var mounting_1 = __webpack_require__(11);
-var patching_1 = __webpack_require__(6);
+var hydration_1 = __webpack_require__(58);
+var mounting_1 = __webpack_require__(12);
+var patching_1 = __webpack_require__(7);
 var unmounting_1 = __webpack_require__(15);
 var utils_1 = __webpack_require__(3);
 // rather than use a Map, like we did before, we can use an array here
@@ -1896,422 +1978,7 @@ exports.createRenderer = createRenderer;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function (useSourceMap) {
-	var list = [];
-
-	// return the list of modules as css string
-	list.toString = function toString() {
-		return this.map(function (item) {
-			var content = cssWithMappingToString(item, useSourceMap);
-			if (item[2]) {
-				return "@media " + item[2] + "{" + content + "}";
-			} else {
-				return content;
-			}
-		}).join("");
-	};
-
-	// import a list of modules into the list
-	list.i = function (modules, mediaQuery) {
-		if (typeof modules === "string") modules = [[null, modules, ""]];
-		var alreadyImportedModules = {};
-		for (var i = 0; i < this.length; i++) {
-			var id = this[i][0];
-			if (typeof id === "number") alreadyImportedModules[id] = true;
-		}
-		for (i = 0; i < modules.length; i++) {
-			var item = modules[i];
-			// skip already imported module
-			// this implementation is not 100% perfect for weird media query combinations
-			//  when a module is imported multiple times with different media queries.
-			//  I hope this will never occur (Hey this way we have smaller bundles)
-			if (typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-				if (mediaQuery && !item[2]) {
-					item[2] = mediaQuery;
-				} else if (mediaQuery) {
-					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-				}
-				list.push(item);
-			}
-		}
-	};
-	return list;
-};
-
-function cssWithMappingToString(item, useSourceMap) {
-	var content = item[1] || '';
-	var cssMapping = item[3];
-	if (!cssMapping) {
-		return content;
-	}
-
-	if (useSourceMap && typeof btoa === 'function') {
-		var sourceMapping = toComment(cssMapping);
-		var sourceURLs = cssMapping.sources.map(function (source) {
-			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';
-		});
-
-		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
-	}
-
-	return [content].join('\n');
-}
-
-// Adapted from convert-source-map (MIT)
-function toComment(sourceMap) {
-	// eslint-disable-next-line no-undef
-	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-
-	return '/*# ' + data + ' */';
-}
-
-/***/ }),
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.xlinkNS = 'http://www.w3.org/1999/xlink';
-exports.xmlNS = 'http://www.w3.org/XML/1998/namespace';
-exports.svgNS = 'http://www.w3.org/2000/svg';
-exports.strictProps = new Set();
-exports.strictProps.add('volume');
-exports.strictProps.add('defaultChecked');
-exports.booleanProps = new Set();
-exports.booleanProps.add('muted');
-exports.booleanProps.add('scoped');
-exports.booleanProps.add('loop');
-exports.booleanProps.add('open');
-exports.booleanProps.add('checked');
-exports.booleanProps.add('default');
-exports.booleanProps.add('capture');
-exports.booleanProps.add('disabled');
-exports.booleanProps.add('readOnly');
-exports.booleanProps.add('required');
-exports.booleanProps.add('autoplay');
-exports.booleanProps.add('controls');
-exports.booleanProps.add('seamless');
-exports.booleanProps.add('reversed');
-exports.booleanProps.add('allowfullscreen');
-exports.booleanProps.add('novalidate');
-exports.booleanProps.add('hidden');
-exports.booleanProps.add('autoFocus');
-exports.booleanProps.add('selected');
-exports.namespaces = new Map();
-exports.namespaces.set('xlink:href', exports.xlinkNS);
-exports.namespaces.set('xlink:arcrole', exports.xlinkNS);
-exports.namespaces.set('xlink:actuate', exports.xlinkNS);
-exports.namespaces.set('xlink:show', exports.xlinkNS);
-exports.namespaces.set('xlink:role', exports.xlinkNS);
-exports.namespaces.set('xlink:title', exports.xlinkNS);
-exports.namespaces.set('xlink:type', exports.xlinkNS);
-exports.namespaces.set('xml:base', exports.xmlNS);
-exports.namespaces.set('xml:lang', exports.xmlNS);
-exports.namespaces.set('xml:space', exports.xmlNS);
-exports.isUnitlessNumber = new Set();
-exports.isUnitlessNumber.add('animationIterationCount');
-exports.isUnitlessNumber.add('borderImageOutset');
-exports.isUnitlessNumber.add('borderImageSlice');
-exports.isUnitlessNumber.add('borderImageWidth');
-exports.isUnitlessNumber.add('boxFlex');
-exports.isUnitlessNumber.add('boxFlexGroup');
-exports.isUnitlessNumber.add('boxOrdinalGroup');
-exports.isUnitlessNumber.add('columnCount');
-exports.isUnitlessNumber.add('flex');
-exports.isUnitlessNumber.add('flexGrow');
-exports.isUnitlessNumber.add('flexPositive');
-exports.isUnitlessNumber.add('flexShrink');
-exports.isUnitlessNumber.add('flexNegative');
-exports.isUnitlessNumber.add('flexOrder');
-exports.isUnitlessNumber.add('gridRow');
-exports.isUnitlessNumber.add('gridColumn');
-exports.isUnitlessNumber.add('fontWeight');
-exports.isUnitlessNumber.add('lineClamp');
-exports.isUnitlessNumber.add('lineHeight');
-exports.isUnitlessNumber.add('opacity');
-exports.isUnitlessNumber.add('order');
-exports.isUnitlessNumber.add('orphans');
-exports.isUnitlessNumber.add('tabSize');
-exports.isUnitlessNumber.add('widows');
-exports.isUnitlessNumber.add('zIndex');
-exports.isUnitlessNumber.add('zoom');
-exports.isUnitlessNumber.add('fillOpacity');
-exports.isUnitlessNumber.add('floodOpacity');
-exports.isUnitlessNumber.add('stopOpacity');
-exports.isUnitlessNumber.add('strokeDasharray');
-exports.isUnitlessNumber.add('strokeDashoffset');
-exports.isUnitlessNumber.add('strokeMiterlimit');
-exports.isUnitlessNumber.add('strokeOpacity');
-exports.isUnitlessNumber.add('strokeWidth');
-exports.skipProps = new Set();
-exports.skipProps.add('children');
-exports.skipProps.add('childrenType');
-exports.skipProps.add('defaultValue');
-exports.skipProps.add('ref');
-exports.skipProps.add('key');
-exports.skipProps.add('checked');
-exports.skipProps.add('multiple');
-exports.delegatedEvents = new Set();
-exports.delegatedEvents.add('onClick');
-exports.delegatedEvents.add('onMouseDown');
-exports.delegatedEvents.add('onMouseUp');
-exports.delegatedEvents.add('onMouseMove');
-exports.delegatedEvents.add('onSubmit');
-exports.delegatedEvents.add('onDblClick');
-exports.delegatedEvents.add('onKeyDown');
-exports.delegatedEvents.add('onKeyUp');
-exports.delegatedEvents.add('onKeyPress');
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var inferno_shared_1 = __webpack_require__(0);
-var options_1 = __webpack_require__(4);
-var VNodes_1 = __webpack_require__(5);
-var patching_1 = __webpack_require__(6);
-var recycling_1 = __webpack_require__(22);
-var rendering_1 = __webpack_require__(8);
-var utils_1 = __webpack_require__(3);
-var processElement_1 = __webpack_require__(16);
-function mount(vNode, parentDom, lifecycle, context, isSVG) {
-    var flags = vNode.flags;
-    if (flags & 3970 /* Element */) {
-            return mountElement(vNode, parentDom, lifecycle, context, isSVG);
-        } else if (flags & 28 /* Component */) {
-            return mountComponent(vNode, parentDom, lifecycle, context, isSVG, (flags & 4 /* ComponentClass */) > 0);
-        } else if (flags & 4096 /* Void */) {
-            return mountVoid(vNode, parentDom);
-        } else if (flags & 1 /* Text */) {
-            return mountText(vNode, parentDom);
-        } else {
-        if (process.env.NODE_ENV !== 'production') {
-            if ((typeof vNode === "undefined" ? "undefined" : _typeof(vNode)) === 'object') {
-                inferno_shared_1.throwError("mount() received an object that's not a valid VNode, you should stringify it first. Object: \"" + JSON.stringify(vNode) + "\".");
-            } else {
-                inferno_shared_1.throwError("mount() expects a valid VNode, instead it received an object with the type \"" + (typeof vNode === "undefined" ? "undefined" : _typeof(vNode)) + "\".");
-            }
-        }
-        inferno_shared_1.throwError();
-    }
-}
-exports.mount = mount;
-function mountText(vNode, parentDom) {
-    var dom = document.createTextNode(vNode.children);
-    vNode.dom = dom;
-    if (!inferno_shared_1.isNull(parentDom)) {
-        utils_1.appendChild(parentDom, dom);
-    }
-    return dom;
-}
-exports.mountText = mountText;
-function mountVoid(vNode, parentDom) {
-    var dom = document.createTextNode('');
-    vNode.dom = dom;
-    if (!inferno_shared_1.isNull(parentDom)) {
-        utils_1.appendChild(parentDom, dom);
-    }
-    return dom;
-}
-exports.mountVoid = mountVoid;
-function mountElement(vNode, parentDom, lifecycle, context, isSVG) {
-    if (options_1.options.recyclingEnabled) {
-        var dom_1 = recycling_1.recycleElement(vNode, lifecycle, context, isSVG);
-        if (!inferno_shared_1.isNull(dom_1)) {
-            if (!inferno_shared_1.isNull(parentDom)) {
-                utils_1.appendChild(parentDom, dom_1);
-            }
-            return dom_1;
-        }
-    }
-    var flags = vNode.flags;
-    isSVG = isSVG || (flags & 128 /* SvgElement */) > 0;
-    var dom = utils_1.documentCreateElement(vNode.type, isSVG);
-    var children = vNode.children;
-    var props = vNode.props;
-    var className = vNode.className;
-    var ref = vNode.ref;
-    vNode.dom = dom;
-    if (!inferno_shared_1.isInvalid(children)) {
-        if (inferno_shared_1.isStringOrNumber(children)) {
-            utils_1.setTextContent(dom, children);
-        } else {
-            var childrenIsSVG = isSVG === true && vNode.type !== 'foreignObject';
-            if (inferno_shared_1.isArray(children)) {
-                mountArrayChildren(children, dom, lifecycle, context, childrenIsSVG);
-            } else if (VNodes_1.isVNode(children)) {
-                mount(children, dom, lifecycle, context, childrenIsSVG);
-            }
-        }
-    }
-    if (!inferno_shared_1.isNull(props)) {
-        var hasControlledValue = false;
-        var isFormElement = (flags & 3584 /* FormElement */) > 0;
-        if (isFormElement) {
-            hasControlledValue = processElement_1.isControlledFormElement(props);
-        }
-        for (var prop in props) {
-            // do not add a hasOwnProperty check here, it affects performance
-            patching_1.patchProp(prop, null, props[prop], dom, isSVG, hasControlledValue);
-        }
-        if (isFormElement) {
-            processElement_1.processElement(flags, vNode, dom, props, true, hasControlledValue);
-        }
-    }
-    if (className !== null) {
-        if (isSVG) {
-            dom.setAttribute('class', className);
-        } else {
-            dom.className = className;
-        }
-    }
-    if (!inferno_shared_1.isNull(ref)) {
-        mountRef(dom, ref, lifecycle);
-    }
-    if (!inferno_shared_1.isNull(parentDom)) {
-        utils_1.appendChild(parentDom, dom);
-    }
-    return dom;
-}
-exports.mountElement = mountElement;
-function mountArrayChildren(children, dom, lifecycle, context, isSVG) {
-    for (var i = 0, len = children.length; i < len; i++) {
-        var child = children[i];
-        // Verify can string/number be here. might cause de-opt. - Normalization takes care of it.
-        if (!inferno_shared_1.isInvalid(child)) {
-            if (child.dom) {
-                children[i] = child = VNodes_1.directClone(child);
-            }
-            mount(children[i], dom, lifecycle, context, isSVG);
-        }
-    }
-}
-exports.mountArrayChildren = mountArrayChildren;
-function mountComponent(vNode, parentDom, lifecycle, context, isSVG, isClass) {
-    if (options_1.options.recyclingEnabled) {
-        var dom_2 = recycling_1.recycleComponent(vNode, lifecycle, context, isSVG);
-        if (!inferno_shared_1.isNull(dom_2)) {
-            if (!inferno_shared_1.isNull(parentDom)) {
-                utils_1.appendChild(parentDom, dom_2);
-            }
-            return dom_2;
-        }
-    }
-    var type = vNode.type;
-    var props = vNode.props || utils_1.EMPTY_OBJ;
-    var ref = vNode.ref;
-    var dom;
-    if (isClass) {
-        var instance = utils_1.createClassComponentInstance(vNode, type, props, context, isSVG, lifecycle);
-        var input = instance._lastInput;
-        instance._vNode = vNode;
-        vNode.dom = dom = mount(input, null, lifecycle, instance._childContext, isSVG);
-        if (!inferno_shared_1.isNull(parentDom)) {
-            utils_1.appendChild(parentDom, dom);
-        }
-        mountClassComponentCallbacks(vNode, ref, instance, lifecycle);
-        instance._updating = false;
-        if (options_1.options.findDOMNodeEnabled) {
-            rendering_1.componentToDOMNodeMap.set(instance, dom);
-        }
-    } else {
-        var input = utils_1.createFunctionalComponentInput(vNode, type, props, context);
-        vNode.dom = dom = mount(input, null, lifecycle, context, isSVG);
-        vNode.children = input;
-        mountFunctionalComponentCallbacks(ref, dom, lifecycle);
-        if (!inferno_shared_1.isNull(parentDom)) {
-            utils_1.appendChild(parentDom, dom);
-        }
-    }
-    return dom;
-}
-exports.mountComponent = mountComponent;
-function mountClassComponentCallbacks(vNode, ref, instance, lifecycle) {
-    if (ref) {
-        if (inferno_shared_1.isFunction(ref)) {
-            ref(instance);
-        } else {
-            if (process.env.NODE_ENV !== 'production') {
-                if (inferno_shared_1.isStringOrNumber(ref)) {
-                    inferno_shared_1.throwError('string "refs" are not supported in Inferno 1.0. Use callback "refs" instead.');
-                } else if (inferno_shared_1.isObject(ref) && vNode.flags & 4 /* ComponentClass */) {
-                    inferno_shared_1.throwError('functional component lifecycle events are not supported on ES2015 class components.');
-                } else {
-                    inferno_shared_1.throwError("a bad value for \"ref\" was used on component: \"" + JSON.stringify(ref) + "\"");
-                }
-            }
-            inferno_shared_1.throwError();
-        }
-    }
-    var hasDidMount = !inferno_shared_1.isUndefined(instance.componentDidMount);
-    var afterMount = options_1.options.afterMount;
-    if (hasDidMount || !inferno_shared_1.isNull(afterMount)) {
-        lifecycle.addListener(function () {
-            instance._updating = true;
-            if (afterMount) {
-                afterMount(vNode);
-            }
-            if (hasDidMount) {
-                instance.componentDidMount();
-            }
-            instance._updating = false;
-        });
-    }
-}
-exports.mountClassComponentCallbacks = mountClassComponentCallbacks;
-function mountFunctionalComponentCallbacks(ref, dom, lifecycle) {
-    if (ref) {
-        if (!inferno_shared_1.isNullOrUndef(ref.onComponentWillMount)) {
-            ref.onComponentWillMount();
-        }
-        if (!inferno_shared_1.isNullOrUndef(ref.onComponentDidMount)) {
-            lifecycle.addListener(function () {
-                return ref.onComponentDidMount(dom);
-            });
-        }
-    }
-}
-exports.mountFunctionalComponentCallbacks = mountFunctionalComponentCallbacks;
-function mountRef(dom, value, lifecycle) {
-    if (inferno_shared_1.isFunction(value)) {
-        lifecycle.addListener(function () {
-            return value(dom);
-        });
-    } else {
-        if (inferno_shared_1.isInvalid(value)) {
-            return;
-        }
-        if (process.env.NODE_ENV !== 'production') {
-            inferno_shared_1.throwError('string "refs" are not supported in Inferno 1.0. Use callback "refs" instead.');
-        }
-        inferno_shared_1.throwError();
-    }
-}
-exports.mountRef = mountRef;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
-
-/***/ }),
-/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -2357,7 +2024,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(62);
+var	fixUrls = __webpack_require__(64);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -2670,13 +2337,346 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.xlinkNS = 'http://www.w3.org/1999/xlink';
+exports.xmlNS = 'http://www.w3.org/XML/1998/namespace';
+exports.svgNS = 'http://www.w3.org/2000/svg';
+exports.strictProps = new Set();
+exports.strictProps.add('volume');
+exports.strictProps.add('defaultChecked');
+exports.booleanProps = new Set();
+exports.booleanProps.add('muted');
+exports.booleanProps.add('scoped');
+exports.booleanProps.add('loop');
+exports.booleanProps.add('open');
+exports.booleanProps.add('checked');
+exports.booleanProps.add('default');
+exports.booleanProps.add('capture');
+exports.booleanProps.add('disabled');
+exports.booleanProps.add('readOnly');
+exports.booleanProps.add('required');
+exports.booleanProps.add('autoplay');
+exports.booleanProps.add('controls');
+exports.booleanProps.add('seamless');
+exports.booleanProps.add('reversed');
+exports.booleanProps.add('allowfullscreen');
+exports.booleanProps.add('novalidate');
+exports.booleanProps.add('hidden');
+exports.booleanProps.add('autoFocus');
+exports.booleanProps.add('selected');
+exports.namespaces = new Map();
+exports.namespaces.set('xlink:href', exports.xlinkNS);
+exports.namespaces.set('xlink:arcrole', exports.xlinkNS);
+exports.namespaces.set('xlink:actuate', exports.xlinkNS);
+exports.namespaces.set('xlink:show', exports.xlinkNS);
+exports.namespaces.set('xlink:role', exports.xlinkNS);
+exports.namespaces.set('xlink:title', exports.xlinkNS);
+exports.namespaces.set('xlink:type', exports.xlinkNS);
+exports.namespaces.set('xml:base', exports.xmlNS);
+exports.namespaces.set('xml:lang', exports.xmlNS);
+exports.namespaces.set('xml:space', exports.xmlNS);
+exports.isUnitlessNumber = new Set();
+exports.isUnitlessNumber.add('animationIterationCount');
+exports.isUnitlessNumber.add('borderImageOutset');
+exports.isUnitlessNumber.add('borderImageSlice');
+exports.isUnitlessNumber.add('borderImageWidth');
+exports.isUnitlessNumber.add('boxFlex');
+exports.isUnitlessNumber.add('boxFlexGroup');
+exports.isUnitlessNumber.add('boxOrdinalGroup');
+exports.isUnitlessNumber.add('columnCount');
+exports.isUnitlessNumber.add('flex');
+exports.isUnitlessNumber.add('flexGrow');
+exports.isUnitlessNumber.add('flexPositive');
+exports.isUnitlessNumber.add('flexShrink');
+exports.isUnitlessNumber.add('flexNegative');
+exports.isUnitlessNumber.add('flexOrder');
+exports.isUnitlessNumber.add('gridRow');
+exports.isUnitlessNumber.add('gridColumn');
+exports.isUnitlessNumber.add('fontWeight');
+exports.isUnitlessNumber.add('lineClamp');
+exports.isUnitlessNumber.add('lineHeight');
+exports.isUnitlessNumber.add('opacity');
+exports.isUnitlessNumber.add('order');
+exports.isUnitlessNumber.add('orphans');
+exports.isUnitlessNumber.add('tabSize');
+exports.isUnitlessNumber.add('widows');
+exports.isUnitlessNumber.add('zIndex');
+exports.isUnitlessNumber.add('zoom');
+exports.isUnitlessNumber.add('fillOpacity');
+exports.isUnitlessNumber.add('floodOpacity');
+exports.isUnitlessNumber.add('stopOpacity');
+exports.isUnitlessNumber.add('strokeDasharray');
+exports.isUnitlessNumber.add('strokeDashoffset');
+exports.isUnitlessNumber.add('strokeMiterlimit');
+exports.isUnitlessNumber.add('strokeOpacity');
+exports.isUnitlessNumber.add('strokeWidth');
+exports.skipProps = new Set();
+exports.skipProps.add('children');
+exports.skipProps.add('childrenType');
+exports.skipProps.add('defaultValue');
+exports.skipProps.add('ref');
+exports.skipProps.add('key');
+exports.skipProps.add('checked');
+exports.skipProps.add('multiple');
+exports.delegatedEvents = new Set();
+exports.delegatedEvents.add('onClick');
+exports.delegatedEvents.add('onMouseDown');
+exports.delegatedEvents.add('onMouseUp');
+exports.delegatedEvents.add('onMouseMove');
+exports.delegatedEvents.add('onSubmit');
+exports.delegatedEvents.add('onDblClick');
+exports.delegatedEvents.add('onKeyDown');
+exports.delegatedEvents.add('onKeyUp');
+exports.delegatedEvents.add('onKeyPress');
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var inferno_shared_1 = __webpack_require__(0);
+var options_1 = __webpack_require__(4);
+var VNodes_1 = __webpack_require__(5);
+var patching_1 = __webpack_require__(7);
+var recycling_1 = __webpack_require__(22);
+var rendering_1 = __webpack_require__(9);
+var utils_1 = __webpack_require__(3);
+var processElement_1 = __webpack_require__(16);
+function mount(vNode, parentDom, lifecycle, context, isSVG) {
+    var flags = vNode.flags;
+    if (flags & 3970 /* Element */) {
+            return mountElement(vNode, parentDom, lifecycle, context, isSVG);
+        } else if (flags & 28 /* Component */) {
+            return mountComponent(vNode, parentDom, lifecycle, context, isSVG, (flags & 4 /* ComponentClass */) > 0);
+        } else if (flags & 4096 /* Void */) {
+            return mountVoid(vNode, parentDom);
+        } else if (flags & 1 /* Text */) {
+            return mountText(vNode, parentDom);
+        } else {
+        if (process.env.NODE_ENV !== 'production') {
+            if ((typeof vNode === "undefined" ? "undefined" : _typeof(vNode)) === 'object') {
+                inferno_shared_1.throwError("mount() received an object that's not a valid VNode, you should stringify it first. Object: \"" + JSON.stringify(vNode) + "\".");
+            } else {
+                inferno_shared_1.throwError("mount() expects a valid VNode, instead it received an object with the type \"" + (typeof vNode === "undefined" ? "undefined" : _typeof(vNode)) + "\".");
+            }
+        }
+        inferno_shared_1.throwError();
+    }
+}
+exports.mount = mount;
+function mountText(vNode, parentDom) {
+    var dom = document.createTextNode(vNode.children);
+    vNode.dom = dom;
+    if (!inferno_shared_1.isNull(parentDom)) {
+        utils_1.appendChild(parentDom, dom);
+    }
+    return dom;
+}
+exports.mountText = mountText;
+function mountVoid(vNode, parentDom) {
+    var dom = document.createTextNode('');
+    vNode.dom = dom;
+    if (!inferno_shared_1.isNull(parentDom)) {
+        utils_1.appendChild(parentDom, dom);
+    }
+    return dom;
+}
+exports.mountVoid = mountVoid;
+function mountElement(vNode, parentDom, lifecycle, context, isSVG) {
+    if (options_1.options.recyclingEnabled) {
+        var dom_1 = recycling_1.recycleElement(vNode, lifecycle, context, isSVG);
+        if (!inferno_shared_1.isNull(dom_1)) {
+            if (!inferno_shared_1.isNull(parentDom)) {
+                utils_1.appendChild(parentDom, dom_1);
+            }
+            return dom_1;
+        }
+    }
+    var flags = vNode.flags;
+    isSVG = isSVG || (flags & 128 /* SvgElement */) > 0;
+    var dom = utils_1.documentCreateElement(vNode.type, isSVG);
+    var children = vNode.children;
+    var props = vNode.props;
+    var className = vNode.className;
+    var ref = vNode.ref;
+    vNode.dom = dom;
+    if (!inferno_shared_1.isInvalid(children)) {
+        if (inferno_shared_1.isStringOrNumber(children)) {
+            utils_1.setTextContent(dom, children);
+        } else {
+            var childrenIsSVG = isSVG === true && vNode.type !== 'foreignObject';
+            if (inferno_shared_1.isArray(children)) {
+                mountArrayChildren(children, dom, lifecycle, context, childrenIsSVG);
+            } else if (VNodes_1.isVNode(children)) {
+                mount(children, dom, lifecycle, context, childrenIsSVG);
+            }
+        }
+    }
+    if (!inferno_shared_1.isNull(props)) {
+        var hasControlledValue = false;
+        var isFormElement = (flags & 3584 /* FormElement */) > 0;
+        if (isFormElement) {
+            hasControlledValue = processElement_1.isControlledFormElement(props);
+        }
+        for (var prop in props) {
+            // do not add a hasOwnProperty check here, it affects performance
+            patching_1.patchProp(prop, null, props[prop], dom, isSVG, hasControlledValue);
+        }
+        if (isFormElement) {
+            processElement_1.processElement(flags, vNode, dom, props, true, hasControlledValue);
+        }
+    }
+    if (className !== null) {
+        if (isSVG) {
+            dom.setAttribute('class', className);
+        } else {
+            dom.className = className;
+        }
+    }
+    if (!inferno_shared_1.isNull(ref)) {
+        mountRef(dom, ref, lifecycle);
+    }
+    if (!inferno_shared_1.isNull(parentDom)) {
+        utils_1.appendChild(parentDom, dom);
+    }
+    return dom;
+}
+exports.mountElement = mountElement;
+function mountArrayChildren(children, dom, lifecycle, context, isSVG) {
+    for (var i = 0, len = children.length; i < len; i++) {
+        var child = children[i];
+        // Verify can string/number be here. might cause de-opt. - Normalization takes care of it.
+        if (!inferno_shared_1.isInvalid(child)) {
+            if (child.dom) {
+                children[i] = child = VNodes_1.directClone(child);
+            }
+            mount(children[i], dom, lifecycle, context, isSVG);
+        }
+    }
+}
+exports.mountArrayChildren = mountArrayChildren;
+function mountComponent(vNode, parentDom, lifecycle, context, isSVG, isClass) {
+    if (options_1.options.recyclingEnabled) {
+        var dom_2 = recycling_1.recycleComponent(vNode, lifecycle, context, isSVG);
+        if (!inferno_shared_1.isNull(dom_2)) {
+            if (!inferno_shared_1.isNull(parentDom)) {
+                utils_1.appendChild(parentDom, dom_2);
+            }
+            return dom_2;
+        }
+    }
+    var type = vNode.type;
+    var props = vNode.props || utils_1.EMPTY_OBJ;
+    var ref = vNode.ref;
+    var dom;
+    if (isClass) {
+        var instance = utils_1.createClassComponentInstance(vNode, type, props, context, isSVG, lifecycle);
+        var input = instance._lastInput;
+        instance._vNode = vNode;
+        vNode.dom = dom = mount(input, null, lifecycle, instance._childContext, isSVG);
+        if (!inferno_shared_1.isNull(parentDom)) {
+            utils_1.appendChild(parentDom, dom);
+        }
+        mountClassComponentCallbacks(vNode, ref, instance, lifecycle);
+        instance._updating = false;
+        if (options_1.options.findDOMNodeEnabled) {
+            rendering_1.componentToDOMNodeMap.set(instance, dom);
+        }
+    } else {
+        var input = utils_1.createFunctionalComponentInput(vNode, type, props, context);
+        vNode.dom = dom = mount(input, null, lifecycle, context, isSVG);
+        vNode.children = input;
+        mountFunctionalComponentCallbacks(ref, dom, lifecycle);
+        if (!inferno_shared_1.isNull(parentDom)) {
+            utils_1.appendChild(parentDom, dom);
+        }
+    }
+    return dom;
+}
+exports.mountComponent = mountComponent;
+function mountClassComponentCallbacks(vNode, ref, instance, lifecycle) {
+    if (ref) {
+        if (inferno_shared_1.isFunction(ref)) {
+            ref(instance);
+        } else {
+            if (process.env.NODE_ENV !== 'production') {
+                if (inferno_shared_1.isStringOrNumber(ref)) {
+                    inferno_shared_1.throwError('string "refs" are not supported in Inferno 1.0. Use callback "refs" instead.');
+                } else if (inferno_shared_1.isObject(ref) && vNode.flags & 4 /* ComponentClass */) {
+                    inferno_shared_1.throwError('functional component lifecycle events are not supported on ES2015 class components.');
+                } else {
+                    inferno_shared_1.throwError("a bad value for \"ref\" was used on component: \"" + JSON.stringify(ref) + "\"");
+                }
+            }
+            inferno_shared_1.throwError();
+        }
+    }
+    var hasDidMount = !inferno_shared_1.isUndefined(instance.componentDidMount);
+    var afterMount = options_1.options.afterMount;
+    if (hasDidMount || !inferno_shared_1.isNull(afterMount)) {
+        lifecycle.addListener(function () {
+            instance._updating = true;
+            if (afterMount) {
+                afterMount(vNode);
+            }
+            if (hasDidMount) {
+                instance.componentDidMount();
+            }
+            instance._updating = false;
+        });
+    }
+}
+exports.mountClassComponentCallbacks = mountClassComponentCallbacks;
+function mountFunctionalComponentCallbacks(ref, dom, lifecycle) {
+    if (ref) {
+        if (!inferno_shared_1.isNullOrUndef(ref.onComponentWillMount)) {
+            ref.onComponentWillMount();
+        }
+        if (!inferno_shared_1.isNullOrUndef(ref.onComponentDidMount)) {
+            lifecycle.addListener(function () {
+                return ref.onComponentDidMount(dom);
+            });
+        }
+    }
+}
+exports.mountFunctionalComponentCallbacks = mountFunctionalComponentCallbacks;
+function mountRef(dom, value, lifecycle) {
+    if (inferno_shared_1.isFunction(value)) {
+        lifecycle.addListener(function () {
+            return value(dom);
+        });
+    } else {
+        if (inferno_shared_1.isInvalid(value)) {
+            return;
+        }
+        if (process.env.NODE_ENV !== 'production') {
+            inferno_shared_1.throwError('string "refs" are not supported in Inferno 1.0. Use callback "refs" instead.');
+        }
+        inferno_shared_1.throwError();
+    }
+}
+exports.mountRef = mountRef;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ }),
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(52).default;
+module.exports = __webpack_require__(54).default;
 module.exports.default = module.exports;
 
 /***/ }),
@@ -2687,7 +2687,7 @@ module.exports.default = module.exports;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(1);
-var normalizeHeaderName = __webpack_require__(48);
+var normalizeHeaderName = __webpack_require__(50);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -2782,9 +2782,9 @@ module.exports = defaults;
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
-var patching_1 = __webpack_require__(6);
+var patching_1 = __webpack_require__(7);
 var recycling_1 = __webpack_require__(22);
-var rendering_1 = __webpack_require__(8);
+var rendering_1 = __webpack_require__(9);
 var utils_1 = __webpack_require__(3);
 function unmount(vNode, parentDom, lifecycle, canRecycle, isRecycling) {
     var flags = vNode.flags;
@@ -2912,9 +2912,9 @@ function unmountRef(ref) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var InputWrapper_1 = __webpack_require__(57);
-var SelectWrapper_1 = __webpack_require__(58);
-var TextareaWrapper_1 = __webpack_require__(59);
+var InputWrapper_1 = __webpack_require__(59);
+var SelectWrapper_1 = __webpack_require__(60);
+var TextareaWrapper_1 = __webpack_require__(61);
 /**
  * There is currently no support for switching same input between controlled and nonControlled
  * If that ever becomes a real issue, then re design controlled elements
@@ -2945,12 +2945,12 @@ exports.isControlledFormElement = isControlledFormElement;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(1);
-var settle = __webpack_require__(40);
-var buildURL = __webpack_require__(43);
-var parseHeaders = __webpack_require__(49);
-var isURLSameOrigin = __webpack_require__(47);
+var settle = __webpack_require__(42);
+var buildURL = __webpack_require__(45);
+var parseHeaders = __webpack_require__(51);
+var isURLSameOrigin = __webpack_require__(49);
 var createError = __webpack_require__(20);
-var btoa = typeof window !== 'undefined' && window.btoa && window.btoa.bind(window) || __webpack_require__(42);
+var btoa = typeof window !== 'undefined' && window.btoa && window.btoa.bind(window) || __webpack_require__(44);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -3043,7 +3043,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(45);
+      var cookies = __webpack_require__(47);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ? cookies.read(config.xsrfCookieName) : undefined;
@@ -3162,7 +3162,7 @@ module.exports = function isCancel(value) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(39);
+var enhanceError = __webpack_require__(41);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -3205,7 +3205,7 @@ module.exports = function bind(fn, thisArg) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var patching_1 = __webpack_require__(6);
+var patching_1 = __webpack_require__(7);
 var componentPools = new Map();
 var elementPools = new Map();
 function recycleElement(vNode, lifecycle, context, isSVG) {
@@ -3504,13 +3504,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ChalToolbar = __webpack_require__(30);
+var _ChalGrid = __webpack_require__(29);
 
-var _ChalToolbar2 = _interopRequireDefault(_ChalToolbar);
+var _ChalGrid2 = _interopRequireDefault(_ChalGrid);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _ChalToolbar2.default;
+exports.default = _ChalGrid2.default;
 
 /***/ }),
 /* 26 */
@@ -3519,16 +3519,35 @@ exports.default = _ChalToolbar2.default;
 "use strict";
 
 
-module.exports = __webpack_require__(34);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _ChalToolbar = __webpack_require__(32);
+
+var _ChalToolbar2 = _interopRequireDefault(_ChalToolbar);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _ChalToolbar2.default;
 
 /***/ }),
 /* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+module.exports = __webpack_require__(36);
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(65);
+var content = __webpack_require__(68);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -3536,7 +3555,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(12)(content, options);
+var update = __webpack_require__(10)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -3553,7 +3572,66 @@ if(false) {
 }
 
 /***/ }),
-/* 28 */
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _inferno = __webpack_require__(6);
+
+var _inferno2 = _interopRequireDefault(_inferno);
+
+__webpack_require__(70);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var createVNode = _inferno2.default.createVNode;
+
+exports.default = function (props) {
+  var range = props.challenges.reduce(function (obj, chal) {
+    if (!obj.min) {
+      obj.min = chal.value;
+    }
+
+    if (!obj.max) {
+      obj.max = chal.value;
+    }
+
+    if (chal.value > obj.max) {
+      obj.max = chal.value;
+    }
+
+    if (chal.value < obj.min) {
+      obj.min = chal.value;
+    }
+
+    return obj;
+  }, { min: null, max: null });
+  console.log(range);
+
+  return createVNode(2, 'div', 'chal-grid', props.challenges.map(function (chal) {
+    return createVNode(2, 'div', 'chal-item-container', createVNode(2, 'div', 'chal-item', [createVNode(2, 'div', 'chal-title', chal.category), createVNode(2, 'div', 'chal-name', [chal.name, ' ', Math.random() > 0.5 ? "is a really long challenege name but i guess we don't really care" : '']), createVNode(2, 'div', 'chal-points', chal.value, {
+      'style': { color: getColorFromValue(chal.value, range) }
+    })]), {
+      'onClick': function onClick(e) {
+        return console.log(e);
+      }
+    });
+  }));
+};
+
+function getColorFromValue(value, range) {
+  var h = 240 * (1 - (value - range.min) / (range.max - range.min));
+  return 'hsl(' + Math.floor(h) + ', 91%, 43.5%)';
+};
+
+/***/ }),
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3565,7 +3643,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _inferno = __webpack_require__(7);
+var _inferno = __webpack_require__(6);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
@@ -3573,7 +3651,7 @@ var _infernoComponent = __webpack_require__(13);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
-__webpack_require__(67);
+__webpack_require__(71);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3627,7 +3705,7 @@ var ChalProgress = function (_Component) {
 exports.default = ChalProgress;
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3637,7 +3715,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ChalProgress = __webpack_require__(28);
+var _ChalProgress = __webpack_require__(30);
 
 var _ChalProgress2 = _interopRequireDefault(_ChalProgress);
 
@@ -3646,7 +3724,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _ChalProgress2.default;
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3656,19 +3734,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _inferno = __webpack_require__(7);
+var _inferno = __webpack_require__(6);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-var _FilterDropdown = __webpack_require__(32);
+var _FilterDropdown = __webpack_require__(34);
 
 var _FilterDropdown2 = _interopRequireDefault(_FilterDropdown);
 
-var _ChalProgress = __webpack_require__(29);
+var _ChalProgress = __webpack_require__(31);
 
 var _ChalProgress2 = _interopRequireDefault(_ChalProgress);
 
-__webpack_require__(68);
+__webpack_require__(72);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3691,7 +3769,7 @@ exports.default = function (props) {
 };
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3703,7 +3781,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _inferno = __webpack_require__(7);
+var _inferno = __webpack_require__(6);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
@@ -3711,11 +3789,11 @@ var _infernoComponent = __webpack_require__(13);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
-var _classnames = __webpack_require__(51);
+var _classnames = __webpack_require__(53);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-__webpack_require__(69);
+__webpack_require__(73);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3766,20 +3844,20 @@ var FilterDropdown = function (_Component) {
   }, {
     key: 'onOutsideClick',
     value: function onOutsideClick(e) {
-      var found = false;
-      do {
-        if (e.target.className.includes('filter-dropdown')) {
-          found = true;
-        }
-        e = { target: e.target.parentNode };
-      } while (e.target.parentNode);
+      // let found = false;
+      // do {
+      //   if (e.target.className.includes('filter-dropdown')) {
+      //     found = false;
+      //   }
+      //   e = { target: e.target.parentNode };
+      // } while (e.target.parentNode);
 
-      if (!found) {
-        this.setState(function (state) {
-          state.toggled = false;
-        });
-        document.removeEventListener('click', this.onOutsideClick, true);
-      }
+      // if (!found) {
+      this.setState(function (state) {
+        state.toggled = false;
+      });
+      document.removeEventListener('click', this.onOutsideClick);
+      // }
     }
   }, {
     key: 'render',
@@ -3793,7 +3871,17 @@ var FilterDropdown = function (_Component) {
         'position-left': this.props.position === 'left',
         'position-right': this.props.position === 'right'
       });
-      return createVNode(2, 'div', filterDropdownClasses, [props.title, ' ', createVNode(2, 'i', 'fa fa-caret-down')], {
+      return createVNode(2, 'div', filterDropdownClasses, [props.title, ' ', createVNode(2, 'i', 'fa fa-caret-' + (toggled ? 'up' : 'down')), createVNode(2, 'div', 'dropdown-items', props.options.map(function (option) {
+
+        if (typeof option === 'string') {
+          option = {
+            value: option,
+            label: option
+          };
+        }
+
+        return createVNode(2, 'div', 'dropdown-item', option.label, null, option.value);
+      }))], {
         'onClick': this.onClick
       });
     }
@@ -3804,8 +3892,13 @@ var FilterDropdown = function (_Component) {
 
 exports.default = FilterDropdown;
 
+
+FilterDropdown.defaultProps = {
+  options: []
+};
+
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3815,7 +3908,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _FilterDropdown = __webpack_require__(31);
+var _FilterDropdown = __webpack_require__(33);
 
 var _FilterDropdown2 = _interopRequireDefault(_FilterDropdown);
 
@@ -3824,7 +3917,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _FilterDropdown2.default;
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3832,7 +3925,7 @@ exports.default = _FilterDropdown2.default;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _inferno = __webpack_require__(7);
+var _inferno = __webpack_require__(6);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
@@ -3840,19 +3933,19 @@ var _infernoComponent = __webpack_require__(13);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
-var _axios = __webpack_require__(26);
+var _axios = __webpack_require__(27);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _ChalToolbar = __webpack_require__(25);
+var _ChalToolbar = __webpack_require__(26);
 
 var _ChalToolbar2 = _interopRequireDefault(_ChalToolbar);
 
-var _ChalGrid = __webpack_require__(70);
+var _ChalGrid = __webpack_require__(25);
 
 var _ChalGrid2 = _interopRequireDefault(_ChalGrid);
 
-__webpack_require__(27);
+__webpack_require__(28);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3912,7 +4005,7 @@ var Chalboard = function (_Component) {
 _inferno2.default.render(createVNode(16, Chalboard), document.getElementById('challenges-container'));
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3920,7 +4013,7 @@ _inferno2.default.render(createVNode(16, Chalboard), document.getElementById('ch
 
 var utils = __webpack_require__(1);
 var bind = __webpack_require__(21);
-var Axios = __webpack_require__(36);
+var Axios = __webpack_require__(38);
 var defaults = __webpack_require__(14);
 
 /**
@@ -3955,14 +4048,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(18);
-axios.CancelToken = __webpack_require__(35);
+axios.CancelToken = __webpack_require__(37);
 axios.isCancel = __webpack_require__(19);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(50);
+axios.spread = __webpack_require__(52);
 
 module.exports = axios;
 
@@ -3970,7 +4063,7 @@ module.exports = axios;
 module.exports.default = axios;
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4033,7 +4126,7 @@ CancelToken.source = function source() {
 module.exports = CancelToken;
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4041,10 +4134,10 @@ module.exports = CancelToken;
 
 var defaults = __webpack_require__(14);
 var utils = __webpack_require__(1);
-var InterceptorManager = __webpack_require__(37);
-var dispatchRequest = __webpack_require__(38);
-var isAbsoluteURL = __webpack_require__(46);
-var combineURLs = __webpack_require__(44);
+var InterceptorManager = __webpack_require__(39);
+var dispatchRequest = __webpack_require__(40);
+var isAbsoluteURL = __webpack_require__(48);
+var combineURLs = __webpack_require__(46);
 
 /**
  * Create a new instance of Axios
@@ -4125,7 +4218,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = Axios;
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4183,14 +4276,14 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 module.exports = InterceptorManager;
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(1);
-var transformData = __webpack_require__(41);
+var transformData = __webpack_require__(43);
 var isCancel = __webpack_require__(19);
 var defaults = __webpack_require__(14);
 
@@ -4249,7 +4342,7 @@ module.exports = function dispatchRequest(config) {
 };
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4277,7 +4370,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 };
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4303,7 +4396,7 @@ module.exports = function settle(resolve, reject, response) {
 };
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4329,7 +4422,7 @@ module.exports = function transformData(data, headers, fns) {
 };
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4370,7 +4463,7 @@ function btoa(input) {
 module.exports = btoa;
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4437,7 +4530,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 };
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4456,7 +4549,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 };
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4515,7 +4608,7 @@ function nonStandardBrowserEnv() {
 }();
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4537,7 +4630,7 @@ module.exports = function isAbsoluteURL(url) {
 };
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4606,7 +4699,7 @@ function nonStandardBrowserEnv() {
 }();
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4624,7 +4717,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 };
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4669,7 +4762,7 @@ module.exports = function parseHeaders(headers) {
 };
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4703,7 +4796,7 @@ module.exports = function spread(callback) {
 };
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4762,7 +4855,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4770,7 +4863,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 Object.defineProperty(exports, "__esModule", { value: true });
 // Make sure u use EMPTY_OBJ from 'inferno', otherwise it'll be a different reference
-var inferno_1 = __webpack_require__(7);
+var inferno_1 = __webpack_require__(6);
 var inferno_shared_1 = __webpack_require__(0);
 var noOp = inferno_shared_1.ERROR_MSG;
 if (process.env.NODE_ENV !== 'production') {
@@ -5022,7 +5115,7 @@ exports.default = Component;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5131,7 +5224,7 @@ Lifecycle.prototype.trigger = function trigger() {
 };
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5239,7 +5332,7 @@ function trapClickOnNonInteractiveElement(dom) {
 }
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5262,7 +5355,7 @@ function linkEvent(data, event) {
 exports.linkEvent = linkEvent;
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5273,10 +5366,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
-var constants_1 = __webpack_require__(10);
-var mounting_1 = __webpack_require__(11);
-var patching_1 = __webpack_require__(6);
-var rendering_1 = __webpack_require__(8);
+var constants_1 = __webpack_require__(11);
+var mounting_1 = __webpack_require__(12);
+var patching_1 = __webpack_require__(7);
+var rendering_1 = __webpack_require__(9);
 var utils_1 = __webpack_require__(3);
 var processElement_1 = __webpack_require__(16);
 function normalizeChildNodes(parentDom) {
@@ -5465,7 +5558,7 @@ exports.hydrateRoot = hydrateRoot;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5589,7 +5682,7 @@ function applyValue(nextPropsOrEmpty, dom) {
 exports.applyValue = applyValue;
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5683,7 +5776,7 @@ function applyValue(vNode, dom, nextPropsOrEmpty, mounting) {
 exports.applyValue = applyValue;
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5767,7 +5860,7 @@ function applyValue(nextPropsOrEmpty, dom, mounting) {
 exports.applyValue = applyValue;
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5785,13 +5878,13 @@ exports.options = options_1.options;
 var VNodes_1 = __webpack_require__(5);
 exports.cloneVNode = VNodes_1.cloneVNode;
 exports.createVNode = VNodes_1.createVNode;
-var constants_1 = __webpack_require__(10);
+var constants_1 = __webpack_require__(11);
 exports.internal_isUnitlessNumber = constants_1.isUnitlessNumber;
-var linkEvent_1 = __webpack_require__(55);
+var linkEvent_1 = __webpack_require__(57);
 exports.linkEvent = linkEvent_1.linkEvent;
-var patching_1 = __webpack_require__(6);
+var patching_1 = __webpack_require__(7);
 exports.internal_patch = patching_1.patch;
-var rendering_1 = __webpack_require__(8);
+var rendering_1 = __webpack_require__(9);
 exports.internal_DOMNodeMap = rendering_1.componentToDOMNodeMap;
 exports.createRenderer = rendering_1.createRenderer;
 exports.findDOMNode = rendering_1.findDOMNode;
@@ -5828,7 +5921,7 @@ exports.default = {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5857,7 +5950,7 @@ function isSlowBuffer(obj) {
 }
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5952,10 +6045,24 @@ module.exports = function (css) {
 };
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(9)(undefined);
+exports = module.exports = __webpack_require__(8)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, ".chal-grid {\n  display: flex;\n  flex-flow: row wrap;\n  margin: 0 0 0 -15px; }\n  .chal-grid .chal-item-container {\n    padding-left: 15px;\n    padding-bottom: 15px;\n    height: 156px;\n    width: 20%;\n    position: relative; }\n    .chal-grid .chal-item-container .chal-item {\n      cursor: pointer;\n      background: #FFFFFF;\n      color: #95989A;\n      padding: 15px;\n      height: 100%;\n      width: 100%;\n      text-align: center;\n      overflow: hidden;\n      animation: 0.2s fadeUpIn; }\n      .chal-grid .chal-item-container .chal-item .chal-title {\n        display: block;\n        margin-bottom: 5px;\n        color: #484654;\n        font-weight: 600;\n        font-size: 16px; }\n      .chal-grid .chal-item-container .chal-item .chal-name {\n        display: flex;\n        flex-flow: row wrap;\n        justify-content: center;\n        align-items: center;\n        height: 56px;\n        margin-bottom: 5px;\n        overflow: hidden;\n        position: relative; }\n      .chal-grid .chal-item-container .chal-item .chal-points {\n        font-size: 16px;\n        font-weight: 600; }\n\n@keyframes fadeUpIn {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1;\n    transform: translateY(0); } }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(8)(undefined);
 // imports
 
 
@@ -5966,10 +6073,10 @@ exports.push([module.i, ".chal-progress {\n  display: flex;\n  flex-flow: row no
 
 
 /***/ }),
-/* 64 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(9)(undefined);
+exports = module.exports = __webpack_require__(8)(undefined);
 // imports
 
 
@@ -5980,10 +6087,10 @@ exports.push([module.i, ".chal-toolbar {\n  display: flex;\n  flex-flow: row now
 
 
 /***/ }),
-/* 65 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(9)(undefined);
+exports = module.exports = __webpack_require__(8)(undefined);
 // imports
 
 
@@ -5994,27 +6101,27 @@ exports.push([module.i, ".chalboard {\n  margin-left: -15px;\n  margin-right: -1
 
 
 /***/ }),
-/* 66 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(9)(undefined);
+exports = module.exports = __webpack_require__(8)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, ".filter-dropdown {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  color: #484654;\n  padding: 15px;\n  position: relative; }\n  .filter-dropdown.active {\n    font-weight: 600; }\n  .filter-dropdown.position-left {\n    border-right: 1px solid #E9E7EB; }\n  .filter-dropdown.position-right {\n    border-left: 1px solid #E9E7EB; }\n  .filter-dropdown i {\n    margin-left: 5px; }\n", ""]);
+exports.push([module.i, ".filter-dropdown {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  color: #484654;\n  padding: 15px;\n  position: relative;\n  user-select: none; }\n  .filter-dropdown.active {\n    background: #E9E7EB;\n    font-weight: 600; }\n  .filter-dropdown.position-left {\n    border-right: 1px solid #E9E7EB; }\n  .filter-dropdown.position-right {\n    border-left: 1px solid #E9E7EB; }\n  .filter-dropdown i {\n    margin-left: 5px; }\n  .filter-dropdown .dropdown-items {\n    display: none;\n    background: #FFFFFF;\n    border: 2px solid #E9E7EB;\n    left: 0;\n    top: 100%;\n    min-width: 120%;\n    position: absolute;\n    z-index: 3;\n    animation: 0.2s scaleIn;\n    transform-origin: left top; }\n    .filter-dropdown .dropdown-items .dropdown-item {\n      padding: 15px;\n      white-space: nowrap; }\n      .filter-dropdown .dropdown-items .dropdown-item:hover {\n        background: #E9E7EB; }\n  .filter-dropdown.active .dropdown-items {\n    display: block; }\n\n@keyframes scaleIn {\n  0% {\n    opacity: 0;\n    transform: scale(0); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 67 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(63);
+var content = __webpack_require__(65);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -6022,7 +6129,38 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(12)(content, options);
+var update = __webpack_require__(10)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./ChalGrid.scss", function() {
+			var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./ChalGrid.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(66);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(10)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6039,13 +6177,13 @@ if(false) {
 }
 
 /***/ }),
-/* 68 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(64);
+var content = __webpack_require__(67);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -6053,7 +6191,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(12)(content, options);
+var update = __webpack_require__(10)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6070,13 +6208,13 @@ if(false) {
 }
 
 /***/ }),
-/* 69 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(66);
+var content = __webpack_require__(69);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -6084,7 +6222,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(12)(content, options);
+var update = __webpack_require__(10)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6092,129 +6230,6 @@ if(false) {
 	if(!content.locals) {
 		module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./FilterDropdown.scss", function() {
 			var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./FilterDropdown.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 70 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _ChalGrid = __webpack_require__(71);
-
-var _ChalGrid2 = _interopRequireDefault(_ChalGrid);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _ChalGrid2.default;
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _inferno = __webpack_require__(7);
-
-var _inferno2 = _interopRequireDefault(_inferno);
-
-__webpack_require__(73);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var createVNode = _inferno2.default.createVNode;
-
-exports.default = function (props) {
-  var range = props.challenges.reduce(function (obj, chal) {
-    if (!obj.min) {
-      obj.min = chal.value;
-    }
-
-    if (!obj.max) {
-      obj.max = chal.value;
-    }
-
-    if (chal.value > obj.max) {
-      obj.max = chal.value;
-    }
-
-    if (chal.value < obj.min) {
-      obj.min = chal.value;
-    }
-
-    return obj;
-  }, { min: null, max: null });
-  console.log(range);
-
-  return createVNode(2, 'div', 'chal-grid', props.challenges.map(function (chal) {
-    return createVNode(2, 'div', 'chal-item-container', createVNode(2, 'div', 'chal-item', [createVNode(2, 'div', 'chal-title', chal.category), createVNode(2, 'div', 'chal-name', [chal.name, ' ', Math.random() > 0.5 ? "is a really long challenege name but i guess we don't really care" : '']), createVNode(2, 'div', 'chal-points', chal.value, {
-      'style': { color: getColorFromValue(chal.value, range) }
-    })]), {
-      'onClick': function onClick(e) {
-        return console.log(e);
-      }
-    });
-  }));
-};
-
-function getColorFromValue(value, range) {
-  var h = 240 * (1 - (value - range.min) / (range.max - range.min));
-  return 'hsl(' + Math.floor(h) + ', 91%, 43.5%)';
-};
-
-/***/ }),
-/* 72 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(9)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, ".chal-grid {\n  display: flex;\n  flex-flow: row wrap;\n  margin: 0 0 0 -15px; }\n  .chal-grid .chal-item-container {\n    padding-left: 15px;\n    padding-bottom: 15px;\n    height: 156px;\n    width: 20%;\n    position: relative; }\n    .chal-grid .chal-item-container .chal-item {\n      cursor: pointer;\n      background: #FFFFFF;\n      color: #95989A;\n      padding: 15px;\n      height: 100%;\n      width: 100%;\n      text-align: center;\n      overflow: hidden;\n      animation: 0.2s fadeUpIn; }\n      .chal-grid .chal-item-container .chal-item .chal-title {\n        display: block;\n        margin-bottom: 5px;\n        color: #484654;\n        font-weight: 600;\n        font-size: 16px; }\n      .chal-grid .chal-item-container .chal-item .chal-name {\n        display: flex;\n        flex-flow: row wrap;\n        justify-content: center;\n        align-items: center;\n        height: 56px;\n        margin-bottom: 5px;\n        overflow: hidden;\n        position: relative; }\n      .chal-grid .chal-item-container .chal-item .chal-points {\n        font-size: 16px;\n        font-weight: 600; }\n\n@keyframes fadeUpIn {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1;\n    transform: translateY(0); } }\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 73 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(72);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
-var transform;
-
-var options = {}
-options.transform = transform
-// add the styles to the DOM
-var update = __webpack_require__(12)(content, options);
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./ChalGrid.scss", function() {
-			var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./ChalGrid.scss");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});

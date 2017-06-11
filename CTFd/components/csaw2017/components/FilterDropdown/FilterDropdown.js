@@ -34,20 +34,20 @@ export default class FilterDropdown extends Component {
   }
 
   onOutsideClick(e) {
-    let found = false;
-    do {
-      if (e.target.className.includes('filter-dropdown')) {
-        found = true;
-      }
-      e = { target: e.target.parentNode };
-    } while (e.target.parentNode);
+    // let found = false;
+    // do {
+    //   if (e.target.className.includes('filter-dropdown')) {
+    //     found = false;
+    //   }
+    //   e = { target: e.target.parentNode };
+    // } while (e.target.parentNode);
 
-    if (!found) {
+    // if (!found) {
       this.setState(state => {
         state.toggled = false;
       });
-      document.removeEventListener('click', this.onOutsideClick, true);
-    }
+      document.removeEventListener('click', this.onOutsideClick);
+    // }
   }
 
   render() {
@@ -61,8 +61,29 @@ export default class FilterDropdown extends Component {
     });
     return (
       <div className={filterDropdownClasses} onClick={this.onClick}>
-        {props.title} <i className="fa fa-caret-down" />
+        {props.title} <i className={'fa fa-caret-' + (toggled ? 'up' : 'down')} />
+        <div className="dropdown-items">
+          {props.options.map(option => {
+
+            if (typeof option === 'string') {
+              option = {
+                value: option,
+                label: option
+              }
+            }
+
+            return (
+              <div className="dropdown-item" key={option.value}>
+                {option.label}
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }
 }
+
+FilterDropdown.defaultProps = {
+  options: []
+};
