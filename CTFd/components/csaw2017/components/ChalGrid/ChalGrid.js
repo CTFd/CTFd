@@ -34,7 +34,7 @@ export default props => {
         return (
           <div
             className={'chal-item-container' + (solves.includes(chal.id) ? ' solved' : '')}
-            onClick={e => console.log(e)}
+            onClick={props.showChallenge.bind(null, chal)}
           >
             <div className="chal-item">
               <div className="chal-title">

@@ -1,0 +1,39 @@
+.chal-modal-container {
+  display: flex;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.25);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: all 0.2s ease-in-out;
+  opacity: 0;
+  position: absolute;
+  visibility: hidden;
+  z-index: 10;
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .chal-modal {
+    background: #FFFFFF;
+    margin-top: 154px;
+    height: 540px;
+    width: 585px;
+    animation: fadeScaleIn 0.2s ease-in-out;
+  }
+}
+
+@keyframes fadeScaleIn {
+  0% {
+    opacity: 0;
+    transform: translateY(80px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

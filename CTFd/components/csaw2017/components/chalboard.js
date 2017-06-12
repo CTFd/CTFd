@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import ChalToolbar from './ChalToolbar';
 import ChalGrid from './ChalGrid';
+import ChalModal from './ChalModal';
 
 import './Chalboard.scss';
 
@@ -27,7 +28,8 @@ class Chalboard extends Component {
         { label: 'Not Completed', value: 'not_completed' }
       ],
       totalPoints: 1,
-      solvedPoints: 0
+      solvedPoints: 0,
+      activeChallenge: null
     };
 
     this.loadChals = this.loadChals.bind(this);
@@ -36,6 +38,8 @@ class Chalboard extends Component {
     this.isSolved = this.isSolved.bind(this);
     this.updateCategoryFilters = this.updateCategoryFilters.bind(this);
     this.updateCompletedFilters = this.updateCompletedFilters.bind(this);
+    this.showChallenge = this.showChallenge.bind(this);
+    this.hideModal = this.hideModal.bind(this);
   }
 
   componentWillMount() {
@@ -114,6 +118,20 @@ class Chalboard extends Component {
     });
   }
 
+  showChallenge(chal) {
+    this.setState(state => {
+      state.activeChallenge = chal;
+    });
+  }
+
+  hideModal(e) {
+    if (!e.target.className.includes('chal-modal-container')) {
+      return;
+    }
+
+    this.showChallenge(null);
+  }
+
   render() {
     return (
       <div className="chalboard container">
@@ -128,7 +146,13 @@ class Chalboard extends Component {
           totalPoints={this.state.totalPoints}
           solvedPoints={this.state.solvedPoints}
         />
-        <ChalGrid challenges={this.getChals()} solves={this.state.solves} loading={this.state.loadingChals} />
+        <ChalGrid
+          challenges={this.getChals()}
+          solves={this.state.solves}
+          loading={this.state.loadingChals}
+          showChallenge={this.showChallenge}
+        />
+        <ChalModal challenge={this.state.activeChallenge} hide={this.hideModal} />
       </div>
     );
   }
