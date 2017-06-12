@@ -13,6 +13,27 @@ admin_teams = Blueprint('admin_teams', __name__)
 @admin_teams.route('/admin/teams/<int:page>')
 @admins_only
 def admin_teams_view(page):
+    q = request.args.get('q')
+    if q:
+        field = request.args.get('field')
+        teams = []
+        errors = []
+        if field == 'id':
+            if q.isnumeric():
+                teams = Teams.query.filter(Teams.id == q).order_by(Teams.id.asc()).all()
+            else:
+                teams = []
+                errors.append('Your ID search term is not numeric')
+        elif field == 'name':
+            teams = Teams.query.filter(Teams.name.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
+        elif field == 'email':
+            teams = Teams.query.filter(Teams.email.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
+        elif field == 'affiliation':
+            teams = Teams.query.filter(Teams.affiliation.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
+        elif field == 'country':
+            teams = Teams.query.filter(Teams.country.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
+        return render_template('admin/teams.html', teams=teams, pages=None, curr_page=None, q=q, field=field)
+
     page = abs(int(page))
     results_per_page = 50
     page_start = results_per_page * (page - 1)
