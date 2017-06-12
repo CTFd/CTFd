@@ -25,13 +25,17 @@ export default props => {
     },
     { min: null, max: null }
   );
-  console.log(range);
+
+  const solves = props.solves.map(solve => solve.chalid);
 
   return (
     <div className="chal-grid">
       {props.challenges.map(chal => {
         return (
-          <div className="chal-item-container" onClick={e => console.log(e)}>
+          <div
+            className={'chal-item-container' + (solves.includes(chal.id) ? ' solved' : '')}
+            onClick={e => console.log(e)}
+          >
             <div className="chal-item">
               <div className="chal-title">
                 {chal.category}
@@ -51,7 +55,7 @@ export default props => {
   );
 };
 
-function getColorFromValue (value, range) {
+function getColorFromValue(value, range) {
   const h = 240 * (1 - (value - range.min) / (range.max - range.min));
   return 'hsl(' + Math.floor(h) + ', 91%, 43.5%)';
-};
+}

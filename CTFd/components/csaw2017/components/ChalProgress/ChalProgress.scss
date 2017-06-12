@@ -7,6 +7,16 @@
   width: 100%;
   position: relative;
 
+  .progress-pct, .progress-pts {
+    animation: 0.2s fadeIn;
+  }
+
+  &.loading {
+    .progress-pct, .progress-pts {
+      display: none
+    }
+  }
+
   .progress-pct {
     font-weight: 600;
     margin-right: 5px;
@@ -30,6 +40,16 @@
     left: 0;
     bottom: 0;
     width: 0;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
   }
 }

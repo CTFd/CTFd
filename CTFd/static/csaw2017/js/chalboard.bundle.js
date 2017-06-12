@@ -3612,10 +3612,13 @@ exports.default = function (props) {
 
     return obj;
   }, { min: null, max: null });
-  console.log(range);
+
+  var solves = props.solves.map(function (solve) {
+    return solve.chalid;
+  });
 
   return createVNode(2, 'div', 'chal-grid', props.challenges.map(function (chal) {
-    return createVNode(2, 'div', 'chal-item-container', createVNode(2, 'div', 'chal-item', [createVNode(2, 'div', 'chal-title', chal.category), createVNode(2, 'div', 'chal-name', [chal.name, ' ', Math.random() > 0.5 ? "is a really long challenege name but i guess we don't really care" : '']), createVNode(2, 'div', 'chal-points', chal.value, {
+    return createVNode(2, 'div', 'chal-item-container' + (solves.includes(chal.id) ? ' solved' : ''), createVNode(2, 'div', 'chal-item', [createVNode(2, 'div', 'chal-title', chal.category), createVNode(2, 'div', 'chal-name', [chal.name, ' ', Math.random() > 0.5 ? "is a really long challenege name but i guess we don't really care" : '']), createVNode(2, 'div', 'chal-points', chal.value, {
       'style': { color: getColorFromValue(chal.value, range) }
     })]), {
       'onClick': function onClick(e) {
@@ -3628,7 +3631,7 @@ exports.default = function (props) {
 function getColorFromValue(value, range) {
   var h = 240 * (1 - (value - range.min) / (range.max - range.min));
   return 'hsl(' + Math.floor(h) + ', 91%, 43.5%)';
-};
+}
 
 /***/ }),
 /* 30 */
@@ -3672,20 +3675,46 @@ var ChalProgress = function (_Component) {
     var _this = _possibleConstructorReturn(this, (ChalProgress.__proto__ || Object.getPrototypeOf(ChalProgress)).call(this, props));
 
     _this.state = {
-      progressBarPctStr: '0'
+      completed: 0,
+      total: 1,
+      pct: '0%'
     };
+
+    _this.renderBar = _this.renderBar.bind(_this);
     return _this;
   }
 
   _createClass(ChalProgress, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      this.renderBar();
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      if (this.state.completed != this.props.completed || this.state.total != this.props.total || this.props.total >= this.props.completed) {
+        this.renderBar();
+      }
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.completed <= nextProps.total) {
+        this.setState(function (state) {
+          state.completed = nextProps.completed;
+          state.total = nextProps.total;
+        });
+      }
+    }
+  }, {
+    key: 'renderBar',
+    value: function renderBar() {
       var _this2 = this;
 
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
           _this2.setState(function (state) {
-            state.progressBarPctStr = '13.3%';
+            state.pct = (_this2.state.completed / _this2.state.total * 100).toFixed(2) + '%';
           });
         });
       });
@@ -3693,8 +3722,11 @@ var ChalProgress = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      return createVNode(2, 'div', 'chal-progress', [createVNode(2, 'span', 'progress-pct', '13.3%'), createVNode(2, 'span', 'progress-pts', '(4,000 / 30,000)'), createVNode(2, 'div', 'progress-bar-bg'), createVNode(2, 'div', 'progress-bar', null, {
-        'style': { width: this.state.progressBarPctStr }
+      var loading = this.props.loading;
+
+
+      return createVNode(2, 'div', 'chal-progress' + (loading ? ' loading' : ''), [createVNode(2, 'span', 'progress-pct', this.state.pct), createVNode(2, 'span', 'progress-pts', ['(', this.state.completed, ' / ', this.state.total, ')']), createVNode(2, 'div', 'progress-bar-bg'), createVNode(2, 'div', 'progress-bar', null, {
+        'style': { width: this.state.pct }
       })]);
     }
   }]);
@@ -3703,6 +3735,13 @@ var ChalProgress = function (_Component) {
 }(_infernoComponent2.default);
 
 exports.default = ChalProgress;
+
+
+ChalProgress.defaultProps = {
+  loading: true,
+  completed: 0,
+  total: 100
+};
 
 /***/ }),
 /* 31 */
@@ -3755,15 +3794,25 @@ var createVNode = _inferno2.default.createVNode;
 exports.default = function (props) {
   return createVNode(2, 'div', 'chal-toolbar', [createVNode(16, _FilterDropdown2.default, null, null, {
     'title': 'Categories',
-    'options': ['All', 'Apple', 'Banana', 'Carrot', 'Donut', 'Eclair', 'Froyo'],
-    'position': 'left'
-  }), createVNode(16, _ChalProgress2.default), createVNode(16, _FilterDropdown2.default, null, null, {
+    'options': props.categories,
+    'filters': props.categoryFilters,
+    'onFilter': props.onUpdateCategoryFilters,
+    'position': 'left',
+    'multi': true
+  }), createVNode(16, _ChalProgress2.default, null, null, {
+    'total': props.totalPoints,
+    'completed': props.solvedPoints,
+    'loading': props.progressLoading
+  }), createVNode(16, _FilterDropdown2.default, null, null, {
     'title': 'Filter',
-    'options': ['All', 'Completed', 'Not Completed'],
-    'position': 'right'
+    'options': props.completedOptions,
+    'filters': props.completedFilters,
+    'onFilter': props.onUpdateCompletedFilters,
+    'position': 'right',
+    'multi': true
   }), createVNode(16, _FilterDropdown2.default, null, null, {
     'title': 'Sort',
-    'options': ['Points DESC', 'Points ASC'],
+    'options': [{ label: 'Points DESC', value: 'points_desc' }, { label: 'Points ASC', value: 'points_asc' }],
     'position': 'right'
   })]);
 };
@@ -3797,6 +3846,8 @@ __webpack_require__(73);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -3817,16 +3868,49 @@ var FilterDropdown = function (_Component) {
       toggled: false
     };
 
-    _this.onClick = _this.onClick.bind(_this);
+    _this.onDropdownClick = _this.onDropdownClick.bind(_this);
+    _this.onItemClick = _this.onItemClick.bind(_this);
     _this.onOutsideClick = _this.onOutsideClick.bind(_this);
     _this.toggleShown = _this.toggleShown.bind(_this);
     return _this;
   }
 
   _createClass(FilterDropdown, [{
-    key: 'onClick',
-    value: function onClick(e) {
-      this.toggleShown();
+    key: 'onDropdownClick',
+    value: function onDropdownClick(e) {
+      if (this.props.multi && this.state.toggled) {
+        return;
+      }
+
+      var outside = false;
+
+      do {
+        if (e.target.className.includes('filter-dropdown')) {
+          outside = true;
+          break;
+        }
+
+        e = { target: e.target.parentNode };
+      } while (e.target.parentNode);
+
+      if (outside) {
+        this.toggleShown();
+      }
+    }
+  }, {
+    key: 'onItemClick',
+    value: function onItemClick(option, checked) {
+      var filters = [].concat(_toConsumableArray(this.props.filters));
+
+      if (checked) {
+        filters = filters.filter(function (filter) {
+          return filter.value !== option.value;
+        });
+      } else {
+        filters.push(option);
+      }
+
+      this.props.onFilter(filters);
     }
   }, {
     key: 'toggleShown',
@@ -3844,45 +3928,54 @@ var FilterDropdown = function (_Component) {
   }, {
     key: 'onOutsideClick',
     value: function onOutsideClick(e) {
-      // let found = false;
-      // do {
-      //   if (e.target.className.includes('filter-dropdown')) {
-      //     found = false;
-      //   }
-      //   e = { target: e.target.parentNode };
-      // } while (e.target.parentNode);
+      var inside = false;
 
-      // if (!found) {
-      this.setState(function (state) {
-        state.toggled = false;
-      });
-      document.removeEventListener('click', this.onOutsideClick);
-      // }
+      do {
+        if (e.target.className.includes('dropdown-items')) {
+          inside = true;
+          break;
+        }
+
+        e = { target: e.target.parentNode };
+      } while (e.target.parentNode);
+
+      if (!inside) {
+        this.toggleShown();
+      }
     }
   }, {
     key: 'render',
     value: function render() {
-      var props = this.props;
+      var _this2 = this;
+
+      var _props = this.props,
+          title = _props.title,
+          position = _props.position,
+          options = _props.options,
+          filters = _props.filters,
+          multi = _props.multi;
       var toggled = this.state.toggled;
 
       var filterDropdownClasses = (0, _classnames2.default)({
         'filter-dropdown': true,
         active: toggled,
-        'position-left': this.props.position === 'left',
-        'position-right': this.props.position === 'right'
+        multi: multi,
+        'position-left': position === 'left',
+        'position-right': position === 'right'
       });
-      return createVNode(2, 'div', filterDropdownClasses, [props.title, ' ', createVNode(2, 'i', 'fa fa-caret-' + (toggled ? 'up' : 'down')), createVNode(2, 'div', 'dropdown-items', props.options.map(function (option) {
+      return createVNode(2, 'div', filterDropdownClasses, [title, ' ', createVNode(2, 'i', 'fa fa-caret-' + (toggled ? 'up' : 'down')), createVNode(2, 'div', 'dropdown-items', options.map(function (option) {
+        var checked = filters.map(function (f) {
+          return f.value;
+        }).includes(option.value);
 
-        if (typeof option === 'string') {
-          option = {
-            value: option,
-            label: option
-          };
-        }
-
-        return createVNode(2, 'div', 'dropdown-item', option.label, null, option.value);
+        return createVNode(2, 'div', 'dropdown-item', [createVNode(2, 'span', null, option.label), multi && createVNode(2, 'label', 'check', [createVNode(512, 'input', null, null, {
+          'type': 'checkbox',
+          'checked': checked
+        }), createVNode(2, 'div', 'box')])], {
+          'onClick': _this2.onItemClick.bind(null, option, checked)
+        }, option.value);
       }))], {
-        'onClick': this.onClick
+        'onClick': this.onDropdownClick
       });
     }
   }]);
@@ -3894,7 +3987,8 @@ exports.default = FilterDropdown;
 
 
 FilterDropdown.defaultProps = {
-  options: []
+  options: [],
+  filters: []
 };
 
 /***/ }),
@@ -3949,6 +4043,8 @@ __webpack_require__(28);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -3966,11 +4062,24 @@ var Chalboard = function (_Component) {
     var _this = _possibleConstructorReturn(this, (Chalboard.__proto__ || Object.getPrototypeOf(Chalboard)).call(this, props));
 
     _this.state = {
-      loading: true,
-      challenges: []
+      loadingChals: true,
+      loadingSolves: true,
+      challenges: [],
+      solves: [],
+      challengeCategories: [],
+      categoryFilters: [],
+      completedOptions: [{ label: 'Completed', value: 'completed' }, { label: 'Not Completed', value: 'not_completed' }],
+      completedFilters: [{ label: 'Completed', value: 'completed' }, { label: 'Not Completed', value: 'not_completed' }],
+      totalPoints: 1,
+      solvedPoints: 0
     };
 
     _this.loadChals = _this.loadChals.bind(_this);
+    _this.loadSolves = _this.loadSolves.bind(_this);
+    _this.getChals = _this.getChals.bind(_this);
+    _this.isSolved = _this.isSolved.bind(_this);
+    _this.updateCategoryFilters = _this.updateCategoryFilters.bind(_this);
+    _this.updateCompletedFilters = _this.updateCompletedFilters.bind(_this);
     return _this;
   }
 
@@ -3978,6 +4087,7 @@ var Chalboard = function (_Component) {
     key: 'componentWillMount',
     value: function componentWillMount() {
       this.loadChals();
+      this.loadSolves();
     }
   }, {
     key: 'loadChals',
@@ -3985,16 +4095,97 @@ var Chalboard = function (_Component) {
       var challenges = (await _axios2.default.get('/chals')).data.game;
 
       this.setState(function (state) {
+        var points = 0;
+
         state.challenges = challenges;
-        state.loading = false;
+
+        state.challengeCategories = [].concat(_toConsumableArray(challenges.reduce(function (set, chal) {
+          points += chal.value;
+          set.add(chal.category);
+          return set;
+        }, new Set()))).sort().map(function (category) {
+          return {
+            label: category,
+            value: category
+          };
+        });
+
+        state.categoryFilters = state.challengeCategories;
+
+        state.totalPoints = points;
+
+        state.loadingChals = false;
+      });
+    }
+  }, {
+    key: 'loadSolves',
+    value: async function loadSolves() {
+      var solves = (await _axios2.default.get('/solves')).data.solves;
+
+      var solvedPoints = solves.reduce(function (points, solve) {
+        points += solve.value;
+        return points;
+      }, 0);
+
+      this.setState(function (state) {
+        state.solves = solves;
+        state.solvedPoints = solvedPoints;
+        state.loadingSolves = false;
+      });
+    }
+  }, {
+    key: 'getChals',
+    value: function getChals() {
+      var _this2 = this;
+
+      var categoryFilters = this.state.categoryFilters.map(function (f) {
+        return f.value;
+      });
+      var completedFilters = this.state.completedFilters.map(function (f) {
+        return f.value;
+      });
+      return this.state.challenges.filter(function (chal) {
+        return categoryFilters.includes(chal.category) && completedFilters.includes(_this2.isSolved(chal.id) ? 'completed' : 'not_completed');
+      });
+    }
+  }, {
+    key: 'isSolved',
+    value: function isSolved(chalid) {
+      return this.state.solves.map(function (s) {
+        return s.chalid;
+      }).includes(chalid);
+    }
+  }, {
+    key: 'updateCategoryFilters',
+    value: function updateCategoryFilters(categories) {
+      this.setState(function (state) {
+        state.categoryFilters = categories;
+      });
+    }
+  }, {
+    key: 'updateCompletedFilters',
+    value: function updateCompletedFilters(completedFilters) {
+      this.setState(function (state) {
+        state.completedFilters = completedFilters;
       });
     }
   }, {
     key: 'render',
     value: function render() {
-      return createVNode(2, 'div', 'chalboard container', [createVNode(16, _ChalToolbar2.default), createVNode(16, _ChalGrid2.default, null, null, {
-        'challenges': this.state.challenges,
-        'loading': this.state.loading
+      return createVNode(2, 'div', 'chalboard container', [createVNode(16, _ChalToolbar2.default, null, null, {
+        'categories': this.state.challengeCategories,
+        'categoryFilters': this.state.categoryFilters,
+        'onUpdateCategoryFilters': this.updateCategoryFilters,
+        'completedOptions': this.state.completedOptions,
+        'completedFilters': this.state.completedFilters,
+        'onUpdateCompletedFilters': this.updateCompletedFilters,
+        'progressLoading': this.state.loadingChals || this.state.loadingSolves,
+        'totalPoints': this.state.totalPoints,
+        'solvedPoints': this.state.solvedPoints
+      }), createVNode(16, _ChalGrid2.default, null, null, {
+        'challenges': this.getChals(),
+        'solves': this.state.solves,
+        'loading': this.state.loadingChals
       })]);
     }
   }]);
@@ -6053,7 +6244,7 @@ exports = module.exports = __webpack_require__(8)(undefined);
 
 
 // module
-exports.push([module.i, ".chal-grid {\n  display: flex;\n  flex-flow: row wrap;\n  margin: 0 0 0 -15px; }\n  .chal-grid .chal-item-container {\n    padding-left: 15px;\n    padding-bottom: 15px;\n    height: 156px;\n    width: 20%;\n    position: relative; }\n    .chal-grid .chal-item-container .chal-item {\n      cursor: pointer;\n      background: #FFFFFF;\n      color: #95989A;\n      padding: 15px;\n      height: 100%;\n      width: 100%;\n      text-align: center;\n      overflow: hidden;\n      animation: 0.2s fadeUpIn; }\n      .chal-grid .chal-item-container .chal-item .chal-title {\n        display: block;\n        margin-bottom: 5px;\n        color: #484654;\n        font-weight: 600;\n        font-size: 16px; }\n      .chal-grid .chal-item-container .chal-item .chal-name {\n        display: flex;\n        flex-flow: row wrap;\n        justify-content: center;\n        align-items: center;\n        height: 56px;\n        margin-bottom: 5px;\n        overflow: hidden;\n        position: relative; }\n      .chal-grid .chal-item-container .chal-item .chal-points {\n        font-size: 16px;\n        font-weight: 600; }\n\n@keyframes fadeUpIn {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1;\n    transform: translateY(0); } }\n", ""]);
+exports.push([module.i, ".chal-grid {\n  display: flex;\n  flex-flow: row wrap;\n  margin: 0 0 0 -15px; }\n  .chal-grid .chal-item-container {\n    padding-left: 15px;\n    padding-bottom: 15px;\n    height: 156px;\n    width: 20%;\n    position: relative; }\n    .chal-grid .chal-item-container.solved {\n      opacity: 0.5; }\n    .chal-grid .chal-item-container .chal-item {\n      cursor: pointer;\n      background: #FFFFFF;\n      color: #95989A;\n      padding: 15px;\n      height: 100%;\n      width: 100%;\n      text-align: center;\n      overflow: hidden;\n      animation: 0.2s fadeUpIn; }\n      .chal-grid .chal-item-container .chal-item .chal-title {\n        display: block;\n        margin-bottom: 5px;\n        color: #484654;\n        font-weight: 600;\n        font-size: 16px; }\n      .chal-grid .chal-item-container .chal-item .chal-name {\n        display: flex;\n        flex-flow: row wrap;\n        justify-content: center;\n        align-items: center;\n        height: 56px;\n        margin-bottom: 5px;\n        overflow: hidden;\n        position: relative; }\n      .chal-grid .chal-item-container .chal-item .chal-points {\n        font-size: 16px;\n        font-weight: 600; }\n\n@keyframes fadeUpIn {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1;\n    transform: translateY(0); } }\n", ""]);
 
 // exports
 
@@ -6067,7 +6258,7 @@ exports = module.exports = __webpack_require__(8)(undefined);
 
 
 // module
-exports.push([module.i, ".chal-progress {\n  display: flex;\n  flex-flow: row nowrap;\n  align-items: center;\n  color: #484654;\n  padding: 15px 8px;\n  width: 100%;\n  position: relative; }\n  .chal-progress .progress-pct {\n    font-weight: 600;\n    margin-right: 5px; }\n  .chal-progress .progress-bar-bg {\n    display: block;\n    position: absolute;\n    background: #D9EEDC;\n    height: 5px;\n    left: 0;\n    bottom: 0;\n    width: 100%; }\n  .chal-progress .progress-bar {\n    display: block;\n    position: absolute;\n    background: #5CC67C;\n    height: 5px;\n    left: 0;\n    bottom: 0;\n    width: 0;\n    transition: all 0.2s ease-in-out; }\n", ""]);
+exports.push([module.i, ".chal-progress {\n  display: flex;\n  flex-flow: row nowrap;\n  align-items: center;\n  color: #484654;\n  padding: 15px 8px;\n  width: 100%;\n  position: relative; }\n  .chal-progress .progress-pct, .chal-progress .progress-pts {\n    animation: 0.2s fadeIn; }\n  .chal-progress.loading .progress-pct, .chal-progress.loading .progress-pts {\n    display: none; }\n  .chal-progress .progress-pct {\n    font-weight: 600;\n    margin-right: 5px; }\n  .chal-progress .progress-bar-bg {\n    display: block;\n    position: absolute;\n    background: #D9EEDC;\n    height: 5px;\n    left: 0;\n    bottom: 0;\n    width: 100%; }\n  .chal-progress .progress-bar {\n    display: block;\n    position: absolute;\n    background: #5CC67C;\n    height: 5px;\n    left: 0;\n    bottom: 0;\n    width: 0;\n    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }\n\n@keyframes fadeIn {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
 
 // exports
 
@@ -6109,7 +6300,7 @@ exports = module.exports = __webpack_require__(8)(undefined);
 
 
 // module
-exports.push([module.i, ".filter-dropdown {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  color: #484654;\n  padding: 15px;\n  position: relative;\n  user-select: none; }\n  .filter-dropdown.active {\n    background: #E9E7EB;\n    font-weight: 600; }\n  .filter-dropdown.position-left {\n    border-right: 1px solid #E9E7EB; }\n  .filter-dropdown.position-right {\n    border-left: 1px solid #E9E7EB; }\n  .filter-dropdown i {\n    margin-left: 5px; }\n  .filter-dropdown .dropdown-items {\n    display: none;\n    background: #FFFFFF;\n    border: 2px solid #E9E7EB;\n    left: 0;\n    top: 100%;\n    min-width: 120%;\n    position: absolute;\n    z-index: 3;\n    animation: 0.2s scaleIn;\n    transform-origin: left top; }\n    .filter-dropdown .dropdown-items .dropdown-item {\n      padding: 15px;\n      white-space: nowrap; }\n      .filter-dropdown .dropdown-items .dropdown-item:hover {\n        background: #E9E7EB; }\n  .filter-dropdown.active .dropdown-items {\n    display: block; }\n\n@keyframes scaleIn {\n  0% {\n    opacity: 0;\n    transform: scale(0); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n", ""]);
+exports.push([module.i, ".filter-dropdown {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  color: #484654;\n  padding: 15px;\n  position: relative;\n  user-select: none; }\n  .filter-dropdown.active {\n    background: #E9E7EB;\n    font-weight: 600; }\n  .filter-dropdown.position-left {\n    border-right: 1px solid #E9E7EB; }\n  .filter-dropdown.position-right {\n    border-left: 1px solid #E9E7EB; }\n  .filter-dropdown i {\n    margin-left: 10px; }\n  .filter-dropdown .dropdown-items {\n    display: none;\n    background: #FFFFFF;\n    border: 1px solid #E9E7EB;\n    left: 0;\n    top: 100%;\n    min-width: 120%;\n    position: absolute;\n    z-index: 3;\n    animation: 0.2s scaleIn;\n    transform-origin: left top; }\n    .filter-dropdown .dropdown-items .dropdown-item {\n      display: flex;\n      flex-flow: row nowrap;\n      align-items: center;\n      justify-content: space-between;\n      font-weight: 400;\n      font-size: 13px;\n      padding: 15px;\n      white-space: nowrap; }\n      .filter-dropdown .dropdown-items .dropdown-item:hover {\n        background: #E9E7EB; }\n  .filter-dropdown.active .dropdown-items {\n    display: block; }\n\n.check {\n  width: 27px;\n  height: 27px;\n  margin-bottom: 0;\n  margin-left: 15px;\n  position: relative; }\n  .check input {\n    display: none;\n    margin: 0; }\n    .check input:checked + .box:after {\n      border-color: #484654; }\n  .check .box {\n    width: 100%;\n    height: 100%;\n    position: relative;\n    overflow: hidden;\n    cursor: pointer; }\n    .check .box:after {\n      content: '';\n      display: block;\n      width: 6px;\n      height: 12px;\n      border: solid #AFB0B3;\n      border-width: 0 2px 2px 0;\n      transform: rotate(45deg);\n      left: 11px;\n      top: 6px;\n      position: relative; }\n\n@keyframes scaleIn {\n  0% {\n    opacity: 0;\n    transform: scale(0); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n", ""]);
 
 // exports
 

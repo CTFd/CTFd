@@ -12,13 +12,43 @@ export default class FilterDropdown extends Component {
       toggled: false
     };
 
-    this.onClick = this.onClick.bind(this);
+    this.onDropdownClick = this.onDropdownClick.bind(this);
+    this.onItemClick = this.onItemClick.bind(this);
     this.onOutsideClick = this.onOutsideClick.bind(this);
     this.toggleShown = this.toggleShown.bind(this);
   }
 
-  onClick(e) {
-    this.toggleShown();
+  onDropdownClick(e) {
+    if (this.props.multi && this.state.toggled) {
+      return;
+    }
+
+    let outside = false;
+
+    do {
+      if (e.target.className.includes('filter-dropdown')) {
+        outside = true;
+        break;
+      }
+
+      e = { target: e.target.parentNode };
+    } while (e.target.parentNode);
+
+    if (outside) {
+      this.toggleShown();
+    }
+  }
+
+  onItemClick(option, checked) {
+    let filters = [...this.props.filters];
+
+    if (checked) {
+      filters = filters.filter(filter => filter.value !== option.value);
+    } else {
+      filters.push(option);
+    }
+
+    this.props.onFilter(filters);
   }
 
   toggleShown() {
@@ -34,47 +64,44 @@ export default class FilterDropdown extends Component {
   }
 
   onOutsideClick(e) {
-    // let found = false;
-    // do {
-    //   if (e.target.className.includes('filter-dropdown')) {
-    //     found = false;
-    //   }
-    //   e = { target: e.target.parentNode };
-    // } while (e.target.parentNode);
+    let inside = false;
 
-    // if (!found) {
-      this.setState(state => {
-        state.toggled = false;
-      });
-      document.removeEventListener('click', this.onOutsideClick);
-    // }
+    do {
+      if (e.target.className.includes('dropdown-items')) {
+        inside = true;
+        break;
+      }
+
+      e = { target: e.target.parentNode };
+    } while (e.target.parentNode);
+
+    if (!inside) {
+      this.toggleShown();
+    }
   }
 
   render() {
-    const props = this.props;
+    const { title, position, options, filters, multi } = this.props;
     const { toggled } = this.state;
     const filterDropdownClasses = cn({
       'filter-dropdown': true,
       active: toggled,
-      'position-left': this.props.position === 'left',
-      'position-right': this.props.position === 'right'
+      multi,
+      'position-left': position === 'left',
+      'position-right': position === 'right'
     });
     return (
-      <div className={filterDropdownClasses} onClick={this.onClick}>
-        {props.title} <i className={'fa fa-caret-' + (toggled ? 'up' : 'down')} />
+      <div className={filterDropdownClasses} onClick={this.onDropdownClick}>
+        {title} <i className={'fa fa-caret-' + (toggled ? 'up' : 'down')} />
         <div className="dropdown-items">
-          {props.options.map(option => {
-
-            if (typeof option === 'string') {
-              option = {
-                value: option,
-                label: option
-              }
-            }
+          {options.map(option => {
+            const checked = filters.map(f => f.value).includes(option.value);
 
             return (
-              <div className="dropdown-item" key={option.value}>
-                {option.label}
+              <div className="dropdown-item" key={option.value} onClick={this.onItemClick.bind(null, option, checked)}>
+                <span>{option.label}</span>
+                {multi &&
+                  <label className="check"><input type="checkbox" checked={checked} /><div className="box" /></label>}
               </div>
             );
           })}
@@ -85,5 +112,6 @@ export default class FilterDropdown extends Component {
 }
 
 FilterDropdown.defaultProps = {
-  options: []
+  options: [],
+  filters: []
 };
