@@ -101,6 +101,35 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 			</div>
 		</div>
 	</div>
+
+	{% if q and field%}
+	<h4 class="text-center">Searching for teams with {{field}} matching {{q}}</h4>
+	{% endif %}
+
+	<div class="row">
+		<form method="GET">
+			<div class="col-md-2 form-group">
+				<label for="sel1">Search Field</label>
+				<select name="field" class="form-control" id="sel1">
+					<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
+					<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
+					<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
+					<option value="affiliation" {% if field == 'affiliation' %}selected{% endif %}>Affiliation</option>
+					<option value="country" {% if field == 'country' %}selected{% endif %}>Country</option>
+			  </select>
+			</div>
+			<div class="col-md-8 form-group">
+				<label for="team-name-search">Parameter</label>
+				<input type="text" class="form-control" id="team-name-search" name="q" placeholder="Search for matching team names" {% if q %}value="{{q}}"{% endif %}>
+			</div>
+			<div class="col-md-2 form-group">
+				<label for="team-name-search">&nbsp;</label>
+				<input type="submit" class="form-control btn btn-default" value="Search">
+			</div>
+		</form>
+	</div>
+
+
 	<table id="teamsboard" class="table table-striped">
 		<thead>
 			<tr>
