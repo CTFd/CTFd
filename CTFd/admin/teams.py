@@ -13,7 +13,7 @@ admin_teams = Blueprint('admin_teams', __name__)
 @admin_teams.route('/admin/teams/<int:page>')
 @admins_only
 def admin_teams_view(page):
-    q  = request.args.get('q')
+    q = request.args.get('q')
     if q:
         field = request.args.get('field')
         teams = []
