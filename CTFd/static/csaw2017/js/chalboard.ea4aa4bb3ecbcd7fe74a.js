@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 37);
+/******/ 	return __webpack_require__(__webpack_require__.s = 36);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,7 +73,7 @@
 "use strict";
 
 
-module.exports = __webpack_require__(57);
+module.exports = __webpack_require__(56);
 module.exports.default = module.exports;
 
 /***/ }),
@@ -85,8 +85,8 @@ module.exports.default = module.exports;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var bind = __webpack_require__(21);
-var isBuffer = __webpack_require__(65);
+var bind = __webpack_require__(20);
+var isBuffer = __webpack_require__(64);
 
 /*global toString:true*/
 
@@ -391,210 +391,17 @@ module.exports = {
 "use strict";
 
 
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout() {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-})();
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch (e) {
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch (e) {
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e) {
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e) {
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while (len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) {
-    return [];
-};
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () {
-    return '/';
-};
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function () {
-    return 0;
-};
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var options_1 = __webpack_require__(4);
-var VNodes_1 = __webpack_require__(6);
-var constants_1 = __webpack_require__(12);
-var mounting_1 = __webpack_require__(13);
-var unmounting_1 = __webpack_require__(15);
+var options_1 = __webpack_require__(3);
+var VNodes_1 = __webpack_require__(5);
+var constants_1 = __webpack_require__(11);
+var mounting_1 = __webpack_require__(12);
+var unmounting_1 = __webpack_require__(14);
 // We need EMPTY_OBJ defined in one place.
 // Its used for comparison so we cant inline it into shared
 exports.EMPTY_OBJ = {};
-if (process.env.NODE_ENV !== 'production') {
+if (false) {
     Object.freeze(exports.EMPTY_OBJ);
 }
 function createClassComponentInstance(vNode, Component, props, context, isSVG, lifecycle) {
@@ -635,7 +442,7 @@ function createClassComponentInstance(vNode, Component, props, context, isSVG, l
         options_1.options.afterRender(instance);
     }
     if (inferno_shared_1.isArray(input)) {
-        if (process.env.NODE_ENV !== 'production') {
+        if (false) {
             inferno_shared_1.throwError('a valid Inferno VNode (or null) must be returned from a component render. You may have returned an array or an invalid object.');
         }
         inferno_shared_1.throwError();
@@ -672,7 +479,7 @@ exports.replaceVNode = replaceVNode;
 function createFunctionalComponentInput(vNode, component, props, context) {
     var input = component(props, context);
     if (inferno_shared_1.isArray(input)) {
-        if (process.env.NODE_ENV !== 'production') {
+        if (false) {
             inferno_shared_1.throwError('a valid Inferno VNode (or null) must be returned from a component render. You may have returned an array or an invalid object.');
         }
         inferno_shared_1.throwError();
@@ -765,10 +572,9 @@ function isKeyed(lastChildren, nextChildren) {
     return nextChildren.length > 0 && !inferno_shared_1.isNullOrUndef(nextChildren[0]) && !inferno_shared_1.isNullOrUndef(nextChildren[0].key) && lastChildren.length > 0 && !inferno_shared_1.isNullOrUndef(lastChildren[0]) && !inferno_shared_1.isNullOrUndef(lastChildren[0].key);
 }
 exports.isKeyed = isKeyed;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -788,17 +594,17 @@ exports.options = {
 };
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(64).default;
+module.exports = __webpack_require__(63).default;
 module.exports.default = module.exports;
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -806,9 +612,9 @@ module.exports.default = module.exports;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var utils_1 = __webpack_require__(3);
-var normalization_1 = __webpack_require__(23);
-var options_1 = __webpack_require__(4);
+var utils_1 = __webpack_require__(2);
+var normalization_1 = __webpack_require__(22);
+var options_1 = __webpack_require__(3);
 function VNode(children, className, flags, key, props, ref, type) {
     this.children = children;
     this.className = className;
@@ -999,7 +805,7 @@ function isVNode(o) {
 exports.isVNode = isVNode;
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1081,23 +887,23 @@ function toComment(sourceMap) {
 }
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var options_1 = __webpack_require__(4);
-var VNodes_1 = __webpack_require__(6);
-var constants_1 = __webpack_require__(12);
-var delegation_1 = __webpack_require__(58);
-var mounting_1 = __webpack_require__(13);
-var rendering_1 = __webpack_require__(10);
-var unmounting_1 = __webpack_require__(15);
-var utils_1 = __webpack_require__(3);
-var processElement_1 = __webpack_require__(16);
+var options_1 = __webpack_require__(3);
+var VNodes_1 = __webpack_require__(5);
+var constants_1 = __webpack_require__(11);
+var delegation_1 = __webpack_require__(57);
+var mounting_1 = __webpack_require__(12);
+var rendering_1 = __webpack_require__(9);
+var unmounting_1 = __webpack_require__(14);
+var utils_1 = __webpack_require__(2);
+var processElement_1 = __webpack_require__(15);
 function patch(lastVNode, nextVNode, parentDom, lifecycle, context, isSVG, isRecycling) {
     if (lastVNode !== nextVNode) {
         var lastFlags = lastVNode.flags;
@@ -1318,7 +1124,7 @@ function patchComponent(lastVNode, nextVNode, parentDom, lifecycle, context, isS
                 } else if (inferno_shared_1.isStringOrNumber(nextInput)) {
                     nextInput = VNodes_1.createTextVNode(nextInput, null);
                 } else if (inferno_shared_1.isArray(nextInput)) {
-                    if (process.env.NODE_ENV !== 'production') {
+                    if (false) {
                         inferno_shared_1.throwError('a valid Inferno VNode (or null) must be returned from a component render. You may have returned an array or an invalid object.');
                     }
                     inferno_shared_1.throwError();
@@ -1375,7 +1181,7 @@ function patchComponent(lastVNode, nextVNode, parentDom, lifecycle, context, isS
                 } else if (inferno_shared_1.isStringOrNumber(nextInput) && nextInput !== inferno_shared_1.NO_OP) {
                     nextInput = VNodes_1.createTextVNode(nextInput, null);
                 } else if (inferno_shared_1.isArray(nextInput)) {
-                    if (process.env.NODE_ENV !== 'production') {
+                    if (false) {
                         inferno_shared_1.throwError('a valid Inferno VNode (or null) must be returned from a component render. You may have returned an array or an invalid object.');
                     }
                     inferno_shared_1.throwError();
@@ -1792,7 +1598,7 @@ function patchEvent(name, lastValue, nextValue, dom) {
                         linkEvent_1(nextValue.data, e);
                     };
                 } else {
-                    if (process.env.NODE_ENV !== 'production') {
+                    if (false) {
                         inferno_shared_1.throwError("an event on a VNode \"" + name + "\". was not a function or a valid linkEvent.");
                     }
                     inferno_shared_1.throwError();
@@ -1843,10 +1649,9 @@ function removeProp(prop, lastValue, dom, nextFlags) {
         dom.removeAttribute(prop);
     }
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -2205,21 +2010,21 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var options_1 = __webpack_require__(4);
-var VNodes_1 = __webpack_require__(6);
-var hydration_1 = __webpack_require__(60);
-var mounting_1 = __webpack_require__(13);
-var patching_1 = __webpack_require__(8);
-var unmounting_1 = __webpack_require__(15);
-var utils_1 = __webpack_require__(3);
+var options_1 = __webpack_require__(3);
+var VNodes_1 = __webpack_require__(5);
+var hydration_1 = __webpack_require__(59);
+var mounting_1 = __webpack_require__(12);
+var patching_1 = __webpack_require__(7);
+var unmounting_1 = __webpack_require__(14);
+var utils_1 = __webpack_require__(2);
 // rather than use a Map, like we did before, we can use an array here
 // given there shouldn't be THAT many roots on the page, the difference
 // in performance is huge: https://esbench.com/bench/5802a691330ab09900a1a2da
@@ -2232,7 +2037,7 @@ var roots = options_1.options.roots;
  */
 function findDOMNode(ref) {
     if (!options_1.options.findDOMNodeEnabled) {
-        if (process.env.NODE_ENV !== 'production') {
+        if (false) {
             inferno_shared_1.throwError('findDOMNode() has been disabled, use Inferno.options.findDOMNodeEnabled = true; enabled findDOMNode(). Warning this can significantly impact performance!');
         }
         inferno_shared_1.throwError();
@@ -2267,7 +2072,7 @@ function removeRoot(root) {
         }
     }
 }
-if (process.env.NODE_ENV !== 'production') {
+if (false) {
     if (inferno_shared_1.isBrowser && document.body === null) {
         inferno_shared_1.warning('Inferno warning: you cannot initialize inferno without "document.body". Wait on "DOMContentLoaded" event, add script to bottom of body, or use async/defer attributes on script tag.');
     }
@@ -2281,7 +2086,7 @@ var documentBody = inferno_shared_1.isBrowser ? document.body : null;
  */
 function render(input, parentDom) {
     if (documentBody === parentDom) {
-        if (process.env.NODE_ENV !== 'production') {
+        if (false) {
             inferno_shared_1.throwError('you cannot render() to the "document.body". Use an empty element as a container instead.');
         }
         inferno_shared_1.throwError();
@@ -2334,20 +2139,19 @@ function createRenderer(parentDom) {
     };
 }
 exports.createRenderer = createRenderer;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(56).default;
+module.exports = __webpack_require__(55).default;
 module.exports.default = module.exports;
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2446,23 +2250,23 @@ exports.delegatedEvents.add('onKeyUp');
 exports.delegatedEvents.add('onKeyPress');
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var options_1 = __webpack_require__(4);
-var VNodes_1 = __webpack_require__(6);
-var patching_1 = __webpack_require__(8);
-var recycling_1 = __webpack_require__(22);
-var rendering_1 = __webpack_require__(10);
-var utils_1 = __webpack_require__(3);
-var processElement_1 = __webpack_require__(16);
+var options_1 = __webpack_require__(3);
+var VNodes_1 = __webpack_require__(5);
+var patching_1 = __webpack_require__(7);
+var recycling_1 = __webpack_require__(21);
+var rendering_1 = __webpack_require__(9);
+var utils_1 = __webpack_require__(2);
+var processElement_1 = __webpack_require__(15);
 function mount(vNode, parentDom, lifecycle, context, isSVG) {
     var flags = vNode.flags;
     if (flags & 3970 /* Element */) {
@@ -2474,7 +2278,7 @@ function mount(vNode, parentDom, lifecycle, context, isSVG) {
         } else if (flags & 1 /* Text */) {
             return mountText(vNode, parentDom);
         } else {
-        if (process.env.NODE_ENV !== 'production') {
+        if (false) {
             if ((typeof vNode === "undefined" ? "undefined" : _typeof(vNode)) === 'object') {
                 inferno_shared_1.throwError("mount() received an object that's not a valid VNode, you should stringify it first. Object: \"" + JSON.stringify(vNode) + "\".");
             } else {
@@ -2620,7 +2424,7 @@ function mountClassComponentCallbacks(vNode, ref, instance, lifecycle) {
         if (inferno_shared_1.isFunction(ref)) {
             ref(instance);
         } else {
-            if (process.env.NODE_ENV !== 'production') {
+            if (false) {
                 if (inferno_shared_1.isStringOrNumber(ref)) {
                     inferno_shared_1.throwError('string "refs" are not supported in Inferno 1.0. Use callback "refs" instead.');
                 } else if (inferno_shared_1.isObject(ref) && vNode.flags & 4 /* ComponentClass */) {
@@ -2670,24 +2474,23 @@ function mountRef(dom, value, lifecycle) {
         if (inferno_shared_1.isInvalid(value)) {
             return;
         }
-        if (process.env.NODE_ENV !== 'production') {
+        if (false) {
             inferno_shared_1.throwError('string "refs" are not supported in Inferno 1.0. Use callback "refs" instead.');
         }
         inferno_shared_1.throwError();
     }
 }
 exports.mountRef = mountRef;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(1);
-var normalizeHeaderName = __webpack_require__(52);
+var normalizeHeaderName = __webpack_require__(51);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -2703,10 +2506,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(17);
+    adapter = __webpack_require__(16);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(17);
+    adapter = __webpack_require__(16);
   }
   return adapter;
 }
@@ -2770,22 +2573,22 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 });
 
 module.exports = defaults;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(65)))
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var options_1 = __webpack_require__(4);
-var patching_1 = __webpack_require__(8);
-var recycling_1 = __webpack_require__(22);
-var rendering_1 = __webpack_require__(10);
-var utils_1 = __webpack_require__(3);
+var options_1 = __webpack_require__(3);
+var patching_1 = __webpack_require__(7);
+var recycling_1 = __webpack_require__(21);
+var rendering_1 = __webpack_require__(9);
+var utils_1 = __webpack_require__(2);
 function unmount(vNode, parentDom, lifecycle, canRecycle, isRecycling) {
     var flags = vNode.flags;
     if (flags & 28 /* Component */) {
@@ -2895,16 +2698,15 @@ function unmountRef(ref) {
         if (inferno_shared_1.isInvalid(ref)) {
             return;
         }
-        if (process.env.NODE_ENV !== 'production') {
+        if (false) {
             inferno_shared_1.throwError('string "refs" are not supported in Inferno 1.0. Use callback "refs" instead.');
         }
         inferno_shared_1.throwError();
     }
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2912,9 +2714,9 @@ function unmountRef(ref) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var InputWrapper_1 = __webpack_require__(61);
-var SelectWrapper_1 = __webpack_require__(62);
-var TextareaWrapper_1 = __webpack_require__(63);
+var InputWrapper_1 = __webpack_require__(60);
+var SelectWrapper_1 = __webpack_require__(61);
+var TextareaWrapper_1 = __webpack_require__(62);
 /**
  * There is currently no support for switching same input between controlled and nonControlled
  * If that ever becomes a real issue, then re design controlled elements
@@ -2938,19 +2740,19 @@ function isControlledFormElement(nextPropsOrEmpty) {
 exports.isControlledFormElement = isControlledFormElement;
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 
 var utils = __webpack_require__(1);
-var settle = __webpack_require__(44);
-var buildURL = __webpack_require__(47);
-var parseHeaders = __webpack_require__(53);
-var isURLSameOrigin = __webpack_require__(51);
-var createError = __webpack_require__(20);
-var btoa = typeof window !== 'undefined' && window.btoa && window.btoa.bind(window) || __webpack_require__(46);
+var settle = __webpack_require__(43);
+var buildURL = __webpack_require__(46);
+var parseHeaders = __webpack_require__(52);
+var isURLSameOrigin = __webpack_require__(50);
+var createError = __webpack_require__(19);
+var btoa = typeof window !== 'undefined' && window.btoa && window.btoa.bind(window) || __webpack_require__(45);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -2968,7 +2770,7 @@ module.exports = function xhrAdapter(config) {
     // For IE 8/9 CORS support
     // Only supports POST and GET calls and doesn't returns the response headers.
     // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
-    if (process.env.NODE_ENV !== 'test' && typeof window !== 'undefined' && window.XDomainRequest && !('withCredentials' in request) && !isURLSameOrigin(config.url)) {
+    if ("production" !== 'test' && typeof window !== 'undefined' && window.XDomainRequest && !('withCredentials' in request) && !isURLSameOrigin(config.url)) {
       request = new window.XDomainRequest();
       loadEvent = 'onload';
       xDomain = true;
@@ -3043,7 +2845,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(49);
+      var cookies = __webpack_require__(48);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ? cookies.read(config.xsrfCookieName) : undefined;
@@ -3116,10 +2918,9 @@ module.exports = function xhrAdapter(config) {
     request.send(requestData);
   });
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3145,7 +2946,7 @@ Cancel.prototype.__CANCEL__ = true;
 module.exports = Cancel;
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3156,13 +2957,13 @@ module.exports = function isCancel(value) {
 };
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(43);
+var enhanceError = __webpack_require__(42);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -3180,7 +2981,7 @@ module.exports = function createError(message, config, code, request, response) 
 };
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3197,7 +2998,7 @@ module.exports = function bind(fn, thisArg) {
 };
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3205,7 +3006,7 @@ module.exports = function bind(fn, thisArg) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var patching_1 = __webpack_require__(8);
+var patching_1 = __webpack_require__(7);
 var componentPools = new Map();
 var elementPools = new Map();
 function recycleElement(vNode, lifecycle, context, isSVG) {
@@ -3298,15 +3099,15 @@ function poolComponent(vNode) {
 exports.poolComponent = poolComponent;
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var VNodes_1 = __webpack_require__(6);
+var VNodes_1 = __webpack_require__(5);
 function applyKey(key, vNode) {
     vNode.key = key;
     return vNode;
@@ -3461,7 +3262,7 @@ function normalize(vNode) {
     if (!inferno_shared_1.isInvalid(children)) {
         vNode.children = normalizeChildren(children);
     }
-    if (process.env.NODE_ENV !== 'production') {
+    if (false) {
         // This code will be stripped out from production CODE
         // It helps users to track errors in their applications.
         var verifyKeys = function verifyKeys(vNodes) {
@@ -3482,16 +3283,34 @@ function normalize(vNode) {
     }
 }
 exports.normalize = normalize;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
 module.exports = __webpack_amd_options__;
 
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _ChalGrid = __webpack_require__(29);
+
+var _ChalGrid2 = _interopRequireDefault(_ChalGrid);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _ChalGrid2.default;
 
 /***/ }),
 /* 25 */
@@ -3504,13 +3323,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ChalGrid = __webpack_require__(30);
+var _ChalModal = __webpack_require__(30);
 
-var _ChalGrid2 = _interopRequireDefault(_ChalGrid);
+var _ChalModal2 = _interopRequireDefault(_ChalModal);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _ChalGrid2.default;
+exports.default = _ChalModal2.default;
 
 /***/ }),
 /* 26 */
@@ -3523,26 +3342,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ChalModal = __webpack_require__(31);
-
-var _ChalModal2 = _interopRequireDefault(_ChalModal);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _ChalModal2.default;
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _ChalToolbar = __webpack_require__(34);
+var _ChalToolbar = __webpack_require__(33);
 
 var _ChalToolbar2 = _interopRequireDefault(_ChalToolbar);
 
@@ -3551,16 +3351,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _ChalToolbar2.default;
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(38);
+module.exports = __webpack_require__(37);
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -3574,7 +3374,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(9)(content, options);
+var update = __webpack_require__(8)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -3591,7 +3391,7 @@ if(false) {
 }
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3601,7 +3401,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _inferno = __webpack_require__(5);
+var _inferno = __webpack_require__(4);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
@@ -3651,7 +3451,7 @@ function getColorFromValue(value, range) {
 }
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3663,11 +3463,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _inferno = __webpack_require__(5);
+var _inferno = __webpack_require__(4);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-var _infernoComponent = __webpack_require__(11);
+var _infernoComponent = __webpack_require__(10);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
@@ -3819,7 +3619,7 @@ var ChalModal = function (_Component) {
 exports.default = ChalModal;
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3831,11 +3631,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _inferno = __webpack_require__(5);
+var _inferno = __webpack_require__(4);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-var _infernoComponent = __webpack_require__(11);
+var _infernoComponent = __webpack_require__(10);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
@@ -3929,6 +3729,25 @@ ChalProgress.defaultProps = {
 };
 
 /***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _ChalProgress = __webpack_require__(31);
+
+var _ChalProgress2 = _interopRequireDefault(_ChalProgress);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _ChalProgress2.default;
+
+/***/ }),
 /* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3939,34 +3758,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ChalProgress = __webpack_require__(32);
-
-var _ChalProgress2 = _interopRequireDefault(_ChalProgress);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _ChalProgress2.default;
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _inferno = __webpack_require__(5);
+var _inferno = __webpack_require__(4);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-var _FilterDropdown = __webpack_require__(36);
+var _FilterDropdown = __webpack_require__(35);
 
 var _FilterDropdown2 = _interopRequireDefault(_FilterDropdown);
 
-var _ChalProgress = __webpack_require__(33);
+var _ChalProgress = __webpack_require__(32);
 
 var _ChalProgress2 = _interopRequireDefault(_ChalProgress);
 
@@ -4005,7 +3805,7 @@ exports.default = function (props) {
 };
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4017,15 +3817,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _inferno = __webpack_require__(5);
+var _inferno = __webpack_require__(4);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-var _infernoComponent = __webpack_require__(11);
+var _infernoComponent = __webpack_require__(10);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
-var _classnames = __webpack_require__(55);
+var _classnames = __webpack_require__(54);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -4184,7 +3984,7 @@ FilterDropdown.defaultProps = {
 };
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4194,7 +3994,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _FilterDropdown = __webpack_require__(35);
+var _FilterDropdown = __webpack_require__(34);
 
 var _FilterDropdown2 = _interopRequireDefault(_FilterDropdown);
 
@@ -4203,7 +4003,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _FilterDropdown2.default;
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4211,31 +4011,31 @@ exports.default = _FilterDropdown2.default;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _inferno = __webpack_require__(5);
+var _inferno = __webpack_require__(4);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-var _infernoComponent = __webpack_require__(11);
+var _infernoComponent = __webpack_require__(10);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
-var _axios = __webpack_require__(28);
+var _axios = __webpack_require__(27);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _ChalToolbar = __webpack_require__(27);
+var _ChalToolbar = __webpack_require__(26);
 
 var _ChalToolbar2 = _interopRequireDefault(_ChalToolbar);
 
-var _ChalGrid = __webpack_require__(25);
+var _ChalGrid = __webpack_require__(24);
 
 var _ChalGrid2 = _interopRequireDefault(_ChalGrid);
 
-var _ChalModal = __webpack_require__(26);
+var _ChalModal = __webpack_require__(25);
 
 var _ChalModal2 = _interopRequireDefault(_ChalModal);
 
-__webpack_require__(29);
+__webpack_require__(28);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4486,16 +4286,16 @@ var Chalboard = function (_Component) {
 _inferno2.default.render(createVNode(16, Chalboard), document.getElementById('challenges-container'));
 
 /***/ }),
-/* 38 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(1);
-var bind = __webpack_require__(21);
-var Axios = __webpack_require__(40);
-var defaults = __webpack_require__(14);
+var bind = __webpack_require__(20);
+var Axios = __webpack_require__(39);
+var defaults = __webpack_require__(13);
 
 /**
  * Create an instance of Axios
@@ -4528,15 +4328,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(18);
-axios.CancelToken = __webpack_require__(39);
-axios.isCancel = __webpack_require__(19);
+axios.Cancel = __webpack_require__(17);
+axios.CancelToken = __webpack_require__(38);
+axios.isCancel = __webpack_require__(18);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(54);
+axios.spread = __webpack_require__(53);
 
 module.exports = axios;
 
@@ -4544,13 +4344,13 @@ module.exports = axios;
 module.exports.default = axios;
 
 /***/ }),
-/* 39 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(18);
+var Cancel = __webpack_require__(17);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -4607,18 +4407,18 @@ CancelToken.source = function source() {
 module.exports = CancelToken;
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(14);
+var defaults = __webpack_require__(13);
 var utils = __webpack_require__(1);
-var InterceptorManager = __webpack_require__(41);
-var dispatchRequest = __webpack_require__(42);
-var isAbsoluteURL = __webpack_require__(50);
-var combineURLs = __webpack_require__(48);
+var InterceptorManager = __webpack_require__(40);
+var dispatchRequest = __webpack_require__(41);
+var isAbsoluteURL = __webpack_require__(49);
+var combineURLs = __webpack_require__(47);
 
 /**
  * Create a new instance of Axios
@@ -4699,7 +4499,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = Axios;
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4757,16 +4557,16 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 module.exports = InterceptorManager;
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(1);
-var transformData = __webpack_require__(45);
-var isCancel = __webpack_require__(19);
-var defaults = __webpack_require__(14);
+var transformData = __webpack_require__(44);
+var isCancel = __webpack_require__(18);
+var defaults = __webpack_require__(13);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -4823,7 +4623,7 @@ module.exports = function dispatchRequest(config) {
 };
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4851,13 +4651,13 @@ module.exports = function enhanceError(error, config, code, request, response) {
 };
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(20);
+var createError = __webpack_require__(19);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -4877,7 +4677,7 @@ module.exports = function settle(resolve, reject, response) {
 };
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4903,7 +4703,7 @@ module.exports = function transformData(data, headers, fns) {
 };
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4944,7 +4744,7 @@ function btoa(input) {
 module.exports = btoa;
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5011,7 +4811,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 };
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5030,7 +4830,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 };
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5089,7 +4889,7 @@ function nonStandardBrowserEnv() {
 }();
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5111,7 +4911,7 @@ module.exports = function isAbsoluteURL(url) {
 };
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5180,7 +4980,7 @@ function nonStandardBrowserEnv() {
 }();
 
 /***/ }),
-/* 52 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5198,7 +4998,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 };
 
 /***/ }),
-/* 53 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5243,7 +5043,7 @@ module.exports = function parseHeaders(headers) {
 };
 
 /***/ }),
-/* 54 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5277,7 +5077,7 @@ module.exports = function spread(callback) {
 };
 
 /***/ }),
-/* 55 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5324,7 +5124,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	if (typeof module !== 'undefined' && module.exports) {
 		module.exports = classNames;
-	} else if ("function" === 'function' && _typeof(__webpack_require__(24)) === 'object' && __webpack_require__(24)) {
+	} else if ("function" === 'function' && _typeof(__webpack_require__(23)) === 'object' && __webpack_require__(23)) {
 		// register as 'classnames', consistent with npm package name
 		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 			return classNames;
@@ -5336,18 +5136,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })();
 
 /***/ }),
-/* 56 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 
 Object.defineProperty(exports, "__esModule", { value: true });
 // Make sure u use EMPTY_OBJ from 'inferno', otherwise it'll be a different reference
-var inferno_1 = __webpack_require__(5);
+var inferno_1 = __webpack_require__(4);
 var inferno_shared_1 = __webpack_require__(0);
 var noOp = inferno_shared_1.ERROR_MSG;
-if (process.env.NODE_ENV !== 'production') {
+if (false) {
     noOp = 'Inferno Error: Can only update a mounted or mounting component. This usually means you called setState() or forceUpdate() on an unmounted component. This is a no-op.';
 }
 var componentCallbackQueue = new Map();
@@ -5441,7 +5241,7 @@ function applyState(component, force, callback) {
         } else if (inferno_shared_1.isStringOrNumber(nextInput)) {
             nextInput = inferno_1.createVNode(1 /* Text */, null, null, nextInput);
         } else if (inferno_shared_1.isArray(nextInput)) {
-            if (process.env.NODE_ENV !== 'production') {
+            if (false) {
                 inferno_shared_1.throwError('a valid Inferno VNode (or null) must be returned from a component render. You may have returned an array or an invalid object.');
             }
             inferno_shared_1.throwError();
@@ -5516,14 +5316,14 @@ var Component = function () {
         if (!this._blockSetState) {
             queueStateChanges(this, newState, callback);
         } else {
-            if (process.env.NODE_ENV !== 'production') {
+            if (false) {
                 inferno_shared_1.throwError('cannot update state via setState() in componentWillUpdate() or constructor.');
             }
             inferno_shared_1.throwError();
         }
     };
     Component.prototype.setStateSync = function (newState) {
-        if (process.env.NODE_ENV !== 'production') {
+        if (false) {
             if (!alreadyWarned) {
                 alreadyWarned = true;
                 // tslint:disable-next-line:no-console
@@ -5534,7 +5334,7 @@ var Component = function () {
     };
     Component.prototype._updateComponent = function (prevState, nextState, prevProps, nextProps, context, force, fromSetState) {
         if (this._unmounted === true) {
-            if (process.env.NODE_ENV !== 'production') {
+            if (false) {
                 inferno_shared_1.throwError(noOp);
             }
             inferno_shared_1.throwError();
@@ -5593,10 +5393,9 @@ var Component = function () {
     return Component;
 }();
 exports.default = Component;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 57 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5705,7 +5504,7 @@ Lifecycle.prototype.trigger = function trigger() {
 };
 
 /***/ }),
-/* 58 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5813,7 +5612,7 @@ function trapClickOnNonInteractiveElement(dom) {
 }
 
 /***/ }),
-/* 59 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5836,23 +5635,23 @@ function linkEvent(data, event) {
 exports.linkEvent = linkEvent;
 
 /***/ }),
-/* 60 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var options_1 = __webpack_require__(4);
-var constants_1 = __webpack_require__(12);
-var mounting_1 = __webpack_require__(13);
-var patching_1 = __webpack_require__(8);
-var rendering_1 = __webpack_require__(10);
-var utils_1 = __webpack_require__(3);
-var processElement_1 = __webpack_require__(16);
+var options_1 = __webpack_require__(3);
+var constants_1 = __webpack_require__(11);
+var mounting_1 = __webpack_require__(12);
+var patching_1 = __webpack_require__(7);
+var rendering_1 = __webpack_require__(9);
+var utils_1 = __webpack_require__(2);
+var processElement_1 = __webpack_require__(15);
 function normalizeChildNodes(parentDom) {
     var dom = parentDom.firstChild;
     while (dom) {
@@ -5904,7 +5703,7 @@ function hydrateElement(vNode, dom, lifecycle, context, isSVG) {
     var ref = vNode.ref;
     isSVG = isSVG || (flags & 128 /* SvgElement */) > 0;
     if (dom.nodeType !== 1 || dom.tagName.toLowerCase() !== vNode.type) {
-        if (process.env.NODE_ENV !== 'production') {
+        if (false) {
             inferno_shared_1.warning('Inferno hydration: Server-side markup doesn\'t match client-side markup or Initial render target is not empty');
         }
         var newDom = mounting_1.mountElement(vNode, null, lifecycle, context, isSVG);
@@ -6014,7 +5813,7 @@ function hydrate(vNode, dom, lifecycle, context, isSVG) {
         } else if (flags & 4096 /* Void */) {
             hydrateVoid(vNode, dom);
         } else {
-        if (process.env.NODE_ENV !== 'production') {
+        if (false) {
             inferno_shared_1.throwError("hydrate() expects a valid VNode, instead it received an object with the type \"" + (typeof vNode === "undefined" ? "undefined" : _typeof(vNode)) + "\".");
         }
         inferno_shared_1.throwError();
@@ -6036,10 +5835,9 @@ function hydrateRoot(input, parentDom, lifecycle) {
     return false;
 }
 exports.hydrateRoot = hydrateRoot;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6047,7 +5845,7 @@ exports.hydrateRoot = hydrateRoot;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var utils_1 = __webpack_require__(3);
+var utils_1 = __webpack_require__(2);
 function isCheckedType(type) {
     return type === 'checkbox' || type === 'radio';
 }
@@ -6163,7 +5961,7 @@ function applyValue(nextPropsOrEmpty, dom) {
 exports.applyValue = applyValue;
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6171,8 +5969,8 @@ exports.applyValue = applyValue;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var VNodes_1 = __webpack_require__(6);
-var utils_1 = __webpack_require__(3);
+var VNodes_1 = __webpack_require__(5);
+var utils_1 = __webpack_require__(2);
 function updateChildOptionGroup(vNode, value) {
     var type = vNode.type;
     if (type === 'optgroup') {
@@ -6257,7 +6055,7 @@ function applyValue(vNode, dom, nextPropsOrEmpty, mounting) {
 exports.applyValue = applyValue;
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6265,7 +6063,7 @@ exports.applyValue = applyValue;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var utils_1 = __webpack_require__(3);
+var utils_1 = __webpack_require__(2);
 function wrappedOnChange(e) {
     var props = this.vNode.props || utils_1.EMPTY_OBJ;
     var event = props.onChange;
@@ -6341,38 +6139,38 @@ function applyValue(nextPropsOrEmpty, dom, mounting) {
 exports.applyValue = applyValue;
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /* tslint:disable:object-literal-sort-keys */
 var inferno_shared_1 = __webpack_require__(0);
 exports.NO_OP = inferno_shared_1.NO_OP;
-var normalization_1 = __webpack_require__(23);
+var normalization_1 = __webpack_require__(22);
 exports.getFlagsForElementVnode = normalization_1.getFlagsForElementVnode;
 exports.internal_normalize = normalization_1.normalize;
-var options_1 = __webpack_require__(4);
+var options_1 = __webpack_require__(3);
 exports.options = options_1.options;
-var VNodes_1 = __webpack_require__(6);
+var VNodes_1 = __webpack_require__(5);
 exports.cloneVNode = VNodes_1.cloneVNode;
 exports.createVNode = VNodes_1.createVNode;
-var constants_1 = __webpack_require__(12);
+var constants_1 = __webpack_require__(11);
 exports.internal_isUnitlessNumber = constants_1.isUnitlessNumber;
-var linkEvent_1 = __webpack_require__(59);
+var linkEvent_1 = __webpack_require__(58);
 exports.linkEvent = linkEvent_1.linkEvent;
-var patching_1 = __webpack_require__(8);
+var patching_1 = __webpack_require__(7);
 exports.internal_patch = patching_1.patch;
-var rendering_1 = __webpack_require__(10);
+var rendering_1 = __webpack_require__(9);
 exports.internal_DOMNodeMap = rendering_1.componentToDOMNodeMap;
 exports.createRenderer = rendering_1.createRenderer;
 exports.findDOMNode = rendering_1.findDOMNode;
 exports.render = rendering_1.render;
-var utils_1 = __webpack_require__(3);
+var utils_1 = __webpack_require__(2);
 exports.EMPTY_OBJ = utils_1.EMPTY_OBJ;
-if (process.env.NODE_ENV !== 'production') {
+if (false) {
     /* tslint:disable-next-line:no-empty */
     var testFunc = function testFn() {};
     if ((testFunc.name || testFunc.toString()).indexOf('testFn') === -1) {
@@ -6399,10 +6197,9 @@ exports.default = {
     render: rendering_1.render,
     version: version // DOM
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 65 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6429,6 +6226,199 @@ function isBuffer(obj) {
 function isSlowBuffer(obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0));
 }
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout() {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+})();
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch (e) {
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch (e) {
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e) {
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e) {
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while (len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) {
+    return [];
+};
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () {
+    return '/';
+};
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function () {
+    return 0;
+};
 
 /***/ }),
 /* 66 */
@@ -6529,7 +6519,7 @@ module.exports = function (css) {
 /* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(6)(undefined);
 // imports
 
 
@@ -6543,7 +6533,7 @@ exports.push([module.i, ".chal-grid {\n  display: flex;\n  flex-flow: row wrap;\
 /* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(6)(undefined);
 // imports
 
 
@@ -6557,7 +6547,7 @@ exports.push([module.i, ".btn-primary {\n  background-color: #484654;\n  border:
 /* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(6)(undefined);
 // imports
 
 
@@ -6571,7 +6561,7 @@ exports.push([module.i, ".chal-progress {\n  display: flex;\n  flex-flow: row no
 /* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(6)(undefined);
 // imports
 
 
@@ -6585,7 +6575,7 @@ exports.push([module.i, ".chal-toolbar {\n  display: flex;\n  flex-flow: row now
 /* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(6)(undefined);
 // imports
 
 
@@ -6599,7 +6589,7 @@ exports.push([module.i, ".chalboard {\n  margin-left: -15px;\n  margin-right: -1
 /* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(7)(undefined);
+exports = module.exports = __webpack_require__(6)(undefined);
 // imports
 
 
@@ -6624,7 +6614,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(9)(content, options);
+var update = __webpack_require__(8)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6655,7 +6645,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(9)(content, options);
+var update = __webpack_require__(8)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6686,7 +6676,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(9)(content, options);
+var update = __webpack_require__(8)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6717,7 +6707,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(9)(content, options);
+var update = __webpack_require__(8)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6748,7 +6738,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(9)(content, options);
+var update = __webpack_require__(8)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
