@@ -41,7 +41,7 @@ module.exports = {
           .replace('__CHALBOARD_SCRIPT__', 'chalboard.' + stats.hash + '.js');
         fs.writeFileSync('../../templates/csaw2017/chals.html', template);
       });
-    }
+    },
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
     })
