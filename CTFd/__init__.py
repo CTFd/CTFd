@@ -33,7 +33,7 @@ def create_app(config='CTFd.config.Config'):
     app = Flask(__name__)
     with app.app_context():
         app.config.from_object(config)
-        app.jinja_loader = ThemeLoader(os.path.join(app.root_path, app.template_folder), followlinks=True)
+        app.jinja_loader = ThemeLoader(os.path.join(app.root_path, app.template_folder))
 
         from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
 

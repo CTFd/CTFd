@@ -2,7 +2,7 @@ import datetime
 import hashlib
 import json
 import netaddr
-from socket import inet_pton, inet_ntop, AF_INET, AF_INET6
+from socket import inet_aton, inet_ntoa , AF_INET, AF_INET6
 from struct import unpack, pack, error as struct_error
 
 from flask_sqlalchemy import SQLAlchemy
