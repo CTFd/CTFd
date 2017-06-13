@@ -14,4 +14,4 @@ $ npm install
 $ npm run build
 ```
 
-3. Copy folder into your root CTFd directory.
+3. Copy `static` and `template` folders into your CTFd directory.
