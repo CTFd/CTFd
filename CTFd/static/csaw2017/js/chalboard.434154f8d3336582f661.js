@@ -1003,6 +1003,88 @@ exports.isVNode = isVNode;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function (useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if (item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function (modules, mediaQuery) {
+		if (typeof modules === "string") modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for (var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if (typeof id === "number") alreadyImportedModules[id] = true;
+		}
+		for (i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if (typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if (mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if (mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1012,7 +1094,7 @@ var VNodes_1 = __webpack_require__(6);
 var constants_1 = __webpack_require__(11);
 var delegation_1 = __webpack_require__(58);
 var mounting_1 = __webpack_require__(12);
-var rendering_1 = __webpack_require__(9);
+var rendering_1 = __webpack_require__(10);
 var unmounting_1 = __webpack_require__(15);
 var utils_1 = __webpack_require__(3);
 var processElement_1 = __webpack_require__(16);
@@ -1764,221 +1846,7 @@ function removeProp(prop, lastValue, dom, nextFlags) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function (useSourceMap) {
-	var list = [];
-
-	// return the list of modules as css string
-	list.toString = function toString() {
-		return this.map(function (item) {
-			var content = cssWithMappingToString(item, useSourceMap);
-			if (item[2]) {
-				return "@media " + item[2] + "{" + content + "}";
-			} else {
-				return content;
-			}
-		}).join("");
-	};
-
-	// import a list of modules into the list
-	list.i = function (modules, mediaQuery) {
-		if (typeof modules === "string") modules = [[null, modules, ""]];
-		var alreadyImportedModules = {};
-		for (var i = 0; i < this.length; i++) {
-			var id = this[i][0];
-			if (typeof id === "number") alreadyImportedModules[id] = true;
-		}
-		for (i = 0; i < modules.length; i++) {
-			var item = modules[i];
-			// skip already imported module
-			// this implementation is not 100% perfect for weird media query combinations
-			//  when a module is imported multiple times with different media queries.
-			//  I hope this will never occur (Hey this way we have smaller bundles)
-			if (typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-				if (mediaQuery && !item[2]) {
-					item[2] = mediaQuery;
-				} else if (mediaQuery) {
-					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-				}
-				list.push(item);
-			}
-		}
-	};
-	return list;
-};
-
-function cssWithMappingToString(item, useSourceMap) {
-	var content = item[1] || '';
-	var cssMapping = item[3];
-	if (!cssMapping) {
-		return content;
-	}
-
-	if (useSourceMap && typeof btoa === 'function') {
-		var sourceMapping = toComment(cssMapping);
-		var sourceURLs = cssMapping.sources.map(function (source) {
-			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';
-		});
-
-		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
-	}
-
-	return [content].join('\n');
-}
-
-// Adapted from convert-source-map (MIT)
-function toComment(sourceMap) {
-	// eslint-disable-next-line no-undef
-	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-
-	return '/*# ' + data + ' */';
-}
-
-/***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var inferno_shared_1 = __webpack_require__(0);
-var options_1 = __webpack_require__(4);
-var VNodes_1 = __webpack_require__(6);
-var hydration_1 = __webpack_require__(60);
-var mounting_1 = __webpack_require__(12);
-var patching_1 = __webpack_require__(7);
-var unmounting_1 = __webpack_require__(15);
-var utils_1 = __webpack_require__(3);
-// rather than use a Map, like we did before, we can use an array here
-// given there shouldn't be THAT many roots on the page, the difference
-// in performance is huge: https://esbench.com/bench/5802a691330ab09900a1a2da
-exports.componentToDOMNodeMap = new Map();
-var roots = options_1.options.roots;
-/**
- * When inferno.options.findDOMNOdeEnabled is true, this function will return DOM Node by component instance
- * @param ref Component instance
- * @returns {*|null} returns dom node
- */
-function findDOMNode(ref) {
-    if (!options_1.options.findDOMNodeEnabled) {
-        if (process.env.NODE_ENV !== 'production') {
-            inferno_shared_1.throwError('findDOMNode() has been disabled, use Inferno.options.findDOMNodeEnabled = true; enabled findDOMNode(). Warning this can significantly impact performance!');
-        }
-        inferno_shared_1.throwError();
-    }
-    var dom = ref && ref.nodeType ? ref : null;
-    return exports.componentToDOMNodeMap.get(ref) || dom;
-}
-exports.findDOMNode = findDOMNode;
-function getRoot(dom) {
-    for (var i = 0, len = roots.length; i < len; i++) {
-        var root = roots[i];
-        if (root.dom === dom) {
-            return root;
-        }
-    }
-    return null;
-}
-function setRoot(dom, input, lifecycle) {
-    var root = {
-        dom: dom,
-        input: input,
-        lifecycle: lifecycle
-    };
-    roots.push(root);
-    return root;
-}
-function removeRoot(root) {
-    for (var i = 0, len = roots.length; i < len; i++) {
-        if (roots[i] === root) {
-            roots.splice(i, 1);
-            return;
-        }
-    }
-}
-if (process.env.NODE_ENV !== 'production') {
-    if (inferno_shared_1.isBrowser && document.body === null) {
-        inferno_shared_1.warning('Inferno warning: you cannot initialize inferno without "document.body". Wait on "DOMContentLoaded" event, add script to bottom of body, or use async/defer attributes on script tag.');
-    }
-}
-var documentBody = inferno_shared_1.isBrowser ? document.body : null;
-/**
- * Renders virtual node tree into parent node.
- * @param {VNode | null | string | number} input vNode to be rendered
- * @param parentDom DOM node which content will be replaced by virtual node
- * @returns {InfernoChildren} rendered virtual node
- */
-function render(input, parentDom) {
-    if (documentBody === parentDom) {
-        if (process.env.NODE_ENV !== 'production') {
-            inferno_shared_1.throwError('you cannot render() to the "document.body". Use an empty element as a container instead.');
-        }
-        inferno_shared_1.throwError();
-    }
-    if (input === inferno_shared_1.NO_OP) {
-        return;
-    }
-    var root = getRoot(parentDom);
-    if (inferno_shared_1.isNull(root)) {
-        var lifecycle = new inferno_shared_1.Lifecycle();
-        if (!inferno_shared_1.isInvalid(input)) {
-            if (input.dom) {
-                input = VNodes_1.directClone(input);
-            }
-            if (!hydration_1.hydrateRoot(input, parentDom, lifecycle)) {
-                mounting_1.mount(input, parentDom, lifecycle, utils_1.EMPTY_OBJ, false);
-            }
-            root = setRoot(parentDom, input, lifecycle);
-            lifecycle.trigger();
-        }
-    } else {
-        var lifecycle = root.lifecycle;
-        lifecycle.listeners = [];
-        if (inferno_shared_1.isNullOrUndef(input)) {
-            unmounting_1.unmount(root.input, parentDom, lifecycle, false, false);
-            removeRoot(root);
-        } else {
-            if (input.dom) {
-                input = VNodes_1.directClone(input);
-            }
-            patching_1.patch(root.input, input, parentDom, lifecycle, utils_1.EMPTY_OBJ, false, false);
-        }
-        root.input = input;
-        lifecycle.trigger();
-    }
-    if (root) {
-        var rootInput = root.input;
-        if (rootInput && rootInput.flags & 28 /* Component */) {
-            return rootInput.children;
-        }
-    }
-}
-exports.render = render;
-function createRenderer(parentDom) {
-    return function renderer(lastInput, nextInput) {
-        if (!parentDom) {
-            parentDom = lastInput;
-        }
-        render(nextInput, parentDom);
-    };
-}
-exports.createRenderer = createRenderer;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
-
-/***/ }),
-/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -2337,6 +2205,138 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var inferno_shared_1 = __webpack_require__(0);
+var options_1 = __webpack_require__(4);
+var VNodes_1 = __webpack_require__(6);
+var hydration_1 = __webpack_require__(60);
+var mounting_1 = __webpack_require__(12);
+var patching_1 = __webpack_require__(8);
+var unmounting_1 = __webpack_require__(15);
+var utils_1 = __webpack_require__(3);
+// rather than use a Map, like we did before, we can use an array here
+// given there shouldn't be THAT many roots on the page, the difference
+// in performance is huge: https://esbench.com/bench/5802a691330ab09900a1a2da
+exports.componentToDOMNodeMap = new Map();
+var roots = options_1.options.roots;
+/**
+ * When inferno.options.findDOMNOdeEnabled is true, this function will return DOM Node by component instance
+ * @param ref Component instance
+ * @returns {*|null} returns dom node
+ */
+function findDOMNode(ref) {
+    if (!options_1.options.findDOMNodeEnabled) {
+        if (process.env.NODE_ENV !== 'production') {
+            inferno_shared_1.throwError('findDOMNode() has been disabled, use Inferno.options.findDOMNodeEnabled = true; enabled findDOMNode(). Warning this can significantly impact performance!');
+        }
+        inferno_shared_1.throwError();
+    }
+    var dom = ref && ref.nodeType ? ref : null;
+    return exports.componentToDOMNodeMap.get(ref) || dom;
+}
+exports.findDOMNode = findDOMNode;
+function getRoot(dom) {
+    for (var i = 0, len = roots.length; i < len; i++) {
+        var root = roots[i];
+        if (root.dom === dom) {
+            return root;
+        }
+    }
+    return null;
+}
+function setRoot(dom, input, lifecycle) {
+    var root = {
+        dom: dom,
+        input: input,
+        lifecycle: lifecycle
+    };
+    roots.push(root);
+    return root;
+}
+function removeRoot(root) {
+    for (var i = 0, len = roots.length; i < len; i++) {
+        if (roots[i] === root) {
+            roots.splice(i, 1);
+            return;
+        }
+    }
+}
+if (process.env.NODE_ENV !== 'production') {
+    if (inferno_shared_1.isBrowser && document.body === null) {
+        inferno_shared_1.warning('Inferno warning: you cannot initialize inferno without "document.body". Wait on "DOMContentLoaded" event, add script to bottom of body, or use async/defer attributes on script tag.');
+    }
+}
+var documentBody = inferno_shared_1.isBrowser ? document.body : null;
+/**
+ * Renders virtual node tree into parent node.
+ * @param {VNode | null | string | number} input vNode to be rendered
+ * @param parentDom DOM node which content will be replaced by virtual node
+ * @returns {InfernoChildren} rendered virtual node
+ */
+function render(input, parentDom) {
+    if (documentBody === parentDom) {
+        if (process.env.NODE_ENV !== 'production') {
+            inferno_shared_1.throwError('you cannot render() to the "document.body". Use an empty element as a container instead.');
+        }
+        inferno_shared_1.throwError();
+    }
+    if (input === inferno_shared_1.NO_OP) {
+        return;
+    }
+    var root = getRoot(parentDom);
+    if (inferno_shared_1.isNull(root)) {
+        var lifecycle = new inferno_shared_1.Lifecycle();
+        if (!inferno_shared_1.isInvalid(input)) {
+            if (input.dom) {
+                input = VNodes_1.directClone(input);
+            }
+            if (!hydration_1.hydrateRoot(input, parentDom, lifecycle)) {
+                mounting_1.mount(input, parentDom, lifecycle, utils_1.EMPTY_OBJ, false);
+            }
+            root = setRoot(parentDom, input, lifecycle);
+            lifecycle.trigger();
+        }
+    } else {
+        var lifecycle = root.lifecycle;
+        lifecycle.listeners = [];
+        if (inferno_shared_1.isNullOrUndef(input)) {
+            unmounting_1.unmount(root.input, parentDom, lifecycle, false, false);
+            removeRoot(root);
+        } else {
+            if (input.dom) {
+                input = VNodes_1.directClone(input);
+            }
+            patching_1.patch(root.input, input, parentDom, lifecycle, utils_1.EMPTY_OBJ, false, false);
+        }
+        root.input = input;
+        lifecycle.trigger();
+    }
+    if (root) {
+        var rootInput = root.input;
+        if (rootInput && rootInput.flags & 28 /* Component */) {
+            return rootInput.children;
+        }
+    }
+}
+exports.render = render;
+function createRenderer(parentDom) {
+    return function renderer(lastInput, nextInput) {
+        if (!parentDom) {
+            parentDom = lastInput;
+        }
+        render(nextInput, parentDom);
+    };
+}
+exports.createRenderer = createRenderer;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ }),
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2448,9 +2448,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
 var VNodes_1 = __webpack_require__(6);
-var patching_1 = __webpack_require__(7);
+var patching_1 = __webpack_require__(8);
 var recycling_1 = __webpack_require__(22);
-var rendering_1 = __webpack_require__(9);
+var rendering_1 = __webpack_require__(10);
 var utils_1 = __webpack_require__(3);
 var processElement_1 = __webpack_require__(16);
 function mount(vNode, parentDom, lifecycle, context, isSVG) {
@@ -2782,9 +2782,9 @@ module.exports = defaults;
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
-var patching_1 = __webpack_require__(7);
+var patching_1 = __webpack_require__(8);
 var recycling_1 = __webpack_require__(22);
-var rendering_1 = __webpack_require__(9);
+var rendering_1 = __webpack_require__(10);
 var utils_1 = __webpack_require__(3);
 function unmount(vNode, parentDom, lifecycle, canRecycle, isRecycling) {
     var flags = vNode.flags;
@@ -3205,7 +3205,7 @@ module.exports = function bind(fn, thisArg) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
-var patching_1 = __webpack_require__(7);
+var patching_1 = __webpack_require__(8);
 var componentPools = new Map();
 var elementPools = new Map();
 function recycleElement(vNode, lifecycle, context, isSVG) {
@@ -3566,7 +3566,7 @@ module.exports = __webpack_require__(38);
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(70);
+var content = __webpack_require__(71);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -3574,7 +3574,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(10)(content, options);
+var update = __webpack_require__(9)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -3605,7 +3605,7 @@ var _inferno = __webpack_require__(5);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-__webpack_require__(72);
+__webpack_require__(73);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3637,7 +3637,7 @@ exports.default = function (props) {
   });
 
   return createVNode(2, 'div', 'chal-grid', props.challenges.map(function (chal) {
-    return createVNode(2, 'div', 'chal-item-container' + (solves.includes(chal.id) ? ' solved' : ''), createVNode(2, 'div', 'chal-item', [createVNode(2, 'div', 'chal-title', chal.category), createVNode(2, 'div', 'chal-name', [chal.name, ' ', Math.random() > 0.5 ? "is a really long challenege name but i guess we don't really care" : '']), createVNode(2, 'div', 'chal-points', chal.value, {
+    return createVNode(2, 'div', 'chal-item-container' + (solves.includes(chal.id) ? ' solved' : ''), createVNode(2, 'div', 'chal-item', [createVNode(2, 'div', 'chal-title', chal.category), createVNode(2, 'div', 'chal-name', chal.name), createVNode(2, 'div', 'chal-points', chal.value, {
       'style': { color: getColorFromValue(chal.value, range) }
     })]), {
       'onClick': props.showChallenge.bind(null, chal)
@@ -3661,30 +3661,118 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _inferno = __webpack_require__(5);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-__webpack_require__(77);
+var _infernoComponent = __webpack_require__(13);
+
+var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
+
+__webpack_require__(74);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var createVNode = _inferno2.default.createVNode;
 
-exports.default = function (props) {
-  var challenge = props.challenge,
-      hide = props.hide;
+var ChalModal = function (_Component) {
+  _inherits(ChalModal, _Component);
 
-  if (!challenge) {
-    return createVNode(2, 'div', 'chal-modal-container');
+  function ChalModal(props) {
+    _classCallCheck(this, ChalModal);
+
+    var _this = _possibleConstructorReturn(this, (ChalModal.__proto__ || Object.getPrototypeOf(ChalModal)).call(this, props));
+
+    _this.state = {
+      input: ''
+    };
+
+    _this.onInputKeyDown = _this.onInputKeyDown.bind(_this);
+    _this.onInputChange = _this.onInputChange.bind(_this);
+    _this.onSubmit = _this.onSubmit.bind(_this);
+    return _this;
   }
 
-  console.log(challenge);
+  _createClass(ChalModal, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (this.props.challenge != nextProps.challenge) {
+        this.setState(function (state) {
+          state.input = '';
+        });
+      }
+    }
+  }, {
+    key: 'onInputKeyDown',
+    value: function onInputKeyDown(e) {
+      if (e.key === 'Enter') {
+        this.onSubmit();
+      }
 
-  return createVNode(2, 'div', 'chal-modal-container open', createVNode(2, 'div', 'chal-modal', [createVNode(2, 'div', 'chal-category', challenge.category), createVNode(2, 'div', 'chal-name', challenge.name), createVNode(2, 'div', 'chal-desc', challenge.description)]), {
-    'onClick': hide
-  });
-};
+      if (e.key === 'Escape') {
+        this.setState(function (state) {
+          state.input = '';
+        });
+      }
+    }
+  }, {
+    key: 'onInputChange',
+    value: function onInputChange(e) {
+      this.setState(function (state) {
+        state.input = e.target.value;
+      });
+    }
+  }, {
+    key: 'onSubmit',
+    value: function onSubmit() {
+      if (!this.state.input.length) return;
+      this.props.submit(this.state.input);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props,
+          challenge = _props.challenge,
+          hide = _props.hide,
+          submit = _props.submit,
+          response = _props.response;
+
+
+      if (!challenge) {
+        return createVNode(2, 'div', 'chal-modal-container');
+      }
+
+      return createVNode(2, 'div', 'chal-modal-container open', createVNode(2, 'div', 'chal-modal', [createVNode(2, 'div', 'chal-row', [createVNode(2, 'div', 'chal-category', challenge.category), createVNode(2, 'div', 'chal-name', challenge.name), createVNode(2, 'div', 'chal-desc', challenge.description), createVNode(2, 'div', 'chal-files', challenge.files.map(function (file) {
+        return createVNode(2, 'a', 'chal-file', file.split('/').slice(-1)[0], {
+          'href': '/files/' + file,
+          'download': true
+        });
+      }))]), createVNode(2, 'div', 'chal-row', createVNode(2, 'div', 'chal-input', [createVNode(2, 'div', 'chal-input-row', [createVNode(512, 'input', 'csaw-form-control ' + (response || ''), null, {
+        'type': 'text',
+        'placeholder': 'Key',
+        'onKeyDown': this.onInputKeyDown,
+        'onInput': this.onInputChange,
+        'value': this.state.input
+      }), createVNode(2, 'button', 'btn btn-primary', 'Submit', {
+        'onClick': this.onSubmit
+      })]), createVNode(2, 'div', 'chal-input-row', createVNode(2, 'div', 'chal-response ' + (response || ''), 'Key Rejected'))]))]), {
+        'onClick': hide
+      });
+    }
+  }]);
+
+  return ChalModal;
+}(_infernoComponent2.default);
+
+exports.default = ChalModal;
 
 /***/ }),
 /* 32 */
@@ -3707,7 +3795,7 @@ var _infernoComponent = __webpack_require__(13);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
-__webpack_require__(73);
+__webpack_require__(75);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3838,7 +3926,7 @@ var _ChalProgress = __webpack_require__(33);
 
 var _ChalProgress2 = _interopRequireDefault(_ChalProgress);
 
-__webpack_require__(74);
+__webpack_require__(76);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3895,7 +3983,7 @@ var _classnames = __webpack_require__(55);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-__webpack_require__(75);
+__webpack_require__(77);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4129,7 +4217,8 @@ var Chalboard = function (_Component) {
       completedFilters: [{ label: 'Completed', value: 'completed' }, { label: 'Not Completed', value: 'not_completed' }],
       totalPoints: 1,
       solvedPoints: 0,
-      activeChallenge: null
+      activeChallenge: null,
+      keyResponse: null
     };
 
     _this.loadChals = _this.loadChals.bind(_this);
@@ -4140,6 +4229,9 @@ var Chalboard = function (_Component) {
     _this.updateCompletedFilters = _this.updateCompletedFilters.bind(_this);
     _this.showChallenge = _this.showChallenge.bind(_this);
     _this.hideModal = _this.hideModal.bind(_this);
+    _this.submitKey = _this.submitKey.bind(_this);
+
+    _this.keyTO = null;
     return _this;
   }
 
@@ -4246,6 +4338,23 @@ var Chalboard = function (_Component) {
       this.showChallenge(null);
     }
   }, {
+    key: 'submitKey',
+    value: function submitKey(key) {
+      var _this3 = this;
+
+      this.setState(function (state) {
+        state.keyResponse = 'error';
+      });
+
+      clearTimeout(this.keyTO);
+
+      this.keyTO = setTimeout(function () {
+        _this3.setState(function (state) {
+          state.keyResponse = null;
+        });
+      }, 2000);
+    }
+  }, {
     key: 'render',
     value: function render() {
       return createVNode(2, 'div', 'chalboard container', [createVNode(16, _ChalToolbar2.default, null, null, {
@@ -4265,7 +4374,9 @@ var Chalboard = function (_Component) {
         'showChallenge': this.showChallenge
       }), createVNode(16, _ChalModal2.default, null, null, {
         'challenge': this.state.activeChallenge,
-        'hide': this.hideModal
+        'hide': this.hideModal,
+        'submit': this.submitKey,
+        'response': this.state.keyResponse
       })]);
     }
   }]);
@@ -5639,8 +5750,8 @@ var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
 var constants_1 = __webpack_require__(11);
 var mounting_1 = __webpack_require__(12);
-var patching_1 = __webpack_require__(7);
-var rendering_1 = __webpack_require__(9);
+var patching_1 = __webpack_require__(8);
+var rendering_1 = __webpack_require__(10);
 var utils_1 = __webpack_require__(3);
 var processElement_1 = __webpack_require__(16);
 function normalizeChildNodes(parentDom) {
@@ -6153,9 +6264,9 @@ var constants_1 = __webpack_require__(11);
 exports.internal_isUnitlessNumber = constants_1.isUnitlessNumber;
 var linkEvent_1 = __webpack_require__(59);
 exports.linkEvent = linkEvent_1.linkEvent;
-var patching_1 = __webpack_require__(7);
+var patching_1 = __webpack_require__(8);
 exports.internal_patch = patching_1.patch;
-var rendering_1 = __webpack_require__(9);
+var rendering_1 = __webpack_require__(10);
 exports.internal_DOMNodeMap = rendering_1.componentToDOMNodeMap;
 exports.createRenderer = rendering_1.createRenderer;
 exports.findDOMNode = rendering_1.findDOMNode;
@@ -6319,7 +6430,7 @@ module.exports = function (css) {
 /* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(8)(undefined);
+exports = module.exports = __webpack_require__(7)(undefined);
 // imports
 
 
@@ -6333,7 +6444,21 @@ exports.push([module.i, ".chal-grid {\n  display: flex;\n  flex-flow: row wrap;\
 /* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(8)(undefined);
+exports = module.exports = __webpack_require__(7)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, ".btn-primary {\n  background-color: #484654;\n  border: 0;\n  outline: 0 !important; }\n  .btn-primary:focus {\n    background-color: #484654 !important; }\n  .btn-primary:hover {\n    background-color: #3D3B47 !important; }\n  .btn-primary:active {\n    background-color: #2c2a33 !important; }\n\n.chal-modal-container {\n  display: flex;\n  justify-content: center;\n  background: rgba(0, 0, 0, 0.25);\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  transition: all 0.2s ease-in-out;\n  opacity: 0;\n  position: absolute;\n  visibility: hidden;\n  z-index: 10; }\n  .chal-modal-container.open {\n    opacity: 1;\n    visibility: visible; }\n  .chal-modal-container .chal-modal {\n    display: flex;\n    flex-flow: column nowrap;\n    justify-content: space-between;\n    width: 100%;\n    background: #FFFFFF;\n    margin-top: 154px;\n    height: 453px;\n    width: 585px;\n    animation: fadeScaleIn 0.2s ease-in-out;\n    position: relative; }\n    .chal-modal-container .chal-modal .chal-row {\n      display: flex;\n      flex-flow: column nowrap;\n      width: 100%;\n      position: relative; }\n    .chal-modal-container .chal-modal .chal-category {\n      font-size: 16px;\n      font-weight: 600;\n      margin: 15px 0px;\n      text-align: center; }\n    .chal-modal-container .chal-modal .chal-name {\n      font-size: 16px;\n      margin: 15px 0px 0px 0px;\n      text-align: center; }\n    .chal-modal-container .chal-modal .chal-desc {\n      text-align: center;\n      padding: 15px;\n      line-height: 24px; }\n    .chal-modal-container .chal-modal .chal-files {\n      display: flex;\n      flex-flow: row wrap;\n      width: 100%;\n      padding: 15px; }\n      .chal-modal-container .chal-modal .chal-files .chal-file {\n        cursor: pointer;\n        background: #635Cc6;\n        color: #FFFFFF;\n        margin-right: 10px;\n        margin-bottom: 10px;\n        padding: 9px 12px; }\n    .chal-modal-container .chal-modal .chal-input {\n      display: flex;\n      flex-flow: column nowrap;\n      padding: 0 15px 15px 15px;\n      width: 100%; }\n      .chal-modal-container .chal-modal .chal-input .chal-input-row {\n        display: flex;\n        flex-flow: row nowrap; }\n        .chal-modal-container .chal-modal .chal-input .chal-input-row input {\n          width: 100%;\n          margin-right: 10px; }\n        .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response {\n          margin-top: 5px;\n          font-size: 12px;\n          font-weight: 600;\n          opacity: 0;\n          transform: scale(0);\n          transition: all 0.2s ease-in-out;\n          transform-origin: top left; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.success, .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.error {\n            opacity: 1;\n            transform: scale(1); }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.success {\n            color: #5CC67C; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.error {\n            color: #C65C5C; }\n\n@keyframes fadeScaleIn {\n  0% {\n    opacity: 0;\n    transform: translateY(-30px); }\n  100% {\n    opacity: 1;\n    transform: translateY(0); } }\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(7)(undefined);
 // imports
 
 
@@ -6344,10 +6469,10 @@ exports.push([module.i, ".chal-progress {\n  display: flex;\n  flex-flow: row no
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(8)(undefined);
+exports = module.exports = __webpack_require__(7)(undefined);
 // imports
 
 
@@ -6358,10 +6483,10 @@ exports.push([module.i, ".chal-toolbar {\n  display: flex;\n  flex-flow: row now
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(8)(undefined);
+exports = module.exports = __webpack_require__(7)(undefined);
 // imports
 
 
@@ -6372,10 +6497,10 @@ exports.push([module.i, ".chalboard {\n  margin-left: -15px;\n  margin-right: -1
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(8)(undefined);
+exports = module.exports = __webpack_require__(7)(undefined);
 // imports
 
 
@@ -6386,7 +6511,7 @@ exports.push([module.i, ".filter-dropdown {\n  cursor: pointer;\n  display: flex
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -6400,7 +6525,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(10)(content, options);
+var update = __webpack_require__(9)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6417,7 +6542,7 @@ if(false) {
 }
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
@@ -6431,7 +6556,38 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(10)(content, options);
+var update = __webpack_require__(9)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./ChalModal.scss", function() {
+			var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./ChalModal.scss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(69);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(9)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6448,13 +6604,13 @@ if(false) {
 }
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(69);
+var content = __webpack_require__(70);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -6462,7 +6618,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(10)(content, options);
+var update = __webpack_require__(9)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6479,13 +6635,13 @@ if(false) {
 }
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(71);
+var content = __webpack_require__(72);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -6493,7 +6649,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(10)(content, options);
+var update = __webpack_require__(9)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -6501,51 +6657,6 @@ if(false) {
 	if(!content.locals) {
 		module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./FilterDropdown.scss", function() {
 			var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./FilterDropdown.scss");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-	}
-	// When the module is disposed, remove the <style> tags
-	module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 76 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(8)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, ".chal-modal-container {\n  display: flex;\n  justify-content: center;\n  background: rgba(0, 0, 0, 0.25);\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  transition: all 0.2s ease-in-out;\n  opacity: 0;\n  position: absolute;\n  visibility: hidden;\n  z-index: 10; }\n  .chal-modal-container.open {\n    opacity: 1;\n    visibility: visible; }\n  .chal-modal-container .chal-modal {\n    background: #FFFFFF;\n    margin-top: 154px;\n    height: 540px;\n    width: 585px;\n    animation: fadeScaleIn 0.2s ease-in-out; }\n\n@keyframes fadeScaleIn {\n  0% {\n    opacity: 0;\n    transform: translateY(80px); }\n  100% {\n    opacity: 1;\n    transform: translateY(0); } }\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 77 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(76);
-if(typeof content === 'string') content = [[module.i, content, '']];
-// Prepare cssTransformation
-var transform;
-
-var options = {}
-options.transform = transform
-// add the styles to the DOM
-var update = __webpack_require__(10)(content, options);
-if(content.locals) module.exports = content.locals;
-// Hot Module Replacement
-if(false) {
-	// When the styles change, update the <style> tags
-	if(!content.locals) {
-		module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./ChalModal.scss", function() {
-			var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/sass-loader/lib/loader.js!./ChalModal.scss");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});

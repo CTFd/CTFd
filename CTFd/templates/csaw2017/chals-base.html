@@ -123,6 +123,6 @@
 {% block scripts %}
 	<script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/utils.js"></script>
 	<script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/multi-modal.js"></script>
-	{% if not errors %}<script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/chalboard.434154f8d3336582f661.js"></script>{% endif %}
+	{% if not errors %}<script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/__CHALBOARD_SCRIPT__"></script>{% endif %}
 	<script src="{{ request.script_root }}/static/{{ ctf_theme() }}/js/style.js"></script>
 {% endblock %}

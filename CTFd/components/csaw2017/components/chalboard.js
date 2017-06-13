@@ -29,7 +29,8 @@ class Chalboard extends Component {
       ],
       totalPoints: 1,
       solvedPoints: 0,
-      activeChallenge: null
+      activeChallenge: null,
+      keyResponse: null
     };
 
     this.loadChals = this.loadChals.bind(this);
@@ -40,6 +41,9 @@ class Chalboard extends Component {
     this.updateCompletedFilters = this.updateCompletedFilters.bind(this);
     this.showChallenge = this.showChallenge.bind(this);
     this.hideModal = this.hideModal.bind(this);
+    this.submitKey = this.submitKey.bind(this);
+
+    this.keyTO = null;
   }
 
   componentWillMount() {
@@ -132,6 +136,20 @@ class Chalboard extends Component {
     this.showChallenge(null);
   }
 
+  submitKey(key) {
+    this.setState(state => {
+      state.keyResponse = 'error';
+    });
+
+    clearTimeout(this.keyTO);
+
+    this.keyTO = setTimeout(() => {
+      this.setState(state => {
+        state.keyResponse = null;
+      });
+    }, 2000);
+  }
+
   render() {
     return (
       <div className="chalboard container">
@@ -152,7 +170,12 @@ class Chalboard extends Component {
           loading={this.state.loadingChals}
           showChallenge={this.showChallenge}
         />
-        <ChalModal challenge={this.state.activeChallenge} hide={this.hideModal} />
+        <ChalModal
+          challenge={this.state.activeChallenge}
+          hide={this.hideModal}
+          submit={this.submitKey}
+          response={this.state.keyResponse}
+        />
       </div>
     );
   }

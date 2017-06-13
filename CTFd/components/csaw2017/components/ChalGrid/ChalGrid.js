@@ -42,7 +42,6 @@ export default props => {
               </div>
               <div className="chal-name">
                 {chal.name}
-                {' '}{Math.random() > 0.5 ? "is a really long challenege name but i guess we don't really care" : ''}
               </div>
               <div className="chal-points" style={{ color: getColorFromValue(chal.value, range) }}>
                 {chal.value}

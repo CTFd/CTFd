@@ -1,3 +1,21 @@
+.btn-primary {
+    background-color: #484654;
+    border: 0;
+    outline: 0 !important;
+
+    &:focus {
+      background-color: #484654 !important;
+    }
+
+    &:hover {
+      background-color: #3D3B47 !important;
+    }
+
+    &:active {
+      background-color: #2c2a33 !important;
+    }
+}
+
 .chal-modal-container {
   display: flex;
   justify-content: center;
@@ -18,18 +36,105 @@
   }
 
   .chal-modal {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    width: 100%;
     background: #FFFFFF;
     margin-top: 154px;
-    height: 540px;
+    height: 453px;
     width: 585px;
     animation: fadeScaleIn 0.2s ease-in-out;
+    position: relative;
+
+    .chal-row {
+      display: flex;
+      flex-flow: column nowrap;
+      width: 100%;
+      position: relative;
+    }
+
+    .chal-category {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 15px 0px;
+      text-align: center;
+    }
+
+    .chal-name {
+      font-size: 16px;
+      margin: 15px 0px 0px 0px;
+      text-align: center;
+    }
+
+    .chal-desc {
+      text-align: center;
+      padding: 15px;
+      line-height: 24px;
+    }
+
+    .chal-files {
+      display: flex;
+      flex-flow: row wrap;
+      width: 100%;
+      padding: 15px;
+
+      .chal-file {
+        cursor: pointer;
+        background: #635Cc6;
+        color: #FFFFFF;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        padding: 9px 12px;
+      }
+    }
+
+    .chal-input {
+      display: flex;
+      flex-flow: column nowrap;
+      padding: 0 15px 15px 15px;
+      width: 100%;
+      
+      .chal-input-row {
+        display: flex;
+        flex-flow: row nowrap;
+
+        input {
+          width: 100%;
+          margin-right: 10px;
+        }
+
+        .chal-response {
+          margin-top: 5px;
+          font-size: 12px;
+          font-weight: 600;
+          opacity: 0;
+          transform: scale(0);
+          transition: all 0.2s ease-in-out;
+          transform-origin: top left;
+          
+          &.success, &.error {
+            opacity: 1;
+            transform: scale(1);
+          }
+
+          &.success {
+            color: #5CC67C;
+          }
+
+          &.error {
+            color: #C65C5C;
+          }
+        }
+      }
+    }
   }
 }
 
 @keyframes fadeScaleIn {
   0% {
     opacity: 0;
-    transform: translateY(80px);
+    transform: translateY(-30px);
   }
 
   100% {
