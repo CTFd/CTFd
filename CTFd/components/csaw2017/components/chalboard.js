@@ -28,6 +28,7 @@ class Chalboard extends Component {
         { label: 'Completed', value: 'completed' },
         { label: 'Not Completed', value: 'not_completed' }
       ],
+      sortFilter: 'points_asc',
       totalPoints: 1,
       solvedPoints: 0,
       activeChallenge: null,
@@ -41,6 +42,7 @@ class Chalboard extends Component {
     this.isSolved = this.isSolved.bind(this);
     this.updateCategoryFilters = this.updateCategoryFilters.bind(this);
     this.updateCompletedFilters = this.updateCompletedFilters.bind(this);
+    this.updateSortFilter = this.updateSortFilter.bind(this);
     this.showChallenge = this.showChallenge.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.submitKey = this.submitKey.bind(this);
@@ -135,6 +137,12 @@ class Chalboard extends Component {
     });
   }
 
+  updateSortFilter(filter) {
+    this.setState(state => {
+      state.sortFilter = filter;
+    });
+  }
+
   showChallenge(chal) {
     this.loadChalSolves(chal);
     this.setState(state => {
@@ -195,6 +203,8 @@ class Chalboard extends Component {
           completedOptions={this.state.completedOptions}
           completedFilters={this.state.completedFilters}
           onUpdateCompletedFilters={this.updateCompletedFilters}
+          sortFilter={this.state.sortFilter}
+          onUpdateSortFilter={this.updateSortFilter}
           progressLoading={this.state.loadingChals || this.state.loadingSolves}
           totalPoints={this.state.totalPoints}
           solvedPoints={this.state.solvedPoints}

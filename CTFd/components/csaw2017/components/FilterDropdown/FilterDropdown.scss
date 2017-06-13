@@ -47,8 +47,16 @@
       padding: 15px;
       white-space: nowrap;
 
-      &:hover {
+      &:hover, &.active {
         background: #E9E7EB;
+      }
+
+      .icon-span {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
       }
     }
   }

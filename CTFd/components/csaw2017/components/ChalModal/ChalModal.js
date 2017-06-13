@@ -12,7 +12,7 @@ export default class ChalModal extends Component {
       showSolvesView: false
     };
 
-    this.showSolvesView = this.showSolvesView.bind(this);
+    this.toggleSolvesView = this.toggleSolvesView.bind(this);
 
     this.onInputKeyDown = this.onInputKeyDown.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
@@ -28,7 +28,7 @@ export default class ChalModal extends Component {
     }
   }
 
-  showSolvesView() {
+  toggleSolvesView() {
     this.setState(state => {
       state.showSolvesView = !state.showSolvesView;
     });
@@ -86,46 +86,67 @@ export default class ChalModal extends Component {
     return (
       <div className="chal-modal-container open" onClick={hide}>
         <div className="chal-modal">
-          {solves &&
-            <div className="chal-solves" onClick={this.showSolvesView}>
-              {solves.length} Solves
-            </div>}
-          <div className="chal-row">
-            <div className="chal-category">
-              {challenge.category}
-            </div>
-            <div className="chal-name">
-              {challenge.name}
-            </div>
-            <div className="chal-desc">
-              {challenge.description}
-            </div>
-            <div className="chal-files">
-              {challenge.files.map(file =>
-                <a className="chal-file" href={`/files/${file}`} download>{file.split('/').slice(-1)[0]}</a>
-              )}
-            </div>
-          </div>
-          <div className="chal-row">
-            <div className="chal-input">
-              <div className="chal-input-row">
-                <input
-                  className={'csaw-form-control ' + this.classFromResponse(response)}
-                  type="text"
-                  placeholder="Key"
-                  onKeyDown={this.onInputKeyDown}
-                  onInput={this.onInputChange}
-                  value={this.state.input}
-                />
-                <button className="btn btn-primary" onClick={this.onSubmit}>Submit</button>
-              </div>
-              <div className="chal-input-row">
-                <div className={'chal-response ' + this.classFromResponse(response)}>
-                  {response ? response.message : '\u00A0'}
+          {!this.state.showSolvesView &&
+            <div className="chal-content">
+              {solves &&
+                <div className="chal-solves" onClick={this.toggleSolvesView}>
+                  {solves.length} Solves
+                </div>}
+              <div className="chal-row">
+                <div className="chal-category">
+                  {challenge.category}
+                </div>
+                <div className="chal-name">
+                  {challenge.name}
+                </div>
+                <div className="chal-desc">
+                  {challenge.description}
+                </div>
+                <div className="chal-files">
+                  {challenge.files.map(file =>
+                    <a className="chal-file" href={`/files/${file}`} download>{file.split('/').slice(-1)[0]}</a>
+                  )}
                 </div>
               </div>
-            </div>
-          </div>
+              <div className="chal-row">
+                <div className="chal-input">
+                  <div className="chal-input-row">
+                    <input
+                      className={'csaw-form-control ' + this.classFromResponse(response)}
+                      type="text"
+                      placeholder="Key"
+                      onKeyDown={this.onInputKeyDown}
+                      onInput={this.onInputChange}
+                      value={this.state.input}
+                    />
+                    <button className="btn btn-primary" onClick={this.onSubmit}>Submit</button>
+                  </div>
+                  <div className="chal-input-row">
+                    <div className={'chal-response ' + this.classFromResponse(response)}>
+                      {response ? response.message : '\u00A0'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>}
+          {this.state.showSolvesView &&
+            <div className="chal-content chal-solves-container">
+              <div className="chal-solves" onClick={this.toggleSolvesView}>
+                <i className="fa fa-arrow-left" /><span style={{ marginLeft: '5px' }}>Challenge</span>
+              </div>
+              <div class="chal-category">Solves</div>
+              <div className="solves-table">
+                {solves &&
+                  solves.map(solve => {
+                    return (
+                      <div className="chal-solve">
+                        <div><a href={'/team/' + solve.id} target="_blank">{solve.name}</a></div>
+                        <div className="pull-right">{new Date(solve.date).toLocaleString()}</div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>}
         </div>
       </div>
     );

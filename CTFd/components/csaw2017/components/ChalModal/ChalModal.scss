@@ -18,6 +18,7 @@
 }
 
 .chal-modal-container {
+  cursor: pointer;
   display: flex;
   justify-content: center;
   background: rgba(0, 0, 0, 0.25);
@@ -48,6 +49,17 @@
     animation: fadeScaleIn 0.2s ease-in-out;
     position: relative;
 
+
+    .chal-content {
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: space-between;
+      height: 100%;
+      width: 100%;
+      position: relative;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
     .chal-solves {
       cursor: pointer;
       position: absolute;
@@ -60,6 +72,7 @@
       padding: 3px 6px;
       animation: fadeIn 0.2s ease-in-out;
       z-index: 3;
+      user-select: none;
     }
 
     .chal-row {
@@ -150,7 +163,35 @@
         }
       }
     }
+
+    .chal-solves-container {
+      .solves-table {
+        overflow: auto;
+      }
+
+      .chal-solve {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+        border-bottom: 1px solid #f6f6f8;
+        padding: 15px;
+
+        div {
+          flex: 1;
+
+          &.pull-right {
+            text-align: right;
+          }
+        }
+      }
+    }
   }
+}
+
+.fadeIn {
+  animation: fadeIn 0.2s ease-in-out !important;
 }
 
 @keyframes fadeScaleIn {

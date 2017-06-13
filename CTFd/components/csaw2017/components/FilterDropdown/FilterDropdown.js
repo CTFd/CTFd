@@ -40,6 +40,10 @@ export default class FilterDropdown extends Component {
   }
 
   onItemClick(option, checked) {
+    if (!this.props.multi) {
+      return this.props.onFilter(option.value);
+    }
+
     let filters = [...this.props.filters];
 
     if (checked) {
@@ -81,7 +85,7 @@ export default class FilterDropdown extends Component {
   }
 
   render() {
-    const { title, position, options, filters, multi } = this.props;
+    const { title, position, options, filters, filter, multi } = this.props;
     const { toggled } = this.state;
     const filterDropdownClasses = cn({
       'filter-dropdown': true,
@@ -95,11 +99,15 @@ export default class FilterDropdown extends Component {
         {title} <i className={'fa fa-caret-' + (toggled ? 'up' : 'down')} />
         <div className="dropdown-items">
           {options.map(option => {
-            const checked = filters.map(f => f.value).includes(option.value);
+            const checked = multi ? filters.map(f => f.value).includes(option.value) : filter === option.value;
 
             return (
-              <div className="dropdown-item" key={option.value} onClick={this.onItemClick.bind(null, option, checked)}>
-                <span>{option.label}</span>
+              <div
+                className={'dropdown-item' + (!multi && checked ? ' active' : '')}
+                key={option.value}
+                onClick={this.onItemClick.bind(null, option, checked)}
+              >
+                {option.label}
                 {multi &&
                   <label className="check"><input type="checkbox" checked={checked} /><div className="box" /></label>}
               </div>

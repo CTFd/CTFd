@@ -3696,7 +3696,7 @@ var ChalModal = function (_Component) {
       showSolvesView: false
     };
 
-    _this.showSolvesView = _this.showSolvesView.bind(_this);
+    _this.toggleSolvesView = _this.toggleSolvesView.bind(_this);
 
     _this.onInputKeyDown = _this.onInputKeyDown.bind(_this);
     _this.onInputChange = _this.onInputChange.bind(_this);
@@ -3715,8 +3715,8 @@ var ChalModal = function (_Component) {
       }
     }
   }, {
-    key: 'showSolvesView',
-    value: function showSolvesView() {
+    key: 'toggleSolvesView',
+    value: function toggleSolvesView() {
       this.setState(function (state) {
         state.showSolvesView = !state.showSolvesView;
       });
@@ -3783,8 +3783,8 @@ var ChalModal = function (_Component) {
         return createVNode(2, 'div', 'chal-modal-container');
       }
 
-      return createVNode(2, 'div', 'chal-modal-container open', createVNode(2, 'div', 'chal-modal', [solves && createVNode(2, 'div', 'chal-solves', [solves.length, ' Solves'], {
-        'onClick': this.showSolvesView
+      return createVNode(2, 'div', 'chal-modal-container open', createVNode(2, 'div', 'chal-modal', [!this.state.showSolvesView && createVNode(2, 'div', 'chal-content', [solves && createVNode(2, 'div', 'chal-solves', [solves.length, ' Solves'], {
+        'onClick': this.toggleSolvesView
       }), createVNode(2, 'div', 'chal-row', [createVNode(2, 'div', 'chal-category', challenge.category), createVNode(2, 'div', 'chal-name', challenge.name), createVNode(2, 'div', 'chal-desc', challenge.description), createVNode(2, 'div', 'chal-files', challenge.files.map(function (file) {
         return createVNode(2, 'a', 'chal-file', file.split('/').slice(-1)[0], {
           'href': '/files/' + file,
@@ -3798,7 +3798,16 @@ var ChalModal = function (_Component) {
         'value': this.state.input
       }), createVNode(2, 'button', 'btn btn-primary', 'Submit', {
         'onClick': this.onSubmit
-      })]), createVNode(2, 'div', 'chal-input-row', createVNode(2, 'div', 'chal-response ' + this.classFromResponse(response), response ? response.message : '\xA0'))]))]), {
+      })]), createVNode(2, 'div', 'chal-input-row', createVNode(2, 'div', 'chal-response ' + this.classFromResponse(response), response ? response.message : '\xA0'))]))]), this.state.showSolvesView && createVNode(2, 'div', 'chal-content chal-solves-container', [createVNode(2, 'div', 'chal-solves', [createVNode(2, 'i', 'fa fa-arrow-left'), createVNode(2, 'span', null, 'Challenge', {
+        'style': { marginLeft: '5px' }
+      })], {
+        'onClick': this.toggleSolvesView
+      }), createVNode(2, 'div', 'chal-category', 'Solves'), createVNode(2, 'div', 'solves-table', solves && solves.map(function (solve) {
+        return createVNode(2, 'div', 'chal-solve', [createVNode(2, 'div', null, createVNode(2, 'a', null, solve.name, {
+          'href': '/team/' + solve.id,
+          'target': '_blank'
+        })), createVNode(2, 'div', 'pull-right', new Date(solve.date).toLocaleString())]);
+      }))])]), {
         'onClick': hide
       });
     }
@@ -3988,7 +3997,9 @@ exports.default = function (props) {
     'multi': true
   }), createVNode(16, _FilterDropdown2.default, null, null, {
     'title': 'Sort',
-    'options': [{ label: 'Points DESC', value: 'points_desc' }, { label: 'Points ASC', value: 'points_asc' }],
+    'options': [{ label: createVNode(2, 'span', 'icon-span', ['Name ', createVNode(2, 'i', 'fa fa-sort-alpha-asc')]), value: 'name_asc' }, { label: createVNode(2, 'span', 'icon-span', ['Name ', createVNode(2, 'i', 'fa fa-sort-alpha-desc')]), value: 'name_desc' }, { label: createVNode(2, 'span', 'icon-span', ['Category ', createVNode(2, 'i', 'fa fa-sort-alpha-asc')]), value: 'category_asc' }, { label: createVNode(2, 'span', 'icon-span', ['Category ', createVNode(2, 'i', 'fa fa-sort-alpha-desc')]), value: 'category_desc' }, { label: createVNode(2, 'span', 'icon-span', ['Points ', createVNode(2, 'i', 'fa fa-sort-numeric-asc')]), value: 'points_asc' }, { label: createVNode(2, 'span', 'icon-span', ['Points ', createVNode(2, 'i', 'fa fa-sort-numeric-desc')]), value: 'points_desc' }],
+    'filter': props.sortFilter,
+    'onFilter': props.onUpdateSortFilter,
     'position': 'right'
   })]);
 };
@@ -4076,6 +4087,10 @@ var FilterDropdown = function (_Component) {
   }, {
     key: 'onItemClick',
     value: function onItemClick(option, checked) {
+      if (!this.props.multi) {
+        return this.props.onFilter(option.value);
+      }
+
       var filters = [].concat(_toConsumableArray(this.props.filters));
 
       if (checked) {
@@ -4129,6 +4144,7 @@ var FilterDropdown = function (_Component) {
           position = _props.position,
           options = _props.options,
           filters = _props.filters,
+          filter = _props.filter,
           multi = _props.multi;
       var toggled = this.state.toggled;
 
@@ -4140,11 +4156,11 @@ var FilterDropdown = function (_Component) {
         'position-right': position === 'right'
       });
       return createVNode(2, 'div', filterDropdownClasses, [title, ' ', createVNode(2, 'i', 'fa fa-caret-' + (toggled ? 'up' : 'down')), createVNode(2, 'div', 'dropdown-items', options.map(function (option) {
-        var checked = filters.map(function (f) {
+        var checked = multi ? filters.map(function (f) {
           return f.value;
-        }).includes(option.value);
+        }).includes(option.value) : filter === option.value;
 
-        return createVNode(2, 'div', 'dropdown-item', [createVNode(2, 'span', null, option.label), multi && createVNode(2, 'label', 'check', [createVNode(512, 'input', null, null, {
+        return createVNode(2, 'div', 'dropdown-item' + (!multi && checked ? ' active' : ''), [option.label, multi && createVNode(2, 'label', 'check', [createVNode(512, 'input', null, null, {
           'type': 'checkbox',
           'checked': checked
         }), createVNode(2, 'div', 'box')])], {
@@ -4251,6 +4267,7 @@ var Chalboard = function (_Component) {
       categoryFilters: [],
       completedOptions: [{ label: 'Completed', value: 'completed' }, { label: 'Not Completed', value: 'not_completed' }],
       completedFilters: [{ label: 'Completed', value: 'completed' }, { label: 'Not Completed', value: 'not_completed' }],
+      sortFilter: 'points_asc',
       totalPoints: 1,
       solvedPoints: 0,
       activeChallenge: null,
@@ -4264,6 +4281,7 @@ var Chalboard = function (_Component) {
     _this.isSolved = _this.isSolved.bind(_this);
     _this.updateCategoryFilters = _this.updateCategoryFilters.bind(_this);
     _this.updateCompletedFilters = _this.updateCompletedFilters.bind(_this);
+    _this.updateSortFilter = _this.updateSortFilter.bind(_this);
     _this.showChallenge = _this.showChallenge.bind(_this);
     _this.hideModal = _this.hideModal.bind(_this);
     _this.submitKey = _this.submitKey.bind(_this);
@@ -4371,6 +4389,13 @@ var Chalboard = function (_Component) {
       });
     }
   }, {
+    key: 'updateSortFilter',
+    value: function updateSortFilter(filter) {
+      this.setState(function (state) {
+        state.sortFilter = filter;
+      });
+    }
+  }, {
     key: 'showChallenge',
     value: function showChallenge(chal) {
       this.loadChalSolves(chal);
@@ -4435,6 +4460,8 @@ var Chalboard = function (_Component) {
         'completedOptions': this.state.completedOptions,
         'completedFilters': this.state.completedFilters,
         'onUpdateCompletedFilters': this.updateCompletedFilters,
+        'sortFilter': this.state.sortFilter,
+        'onUpdateSortFilter': this.updateSortFilter,
         'progressLoading': this.state.loadingChals || this.state.loadingSolves,
         'totalPoints': this.state.totalPoints,
         'solvedPoints': this.state.solvedPoints
@@ -6521,7 +6548,7 @@ exports = module.exports = __webpack_require__(7)(undefined);
 
 
 // module
-exports.push([module.i, ".btn-primary {\n  background-color: #484654;\n  border: 0;\n  border-radius: 3px;\n  outline: 0 !important; }\n  .btn-primary:focus {\n    background-color: #484654 !important; }\n  .btn-primary:hover {\n    background-color: #3D3B47 !important; }\n  .btn-primary:active {\n    background-color: #2c2a33 !important; }\n\n.chal-modal-container {\n  display: flex;\n  justify-content: center;\n  background: rgba(0, 0, 0, 0.25);\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  transition: all 0.2s ease-in-out;\n  opacity: 0;\n  position: absolute;\n  visibility: hidden;\n  z-index: 10; }\n  .chal-modal-container.open {\n    opacity: 1;\n    visibility: visible; }\n  .chal-modal-container .chal-modal {\n    display: flex;\n    flex-flow: column nowrap;\n    justify-content: space-between;\n    width: 100%;\n    background: #FFFFFF;\n    margin-top: 154px;\n    height: 453px;\n    width: 585px;\n    animation: fadeScaleIn 0.2s ease-in-out;\n    position: relative; }\n    .chal-modal-container .chal-modal .chal-solves {\n      cursor: pointer;\n      position: absolute;\n      border-radius: 3px;\n      background: #5CC67C;\n      color: #ffffff;\n      font-size: 12px;\n      top: 15px;\n      right: 15px;\n      padding: 3px 6px;\n      animation: fadeIn 0.2s ease-in-out;\n      z-index: 3; }\n    .chal-modal-container .chal-modal .chal-row {\n      display: flex;\n      flex-flow: column nowrap;\n      width: 100%;\n      position: relative; }\n    .chal-modal-container .chal-modal .chal-category {\n      font-size: 16px;\n      font-weight: 600;\n      margin: 15px 0px;\n      text-align: center; }\n    .chal-modal-container .chal-modal .chal-name {\n      font-size: 16px;\n      margin: 15px 0px 0px 0px;\n      text-align: center; }\n    .chal-modal-container .chal-modal .chal-desc {\n      text-align: center;\n      padding: 15px;\n      line-height: 24px; }\n    .chal-modal-container .chal-modal .chal-files {\n      display: flex;\n      flex-flow: row wrap;\n      width: 100%;\n      padding: 15px; }\n      .chal-modal-container .chal-modal .chal-files .chal-file {\n        cursor: pointer;\n        background: #635CC6;\n        border-bottom: 4px solid #5550A8;\n        color: #FFFFFF;\n        margin-right: 10px;\n        margin-bottom: 10px;\n        padding: 9px 12px; }\n    .chal-modal-container .chal-modal .chal-input {\n      display: flex;\n      flex-flow: column nowrap;\n      border-radius: 3px;\n      padding: 0 15px 15px 15px;\n      width: 100%; }\n      .chal-modal-container .chal-modal .chal-input .chal-input-row {\n        display: flex;\n        flex-flow: row nowrap; }\n        .chal-modal-container .chal-modal .chal-input .chal-input-row input {\n          width: 100%;\n          margin-right: 10px;\n          border-radius: 3px; }\n        .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response {\n          margin-top: 5px;\n          font-size: 12px;\n          font-weight: 600;\n          opacity: 0;\n          transform: scale(0);\n          transition: all 0.2s ease-in-out;\n          transform-origin: top left; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.success, .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.error, .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.info {\n            opacity: 1;\n            transform: scale(1); }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.success {\n            color: #5CC67C; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.error {\n            color: #C65C5C; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.info {\n            color: #797b80; }\n\n@keyframes fadeScaleIn {\n  0% {\n    opacity: 0;\n    transform: translateY(-30px); }\n  100% {\n    opacity: 1;\n    transform: translateY(0); } }\n\n@keyframes fadeIn {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
+exports.push([module.i, ".btn-primary {\n  background-color: #484654;\n  border: 0;\n  border-radius: 3px;\n  outline: 0 !important; }\n  .btn-primary:focus {\n    background-color: #484654 !important; }\n  .btn-primary:hover {\n    background-color: #3D3B47 !important; }\n  .btn-primary:active {\n    background-color: #2c2a33 !important; }\n\n.chal-modal-container {\n  cursor: pointer;\n  display: flex;\n  justify-content: center;\n  background: rgba(0, 0, 0, 0.25);\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  transition: all 0.2s ease-in-out;\n  opacity: 0;\n  position: absolute;\n  visibility: hidden;\n  z-index: 10; }\n  .chal-modal-container.open {\n    opacity: 1;\n    visibility: visible; }\n  .chal-modal-container .chal-modal {\n    display: flex;\n    flex-flow: column nowrap;\n    justify-content: space-between;\n    width: 100%;\n    background: #FFFFFF;\n    margin-top: 154px;\n    height: 453px;\n    width: 585px;\n    animation: fadeScaleIn 0.2s ease-in-out;\n    position: relative; }\n    .chal-modal-container .chal-modal .chal-content {\n      display: flex;\n      flex-flow: column nowrap;\n      justify-content: space-between;\n      height: 100%;\n      width: 100%;\n      position: relative;\n      animation: fadeIn 0.2s ease-in-out; }\n    .chal-modal-container .chal-modal .chal-solves {\n      cursor: pointer;\n      position: absolute;\n      border-radius: 3px;\n      background: #5CC67C;\n      color: #ffffff;\n      font-size: 12px;\n      top: 15px;\n      right: 15px;\n      padding: 3px 6px;\n      animation: fadeIn 0.2s ease-in-out;\n      z-index: 3;\n      user-select: none; }\n    .chal-modal-container .chal-modal .chal-row {\n      display: flex;\n      flex-flow: column nowrap;\n      width: 100%;\n      position: relative; }\n    .chal-modal-container .chal-modal .chal-category {\n      font-size: 16px;\n      font-weight: 600;\n      margin: 15px 0px;\n      text-align: center; }\n    .chal-modal-container .chal-modal .chal-name {\n      font-size: 16px;\n      margin: 15px 0px 0px 0px;\n      text-align: center; }\n    .chal-modal-container .chal-modal .chal-desc {\n      text-align: center;\n      padding: 15px;\n      line-height: 24px; }\n    .chal-modal-container .chal-modal .chal-files {\n      display: flex;\n      flex-flow: row wrap;\n      width: 100%;\n      padding: 15px; }\n      .chal-modal-container .chal-modal .chal-files .chal-file {\n        cursor: pointer;\n        background: #635CC6;\n        border-bottom: 4px solid #5550A8;\n        color: #FFFFFF;\n        margin-right: 10px;\n        margin-bottom: 10px;\n        padding: 9px 12px; }\n    .chal-modal-container .chal-modal .chal-input {\n      display: flex;\n      flex-flow: column nowrap;\n      border-radius: 3px;\n      padding: 0 15px 15px 15px;\n      width: 100%; }\n      .chal-modal-container .chal-modal .chal-input .chal-input-row {\n        display: flex;\n        flex-flow: row nowrap; }\n        .chal-modal-container .chal-modal .chal-input .chal-input-row input {\n          width: 100%;\n          margin-right: 10px;\n          border-radius: 3px; }\n        .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response {\n          margin-top: 5px;\n          font-size: 12px;\n          font-weight: 600;\n          opacity: 0;\n          transform: scale(0);\n          transition: all 0.2s ease-in-out;\n          transform-origin: top left; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.success, .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.error, .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.info {\n            opacity: 1;\n            transform: scale(1); }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.success {\n            color: #5CC67C; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.error {\n            color: #C65C5C; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.info {\n            color: #797b80; }\n    .chal-modal-container .chal-modal .chal-solves-container .solves-table {\n      overflow: auto; }\n    .chal-modal-container .chal-modal .chal-solves-container .chal-solve {\n      display: flex;\n      flex-flow: row nowrap;\n      align-items: center;\n      justify-content: space-between;\n      flex-shrink: 0;\n      border-bottom: 1px solid #f6f6f8;\n      padding: 15px; }\n      .chal-modal-container .chal-modal .chal-solves-container .chal-solve div {\n        flex: 1; }\n        .chal-modal-container .chal-modal .chal-solves-container .chal-solve div.pull-right {\n          text-align: right; }\n\n.fadeIn {\n  animation: fadeIn 0.2s ease-in-out !important; }\n\n@keyframes fadeScaleIn {\n  0% {\n    opacity: 0;\n    transform: translateY(-30px); }\n  100% {\n    opacity: 1;\n    transform: translateY(0); } }\n\n@keyframes fadeIn {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
 
 // exports
 
@@ -6577,7 +6604,7 @@ exports = module.exports = __webpack_require__(7)(undefined);
 
 
 // module
-exports.push([module.i, ".filter-dropdown {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  color: #484654;\n  padding: 15px;\n  position: relative;\n  user-select: none; }\n  .filter-dropdown.active {\n    background: #E9E7EB;\n    font-weight: 600; }\n  .filter-dropdown.position-left {\n    border-right: 1px solid #E9E7EB; }\n  .filter-dropdown.position-right {\n    border-left: 1px solid #E9E7EB; }\n  .filter-dropdown i {\n    margin-left: 10px; }\n  .filter-dropdown .dropdown-items {\n    display: none;\n    background: #FFFFFF;\n    border: 1px solid #E9E7EB;\n    left: 0;\n    top: 100%;\n    min-width: 120%;\n    position: absolute;\n    z-index: 3;\n    animation: 0.2s scaleIn;\n    transform-origin: left top; }\n    .filter-dropdown .dropdown-items .dropdown-item {\n      display: flex;\n      flex-flow: row nowrap;\n      align-items: center;\n      justify-content: space-between;\n      font-weight: 400;\n      font-size: 13px;\n      padding: 15px;\n      white-space: nowrap; }\n      .filter-dropdown .dropdown-items .dropdown-item:hover {\n        background: #E9E7EB; }\n  .filter-dropdown.active .dropdown-items {\n    display: block; }\n\n.check {\n  width: 27px;\n  height: 27px;\n  margin-bottom: 0;\n  margin-left: 15px;\n  position: relative; }\n  .check input {\n    display: none;\n    margin: 0; }\n    .check input:checked + .box:after {\n      border-color: #484654; }\n  .check .box {\n    width: 100%;\n    height: 100%;\n    position: relative;\n    overflow: hidden;\n    cursor: pointer; }\n    .check .box:after {\n      content: '';\n      display: block;\n      width: 6px;\n      height: 12px;\n      border: solid #AFB0B3;\n      border-width: 0 2px 2px 0;\n      transform: rotate(45deg);\n      left: 11px;\n      top: 6px;\n      position: relative; }\n\n@keyframes scaleIn {\n  0% {\n    opacity: 0;\n    transform: scale(0); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n", ""]);
+exports.push([module.i, ".filter-dropdown {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  color: #484654;\n  padding: 15px;\n  position: relative;\n  user-select: none; }\n  .filter-dropdown.active {\n    background: #E9E7EB;\n    font-weight: 600; }\n  .filter-dropdown.position-left {\n    border-right: 1px solid #E9E7EB; }\n  .filter-dropdown.position-right {\n    border-left: 1px solid #E9E7EB; }\n  .filter-dropdown i {\n    margin-left: 10px; }\n  .filter-dropdown .dropdown-items {\n    display: none;\n    background: #FFFFFF;\n    border: 1px solid #E9E7EB;\n    left: 0;\n    top: 100%;\n    min-width: 120%;\n    position: absolute;\n    z-index: 3;\n    animation: 0.2s scaleIn;\n    transform-origin: left top; }\n    .filter-dropdown .dropdown-items .dropdown-item {\n      display: flex;\n      flex-flow: row nowrap;\n      align-items: center;\n      justify-content: space-between;\n      font-weight: 400;\n      font-size: 13px;\n      padding: 15px;\n      white-space: nowrap; }\n      .filter-dropdown .dropdown-items .dropdown-item:hover, .filter-dropdown .dropdown-items .dropdown-item.active {\n        background: #E9E7EB; }\n      .filter-dropdown .dropdown-items .dropdown-item .icon-span {\n        display: flex;\n        flex-flow: row nowrap;\n        align-items: center;\n        justify-content: space-between;\n        width: 100%; }\n  .filter-dropdown.active .dropdown-items {\n    display: block; }\n\n.check {\n  width: 27px;\n  height: 27px;\n  margin-bottom: 0;\n  margin-left: 15px;\n  position: relative; }\n  .check input {\n    display: none;\n    margin: 0; }\n    .check input:checked + .box:after {\n      border-color: #484654; }\n  .check .box {\n    width: 100%;\n    height: 100%;\n    position: relative;\n    overflow: hidden;\n    cursor: pointer; }\n    .check .box:after {\n      content: '';\n      display: block;\n      width: 6px;\n      height: 12px;\n      border: solid #AFB0B3;\n      border-width: 0 2px 2px 0;\n      transform: rotate(45deg);\n      left: 11px;\n      top: 6px;\n      position: relative; }\n\n@keyframes scaleIn {\n  0% {\n    opacity: 0;\n    transform: scale(0); }\n  100% {\n    opacity: 1;\n    transform: scale(1); } }\n", ""]);
 
 // exports
 
