@@ -588,8 +588,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
 var VNodes_1 = __webpack_require__(6);
-var constants_1 = __webpack_require__(11);
-var mounting_1 = __webpack_require__(12);
+var constants_1 = __webpack_require__(12);
+var mounting_1 = __webpack_require__(13);
 var unmounting_1 = __webpack_require__(15);
 // We need EMPTY_OBJ defined in one place.
 // Its used for comparison so we cant inline it into shared
@@ -1091,9 +1091,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
 var VNodes_1 = __webpack_require__(6);
-var constants_1 = __webpack_require__(11);
+var constants_1 = __webpack_require__(12);
 var delegation_1 = __webpack_require__(58);
-var mounting_1 = __webpack_require__(12);
+var mounting_1 = __webpack_require__(13);
 var rendering_1 = __webpack_require__(10);
 var unmounting_1 = __webpack_require__(15);
 var utils_1 = __webpack_require__(3);
@@ -2216,7 +2216,7 @@ var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
 var VNodes_1 = __webpack_require__(6);
 var hydration_1 = __webpack_require__(60);
-var mounting_1 = __webpack_require__(12);
+var mounting_1 = __webpack_require__(13);
 var patching_1 = __webpack_require__(8);
 var unmounting_1 = __webpack_require__(15);
 var utils_1 = __webpack_require__(3);
@@ -2343,6 +2343,16 @@ exports.createRenderer = createRenderer;
 "use strict";
 
 
+module.exports = __webpack_require__(56).default;
+module.exports.default = module.exports;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.xlinkNS = 'http://www.w3.org/1999/xlink';
 exports.xmlNS = 'http://www.w3.org/XML/1998/namespace';
@@ -2436,7 +2446,7 @@ exports.delegatedEvents.add('onKeyUp');
 exports.delegatedEvents.add('onKeyPress');
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2668,16 +2678,6 @@ function mountRef(dom, value, lifecycle) {
 }
 exports.mountRef = mountRef;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(56).default;
-module.exports.default = module.exports;
 
 /***/ }),
 /* 14 */
@@ -3667,7 +3667,7 @@ var _inferno = __webpack_require__(5);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-var _infernoComponent = __webpack_require__(13);
+var _infernoComponent = __webpack_require__(11);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
@@ -3692,8 +3692,11 @@ var ChalModal = function (_Component) {
     var _this = _possibleConstructorReturn(this, (ChalModal.__proto__ || Object.getPrototypeOf(ChalModal)).call(this, props));
 
     _this.state = {
-      input: ''
+      input: '',
+      showSolvesView: false
     };
+
+    _this.showSolvesView = _this.showSolvesView.bind(_this);
 
     _this.onInputKeyDown = _this.onInputKeyDown.bind(_this);
     _this.onInputChange = _this.onInputChange.bind(_this);
@@ -3707,8 +3710,16 @@ var ChalModal = function (_Component) {
       if (this.props.challenge != nextProps.challenge) {
         this.setState(function (state) {
           state.input = '';
+          state.showSolvesView = false;
         });
       }
+    }
+  }, {
+    key: 'showSolvesView',
+    value: function showSolvesView() {
+      this.setState(function (state) {
+        state.showSolvesView = !state.showSolvesView;
+      });
     }
   }, {
     key: 'onInputKeyDown',
@@ -3737,10 +3748,32 @@ var ChalModal = function (_Component) {
       this.props.submit(this.state.input);
     }
   }, {
+    key: 'classFromResponse',
+    value: function classFromResponse(response) {
+      if (!response) {
+        return '';
+      }
+
+      switch (response.status) {
+        case 0:
+          return 'error';
+        case 1:
+          return 'success';
+        default:
+          return 'info';
+      }
+    }
+  }, {
+    key: 'textFromResponse',
+    value: function textFromResponse(response) {
+      return response ? response.message : '';
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _props = this.props,
           challenge = _props.challenge,
+          solves = _props.solves,
           hide = _props.hide,
           submit = _props.submit,
           response = _props.response;
@@ -3750,12 +3783,14 @@ var ChalModal = function (_Component) {
         return createVNode(2, 'div', 'chal-modal-container');
       }
 
-      return createVNode(2, 'div', 'chal-modal-container open', createVNode(2, 'div', 'chal-modal', [createVNode(2, 'div', 'chal-row', [createVNode(2, 'div', 'chal-category', challenge.category), createVNode(2, 'div', 'chal-name', challenge.name), createVNode(2, 'div', 'chal-desc', challenge.description), createVNode(2, 'div', 'chal-files', challenge.files.map(function (file) {
+      return createVNode(2, 'div', 'chal-modal-container open', createVNode(2, 'div', 'chal-modal', [solves && createVNode(2, 'div', 'chal-solves', [solves.length, ' Solves'], {
+        'onClick': this.showSolvesView
+      }), createVNode(2, 'div', 'chal-row', [createVNode(2, 'div', 'chal-category', challenge.category), createVNode(2, 'div', 'chal-name', challenge.name), createVNode(2, 'div', 'chal-desc', challenge.description), createVNode(2, 'div', 'chal-files', challenge.files.map(function (file) {
         return createVNode(2, 'a', 'chal-file', file.split('/').slice(-1)[0], {
           'href': '/files/' + file,
           'download': true
         });
-      }))]), createVNode(2, 'div', 'chal-row', createVNode(2, 'div', 'chal-input', [createVNode(2, 'div', 'chal-input-row', [createVNode(512, 'input', 'csaw-form-control ' + (response || ''), null, {
+      }))]), createVNode(2, 'div', 'chal-row', createVNode(2, 'div', 'chal-input', [createVNode(2, 'div', 'chal-input-row', [createVNode(512, 'input', 'csaw-form-control ' + this.classFromResponse(response), null, {
         'type': 'text',
         'placeholder': 'Key',
         'onKeyDown': this.onInputKeyDown,
@@ -3763,7 +3798,7 @@ var ChalModal = function (_Component) {
         'value': this.state.input
       }), createVNode(2, 'button', 'btn btn-primary', 'Submit', {
         'onClick': this.onSubmit
-      })]), createVNode(2, 'div', 'chal-input-row', createVNode(2, 'div', 'chal-response ' + (response || ''), 'Key Rejected'))]))]), {
+      })]), createVNode(2, 'div', 'chal-input-row', createVNode(2, 'div', 'chal-response ' + this.classFromResponse(response), response ? response.message : '\xA0'))]))]), {
         'onClick': hide
       });
     }
@@ -3791,7 +3826,7 @@ var _inferno = __webpack_require__(5);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-var _infernoComponent = __webpack_require__(13);
+var _infernoComponent = __webpack_require__(11);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
@@ -3975,7 +4010,7 @@ var _inferno = __webpack_require__(5);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-var _infernoComponent = __webpack_require__(13);
+var _infernoComponent = __webpack_require__(11);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
@@ -4164,7 +4199,7 @@ var _inferno = __webpack_require__(5);
 
 var _inferno2 = _interopRequireDefault(_inferno);
 
-var _infernoComponent = __webpack_require__(13);
+var _infernoComponent = __webpack_require__(11);
 
 var _infernoComponent2 = _interopRequireDefault(_infernoComponent);
 
@@ -4211,6 +4246,7 @@ var Chalboard = function (_Component) {
       loadingSolves: true,
       challenges: [],
       solves: [],
+      chalSolves: {},
       challengeCategories: [],
       categoryFilters: [],
       completedOptions: [{ label: 'Completed', value: 'completed' }, { label: 'Not Completed', value: 'not_completed' }],
@@ -4223,6 +4259,7 @@ var Chalboard = function (_Component) {
 
     _this.loadChals = _this.loadChals.bind(_this);
     _this.loadSolves = _this.loadSolves.bind(_this);
+    _this.loadChalSolves = _this.loadChalSolves.bind(_this);
     _this.getChals = _this.getChals.bind(_this);
     _this.isSolved = _this.isSolved.bind(_this);
     _this.updateCategoryFilters = _this.updateCategoryFilters.bind(_this);
@@ -4286,6 +4323,18 @@ var Chalboard = function (_Component) {
       });
     }
   }, {
+    key: 'loadChalSolves',
+    value: async function loadChalSolves(chal) {
+      if (!chal) {
+        return;
+      }
+
+      var chalSolves = (await _axios2.default.get('/chal/' + chal.id + '/solves')).data.teams;
+      this.setState(function (state) {
+        state.chalSolves[chal.id] = chalSolves;
+      });
+    }
+  }, {
     key: 'getChals',
     value: function getChals() {
       var _this2 = this;
@@ -4302,10 +4351,10 @@ var Chalboard = function (_Component) {
     }
   }, {
     key: 'isSolved',
-    value: function isSolved(chalid) {
+    value: function isSolved(chalId) {
       return this.state.solves.map(function (s) {
-        return s.chalid;
-      }).includes(chalid);
+        return s.chalId;
+      }).includes(chalId);
     }
   }, {
     key: 'updateCategoryFilters',
@@ -4324,6 +4373,7 @@ var Chalboard = function (_Component) {
   }, {
     key: 'showChallenge',
     value: function showChallenge(chal) {
+      this.loadChalSolves(chal);
       this.setState(function (state) {
         state.activeChallenge = chal;
       });
@@ -4342,17 +4392,38 @@ var Chalboard = function (_Component) {
     value: function submitKey(key) {
       var _this3 = this;
 
-      this.setState(function (state) {
-        state.keyResponse = 'error';
-      });
-
       clearTimeout(this.keyTO);
 
-      this.keyTO = setTimeout(function () {
+      var data = new FormData();
+
+      data.append('nonce', document.getElementById('nonce').value);
+      data.append('key', key);
+
+      _axios2.default.post('/chal/' + this.state.activeChallenge.id, data).then(function (resp) {
         _this3.setState(function (state) {
-          state.keyResponse = null;
+          state.keyResponse = resp.data;
         });
-      }, 2000);
+
+        if (resp.data.status === 0) {
+          _this3.keyTO = setTimeout(function () {
+            _this3.setState(function (state) {
+              state.keyResponse = null;
+            });
+          }, 2000);
+        }
+      });
+
+      // this.setState(state => {
+      //   state.keyResponse = 'error';
+      // });
+
+      // clearTimeout(this.keyTO);
+
+      // this.keyTO = setTimeout(() => {
+      //   this.setState(state => {
+      //     state.keyResponse = null;
+      //   });
+      // }, 2000);
     }
   }, {
     key: 'render',
@@ -4374,6 +4445,7 @@ var Chalboard = function (_Component) {
         'showChallenge': this.showChallenge
       }), createVNode(16, _ChalModal2.default, null, null, {
         'challenge': this.state.activeChallenge,
+        'solves': this.state.chalSolves[this.state.activeChallenge && this.state.activeChallenge.id],
         'hide': this.hideModal,
         'submit': this.submitKey,
         'response': this.state.keyResponse
@@ -5748,8 +5820,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 Object.defineProperty(exports, "__esModule", { value: true });
 var inferno_shared_1 = __webpack_require__(0);
 var options_1 = __webpack_require__(4);
-var constants_1 = __webpack_require__(11);
-var mounting_1 = __webpack_require__(12);
+var constants_1 = __webpack_require__(12);
+var mounting_1 = __webpack_require__(13);
 var patching_1 = __webpack_require__(8);
 var rendering_1 = __webpack_require__(10);
 var utils_1 = __webpack_require__(3);
@@ -6260,7 +6332,7 @@ exports.options = options_1.options;
 var VNodes_1 = __webpack_require__(6);
 exports.cloneVNode = VNodes_1.cloneVNode;
 exports.createVNode = VNodes_1.createVNode;
-var constants_1 = __webpack_require__(11);
+var constants_1 = __webpack_require__(12);
 exports.internal_isUnitlessNumber = constants_1.isUnitlessNumber;
 var linkEvent_1 = __webpack_require__(59);
 exports.linkEvent = linkEvent_1.linkEvent;
@@ -6449,7 +6521,7 @@ exports = module.exports = __webpack_require__(7)(undefined);
 
 
 // module
-exports.push([module.i, ".btn-primary {\n  background-color: #484654;\n  border: 0;\n  outline: 0 !important; }\n  .btn-primary:focus {\n    background-color: #484654 !important; }\n  .btn-primary:hover {\n    background-color: #3D3B47 !important; }\n  .btn-primary:active {\n    background-color: #2c2a33 !important; }\n\n.chal-modal-container {\n  display: flex;\n  justify-content: center;\n  background: rgba(0, 0, 0, 0.25);\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  transition: all 0.2s ease-in-out;\n  opacity: 0;\n  position: absolute;\n  visibility: hidden;\n  z-index: 10; }\n  .chal-modal-container.open {\n    opacity: 1;\n    visibility: visible; }\n  .chal-modal-container .chal-modal {\n    display: flex;\n    flex-flow: column nowrap;\n    justify-content: space-between;\n    width: 100%;\n    background: #FFFFFF;\n    margin-top: 154px;\n    height: 453px;\n    width: 585px;\n    animation: fadeScaleIn 0.2s ease-in-out;\n    position: relative; }\n    .chal-modal-container .chal-modal .chal-row {\n      display: flex;\n      flex-flow: column nowrap;\n      width: 100%;\n      position: relative; }\n    .chal-modal-container .chal-modal .chal-category {\n      font-size: 16px;\n      font-weight: 600;\n      margin: 15px 0px;\n      text-align: center; }\n    .chal-modal-container .chal-modal .chal-name {\n      font-size: 16px;\n      margin: 15px 0px 0px 0px;\n      text-align: center; }\n    .chal-modal-container .chal-modal .chal-desc {\n      text-align: center;\n      padding: 15px;\n      line-height: 24px; }\n    .chal-modal-container .chal-modal .chal-files {\n      display: flex;\n      flex-flow: row wrap;\n      width: 100%;\n      padding: 15px; }\n      .chal-modal-container .chal-modal .chal-files .chal-file {\n        cursor: pointer;\n        background: #635Cc6;\n        color: #FFFFFF;\n        margin-right: 10px;\n        margin-bottom: 10px;\n        padding: 9px 12px; }\n    .chal-modal-container .chal-modal .chal-input {\n      display: flex;\n      flex-flow: column nowrap;\n      padding: 0 15px 15px 15px;\n      width: 100%; }\n      .chal-modal-container .chal-modal .chal-input .chal-input-row {\n        display: flex;\n        flex-flow: row nowrap; }\n        .chal-modal-container .chal-modal .chal-input .chal-input-row input {\n          width: 100%;\n          margin-right: 10px; }\n        .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response {\n          margin-top: 5px;\n          font-size: 12px;\n          font-weight: 600;\n          opacity: 0;\n          transform: scale(0);\n          transition: all 0.2s ease-in-out;\n          transform-origin: top left; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.success, .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.error {\n            opacity: 1;\n            transform: scale(1); }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.success {\n            color: #5CC67C; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.error {\n            color: #C65C5C; }\n\n@keyframes fadeScaleIn {\n  0% {\n    opacity: 0;\n    transform: translateY(-30px); }\n  100% {\n    opacity: 1;\n    transform: translateY(0); } }\n", ""]);
+exports.push([module.i, ".btn-primary {\n  background-color: #484654;\n  border: 0;\n  border-radius: 3px;\n  outline: 0 !important; }\n  .btn-primary:focus {\n    background-color: #484654 !important; }\n  .btn-primary:hover {\n    background-color: #3D3B47 !important; }\n  .btn-primary:active {\n    background-color: #2c2a33 !important; }\n\n.chal-modal-container {\n  display: flex;\n  justify-content: center;\n  background: rgba(0, 0, 0, 0.25);\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  transition: all 0.2s ease-in-out;\n  opacity: 0;\n  position: absolute;\n  visibility: hidden;\n  z-index: 10; }\n  .chal-modal-container.open {\n    opacity: 1;\n    visibility: visible; }\n  .chal-modal-container .chal-modal {\n    display: flex;\n    flex-flow: column nowrap;\n    justify-content: space-between;\n    width: 100%;\n    background: #FFFFFF;\n    margin-top: 154px;\n    height: 453px;\n    width: 585px;\n    animation: fadeScaleIn 0.2s ease-in-out;\n    position: relative; }\n    .chal-modal-container .chal-modal .chal-solves {\n      cursor: pointer;\n      position: absolute;\n      border-radius: 3px;\n      background: #5CC67C;\n      color: #ffffff;\n      font-size: 12px;\n      top: 15px;\n      right: 15px;\n      padding: 3px 6px;\n      animation: fadeIn 0.2s ease-in-out;\n      z-index: 3; }\n    .chal-modal-container .chal-modal .chal-row {\n      display: flex;\n      flex-flow: column nowrap;\n      width: 100%;\n      position: relative; }\n    .chal-modal-container .chal-modal .chal-category {\n      font-size: 16px;\n      font-weight: 600;\n      margin: 15px 0px;\n      text-align: center; }\n    .chal-modal-container .chal-modal .chal-name {\n      font-size: 16px;\n      margin: 15px 0px 0px 0px;\n      text-align: center; }\n    .chal-modal-container .chal-modal .chal-desc {\n      text-align: center;\n      padding: 15px;\n      line-height: 24px; }\n    .chal-modal-container .chal-modal .chal-files {\n      display: flex;\n      flex-flow: row wrap;\n      width: 100%;\n      padding: 15px; }\n      .chal-modal-container .chal-modal .chal-files .chal-file {\n        cursor: pointer;\n        background: #635CC6;\n        border-bottom: 4px solid #5550A8;\n        color: #FFFFFF;\n        margin-right: 10px;\n        margin-bottom: 10px;\n        padding: 9px 12px; }\n    .chal-modal-container .chal-modal .chal-input {\n      display: flex;\n      flex-flow: column nowrap;\n      border-radius: 3px;\n      padding: 0 15px 15px 15px;\n      width: 100%; }\n      .chal-modal-container .chal-modal .chal-input .chal-input-row {\n        display: flex;\n        flex-flow: row nowrap; }\n        .chal-modal-container .chal-modal .chal-input .chal-input-row input {\n          width: 100%;\n          margin-right: 10px;\n          border-radius: 3px; }\n        .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response {\n          margin-top: 5px;\n          font-size: 12px;\n          font-weight: 600;\n          opacity: 0;\n          transform: scale(0);\n          transition: all 0.2s ease-in-out;\n          transform-origin: top left; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.success, .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.error, .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.info {\n            opacity: 1;\n            transform: scale(1); }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.success {\n            color: #5CC67C; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.error {\n            color: #C65C5C; }\n          .chal-modal-container .chal-modal .chal-input .chal-input-row .chal-response.info {\n            color: #797b80; }\n\n@keyframes fadeScaleIn {\n  0% {\n    opacity: 0;\n    transform: translateY(-30px); }\n  100% {\n    opacity: 1;\n    transform: translateY(0); } }\n\n@keyframes fadeIn {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n", ""]);
 
 // exports
 

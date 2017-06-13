@@ -1,6 +1,7 @@
 .btn-primary {
     background-color: #484654;
     border: 0;
+    border-radius: 3px;
     outline: 0 !important;
 
     &:focus {
@@ -47,6 +48,20 @@
     animation: fadeScaleIn 0.2s ease-in-out;
     position: relative;
 
+    .chal-solves {
+      cursor: pointer;
+      position: absolute;
+      border-radius: 3px;
+      background: #5CC67C;
+      color: #ffffff;
+      font-size: 12px;
+      top: 15px;
+      right: 15px;
+      padding: 3px 6px;
+      animation: fadeIn 0.2s ease-in-out;
+      z-index: 3;
+    }
+
     .chal-row {
       display: flex;
       flex-flow: column nowrap;
@@ -81,7 +96,8 @@
 
       .chal-file {
         cursor: pointer;
-        background: #635Cc6;
+        background: #635CC6;
+        border-bottom: 4px solid #5550A8;
         color: #FFFFFF;
         margin-right: 10px;
         margin-bottom: 10px;
@@ -92,6 +108,7 @@
     .chal-input {
       display: flex;
       flex-flow: column nowrap;
+      border-radius: 3px;
       padding: 0 15px 15px 15px;
       width: 100%;
       
@@ -102,6 +119,7 @@
         input {
           width: 100%;
           margin-right: 10px;
+          border-radius: 3px;
         }
 
         .chal-response {
@@ -113,7 +131,7 @@
           transition: all 0.2s ease-in-out;
           transform-origin: top left;
           
-          &.success, &.error {
+          &.success, &.error, &.info {
             opacity: 1;
             transform: scale(1);
           }
@@ -124,6 +142,10 @@
 
           &.error {
             color: #C65C5C;
+          }
+
+          &.info {
+            color: #797b80;
           }
         }
       }
@@ -142,3 +164,14 @@
     transform: translateY(0);
   }
 }
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+

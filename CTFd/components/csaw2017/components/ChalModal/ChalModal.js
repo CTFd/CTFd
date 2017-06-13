@@ -8,8 +8,11 @@ export default class ChalModal extends Component {
     super(props);
 
     this.state = {
-      input: ''
+      input: '',
+      showSolvesView: false
     };
+
+    this.showSolvesView = this.showSolvesView.bind(this);
 
     this.onInputKeyDown = this.onInputKeyDown.bind(this);
     this.onInputChange = this.onInputChange.bind(this);
@@ -20,8 +23,15 @@ export default class ChalModal extends Component {
     if (this.props.challenge != nextProps.challenge) {
       this.setState(state => {
         state.input = '';
+        state.showSolvesView = false;
       });
     }
+  }
+
+  showSolvesView() {
+    this.setState(state => {
+      state.showSolvesView = !state.showSolvesView;
+    });
   }
 
   onInputKeyDown(e) {
@@ -47,8 +57,27 @@ export default class ChalModal extends Component {
     this.props.submit(this.state.input);
   }
 
+  classFromResponse(response) {
+    if (!response) {
+      return '';
+    }
+
+    switch (response.status) {
+      case 0:
+        return 'error';
+      case 1:
+        return 'success';
+      default:
+        return 'info';
+    }
+  }
+
+  textFromResponse(response) {
+    return response ? response.message : '';
+  }
+
   render() {
-    const { challenge, hide, submit, response } = this.props;
+    const { challenge, solves, hide, submit, response } = this.props;
 
     if (!challenge) {
       return <div className="chal-modal-container" />;
@@ -57,6 +86,10 @@ export default class ChalModal extends Component {
     return (
       <div className="chal-modal-container open" onClick={hide}>
         <div className="chal-modal">
+          {solves &&
+            <div className="chal-solves" onClick={this.showSolvesView}>
+              {solves.length} Solves
+            </div>}
           <div className="chal-row">
             <div className="chal-category">
               {challenge.category}
@@ -77,7 +110,7 @@ export default class ChalModal extends Component {
             <div className="chal-input">
               <div className="chal-input-row">
                 <input
-                  className={'csaw-form-control ' + (response || '')}
+                  className={'csaw-form-control ' + this.classFromResponse(response)}
                   type="text"
                   placeholder="Key"
                   onKeyDown={this.onInputKeyDown}
@@ -87,8 +120,8 @@ export default class ChalModal extends Component {
                 <button className="btn btn-primary" onClick={this.onSubmit}>Submit</button>
               </div>
               <div className="chal-input-row">
-                <div className={'chal-response ' + (response || '')}>
-                  Key Rejected
+                <div className={'chal-response ' + this.classFromResponse(response)}>
+                  {response ? response.message : '\u00A0'}
                 </div>
               </div>
             </div>

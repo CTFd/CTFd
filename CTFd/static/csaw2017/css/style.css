@@ -402,8 +402,9 @@ table {
 /* END OF INPUT CSS */
 
 .csaw-form-control {
-  border: 2px solid transparent;
   background: #f6f6f8;
+  border: 2px solid transparent;
+  border-radius: 3px;
   outline: 0;
   padding: 9px 12px;
 }
@@ -414,4 +415,9 @@ table {
 
 .csaw-form-control.error {
   border: 2px solid #C65C5C;
+}
+}
+
+.csaw-form-control.info {
+  border: 2px solid #797B80;
 }

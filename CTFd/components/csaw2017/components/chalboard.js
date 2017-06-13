@@ -17,6 +17,7 @@ class Chalboard extends Component {
       loadingSolves: true,
       challenges: [],
       solves: [],
+      chalSolves: {},
       challengeCategories: [],
       categoryFilters: [],
       completedOptions: [
@@ -35,6 +36,7 @@ class Chalboard extends Component {
 
     this.loadChals = this.loadChals.bind(this);
     this.loadSolves = this.loadSolves.bind(this);
+    this.loadChalSolves = this.loadChalSolves.bind(this);
     this.getChals = this.getChals.bind(this);
     this.isSolved = this.isSolved.bind(this);
     this.updateCategoryFilters = this.updateCategoryFilters.bind(this);
@@ -95,6 +97,17 @@ class Chalboard extends Component {
     });
   }
 
+  async loadChalSolves(chal) {
+    if (!chal) {
+      return;
+    }
+
+    const chalSolves = (await axios.get('/chal/' + chal.id + '/solves')).data.teams;
+    this.setState(state => {
+      state.chalSolves[chal.id] = chalSolves;
+    });
+  }
+
   getChals() {
     const categoryFilters = this.state.categoryFilters.map(f => f.value);
     const completedFilters = this.state.completedFilters.map(f => f.value);
@@ -106,8 +119,8 @@ class Chalboard extends Component {
     });
   }
 
-  isSolved(chalid) {
-    return this.state.solves.map(s => s.chalid).includes(chalid);
+  isSolved(chalId) {
+    return this.state.solves.map(s => s.chalId).includes(chalId);
   }
 
   updateCategoryFilters(categories) {
@@ -123,6 +136,7 @@ class Chalboard extends Component {
   }
 
   showChallenge(chal) {
+    this.loadChalSolves(chal);
     this.setState(state => {
       state.activeChallenge = chal;
     });
@@ -137,17 +151,38 @@ class Chalboard extends Component {
   }
 
   submitKey(key) {
-    this.setState(state => {
-      state.keyResponse = 'error';
-    });
-
     clearTimeout(this.keyTO);
 
-    this.keyTO = setTimeout(() => {
+    const data = new FormData();
+
+    data.append('nonce', document.getElementById('nonce').value);
+    data.append('key', key);
+
+    axios.post('/chal/' + this.state.activeChallenge.id, data).then(resp => {
       this.setState(state => {
-        state.keyResponse = null;
+        state.keyResponse = resp.data;
       });
-    }, 2000);
+
+      if (resp.data.status === 0) {
+        this.keyTO = setTimeout(() => {
+          this.setState(state => {
+            state.keyResponse = null;
+          });
+        }, 2000);
+      }
+    });
+
+    // this.setState(state => {
+    //   state.keyResponse = 'error';
+    // });
+
+    // clearTimeout(this.keyTO);
+
+    // this.keyTO = setTimeout(() => {
+    //   this.setState(state => {
+    //     state.keyResponse = null;
+    //   });
+    // }, 2000);
   }
 
   render() {
@@ -172,6 +207,7 @@ class Chalboard extends Component {
         />
         <ChalModal
           challenge={this.state.activeChallenge}
+          solves={this.state.chalSolves[this.state.activeChallenge && this.state.activeChallenge.id]}
           hide={this.hideModal}
           submit={this.submitKey}
           response={this.state.keyResponse}
