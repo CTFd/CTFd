@@ -1,7 +1,7 @@
 {
-  "name": "ctfd",
+  "name": "csaw-ctf-2017-theme",
   "version": "1.0.0",
-  "description": "![](https://raw.githubusercontent.com/CTFd/CTFd/master/CTFd/static/original/img/logo.png)\r ====",
+  "description": "CTFd Theme for CSAW's 2017 CTF Competition",
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nolanleung/ctfd.git"
+    "url": "git+https://github.com/nolanleung/CSAW-CTF-2017-Theme.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nolanleung/ctfd/issues"
+    "url": "https://github.com/nolanleung/CSAW-CTF-2017-Theme/issues"
   },
-  "homepage": "https://github.com/nolanleung/ctfd#readme",
+  "homepage": "https://github.com/nolanleung/CSAW-CTF-2017-Theme#readme",
   "dependencies": {
     "axios": "^0.16.2",
     "classnames": "^2.2.5",
