@@ -42,7 +42,7 @@ def admin_plugin_config(plugin):
     if request.method == 'GET':
         if plugin in utils.get_configurable_plugins():
             config = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
-            return render_template('admin/page.html', content=config)
+            return render_template_string(config)
         abort(404)
     elif request.method == 'POST':
         for k, v in request.form.items():
