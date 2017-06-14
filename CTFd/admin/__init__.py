@@ -46,6 +46,8 @@ def admin_plugin_config(plugin):
         abort(404)
     elif request.method == 'POST':
         for k, v in request.form.items():
+            if k == "nonce":
+                continue
             utils.set_config(k, v)
         return '1'
 
