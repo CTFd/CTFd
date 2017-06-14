@@ -43,6 +43,7 @@ class Chalboard extends Component {
     this.updateCategoryFilters = this.updateCategoryFilters.bind(this);
     this.updateCompletedFilters = this.updateCompletedFilters.bind(this);
     this.updateSortFilter = this.updateSortFilter.bind(this);
+    this.getSortFunc = this.getSortFunc.bind(this);
     this.showChallenge = this.showChallenge.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.submitKey = this.submitKey.bind(this);
@@ -113,16 +114,20 @@ class Chalboard extends Component {
   getChals() {
     const categoryFilters = this.state.categoryFilters.map(f => f.value);
     const completedFilters = this.state.completedFilters.map(f => f.value);
-    return this.state.challenges.filter(chal => {
-      return (
-        categoryFilters.includes(chal.category) &&
-        completedFilters.includes(this.isSolved(chal.id) ? 'completed' : 'not_completed')
-      );
-    });
+    return this.state.challenges
+      .filter(chal => {
+        return (
+          categoryFilters.includes(chal.category) &&
+          completedFilters.includes(this.isSolved(chal.id) ? 'completed' : 'not_completed')
+        );
+      })
+      .sort((a, b) => {
+        return this.getSortFunc()(a, b);
+      });
   }
 
-  isSolved(chalId) {
-    return this.state.solves.map(s => s.chalId).includes(chalId);
+  isSolved(chalid) {
+    return this.state.solves.map(s => s.chalid).includes(chalid);
   }
 
   updateCategoryFilters(categories) {
@@ -141,6 +146,48 @@ class Chalboard extends Component {
     this.setState(state => {
       state.sortFilter = filter;
     });
+  }
+
+  getSortFunc() {
+    switch (this.state.sortFilter) {
+      case 'name_asc':
+        return (a, b) => {
+          const aName = a.name.toLowerCase();
+          const bName = b.name.toLowerCase();
+          return aName > bName ? 1 : aName < bName ? -1 : 0;
+        };
+      case 'name_desc':
+        return (a, b) => {
+          const aName = a.name.toLowerCase();
+          const bName = b.name.toLowerCase();
+          return aName > bName ? -1 : aName < bName ? 1 : 0;
+        };
+      case 'category_asc':
+        return (a, b) => {
+          const aCategory = a.category.toLowerCase();
+          const bCategory = b.category.toLowerCase();
+          return aCategory > bCategory
+            ? 1
+            : aCategory < bCategory ? -1 : a.value > b.value ? 1 : a.value < b.value ? -1 : 0;
+        };
+      case 'category_desc':
+        return (a, b) => {
+          const aCategory = a.category.toLowerCase();
+          const bCategory = b.category.toLowerCase();
+          return aCategory > bCategory
+            ? -1
+            : aCategory < bCategory ? 1 : a.value > b.value ? 1 : a.value < b.value ? -1 : 0;
+        };
+      case 'points_desc':
+        return (a, b) => {
+          return a.value > b.value ? -1 : a.value < b.value ? 1 : 0;
+        };
+      case 'points_asc':
+      default:
+        return (a, b) => {
+          return a.value > b.value ? 1 : a.value < b.value ? -1 : 0;
+        };
+    }
   }
 
   showChallenge(chal) {
