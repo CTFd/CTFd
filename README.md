@@ -1,5 +1,7 @@
 # CSAW CTF 2017 CTFd Theme
 
+![CSAW CTF 2017 Theme](https://raw.githubusercontent.com/nolanleung/CSAW-CTF-2017-Theme/master/csaw.png)
+
 ## Installation
 
 Download node @ [nodejs.org](https://nodejs.org) if you haven't already.
