@@ -64,7 +64,7 @@ def admin_import_ctf():
         else:
             import_ctf(backup)
     except Exception as e:
-        print e
+        print(e)
         errors.append(type(e).__name__)
 
     if errors:

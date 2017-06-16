@@ -21,5 +21,3 @@ with app.app_context():
 
         with open(full_name, 'wb') as target:
             shutil.copyfileobj(backup, target)
-
-

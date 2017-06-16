@@ -799,7 +799,6 @@ def import_ctf(backup, segments=None, erase=False):
                                 try:
                                     entry[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')
                                 except ValueError as e:
-                                    print(e)
                                     pass
                     table.insert(entry)
             else:
