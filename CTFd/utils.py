@@ -793,6 +793,7 @@ def import_ctf(backup, segments=None, erase=False):
                 for entry in saved['results']:
                     entry_id = entry.pop('id', None)
                     # This is a hack to get SQlite to properly accept datetime values from dataset
+                    # See Issue #246
                     if get_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
                         for k, v in entry.items():
                             if isinstance(v, six.string_types):
