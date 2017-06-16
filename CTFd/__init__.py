@@ -43,7 +43,11 @@ def create_app(config='CTFd.config.Config'):
 
         # Creates database if the database database does not exist
         if not database_exists(url):
-            create_database(url)
+            if url.drivername.startswith('mysql'):
+                url.query['charset'] = 'utf8mb4'
+                create_database(url, encoding='utf8mb4')
+            else:
+                create_database(url)
 
         # Register database
         db.init_app(app)
