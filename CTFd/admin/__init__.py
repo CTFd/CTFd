@@ -63,11 +63,8 @@ def admin_import_ctf():
             import_ctf(backup, segments=segments.split(','))
         else:
             import_ctf(backup)
-    except TypeError:
-        errors.append('The backup file is invalid')
-    except IntegrityError as e:
-        errors.append(e.message)
     except Exception as e:
+        print e
         errors.append(type(e).__name__)
 
     if errors:

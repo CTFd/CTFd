@@ -41,13 +41,19 @@ def create_app(config='CTFd.config.Config'):
         if url.drivername == 'postgres':
             url.drivername = 'postgresql'
 
+        if url.drivername.startswith('mysql'):
+            url.query['charset'] = 'utf8mb4'
+
         # Creates database if the database database does not exist
         if not database_exists(url):
             if url.drivername.startswith('mysql'):
-                url.query['charset'] = 'utf8mb4'
                 create_database(url, encoding='utf8mb4')
             else:
                 create_database(url)
+
+        # This allows any changes to the SQLALCHEMY_DATABASE_URI to get pushed back in
+        # This is mostly so we can force MySQL's charset
+        app.config['SQLALCHEMY_DATABASE_URI'] = str(url)
 
         # Register database
         db.init_app(app)
