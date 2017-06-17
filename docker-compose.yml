@@ -22,4 +22,7 @@ services:
       - MYSQL_PASSWORD=ctfd
       - MYSQL_DATABASE=ctfd
     volumes:
-      - .data/mysql:/var/lib/mysql
+      - mysql_data_vol:/var/lib/mysql
+
+volumes:
+  mysql_data_vol:

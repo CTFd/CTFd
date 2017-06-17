@@ -30,8 +30,10 @@ Vagrant.configure("2") do |config|
   # Create a private network, which allows host-only access to the machine
   config.vm.network "private_network", ip: "10.9.8.7"
 
-  # Forward the default port for the development server to host machine
+  # Forward the default port for the development server (4000)
+  # and docker (8000) to host machine
   config.vm.network "forwarded_port", guest: 4000, host: 4000
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
 
   # Pre-provision
   config.vm.provision "shell", inline: $preProvision
@@ -40,6 +42,10 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: $provision, privileged: false
 
   # Start server in tmux session (every reboot)
-  config.vm.provision "shell", inline: $startServer, privileged: false, run: "always"
+  config.vm.provision "shell", inline: $startServer, privileged: false,
+                      run: "always"
+
+  # Install docker (convenience)
+  config.vm.provision "shell", path: "scripts/install_docker_debian.sh"
 
 end
