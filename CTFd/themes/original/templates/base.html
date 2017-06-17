@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<title>{{ ctf_name() }}</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="shortcut icon" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/img/favicon.ico" type="image/x-icon">
+		<link rel="icon" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/img/favicon.ico" type="image/x-icon">
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/bootstrap.min.css">
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/font-awesome/css/font-awesome.min.css" />
+		<link href='{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/lato.css' rel='stylesheet' type='text/css'>
+		<link href='{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/raleway.css' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/style.css">
+		<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/static/user.css">
+		{% block stylesheets %}{% endblock %}
+		<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/moment.min.js"></script>
+		<script src="{{ request.script_root }}/themes/original/static/js/vendor/handlebars.min.js"></script>
+		<script type="text/javascript">
+				var script_root = "{{ request.script_root }}";
+		</script>
+</head>
+<body>
+	<div class="body-container">
+		<div class="navbar navbar-inverse home">
+			<div class="container">
+				<div class="navbar-header">
+					<button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a href="{{ request.script_root }}/" class="navbar-brand">{{ ctf_name() }}</a>
+				</div>
+				<div class="navbar-collapse collapse" aria-expanded="false" style="height: 0px">
+					<ul class="nav navbar-nav">
+						{% for page in pages() %}
+							<li><a href="{{ request.script_root }}/{{ page.route }}">{{ page.route|title }}</a></li>
+						{% endfor %}
+						<li><a href="{{ request.script_root }}/teams">Teams</a></li>
+						{% if not hide_scores() %}
+						<li><a href="{{ request.script_root }}/scoreboard">Scoreboard</a></li>
+						{% endif %}
+						<li><a href="{{ request.script_root }}/challenges">Challenges</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+					{% if username is defined %}
+						{% if admin %}
+						<li><a href="{{ request.script_root }}/admin">Admin</a></li>
+						{% endif %}
+						<li><a href="{{ request.script_root }}/team/{{ id }}">Team</a></li>
+						<li><a href="{{ request.script_root }}/profile">Profile</a></li>
+						<li><a href="{{ request.script_root }}/logout">Logout</a></li>
+					{% else %}
+						{% if can_register() %}
+						<li><a href="{{ request.script_root }}/register">Register</a></li>
+						<li><a style="padding-left:0px;padding-right:0px;">|</a></li>
+						{% endif %}
+						<li><a href="{{ request.script_root }}/login">Login</a></li>
+					{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		{% block content %}
+		{% endblock %}
+
+		<div class="navbar navbar-bottom footer">
+				<p class="text-muted text-center"><a style="text-decoration:none;" href="https://ctfd.io"><sub>Powered by CTFd</sub></p>
+		</div>
+	</div>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/jquery.min.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/marked.min.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/bootstrap.min.js"></script>
+	{% block scripts %}
+	{% endblock %}
+</body>
+</html>

@@ -262,3 +262,12 @@ def file_handler(path):
                     abort(403)
     upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
     return send_file(os.path.join(upload_folder, f.location))
+
+
+@views.route('/themes/<theme>/static/<path:path>')
+def themes_handler(theme, path):
+    filename = os.path.join(app.root_path, 'themes', theme, 'static', path)
+    if os.path.isfile(filename):
+        return send_file(filename)
+    else:
+        abort(404)
