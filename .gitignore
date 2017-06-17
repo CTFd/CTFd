@@ -1,6 +1,7 @@
 *
 
-!CTFd/components
 !webpack.config.js
+!csaw.png
+!CTFd/components
 !CTFd/static/csaw2017
 !CTFd/templates/csaw2017
