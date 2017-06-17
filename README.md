@@ -14,6 +14,7 @@ CTFd is a Capture The Flag in a can. It's easy to customize with plugins and the
  2. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
  3. Use `python serve.py` in a terminal to drop into debug mode.
  4. [Here](https://github.com/CTFd/CTFd/wiki/Deployment) are some deployment options
+ 5. You can check out the [Getting Started](https://github.com/CTFd/CTFd/wiki/Getting-Started) guide for a breakdown of some of the features you need to get started.
 
 ## Live Demo
 https://demo.ctfd.io/
