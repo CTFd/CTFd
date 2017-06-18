@@ -2,6 +2,7 @@ import os
 import re
 
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, url_for, session, Blueprint, Response, send_file
+from flask.helpers import safe_join
 from jinja2.exceptions import TemplateNotFound
 from passlib.hash import bcrypt_sha256
 
@@ -45,7 +46,7 @@ def setup():
 
             # Index page
             page = Pages('index', """<div class="container main-container">
-    <img class="logo" src="static/original/img/logo.png" />
+    <img class="logo" src="themes/original/static/img/logo.png" />
     <h3 class="text-center">
         <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
         <p>Follow us on social media:</p>
@@ -261,4 +262,13 @@ def file_handler(path):
                 else:
                     abort(403)
     upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-    return send_file(os.path.join(upload_folder, f.location))
+    return send_file(safe_join(upload_folder, f.location))
+
+
+@views.route('/themes/<theme>/static/<path:path>')
+def themes_handler(theme, path):
+    filename = safe_join(app.root_path, 'themes', theme, 'static', path)
+    if os.path.isfile(filename):
+        return send_file(filename)
+    else:
+        abort(404)

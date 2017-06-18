@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+		<title>Admin Panel</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="shortcut icon" href="{{ request.script_root }}/themes/original/static/img/favicon.ico" type="image/x-icon">
+		<link rel="icon" href="{{ request.script_root }}/themes/original/static/img/favicon.ico" type="image/x-icon">
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/vendor/bootstrap.min.css">
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/vendor/font-awesome/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/style.css">
+		<link href='{{ request.script_root }}/themes/admin/static/css/vendor/lato.css' rel='stylesheet' type='text/css'>
+		<link href='{{ request.script_root }}/themes/admin/static/css/vendor/raleway.css' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/themes/admin/static/css/style.css">
+		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
+		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment-timezone-with-data.min.js"></script>
+		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/handlebars.min.js"></script>
+		<script type="text/javascript">
+				var script_root = "{{ request.script_root }}";
+		</script>
+		{% block stylesheets %} {% endblock %}
+</head>
+
+<body>
+	<div class="body-container">
+		<div class="navbar navbar-inverse home">
+			<div class="container">
+				<div class="navbar-header">
+					<button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a href="{{ request.script_root }}/" class="navbar-brand">CTFd</a>
+				</div>
+				<div class="navbar-collapse collapse" aria-expanded="false" style="height: 0px">
+					<ul class="nav navbar-nav navbar-nav-right">
+						<li><a href="{{ request.script_root }}/admin/graphs">Graphs</a></li>
+						<li>
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+									 aria-expanded="false">Pages <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+										<li><a href="{{ request.script_root }}/admin/pages">All Pages</a></li>
+										<li><a href="{{ request.script_root }}/admin/pages?mode=create">New Page</a></li>
+								</ul>
+						</li>
+						<li><a href="{{ request.script_root }}/admin/teams">Teams</a></li>
+						<li><a href="{{ request.script_root }}/admin/scoreboard">Scoreboard</a></li>
+						{% if can_create_container() %}
+						<li><a href="{{ request.script_root }}/admin/containers">Containers</a></li>
+						{% endif %}
+						<li><a href="{{ request.script_root }}/admin/chals">Challenges</a></li>
+						<li><a href="{{ request.script_root }}/admin/statistics">Statistics</a></li>
+						<li><a href="{{ request.script_root }}/admin/config">Config</a></li>
+						<li>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plugins <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+									{% for plugin in get_configurable_plugins() %}
+											<li><a href="{{ request.script_root }}/admin/plugins/{{ plugin }}">{{ plugin }}</a></li>
+									{% endfor %}
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+				{{ content | safe }}
+		</div>
+</div>
+		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/jquery.min.js"></script>
+		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/marked.min.js"></script>
+		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/bootstrap.min.js"></script>
+		{% block scripts %} {% endblock %}
+</body>
+
+</html>

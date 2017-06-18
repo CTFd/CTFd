@@ -23,9 +23,11 @@ __version__ = '1.0.2'
 class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
         if template.startswith('admin/'):
+            template = template.lstrip('admin/')
+            template = "/".join(['admin', 'templates', template])
             return super(ThemeLoader, self).get_source(environment, template)
         theme = utils.get_config('ctf_theme')
-        template = "/".join([theme, template])
+        template = "/".join([theme, 'templates', template])
         return super(ThemeLoader, self).get_source(environment, template)
 
 
@@ -33,7 +35,7 @@ def create_app(config='CTFd.config.Config'):
     app = Flask(__name__)
     with app.app_context():
         app.config.from_object(config)
-        app.jinja_loader = ThemeLoader(os.path.join(app.root_path, app.template_folder), followlinks=True)
+        app.jinja_loader = ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True)
 
         from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
 

@@ -1,0 +1,356 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+<style>
+		.btn-primary {
+				background-color: #337ab7;
+		}
+
+		.btn-danger {
+				background-color: #d9534f;
+		}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="modal fade" id="create-award-modal" tabindex="-1" role="dialog" aria-labelledby="create-award-label">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="create-award-label">Create Award</h4>
+			</div>
+			<div class="modal-body">
+				<form id="award-create-form" method="POST" action="{{ request.script_root }}/admin/awards/add">
+					<div class="form-group">
+						<label for="award-name-input">Name</label>
+						<input type="text" class="form-control" id="award-name-input" name="name" placeholder="Enter award name">
+					</div>
+					<div class="form-group">
+						<label for="award-value-input">Value</label>
+						<input type="number" class="form-control" id="award-value-input" name="value" placeholder="Enter award value">
+					</div>
+					<div class="form-group">
+							<label for="award-category-input">Category</label>
+							<input type="text" class="form-control" id="award-category-input" name="category" placeholder="Enter award category">
+					</div>
+					<div class="form-group">
+							<label for="award-description-input" class="control-label">Description</label>
+							<textarea id="award-description-input" class="form-control" name="description" rows="10" placeholder="Description of what the award is for"></textarea>
+					</div>
+					<div class="form-group">
+						<label for="award-icon-input">Award Icon</label>
+						<input type="file" id="award-icon-input" name="icon">
+					</div>
+					<input type="hidden" value="{{ team.id }}" name="teamid" id="teamid">
+					<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+					<div class="modal-footer">
+						<button type="submit" id="award-create-button" class="btn btn-primary">Create</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row container-fluid">
+		<div id="confirm" class="modal fade" tabindex="-1">
+				<div class="modal-dialog">
+						<div class="modal-content">
+								<div class="modal-header text-center">
+										<h3 id="confirm-title">Delete Key</h3>
+								</div>
+								<div class="modal-body">
+										<form method="POST" action="{{ request.script_root }}/admin/chal/delete">
+												<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+												<div class="small-6 small-centered text-center columns">
+														<p id="confirm-description"></p>
+														<a onclick="$('#confirm').modal('hide')" class="btn btn-primary">No</a>
+														<button class="btn btn-danger" id="delete-solve" type="button">Yes</button>
+												</div>
+										</form>
+								</div>
+						</div>
+				</div>
+		</div>
+
+		<h1 id="team-id">{{ team.name }}</h1>
+		<h2 id="team-email" class="text-center">{{ team.email }}</h2>
+		<h2 id="team-place" class="text-center">
+				{%if place %}
+						{{ place }} <small>place</small>
+				{% endif %}
+		</h2>
+		<h2 id="team-score" class="text-center">
+				{%if score %}
+						{{ score }} <small>points</small>
+				{% endif %}
+		</h2>
+
+
+		<div id="keys-pie-graph"></div>
+		<div id="categories-pie-graph"></div>
+		<div id="score-graph"></div>
+
+		<table class="table table-striped">
+				<h3>IP Addresses</h3>
+				<thead>
+				<tr>
+						<td class="text-center"><b>IP Address</b></td>
+						<td class="text-center"><b>Last Seen</b></td>
+				</tr>
+				</thead>
+				<tbody>
+				{% for addr in addrs %}
+						<tr>
+								<td class="text-center">{{ addr[0]|long2ip }}</td>
+								<td class="text-center solve-time"><script>document.write( moment({{ addr[1]|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
+						</tr>
+				{% endfor %}
+				</tbody>
+		</table>
+
+
+		<table class="table table-striped">
+				<h3>Awards</h3>
+				<thead>
+						<tr>
+								<td class="text-center"><b>Name</b></td>
+								<td class="text-center"><b>Description</b></td>
+								<td class="text-center"><b>Date</b></td>
+								<td class="text-center"><b>Value</b></td>
+								<td class="text-center"><b>Category</b></td>
+								<td class="text-center"><b>Icon</b></td>
+								<td class="text-center"><b>Delete</b></td>
+						</tr>
+				</thead>
+				<tbody id="awards-body">
+				{% for award in awards %}
+						<tr class="award-row">
+								<td class="text-center chal" id="{{ award.id }}">{{ award.name }}</td>
+								<td class="text-center">{{ award.description }}</td>
+								<td class="text-center solve-time"><script>document.write( moment({{ award.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
+								<td class="text-center">{{ award.value }}</td>
+								<td class="text-center">{{ award.category }}</td>
+								<td class="text-center">{{ award.icon }}</td>
+
+								<td class="text-center"><i class="fa fa-times"></i></td>
+						</tr>
+				{% endfor %}
+				</tbody>
+		</table>
+
+		<div class="row container-fluid">
+				<button type="button" data-toggle="modal" data-target="#create-award-modal" class="btn btn-primary pull-right">Create Award</button>
+		</div>
+
+		<table class="table table-striped">
+				<h3>Solves</h3>
+				<thead>
+						<tr>
+								<td class="text-center"><b>Challenge</b></td>
+								<td class="text-center"><b>Submitted</b></td>
+								<td class="text-center"><b>Category</b></td>
+								<td class="text-center"><b>Value</b></td>
+								<td class="text-center"><b>Time</b></td>
+								<td class="text-center"><b>Delete</b></td>
+						</tr>
+				</thead>
+				<tbody>
+				{% for solve in solves %}
+						<tr class="chal-solve">
+								<td class="text-center chal" id="{{ solve.chalid }}">{{ solve.chal.name }}</td>
+								<td class="text-center flag" id="{{ solve.id }}">{{ solve.flag }}</td>
+								<td class="text-center">{{ solve.chal.category }}</td>
+								<td class="text-center">{{ solve.chal.value }}</td>
+								<td class="text-center solve-time"><script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
+								<td class="text-center"><i class="fa fa-times"></i></td>
+						</tr>
+				{% endfor %}
+				</tbody>
+		</table>
+
+		<table class="table table-striped">
+				<h3>Missing</h3>
+				<thead>
+				<tr>
+						<td class="text-center"><b>Challenge</b></td>
+						<td class="text-center"><b>Category</b></td>
+						<td class="text-center"><b>Value</b></td>
+						<td class="text-center"><b>Mark Solved</b></td>
+				</tr>
+				</thead>
+				<tbody>
+				{% for chal in missing %}
+						<tr class="chal-solve">
+								<td class="text-center chal" id="{{ chal.id }}">{{ chal.name }}</td>
+								<td class="text-center">{{ chal.category }}</td>
+								<td class="text-center">{{ chal.value }}</td>
+								<td class="text-center"><i class="fa fa-check"></i></td>
+						</tr>
+				{% endfor %}
+				</tbody>
+		</table>
+
+
+		<table class="table table-striped">
+				<h3>Wrong Keys</h3>
+				<thead>
+						<tr>
+								<td class="text-center"><b>Challenge</b></td>
+								<td class="text-center"><b>Submitted</b></td>
+								<td class="text-center"><b>Time</b></td>
+								<td class="text-center"><b>Delete</b></td>
+						</tr>
+				</thead>
+				<tbody>
+				{% for wrong_key in wrong_keys %}
+						<tr class="chal-wrong">
+								<td class="text-center chal" id="{{ wrong_key.chalid }}">{{ wrong_key.chal.name }}</td>
+								<td class="text-center flag" id="{{ wrong_key.id }}">{{ wrong_key.flag }}</td>
+								<td class="text-center solve-time"><script>document.write( moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
+								<td class="text-center"><i class="fa fa-times"></i></td>
+						</tr>
+				{% endfor %}
+				</tbody>
+		</table>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
+		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
+		<script src="{{ request.script_root }}/themes/admin/static/js/utils.js"></script>
+		<script src="{{ request.script_root }}/themes/admin/static/js/team.js"></script>
+		<script>
+				$('#delete-solve').click(function (e) {
+						e.preventDefault();
+						var solve = $('#confirm input[name="solve"]').val()
+						$.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function (data) {
+								var data = $.parseJSON(JSON.stringify(data))
+								if (data == "1") {
+										location.reload()
+								}
+						})
+				});
+
+				function load_confirm_modal(msg) {
+						var title = msg.title;
+						var description = msg.description;
+						var action = msg.action;
+						$('#confirm-title').text(title);
+						$('#confirm-description').html(description);
+						$('#confirm form').attr('action', action);
+						$('#confirm').modal('show');
+				}
+
+				$('.fa-times').click(function () {
+						var elem = $(this).parent().parent();
+						var type = elem.attr('class');
+						var chal_name = elem.find('.chal').text().trim();
+						var team_name = $("#team-id").text();
+						var key_id = elem.find('.flag').attr('id');
+
+						if (type == 'chal-solve'){
+								var title = 'Delete Solve';
+								var description = "<span>Are you sure you want to delete " +
+																		"<strong>correct</strong> " +
+																		"key submission for team: " +
+																		"<strong id='confirm-team-name'></strong> " +
+																		"in challenge: " +
+																		"<strong id='confirm-chal-name'></strong>?</span>"
+
+
+								var description = $($.parseHTML(description));
+								description.find('#confirm-team-name').text(team_name);
+								description.find('#confirm-chal-name').text(chal_name);
+								description = description.html()
+
+								var action = '{{ request.script_root }}/admin/solves/' + key_id + '/delete';
+						} else if (type == 'chal-wrong') {
+								var title = 'Delete Wrong Key';
+								var description = "<span>Are you sure you want to delete " +
+																		"<strong>incorrect</strong> " +
+																		"key submission for team: " +
+																		"<strong id='confirm-team-name'></strong> " +
+																		"in challenge: " +
+																		"<strong id='confirm-chal-name'></strong>?</span>"
+
+								var description = $($.parseHTML(description));
+								description.find('#confirm-team-name').text(team_name);
+								description.find('#confirm-chal-name').text(chal_name);
+								description = description.html()
+
+								var action = '{{ request.script_root }}/admin/wrong_keys/' + key_id + '/delete';
+						} else if (type == 'award-row') {
+								var title = 'Delete Award';
+								var award_id = elem.find('.chal').attr('id');
+								var description = "<span>Are you sure you want to delete the " +
+																	"<strong>{0}</strong> award?</span>".format(chal_name);
+								var action = '{{ request.script_root }}/admin/awards/{0}/delete'.format(award_id);
+						}
+
+						var msg = {
+								title : title,
+								description : description,
+								action : action,
+						}
+
+						load_confirm_modal(msg)
+				});
+
+				$('.fa-check').click(function () {
+						var elem = $(this).parent().parent();
+						var type = elem.attr('class');
+						var chal = elem.find('.chal').attr('id');
+						var chal_name = elem.find('.chal').text().trim();
+						var team = window.location.pathname.split('/').pop();
+						var team_name = $("#team-id").text();
+
+						var title = 'Mark '+chal_name+' Solved';
+						var description = "<span>Are you sure you want to mark " +
+																"<strong id='confirm-chal-name'></strong> " +
+																"as solved for team " +
+																"<strong id='confirm-team-name'></strong> " +
+																"?</span>";
+
+
+						var description = $($.parseHTML(description));
+						description.find('#confirm-team-name').text(team_name);
+						description.find('#confirm-chal-name').text(chal_name);
+						description = description.html()
+
+						var action = '{{request.script_root }}/admin/solves/' + team + '/' + chal + '/solve';
+
+						var msg = {
+								title : title,
+								description : description,
+								action : action,
+						};
+
+						load_confirm_modal(msg);
+				});
+
+				$('#award-create-form').submit(function(e){
+						$.post($(this).attr('action'), $(this).serialize(), function(res){
+								if (res == '1'){
+										var award = $('#award-create-form').serializeObject();
+										var award_text = '<td class="text-center">{0}</td>'.format(award.name) +
+										'<td class="text-center">{0}</td>'.format(award.description) +
+										'<td class="text-center solve-time">{0}</td>'.format(moment().local().format('MMMM Do, h:mm:ss A')) +
+										'<td class="text-center">{0}</td>'.format(award.value) +
+										'<td class="text-center">{0}</td>'.format(award.category) +
+										'<td class="text-center">{0}</td>'.format('None') +
+										'<td class="text-center"><i class="fa fa-times"></i></td>'
+										$('#awards-body').append(award_text);
+										$('#create-award-modal').modal('hide');
+								}
+						})
+						e.preventDefault();
+				});
+
+		</script>
+{% endblock %}

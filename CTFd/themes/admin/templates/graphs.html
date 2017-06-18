@@ -1,0 +1,178 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+	<div class="row">
+			<div id="solves-graph"></div>
+	</div>
+	<div class="row">
+		<div>
+			<div id="keys-pie-graph"></div>
+		</div>
+		<div>
+			<div id="categories-pie-graph"></div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<style>
+		#solves-graph{
+			display: block;
+			height: 500px;
+		}
+		#keys-pie-graph{
+			height: 400px;
+			display: block;
+		}
+		#categories-pie-graph{
+			height: 400px;
+			display: block;
+		}
+	</style>
+	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
+	<script type="text/javascript">
+		// $.distint(array)
+		// Unique elements in array
+		$.extend({
+			distinct : function(anArray) {
+			   var result = [];
+			   $.each(anArray, function(i,v){
+				   if ($.inArray(v, result) == -1) result.push(v);
+			   });
+			   return result;
+			}
+		});
+
+		// Praise Resig: http://ejohn.org/blog/fast-javascript-maxmin/
+		Array.max = function( array ){
+			return Math.max.apply( Math, array );
+		};
+
+		function colorhash (x) {
+			color = ""
+			for (var i = 20; i <= 60; i+=20){
+				x += i
+				x *= i
+				color += x.toString(16)
+			};
+			return "#" + color.substring(0, 6)
+		}
+
+		function solves_graph() {
+			$.get('{{ request.script_root }}/admin/graphs/solves', function (data) {
+				var solves = $.parseJSON(JSON.stringify(data));
+				var chals = [];
+				var counts = [];
+				var colors = [];
+				var annotations = [];
+				var i = 1;
+				solves_order = Object.keys(solves).sort(function (a, b) {
+					return solves[b] - solves[a]
+				});
+				$.each(solves_order, function (key, value) {
+					chals.push(value);
+					counts.push(solves[value]);
+					var result = {
+						x: value,
+						y: solves[value],
+						text: solves[value],
+						xanchor: 'center',
+						yanchor: 'bottom',
+						showarrow: false
+					};
+					annotations.push(result);
+					colors.push(colorhash(i++));
+				});
+
+				var data = [{
+					type: 'bar',
+					x: chals,
+					y: counts,
+					text: counts,
+					orientation: 'v'
+				}];
+
+				var layout = {
+					title: 'Score Counts',
+					annotations: annotations
+				};
+
+				Plotly.newPlot('solves-graph', data, layout);
+			});
+		}
+
+		function keys_percentage_graph(){
+			// Solves and Fails pie chart
+			$.get('{{ request.script_root }}/admin/fails/all', function(data){
+				var res = $.parseJSON(JSON.stringify(data));
+				var solves = res['solves'];
+				var fails = res['fails'];
+
+				var data = [{
+					values: [solves, fails],
+					labels: ['Solves', 'Fails'],
+					marker: {
+						colors: [
+							"rgb(0, 209, 64)",
+							"rgb(207, 38, 0)"
+						]
+					},
+					hole: .4,
+					type: 'pie'
+				}];
+
+				var layout = {
+					title: 'Key Percentages'
+				};
+
+				Plotly.newPlot('keys-pie-graph', data, layout);
+			});
+		}
+
+		function category_breakdown_graph(){
+			$.get('{{ request.script_root }}/admin/graphs/categories', function(data){
+				res = $.parseJSON(JSON.stringify(data));
+				res = res['categories']
+
+				categories = [];
+				count = [];
+				for (var i = 0; i < res.length; i++) {
+					categories.push(res[i].category)
+					count.push(res[i].count)
+				};
+
+				var data = [{
+					values: count,
+					labels: categories,
+					hole: .4,
+					type: 'pie'
+				}];
+
+				var layout = {
+					title: 'Category Breakdown'
+				};
+
+				Plotly.newPlot('categories-pie-graph', data, layout);
+			});
+		}
+
+		function update(){
+			solves_graph();
+			keys_percentage_graph();
+			category_breakdown_graph();
+		}
+
+		$(function() {
+			update();
+			window.onresize = function () {
+				console.log('resizing')
+				Plotly.Plots.resize(document.getElementById('keys-pie-graph'));
+				Plotly.Plots.resize(document.getElementById('categories-pie-graph'));
+				Plotly.Plots.resize(document.getElementById('solves-graph'));
+			};
+		});
+
+		setInterval(update, 300000);
+
+	</script>
+{% endblock %}

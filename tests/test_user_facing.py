@@ -279,3 +279,22 @@ def test_pages_routing_and_rendering():
             r = client.get('/test')
             output = r.get_data(as_text=True)
             assert "<h2>The quick brown fox jumped over the lazy dog</h2>" in output
+
+
+def test_themes_handler():
+    """Test that the themes handler is working properly"""
+    app = create_ctfd()
+    with app.app_context():
+        with app.test_client() as client:
+            r = client.get('/themes/original/static/css/style.css')
+            assert r.status_code == 200
+            r = client.get('/themes/original/static/css/404_NOT_FOUND')
+            assert r.status_code == 404
+            r = client.get('/themes/original/static/%2e%2e/%2e%2e/%2e%2e/utils.py')
+            assert r.status_code == 404
+            r = client.get('/themes/original/static/%2e%2e%2f%2e%2e%2f%2e%2e%2futils.py')
+            assert r.status_code == 404
+            r = client.get('/themes/original/static/..%2f..%2f..%2futils.py')
+            assert r.status_code == 404
+            r = client.get('/themes/original/static/../../../utils.py')
+            assert r.status_code == 404

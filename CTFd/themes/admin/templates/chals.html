@@ -1,0 +1,56 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+<style>
+.btn-primary { background-color: #337ab7; }
+.btn-danger { background-color: #d9534f; }
+.col-md-4 { margin-bottom: 15px; }
+.key-remove-button { margin-top: 10px; }
+.delete-tag { color: white; margin-left: 3px; cursor: pointer; }
+</style>
+{% endblock %}
+
+{% block content %}
+	<div id="email-user" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+				</div>
+				<div class="modal-body">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<input type="hidden" value="{{ nonce }}" id="nonce">
+
+	<div id="create-challenge" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h3>New Challenge</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="update-modals-entry-div">
+	</div>
+
+	<div style="text-align:center">
+		<br>
+		<h1 class="text-center">Challenges</h1>
+		<a class="btn btn-theme btn-outlined create-challenge" href="{{ request.script_root }}/admin/chal/new" role="button">New Challenge</a>
+		<div>
+			<table id='challenges'>
+			</table>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ request.script_root }}/themes/admin/static/js/utils.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/chalboard.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/multi-modal.js"></script>
+{% endblock %}

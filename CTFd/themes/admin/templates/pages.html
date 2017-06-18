@@ -1,0 +1,125 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/themes/admin/static/css/vendor/codemirror.min.css">
+	<style>
+		.CodeMirror {
+			padding-left: 15px;
+			margin-bottom: 10px;
+		}
+	</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<br>
+	<div id="confirm" class="modal fade" tabindex="-1" data-width="760">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="text-center">Delete Page</h2>
+				</div>
+				<div class="modal-body" style="height:110px">
+					<div class="row-fluid">
+						<div class="col-md-12">
+							<form method="POST">
+								<input type="hidden" name="route">
+								<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+								<div class="small-6 small-centered text-center columns">
+									<p>Are you sure you want to delete <strong id="confirm-route-name"></strong>?</p>
+									<button type="button" data-dismiss="modal" class="btn btn-theme btn-outlined">No</button>
+									<button type="button" id="delete-route" class="btn btn-theme btn-outlined">Yes</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-6">
+		<h3>Pages</h3>
+		<table id="pages" class="table table-striped">
+			<thead>
+			<tr>
+				<td><b>Route</b></td>
+				<td class="text-center" style="width: 150px;"><b>Settings</b></td>
+			</tr>
+			</thead>
+			<tbody>
+			{% for route in routes %}
+				<tr name="{{ route.route }}">
+					<td class="route-name"><a
+							href="{{ request.script_root }}/admin/pages/{{ route.route }}">{{ route.route }}</a></td>
+					<td class="text-center"><i class="fa fa-times"></i></td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+
+		<a href="{{ request.script_root }}/admin/pages?mode=create">
+			<button type="button" id="submit" class="btn btn-md btn-primary btn-theme btn-outlined">
+				Add Page
+			</button>
+		</a>
+	</div>
+
+	<div class="col-md-6">
+		<h3>CSS editor</h3>
+		<form method="POST">
+			<textarea id="pages-editor" name="css" style="padding-left:20px; visibility: hidden;">{{ css }}</textarea>
+			<button onclick="save_css()" type="button" id="submit" class="btn btn-md btn-primary btn-theme btn-outlined">
+				Update CSS
+			</button>
+		</form>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ request.script_root }}/themes/admin/static/js/vendor/codemirror.min.js"></script>
+<script>
+var editor = CodeMirror.fromTextArea(document.getElementById("pages-editor"), {
+	lineNumbers: true,
+	lineWrapping: true,
+	mode: "css",
+	htmlMode: false,
+	theme: 'elegant'
+});
+
+$('#delete-route').click(function(e){
+	e.preventDefault();
+	var route = $('#confirm input[name="route"]').val()
+	$.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function(data){
+		var data = $.parseJSON(JSON.stringify(data))
+		if (data == "1"){
+			location.reload()
+		}
+	})
+});
+
+function load_confirm_modal(route){
+	var modal = $('#confirm')
+	modal.find('input[name=route]').val(route)
+	modal.find('#confirm-route-name').text(route)
+	$('#confirm form').attr('action', '{{ request.script_root }}/admin/page/'+route+'/delete');
+	$('#confirm').modal();
+}
+
+function save_css(){
+	var css = editor.getValue();
+	var nonce = $('#nonce').val();
+	$.post(script_root + '/admin/css', {'css':css, 'nonce':nonce}, function(){
+		location.reload();
+	});
+}
+
+$('.fa-times').click(function(){
+	var elem = $(this).parent().parent();
+	var name = elem.find('.route-name').text().trim();
+	load_confirm_modal(name)
+});
+
+</script>
+{% endblock %}

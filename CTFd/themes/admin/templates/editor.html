@@ -1,0 +1,289 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/themes/admin/static/css/vendor/codemirror.min.css">
+	<style>
+	.row-fluid { margin: 25px; padding-bottom: 25px; }
+	.media-item-wrapper { height: 120px; margin: 5px;
+		float: left; border: 1px solid #eee; text-align: center; text-overflow: ellipsis; overflow: hidden;}
+	.media-item-wrapper > a > i {line-height: 90px;}
+	.media-item-title{ font-size: 10px; }
+	#media-item{display: none;}
+	</style>
+{% endblock %}
+
+{% block content %}
+
+<div id="media-modal" class="modal fade" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h3 class="text-center">Media Library</h3>
+
+				<div class="row">
+					<div class="col-md-8 col-md-offset-1" id="media-library-list">
+					</div>
+					<div class="col-md-2">
+						<h4 class="text-center">Media Details</h4>
+						<div id="media-item">
+							<div class="row text-center" id="media-icon">
+							</div>
+							<br>
+							<div class="row text-center" id="media-filename">
+							</div>
+							<br>
+							<div class="row form-group">
+								Link: <input class="form-control" type="text" id="media-link">
+							</div>
+
+							<div class="row form-group text-center">
+								<button class="btn btn-success" id="media-insert">Insert</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<hr>
+
+				<form id="media-library-upload">
+					<div class="form-group">
+						<label for="media-files">Upload Files
+						</label>
+						<input type="file" name="files[]" id="media-files" multiple>
+						<sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
+					</div>
+					<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+				</form>
+				<div class="pull-right">
+					<button type="submit" class="btn btn-primary" onclick="uploadfiles();">Upload</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="row">
+	{% for error in errors %}
+		<div class="large-8 large-centered columns">
+			<div data-alert class="alert-box alert radius centered text-center">
+				<span>{{ error }}</span>
+				<a href="#" class="close">×</a>
+			</div>
+		</div>
+	{% endfor %}
+	</div>
+
+	<form id="page-edit" method="POST">
+		<div class="row-fluid">
+			<div class="col-md-12">
+				<h3>Route: </h3>
+				<p class="help-block">This is the URL route that your page will be at (e.g. /page)</p>
+				<input name='nonce' type='hidden' value="{{ nonce }}">
+				<input class="form-control radius" id="route" type="text" name="route" value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
+			</div>
+		</div>
+		<br>
+		<div class="row-fluid">
+			<div class="col-md-12">
+
+				<h3>Content: </h3>
+				<p class="help-block">This is the HTML content of your page</p>
+
+				<ul class="nav nav-tabs" role="tablist" id="content-edit">
+					<li role="presentation" class="active"><a href="#content-write" aria-controls="home" role="tab" data-toggle="tab">Write</a></li>
+					<li role="presentation"><a href="#content-preview" aria-controls="home" role="tab" data-toggle="tab">Preview</a></li>
+				</ul>
+
+				<div class="tab-content">
+					<div role="tabpanel" class="tab-pane active" id="content-write" style="height:400px">
+						<div class="form-group">
+							<br>
+							<div class="btn-group btn-group-sm" role="group" aria-label="...">
+								<div class="btn-group" role="group">
+									<button type="button" class="btn btn-default" id="media-button"><i class="fa fa-camera-retro" aria-hidden="true"></i> Media Library</button>
+								</div>
+							</div>
+							<br>
+							<br>
+
+							<textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
+						</div>
+					</div>
+					<div role="tabpanel" class="tab-pane content" id="content-preview" style="height:400px">
+					</div>
+				</div>
+			</div>
+			<button class="btn btn-theme btn-outlined create-challenge pull-right">
+				{% if page is defined %}
+					Update
+				{% else %}
+					Create
+				{% endif %}
+			</button>
+		</div>
+	</form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ request.script_root }}/themes/admin/static/js/utils.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/vendor/codemirror.min.js"></script>
+<script>
+	function uploadfiles(){
+		var form = $('#media-library-upload')[0];
+		var formData = new FormData(form);
+		console.log(formData);
+		$.ajax({
+			url: script_root + '/admin/media',
+			data: formData,
+			type: 'POST',
+			cache: false,
+			contentType: false,
+			processData: false,
+			success: function(data){
+				refreshfiles(data);
+				form.reset();
+			}
+		});
+	}
+
+	function refreshfiles(data){
+		var data = data.results;
+		var list = $('#media-library-list');
+		var mapping = {
+			// Image Files
+			'png': 'fa-file-image-o',
+			'jpg': 'fa-file-image-o',
+			'jpeg': 'fa-file-image-o',
+			'gif': 'fa-file-image-o',
+			'bmp': 'fa-file-image-o',
+			'svg': 'fa-file-image-o',
+
+			// Text Files
+			'txt': 'fa-file-text-o',
+
+			// Video Files
+			'mov': 'fa-file-video-o',
+			'mp4': 'fa-file-video-o',
+			'wmv': 'fa-file-video-o',
+			'flv': 'fa-file-video-o',
+			'mkv': 'fa-file-video-o',
+			'avi': 'fa-file-video-o',
+
+			// PDF Files
+			'pdf': 'fa-file-pdf-o',
+
+			// Audio Files
+			'mp3': 'fa-file-sound-o',
+			'wav': 'fa-file-sound-o',
+			'aac': 'fa-file-sound-o',
+
+			// Archive Files
+			'zip': 'fa-file-archive-o',
+			'gz': 'fa-file-archive-o',
+			'tar': 'fa-file-archive-o',
+			'7z': 'fa-file-archive-o',
+			'rar': 'fa-file-archive-o',
+
+			// Code Files
+			'py': 'fa-file-code-o',
+			'c': 'fa-file-code-o',
+			'cpp': 'fa-file-code-o',
+			'html': 'fa-file-code-o',
+			'js': 'fa-file-code-o',
+			'rb': 'fa-file-code-o',
+			'go': 'fa-file-code-o',
+		}
+		for (var i = 0; i < data.length; i++) {
+			var f = data[i];
+			var ext = f.location.split('.').pop();
+			var fname = f.location.split('/')[1];
+
+			var wrapper = $('<div>').attr('class', 'media-item-wrapper col-md-2')
+
+			var link = $('<a>');
+			link.attr('href', '##');
+
+			if (mapping[ext] == undefined)
+				link.append('<i class="fa fa-file-o fa-4x" aria-hidden="true"></i>'.format(mapping[ext]));
+			else
+				link.append('<i class="fa {0} fa-4x" aria-hidden="true"></i>'.format(mapping[ext]));
+
+			link.click(function(e){
+				var media_div = $(this).parent();
+				var icon = $(this).find('.fa')[0];
+				var f_loc = media_div.attr('data-location');
+				var fname = media_div.attr('data-filename');
+				$('#media-link').val(f_loc);
+				$('#media-filename').text(fname);
+
+				$('#media-icon').empty()
+				if ($(icon).hasClass('fa-file-image-o')){
+					$('#media-icon').append($('<img>').attr('src', f_loc).attr('width', '100%'));
+				} else {
+					// icon is empty so we need to pull outerHTML
+					$('#media-icon').append(icon.outerHTML);
+				}
+				$('#media-item').show();
+			});
+			wrapper.append(link);
+			wrapper.attr('data-location',  script_root + '/files/' + f.location);
+			wrapper.attr('data-id',  f.id);
+			wrapper.attr('data-filename',  fname);
+			list.append(wrapper);
+
+			wrapper.append($('<span>').attr('class', 'media-item-title').text(fname));
+		}
+	}
+
+	var editor = CodeMirror.fromTextArea(document.getElementById("admin-pages-editor"), {
+		lineNumbers: true,
+		lineWrapping: true,
+		mode: "xml",
+		htmlMode: true,
+		theme: 'elegant'
+	});
+
+	function insert_at_cursor(editor, text) {
+		var doc = editor.getDoc();
+		var cursor = doc.getCursor();
+		doc.replaceRange(text, cursor);
+	}
+
+	$('#media-insert').click(function(e){
+		var tag = $('#media-icon').children()[0].nodeName.toLowerCase();
+		console.log(tag);
+		var link = $('#media-link').val();
+		var fname = $('#media-filename').text();
+		if (tag == 'img'){
+			var entry = '![{0}]({1})'.format(fname, link);
+		} else if (tag == 'i'){
+			var entry = '[{0}]({1})'.format(fname, link);
+		}
+
+		insert_at_cursor(editor, entry);
+	});
+
+	$('#page-edit').submit(function (e){
+		$(this).attr('action', '{{ request.script_root }}/admin/pages/'+$('#route').val());
+	});
+
+	// Markdown Preview
+	$('#content-edit').on('shown.bs.tab', function (event) {
+		if (event.target.hash == '#content-preview'){
+			$(event.target.hash).html(marked(editor.getValue(), {'gfm':true, 'breaks':true}));
+		}
+	});
+
+	$('#media-button').click(function(){
+		$.get(script_root + '/admin/media', function(data){
+			$('#media-library-list').empty();
+			refreshfiles(data);
+			$('#media-modal').modal();
+		});
+	})
+</script>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron home">
+	<div class="container">
+		<h1>Scoreboard</h1>
+	</div>
+</div>
+<div class="container main-container">
+	{% if errors %}
+	<div class="container main-container">
+		<div id='errors' class="row">
+	{% for error in errors %}
+			<h1>{{ error }}</h1>
+	{% endfor %}
+		</div>
+	</div>
+	{% else %}
+
+		{% if score_frozen %}
+		<div class="container main-container">
+			<div class="row">
+				<h1>Scoreboard has been frozen.</h1>
+			</div>
+		</div>
+		{% endif %}
+
+	<div id="score-graph"></div>
+	<br>
+
+	<table id="scoreboard" class="table table-striped">
+		<thead>
+			<tr>
+				<td width="10px"><b>Place</b>
+				</td>
+				<td><b>Team</b>
+				</td>
+				<td><b>Score</b>
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+		{% for team in teams %}
+			<tr><td>{{ loop.index }}</td><td><a href="{{ request.script_root }}/team/{{ team.teamid }}">{{ team.name }}</a></td><td>{{ team.score }}</td></tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/plotly.min.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/utils.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/scoreboard.js"></script>
+{% endblock %}
