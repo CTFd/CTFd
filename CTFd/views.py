@@ -46,7 +46,7 @@ def setup():
 
             # Index page
             page = Pages('index', """<div class="container main-container">
-    <img class="logo" src="static/original/img/logo.png" />
+    <img class="logo" src="themes/original/static/img/logo.png" />
     <h3 class="text-center">
         <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
         <p>Follow us on social media:</p>
