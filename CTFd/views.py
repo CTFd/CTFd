@@ -13,14 +13,6 @@ from CTFd import utils
 views = Blueprint('views', __name__)
 
 
-@views.before_request
-def redirect_setup():
-    if request.path.startswith("/static"):
-        return
-    if not utils.is_setup() and request.path != "/setup":
-        return redirect(url_for('views.setup'))
-
-
 @views.route('/setup', methods=['GET', 'POST'])
 def setup():
     # with app.app_context():

@@ -298,3 +298,17 @@ def test_themes_handler():
             assert r.status_code == 404
             r = client.get('/themes/original/static/../../../utils.py')
             assert r.status_code == 404
+
+
+def test_ctfd_setup_redirect():
+    """Test that a fresh CTFd instance redirects to /setup"""
+    app = create_ctfd(setup=False)
+    with app.app_context():
+        with app.test_client() as client:
+            r = client.get('/teams')
+            assert r.status_code == 302
+            assert r.location == "http://localhost/setup"
+
+            # Files in /themes load properly
+            r = client.get('/themes/original/static/css/style.css')
+            assert r.status_code == 200
