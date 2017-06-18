@@ -4,7 +4,7 @@ from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.engine.url import make_url
 
 
-def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password"):
+def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", setup=True):
     app = create_app('CTFd.config.TestingConfig')
 
     url = make_url(app.config['SQLALCHEMY_DATABASE_URI'])
@@ -17,19 +17,20 @@ def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="
         with app.app_context():
             app.db.create_all()
 
-    with app.app_context():
-        with app.test_client() as client:
-            data = {}
-            r = client.get('/setup')  # Populate session with nonce
-            with client.session_transaction() as sess:
-                data = {
-                    "ctf_name": ctf_name,
-                    "name": name,
-                    "email": email,
-                    "password": password,
-                    "nonce": sess.get('nonce')
-                }
-            client.post('/setup', data=data)
+    if setup:
+        with app.app_context():
+            with app.test_client() as client:
+                data = {}
+                r = client.get('/setup')  # Populate session with nonce
+                with client.session_transaction() as sess:
+                    data = {
+                        "ctf_name": ctf_name,
+                        "name": name,
+                        "email": email,
+                        "password": password,
+                        "nonce": sess.get('nonce')
+                    }
+                client.post('/setup', data=data)
     return app
 
 
