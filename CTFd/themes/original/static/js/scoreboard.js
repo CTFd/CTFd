@@ -51,7 +51,9 @@ function scoregraph () {
         }
 
         var layout = {
-            title: 'Top 10 Teams'
+            title: 'Top 10 Teams',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
         };
         console.log(traces);
 

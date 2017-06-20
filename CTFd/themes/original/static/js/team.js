@@ -48,7 +48,9 @@ function scoregraph() {
         ];
 
         var layout = {
-            title: 'Score over Time'
+            title: 'Score over Time',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
         };
 
         Plotly.newPlot('score-graph', data, layout);
@@ -76,7 +78,9 @@ function keys_percentage_graph() {
         }];
 
         var layout = {
-            title: 'Key Percentages'
+            title: 'Key Percentages',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
         };
 
 
@@ -120,7 +124,9 @@ function category_breakdown_graph() {
         }];
 
         var layout = {
-            title: 'Category Breakdown'
+            title: 'Category Breakdown',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)'
         };
 
         Plotly.newPlot('categories-pie-graph', data, layout);
