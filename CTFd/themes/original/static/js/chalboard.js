@@ -230,6 +230,11 @@ function loadchals(refresh) {
             var chalbutton = $("<button class='challenge-button trigger theme-background hide-text' value='{0}'></div>".format(chalinfo.id));
             var chalheader = $("<h5>{0}</h5>".format(chalinfo.name));
             var chalscore = $("<span>{0}</span>".format(chalinfo.value));
+            for (var j = 0; j < chalinfo.tags.length; j++) {
+                var tag = 'tag-' + chalinfo.tags[j].replace(/ /g, '-');
+                chalwrap.addClass(tag);
+            }
+
             chalbutton.append(chalheader);
             chalbutton.append(chalscore);
             chalwrap.append(chalbutton);
