@@ -2,9 +2,12 @@
 __pycache__/
 *.py[cod]
 
+.terraform/
+*.tfstate*
+*.tfstate
 # C extensions
 *.so
-
+*.tfvars
 # Distribution / packaging
 .Python
 env/

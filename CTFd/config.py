@@ -27,6 +27,11 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or key
 
     '''
+    BUCKET is used by the CTFD S3 plugin only -- if you aren't using that plugin, this won't be used, and does not need to be set
+    '''
+    BUCKET = os.environ.get('BUCKET') or 'NO_BUCKET'
+
+    '''
     SQLALCHEMY_DATABASE_URI is the URI that specifies the username, password, hostname, port, and database of the server
     used to hold the CTFd database.
 

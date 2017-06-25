@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn instance to serve ctfd
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/opt/ctfd
+ExecStart=/opt/ctfd/gunicorn.sh
+
+[Install]
+WantedBy=multi-user.target
