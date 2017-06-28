@@ -21,11 +21,22 @@ __version__ = '1.0.2'
 
 
 class ThemeLoader(FileSystemLoader):
+    def __init__(self, searchpath, encoding='utf-8', followlinks=False):
+        super(ThemeLoader, self).__init__(searchpath, encoding, followlinks)
+        self.overriden_templates = {}
+
     def get_source(self, environment, template):
+        # Check if the template has been overriden
+        if template in self.overriden_templates:
+            return self.overriden_templates[template], template, True
+
+        # Check if the template requested is for the admin panel
         if template.startswith('admin/'):
             template = template.lstrip('admin/')
             template = "/".join(['admin', 'templates', template])
             return super(ThemeLoader, self).get_source(environment, template)
+
+        # Load regular theme data
         theme = utils.get_config('ctf_theme')
         template = "/".join([theme, 'templates', template])
         return super(ThemeLoader, self).get_source(environment, template)
