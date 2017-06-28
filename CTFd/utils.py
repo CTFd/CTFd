@@ -166,6 +166,11 @@ def hide_scores():
     return get_config('hide_scores')
 
 
+def override_template(template, html):
+    with app.app_context():
+        app.jinja_loader.overriden_templates[template] = html
+
+
 def pages():
     pages = Pages.query.filter(Pages.route != "index").all()
     return pages
