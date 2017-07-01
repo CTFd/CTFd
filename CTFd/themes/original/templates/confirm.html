@@ -2,10 +2,6 @@
 
 {% block stylesheets %}
 	<style>
-		#login-container {
-			padding-left: 60px;
-			padding-right: 60px;
-		}
 
 		.done-row {
 			padding-top: 15px;
@@ -22,7 +18,15 @@
 	</div>
 	<div class="container main-container">
 		<div class="row">
-			<div id="login-container" class="col-md-6 col-md-offset-3">
+			<div id="confirm-container" class="col-md-6 col-md-offset-3">
+				{% for info in infos %}
+					<div class="alert alert-info alert-dismissable" role="alert">
+						<span class="sr-only"></span>
+						{{ info }}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+								aria-hidden="true">×</span></button>
+					</div>
+				{% endfor %}
 				{% for error in errors %}
 					<div class="alert alert-danger alert-dismissable" role="alert">
 						<span class="sr-only">Error:</span>
@@ -35,9 +39,22 @@
 					We've sent a confirmation email to {{ team.email }}
 				</h3>
 
-				<h3 class="text-center">
-					Please click the link in that email to confirm your account and access the rest of the CTF.
-				</h3>
+				<br>
+
+				<h4 class="text-center">
+					Please click the link in that email to confirm your account.
+				</h4>
+
+
+				<form method="POST">
+					<h4 class="text-center">
+						Need to resend the confirmation email?
+					</h4>
+					<div class="col-md-12 text-center">
+						<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-theme btn-outlined">Resend</button>
+					</div>
+					<input type="hidden" name="nonce" value="{{ nonce }}">
+				</form>
 			</div>
 		</div>
 	</div>
