@@ -18,8 +18,11 @@ auth = Blueprint('auth', __name__)
 @auth.route('/confirm/<data>', methods=['GET'])
 def confirm_user(data=None):
     if not utils.get_config('verify_emails'):
+        # If the CTF doesn't care about confirming email addresses then redierct to challenges
         return redirect(url_for('challenges.challenges_view'))
-    if data and request.method == "GET":  # User is confirming email account
+
+    # User is confirming email account
+    if data and request.method == "GET":
         try:
             s = Signer(app.config['SECRET_KEY'])
             email = s.unsign(urllib.unquote_plus(data.decode('base64')))
@@ -36,15 +39,28 @@ def confirm_user(data=None):
         if utils.authed():
             return redirect(url_for('challenges.challenges_view'))
         return redirect(url_for('auth.login'))
-    if not data and request.method == "GET":  # User has been directed to the confirm page because his account is not verified
-        if not utils.authed():
-            return redirect(url_for('auth.login'))
-        team = Teams.query.filter_by(id=session['id']).first_or_404()
-        if team.verified:
-            return redirect(url_for('views.profile'))
-        else:
-            utils.verify_email(team.email)
-        return render_template('confirm.html', team=team)
+
+    # User is trying to start or restart the confirmation flow
+    if not utils.authed():
+        return redirect(url_for('auth.login'))
+
+    team = Teams.query.filter_by(id=session['id']).first_or_404()
+
+    if data is None:
+        if request.method == "POST":
+            # User wants to resend their confirmation email
+            if team.verified:
+                return redirect(url_for('views.profile'))
+            else:
+                utils.verify_email(team.email)
+            return render_template('confirm.html', team=team, infos=['Your confirmation email has been resent!'])
+        elif request.method == "GET":
+            # User has been directed to the confirm page
+            team = Teams.query.filter_by(id=session['id']).first_or_404()
+            if team.verified:
+                # If user is already verified, redirect to their profile
+                return redirect(url_for('views.profile'))
+            return render_template('confirm.html', team=team)
 
 
 @auth.route('/reset_password', methods=['POST', 'GET'])
@@ -136,6 +152,9 @@ def register():
                     logger.warn("[{0}] {1} registered (UNCONFIRMED) with {2}".format(time.strftime("%m/%d/%Y %X"),
                                                                                      request.form['name'].encode('utf-8'),
                                                                                      request.form['email'].encode('utf-8')))
+
+                    utils.verify_email(team.email)
+
                     return redirect(url_for('auth.confirm_user'))
                 else:  # Don't care about confirming users
                     if utils.can_send_mail():  # We want to notify the user that they have registered.
