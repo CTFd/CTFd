@@ -17,7 +17,7 @@ if sys.version_info[0] < 3:
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 
 class ThemeLoader(FileSystemLoader):
