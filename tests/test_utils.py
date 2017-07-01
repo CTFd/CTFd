@@ -3,7 +3,8 @@
 
 from tests.helpers import *
 from CTFd.models import ip2long, long2ip
-from CTFd.utils import get_config, set_config, override_template
+from CTFd.utils import get_config, set_config, override_template, sendmail
+from mock import patch
 import json
 
 
@@ -56,9 +57,35 @@ def test_admin_override_template():
     app = create_ctfd()
     with app.app_context():
         override_template('admin/team.html', 'ADMIN TEAM OVERRIDE')
-        with app.app_context():
-            client = login_as_user(app, name="admin", password="password")
-            r = client.get('/admin/team/1')
-            assert r.status_code == 200
-            output = r.get_data(as_text=True)
-            assert 'ADMIN TEAM OVERRIDE' in output
+
+        client = login_as_user(app, name="admin", password="password")
+        r = client.get('/admin/team/1')
+        assert r.status_code == 200
+        output = r.get_data(as_text=True)
+        assert 'ADMIN TEAM OVERRIDE' in output
+
+
+@patch('smtplib.SMTP')
+def test_sendmail_with_smtp(mock_smtp):
+    """Does sendmail work properly with simple SMTP mail servers"""
+    from email.mime.text import MIMEText
+    app = create_ctfd()
+    with app.app_context():
+        set_config('mail_server', 'localhost')
+        set_config('mail_port', 25)
+        set_config('mail_username', 'username')
+        set_config('mail_password', 'password')
+
+        from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+        to_addr = 'user@user.com'
+        msg = 'this is a test'
+
+        sendmail(to_addr, msg)
+
+        ctf_name = get_config('ctf_name')
+        email_msg = MIMEText(msg)
+        email_msg['Subject'] = "Message from {0}".format(ctf_name)
+        email_msg['From'] = from_addr
+        email_msg['To'] = to_addr
+
+        mock_smtp.return_value.sendmail.assert_called_once_with(from_addr, [to_addr], email_msg.as_string())
