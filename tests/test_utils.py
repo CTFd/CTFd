@@ -3,8 +3,18 @@
 
 from tests.helpers import *
 from CTFd.models import ip2long, long2ip
-from CTFd.utils import override_template
+from CTFd.utils import get_config, set_config, override_template
 import json
+
+
+def test_get_config_and_set_config():
+    """Does get_config and set_config work properly"""
+    app = create_ctfd()
+    with app.app_context():
+        assert get_config('setup') == True
+        config = set_config('TEST_CONFIG_ENTRY', 'test_config_entry')
+        assert config.value == 'test_config_entry'
+        assert get_config('TEST_CONFIG_ENTRY') == 'test_config_entry'
 
 
 def test_ip2long_ipv4():
