@@ -317,7 +317,6 @@ def test_submitting_flags_with_large_ips():
             r = client.post('/chal/{}'.format(chal_id), data=data)
             assert r.status_code == 200
             resp = json.loads(r.data.decode('utf8'))
-            print resp
             assert resp.get('status') == 0 and resp.get('message') == "Incorrect"
             assert WrongKeys.query.filter_by(ip=utils.ip2long(ip_address)).first()
 
