@@ -260,7 +260,7 @@ if __name__ == '__main__':
                 chalid = random.randint(1, CHAL_AMOUNT)
                 if chalid not in used:
                     used.append(chalid)
-                    solve = Solves(chalid, x + 1, '127.0.0.1', gen_word())
+                    solve = Solves(x + 1, chalid, '127.0.0.1', gen_word())
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     solve.date = new_base
@@ -293,7 +293,7 @@ if __name__ == '__main__':
                 chalid = random.randint(1, CHAL_AMOUNT)
                 if chalid not in used:
                     used.append(chalid)
-                    wrong = WrongKeys(x + 1, chalid, gen_word())
+                    wrong = WrongKeys(x + 1, chalid, '127.0.0.1', gen_word())
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     wrong.date = new_base

@@ -16,6 +16,7 @@ def test_get_config_and_set_config():
         config = set_config('TEST_CONFIG_ENTRY', 'test_config_entry')
         assert config.value == 'test_config_entry'
         assert get_config('TEST_CONFIG_ENTRY') == 'test_config_entry'
+    destroy_ctfd(app)
 
 
 def test_ip2long_ipv4():
@@ -50,6 +51,7 @@ def test_override_template():
             assert r.status_code == 200
             output = r.get_data(as_text=True)
             assert 'LOGIN OVERRIDE' in output
+    destroy_ctfd(app)
 
 
 def test_admin_override_template():
@@ -63,6 +65,7 @@ def test_admin_override_template():
         assert r.status_code == 200
         output = r.get_data(as_text=True)
         assert 'ADMIN TEAM OVERRIDE' in output
+    destroy_ctfd(app)
 
 
 @patch('smtplib.SMTP')
@@ -89,3 +92,4 @@ def test_sendmail_with_smtp(mock_smtp):
         email_msg['To'] = to_addr
 
         mock_smtp.return_value.sendmail.assert_called_once_with(from_addr, [to_addr], email_msg.as_string())
+    destroy_ctfd(app)

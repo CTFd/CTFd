@@ -262,7 +262,7 @@ def chal(chalid):
         # Anti-bruteforce / submitting keys too quickly
         if utils.get_kpm(session['id']) > 10:
             if utils.ctftime():
-                wrong = WrongKeys(session['id'], chalid, request.form['key'])
+                wrong = WrongKeys(teamid=session['id'], chalid=chalid, ip=utils.get_ip(), flag=request.form['key'].strip())
                 db.session.add(wrong)
                 db.session.commit()
                 db.session.close()
@@ -289,7 +289,7 @@ def chal(chalid):
             chal_class = get_chal_class(chal.type)
             if chal_class.solve(chal, provided_key):
                 if utils.ctftime():
-                    solve = Solves(chalid=chalid, teamid=session['id'], ip=utils.get_ip(), flag=provided_key)
+                    solve = Solves(teamid=session['id'], chalid=chalid, ip=utils.get_ip(), flag=provided_key)
                     db.session.add(solve)
                     db.session.commit()
                     db.session.close()
@@ -297,7 +297,7 @@ def chal(chalid):
                 return jsonify({'status': 1, 'message': 'Correct'})
 
             if utils.ctftime():
-                wrong = WrongKeys(teamid=session['id'], chalid=chalid, flag=provided_key)
+                wrong = WrongKeys(teamid=session['id'], chalid=chalid, ip=utils.get_ip(), flag=provided_key)
                 db.session.add(wrong)
                 db.session.commit()
                 db.session.close()

@@ -7,6 +7,7 @@ from jinja2 import FileSystemLoader
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy_utils import database_exists, create_database
+from sqlalchemy_utils.functions import get_tables
 from six.moves import input
 
 from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
@@ -74,13 +75,14 @@ def create_app(config='CTFd.config.Config'):
         # Register Flask-Migrate
         migrate.init_app(app, db)
 
-        # This creates tables instead of db.create_all()
-        # Allows migrations to happen properly
-        migrate_upgrade()
-
         # Alembic sqlite support is lacking so we should just create_all anyway
         if url.drivername.startswith('sqlite'):
             db.create_all()
+        else:
+            if 'alembic_version' not in db.engine.table_names():
+                # This creates tables instead of db.create_all()
+                # Allows migrations to happen properly
+                migrate_upgrade()
 
         app.db = db
 

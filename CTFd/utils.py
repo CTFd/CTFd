@@ -126,7 +126,7 @@ def init_utils(app):
     @app.before_request
     def tracker():
         if authed():
-            track = Tracking.query.filter_by(ip=ip2long(get_ip()), team=session['id']).first()
+            track = Tracking.query.filter_by(ip=get_ip(), team=session['id']).first()
             if not track:
                 visit = Tracking(ip=get_ip(), team=session['id'])
                 db.session.add(visit)

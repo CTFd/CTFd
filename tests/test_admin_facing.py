@@ -1,4 +1,4 @@
-from tests.helpers import create_ctfd, register_user, login_as_user
+from tests.helpers import *
 from CTFd.models import Teams
 
 
@@ -11,6 +11,7 @@ def test_admin_panel():
         assert r.status_code == 302
         r = client.get('/admin/graphs')
         assert r.status_code == 200
+    destroy_ctfd(app)
 
 
 def test_admin_pages():
@@ -20,6 +21,7 @@ def test_admin_pages():
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin/pages')
         assert r.status_code == 200
+    destroy_ctfd(app)
 
 
 def test_admin_teams():
@@ -29,6 +31,7 @@ def test_admin_teams():
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin/teams')
         assert r.status_code == 200
+    destroy_ctfd(app)
 
 
 def test_admin_scoreboard():
@@ -38,6 +41,7 @@ def test_admin_scoreboard():
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin/scoreboard')
         assert r.status_code == 200
+    destroy_ctfd(app)
 
 
 def test_admin_containers():
@@ -47,6 +51,7 @@ def test_admin_containers():
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin/containers')
         assert r.status_code == 200
+    destroy_ctfd(app)
 
 
 def test_admin_chals():
@@ -56,6 +61,7 @@ def test_admin_chals():
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin/chals')
         assert r.status_code == 200
+    destroy_ctfd(app)
 
 
 def test_admin_statistics():
@@ -65,6 +71,7 @@ def test_admin_statistics():
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin/statistics')
         assert r.status_code == 200
+    destroy_ctfd(app)
 
 
 def test_admin_config():
@@ -74,3 +81,4 @@ def test_admin_config():
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin/config')
         assert r.status_code == 200
+    destroy_ctfd(app)

@@ -225,39 +225,41 @@ class Solves(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chalid = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
-    ip = db.Column(db.Integer)
+    ip = db.Column(db.String(46))
     flag = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     team = db.relationship('Teams', foreign_keys="Solves.teamid", lazy='joined')
     chal = db.relationship('Challenges', foreign_keys="Solves.chalid", lazy='joined')
     # value = db.Column(db.Integer)
 
-    def __init__(self, chalid, teamid, ip, flag):
-        self.ip = ip2long(ip)
+    def __init__(self, teamid, chalid, ip, flag):
+        self.ip = ip
         self.chalid = chalid
         self.teamid = teamid
         self.flag = flag
         # self.value = value
 
     def __repr__(self):
-        return '<solves %r>' % self.chal
+        return '<solve {}, {}, {}, {}>'.format(self.teamid, self.chalid, self.ip, self.flag)
 
 
 class WrongKeys(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chalid = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    ip = db.Column(db.String(46))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     flag = db.Column(db.Text)
     chal = db.relationship('Challenges', foreign_keys="WrongKeys.chalid", lazy='joined')
 
-    def __init__(self, teamid, chalid, flag):
+    def __init__(self, teamid, chalid, ip, flag):
+        self.ip = ip
         self.teamid = teamid
         self.chalid = chalid
         self.flag = flag
 
     def __repr__(self):
-        return '<wrong %r>' % self.flag
+        return '<wrong {}, {}, {}, {}>'.format(self.teamid, self.chalid, self.ip, self.flag)
 
 
 class Unlocks(db.Model):
@@ -278,12 +280,12 @@ class Unlocks(db.Model):
 
 class Tracking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ip = db.Column(db.BigInteger)
+    ip = db.Column(db.String(46))
     team = db.Column(db.Integer, db.ForeignKey('teams.id'))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, ip, team):
-        self.ip = ip2long(ip)
+        self.ip = ip
         self.team = team
 
     def __repr__(self):
