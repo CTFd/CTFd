@@ -104,7 +104,7 @@
 				<tbody>
 				{% for addr in addrs %}
 						<tr>
-								<td class="text-center">{{ addr[0]|long2ip }}</td>
+								<td class="text-center">{{ addr[0] }}</td>
 								<td class="text-center solve-time"><script>document.write( moment({{ addr[1]|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
 						</tr>
 				{% endfor %}
