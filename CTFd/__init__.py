@@ -75,14 +75,14 @@ def create_app(config='CTFd.config.Config'):
         # Register Flask-Migrate
         migrate.init_app(app, db)
 
-        if 'alembic_version' not in db.engine.table_names():
-            # This creates tables instead of db.create_all()
-            # Allows migrations to happen properly
-            migrate_upgrade()
-
         # Alembic sqlite support is lacking so we should just create_all anyway
         if url.drivername.startswith('sqlite'):
             db.create_all()
+        else:
+            if 'alembic_version' not in db.engine.table_names():
+                # This creates tables instead of db.create_all()
+                # Allows migrations to happen properly
+                migrate_upgrade()
 
         app.db = db
 
