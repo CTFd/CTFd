@@ -221,7 +221,7 @@ def admin_fails(teamid):
 @admin_teams.route('/admin/solves/<int:teamid>/<int:chalid>/solve', methods=['POST'])
 @admins_only
 def create_solve(teamid, chalid):
-    solve = Solves(chalid=chalid, teamid=teamid, ip='127.0.0.1', flag='MARKED_AS_SOLVED_BY_ADMIN')
+    solve = Solves(teamid=teamid, chalid=chalid, ip='127.0.0.1', flag='MARKED_AS_SOLVED_BY_ADMIN')
     db.session.add(solve)
     db.session.commit()
     db.session.close()

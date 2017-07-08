@@ -7,16 +7,6 @@ from sqlalchemy.engine.url import make_url
 def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", setup=True):
     app = create_app('CTFd.config.TestingConfig')
 
-    url = make_url(app.config['SQLALCHEMY_DATABASE_URI'])
-    if url.drivername == 'postgres':
-        url.drivername = 'postgresql'
-
-    if database_exists(url):
-        drop_database(url)
-        create_database(url)
-        with app.app_context():
-            app.db.create_all()
-
     if setup:
         with app.app_context():
             with app.test_client() as client:
@@ -32,6 +22,10 @@ def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="
                     }
                 client.post('/setup', data=data)
     return app
+
+
+def destroy_ctfd(app):
+    drop_database(app.config['SQLALCHEMY_DATABASE_URI'])
 
 
 def register_user(app, name="user", email="user@ctfd.io", password="password"):
@@ -101,15 +95,15 @@ def gen_team(db, name='name', email='user@ctfd.io', password='password'):
     return team
 
 
-def gen_solve(db, chalid, teamid, ip='127.0.0.1', flag='rightkey'):
-    solve = Solves(chalid, teamid, ip, flag)
+def gen_solve(db, teamid, chalid, ip='127.0.0.1', flag='rightkey'):
+    solve = Solves(teamid, chalid, ip, flag)
     db.session.add(solve)
     db.session.commit()
     return solve
 
 
-def gen_wrongkey(db, teamid, chalid, flag='wrongkey'):
-    wrongkey = WrongKeys(teamid, chalid, flag)
+def gen_wrongkey(db, teamid, chalid, ip='127.0.0.1', flag='wrongkey'):
+    wrongkey = WrongKeys(teamid, chalid, ip, flag)
     db.session.add(wrongkey)
     db.session.commit()
     return wrongkey
