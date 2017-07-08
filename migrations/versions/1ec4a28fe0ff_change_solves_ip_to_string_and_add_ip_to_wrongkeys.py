@@ -5,8 +5,10 @@ Revises: c7225db614c1
 Create Date: 2017-07-08 17:08:59.098805
 
 """
+from CTFd.models import db, Solves, WrongKeys
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.sql import text, table, column
 import netaddr
 
 def ip2long(ip):
@@ -31,10 +33,10 @@ solves_table = table('solves',
 )
 
 tracking_table = table('tracking',
-    column('id', db.Integer)
-    column('ip', db.String(46))
-    column('team', db.Integer)
-    column('data', db.DateTime)
+    column('id', db.Integer),
+    column('ip', db.String(46)),
+    column('team', db.Integer),
+    column('data', db.DateTime),
 )
 
 
