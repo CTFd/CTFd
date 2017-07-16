@@ -18,10 +18,20 @@ def test_index():
 
 
 def test_register_user():
-    """Can a user can be registered"""
+    """Can a user be registered"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
+        team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
+        assert team_count == 2  # There's the admin user and the created user
+    destroy_ctfd(app)
+
+
+def test_register_unicode_user():
+    """Can a user with a unicode name be registered"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="你好")
         team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
         assert team_count == 2  # There's the admin user and the created user
     destroy_ctfd(app)

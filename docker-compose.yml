@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=mysql+pymysql://ctfd:ctfd@db/ctfd
+      - DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfd
     volumes:
       - .data/CTFd/logs:/opt/CTFd/CTFd/logs
       - .data/CTFd/uploads:/opt/CTFd/CTFd/uploads
@@ -15,11 +15,10 @@ services:
       - db
 
   db:
-    image: mariadb
+    image: mariadb:10.2
     environment:
       - MYSQL_ROOT_PASSWORD=ctfd
       - MYSQL_USER=ctfd
       - MYSQL_PASSWORD=ctfd
-      - MYSQL_DATABASE=ctfd
     volumes:
       - .data/mysql:/var/lib/mysql
