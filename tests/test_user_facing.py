@@ -302,6 +302,7 @@ def test_submitting_unicode_flag():
 
 
 def test_submitting_flags_with_large_ips():
+    '''Test that users with high octect IP addresses can submit flags'''
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -342,6 +343,108 @@ def test_submitting_flags_with_large_ips():
             assert resp.get('status') == 1 and resp.get('message') == "Correct"
             assert Solves.query.filter_by(ip=ip_address).first()
     destroy_ctfd(app)
+
+
+def test_scoring_logic():
+    """Test that scoring logic is correct"""
+    app = create_ctfd()
+    with app.app_context():
+        admin = login_as_user(app, name="admin", password="password")
+
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        client1 = login_as_user(app, name="user1", password="password")
+        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        client2 = login_as_user(app, name="user2", password="password")
+
+        chal1 = gen_challenge(app.db)
+        flag1 = gen_flag(app.db, chal=chal1.id, flag='flag')
+        chal1_id = chal1.id
+
+        chal2 = gen_challenge(app.db)
+        flag2 = gen_flag(app.db, chal=chal2.id, flag='flag')
+        chal2_id = chal2.id
+
+        # user1 solves chal1
+        with client1.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+            r = client1.post('/chal/{}'.format(chal1_id), data=data)
+
+        # user1 is now on top
+        scores = get_scores(admin)
+        assert scores[0]['team'] == 'user1'
+
+        # user2 solves chal1 and chal2
+        with client2.session_transaction() as sess:
+            # solve chal1
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+            r = client2.post('/chal/{}'.format(chal1_id), data=data)
+            # solve chal2
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+            r = client2.post('/chal/{}'.format(chal2_id), data=data)
+
+        # user2 is now on top
+        scores = get_scores(admin)
+        assert scores[0]['team'] == 'user2'
+
+        # user1 solves chal2
+        with client1.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+            r = client1.post('/chal/{}'.format(chal2_id), data=data)
+
+        # user should still be on top because they solved chal2 first
+        scores = get_scores(admin)
+        assert scores[0]['team'] == 'user2'
+
+
+def test_user_score_is_correct():
+    '''Test that a user's score is correct'''
+    app = create_ctfd()
+    with app.app_context():
+        # create user1
+        register_user(app, name="user1", email="user1@ctfd.io")
+
+        # create challenge
+        chal = gen_challenge(app.db, value=100)
+        flag = gen_flag(app.db, chal=chal.id, flag='flag')
+        chal_id = chal.id
+
+        # create a solve for the challenge for user1. (the id is 2 because of the admin)
+        gen_solve(app.db, 2, chal_id)
+        user1 = Teams.query.filter_by(id=2).first()
+
+        # assert that user1's score is 100
+        assert user1.score() == 100
+        assert user1.place() == '1st'
+
+        # create user2
+        register_user(app, name="user2", email="user2@ctfd.io")
+
+        # user2 solves the challenge
+        gen_solve(app.db, 3, chal_id)
+
+        # assert that user2's score is 100 but is in 2nd place
+        user2 = Teams.query.filter_by(id=3).first()
+        assert user2.score() == 100
+        assert user2.place() == '2nd'
+
+        # create an award for user2
+        gen_award(app.db, 3, value=5)
+
+        # assert that user2's score is now 105 and is in 1st place
+        assert user2.score() == 105
+        assert user2.place() == '1st'
 
 
 def test_pages_routing_and_rendering():

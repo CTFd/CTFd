@@ -56,6 +56,12 @@ def login_as_user(app, name="user", password="password"):
             return client
 
 
+def get_scores(user):
+    scores = user.get('/scores')
+    scores = json.loads(scores.get_data(as_text=True))
+    return scores['standings']
+
+
 def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type=0):
     chal = Challenges(name, description, value, category)
     db.session.add(chal)
