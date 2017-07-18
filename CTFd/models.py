@@ -8,6 +8,7 @@ from struct import unpack, pack, error as struct_error
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.exc import DatabaseError
+from sqlalchemy.sql.expression import union_all
 
 
 def sha512(string):
@@ -198,22 +199,44 @@ class Teams(db.Model):
             return 0
 
     def place(self, admin=False):
-        score = db.func.sum(Challenges.value).label('score')
-        quickest = db.func.max(Solves.date).label('quickest')
-        teams = db.session.query(Solves.teamid).join(Teams).join(Challenges).filter(Teams.banned == False)
+        scores = db.session.query(
+            Solves.teamid.label('teamid'),
+            db.func.sum(Challenges.value).label('score'),
+            db.func.max(Solves.date).label('date')
+        ).join(Challenges).group_by(Solves.teamid)
+
+        awards = db.session.query(
+            Awards.teamid.label('teamid'),
+            db.func.sum(Awards.value).label('score'),
+            db.func.max(Awards.date).label('date')
+        ).group_by(Awards.teamid)
 
         if not admin:
             freeze = Config.query.filter_by(key='freeze').first()
             if freeze and freeze.value:
                 freeze = int(freeze.value)
                 freeze = datetime.datetime.utcfromtimestamp(freeze)
-                teams = teams.filter(Solves.date < freeze)
+                scores = scores.filter(Solves.date < freeze)
+                awards = awards.filter(Awards.date < freeze)
 
-        teams = teams.group_by(Solves.teamid).order_by(score.desc(), quickest).all()
+        results = union_all(scores, awards).alias('results')
+
+        sumscore = db.func.sum(results.columns.score).label('sumscore')
+        quickest = db.func.max(results.columns.date).label('quickest')
+
+        standings_query = db.session.query(results.columns.teamid)\
+            .join(Teams)\
+            .group_by(results.columns.teamid)\
+            .order_by(sumscore.desc(), quickest)
+
+        if not admin:
+            standings_query = standings_query.filter(Teams.banned == False)
+
+        standings = standings_query.all()
 
         # http://codegolf.stackexchange.com/a/4712
         try:
-            i = teams.index((self.id,)) + 1
+            i = standings.index((self.id,)) + 1
             k = i % 10
             return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
         except ValueError:
