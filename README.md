@@ -20,7 +20,7 @@ CTFd is a Capture The Flag in a can. It's easy to customize with plugins and the
 https://demo.ctfd.io/
 
 ## HackerFire
-Looking for CTF challenges to work on? [HackerFire](https://hackerfire.com/) is a learning focused CTF from the developers of CTFd. It features a wide variety of challenges and is updated with new content frequently. It also contains custom knowledge resources to teach newcomers about the techniques used to solve a challenge. 
+Looking for CTF challenges to work on? [HackerFire](https://hackerfire.com/) is a learning focused CTF built using CTFd. It features a wide variety of challenges and is updated with new content frequently. It also contains custom knowledge resources to teach newcomers about the techniques used to solve a challenge. 
 
 ## Credits
 * Logo by [Laura Barbera](http://www.laurabb.com/)
