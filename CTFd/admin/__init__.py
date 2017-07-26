@@ -49,8 +49,8 @@ def admin_plugin_config(plugin):
             if k == "nonce":
                 continue
             utils.set_config(k, v)
-            with app.app_context():
-                cache.clear()
+        with app.app_context():
+            cache.clear()
         return '1'
 
 
