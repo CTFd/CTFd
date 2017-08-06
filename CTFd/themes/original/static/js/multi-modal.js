@@ -3,7 +3,6 @@
 
     var MultiModal = function(element) {
         this.$element = $(element);
-        this.modalCount = 0;
     };
 
     MultiModal.BASE_ZINDEX = 1040;
@@ -11,30 +10,32 @@
     MultiModal.prototype.show = function(target) {
         var that = this;
         var $target = $(target);
-        var modalIndex = that.modalCount++;
+        var modalCount = $('.modal:visible').length;
 
-        $target.css('z-index', MultiModal.BASE_ZINDEX + (modalIndex * 20) + 10);
+        $target.css('z-index', MultiModal.BASE_ZINDEX + (modalCount * 20) + 10);
 
         window.setTimeout(function() {
-            if(modalIndex > 0)
+            var modalCount = $('.modal:visible').length;
+            if(modalCount > 0)
                 $('.modal-backdrop').not(':first').addClass('hidden');
 
-            that.adjustBackdrop();
+            that.adjustBackdrop(modalCount);
         });
     };
 
     MultiModal.prototype.hidden = function(target) {
-        this.modalCount--;
+        var modalCount = $('.modal:visible').length;
 
-        if(this.modalCount) {
-           this.adjustBackdrop();
+        var $target = $(target);
+
+        if(modalCount) {
+           this.adjustBackdrop(modalCount - 1);
             $('body').addClass('modal-open');
         }
     };
 
-    MultiModal.prototype.adjustBackdrop = function() {
-        var modalIndex = this.modalCount - 1;
-        $('.modal-backdrop:first').css('z-index', MultiModal.BASE_ZINDEX + (modalIndex * 20));
+    MultiModal.prototype.adjustBackdrop = function(modalCount) {
+        $('.modal-backdrop:first').css('z-index', MultiModal.BASE_ZINDEX + ((modalCount)* 20));
     };
 
     function Plugin(method, target) {
