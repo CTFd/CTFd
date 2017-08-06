@@ -61,7 +61,7 @@
 				{% endif %}
 						<p class="text-center"><strong>{{ award.name }}</strong></p>
 						{% if award.category %}<p class="text-center">{{ award.category }}</p>{% endif %}
-						<p class="text-center">{{ award.description }}</p>
+						{% if award.description %}<p class="text-center">{{ award.description }}</p>{% endif %}
 						<p class="text-center">{{ award.value }}</p>
 					</div>
 			{% endfor %}
