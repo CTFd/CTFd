@@ -178,7 +178,7 @@ class Teams(db.Model):
 
     def score(self, admin=False):
         score = db.func.sum(Challenges.value).label('score')
-        team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.banned == False, Teams.id == self.id)
+        team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.id == self.id)
         award_score = db.func.sum(Awards.value).label('award_score')
         award = db.session.query(award_score).filter_by(teamid=self.id)
 
