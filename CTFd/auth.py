@@ -35,7 +35,7 @@ def confirm_user(data=None):
         team.verified = True
         db.session.commit()
         db.session.close()
-        logger.warn("[{date}] {ip} - {username} reset their password".format(
+        logger.warn("[{date}] {ip} - {username} confirmed their account".format(
             date=time.strftime("%m/%d/%Y %X"),
             ip=utils.get_ip(),
             username=team.name.encode('utf-8'),
@@ -58,7 +58,7 @@ def confirm_user(data=None):
                 return redirect(url_for('views.profile'))
             else:
                 utils.verify_email(team.email)
-                logger.warn("[{date}] {ip} - {username} initiated a password reset".format(
+                logger.warn("[{date}] {ip} - {username} initiated a confirmation email resend".format(
                     date=time.strftime("%m/%d/%Y %X"),
                     ip=utils.get_ip(),
                     username=team.name.encode('utf-8'),
@@ -87,15 +87,15 @@ def reset_password(data=None):
             return render_template('reset_password.html', errors=['Your link has expired'])
         except:
             return render_template('reset_password.html', errors=['Your link appears broken, please try again.'])
-        logger.warn("[{date}] {ip} -  submitted invalid password for {username}".format(
-            date=time.strftime("%m/%d/%Y %X"),
-            ip=utils.get_ip(),
-            username=team.name.encode('utf-8')
-        ))
         team = Teams.query.filter_by(name=name).first_or_404()
         team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
         db.session.commit()
         db.session.close()
+        logger.warn("[{date}] {ip} -  successful password reset for {username}".format(
+            date=time.strftime("%m/%d/%Y %X"),
+            ip=utils.get_ip(),
+            username=team.name.encode('utf-8')
+        ))
         return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
