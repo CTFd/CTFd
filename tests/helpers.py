@@ -101,6 +101,13 @@ def gen_team(db, name='name', email='user@ctfd.io', password='password'):
     return team
 
 
+def gen_hint(db, chal, hint="This is a hint", cost=0, type=0):
+    hint = Hints(chal, hint, cost, type)
+    db.session.add(hint)
+    db.session.commit()
+    return hint
+
+
 def gen_solve(db, teamid, chalid, ip='127.0.0.1', flag='rightkey'):
     solve = Solves(teamid, chalid, ip, flag)
     db.session.add(solve)

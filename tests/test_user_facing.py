@@ -495,3 +495,61 @@ def test_ctfd_setup_redirect():
             r = client.get('/themes/original/static/css/style.css')
             assert r.status_code == 200
     destroy_ctfd(app)
+
+
+def test_user_cannot_unlock_hint():
+    """Test that a user can't unlock a hint if they don't have enough points"""
+    app = create_ctfd()
+    with app.app_context():
+        with app.test_client() as client:
+            register_user(app, name="user1", email="user1@ctfd.io")
+
+            chal = gen_challenge(app.db, value=100)
+            chal_id = chal.id
+
+            flag = gen_flag(app.db, chal=chal.id, flag='flag')
+
+            hint = gen_hint(db, chal_id, cost=10)
+            hint_id = hint.id
+
+            client = login_as_user(app, name="user1", password="password")
+
+            with client.session_transaction() as sess:
+                data = {
+                    "nonce": sess.get('nonce')
+                }
+                r = client.post('/hints/{}'.format(hint_id), data=data)
+                resp = json.loads(r.data.decode('utf8'))
+                assert resp.get('errors') == 'Not enough points'
+    destroy_ctfd(app)
+
+
+def test_user_can_unlock_hint():
+    """Test that a user can unlock a hint if they have enough points"""
+    app = create_ctfd()
+    with app.app_context():
+        with app.test_client() as client:
+            register_user(app, name="user1", email="user1@ctfd.io")
+
+            chal = gen_challenge(app.db, value=100)
+            chal_id = chal.id
+
+            flag = gen_flag(app.db, chal=chal.id, flag='flag')
+
+            hint = gen_hint(app.db, chal_id, cost=10)
+            hint_id = hint.id
+
+            award = gen_award(app.db, teamid=2, value=15)
+
+            client = login_as_user(app, name="user1", password="password")
+
+            with client.session_transaction() as sess:
+                data = {
+                    "nonce": sess.get('nonce')
+                }
+                r = client.post('/hints/{}'.format(hint_id), data=data)
+                resp = json.loads(r.data.decode('utf8'))
+                assert resp.get('errors') is None
+                assert resp.get('hint')
+                assert resp.get('chal') == chal_id
+    destroy_ctfd(app)
