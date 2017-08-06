@@ -193,8 +193,12 @@ class Teams(db.Model):
         team = team.group_by(Solves.teamid).first()
         award = award.first()
 
-        if team:
+        if team and award:
             return int(team.score or 0) + int(award.award_score or 0)
+        elif team:
+            return int(team.score or 0)
+        elif award:
+            return int(award.award_score or 0)
         else:
             return 0
 
