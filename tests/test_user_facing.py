@@ -521,6 +521,7 @@ def test_user_cannot_unlock_hint():
                 r = client.post('/hints/{}'.format(hint_id), data=data)
                 resp = json.loads(r.data.decode('utf8'))
                 assert resp.get('errors') == 'Not enough points'
+    destroy_ctfd(app)
 
 
 def test_user_can_unlock_hint():
