@@ -12,9 +12,9 @@
             <div role="tabpanel">
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade in active" id="challenge">
-                        <h3 class='chal-name'>{{ name }}</h3>
-                        <h4 class="chal-value">{{ value }}</h4>
-                        <div class="chal-tags">
+                        <h3 class='chal-name text-center'>{{ name }}</h3>
+                        <h4 class="chal-value text-center">{{ value }}</h4>
+                        <div class="chal-tags text-center">
                         {{#each tags }}
                             <span class='label label-primary chal-tag'>{{this}}</span>
                         {{/each}}
@@ -22,7 +22,7 @@
                         <span class="chal-desc">{{{ desc }}}</span>
                         <div class="chal-hints file-row row">
                             {{#each hints}}
-                            <div class='col-md-12 file-button-wrapper'>
+                            <div class='col-md-12 file-button-wrapper text-center'>
                                 <a onclick="javascript:loadhint({{this.id}})">
                                     {{#if this.hint }}
                                         <label class='challenge-wrapper file-wrapper hide-text'>
@@ -43,7 +43,7 @@
                             </div>
                             {{/each}}
                         </div>
-                        <div class="chal-files file-row row">
+                        <div class="chal-files file-row row text-center">
                             {{#each files}}
                             <div class='col-md-3 file-button-wrapper'>
                                 <a class='file-button' href='/files/{{this}}'>
@@ -74,7 +74,7 @@
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="solves">
-                        <table class="table table-striped">
+                        <table class="table table-striped text-center">
                             <thead>
                                 <tr>
                                     <td><b>Name</b>
