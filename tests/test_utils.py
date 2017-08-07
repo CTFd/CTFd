@@ -3,7 +3,8 @@
 
 from tests.helpers import *
 from CTFd.models import ip2long, long2ip
-from CTFd.utils import get_config, set_config, override_template, sendmail
+from CTFd.utils import get_config, set_config, override_template, sendmail, verify_email
+from CTFd.utils import base64encode, base64decode
 from mock import patch
 import json
 
@@ -39,6 +40,20 @@ def test_long2ip_ipv6():
     """Does long2ip work properly for ipv6 addresses"""
     assert long2ip(42540766452641154071740215577757643572) == '2001:db8:85a3::8a2e:370:7334'
     assert long2ip(42540616829182469433547762482097946625) == '2001:658:22a:cafe:200::1'
+
+
+def test_base64encode():
+    """The base64encode wrapper works properly"""
+    assert base64encode('abc123') == 'YWJjMTIz'
+    assert base64encode('😆') == '8J-Yhg=='
+    assert base64encode('😆', urlencode=True) == '8J-Yhg%3D%3D'
+
+
+def test_base64decode():
+    """The base64decode wrapper works properly"""
+    assert base64decode('YWJjMTIz') == 'abc123'
+    assert base64decode('8J-Yhg==') == '😆'
+    assert base64decode('8J-Yhg%3D%3D', urldecode=True) == '😆'
 
 
 def test_override_template():
@@ -92,4 +107,38 @@ def test_sendmail_with_smtp(mock_smtp):
         email_msg['To'] = to_addr
 
         mock_smtp.return_value.sendmail.assert_called_once_with(from_addr, [to_addr], email_msg.as_string())
+    destroy_ctfd(app)
+
+
+@patch('smtplib.SMTP')
+def test_verify_email(mock_smtp):
+    """Does verify_email send emails"""
+    from email.mime.text import MIMEText
+    app = create_ctfd()
+    with app.app_context():
+        set_config('mail_server', 'localhost')
+        set_config('mail_port', 25)
+        set_config('mail_username', 'username')
+        set_config('mail_password', 'password')
+        set_config('verify_emails', True)
+
+        from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+        to_addr = 'user@user.com'
+
+        verify_email(to_addr)
+
+        # This is currently not actually validated
+        msg = ("Please click the following link to confirm"
+               " your email address for CTFd:"
+               " http://localhost/confirm/InVzZXJAdXNlci5jb20iLkRHbGFZUS5XUURfQzBub3pGZkFMRlIyeGxDS1BCMjZETlk%3D")
+
+        ctf_name = get_config('ctf_name')
+        email_msg = MIMEText(msg)
+        email_msg['Subject'] = "Message from {0}".format(ctf_name)
+        email_msg['From'] = from_addr
+        email_msg['To'] = to_addr
+
+        # Need to freeze time to predict the value of the itsdangerous token.
+        # For now just assert that sendmail was called.
+        mock_smtp.return_value.sendmail.assert_called()
     destroy_ctfd(app)

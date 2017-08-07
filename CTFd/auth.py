@@ -2,7 +2,6 @@ import logging
 import os
 import re
 import time
-import urllib
 
 from flask import current_app as app, render_template, request, redirect, url_for, session, Blueprint
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
@@ -25,8 +24,10 @@ def confirm_user(data=None):
     # User is confirming email account
     if data and request.method == "GET":
         try:
-            s = Signer(app.config['SECRET_KEY'])
-            email = s.unsign(urllib.unquote_plus(data.decode('base64')))
+            s = TimedSerializer(app.config['SECRET_KEY'])
+            email = s.loads(utils.base64decode(data, urldecode=True), max_age=1800)
+        except BadTimeSignature:
+            return render_template('confirm.html', errors=['Your confirmation link has expired'])
         except BadSignature:
             return render_template('confirm.html', errors=['Your confirmation link seems wrong'])
         except:
@@ -82,7 +83,7 @@ def reset_password(data=None):
     if data is not None and request.method == "POST":
         try:
             s = TimedSerializer(app.config['SECRET_KEY'])
-            name = s.loads(urllib.unquote_plus(data.decode('base64')), max_age=1800)
+            name = s.loads(utils.base64decode(data, urldecode=True), max_age=1800)
         except BadTimeSignature:
             return render_template('reset_password.html', errors=['Your link has expired'])
         except:
@@ -110,7 +111,7 @@ Did you initiate a password reset?
 
 {0}/{1}
 
-""".format(url_for('auth.reset_password', _external=True), urllib.quote_plus(token.encode('base64')))
+""".format(url_for('auth.reset_password', _external=True), utils.base64encode(token, urlencode=True))
 
         utils.sendmail(email, text)
 
