@@ -442,7 +442,8 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None):
     if TLS:
         smtp.starttls()
         smtp.ehlo()
-    smtp.login(username, password)
+    if username:
+        smtp.login(username, password)
     return smtp
 
 
