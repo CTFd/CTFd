@@ -104,7 +104,7 @@ function submitkey(chal, key, nonce) {
           return
         }
         else if (result.status == 0){ // Incorrect key
-            result_notification.addClass('alert alert-danger alert-dismissable');
+            result_notification.addClass('alert alert-danger alert-dismissable text-center');
             result_notification.slideDown();
 
             answer_input.removeClass("correct");
@@ -114,7 +114,7 @@ function submitkey(chal, key, nonce) {
             }, 3000);
         }
         else if (result.status == 1){ // Challenge Solved
-            result_notification.addClass('alert alert-success alert-dismissable');
+            result_notification.addClass('alert alert-success alert-dismissable text-center');
             result_notification.slideDown();
 
             $('.chal-solves').text((parseInt($('.chal-solves').text().split(" ")[0]) + 1 +  " Solves") );
@@ -124,13 +124,13 @@ function submitkey(chal, key, nonce) {
             answer_input.addClass("correct");
         }
         else if (result.status == 2){ // Challenge already solved
-            result_notification.addClass('alert alert-info alert-dismissable');
+            result_notification.addClass('alert alert-info alert-dismissable text-center');
             result_notification.slideDown();
 
             answer_input.addClass("correct");
         }
         else if (result.status == 3){ // Keys per minute too high
-            result_notification.addClass('alert alert-warning alert-dismissable');
+            result_notification.addClass('alert alert-warning alert-dismissable text-center');
             result_notification.slideDown();
 
             answer_input.addClass("too-fast");
