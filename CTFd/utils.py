@@ -436,13 +436,14 @@ def mailserver():
     return False
 
 
-def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None):
+def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=None):
     smtp = smtplib.SMTP(host, port)
     smtp.ehlo()
     if TLS:
         smtp.starttls()
         smtp.ehlo()
-    smtp.login(username, password)
+    if auth:
+        smtp.login(username, password)
     return smtp
 
 
@@ -477,6 +478,8 @@ def sendmail(addr, text):
             data['TLS'] = get_config('mail_tls')
         if get_config('mail_ssl'):
             data['SSL'] = get_config('mail_ssl')
+        if get_config('mail_useauth'):
+            data['auth'] = get_config('mail_useauth')
 
         smtp = get_smtp(**data)
         msg = MIMEText(text)
