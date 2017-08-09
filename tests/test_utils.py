@@ -45,6 +45,8 @@ def test_long2ip_ipv6():
 def test_base64encode():
     """The base64encode wrapper works properly"""
     assert base64encode('abc123') == 'YWJjMTIz'
+    assert base64encode(unicode('abc123')) == 'YWJjMTIz'
+    assert base64encode(unicode('"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'), urlencode=True) == 'InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ%3D'
     assert base64encode('😆') == '8J-Yhg=='
     assert base64encode('😆', urlencode=True) == '8J-Yhg%3D%3D'
 
@@ -52,6 +54,8 @@ def test_base64encode():
 def test_base64decode():
     """The base64decode wrapper works properly"""
     assert base64decode('YWJjMTIz') == 'abc123'
+    assert base64decode(unicode('YWJjMTIz')) == 'abc123'
+    assert base64decode(unicode('InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ%3D'), urldecode=True) == '"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'
     assert base64decode('8J-Yhg==') == '😆'
     assert base64decode('8J-Yhg%3D%3D', urldecode=True) == '😆'
 

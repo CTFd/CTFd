@@ -529,6 +529,10 @@ def sha512(string):
 def base64encode(s, urlencode=False):
     if six.PY3 and isinstance(s, six.string_types):
         s = s.encode('utf-8')
+    else:
+        # Python 2 support because the base64 module doesnt like unicode
+        s = str(s)
+
     encoded = base64.urlsafe_b64encode(s)
     if six.PY3:
         encoded = encoded.decode('utf-8')
@@ -540,8 +544,13 @@ def base64encode(s, urlencode=False):
 def base64decode(s, urldecode=False):
     if urldecode:
         s = unquote(s)
+
     if six.PY3 and isinstance(s, six.string_types):
         s = s.encode('utf-8')
+    else:
+        # Python 2 support because the base64 module doesnt like unicode
+        s = str(s)
+
     decoded = base64.urlsafe_b64decode(s)
     if six.PY3:
         decoded = decoded.decode('utf-8')

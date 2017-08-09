@@ -35,6 +35,7 @@
 								aria-hidden="true">×</span></button>
 					</div>
 				{% endfor %}
+				{% if team %}
 				<h3 class="text-center">
 					We've sent a confirmation email to {{ team.email }}
 				</h3>
@@ -44,8 +45,9 @@
 				<h4 class="text-center">
 					Please click the link in that email to confirm your account.
 				</h4>
+				{% endif %}
 
-
+				{% if username %}
 				<form method="POST">
 					<h4 class="text-center">
 						Need to resend the confirmation email?
@@ -55,6 +57,7 @@
 					</div>
 					<input type="hidden" name="nonce" value="{{ nonce }}">
 				</form>
+				{% endif %}
 			</div>
 		</div>
 	</div>

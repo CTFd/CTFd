@@ -20,7 +20,7 @@ def confirm_user(data=None):
         # If the CTF doesn't care about confirming email addresses then redierct to challenges
         return redirect(url_for('challenges.challenges_view'))
 
-    logger = logging.getLogger('logins')
+    logger = logging.getLogger('regs')
     # User is confirming email account
     if data and request.method == "GET":
         try:
@@ -30,18 +30,16 @@ def confirm_user(data=None):
             return render_template('confirm.html', errors=['Your confirmation link has expired'])
         except BadSignature:
             return render_template('confirm.html', errors=['Your confirmation link seems wrong'])
-        except:
-            return render_template('confirm.html', errors=['Your link appears broken, please try again.'])
         team = Teams.query.filter_by(email=email).first_or_404()
         team.verified = True
         db.session.commit()
-        db.session.close()
         logger.warn("[{date}] {ip} - {username} confirmed their account".format(
             date=time.strftime("%m/%d/%Y %X"),
             ip=utils.get_ip(),
             username=team.name.encode('utf-8'),
             email=team.email.encode('utf-8')
         ))
+        db.session.close()
         if utils.authed():
             return redirect(url_for('challenges.challenges_view'))
         return redirect(url_for('auth.login'))
@@ -91,12 +89,12 @@ def reset_password(data=None):
         team = Teams.query.filter_by(name=name).first_or_404()
         team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
         db.session.commit()
-        db.session.close()
         logger.warn("[{date}] {ip} -  successful password reset for {username}".format(
             date=time.strftime("%m/%d/%Y %X"),
             ip=utils.get_ip(),
             username=team.name.encode('utf-8')
         ))
+        db.session.close()
         return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
@@ -165,7 +163,6 @@ def register():
                 session['nonce'] = utils.sha512(os.urandom(10))
 
                 if utils.can_send_mail() and utils.get_config('verify_emails'):  # Confirming users is enabled and we can send email.
-                    db.session.close()
                     logger = logging.getLogger('regs')
                     logger.warn("[{date}] {ip} - {username} registered (UNCONFIRMED) with {email}".format(
                         date=time.strftime("%m/%d/%Y %X"),
@@ -173,15 +170,12 @@ def register():
                         username=request.form['name'].encode('utf-8'),
                         email=request.form['email'].encode('utf-8')
                     ))
-
                     utils.verify_email(team.email)
-
+                    db.session.close()
                     return redirect(url_for('auth.confirm_user'))
                 else:  # Don't care about confirming users
                     if utils.can_send_mail():  # We want to notify the user that they have registered.
                         utils.sendmail(request.form['email'], "You've successfully registered for {}".format(utils.get_config('ctf_name')))
-
-        db.session.close()
 
         logger.warn("[{date}] {ip} - {username} registered with {email}".format(
             date=time.strftime("%m/%d/%Y %X"),
@@ -189,6 +183,7 @@ def register():
             username=request.form['name'].encode('utf-8'),
             email=request.form['email'].encode('utf-8')
         ))
+        db.session.close()
         return redirect(url_for('challenges.challenges_view'))
     else:
         return render_template('register.html')
