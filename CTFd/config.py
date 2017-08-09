@@ -119,7 +119,9 @@ class Config(object):
 
 
 class TestingConfig(Config):
+    SECRET_KEY = 'AAAAAAAAAAAAAAAAAAAA'
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SERVER_NAME = 'localhost'

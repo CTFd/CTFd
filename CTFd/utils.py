@@ -1,3 +1,4 @@
+import base64
 import datetime
 import functools
 import hashlib
@@ -16,7 +17,6 @@ import subprocess
 import sys
 import tempfile
 import time
-import urllib
 import dataset
 import zipfile
 import io
@@ -25,8 +25,8 @@ from email.mime.text import MIMEText
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort
 from flask_caching import Cache
 from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
-from itsdangerous import Signer
-from six.moves.urllib.parse import urlparse, urljoin
+from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
+from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
 from werkzeug.utils import secure_filename
 
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, Containers, ip2long, long2ip
@@ -495,11 +495,12 @@ def sendmail(addr, text):
 
 
 def verify_email(addr):
-    s = Signer(app.config['SECRET_KEY'])
-    token = s.sign(addr)
-    text = """Please click the following link to confirm your email address for {}: {}""".format(
-        get_config('ctf_name'),
-        url_for('auth.confirm_user', _external=True) + '/' + urllib.quote_plus(token.encode('base64'))
+    s = TimedSerializer(app.config['SECRET_KEY'])
+    token = s.dumps(addr)
+    text = """Please click the following link to confirm your email address for {ctf_name}: {url}/{token}""".format(
+        ctf_name=get_config('ctf_name'),
+        url=url_for('auth.confirm_user', _external=True),
+        token=base64encode(token, urlencode=True)
     )
     sendmail(addr, text)
 
@@ -520,6 +521,28 @@ def validate_url(url):
 
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
+
+
+def base64encode(s, urlencode=False):
+    if six.PY3 and isinstance(s, six.string_types):
+        s = s.encode('utf-8')
+    encoded = base64.urlsafe_b64encode(s)
+    if six.PY3:
+        encoded = encoded.decode('utf-8')
+    if urlencode:
+        encoded = quote(encoded)
+    return encoded
+
+
+def base64decode(s, urldecode=False):
+    if urldecode:
+        s = unquote(s)
+    if six.PY3 and isinstance(s, six.string_types):
+        s = s.encode('utf-8')
+    decoded = base64.urlsafe_b64decode(s)
+    if six.PY3:
+        decoded = decoded.decode('utf-8')
+    return decoded
 
 
 @cache.memoize()
