@@ -131,6 +131,12 @@
 									   placeholder="Mail Server Port"
 									   {% if mail_port is defined and mail_port != None %}value="{{ mail_port }}"{% endif %}>
 							</div>
+							<div class="checkbox">
+                                                                <label>
+                                                                        <input id="mail_useauth" name="mail_useauth" type="checkbox" {% if mail_useauth %}checked{% endif %}>
+                                                                        Use SMTP Authentication?
+                                                                </label>
+                                                        </div>
 							<div class="form-group">
 								<label for="start">Username:</label>
 								<input class="form-control" id='mail_username' name='mail_username' type='text'

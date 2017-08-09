@@ -75,6 +75,7 @@ def setup():
             mail_ssl = utils.set_config('mail_ssl', None)
             mail_username = utils.set_config('mail_username', None)
             mail_password = utils.set_config('mail_password', None)
+            mail_useauth = utils.set_config('mail_useauth', None)
 
             setup = utils.set_config('setup', True)
 
