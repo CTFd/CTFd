@@ -7,6 +7,7 @@ from CTFd.utils import get_config, set_config, override_template, sendmail, veri
 from CTFd.utils import base64encode, base64decode
 from mock import patch
 import json
+import six
 
 
 def test_get_config_and_set_config():
@@ -44,16 +45,34 @@ def test_long2ip_ipv6():
 
 def test_base64encode():
     """The base64encode wrapper works properly"""
-    assert base64encode('abc123') == 'YWJjMTIz'
-    assert base64encode('😆') == '8J-Yhg=='
-    assert base64encode('😆', urlencode=True) == '8J-Yhg%3D%3D'
+    if six.PY2:
+        assert base64encode('abc123') == 'YWJjMTIz'
+        assert base64encode(unicode('abc123')) == 'YWJjMTIz'
+        assert base64encode(unicode('"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'), urlencode=True) == 'InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ%3D'
+        assert base64encode('😆') == '8J-Yhg=='
+        assert base64encode('😆', urlencode=True) == '8J-Yhg%3D%3D'
+    else:
+        assert base64encode('abc123') == 'YWJjMTIz'
+        assert base64encode('abc123') == 'YWJjMTIz'
+        assert base64encode('"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4', urlencode=True) == 'InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ%3D'
+        assert base64encode('😆') == '8J-Yhg=='
+        assert base64encode('😆', urlencode=True) == '8J-Yhg%3D%3D'
 
 
 def test_base64decode():
     """The base64decode wrapper works properly"""
-    assert base64decode('YWJjMTIz') == 'abc123'
-    assert base64decode('8J-Yhg==') == '😆'
-    assert base64decode('8J-Yhg%3D%3D', urldecode=True) == '😆'
+    if six.PY2:
+        assert base64decode('YWJjMTIz') == 'abc123'
+        assert base64decode(unicode('YWJjMTIz')) == 'abc123'
+        assert base64decode(unicode('InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ%3D'), urldecode=True) == '"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'
+        assert base64decode('8J-Yhg==') == '😆'
+        assert base64decode('8J-Yhg%3D%3D', urldecode=True) == '😆'
+    else:
+        assert base64decode('YWJjMTIz') == 'abc123'
+        assert base64decode('YWJjMTIz') == 'abc123'
+        assert base64decode('InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ%3D', urldecode=True) == '"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'
+        assert base64decode('8J-Yhg==') == '😆'
+        assert base64decode('8J-Yhg%3D%3D', urldecode=True) == '😆'
 
 
 def test_override_template():
