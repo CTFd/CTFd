@@ -437,11 +437,14 @@ def mailserver():
 
 
 def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=None):
-    smtp = smtplib.SMTP(host, port)
-    smtp.ehlo()
+    if SSL is None:
+        smtp = smtplib.SMTP(host, port)
+    else:
+        smtp = smtplib.SMTP_SSL(host, port)
+
     if TLS:
         smtp.starttls()
-        smtp.ehlo()
+
     if auth:
         smtp.login(username, password)
     return smtp
