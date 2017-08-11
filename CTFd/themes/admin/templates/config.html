@@ -97,8 +97,8 @@
 							Prevent team name changes
 						</label>
 					</div>
-			   </div>
-			   <div role="tabpanel" class="tab-pane" id="email-section">
+				</div>
+				<div role="tabpanel" class="tab-pane" id="email-section">
 					<ul class="nav nav-tabs" role="tablist">
 						<li role="presentation" class="active">
 							<a href="#mailserver" aria-controls="mailserver" role="tab" data-toggle="tab">Mail Server</a>
@@ -111,8 +111,8 @@
 					<div class="form-group">
 						<label for="start">Mail From Address:</label>
 						<input class="form-control" id='mailfrom_addr' name='mailfrom_addr' type='text'
-							   placeholder="Email address used to send email"
-							   {% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
+								placeholder="Email address used to send email"
+								{% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
 					</div>
 
 					<div class="tab-content">
@@ -121,27 +121,35 @@
 							<div class="form-group">
 								<label for="start">Mail Server Address:</label>
 								<input class="form-control" id='mail_server' name='mail_server' type='text'
-									   placeholder="Mail Server Address"
-									   {% if mail_server is defined and mail_server != None %}value="{{ mail_server }}"{% endif %}>
+										placeholder="Mail Server Address"
+										{% if mail_server is defined and mail_server != None %}value="{{ mail_server }}"{% endif %}>
 							</div>
 
 							<div class="form-group">
 								<label for="start">Mail Server Port:</label>
 								<input class="form-control" id='mail_port' name='mail_port' type='text'
-									   placeholder="Mail Server Port"
-									   {% if mail_port is defined and mail_port != None %}value="{{ mail_port }}"{% endif %}>
+										placeholder="Mail Server Port"
+										{% if mail_port is defined and mail_port != None %}value="{{ mail_port }}"{% endif %}>
 							</div>
-							<div class="form-group">
-								<label for="start">Username:</label>
-								<input class="form-control" id='mail_username' name='mail_username' type='text'
-									   placeholder="Username"
-									   {% if mail_username is defined and mail_username != None %}value="{{ mail_username }}"{% endif %}>
+							<div class="checkbox">
+							<label>
+								<input id="mail_useauth" name="mail_useauth" type="checkbox" {% if mail_useauth %}checked{% endif %}>
+									Specify Username and Password
+								</label>
 							</div>
-							<div class="form-group">
-								<label for="start">Password:</label>
-								<input class="form-control" id='mail_password' name='mail_password' type='password'
-									   placeholder="Password"
-									   {% if mail_password is defined and mail_password != None %}value="{{ mail_password }}"{% endif %}>
+							<div id="mail_username_password">
+								<div class="form-group">
+									<label for="start">Username:</label>
+									<input class="form-control" id='mail_username' name='mail_username' type='text'
+											placeholder="Username"
+											{% if mail_username is defined and mail_username != None %}value="{{ mail_username }}"{% endif %}>
+								</div>
+								<div class="form-group">
+									<label for="start">Password:</label>
+									<input class="form-control" id='mail_password' name='mail_password' type='password'
+											placeholder="Password"
+											{% if mail_password is defined and mail_password != None %}value="{{ mail_password }}"{% endif %}>
+								</div>
 							</div>
 							<div class="checkbox">
 								<label>
@@ -161,14 +169,14 @@
 							<div class="form-group">
 								<label for="start">Mailgun API Base URL:</label>
 								<input class="form-control" id='mg_base_url' name='mg_base_url' type='text'
-									   placeholder="Mailgun API Base URL"
-									   {% if mg_base_url is defined and mg_base_url != None %}value="{{ mg_base_url }}"{% endif %}>
+										placeholder="Mailgun API Base URL"
+										{% if mg_base_url is defined and mg_base_url != None %}value="{{ mg_base_url }}"{% endif %}>
 							</div>
 							<div class="form-group">
 								<label for="start">Mailgun API Key:</label>
 								<input class="form-control" id='mg_api_key' name='mg_api_key' type='text'
-									   placeholder="Mailgun API Key"
-									   {% if mg_api_key is defined and mg_api_key != None %}value="{{ mg_api_key }}"{% endif %}>
+										placeholder="Mailgun API Key"
+										{% if mg_api_key is defined and mg_api_key != None %}value="{{ mg_api_key }}"{% endif %}>
 							</div>
 						</div>
 					</div>
@@ -231,20 +239,20 @@
 								<div class="form-group col-xs-12">
 									<label for="start-local">Local Time:</label>
 									<input class="form-control" id='start-local' type='text'
-										   placeholder="Start Date (Local Time)" readonly>
+											placeholder="Start Date (Local Time)" readonly>
 								</div>
 
 								<div class="form-group col-xs-12">
 									<label for="start-zonetime">Timezone Time:</label>
 									<input class="form-control" id='start-zonetime' type='text'
-										   placeholder="Start Date (Timezone Time)" readonly>
+											placeholder="Start Date (Timezone Time)" readonly>
 								</div>
 
 								<div class="form-group col-xs-12">
 									<label for="start">UTC Timestamp:</label>
 									<input class="form-control" id='start' name='start' type='text'
-									   placeholder="Start Date (UTC timestamp)"
-									   {% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly>
+										placeholder="Start Date (UTC timestamp)"
+										{% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly>
 								</div>
 							</div>
 						</div>
@@ -253,13 +261,13 @@
 								<div class="form-group col-xs-2">
 									<label for="end-month">Month:</label>
 									<input class="form-control end-date" id='end-month' name='end-month' min="1" max="12"
-										   type='number'>
+											type='number'>
 								</div>
 
 								<div class="form-group col-xs-2">
 									<label for="end-day">Day:</label>
 									<input class="form-control end-date" id='end-day' name='end-day' min="1" max="31"
-										   type='number'>
+											type='number'>
 								</div>
 
 								<div class="form-group col-xs-2">
@@ -270,13 +278,13 @@
 								<div class="form-group col-xs-2">
 									<label for="end-hour">Hour:</label>
 									<input class="form-control end-date" id='end-hour' name='end-hour' min="0" max="23"
-										   type='number'>
+											type='number'>
 								</div>
 
 								<div class="form-group col-xs-2">
 									<label for="end-minute">Minute:</label>
 									<input class="form-control end-date" id='end-minute' name='end-minute' min="0"
-										   max="59" type='number'>
+											max="59" type='number'>
 								</div>
 
 								<div class="form-group col-xs-4">
@@ -295,20 +303,20 @@
 								<div class="form-group col-xs-12">
 									<label for="end-local">Local Time:</label>
 									<input class="form-control" id='end-local' type='text'
-										   placeholder="End Date (Local Time)" readonly>
+											placeholder="End Date (Local Time)" readonly>
 								</div>
 
 								<div class="form-group col-xs-12">
 									<label for="end-zonetime">Timezone Time:</label>
 									<input class="form-control" id='end-zonetime' type='text'
-										   placeholder="End Date (Timezone Time)" readonly>
+											placeholder="End Date (Timezone Time)" readonly>
 								</div>
 
 								<div class="form-group col-xs-12">
 									<label for="end">UTC Timestamp:</label>
 									<input class="form-control" id='end' name='end' type='text'
-										   placeholder="End Date (UTC timestamp)"
-										   {% if end is defined and end != None %}value="{{ end }}"{% endif %} readonly>
+											placeholder="End Date (UTC timestamp)"
+											{% if end is defined and end != None %}value="{{ end }}"{% endif %} readonly>
 								</div>
 							</div>
 						</div>
@@ -600,7 +608,6 @@
 		});
 
 		$(function () {
-
 			var hash = window.location.hash;
 			if (hash) {
 				hash = hash.replace("<>[]'\"", "");
@@ -615,8 +622,7 @@
 			var start = $('#start').val();
 			var end = $('#end').val();
 			var freeze = $('#freeze').val();
-			console.log(start);
-			console.log(end);
+
 			if (start){
 				load_timestamp('start', start);
 			}
@@ -626,6 +632,11 @@
 			if (freeze) {
 				load_timestamp('freeze', freeze);
 			}
+
+			// Toggle username and password based on stored value
+			$('#mail_useauth').change(function () {
+				$('#mail_username_password').toggle(this.checked);
+			}).change();
 		});
 	</script>
 {% endblock %}

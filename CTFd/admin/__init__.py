@@ -113,6 +113,7 @@ def admin_config():
             verify_emails = bool(request.form.get('verify_emails', None))
             mail_tls = bool(request.form.get('mail_tls', None))
             mail_ssl = bool(request.form.get('mail_ssl', None))
+            mail_useauth = bool(request.form.get('mail_useauth', None))
         except (ValueError, TypeError):
             view_challenges_unregistered = None
             view_scoreboard_if_authed = None
@@ -123,6 +124,7 @@ def admin_config():
             verify_emails = None
             mail_tls = None
             mail_ssl = None
+            mail_useauth = None
         finally:
             view_challenges_unregistered = utils.set_config('view_challenges_unregistered', view_challenges_unregistered)
             view_scoreboard_if_authed = utils.set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
@@ -133,6 +135,7 @@ def admin_config():
             verify_emails = utils.set_config('verify_emails', verify_emails)
             mail_tls = utils.set_config('mail_tls', mail_tls)
             mail_ssl = utils.set_config('mail_ssl', mail_ssl)
+            mail_useauth = utils.set_config('mail_useauth', mail_useauth)
 
         mail_server = utils.set_config("mail_server", request.form.get('mail_server', None))
         mail_port = utils.set_config("mail_port", request.form.get('mail_port', None))
@@ -186,6 +189,7 @@ def admin_config():
 
     mail_tls = utils.get_config('mail_tls')
     mail_ssl = utils.get_config('mail_ssl')
+    mail_useauth = utils.get_config('mail_useauth')
 
     view_challenges_unregistered = utils.get_config('view_challenges_unregistered')
     view_scoreboard_if_authed = utils.get_config('view_scoreboard_if_authed')
@@ -208,6 +212,7 @@ def admin_config():
                            hide_scores=hide_scores,
                            mail_server=mail_server,
                            mail_port=mail_port,
+                           mail_useauth=mail_useauth,
                            mail_username=mail_username,
                            mail_password=mail_password,
                            mail_tls=mail_tls,

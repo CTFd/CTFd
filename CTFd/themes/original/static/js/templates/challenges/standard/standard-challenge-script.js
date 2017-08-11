@@ -23,5 +23,7 @@ $(".input-field").bind({
         }
     }
 });
+var content = $('.chal-desc').text();
+var decoded = $('<textarea/>').html(content).val()
 
-$('.chal-desc').html(marked($('.chal-desc').html(), {'gfm':true, 'breaks':true}));
+$('.chal-desc').html(marked(content, {'gfm':true, 'breaks':true}));
