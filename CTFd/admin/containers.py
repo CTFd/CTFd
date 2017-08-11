@@ -65,3 +65,13 @@ def new_container():
     utils.create_image(name=name, buildfile=buildfile, files=files)
     utils.run_image(name)
     return redirect(url_for('admin_containers.list_container'))
+
+
+@admin_containers.route('/admin/containers/import', methods=['POST'])
+@admins_only
+def import_container():
+    name = request.form.get('name')
+    if not set(name) <= set('abcdefghijklmnopqrstuvwxyz0123456789-_'):
+        return redirect(url_for('admin_containers.list_container'))
+    utils.import_image(name=name)
+    return redirect(url_for('admin_containers.list_container'))
