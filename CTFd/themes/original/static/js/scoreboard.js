@@ -50,6 +50,14 @@ function scoregraph () {
             traces.push(trace);
         }
 
+        traces.sort(function(a, b) {
+            var scorediff = b['y'][b['y'].length - 1] - a['y'][a['y'].length - 1];
+            if(!scorediff) {
+                return a['x'][a['x'].length - 1] - b['x'][b['x'].length - 1];
+            }
+            return scorediff;
+        });
+
         var layout = {
             title: 'Top 10 Teams',
             paper_bgcolor: 'rgba(0,0,0,0)',
