@@ -35,6 +35,29 @@
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="import-container-modal" tabindex="-1" role="dialog" aria-labelledby="container-modal-label">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+						aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="container-modal-label">Create Container</h4>
+			</div>
+			<form method="POST" action="{{ request.script_root }}/admin/containers/import" enctype="multipart/form-data">
+				<div class="modal-body">
+						<div class="form-group">
+							<label for="name">Name</label>
+							<input type="text" class="form-control" name="name" placeholder="Enter container name">
+						</div>
+						<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Create</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 
 
 <div id="confirm" class="modal fade" tabindex="-1">
@@ -68,6 +91,9 @@
 		<h1>Containers</h1>
 		<button class="btn btn-theme btn-outlined create-challenge" data-toggle="modal" data-target="#create-container-modal">
 			New Container
+		</button>
+		<button class="btn btn-theme btn-outlined create-challenge" data-toggle="modal" data-target="#import-container-modal">
+			Import Container
 		</button>
 	</div>
 	<br>
