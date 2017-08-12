@@ -578,8 +578,7 @@ def is_port_free(port):
 def import_image(name):
     try:
         info = json.loads(subprocess.check_output(['docker', 'inspect', '--type=image', name]))
-        print(info)
-        container = Containers(name, "<none>")
+        container = Containers(name=name, buildfile=None)
         db.session.add(container)
         db.session.commit()
         db.session.close()
