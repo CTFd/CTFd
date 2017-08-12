@@ -10,7 +10,7 @@ from sqlalchemy.sql import not_
 from sqlalchemy.exc import IntegrityError
 
 from CTFd.utils import admins_only, is_admin, cache, export_ctf, import_ctf
-from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
+from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.scoreboard import get_standings
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 
@@ -18,7 +18,6 @@ from CTFd.admin.statistics import admin_statistics
 from CTFd.admin.challenges import admin_challenges
 from CTFd.admin.scoreboard import admin_scoreboard
 from CTFd.admin.pages import admin_pages
-from CTFd.admin.containers import admin_containers
 from CTFd.admin.keys import admin_keys
 from CTFd.admin.teams import admin_teams
 

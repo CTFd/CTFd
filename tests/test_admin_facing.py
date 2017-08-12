@@ -44,16 +44,6 @@ def test_admin_scoreboard():
     destroy_ctfd(app)
 
 
-def test_admin_containers():
-    """Does admin containers return a 200 by default"""
-    app = create_ctfd()
-    with app.app_context():
-        client = login_as_user(app, name="admin", password="password")
-        r = client.get('/admin/containers')
-        assert r.status_code == 200
-    destroy_ctfd(app)
-
-
 def test_admin_chals():
     """Does admin chals return a 200 by default"""
     app = create_ctfd()

@@ -13,7 +13,6 @@ import shutil
 import six
 import smtplib
 import socket
-import subprocess
 import sys
 import tempfile
 import time
@@ -29,7 +28,7 @@ from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
 from werkzeug.utils import secure_filename
 
-from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, Containers, ip2long, long2ip
+from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
 
 cache = Cache()
 migrate = Migrate()
@@ -105,7 +104,6 @@ def init_utils(app):
     app.jinja_env.globals.update(can_send_mail=can_send_mail)
     app.jinja_env.globals.update(ctf_name=ctf_name)
     app.jinja_env.globals.update(ctf_theme=ctf_theme)
-    app.jinja_env.globals.update(can_create_container=can_create_container)
     app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
     app.jinja_env.globals.update(get_config=get_config)
     app.jinja_env.globals.update(hide_scores=hide_scores)
@@ -557,148 +555,6 @@ def base64decode(s, urldecode=False):
     return decoded
 
 
-@cache.memoize()
-def can_create_container():
-    try:
-        subprocess.check_output(['docker', 'version'])
-        return True
-    except (subprocess.CalledProcessError, OSError):
-        return False
-
-
-def is_port_free(port):
-    s = socket.socket()
-    result = s.connect_ex(('127.0.0.1', port))
-    if result == 0:
-        s.close()
-        return False
-    return True
-
-
-def import_image(name):
-    try:
-        info = json.loads(subprocess.check_output(['docker', 'inspect', '--type=image', name]))
-        container = Containers(name=name, buildfile=None)
-        db.session.add(container)
-        db.session.commit()
-        db.session.close()
-        return True
-    except subprocess.CalledProcessError:
-        return False
-
-
-def create_image(name, buildfile, files):
-    if not can_create_container():
-        return False
-    folder = tempfile.mkdtemp(prefix='ctfd')
-    tmpfile = tempfile.NamedTemporaryFile(dir=folder, delete=False)
-    tmpfile.write(buildfile)
-    tmpfile.close()
-
-    for f in files:
-        if f.filename.strip():
-            filename = os.path.basename(f.filename)
-            f.save(os.path.join(folder, filename))
-    # repository name component must match "[a-z0-9](?:-*[a-z0-9])*(?:[._][a-z0-9](?:-*[a-z0-9])*)*"
-    # docker build -f tmpfile.name -t name
-    try:
-        cmd = ['docker', 'build', '-f', tmpfile.name, '-t', name, folder]
-        print(cmd)
-        subprocess.call(cmd)
-        container = Containers(name, buildfile)
-        db.session.add(container)
-        db.session.commit()
-        db.session.close()
-        rmdir(folder)
-        return True
-    except subprocess.CalledProcessError:
-        return False
-
-
-def delete_image(name):
-    try:
-        subprocess.call(['docker', 'rm', name])
-        subprocess.call(['docker', 'rmi', name])
-        return True
-    except subprocess.CalledProcessError:
-        return False
-
-
-def run_image(name):
-    try:
-        info = json.loads(subprocess.check_output(['docker', 'inspect', '--type=image', name]))
-
-        try:
-            ports_asked = info[0]['Config']['ExposedPorts'].keys()
-            ports_asked = [int(re.sub('[A-Za-z/]+', '', port)) for port in ports_asked]
-        except KeyError:
-            ports_asked = []
-
-        cmd = ['docker', 'run', '-d']
-        ports_used = []
-        for port in ports_asked:
-            if is_port_free(port):
-                cmd.append('-p')
-                cmd.append('{}:{}'.format(port, port))
-            else:
-                cmd.append('-p')
-                ports_used.append('{}'.format(port))
-        cmd += ['--name', name, name]
-        print(cmd)
-        subprocess.call(cmd)
-        return True
-    except subprocess.CalledProcessError:
-        return False
-
-
-def container_start(name):
-    try:
-        cmd = ['docker', 'start', name]
-        subprocess.call(cmd)
-        return True
-    except subprocess.CalledProcessError:
-        return False
-
-
-def container_stop(name):
-    try:
-        cmd = ['docker', 'stop', name]
-        subprocess.call(cmd)
-        return True
-    except subprocess.CalledProcessError:
-        return False
-
-
-def container_status(name):
-    try:
-        data = json.loads(subprocess.check_output(['docker', 'inspect', '--type=container', name]))
-        status = data[0]["State"]["Status"]
-        return status
-    except subprocess.CalledProcessError:
-        return 'missing'
-
-
-def container_ports(name, verbose=False):
-    try:
-        info = json.loads(subprocess.check_output(['docker', 'inspect', '--type=container', name]))
-        if verbose:
-            ports = info[0]["NetworkSettings"]["Ports"]
-            if not ports:
-                return []
-            final = []
-            for port in ports.keys():
-                final.append("".join([ports[port][0]["HostPort"], '->', port]))
-            return final
-        else:
-            ports = info[0]['Config']['ExposedPorts'].keys()
-            if not ports:
-                return []
-            ports = [int(re.sub('[A-Za-z/]+', '', port)) for port in ports]
-            return ports
-    except subprocess.CalledProcessError:
-        return []
-
-
 def export_ctf(segments=None):
     db = dataset.connect(get_config('SQLALCHEMY_DATABASE_URI'))
     if segments is None:
@@ -726,7 +582,6 @@ def export_ctf(segments=None):
             'alembic_version',
             'config',
             'pages',
-            'containers',
         ]
     }
 
@@ -787,7 +642,6 @@ def import_ctf(backup, segments=None, erase=False):
             'alembic_version',
             'config',
             'pages',
-            'containers',
         ]
     }
 
@@ -822,19 +676,6 @@ def import_ctf(backup, segments=None, erase=False):
                         else:
                             page = Pages(route, html)
                             db.session.add(page)
-                        db.session.commit()
-
-                elif item == 'containers':
-                    saved = json.loads(data)
-                    for entry in saved['results']:
-                        name = entry['name']
-                        buildfile = entry['buildfile']
-                        container = Containers.query.filter_by(name=name).first()
-                        if container:
-                            container.buildfile = buildfile
-                        else:
-                            container = Containers(name, buildfile)
-                            db.session.add(container)
                         db.session.commit()
 
     for segment in segments:
