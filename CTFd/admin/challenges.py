@@ -102,7 +102,7 @@ def admin_hints(hintid):
         if request.method == 'POST':
             hint.hint = request.form.get('hint')
             hint.chal = int(request.form.get('chal'))
-            hint.cost = int(request.form.get('cost'))
+            hint.cost = int(request.form.get('cost') or 0)
             db.session.commit()
 
         elif request.method == 'DELETE':
@@ -136,7 +136,7 @@ def admin_hints(hintid):
         elif request.method == 'POST':
             hint = request.form.get('hint')
             chalid = int(request.form.get('chal'))
-            cost = int(request.form.get('cost'))
+            cost = int(request.form.get('cost') or 0)
             hint_type = request.form.get('type', 0)
             hint = Hints(chal=chalid, hint=hint, cost=cost)
             db.session.add(hint)
