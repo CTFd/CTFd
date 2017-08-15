@@ -287,30 +287,33 @@ def chal(chalid):
                 })
 
             chal_class = get_chal_class(chal.type)
-            if chal_class.solve(chal, provided_key):
+            status, message = chal_class.solve(chal, provided_key)
+            if status:  # The challenge plugin says the input is right
                 if utils.ctftime():
                     solve = Solves(teamid=session['id'], chalid=chalid, ip=utils.get_ip(), flag=provided_key)
                     db.session.add(solve)
                     db.session.commit()
                     db.session.close()
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
-                return jsonify({'status': 1, 'message': 'Correct'})
-
-            if utils.ctftime():
-                wrong = WrongKeys(teamid=session['id'], chalid=chalid, ip=utils.get_ip(), flag=provided_key)
-                db.session.add(wrong)
-                db.session.commit()
-                db.session.close()
-            logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
-            # return '0' # key was wrong
-            if max_tries:
-                attempts_left = max_tries - fails - 1  # Off by one since fails has changed since it was gotten
-                tries_str = 'tries'
-                if attempts_left == 1:
-                    tries_str = 'try'
-                return jsonify({'status': 0, 'message': 'Incorrect. You have {} {} remaining.'.format(attempts_left, tries_str)})
-            else:
-                return jsonify({'status': 0, 'message': 'Incorrect'})
+                return jsonify({'status': 1, 'message': message})
+            else:  # The challenge plugin says the input is wrong
+                if utils.ctftime():
+                    wrong = WrongKeys(teamid=session['id'], chalid=chalid, ip=utils.get_ip(), flag=provided_key)
+                    db.session.add(wrong)
+                    db.session.commit()
+                    db.session.close()
+                logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
+                # return '0' # key was wrong
+                if max_tries:
+                    attempts_left = max_tries - fails - 1  # Off by one since fails has changed since it was gotten
+                    tries_str = 'tries'
+                    if attempts_left == 1:
+                        tries_str = 'try'
+                    if message[-1] not in '!().;?[]\{\}':  # Add a punctuation mark if there isn't one
+                        message = message + '.'
+                    return jsonify({'status': 0, 'message': '{} You have {} {} remaining.'.format(message, attempts_left, tries_str)})
+                else:
+                    return jsonify({'status': 0, 'message': message})
 
         # Challenge already solved
         else:
