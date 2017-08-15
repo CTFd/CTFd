@@ -16,8 +16,8 @@ class CTFdStandardChallenge(BaseChallenge):
         chal_keys = Keys.query.filter_by(chal=chal.id).all()
         for chal_key in chal_keys:
             if get_key_class(chal_key.key_type).compare(chal_key.flag, provided_key):
-                return True
-        return False
+                return True, 'Correct'
+        return False, 'Incorrect'
 
 
 CHALLENGE_CLASSES = {
