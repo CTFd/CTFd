@@ -24,8 +24,8 @@ tmux new-session -d -n "ctfd" -c "/vagrant" -s "ctfd" "gunicorn --bind 0.0.0.0:8
 SCRIPT
 
 Vagrant.configure("2") do |config|
-  # contrib-jessie64 supports synced folders
-  config.vm.box = "debian/contrib-jessie64"
+  # ubuntu/xenial64 supports synced folders
+  config.vm.box = "ubuntu/xenial64"
 
   # Create a private network, which allows host-only access to the machine
   config.vm.network "private_network", ip: "10.9.8.7"
@@ -46,6 +46,6 @@ Vagrant.configure("2") do |config|
                       run: "always"
 
   # Install docker (convenience)
-  config.vm.provision "shell", path: "scripts/install_docker_debian.sh"
+  config.vm.provision "shell", path: "scripts/install_docker_ubuntu.sh"
 
 end
