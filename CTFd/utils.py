@@ -429,7 +429,7 @@ def mailgun():
 
 @cache.memoize()
 def mailserver():
-    if (get_config('mail_server') and get_config('mail_port')):
+    if ((get_config('mail_server') or app.config.get('MAIL_SERVER') ) and (get_config('mail_port') or app.config.get('MAIL_PORT'))):
         return True
     return False
 
@@ -451,6 +451,8 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=
 def sendmail(addr, text):
     ctf_name = get_config('ctf_name')
     mailfrom_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+    mail_server = get_config('mail_server') or app.config.get('MAIL_SERVER')
+    mail_port = get_config('mail_port') or app.config.get('MAIL_PORT')
     if mailgun():
         mg_api_key = get_config('mg_api_key') or app.config.get('MAILGUN_API_KEY')
         mg_base_url = get_config('mg_base_url') or app.config.get('MAILGUN_BASE_URL')
@@ -468,8 +470,8 @@ def sendmail(addr, text):
             return False
     elif mailserver():
         data = {
-            'host': get_config('mail_server'),
-            'port': int(get_config('mail_port'))
+            'host': mail_server,
+            'port': int(mail_port)
         }
         if get_config('mail_username'):
             data['username'] = get_config('mail_username')
