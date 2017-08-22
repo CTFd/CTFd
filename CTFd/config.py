@@ -73,7 +73,7 @@ class Config(object):
     MAILFROM_ADDR = "noreply@ctfd.io"
 
     '''
-    MAIL_SERVER is the name of the mail server emails are sent from if not overriden in the configuration panel. 
+    MAIL_SERVER is the name of the mail server emails are sent from if not overriden in the configuration panel.
     '''
     MAIL_SERVER = "localhost"
 
@@ -81,7 +81,6 @@ class Config(object):
     MAIL_PORT is the port of the mail server emails are sent from if not overridden in the configuration panel.
     '''
     MAIL_PORT = ""
-
 
     '''
     UPLOAD_FOLDER is the location where files are uploaded.

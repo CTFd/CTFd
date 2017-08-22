@@ -429,7 +429,7 @@ def mailgun():
 
 @cache.memoize()
 def mailserver():
-    if ((get_config('mail_server') or app.config.get('MAIL_SERVER') ) and (get_config('mail_port') or app.config.get('MAIL_PORT'))):
+    if ((get_config('mail_server') or app.config.get('MAIL_SERVER')) and (get_config('mail_port') or app.config.get('MAIL_PORT'))):
         return True
     return False
 
