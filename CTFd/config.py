@@ -80,7 +80,7 @@ class Config(object):
     '''
     MAIL_PORT is the port of the mail server emails are sent from if not overridden in the configuration panel.
     '''
-    MAIL_PORT = 25
+    MAIL_PORT = ""
 
 
     '''
