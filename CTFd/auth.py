@@ -76,6 +76,7 @@ def confirm_user(data=None):
 @auth.route('/reset_password', methods=['POST', 'GET'])
 @auth.route('/reset_password/<data>', methods=['POST', 'GET'])
 def reset_password(data=None):
+    logger = logging.getLogger('logins')
     if data is not None and request.method == "GET":
         return render_template('reset_password.html', mode='set')
     if data is not None and request.method == "POST":
