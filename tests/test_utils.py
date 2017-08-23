@@ -5,6 +5,7 @@ from tests.helpers import *
 from CTFd.models import ip2long, long2ip
 from CTFd.utils import get_config, set_config, override_template, sendmail, verify_email
 from CTFd.utils import base64encode, base64decode
+from freezegun import freeze_time
 from mock import patch
 import json
 import six
@@ -130,6 +131,7 @@ def test_sendmail_with_smtp(mock_smtp):
 
 
 @patch('smtplib.SMTP')
+@freeze_time("2012-01-14 03:21:34")
 def test_verify_email(mock_smtp):
     """Does verify_email send emails"""
     from email.mime.text import MIMEText
@@ -149,7 +151,7 @@ def test_verify_email(mock_smtp):
         # This is currently not actually validated
         msg = ("Please click the following link to confirm"
                " your email address for CTFd:"
-               " http://localhost/confirm/InVzZXJAdXNlci5jb20iLkRHbGFZUS5XUURfQzBub3pGZkFMRlIyeGxDS1BCMjZETlk%3D")
+               " http://localhost/confirm/InVzZXJAdXNlci5jb20iLkFmS0dQZy5kLUJnVkgwaUhadzFHaXVENHczWTJCVVJwdWc%3D")
 
         ctf_name = get_config('ctf_name')
         email_msg = MIMEText(msg)
@@ -159,5 +161,5 @@ def test_verify_email(mock_smtp):
 
         # Need to freeze time to predict the value of the itsdangerous token.
         # For now just assert that sendmail was called.
-        mock_smtp.return_value.sendmail.assert_called()
+        mock_smtp.return_value.sendmail.assert_called_with(from_addr, [to_addr], email_msg.as_string())
     destroy_ctfd(app)
