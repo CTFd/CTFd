@@ -50,12 +50,16 @@ def test_base64encode():
         assert base64encode('abc123') == 'YWJjMTIz'
         assert base64encode(unicode('abc123')) == 'YWJjMTIz'
         assert base64encode(unicode('"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'), urlencode=True) == 'InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ%3D'
+        assert base64encode('user+user@ctfd.io') == 'dXNlcit1c2VyQGN0ZmQuaW8='
+        assert base64encode('user+user@ctfd.io', urlencode=True) == 'dXNlcit1c2VyQGN0ZmQuaW8%3D'
         assert base64encode('😆') == '8J-Yhg=='
         assert base64encode('😆', urlencode=True) == '8J-Yhg%3D%3D'
     else:
         assert base64encode('abc123') == 'YWJjMTIz'
         assert base64encode('abc123') == 'YWJjMTIz'
         assert base64encode('"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4', urlencode=True) == 'InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ%3D'
+        assert base64encode('user+user@ctfd.io') == 'dXNlcit1c2VyQGN0ZmQuaW8='
+        assert base64encode('user+user@ctfd.io', urlencode=True) == 'dXNlcit1c2VyQGN0ZmQuaW8%3D'
         assert base64encode('😆') == '8J-Yhg=='
         assert base64encode('😆', urlencode=True) == '8J-Yhg%3D%3D'
 
@@ -72,6 +76,8 @@ def test_base64decode():
         assert base64decode('YWJjMTIz') == 'abc123'
         assert base64decode('YWJjMTIz') == 'abc123'
         assert base64decode('InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ%3D', urldecode=True) == '"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'
+        assert base64decode('dXNlcit1c2VyQGN0ZmQuaW8=') == 'user+user@ctfd.io'
+        assert base64decode('dXNlcit1c2VyQGN0ZmQuaW8%3D', urldecode=True) == 'user+user@ctfd.io'
         assert base64decode('8J-Yhg==') == '😆'
         assert base64decode('8J-Yhg%3D%3D', urldecode=True) == '😆'
 
