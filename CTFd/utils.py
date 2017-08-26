@@ -26,6 +26,7 @@ from flask_caching import Cache
 from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
+from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from werkzeug.utils import secure_filename
 
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
@@ -128,10 +129,16 @@ def init_utils(app):
             if not track:
                 visit = Tracking(ip=get_ip(), team=session['id'])
                 db.session.add(visit)
-                db.session.commit()
             else:
                 track.date = datetime.datetime.utcnow()
+
+            try:
                 db.session.commit()
+            except (InvalidRequestError, IntegrityError) as e:
+                print(e.message)
+                db.session.rollback()
+                session.clear()
+
             db.session.close()
 
     @app.before_request
