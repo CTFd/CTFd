@@ -200,12 +200,12 @@
 							<div class="row" id="start-date">
 								<div class="form-group col-xs-2">
 									<label for="start-month">Month:</label>
-									<input class="form-control start-date" id='start-month' name='start-month' min="1" max="12" type='number'>
+									<input class="form-control start-date" id='start-month' name='start-month' min="0" max="12" type='number'>
 								</div>
 
 								<div class="form-group col-xs-2">
 									<label for="start-day">Day:</label>
-									<input class="form-control start-date" id='start-day' name='start-day' min="1" max="31" type='number'>
+									<input class="form-control start-date" id='start-day' name='start-day' min="0" max="31" type='number'>
 								</div>
 
 								<div class="form-group col-xs-2">
@@ -260,13 +260,13 @@
 							<div class="row" id="end-date">
 								<div class="form-group col-xs-2">
 									<label for="end-month">Month:</label>
-									<input class="form-control end-date" id='end-month' name='end-month' min="1" max="12"
+									<input class="form-control end-date" id='end-month' name='end-month' min="0" max="12"
 											type='number'>
 								</div>
 
 								<div class="form-group col-xs-2">
 									<label for="end-day">Day:</label>
-									<input class="form-control end-date" id='end-day' name='end-day' min="1" max="31"
+									<input class="form-control end-date" id='end-day' name='end-day' min="0" max="31"
 											type='number'>
 								</div>
 
@@ -324,13 +324,13 @@
 							<div class="row" id="freeze-date">
 								<div class="form-group col-xs-2">
 									<label for="freeze-month">Month:</label>
-									<input class="form-control freeze-date" id='freeze-month' name='freeze-month' min="1" max="12"
+									<input class="form-control freeze-date" id='freeze-month' name='freeze-month' min="0" max="12"
 										   type='number'>
 								</div>
 
 								<div class="form-group col-xs-2">
 									<label for="freeze-day">Day:</label>
-									<input class="form-control freeze-date" id='freeze-day' name='freeze-day' min="1" max="31"
+									<input class="form-control freeze-date" id='freeze-day' name='freeze-day' min="0" max="31"
 										   type='number'>
 								</div>
 
@@ -516,9 +516,15 @@
 			var timezone = $('#' + place + '-timezone').val();
 
 			var utc = convert_date_to_moment(month, day, year, hour, minute, timezone);
-			$('#' + place).val(utc.unix());
-			$('#' + place + '-local').val(utc.local().format("dddd, MMMM Do YYYY, h:mm:ss a zz"));
-			$('#' + place + '-zonetime').val(utc.tz(timezone).format("dddd, MMMM Do YYYY, h:mm:ss a zz"));
+			if (isNaN(utc.unix())){
+				$('#' + place).val('');
+				$('#' + place + '-local').val('');
+				$('#' + place + '-zonetime').val('');
+			} else {
+				$('#' + place).val(utc.unix());
+				$('#' + place + '-local').val(utc.local().format("dddd, MMMM Do YYYY, h:mm:ss a zz"));
+				$('#' + place + '-zonetime').val(utc.tz(timezone).format("dddd, MMMM Do YYYY, h:mm:ss a zz"));
+			}
 		}
 
 		function convert_date_to_moment(month, day, year, hour, minute, timezone){
