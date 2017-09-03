@@ -74,5 +74,9 @@
 	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/bootstrap.min.js"></script>
 	{% block scripts %}
 	{% endblock %}
+
+	{% for script in get_registered_scripts() %}
+	<script src="{% if script.startswith('http')%}{{ request.script_root }}{% endif %}{{ script }}"></script>
+	{% endfor %}
 </body>
 </html>

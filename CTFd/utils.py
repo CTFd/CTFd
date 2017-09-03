@@ -34,6 +34,7 @@ from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip
 cache = Cache()
 migrate = Migrate()
 markdown = mistune.Markdown()
+plugin_scripts = []
 
 
 def init_logs(app):
@@ -106,6 +107,7 @@ def init_utils(app):
     app.jinja_env.globals.update(ctf_name=ctf_name)
     app.jinja_env.globals.update(ctf_theme=ctf_theme)
     app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
+    app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
     app.jinja_env.globals.update(get_config=get_config)
     app.jinja_env.globals.update(hide_scores=hide_scores)
 
@@ -174,6 +176,10 @@ def hide_scores():
 def override_template(template, html):
     with app.app_context():
         app.jinja_loader.overriden_templates[template] = html
+
+
+def register_plugin_script(url):
+    plugin_scripts.append(url)
 
 
 def pages():
@@ -347,6 +353,10 @@ def get_configurable_plugins():
     dir = os.path.join(app.root_path, 'plugins')
     return [name for name in os.listdir(dir)
             if os.path.isfile(os.path.join(dir, name, 'config.html'))]
+
+
+def get_registered_scripts():
+    return plugin_scripts
 
 
 def upload_file(file, chalid):
