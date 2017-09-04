@@ -289,7 +289,7 @@ def chal(chalid):
             chal_class = get_chal_class(chal.type)
             status, message = chal_class.solve(chal, provided_key)
             if status:  # The challenge plugin says the input is right
-                if utils.ctftime() utils.is_admin():
+                if utils.ctftime() or utils.is_admin():
                     solve = Solves(teamid=session['id'], chalid=chalid, ip=utils.get_ip(), flag=provided_key)
                     db.session.add(solve)
                     db.session.commit()
