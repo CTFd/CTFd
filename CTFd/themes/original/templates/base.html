@@ -13,6 +13,15 @@
 		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/style.css">
 		<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/static/user.css">
 		{% block stylesheets %}{% endblock %}
+		{% for stylesheet in get_registered_stylesheets() %}
+		{% if stylesheet.startswith('http') %}
+		<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+		{% elif request.script_root %}
+		<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/{{ stylesheet }}">
+		{% else %}
+		<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+		{% endif %}
+		{% endfor %}
 		<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/moment.min.js"></script>
 		<script src="{{ request.script_root }}/themes/original/static/js/vendor/handlebars.min.js"></script>
 		<script type="text/javascript">
@@ -76,7 +85,13 @@
 	{% endblock %}
 
 	{% for script in get_registered_scripts() %}
-	<script src="{% if script.startswith('http')%}{{ request.script_root }}{% endif %}{{ script }}"></script>
+	{% if script.startswith('http') %}
+	<script src="{{ script }}"></script>
+	{% elif request.script_root %}
+	<script src="{{ request.script_root }}/{{ script }}"></script>
+	{% else %}
+	<script src="{{ script }}"></script>
+	{% endif %}
 	{% endfor %}
 </body>
 </html>
