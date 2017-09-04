@@ -4,6 +4,7 @@
 from tests.helpers import *
 from CTFd.models import ip2long, long2ip
 from CTFd.utils import get_config, set_config, override_template, sendmail, verify_email, ctf_started, ctf_ended
+from CTFd.utils import register_plugin_script, register_plugin_stylesheet
 from CTFd.utils import base64encode, base64decode
 from freezegun import freeze_time
 from mock import patch
@@ -172,7 +173,7 @@ def test_verify_email(mock_smtp):
 
 
 def test_ctftime_prevents_accessing_challenges_before_ctf():
-    """Test that the ctftime function prevents users from accessing challenges after the ctf"""
+    """Test that the ctftime function prevents users from accessing challenges before the ctf"""
     app = create_ctfd()
     with app.app_context():
         set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
@@ -293,3 +294,29 @@ def test_ctf_ended():
         with freeze_time("2017-10-7"):
             assert ctf_ended() == True
     destroy_ctfd(app)
+
+
+def test_register_plugin_script():
+    '''Test that register_plugin_script adds script paths to the original theme'''
+    app = create_ctfd()
+    with app.app_context():
+        register_plugin_script('/fake/script/path.js')
+        register_plugin_script('http://ctfd.io/fake/script/path.js')
+        with app.test_client() as client:
+            r = client.get('/')
+            output = r.get_data(as_text=True)
+            assert '/fake/script/path.js' in output
+            assert 'http://ctfd.io/fake/script/path.js' in output
+
+
+def test_register_plugin_stylesheet():
+    '''Test that register_plugin_stylesheet adds stylesheet paths to the original theme'''
+    app = create_ctfd()
+    with app.app_context():
+        register_plugin_script('/fake/stylesheet/path.css')
+        register_plugin_script('http://ctfd.io/fake/stylesheet/path.css')
+        with app.test_client() as client:
+            r = client.get('/')
+            output = r.get_data(as_text=True)
+            assert '/fake/stylesheet/path.css' in output
+            assert 'http://ctfd.io/fake/stylesheet/path.css' in output
