@@ -35,6 +35,7 @@ cache = Cache()
 migrate = Migrate()
 markdown = mistune.Markdown()
 plugin_scripts = []
+plugin_stylesheets = []
 
 
 def init_logs(app):
@@ -108,6 +109,7 @@ def init_utils(app):
     app.jinja_env.globals.update(ctf_theme=ctf_theme)
     app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
     app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
+    app.jinja_env.globals.update(get_registered_stylesheets=get_registered_stylesheets)
     app.jinja_env.globals.update(get_config=get_config)
     app.jinja_env.globals.update(hide_scores=hide_scores)
 
@@ -180,6 +182,10 @@ def override_template(template, html):
 
 def register_plugin_script(url):
     plugin_scripts.append(url)
+
+
+def register_plugin_stylesheet(url):
+    plugin_stylesheets.append(url)
 
 
 def pages():
@@ -357,6 +363,10 @@ def get_configurable_plugins():
 
 def get_registered_scripts():
     return plugin_scripts
+
+
+def get_registered_stylesheets():
+    return plugin_stylesheets
 
 
 def upload_file(file, chalid):
