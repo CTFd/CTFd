@@ -3,7 +3,7 @@ import logging
 import re
 import time
 
-from flask import render_template, request, redirect, jsonify, url_for, session, Blueprint
+from flask import render_template, request, redirect, jsonify, url_for, session, Blueprint, abort
 from sqlalchemy.sql import or_
 
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards, Hints, Unlocks
@@ -104,7 +104,7 @@ def chals():
             if utils.view_after_ctf():
                 pass
             else:
-                return redirect(url_for('views.static_html'))
+                abort(403)
     if utils.user_can_view_challenges() and (utils.ctf_started() or utils.is_admin()):
         chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).order_by(Challenges.value).all()
         json = {'game': []}
@@ -136,7 +136,7 @@ def chals():
         return jsonify(json)
     else:
         db.session.close()
-        return redirect(url_for('auth.login', next='chals'))
+        abort(403)
 
 
 @challenges.route('/chals/solves')
@@ -250,7 +250,7 @@ def who_solved(chalid):
 @challenges.route('/chal/<int:chalid>', methods=['POST'])
 def chal(chalid):
     if utils.ctf_ended() and not utils.view_after_ctf():
-        return redirect(url_for('challenges.challenges_view'))
+        abort(403)
     if not utils.user_can_view_challenges():
         return redirect(url_for('auth.login', next=request.path))
     if (utils.authed() and utils.is_verified() and (utils.ctf_started() or utils.view_after_ctf())) or utils.is_admin():
@@ -324,4 +324,4 @@ def chal(chalid):
         return jsonify({
             'status': -1,
             'message': "You must be logged in to solve a challenge"
-        })
+        }), 403
