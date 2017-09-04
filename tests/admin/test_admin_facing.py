@@ -81,8 +81,8 @@ def test_admins_can_access_challenges_before_ctftime():
     '''Admins can see and solve challenges despite it being before ctftime'''
     app = create_ctfd()
     with app.app_context():
-        set_config('start', '1507089600') # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
-        set_config('end', '1507262400') # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
