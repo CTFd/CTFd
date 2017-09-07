@@ -87,7 +87,7 @@ def scores():
 
 @scoreboard.route('/top/<int:count>')
 def topteams(count):
-    json = {'scores': {}}
+    json = {'places': {}}
     if utils.get_config('view_scoreboard_if_authed') and not utils.authed():
         return redirect(url_for('auth.login', next=request.path))
     if utils.hide_scores():
@@ -98,7 +98,7 @@ def topteams(count):
 
     standings = get_standings(count=count)
 
-    for team in standings:
+    for i, team in enumerate(standings):
         solves = Solves.query.filter_by(teamid=team.teamid)
         awards = Awards.query.filter_by(teamid=team.teamid)
 
@@ -111,20 +111,24 @@ def topteams(count):
         solves = solves.all()
         awards = awards.all()
 
-        json['scores'][team.name] = []
+        json['places'][i + 1] = {
+            'id' : team.teamid,
+            'name' : team.name,
+            'solves': []
+        }
         for x in solves:
-            json['scores'][team.name].append({
+            json['places'][i + 1]['solves'].append({
                 'chal': x.chalid,
                 'team': x.teamid,
                 'value': x.chal.value,
                 'time': utils.unix_time(x.date)
             })
         for award in awards:
-            json['scores'][team.name].append({
+            json['places'][i + 1]['solves'].append({
                 'chal': None,
                 'team': award.teamid,
                 'value': award.value,
                 'time': utils.unix_time(award.date)
             })
-        json['scores'][team.name] = sorted(json['scores'][team.name], key=lambda k: k['time'])
+        json['places'][i + 1]['solves'] = sorted(json['places'][i + 1]['solves'], key=lambda k: k['time'])
     return jsonify(json)
