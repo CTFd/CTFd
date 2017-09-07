@@ -31,7 +31,7 @@ function updateChalWindow(obj) {
         template_data['script_root'] = script_root;
         var template = Handlebars.compile(template_data);
         var solves = obj.solves == 1 ? " Solve" : " Solves";
-        solves = obj.solves + solves;
+        var solves = obj.solves + solves;
 
         var nonce = $('#nonce').val();
         var wrapper  = {
@@ -168,10 +168,10 @@ function updatesolves(cb){
         var chalids = Object.keys(solves);
 
         for (var i = 0; i < chalids.length; i++) {
-            var obj = $.grep(challenges['game'], function (e) {
-                return e.id == chalids[i];
-            })[0];
-            obj.solves = solves[chalids[i]]
+            for (var i = 0; i < challenges['game'].length; i++) {
+                var obj = challenges['game'][i];
+                obj.solves = solves[chalids[i]];
+            }
         };
         if (cb) {
             cb();
@@ -193,10 +193,14 @@ function getsolves(id){
   });
 }
 
-function loadchals(refresh) {
+function loadchals(cb) {
     $.get(script_root + "/chals", function (data) {
         var categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
+
+        challenges['game'].sort(function(a, b) {
+            return a.id - b.id  ||  a.name.localeCompare(b.name);
+        });
 
         $('#challenges-board').html("");
 
@@ -242,21 +246,15 @@ function loadchals(refresh) {
             $("#"+ catid +"-row").find(".category-challenges > .chal-row").append(chalwrap);
         };
 
-        var load_location_hash = function () {
-            if (window.location.hash.length > 0) {
-                loadchalbyname(window.location.hash.substring(1));
-                $("#chal-window").modal("show");
-            }
-        };
-
-        if (!refresh){
-            updatesolves(load_location_hash);
-        }
         marksolves();
 
         $('.challenge-button').click(function (e) {
             loadchal(this.value);
         });
+
+        if (cb){
+            cb();
+        }
     });
 }
 
@@ -312,13 +310,23 @@ function colorhash (x) {
     return "#" + color.substring(0, 6);
 }
 
+var load_location_hash = function () {
+    if (window.location.hash.length > 0) {
+        loadchalbyname(window.location.hash.substring(1));
+        $("#chal-window").modal("show");
+    }
+};
+
 function update(){
-    loadchals(true);
-    updatesolves();
+    loadchals(function(){
+        updatesolves();
+    });
 }
 
 $(function() {
-    loadchals();
+    loadchals(function(){
+        updatesolves(load_location_hash);
+    });
 });
 
 $('.nav-tabs a').click(function (e) {
