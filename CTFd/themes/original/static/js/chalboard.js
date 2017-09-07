@@ -314,6 +314,7 @@ function colorhash (x) {
 
 function update(){
     loadchals(true);
+    updatesolves();
 }
 
 $(function() {
