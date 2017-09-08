@@ -24,20 +24,20 @@ function UTCtoDate(utc){
 }
 function scoregraph () {
     $.get(script_root + '/top/10', function( data ) {
-        var scores = $.parseJSON(JSON.stringify(data));
-        scores = scores['scores'];
-        if (Object.keys(scores).length == 0 ){
+        var places = $.parseJSON(JSON.stringify(data));
+        places = places['places'];
+        if (Object.keys(places).length == 0 ){
             return;
         }
 
-        var teams = Object.keys(scores);
+        var teams = Object.keys(places);
         var traces = [];
         for(var i = 0; i < teams.length; i++){
             var team_score = [];
             var times = [];
-            for(var j = 0; j < scores[teams[i]].length; j++){
-                team_score.push(scores[teams[i]][j].value);
-                var date = moment(scores[teams[i]][j].time * 1000);
+            for(var j = 0; j < places[teams[i]]['solves'].length; j++){
+                team_score.push(places[teams[i]]['solves'][j].value);
+                var date = moment(places[teams[i]]['solves'][j].time * 1000);
                 times.push(date.toDate());
             }
             team_score = cumulativesum(team_score);
@@ -45,7 +45,7 @@ function scoregraph () {
                 x: times,
                 y: team_score,
                 mode: 'lines+markers',
-                name: teams[i]
+                name: places[teams[i]]['name']
             }
             traces.push(trace);
         }

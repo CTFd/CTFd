@@ -2,6 +2,7 @@ from CTFd import create_app
 from CTFd.models import *
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.engine.url import make_url
+import datetime
 
 
 def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", setup=True):
@@ -110,6 +111,7 @@ def gen_hint(db, chal, hint="This is a hint", cost=0, type=0):
 
 def gen_solve(db, teamid, chalid, ip='127.0.0.1', flag='rightkey'):
     solve = Solves(teamid, chalid, ip, flag)
+    solve.date = datetime.datetime.utcnow()
     db.session.add(solve)
     db.session.commit()
     return solve
@@ -117,6 +119,7 @@ def gen_solve(db, teamid, chalid, ip='127.0.0.1', flag='rightkey'):
 
 def gen_wrongkey(db, teamid, chalid, ip='127.0.0.1', flag='wrongkey'):
     wrongkey = WrongKeys(teamid, chalid, ip, flag)
+    wrongkey.date = datetime.datetime.utcnow()
     db.session.add(wrongkey)
     db.session.commit()
     return wrongkey
