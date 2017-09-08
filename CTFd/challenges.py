@@ -144,9 +144,21 @@ def solves_per_chal():
     if not utils.user_can_view_challenges():
         return redirect(url_for('auth.login', next=request.path))
 
-    solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves')).join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).group_by(Solves.chalid).subquery()
-    solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves, Challenges.name) \
-                       .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
+    solves_sub = db.session.query(
+        Solves.chalid,
+        db.func.count(Solves.chalid).label('solves')
+    )\
+        .join(Teams, Solves.teamid == Teams.id) \
+        .filter(Teams.banned == False) \
+        .group_by(Solves.chalid).subquery()
+
+    solves = db.session.query(
+        solves_sub.columns.chalid,
+        solves_sub.columns.solves,
+        Challenges.name
+    ) \
+        .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
+
     json = {}
     if utils.hide_scores():
         for chal, count, name in solves:
@@ -174,18 +186,23 @@ def solves(teamid=None):
         else:
             return redirect(url_for('auth.login', next='solves'))
     else:
-        solves = Solves.query.filter_by(teamid=teamid)
-        awards = Awards.query.filter_by(teamid=teamid)
+        if utils.hide_scores():
+            # Use empty values to hide scores
+            solves = []
+            awards = []
+        else:
+            solves = Solves.query.filter_by(teamid=teamid)
+            awards = Awards.query.filter_by(teamid=teamid)
 
-        freeze = utils.get_config('freeze')
-        if freeze:
-            freeze = utils.unix_time_to_utc(freeze)
-            if teamid != session.get('id'):
-                solves = solves.filter(Solves.date < freeze)
-                awards = awards.filter(Awards.date < freeze)
+            freeze = utils.get_config('freeze')
+            if freeze:
+                freeze = utils.unix_time_to_utc(freeze)
+                if teamid != session.get('id'):
+                    solves = solves.filter(Solves.date < freeze)
+                    awards = awards.filter(Awards.date < freeze)
 
-        solves = solves.all()
-        awards = awards.all()
+            solves = solves.all()
+            awards = awards.all()
     db.session.close()
     json = {'solves': []}
     for solve in solves:
@@ -224,10 +241,19 @@ def attempts():
     return jsonify(json)
 
 
-@challenges.route('/fails/<int:teamid>', methods=['GET'])
-def fails(teamid):
-    fails = WrongKeys.query.filter_by(teamid=teamid).count()
-    solves = Solves.query.filter_by(teamid=teamid).count()
+@challenges.route('/fails')
+@challenges.route('/fails/<int:teamid>')
+def fails(teamid=None):
+    if teamid is None:
+        fails = WrongKeys.query.filter_by(teamid=session['id']).count()
+        solves = Solves.query.filter_by(teamid=session['id']).count()
+    else:
+        if utils.hide_scores():
+            fails = 0
+            solves = 0
+        else:
+            fails = WrongKeys.query.filter_by(teamid=teamid).count()
+            solves = Solves.query.filter_by(teamid=teamid).count()
     db.session.close()
     json = {'fails': str(fails), 'solves': str(solves)}
     return jsonify(json)
