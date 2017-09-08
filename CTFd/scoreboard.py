@@ -112,8 +112,8 @@ def topteams(count):
         awards = awards.all()
 
         json['places'][i + 1] = {
-            'id' : team.teamid,
-            'name' : team.name,
+            'id': team.teamid,
+            'name': team.name,
             'solves': []
         }
         for x in solves:
