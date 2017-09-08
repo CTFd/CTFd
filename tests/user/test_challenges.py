@@ -45,6 +45,44 @@ def test_viewing_challenges():
     destroy_ctfd(app)
 
 
+def test_chals_solves():
+    '''Test that the /chals/solves endpoint works properly'''
+    app = create_ctfd()
+    with app.app_context():
+        # Generate 5 users
+        for c in range(1, 6):
+            name = "user{}".format(c)
+            email = "user{}@ctfd.io".format(c)
+            register_user(app, name=name, email=email, password="password")
+
+        # Generate 5 challenges
+        for c in range(5):
+            chal1 = gen_challenge(app.db, value=100)
+
+        user_ids = list(range(2, 7))
+        chal_ids = list(range(1, 6))
+        for u in user_ids:
+            for c in chal_ids:
+                gen_solve(app.db, teamid=u, chalid=c)
+            chal_ids.pop()
+
+        client = login_as_user(app, name="user1")
+
+        with client.session_transaction() as sess:
+            r = client.get('/chals/solves')
+            output = r.get_data(as_text=True)
+            saved = json.loads('''{
+              "1": 5,
+              "2": 4,
+              "3": 3,
+              "4": 2,
+              "5": 1
+            }
+            ''')
+            received = json.loads(output)
+            assert saved == received
+
+
 def test_submitting_correct_flag():
     """Test that correct flags are correct"""
     app = create_ctfd()
