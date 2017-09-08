@@ -59,8 +59,8 @@ def test_chals_solves():
         for c in range(5):
             chal1 = gen_challenge(app.db, value=100)
 
-        user_ids = range(2, 7)
-        chal_ids = range(1, 6)
+        user_ids = list(range(2, 7))
+        chal_ids = list(range(1, 6))
         for u in user_ids:
             for c in chal_ids:
                 gen_solve(app.db, teamid=u, chalid=c)
