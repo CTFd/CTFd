@@ -111,7 +111,9 @@ def static_html(template):
     try:
         return render_template('%s.html' % template)
     except TemplateNotFound:
-        page = Pages.query.filter_by(route=template).first_or_404()
+        page = utils.get_page(template)
+        if page is None:
+            abort(404)
         return render_template('page.html', content=markdown(page.html))
 
 
