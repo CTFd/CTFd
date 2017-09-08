@@ -193,6 +193,11 @@ def pages():
     return pages
 
 
+@cache.memoize()
+def get_page(template):
+    return Pages.query.filter_by(route=template).first()
+
+
 def authed():
     return bool(session.get('id', False))
 
