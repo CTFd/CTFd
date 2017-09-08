@@ -43,11 +43,15 @@ def admin_pages_view(route):
             page.html = html
             db.session.commit()
             db.session.close()
+            with app.app_context():
+                cache.clear()
             return redirect(url_for('admin_pages.admin_pages_view'))
         page = Pages(route, html)
         db.session.add(page)
         db.session.commit()
         db.session.close()
+        with app.app_context():
+            cache.clear()
         return redirect(url_for('admin_pages.admin_pages_view'))
     pages = Pages.query.all()
     return render_template('admin/pages.html', routes=pages, css=utils.get_config('css'))
@@ -82,4 +86,6 @@ def delete_page(pageroute):
     db.session.delete(page)
     db.session.commit()
     db.session.close()
+    with app.app_context():
+        cache.clear()
     return '1'
