@@ -80,8 +80,6 @@ def test_chals_solves():
             }
             ''')
             received = json.loads(output)
-            print saved
-            print received
             assert saved == received
 
 
