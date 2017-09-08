@@ -108,14 +108,18 @@ class Config(object):
     CACHE_TYPE specifies how CTFd should cache configuration values. If CACHE_TYPE is set to 'redis', CTFd will make use
     of the REDIS_URL specified in environment variables. You can also choose to hardcode the REDIS_URL here.
 
+    It is important that you specify some sort of cache as CTFd uses it to store values received from the database.
+
     CACHE_REDIS_URL is the URL to connect to Redis server.
-    Example: redis://user:password@localhost:6379/2.
+    Example: redis://user:password@localhost:6379
 
     http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     '''
-    CACHE_TYPE = "simple"
-    if CACHE_TYPE == 'redis':
-        CACHE_REDIS_URL = os.environ.get('REDIS_URL')
+    CACHE_REDIS_URL = os.environ.get('REDIS_URL')
+    if CACHE_REDIS_URL:
+        CACHE_TYPE = 'redis'
+    else:
+        CACHE_TYPE = 'simple'
 
 
 class TestingConfig(Config):
