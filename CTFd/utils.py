@@ -406,7 +406,7 @@ def delete_file(file_id):
 @cache.memoize()
 def get_config(key):
     with app.app_context():
-        value = app.config.get(key)
+        value = app.config.get(key.upper()) or app.config.get(key.lower())
         if value:
             if value and value.isdigit():
                 return int(value)
