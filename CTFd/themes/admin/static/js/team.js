@@ -41,7 +41,7 @@ function scoregraph () {
         var layout = {
             title: 'Score over Time'
         };
-
+        $('#score-graph').empty();
         Plotly.newPlot('score-graph', data, layout);
     });
 }
@@ -69,7 +69,7 @@ function keys_percentage_graph(){
         var layout = {
             title: 'Key Percentages'
         };
-
+        $('#keys-pie-graph').empty();
         Plotly.newPlot('keys-pie-graph', data, layout);
     });
 }
@@ -113,6 +113,7 @@ function category_breakdown_graph(){
             title:'Category Breakdown'
         };
 
+        $('#categories-pie-graph').empty();
         Plotly.newPlot('categories-pie-graph', data, layout);
     });
 }

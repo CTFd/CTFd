@@ -53,6 +53,7 @@ function scoregraph() {
             plot_bgcolor: 'rgba(0,0,0,0)'
         };
 
+        $('#score-graph').empty();
         Plotly.newPlot('score-graph', data, layout);
     });
 }
@@ -83,7 +84,7 @@ function keys_percentage_graph() {
             plot_bgcolor: 'rgba(0,0,0,0)'
         };
 
-
+        $('#keys-pie-graph').empty();
         Plotly.newPlot('keys-pie-graph', data, layout);
     });
 }
@@ -129,6 +130,7 @@ function category_breakdown_graph() {
             plot_bgcolor: 'rgba(0,0,0,0)'
         };
 
+        $('#categories-pie-graph').empty();
         Plotly.newPlot('categories-pie-graph', data, layout);
     });
 }
