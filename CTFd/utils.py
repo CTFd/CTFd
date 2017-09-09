@@ -31,6 +31,13 @@ from werkzeug.utils import secure_filename
 
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
 
+if six.PY2:
+    text_type = unicode
+    binary_type = str
+else:
+    text_type = str
+    binary_type = bytes
+
 cache = Cache()
 migrate = Migrate()
 markdown = mistune.Markdown()
