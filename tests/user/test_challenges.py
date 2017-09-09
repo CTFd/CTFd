@@ -205,7 +205,6 @@ def test_unlocking_hints_with_no_cost():
         r = client.post('/hints/1', data=data)
         output = r.get_data(as_text=True)
         output = json.loads(output)
-        print output
         assert output.get('hint') == 'This is a hint'
     destroy_ctfd(app)
 
