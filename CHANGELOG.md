@@ -1,4 +1,32 @@
-1.0.2 / 2017-07-01
+1.0.4 / 2017-09-09
+==================
+
+* Add spinners to the original theme for loading graphs
+* Plugins can register global JS files with `utils.register_plugin_script()`
+* Plugins can register global CSS files with `utils.register_plugin_stylesheet()`
+* Challenge type plugins can now control the response to a user's input
+* Vagrantfile!
+* Containers functionality has been moved into a [plugin](https://github.com/CTFd/CTFd-Docker)
+* Hide solves from the JSON endpoint when hiding scores.
+* The `utils.get_config()` function now checks for lower case and upper case values specified in `config.py`
+* Pages are now cached so that we don't hit the database every time we need to load a page.
+* The /top/10 endpoint has been changed to group users by ID instead of by name.
+* Admins are allowed to see and solve challenges before a CTF starts.
+* The CTF time configuration UI has been fixed to allow for the removal of times.
+* The score graph in the original theme is now sorted by score.
+* Bug fixes
+    * Use strings to store IP addresses.
+    * Take into account awards when we calculate a user's place.
+    * Plugin configuration clears the cache.
+    * More logging inside of auth.py.
+    * Username and password in the SMTP mail configuration are now optional.
+    * Markdown in challenges has been fixed to it's pre-regression state and is easier to write.
+    * Improvements to Python 3 compatability.
+    * Variety of new tests to further test behavior.
+    * Fixed an old bug where users would incorrectly see a challenge with 0 solves.
+
+
+1.0.3 / 2017-07-01
 ==================
 
 * Increased Unicode support. Smileys everywhere 👌
