@@ -81,6 +81,7 @@ def test_chals_solves():
             ''')
             received = json.loads(output)
             assert saved == received
+    destroy_ctfd(app)
 
 
 def test_submitting_correct_flag():
@@ -184,4 +185,48 @@ def test_submitting_flags_with_large_ips():
             resp = json.loads(r.data.decode('utf8'))
             assert resp.get('status') == 1 and resp.get('message') == "Correct"
             assert Solves.query.filter_by(ip=ip_address).first()
+    destroy_ctfd(app)
+
+
+def test_unlocking_hints_with_no_cost():
+    '''Test that hints with no cost can be unlocked'''
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+        hint = gen_hint(app.db, chal_id)
+
+        client = login_as_user(app)
+        with client.session_transaction() as sess:
+            data = {
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/hints/1', data=data)
+        output = r.get_data(as_text=True)
+        output = json.loads(output)
+        print output
+        assert output.get('hint') == 'This is a hint'
+    destroy_ctfd(app)
+
+
+def test_unlocking_hint_for_unicode_challenge():
+    '''Test that hints for challenges with unicode names can be unlocked'''
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        chal = gen_challenge(app.db, name=text_type('🐺'))
+        chal_id = chal.id
+        hint = gen_hint(app.db, chal_id)
+
+        client = login_as_user(app)
+        with client.session_transaction() as sess:
+            data = {
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/hints/1', data=data)
+        output = r.get_data(as_text=True)
+        output = json.loads(output)
+        print output
+        assert output.get('hint') == 'This is a hint'
     destroy_ctfd(app)

@@ -11,6 +11,7 @@ from CTFd.plugins.keys import get_key_class
 from CTFd.plugins.challenges import get_chal_class
 
 from CTFd import utils
+from CTFd.utils import text_type
 
 challenges = Blueprint('challenges', __name__)
 
@@ -40,7 +41,7 @@ def hints_view(hintid):
             if team.score() < hint.cost:
                 return jsonify({'errors': 'Not enough points'})
             unlock = Unlocks(model='hints', teamid=session['id'], itemid=hint.id)
-            award = Awards(teamid=session['id'], name='Hint for {}'.format(chal.name), value=(-hint.cost))
+            award = Awards(teamid=session['id'], name=text_type('Hint for {}'.format(chal.name)), value=(-hint.cost))
             db.session.add(unlock)
             db.session.add(award)
             db.session.commit()
