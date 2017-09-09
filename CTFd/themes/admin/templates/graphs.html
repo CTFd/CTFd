@@ -2,14 +2,26 @@
 
 {% block content %}
 	<div class="row">
-			<div id="solves-graph"></div>
+			<div id="solves-graph">
+				<div class="text-center">
+					<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
 	</div>
 	<div class="row">
 		<div>
-			<div id="keys-pie-graph"></div>
+			<div id="keys-pie-graph">
+				<div class="text-center">
+					<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
 		</div>
 		<div>
-			<div id="categories-pie-graph"></div>
+			<div id="categories-pie-graph">
+				<div class="text-center">
+					<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
 		</div>
 	</div>
 {% endblock %}
@@ -97,6 +109,7 @@
 					annotations: annotations
 				};
 
+				$('#solves-graph').empty()
 				Plotly.newPlot('solves-graph', data, layout);
 			});
 		}
@@ -125,6 +138,7 @@
 					title: 'Key Percentages'
 				};
 
+				$('#keys-pie-graph').empty();
 				Plotly.newPlot('keys-pie-graph', data, layout);
 			});
 		}
@@ -152,6 +166,7 @@
 					title: 'Category Breakdown'
 				};
 
+				$('#categories-pie-graph').empty();
 				Plotly.newPlot('categories-pie-graph', data, layout);
 			});
 		}
