@@ -227,6 +227,5 @@ def test_unlocking_hint_for_unicode_challenge():
         r = client.post('/hints/1', data=data)
         output = r.get_data(as_text=True)
         output = json.loads(output)
-        print output
         assert output.get('hint') == 'This is a hint'
     destroy_ctfd(app)
