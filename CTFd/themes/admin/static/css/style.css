@@ -106,6 +106,12 @@ table{
     line-height: 66px;
 }
 
+.spinner {
+    margin-top: 225px;
+    text-align: center;
+    opacity: 0.5;
+}
+
 #score-graph{
     height: 450px;
     display: block;

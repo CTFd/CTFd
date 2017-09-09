@@ -170,7 +170,12 @@ function updatesolves(cb){
         for (var i = 0; i < chalids.length; i++) {
             for (var i = 0; i < challenges['game'].length; i++) {
                 var obj = challenges['game'][i];
-                obj.solves = solves[chalids[i]];
+                var solve_cnt = solves[chalids[i]];
+                if (solve_cnt) {
+                    obj.solves = solve_cnt;
+                } else {
+                    obj.solves = 0;
+                }
             }
         };
         if (cb) {
