@@ -65,10 +65,8 @@ function scoregraph () {
         };
         console.log(traces);
 
+        $('#score-graph').empty() // Remove spinners
         Plotly.newPlot('score-graph', traces, layout);
-
-
-        $('#score-graph').show()
     });
 }
 
