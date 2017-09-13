@@ -228,3 +228,41 @@ def test_unlocking_hint_for_unicode_challenge():
         output = json.loads(output)
         assert output.get('hint') == 'This is a hint'
     destroy_ctfd(app)
+
+
+def test_that_view_challenges_unregistered_works():
+    '''Test that view_challenges_unregistered works'''
+    app = create_ctfd()
+    with app.app_context():
+        chal = gen_challenge(app.db, name=text_type('🐺'))
+        chal_id = chal.id
+        hint = gen_hint(app.db, chal_id)
+
+        client = app.test_client()
+        r = client.get('/chals')
+        assert r.status_code == 403
+
+        config = set_config('view_challenges_unregistered', True)
+
+        client = app.test_client()
+        r = client.get('/chals')
+        data = r.get_data(as_text=True)
+        assert json.loads(data)
+
+        r = client.get('/chals/solves')
+        data = r.get_data(as_text=True)
+        assert json.loads(data) == {}
+
+        r = client.get('/chal/1/solves')
+        data = r.get_data(as_text=True)
+        assert json.loads(data)
+
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'not_flag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal_id), data=data)
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+        assert data['status'] == -1

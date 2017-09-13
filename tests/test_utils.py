@@ -194,7 +194,9 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
                     "nonce": sess.get('nonce')
                 }
             r = client.post('/chal/{}'.format(chal_id), data=data)
-            assert r.status_code == 403
+            data = r.get_data(as_text=True)
+            data = json.loads(data)
+            assert data['status'] == -1
         solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
         assert solve_count == 0
     destroy_ctfd(app)
