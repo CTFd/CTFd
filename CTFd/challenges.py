@@ -107,19 +107,19 @@ def chals():
             else:
                 abort(403)
     if utils.user_can_view_challenges() and (utils.ctf_started() or utils.is_admin()):
+        teamid = session.get('id')
         chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).order_by(Challenges.value).all()
         json = {'game': []}
         for x in chals:
             tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=x.id).all()]
             files = [str(f.location) for f in Files.query.filter_by(chal=x.id).all()]
-            unlocked_hints = set([u.itemid for u in Unlocks.query.filter_by(model='hints', teamid=session['id'])])
+            unlocked_hints = set([u.itemid for u in Unlocks.query.filter_by(model='hints', teamid=teamid)])
             hints = []
             for hint in Hints.query.filter_by(chal=x.id).all():
                 if hint.id in unlocked_hints or utils.ctf_ended():
                     hints.append({'id': hint.id, 'cost': hint.cost, 'hint': hint.hint})
                 else:
                     hints.append({'id': hint.id, 'cost': hint.cost})
-            # hints = [{'id':hint.id, 'cost':hint.cost} for hint in Hints.query.filter_by(chal=x.id).all()]
             chal_type = get_chal_class(x.type)
             json['game'].append({
                 'id': x.id,
@@ -351,4 +351,4 @@ def chal(chalid):
         return jsonify({
             'status': -1,
             'message': "You must be logged in to solve a challenge"
-        }), 403
+        })
