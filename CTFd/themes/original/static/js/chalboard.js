@@ -168,13 +168,15 @@ function updatesolves(cb){
         var chalids = Object.keys(solves);
 
         for (var i = 0; i < chalids.length; i++) {
-            for (var i = 0; i < challenges['game'].length; i++) {
-                var obj = challenges['game'][i];
+            for (var z = 0; z < challenges['game'].length; z++) {
+                var obj = challenges['game'][z];
                 var solve_cnt = solves[chalids[i]];
-                if (solve_cnt) {
-                    obj.solves = solve_cnt;
-                } else {
-                    obj.solves = 0;
+                if (obj.id == chalids[i]){
+                    if (solve_cnt) {
+                        obj.solves = solve_cnt;
+                    } else {
+                        obj.solves = 0;
+                    }
                 }
             }
         };
@@ -202,10 +204,6 @@ function loadchals(cb) {
     $.get(script_root + "/chals", function (data) {
         var categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
-
-        challenges['game'].sort(function(a, b) {
-            return a.id - b.id  ||  a.name.localeCompare(b.name);
-        });
 
         $('#challenges-board').html("");
 
