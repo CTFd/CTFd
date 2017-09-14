@@ -1,3 +1,3 @@
-import FilterDropdown from './FilterDropdown';
+import FilterDropdown from './FilterDropdown'
 
-export default FilterDropdown;
+export default FilterDropdown

@@ -1,3 +1,3 @@
-import ChalToolbar from './ChalToolbar';
+import ChalToolbar from './ChalToolbar'
 
-export default ChalToolbar;
+export default ChalToolbar

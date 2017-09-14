@@ -1,3 +1,3 @@
-import ChalGrid from './ChalGrid';
+import ChalGrid from './ChalGrid'
 
-export default ChalGrid;
+export default ChalGrid

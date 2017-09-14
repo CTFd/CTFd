@@ -1,3 +1,3 @@
-import ChalProgress from './ChalProgress';
+import ChalProgress from './ChalProgress'
 
-export default ChalProgress;
+export default ChalProgress

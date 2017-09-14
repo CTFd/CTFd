@@ -1,111 +1,108 @@
-import Inferno from 'inferno';
-import Component from 'inferno-component';
+import Inferno from 'inferno'
+import Component from 'inferno-component'
 
-import './ChalModal.scss';
+import './ChalModal.scss'
 
 export default class ChalModal extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       input: '',
-      showSolvesView: false
-    };
+      showSolvesView: false,
+    }
 
-    this.toggleSolvesView = this.toggleSolvesView.bind(this);
+    this.toggleSolvesView = this.toggleSolvesView.bind(this)
 
-    this.onInputKeyDown = this.onInputKeyDown.bind(this);
-    this.onInputChange = this.onInputChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+    this.onInputKeyDown = this.onInputKeyDown.bind(this)
+    this.onInputChange = this.onInputChange.bind(this)
+    this.onSubmit = this.onSubmit.bind(this)
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.challenge != nextProps.challenge) {
       this.setState(state => {
-        state.input = '';
-        state.showSolvesView = false;
-      });
+        state.input = ''
+        state.showSolvesView = false
+      })
     }
   }
 
   toggleSolvesView() {
     this.setState(state => {
-      state.showSolvesView = !state.showSolvesView;
-    });
+      state.showSolvesView = !state.showSolvesView
+    })
   }
 
   onInputKeyDown(e) {
     if (e.key === 'Enter') {
-      this.onSubmit();
+      this.onSubmit()
     }
 
     if (e.key === 'Escape') {
       this.setState(state => {
-        state.input = '';
-      });
+        state.input = ''
+      })
     }
   }
 
   onInputChange(e) {
     this.setState(state => {
-      state.input = e.target.value;
-    });
+      state.input = e.target.value
+    })
   }
 
   onSubmit() {
-    if (!this.state.input.length) return;
-    this.props.submit(this.state.input);
+    if (!this.state.input.length) return
+    this.props.submit(this.state.input)
   }
 
   classFromResponse(response) {
     if (!response) {
-      return '';
+      return ''
     }
 
     switch (response.status) {
       case 0:
-        return 'error';
+        return 'error'
       case 1:
-        return 'success';
+        return 'success'
       default:
-        return 'info';
+        return 'info'
     }
   }
 
   textFromResponse(response) {
-    return response ? response.message : '';
+    return response ? response.message : ''
   }
 
   render() {
-    const { challenge, solves, hide, submit, response } = this.props;
+    const { challenge, solves, hide, submit, response } = this.props
 
     if (!challenge) {
-      return <div className="chal-modal-container" />;
+      return <div className="chal-modal-container" />
     }
 
     return (
       <div className="chal-modal-container open" onClick={hide}>
         <div className="chal-modal">
-          {!this.state.showSolvesView &&
+          {!this.state.showSolvesView && (
             <div className="chal-content">
-              {solves &&
+              {solves && (
                 <div className="chal-solves" onClick={this.toggleSolvesView}>
                   {solves.length} Solves
-                </div>}
+                </div>
+              )}
               <div className="chal-row">
-                <div className="chal-category">
-                  {challenge.category}
-                </div>
-                <div className="chal-name">
-                  {challenge.name}
-                </div>
-                <div className="chal-desc">
-                  {challenge.description}
-                </div>
+                <div className="chal-category">{challenge.category}</div>
+                <div className="chal-name">{challenge.name}</div>
+                <div className="chal-desc" dangerouslySetInnerHTML={{ __html: marked(challenge.description) }} />
                 <div className="chal-files">
-                  {challenge.files.map(file =>
-                    <a className="chal-file" href={`/files/${file}`} download>{file.split('/').slice(-1)[0]}</a>
-                  )}
+                  {challenge.files.map(file => (
+                    <a className="chal-file" href={`/files/${file}`} download>
+                      {file.split('/').slice(-1)[0]}
+                    </a>
+                  ))}
                 </div>
               </div>
               <div className="chal-row">
@@ -119,7 +116,9 @@ export default class ChalModal extends Component {
                       onInput={this.onInputChange}
                       value={this.state.input}
                     />
-                    <button className="btn btn-primary" onClick={this.onSubmit}>Submit</button>
+                    <button className="btn btn-primary" onClick={this.onSubmit}>
+                      Submit
+                    </button>
                   </div>
                   <div className="chal-input-row">
                     <div className={'chal-response ' + this.classFromResponse(response)}>
@@ -128,11 +127,13 @@ export default class ChalModal extends Component {
                   </div>
                 </div>
               </div>
-            </div>}
-          {this.state.showSolvesView &&
+            </div>
+          )}
+          {this.state.showSolvesView && (
             <div className="chal-content chal-solves-container">
               <div className="chal-solves" onClick={this.toggleSolvesView}>
-                <i className="fa fa-arrow-left" /><span style={{ marginLeft: '5px' }}>Challenge</span>
+                <i className="fa fa-arrow-left" />
+                <span style={{ marginLeft: '5px' }}>Challenge</span>
               </div>
               <div class="chal-category">Solves</div>
               <div className="solves-table">
@@ -140,15 +141,20 @@ export default class ChalModal extends Component {
                   solves.map(solve => {
                     return (
                       <div className="chal-solve">
-                        <div><a href={'/team/' + solve.id} target="_blank">{solve.name}</a></div>
+                        <div>
+                          <a href={'/team/' + solve.id} target="_blank">
+                            {solve.name}
+                          </a>
+                        </div>
                         <div className="pull-right">{new Date(solve.date).toLocaleString()}</div>
                       </div>
-                    );
+                    )
                   })}
               </div>
-            </div>}
+            </div>
+          )}
         </div>
       </div>
-    );
+    )
   }
 }

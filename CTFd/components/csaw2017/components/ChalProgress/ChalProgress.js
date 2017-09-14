@@ -1,23 +1,23 @@
-import Inferno from 'inferno';
-import Component from 'inferno-component';
+import Inferno from 'inferno'
+import Component from 'inferno-component'
 
-import './ChalProgress.scss';
+import './ChalProgress.scss'
 
 export default class ChalProgress extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       completed: 0,
       total: 1,
-      pct: '0%'
-    };
+      pct: '0%',
+    }
 
-    this.renderBar = this.renderBar.bind(this);
+    this.renderBar = this.renderBar.bind(this)
   }
 
   componentDidMount() {
-    this.renderBar();
+    this.renderBar()
   }
 
   componentDidUpdate() {
@@ -26,16 +26,16 @@ export default class ChalProgress extends Component {
       this.state.total != this.props.total ||
       this.props.total >= this.props.completed
     ) {
-      this.renderBar();
+      this.renderBar()
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.completed <= nextProps.total) {
       this.setState(state => {
-        state.completed = nextProps.completed;
-        state.total = nextProps.total;
-      });
+        state.completed = nextProps.completed
+        state.total = nextProps.total
+      })
     }
   }
 
@@ -43,28 +43,30 @@ export default class ChalProgress extends Component {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         this.setState(state => {
-          state.pct = (this.state.completed / this.state.total * 100).toFixed(2) + '%';
-        });
-      });
-    });
+          state.pct = (this.state.completed / this.state.total * 100).toFixed(2) + '%'
+        })
+      })
+    })
   }
 
   render() {
-    const { loading } = this.props;
+    const { loading } = this.props
 
     return (
       <div className={'chal-progress' + (loading ? ' loading' : '')}>
         <span className="progress-pct">{this.state.pct}</span>
-        <span className="progress-pts">({this.state.completed} / {this.state.total})</span>
+        <span className="progress-pts">
+          ({this.state.completed} / {this.state.total})
+        </span>
         <div className="progress-bar-bg" />
         <div className="progress-bar" style={{ width: this.state.pct }} />
       </div>
-    );
+    )
   }
 }
 
 ChalProgress.defaultProps = {
   loading: true,
   completed: 0,
-  total: 100
-};
+  total: 100,
+}

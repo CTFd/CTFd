@@ -1,3 +1,3 @@
-import ChalModal from './ChalModal';
+import ChalModal from './ChalModal'
 
-export default ChalModal;
+export default ChalModal
