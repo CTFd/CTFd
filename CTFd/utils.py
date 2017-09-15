@@ -412,6 +412,18 @@ def delete_file(file_id):
 
 @cache.memoize()
 def get_config(key):
+    with app.app_context():
+        value = app.config.get(key)
+        if value:
+            if value and value.isdigit():
+                return int(value)
+            elif value and isinstance(value, six.string_types):
+                if value.lower() == 'true':
+                    return True
+                elif value.lower() == 'false':
+                    return False
+                else:
+                    return value
     config = Config.query.filter_by(key=key).first()
     if config and config.value:
         value = config.value
@@ -424,19 +436,9 @@ def get_config(key):
                 return False
             else:
                 return value
-    with app.app_context():
-        value = app.config.get(key.upper()) or app.config.get(key.lower())
-        if value:
-            if value and value.isdigit():
-                return int(value)
-            elif value and isinstance(value, six.string_types):
-                if value.lower() == 'true':
-                    return True
-                elif value.lower() == 'false':
-                    return False
-                else:
-                    return value
-    return None
+    else:
+        set_config(key, None)
+        return None
 
 
 def set_config(key, value):
