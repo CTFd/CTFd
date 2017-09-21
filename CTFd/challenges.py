@@ -281,6 +281,7 @@ def chal(chalid):
     if not utils.user_can_view_challenges():
         return redirect(url_for('auth.login', next=request.path))
     if (utils.authed() and utils.is_verified() and (utils.ctf_started() or utils.view_after_ctf())) or utils.is_admin():
+        team = Teams.query.filter_by(id=session['id']).first()
         fails = WrongKeys.query.filter_by(teamid=session['id'], chalid=chalid).count()
         logger = logging.getLogger('keys')
         data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'), utils.get_kpm(session['id']))
@@ -314,21 +315,15 @@ def chal(chalid):
                 })
 
             chal_class = get_chal_class(chal.type)
-            status, message = chal_class.solve(chal, provided_key)
+            status, message = chal_class.attempt(chal, request)
             if status:  # The challenge plugin says the input is right
                 if utils.ctftime() or utils.is_admin():
-                    solve = Solves(teamid=session['id'], chalid=chalid, ip=utils.get_ip(), flag=provided_key)
-                    db.session.add(solve)
-                    db.session.commit()
-                    db.session.close()
+                    chal_class.solve(team=team, chal=chal, request=request)
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
                 return jsonify({'status': 1, 'message': message})
             else:  # The challenge plugin says the input is wrong
                 if utils.ctftime() or utils.is_admin():
-                    wrong = WrongKeys(teamid=session['id'], chalid=chalid, ip=utils.get_ip(), flag=provided_key)
-                    db.session.add(wrong)
-                    db.session.commit()
-                    db.session.close()
+                    chal_class.fail(team=team, chal=chal, request=request)
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
                 # return '0' # key was wrong
                 if max_tries:
