@@ -155,7 +155,9 @@ def test_submitting_flags_with_large_ips():
         ip_addresses = ['172.18.0.1', '255.255.255.255', '2001:0db8:85a3:0000:0000:8a2e:0370:7334']
         for ip_address in ip_addresses:
             # Monkeypatch get_ip
-            utils.get_ip = lambda: ip_address
+            def get_ip_fake(req=None):
+                return ip_address
+            utils.get_ip = get_ip_fake
 
             # Generate challenge and flag
             chal = gen_challenge(app.db)
