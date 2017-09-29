@@ -1,11 +1,16 @@
 function updatescores () {
   $.get(script_root + '/scores', function( data ) {
-    teams = $.parseJSON(JSON.stringify(data));
+    var teams = $.parseJSON(JSON.stringify(data));
     $('#scoreboard > tbody').empty()
     for (var i = 0; i < teams['standings'].length; i++) {
-      row = "<tr><td>{0}</td><td><a href='/team/{1}'>{2}</a></td><td>{3}</td></tr>".format(i+1, teams['standings'][i].id, htmlentities(teams['standings'][i].team), teams['standings'][i].score)
+      var row = "<tr><td>{0}</td><td><a href='/team/{1}'>{2}</a></td><td>{3}</td></tr>".format(
+          i+1,
+          teams['standings'][i].id,
+          htmlentities(teams['standings'][i].team),
+          teams['standings'][i].score
+      );
       $('#scoreboard > tbody').append(row)
-    };
+    }
   });
 }
 
@@ -18,15 +23,17 @@ function cumulativesum (arr) {
 }
 
 function UTCtoDate(utc){
-    var d = new Date(0)
-    d.setUTCSeconds(utc)
+    var d = new Date(0);
+    d.setUTCSeconds(utc);
     return d;
 }
+
 function scoregraph () {
     $.get(script_root + '/top/10', function( data ) {
         var places = $.parseJSON(JSON.stringify(data));
         places = places['places'];
-        if (Object.keys(places).length == 0 ){
+        if (Object.keys(places).length === 0 ){
+            $('#score-graph').html('<div class="text-center"><h3 class="spinner-error">No solves yet</h3></div>'); // Replace spinner
             return;
         }
 
@@ -46,7 +53,7 @@ function scoregraph () {
                 y: team_score,
                 mode: 'lines+markers',
                 name: places[teams[i]]['name']
-            }
+            };
             traces.push(trace);
         }
 
@@ -65,7 +72,7 @@ function scoregraph () {
         };
         console.log(traces);
 
-        $('#score-graph').empty() // Remove spinners
+        $('#score-graph').empty(); // Remove spinners
         Plotly.newPlot('score-graph', traces, layout);
     });
 }
