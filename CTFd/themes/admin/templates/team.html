@@ -89,6 +89,7 @@
 		</h2>
 
 
+		{% if solves %}
 		<div id="keys-pie-graph">
 			<div class="text-center">
 				<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw spinner"></i>
@@ -104,6 +105,11 @@
 				<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw spinner"></i>
 			</div>
 		</div>
+		{% else %}
+		<div class="row">
+			<div class="text-center"><h3 class="spinner-error">No solves yet</h3></div>
+		</div>
+		{% endif %}
 
 		<table class="table table-striped">
 				<h3>IP Addresses</h3>

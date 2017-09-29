@@ -32,6 +32,7 @@
 	</div>
 	<br>
 
+	{% if teams %}
 	<table id="scoreboard" class="table table-striped">
 		<thead>
 			<tr>
@@ -49,6 +50,7 @@
 		{% endfor %}
 		</tbody>
 	</table>
+	{% endif %}
 	{% endif %}
 </div>
 {% endblock %}

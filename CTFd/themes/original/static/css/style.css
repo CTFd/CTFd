@@ -116,8 +116,14 @@ table{
     clear: both;
 }
 
-.spinner {
+.fa.spinner {
     margin-top: 225px;
+    text-align: center;
+    opacity: 0.5;
+}
+
+.spinner-error {
+    padding-top: 210px;
     text-align: center;
     opacity: 0.5;
 }
