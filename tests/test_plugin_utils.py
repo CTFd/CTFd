@@ -18,6 +18,22 @@ def test_register_plugin_asset():
     with app.app_context():
         with app.test_client() as client:
             r = client.get('/plugins/__init__.py')
-            assert len(r.get_data(as_text=True)) > 0 
+            assert len(r.get_data(as_text=True)) > 0
+            assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_register_plugin_assets_directory():
+    """Test that asset directory registration works"""
+    app = create_ctfd(setup=False)
+    register_plugin_assets_directory(app, base_path='/plugins/')
+    app = setup_ctfd(app)
+    with app.app_context():
+        with app.test_client() as client:
+            r = client.get('/plugins/__init__.py')
+            assert len(r.get_data(as_text=True)) > 0
+            assert r.status_code == 200
+            r = client.get('/plugins/challenges/__init__.py')
+            assert len(r.get_data(as_text=True)) > 0
             assert r.status_code == 200
     destroy_ctfd(app)
