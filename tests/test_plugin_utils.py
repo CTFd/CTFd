@@ -11,7 +11,7 @@ import six
 
 
 def test_register_plugin_asset():
-    """Test that asset registration works"""
+    """Test that plugin asset registration works"""
     app = create_ctfd(setup=False)
     register_plugin_asset(app, asset_path='/plugins/__init__.py')
     app = setup_ctfd(app)
@@ -24,7 +24,7 @@ def test_register_plugin_asset():
 
 
 def test_register_plugin_assets_directory():
-    """Test that asset directory registration works"""
+    """Test that plugin asset directory registration works"""
     app = create_ctfd(setup=False)
     register_plugin_assets_directory(app, base_path='/plugins/')
     app = setup_ctfd(app)
