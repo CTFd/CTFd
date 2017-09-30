@@ -17,19 +17,24 @@ def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="
     app = create_app('CTFd.config.TestingConfig')
 
     if setup:
-        with app.app_context():
-            with app.test_client() as client:
-                data = {}
-                r = client.get('/setup')  # Populate session with nonce
-                with client.session_transaction() as sess:
-                    data = {
-                        "ctf_name": ctf_name,
-                        "name": name,
-                        "email": email,
-                        "password": password,
-                        "nonce": sess.get('nonce')
-                    }
-                client.post('/setup', data=data)
+        app = setup_ctfd(app, ctf_name, name, email, password)
+    return app
+
+
+def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password"):
+    with app.app_context():
+        with app.test_client() as client:
+            data = {}
+            r = client.get('/setup')  # Populate session with nonce
+            with client.session_transaction() as sess:
+                data = {
+                    "ctf_name": ctf_name,
+                    "name": name,
+                    "email": email,
+                    "password": password,
+                    "nonce": sess.get('nonce')
+                }
+            client.post('/setup', data=data)
     return app
 
 
