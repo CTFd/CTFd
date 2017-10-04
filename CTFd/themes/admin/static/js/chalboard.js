@@ -43,11 +43,11 @@ function load_chal_template(id, success_cb){
     obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
     })[0]
-    $.get(script_root + '/themes/admin/static/js/templates/challenges/'+ obj['type_name'] +'/' + obj['type_name'] + '-challenge-update.hbs', function(template_data){
+    $.get(script_root + obj.type_data.templates.update, function(template_data){
         var template = Handlebars.compile(template_data);
         $("#update-modals-entry-div").html(template({'nonce':$('#nonce').val(), 'script_root':script_root}));
         $.ajax({
-          url: script_root + '/themes/admin/static/js/templates/challenges/'+obj['type_name']+'/'+obj['type_name']+'-challenge-update.js',
+          url: script_root + obj.type_data.scripts.update,
           dataType: "script",
           success: success_cb,
           cache: true,

@@ -24,7 +24,7 @@ function loadchalbyname(chalname) {
 }
 
 function updateChalWindow(obj) {
-    $.get(script_root + '/themes/original/static/js/templates/challenges/'+obj.type+'/'+obj.type+'-challenge-modal.hbs', function(template_data){
+    $.get(script_root + obj.template, function(template_data){
         $('#chal-window').empty();
         templates[obj.type] = template_data;
         var template_data = templates[obj.type];
@@ -46,7 +46,7 @@ function updateChalWindow(obj) {
         };
 
         $('#chal-window').append(template(wrapper));
-        $.getScript(script_root + '/themes/original/static/js/templates/challenges/'+obj.type+'/'+obj.type+'-challenge-script.js',
+        $.getScript(script_root + obj.script,
             function() {
                 // Handle Solves tab
                 $('.chal-solves').click(function (e) {

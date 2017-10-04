@@ -6,11 +6,24 @@ from CTFd import utils
 class BaseChallenge(object):
     id = None
     name = None
+    templates = {}
+    scripts = {}
 
 
 class CTFdStandardChallenge(BaseChallenge):
     id = 0
     name = "standard"
+    templates = {
+        'create': '/themes/admin/static/js/templates/challenges/standard/standard-challenge-create.hbs',
+        'update': '/themes/admin/static/js/templates/challenges/standard/standard-challenge-update.hbs',
+        'modal': '/themes/original/static/js/templates/challenges/standard/standard-challenge-modal.hbs',
+    }
+
+    scripts = {
+        'create': '/themes/admin/static/js/templates/challenges/standard/standard-challenge-create.js',
+        'update': '/themes/admin/static/js/templates/challenges/standard/standard-challenge-update.js',
+        'modal': '/themes/original/static/js/templates/challenges/standard/standard-challenge-modal.js',
+    }
 
     @staticmethod
     def attempt(chal, request):
