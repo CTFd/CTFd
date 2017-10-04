@@ -12,7 +12,7 @@ class BaseChallenge(object):
 
 
 class CTFdStandardChallenge(BaseChallenge):
-    id = 0
+    id = "standard"
     name = "standard"
     templates = {
         'create': '/plugins/challenges/assets/standard-challenge-create.hbs',
@@ -84,7 +84,7 @@ def get_chal_class(class_id):
 
 
 CHALLENGE_CLASSES = {
-    0: CTFdStandardChallenge
+    "standard": CTFdStandardChallenge
 }
 
 

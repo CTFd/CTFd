@@ -48,16 +48,15 @@ class Challenges(db.Model):
     max_attempts = db.Column(db.Integer, default=0)
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
-    type = db.Column(db.Integer)
+    type = db.Column(db.String(80))
     hidden = db.Column(db.Boolean)
 
-    def __init__(self, name, description, value, category, type=0):
+    def __init__(self, name, description, value, category, type='standard'):
         self.name = name
         self.description = description
         self.value = value
         self.category = category
         self.type = type
-        # self.flags = json.dumps(flags)
 
     def __repr__(self):
         return '<chal %r>' % self.name
