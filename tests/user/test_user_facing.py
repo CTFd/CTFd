@@ -229,43 +229,46 @@ def test_scoring_logic():
         chal2_id = chal2.id
 
         # user1 solves chal1
-        with client1.session_transaction() as sess:
-            data = {
-                "key": 'flag',
-                "nonce": sess.get('nonce')
-            }
-            r = client1.post('/chal/{}'.format(chal1_id), data=data)
+        with freeze_time("2017-10-3 03:21:34"):
+            with client1.session_transaction() as sess:
+                data = {
+                    "key": 'flag',
+                    "nonce": sess.get('nonce')
+                }
+                r = client1.post('/chal/{}'.format(chal1_id), data=data)
 
         # user1 is now on top
         scores = get_scores(admin)
         assert scores[0]['team'] == 'user1'
 
         # user2 solves chal1 and chal2
-        with client2.session_transaction() as sess:
-            # solve chal1
-            data = {
-                "key": 'flag',
-                "nonce": sess.get('nonce')
-            }
-            r = client2.post('/chal/{}'.format(chal1_id), data=data)
-            # solve chal2
-            data = {
-                "key": 'flag',
-                "nonce": sess.get('nonce')
-            }
-            r = client2.post('/chal/{}'.format(chal2_id), data=data)
+        with freeze_time("2017-10-3 03:22:34"):
+            with client2.session_transaction() as sess:
+                # solve chal1
+                data = {
+                    "key": 'flag',
+                    "nonce": sess.get('nonce')
+                }
+                r = client2.post('/chal/{}'.format(chal1_id), data=data)
+                # solve chal2
+                data = {
+                    "key": 'flag',
+                    "nonce": sess.get('nonce')
+                }
+                r = client2.post('/chal/{}'.format(chal2_id), data=data)
 
         # user2 is now on top
         scores = get_scores(admin)
         assert scores[0]['team'] == 'user2'
 
         # user1 solves chal2
-        with client1.session_transaction() as sess:
-            data = {
-                "key": 'flag',
-                "nonce": sess.get('nonce')
-            }
-            r = client1.post('/chal/{}'.format(chal2_id), data=data)
+        with freeze_time("2017-10-3 03:23:34"):
+            with client1.session_transaction() as sess:
+                data = {
+                    "key": 'flag',
+                    "nonce": sess.get('nonce')
+                }
+                r = client1.post('/chal/{}'.format(chal2_id), data=data)
 
         # user should still be on top because they solved chal2 first
         scores = get_scores(admin)
