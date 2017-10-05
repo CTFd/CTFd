@@ -39,6 +39,10 @@ def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", passwo
 
 
 def destroy_ctfd(app):
+    with app.app_context():
+        app.db.session.commit()
+        app.db.session.close_all()
+        app.db.drop_all()
     drop_database(app.config['SQLALCHEMY_DATABASE_URI'])
 
 
