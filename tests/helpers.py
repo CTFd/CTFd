@@ -76,7 +76,9 @@ def login_as_user(app, name="user", password="password"):
 
 def get_scores(user):
     scores = user.get('/scores')
+    print scores.get_data(as_text=True)
     scores = json.loads(scores.get_data(as_text=True))
+    print scores
     return scores['standings']
 
 

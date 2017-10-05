@@ -12,28 +12,48 @@ def get_standings(admin=False, count=None):
     scores = db.session.query(
         Solves.teamid.label('teamid'),
         db.func.sum(Challenges.value).label('score'),
+        db.func.max(Solves.id).label('id'),
         db.func.max(Solves.date).label('date')
     ).join(Challenges).group_by(Solves.teamid)
 
     awards = db.session.query(
         Awards.teamid.label('teamid'),
         db.func.sum(Awards.value).label('score'),
+        db.func.max(Awards.id).label('id'),
         db.func.max(Awards.date).label('date')
     ).group_by(Awards.teamid)
 
+    """
+    Filter out solves and awards that are before a specific time point.
+    """
     freeze = utils.get_config('freeze')
     if not admin and freeze:
         scores = scores.filter(Solves.date < utils.unix_time_to_utc(freeze))
         awards = awards.filter(Awards.date < utils.unix_time_to_utc(freeze))
 
+    """
+    Combine awards and solves with a union. They should have the same amount of columns
+    """
     results = union_all(scores, awards).alias('results')
 
+    """
+    Sum each of the results by the team id to get their score.
+    """
     sumscores = db.session.query(
         results.columns.teamid,
         db.func.sum(results.columns.score).label('score'),
+        db.func.max(results.columns.id).label('id'),
         db.func.max(results.columns.date).label('date')
     ).group_by(results.columns.teamid).subquery()
 
+    """
+    Admins can see scores for all users but the public cannot see banned users.
+
+    Filters out banned users.
+    Properly resolves value ties by ID.
+
+    Different databases treat time precision differently so resolve by the row ID instead.
+    """
     if admin:
         standings_query = db.session.query(
             Teams.id.label('teamid'),
@@ -41,7 +61,7 @@ def get_standings(admin=False, count=None):
             Teams.banned, sumscores.columns.score
         )\
             .join(sumscores, Teams.id == sumscores.columns.teamid) \
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
     else:
         standings_query = db.session.query(
             Teams.id.label('teamid'),
@@ -50,13 +70,17 @@ def get_standings(admin=False, count=None):
         )\
             .join(sumscores, Teams.id == sumscores.columns.teamid) \
             .filter(Teams.banned == False) \
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
+    """
+    Only select a certain amount of users if asked.
+    """
     if count is None:
         standings = standings_query.all()
     else:
         standings = standings_query.limit(count).all()
     db.session.close()
+
     return standings
 
 
