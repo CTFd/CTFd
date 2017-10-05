@@ -1,4 +1,9 @@
 language: python
+services:
+    - mysql
+env:
+    - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
+    - TESTING_DATABASE_URL='sqlite://'
 python:
     - 2.7
     - 3.6
