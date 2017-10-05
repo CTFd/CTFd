@@ -12,14 +12,14 @@ class BaseChallenge(object):
 
 
 class CTFdStandardChallenge(BaseChallenge):
-    id = "standard"
-    name = "standard"
-    templates = {
+    id = "standard"  # Unique identifier used to register challenges
+    name = "standard"  # Name of a challenge type
+    templates = {  # Handlebars templates used for each aspect of challenge editing & viewing
         'create': '/plugins/challenges/assets/standard-challenge-create.hbs',
         'update': '/plugins/challenges/assets/standard-challenge-update.hbs',
         'modal': '/plugins/challenges/assets/standard-challenge-modal.hbs',
     }
-    scripts = {
+    scripts = {  # Scripts that are loaded when a template is loaded
         'create': '/plugins/challenges/assets/standard-challenge-create.js',
         'update': '/plugins/challenges/assets/standard-challenge-update.js',
         'modal': '/plugins/challenges/assets/standard-challenge-modal.js',
@@ -77,12 +77,22 @@ class CTFdStandardChallenge(BaseChallenge):
 
 
 def get_chal_class(class_id):
+    """
+    Utility function used to get the corresponding class from a class ID.
+
+    :param class_id: String representing the class ID
+    :return: Challenge class
+    """
     cls = CHALLENGE_CLASSES.get(class_id)
     if cls is None:
         raise KeyError
     return cls
 
 
+"""
+Global dictionary used to hold all the Challenge Type classes used by CTFd. Insert into this dictionary to register
+your Challenge Type.
+"""
 CHALLENGE_CLASSES = {
     "standard": CTFdStandardChallenge
 }
