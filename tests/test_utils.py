@@ -309,6 +309,7 @@ def test_register_plugin_script():
             output = r.get_data(as_text=True)
             assert '/fake/script/path.js' in output
             assert 'http://ctfd.io/fake/script/path.js' in output
+    destroy_ctfd(app)
 
 
 def test_register_plugin_stylesheet():
@@ -322,3 +323,4 @@ def test_register_plugin_stylesheet():
             output = r.get_data(as_text=True)
             assert '/fake/stylesheet/path.css' in output
             assert 'http://ctfd.io/fake/stylesheet/path.css' in output
+    destroy_ctfd(app)
