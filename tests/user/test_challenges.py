@@ -268,3 +268,4 @@ def test_that_view_challenges_unregistered_works():
         data = r.get_data(as_text=True)
         data = json.loads(data)
         assert data['status'] == -1
+    destroy_ctfd(app)

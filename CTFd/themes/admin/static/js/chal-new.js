@@ -1,24 +1,25 @@
-function load_chal_template(chal_type_name){
-    $.get(script_root + '/themes/admin/static/js/templates/challenges/'+ chal_type_name +'/' + chal_type_name + '-challenge-create.hbs', function(template_data){
+function load_chal_template(challenge){
+    $.get(script_root + challenge.templates.create, function(template_data){
         var template = Handlebars.compile(template_data);
         $("#create-chal-entry-div").html(template({'nonce':nonce, 'script_root':script_root}));
-        $.getScript(script_root + '/themes/admin/static/js/templates/challenges/'+chal_type_name+'/'+chal_type_name+'-challenge-create.js', function(){
+        $.getScript(script_root + challenge.scripts.create, function(){
             console.log('loaded');
         });
     });
 }
 
-
-nonce = "{{ nonce }}";
 $.get(script_root + '/admin/chal_types', function(data){
-    console.log(data);
     $("#create-chals-select").empty();
     var chal_type_amt = Object.keys(data).length;
     if (chal_type_amt > 1){
         var option = "<option> -- </option>";
         $("#create-chals-select").append(option);
         for (var key in data){
-            var option = "<option value='{0}'>{1}</option>".format(key, data[key]);
+            var challenge = data[key];
+            var option = $("<option/>");
+            option.attr('value', challenge.type);
+            option.text(challenge.name);
+            option.data('meta', challenge);
             $("#create-chals-select").append(option);
         }
     } else if (chal_type_amt == 1) {
@@ -28,6 +29,6 @@ $.get(script_root + '/admin/chal_types', function(data){
     }
 });
 $('#create-chals-select').change(function(){
-    var chal_type_name = $(this).find("option:selected").text();
-    load_chal_template(chal_type_name);
+    var challenge = $(this).find("option:selected").data('meta');
+    load_chal_template(challenge);
 });

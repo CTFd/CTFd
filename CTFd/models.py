@@ -48,16 +48,15 @@ class Challenges(db.Model):
     max_attempts = db.Column(db.Integer, default=0)
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
-    type = db.Column(db.Integer)
+    type = db.Column(db.String(80))
     hidden = db.Column(db.Boolean)
 
-    def __init__(self, name, description, value, category, type=0):
+    def __init__(self, name, description, value, category, type='standard'):
         self.name = name
         self.description = description
         self.value = value
         self.category = category
         self.type = type
-        # self.flags = json.dumps(flags)
 
     def __repr__(self):
         return '<chal %r>' % self.name
@@ -190,15 +189,23 @@ class Teams(db.Model):
             return 0
 
     def place(self, admin=False):
+        """
+        This method is generally a clone of CTFd.scoreboard.get_standings.
+        The point being that models.py must be self-reliant and have little
+        to no imports within the CTFd application as importing from the
+        application itself will result in a circular import.
+        """
         scores = db.session.query(
             Solves.teamid.label('teamid'),
             db.func.sum(Challenges.value).label('score'),
+            db.func.max(Solves.id).label('id'),
             db.func.max(Solves.date).label('date')
         ).join(Challenges).group_by(Solves.teamid)
 
         awards = db.session.query(
             Awards.teamid.label('teamid'),
             db.func.sum(Awards.value).label('score'),
+            db.func.max(Awards.id).label('id'),
             db.func.max(Awards.date).label('date')
         ).group_by(Awards.teamid)
 
@@ -212,16 +219,26 @@ class Teams(db.Model):
 
         results = union_all(scores, awards).alias('results')
 
-        sumscore = db.func.sum(results.columns.score).label('sumscore')
-        quickest = db.func.max(results.columns.date).label('quickest')
+        sumscores = db.session.query(
+            results.columns.teamid,
+            db.func.sum(results.columns.score).label('score'),
+            db.func.max(results.columns.id).label('id'),
+            db.func.max(results.columns.date).label('date')
+        ).group_by(results.columns.teamid).subquery()
 
-        standings_query = db.session.query(results.columns.teamid)\
-            .join(Teams)\
-            .group_by(results.columns.teamid)\
-            .order_by(sumscore.desc(), quickest)
-
-        if not admin:
-            standings_query = standings_query.filter(Teams.banned == False)
+        if admin:
+            standings_query = db.session.query(
+                Teams.id.label('teamid'),
+            )\
+                .join(sumscores, Teams.id == sumscores.columns.teamid) \
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+        else:
+            standings_query = db.session.query(
+                Teams.id.label('teamid'),
+            )\
+                .join(sumscores, Teams.id == sumscores.columns.teamid) \
+                .filter(Teams.banned == False) \
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
         standings = standings_query.all()
 

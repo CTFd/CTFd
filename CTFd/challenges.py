@@ -130,7 +130,9 @@ def chals():
                 'category': x.category,
                 'files': files,
                 'tags': tags,
-                'hints': hints
+                'hints': hints,
+                'template': chal_type.templates['modal'],
+                'script': chal_type.scripts['modal'],
             })
 
         db.session.close()

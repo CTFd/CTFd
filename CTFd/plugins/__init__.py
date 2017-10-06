@@ -57,7 +57,7 @@ def init_plugins(app):
     :return:
     """
     modules = glob.glob(os.path.dirname(__file__) + "/*")
-    blacklist = {'keys', 'challenges', '__pycache__'}
+    blacklist = {'keys', '__pycache__'}
     for module in modules:
         module_name = os.path.basename(module)
         if os.path.isdir(module) and module_name not in blacklist:

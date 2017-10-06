@@ -229,47 +229,51 @@ def test_scoring_logic():
         chal2_id = chal2.id
 
         # user1 solves chal1
-        with client1.session_transaction() as sess:
-            data = {
-                "key": 'flag',
-                "nonce": sess.get('nonce')
-            }
-            r = client1.post('/chal/{}'.format(chal1_id), data=data)
+        with freeze_time("2017-10-3 03:21:34"):
+            with client1.session_transaction() as sess:
+                data = {
+                    "key": 'flag',
+                    "nonce": sess.get('nonce')
+                }
+                r = client1.post('/chal/{}'.format(chal1_id), data=data)
 
         # user1 is now on top
         scores = get_scores(admin)
         assert scores[0]['team'] == 'user1'
 
         # user2 solves chal1 and chal2
-        with client2.session_transaction() as sess:
-            # solve chal1
-            data = {
-                "key": 'flag',
-                "nonce": sess.get('nonce')
-            }
-            r = client2.post('/chal/{}'.format(chal1_id), data=data)
-            # solve chal2
-            data = {
-                "key": 'flag',
-                "nonce": sess.get('nonce')
-            }
-            r = client2.post('/chal/{}'.format(chal2_id), data=data)
+        with freeze_time("2017-10-4 03:30:34"):
+            with client2.session_transaction() as sess:
+                # solve chal1
+                data = {
+                    "key": 'flag',
+                    "nonce": sess.get('nonce')
+                }
+                r = client2.post('/chal/{}'.format(chal1_id), data=data)
+                # solve chal2
+                data = {
+                    "key": 'flag',
+                    "nonce": sess.get('nonce')
+                }
+                r = client2.post('/chal/{}'.format(chal2_id), data=data)
 
         # user2 is now on top
         scores = get_scores(admin)
         assert scores[0]['team'] == 'user2'
 
         # user1 solves chal2
-        with client1.session_transaction() as sess:
-            data = {
-                "key": 'flag',
-                "nonce": sess.get('nonce')
-            }
-            r = client1.post('/chal/{}'.format(chal2_id), data=data)
+        with freeze_time("2017-10-5 03:50:34"):
+            with client1.session_transaction() as sess:
+                data = {
+                    "key": 'flag',
+                    "nonce": sess.get('nonce')
+                }
+                r = client1.post('/chal/{}'.format(chal2_id), data=data)
 
-        # user should still be on top because they solved chal2 first
+        # user2 should still be on top because they solved chal2 first
         scores = get_scores(admin)
         assert scores[0]['team'] == 'user2'
+    destroy_ctfd(app)
 
 
 def test_user_score_is_correct():
@@ -309,6 +313,7 @@ def test_user_score_is_correct():
         # assert that user2's score is now 105 and is in 1st place
         assert user2.score() == 105
         assert user2.place() == '1st'
+    destroy_ctfd(app)
 
 
 def test_pages_routing_and_rendering():
@@ -457,6 +462,7 @@ def test_user_can_confirm_email(mock_smtp):
             # The team is now verified
             team = Teams.query.filter_by(email='user@user.com').first()
             assert team.verified == True
+    destroy_ctfd(app)
 
 
 @patch('smtplib.SMTP')
@@ -524,3 +530,4 @@ http://localhost/reset_password/InVzZXIxIi5BZktHUGcuTVhkTmZtOWU2U2xwSXZ1MlFwTjdw
             # Make sure that the user's password changed
             team = Teams.query.filter_by(email="user@user.com").first()
             assert team.password != team_password_saved
+    destroy_ctfd(app)

@@ -39,6 +39,10 @@ def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", passwo
 
 
 def destroy_ctfd(app):
+    with app.app_context():
+        app.db.session.commit()
+        app.db.session.close_all()
+        app.db.drop_all()
     drop_database(app.config['SQLALCHEMY_DATABASE_URI'])
 
 
@@ -72,11 +76,13 @@ def login_as_user(app, name="user", password="password"):
 
 def get_scores(user):
     scores = user.get('/scores')
+    print(scores.get_data(as_text=True))
     scores = json.loads(scores.get_data(as_text=True))
+    print(scores)
     return scores['standings']
 
 
-def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type=0):
+def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard'):
     chal = Challenges(name, description, value, category)
     db.session.add(chal)
     db.session.commit()

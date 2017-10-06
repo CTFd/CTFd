@@ -16,7 +16,13 @@ admin_challenges = Blueprint('admin_challenges', __name__)
 def admin_chal_types():
     data = {}
     for class_id in CHALLENGE_CLASSES:
-        data[class_id] = CHALLENGE_CLASSES.get(class_id).name
+        challenge_class = CHALLENGE_CLASSES.get(class_id)
+        data[challenge_class.id] = {
+            'id': challenge_class.id,
+            'name': challenge_class.name,
+            'templates': challenge_class.templates,
+            'scripts': challenge_class.scripts,
+        }
 
     return jsonify(data)
 
@@ -52,7 +58,13 @@ def admin_chals():
                 'max_attempts': x.max_attempts,
                 'type': x.type,
                 'type_name': type_name,
-                'percentage_solved': percentage
+                'percentage_solved': percentage,
+                'type_data': {
+                    'id': type_class.id,
+                    'name': type_class.name,
+                    'templates': type_class.templates,
+                    'scripts': type_class.scripts,
+                }
             })
 
         db.session.close()
@@ -225,7 +237,14 @@ def admin_create_chal():
         files = request.files.getlist('files[]')
 
         # Create challenge
-        chal = Challenges(request.form['name'], request.form['desc'], request.form['value'], request.form['category'], int(request.form['chaltype']))
+        chal = Challenges(
+            name=request.form['name'],
+            description=request.form['desc'],
+            value=request.form['value'],
+            category=request.form['category'],
+            type=request.form['chaltype']
+        )
+
         if 'hidden' in request.form:
             chal.hidden = True
         else:
