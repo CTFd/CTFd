@@ -189,6 +189,7 @@ function updatesolves(cb){
 function getsolves(id){
   $.get(script_root + '/chal/'+id+'/solves', function (data) {
     var teams = data['teams'];
+    $('.chal-solves').text((parseInt(teams.length) + " Solves"));
     var box = $('#chal-solves-names');
     box.empty();
     for (var i = 0; i < teams.length; i++) {
