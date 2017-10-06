@@ -195,7 +195,7 @@ function getsolves(id){
       var id = teams[i].id;
       var name = teams[i].name;
       var date = moment(teams[i].date).local().format('LLL');
-      box.append('<tr><td><a href="/team/{0}">{1}</td><td>{2}</td></tr>'.format(id, htmlentities(name), date));
+      box.append('<tr><td><a href="team/{0}">{1}</td><td>{2}</td></tr>'.format(id, htmlentities(name), date));
     };
   });
 }
