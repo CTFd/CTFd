@@ -17,6 +17,7 @@ import sys
 import tempfile
 import time
 import dataset
+import datafreeze
 import zipfile
 import io
 
@@ -635,7 +636,7 @@ def export_ctf(segments=None):
         for item in group:
             result = db[item].all()
             result_file = io.BytesIO()
-            dataset.freeze(result, format='json', fileobj=result_file)
+            datafreeze.freeze(result, format='json', fileobj=result_file)
             result_file.seek(0)
             backup_zip.writestr('db/{}.json'.format(item), result_file.read())
 
