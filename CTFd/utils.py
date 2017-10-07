@@ -32,6 +32,9 @@ from werkzeug.utils import secure_filename
 
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
 
+from datafreeze.format import SERIALIZERS
+from datafreeze.format.fjson import JSONSerializer
+
 if six.PY2:
     text_type = unicode
     binary_type = str
@@ -44,6 +47,35 @@ migrate = Migrate()
 markdown = mistune.Markdown()
 plugin_scripts = []
 plugin_stylesheets = []
+
+
+class CTFdSerializer(JSONSerializer):
+    def close(self):
+        for path, result in self.buckets.items():
+            result = self.wrap(result)
+
+            if self.fileobj is None:
+                fh = open(path, 'wb')
+            else:
+                fh = self.fileobj
+
+            data = json.dumps(result,
+                              cls=JSONEncoder,
+                              indent=self.export.get_int('indent'))
+
+            callback = self.export.get('callback')
+            if callback:
+                data = "%s && %s(%s);" % (callback, callback, data)
+
+            if six.PY3:
+                fh.write(bytes(data, encoding='utf-8'))
+            else:
+                fh.write(data)
+            if self.fileobj is None:
+                fh.close()
+
+
+SERIALIZERS['ctfd'] = CTFdSerializer
 
 
 def init_logs(app):
@@ -628,17 +660,22 @@ def export_ctf(segments=None):
     }
 
     # Backup database
-    backup = io.StringIO()
+    backup = six.BytesIO()
+
     backup_zip = zipfile.ZipFile(backup, 'w')
 
     for segment in segments:
         group = groups[segment]
         for item in group:
             result = db[item].all()
-            result_file = io.StringIO()
-            datafreeze.freeze(result, format='json', fileobj=result_file)
+            result_file = six.BytesIO()
+            print(item)
+            datafreeze.freeze(result, format='ctfd', fileobj=result_file)
             result_file.seek(0)
-            backup_zip.writestr('db/{}.json'.format(item), result_file.read())
+            data = result_file.getvalue()
+            print(type(data), item)
+            print(data)
+            backup_zip.writestr('db/{}.json'.format(item), data)
 
     # Backup uploads
     upload_folder = os.path.join(os.path.normpath(app.root_path), get_config('UPLOAD_FOLDER'))
