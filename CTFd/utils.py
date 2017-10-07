@@ -628,14 +628,14 @@ def export_ctf(segments=None):
     }
 
     # Backup database
-    backup = io.BytesIO()
+    backup = io.StringIO()
     backup_zip = zipfile.ZipFile(backup, 'w')
 
     for segment in segments:
         group = groups[segment]
         for item in group:
             result = db[item].all()
-            result_file = io.BytesIO()
+            result_file = io.StringIO()
             datafreeze.freeze(result, format='json', fileobj=result_file)
             result_file.seek(0)
             backup_zip.writestr('db/{}.json'.format(item), result_file.read())
