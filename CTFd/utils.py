@@ -33,7 +33,7 @@ from werkzeug.utils import secure_filename
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
 
 from datafreeze.format import SERIALIZERS
-from datafreeze.format.fjson import JSONSerializer
+from datafreeze.format.fjson import JSONSerializer, JSONEncoder
 
 if six.PY2:
     text_type = unicode
