@@ -3,7 +3,7 @@
 
 from tests.helpers import *
 from CTFd.models import ip2long, long2ip
-from CTFd.utils import get_config, set_config, override_template, sendmail, verify_email, ctf_started, ctf_ended
+from CTFd.utils import get_config, set_config, override_template, sendmail, verify_email, ctf_started, ctf_ended, export_ctf
 from CTFd.utils import register_plugin_script, register_plugin_stylesheet
 from CTFd.utils import base64encode, base64decode
 from freezegun import freeze_time
@@ -323,4 +323,29 @@ def test_register_plugin_stylesheet():
             output = r.get_data(as_text=True)
             assert '/fake/stylesheet/path.css' in output
             assert 'http://ctfd.io/fake/stylesheet/path.css' in output
+    destroy_ctfd(app)
+
+
+def test_export_ctf():
+    """Test that CTFd can properly export the database"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        chal = gen_challenge(app.db, name=text_type('🐺'))
+        chal_id = chal.id
+        hint = gen_hint(app.db, chal_id)
+
+        client = login_as_user(app)
+        with client.session_transaction() as sess:
+            data = {
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/hints/1', data=data)
+        output = r.get_data(as_text=True)
+        output = json.loads(output)
+        app.db.session.commit()
+        backup = export_ctf()
+        backup.seek(0)
+        with open('export.zip', 'wb') as f:
+            f.write(backup.getvalue())
     destroy_ctfd(app)
