@@ -50,6 +50,10 @@ plugin_stylesheets = []
 
 
 class CTFdSerializer(JSONSerializer):
+    """
+    Slightly modified datafreeze serializer so that we can properly
+    export the CTFd database into a zip file.
+    """
     def close(self):
         for path, result in self.buckets.items():
             result = self.wrap(result)
@@ -75,7 +79,7 @@ class CTFdSerializer(JSONSerializer):
                 fh.close()
 
 
-SERIALIZERS['ctfd'] = CTFdSerializer
+SERIALIZERS['ctfd'] = CTFdSerializer  # Load the custom serializer
 
 
 def init_logs(app):
