@@ -4,6 +4,7 @@ from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.engine.url import make_url
 import datetime
 import six
+import gc
 
 if six.PY2:
     text_type = unicode
@@ -42,6 +43,7 @@ def destroy_ctfd(app):
     with app.app_context():
         app.db.session.commit()
         app.db.session.close_all()
+        gc.collect()  # Garbage collect (necessary in the case of dataset freezes to clean database connections)
         app.db.drop_all()
     drop_database(app.config['SQLALCHEMY_DATABASE_URI'])
 

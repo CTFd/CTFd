@@ -669,13 +669,9 @@ def export_ctf(segments=None):
         for item in group:
             result = db[item].all()
             result_file = six.BytesIO()
-            print(item)
             datafreeze.freeze(result, format='ctfd', fileobj=result_file)
             result_file.seek(0)
-            data = result_file.getvalue()
-            print(type(data), item)
-            print(data)
-            backup_zip.writestr('db/{}.json'.format(item), data)
+            backup_zip.writestr('db/{}.json'.format(item), result_file.read())
 
     # Backup uploads
     upload_folder = os.path.join(os.path.normpath(app.root_path), get_config('UPLOAD_FOLDER'))
