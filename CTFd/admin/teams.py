@@ -45,6 +45,44 @@ def admin_teams_view(page):
     return render_template('admin/teams.html', teams=teams, pages=pages, curr_page=page)
 
 
+@admin_teams.route('/admin/team/new', methods=['POST'])
+@admins_only
+def admin_create_team():
+    name = request.form.get('name', None)
+    password = request.form.get('password', None)
+    email = request.form.get('email', None)
+    website = request.form.get('website', None)
+    affiliation = request.form.get('affiliation', None)
+    country = request.form.get('country', None)
+
+    errors = []
+    if not name:
+        errors.append('The team requires a name')
+    elif Teams.query.filter(Teams.name == name).first():
+        errors.append('That name is taken')
+    if not email:
+        errors.append('The team requires an email')
+    elif Teams.query.filter(Teams.email == email).first():
+        errors.append('That email is taken')
+    if not password:
+        errors.append('The team requires a password')
+    if website and not (website.startswith('http://') or website.startswith('https://')):
+        errors.append('Websites must start with http:// or https://')
+    if errors:
+        db.session.close()
+        return jsonify({'data': errors})
+
+    team = Teams(name, email, password)
+    team.website = website
+    team.affiliation = affiliation
+    team.country = country
+
+    db.session.add(team)
+    db.session.commit()
+    db.session.close()
+    return jsonify({'data': ['success']})
+
+
 @admin_teams.route('/admin/team/<int:teamid>', methods=['GET', 'POST'])
 @admins_only
 def admin_team(teamid):

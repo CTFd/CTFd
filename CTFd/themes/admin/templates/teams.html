@@ -9,7 +9,7 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 {% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row" style="text-align:center">
 	<h1>Teams</h1>
 	<div id="confirm" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
@@ -185,6 +185,7 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 			{% endfor %}
 		</tbody>
 	</table>
+	<span class="btn btn-theme btn-outlined create-team" role="button">New Team</span>
 	{% if pages > 1 %}
 	<div class="text-center">Page
 		<br>
@@ -304,6 +305,10 @@ $('.fa-pencil-square-o').click(function(){
 	var country = elem.find('.team-country').attr('value')  || '';
 
 	load_update_modal(id, name, email, website, affiliation, country);
+});
+
+$('.create-team').click(function(){
+	load_update_modal('new', '', '', '', '', '');
 });
 
 function load_confirm_modal(id, name){
