@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Teams, Solves, WrongKeys
+from CTFd.models import Teams, Solves, WrongKeys, Challenges
 from CTFd.utils import get_config, set_config
 from CTFd import utils
 from tests.helpers import *
@@ -141,6 +141,86 @@ def test_submitting_unicode_flag():
         assert r.status_code == 200
         resp = json.loads(r.data.decode('utf8'))
         assert resp.get('status') == 1 and resp.get('message') == "Correct"
+    destroy_ctfd(app)
+
+
+def test_challenges_with_max_attempts():
+    """Test that users are locked out of a challenge after they reach max_attempts"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        chal = Challenges.query.filter_by(id=chal.id).first()
+        chal_id = chal.id
+        chal.max_attempts = 3
+        app.db.session.commit()
+
+        flag = gen_flag(app.db, chal=chal.id, flag=u'flag')
+        for x in range(3):
+            with client.session_transaction() as sess:
+                data = {
+                    "key": 'notflag',
+                    "nonce": sess.get('nonce')
+                }
+            r = client.post('/chal/{}'.format(chal_id), data=data)
+
+        wrong_keys = WrongKeys.query.all()
+        assert len(wrong_keys) == 3
+
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal_id), data=data)
+        assert r.status_code == 200
+
+        resp = json.loads(r.data.decode('utf8'))
+        assert resp.get('status') == 0 and resp.get('message') == "You have 0 tries remaining"
+
+        solves = Solves.query.all()
+        assert len(solves) == 0
+    destroy_ctfd(app)
+
+
+def test_challenge_kpm_limit():
+    """Test that users are properly ratelimited when submitting flags"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+
+        flag = gen_flag(app.db, chal=chal.id, flag=u'flag')
+        for x in range(11):
+            with client.session_transaction() as sess:
+                data = {
+                    "key": 'notflag',
+                    "nonce": sess.get('nonce')
+                }
+            r = client.post('/chal/{}'.format(chal_id), data=data)
+
+        wrong_keys = WrongKeys.query.all()
+        assert len(wrong_keys) == 11
+
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal_id), data=data)
+        assert r.status_code == 200
+
+        wrong_keys = WrongKeys.query.all()
+        assert len(wrong_keys) == 12
+
+        resp = json.loads(r.data.decode('utf8'))
+        assert resp.get('status') == 3 and resp.get('message') == "You're submitting keys too fast. Slow down."
+
+        solves = Solves.query.all()
+        assert len(solves) == 0
     destroy_ctfd(app)
 
 
