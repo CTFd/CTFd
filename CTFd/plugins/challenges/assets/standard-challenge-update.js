@@ -317,11 +317,13 @@ $('#create-key').click(function(e){
 $('#create-keys-select').change(function(){
     var key_type_name = $(this).find("option:selected").text();
 
-    $.get(script_root + '/themes/admin/static/js/templates/keys/'+key_type_name +'/'+key_type_name+'.hbs', function(template_data){
-        var template = Handlebars.compile(template_data);
-        $("#create-keys-entry-div").html(template());
-        $("#create-keys-button-div").show();
-    });
+    $.get(script_root + '/admin/key_types/' + key_type_name, function(key_data){
+        $.get(script_root + key_data.templates.create, function(template_data){
+            var template = Handlebars.compile(template_data);
+            $("#create-keys-entry-div").html(template());
+            $("#create-keys-button-div").show();
+        });
+    })
 });
 
 
