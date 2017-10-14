@@ -3,8 +3,13 @@ import importlib
 import os
 
 from flask.helpers import safe_join
-from flask import send_file, send_from_directory, abort
-from CTFd.utils import admins_only as admins_only_wrapper
+from flask import current_app as app, send_file, send_from_directory, abort
+from CTFd.utils import (
+    admins_only as admins_only_wrapper,
+    override_template as utils_override_template,
+    register_plugin_script as utils_register_plugin_script,
+    register_plugin_stylesheet as utils_register_plugin_stylesheet
+)
 
 
 def register_plugin_assets_directory(app, base_path, admins_only=False):
@@ -46,6 +51,29 @@ def register_plugin_asset(app, asset_path, admins_only=False):
         asset_handler = admins_only_wrapper(asset_handler)
     rule = '/' + asset_path
     app.add_url_rule(rule=rule, endpoint=asset_path, view_func=asset_handler)
+
+
+def override_template(*args, **kwargs):
+    """
+    Overrides a template with the provided html content.
+
+    e.g. override_template('scoreboard.html', '<h1>scores</h1>')
+    """
+    utils_override_template(*args, **kwargs)
+
+
+def register_plugin_script(*args, **kwargs):
+    """
+    Adds a given script to the base.html template which all pages inherit from
+    """
+    utils_register_plugin_script(*args, **kwargs)
+
+
+def register_plugin_stylesheet(*args, **kwargs):
+    """
+    Adds a given stylesheet to the base.html template which all pages inherit from.
+    """
+    utils_register_plugin_stylesheet(*args, **kwargs)
 
 
 def init_plugins(app):
