@@ -109,7 +109,7 @@ def gen_file():
     pass
 
 
-def gen_flag(db, chal, flag='flag', key_type='standard'):
+def gen_flag(db, chal, flag='flag', key_type='static'):
     key = Keys(chal, flag, key_type)
     db.session.add(key)
     db.session.commit()
