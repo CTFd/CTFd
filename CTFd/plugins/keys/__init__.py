@@ -1,3 +1,5 @@
+from CTFd.plugins import register_plugin_assets_directory
+
 import re
 import string
 import hmac
@@ -6,6 +8,7 @@ import hmac
 class BaseKey(object):
     id = None
     name = None
+    templates = {}
 
     @staticmethod
     def compare(self, saved, provided):
@@ -15,6 +18,10 @@ class BaseKey(object):
 class CTFdStaticKey(BaseKey):
     id = 0
     name = "static"
+    templates = {  # Handlebars templates used for key editing & viewing
+        'create': '/plugins/keys/assets/static/create-static-modal.hbs',
+        'update': '/plugins/keys/assets/static/edit-static-modal.hbs',
+    }
 
     @staticmethod
     def compare(saved, provided):
@@ -29,6 +36,10 @@ class CTFdStaticKey(BaseKey):
 class CTFdRegexKey(BaseKey):
     id = 1
     name = "regex"
+    templates = {  # Handlebars templates used for key editing & viewing
+        'create': '/plugins/keys/assets/regex/create-regex-modal.hbs',
+        'update': '/plugins/keys/assets/regex/edit-regex-modal.hbs',
+    }
 
     @staticmethod
     def compare(saved, provided):
@@ -37,8 +48,8 @@ class CTFdRegexKey(BaseKey):
 
 
 KEY_CLASSES = {
-    0: CTFdStaticKey,
-    1: CTFdRegexKey
+    'static': CTFdStaticKey,
+    'regex': CTFdRegexKey
 }
 
 
@@ -47,3 +58,7 @@ def get_key_class(class_id):
     if cls is None:
         raise KeyError
     return cls
+
+
+def load(app):
+    register_plugin_assets_directory(app, base_path='/plugins/keys/assets/')

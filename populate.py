@@ -222,7 +222,7 @@ if __name__ == '__main__':
             word = gen_word()
             db.session.add(Challenges(word, gen_sentence(), gen_value(), gen_category()))
             db.session.commit()
-            db.session.add(Keys(x + 1, word, 0))
+            db.session.add(Keys(x + 1, word, 'static'))
             db.session.commit()
 
         # Generating Files

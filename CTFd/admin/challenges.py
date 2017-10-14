@@ -199,11 +199,13 @@ def admin_get_values(chalid, prop):
         chal_keys = Keys.query.filter_by(chal=challenge.id).all()
         json_data = {'keys': []}
         for x in chal_keys:
+            key_class = get_key_class(x.key_type)
             json_data['keys'].append({
                 'id': x.id,
                 'key': x.flag,
                 'type': x.key_type,
-                'type_name': get_key_class(x.key_type).name
+                'type_name': key_class.name,
+                'templates': key_class.templates,
             })
         return jsonify(json_data)
     elif prop == 'tags':
@@ -257,7 +259,7 @@ def admin_create_chal():
         db.session.add(chal)
         db.session.flush()
 
-        flag = Keys(chal.id, request.form['key'], int(request.form['key_type[0]']))
+        flag = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
         if request.form.get('keydata'):
             flag.data = request.form.get('keydata')
         db.session.add(flag)

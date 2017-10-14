@@ -22,8 +22,8 @@ String.prototype.hashCode = function() {
 };
 
 function load_edit_key_modal(key_id, key_type_name) {
-    $.get(script_root + '/themes/admin/static/js/templates/keys/'+key_type_name+'/edit-'+key_type_name+'-modal.hbs', function(template_data){
-        $.get(script_root + '/admin/keys/' + key_id, function(key_data){
+    $.get(script_root + '/admin/keys/' + key_id, function(key_data){
+        $.get(script_root + key_data.templates.update, function(template_data){
             $('#edit-keys').empty();
             var template = Handlebars.compile(template_data);
             key_data['script_root'] = script_root;
