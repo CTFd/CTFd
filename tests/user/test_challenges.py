@@ -221,6 +221,7 @@ def test_challenge_kpm_limit():
 
         solves = Solves.query.all()
         assert len(solves) == 0
+    destroy_ctfd(app)
 
 
 def test_submitting_flags_with_large_ips():
