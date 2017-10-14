@@ -37,8 +37,8 @@ class CTFdRegexKey(BaseKey):
 
 
 KEY_CLASSES = {
-    0: CTFdStaticKey,
-    1: CTFdRegexKey
+    'static': CTFdStaticKey,
+    'regex': CTFdRegexKey
 }
 
 

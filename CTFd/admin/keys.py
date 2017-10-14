@@ -40,7 +40,7 @@ def admin_keys_view(keyid):
         chal = request.form.get('chal')
         flag = request.form.get('key')
         data = request.form.get('keydata')
-        key_type = int(request.form.get('key_type'))
+        key_type = request.form.get('key_type')
         if not keyid:
             k = Keys(chal, flag, key_type)
             k.data = data

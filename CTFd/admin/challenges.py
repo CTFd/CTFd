@@ -257,7 +257,7 @@ def admin_create_chal():
         db.session.add(chal)
         db.session.flush()
 
-        flag = Keys(chal.id, request.form['key'], int(request.form['key_type[0]']))
+        flag = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
         if request.form.get('keydata'):
             flag.data = request.form.get('keydata')
         db.session.add(flag)

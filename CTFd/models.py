@@ -127,7 +127,7 @@ class Files(db.Model):
 class Keys(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
-    key_type = db.Column(db.Integer)
+    key_type = db.Column(db.String(80))
     flag = db.Column(db.Text)
     data = db.Column(db.Text)
 
