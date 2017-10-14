@@ -289,13 +289,13 @@ def chal(chalid):
         data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'), utils.get_kpm(session['id']))
         print("[{0}] {1} submitted {2} with kpm {3}".format(*data))
 
+        chal = Challenges.query.filter_by(id=chalid).first_or_404()
+        chal_class = get_chal_class(chal.type)
+
         # Anti-bruteforce / submitting keys too quickly
         if utils.get_kpm(session['id']) > 10:
             if utils.ctftime():
-                wrong = WrongKeys(teamid=session['id'], chalid=chalid, ip=utils.get_ip(), flag=request.form['key'].strip())
-                db.session.add(wrong)
-                db.session.commit()
-                db.session.close()
+                chal_class.fail(team=team, chal=chal, request=request)
             logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
             # return '3' # Submitting too fast
             return jsonify({'status': 3, 'message': "You're submitting keys too fast. Slow down."})
@@ -304,7 +304,6 @@ def chal(chalid):
 
         # Challange not solved yet
         if not solves:
-            chal = Challenges.query.filter_by(id=chalid).first_or_404()
             provided_key = request.form['key'].strip()
             saved_keys = Keys.query.filter_by(chal=chal.id).all()
 
@@ -316,7 +315,6 @@ def chal(chalid):
                     'message': "You have 0 tries remaining"
                 })
 
-            chal_class = get_chal_class(chal.type)
             status, message = chal_class.attempt(chal, request)
             if status:  # The challenge plugin says the input is right
                 if utils.ctftime() or utils.is_admin():
