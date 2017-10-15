@@ -189,7 +189,20 @@ def solves(teamid=None):
         else:
             return redirect(url_for('auth.login', next='solves'))
     else:
-        if utils.hide_scores():
+        if utils.authed() and session['id'] == teamid:
+            solves = Solves.query.filter_by(teamid=teamid)
+            awards = Awards.query.filter_by(teamid=teamid)
+
+            freeze = utils.get_config('freeze')
+            if freeze:
+                freeze = utils.unix_time_to_utc(freeze)
+                if teamid != session.get('id'):
+                    solves = solves.filter(Solves.date < freeze)
+                    awards = awards.filter(Awards.date < freeze)
+
+            solves = solves.all()
+            awards = awards.all()
+        elif utils.hide_scores():
             # Use empty values to hide scores
             solves = []
             awards = []
@@ -251,7 +264,10 @@ def fails(teamid=None):
         fails = WrongKeys.query.filter_by(teamid=session['id']).count()
         solves = Solves.query.filter_by(teamid=session['id']).count()
     else:
-        if utils.hide_scores():
+        if utils.authed() and session['id'] == teamid:
+            fails = WrongKeys.query.filter_by(teamid=teamid).count()
+            solves = Solves.query.filter_by(teamid=teamid).count()
+        elif utils.hide_scores():
             fails = 0
             solves = 0
         else:
