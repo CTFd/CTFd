@@ -159,7 +159,7 @@ def private_team():
 
         return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place, score_frozen=utils.is_scoreboard_frozen())
     else:
-        redirect(url_for('auth.login'))
+        return redirect(url_for('auth.login'))
 
 
 @views.route('/team/<int:teamid>', methods=['GET', 'POST'])
