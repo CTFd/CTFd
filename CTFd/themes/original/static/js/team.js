@@ -1,6 +1,5 @@
 function teamid (){
-    loc = window.location.pathname
-    return loc.substring(loc.lastIndexOf('/')+1, loc.length);
+    return $('#team-id').attr('team-id');
 }
 
 function colorhash (x) {

@@ -135,6 +135,33 @@ def teams(page):
     return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
 
 
+@views.route('/team', methods=['GET'])
+def private_team():
+    if utils.authed():
+        teamid = session['id']
+
+        freeze = utils.get_config('freeze')
+        user = Teams.query.filter_by(id=teamid).first_or_404()
+        solves = Solves.query.filter_by(teamid=teamid)
+        awards = Awards.query.filter_by(teamid=teamid)
+
+        place = user.place()
+        score = user.score()
+
+        if freeze:
+            freeze = utils.unix_time_to_utc(freeze)
+            if teamid != session.get('id'):
+                solves = solves.filter(Solves.date < freeze)
+                awards = awards.filter(Awards.date < freeze)
+
+        solves = solves.all()
+        awards = awards.all()
+
+        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place, score_frozen=utils.is_scoreboard_frozen())
+    else:
+        return redirect(url_for('auth.login'))
+
+
 @views.route('/team/<int:teamid>', methods=['GET', 'POST'])
 def team(teamid):
     if utils.get_config('view_scoreboard_if_utils.authed') and not utils.authed():
