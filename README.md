@@ -19,6 +19,11 @@ CTFd is a Capture The Flag in a can. It's easy to customize with plugins and the
 ## Live Demo
 https://demo.ctfd.io/
 
+## Support
+To get basic support, you can join the [CTFd Slack Community](https://slack.ctfd.io/): [![CTFd Slack](https://slack.ctfd.io/badge.svg)](https://slack.ctfd.io/)
+
+If you prefer commercial support or have a special project, send us an email: mailto:support@ctfd.io.
+
 ## Managed Hosting
 Looking to use CTFd but don't want to deal with managing infrastructure? Check out [the CTFd website](https://ctfd.io/) for managed CTFd deployments. 
 
