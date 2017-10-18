@@ -25,8 +25,8 @@ def upgrade():
                    existing_type=sa.INTEGER(),
                    type_=sa.String(length=80),
                    existing_nullable=True)
-        op.execute("UPDATE `keys` set key_type='static' WHERE key_type=0")
-        op.execute("UPDATE `keys` set key_type='regex' WHERE key_type=1")
+        op.execute("UPDATE `keys` set key_type='static' WHERE key_type='0'")
+        op.execute("UPDATE `keys` set key_type='regex' WHERE key_type='1'")
     elif url.startswith('postgres'):
         op.alter_column('keys', 'key_type',
                    existing_type=sa.INTEGER(),
