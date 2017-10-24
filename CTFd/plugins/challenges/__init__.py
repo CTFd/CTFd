@@ -27,6 +27,12 @@ class CTFdStandardChallenge(BaseChallenge):
 
     @staticmethod
     def create(request):
+        """
+        This method is used to process the challenge creation request.
+
+        :param request:
+        :return:
+        """
         files = request.files.getlist('files[]')
 
         # Create challenge
@@ -64,6 +70,14 @@ class CTFdStandardChallenge(BaseChallenge):
 
     @staticmethod
     def update(challenge, request):
+        """
+        This method is used to update the information associated with a challenge. This should be kept strictly to the
+        Challenges table and any child tables.
+
+        :param challenge:
+        :param request:
+        :return:
+        """
         challenge.name = request.form['name']
         challenge.description = request.form['desc']
         challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
@@ -75,6 +89,12 @@ class CTFdStandardChallenge(BaseChallenge):
 
     @staticmethod
     def delete(challenge):
+        """
+        This method is used to delete the resources used by a challenge.
+
+        :param challenge:
+        :return:
+        """
         WrongKeys.query.filter_by(chalid=challenge.id).delete()
         Solves.query.filter_by(chalid=challenge.id).delete()
         Keys.query.filter_by(chal=challenge.id).delete()
