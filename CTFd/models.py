@@ -50,6 +50,7 @@ class Challenges(db.Model):
     category = db.Column(db.String(80))
     type = db.Column(db.String(80))
     hidden = db.Column(db.Boolean)
+    __mapper_args__ = {'polymorphic_on': type}
 
     def __init__(self, name, description, value, category, type='standard'):
         self.name = name

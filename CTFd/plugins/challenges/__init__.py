@@ -1,6 +1,6 @@
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.keys import get_key_class
-from CTFd.models import db, Solves, WrongKeys, Keys
+from CTFd.models import db, Solves, WrongKeys, Keys, Challenges, Files, Tags
 from CTFd import utils
 
 
@@ -24,6 +24,67 @@ class CTFdStandardChallenge(BaseChallenge):
         'update': '/plugins/challenges/assets/standard-challenge-update.js',
         'modal': '/plugins/challenges/assets/standard-challenge-modal.js',
     }
+
+    @staticmethod
+    def create(request):
+        files = request.files.getlist('files[]')
+
+        # Create challenge
+        chal = StandardChallenge(
+            name=request.form['name'],
+            description=request.form['desc'],
+            value=request.form['value'],
+            category=request.form['category'],
+            type=request.form['chaltype']
+        )
+
+        if 'hidden' in request.form:
+            chal.hidden = True
+        else:
+            chal.hidden = False
+
+        max_attempts = request.form.get('max_attempts')
+        if max_attempts and max_attempts.isdigit():
+            chal.max_attempts = int(max_attempts)
+
+        db.session.add(chal)
+        db.session.flush()
+
+        flag = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
+        if request.form.get('keydata'):
+            flag.data = request.form.get('keydata')
+        db.session.add(flag)
+
+        db.session.commit()
+
+        for f in files:
+            utils.upload_file(file=f, chalid=chal.id)
+
+        db.session.commit()
+
+    @staticmethod
+    def update(challenge, request):
+        challenge.name = request.form['name']
+        challenge.description = request.form['desc']
+        challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
+        challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
+        challenge.category = request.form['category']
+        challenge.hidden = 'hidden' in request.form
+        db.session.commit()
+        db.session.close()
+
+    @staticmethod
+    def delete(challenge):
+        WrongKeys.query.filter_by(chalid=challenge.id).delete()
+        Solves.query.filter_by(chalid=challenge.id).delete()
+        Keys.query.filter_by(chal=challenge.id).delete()
+        files = Files.query.filter_by(chal=challenge.id).all()
+        for f in files:
+            utils.delete_file(f.id)
+        Files.query.filter_by(chal=challenge.id).delete()
+        Tags.query.filter_by(chal=challenge.id).delete()
+        Challenges.query.filter_by(id=challenge.id).delete()
+        db.session.commit()
 
     @staticmethod
     def attempt(chal, request):
@@ -97,6 +158,17 @@ CHALLENGE_CLASSES = {
     "standard": CTFdStandardChallenge
 }
 
+
+class StandardChallenge(Challenges):
+    __mapper_args__ = {'polymorphic_identity': 'standard'}
+    id = db.Column(None, db.ForeignKey('challenges.id'), primary_key=True)
+    
+    def __init__(self, name, description, value, category, type='standard'):
+        self.name = name
+        self.description = description
+        self.value = value
+        self.category = category
+        self.type = type
 
 def load(app):
     register_plugin_assets_directory(app, base_path='/plugins/challenges/assets/')

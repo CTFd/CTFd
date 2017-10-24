@@ -236,41 +236,9 @@ def admin_get_values(chalid, prop):
 @admins_only
 def admin_create_chal():
     if request.method == 'POST':
-        files = request.files.getlist('files[]')
-
-        # Create challenge
-        chal = Challenges(
-            name=request.form['name'],
-            description=request.form['desc'],
-            value=request.form['value'],
-            category=request.form['category'],
-            type=request.form['chaltype']
-        )
-
-        if 'hidden' in request.form:
-            chal.hidden = True
-        else:
-            chal.hidden = False
-
-        max_attempts = request.form.get('max_attempts')
-        if max_attempts and max_attempts.isdigit():
-            chal.max_attempts = int(max_attempts)
-
-        db.session.add(chal)
-        db.session.flush()
-
-        flag = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
-        if request.form.get('keydata'):
-            flag.data = request.form.get('keydata')
-        db.session.add(flag)
-
-        db.session.commit()
-
-        for f in files:
-            utils.upload_file(file=f, chalid=chal.id)
-
-        db.session.commit()
-        db.session.close()
+        chal_type = request.form['chaltype']
+        chal_class = get_chal_class(chal_type)
+        chal_class.create(request)
         return redirect(url_for('admin_challenges.admin_chals'))
     else:
         return render_template('admin/chals/create.html')
@@ -280,17 +248,8 @@ def admin_create_chal():
 @admins_only
 def admin_delete_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
-    WrongKeys.query.filter_by(chalid=challenge.id).delete()
-    Solves.query.filter_by(chalid=challenge.id).delete()
-    Keys.query.filter_by(chal=challenge.id).delete()
-    files = Files.query.filter_by(chal=challenge.id).all()
-    for f in files:
-        utils.delete_file(f.id)
-    Files.query.filter_by(chal=challenge.id).delete()
-    Tags.query.filter_by(chal=challenge.id).delete()
-    Challenges.query.filter_by(id=challenge.id).delete()
-    db.session.commit()
-    db.session.close()
+    chal_class = get_chal_class(challenge.type)
+    chal_class.delete(challenge)
     return '1'
 
 
@@ -298,13 +257,6 @@ def admin_delete_chal():
 @admins_only
 def admin_update_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
-    challenge.name = request.form['name']
-    challenge.description = request.form['desc']
-    challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
-    challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
-    challenge.category = request.form['category']
-    challenge.hidden = 'hidden' in request.form
-    db.session.add(challenge)
-    db.session.commit()
-    db.session.close()
+    chal_class = get_chal_class(challenge.type)
+    chal_class.update(challenge, request)
     return redirect(url_for('admin_challenges.admin_chals'))
