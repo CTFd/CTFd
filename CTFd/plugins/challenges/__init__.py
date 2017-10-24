@@ -30,7 +30,7 @@ class CTFdStandardChallenge(BaseChallenge):
         files = request.files.getlist('files[]')
 
         # Create challenge
-        chal = Standard(
+        chal = Challenges(
             name=request.form['name'],
             description=request.form['desc'],
             value=request.form['value'],
@@ -48,7 +48,7 @@ class CTFdStandardChallenge(BaseChallenge):
             chal.max_attempts = int(max_attempts)
 
         db.session.add(chal)
-        db.session.flush()
+        db.session.commit()
 
         flag = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
         if request.form.get('keydata'):
@@ -159,18 +159,5 @@ CHALLENGE_CLASSES = {
 }
 
 
-class Standard(Challenges):
-    __mapper_args__ = {'polymorphic_identity': 'standard'}
-    id = db.Column(None, db.ForeignKey('challenges.id'), primary_key=True)
-
-    def __init__(self, name, description, value, category, type='standard'):
-        self.name = name
-        self.description = description
-        self.value = value
-        self.category = category
-        self.type = type
-
-
 def load(app):
-    app.db.create_all()
     register_plugin_assets_directory(app, base_path='/plugins/challenges/assets/')
