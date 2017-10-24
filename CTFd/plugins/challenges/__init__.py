@@ -159,8 +159,7 @@ CHALLENGE_CLASSES = {
 }
 
 
-class StandardChallenge(Challenges):
-    __tablename__ = 'standard_challenge'
+class Standard(Challenges):
     __mapper_args__ = {'polymorphic_identity': 'standard'}
     id = db.Column(None, db.ForeignKey('challenges.id'), primary_key=True)
 
