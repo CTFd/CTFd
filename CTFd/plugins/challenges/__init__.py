@@ -160,15 +160,16 @@ CHALLENGE_CLASSES = {
 
 
 class StandardChallenge(Challenges):
-    __mapper_args__ = {'polymorphic_identity': 'standard'}
+    __mapper_args__ = {'polymorphic_identity': 'standard_challenge'}
     id = db.Column(None, db.ForeignKey('challenges.id'), primary_key=True)
-    
+
     def __init__(self, name, description, value, category, type='standard'):
         self.name = name
         self.description = description
         self.value = value
         self.category = category
         self.type = type
+
 
 def load(app):
     register_plugin_assets_directory(app, base_path='/plugins/challenges/assets/')
