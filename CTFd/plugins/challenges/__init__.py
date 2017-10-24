@@ -172,4 +172,5 @@ class Standard(Challenges):
 
 
 def load(app):
+    app.db.create_all()
     register_plugin_assets_directory(app, base_path='/plugins/challenges/assets/')

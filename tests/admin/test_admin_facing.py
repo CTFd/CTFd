@@ -132,7 +132,7 @@ def test_admins_can_create_challenges():
 
 
 def test_admins_can_update_challenges():
-    '''Test that admins can create new challenges'''
+    '''Test that admins can update challenges'''
     app = create_ctfd()
     with app.app_context():
         client = login_as_user(app, name="admin", password="password")
