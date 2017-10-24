@@ -73,6 +73,18 @@ def admin_chals():
         return render_template('admin/chals.html')
 
 
+@admin_challenges.route('/admin/chals/<int:chalid>', methods=['GET', 'POST'])
+@admins_only
+def admin_chal_detail(chalid):
+    if request.method == 'POST':
+        pass
+    elif request.method == 'GET':
+        chal = Challenges.query.filter_by(id=chalid).first_or_404()
+        chal_class = get_chal_class(chal.type)
+        obj, data = chal_class.read(chal)
+        return jsonify(data)
+
+
 @admin_challenges.route('/admin/tags/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_tags(chalid):

@@ -69,6 +69,32 @@ class CTFdStandardChallenge(BaseChallenge):
         db.session.commit()
 
     @staticmethod
+    def read(challenge):
+        """
+        This method is in used to access the data of a challenge in a format processable by the front end.
+
+        :param challenge:
+        :return:
+        """
+        data = {
+            'id': challenge.id,
+            'name': challenge.name,
+            'value': challenge.value,
+            'description': challenge.description,
+            'category': challenge.category,
+            'hidden': challenge.hidden,
+            'max_attempts': challenge.max_attempts,
+            'type': challenge.type,
+            'type_data': {
+                'id': CTFdStandardChallenge.id,
+                'name': CTFdStandardChallenge.name,
+                'templates': CTFdStandardChallenge.templates,
+                'scripts': CTFdStandardChallenge.scripts,
+            }
+        }
+        return challenge, data
+
+    @staticmethod
     def update(challenge, request):
         """
         This method is used to update the information associated with a challenge. This should be kept strictly to the
