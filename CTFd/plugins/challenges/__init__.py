@@ -30,7 +30,7 @@ class CTFdStandardChallenge(BaseChallenge):
         files = request.files.getlist('files[]')
 
         # Create challenge
-        chal = StandardChallenge(
+        chal = Standard(
             name=request.form['name'],
             description=request.form['desc'],
             value=request.form['value'],
