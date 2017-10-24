@@ -51,7 +51,7 @@ class Challenges(db.Model):
     type = db.Column(db.String(80))
     hidden = db.Column(db.Boolean)
     __mapper_args__ = {
-        'polymorphic_identity':'standard',
+        'polymorphic_identity': 'standard',
         'polymorphic_on': type
     }
 
