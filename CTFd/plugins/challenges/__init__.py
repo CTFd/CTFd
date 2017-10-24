@@ -160,7 +160,8 @@ CHALLENGE_CLASSES = {
 
 
 class StandardChallenge(Challenges):
-    __mapper_args__ = {'polymorphic_identity': 'standard_challenge'}
+    __tablename__ = 'standard_challenge'
+    __mapper_args__ = {'polymorphic_identity': 'standard'}
     id = db.Column(None, db.ForeignKey('challenges.id'), primary_key=True)
 
     def __init__(self, name, description, value, category, type='standard'):
