@@ -38,7 +38,12 @@ def admin_view():
 @admins_only
 def admin_plugin_config(plugin):
     if request.method == 'GET':
-        if plugin in utils.get_configurable_plugins():
+        plugins_path = os.path.join(app.root_path, 'plugins')
+
+        config_html_plugins = [name for name in os.listdir(plugins_path)
+                               if os.path.isfile(os.path.join(plugins_path, name, 'config.html'))]
+
+        if plugin in config_html_plugins:
             config = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
             return render_template_string(config)
         abort(404)
