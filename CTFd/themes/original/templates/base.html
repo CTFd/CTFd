@@ -45,6 +45,16 @@
 						{% for page in pages() %}
 							<li><a href="{{ request.script_root }}/{{ page.route }}">{{ page.route|title }}</a></li>
 						{% endfor %}
+
+						{% set page_menu = get_user_page_menu_bar() %}
+						{% for menu in page_menu %}
+							{% if menu.route.startswith('http://') or menu.route.startswith('https://') %}
+								<li><a href="{{ menu.route }}">{{ menu.name }}</a></li>
+							{% else %}
+								<li><a href="{{ request.script_root }}{{ menu.route }}">{{ menu.name }}</a></li>
+							{% endif %}
+						{% endfor %}
+
 						<li><a href="{{ request.script_root }}/teams">Teams</a></li>
 						{% if not hide_scores() %}
 						<li><a href="{{ request.script_root }}/scoreboard">Scoreboard</a></li>
