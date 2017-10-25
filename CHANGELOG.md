@@ -1,3 +1,23 @@
+1.0.5 / 2017-10-25
+==================
+
+* Challenge Type Plugins now have a static interface which should be implemented by all challenge types.
+    * Challenge Type Plugins are now self-contained in the plugin system meaning you no longer need to manipulate themes in order to register Challenge Type Plugins.
+    * Challenge Type plugins should implement the create, read, update, delete, attempt, solve, and fail static methods.
+    * Challenge Type plugins now use strings for both their IDs and names. 
+    * Challenge TYpe plugins now contain references to their related modal template files.
+* Plugins can now register directories and files to be served by CTFd
+    * `CTFd.plugins.register_plugin_assets_directory` registers a directory to be served
+    * `CTFd.plugins.register_plugin_asset` registers a file to be served
+* The challenge type and key type columns are now strings.
+* Some utils functions now have `CTFd.plugins` wrappers.
+* There is now a `/team` endpoint which takes the user to their own public profile.
+* Mail server username and passwords are no longer rendered in the Admin Config panel.    
+* Users can now see their own user graphs when scores are hidden.
+* `prepare.sh` is now marked executable.
+* Spinners are now properly removed if there is no data to display.
+
+
 1.0.4 / 2017-09-09
 ==================
 
@@ -73,7 +93,7 @@
 * Fixes Python 3 compatibility
 * Fixes a variety of glitches reported by users
 
-***Always backup database before upgrading!**
+* **Always backup database before upgrading!**
 
 1.0.0 / 2017-01-24
 ==================
