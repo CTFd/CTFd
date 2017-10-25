@@ -4,8 +4,11 @@
 from tests.helpers import *
 from CTFd.models import Teams, Challenges
 from CTFd.utils import get_config, set_config, override_template, sendmail, verify_email, ctf_started, ctf_ended
+from CTFd.plugins.challenges import get_chal_class
 from freezegun import freeze_time
 from mock import patch
+
+import json
 
 
 def test_admin_panel():
@@ -182,4 +185,39 @@ def test_admins_can_delete_challenges():
             assert r.get_data(as_text=True) == '1'
 
         assert Challenges.query.count() == 0
+    destroy_ctfd(app)
+
+
+def test_admin_chal_detail_returns_proper_data():
+    """Test that the /admin/chals/<int:chalid> endpoint returns the proper data"""
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        chal = gen_challenge(app.db)
+        chal_class = get_chal_class(chal.type)
+        data = {
+            'id': chal.id,
+            'name': chal.name,
+            'value': chal.value,
+            'description': chal.description,
+            'category': chal.category,
+            'hidden': chal.hidden,
+            'max_attempts': chal.max_attempts,
+            'type': chal.type,
+            'type_data': {
+                'id': chal_class.id,
+                'name': chal_class.name,
+                'templates': chal_class.templates,
+                'scripts': chal_class.scripts,
+            }
+        }
+
+        assert Challenges.query.count() == 1
+
+        r = client.get('/admin/chals/1')
+        response = json.loads(r.get_data(as_text=True))
+
+        assert data == response
+
     destroy_ctfd(app)

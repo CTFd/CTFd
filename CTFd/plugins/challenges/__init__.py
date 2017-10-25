@@ -74,7 +74,7 @@ class CTFdStandardChallenge(BaseChallenge):
         This method is in used to access the data of a challenge in a format processable by the front end.
 
         :param challenge:
-        :return:
+        :return: Challenge object, data dictionary to be returned to the user
         """
         data = {
             'id': challenge.id,
