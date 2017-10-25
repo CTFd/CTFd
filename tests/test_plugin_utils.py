@@ -8,7 +8,11 @@ from CTFd.plugins import (
     register_plugin_asset,
     register_plugin_script,
     register_plugin_stylesheet,
-    override_template
+    override_template,
+    register_admin_plugin_menu_bar,
+    get_admin_plugin_menu_bar,
+    register_user_page_menu_bar,
+    get_user_page_menu_bar
 )
 from freezegun import freeze_time
 from mock import patch
@@ -97,4 +101,47 @@ def test_register_plugin_stylesheet():
             output = r.get_data(as_text=True)
             assert '/fake/stylesheet/path.css' in output
             assert 'http://ctfd.io/fake/stylesheet/path.css' in output
+    destroy_ctfd(app)
+
+
+def test_register_admin_plugin_menu_bar():
+    """
+    Test that register_admin_plugin_menu_bar() properly inserts into HTML and get_admin_plugin_menu_bar()
+    returns the proper list.
+    """
+    app = create_ctfd()
+    with app.app_context():
+        register_admin_plugin_menu_bar(name='test_admin_plugin_name', route='/test_plugin')
+
+        client = login_as_user(app, name="admin", password="password")
+        r = client.get('/admin/graphs')
+        output = r.get_data(as_text=True)
+        assert '/test_plugin' in output
+        assert 'test_admin_plugin_name' in output
+
+        menu_item = get_admin_plugin_menu_bar()[0]
+        assert menu_item.name == 'test_admin_plugin_name'
+        assert menu_item.route == '/test_plugin'
+    destroy_ctfd(app)
+
+
+def test_register_user_page_menu_bar():
+    """
+    Test that the register_user_page_menu_bar() properly inserts into HTML and get_user_page_menu_bar() returns the
+    proper list.
+    """
+    app = create_ctfd()
+    with app.app_context():
+        register_user_page_menu_bar(name='test_user_menu_link', route='/test_user_href')
+
+        client = login_as_user(app)
+        r = client.get('/')
+
+        output = r.get_data(as_text=True)
+        assert '/test_user_href' in output
+        assert 'test_user_menu_link' in output
+
+        menu_item = get_user_page_menu_bar()[0]
+        assert menu_item.name == 'test_user_menu_link'
+        assert menu_item.route == '/test_user_href'
     destroy_ctfd(app)
