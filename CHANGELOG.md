@@ -5,17 +5,23 @@
     * Challenge Type Plugins are now self-contained in the plugin system meaning you no longer need to manipulate themes in order to register Challenge Type Plugins.
     * Challenge Type plugins should implement the create, read, update, delete, attempt, solve, and fail static methods.
     * Challenge Type plugins now use strings for both their IDs and names. 
-    * Challenge TYpe plugins now contain references to their related modal template files.
+    * Challenge Type plugins now contain references to their related modal template files.
 * Plugins can now register directories and files to be served by CTFd
     * `CTFd.plugins.register_plugin_assets_directory` registers a directory to be served
     * `CTFd.plugins.register_plugin_asset` registers a file to be served
+* Plugins can now add to the admin and user menu/nav bars
+    * Plugins can now add to the admin menu bar with `CTFd.plugins. register_admin_plugin_menu_bar `
+    * Plugins can now add to the user menu bar with `CTFd.plugins. register_user_page_menu_bar `
+* Plugins should now use `config.json` to define plugin attributes in lieu of config.html. Backwards compatibility has been maintained. With `config.json`, plugins can now control where the user is linked to instead of being directed to config.html.
 * The challenge type and key type columns are now strings.
 * Some utils functions now have `CTFd.plugins` wrappers.
 * There is now a `/team` endpoint which takes the user to their own public profile.
-* Mail server username and passwords are no longer rendered in the Admin Config panel.    
+* Mail server username and passwords are no longer rendered in the Admin Config panel.
 * Users can now see their own user graphs when scores are hidden.
 * `prepare.sh` is now marked executable.
 * Spinners are now properly removed if there is no data to display.
+
+**Always backup your database before upgrading!**
 
 
 1.0.4 / 2017-09-09
