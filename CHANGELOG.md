@@ -1,9 +1,8 @@
 1.0.5 / 2017-10-25
 ==================
 
-* Challenge Type Plugins now have a static interface which should be implemented by all challenge types. 
-    * Challenge Type Plugins are now self contained in the plugin system meaning you no 
-    longer need to manipulate themes in order to register Challenge Type Plugins.
+* Challenge Type Plugins now have a static interface which should be implemented by all challenge types.
+    * Challenge Type Plugins are now self-contained in the plugin system meaning you no longer need to manipulate themes in order to register Challenge Type Plugins.
     * Challenge Type plugins should implement the create, read, update, delete, attempt, solve, and fail static methods.
     * Challenge Type plugins now use strings for both their IDs and names. 
     * Challenge TYpe plugins now contain references to their related modal template files.
@@ -94,7 +93,7 @@
 * Fixes Python 3 compatibility
 * Fixes a variety of glitches reported by users
 
-***Always backup database before upgrading!**
+* **Always backup database before upgrading!**
 
 1.0.0 / 2017-01-24
 ==================
