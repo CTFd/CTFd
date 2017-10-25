@@ -40,9 +40,9 @@ function load_edit_key_modal(key_id, key_type_name) {
 }
 
 function load_chal_template(id, success_cb){
-    obj = $.grep(challenges['game'], function (e) {
+    var obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
-    })[0]
+    })[0];
     $.get(script_root + obj.type_data.templates.update, function(template_data){
         var template = Handlebars.compile(template_data);
         $("#update-modals-entry-div").html(template({'nonce':$('#nonce').val(), 'script_root':script_root}));
@@ -50,7 +50,7 @@ function load_chal_template(id, success_cb){
           url: script_root + obj.type_data.scripts.update,
           dataType: "script",
           success: success_cb,
-          cache: true,
+          cache: false,
         });
     });
 }
@@ -72,7 +72,7 @@ function loadchals(){
         };
 
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
-            var chal = challenges['game'][i]
+            var chal = challenges['game'][i];
             var chal_button = $('<button class="chal-button col-md-2 theme-background" value="{0}"><h5>{1}</h5><p class="chal-points">{2}</p><span class="chal-percent">{3}% solved</span></button>'.format(chal.id, chal.name, chal.value, Math.round(chal.percentage_solved * 100)));
             $('#' + challenges['game'][i].category.replace(/ /g,"-").hashCode()).append(chal_button);
         };
