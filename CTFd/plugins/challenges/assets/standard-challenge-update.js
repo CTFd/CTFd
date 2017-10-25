@@ -376,7 +376,7 @@ function loadchal(id, update) {
         //})
         if (typeof update === 'undefined')
             $('#update-challenge').modal();
-    }
+    });
 }
 
 function openchal(id){

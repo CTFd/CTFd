@@ -1,3 +1,4 @@
+$.ajaxSetup({ cache: false });
 function load_chal_template(challenge){
     $.get(script_root + challenge.templates.create, function(template_data){
         var template = Handlebars.compile(template_data);
