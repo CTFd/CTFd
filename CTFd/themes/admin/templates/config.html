@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row">
 	<h1>Config</h1>
-	<form method="POST">
+	<form method="POST" autocomplete="off">
 		<div class="col-md-2 col-md-offset-2">
 			<ul class="nav nav-pills nav-stacked">
 				<li role="presentation" class="active">
@@ -133,22 +133,29 @@
 							<div class="checkbox">
 							<label>
 								<input id="mail_useauth" name="mail_useauth" type="checkbox" {% if mail_useauth %}checked{% endif %}>
-									Specify Username and Password
+									Use Mail Server Username and Password
 								</label>
 							</div>
 							<div id="mail_username_password">
 								<div class="form-group">
 									<label for="start">Username:</label>
-									<input class="form-control" id='mail_username' name='mail_username' type='text'
-											placeholder="Username"
-											{% if mail_username is defined and mail_username != None %}value="{{ mail_username }}"{% endif %}>
+									{% if mail_username is defined and mail_username != None %}
+										<label for="mail_u"><sup>A mail server username is currently set</sup></label>
+									{% endif %}
+									<input class="form-control" id='mail_u' name='mail_u' autocomplete='off' type='text'
+											placeholder="Username">
 								</div>
 								<div class="form-group">
-									<label for="start">Password:</label>
-									<input class="form-control" id='mail_password' name='mail_password' type='password'
-											placeholder="Password"
-											{% if mail_password is defined and mail_password != None %}value="{{ mail_password }}"{% endif %}>
+									<label for="mail_p">Password:</label>
+									{% if mail_password is defined and mail_password != None %}
+										<label for="mail_p"><sup>An mail server password is currently set</sup></label>
+									{% endif %}
+									<input class="form-control" id='mail_p' name='mail_p' autocomplete='off' type='password'
+											placeholder="Password">
 								</div>
+                                <sup>Uncheck setting and update to remove username and password</sup>
+                                <br>
+                                <br>
 							</div>
 							<div class="checkbox">
 								<label>

@@ -143,8 +143,15 @@ def admin_config():
         mail_server = utils.set_config("mail_server", request.form.get('mail_server', None))
         mail_port = utils.set_config("mail_port", request.form.get('mail_port', None))
 
-        mail_username = utils.set_config("mail_username", request.form.get('mail_username', None))
-        mail_password = utils.set_config("mail_password", request.form.get('mail_password', None))
+        if request.form.get('mail_useauth', None) and (request.form.get('mail_u', None) or request.form.get('mail_p', None)):
+            if len(request.form.get('mail_u')) > 0:
+                mail_username = utils.set_config("mail_username", request.form.get('mail_u', None))
+            if len(request.form.get('mail_p')) > 0:
+                mail_password = utils.set_config("mail_password", request.form.get('mail_p', None))
+
+        elif request.form.get('mail_useauth', None) is None:
+            utils.set_config("mail_username", None)
+            utils.set_config("mail_password", None)
 
         ctf_name = utils.set_config("ctf_name", request.form.get('ctf_name', None))
         ctf_theme = utils.set_config("ctf_theme", request.form.get('ctf_theme', None))
