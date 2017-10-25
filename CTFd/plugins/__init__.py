@@ -2,6 +2,7 @@ import glob
 import importlib
 import os
 
+from collections import namedtuple
 from flask.helpers import safe_join
 from flask import current_app as app, send_file, send_from_directory, abort
 from CTFd.utils import (
@@ -10,6 +11,10 @@ from CTFd.utils import (
     register_plugin_script as utils_register_plugin_script,
     register_plugin_stylesheet as utils_register_plugin_stylesheet
 )
+
+
+AdminMenu = namedtuple('AdminMenu', ['name', 'route'])
+ADMIN_PLUGIN_MENUBAR = []
 
 
 def register_plugin_assets_directory(app, base_path, admins_only=False):
@@ -76,6 +81,15 @@ def register_plugin_stylesheet(*args, **kwargs):
     utils_register_plugin_stylesheet(*args, **kwargs)
 
 
+def register_admin_plugin_menu_bar(name, route):
+    am = AdminMenu(name=name, route=route)
+    ADMIN_PLUGIN_MENUBAR.append(am)
+
+
+def get_admin_plugin_menu_bar():
+    return ADMIN_PLUGIN_MENUBAR
+
+
 def init_plugins(app):
     """
     Searches for the load function in modules in the CTFd/plugins folder. This function is called with the current CTFd
@@ -93,3 +107,5 @@ def init_plugins(app):
             module = importlib.import_module(module, package='CTFd.plugins')
             module.load(app)
             print(" * Loaded module, %s" % module)
+
+    app.jinja_env.globals.update(get_admin_plugin_menu_bar=get_admin_plugin_menu_bar)
