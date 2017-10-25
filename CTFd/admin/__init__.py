@@ -1,4 +1,5 @@
 import hashlib
+import importlib
 import json
 import os
 import datetime
@@ -37,12 +38,15 @@ def admin_view():
 @admin.route('/admin/plugins/<plugin>', methods=['GET', 'POST'])
 @admins_only
 def admin_plugin_config(plugin):
-    if request.method == 'GET':
-        if plugin in utils.get_configurable_plugins():
-            config = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
-            return render_template_string(config)
-        abort(404)
-    elif request.method == 'POST':
+    if plugin in utils.get_configurable_plugins():
+        config_template = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
+        plugin_module = '.' + plugin
+        plugin_module = importlib.import_module(plugin_module, package='CTFd.plugins')
+        if ('plugin_config_route' in dir(plugin_module)):
+            return plugin_module.plugin_config_route(config_template, request)
+        elif request.method == 'GET':
+            return render_template_string(config_template)
+    if request.method == 'POST':
         for k, v in request.form.items():
             if k == "nonce":
                 continue
@@ -50,6 +54,7 @@ def admin_plugin_config(plugin):
         with app.app_context():
             cache.clear()
         return '1'
+    abort(404)
 
 
 @admin.route('/admin/import', methods=['GET', 'POST'])
