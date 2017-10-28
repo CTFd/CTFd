@@ -84,8 +84,10 @@ def get_scores(user):
     return scores['standings']
 
 
-def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard'):
+def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard', hidden=False):
     chal = Challenges(name, description, value, category)
+    if hidden:
+        chal.hidden = hidden
     db.session.add(chal)
     db.session.commit()
     return chal

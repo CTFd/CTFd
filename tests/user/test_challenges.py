@@ -349,3 +349,27 @@ def test_that_view_challenges_unregistered_works():
         data = json.loads(data)
         assert data['status'] == -1
     destroy_ctfd(app)
+
+
+def test_hidden_challenge_is_unsolveable():
+    """Test that hidden challenges return 404 and do not insert a solve or wrong key"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db, hidden=True)
+        flag = gen_flag(app.db, chal=chal.id, flag='flag')
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 404
+
+        solves = Solves.query.all()
+        assert len(solves) == 0
+
+        wrong_keys = WrongKeys.query.all()
+        assert len(wrong_keys) == 0
+    destroy_ctfd(app)

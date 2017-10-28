@@ -306,6 +306,8 @@ def chal(chalid):
         print("[{0}] {1} submitted {2} with kpm {3}".format(*data))
 
         chal = Challenges.query.filter_by(id=chalid).first_or_404()
+        if chal.hidden:
+            abort(404)
         chal_class = get_chal_class(chal.type)
 
         # Anti-bruteforce / submitting keys too quickly
