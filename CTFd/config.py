@@ -77,7 +77,7 @@ class Config(object):
     The default destination is the CTFd/uploads folder. If you need Amazon S3 files
     you can use the CTFd S3 plugin: https://github.com/ColdHeat/CTFd-S3-plugin
     '''
-    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(os.path.dirname(__file__), 'uploads')
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 
     '''
     TEMPLATES_AUTO_RELOAD specifies whether Flask should check for modifications to templates and
