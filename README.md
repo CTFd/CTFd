@@ -10,7 +10,7 @@ CTFd is a Capture The Flag framework focusing on ease of use an customizability.
 ![CTFd is a CTF in a can.](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/original/static/img/scoreboard.png?raw=true)
 
 ## Features
- * Create your own challenges, categories, and flags from the Admin Interface
+ * Create your own challenges, categories, hints, and flags from the Admin Interface
     * Static & Regex based flags
     * Users can unlock hints for free or with points
     * File uploads to the server or [Amazon S3](https://github.com/CTFd/CTFd-S3-plugin)
