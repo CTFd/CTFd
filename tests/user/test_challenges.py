@@ -271,7 +271,7 @@ def test_submitting_flags_with_large_ips():
 
 
 def test_unlocking_hints_with_no_cost():
-    '''Test that hints with no cost can be unlocked'''
+    """Test that hints with no cost can be unlocked"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -291,8 +291,110 @@ def test_unlocking_hints_with_no_cost():
     destroy_ctfd(app)
 
 
+def test_unlocking_hints_with_cost_during_ctf_with_points():
+    """Test that hints with a cost are unlocked if you have the points"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+        hint = gen_hint(app.db, chal_id, cost=10)
+        gen_award(app.db, teamid=2)
+
+        client = login_as_user(app)
+        with client.session_transaction() as sess:
+            data = {
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/hints/1', data=data)
+        output = r.get_data(as_text=True)
+        output = json.loads(output)
+        assert output.get('hint') == 'This is a hint'
+        user = Teams.query.filter_by(id=2).first()
+        assert user.score() == 90
+    destroy_ctfd(app)
+
+
+def test_unlocking_hints_with_cost_during_ctf_without_points():
+    """Test that hints with a cost are not unlocked if you don't have the points"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+        hint = gen_hint(app.db, chal_id, cost=10)
+
+        client = login_as_user(app)
+        with client.session_transaction() as sess:
+            data = {
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/hints/1', data=data)
+        output = r.get_data(as_text=True)
+        output = json.loads(output)
+        assert output.get('errors') == 'Not enough points'
+        user = Teams.query.filter_by(id=2).first()
+        assert user.score() == 0
+    destroy_ctfd(app)
+
+
+def test_unlocking_hints_with_cost_during_ended_ctf():
+    """Test that hints with a cost are not unlocked if the CTF has ended"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+        hint = gen_hint(app.db, chal_id, cost=10)
+        gen_award(app.db, teamid=2)
+
+        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+
+        with freeze_time("2017-11-4"):
+            client = login_as_user(app)
+            with client.session_transaction() as sess:
+                data = {
+                    "nonce": sess.get('nonce')
+                }
+            r = client.post('/hints/1', data=data)
+            assert r.status_code == 403
+            user = Teams.query.filter_by(id=2).first()
+            assert user.score() == 100
+            assert Unlocks.query.count() == 0
+    destroy_ctfd(app)
+
+
+def test_unlocking_hints_with_cost_during_frozen_ctf():
+    """Test that hints with a cost are unlocked if the CTF is frozen."""
+    app = create_ctfd()
+    with app.app_context():
+        set_config('freeze', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        with freeze_time("2017-10-4"):
+            register_user(app)
+            chal = gen_challenge(app.db)
+            chal_id = chal.id
+            hint = gen_hint(app.db, chal_id, cost=10)
+            gen_award(app.db, teamid=2)
+
+        with freeze_time("2017-10-8"):
+            client = login_as_user(app)
+            with client.session_transaction() as sess:
+                data = {
+                    "nonce": sess.get('nonce')
+                }
+
+            r = client.post('/hints/1', data=data)
+            output = r.get_data(as_text=True)
+            output = json.loads(output)
+            assert output.get('hint') == 'This is a hint'
+            user = Teams.query.filter_by(id=2).first()
+            assert user.score() == 100
+    destroy_ctfd(app)
+
+
 def test_unlocking_hint_for_unicode_challenge():
-    '''Test that hints for challenges with unicode names can be unlocked'''
+    """Test that hints for challenges with unicode names can be unlocked"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
