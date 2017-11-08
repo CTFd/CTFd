@@ -312,6 +312,7 @@ def test_unlocking_hints_with_cost_during_ctf_with_points():
         assert output.get('hint') == 'This is a hint'
         user = Teams.query.filter_by(id=2).first()
         assert user.score() == 90
+    destroy_ctfd(app)
 
 
 def test_unlocking_hints_with_cost_during_ctf_without_points():
@@ -334,6 +335,7 @@ def test_unlocking_hints_with_cost_during_ctf_without_points():
         assert output.get('errors') == 'Not enough points'
         user = Teams.query.filter_by(id=2).first()
         assert user.score() == 0
+    destroy_ctfd(app)
 
 
 def test_unlocking_hints_with_cost_during_ended_ctf():
@@ -360,6 +362,7 @@ def test_unlocking_hints_with_cost_during_ended_ctf():
             user = Teams.query.filter_by(id=2).first()
             assert user.score() == 100
             assert Unlocks.query.count() == 0
+    destroy_ctfd(app)
 
 
 def test_unlocking_hints_with_cost_during_frozen_ctf():
@@ -387,6 +390,7 @@ def test_unlocking_hints_with_cost_during_frozen_ctf():
             assert output.get('hint') == 'This is a hint'
             user = Teams.query.filter_by(id=2).first()
             assert user.score() == 100
+    destroy_ctfd(app)
 
 
 def test_unlocking_hint_for_unicode_challenge():
