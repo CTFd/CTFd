@@ -18,7 +18,7 @@ challenges = Blueprint('challenges', __name__)
 
 @challenges.route('/hints/<int:hintid>', methods=['GET', 'POST'])
 def hints_view(hintid):
-    if not utils.ctf_started():
+    if not utils.ctftime() or is_scoreboard_frozen():
         abort(403)
     hint = Hints.query.filter_by(id=hintid).first_or_404()
     chal = Challenges.query.filter_by(id=hint.chal).first()
