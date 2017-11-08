@@ -36,31 +36,27 @@ def hints_view(hintid):
                 'cost': hint.cost
             })
     elif request.method == 'POST':
-        if not unlock and utils.ctftime():
-            team = Teams.query.filter_by(id=session['id']).first()
-            if team.score() < hint.cost:
-                return jsonify({'errors': 'Not enough points'})
-            unlock = Unlocks(model='hints', teamid=session['id'], itemid=hint.id)
-            award = Awards(teamid=session['id'], name=text_type('Hint for {}'.format(chal.name)), value=(-hint.cost))
-            db.session.add(unlock)
-            db.session.add(award)
-            db.session.commit()
-            json_data = {
-                'hint': hint.hint,
-                'chal': hint.chal,
-                'cost': hint.cost
-            }
-            db.session.close()
-            return jsonify(json_data)
-        elif utils.ctf_ended():
-            json_data = {
-                'hint': hint.hint,
-                'chal': hint.chal,
-                'cost': hint.cost
-            }
-            db.session.close()
-            return jsonify(json_data)
-        else:
+        if unlock is None:  # The user does not have an unlock.
+            if utils.ctftime() or (utils.ctf_ended() and utils.view_after_ctf()):
+                # It's ctftime or the CTF has ended (but we allow views after)
+                team = Teams.query.filter_by(id=session['id']).first()
+                if team.score() < hint.cost:
+                    return jsonify({'errors': 'Not enough points'})
+                unlock = Unlocks(model='hints', teamid=session['id'], itemid=hint.id)
+                award = Awards(teamid=session['id'], name=text_type('Hint for {}'.format(chal.name)), value=(-hint.cost))
+                db.session.add(unlock)
+                db.session.add(award)
+                db.session.commit()
+                json_data = {
+                    'hint': hint.hint,
+                    'chal': hint.chal,
+                    'cost': hint.cost
+                }
+                db.session.close()
+                return jsonify(json_data)
+            elif utils.ctf_ended():  # The CTF has ended. No views after.
+                abort(403)
+        else:  # The user does have an unlock, we should give them their hint.
             json_data = {
                 'hint': hint.hint,
                 'chal': hint.chal,
