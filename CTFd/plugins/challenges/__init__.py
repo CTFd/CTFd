@@ -30,7 +30,7 @@ class CTFdStandardChallenge(BaseChallenge):
         """
         This method is used to process the challenge creation request.
 
-        :param request:
+        :param request: The request the user submitted
         :return:
         """
         files = request.files.getlist('files[]')
@@ -71,9 +71,10 @@ class CTFdStandardChallenge(BaseChallenge):
     @staticmethod
     def read(challenge):
         """
-        This method is in used to access the data of a challenge in a format processable by the front end.
+        This method is in used to access the data of a challenge in a format
+        processable by the front end.
 
-        :param challenge:
+        :param challenge: The Challenge object from the database
         :return: Challenge object, data dictionary to be returned to the user
         """
         data = {
@@ -97,11 +98,12 @@ class CTFdStandardChallenge(BaseChallenge):
     @staticmethod
     def update(challenge, request):
         """
-        This method is used to update the information associated with a challenge. This should be kept strictly to the
-        Challenges table and any child tables.
+        This method is used to update the information associated with a
+        challenge. This should be kept strictly to the Challenges table and any
+        child tables.
 
-        :param challenge:
-        :param request:
+        :param challenge: The Challenge object from the database
+        :param request:  The request the user submitted
         :return:
         """
         challenge.name = request.form['name']
@@ -118,7 +120,7 @@ class CTFdStandardChallenge(BaseChallenge):
         """
         This method is used to delete the resources used by a challenge.
 
-        :param challenge:
+        :param challenge: The Challenge object from the database
         :return:
         """
         WrongKeys.query.filter_by(chalid=challenge.id).delete()
@@ -135,9 +137,10 @@ class CTFdStandardChallenge(BaseChallenge):
     @staticmethod
     def attempt(chal, request):
         """
-        This method is used to check whether a given input is right or wrong. It does not make any changes and should
-        return a boolean for correctness and a string to be shown to the user. It is also in charge of parsing the
-        user's input from the request itself.
+        This method is used to check whether a given input is right or wrong. It
+        does not make any changes and should return a boolean for correctness
+        and a string to be shown to the user. It is also in charge of parsing
+        the user's input from the request itself.
 
         :param chal: The Challenge object from the database
         :param request: The request the user submitted
@@ -153,7 +156,8 @@ class CTFdStandardChallenge(BaseChallenge):
     @staticmethod
     def solve(team, chal, request):
         """
-        This method is used to insert Solves into the database in order to mark a challenge as solved.
+        This method is used to insert Solves into the database in order to mark
+        a challenge as solved.
 
         :param team: The Team object from the database
         :param chal: The Challenge object from the database
@@ -161,7 +165,8 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         provided_key = request.form['key'].strip()
-        solve = Solves(teamid=team.id, chalid=chal.id, ip=utils.get_ip(req=request), flag=provided_key)
+        solve = Solves(teamid=team.id, chalid=chal.id,
+                       ip=utils.get_ip(req=request), flag=provided_key)
         db.session.add(solve)
         db.session.commit()
         db.session.close()
@@ -169,7 +174,8 @@ class CTFdStandardChallenge(BaseChallenge):
     @staticmethod
     def fail(team, chal, request):
         """
-        This method is used to insert WrongKeys into the database in order to mark an answer incorrect.
+        This method is used to insert WrongKeys into the database in order to
+        mark an answer incorrect.
 
         :param team: The Team object from the database
         :param chal: The Challenge object from the database
@@ -177,7 +183,8 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         provided_key = request.form['key'].strip()
-        wrong = WrongKeys(teamid=team.id, chalid=chal.id, ip=utils.get_ip(request), flag=provided_key)
+        wrong = WrongKeys(teamid=team.id, chalid=chal.id,
+                          ip=utils.get_ip(request), flag=provided_key)
         db.session.add(wrong)
         db.session.commit()
         db.session.close()
@@ -197,8 +204,8 @@ def get_chal_class(class_id):
 
 
 """
-Global dictionary used to hold all the Challenge Type classes used by CTFd. Insert into this dictionary to register
-your Challenge Type.
+Global dictionary used to hold all the Challenge Type classes used by
+CTFd. Insert into this dictionary to register your Challenge Type.
 """
 CHALLENGE_CLASSES = {
     "standard": CTFdStandardChallenge
