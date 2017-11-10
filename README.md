@@ -5,7 +5,7 @@
 [![CTFd Slack](https://slack.ctfd.io/badge.svg)](https://slack.ctfd.io/)
 
 ## What is CTFd?
-CTFd is a Capture The Flag framework focusing on ease of use an customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.
+CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.
 
 ![CTFd is a CTF in a can.](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/original/static/img/scoreboard.png?raw=true)
 
