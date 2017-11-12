@@ -108,8 +108,8 @@ class CTFdStandardChallenge(BaseChallenge):
         """
         challenge.name = request.form['name']
         challenge.description = request.form['desc']
-        challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
-        challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
+        challenge.value = request.form.get('value', default=0, type=int)
+        challenge.max_attempts = request.form.get('max_attempts', default=0, type=int)
         challenge.category = request.form['category']
         challenge.hidden = 'hidden' in request.form
         db.session.commit()
