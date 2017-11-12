@@ -98,10 +98,10 @@ class CTFdStandardChallenge(BaseChallenge):
             'max_attempts': challenge.max_attempts,
             'type': challenge.type,
             'type_data': {
-                'id': CTFdStandardChallenge.id,
-                'name': CTFdStandardChallenge.name,
-                'templates': CTFdStandardChallenge.templates,
-                'scripts': CTFdStandardChallenge.scripts,
+                'id': cls.id,
+                'name': cls.name,
+                'templates': cls.templates,
+                'scripts': cls.scripts,
             }
         }
 
