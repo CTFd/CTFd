@@ -49,10 +49,11 @@ class Challenges(db.Model):
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     type = db.Column(db.String(80))
+    challenge_discriminator = db.Column(db.String(80))
     hidden = db.Column(db.Boolean)
     __mapper_args__ = {
         'polymorphic_identity': 'standard',
-        'polymorphic_on': type
+        'polymorphic_on': challenge_discriminator
     }
 
     def __init__(self, name, description, value, category, type='standard'):
