@@ -55,12 +55,12 @@ class Challenges(db.Model):
         'polymorphic_on': type
     }
 
-    def __init__(self, name, description, value, category, type='standard'):
+    def __init__(self, name, description, value, category):
         self.name = name
         self.description = description
         self.value = value
         self.category = category
-        self.type = type
+        self.type = 'standard'
 
     def __repr__(self):
         return '<chal %r>' % self.name

@@ -55,7 +55,6 @@ class CTFdStandardChallenge(BaseChallenge):
             description=ns.request.form['desc'],
             value=ns.request.form['value'],
             category=ns.request.form['category'],
-            type=ns.request.form['chaltype']
         )
 
         ns.chal.hidden = 'hidden' in ns.request.form
