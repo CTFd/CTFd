@@ -1,5 +1,5 @@
-<!-- 
-If this is a bug report please fill out the template below. 
+<!--
+If this is a bug report please fill out the template below.
 
 If this is a feature request please describe the behavior that you'd like to see.
 -->
@@ -8,7 +8,7 @@ If this is a feature request please describe the behavior that you'd like to see
 
   - CTFd Version/Commit:
   - Operating System:
-  - Web Browser and version:
+  - Web Browser and Version:
 
 **What happened?**
 
