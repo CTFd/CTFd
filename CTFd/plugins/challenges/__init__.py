@@ -4,6 +4,14 @@ from CTFd.models import db, Solves, WrongKeys, Keys, Challenges, Files, Tags
 from CTFd import utils
 
 from pymitter import EventEmitter
+class NameSpace(object):
+    """
+    A way to create references to local variables, such that they may be modified
+    in event functions.
+    """
+    def __init__(self, **kwargs):
+        for k,v in kwargs.iteritems():
+            self.__setattr__(k, v)
 
 class BaseChallenge(object):
     id = None
@@ -35,45 +43,42 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return:
         """
-        cls.ee.emit("challenge.onPreCreate", **locals())
+        ns = NameSpace(**locals())
+        cls.ee.emit("challenge.onPreCreate", ns)
 
-        files = request.files.getlist('files[]')
+        ns.files = ns.request.files.getlist('files[]')
 
         # Create challenge
-        chal = Challenges(
-            name=request.form['name'],
-            description=request.form['desc'],
-            value=request.form['value'],
-            category=request.form['category'],
-            type=request.form['chaltype']
+        ns.chal = Challenges(
+            name=ns.request.form['name'],
+            description=ns.request.form['desc'],
+            value=ns.request.form['value'],
+            category=ns.request.form['category'],
+            type=ns.request.form['chaltype']
         )
 
-        if 'hidden' in request.form:
-            chal.hidden = True
-        else:
-            chal.hidden = False
+        ns.chal.hidden = 'hidden' in ns.request.form
 
-        max_attempts = request.form.get('max_attempts')
-        if max_attempts and max_attempts.isdigit():
-            chal.max_attempts = int(max_attempts)
+        ns.max_attempts = ns.request.form.get('max_attempts')
+        if ns.max_attempts and ns.max_attempts.isdigit():
+            ns.chal.max_attempts = int(ns.max_attempts)
 
-        cls.ee.emit("challenge.onCreate", **locals())
+        cls.ee.emit("challenge.onCreate", ns)
 
-        db.session.add(chal)
+        db.session.add(ns.chal)
         db.session.commit()
 
-        flag = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
-        if request.form.get('keydata'):
-            flag.data = request.form.get('keydata')
+        ns.flag = Keys(ns.chal.id, ns.request.form['key'], ns.request.form['key_type[0]'])
+        if ns.request.form.get('keydata'):
+            ns.flag.data = ns.request.form.get('keydata')
 
-        cls.ee.emit("challenge.onPostCreate", **locals())
+        cls.ee.emit("challenge.onPostCreate", ns)
 
-        db.session.add(flag)
-
+        db.session.add(ns.flag)
         db.session.commit()
 
-        for f in files:
-            utils.upload_file(file=f, chalid=chal.id)
+        for f in ns.files:
+            utils.upload_file(file=f, chalid=ns.chal.id)
 
         db.session.commit()
 
@@ -86,17 +91,18 @@ class CTFdStandardChallenge(BaseChallenge):
         :param challenge: The Challenge object from the database
         :return: Challenge object, data dictionary to be returned to the user
         """
-        cls.ee.emit("challenge.onPreRead", **locals())
+        ns = NameSpace(**locals())
+        cls.ee.emit("challenge.onPreRead", ns)
 
-        data = {
-            'id': challenge.id,
-            'name': challenge.name,
-            'value': challenge.value,
-            'description': challenge.description,
-            'category': challenge.category,
-            'hidden': challenge.hidden,
-            'max_attempts': challenge.max_attempts,
-            'type': challenge.type,
+        ns.data = {
+            'id': ns.challenge.id,
+            'name': ns.challenge.name,
+            'value': ns.challenge.value,
+            'description': ns.challenge.description,
+            'category': ns.challenge.category,
+            'hidden': ns.challenge.hidden,
+            'max_attempts': ns.challenge.max_attempts,
+            'type': ns.challenge.type,
             'type_data': {
                 'id': cls.id,
                 'name': cls.name,
@@ -105,9 +111,9 @@ class CTFdStandardChallenge(BaseChallenge):
             }
         }
 
-        cls.ee.emit("challenge.onPostRead", **locals())
+        cls.ee.emit("challenge.onPostRead", ns)
 
-        return challenge, data
+        return ns.challenge, ns.data
 
     @classmethod
     def update(cls, challenge, request):
@@ -120,16 +126,17 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request:  The request the user submitted
         :return:
         """
-        cls.ee.emit("challenge.onPreUpdate", **locals())
+        ns = NameSpace(**locals())
+        cls.ee.emit("challenge.onPreUpdate", ns)
 
-        challenge.name = request.form['name']
-        challenge.description = request.form['desc']
-        challenge.value = request.form.get('value', default=0, type=int)
-        challenge.max_attempts = request.form.get('max_attempts', default=0, type=int)
-        challenge.category = request.form['category']
-        challenge.hidden = 'hidden' in request.form
+        ns.challenge.name = ns.request.form['name']
+        ns.challenge.description = ns.request.form['desc']
+        ns.challenge.value = ns.request.form.get('value', default=0, type=int)
+        ns.challenge.max_attempts = ns.request.form.get('max_attempts', default=0, type=int)
+        ns.challenge.category = ns.request.form['category']
+        ns.challenge.hidden = 'hidden' in ns.request.form
 
-        cls.ee.emit("challenge.onPostUpdate", **locals())
+        cls.ee.emit("challenge.onPostUpdate", ns)
 
         db.session.commit()
         db.session.close()
@@ -142,19 +149,22 @@ class CTFdStandardChallenge(BaseChallenge):
         :param challenge: The Challenge object from the database
         :return:
         """
-        cls.ee.emit("challenge.onPreDelete", **locals())
+        ns = NameSpace(**locals())
+        cls.ee.emit("challenge.onPreDelete", ns)
 
-        WrongKeys.query.filter_by(chalid=challenge.id).delete()
-        Solves.query.filter_by(chalid=challenge.id).delete()
-        Keys.query.filter_by(chal=challenge.id).delete()
-        files = Files.query.filter_by(chal=challenge.id).all()
-        for f in files:
+        WrongKeys.query.filter_by(chalid=ns.challenge.id).delete()
+        Solves.query.filter_by(chalid=ns.challenge.id).delete()
+        Keys.query.filter_by(chal=ns.challenge.id).delete()
+        ns.files = Files.query.filter_by(chal=ns.challenge.id).all()
+        for f in ns.files:
             utils.delete_file(f.id)
-        Files.query.filter_by(chal=challenge.id).delete()
-        Tags.query.filter_by(chal=challenge.id).delete()
-        Challenges.query.filter_by(id=challenge.id).delete()
+        Files.query.filter_by(chal=ns.challenge.id).delete()
+        Tags.query.filter_by(chal=ns.challenge.id).delete()
+        # Having subclasses define `ondelete="CASCADE"` will make sure their
+        # referencing rows are also deleted, when this one is.
+        Challenges.query.filter_by(id=ns.challenge.id).delete()
 
-        cls.ee.emit("challenge.onPostDelete", **locals())
+        cls.ee.emit("challenge.onPostDelete", ns)
 
         db.session.commit()
 
@@ -170,18 +180,19 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return: (boolean, string)
         """
-        cls.ee.emit("challenge.onPreAttempt", **locals())
+        ns = NameSpace(**locals())
+        cls.ee.emit("challenge.onPreAttempt", ns)
 
-        provided_key = request.form['key'].strip()
-        chal_keys = Keys.query.filter_by(chal=chal.id).all()
-        for chal_key in chal_keys:
-            if get_key_class(chal_key.key_type).compare(chal_key.flag, provided_key):
+        ns.provided_key = ns.request.form['key'].strip()
+        ns.chal_keys = Keys.query.filter_by(chal=ns.chal.id).all()
+        for ns.chal_key in ns.chal_keys:
+            if get_key_class(ns.chal_key.key_type).compare(ns.chal_key.flag, ns.provided_key):
 
-                cls.ee.emit("challenge.onPostAttempt", status=True, **locals())
+                cls.ee.emit("challenge.onPostAttempt", ns, status=True)
 
                 return True, 'Correct'
 
-        cls.ee.emit("challenge.onPostAttempt", status=False, **locals())
+        cls.ee.emit("challenge.onPostAttempt", ns, status=False)
 
         return False, 'Incorrect'
 
@@ -196,15 +207,16 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return:
         """
-        cls.ee.emit("challenge.onPreSolve", **locals())
+        ns = NameSpace(**locals())
+        cls.ee.emit("challenge.onPreSolve", ns)
 
-        provided_key = request.form['key'].strip()
-        solve = Solves(teamid=team.id, chalid=chal.id,
-                       ip=utils.get_ip(req=request), flag=provided_key)
+        ns.provided_key = ns.request.form['key'].strip()
+        ns.solve = Solves(teamid=ns.team.id, chalid=ns.chal.id,
+                       ip=utils.get_ip(req=ns.request), flag=ns.provided_key)
 
-        cls.ee.emit("challenge.onPostSolve", **locals())
+        cls.ee.emit("challenge.onPostSolve", ns)
 
-        db.session.add(solve)
+        db.session.add(ns.solve)
         db.session.commit()
         db.session.close()
 
@@ -219,15 +231,16 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return:
         """
-        cls.ee.emit("challenge.onPreFail", **locals())
+        ns = NameSpace(**locals())
+        cls.ee.emit("challenge.onPreFail", ns)
 
-        provided_key = request.form['key'].strip()
-        wrong = WrongKeys(teamid=team.id, chalid=chal.id,
-                          ip=utils.get_ip(request), flag=provided_key)
+        ns.provided_key = ns.request.form['key'].strip()
+        ns.wrong = WrongKeys(teamid=ns.team.id, chalid=ns.chal.id,
+                          ip=utils.get_ip(req=ns.request), flag=ns.provided_key)
 
-        cls.ee.emit("challenge.onPostFail", **locals())
+        cls.ee.emit("challenge.onPostFail", ns)
 
-        db.session.add(wrong)
+        db.session.add(ns.wrong)
         db.session.commit()
         db.session.close()
 
