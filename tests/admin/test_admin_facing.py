@@ -209,7 +209,7 @@ def test_admin_chal_detail_returns_proper_data():
         client = login_as_user(app, name="admin", password="password")
 
         chal = gen_challenge(app.db)
-        chal_class = get_chal_class(chal.type)
+        chal_class, _ = get_chal_class(chal.type)
         data = {
             'id': chal.id,
             'name': chal.name,

@@ -16,7 +16,7 @@ admin_challenges = Blueprint('admin_challenges', __name__)
 def admin_chal_types():
     data = {}
     for class_id in CHALLENGE_CLASSES:
-        challenge_class = CHALLENGE_CLASSES.get(class_id)
+        challenge_class, _ = get_chal_class(class_id)
         data[challenge_class.id] = {
             'id': challenge_class.id,
             'name': challenge_class.name,
@@ -45,7 +45,7 @@ def admin_chals():
             else:
                 percentage = 0.0
 
-            type_class = CHALLENGE_CLASSES.get(x.type)
+            type_class, _ = get_chal_class(x.type)
             type_name = type_class.name if type_class else None
 
             json_data['game'].append({
@@ -80,7 +80,7 @@ def admin_chal_detail(chalid):
         pass
     elif request.method == 'GET':
         chal = Challenges.query.filter_by(id=chalid).first_or_404()
-        chal_class = get_chal_class(chal.type)
+        chal_class, _ = get_chal_class(chal.type)
         obj, data = chal_class.read(chal)
         return jsonify(data)
 
@@ -249,7 +249,7 @@ def admin_get_values(chalid, prop):
 def admin_create_chal():
     if request.method == 'POST':
         chal_type = request.form['chaltype']
-        chal_class = get_chal_class(chal_type)
+        chal_class, _ = get_chal_class(chal_type)
         chal_class.create(request)
         return redirect(url_for('admin_challenges.admin_chals'))
     else:
@@ -260,7 +260,7 @@ def admin_create_chal():
 @admins_only
 def admin_delete_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
-    chal_class = get_chal_class(challenge.type)
+    chal_class, _ = get_chal_class(challenge.type)
     chal_class.delete(challenge)
     return '1'
 
@@ -269,6 +269,6 @@ def admin_delete_chal():
 @admins_only
 def admin_update_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
-    chal_class = get_chal_class(challenge.type)
+    chal_class, _ = get_chal_class(challenge.type)
     chal_class.update(challenge, request)
     return redirect(url_for('admin_challenges.admin_chals'))

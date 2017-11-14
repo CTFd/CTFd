@@ -49,7 +49,8 @@ class CTFdStandardChallenge(BaseChallenge):
         ns.files = ns.request.files.getlist('files[]')
 
         # Create challenge
-        ns.chal = Challenges(
+        _, chal_db_cls = CHALLENGE_CLASSES.get(cls.id, (None, None))
+        ns.chal = chal_db_cls(
             name=ns.request.form['name'],
             description=ns.request.form['desc'],
             value=ns.request.form['value'],
@@ -252,10 +253,8 @@ def get_chal_class(class_id):
     :param class_id: String representing the class ID
     :return: Challenge class
     """
-    cls = CHALLENGE_CLASSES.get(class_id)
-    if cls is None:
-        raise KeyError
-    return cls
+    chal_cls, chal_db_cls = CHALLENGE_CLASSES[class_id]
+    return chal_cls, chal_db_cls
 
 
 """
@@ -263,7 +262,7 @@ Global dictionary used to hold all the Challenge Type classes used by
 CTFd. Insert into this dictionary to register your Challenge Type.
 """
 CHALLENGE_CLASSES = {
-    "standard": CTFdStandardChallenge
+    "standard": (CTFdStandardChallenge, Challenges)
 }
 
 
