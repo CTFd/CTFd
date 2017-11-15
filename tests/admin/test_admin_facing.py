@@ -124,13 +124,27 @@ def test_admins_can_create_challenges():
                 'desc': 'description',
                 'value': 100,
                 'key_type[0]': 'static',
-                'max_attempts': '',
+                'key': 'flag',
+                'max_attempts': 5,
                 'nonce': sess.get('nonce'),
                 'chaltype': 'standard'
             }
             r = client.post('/admin/chal/new', data=data)
+            assert r.status_code == 302
 
         assert Challenges.query.count() == 1
+        chal = Challenges.query.filter_by(id=1).first()
+        assert chal.name == '💫'
+        assert chal.category == '💫'
+        assert chal.max_attempts == 5
+        assert chal.description == 'description'
+        assert chal.value == 100
+        assert chal.type == 'standard'
+
+        assert Keys.query.count() == 1
+        key = Keys.query.filter_by(id=1).first()
+        assert key.key_type == 'static'
+        assert key.flag == 'flag'
     destroy_ctfd(app)
 
 
