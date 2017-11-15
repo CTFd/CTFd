@@ -121,7 +121,7 @@ def test_admins_can_create_challenges():
             data = {
                 'name': '💫',
                 'category': '💫',
-                'desc': 'description',
+                'description': 'description',
                 'value': 100,
                 'key_type[0]': 'static',
                 'key': 'flag',

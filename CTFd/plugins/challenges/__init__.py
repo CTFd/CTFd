@@ -50,19 +50,25 @@ class CTFdStandardChallenge(BaseChallenge):
 
         # Create challenge
         _, chal_db_cls = CHALLENGE_CLASSES.get(cls.id, (None, None))
-        ns.chal = chal_db_cls(
-            name=ns.request.form['name'],
-            description=ns.request.form['desc'],
-            value=ns.request.form['value'],
-            category=ns.request.form['category'],
-        )
+        # Dynamically get the form elements, and convert them to the correct
+        # type, before passing it to the given challenge database object
+        # initialisation.
+        data = {}
+        for col in chal_db_cls.__mapper__.columns:
+            if col.name in ns.request.form:
+                data[col.name] = ns.request.form.get(
+                        col.name, default=col.default.arg if col.default else None,
+                        type=col.type.python_type # if col.type.python_type in
+                )
+            # Checkboxes will not be included in `request.form` (as per the W3C
+            # HTML4 recommendation).  A trick to get them to be part of the
+            # `request.form` is to add a hidden input box below, with the value
+            # that gets interpreted as false (see
+            # https://stackoverflow.com/a/11424091).
+            elif col.name in ['hidden']:
+                data[col.name] = False
 
-        ns.chal.hidden = 'hidden' in ns.request.form
-
-        ns.max_attempts = ns.request.form.get('max_attempts')
-        if ns.max_attempts and ns.max_attempts.isdigit():
-            ns.chal.max_attempts = int(ns.max_attempts)
-
+        ns.chal = chal_db_cls(**data)
         cls.ee.emit("challenge.onCreate", ns)
 
         db.session.add(ns.chal)
@@ -95,14 +101,6 @@ class CTFdStandardChallenge(BaseChallenge):
         cls.ee.emit("challenge.onPreRead", ns)
 
         ns.data = {
-            'id': ns.challenge.id,
-            'name': ns.challenge.name,
-            'value': ns.challenge.value,
-            'description': ns.challenge.description,
-            'category': ns.challenge.category,
-            'hidden': ns.challenge.hidden,
-            'max_attempts': ns.challenge.max_attempts,
-            'type': ns.challenge.type,
             'type_data': {
                 'id': cls.id,
                 'name': cls.name,
@@ -110,6 +108,8 @@ class CTFdStandardChallenge(BaseChallenge):
                 'scripts': cls.scripts,
             }
         }
+        for col in ns.challenge.__mapper__.columns:
+            ns.data[col.name] = ns.challenge.__getattribute__(col.name)
 
         cls.ee.emit("challenge.onPostRead", ns)
 
@@ -129,12 +129,19 @@ class CTFdStandardChallenge(BaseChallenge):
         ns = NameSpace(**locals())
         cls.ee.emit("challenge.onPreUpdate", ns)
 
-        ns.challenge.name = ns.request.form['name']
-        ns.challenge.description = ns.request.form['desc']
-        ns.challenge.value = ns.request.form.get('value', default=0, type=int)
-        ns.challenge.max_attempts = ns.request.form.get('max_attempts', default=0, type=int)
-        ns.challenge.category = ns.request.form['category']
-        ns.challenge.hidden = 'hidden' in ns.request.form
+        for col in ns.challenge.__mapper__.columns:
+            if col.name in ns.request.form:
+                ns.challenge.__setattr__(
+                    col.name, ns.request.form.get(
+                        col.name, default=col.default.arg if col.default else None,
+                        type=col.type.python_type
+                    )
+                )
+            # Specially handle checkboxes, as they won't be part of the
+            # `request.form` if they are unchecked.  Thus explicitly set them to
+            # False.  See `create()` above for the same challenges.
+            elif col.name in ['hidden']:
+                ns.challenge.__setattr__(col.name, False)
 
         cls.ee.emit("challenge.onPostUpdate", ns)
 
