@@ -26,7 +26,6 @@ def test_user_can_view_challenges():
         set_config('view_challenges_unregistered', False)
         with app.test_client() as client:
             r = client.get('/challenges')
-            print r.status_code
             assert r.status_code == 302
             r = client.get('/chals')
             assert r.status_code == 403
