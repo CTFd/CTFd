@@ -122,37 +122,42 @@ def topteams(count):
 
     standings = get_standings(count=count)
 
-    for i, team in enumerate(standings):
-        solves = Solves.query.filter_by(teamid=team.teamid)
-        awards = Awards.query.filter_by(teamid=team.teamid)
+    team_ids = [team.teamid for team in standings]
 
-        freeze = utils.get_config('freeze')
+    solves = Solves.query.filter(Solves.teamid.in_(team_ids))
+    awards = Awards.query.filter(Awards.teamid.in_(team_ids))
 
-        if freeze:
-            solves = solves.filter(Solves.date < utils.unix_time_to_utc(freeze))
-            awards = awards.filter(Awards.date < utils.unix_time_to_utc(freeze))
+    freeze = utils.get_config('freeze')
 
-        solves = solves.all()
-        awards = awards.all()
+    if freeze:
+        solves = solves.filter(Solves.date < utils.unix_time_to_utc(freeze))
+        awards = awards.filter(Awards.date < utils.unix_time_to_utc(freeze))
 
+    solves = solves.all()
+    awards = awards.all()
+
+    for i, team in enumerate(team_ids):
         json['places'][i + 1] = {
-            'id': team.teamid,
-            'name': team.name,
+            'id': standings[i].teamid,
+            'name': standings[i].name,
             'solves': []
         }
-        for x in solves:
-            json['places'][i + 1]['solves'].append({
-                'chal': x.chalid,
-                'team': x.teamid,
-                'value': x.chal.value,
-                'time': utils.unix_time(x.date)
-            })
+        for solve in solves:
+            if solve.teamid == team:
+                json['places'][i + 1]['solves'].append({
+                    'chal': solve.chalid,
+                    'team': solve.teamid,
+                    'value': solve.chal.value,
+                    'time': utils.unix_time(solve.date)
+                })
         for award in awards:
-            json['places'][i + 1]['solves'].append({
-                'chal': None,
-                'team': award.teamid,
-                'value': award.value,
-                'time': utils.unix_time(award.date)
-            })
+            if award.teamid == team:
+                json['places'][i + 1]['solves'].append({
+                    'chal': None,
+                    'team': award.teamid,
+                    'value': award.value,
+                    'time': utils.unix_time(award.date)
+                })
         json['places'][i + 1]['solves'] = sorted(json['places'][i + 1]['solves'], key=lambda k: k['time'])
+
     return jsonify(json)
