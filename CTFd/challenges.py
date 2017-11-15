@@ -82,8 +82,12 @@ def challenges_view():
                 if (utils.get_config('end') and utils.ctf_ended()) and not utils.view_after_ctf():
                     errors.append('{} has ended'.format(utils.ctf_name()))
                 return render_template('chals.html', errors=errors, start=int(start), end=int(end))
-        if utils.get_config('verify_emails') and not utils.is_verified():  # User is not confirmed
-            return redirect(url_for('auth.confirm_user'))
+
+    if utils.get_config('verify_emails'):
+        if utils.authed():
+            if utils.is_admin() is False and utils.is_verified() is False:  # User is not confirmed
+                return redirect(url_for('auth.confirm_user'))
+
     if utils.user_can_view_challenges():  # Do we allow unauthenticated users?
         if utils.get_config('start') and not utils.ctf_started():
             errors.append('{} has not started yet'.format(utils.ctf_name()))
@@ -102,6 +106,12 @@ def chals():
                 pass
             else:
                 abort(403)
+
+    if utils.get_config('verify_emails'):
+        if utils.authed():
+            if utils.is_admin() is False and utils.is_verified() is False:  # User is not confirmed
+                abort(403)
+
     if utils.user_can_view_challenges() and (utils.ctf_started() or utils.is_admin()):
         teamid = session.get('id')
         chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).order_by(Challenges.value).all()

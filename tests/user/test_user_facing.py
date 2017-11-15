@@ -91,9 +91,10 @@ def test_user_isnt_admin():
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
-        r = client.get('/admin/graphs')
-        assert r.location == "http://localhost/login"
-        assert r.status_code == 302
+        for page in ['graphs', 'pages', 'teams', 'scoreboard', 'chals', 'statistics', 'config']:
+            r = client.get('/admin/{}'.format(page))
+            assert r.location == "http://localhost/login"
+            assert r.status_code == 302
     destroy_ctfd(app)
 
 
