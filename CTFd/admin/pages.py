@@ -19,24 +19,27 @@ def admin_css():
     return '0'
 
 
-@admin_pages.route('/admin/pages', defaults={'route': None}, methods=['GET', 'POST'])
-@admin_pages.route('/admin/pages/<route>', methods=['GET', 'POST'])
+@admin_pages.route('/admin/pages', methods=['GET', 'POST'])
 @admins_only
-def admin_pages_view(route):
+def admin_pages_view():
+    route = request.args.get('route')
+
     if request.method == 'GET' and request.args.get('mode') == 'create':
         return render_template('admin/editor.html')
+
     if route and request.method == 'GET':
         page = Pages.query.filter_by(route=route).first()
         return render_template('admin/editor.html', page=page)
-    if route and request.method == 'POST':
+
+    if request.method == 'POST':
+        html = request.form['html']
+        route = request.form['route'].lstrip('/')
         page = Pages.query.filter_by(route=route).first()
         errors = []
-        html = request.form['html']
-        route = request.form['route']
         if not route:
             errors.append('Missing URL route')
         if errors:
-            page = Pages(html, '')
+            page = Pages(html, route)
             return render_template('/admin/editor.html', page=page)
         if page:
             page.route = route
@@ -53,8 +56,22 @@ def admin_pages_view(route):
         with app.app_context():
             cache.clear()
         return redirect(url_for('admin_pages.admin_pages_view'))
+
     pages = Pages.query.all()
     return render_template('admin/pages.html', routes=pages, css=utils.get_config('css'))
+
+
+@admin_pages.route('/admin/pages/delete', methods=['POST'])
+@admins_only
+def delete_page():
+    route = request.form['route']
+    page = Pages.query.filter_by(route=route).first_or_404()
+    db.session.delete(page)
+    db.session.commit()
+    db.session.close()
+    with app.app_context():
+        cache.clear()
+    return '1'
 
 
 @admin_pages.route('/admin/media', methods=['GET', 'POST', 'DELETE'])
@@ -77,15 +94,3 @@ def admin_pages_media():
     else:
         files = [{'id': f.id, 'location': f.location} for f in Files.query.filter_by(chal=None).all()]
         return jsonify({'results': files})
-
-
-@admin_pages.route('/admin/page/<pageroute>/delete', methods=['POST'])
-@admins_only
-def delete_page(pageroute):
-    page = Pages.query.filter_by(route=pageroute).first_or_404()
-    db.session.delete(page)
-    db.session.commit()
-    db.session.close()
-    with app.app_context():
-        cache.clear()
-    return '1'

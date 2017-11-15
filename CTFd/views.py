@@ -106,7 +106,7 @@ def custom_css():
 
 # Static HTML files
 @views.route("/", defaults={'template': 'index'})
-@views.route("/<template>")
+@views.route("/<path:template>")
 def static_html(template):
     try:
         return render_template('%s.html' % template)

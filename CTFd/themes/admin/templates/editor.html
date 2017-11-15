@@ -272,7 +272,7 @@
 	});
 
 	$('#page-edit').submit(function (e){
-		$(this).attr('action', '{{ request.script_root }}/admin/pages/'+$('#route').val());
+		$(this).attr('action', '{{ request.script_root }}/admin/pages');
 	});
 
 	// Markdown Preview
