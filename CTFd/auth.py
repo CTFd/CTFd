@@ -85,8 +85,8 @@ def reset_password(data=None):
             name = s.loads(utils.base64decode(data, urldecode=True), max_age=1800)
         except BadTimeSignature:
             return render_template('reset_password.html', errors=['Your link has expired'])
-        except:
-            return render_template('reset_password.html', errors=['Your link appears broken, please try again'])
+        except Exception:
+            return render_template('reset_password.html', errors=['Your link appears broken, please try again.'])
         team = Teams.query.filter_by(name=name).first_or_404()
         team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
         db.session.commit()
@@ -225,7 +225,7 @@ def login():
             if team and bcrypt_sha256.verify(request.form['password'], team.password):
                 try:
                     session.regenerate()  # NO SESSION FIXATION FOR YOU
-                except:
+                except Exception:
                     pass  # TODO: Some session objects don't implement regenerate :(
                 session['username'] = team.name
                 session['id'] = team.id

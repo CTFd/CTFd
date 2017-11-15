@@ -9,10 +9,13 @@ env:
 python:
     - 2.7
     - 3.6
+cache: pip
 install:
     - pip install -r development.txt
 before_script:
     - psql -c 'create database ctfd;' -U postgres
 script:
-    - pep8 --ignore E501,E712 CTFd/ tests/
+    # E501 line too long (82 characters)
+    # E712 comparison to True should be ‘if cond is True:’ or ‘if cond:’
+    - pycodestyle --statistics --ignore E501,E712 CTFd/ tests/
     - nosetests -d

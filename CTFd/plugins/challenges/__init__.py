@@ -4,14 +4,17 @@ from CTFd.models import db, Solves, WrongKeys, Keys, Challenges, Files, Tags
 from CTFd import utils
 
 from pymitter import EventEmitter
+
+
 class NameSpace(object):
     """
     A way to create references to local variables, such that they may be modified
     in event functions.
     """
     def __init__(self, **kwargs):
-        for k,v in kwargs.iteritems():
+        for k, v in kwargs.items():
             self.__setattr__(k, v)
+
 
 class BaseChallenge(object):
     id = None
@@ -57,8 +60,8 @@ class CTFdStandardChallenge(BaseChallenge):
         for col in chal_db_cls.__mapper__.columns:
             if col.name in ns.request.form:
                 data[col.name] = ns.request.form.get(
-                        col.name, default=col.default.arg if col.default else None,
-                        type=col.type.python_type # if col.type.python_type in
+                    col.name, default=col.default.arg if col.default else None,
+                    type=col.type.python_type
                 )
             # Checkboxes will not be included in `request.form` (as per the W3C
             # HTML4 recommendation).  A trick to get them to be part of the
@@ -219,7 +222,7 @@ class CTFdStandardChallenge(BaseChallenge):
 
         ns.provided_key = ns.request.form['key'].strip()
         ns.solve = Solves(teamid=ns.team.id, chalid=ns.chal.id,
-                       ip=utils.get_ip(req=ns.request), flag=ns.provided_key)
+                          ip=utils.get_ip(req=ns.request), flag=ns.provided_key)
 
         cls.ee.emit("challenge.onPostSolve", ns)
 
@@ -243,7 +246,7 @@ class CTFdStandardChallenge(BaseChallenge):
 
         ns.provided_key = ns.request.form['key'].strip()
         ns.wrong = WrongKeys(teamid=ns.team.id, chalid=ns.chal.id,
-                          ip=utils.get_ip(req=ns.request), flag=ns.provided_key)
+                             ip=utils.get_ip(req=ns.request), flag=ns.provided_key)
 
         cls.ee.emit("challenge.onPostFail", ns)
 
