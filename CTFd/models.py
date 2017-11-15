@@ -43,11 +43,11 @@ class Pages(db.Model):
 
 class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    description = db.Column(db.Text)
+    name = db.Column(db.Unicode(80))
+    description = db.Column(db.UnicodeText)
     max_attempts = db.Column(db.Integer, default=0)
     value = db.Column(db.Integer)
-    category = db.Column(db.String(80))
+    category = db.Column(db.Unicode(80))
     type = db.Column(db.String(80))
     hidden = db.Column(db.Boolean)
     __mapper_args__ = {
