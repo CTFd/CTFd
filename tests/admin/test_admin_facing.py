@@ -235,3 +235,138 @@ def test_admin_chal_detail_returns_proper_data():
         assert data == response
 
     destroy_ctfd(app)
+
+
+def test_admins_can_create_teams():
+    '''Test that admins can create new teams'''
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        with client.session_transaction() as sess:
+            data = {
+                'name': 'TunnelBunnies',
+                'password': 'fUnn3lJuNK135',
+                'email': 'scary.hares@trace.us',
+                'website': 'https://scary-hares.trace.us/',
+                'affiliation': 'Energizer',
+                'country': 'USA',
+                'nonce': sess.get('nonce'),
+            }
+            r = client.post('/admin/team/new', data=data)
+            assert r.status_code == 200
+
+        team = Teams.query.filter_by(id=2).first()
+        assert team
+        assert team.name == 'TunnelBunnies'
+        assert team.email == 'scary.hares@trace.us'
+        assert team.website == 'https://scary-hares.trace.us/'
+        assert team.affiliation == 'Energizer'
+        assert team.country == 'USA'
+    destroy_ctfd(app)
+
+
+def test_admin_create_team_without_required_fields():
+    '''Test that an admin can't create a new team without the required fields'''
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        with client.session_transaction() as sess:
+            data = {
+                'name': '',
+                'password': '',
+                'email': '',
+                'website': '',
+                'affiliation': '',
+                'country': '',
+                'nonce': sess.get('nonce'),
+            }
+            r = client.post('/admin/team/new', data=data)
+            assert r.status_code == 200
+
+        response = json.loads(r.get_data(as_text=True))
+        assert 'data' in response
+        assert len(response['data']) == 3
+        assert 'The team requires a name' in response['data']
+        assert 'The team requires an email' in response['data']
+        assert 'The team requires a password' in response['data']
+    destroy_ctfd(app)
+
+
+def test_admin_create_team_with_existing_name():
+    '''Test that an admin can't create a new team with an existing name'''
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        with client.session_transaction() as sess:
+            data = {
+                'name': 'admin',
+                'password': 'fUnn3lJuNK135',
+                'email': 'scary.hares@trace.us',
+                'website': 'https://scary-hares.trace.us/',
+                'affiliation': 'Energizer',
+                'country': 'USA',
+                'nonce': sess.get('nonce'),
+            }
+            r = client.post('/admin/team/new', data=data)
+            assert r.status_code == 200
+
+        response = json.loads(r.get_data(as_text=True))
+        assert 'data' in response
+        assert len(response['data']) == 1
+        assert 'That name is taken' in response['data']
+    destroy_ctfd(app)
+
+
+def test_admin_create_team_with_existing_email():
+    '''Test that an admin can't create a new team with an existing email'''
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        with client.session_transaction() as sess:
+            data = {
+                'name': 'TunnelBunnies',
+                'password': 'fUnn3lJuNK135',
+                'email': 'admin@ctfd.io',
+                'website': 'https://scary-hares.trace.us/',
+                'affiliation': 'Energizer',
+                'country': 'USA',
+                'nonce': sess.get('nonce'),
+            }
+            r = client.post('/admin/team/new', data=data)
+            assert r.status_code == 200
+
+        response = json.loads(r.get_data(as_text=True))
+        assert 'data' in response
+        assert len(response['data']) == 1
+        assert 'That email is taken' in response['data']
+    destroy_ctfd(app)
+
+
+def test_admin_create_team_with_invalid_website():
+    '''Test that an admin can't create a new team with an invalid website'''
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        with client.session_transaction() as sess:
+            data = {
+                'name': 'TunnelBunnies',
+                'password': 'fUnn3lJuNK135',
+                'email': 'scary.hares@trace.us',
+                'website': 'ftp://scary-hares.trace.us/',
+                'affiliation': 'Energizer',
+                'country': 'USA',
+                'nonce': sess.get('nonce'),
+            }
+            r = client.post('/admin/team/new', data=data)
+            assert r.status_code == 200
+
+        response = json.loads(r.get_data(as_text=True))
+        assert 'data' in response
+        assert len(response['data']) == 1
+        assert 'Websites must start with http:// or https://' in response['data']
+    destroy_ctfd(app)
