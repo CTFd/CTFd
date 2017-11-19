@@ -10,7 +10,10 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 
 {% block content %}
 <div class="row">
-	<h1>Teams</h1>
+	<h1>
+		Teams
+		<i class="fa fa-plus-circle create-team" role="button" data-toggle="tooltip" title="Create Team"></i>
+	</h1>
 	<div id="confirm" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -41,7 +44,7 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h2 class="text-center">Email User</h2>
+					<h2 class="text-center">Email Team</h2>
 				</div>
 				<div class="modal-body">
 					<form method="POST">
@@ -61,9 +64,9 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h2 class="text-center">Edit User</h2>
+					<h2 class="text-center modal-action">Edit Team</h2>
 				</div>
-				<div class="modal-body" style="padding:20px; height:525px;">
+				<div class="modal-body clearfix" style="padding:20px;">
 					<form method="POST" action="{{ request.script_root }}/admin/teams/">
 						<input type="hidden" name="nonce" value="{{ nonce }}">
 						<input type="hidden" name="id">
@@ -94,7 +97,7 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 						<div id="results">
 
 						</div>
-						<button id="update-user" type="submit" class="btn btn-theme btn-outlined pull-right">Update</button>
+						<button id="update-user" type="submit" class="btn btn-theme btn-outlined pull-right modal-action">Update</button>
 					</form>
 				</div>
 			</div>
@@ -158,8 +161,8 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 				<td class="team-id" value="{{ team.id }}">{{ team.id }}</td>
 				<td class="team-name" value="{{ team.name }}"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
 				</td>
-				<td class="team-email">{{ team.email | truncate(32) }}</td>
-				<td class="team-website">{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}<a href="{{ team.website }}">{{ team.website | truncate(32) }}</a>{% endif %}
+				<td class="team-email" value="{{ team.email }}">{{ team.email | truncate(32) }}</td>
+				<td class="team-website">{% if team.website %}<a href="{{ team.website }}">{{ team.website | truncate(32) }}</a>{% endif %}
 				</td>
 				<td class="team-affiliation" value="{{ team.affiliation if team.affiliation is not none }}"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
 				</td>
@@ -207,13 +210,22 @@ input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
 function load_update_modal(id, name, email, website, affiliation, country){
 	var modal_form = $('#user form');
 
-	modal_form.find('input[name=name]').val(name)
-	modal_form.find('input[name=id]').val(id)
-	modal_form.find('input[name=email]').val(email)
-	modal_form.find('input[name=website]').val(website)
-	modal_form.find('input[name=affiliation]').val(affiliation)
-	modal_form.find('input[name=country]').val(country)
-	$('#user form').attr('action', '{{ request.script_root }}/admin/team/'+id)
+	modal_form.find('input[name=name]').val(name);
+	modal_form.find('input[name=id]').val(id);
+	modal_form.find('input[name=email]').val(email);
+	modal_form.find('input[name=website]').val(website);
+	modal_form.find('input[name=affiliation]').val(affiliation);
+	modal_form.find('input[name=country]').val(country);
+	modal_form.find('input[name=password]').val('');
+
+	if (id == 'new'){
+		$('#user .modal-action').text('Create Team');
+	} else {
+		$('#user .modal-action').text('Edit Team');
+	}
+
+	$('#results').empty();
+	$('#user form').attr('action', '{{ request.script_root }}/admin/team/'+id);
 	$('#user').modal("show");
 }
 
@@ -221,28 +233,20 @@ $('#update-user').click(function(e){
 	e.preventDefault();
 	var id = $('#user input[name="id"]').val()
 	var user_data = $('#user form').serializeArray()
+	$('#results').empty();
 	$.post($('#user form').attr('action'), $('#user form').serialize(), function(data){
 		var data = $.parseJSON(JSON.stringify(data))
 		for (var i = 0; i < data['data'].length; i++) {
 			if (data['data'][i] == 'success'){
-				var row = $('tr[name='+id+']')
-				console.log($.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'])
-				console.log(row.find('.team-name > a'))
-				row.find('.team-name > a').text( $.grep(user_data, function(e){ return e.name == 'name'; })[0]['value'] );
-				var new_email = $.grep(user_data, function(e){ return e.name == 'email'; })[0]['value'];
-				if (new_email){
-					row.find('.team-email').text( new_email );
-				}
-				row.find('.team-website > a').empty()
-				var website = $.grep(user_data, function(e){ return e.name == 'website'; })[0]['value']
-				row.find('.team-website').append($('<a>').attr('href', website).text(website));
-
-				row.find('.team-affiliation').text( $.grep(user_data, function(e){ return e.name == 'affiliation'; })[0]['value'] );
-				row.find('.team-country').text( $.grep(user_data, function(e){ return e.name == 'country'; })[0]['value'] );
 				$('#user').modal('hide');
+				location.reload();
 			}
 			else{
-				$('#results').append($('p').text( data['data'][i] ))
+				var error = $('<div class="alert alert-danger alert-dismissable">\n' +
+					'  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
+					'  {0}\n'.format(data['data'][i]) +
+					'</div>');
+				$('#results').append(error);
 			}
 		};
 	})
@@ -304,6 +308,10 @@ $('.fa-pencil-square-o').click(function(){
 	var country = elem.find('.team-country').attr('value')  || '';
 
 	load_update_modal(id, name, email, website, affiliation, country);
+});
+
+$('.create-team').click(function(){
+	load_update_modal('new', '', '', '', '', '');
 });
 
 function load_confirm_modal(id, name){
