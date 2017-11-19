@@ -59,8 +59,6 @@ def admin_create_team():
 
     errors = []
 
-    valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
-
     if not name:
         errors.append('The team requires a name')
     elif Teams.query.filter(Teams.name == name).first():
@@ -71,8 +69,10 @@ def admin_create_team():
     elif Teams.query.filter(Teams.email == email).first():
         errors.append('That email is taken')
 
-    if not valid_email:
-        errors.append("That email address is invalid")
+    if email:
+        valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
+        if not valid_email:
+            errors.append("That email address is invalid")
 
     if not password:
         errors.append('The team requires a password')
@@ -143,9 +143,10 @@ def admin_team(teamid):
 
         errors = []
 
-        valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
-        if not valid_email:
-            errors.append("That email address is invalid")
+        if email:
+            valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
+            if not valid_email:
+                errors.append("That email address is invalid")
 
         name_used = Teams.query.filter(Teams.name == name).first()
         if name_used and int(name_used.id) != int(teamid):
