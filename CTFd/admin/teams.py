@@ -6,6 +6,8 @@ from sqlalchemy.sql import not_
 
 from CTFd import utils
 
+import re
+
 admin_teams = Blueprint('admin_teams', __name__)
 
 
@@ -56,18 +58,28 @@ def admin_create_team():
     country = request.form.get('country', None)
 
     errors = []
+
+    valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
+
     if not name:
         errors.append('The team requires a name')
     elif Teams.query.filter(Teams.name == name).first():
         errors.append('That name is taken')
+
     if not email:
         errors.append('The team requires an email')
     elif Teams.query.filter(Teams.email == email).first():
         errors.append('That email is taken')
+
+    if not valid_email:
+        errors.append("That email address is invalid")
+
     if not password:
         errors.append('The team requires a password')
-    if website and not (website.startswith('http://') or website.startswith('https://')):
+
+    if website and (website.startswith('http://') or website.startswith('https://')) is False:
         errors.append('Websites must start with http:// or https://')
+
     if errors:
         db.session.close()
         return jsonify({'data': errors})
@@ -131,6 +143,10 @@ def admin_team(teamid):
 
         errors = []
 
+        valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
+        if not valid_email:
+            errors.append("That email address is invalid")
+
         name_used = Teams.query.filter(Teams.name == name).first()
         if name_used and int(name_used.id) != int(teamid):
             errors.append('That name is taken')
@@ -138,6 +154,9 @@ def admin_team(teamid):
         email_used = Teams.query.filter(Teams.email == email).first()
         if email_used and int(email_used.id) != int(teamid):
             errors.append('That email is taken')
+
+        if website and (website.startswith('http://') or website.startswith('https://')) is False:
+            errors.append('Websites must start with http:// or https://')
 
         if errors:
             db.session.close()
