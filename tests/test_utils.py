@@ -11,6 +11,7 @@ from freezegun import freeze_time
 from mock import patch
 import json
 import os
+import shutil
 import six
 import subprocess
 
@@ -383,3 +384,34 @@ def test_upload_folder_environ():
 
     os.unlink(fshare)
     assert(rslt)
+
+
+def test_uploads_folder():
+    """Test that uploaded files are reachable."""
+    fdest = randstr(32)
+    assert(32 == len(fdest))
+
+    dest = os.path.join(TestingConfig.UPLOAD_FOLDER, fdest)
+
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        chal = gen_challenge(app.db, name='uploads', files=[fdest])
+        chal_id = chal.id
+
+        files = Files.query.filter_by(chal=chal_id).all()
+        assert(1 == len(files))
+        assert(fdest == files[0].location)
+
+        shutil.copy2(__file__, dest)
+        with open(__file__, 'rb') as fh:
+            odata = fh.read()
+
+        with app.test_client() as client:
+            r = client.get('/files/' + fdest)
+            rdata = r.get_data(as_text=True)
+
+        os.unlink(dest)
+        assert(rdata.encode() == odata)
+
+    destroy_ctfd(app)

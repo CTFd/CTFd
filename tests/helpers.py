@@ -3,6 +3,7 @@ from CTFd.models import *
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.engine.url import make_url
 import datetime
+import os
 import random
 import six
 import string
@@ -86,12 +87,17 @@ def get_scores(user):
     return scores['standings']
 
 
-def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard', hidden=False):
+def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard', hidden=False, files=None):
     chal = Challenges(name, description, value, category)
     if hidden:
         chal.hidden = hidden
     db.session.add(chal)
     db.session.commit()
+    if files:
+        for e in files:
+            file = Files(chal.id, os.path.basename(e))
+            db.session.add(file)
+            db.session.commit()
     return chal
 
 
