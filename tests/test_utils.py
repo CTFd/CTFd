@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from tests.helpers import *
+from CTFd.config import TestingConfig
 from CTFd.models import ip2long, long2ip
 from CTFd.utils import get_config, set_config, override_template, sendmail, verify_email, ctf_started, ctf_ended, export_ctf
 from CTFd.utils import register_plugin_script, register_plugin_stylesheet
@@ -9,7 +10,9 @@ from CTFd.utils import base64encode, base64decode
 from freezegun import freeze_time
 from mock import patch
 import json
+import os
 import six
+import subprocess
 
 
 def test_get_config_and_set_config():
@@ -349,3 +352,32 @@ def test_export_ctf():
         with open('export.zip', 'wb') as f:
             f.write(backup.getvalue())
     destroy_ctfd(app)
+
+
+fshare = 'upload_folder.tmp'
+
+def __test_upload_folder_environ():
+    with open(fshare, 'wb') as fh:
+        fh.write(TestingConfig.UPLOAD_FOLDER.encode())
+
+    assert(True != False)
+
+def test_upload_folder_environ():
+    """Test that CTFd properly sets UPLOAD_FOLDER from environment"""
+    reslt = False
+
+    val = randstr(32)
+    assert(32 == len(val))
+    os.environ['UPLOAD_FOLDER'] = val
+
+    with open(os.devnull, 'wb') as fnull:
+        subprocess.call(['nosetests','tests/test_utils.py:__test_upload_folder_environ'], stdout=fnull, stderr=fnull)
+
+    with open(fshare, 'rb') as fh:
+        lines = fh.readlines()
+        assert(1 == len(lines))
+        used = lines[0].decode().strip()
+        rslt = (used == val)
+
+    os.unlink(fshare)
+    assert(rslt)
