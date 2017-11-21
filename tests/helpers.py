@@ -163,5 +163,6 @@ def gen_page(db, route, html):
     db.session.commit()
     return page
 
+
 def randstr(len):
     return ''.join(random.choice(string.ascii_lowercase) for i in range(len))

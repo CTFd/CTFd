@@ -356,11 +356,13 @@ def test_export_ctf():
 
 fshare = 'upload_folder.tmp'
 
+
 def __test_upload_folder_environ():
     with open(fshare, 'wb') as fh:
         fh.write(TestingConfig.UPLOAD_FOLDER.encode())
 
     assert(True != False)
+
 
 def test_upload_folder_environ():
     """Test that CTFd properly sets UPLOAD_FOLDER from environment"""
@@ -371,7 +373,7 @@ def test_upload_folder_environ():
     os.environ['UPLOAD_FOLDER'] = val
 
     with open(os.devnull, 'wb') as fnull:
-        subprocess.call(['nosetests','tests/test_utils.py:__test_upload_folder_environ'], stdout=fnull, stderr=fnull)
+        subprocess.call(['nosetests', 'tests/test_utils.py:__test_upload_folder_environ'], stdout=fnull, stderr=fnull)
 
     with open(fshare, 'rb') as fh:
         lines = fh.readlines()
