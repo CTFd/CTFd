@@ -86,7 +86,7 @@ def reset_password(data=None):
         except BadTimeSignature:
             return render_template('reset_password.html', errors=['Your link has expired'])
         except:
-            return render_template('reset_password.html', errors=['Your link appears broken, please try again.'])
+            return render_template('reset_password.html', errors=['Your link appears broken, please try again'])
         team = Teams.query.filter_by(name=name).first_or_404()
         team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
         db.session.commit()
@@ -101,6 +101,15 @@ def reset_password(data=None):
     if request.method == 'POST':
         email = request.form['email'].strip()
         team = Teams.query.filter_by(email=email).first()
+
+        errors = []
+
+        if utils.can_send_mail() is False:
+            return render_template(
+                'reset_password.html',
+                errors=['Email could not be sent due to server misconfiguration']
+            )
+
         if not team:
             return render_template(
                 'reset_password.html',
@@ -117,7 +126,10 @@ Did you initiate a password reset?
 
         utils.sendmail(email, text)
 
-        return render_template('reset_password.html', errors=['If that account exists you will receive an email, please check your inbox'])
+        return render_template(
+            'reset_password.html',
+            errors=['If that account exists you will receive an email, please check your inbox']
+        )
     return render_template('reset_password.html')
 
 
