@@ -565,3 +565,53 @@ http://localhost/reset_password/InVzZXIxIi5BZktHUGcuTVhkTmZtOWU2U2xwSXZ1MlFwTjdw
             team = Teams.query.filter_by(email="user@user.com").first()
             assert team.password != team_password_saved
     destroy_ctfd(app)
+
+
+def test_workshop_mode():
+    """Test that workshop mode hides the appropriate data"""
+    app = create_ctfd()
+    with app.app_context():
+        # Set CTFd to only allow confirmed users and send emails
+        set_config('workshop_mode', True)
+
+        register_user(app)
+
+        chal = gen_challenge(app.db, value=100)
+        solve = gen_solve(app.db, teamid=2, chalid=1)
+
+        client = login_as_user(app, name="user", password="password")
+        r = client.get('/scoreboard')
+        output = r.get_data(as_text=True)
+        assert "Scores are currently hidden" in output
+
+        r = client.get('/scoreboard')
+        output = r.get_data(as_text=True)
+        assert "Scores are currently hidden" in output
+
+        r = client.get('/scores')
+        received = r.get_data(as_text=True)
+        saved = '''{
+          "standings": []
+        }
+        '''
+        assert json.loads(saved) == json.loads(received)
+
+        r = client.get('/teams')
+        assert r.status_code == 404
+
+        r = client.get('/teams/1')
+        assert r.status_code == 404
+
+        r = client.get('/teams/2')
+        assert r.status_code == 404
+
+        r = client.get('/chals/solves')
+        output = r.get_data(as_text=True)
+        saved = json.loads('''{
+          "1": -1
+        }
+        ''')
+        received = json.loads(output)
+        assert saved == received
+
+    destroy_ctfd(app)

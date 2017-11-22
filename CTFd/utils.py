@@ -217,7 +217,7 @@ def ctf_theme():
 
 @cache.memoize()
 def hide_scores():
-    return get_config('hide_scores')
+    return get_config('hide_scores') or get_config('workshop_mode')
 
 
 def override_template(template, html):

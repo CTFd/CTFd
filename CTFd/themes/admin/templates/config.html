@@ -55,6 +55,16 @@
 
 					<div class="checkbox">
 						<label>
+							<input id="workshop_mode" name="workshop_mode" type="checkbox"
+								   {% if workshop_mode %}checked{% endif %}>
+							Workshop Mode <i class="fa fa-question-circle gray-text" data-toggle="tooltip"
+											 data-placement="right"
+											 title="Hide all public team and score information."></i>
+						</label>
+					</div>
+
+					<div class="checkbox">
+						<label>
 							<input id="hide_scores" name="hide_scores" type="checkbox" {% if hide_scores %}checked{% endif %}>
 							Hide Scores from public view
 						</label>

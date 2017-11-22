@@ -53,8 +53,9 @@
 								<li><a href="{{ request.script_root }}{{ menu.route }}">{{ menu.name }}</a></li>
 							{% endif %}
 						{% endfor %}
-
+						{% if not get_config('workshop_mode') %}
 						<li><a href="{{ request.script_root }}/teams">Teams</a></li>
+						{% endif %}
 						{% if not hide_scores() %}
 						<li><a href="{{ request.script_root }}/scoreboard">Scoreboard</a></li>
 						{% endif %}
@@ -65,7 +66,7 @@
 						{% if admin %}
 						<li><a href="{{ request.script_root }}/admin">Admin</a></li>
 						{% endif %}
-						<li><a href="{{ request.script_root }}/team/{{ id }}">Team</a></li>
+						<li><a href="{{ request.script_root }}/team">Team</a></li>
 						<li><a href="{{ request.script_root }}/profile">Profile</a></li>
 						<li><a href="{{ request.script_root }}/logout">Logout</a></li>
 					{% else %}

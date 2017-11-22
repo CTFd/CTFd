@@ -120,6 +120,8 @@ def static_html(template):
 @views.route('/teams', defaults={'page': '1'})
 @views.route('/teams/<int:page>')
 def teams(page):
+    if utils.get_config('workshop_mode'):
+        abort(404)
     page = abs(int(page))
     results_per_page = 50
     page_start = results_per_page * (page - 1)
@@ -164,6 +166,9 @@ def private_team():
 
 @views.route('/team/<int:teamid>', methods=['GET', 'POST'])
 def team(teamid):
+    if utils.get_config('workshop_mode'):
+        abort(404)
+
     if utils.get_config('view_scoreboard_if_utils.authed') and not utils.authed():
         return redirect(url_for('auth.login', next=request.path))
     errors = []

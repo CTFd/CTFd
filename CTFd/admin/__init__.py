@@ -117,6 +117,7 @@ def admin_config():
             mail_tls = bool(request.form.get('mail_tls', None))
             mail_ssl = bool(request.form.get('mail_ssl', None))
             mail_useauth = bool(request.form.get('mail_useauth', None))
+            workshop_mode = bool(request.form.get('workshop_mode', None))
         except (ValueError, TypeError):
             view_challenges_unregistered = None
             view_scoreboard_if_authed = None
@@ -128,6 +129,7 @@ def admin_config():
             mail_tls = None
             mail_ssl = None
             mail_useauth = None
+            workshop_mode = None
         finally:
             view_challenges_unregistered = utils.set_config('view_challenges_unregistered', view_challenges_unregistered)
             view_scoreboard_if_authed = utils.set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
@@ -139,6 +141,7 @@ def admin_config():
             mail_tls = utils.set_config('mail_tls', mail_tls)
             mail_ssl = utils.set_config('mail_ssl', mail_ssl)
             mail_useauth = utils.set_config('mail_useauth', mail_useauth)
+            workshop_mode = utils.set_config('workshop_mode', workshop_mode)
 
         mail_server = utils.set_config("mail_server", request.form.get('mail_server', None))
         mail_port = utils.set_config("mail_port", request.form.get('mail_port', None))
@@ -207,6 +210,8 @@ def admin_config():
     prevent_name_change = utils.get_config('prevent_name_change')
     verify_emails = utils.get_config('verify_emails')
 
+    workshop_mode = utils.get_config('workshop_mode')
+
     db.session.commit()
     db.session.close()
 
@@ -236,4 +241,5 @@ def admin_config():
                            prevent_name_change=prevent_name_change,
                            verify_emails=verify_emails,
                            view_after_ctf=view_after_ctf,
-                           themes=themes)
+                           themes=themes,
+                           workshop_mode=workshop_mode)
