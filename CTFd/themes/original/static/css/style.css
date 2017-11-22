@@ -1,11 +1,11 @@
 
 html, body, .container {
     height: 100% !important;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Lato', 'LatoOffline', sans-serif;
 }
 
 h1, h2 {
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Raleway', 'RalewayOffline', sans-serif;
     font-weight: 500;
     letter-spacing: 2px;
 }
