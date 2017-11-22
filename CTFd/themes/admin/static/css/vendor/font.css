@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i|Raleway:400,400i,700,700i&subset=latin-ext');
+
 @font-face {
-	font-family: 'Lato';
+	font-family: 'LatoOffline';
 	font-style: normal;
 	font-weight: 400;
 	src:
@@ -17,7 +19,7 @@
 		url('lato/Lato_400.ttf') format('truetype');
 }
 @font-face {
-	font-family: 'Lato';
+	font-family: 'LatoOffline';
 	font-style: italic;
 	font-weight: 400;
 	src:
@@ -35,7 +37,7 @@
 		url('lato/Lato_400i.ttf') format('truetype');
 }
 @font-face {
-	font-family: 'Lato';
+	font-family: 'LatoOffline';
 	font-style: normal;
 	font-weight: 700;
 	src:
@@ -53,7 +55,7 @@
 		url('lato/Lato_700.ttf') format('truetype');
 }
 @font-face {
-	font-family: 'Lato';
+	font-family: 'LatoOffline';
 	font-style: italic;
 	font-weight: 700;
 	src:
@@ -71,7 +73,7 @@
 		url('lato/Lato_700i.ttf') format('truetype');
 }
 @font-face {
-	font-family: 'Raleway';
+	font-family: 'RalewayOffline';
 	font-style: normal;
 	font-weight: 400;
 	src:
@@ -89,7 +91,7 @@
 		url('raleway/Raleway_400.ttf') format('truetype');
 }
 @font-face {
-	font-family: 'Raleway';
+	font-family: 'RalewayOffline';
 	font-style: italic;
 	font-weight: 400;
 	src:
@@ -107,7 +109,7 @@
 		url('raleway/Raleway_400i.ttf') format('truetype');
 }
 @font-face {
-	font-family: 'Raleway';
+	font-family: 'RalewayOffline';
 	font-style: normal;
 	font-weight: 700;
 	src:
@@ -125,7 +127,7 @@
 		url('raleway/Raleway_700.ttf') format('truetype');
 }
 @font-face {
-	font-family: 'Raleway';
+	font-family: 'RalewayOffline';
 	font-style: italic;
 	font-weight: 700;
 	src:
