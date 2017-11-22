@@ -621,6 +621,10 @@ def validate_url(url):
     return urlparse(url).scheme.startswith('http')
 
 
+def check_email_format(email):
+    return bool(re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email))
+
+
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
 

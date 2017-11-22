@@ -102,7 +102,10 @@ def reset_password(data=None):
         email = request.form['email'].strip()
         team = Teams.query.filter_by(email=email).first()
         if not team:
-            return render_template('reset_password.html', errors=['If that account exists you will receive an email, please check your inbox'])
+            return render_template(
+                'reset_password.html',
+                errors=['If that account exists you will receive an email, please check your inbox']
+            )
         s = TimedSerializer(app.config['SECRET_KEY'])
         token = s.dumps(team.name)
         text = """
@@ -134,12 +137,15 @@ def register():
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
         pass_short = len(password) == 0
         pass_long = len(password) > 128
-        valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", request.form['email'])
+        valid_email = utils.check_email_format(request.form['email'])
+        team_name_email_check = utils.check_email_format(name)
 
         if not valid_email:
-            errors.append("That email doesn't look right")
+            errors.append("Please enter a valid email address")
         if names:
             errors.append('That team name is already taken')
+        if team_name_email_check is True:
+            errors.append('Your team name cannot be an email address')
         if emails:
             errors.append('That email has already been used')
         if pass_short:
@@ -196,7 +202,14 @@ def login():
     if request.method == 'POST':
         errors = []
         name = request.form['name']
-        team = Teams.query.filter_by(name=name).first()
+
+        # Check if the user submitted an email address or a team name
+        print utils.check_email_format(name)
+        if utils.check_email_format(name) is True:
+            team = Teams.query.filter_by(email=name).first()
+        else:
+            team = Teams.query.filter_by(name=name).first()
+
         if team:
             if team and bcrypt_sha256.verify(request.form['password'], team.password):
                 try:
