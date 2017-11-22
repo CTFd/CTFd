@@ -153,6 +153,11 @@ def solves_per_chal():
     if not utils.user_can_view_challenges():
         return redirect(url_for('auth.login', next=request.path))
 
+    chals = Challenges.query\
+        .filter(or_(Challenges.hidden != True, Challenges.hidden == None))\
+        .order_by(Challenges.value)\
+        .all()
+
     solves_sub = db.session.query(
         Solves.chalid,
         db.func.count(Solves.chalid).label('solves')
@@ -168,15 +173,21 @@ def solves_per_chal():
     ) \
         .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
 
-    json = {}
+    data = {}
     if utils.hide_scores():
         for chal, count, name in solves:
-            json[chal] = -1
+            data[chal] = -1
+        for c in chals:
+            if c.id not in data:
+                data[c.id] = -1
     else:
         for chal, count, name in solves:
-            json[chal] = count
+            data[chal] = count
+        for c in chals:
+            if c.id not in data:
+                data[c.id] = 0
     db.session.close()
-    return jsonify(json)
+    return jsonify(data)
 
 
 @challenges.route('/solves')

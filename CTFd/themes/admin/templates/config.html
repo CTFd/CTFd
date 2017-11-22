@@ -55,6 +55,14 @@
 
 					<div class="checkbox">
 						<label>
+							<input id="workshop_mode" name="workshop_mode" type="checkbox"
+								   {% if workshop_mode %}checked{% endif %}>
+							Workshop Mode
+						</label>
+					</div>
+
+					<div class="checkbox">
+						<label>
 							<input id="hide_scores" name="hide_scores" type="checkbox" {% if hide_scores %}checked{% endif %}>
 							Hide Scores from public view
 						</label>

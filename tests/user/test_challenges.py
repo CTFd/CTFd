@@ -56,7 +56,7 @@ def test_chals_solves():
             register_user(app, name=name, email=email, password="password")
 
         # Generate 5 challenges
-        for c in range(5):
+        for c in range(6):
             chal1 = gen_challenge(app.db, value=100)
 
         user_ids = list(range(2, 7))
@@ -76,7 +76,23 @@ def test_chals_solves():
               "2": 4,
               "3": 3,
               "4": 2,
-              "5": 1
+              "5": 1,
+              "6": 0
+            }
+            ''')
+            received = json.loads(output)
+            assert saved == received
+        set_config('hide_scores', True)
+        with client.session_transaction() as sess:
+            r = client.get('/chals/solves')
+            output = r.get_data(as_text=True)
+            saved = json.loads('''{
+              "1": -1,
+              "2": -1,
+              "3": -1,
+              "4": -1,
+              "5": -1,
+              "6": -1
             }
             ''')
             received = json.loads(output)
@@ -435,7 +451,10 @@ def test_that_view_challenges_unregistered_works():
 
         r = client.get('/chals/solves')
         data = r.get_data(as_text=True)
-        assert json.loads(data) == {}
+        assert json.loads(data) == json.loads('''{
+              "1": 0
+            }
+            ''')
 
         r = client.get('/chal/1/solves')
         data = r.get_data(as_text=True)
