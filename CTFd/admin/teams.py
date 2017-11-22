@@ -70,7 +70,7 @@ def admin_create_team():
         errors.append('That email is taken')
 
     if email:
-        valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
+        valid_email = utils.check_email_format(email)
         if not valid_email:
             errors.append("That email address is invalid")
 
@@ -144,7 +144,7 @@ def admin_team(teamid):
         errors = []
 
         if email:
-            valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
+            valid_email = utils.check_email_format(email)
             if not valid_email:
                 errors.append("That email address is invalid")
 
