@@ -40,6 +40,16 @@ def test_register_unicode_user():
     destroy_ctfd(app)
 
 
+def test_register_email_as_team_name():
+    """A user shouldn't be able to use an email address as a team name"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user@ctfd.io", email="user@ctfd.io", password="password")
+        team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
+        assert team_count == 1  # There's only the admin user
+    destroy_ctfd(app)
+
+
 def test_register_duplicate_teamname():
     """A user shouldn't be able to use an already registered team name"""
     app = create_ctfd()
@@ -79,6 +89,18 @@ def test_user_login():
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
+        r = client.get('/profile')
+        assert r.location != "http://localhost/login"  # We didn't get redirected to login
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_login_with_email():
+    """Can a registered user can login with an email address instead of a team name"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app, name="user@ctfd.io", password="password")
         r = client.get('/profile')
         assert r.location != "http://localhost/login"  # We didn't get redirected to login
         assert r.status_code == 200

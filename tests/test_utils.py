@@ -6,6 +6,7 @@ from CTFd.models import ip2long, long2ip
 from CTFd.utils import get_config, set_config, override_template, sendmail, verify_email, ctf_started, ctf_ended, export_ctf
 from CTFd.utils import register_plugin_script, register_plugin_stylesheet
 from CTFd.utils import base64encode, base64decode
+from CTFd.utils import check_email_format
 from freezegun import freeze_time
 from mock import patch
 import json
@@ -349,3 +350,23 @@ def test_export_ctf():
         with open('export.zip', 'wb') as f:
             f.write(backup.getvalue())
     destroy_ctfd(app)
+
+
+def test_check_email_format():
+    """Test that the check_email_format() works properly"""
+    assert check_email_format('user@ctfd.io') is True
+    assert check_email_format('user+plus@gmail.com') is True
+    assert check_email_format('user.period1234@gmail.com') is True
+    assert check_email_format('user.period1234@b.c') is True
+    assert check_email_format('user.period1234@b') is False
+    assert check_email_format('no.ampersand') is False
+    assert check_email_format('user@') is False
+    assert check_email_format('@ctfd.io') is False
+    assert check_email_format('user.io@ctfd') is False
+    assert check_email_format('user\@ctfd') is False
+
+    for invalid_email in ['user.@ctfd.io', '.user@ctfd.io', 'user@ctfd..io']:
+        try:
+            assert check_email_format(invalid_email) is False
+        except AssertionError:
+            print(invalid_email, 'did not pass validation')

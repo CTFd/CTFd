@@ -64,13 +64,16 @@ def admin_create_team():
     elif Teams.query.filter(Teams.name == name).first():
         errors.append('That name is taken')
 
+    if utils.check_email_format(name) is True:
+        errors.append('Team name cannot be an email address')
+
     if not email:
         errors.append('The team requires an email')
     elif Teams.query.filter(Teams.email == email).first():
         errors.append('That email is taken')
 
     if email:
-        valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
+        valid_email = utils.check_email_format(email)
         if not valid_email:
             errors.append("That email address is invalid")
 
@@ -144,13 +147,16 @@ def admin_team(teamid):
         errors = []
 
         if email:
-            valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
+            valid_email = utils.check_email_format(email)
             if not valid_email:
                 errors.append("That email address is invalid")
 
         name_used = Teams.query.filter(Teams.name == name).first()
         if name_used and int(name_used.id) != int(teamid):
             errors.append('That name is taken')
+
+        if utils.check_email_format(name) is True:
+            errors.append('Team name cannot be an email address')
 
         email_used = Teams.query.filter(Teams.email == email).first()
         if email_used and int(email_used.id) != int(teamid):
