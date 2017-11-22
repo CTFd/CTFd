@@ -222,6 +222,9 @@ def profile():
             emails = Teams.query.filter_by(email=email).first()
             valid_email = utils.check_email_format(email)
 
+            if utils.check_email_format(name) is True:
+                errors.append('Team name cannot be an email address')
+
             if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
                     (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):
                 errors.append("Your old password doesn't match what we have.")

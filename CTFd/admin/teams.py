@@ -64,6 +64,9 @@ def admin_create_team():
     elif Teams.query.filter(Teams.name == name).first():
         errors.append('That name is taken')
 
+    if utils.check_email_format(name) is True:
+        errors.append('Team name cannot be an email address')
+
     if not email:
         errors.append('The team requires an email')
     elif Teams.query.filter(Teams.email == email).first():
@@ -151,6 +154,9 @@ def admin_team(teamid):
         name_used = Teams.query.filter(Teams.name == name).first()
         if name_used and int(name_used.id) != int(teamid):
             errors.append('That name is taken')
+
+        if utils.check_email_format(name) is True:
+            errors.append('Team name cannot be an email address')
 
         email_used = Teams.query.filter(Teams.email == email).first()
         if email_used and int(email_used.id) != int(teamid):
