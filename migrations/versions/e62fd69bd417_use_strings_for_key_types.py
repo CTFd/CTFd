@@ -21,18 +21,18 @@ def upgrade():
     bind = op.get_bind()
     url = str(bind.engine.url)
     if url.startswith('mysql'):
-        op.alter_column('keys', 'type',
+        op.alter_column('keys', 'key_type',
                    existing_type=sa.INTEGER(),
                    type_=sa.String(length=80),
                    existing_nullable=True)
-        op.execute("UPDATE `keys` set type='static' WHERE type='0'")
-        op.execute("UPDATE `keys` set type='regex' WHERE type='1'")
+        op.execute("UPDATE `keys` set key_type='static' WHERE key_type='0'")
+        op.execute("UPDATE `keys` set key_type='regex' WHERE key_type='1'")
     elif url.startswith('postgres'):
-        op.alter_column('keys', 'type',
+        op.alter_column('keys', 'key_type',
                    existing_type=sa.INTEGER(),
                    type_=sa.String(length=80),
                    existing_nullable=True,
-                   postgresql_using="CASE WHEN type=0 THEN 'static' WHEN type=1 THEN 'regex' ELSE NULL END"
+                   postgresql_using="CASE WHEN key_type=0 THEN 'static' WHEN key_type=1 THEN 'regex' ELSE NULL END"
                    )
     # ### end Alembic commands ###
 
@@ -42,17 +42,17 @@ def downgrade():
     bind = op.get_bind()
     url = str(bind.engine.url)
     if url.startswith('mysql'):
-        op.execute("UPDATE `keys` set type=0 WHERE type='static'")
-        op.execute("UPDATE `keys` set type=1 WHERE type='regex'")
-        op.alter_column('keys', 'type',
+        op.execute("UPDATE `keys` set key_type=0 WHERE key_type='static'")
+        op.execute("UPDATE `keys` set key_type=1 WHERE key_type='regex'")
+        op.alter_column('keys', 'key_type',
                    existing_type=sa.String(length=80),
                    type_=sa.INTEGER(),
                    existing_nullable=True)
     elif url.startswith('postgres'):
-        op.alter_column('keys', 'type',
+        op.alter_column('keys', 'key_type',
                     existing_type=sa.String(length=80),
                     type_=sa.INTEGER(),
                     existing_nullable=True,
-                    postgresql_using="CASE WHEN type='static' THEN 0 WHEN type='regex' THEN 1 ELSE NULL END"
+                    postgresql_using="CASE WHEN key_type='static' THEN 0 WHEN key_type='regex' THEN 1 ELSE NULL END"
                     )
     # ### end Alembic commands ###
