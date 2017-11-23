@@ -3,9 +3,7 @@ from CTFd.models import *
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.engine.url import make_url
 import datetime
-import random
 import six
-import string
 import gc
 
 if six.PY2:
@@ -162,6 +160,3 @@ def gen_page(db, route, html):
     db.session.add(page)
     db.session.commit()
     return page
-
-def randstr(len):
-    return ''.join(random.choice(string.ascii_lowercase) for i in range(len))
