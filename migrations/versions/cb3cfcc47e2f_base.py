@@ -93,7 +93,7 @@ def upgrade():
     op.create_table('keys',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('chal', sa.Integer(), nullable=True),
-    sa.Column('key_type', sa.Integer(), nullable=True),
+    sa.Column('type', sa.Integer(), nullable=True),
     sa.Column('flag', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['chal'], ['challenges.id'], ),
     sa.PrimaryKeyConstraint('id')

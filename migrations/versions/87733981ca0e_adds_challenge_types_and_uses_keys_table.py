@@ -22,7 +22,7 @@ depends_on = None
 keys_table = table('keys',
     column('id', db.Integer),
     column('chal', db.Integer),
-    column('key_type', db.Integer),
+    column('type', db.Integer),
     column('flag', db.Text)
 )
 
@@ -44,7 +44,7 @@ def upgrade():
         if r[1]: ## Check if flags are NULL
             data = json.loads(r[1])
             for old_keys in data:
-                new_keys.append({'chal':r[0], 'flag':old_keys.get('flag'), 'key_type':old_keys.get('type')})
+                new_keys.append({'chal':r[0], 'flag':old_keys.get('flag'), 'type':old_keys.get('type')})
     if new_keys:
         ## Base CTFd databases actually already insert into Keys but the database does not make use of them
         ## This prevents duplicate entries of keys
@@ -94,7 +94,7 @@ def downgrade():
         new_keys = Keys.query.filter_by(chal=chal_id[0]).all()
         old_flags = []
         for new_key in new_keys:
-            flag_dict = {'flag': new_key.flag, 'type': new_key.key_type}
+            flag_dict = {'flag': new_key.flag, 'type': new_key.type}
             old_flags.append(flag_dict)
         old_flags =json.dumps(old_flags)
         # print("Updating challenge {} to insert {}".format(chal_id[0], flag_dict))
