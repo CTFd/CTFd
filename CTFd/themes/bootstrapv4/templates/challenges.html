@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/challenge-board.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron">
+	<div class="container">
+		<h1>Challenges</h1>
+	</div>
+</div>
+
+{% if errors %}
+	<div id='errors' class="row">
+{% for error in errors %}
+		<h1>{{ error }}</h1>
+{% endfor %}
+	</div>
+{% endif %}
+
+{% if admin or not errors %}
+<div class="container">
+	<div id='challenges-board'>
+		<div class="text-center">
+			<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw spinner"></i>
+		</div>
+	</div>
+</div>
+
+<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+
+<div class="modal fade" id="hint-modal" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="text-center w-100">Hint</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="hint-modal-body">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="chal-window" tabindex="-1" role="dialog">
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/utils.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/multi-modal.js"></script>
+	{% if admin or not errors %}
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/chalboard.js"></script>
+	{% endif %}
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/style.js"></script>
+{% endblock %}
