@@ -24,8 +24,7 @@ tmux new-session -d -n "ctfd" -c "/vagrant" -s "ctfd" "gunicorn --bind 0.0.0.0:8
 SCRIPT
 
 Vagrant.configure("2") do |config|
-  # ubuntu/xenial64 supports synced folders
-  config.vm.box = "ubuntu/xenial64"
+  config.vm.box = "bento/ubuntu-16.04"
 
   # Create a private network, which allows host-only access to the machine
   config.vm.network "private_network", ip: "10.9.8.7"
