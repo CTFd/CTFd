@@ -18,6 +18,10 @@ a {
     outline: 0;
 }
 
+img {
+    max-width: 100%;
+}
+
 .body-container {
     min-height: 100%;
     position: relative;
@@ -106,6 +110,12 @@ table{
     line-height: 66px;
 }
 
+#score-graph{
+    height: 450px;
+    display: block;
+    clear: both;
+}
+
 .fa.spinner {
     margin-top: 225px;
     text-align: center;
@@ -113,14 +123,9 @@ table{
 }
 
 .spinner-error {
+    padding-top: 20vh;
     text-align: center;
     opacity: 0.5;
-}
-
-#score-graph{
-    height: 450px;
-    display: block;
-    clear: both;
 }
 
 #keys-pie-graph{
@@ -385,118 +390,6 @@ table{
     margin: 0px;
 }
 
-/* END OF INPUT CSS */
-
-/* ADMIN CSS */
-
-#submit-key{
-    display: none;
-}
-
-#chal > h1{
-    text-align: center
-}
-
-#chal > form{
-    width: 400px;
-    margin: 0 auto;
-}
-
-#chal > form > h3,h4{
-    text-align: center;
-}
-
-#chal > form > input{
-    display: none;
-}
-
-table{
-    width: 100%;
-}
-
-/*Not sure why foundation needs these two...*/
-.top-bar input{
-    height: auto;
-    padding-top: 0.35rem;
-    padding-bottom: 0.35rem;
-    font-size: 0.75rem;
-}
-
-.top-bar .button{
-    padding-top: 0.45rem;
-    padding-bottom: 0.35rem;
-    margin-bottom: 0;
-    font-size: 0.75rem;
-}
-
-.dropdown{
-    background-color: #333 !important;
-    padding: 5px;
-}
-
-.dropdown button{
-    padding-top: 0.45rem;
-    padding-bottom: 0.35rem;
-    margin-bottom: 0;
-    font-size: 0.75rem;
-}
-
-#challenges button{
-    margin: 5px;
-}
-
-.row h1{
-    text-align: center;
-}
-
-
-.textbox{
-    height: 150px;
-}
-
-.chal-tag{
-    margin: 0 5px 0 5px;
-}
-
-#score-graph{
-    clear:both;
-}
-
-#keys-pie-graph{
-    width: 50%;
-    float: left;
-}
-
-#categories-pie-graph{
-    width: 50%;
-    float: left;
-}
-
-.chal-button{
-    width: 150px;
-    color: white;
-    border: None;
-}
-
-.chal-button > .chal-name {
-    margin-bottom: 0px;
-    height: 20px;
-    font-weight: bold;
-}
-
-.chal-button > .chal-points {
-    margin: -20px 0 0 0;
-    height: 20px;
-}
-
-.chal-button > .chal-percent{
-    font-size: 12px;
-}
-
-.remove-key{
-    float:right;
-}
-
 .footer {
     position: absolute;
     left: 0;
@@ -506,6 +399,4 @@ table{
     width: 100%;
 }
 
-.gray-text{
-    color: lightgray;
-}
+/* END OF INPUT CSS */
