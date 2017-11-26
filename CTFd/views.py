@@ -249,7 +249,6 @@ def profile():
                                        affiliation=affiliation, country=country, errors=errors)
             else:
                 team = Teams.query.filter_by(id=session['id']).first()
-                print utils.get_config('prevent_name_change')
                 if team.name != name:
                     if not utils.get_config('prevent_name_change'):
                         team.name = name
