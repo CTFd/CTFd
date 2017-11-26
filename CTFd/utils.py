@@ -221,8 +221,7 @@ def hide_scores():
 
 
 def override_template(template, html):
-    with app.app_context():
-        app.jinja_loader.overriden_templates[template] = html
+    app.jinja_loader.overriden_templates[template] = html
 
 
 def register_plugin_script(url):
@@ -474,18 +473,17 @@ def delete_file(file_id):
 
 @cache.memoize()
 def get_config(key):
-    with app.app_context():
-        value = app.config.get(key)
-        if value:
-            if value and value.isdigit():
-                return int(value)
-            elif value and isinstance(value, six.string_types):
-                if value.lower() == 'true':
-                    return True
-                elif value.lower() == 'false':
-                    return False
-                else:
-                    return value
+    value = app.config.get(key)
+    if value:
+        if value and value.isdigit():
+            return int(value)
+        elif value and isinstance(value, six.string_types):
+            if value.lower() == 'true':
+                return True
+            elif value.lower() == 'false':
+                return False
+            else:
+                return value
     config = Config.query.filter_by(key=key).first()
     if config and config.value:
         value = config.value
