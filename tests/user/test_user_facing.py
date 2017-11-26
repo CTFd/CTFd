@@ -219,6 +219,35 @@ def test_user_get_profile():
     destroy_ctfd(app)
 
 
+def test_user_set_profile():
+    """Can a registered user set their private profile (/profile)"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/profile')
+        with client.session_transaction() as sess:
+            data = {
+                'name': 'user',
+                'email': 'user@ctfd.io',
+                'confirm': '',
+                'password': '',
+                'affiliation': 'affiliation_test',
+                'website': 'https://ctfd.io',
+                'country': 'United States of America',
+                'nonce': sess.get('nonce')
+            }
+
+        r = client.post('/profile', data=data)
+        assert r.status_code == 302
+
+        user = Teams.query.filter_by(id=2).first()
+        assert user.affiliation == 'affiliation_test'
+        assert user.website == 'https://ctfd.io'
+        assert user.country == 'United States of America'
+    destroy_ctfd(app)
+
+
 def test_user_get_logout():
     """Can a registered user load /logout"""
     app = create_ctfd()

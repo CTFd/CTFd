@@ -212,11 +212,11 @@ def profile():
         if request.method == "POST":
             errors = []
 
-            name = request.form.get('name')
-            email = request.form.get('email')
-            website = request.form.get('website')
-            affiliation = request.form.get('affiliation')
-            country = request.form.get('country')
+            name = request.form.get('name').strip()
+            email = request.form.get('email').strip()
+            website = request.form.get('website').strip()
+            affiliation = request.form.get('affiliation').strip()
+            country = request.form.get('country').strip()
 
             user = Teams.query.filter_by(id=session['id']).first()
 
@@ -249,13 +249,14 @@ def profile():
                                        affiliation=affiliation, country=country, errors=errors)
             else:
                 team = Teams.query.filter_by(id=session['id']).first()
-                if not utils.get_config('prevent_name_change'):
-                    team.name = name
+                if team.name != name:
+                    if not utils.get_config('prevent_name_change'):
+                        team.name = name
+                        session['username'] = team.name
                 if team.email != email.lower():
                     team.email = email.lower()
                     if utils.get_config('verify_emails'):
                         team.verified = False
-                session['username'] = team.name
 
                 if 'password' in request.form.keys() and not len(request.form['password']) == 0:
                     team.password = bcrypt_sha256.encrypt(request.form.get('password'))
