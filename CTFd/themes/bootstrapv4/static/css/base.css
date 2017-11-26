@@ -103,3 +103,8 @@ table > thead > tr > td {
 .btn-info {
     background-color: #5B7290 !important;
 }
+
+.alert {
+    border-radius: 0 !important;
+    padding: 0.8em;
+}
