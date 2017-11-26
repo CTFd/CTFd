@@ -208,6 +208,17 @@ def test_user_get_private_team_page():
     destroy_ctfd(app)
 
 
+def test_user_get_profile():
+    """Can a registered user load their private profile (/profile)"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/profile')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
 def test_user_set_profile():
     """Can a registered user set their private profile (/profile)"""
     app = create_ctfd()
