@@ -55,7 +55,13 @@ function scoregraph () {
                 x: times,
                 y: team_score,
                 mode: 'lines+markers',
-                name: places[teams[i]]['name']
+                name: places[teams[i]]['name'],
+                marker: {
+                    color: colorhash(places[teams[i]]['name'] + places[teams[i]]['id']),
+                },
+                line: {
+                    color: colorhash(places[teams[i]]['name'] + places[teams[i]]['id']),
+                }
             };
             traces.push(trace);
         }
@@ -72,11 +78,14 @@ function scoregraph () {
             title: 'Top 10 Teams',
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
+            hovermode: 'closest',
             xaxis: {
-                showgrid: false
+                showgrid: false,
+                showspikes: true,
             },
             yaxis: {
-                showgrid: false
+                showgrid: false,
+                showspikes: true,
             },
             legend: {
                 "orientation": "h"
@@ -85,7 +94,10 @@ function scoregraph () {
         console.log(traces);
 
         $('#score-graph').empty(); // Remove spinners
-        Plotly.newPlot('score-graph', traces, layout);
+        Plotly.newPlot('score-graph', traces, layout, {
+            // displayModeBar: false,
+            displaylogo: false
+        });
     });
 }
 

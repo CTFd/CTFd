@@ -13,6 +13,12 @@ a {
     text-decoration: none;
 }
 
+table > thead > tr > td {
+    /* Remove border line from thead of all tables */
+    /* It can overlap with other element styles */
+    border-top: none !important;
+}
+
 #score-graph {
     height: 450px;
     display: block;

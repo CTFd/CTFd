@@ -2,16 +2,6 @@ function teamid (){
     return $('#team-id').attr('team-id');
 }
 
-function colorhash (x) {
-    color = "";
-    for (var i = 20; i <= 60; i+=20){
-        x += i;
-        x *= i;
-        color += x.toString(16);
-    }
-    return "#" + color.substring(0, 6);
-}
-
 function cumulativesum (arr) {
     var result = arr.concat();
     for (var i = 0; i < arr.length; i++){
@@ -43,14 +33,32 @@ function scoregraph() {
             {
                 x: times,
                 y: scores,
-                type: 'scatter'
+                type: 'scatter',
+                marker: {
+                    color: colorhash(teamname + teamid ()),
+                },
+                line: {
+                    color: colorhash(teamname + teamid ()),
+                }
             }
         ];
 
         var layout = {
             title: 'Score over Time',
             paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)'
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            hovermode: 'closest',
+            xaxis: {
+                showgrid: false,
+                showspikes: true,
+            },
+            yaxis: {
+                showgrid: false,
+                showspikes: true,
+            },
+            legend: {
+                "orientation": "h"
+            }
         };
 
         $('#score-graph').empty();
