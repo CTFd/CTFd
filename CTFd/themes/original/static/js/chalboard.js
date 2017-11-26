@@ -211,22 +211,26 @@ function loadchals(cb) {
         for (var i = challenges['game'].length - 1; i >= 0; i--) {
             challenges['game'][i].solves = 0
             if ($.inArray(challenges['game'][i].category, categories) == -1) {
-                var category = challenges['game'][i].category;
-                categories.push(category);
-
-                var categoryid = category.replace(/ /g,"-").hashCode();
-                var categoryrow = $('' +
-                    '<div id="{0}-row">'.format(categoryid) +
-                        '<div class="category-header col-md-2">' +
-                        '</div>' +
-                        '<div class="category-challenges col-md-12">' +
-                            '<div class="chal-row"></div>' +
-                        '</div>' +
-                    '</div>');
-                categoryrow.find(".category-header").append($("<h3>"+ category +"</h3>"));
-
-                $('#challenges-board').append(categoryrow);
+                categories.push(challenges['game'][i].category);
             }
+        };
+
+      categories.sort();
+
+        for (var i = 0; i < categories.length; i++) {
+            var category = categories[i];
+            var categoryid = category.replace(/ /g,"-").hashCode();
+            var categoryrow = $('' +
+                '<div id="{0}-row">'.format(categoryid) +
+                    '<div class="category-header col-md-2">' +
+                    '</div>' +
+                    '<div class="category-challenges col-md-12">' +
+                        '<div class="chal-row"></div>' +
+                    '</div>' +
+                '</div>');
+            categoryrow.find(".category-header").append($("<h3>"+ category +"</h3>"));
+
+            $('#challenges-board').append(categoryrow);
         };
 
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
