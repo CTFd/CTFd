@@ -19,6 +19,7 @@ from CTFd.admin.scoreboard import admin_scoreboard
 from CTFd.admin.pages import admin_pages
 from CTFd.admin.keys import admin_keys
 from CTFd.admin.teams import admin_teams
+from CTFd.admin.message import admin_message
 
 from CTFd import utils
 
