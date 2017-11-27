@@ -19,6 +19,10 @@ table > thead > tr > td {
     border-top: none !important;
 }
 
+pre {
+    white-space: pre-wrap;
+}
+
 #score-graph {
     height: 450px;
     display: block;
@@ -47,7 +51,7 @@ table > thead > tr > td {
 .form-control {
     position: relative;
     display: block;
-    padding: 0.8em;
+    /*padding: 0.8em;*/
     border-radius: 0;
     background: #f0f0f0;
     color: #aaa;
@@ -107,4 +111,29 @@ table > thead > tr > td {
 .alert {
     border-radius: 0 !important;
     padding: 0.8em;
+}
+
+#solves-graph {
+    display: block;
+    height: 500px;
+}
+
+#keys-pie-graph {
+    height: 400px;
+    display: block;
+}
+
+#categories-pie-graph {
+    height: 400px;
+    display: block;
+}
+
+.no-decoration {
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+.no-decoration:hover {
+    color: inherit !important;
+    text-decoration: none !important;
 }

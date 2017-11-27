@@ -1,31 +1,35 @@
 {% extends "admin/base.html" %}
 
 {% block content %}
-<div class="row">
-	<h1>Config</h1>
-	<form method="POST" autocomplete="off">
-		<div class="col-md-2 col-md-offset-2">
-			<ul class="nav nav-pills nav-stacked">
-				<li role="presentation" class="active">
-					<a href="#appearance-section" aria-controls="appearance-section" role="tab" data-toggle="tab">Appearance</a>
+<div class="jumbotron">
+	<div class="container">
+		<h1>Configuration</h1>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-2 offset-md-2">
+			<ul class="nav nav-pills flex-column">
+				<li class="nav-item">
+					<a class="nav-link rounded-0 active" href="#appearance-section" aria-controls="appearance-section" role="tab" data-toggle="tab">Appearance</a>
 				</li>
-				<li role="presentation">
-					<a href="#accounts-section" aria-controls="accounts-section" role="tab" data-toggle="tab">Accounts</a>
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#accounts-section" aria-controls="accounts-section" role="tab" data-toggle="tab">Accounts</a>
 				</li>
-				<li role="presentation">
-					<a href="#email-section" aria-controls="email-section" role="tab" data-toggle="tab">Email</a>
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#email-section" aria-controls="email-section" role="tab" data-toggle="tab">Email</a>
 				</li>
-				<li role="presentation">
-					<a href="#ctftime-section" aria-controls="ctftime-section" role="tab" data-toggle="tab">CTF Time</a>
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#ctftime-section" aria-controls="ctftime-section" role="tab" data-toggle="tab">Time</a>
 				</li>
-				<li role="presentation">
-					<a href="#backup-section" aria-controls="backup-section" role="tab" data-toggle="tab">Backup</a>
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#backup-section" aria-controls="backup-section" role="tab" data-toggle="tab">Backup</a>
 				</li>
 			</ul>
-			<br><br>
-			<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-theme btn-outlined pull-left">Update</button>
+
 		</div>
 		<div class="col-md-6">
+			<form method="POST" autocomplete="off" class="w-100">
 			{% for error in errors %}
 				<div class="alert alert-danger alert-dismissable" role="alert">
 					<span class="sr-only">Error:</span>
@@ -108,12 +112,12 @@
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="email-section">
-					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="active">
-							<a href="#mailserver" aria-controls="mailserver" role="tab" data-toggle="tab">Mail Server</a>
+					<ul class="nav nav-tabs mb-3" role="tablist">
+						<li class="nav-item" class="active">
+							<a class="nav-link active" href="#mailserver" aria-controls="mailserver" role="tab" data-toggle="tab">Mail Server</a>
 						</li>
-						<li role="presentation">
-							<a href="#mailgun" aria-controls="mailgun" role="tab" data-toggle="tab">Mailgun</a>
+						<li class="nav-item">
+							<a class="nav-link" href="#mailgun" aria-controls="mailgun" role="tab" data-toggle="tab">Mailgun</a>
 						</li>
 					</ul>
 
@@ -163,9 +167,9 @@
 									<input class="form-control" id='mail_p' name='mail_p' autocomplete='off' type='password'
 											placeholder="Password">
 								</div>
-                                <sup>Uncheck setting and update to remove username and password</sup>
-                                <br>
-                                <br>
+								<sup>Uncheck setting and update to remove username and password</sup>
+								<br>
+								<br>
 							</div>
 							<div class="checkbox">
 								<label>
@@ -198,48 +202,54 @@
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="ctftime-section">
-					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="active">
-							<a href="#start-date" aria-controls="start-date" role="tab" data-toggle="tab">Start Time</a>
+					<ul class="nav nav-tabs mb-3">
+						<li class="nav-item">
+							<a class="nav-link active" href="#start-date" aria-controls="start-date" role="tab" data-toggle="tab">Start Time</a>
 						</li>
-						<li role="presentation">
-							<a href="#end-date" aria-controls="end-date" role="tab" data-toggle="tab">End Time</a>
+						<li class="nav-item">
+							<a class="nav-link" href="#end-date" aria-controls="end-date" role="tab" data-toggle="tab">End Time</a>
 						</li>
-						<li role="presentation">
-							<a href="#freeze-date" aria-controls="freeze-date" role="tab" data-toggle="tab">Freeze Time</a>
+						<li class="nav-item">
+							<a class="nav-link" href="#freeze-date" aria-controls="freeze-date" role="tab" data-toggle="tab">Freeze Time</a>
 						</li>
-						<sub style="float:right;">* All time fields required</sub>
+
 					</ul>
 
 					<div class="tab-content">
 						<div role="tabpanel" class="tab-pane active" id="start-date">
 							<div class="row" id="start-date">
-								<div class="form-group col-xs-2">
+								<div class="col-md-12">
+									<p>This is the time when the competition will begin. Challenges will automatically
+										unlock and users will be able to submit answers.</p>
+									<sub class="text-right mb-3">* All time fields required</sub>
+								</div>
+
+								<div class="form-group col-md-2">
 									<label for="start-month">Month:</label>
 									<input class="form-control start-date" id='start-month' name='start-month' min="0" max="12" type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-2">
 									<label for="start-day">Day:</label>
 									<input class="form-control start-date" id='start-day' name='start-day' min="0" max="31" type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-4">
 									<label for="start-year">Year:</label>
 									<input class="form-control start-date" id='start-year' name='start-year' type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-2">
 									<label for="start-hour">Hour:</label>
 									<input class="form-control start-date" id='start-hour' name='start-hour' min="0" max="23" type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-2">
 									<label for="start-minute">Minute:</label>
 									<input class="form-control start-date" id='start-minute' name='start-minute' min="0" max="59" type='number'>
 								</div>
 
-								<div class="form-group col-xs-4">
+								<div class="form-group col-md-12">
 									<label for="start-timezone">Timezone:</label>
 									<select class="form-control start-date" id="start-timezone">
 										<script>
@@ -252,19 +262,19 @@
 									</select>
 								</div>
 
-								<div class="form-group col-xs-12">
+								<div class="form-group col-md-12">
 									<label for="start-local">Local Time:</label>
 									<input class="form-control" id='start-local' type='text'
 											placeholder="Start Date (Local Time)" readonly>
 								</div>
 
-								<div class="form-group col-xs-12">
+								<div class="form-group col-md-12">
 									<label for="start-zonetime">Timezone Time:</label>
 									<input class="form-control" id='start-zonetime' type='text'
 											placeholder="Start Date (Timezone Time)" readonly>
 								</div>
 
-								<div class="form-group col-xs-12">
+								<div class="form-group col-md-12">
 									<label for="start">UTC Timestamp:</label>
 									<input class="form-control" id='start' name='start' type='text'
 										placeholder="Start Date (UTC timestamp)"
@@ -274,36 +284,42 @@
 						</div>
 						<div role="tabpanel" class="tab-pane" id="end-date">
 							<div class="row" id="end-date">
-								<div class="form-group col-xs-2">
+								<div class="col-md-12">
+									<p>This is the time when the competition will end. Challenges will automatically
+										close and users won't be able to submit answers.</p>
+									<sub class="text-right mb-3">* All time fields required</sub>
+								</div>
+
+								<div class="form-group col-md-2">
 									<label for="end-month">Month:</label>
 									<input class="form-control end-date" id='end-month' name='end-month' min="0" max="12"
 											type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-2">
 									<label for="end-day">Day:</label>
 									<input class="form-control end-date" id='end-day' name='end-day' min="0" max="31"
 											type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-4">
 									<label for="end-year">Year:</label>
 									<input class="form-control end-date" id='end-year' name='end-year' type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-2">
 									<label for="end-hour">Hour:</label>
 									<input class="form-control end-date" id='end-hour' name='end-hour' min="0" max="23"
 											type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-2">
 									<label for="end-minute">Minute:</label>
 									<input class="form-control end-date" id='end-minute' name='end-minute' min="0"
 											max="59" type='number'>
 								</div>
 
-								<div class="form-group col-xs-4">
+								<div class="form-group col-md-12">
 									<label for="end-timezone">Timezone:</label>
 									<select class="form-control end-date" id="end-timezone">
 										<script>
@@ -316,19 +332,19 @@
 									</select>
 								</div>
 
-								<div class="form-group col-xs-12">
+								<div class="form-group col-md-12">
 									<label for="end-local">Local Time:</label>
 									<input class="form-control" id='end-local' type='text'
 											placeholder="End Date (Local Time)" readonly>
 								</div>
 
-								<div class="form-group col-xs-12">
+								<div class="form-group col-md-12">
 									<label for="end-zonetime">Timezone Time:</label>
 									<input class="form-control" id='end-zonetime' type='text'
 											placeholder="End Date (Timezone Time)" readonly>
 								</div>
 
-								<div class="form-group col-xs-12">
+								<div class="form-group col-md-12">
 									<label for="end">UTC Timestamp:</label>
 									<input class="form-control" id='end' name='end' type='text'
 											placeholder="End Date (UTC timestamp)"
@@ -338,36 +354,42 @@
 						</div>
 						<div role="tabpanel" class="tab-pane" id="freeze-date">
 							<div class="row" id="freeze-date">
-								<div class="form-group col-xs-2">
+								<div class="col-md-12">
+									<p>Freeze time specifies the timestamp that the competition will be frozen to.
+										All solves before the freeze time will be shown, but new solves won't be shown to users. </p>
+									<sub class="text-right mb-3">* All time fields required</sub>
+								</div>
+
+								<div class="form-group col-md-2">
 									<label for="freeze-month">Month:</label>
 									<input class="form-control freeze-date" id='freeze-month' name='freeze-month' min="0" max="12"
 										   type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-2">
 									<label for="freeze-day">Day:</label>
 									<input class="form-control freeze-date" id='freeze-day' name='freeze-day' min="0" max="31"
 										   type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-4">
 									<label for="freeze-year">Year:</label>
 									<input class="form-control freeze-date" id='freeze-year' name='freeze-year' type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-2">
 									<label for="freeze-hour">Hour:</label>
 									<input class="form-control freeze-date" id='freeze-hour' name='freeze-hour' min="0" max="23"
 										   type='number'>
 								</div>
 
-								<div class="form-group col-xs-2">
+								<div class="form-group col-md-2">
 									<label for="freeze-minute">Minute:</label>
 									<input class="form-control freeze-date" id='freeze-minute' name='freeze-minute' min="0"
 										   max="59" type='number'>
 								</div>
 
-								<div class="form-group col-xs-4">
+								<div class="form-group col-md-12">
 									<label for="freeze-timezone">Timezone:</label>
 									<select class="form-control freeze-date" id="freeze-timezone">
 										<script>
@@ -380,19 +402,19 @@
 									</select>
 								</div>
 
-								<div class="form-group col-xs-12">
+								<div class="form-group col-md-12">
 									<label for="freeze-local">Local Time:</label>
 									<input class="form-control" id='freeze-local' type='text'
 										   placeholder="Freeze Date (Local Time)" readonly>
 								</div>
 
-								<div class="form-group col-xs-12">
+								<div class="form-group col-md-12">
 									<label for="freeze-zonetime">Timezone Time:</label>
 									<input class="form-control" id='freeze-zonetime' type='text'
 										   placeholder="Freeze Date (Timezone Time)" readonly>
 								</div>
 
-								<div class="form-group col-xs-12">
+								<div class="form-group col-md-12">
 									<label for="freeze">UTC Timestamp:</label>
 									<input class="form-control" id='freeze' name='freeze' type='text'
 										   placeholder="Freeze Date (UTC timestamp)"
@@ -409,84 +431,80 @@
 						</label>
 					</div>
 				</div>
-
 				<div role="tabpanel" class="tab-pane" id="backup-section">
-					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="active">
-							<a href="#export-ctf" aria-controls="export-ctf" role="tab" data-toggle="tab">Export</a>
+					<ul class="nav nav-tabs mb-3" role="tablist">
+						<li class="nav-item active">
+							<a class="nav-link active" href="#export-ctf" aria-controls="export-ctf" role="tab" data-toggle="tab">Export</a>
 						</li>
-						<li role="presentation">
-							<a href="#import-ctf" aria-controls="import-ctf" role="tab" data-toggle="tab">Import</a>
+						<li class="nav-item">
+							<a class="nav-link" href="#import-ctf" aria-controls="import-ctf" role="tab" data-toggle="tab">Import</a>
 						</li>
 					</ul>
 					<div class="tab-content">
 						<div role="tabpanel" class="tab-pane active" id="export-ctf">
-							<div class="row">
-								<div class="form-group col-xs-8">
-									<div class="checkbox">
-										<label>
-											<input class="export-config" value="challenges" type="checkbox" checked>Challenges
-										</label>
-									</div>
-									<div class="checkbox">
-										<label>
-											<input class="export-config" value="teams" type="checkbox" checked>Teams
-										</label>
-									</div>
-									<div class="checkbox">
-										<label>
-											<input class="export-config" value="both" type="checkbox" checked>Solves, Wrong Keys, Unlocks
-										</label>
-									</div>
-									<div class="checkbox">
-										<label>
-											<input class="export-config" value="metadata" type="checkbox" checked>Configuration
-										</label>
-									</div>
-
-									<a href="{{ request.script_root }}/admin/export" id="export-button" class="btn btn-default">Export</a>
+							<div class="form-group">
+								<div class="checkbox">
+									<label>
+										<input class="export-config" value="challenges" type="checkbox" checked> Challenges
+									</label>
 								</div>
+								<div class="checkbox">
+									<label>
+										<input class="export-config" value="teams" type="checkbox" checked> Teams
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+										<input class="export-config" value="both" type="checkbox" checked> Solves, Wrong Keys, Unlocks
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+										<input class="export-config" value="metadata" type="checkbox" checked> Configuration
+									</label>
+								</div>
+								<a href="{{ request.script_root }}/admin/export" id="export-button" class="btn btn-warning">Export</a>
 							</div>
 						</div>
 						<div role="tabpanel" class="tab-pane" id="import-ctf">
-							<div class="row" id="import-div">
-								<br>
-								<div class="form-group col-xs-8">
-									<label for="container-files">Import File
-										<input type="file" name="backup" id="import-file" accept=".zip">
+							<div class="form-group">
+								<label for="container-files">Import File</label>
+								<input class="form-control-file" type="file" name="backup" id="import-file" accept=".zip">
+							</div>
+
+							<div class="form-group">
+								<div class="checkbox">
+									<label>
+										<input class="import-config" value="challenges" type="checkbox" checked> Challenges
 									</label>
 								</div>
-
-								<div class="form-group col-xs-8">
-									<div class="checkbox">
-										<label>
-											<input class="import-config" value="challenges" type="checkbox" checked>Challenges
-										</label>
-									</div>
-									<div class="checkbox">
-										<label>
-											<input class="import-config" value="teams" type="checkbox" checked>Teams
-										</label>
-									</div>
-									<div class="checkbox">
-										<label>
-											<input class="import-config" value="both" type="checkbox" checked>Solves, Wrong Keys, Unlocks
-										</label>
-									</div>
-									<div class="checkbox">
-										<label>
-											<input class="import-config" value="metadata" type="checkbox" checked>Configuration
-										</label>
-									</div>
-									<input id="import-button" type="submit" class="btn btn-default" value="Import">
+								<div class="checkbox">
+									<label>
+										<input class="import-config" value="teams" type="checkbox" checked> Teams
+									</label>
 								</div>
+								<div class="checkbox">
+									<label>
+										<input class="import-config" value="both" type="checkbox" checked> Solves, Wrong Keys, Unlocks
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+										<input class="import-config" value="metadata" type="checkbox" checked> Configuration
+									</label>
+								</div>
+								<input id="import-button" type="submit" class="btn btn-warning" value="Import">
 							</div>
 						</div>
 					</div>
 				</div>
+				<button type="submit" id="submit" tabindex="5"
+						class="btn btn-md btn-primary float-right">Update
+				</button>
 			</div>
+			</form>
 		</div>
-	</form>
+	</div>
 </div>
 {% endblock %}
 

@@ -89,7 +89,10 @@ function keys_percentage_graph() {
         var layout = {
             title: 'Key Percentages',
             paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)'
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            legend: {
+                "orientation": "h"
+            }
         };
 
         $('#keys-pie-graph').empty();
@@ -135,7 +138,10 @@ function category_breakdown_graph() {
         var layout = {
             title: 'Category Breakdown',
             paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)'
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            legend: {
+                "orientation": "v"
+            }
         };
 
         $('#categories-pie-graph').empty();

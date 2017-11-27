@@ -70,7 +70,8 @@ def admin_chals():
         db.session.close()
         return jsonify(json_data)
     else:
-        return render_template('admin/chals.html')
+        challenges = Challenges.query.all()
+        return render_template('admin/challenges.html', challenges=challenges)
 
 
 @admin_challenges.route('/admin/chals/<int:chalid>', methods=['GET', 'POST'])
