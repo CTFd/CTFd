@@ -38,7 +38,7 @@ class CTFdStandardChallenge(BaseChallenge):
         # Create challenge
         chal = Challenges(
             name=request.form['name'],
-            description=request.form['desc'],
+            description=request.form['description'],
             value=request.form['value'],
             category=request.form['category'],
             type=request.form['chaltype']
