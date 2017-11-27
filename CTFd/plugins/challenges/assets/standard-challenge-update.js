@@ -116,7 +116,7 @@ function loadtags(chal){
         tags = $.parseJSON(JSON.stringify(data))
         tags = tags['tags']
         for (var i = 0; i < tags.length; i++) {
-            tag = "<span class='label label-primary chal-tag'><span>"+tags[i].tag+"</span><a name='"+tags[i].id+"'' class='delete-tag'>&#215;</a></span>"
+            tag = "<span class='badge badge-primary mx-1 chal-tag'><span>"+tags[i].tag+"</span><a name='"+tags[i].id+"'' class='delete-tag'> &#215;</a></span>"
             $('#current-tags').append(tag)
         };
         $('.delete-tag').click(function(e){
@@ -176,7 +176,7 @@ function updatetags(){
     tags = [];
     chal = $('#tags-chal').val()
     $('#chal-tags > span > span').each(function(i, e){
-        tags.push($(e).text())
+        tags.push($(e).text());
     });
     $.post(script_root + '/admin/tags/'+chal, {'tags':tags, 'nonce': $('#nonce').val()});
     $('#update-tags').modal('toggle');
@@ -206,12 +206,21 @@ function loadfiles(chal){
     $.get(script_root + '/admin/files/' + chal, function(data){
         $('#files-chal').val(chal)
         files = $.parseJSON(JSON.stringify(data));
-        files = files['files']
-        $('#current-files').empty()
+        files = files['files'];
+        $('#current-files').empty();
         for(x=0; x<files.length; x++){
-            filename = files[x].file.split('/')
-            filename = filename[filename.length - 1]
-            $('#current-files').append('<div class="row" style="margin:5px 0px;">'+'<a style="position:relative;top:10px;" href='+script_root+'/files/'+files[x].file+'>'+filename+'</a><a href="#" class="btn btn-danger" onclick="deletefile('+chal+','+files[x].id+', $(this))" value="'+files[x].id+'" style="float:right;">Delete</a></div>')
+            filename = files[x].file.split('/');
+            filename = filename[filename.length - 1];
+
+            var curr_file = '<div class="col-md-12"><a href="{2}/files/{3}">{4}</a> <i class="fa fa-times float-right" onclick="deletefile({0}, {1}, $(this))" value="{2}" ></i></div>'.format(
+                chal,
+                files[x].id,
+                script_root,
+                files[x].file,
+                filename
+            )
+
+            $('#current-files').append(curr_file);
         }
     });
 }
@@ -264,13 +273,13 @@ $('#delete-chal form').submit(function(e){
 
 $(".tag-insert").keyup(function (e) {
     if (e.keyCode == 13) {
-        tag = $('.tag-insert').val()
+        var tag = $('.tag-insert').val()
         tag = tag.replace(/'/g, '');
         if (tag.length > 0){
-            tag = "<span class='label label-primary chal-tag'><span>"+tag+"</span><a class='delete-tag' onclick='$(this).parent().remove()'>&#215;</a></span>"
-            $('#chal-tags').append(tag)
+            tag = "<span class='badge badge-primary mx-1 chal-tag'><span>"+tag+"</span><a class='delete-tag' onclick='$(this).parent().remove()'> &times;</a></span>"
+            $('#chal-tags').append(tag);
         }
-        $('.tag-insert').val("")
+        $('.tag-insert').val("");
     }
 });
 
@@ -294,12 +303,6 @@ $('#new-desc-edit').on('shown.bs.tab', function (event) {
         $(event.target.hash).html(marked($('#new-desc-editor').val(), {'gfm':true, 'breaks':true}))
     }
 });
-
-// Open New Challenge modal when New Challenge button is clicked
-// $('.create-challenge').click(function (e) {
-//     $('#create-challenge').modal();
-// });
-
 
 $('#create-key').click(function(e){
     $.get(script_root + '/admin/key_types', function(data){

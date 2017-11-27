@@ -10,7 +10,7 @@ $(".form-control").bind({
 });
 
 $('.modal').on('show.bs.modal', function (e) {
-    $('.modal .form-control').each(function () {
+    $('.form-control').each(function () {
         if ($(this).val()) {
             $(this).addClass("input-filled-valid");
         }

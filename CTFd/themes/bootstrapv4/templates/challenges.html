@@ -13,11 +13,15 @@
 </div>
 
 {% if errors %}
+<div class="container">
 	<div id='errors' class="row">
+		<div class="col-md-12">
 {% for error in errors %}
-		<h1>{{ error }}</h1>
+			<h1 class="text-center">{{ error }}</h1>
 {% endfor %}
+		</div>
 	</div>
+</div>
 {% endif %}
 
 {% if admin or not errors %}

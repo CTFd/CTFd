@@ -21,6 +21,8 @@ String.prototype.hashCode = function() {
     return hash;
 };
 
+var challenges = {}
+
 function load_edit_key_modal(key_id, key_type_name) {
     $.get(script_root + '/admin/keys/' + key_id, function(key_data){
         $.get(script_root + key_data.templates.update, function(template_data){
@@ -56,43 +58,28 @@ function load_chal_template(id, success_cb){
 }
 
 function loadchals(){
-    $('#challenges').empty();
     $.post(script_root + "/admin/chals", {
         'nonce': $('#nonce').val()
     }, function (data) {
-        categories = [];
+        var categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
 
 
         for (var i = challenges['game'].length - 1; i >= 0; i--) {
             if ($.inArray(challenges['game'][i].category, categories) == -1) {
                 categories.push(challenges['game'][i].category)
-                $('#challenges').append($('<tr id="' + challenges['game'][i].category.replace(/ /g,"-").hashCode() + '"><td class="col-md-1"><h3>' + challenges['game'][i].category + '</h3></td></tr>'))
             }
         };
-
-        for (var i = 0; i <= challenges['game'].length - 1; i++) {
-            var chal = challenges['game'][i];
-            var chal_button = $('<button class="chal-button col-md-2 theme-background" value="{0}"><h5>{1}</h5><p class="chal-points">{2}</p><span class="chal-percent">{3}% solved</span></button>'.format(chal.id, chal.name, chal.value, Math.round(chal.percentage_solved * 100)));
-            $('#' + challenges['game'][i].category.replace(/ /g,"-").hashCode()).append(chal_button);
-        };
-
-        $('#challenges button').click(function (e) {
-            id = this.value
-            load_chal_template(id, function(){
-                openchal(id);
-            });
-        });
-
-        // $('.create-challenge').click(function (e) {
-        //     $('#new-chal-category').val($($(this).siblings()[0]).text().trim());
-        //     $('#new-chal-title').text($($(this).siblings()[0]).text().trim());
-        //     $('#new-challenge').modal();
-        // });
-
     });
 }
 
 $(function(){
     loadchals();
-})
+    $('.edit-challenge').click(function (e) {
+        var id = $(this).attr('chal-id');
+        load_chal_template(id, function () {
+            openchal(id);
+        });
+    });
+});
+

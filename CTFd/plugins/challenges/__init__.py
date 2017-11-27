@@ -105,7 +105,7 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         challenge.name = request.form['name']
-        challenge.description = request.form['desc']
+        challenge.description = request.form['description']
         challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
         challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
         challenge.category = request.form['category']

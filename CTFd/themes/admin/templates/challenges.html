@@ -70,18 +70,18 @@
 							<td>{{ challenge.type }}</td>
 							<td>{{ challenge.hidden }}</td>
 							<td>
-								<i class="fa fa-pencil-square-o" aria-hidden="true" data-toggle="tooltip"
-								   data-placement="top"
-								   title="Edit Challenge"></i>
-								<i class="fa fa-flag" aria-hidden="true" data-toggle="tooltip" data-placement="top"
-								   title="Edit Answers"></i>
-								<i class="fa fa-cloud-download" aria-hidden="true" data-toggle="tooltip"
-								   data-placement="top" title="Edit Files"></i>
-								<i class="fa fa-tags" aria-hidden="true" data-toggle="tooltip" data-placement="top"
-								   title="Edit Tags"></i>
-								<i class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip"
-								   data-placement="top" title="Edit Hints"></i>
-							</td>
+								<i class="fa fa-pencil-square-o edit-challenge" aria-hidden="true" data-toggle="tooltip"
+								   data-placement="top" chal-id="{{ challenge.id }}"
+								   title="Edit {{ challenge.name }}"></i>
+{#								<i class="fa fa-flag" aria-hidden="true" data-toggle="tooltip" data-placement="top"#}
+{#								   title="Edit Answers"></i>#}
+{#								<i class="fa fa-cloud-download" aria-hidden="true" data-toggle="tooltip"#}
+{#								   data-placement="top" title="Edit Files"></i>#}
+{#								<i class="fa fa-tags" aria-hidden="true" data-toggle="tooltip" data-placement="top"#}
+{#								   title="Edit Tags"></i>#}
+{#								<i class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip"#}
+{#								   data-placement="top" title="Edit Hints"></i>#}
+{#							</td>#}
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -94,6 +94,7 @@
 
 {% block scripts %}
 	<script src="{{ request.script_root }}/themes/admin/static/js/utils.js"></script>
-{#	<script src="{{ request.script_root }}/themes/admin/static/js/chalboard.js"></script>#}
+	<script src="{{ request.script_root }}/themes/admin/static/js/style.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/chalboard.js"></script>
 	<script src="{{ request.script_root }}/themes/admin/static/js/multi-modal.js"></script>
 {% endblock %}
