@@ -62,7 +62,7 @@
 		</div>
 	</div>
 </div>
-<div id="update-user" class="modal fade">
+<div id="update-user-modal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -229,7 +229,7 @@
 {% block scripts %}
 <script>
 function load_update_modal(id, name, email, website, affiliation, country){
-	var modal_form = $('#update-user form');
+	var modal_form = $('#update-user-modal form');
 
 	modal_form.find('input[name=name]').val(name);
 	modal_form.find('input[name=id]').val(id);
@@ -240,26 +240,26 @@ function load_update_modal(id, name, email, website, affiliation, country){
 	modal_form.find('input[name=password]').val('');
 
 	if (id == 'new'){
-		$('#update-user .modal-action').text('Create Team');
+		$('#update-user-modal .modal-action').text('Create Team');
 	} else {
-		$('#update-user .modal-action').text('Edit Team');
+		$('#update-user-modal .modal-action').text('Edit Team');
 	}
 
 	$('#results').empty();
-	$('#update-user form').attr('action', '{{ request.script_root }}/admin/team/'+id);
-	$('#update-user').modal("show");
+	$('#update-user-modal form').attr('action', '{{ request.script_root }}/admin/team/'+id);
+	$('#update-user-modal').modal("show");
 }
 
 $('#update-user').click(function(e){
 	e.preventDefault();
-	var id = $('#update-user input[name="id"]').val()
-	var user_data = $('#update-user form').serializeArray()
+	var id = $('#update-user-modal input[name="id"]').val()
+	var user_data = $('#update-user-modal form').serializeArray()
 	$('#results').empty();
-	$.post($('#update-user form').attr('action'), $('#update-user form').serialize(), function(data){
+	$.post($('#update-user-modal form').attr('action'), $('#update-user-modal form').serialize(), function(data){
 		var data = $.parseJSON(JSON.stringify(data))
 		for (var i = 0; i < data['data'].length; i++) {
 			if (data['data'][i] == 'success'){
-				$('#update-user').modal('hide');
+				$('#update-user-modal').modal('hide');
 				location.reload();
 			}
 			else{
@@ -291,7 +291,7 @@ $('.team-verified input').on('change', function () {
 	console.log(verified);
 
 	$.post('{{ request.script_root }}/admin/team/' + id, {'verified': verified, 'nonce': nonce});
-})
+});
 
 $('#send-user-email').click(function(e){
 	e.preventDefault();
