@@ -259,9 +259,8 @@ $('#submit-files').click(function (e) {
 $('#delete-chal form').submit(function(e){
     e.preventDefault();
     $.post(script_root + '/admin/chal/delete', $(this).serialize(), function(data){
-        console.log(data)
-        if (data){
-            loadchals();
+        if (data == 1){
+            location.reload();
         }
         else {
             alert('There was an error');
