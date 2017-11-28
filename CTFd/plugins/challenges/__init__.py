@@ -33,8 +33,6 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request:
         :return:
         """
-        files = request.files.getlist('files[]')
-
         # Create challenge
         chal = Challenges(
             name=request.form['name'],
@@ -63,6 +61,7 @@ class CTFdStandardChallenge(BaseChallenge):
 
         db.session.commit()
 
+        files = request.files.getlist('files[]')
         for f in files:
             utils.upload_file(file=f, chalid=chal.id)
 

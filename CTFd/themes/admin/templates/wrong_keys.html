@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Incorrect Answers</h1>
+		<h1>Incorrect Submissions</h1>
 	</div>
 </div>
 
@@ -14,16 +14,19 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header text-center">
-				<h3>Delete Key</h3>
+				<h3>Delete Submission</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="">
+				<form method="POST">
 					<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
 					<div class="small-6 small-centered text-center columns">
 						<p>Are you sure you want to delete incorrect key submission for team: <strong
 								id="confirm-team-name"></strong> in challenge: <strong
 								id="confirm-chal-name"></strong>?</p>
-						<a onclick="$('#confirm').modal('hide')" class="btn btn-primary">No</a>
+						<button onclick="$('#confirm').modal('hide'); return false;" class="btn btn-primary">No</button>
 						<button class="btn btn-danger" id="delete-solve" type="button">Yes</button>
 					</div>
 				</form>
@@ -55,7 +58,7 @@
 				<tbody>
 					{% for wrong_key in wrong_keys %}
 					<tr>
-						<td class="text-center team">{{ wrong_key.id }}</td>
+						<td class="text-center">{{ wrong_key.id }}</td>
 						<td class="text-center team" id="{{ wrong_key.teamid }}">
 							<a href="{{ request.script_root }}/admin/team/{{ wrong_key.teamid }}">{{ wrong_key.team_name }}</a>
 						</td>

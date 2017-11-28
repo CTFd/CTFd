@@ -31,15 +31,27 @@
 							<a href="{{ request.script_root }}/team/{{ team.id }}">{{ team.name }}</a>
 						{% endif %}
 						</td>
-						<td>
+						<td class="text-center" style="width: 10px;">
 							{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
-								<a href="{{ team.website }}">
-									{{ team.website }}
+								<a href="{{ team.website }}" target="_blank">
+									<i class="fa fa-globe" data-toggle="tooltip" data-placement="top" title="{{ team.website }}"></i>
 								</a>
 							{% endif %}
 						</td>
-						<td><span>{% if team.affiliation %}{{ team.affiliation }}{% endif %}</span></td>
-						<td class="d-none d-md-block d-lg-block">
+						<td>
+							{% if team.affiliation %}
+								{% if team.affiliation | length > 50 %}
+								<span data-toggle="tooltip" data-placement="top" title="{{ team.affiliation }}">
+									{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
+								</span>
+								{% else %}
+								<span>
+									{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
+								</span>
+								{% endif %}
+							{% endif %}
+						</td>
+						<td>
 							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
 						</td>
 					</tr>

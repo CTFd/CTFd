@@ -34,13 +34,34 @@ function scoregraph () {
             {
                 x: times,
                 y: scores,
-                type: 'scatter'
+                type: 'scatter',
+                marker: {
+                    color: colorhash(teamname + teamid())
+                },
+                line: {
+                    color: colorhash(teamname + teamid())
+                }
             }
         ];
 
         var layout = {
-            title: 'Score over Time'
+            title: 'Score over Time',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            hovermode: 'closest',
+            xaxis: {
+                showgrid: false,
+                showspikes: true,
+            },
+            yaxis: {
+                showgrid: false,
+                showspikes: true,
+            },
+            legend: {
+                "orientation": "h"
+            }
         };
+
         $('#score-graph').empty();
         Plotly.newPlot('score-graph', data, layout);
     });

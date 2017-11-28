@@ -68,7 +68,13 @@
 							<td><pre>{{ challenge.description }}</pre></td>
 							<td>{{ challenge.value }}</td>
 							<td>{{ challenge.type }}</td>
-							<td>{{ challenge.hidden }}</td>
+							<td class="text-center">
+								{% if challenge.hidden %}
+									<button class="btn-sm btn-danger" type="submit">Hidden</button>
+								{% else %}
+									<button class="btn-sm btn-success" type="submit">Visible</button>
+								{% endif %}
+							</td>
 							<td>
 								<i class="fa fa-pencil-square-o edit-challenge" aria-hidden="true" data-toggle="tooltip"
 								   data-placement="top" chal-id="{{ challenge.id }}"

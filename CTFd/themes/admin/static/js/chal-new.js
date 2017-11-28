@@ -1,4 +1,5 @@
 $.ajaxSetup({ cache: false });
+
 function load_chal_template(challenge){
     $.get(script_root + challenge.templates.create, function(template_data){
         var template = Handlebars.compile(template_data);
@@ -23,9 +24,10 @@ $.get(script_root + '/admin/chal_types', function(data){
             option.data('meta', challenge);
             $("#create-chals-select").append(option);
         }
+        $("#create-chals-select").show();
     } else if (chal_type_amt == 1) {
         var key = Object.keys(data)[0];
-        $("#create-chals-select").parent().parent().parent().empty();
+        $("#create-chals-select").empty();
         load_chal_template(data[key]);
     }
 });
