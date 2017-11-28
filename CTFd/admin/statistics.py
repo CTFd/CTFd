@@ -41,6 +41,7 @@ def admin_stats():
     wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
     solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
     challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
+    ip_count = db.session.query(db.func.count(Tracking.ip.distinct())).first()[0]
 
     solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves_cnt')) \
                            .join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False) \
@@ -61,13 +62,17 @@ def admin_stats():
     db.session.commit()
     db.session.close()
 
-    return render_template('admin/statistics.html', team_count=teams_registered,
-                           wrong_count=wrong_count,
-                           solve_count=solve_count,
-                           challenge_count=challenge_count,
-                           solve_data=solve_data,
-                           most_solved=most_solved,
-                           least_solved=least_solved)
+    return render_template(
+        'admin/statistics.html',
+        team_count=teams_registered,
+        ip_count=ip_count,
+        wrong_count=wrong_count,
+        solve_count=solve_count,
+        challenge_count=challenge_count,
+        solve_data=solve_data,
+        most_solved=most_solved,
+        least_solved=least_solved
+    )
 
 
 @admin_statistics.route('/admin/wrong_keys', defaults={'page': '1'}, methods=['GET'])
