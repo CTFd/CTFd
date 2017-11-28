@@ -33,7 +33,7 @@ class ThemeLoader(FileSystemLoader):
 
         # Check if the template requested is for the admin panel
         if template.startswith('admin/'):
-            template = template.lstrip('admin/')
+            template = template[6:]  # Strip out admin/
             template = "/".join(['admin', 'templates', template])
             return super(ThemeLoader, self).get_source(environment, template)
 

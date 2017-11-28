@@ -5,7 +5,13 @@
 </style>
 {% endblock %}
 
+
 {% block content %}
+	{% include "admin/modals/tags/tags.html" %}
+	{% include "admin/modals/files/files.html" %}
+	{% include "admin/modals/hints/hints.html" %}
+	{% include "admin/modals/keys/keys.html" %}
+
 	<div class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -51,12 +57,12 @@
 					<tr>
 						<td><b>ID</b></td>
 						<td><b>Name</b></td>
-						<td><b>Category</b></td>
-						<td class="w-50"><b>Description</b></td>
-						<td><b>Value</b></td>
-						<td><b>Type</b></td>
-						<td><b>Hidden</b></td>
-						<td class="w-25"><b>Settings</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Category</b></td>
+{#						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Description</b></td>#}
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Value</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Type</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Hidden</b></td>
+						<td style="min-width: 150px;"><b>Settings</b></td>
 					</tr>
 					</thead>
 					<tbody>
@@ -64,11 +70,11 @@
 						<tr>
 							<td>{{ challenge.id }}</td>
 							<td>{{ challenge.name }}</td>
-							<td>{{ challenge.category }}</td>
-							<td><pre>{{ challenge.description }}</pre></td>
-							<td>{{ challenge.value }}</td>
-							<td>{{ challenge.type }}</td>
-							<td class="text-center">
+							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.category }}</td>
+{#							<td class="d-none d-md-table-cell d-lg-table-cell"><pre>{{ challenge.description }}</pre></td>#}
+							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.value }}</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.type }}</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell text-center">
 								{% if challenge.hidden %}
 									<button class="btn-sm btn-danger" type="submit">Hidden</button>
 								{% else %}
@@ -79,15 +85,17 @@
 								<i class="fa fa-pencil-square-o edit-challenge" aria-hidden="true" data-toggle="tooltip"
 								   data-placement="top" chal-id="{{ challenge.id }}"
 								   title="Edit {{ challenge.name }}"></i>
-{#								<i class="fa fa-flag" aria-hidden="true" data-toggle="tooltip" data-placement="top"#}
-{#								   title="Edit Answers"></i>#}
-{#								<i class="fa fa-cloud-download" aria-hidden="true" data-toggle="tooltip"#}
-{#								   data-placement="top" title="Edit Files"></i>#}
-{#								<i class="fa fa-tags" aria-hidden="true" data-toggle="tooltip" data-placement="top"#}
-{#								   title="Edit Tags"></i>#}
-{#								<i class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip"#}
-{#								   data-placement="top" title="Edit Hints"></i>#}
-{#							</td>#}
+								<i class="fa fa-flag edit-keys" aria-hidden="true" data-toggle="tooltip" data-placement="top"
+								   title="Edit Flags" chal-id="{{ challenge.id }}"></i>
+								<i class="fa fa-cloud-download edit-files" aria-hidden="true" data-toggle="tooltip"
+								   data-placement="top" title="Edit Files" chal-id="{{ challenge.id }}"></i>
+								<i class="fa fa-tags edit-tags" aria-hidden="true" data-toggle="tooltip" data-placement="top"
+								   title="Edit Tags" chal-id="{{ challenge.id }}"></i>
+								<i class="fa fa-question-circle edit-hints" aria-hidden="true" data-toggle="tooltip"
+								   data-placement="top" title="Edit Hints" chal-id="{{ challenge.id }}"></i>
+								<i class="fa fa-times delete-challenge" aria-hidden="true" data-toggle="tooltip"
+								   data-placement="top" title="Delete {{ challenge.name }}" chal-id="{{ challenge.id }}"></i>
+							</td>
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -99,8 +107,10 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ request.script_root }}/themes/admin/static/js/utils.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/style.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/chalboard.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/chalboard.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/files/files-utils.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/hints/hints-utils.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/keys/keys-utils.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/tags/tags-utils.js"></script>
 	<script src="{{ request.script_root }}/themes/admin/static/js/multi-modal.js"></script>
 {% endblock %}

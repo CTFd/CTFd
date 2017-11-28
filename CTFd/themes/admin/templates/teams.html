@@ -152,13 +152,13 @@
 						</td>
 						<td class="text-center"><b>Team</b>
 						</td>
-						<td class="text-center"><b>Email</b>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
 						</td>
-						<td class="text-center"><b>Website</b>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Website</b>
 						</td>
-						<td class="text-center"><b>Affiliation</b>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Affiliation</b>
 						</td>
-						<td class="text-center"><b>Country</b>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Country</b>
 						</td>
 						<td class="text-center"><b>Admin</b>
 						</td>
@@ -174,8 +174,8 @@
 						<td class="team-id" value="{{ team.id }}">{{ team.id }}</td>
 						<td class="team-name" value="{{ team.name }}"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
 						</td>
-						<td class="team-email" value="{{ team.email }}">{{ team.email | truncate(32) }}</td>
-						<td class="team-website text-center">
+						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ team.email }}">{{ team.email | truncate(32) }}</td>
+						<td class="team-website d-none d-md-table-cell d-lg-table-cell text-center">
 							{% if team.website %}
 								<a href="{{ team.website }}" target="_blank">
 									<i class="fa fa-globe fa-2" data-toggle="tooltip" data-placement="top"
@@ -183,9 +183,9 @@
 								</a>
 							{% endif %}
 						</td>
-						<td class="team-affiliation" value="{{ team.affiliation if team.affiliation is not none }}"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
+						<td class="team-affiliation d-none d-md-table-cell d-lg-table-cell" value="{{ team.affiliation if team.affiliation is not none }}"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
 						</td>
-						<td class="team-country" value="{{ team.country if team.country is not none }}"><span>{% if team.country %}{{ team.country }}{% endif %}</span>
+						<td class="team-country d-none d-md-table-cell d-lg-table-cell" value="{{ team.country if team.country is not none }}"><span>{% if team.country %}{{ team.country }}{% endif %}</span>
 						</td>
 						<td class="team-admin">
 							<div class="center-block checkbox text-center">

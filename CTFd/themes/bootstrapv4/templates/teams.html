@@ -17,8 +17,8 @@
 					<tr>
 						<td><b>Team</b></td>
 						<td><b>Website</b></td>
-						<td><b>Affiliation</b></td>
-						<td class="d-none d-md-block d-lg-block"><b>Country</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Affiliation</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Country</b></td>
 					</tr>
 				</thead>
 				<tbody>
@@ -38,7 +38,7 @@
 								</a>
 							{% endif %}
 						</td>
-						<td>
+						<td class="d-none d-md-table-cell d-lg-table-cell">
 							{% if team.affiliation %}
 								{% if team.affiliation | length > 50 %}
 								<span data-toggle="tooltip" data-placement="top" title="{{ team.affiliation }}">
@@ -51,7 +51,7 @@
 								{% endif %}
 							{% endif %}
 						</td>
-						<td>
+						<td class="d-none d-md-table-cell d-lg-table-cell">
 							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
 						</td>
 					</tr>
