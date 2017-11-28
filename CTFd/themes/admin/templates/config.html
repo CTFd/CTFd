@@ -57,7 +57,7 @@
 						</select>
 					</div>
 
-					<div class="checkbox">
+					<div class="form-check">
 						<label>
 							<input id="workshop_mode" name="workshop_mode" type="checkbox"
 								   {% if workshop_mode %}checked{% endif %}>
@@ -67,29 +67,34 @@
 						</label>
 					</div>
 
-					<div class="checkbox">
+					<div class="form-check">
 						<label>
 							<input id="hide_scores" name="hide_scores" type="checkbox" {% if hide_scores %}checked{% endif %}>
 							Hide Scores from public view
 						</label>
 					</div>
+
+					<div class="form-group">
+						<label>CSS editor</label>
+						<textarea class="form-control" id="css-editor" name="css" rows="7">{{ css }}</textarea>
+					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="accounts-section">
-					<div class="checkbox">
+					<div class="form-check">
 						<label>
 							<input id="verify_emails" name="verify_emails" type="checkbox" {% if verify_emails %}checked{% endif %}>
 							Only allow users with verified emails
 						</label>
 					</div>
 
-					<div class="checkbox">
+					<div class="form-check">
 						<label>
 							<input id="view_challenges_unregistered" name="view_challenges_unregistered" type="checkbox" {% if view_challenges_unregistered %}checked{% endif %}>
 							Unregistered users can view challenges
 						</label>
 					</div>
 
-					<div class="checkbox">
+					<div class="form-check">
 						<label>
 							<input id="view_scoreboard_if_authed" name="view_scoreboard_if_authed" type="checkbox"
 								   {% if view_scoreboard_if_authed %}checked{% endif %}>
@@ -97,14 +102,14 @@
 						</label>
 					</div>
 
-					<div class="checkbox">
+					<div class="form-check">
 						<label>
 							<input id="prevent_registration" name="prevent_registration" type="checkbox" {% if prevent_registration %}checked{% endif %}>
 							Prevent public registration
 						</label>
 					</div>
 
-					<div class="checkbox">
+					<div class="form-check">
 						<label>
 							<input id="prevent_name_change" name="prevent_name_change" type="checkbox" {% if prevent_name_change %}checked{% endif %}>
 							Prevent team name changes
@@ -144,7 +149,7 @@
 										placeholder="Mail Server Port"
 										{% if mail_port is defined and mail_port != None %}value="{{ mail_port }}"{% endif %}>
 							</div>
-							<div class="checkbox">
+							<div class="form-check">
 							<label>
 								<input id="mail_useauth" name="mail_useauth" type="checkbox" {% if mail_useauth %}checked{% endif %}>
 									Use Mail Server Username and Password
@@ -171,13 +176,13 @@
 								<br>
 								<br>
 							</div>
-							<div class="checkbox">
+							<div class="form-check">
 								<label>
 									<input id="mail_ssl" name="mail_ssl" type="checkbox" {% if mail_ssl %}checked{% endif %}>
 									SSL
 								</label>
 							</div>
-							<div class="checkbox">
+							<div class="form-check">
 								<label>
 									<input id="mail_tls" name="mail_tls" type="checkbox" {% if mail_tls %}checked{% endif %}>
 									TLS
@@ -424,7 +429,7 @@
 						</div>
 					</div>
 
-					<div class="checkbox">
+					<div class="form-check">
 						<label>
 							<input id="view_after_ctf" name="view_after_ctf" type="checkbox" {% if view_after_ctf %}checked{% endif %}>
 							Allow challenges to be viewed after CTF end
@@ -443,22 +448,22 @@
 					<div class="tab-content">
 						<div role="tabpanel" class="tab-pane active" id="export-ctf">
 							<div class="form-group">
-								<div class="checkbox">
+								<div class="form-check">
 									<label>
 										<input class="export-config" value="challenges" type="checkbox" checked> Challenges
 									</label>
 								</div>
-								<div class="checkbox">
+								<div class="form-check">
 									<label>
 										<input class="export-config" value="teams" type="checkbox" checked> Teams
 									</label>
 								</div>
-								<div class="checkbox">
+								<div class="form-check">
 									<label>
 										<input class="export-config" value="both" type="checkbox" checked> Solves, Wrong Keys, Unlocks
 									</label>
 								</div>
-								<div class="checkbox">
+								<div class="form-check">
 									<label>
 										<input class="export-config" value="metadata" type="checkbox" checked> Configuration
 									</label>
@@ -473,22 +478,22 @@
 							</div>
 
 							<div class="form-group">
-								<div class="checkbox">
+								<div class="form-check">
 									<label>
 										<input class="import-config" value="challenges" type="checkbox" checked> Challenges
 									</label>
 								</div>
-								<div class="checkbox">
+								<div class="form-check">
 									<label>
 										<input class="import-config" value="teams" type="checkbox" checked> Teams
 									</label>
 								</div>
-								<div class="checkbox">
+								<div class="form-check">
 									<label>
 										<input class="import-config" value="both" type="checkbox" checked> Solves, Wrong Keys, Unlocks
 									</label>
 								</div>
-								<div class="checkbox">
+								<div class="form-check">
 									<label>
 										<input class="import-config" value="metadata" type="checkbox" checked> Configuration
 									</label>
