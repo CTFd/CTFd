@@ -43,11 +43,11 @@
 					<tr>
 						<td class="text-center"><b>ID</b>
 						</td>
-						<td class="text-center"><b>Team</b>
+						<td><b>Team</b>
 						</td>
-						<td class="text-center"><b>Challenge</b>
+						<td><b>Challenge</b>
 						</td>
-						<td class="text-center"><b>Submitted Key</b>
+						<td><b>Submitted Key</b>
 						</td>
 						<td class="text-center"><b>Date</b>
 						</td>
@@ -59,17 +59,19 @@
 					{% for wrong_key in wrong_keys %}
 					<tr>
 						<td class="text-center">{{ wrong_key.id }}</td>
-						<td class="text-center team" id="{{ wrong_key.teamid }}">
+						<td class="team" id="{{ wrong_key.teamid }}">
 							<a href="{{ request.script_root }}/admin/team/{{ wrong_key.teamid }}">{{ wrong_key.team_name }}</a>
 						</td>
-						<td class="text-center chal" id="{{ wrong_key.chalid }}">
+						<td class="chal" id="{{ wrong_key.chalid }}">
 							{{ wrong_key.chal_name }}
 						</td>
 						<td class="flag" id="{{ wrong_key.id }}">
 							<pre class="mb-0">{{ wrong_key.flag }}</pre>
 						</td>
 						<td class="text-center solve-time">
-							<script>document.write( moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+							<small>
+								<script>document.write( moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+							</small>
 						</td>
 						<td class="text-center">
 							<i class="fa fa-times"></i>

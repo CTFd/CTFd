@@ -42,18 +42,12 @@
 			<table id="teamsboard" class=" table table-striped">
 				<thead>
 					<tr>
-						<td class="text-center"><b>ID</b>
-						</td>
-						<td class="text-center"><b>Team</b>
-						</td>
-						<td class="text-center"><b>Challenge</b>
-						</td>
-						<td class="text-center"><b>Key Submitted</b>
-						</td>
-						<td class="text-center"><b>Date</b>
-						</td>
-						<td class="text-center"><b>Delete</b>
-						</td>
+						<td class="text-center"><b>ID</b></td>
+						<td><b>Team</b></td>
+						<td><b>Challenge</b></td>
+						<td><b>Submission</b></td>
+						<td class="text-center"><b>Date</b></td>
+						<td class="text-center"><b>Delete</b></td>
 					</tr>
 				</thead>
 				<tbody>
@@ -62,17 +56,19 @@
 						<td class="text-center" id="{{ solve.id }}">
 							{{ solve.id }}
 						</td>
-						<td class="text-center team" id="{{ solve.teamid }}">
+						<td class="team" id="{{ solve.teamid }}">
 							<a href="{{ request.script_root }}/admin/team/{{ solve.teamid }}">{{ solve.team_name }}</a>
 						</td>
-						<td class="text-center chal" id="{{ solve.chalid }}">
+						<td class="chal" id="{{ solve.chalid }}">
 							{{ solve.chal_name }}
 						</td>
 						<td class="flag" id="{{ solve.id }}">
 							<pre class="mb-0">{{ solve.flag }}</pre>
 						</td>
 						<td class="text-center solve-time">
-							<script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+							<small>
+								<script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+							</small>
 						</td>
 						<td class="text-center"><i class="fa fa-times"></i></td>
 					</tr>
