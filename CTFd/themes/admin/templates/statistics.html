@@ -207,17 +207,29 @@
 
 			var names = [];
 			var percents = [];
+			var labels = [];
+
+			var annotations = [];
 
 			for (var key in res) {
 				names.push(res[key].name);
 				percents.push( (res[key].percentage * 100) );
+
+				var result = {
+					x: res[key].name,
+					y: (res[key].percentage * 100),
+					text: Math.round(res[key].percentage * 100) + '%',
+					xanchor: 'center',
+					yanchor: 'bottom',
+					showarrow: false,
+				};
+				annotations.push(result);
 			}
 
 			var data = [{
 				type: 'bar',
 				x: names,
 				y: percents,
-				text: names,
 				orientation: 'v'
 			}];
 
@@ -229,7 +241,8 @@
 				yaxis: {
 					title: 'Percentage of Teams (%)',
 					range: [0, 100]
-				}
+				},
+				annotations: annotations
 			};
 
 			$('#solve-percentages-graph').empty();
