@@ -32,8 +32,10 @@ def admin_graph(graph_type):
 @admins_only
 def admin_stats():
     teams_registered = db.session.query(db.func.count(Teams.id)).first()[0]
-    wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
-    solve_count = db.session.query(db.func.count(Solves.id)).first()[0]
+
+    wrong_count = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned == False).count()
+    solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).count()
+
     challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
     ip_count = db.session.query(db.func.count(Tracking.ip.distinct())).first()[0]
 
