@@ -14,7 +14,7 @@ class BaseChallenge(object):
 class CTFdStandardChallenge(BaseChallenge):
     id = "standard"  # Unique identifier used to register challenges
     name = "standard"  # Name of a challenge type
-    templates = {  # Handlebars templates used for each aspect of challenge editing & viewing
+    templates = {  # Nunjucks templates used for each aspect of challenge editing & viewing
         'create': '/plugins/challenges/assets/standard-challenge-create.njk',
         'update': '/plugins/challenges/assets/standard-challenge-update.njk',
         'modal': '/plugins/challenges/assets/standard-challenge-modal.njk',
