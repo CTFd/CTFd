@@ -1,0 +1,53 @@
+.chal-desc {
+    padding-left: 30px;
+    padding-right: 30px;
+    font-size: 14px;
+}
+
+.modal-content {
+    border-radius: 0px;
+    max-width: 1000px;
+    padding: 1em;
+    margin: 0 auto;
+}
+
+.btn-info {
+    background-color: #5B7290 !important;
+}
+
+.badge-info {
+    background-color: #5B7290 !important;
+}
+
+.btn-file:nth-child(1):before {
+    content: "\f0ed";
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.solved-challenge {
+    background-color: #37d63e !important;
+    opacity: 0.4;
+    border: none;
+}
+
+.solved-challenge p:after {
+    content: "\f00c";
+    display: inline-block;
+    font: normal normal normal 18px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin-top: -10px;
+    margin-right: 25px;
+    position: absolute;
+    right: 0;
+}
+
+.key-submit .btn {
+    height: 51px;
+}

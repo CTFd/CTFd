@@ -33,12 +33,10 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request:
         :return:
         """
-        files = request.files.getlist('files[]')
-
         # Create challenge
         chal = Challenges(
             name=request.form['name'],
-            description=request.form['desc'],
+            description=request.form['description'],
             value=request.form['value'],
             category=request.form['category'],
             type=request.form['chaltype']
@@ -63,6 +61,7 @@ class CTFdStandardChallenge(BaseChallenge):
 
         db.session.commit()
 
+        files = request.files.getlist('files[]')
         for f in files:
             utils.upload_file(file=f, chalid=chal.id)
 
@@ -105,7 +104,7 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         challenge.name = request.form['name']
-        challenge.description = request.form['desc']
+        challenge.description = request.form['description']
         challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
         challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
         challenge.category = request.form['category']
