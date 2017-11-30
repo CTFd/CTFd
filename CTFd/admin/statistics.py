@@ -7,12 +7,6 @@ from CTFd import utils
 admin_statistics = Blueprint('admin_statistics', __name__)
 
 
-@admin_statistics.route('/admin/graphs')
-@admins_only
-def admin_graphs():
-    return render_template('admin/graphs.html')
-
-
 @admin_statistics.route('/admin/graphs/<graph_type>')
 @admins_only
 def admin_graph(graph_type):

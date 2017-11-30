@@ -29,7 +29,7 @@ admin = Blueprint('admin', __name__)
 @admin.route('/admin', methods=['GET'])
 def admin_view():
     if is_admin():
-        return redirect(url_for('admin_statistics.admin_graphs'))
+        return redirect(url_for('admin_statistics.admin_stats'))
 
     return redirect(url_for('auth.login'))
 

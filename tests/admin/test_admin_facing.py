@@ -18,7 +18,7 @@ def test_admin_panel():
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin')
         assert r.status_code == 302
-        r = client.get('/admin/graphs')
+        r = client.get('/admin/statistics')
         assert r.status_code == 200
     destroy_ctfd(app)
 

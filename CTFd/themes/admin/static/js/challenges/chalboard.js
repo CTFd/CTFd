@@ -40,14 +40,16 @@ function loadchals(cb){
 
 $('.delete-challenge').click(function (e) {
     var chal_id = $(this).attr('chal-id');
-    $.post(script_root + '/admin/chal/delete', {'id': chal_id, 'nonce': $('#nonce').val()}, function (data) {
-        if (data == 1) {
-            location.reload();
-        }
-        else {
-            alert('There was an error');
-        }
-    });
+    if (confirm("Are you sure you want to delete this challenge?")){
+        $.post(script_root + '/admin/chal/delete', {'id': chal_id, 'nonce': $('#nonce').val()}, function (data) {
+            if (data == 1) {
+                location.reload();
+            }
+            else {
+                alert('There was an error');
+            }
+        });
+    }
 });
 
 
