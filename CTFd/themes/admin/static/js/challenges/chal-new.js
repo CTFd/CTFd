@@ -2,8 +2,8 @@ $.ajaxSetup({ cache: false });
 
 function load_chal_template(challenge){
     $.get(script_root + challenge.templates.create, function(template_data){
-        var template = Handlebars.compile(template_data);
-        $("#create-chal-entry-div").html(template({'nonce':nonce, 'script_root':script_root}));
+        var template = nunjucks.compile(template_data);
+        $("#create-chal-entry-div").html(template.render({'nonce':nonce, 'script_root':script_root}));
         $.getScript(script_root + challenge.scripts.create, function(){
             console.log('loaded');
         });
