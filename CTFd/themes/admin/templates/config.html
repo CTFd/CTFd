@@ -8,7 +8,7 @@
 </div>
 <div class="container">
 	<div class="row">
-		<div class="col-md-2 offset-md-2">
+		<div class="col-md-3">
 			<ul class="nav nav-pills flex-column">
 				<li class="nav-item">
 					<a class="nav-link rounded-0 active" href="#appearance-section" aria-controls="appearance-section" role="tab" data-toggle="tab">Appearance</a>
@@ -26,9 +26,8 @@
 					<a class="nav-link rounded-0" href="#backup-section" aria-controls="backup-section" role="tab" data-toggle="tab">Backup</a>
 				</li>
 			</ul>
-
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-9">
 			<form method="POST" autocomplete="off" class="w-100">
 			{% for error in errors %}
 				<div class="alert alert-danger alert-dismissable" role="alert">
@@ -127,7 +126,7 @@
 					</ul>
 
 					<div class="form-group">
-						<label for="start">Mail From Address:</label>
+						<label>Mail From Address:</label>
 						<input class="form-control" id='mailfrom_addr' name='mailfrom_addr' type='text'
 								placeholder="Email address used to send email"
 								{% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
@@ -137,14 +136,14 @@
 						<div role="tabpanel" class="tab-pane active" id="mailserver">
 
 							<div class="form-group">
-								<label for="start">Mail Server Address:</label>
+								<label>Mail Server Address:</label>
 								<input class="form-control" id='mail_server' name='mail_server' type='text'
 										placeholder="Mail Server Address"
 										{% if mail_server is defined and mail_server != None %}value="{{ mail_server }}"{% endif %}>
 							</div>
 
 							<div class="form-group">
-								<label for="start">Mail Server Port:</label>
+								<label>Mail Server Port:</label>
 								<input class="form-control" id='mail_port' name='mail_port' type='text'
 										placeholder="Mail Server Port"
 										{% if mail_port is defined and mail_port != None %}value="{{ mail_port }}"{% endif %}>
@@ -157,7 +156,7 @@
 							</div>
 							<div id="mail_username_password">
 								<div class="form-group">
-									<label for="start">Username:</label>
+									<label>Username:</label>
 									{% if mail_username is defined and mail_username != None %}
 										<label for="mail_u"><sup>A mail server username is currently set</sup></label>
 									{% endif %}
@@ -192,13 +191,13 @@
 						<div role="tabpanel" class="tab-pane" id="mailgun">
 
 							<div class="form-group">
-								<label for="start">Mailgun API Base URL:</label>
+								<label>Mailgun API Base URL:</label>
 								<input class="form-control" id='mg_base_url' name='mg_base_url' type='text'
 										placeholder="Mailgun API Base URL"
 										{% if mg_base_url is defined and mg_base_url != None %}value="{{ mg_base_url }}"{% endif %}>
 							</div>
 							<div class="form-group">
-								<label for="start">Mailgun API Key:</label>
+								<label>Mailgun API Key:</label>
 								<input class="form-control" id='mg_api_key' name='mg_api_key' type='text'
 										placeholder="Mailgun API Key"
 										{% if mg_api_key is defined and mg_api_key != None %}value="{{ mg_api_key }}"{% endif %}>
@@ -239,7 +238,7 @@
 									<input class="form-control start-date" id='start-day' name='start-day' min="0" max="31" type='number'>
 								</div>
 
-								<div class="form-group col-md-4">
+								<div class="form-group col-md-3">
 									<label for="start-year">Year:</label>
 									<input class="form-control start-date" id='start-year' name='start-year' type='number'>
 								</div>
@@ -249,7 +248,7 @@
 									<input class="form-control start-date" id='start-hour' name='start-hour' min="0" max="23" type='number'>
 								</div>
 
-								<div class="form-group col-md-2">
+								<div class="form-group col-md-3">
 									<label for="start-minute">Minute:</label>
 									<input class="form-control start-date" id='start-minute' name='start-minute' min="0" max="59" type='number'>
 								</div>
@@ -280,7 +279,7 @@
 								</div>
 
 								<div class="form-group col-md-12">
-									<label for="start">UTC Timestamp:</label>
+									<label>UTC Timestamp:</label>
 									<input class="form-control" id='start' name='start' type='text'
 										placeholder="Start Date (UTC timestamp)"
 										{% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly>
