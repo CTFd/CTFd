@@ -23,12 +23,6 @@ pre {
     white-space: pre-wrap;
 }
 
-#score-graph {
-    height: 450px;
-    display: block;
-    clear: both;
-}
-
 .fa.spinner {
     margin-top: 225px;
     text-align: center;
@@ -113,9 +107,15 @@ pre {
     padding: 0.8em;
 }
 
+#score-graph {
+    height: 450px;
+    display: block;
+    clear: both;
+}
+
 #solves-graph {
     display: block;
-    height: 500px;
+    height: 350px;
 }
 
 #keys-pie-graph {
@@ -124,6 +124,11 @@ pre {
 }
 
 #categories-pie-graph {
+    height: 400px;
+    display: block;
+}
+
+#solve-percentages-graph {
     height: 400px;
     display: block;
 }

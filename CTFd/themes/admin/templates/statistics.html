@@ -14,21 +14,35 @@
 			<hr>
 			<h5><b>{{ challenge_count }}</b> challenges</h5>
 			{% if most_solved %}
-				<h5><b>{{ most_solved }}</b> has the most solves with {{ solve_data[most_solved] }}</br> solves</h5>
+				<h5><b>{{ most_solved }}</b> has the most solves with <br>{{ solve_data[most_solved] }} solves</h5>
 			{% endif %}
 			{% if least_solved %}
-			<h5><b>{{ least_solved }}</b> has the least solves with {{ solve_data[least_solved] }}</b> solves</h5>
+			<h5><b>{{ least_solved }}</b> has the least solves with <br>{{ solve_data[least_solved] }} solves</h5>
 			{% endif %}
 		</div>
 
 		<div class="col-md-8">
-			<div id="solves-graph" style="height: 300px;">
+			<div id="solves-graph">
 				<div class="text-center">
 					<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw spinner"></i>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div id="solve-percentages-graph">
+				<div class="text-center">
+					<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<hr>
 
 	<div class="row">
 		<div class="col-md-6">
@@ -115,7 +129,13 @@
 
 			var layout = {
 				title: 'Solve Counts',
-				annotations: annotations
+				annotations: annotations,
+                xaxis: {
+                    title: 'Challenge Name'
+                },
+                yaxis: {
+                    title: 'Amount of Solves'
+                }
 			};
 
 			$('#solves-graph').empty();
@@ -144,7 +164,7 @@
 			}];
 
 			var layout = {
-				title: 'Key Percentages'
+				title: 'Submission Percentages'
 			};
 
 			$('#keys-pie-graph').empty();
@@ -154,16 +174,15 @@
 
 	function category_breakdown_graph() {
 		$.get('{{ request.script_root }}/admin/graphs/categories', function (data) {
-			res = $.parseJSON(JSON.stringify(data));
-			res = res['categories']
+			var res = $.parseJSON(JSON.stringify(data));
+			res = res['categories'];
 
-			categories = [];
-			count = [];
+			var categories = [];
+			var count = [];
 			for (var i = 0; i < res.length; i++) {
-				categories.push(res[i].category)
-				count.push(res[i].count)
+				categories.push(res[i].category);
+				count.push(res[i].count);
 			}
-			;
 
 			var data = [{
 				values: count,
@@ -181,19 +200,58 @@
 		});
 	}
 
+	function solve_percentages_graph() {
+		$.get('{{ request.script_root }}/admin/graphs/solve-percentages', function (data) {
+			var res = $.parseJSON(JSON.stringify(data));
+			res = res['percentages'];
+
+			var names = [];
+			var percents = [];
+
+			for (var key in res) {
+				names.push(res[key].name);
+				percents.push( (res[key].percentage * 100) );
+			}
+
+			var data = [{
+				type: 'bar',
+				x: names,
+				y: percents,
+				text: names,
+				orientation: 'v'
+			}];
+
+			var layout = {
+				title: 'Solve Percentages per Challenge',
+				xaxis: {
+					title: 'Challenge Name'
+				},
+				yaxis: {
+					title: 'Percentage of Teams (%)',
+					range: [0, 100]
+				}
+			};
+
+			$('#solve-percentages-graph').empty();
+			Plotly.newPlot('solve-percentages-graph', data, layout);
+		});
+	}
+
 	function update() {
 		solves_graph();
 		keys_percentage_graph();
 		category_breakdown_graph();
+        solve_percentages_graph();
 	}
 
 	$(function () {
 		update();
 		window.onresize = function () {
-			console.log('resizing')
+			console.log('resizing');
 			Plotly.Plots.resize(document.getElementById('keys-pie-graph'));
 			Plotly.Plots.resize(document.getElementById('categories-pie-graph'));
 			Plotly.Plots.resize(document.getElementById('solves-graph'));
+            Plotly.Plots.resize(document.getElementById('solve-percentages-graph'));
 		};
 	});
 
