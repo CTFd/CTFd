@@ -91,10 +91,11 @@ def downgrade():
 
     # print("There are {} results".format(len(results)))
     for chal_id in results:
-        new_keys = Keys.query.filter_by(chal=chal_id[0]).all()
+        # new_keys = Keys.query.filter_by(chal=chal_id[0]).all()
+        new_keys = conn.execute("SELECT * from `keys` WHERE chal={}".format(chal_id[0]))
         old_flags = []
         for new_key in new_keys:
-            flag_dict = {'flag': new_key.flag, 'type': new_key.key_type}
+            flag_dict = {'flag': new_key.flag, 'type': new_key[2]}  # This magic number refers to Keys.type or Keys.key_type
             old_flags.append(flag_dict)
         old_flags =json.dumps(old_flags)
         # print("Updating challenge {} to insert {}".format(chal_id[0], flag_dict))
