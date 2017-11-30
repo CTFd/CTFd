@@ -24,7 +24,7 @@ $.get(script_root + '/admin/chal_types', function(data){
             option.data('meta', challenge);
             $("#create-chals-select").append(option);
         }
-        $("#create-chals-select").show();
+        $("#create-chals-select-div").show();
     } else if (chal_type_amt == 1) {
         var key = Object.keys(data)[0];
         $("#create-chals-select").empty();
