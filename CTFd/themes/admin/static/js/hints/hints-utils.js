@@ -41,9 +41,9 @@ function loadhints(chal, cb){
         for (var i = 0; i < data.hints.length; i++) {
             var hint = data.hints[i]
             var hint_row = "<tr>" +
-            "<td class='hint-entry'>{0}</td>".format(hint.hint) +
-            "<td class='hint-cost'>{0}</td>".format(hint.cost) +
-            "<td class='hint-settings'><span>" +
+            "<td class='hint-entry d-table-cell w-75'><pre>{0}</pre></td>".format(htmlentities(hint.hint)) +
+            "<td class='hint-cost d-table-cell text-center'>{0}</td>".format(hint.cost) +
+            "<td class='hint-settings d-table-cell text-center'><span>" +
                 "<i role='button' class='fa fa-pencil-square-o' onclick=javascript:load_hint_modal('update',{0})></i>".format(hint.id)+
                 "<i role='button' class='fa fa-times' onclick=javascript:deletehint({0})></i>".format(hint.id)+
                 "</span></td>" +
@@ -82,4 +82,14 @@ $('#hint-modal-submit').submit(function (e) {
         loadhints(params['chal']);
     });
     $("#hint-modal").modal('hide');
+});
+
+
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    var target = $(e.target).attr("href");
+    if (target == '#hint-preview') {
+        var obj = $('#hint-modal-hint');
+        var data = marked(obj.val());
+        $(event.target.hash).html(data, {'gfm': true, 'breaks': true});
+    }
 });
