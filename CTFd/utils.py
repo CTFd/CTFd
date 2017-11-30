@@ -284,7 +284,17 @@ def admins_only(f):
         if session.get('admin'):
             return f(*args, **kwargs)
         else:
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login', next=request.path))
+    return decorated_function
+
+
+def authed_only(f):
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('id'):
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('auth.login', next=request.path))
     return decorated_function
 
 
