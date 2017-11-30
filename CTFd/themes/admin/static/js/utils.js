@@ -57,14 +57,6 @@ function htmlentities(string) {
     return $('<div/>').text(string).html();
 }
 
-Handlebars.registerHelper('if_eq', function(a, b, opts) {
-    if (a == b) {
-        return opts.fn(this);
-    } else {
-        return opts.inverse(this);
-    }
-});
-
 // http://stepansuvorov.com/blog/2014/04/jquery-put-and-delete/
 jQuery.each(["put", "delete"], function(i, method) {
     jQuery[method] = function(url, data, callback, type) {

@@ -18,8 +18,9 @@ challenges = Blueprint('challenges', __name__)
 
 @challenges.route('/hints/<int:hintid>', methods=['GET', 'POST'])
 def hints_view(hintid):
-    if not utils.ctf_started():
-        abort(403)
+    if utils.ctf_started() is False:
+        if utils.is_admin() is False:
+            abort(403)
     hint = Hints.query.filter_by(id=hintid).first_or_404()
     chal = Challenges.query.filter_by(id=hint.chal).first()
     unlock = Unlocks.query.filter_by(model='hints', itemid=hintid, teamid=session['id']).first()
@@ -37,7 +38,7 @@ def hints_view(hintid):
             })
     elif request.method == 'POST':
         if unlock is None:  # The user does not have an unlock.
-            if utils.ctftime() or (utils.ctf_ended() and utils.view_after_ctf()):
+            if utils.ctftime() or (utils.ctf_ended() and utils.view_after_ctf()) or utils.is_admin() is True:
                 # It's ctftime or the CTF has ended (but we allow views after)
                 team = Teams.query.filter_by(id=session['id']).first()
                 if team.score() < hint.cost:

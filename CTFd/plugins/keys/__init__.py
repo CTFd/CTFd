@@ -18,9 +18,9 @@ class BaseKey(object):
 class CTFdStaticKey(BaseKey):
     id = 0
     name = "static"
-    templates = {  # Handlebars templates used for key editing & viewing
-        'create': '/plugins/keys/assets/static/create-static-modal.hbs',
-        'update': '/plugins/keys/assets/static/edit-static-modal.hbs',
+    templates = {  # Nunjucks templates used for key editing & viewing
+        'create': '/plugins/keys/assets/static/create-static-modal.njk',
+        'update': '/plugins/keys/assets/static/edit-static-modal.njk',
     }
 
     @staticmethod
@@ -36,9 +36,9 @@ class CTFdStaticKey(BaseKey):
 class CTFdRegexKey(BaseKey):
     id = 1
     name = "regex"
-    templates = {  # Handlebars templates used for key editing & viewing
-        'create': '/plugins/keys/assets/regex/create-regex-modal.hbs',
-        'update': '/plugins/keys/assets/regex/edit-regex-modal.hbs',
+    templates = {  # Nunjucks templates used for key editing & viewing
+        'create': '/plugins/keys/assets/regex/create-regex-modal.njk',
+        'update': '/plugins/keys/assets/regex/edit-regex-modal.njk',
     }
 
     @staticmethod

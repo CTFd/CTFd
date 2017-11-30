@@ -2,10 +2,10 @@ function load_edit_key_modal(key_id, key_type_name) {
     $.get(script_root + '/admin/keys/' + key_id, function (key_data) {
         $.get(script_root + key_data.templates.update, function (template_data) {
             $('#edit-keys').empty();
-            var template = Handlebars.compile(template_data);
+            var template = nunjucks.compile(template_data);
             key_data['script_root'] = script_root;
             key_data['nonce'] = $('#nonce').val();
-            $('#edit-keys').append(template(key_data));
+            $('#edit-keys').append(template.render(key_data));
             $('#key-id').val(key_id);
             $('#submit-keys').click(function (e) {
                 e.preventDefault();
@@ -46,10 +46,10 @@ function loadkeys(chal, cb){
         var keys = $.parseJSON(JSON.stringify(data));
         keys = keys['keys'];
         $('#current-keys').empty();
-        $.get(script_root + "/themes/admin/static/js/templates/admin-keys-table.hbs", function(data){
-            var template = Handlebars.compile(data);
+        $.get(script_root + "/themes/admin/static/js/templates/admin-keys-table.njk", function(data){
+            var template = nunjucks.compile(data);
             var wrapper  = {keys: keys, script_root: script_root};
-            $('#current-keys').append(template(wrapper));
+            $('#current-keys').append(template.render(wrapper));
             if (cb) {
                 cb();
             }
@@ -129,8 +129,8 @@ $('#create-keys-select').change(function () {
 
     $.get(script_root + '/admin/key_types/' + key_type_name, function (key_data) {
         $.get(script_root + key_data.templates.create, function (template_data) {
-            var template = Handlebars.compile(template_data);
-            $("#create-keys-entry-div").html(template());
+            var template = nunjucks.compile(template_data);
+            $("#create-keys-entry-div").html(template.render());
             $("#create-keys-button-div").show();
         });
     })

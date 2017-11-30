@@ -1,12 +1,6 @@
 var challenges;
 var templates = {};
 
-Handlebars.registerHelper('splitSlash', function(filename) {
-    var filename = filename.split("/");
-    filename = filename[filename.length - 1];
-    return filename;
-});
-
 function loadchal(id) {
     var obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
@@ -29,7 +23,7 @@ function updateChalWindow(obj) {
         templates[obj.type] = template_data;
         var template_data = templates[obj.type];
         template_data['script_root'] = script_root;
-        var template = Handlebars.compile(template_data);
+        var template = nunjucks.compile(template_data);
         var solves = obj.solves == 1 ? " Solve" : " Solves";
         var solves = obj.solves + solves;
 
@@ -45,7 +39,7 @@ function updateChalWindow(obj) {
             hints: obj.hints
         };
 
-        $('#chal-window').append(template(wrapper));
+        $('#chal-window').append(template.render(wrapper));
         $.getScript(script_root + obj.script,
             function() {
                 // Handle Solves tab

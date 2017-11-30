@@ -6,8 +6,8 @@ function load_chal_template(id, success_cb){
         return e.id == id;
     })[0];
     $.get(script_root + obj.type_data.templates.update, function(template_data){
-        var template = Handlebars.compile(template_data);
-        $("#update-modals-entry-div").html(template({'nonce':$('#nonce').val(), 'script_root':script_root}));
+        var template = nunjucks.compile(template_data);
+        $("#update-modals-entry-div").html(template.render({'nonce':$('#nonce').val(), 'script_root':script_root}));
         $.ajax({
           url: script_root + obj.type_data.scripts.update,
           dataType: "script",
