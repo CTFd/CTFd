@@ -1,91 +1,100 @@
 <div class="modal-dialog" role="document">
-    <div class="modal-content content">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#challenge" aria-controls="challenge" role="tab">Challenge</a></li>
-            {{#if_eq solves '-1 Solves'}}
-            {{else}}
-            <li role="presentation"><a href="#solves" aria-controls="solves" class="chal-solves" role="tab">{{solves}}</a></li>
-            {{/if_eq}}
-        </ul>
+    <div class="modal-content">
         <div class="modal-body">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" href="#challenge">Challenge</a>
+              </li>
+              {{#if_eq solves '-1 Solves'}}
+              {{else}}
+              <li class="nav-item">
+                <a class="nav-link chal-solves" href="#solves">{{solves}}</a>
+              </li>
+              {{/if_eq}}
+            </ul>
             <div role="tabpanel">
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade in active" id="challenge">
-                        <h3 class='chal-name text-center'>{{ name }}</h3>
-                        <h4 class="chal-value text-center">{{ value }}</h4>
+                    <div role="tabpanel" class="tab-pane fade show active" id="challenge">
+                        <h2 class='chal-name text-center pt-3'>{{ name }}</h2>
+                        <h3 class="chal-value text-center">{{ value }}</h3>
                         <div class="chal-tags text-center">
                         {{#each tags }}
-                            <span class='label label-primary chal-tag'>{{this}}</span>
+                            <span class='badge badge-info chal-tag'>{{this}}</span>
                         {{/each}}
                         </div>
                         <span class="chal-desc">{{ desc }}</span>
-                        <div class="chal-hints file-row row">
+                        <div class="chal-hints hint-row row">
                             {{#each hints}}
-                            <div class='col-md-12 file-button-wrapper text-center'>
-                                <a onclick="javascript:loadhint({{this.id}})">
+                            <div class='col-md-12 hint-button-wrapper text-center mb-3'>
+                                <a class="btn btn-info btn-hint" href="javascript:;" onclick="javascript:loadhint({{this.id}})">
                                     {{#if this.hint }}
-                                        <label class='challenge-wrapper file-wrapper hide-text'>
+                                        <small>
                                         View Hint
-                                        </label>
+                                        </small>
                                     {{else}}
                                         {{#if this.cost}}
-                                            <label class='challenge-wrapper file-wrapper hide-text'>
+                                            <small>
                                             Unlock Hint for {{this.cost}} points
-                                            </label>
+                                            </small>
                                         {{else}}
-                                            <label class='challenge-wrapper file-wrapper hide-text'>
+                                            <small>
                                             View Hint
-                                            </label>
+                                            </small>
                                         {{/if}}
                                     {{/if}}
                                 </a>
                             </div>
                             {{/each}}
                         </div>
-                        <div class="chal-files file-row row text-center">
+                        <div class="row chal-files text-center pb-3">
                             {{#each files}}
-                            <div class='col-md-3 file-button-wrapper'>
-                                <a class='file-button' href='files/{{this}}'>
-                                    <label class='challenge-wrapper file-wrapper hide-text'>
+                            <div class='col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block'>
+                                <a class='btn btn-info btn-file mb-1 d-inline-block px-2 w-100 text-truncate' href='files/{{this}}'>
+                                    <small>
                                     {{splitSlash this}}
-                                    </label>
+                                    </small>
                                 </a>
                             </div>
                             {{/each}}
                         </div>
 
                         <div class="row submit-row">
-                            <div class="col-md-9" style="padding-right:0px;padding-left:10px;">
-                                <span class="input">
-                                    <input class="input-field" type="text" name="answer" id="answer-input" placeholder="Key" />
-                                </span>
-
+                            <div class="col-md-9 form-group">
+                                <input class="form-control" type="text" name="answer" id="answer-input" placeholder="Flag" />
                                 <input id="chal-id" type="hidden" value="{{id}}">
                             </div>
-                            <div class="col-md-3 key-submit">
-                                <button type="submit" id="submit-key" tabindex="5" class="btn btn-md btn-theme btn-outlined pull-right" style="height:46.375px">Submit</button>
+                            <div class="col-md-3 form-group key-submit">
+                                <button type="submit" id="submit-key" tabindex="5" class="btn btn-md btn-outline-secondary float-right">Submit</button>
                             </div>
                         </div>
                         <div class="row notification-row">
-                            <div id="result-notification" class="alert alert-dismissable text-center" role="alert" style="display: none;">
-                              <strong id="result-message"></strong>
+                            <div class="col-md-12">
+                                <div id="result-notification" class="alert alert-dismissable text-center w-100" role="alert" style="display: none;">
+                                  <strong id="result-message"></strong>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="solves">
-                        <table class="table table-striped text-center">
-                            <thead>
-                                <tr>
-                                    <td><b>Name</b>
-                                    </td>
-                                    <td><b>Date</b>
-                                    </td>
-                                </tr>
-                            </thead>
-                            <tbody id="chal-solves-names">
-                            </tbody>
-                        </table>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-striped text-center">
+                                    <thead>
+                                        <tr>
+                                            <td><b>Name</b>
+                                            </td>
+                                            <td><b>Date</b>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="chal-solves-names">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

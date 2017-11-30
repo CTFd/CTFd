@@ -29,7 +29,7 @@ admin = Blueprint('admin', __name__)
 @admin.route('/admin', methods=['GET'])
 def admin_view():
     if is_admin():
-        return redirect(url_for('admin_statistics.admin_graphs'))
+        return redirect(url_for('admin_statistics.admin_stats'))
 
     return redirect(url_for('auth.login'))
 
@@ -158,6 +158,7 @@ def admin_config():
 
         ctf_name = utils.set_config("ctf_name", request.form.get('ctf_name', None))
         ctf_theme = utils.set_config("ctf_theme", request.form.get('ctf_theme', None))
+        css = utils.set_config('css', request.form.get('css', None))
 
         mailfrom_addr = utils.set_config("mailfrom_addr", request.form.get('mailfrom_addr', None))
         mg_base_url = utils.set_config("mg_base_url", request.form.get('mg_base_url', None))
@@ -185,6 +186,7 @@ def admin_config():
     ctf_name = utils.get_config('ctf_name')
     ctf_theme = utils.get_config('ctf_theme')
     hide_scores = utils.get_config('hide_scores')
+    css = utils.get_config('css')
 
     mail_server = utils.get_config('mail_server')
     mail_port = utils.get_config('mail_port')
@@ -221,6 +223,7 @@ def admin_config():
     return render_template('admin/config.html',
                            ctf_name=ctf_name,
                            ctf_theme_config=ctf_theme,
+                           css=css,
                            start=start,
                            end=end,
                            freeze=freeze,

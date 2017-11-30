@@ -47,8 +47,7 @@
 				<b>{{page}}</b>
 			{% endif %}
 		{% endfor %}
-		{% if curr_page != team_pages %}<a href="{{ request.script_root }}/teams/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
-	<a href="{{ request.script_root }}">
+		{% if curr_page != team_pages %}<a href="{{ request.script_root }}/teams/{{ curr_page + 1 }}">&gt;&gt;&gt;</a>{% endif %}
 	</div>
 	{% endif %}
 </div>

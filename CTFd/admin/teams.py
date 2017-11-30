@@ -236,6 +236,7 @@ def delete_team(teamid):
 def admin_solves(teamid="all"):
     if teamid == "all":
         solves = Solves.query.all()
+        awards = []
     else:
         solves = Solves.query.filter_by(teamid=teamid).all()
         awards = Awards.query.filter_by(teamid=teamid).all()

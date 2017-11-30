@@ -7,18 +7,6 @@ from CTFd import utils
 admin_pages = Blueprint('admin_pages', __name__)
 
 
-@admin_pages.route('/admin/css', methods=['GET', 'POST'])
-@admins_only
-def admin_css():
-    if request.method == 'POST':
-        css = request.form['css']
-        css = utils.set_config('css', css)
-        with app.app_context():
-            cache.clear()
-        return '1'
-    return '0'
-
-
 @admin_pages.route('/admin/pages', methods=['GET', 'POST'])
 @admins_only
 def admin_pages_view():

@@ -18,7 +18,7 @@ def test_admin_panel():
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin')
         assert r.status_code == 302
-        r = client.get('/admin/graphs')
+        r = client.get('/admin/statistics')
         assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -121,7 +121,7 @@ def test_admins_can_create_challenges():
             data = {
                 'name': '💫',
                 'category': '💫',
-                'desc': 'description',
+                'description': 'description',
                 'value': 100,
                 'key_type[0]': 'static',
                 'key': 'flag',
@@ -164,7 +164,7 @@ def test_admins_can_update_challenges():
                 'id': chal_id,
                 'name': '💫',
                 'category': '💫',
-                'desc': 'description',
+                'description': 'description',
                 'value': 100,
                 'key_type[0]': 'static',
                 'max_attempts': '',

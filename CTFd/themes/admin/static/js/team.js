@@ -13,15 +13,16 @@ function cumulativesum (arr) {
 }
 
 function scoregraph () {
-    var times = []
-    var scores = []
+    var times = [];
+    var scores = [];
     var teamname = $('#team-id').text()
     $.get(script_root + '/admin/solves/'+teamid(), function( data ) {
         var solves = $.parseJSON(JSON.stringify(data));
         solves = solves['solves'];
 
-        if (solves.length == 0)
+        if (solves.length == 0) {
             return;
+        }
 
         for (var i = 0; i < solves.length; i++) {
             var date = moment(solves[i].time * 1000);
@@ -34,13 +35,34 @@ function scoregraph () {
             {
                 x: times,
                 y: scores,
-                type: 'scatter'
+                type: 'scatter',
+                marker: {
+                    color: colorhash(teamname + teamid())
+                },
+                line: {
+                    color: colorhash(teamname + teamid())
+                }
             }
         ];
 
         var layout = {
-            title: 'Score over Time'
+            title: 'Score over Time',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            hovermode: 'closest',
+            xaxis: {
+                showgrid: false,
+                showspikes: true,
+            },
+            yaxis: {
+                showgrid: false,
+                showspikes: true,
+            },
+            legend: {
+                "orientation": "h"
+            }
         };
+
         $('#score-graph').empty();
         Plotly.newPlot('score-graph', data, layout);
     });
