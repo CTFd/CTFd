@@ -114,7 +114,7 @@ def test_register_admin_plugin_menu_bar():
         register_admin_plugin_menu_bar(name='test_admin_plugin_name', route='/test_plugin')
 
         client = login_as_user(app, name="admin", password="password")
-        r = client.get('/admin/graphs')
+        r = client.get('/admin/statistics')
         output = r.get_data(as_text=True)
         assert '/test_plugin' in output
         assert 'test_admin_plugin_name' in output
