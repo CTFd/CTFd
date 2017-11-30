@@ -131,14 +131,14 @@ class Files(db.Model):
 class Keys(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
-    key_type = db.Column(db.String(80))
+    type = db.Column(db.String(80))
     flag = db.Column(db.Text)
     data = db.Column(db.Text)
 
-    def __init__(self, chal, flag, key_type):
+    def __init__(self, chal, flag, type):
         self.chal = chal
         self.flag = flag
-        self.key_type = key_type
+        self.type = type
 
     def __repr__(self):
         return "<Flag {0} for challenge {1}>".format(self.flag, self.chal)
