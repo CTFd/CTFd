@@ -354,6 +354,33 @@ def test_unlocking_hints_with_cost_during_ctf_without_points():
     destroy_ctfd(app)
 
 
+def test_unlocking_hints_with_cost_before_ctf():
+    """Test that hints without a cost are not unlocked if the CTF hasn't begun"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+        hint = gen_hint(app.db, chal_id)
+        gen_award(app.db, teamid=2)
+
+        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+
+        with freeze_time("2017-10-1"):
+            client = login_as_user(app)
+            with client.session_transaction() as sess:
+                data = {
+                    "nonce": sess.get('nonce')
+                }
+            r = client.post('/hints/1', data=data)
+            assert r.status_code == 403
+            user = Teams.query.filter_by(id=2).first()
+            assert user.score() == 100
+            assert Unlocks.query.count() == 0
+    destroy_ctfd(app)
+
+
 def test_unlocking_hints_with_cost_during_ended_ctf():
     """Test that hints with a cost are not unlocked if the CTF has ended"""
     app = create_ctfd()

@@ -8,12 +8,12 @@
               <li class="nav-item">
                 <a class="nav-link active" href="#challenge">Challenge</a>
               </li>
-              {{#if_eq solves '-1 Solves'}}
-              {{else}}
+              {% if solves == '-1 Solves' %}
+              {% else %}
               <li class="nav-item">
                 <a class="nav-link chal-solves" href="#solves">{{solves}}</a>
               </li>
-              {{/if_eq}}
+              {% endif %}
             </ul>
             <div role="tabpanel">
                 <div class="tab-content">
@@ -21,44 +21,44 @@
                         <h2 class='chal-name text-center pt-3'>{{ name }}</h2>
                         <h3 class="chal-value text-center">{{ value }}</h3>
                         <div class="chal-tags text-center">
-                        {{#each tags }}
-                            <span class='badge badge-info chal-tag'>{{this}}</span>
-                        {{/each}}
+                        {% for tag in tags %}
+                            <span class='badge badge-info chal-tag'>{{tag}}</span>
+                        {% endfor %}
                         </div>
                         <span class="chal-desc">{{ desc }}</span>
                         <div class="chal-hints hint-row row">
-                            {{#each hints}}
+                            {% for hint in hints %}
                             <div class='col-md-12 hint-button-wrapper text-center mb-3'>
-                                <a class="btn btn-info btn-hint" href="javascript:;" onclick="javascript:loadhint({{this.id}})">
-                                    {{#if this.hint }}
+                                <a class="btn btn-info btn-hint" href="javascript:;" onclick="javascript:loadhint({{hint.id}})">
+                                    {% if hint.hint %}
                                         <small>
                                         View Hint
                                         </small>
-                                    {{else}}
-                                        {{#if this.cost}}
+                                    {% else %}
+                                        {% if hint.cost %}
                                             <small>
-                                            Unlock Hint for {{this.cost}} points
+                                            Unlock Hint for {{hint.cost}} points
                                             </small>
-                                        {{else}}
+                                        {% else %}
                                             <small>
                                             View Hint
                                             </small>
-                                        {{/if}}
-                                    {{/if}}
+                                        {% endif %}
+                                    {% endif %}
                                 </a>
                             </div>
-                            {{/each}}
+                            {% endfor %}
                         </div>
                         <div class="row chal-files text-center pb-3">
-                            {{#each files}}
+                            {% for file in files %}
                             <div class='col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block'>
-                                <a class='btn btn-info btn-file mb-1 d-inline-block px-2 w-100 text-truncate' href='files/{{this}}'>
+                                <a class='btn btn-info btn-file mb-1 d-inline-block px-2 w-100 text-truncate' href='files/{{file}}'>
                                     <small>
-                                    {{splitSlash this}}
+                                    {{ file.split('/')[1] }}
                                     </small>
                                 </a>
                             </div>
-                            {{/each}}
+                            {% endfor %}
                         </div>
 
                         <div class="row submit-row">
