@@ -257,16 +257,27 @@ function loadchals(cb) {
 }
 
 function loadhint(hintid){
-    if (confirm("Are you sure you want to open this hint?")){
-        $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function(data){
-            if (data.errors){
-                alert(data.errors);
-            } else {
-                $('#hint-modal-body').html(marked(data.hint, {'gfm':true, 'breaks':true}));
-                $('#hint-modal').modal();
-            }
-        });
-    }
+    ezq({
+        title: "Unlock Hint?",
+        body: "Are you sure you want to open this hint?",
+        success: function(){
+            $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function (data) {
+                if (data.errors) {
+                    ezal({
+                        title: "Error!",
+                        body: data.errors,
+                        button: "Okay"
+                    });
+                } else {
+                    ezal({
+                        title: "Hint",
+                        body: marked(data.hint, {'gfm': true, 'breaks': true}),
+                        button: "Got it!"
+                    });
+                }
+            });
+        }
+    });
 }
 
 $('#submit-key').click(function (e) {
@@ -297,16 +308,6 @@ $.extend({
        return result;
     }
 });
-
-function colorhash (x) {
-    color = "";
-    for (var i = 20; i <= 60; i+=20){
-        x += i;
-        x *= i;
-        color += x.toString(16)
-    };
-    return "#" + color.substring(0, 6);
-}
 
 var load_location_hash = function () {
     if (window.location.hash.length > 0) {

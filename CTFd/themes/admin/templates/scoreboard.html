@@ -26,12 +26,12 @@
 						<td>{{ team.score }}</td>
 						<td>
 						{% if not team.banned %}
-						<form method="POST" style="margin:0;" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/ban">
+						<form method="POST" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/ban">
 							<button class="btn-sm btn-success" type="submit">Visible</button>
 							<input type="hidden" value="{{ nonce }}" name="nonce">
 						</form>
 						{%else %}
-						<form method="POST" style="margin:0;" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/unban">
+						<form method="POST" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/unban">
 							<button class="btn-sm btn-danger" type="submit">Hidden</button>
 							<input type="hidden" value="{{ nonce }}" name="nonce">
 						</form>
