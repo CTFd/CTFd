@@ -1,15 +1,6 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
-<style>
-	.btn-primary {
-		background-color: #337ab7;
-	}
-
-	.btn-danger {
-		background-color: #d9534f;
-	}
-</style>
 {% endblock %}
 
 {% block content %}
@@ -51,26 +42,6 @@
 		</form>
 		</div>
 	</div>
-	</div>
-</div>
-
-<div id="confirm" class="modal fade" tabindex="-1">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header text-center">
-				<h3 id="confirm-title">Delete Key</h3>
-			</div>
-			<div class="modal-body">
-				<form method="POST" action="{{ request.script_root }}/admin/chal/delete">
-					<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
-					<div class="small-6 small-centered text-center columns">
-						<p id="confirm-description"></p>
-						<a onclick="$('#confirm').modal('hide')" class="btn btn-primary">No</a>
-						<button class="btn btn-danger" id="delete-solve" type="button">Yes</button>
-					</div>
-				</form>
-			</div>
-		</div>
 	</div>
 </div>
 
@@ -258,7 +229,7 @@
 							<td class="text-center chal" id="{{ chal.id }}">{{ chal.name }}</td>
 							<td class="text-center">{{ chal.category }}</td>
 							<td class="text-center">{{ chal.value }}</td>
-							<td class="text-center"><i class="fa fa-check"></i></td>
+							<td class="text-center"><i class="fa fa-check mark-correct"></i></td>
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -267,15 +238,6 @@
 			</div>
 		</div>
 	</div>
-
-
-
-
-
-
-
-
-
 
 	<div class="row">
 		<div class="col-md-12">
@@ -306,136 +268,137 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/utils.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/team.js"></script>
-	<script>
-		$('#delete-solve').click(function (e) {
-			e.preventDefault();
-			var solve = $('#confirm input[name="solve"]').val()
-			$.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function (data) {
-				var data = $.parseJSON(JSON.stringify(data))
+<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/team.js"></script>
+<script>
+var nonce = "{{ nonce }}";
+
+$('.fa-times').click(function () {
+	var elem = $(this).parent().parent();
+	var type = elem.attr('class');
+	var chal_name = elem.find('.chal').text().trim();
+	var team_name = $("#team-id").text();
+	var key_id = elem.find('.flag').attr('id');
+
+	if (type == 'chal-solve'){
+		var title = 'Delete Solve';
+		var description = "<span>Are you sure you want to delete " +
+							"<strong>correct</strong> " +
+							"submission from " +
+							"<strong id='confirm-team-name'></strong> " +
+							"for challenge: " +
+							"<strong id='confirm-chal-name'></strong>?</span>"
+
+
+		var description = $($.parseHTML(description));
+		description.find('#confirm-team-name').text(team_name);
+		description.find('#confirm-chal-name').text(chal_name);
+		description = description.html();
+
+		var action = '{{ request.script_root }}/admin/solves/' + key_id + '/delete';
+	} else if (type == 'chal-wrong') {
+		var title = 'Delete Wrong Key';
+		var description = "<span>Are you sure you want to delete " +
+							"<strong>incorrect</strong> " +
+							"submission from " +
+							"<strong id='confirm-team-name'></strong> " +
+							"for <strong id='confirm-chal-name'></strong>?</span>";
+
+		var description = $($.parseHTML(description));
+		description.find('#confirm-team-name').text(team_name);
+		description.find('#confirm-chal-name').text(chal_name);
+		description = description.html();
+
+		var action = '{{ request.script_root }}/admin/wrong_keys/' + key_id + '/delete';
+	} else if (type == 'award-row') {
+		var title = 'Delete Award';
+		var award_id = elem.find('.chal').attr('id');
+		var description = "<span>Are you sure you want to delete the " +
+							"<strong>{0}</strong> award?</span>".format(chal_name);
+		var action = '{{ request.script_root }}/admin/awards/{0}/delete'.format(award_id);
+	}
+
+	var msg = {
+		title : title,
+		description : description,
+		action : action,
+	};
+
+	ezq({
+		title: title,
+		body: description,
+		success: function(){
+			var route = action;
+			$.post(route, {
+				nonce: nonce,
+			}, function (data) {
+				var data = $.parseJSON(JSON.stringify(data));
 				if (data == "1") {
-					location.reload()
+					location.reload();
 				}
-			})
-		});
-
-		function load_confirm_modal(msg) {
-			var title = msg.title;
-			var description = msg.description;
-			var action = msg.action;
-			$('#confirm-title').text(title);
-			$('#confirm-description').html(description);
-			$('#confirm form').attr('action', action);
-			$('#confirm').modal('show');
+			});
 		}
+	});
+});
 
-		$('.fa-times').click(function () {
-			var elem = $(this).parent().parent();
-			var type = elem.attr('class');
-			var chal_name = elem.find('.chal').text().trim();
-			var team_name = $("#team-id").text();
-			var key_id = elem.find('.flag').attr('id');
+$('.mark-correct').click(function () {
+	var elem = $(this).parent().parent();
+	var type = elem.attr('class');
+	var chal = elem.find('.chal').attr('id');
+	var team = window.location.pathname.split('/').pop();
 
-			if (type == 'chal-solve'){
-				var title = 'Delete Solve';
-				var description = "<span>Are you sure you want to delete " +
-									"<strong>correct</strong> " +
-									"key submission for team: " +
-									"<strong id='confirm-team-name'></strong> " +
-									"in challenge: " +
-									"<strong id='confirm-chal-name'></strong>?</span>"
+	var chal_name = htmlentities(elem.find('.chal').text().trim());
+	var team_name = htmlentities($("#team-id").text());
 
 
-				var description = $($.parseHTML(description));
-				description.find('#confirm-team-name').text(team_name);
-				description.find('#confirm-chal-name').text(chal_name);
-				description = description.html()
+	var description = $($.parseHTML(description));
+	description.find('#confirm-team-name').text(team_name);
+	description.find('#confirm-chal-name').text(chal_name);
+	description = description.html();
 
-				var action = '{{ request.script_root }}/admin/solves/' + key_id + '/delete';
-			} else if (type == 'chal-wrong') {
-				var title = 'Delete Wrong Key';
-				var description = "<span>Are you sure you want to delete " +
-									"<strong>incorrect</strong> " +
-									"key submission for team: " +
-									"<strong id='confirm-team-name'></strong> " +
-									"in challenge: " +
-									"<strong id='confirm-chal-name'></strong>?</span>"
+	var action = '{{request.script_root }}/admin/solves/' + team + '/' + chal + '/solve';
 
-				var description = $($.parseHTML(description));
-				description.find('#confirm-team-name').text(team_name);
-				description.find('#confirm-chal-name').text(chal_name);
-				description = description.html()
+	var title = 'Mark ' + chal_name + ' solved for ' + team_name;
+	var description = "<span>Are you sure you want to mark " +
+		"<strong>{0}</strong> ".format(team_name) +
+		"as solved for team " +
+		"<strong>{0}</strong>?</span>".format(chal_name);
 
-				var action = '{{ request.script_root }}/admin/wrong_keys/' + key_id + '/delete';
-			} else if (type == 'award-row') {
-				var title = 'Delete Award';
-				var award_id = elem.find('.chal').attr('id');
-				var description = "<span>Are you sure you want to delete the " +
-									"<strong>{0}</strong> award?</span>".format(chal_name);
-				var action = '{{ request.script_root }}/admin/awards/{0}/delete'.format(award_id);
-			}
-
-			var msg = {
-				title : title,
-				description : description,
-				action : action,
-			}
-
-			load_confirm_modal(msg)
-		});
-
-		$('.fa-check').click(function () {
-			var elem = $(this).parent().parent();
-			var type = elem.attr('class');
-			var chal = elem.find('.chal').attr('id');
-			var chal_name = elem.find('.chal').text().trim();
-			var team = window.location.pathname.split('/').pop();
-			var team_name = $("#team-id").text();
-
-			var title = 'Mark '+chal_name+' Solved';
-			var description = "<span>Are you sure you want to mark " +
-								"<strong id='confirm-chal-name'></strong> " +
-								"as solved for team " +
-								"<strong id='confirm-team-name'></strong> " +
-								"?</span>";
-
-
-			var description = $($.parseHTML(description));
-			description.find('#confirm-team-name').text(team_name);
-			description.find('#confirm-chal-name').text(chal_name);
-			description = description.html()
-
-			var action = '{{request.script_root }}/admin/solves/' + team + '/' + chal + '/solve';
-
-			var msg = {
-				title : title,
-				description : description,
-				action : action,
-			};
-
-			load_confirm_modal(msg);
-		});
-
-		$('#award-create-form').submit(function(e){
-			$.post($(this).attr('action'), $(this).serialize(), function(res){
-				if (res == '1'){
-					var award = $('#award-create-form').serializeObject();
-					var award_text = '<td class="text-center">{0}</td>'.format(award.name) +
-					'<td class="text-center">{0}</td>'.format(award.description) +
-					'<td class="text-center solve-time">{0}</td>'.format(moment().local().format('MMMM Do, h:mm:ss A')) +
-					'<td class="text-center">{0}</td>'.format(award.value) +
-					'<td class="text-center">{0}</td>'.format(award.category) +
-					'<td class="text-center">{0}</td>'.format('None') +
-					'<td class="text-center"><i class="fa fa-times"></i></td>'
-					$('#awards-body').append(award_text);
-					$('#create-award-modal').modal('hide');
+	ezq({
+		title: title,
+		body: description,
+		success: function(){
+			var route = script_root + '/admin/solves/' + team + '/' + chal + '/solve';
+			$.post(route, {
+				nonce: nonce,
+			}, function (data) {
+				var data = $.parseJSON(JSON.stringify(data));
+				if (data == "1") {
+					location.reload();
 				}
-			})
-			e.preventDefault();
-		});
+			});
+		}
+	})
+});
 
-	</script>
+$('#award-create-form').submit(function(e){
+	$.post($(this).attr('action'), $(this).serialize(), function(res){
+		if (res == '1'){
+			var award = $('#award-create-form').serializeObject();
+			var award_text = '<td class="text-center">{0}</td>'.format(award.name) +
+			'<td class="text-center">{0}</td>'.format(award.description) +
+			'<td class="text-center solve-time">{0}</td>'.format(moment().local().format('MMMM Do, h:mm:ss A')) +
+			'<td class="text-center">{0}</td>'.format(award.value) +
+			'<td class="text-center">{0}</td>'.format(award.category) +
+			'<td class="text-center">{0}</td>'.format('None') +
+			'<td class="text-center"><i class="fa fa-times"></i></td>'
+			$('#awards-body').append(award_text);
+			$('#create-award-modal').modal('hide');
+		}
+	})
+	e.preventDefault();
+});
+
+</script>
 {% endblock %}

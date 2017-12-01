@@ -14,36 +14,6 @@
 	</div>
 </div>
 
-<div id="confirm" class="modal fade" tabindex="-1" data-width="760">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="text-center">Delete Page</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-12">
-						<form method="POST">
-							<input type="hidden" name="route">
-							<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
-							<div class="small-6 small-centered text-center columns">
-								<p>Are you sure you want to delete <strong id="confirm-route-name"></strong>?</p>
-								<button type="button" data-dismiss="modal" class="btn btn-danger">No
-								</button>
-								<button type="button" id="delete-route" class="btn btn-success">Yes
-								</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
@@ -75,29 +45,29 @@
 {% block scripts %}
 <script src="{{ request.script_root }}/themes/admin/static/js/vendor/codemirror.min.js"></script>
 <script>
-$('#delete-route').click(function(e){
-	e.preventDefault();
-	var route = $('#confirm input[name="route"]').val()
-	$.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function(data){
-		var data = $.parseJSON(JSON.stringify(data))
-		if (data == "1"){
-			location.reload()
-		}
-	})
-});
-
-function load_confirm_modal(route){
-	var modal = $('#confirm')
-	modal.find('input[name=route]').val(route)
-	modal.find('#confirm-route-name').text(route)
-	$('#confirm form').attr('action', '{{ request.script_root }}/admin/pages/delete');
-	$('#confirm').modal();
-}
+var nonce = "{{ nonce }}";
 
 $('.fa-times').click(function(){
 	var elem = $(this).parent().parent();
 	var name = elem.find('.route-name').attr("route-name");
-	load_confirm_modal(name)
+	ezq({
+		title: 'Delete '+ name,
+		body: "Are you sure you want to delete {0}?".format(
+			"<strong>" + htmlentities(name) + "</strong>"
+		),
+		success: function(){
+		    var page_delete_route = '{{ request.script_root }}/admin/pages/delete';
+			$.post(page_delete_route, {
+				route: name,
+				nonce: nonce,
+			}, function (data) {
+				var data = $.parseJSON(JSON.stringify(data));
+				if (data == "1") {
+					location.reload();
+				}
+			});
+		}
+	});
 });
 </script>
 {% endblock %}
