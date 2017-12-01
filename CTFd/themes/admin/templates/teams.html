@@ -9,35 +9,7 @@
 		<h1>Teams <i class="fa fa-plus-circle create-team" role="button" data-toggle="tooltip" title="Create Team"></i></h1>
 	</div>
 </div>
-<div id="confirm" class="modal fade" tabindex="-1">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2>Delete User</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body" style="height:110px">
-				<div class="row-fluid">
-					<div class="col-md-12">
-						<form method="POST">
-							<input type="hidden" name="route">
-							<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
-							<div class="small-6 small-centered text-center columns">
-								<p>Are you sure you want to delete <strong id="confirm-team-name"></strong>?</p>
-								<button type="button" data-dismiss="modal" class="btn btn-danger">No
-								</button>
-								<button type="button" id="delete-user" class="btn btn-success">Yes
-								</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+
 <div id="email-user" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -62,6 +34,7 @@
 		</div>
 	</div>
 </div>
+
 <div id="update-user-modal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -115,6 +88,7 @@
 		</div>
 	</div>
 </div>
+
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
@@ -183,9 +157,11 @@
 								</a>
 							{% endif %}
 						</td>
-						<td class="team-affiliation d-none d-md-table-cell d-lg-table-cell" value="{{ team.affiliation if team.affiliation is not none }}"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
+						<td class="team-affiliation d-none d-md-table-cell d-lg-table-cell" value="{{ team.affiliation if team.affiliation is not none }}">
+							<span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
 						</td>
-						<td class="team-country d-none d-md-table-cell d-lg-table-cell" value="{{ team.country if team.country is not none }}"><span>{% if team.country %}{{ team.country }}{% endif %}</span>
+						<td class="team-country d-none d-md-table-cell d-lg-table-cell" value="{{ team.country if team.country is not none }}">
+							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
 						</td>
 						<td class="team-admin">
 							<div class="center-block checkbox text-center">
@@ -228,6 +204,8 @@
 
 {% block scripts %}
 <script>
+var nonce = "{{ nonce }}";
+
 function load_update_modal(id, name, email, website, affiliation, country){
 	var modal_form = $('#update-user-modal form');
 
@@ -307,18 +285,6 @@ $('#send-user-email').click(function(e){
 	});
 });
 
-$('#delete-user').click(function(e){
-	e.preventDefault();
-	var id = $('#confirm input[name="id"]').val()
-	var user_data = $('#confirm form').serializeArray()
-	$.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function(data){
-		var data = $.parseJSON(JSON.stringify(data))
-		if (data == "1"){
-			location.reload()
-		}
-	})
-});
-
 $('.fa-pencil-square-o').click(function(){
 	var elem = $(this).parent().parent().parent();
 	var id = elem.find('.team-id').attr('value') || '';
@@ -335,26 +301,32 @@ $('.create-team').click(function(){
 	load_update_modal('new', '', '', '', '', '');
 });
 
-function load_confirm_modal(id, name){
-	var modal = $('#confirm')
-	modal.find('input[name=id]').val(id)
-	modal.find('#confirm-team-name').text(name)
-	$('#confirm form').attr('action', '{{ request.script_root }}/admin/team/'+id+'/delete');
-	$('#confirm').modal();
-}
-
 $('.fa-times').click(function(){
 	var elem = $(this).parent().parent().parent();
-	var id = elem.find('.team-id').text().trim();
+	var team_id = elem.find('.team-id').text().trim();
 	var name = elem.find('.team-name').text().trim();
-	load_confirm_modal(id, name)
+	ezq({
+		title: "Delete User",
+		body: "Are you sure you want to delete {0}".format("<strong>"+name+"</strong>"),
+		success: function(){
+			var route = script_root + '/admin/team/' + team_id + '/delete';
+			$.post(route, {
+				nonce: nonce,
+			}, function (data) {
+				var data = $.parseJSON(JSON.stringify(data));
+				if (data == "1") {
+					location.reload();
+				}
+			});
+		}
+	})
 });
 
 function load_email_modal(id){
-	var modal = $('#email-user')
-	modal.find('textarea').val("")
-	modal.find('input[name=id]').val(id)
-	$('#email-user-errors').empty()
+	var modal = $('#email-user');
+	modal.find('textarea').val("");
+	modal.find('input[name=id]').val(id);
+	$('#email-user-errors').empty();
 	$('#email-user form').attr('action', '{{ request.script_root }}/admin/team/'+id+'/mail');
 	$('#email-user').modal();
 }
