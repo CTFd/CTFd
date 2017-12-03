@@ -48,9 +48,9 @@
 						{% set page_menu = get_user_page_menu_bar() %}
 						{% for menu in page_menu %}
 							{% if menu.route.startswith('http://') or menu.route.startswith('https://') %}
-								<li><a href="{{ menu.route }}">{{ menu.name }}</a></li>
+								<li><a href="{{ menu.route }}">{{ menu.title }}</a></li>
 							{% else %}
-								<li><a href="{{ request.script_root }}{{ menu.route }}">{{ menu.name }}</a></li>
+								<li><a href="{{ request.script_root }}{{ menu.route }}">{{ menu.title }}</a></li>
 							{% endif %}
 						{% endfor %}
 						{% if not get_config('workshop_mode') %}

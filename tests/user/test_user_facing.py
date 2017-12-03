@@ -356,7 +356,8 @@ def test_pages_routing_and_rendering():
     with app.app_context():
         html = '''##The quick brown fox jumped over the lazy dog'''
         route = 'test'
-        page = gen_page(app.db, route, html)
+        title = 'Test'
+        page = gen_page(app.db, title, route, html)
 
         with app.test_client() as client:
             r = client.get('/test')
