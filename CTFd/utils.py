@@ -36,6 +36,8 @@ from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip
 from datafreeze.format import SERIALIZERS
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
 
+from distutils.version import StrictVersion
+
 if six.PY2:
     text_type = unicode
     binary_type = str
@@ -669,6 +671,24 @@ def base64decode(s, urldecode=False):
     if six.PY3:
         decoded = decoded.decode('utf-8')
     return decoded
+
+
+def update_check():
+    update = app.config.get('UPDATE_CHECK')
+    if update:
+        try:
+            check = requests.get('https://versioning.ctfd.io/versions/latest', timeout=0.001).json()
+        except requests.Timeout:
+            pass
+        else:
+            try:
+                latest = check['resource']['tag']
+                if StrictVersion(latest) > StrictVersion(CTFd.__version__):
+                    set_config('version_latest', latest)
+                elif StrictVersion(latest) <= StrictVersion(CTFd.__version__):
+                    set_config('version_latest', None)
+            except KeyError:
+                pass
 
 
 def export_ctf(segments=None):
