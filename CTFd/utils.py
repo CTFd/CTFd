@@ -677,7 +677,14 @@ def update_check():
     update = app.config.get('UPDATE_CHECK')
     if update:
         try:
-            check = requests.get('https://versioning.ctfd.io/versions/latest', timeout=0.001).json()
+            params = {
+                'current': CTFd.__version__
+            }
+            check = requests.get(
+                'https://versioning.ctfd.io/versions/latest',
+                params=params,
+                timeout=0.1
+            ).json()
         except requests.exceptions.RequestException as e:
             pass
         else:
