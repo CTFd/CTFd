@@ -34,6 +34,26 @@ def test_admin_page_create():
     destroy_ctfd(app)
 
 
+def test_admin_page_create_draft():
+    """Draft pages should not be shown"""
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+        r = client.get('/admin/pages?operation=create')
+        assert r.status_code == 200
+        with client.session_transaction() as sess:
+            data = {
+                "route": "this-is-a-route",
+                "html": "This is some HTML",
+                "title": "Title",
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/admin/pages?operation=save', data=data)
+        r = client.get('/this-is-a-route')
+        assert r.status_code == 404
+    destroy_ctfd(app)
+
+
 def test_admin_page_update():
     """Can an admin update a page?"""
     app = create_ctfd()
