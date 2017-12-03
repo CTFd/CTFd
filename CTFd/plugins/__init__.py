@@ -9,11 +9,12 @@ from CTFd.utils import (
     admins_only as admins_only_wrapper,
     override_template as utils_override_template,
     register_plugin_script as utils_register_plugin_script,
-    register_plugin_stylesheet as utils_register_plugin_stylesheet
+    register_plugin_stylesheet as utils_register_plugin_stylesheet,
+    pages as db_pages
 )
 
 
-Menu = namedtuple('Menu', ['name', 'route'])
+Menu = namedtuple('Menu', ['title', 'route'])
 ADMIN_PLUGIN_MENU_BAR = []
 USER_PAGE_MENU_BAR = []
 
@@ -82,7 +83,7 @@ def register_plugin_stylesheet(*args, **kwargs):
     utils_register_plugin_stylesheet(*args, **kwargs)
 
 
-def register_admin_plugin_menu_bar(name, route):
+def register_admin_plugin_menu_bar(title, route):
     """
     Registers links on the Admin Panel menubar/navbar
 
@@ -90,7 +91,7 @@ def register_admin_plugin_menu_bar(name, route):
     :param route: A string that is the href used by the link
     :return:
     """
-    am = Menu(name=name, route=route)
+    am = Menu(title=title, route=route)
     ADMIN_PLUGIN_MENU_BAR.append(am)
 
 
@@ -103,7 +104,7 @@ def get_admin_plugin_menu_bar():
     return ADMIN_PLUGIN_MENU_BAR
 
 
-def register_user_page_menu_bar(name, route):
+def register_user_page_menu_bar(title, route):
     """
     Registers links on the User side menubar/navbar
 
@@ -111,7 +112,7 @@ def register_user_page_menu_bar(name, route):
     :param route: A string that is the href used by the link
     :return:
     """
-    p = Menu(name=name, route=route)
+    p = Menu(title=title, route=route)
     USER_PAGE_MENU_BAR.append(p)
 
 
@@ -121,7 +122,7 @@ def get_user_page_menu_bar():
 
     :return: Returns a list of Menu namedtuples. They have name, and route attributes.
     """
-    return USER_PAGE_MENU_BAR
+    return db_pages() + USER_PAGE_MENU_BAR
 
 
 def init_plugins(app):

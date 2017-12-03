@@ -7,7 +7,7 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1>Pages
-			<a class="no-decoration" href="{{ request.script_root }}/admin/pages?mode=create">
+			<a class="no-decoration" href="{{ request.script_root }}/admin/pages?operation=create">
 				<i class="fa fa-plus-circle create-page" role="button" data-toggle="tooltip" title="Create Page"></i>
 			</a>
 		</h1>
@@ -20,19 +20,34 @@
 			<table id="pages" class="table table-striped">
 				<thead>
 				<tr>
+					<td><b>Title</b></td>
 					<td><b>Route</b></td>
+					<td class="text-center"><b>Published</b></td>
 					<td class="text-center" width="10px"><b>Settings</b></td>
 				</tr>
 				</thead>
 				<tbody>
-				{% for route in routes %}
-					<tr name="{{ route.route }}">
-						<td class="route-name" route-id="{{ route.id }}" route-name="{{ route.route }}">
-							<a href="{{ request.script_root }}/admin/pages?route={{ route.route }}">
-								{{ route.route }}
+				{% for page in pages %}
+					<tr>
+						<td class="page-title">
+							{{ page.title }}
+						</td>
+						<td class="page-route" page-id="{{ page.id }}" page-route="{{ page.route }}">
+							<a href="{{ request.script_root }}/admin/pages?id={{ page.id }}">
+								{{ page.route }}
 							</a>
 						</td>
-						<td class="text-center"><i class="fa fa-times"></i></td>
+						<td class="text-center">
+							{% if page.draft %}
+								Draft
+							{% else %}
+								Published
+							{% endif %}
+						</td>
+						<td class="text-center">
+							<a class="no-decoration" href="{{ request.script_root }}/admin/pages?id={{ page.id }}"><i class="fa fa-edit"></i></a>
+							<i class="fa fa-times" page-id="{{ page.id }}" page-route="{{ page.route }}" page-title="{{ page.title }}"></i>
+						</td>
 					</tr>
 				{% endfor %}
 				</tbody>
@@ -48,8 +63,9 @@
 var nonce = "{{ nonce }}";
 
 $('.fa-times').click(function(){
-	var elem = $(this).parent().parent();
-	var name = elem.find('.route-name').attr("route-name");
+	var elem = $(this);
+	var name = elem.attr("page-route");
+	var page_id = elem.attr("page-id");
 	ezq({
 		title: 'Delete '+ name,
 		body: "Are you sure you want to delete {0}?".format(
@@ -59,6 +75,7 @@ $('.fa-times').click(function(){
 		    var page_delete_route = '{{ request.script_root }}/admin/pages/delete';
 			$.post(page_delete_route, {
 				route: name,
+				id: page_id,
 				nonce: nonce,
 			}, function (data) {
 				var data = $.parseJSON(JSON.stringify(data));
