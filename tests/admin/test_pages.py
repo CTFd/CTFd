@@ -54,6 +54,28 @@ def test_admin_page_create_draft():
     destroy_ctfd(app)
 
 
+def test_admin_page_preview():
+    """Page previews should not create a new page"""
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        with client.session_transaction() as sess:
+            data = {
+                "route": "this-is-a-route",
+                "html": "This is some HTML",
+                "title": "Title",
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/admin/pages?operation=preview', data=data)
+
+        output = r.get_data(as_text=True)
+        assert "This is some HTML" in output
+
+        assert len(Pages.query.all()) == 1  # The index page counts as a page
+    destroy_ctfd(app)
+
+
 def test_admin_page_update():
     """Can an admin update a page?"""
     app = create_ctfd()
