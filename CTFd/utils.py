@@ -678,7 +678,7 @@ def update_check():
     if update:
         try:
             check = requests.get('https://versioning.ctfd.io/versions/latest', timeout=0.001).json()
-        except requests.Timeout:
+        except requests.exceptions.RequestException as e:
             pass
         else:
             try:
