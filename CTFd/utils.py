@@ -241,7 +241,7 @@ def pages():
 
 @cache.memoize()
 def get_page(template):
-    return Pages.query.filter_by(route=template).first()
+    return Pages.query.filter(Pages.route == template, Pages.draft != True).first()
 
 
 def authed():
