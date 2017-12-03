@@ -233,9 +233,10 @@ def register_plugin_stylesheet(url):
     plugin_stylesheets.append(url)
 
 
+@cache.memoize()
 def pages():
-    pages = Pages.query.filter(Pages.route != "index").all()
-    return pages
+    db_pages = Pages.query.filter(Pages.route != "index", Pages.draft != True).all()
+    return db_pages
 
 
 @cache.memoize()

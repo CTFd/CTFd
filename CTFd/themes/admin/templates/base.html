@@ -61,7 +61,12 @@
 						</li>
 
 						{% for menu in plugin_menu %}
-							<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}{{ menu.route }}">{{ menu.name }}</a></li>
+							{% if request.script_root %}
+								{% set route = '/' + request.script_root + '/' + menu.route %}
+							{% else %}
+								{% set route = '/' + menu.route %}
+							{% endif %}
+							<li class="nav-item"><a class="nav-link" href="{{ route }}">{{ menu.title }}</a></li>
 						{% endfor %}
 
 						{% if plugins %}

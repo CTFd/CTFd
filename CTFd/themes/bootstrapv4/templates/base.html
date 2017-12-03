@@ -40,24 +40,23 @@
 			</button>
 			<div class="collapse navbar-collapse" id="base-navbars">
 				<ul class="navbar-nav mr-auto">
-					{% for page in pages() %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/{{ page.route }}">{{ page.route|title }}</a>
-						</li>
-					{% endfor %}
-
-					{% set page_menu = get_user_page_menu_bar() %}
-					{% for menu in page_menu %}
-						{% if menu.route.startswith('http://') or menu.route.startswith('https://') %}
+					{% for page in get_user_page_menu_bar() %}
+						{% if page.route.startswith('http://') or page.route.startswith('https://') %}
 							<li class="nav-item">
-								<a class="nav-link" href="{{ menu.route }}">{{ menu.name }}</a>
+								<a class="nav-link" href="{{ page.route }}">{{ page.title }}</a>
 							</li>
 						{% else %}
 							<li class="nav-item">
-								<a class="nav-link" href="{{ request.script_root }}{{ menu.route }}">{{ menu.name }}</a>
+								{% if request.script_root %}
+									{% set route = '/' + request.script_root + '/' + page.route %}
+								{% else %}
+									{% set route = '/' + page.route %}
+								{% endif %}
+								<a class="nav-link" href="{{ route }}">{{ page.title }}</a>
 							</li>
 						{% endif %}
 					{% endfor %}
+
 					{% if not get_config('workshop_mode') %}
 						<li class="nav-item">
 							<a class="nav-link" href="{{ request.script_root }}/teams">Teams</a>

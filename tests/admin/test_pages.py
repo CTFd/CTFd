@@ -14,15 +14,16 @@ def test_admin_page_create():
     app = create_ctfd()
     with app.app_context():
         client = login_as_user(app, name="admin", password="password")
-        r = client.get('/admin/pages?mode=create')
+        r = client.get('/admin/pages?operation=create')
         assert r.status_code == 200
         with client.session_transaction() as sess:
             data = {
                 "route": "this-is-a-route",
                 "html": "This is some HTML",
+                "title": "Title",
                 "nonce": sess.get('nonce')
             }
-        r = client.post('/admin/pages', data=data)
+        r = client.post('/admin/pages?operation=publish', data=data)
         r = client.get('/admin/pages?route=this-is-a-route')
         assert r.status_code == 200
 
@@ -38,16 +39,18 @@ def test_admin_page_update():
     app = create_ctfd()
     with app.app_context():
         client = login_as_user(app, name="admin", password="password")
-        r = client.get('/admin/pages?route=index')
+        r = client.get('/admin/pages?id=1')
         assert r.status_code == 200
         with client.session_transaction() as sess:
             data = {
                 "route": "index",
                 "html": "New Index Page",
+                "title": "title",
+                "id": 1,
                 "nonce": sess.get('nonce')
             }
-        r = client.post('/admin/pages', data=data)
-        r = client.get('/admin/pages?route=index')
+        r = client.post('/admin/pages?operation=save', data=data)
+        r = client.get('/admin/pages?id=1')
         assert r.status_code == 200
         output = r.get_data(as_text=True)
         assert "New Index Page" in output
@@ -67,7 +70,7 @@ def test_admin_page_delete():
 
         with client.session_transaction() as sess:
             data = {
-                "route": "index",
+                "id": 1,
                 "nonce": sess.get('nonce')
             }
         r = client.post('/admin/pages/delete', data=data)

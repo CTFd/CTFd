@@ -37,7 +37,8 @@ def setup():
             admin.banned = True
 
             # Index page
-            page = Pages('index', """<div class="row">
+
+            index = """<div class="row">
     <div class="col-md-6 offset-md-3">
         <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="themes/original/static/img/logo.png" />
         <h3 class="text-center">
@@ -52,7 +53,9 @@ def setup():
             <a href="admin">Click here</a> to login and setup your CTF
         </h4>
     </div>
-</div>""".format(request.script_root))
+</div>""".format(request.script_root)
+
+            page = Pages(title=None, route='index', html=index, draft=False)
 
             # max attempts per challenge
             max_tries = utils.set_config('max_tries', 0)
@@ -110,13 +113,13 @@ def custom_css():
 @views.route("/", defaults={'template': 'index'})
 @views.route("/<path:template>")
 def static_html(template):
-    try:
-        return render_template('%s.html' % template)
-    except TemplateNotFound:
-        page = utils.get_page(template)
-        if page is None:
+    page = utils.get_page(template)
+    if page is None:
+        try:
+            return render_template('%s.html' % template)
+        except TemplateNotFound:
             abort(404)
-        return render_template('page.html', content=markdown(page.html))
+    return render_template('page.html', content=markdown(page.html))
 
 
 @views.route('/teams', defaults={'page': '1'})

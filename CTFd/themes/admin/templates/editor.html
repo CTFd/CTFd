@@ -24,7 +24,7 @@
 			<div class="modal-body">
 				<div class="modal-header">
 					<div class="container">
-						<div class="row" style="max-height: 100%;">
+						<div class="row mh-100">
 							<div class="col-md-8" id="media-library-list">
 							</div>
 							<div class="col-md-4">
@@ -89,27 +89,36 @@
 			</div>
 
 			<form id="page-edit" method="POST">
-				<div class="row-fluid">
+				<div class="form-group">
 					<div class="col-md-12">
-						<h3>Route: </h3>
-						<p class="help-block">This is the URL route that your page will be at (e.g. /page)</p>
+						<h3>Title</h3>
+						<p class="text-muted">This is the title shown on the navigation bar</p>
+						<input class="form-control radius" id="route" type="text" name="title"
+							   value="{% if page is defined %}{{ page.title }}{% endif %}" placeholder="Title">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-md-12">
+						<h3>Route</h3>
+						<p class="text-muted">This is the URL route that your page will be at (e.g. /page). You can also enter links to link to that page.</p>
 						<input name='nonce' type='hidden' value="{{ nonce }}">
 						<input class="form-control radius" id="route" type="text" name="route" value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
 					</div>
 				</div>
-				<br>
-				<div class="row-fluid">
+
+				<div class="form-group">
 					<div class="col-md-12">
 
-						<h3>Content: </h3>
-						<p class="help-block">This is the HTML content of your page</p>
+						<h3>Content</h3>
+						<p class="text-muted">This is the HTML content of your page</p>
 
 						<ul class="nav nav-tabs" role="tablist" id="content-edit">
 							<li class="nav-item" role="presentation" class="active">
 								<a class="nav-link active" href="#content-write" aria-controls="home" role="tab" data-toggle="tab">Write</a>
 							</li>
 							<li class="nav-item" role="presentation">
-								<a class="nav-link" href="#content-preview" aria-controls="home" role="tab" data-toggle="tab">Preview</a>
+								<a class="nav-link" onclick="preview_page(); return true;" href="#"">Preview</a>
 							</li>
 						</ul>
 
@@ -128,20 +137,30 @@
 									<br>
 
 									<textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
+									{% if page is defined %}
+										<input name='id' type='hidden' value="{{ page.id }}">
+									{% endif %}
 								</div>
 							</div>
 							<div role="tabpanel" class="tab-pane content" id="content-preview" style="height:400px">
 							</div>
 						</div>
 					</div>
-					<button class="btn btn-theme btn-outlined create-challenge pull-right">
+				</div>
+
+				<div class="form-group float-right">
+					<button class="btn btn-success" id="publish-page">
+						Publish
+					</button>
+					<button class="btn btn-primary" id="save-page">
 						{% if page is defined %}
 							Update
 						{% else %}
-							Create
+							Save
 						{% endif %}
 					</button>
 				</div>
+
 			</form>
 		</div>
 	</div>
@@ -293,8 +312,46 @@
 		insert_at_cursor(editor, entry);
 	});
 
-	$('#page-edit').submit(function (e){
-		$(this).attr('action', '{{ request.script_root }}/admin/pages');
+
+	function submit_form(){
+		editor.save(); // Save the CodeMirror data to the Textarea
+		$.ajax({
+			type: "POST",
+			url: $("#page-edit").attr('action'),
+			data: $("#page-edit").serialize(),
+			success: function (data) {
+				if (data.result == 'success'){
+					if (data.operation == 'publish'){
+						window.location = script_root + '/admin/pages'
+					} else if (data.operation == 'save'){
+						ezal({
+							title: 'Saved',
+							body: 'Your changes have been saved',
+							button: 'Okay'
+						})
+					}
+				}
+			}
+		});
+	}
+
+	function preview_page(){
+        editor.save(); // Save the CodeMirror data to the Textarea
+        $('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=preview');
+        $('#page-edit').attr('target', '_blank');
+        $('#page-edit').submit();
+    }
+
+	$('#publish-page').click(function (e) {
+		e.preventDefault();
+		$('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=publish');
+		submit_form();
+	});
+
+	$('#save-page').click(function (e) {
+		e.preventDefault();
+		$('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=save');
+		submit_form();
 	});
 
 	// Markdown Preview
