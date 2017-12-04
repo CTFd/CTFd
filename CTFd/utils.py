@@ -330,7 +330,6 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
     return ratelimit_decorator
 
 
-
 @cache.memoize()
 def view_after_ctf():
     return bool(get_config('view_after_ctf'))
