@@ -309,7 +309,7 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
             t = int(time.time())
             closest_minute = t - (t % interval)
             ip_address = get_ip()
-            key = "%s:%s:%s" % (key_prefix, ip_address, closest_minute)
+            key = "{}:{}:{}:{}".format(key_prefix, ip_address, closest_minute, request.endpoint)
             current = cache.get(key)
 
             if request.method == method:

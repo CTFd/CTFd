@@ -1,5 +1,5 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, cache
+from CTFd.utils import admins_only, is_admin, cache, ratelimit
 from CTFd.models import db, Teams, Solves, Awards, Unlocks, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
@@ -184,6 +184,7 @@ def admin_team(teamid):
 
 @admin_teams.route('/admin/team/<int:teamid>/mail', methods=['POST'])
 @admins_only
+@ratelimit(limit=10, interval=60)
 def email_user(teamid):
     message = request.form.get('msg', None)
     team = Teams.query.filter(Teams.id == teamid).first()
