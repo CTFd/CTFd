@@ -460,3 +460,23 @@ def test_update_check_ignores_downgrades(fake_get_request):
         update_check()
         assert get_config('version_latest') is None
     destroy_ctfd(app)
+
+
+def test_ratelimit_on_auth():
+    """Test that ratelimiting function works properly"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        for x in range(10):
+            client = login_as_user(app, name="user", password="wrong_password")
+
+        with client.session_transaction() as sess:
+            data = {
+                "name": "user",
+                "password": "wrong_password",
+                "nonce": sess.get('nonce')
+            }
+
+            r = client.post('/login', data=data)
+            assert r.status_code == 429
+    destroy_ctfd(app)
