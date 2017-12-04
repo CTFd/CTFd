@@ -674,7 +674,6 @@ def base64decode(s, urldecode=False):
 
 
 def update_check():
-    print "called update_check"
     update = app.config.get('UPDATE_CHECK')
     if update:
         try:
@@ -698,6 +697,8 @@ def update_check():
                     set_config('version_latest', None)
             except KeyError:
                 set_config('version_latest', None)
+    else:
+        set_config('version_latest', None)
 
 
 def export_ctf(segments=None):

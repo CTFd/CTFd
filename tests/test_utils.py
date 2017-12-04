@@ -374,6 +374,13 @@ def test_check_email_format():
             print(invalid_email, 'did not pass validation')
 
 
+def test_update_check_is_called():
+    """Update checks happen on start"""
+    app = create_ctfd()
+    with app.app_context():
+        assert get_config('version_latest') == None
+
+
 @patch.object(requests, 'get')
 def test_update_check_identifies_update(fake_get_request):
     """Update checks properly identify new versions"""
