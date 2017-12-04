@@ -378,7 +378,7 @@ def test_update_check_is_called():
     """Update checks happen on start"""
     app = create_ctfd()
     with app.app_context():
-        assert get_config('version_latest') == None
+        assert get_config('version_latest') is None
 
 
 @patch.object(requests, 'get')
@@ -442,7 +442,7 @@ def test_update_check_ignores_downgrades(fake_get_request):
             }
         }
         update_check()
-        assert get_config('version_latest') == None
+        assert get_config('version_latest') is None
 
         fake_response = Mock()
         fake_get_request.return_value = fake_response
@@ -458,5 +458,5 @@ def test_update_check_ignores_downgrades(fake_get_request):
             }
         }
         update_check()
-        assert get_config('version_latest') == None
+        assert get_config('version_latest') is None
     destroy_ctfd(app)
