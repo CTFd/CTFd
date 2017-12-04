@@ -23,7 +23,7 @@ import io
 
 from collections import namedtuple
 from email.mime.text import MIMEText
-from flask import current_app as app, request, redirect, url_for, session, render_template, abort
+from flask import current_app as app, request, redirect, url_for, session, render_template, abort, jsonify
 from flask_caching import Cache
 from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
@@ -300,6 +300,33 @@ def authed_only(f):
         else:
             return redirect(url_for('auth.login', next=request.path))
     return decorated_function
+
+
+def ratelimit(f, method="POST", limit=50, interval=300, key_prefix="rl"):
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        t = int(time.time())
+        closest_minute = t - (t % interval)
+        ip_address = get_ip()
+        key = "%s:%s:%s" % (key_prefix, ip_address, closest_minute)
+        current = cache.get(key)
+
+        if request.method == method:
+            if current and int(current) > limit - 1:  # -1 in order to align expected limit with the real value
+                resp = jsonify({
+                    'code': 429,
+                    "message": "Too many requests. Limit %s in %s seconds" % (limit, interval)
+                })
+                resp.status_code = 429
+                return resp
+            else:
+                if current is None:
+                    cache.set(key, 1)
+                else:
+                    cache.set(key, int(current) + 1)
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 
 @cache.memoize()

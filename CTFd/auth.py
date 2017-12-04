@@ -9,12 +9,14 @@ from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Teams
 from CTFd import utils
+from CTFd.utils import ratelimit
 
 auth = Blueprint('auth', __name__)
 
 
 @auth.route('/confirm', methods=['POST', 'GET'])
 @auth.route('/confirm/<data>', methods=['GET'])
+@ratelimit(limit=5, interval=60)
 def confirm_user(data=None):
     if not utils.get_config('verify_emails'):
         # If the CTF doesn't care about confirming email addresses then redierct to challenges
@@ -75,6 +77,7 @@ def confirm_user(data=None):
 
 @auth.route('/reset_password', methods=['POST', 'GET'])
 @auth.route('/reset_password/<data>', methods=['POST', 'GET'])
+@ratelimit(limit=5, interval=60)
 def reset_password(data=None):
     logger = logging.getLogger('logins')
     if data is not None and request.method == "GET":
@@ -134,6 +137,7 @@ Did you initiate a password reset?
 
 
 @auth.route('/register', methods=['POST', 'GET'])
+@ratelimit(limit=10, interval=60)
 def register():
     logger = logging.getLogger('regs')
     if not utils.can_register():
@@ -209,6 +213,7 @@ def register():
 
 
 @auth.route('/login', methods=['POST', 'GET'])
+@ratelimit(limit=10, interval=60)
 def login():
     logger = logging.getLogger('logins')
     if request.method == 'POST':
