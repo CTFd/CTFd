@@ -135,3 +135,5 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('TESTING_DATABASE_URL') or 'sqlite://'
     SERVER_NAME = 'localhost'
     UPDATE_CHECK = False
+    CACHE_REDIS_URL = None
+    CACHE_TYPE = 'simple'

@@ -322,9 +322,9 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
                     return resp
                 else:
                     if current is None:
-                        cache.set(key, 1)
+                        cache.set(key, 1, timeout=interval)
                     else:
-                        cache.set(key, int(current) + 1)
+                        cache.set(key, int(current) + 1, timeout=interval)
             return f(*args, **kwargs)
         return decorated_function
     return ratelimit_decorator
