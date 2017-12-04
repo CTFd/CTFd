@@ -678,7 +678,7 @@ def update_check():
     if update:
         try:
             params = {
-                'current': CTFd.__version__
+                'current': app.VERSION
             }
             check = requests.get(
                 'https://versioning.ctfd.io/versions/latest',
@@ -690,12 +690,13 @@ def update_check():
         else:
             try:
                 latest = check['resource']['tag']
-                if StrictVersion(latest) > StrictVersion(CTFd.__version__):
-                    set_config('version_latest', latest)
-                elif StrictVersion(latest) <= StrictVersion(CTFd.__version__):
+                html_url = check['resource']['html_url']
+                if StrictVersion(latest) > StrictVersion(app.VERSION):
+                    set_config('version_latest', html_url)
+                elif StrictVersion(latest) <= StrictVersion(app.VERSION):
                     set_config('version_latest', None)
             except KeyError:
-                pass
+                set_config('version_latest', None)
 
 
 def export_ctf(segments=None):

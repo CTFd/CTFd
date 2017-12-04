@@ -85,6 +85,7 @@ def create_app(config='CTFd.config.Config'):
                 migrate_upgrade()
 
         app.db = db
+        app.VERSION = __version__
 
         cache.init_app(app)
         app.cache = cache
