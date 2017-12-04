@@ -674,6 +674,7 @@ def base64decode(s, urldecode=False):
 
 
 def update_check():
+    print "called update_check"
     update = app.config.get('UPDATE_CHECK')
     if update:
         try:

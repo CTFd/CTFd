@@ -7,9 +7,11 @@ from CTFd.utils import get_config, set_config, override_template, sendmail, veri
 from CTFd.utils import register_plugin_script, register_plugin_stylesheet
 from CTFd.utils import base64encode, base64decode
 from CTFd.utils import check_email_format
+from CTFd.utils import update_check
 from freezegun import freeze_time
-from mock import patch
+from mock import patch, Mock
 import json
+import requests
 import six
 
 
@@ -370,3 +372,84 @@ def test_check_email_format():
             assert check_email_format(invalid_email) is False
         except AssertionError:
             print(invalid_email, 'did not pass validation')
+
+
+@patch.object(requests, 'get')
+def test_update_check_identifies_update(fake_get_request):
+    """Update checks properly identify new versions"""
+    app = create_ctfd()
+    with app.app_context():
+        app.config['UPDATE_CHECK'] = True
+        fake_response = Mock()
+        fake_get_request.return_value = fake_response
+        fake_response.json = lambda: {
+            u'resource': {
+                u'html_url': u'https://github.com/CTFd/CTFd/releases/tag/9.9.9',
+                u'download_url': u'https://api.github.com/repos/CTFd/CTFd/zipball/9.9.9',
+                u'published_at': u'Wed, 25 Oct 2017 19:39:42 -0000',
+                u'tag': u'9.9.9',
+                u'prerelease': False,
+                u'id': 6,
+                u'latest': True
+            }
+        }
+        update_check()
+        assert get_config('version_latest') == 'https://github.com/CTFd/CTFd/releases/tag/9.9.9'
+    destroy_ctfd(app)
+
+
+def test_update_check_notifies_user():
+    """If an update is available, admin users are notified in the panel"""
+    app = create_ctfd()
+    with app.app_context():
+        app.config['UPDATE_CHECK'] = True
+        set_config('version_latest', 'https://github.com/CTFd/CTFd/releases/tag/9.9.9')
+        client = login_as_user(app, name="admin", password="password")
+
+        r = client.get('/admin/config')
+        assert r.status_code == 200
+
+        response = r.get_data(as_text=True)
+        assert 'https://github.com/CTFd/CTFd/releases/tag/9.9.9' in response
+
+    destroy_ctfd(app)
+
+
+@patch.object(requests, 'get')
+def test_update_check_ignores_downgrades(fake_get_request):
+    """Update checks do nothing on old or same versions"""
+    app = create_ctfd()
+    with app.app_context():
+        app.config['UPDATE_CHECK'] = True
+        fake_response = Mock()
+        fake_get_request.return_value = fake_response
+        fake_response.json = lambda: {
+            u'resource': {
+                u'html_url': u'https://github.com/CTFd/CTFd/releases/tag/0.0.1',
+                u'download_url': u'https://api.github.com/repos/CTFd/CTFd/zipball/0.0.1',
+                u'published_at': u'Wed, 25 Oct 2017 19:39:42 -0000',
+                u'tag': u'0.0.1',
+                u'prerelease': False,
+                u'id': 6,
+                u'latest': True
+            }
+        }
+        update_check()
+        assert get_config('version_latest') == None
+
+        fake_response = Mock()
+        fake_get_request.return_value = fake_response
+        fake_response.json = lambda: {
+            u'resource': {
+                u'html_url': u'https://github.com/CTFd/CTFd/releases/tag/{}'.format(app.VERSION),
+                u'download_url': u'https://api.github.com/repos/CTFd/CTFd/zipball/{}'.format(app.VERSION),
+                u'published_at': u'Wed, 25 Oct 2017 19:39:42 -0000',
+                u'tag': u'{}'.format(app.VERSION),
+                u'prerelease': False,
+                u'id': 6,
+                u'latest': True
+            }
+        }
+        update_check()
+        assert get_config('version_latest') == None
+    destroy_ctfd(app)
