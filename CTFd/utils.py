@@ -314,7 +314,7 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
                 if current and int(current) > limit - 1:  # -1 in order to align expected limit with the real value
                     resp = jsonify({
                         'code': 429,
-                        "message": "Too many requests. Limit %s in %s seconds" % (limit, interval)
+                        "message": "Too many requests. Limit is %s requests in %s seconds" % (limit, interval)
                     })
                     resp.status_code = 429
                     return resp
