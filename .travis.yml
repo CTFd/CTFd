@@ -16,3 +16,5 @@ before_script:
 script:
     - pep8 --ignore E501,E712 CTFd/ tests/
     - nosetests -d
+after_success:
+    - codecov
