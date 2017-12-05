@@ -46,8 +46,8 @@ $('#new-desc-edit').on('shown.bs.tab', function (event) {
 
 
 function loadchal(id, update) {
-    $.get(script_root + '/admin/chals/' + id, function(obj){
-        $('#desc-write-link').click() // Switch to Write tab
+    $.get(script_root + '/admin/chal/' + id, function(obj){
+        $('#desc-write-link').click(); // Switch to Write tab
         $('.chal-title').text(obj.name);
         $('.chal-name').val(obj.name);
         $('.chal-desc').val(obj.description);

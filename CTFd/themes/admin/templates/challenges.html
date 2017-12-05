@@ -7,6 +7,8 @@
 
 
 {% block content %}
+	{% include "admin/modals/challenges/challenges.html" %}
+
 	{% include "admin/modals/tags/tags.html" %}
 	{% include "admin/modals/files/files.html" %}
 	{% include "admin/modals/hints/hints.html" %}
@@ -61,7 +63,7 @@
 						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Value</b></td>
 						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Type</b></td>
 						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Status</b></td>
-						<td style="min-width: 150px;"><b>Settings</b></td>
+						<td style="width: 200px;"><b>Settings</b></td>
 					</tr>
 					</thead>
 					<tbody>
@@ -80,9 +82,16 @@
 								{% endif %}
 							</td>
 							<td>
-								<i class="fa fa-pencil-square-o edit-challenge" aria-hidden="true" data-toggle="tooltip"
+								<i class="fa fa-pencil edit-challenge" aria-hidden="true" data-toggle="tooltip"
 								   data-placement="top" chal-id="{{ challenge.id }}"
 								   title="Edit {{ challenge.name }}"></i>
+
+								<i class="fa fa-file-text-o preview-challenge" aria-hidden="true" data-toggle="tooltip"
+								   data-placement="top" chal-id="{{ challenge.id }}"
+								   title="Preview {{ challenge.name }}"></i>
+
+								<span>&nbsp; &nbsp;</span>
+
 								<i class="fa fa-flag edit-keys" aria-hidden="true" data-toggle="tooltip" data-placement="top"
 								   title="Edit Flags" chal-id="{{ challenge.id }}"></i>
 								<i class="fa fa-cloud-download edit-files" aria-hidden="true" data-toggle="tooltip"
@@ -91,6 +100,9 @@
 								   title="Edit Tags" chal-id="{{ challenge.id }}"></i>
 								<i class="fa fa-question-circle edit-hints" aria-hidden="true" data-toggle="tooltip"
 								   data-placement="top" title="Edit Hints" chal-id="{{ challenge.id }}"></i>
+
+								<span>&nbsp; &nbsp;</span>
+
 								<i class="fa fa-times delete-challenge" aria-hidden="true" data-toggle="tooltip"
 								   data-placement="top" title="Delete {{ challenge.name }}" chal-id="{{ challenge.id }}"></i>
 							</td>

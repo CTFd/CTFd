@@ -229,7 +229,7 @@ def test_admin_chal_detail_returns_proper_data():
 
         assert Challenges.query.count() == 1
 
-        r = client.get('/admin/chals/1')
+        r = client.get('/admin/chal/1')
         response = json.loads(r.get_data(as_text=True))
 
         assert data == response
