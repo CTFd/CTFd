@@ -16,7 +16,7 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/confirm', methods=['POST', 'GET'])
 @auth.route('/confirm/<data>', methods=['GET'])
-@ratelimit(limit=20, interval=60)
+@ratelimit(limit=10, interval=60)
 def confirm_user(data=None):
     if not utils.get_config('verify_emails'):
         # If the CTF doesn't care about confirming email addresses then redierct to challenges
@@ -77,7 +77,7 @@ def confirm_user(data=None):
 
 @auth.route('/reset_password', methods=['POST', 'GET'])
 @auth.route('/reset_password/<data>', methods=['POST', 'GET'])
-@ratelimit(limit=20, interval=60)
+@ratelimit(limit=10, interval=60)
 def reset_password(data=None):
     logger = logging.getLogger('logins')
     if data is not None and request.method == "GET":
@@ -118,16 +118,8 @@ def reset_password(data=None):
                 'reset_password.html',
                 errors=['If that account exists you will receive an email, please check your inbox']
             )
-        s = TimedSerializer(app.config['SECRET_KEY'])
-        token = s.dumps(team.name)
-        text = """
-Did you initiate a password reset?
 
-{0}/{1}
-
-""".format(url_for('auth.reset_password', _external=True), utils.base64encode(token, urlencode=True))
-
-        utils.sendmail(email, text)
+        utils.forgot_password(email, team.name)
 
         return render_template(
             'reset_password.html',
@@ -137,7 +129,7 @@ Did you initiate a password reset?
 
 
 @auth.route('/register', methods=['POST', 'GET'])
-@ratelimit(limit=150, interval=60)
+@ratelimit(limit=10, interval=5)
 def register():
     logger = logging.getLogger('regs')
     if not utils.can_register():
@@ -213,7 +205,7 @@ def register():
 
 
 @auth.route('/login', methods=['POST', 'GET'])
-@ratelimit(limit=150, interval=60)
+@ratelimit(limit=10, interval=5)
 def login():
     logger = logging.getLogger('logins')
     if request.method == 'POST':

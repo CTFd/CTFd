@@ -306,10 +306,8 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
     def ratelimit_decorator(f):
         @functools.wraps(f)
         def decorated_function(*args, **kwargs):
-            t = int(time.time())
-            closest_minute = t - (t % interval)
             ip_address = get_ip()
-            key = "{}:{}:{}:{}".format(key_prefix, ip_address, closest_minute, request.endpoint)
+            key = "{}:{}:{}".format(key_prefix, ip_address, request.endpoint)
             current = cache.get(key)
 
             if request.method == method:
@@ -646,6 +644,18 @@ def verify_email(addr):
         token=base64encode(token, urlencode=True)
     )
     sendmail(addr, text)
+
+
+def forgot_password(email, team_name):
+    s = TimedSerializer(app.config['SECRET_KEY'])
+    token = s.dumps(team_name)
+    text = """Did you initiate a password reset? Click the following link to reset your password:
+
+{0}/{1}
+
+""".format(url_for('auth.reset_password', _external=True), base64encode(token, urlencode=True))
+
+    sendmail(email, text)
 
 
 def rmdir(dir):
