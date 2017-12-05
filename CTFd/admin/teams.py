@@ -186,12 +186,19 @@ def admin_team(teamid):
 @admins_only
 @ratelimit(method="POST", limit=10, interval=60)
 def email_user(teamid):
-    message = request.form.get('msg', None)
-    team = Teams.query.filter(Teams.id == teamid).first()
-    if message and team:
-        if utils.sendmail(team.email, message):
-            return '1'
-    return '0'
+    msg = request.form.get('msg', None)
+    team = Teams.query.filter(Teams.id == teamid).first_or_404()
+    if msg and team:
+        result, response = utils.sendmail(team.email, msg)
+        return jsonify({
+            'result': result,
+            'message': response
+        })
+    else:
+        return jsonify({
+            'result': False,
+            'message': "Missing information"
+        })
 
 
 @admin_teams.route('/admin/team/<int:teamid>/ban', methods=['POST'])

@@ -29,6 +29,7 @@ from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
+from socket import timeout
 from werkzeug.utils import secure_filename
 
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
@@ -576,9 +577,9 @@ def mailserver():
 
 def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=None):
     if SSL is None:
-        smtp = smtplib.SMTP(host, port)
+        smtp = smtplib.SMTP(host, port, timeout=3)
     else:
-        smtp = smtplib.SMTP_SSL(host, port)
+        smtp = smtplib.SMTP_SSL(host, port, timeout=3)
 
     if TLS:
         smtp.starttls()
@@ -603,9 +604,9 @@ def sendmail(addr, text):
                   "subject": "Message from {0}".format(ctf_name),
                   "text": text})
         if r.status_code == 200:
-            return True
+            return True, "Email sent"
         else:
-            return False
+            return False, "Mailgun settings are incorrect"
     elif mailserver():
         data = {
             'host': get_config('mail_server'),
@@ -622,17 +623,24 @@ def sendmail(addr, text):
         if get_config('mail_useauth'):
             data['auth'] = get_config('mail_useauth')
 
-        smtp = get_smtp(**data)
-        msg = MIMEText(text)
-        msg['Subject'] = "Message from {0}".format(ctf_name)
-        msg['From'] = mailfrom_addr
-        msg['To'] = addr
+        try:
+            smtp = get_smtp(**data)
+            msg = MIMEText(text)
+            msg['Subject'] = "Message from {0}".format(ctf_name)
+            msg['From'] = mailfrom_addr
+            msg['To'] = addr
 
-        smtp.sendmail(msg['From'], [msg['To']], msg.as_string())
-        smtp.quit()
-        return True
+            smtp.sendmail(msg['From'], [msg['To']], msg.as_string())
+            smtp.quit()
+            return True, "Email sent"
+        except smtplib.SMTPException as e:
+            return False, str(e)
+        except timeout:
+            return False, "SMTP server connection timed out"
+        except Exception as e:
+            return False, str(e)
     else:
-        return False
+        return False, "No mail settings configured"
 
 
 def verify_email(addr):
