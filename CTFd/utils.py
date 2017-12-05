@@ -23,7 +23,7 @@ import io
 
 from collections import namedtuple
 from email.mime.text import MIMEText
-from flask import current_app as app, request, redirect, url_for, session, render_template, abort
+from flask import current_app as app, request, redirect, url_for, session, render_template, abort, jsonify
 from flask_caching import Cache
 from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
@@ -300,6 +300,32 @@ def authed_only(f):
         else:
             return redirect(url_for('auth.login', next=request.path))
     return decorated_function
+
+
+def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
+    def ratelimit_decorator(f):
+        @functools.wraps(f)
+        def decorated_function(*args, **kwargs):
+            ip_address = get_ip()
+            key = "{}:{}:{}".format(key_prefix, ip_address, request.endpoint)
+            current = cache.get(key)
+
+            if request.method == method:
+                if current and int(current) > limit - 1:  # -1 in order to align expected limit with the real value
+                    resp = jsonify({
+                        'code': 429,
+                        "message": "Too many requests. Limit is %s requests in %s seconds" % (limit, interval)
+                    })
+                    resp.status_code = 429
+                    return resp
+                else:
+                    if current is None:
+                        cache.set(key, 1, timeout=interval)
+                    else:
+                        cache.set(key, int(current) + 1, timeout=interval)
+            return f(*args, **kwargs)
+        return decorated_function
+    return ratelimit_decorator
 
 
 @cache.memoize()
@@ -618,6 +644,18 @@ def verify_email(addr):
         token=base64encode(token, urlencode=True)
     )
     sendmail(addr, text)
+
+
+def forgot_password(email, team_name):
+    s = TimedSerializer(app.config['SECRET_KEY'])
+    token = s.dumps(team_name)
+    text = """Did you initiate a password reset? Click the following link to reset your password:
+
+{0}/{1}
+
+""".format(url_for('auth.reset_password', _external=True), base64encode(token, urlencode=True))
+
+    sendmail(email, text)
 
 
 def rmdir(dir):
