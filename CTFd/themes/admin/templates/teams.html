@@ -276,11 +276,19 @@ $('#send-user-email').click(function(e){
 	var id = $('#email-user input[name="id"]').val();
 	var email_data = $('#email-user form').serializeArray();
 	$.post($('#email-user form').attr('action'), $('#email-user form').serialize(), function(data){
-		if (data == "1"){
-			$('#email-user').modal('hide');
+		if (data.result){
+			var error = $('<div class="alert alert-success alert-dismissable">\n' +
+				'  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
+				'  {0}\n'.format(data.message) +
+				'</div>');
+			$('#email-user-errors').append(error);
 		}
 		else{
-			$('#email-user-errors').append("<b>Failed to send email</b>");
+			var error = $('<div class="alert alert-danger alert-dismissable">\n' +
+				'  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
+				'  {0}\n'.format(data.message) +
+				'</div>');
+			$('#email-user-errors').append(error);
 		}
 	});
 });
