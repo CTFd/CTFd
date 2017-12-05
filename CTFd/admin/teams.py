@@ -184,7 +184,7 @@ def admin_team(teamid):
 
 @admin_teams.route('/admin/team/<int:teamid>/mail', methods=['POST'])
 @admins_only
-@ratelimit(limit=10, interval=60)
+@ratelimit(method="POST", limit=10, interval=60)
 def email_user(teamid):
     message = request.form.get('msg', None)
     team = Teams.query.filter(Teams.id == teamid).first()
