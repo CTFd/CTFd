@@ -17,15 +17,6 @@ function load_edit_key_modal(key_id, key_type_name) {
 }
 
 
-function submitkey(chal, key) {
-    $.post(script_root + "/admin/chal/" + chal, {
-        key: key,
-        nonce: $('#nonce').val()
-    }, function (data) {
-        alert(data)
-    })
-}
-
 function create_key(chal, key, key_type) {
     $.post(script_root + "/admin/keys", {
         chal: chal,
