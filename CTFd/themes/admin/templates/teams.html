@@ -27,7 +27,8 @@
 							  rows="15"></textarea>
 					<br>
 					<div id="email-user-errors"></div>
-					<button type="button" id="send-user-email" class="btn btn-primary btn-outlined">Send Message
+					<button type="button" id="send-user-email" class="btn btn-primary float-right">
+						Send Message
 					</button>
 				</form>
 			</div>
@@ -175,7 +176,9 @@
 						</td>
 						<td class="text-center"><span>
 							<i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="top" title="Modify {{ team.name }}"></i>
-							{% if can_send_mail() %}<i class="fa fa-envelope"></i>{% endif %}
+							{% if can_send_mail() %}
+							<i class="fa fa-envelope" data-toggle="tooltip" data-placement="top" title="Email {{ team.name }}"></i>
+							{% endif %}
 							<i class="fa fa-times" data-toggle="tooltip" data-placement="top" title="Delete {{ team.name }}"></i>
 						</span>
 						</td>

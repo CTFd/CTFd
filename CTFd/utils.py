@@ -29,6 +29,7 @@ from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
+from socket import timeout
 from werkzeug.utils import secure_filename
 
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
@@ -633,7 +634,11 @@ def sendmail(addr, text):
             smtp.quit()
             return True, "Email sent"
         except smtplib.SMTPException as e:
-            return False, e.message
+            return False, str(e)
+        except timeout:
+            return False, "SMTP server connection timed out"
+        except Exception as e:
+            return False, str(e)
     else:
         return False, "No mail settings configured"
 
