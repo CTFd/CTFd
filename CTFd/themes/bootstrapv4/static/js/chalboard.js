@@ -1,4 +1,5 @@
 var challenges;
+var user_solves = [];
 var templates = {};
 
 function loadchal(id) {
@@ -149,7 +150,22 @@ function marksolves(cb) {
             var id = solves['solves'][i].chalid;
             $('button[value="' + id + '"]').removeClass('theme-background');
             $('button[value="' + id + '"]').addClass('solved-challenge');
-        };
+        }
+        if (cb) {
+            cb();
+        }
+    });
+}
+
+function load_user_solves(cb){
+    $.get(script_root + '/solves', function (data) {
+        var solves = $.parseJSON(JSON.stringify(data));
+
+        for (var i = solves['solves'].length - 1; i >= 0; i--) {
+            var chal_id = solves['solves'][i].chalid;
+            user_solves.push(chal_id);
+
+        }
         if (cb) {
             cb();
         }
@@ -203,7 +219,7 @@ function loadchals(cb) {
         $('#challenges-board').empty();
 
         for (var i = challenges['game'].length - 1; i >= 0; i--) {
-            challenges['game'][i].solves = 0
+            challenges['game'][i].solves = 0;
             if ($.inArray(challenges['game'][i].category, categories) == -1) {
                 var category = challenges['game'][i].category;
                 categories.push(category);
@@ -221,7 +237,7 @@ function loadchals(cb) {
 
                 $('#challenges-board').append(categoryrow);
             }
-        };
+        }
 
         for (var i = 0; i <= challenges['game'].length - 1; i++) {
             var chalinfo = challenges['game'][i];
@@ -229,7 +245,14 @@ function loadchals(cb) {
             var chalid = chalinfo.name.replace(/ /g,"-").hashCode();
             var catid = chalinfo.category.replace(/ /g,"-").hashCode();
             var chalwrap = $("<div id='{0}' class='col-md-3 d-inline-block'></div>".format(chalid));
-            var chalbutton = $("<button class='btn btn-dark challenge-button w-100 text-truncate pt-3 pb-3 mb-2' value='{0}'></button>".format(chalinfo.id));
+
+            if (user_solves.indexOf(chalinfo.id) == -1){
+                var chalbutton = $("<button class='btn btn-dark challenge-button w-100 text-truncate pt-3 pb-3 mb-2' value='{0}'></button>".format(chalinfo.id));
+            } else {
+                var chalbutton = $("<button class='btn btn-dark challenge-button solved-challenge w-100 text-truncate pt-3 pb-3 mb-2' value='{0}'></button>".format(chalinfo.id));
+            }
+
+
             var chalheader = $("<p>{0}</p>".format(chalinfo.name));
             var chalscore = $("<span>{0}</span>".format(chalinfo.value));
             for (var j = 0; j < chalinfo.tags.length; j++) {
@@ -244,7 +267,7 @@ function loadchals(cb) {
             $("#"+ catid +"-row").find(".category-challenges > .challenges-row").append(chalwrap);
         };
 
-        marksolves();
+        // marksolves();
 
         $('.challenge-button').click(function (e) {
             loadchal(this.value);
@@ -316,15 +339,15 @@ var load_location_hash = function () {
 };
 
 function update(){
-    loadchals(function(){
-        updatesolves();
+    load_user_solves(function () { // Load the user's solved challenge ids
+        loadchals(function () { //  Load the full list of challenges
+            updatesolves(load_location_hash); // Load the counts of all challenge solves and then load the location hash specified challenge
+        });
     });
 }
 
 $(function() {
-    loadchals(function(){
-        updatesolves(load_location_hash);
-    });
+    update();
 });
 
 $('.nav-tabs a').click(function (e) {
