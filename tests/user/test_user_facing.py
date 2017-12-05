@@ -562,8 +562,7 @@ def test_user_can_reset_password(mock_smtp):
             to_addr = 'user@user.com'
 
             # Build the email
-            msg = """
-Did you initiate a password reset?
+            msg = """Did you initiate a password reset? Click the following link to reset your password:
 
 http://localhost/reset_password/InVzZXIxIi5BZktHUGcuTVhkTmZtOWU2U2xwSXZ1MlFwTjdwa3F5V3hR
 
