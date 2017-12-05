@@ -63,14 +63,19 @@ def admin_chals():
         return render_template('admin/challenges.html', challenges=challenges)
 
 
-@admin_challenges.route('/admin/chals/<int:chalid>', methods=['GET', 'POST'])
+@admin_challenges.route('/admin/chal/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_chal_detail(chalid):
+    chal = Challenges.query.filter_by(id=chalid).first_or_404()
+    chal_class = get_chal_class(chal.type)
+
     if request.method == 'POST':
-        pass
+        status, message = chal_class.attempt(chal, request)
+        if status:
+            return jsonify({'status': 1, 'message': message})
+        else:
+            return jsonify({'status': 0, 'message': message})
     elif request.method == 'GET':
-        chal = Challenges.query.filter_by(id=chalid).first_or_404()
-        chal_class = get_chal_class(chal.type)
         obj, data = chal_class.read(chal)
         return jsonify(data)
 
