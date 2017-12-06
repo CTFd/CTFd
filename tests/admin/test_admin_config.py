@@ -5,6 +5,7 @@ from CTFd.plugins.challenges import get_chal_class
 from freezegun import freeze_time
 from mock import patch
 
+
 def test_admin_post_config_values():
     """Test that admins can POST configuration values"""
     app = create_ctfd()

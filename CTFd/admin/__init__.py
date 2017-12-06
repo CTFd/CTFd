@@ -137,8 +137,7 @@ def admin_config():
         utils.set_config("mail_server", request.form.get('mail_server', None))
         utils.set_config("mail_port", request.form.get('mail_port', None))
 
-        if request.form.get('mail_useauth', None) and (
-            request.form.get('mail_u', None) or request.form.get('mail_p', None)):
+        if request.form.get('mail_useauth', None) and (request.form.get('mail_u', None) or request.form.get('mail_p', None)):
             if len(request.form.get('mail_u')) > 0:
                 utils.set_config("mail_username", request.form.get('mail_u', None))
             if len(request.form.get('mail_p')) > 0:
