@@ -72,6 +72,8 @@ def challenges_view():
     errors = []
     start = utils.get_config('start') or 0
     end = utils.get_config('end') or 0
+    if utils.ctf_paused():
+        errors.append('{} is paused'.format(utils.ctf_name()))
     if not utils.is_admin():  # User is not an admin
         if not utils.ctftime():
             # It is not CTF time
@@ -312,6 +314,11 @@ def who_solved(chalid):
 
 @challenges.route('/chal/<int:chalid>', methods=['POST'])
 def chal(chalid):
+    if utils.ctf_paused():
+        return jsonify({
+            'status': 3,
+            'message': '{} is paused'.format(utils.ctf_name())
+        })
     if utils.ctf_ended() and not utils.view_after_ctf():
         abort(403)
     if not utils.user_can_view_challenges():

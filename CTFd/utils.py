@@ -379,6 +379,10 @@ def ctftime():
     return False
 
 
+def ctf_paused():
+    return get_config('paused')
+
+
 def ctf_started():
     return time.time() > int(get_config("start") or 0)
 
