@@ -521,3 +521,44 @@ def test_hidden_challenge_is_unsolveable():
         wrong_keys = WrongKeys.query.all()
         assert len(wrong_keys) == 0
     destroy_ctfd(app)
+
+
+def test_challenges_cannot_be_solved_while_paused():
+    """Test that challenges cannot be solved when the CTF is paused"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config('paused', True)
+
+        register_user(app)
+        client = login_as_user(app)
+
+        r = client.get('/challenges')
+        assert r.status_code == 200
+
+        # Assert that there is a paused message
+        data = r.get_data(as_text=True)
+        assert 'paused' in data
+
+        chal = gen_challenge(app.db, hidden=True)
+        flag = gen_flag(app.db, chal=chal.id, flag='flag')
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+
+        # Assert that the JSON message is correct
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+        assert data['status'] == 3
+        assert data['message'] == 'CTFd is paused'
+
+        # There are no solves saved
+        solves = Solves.query.all()
+        assert len(solves) == 0
+
+        # There are no wrong keys saved
+        wrong_keys = WrongKeys.query.all()
+        assert len(wrong_keys) == 0
+    destroy_ctfd(app)
