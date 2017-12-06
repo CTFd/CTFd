@@ -68,6 +68,14 @@
 
 					<div class="form-check">
 						<label>
+							<input id="pause_ctf" name="pause_ctf" type="checkbox"
+								   {% if pause_ctf %}checked{% endif %}>
+							Pause CTF
+						</label>
+					</div>
+
+					<div class="form-check">
+						<label>
 							<input id="hide_scores" name="hide_scores" type="checkbox" {% if hide_scores %}checked{% endif %}>
 							Hide Scores from public view
 						</label>
