@@ -381,7 +381,7 @@ def ctftime():
 
 
 def ctf_paused():
-    return get_config('pause_ctf')
+    return get_config('paused')
 
 
 def ctf_started():

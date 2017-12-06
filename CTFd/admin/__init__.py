@@ -119,7 +119,7 @@ def admin_config():
             mail_ssl = 'mail_ssl' in request.form
             mail_useauth = 'mail_useauth' in request.form
             workshop_mode = 'workshop_mode' in request.form
-            pause_ctf = 'pause_ctf' in request.form
+            paused = 'paused' in request.form
         finally:
             utils.set_config('view_challenges_unregistered', view_challenges_unregistered)
             utils.set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
@@ -132,7 +132,7 @@ def admin_config():
             utils.set_config('mail_ssl', mail_ssl)
             utils.set_config('mail_useauth', mail_useauth)
             utils.set_config('workshop_mode', workshop_mode)
-            utils.set_config('pause_ctf', pause_ctf)
+            utils.set_config('paused', paused)
 
         utils.set_config("mail_server", request.form.get('mail_server', None))
         utils.set_config("mail_port", request.form.get('mail_port', None))
@@ -205,7 +205,7 @@ def admin_config():
     verify_emails = utils.get_config('verify_emails')
 
     workshop_mode = utils.get_config('workshop_mode')
-    pause_ctf = utils.get_config('pause_ctf')
+    paused = utils.get_config('paused')
 
     db.session.commit()
     db.session.close()
@@ -240,5 +240,5 @@ def admin_config():
         view_after_ctf=view_after_ctf,
         themes=themes,
         workshop_mode=workshop_mode,
-        pause_ctf=pause_ctf
+        paused=paused
     )
