@@ -12,6 +12,18 @@
 	</div>
 </div>
 
+{% if infos %}
+	<div class="container">
+		<div id='errors' class="row">
+			<div class="col-md-12">
+				{% for info in infos %}
+					<h1 class="text-center">{{ info }}</h1>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+{% endif %}
+
 {% if errors %}
 <div class="container">
 	<div id='errors' class="row">
