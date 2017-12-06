@@ -72,6 +72,8 @@ def challenges_view():
     errors = []
     start = utils.get_config('start') or 0
     end = utils.get_config('end') or 0
+    if utils.ctf_paused():
+        errors.append('{} is paused'.format(utils.ctf_name()))
     if not utils.is_admin():  # User is not an admin
         if not utils.ctftime():
             # It is not CTF time
@@ -102,8 +104,6 @@ def challenges_view():
 @challenges.route('/chals', methods=['GET'])
 def chals():
     if not utils.is_admin():
-        if utils.ctf_paused():
-            abort(403)
         if not utils.ctftime():
             if utils.view_after_ctf():
                 pass
