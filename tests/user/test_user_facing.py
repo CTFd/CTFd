@@ -20,6 +20,54 @@ def test_index():
     destroy_ctfd(app)
 
 
+def test_page():
+    """Test that users can access pages that are created in the database"""
+    app = create_ctfd()
+    with app.app_context():
+
+        gen_page(app.db, title="Title", route="this-is-a-route", html="This is some HTML")
+
+        with app.test_client() as client:
+            r = client.get('/this-is-a-route')
+            assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_draft_pages():
+    """Test that draft pages can't be seen"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_page(app.db, title="Title", route="this-is-a-route", html="This is some HTML", draft=True)
+
+        with app.test_client() as client:
+            r = client.get('/this-is-a-route')
+            assert r.status_code == 404
+
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/this-is-a-route')
+        assert r.status_code == 404
+    destroy_ctfd(app)
+
+
+def test_page_requiring_auth():
+    """Test that pages properly require authentication"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_page(app.db, title="Title", route="this-is-a-route", html="This is some HTML", auth_required=True)
+
+        with app.test_client() as client:
+            r = client.get('/this-is-a-route')
+            assert r.status_code == 302
+            assert r.location == 'http://localhost/login?next=%2Fthis-is-a-route'
+
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/this-is-a-route')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
 def test_register_user():
     """Can a user be registered"""
     app = create_ctfd()

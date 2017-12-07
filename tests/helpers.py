@@ -158,8 +158,8 @@ def gen_tracking(db, ip, team):
     return tracking
 
 
-def gen_page(db, title, route, html, draft=False):
-    page = Pages(title, route, html, draft)
+def gen_page(db, title, route, html, draft=False, auth_required=False):
+    page = Pages(title, route, html, draft, auth_required)
     db.session.add(page)
     db.session.commit()
     return page

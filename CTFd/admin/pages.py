@@ -29,6 +29,7 @@ def admin_pages_view():
         title = request.form['title']
         html = request.form['html']
         route = request.form['route'].lstrip('/')
+        auth_required = 'auth_required' in request.form
 
         if page_op == 'preview':
             page = Pages(title, route, html, draft=False)
@@ -48,6 +49,7 @@ def admin_pages_view():
             page.title = title
             page.route = route
             page.html = html
+            page.auth_required = auth_required
 
             if page_op == 'publish':
                 page.draft = False
@@ -63,9 +65,9 @@ def admin_pages_view():
             })
 
         if page_op == 'publish':
-            page = Pages(title, route, html, draft=False)
+            page = Pages(title, route, html, draft=False, auth_required=auth_required)
         elif page_op == 'save':
-            page = Pages(title, route, html)
+            page = Pages(title, route, html, auth_required=auth_required)
 
         db.session.add(page)
         db.session.commit()
