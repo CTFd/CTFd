@@ -79,10 +79,23 @@ def create_app(config='CTFd.config.Config'):
         if url.drivername.startswith('sqlite'):
             db.create_all()
         else:
-            if 'alembic_version' not in db.engine.table_names():
+            if len(db.engine.table_names()) == 0:
                 # This creates tables instead of db.create_all()
                 # Allows migrations to happen properly
                 migrate_upgrade()
+            elif 'alembic_version' not in db.engine.table_names():
+                # There is no alembic_version because CTFd is from before it had migrations
+                # Stamp it to the base migration
+                migrate_stamp(revision='cb3cfcc47e2f')
+                print("/*\\ CTFd has updated and must update the database! /*\\")
+                print("/*\\ Please backup your database before proceeding! /*\\")
+                print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")
+                if input('Run database migrations (Y/N)').lower().strip() == 'y':
+                    migrate_upgrade()
+                    utils.set_config('ctf_version', __version__)
+                else:
+                    print('/*\\ Ignored database migrations... /*\\')
+                    exit()
 
         app.db = db
 
@@ -91,15 +104,12 @@ def create_app(config='CTFd.config.Config'):
 
         version = utils.get_config('ctf_version')
 
-        if not version:  # Upgrading from an unversioned CTFd
-            utils.set_config('ctf_version', __version__)
-
-        if version and (StrictVersion(version) < StrictVersion(__version__)):  # Upgrading from an older version of CTFd
+        # Upgrading from an older version of CTFd
+        if version and (StrictVersion(version) < StrictVersion(__version__)):
             print("/*\\ CTFd has updated and must update the database! /*\\")
             print("/*\\ Please backup your database before proceeding! /*\\")
             print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")
             if input('Run database migrations (Y/N)').lower().strip() == 'y':
-                migrate_stamp()
                 migrate_upgrade()
                 utils.set_config('ctf_version', __version__)
             else:
