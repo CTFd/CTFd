@@ -126,7 +126,7 @@ def create_app(config='CTFd.config.Config'):
                 exit()
 
         if not utils.get_config('ctf_theme'):
-            utils.set_config('ctf_theme', 'original')
+            utils.set_config('ctf_theme', 'core')
 
         from CTFd.views import views
         from CTFd.challenges import challenges

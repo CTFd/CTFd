@@ -527,7 +527,6 @@ def test_challenges_cannot_be_solved_while_paused():
     """Test that challenges cannot be solved when the CTF is paused"""
     app = create_ctfd()
     with app.app_context():
-        set_config('ctf_theme', 'bootstrapv4')
         set_config('paused', True)
 
         register_user(app)

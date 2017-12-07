@@ -302,7 +302,7 @@ def test_ctf_ended():
 
 
 def test_register_plugin_script():
-    '''Test that register_plugin_script adds script paths to the original theme'''
+    '''Test that register_plugin_script adds script paths to the core theme'''
     app = create_ctfd()
     with app.app_context():
         register_plugin_script('/fake/script/path.js')
@@ -316,7 +316,7 @@ def test_register_plugin_script():
 
 
 def test_register_plugin_stylesheet():
-    '''Test that register_plugin_stylesheet adds stylesheet paths to the original theme'''
+    '''Test that register_plugin_stylesheet adds stylesheet paths to the core theme'''
     app = create_ctfd()
     with app.app_context():
         register_plugin_script('/fake/stylesheet/path.css')
