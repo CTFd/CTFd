@@ -22,6 +22,7 @@
 				<tr>
 					<td><b>Title</b></td>
 					<td><b>Route</b></td>
+					<td><b>Authentication</b></td>
 					<td class="text-center"><b>Published</b></td>
 					<td class="text-center" width="10px"><b>Settings</b></td>
 				</tr>
@@ -36,6 +37,12 @@
 							<a href="{{ request.script_root }}/admin/pages?id={{ page.id }}">
 								{{ page.route }}
 							</a>
+						</td>
+						<td class="page-authentication">
+							{% if page.auth_required %}
+							Required
+							{% else %}
+							{% endif %}
 						</td>
 						<td class="text-center">
 							{% if page.draft %}

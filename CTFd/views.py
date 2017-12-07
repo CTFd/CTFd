@@ -119,7 +119,11 @@ def static_html(template):
             return render_template('%s.html' % template)
         except TemplateNotFound:
             abort(404)
-    return render_template('page.html', content=markdown(page.html))
+    else:
+        if page.auth_required and utils.authed() is False:
+            return redirect(url_for('auth.login', next=request.path))
+
+        return render_template('page.html', content=markdown(page.html))
 
 
 @views.route('/teams', defaults={'page': '1'})
