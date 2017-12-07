@@ -30,16 +30,18 @@ db = SQLAlchemy()
 
 class Pages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    auth_required = db.Column(db.Boolean)
     title = db.Column(db.String(80))
     route = db.Column(db.Text, unique=True)
     html = db.Column(db.Text)
     draft = db.Column(db.Boolean)
 
-    def __init__(self, title, route, html, draft=True):
+    def __init__(self, title, route, html, draft=True, auth_required=False):
         self.title = title
         self.route = route
         self.html = html
         self.draft = draft
+        self.auth_required = auth_required
 
     def __repr__(self):
         return "<Pages route {0}>".format(self.route)
