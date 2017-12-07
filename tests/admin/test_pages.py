@@ -21,6 +21,7 @@ def test_admin_page_create():
                 "route": "this-is-a-route",
                 "html": "This is some HTML",
                 "title": "Title",
+                "auth_required": "on",
                 "nonce": sess.get('nonce')
             }
         r = client.post('/admin/pages?operation=publish', data=data)
