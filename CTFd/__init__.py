@@ -102,8 +102,8 @@ def create_app(config='CTFd.config.Config'):
             elif 'alembic_version' not in db.engine.table_names():
                 # There is no alembic_version because CTFd is from before it had migrations
                 # Stamp it to the base migration
-                migrate_stamp(revision='cb3cfcc47e2f')
                 if confirm_upgrade():
+                    migrate_stamp(revision='cb3cfcc47e2f')
                     run_upgrade()
                 else:
                     exit()
