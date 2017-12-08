@@ -126,7 +126,7 @@ def chals():
                     hints.append({'id': hint.id, 'cost': hint.cost, 'hint': hint.hint})
                 else:
                     hints.append({'id': hint.id, 'cost': hint.cost})
-            chal_type = get_chal_class(x.type)
+            chal_type, _ = get_chal_class(x.type)
             json['game'].append({
                 'id': x.id,
                 'type': chal_type.name,
@@ -325,7 +325,7 @@ def chal(chalid):
         chal = Challenges.query.filter_by(id=chalid).first_or_404()
         if chal.hidden:
             abort(404)
-        chal_class = get_chal_class(chal.type)
+        chal_class, _ = get_chal_class(chal.type)
 
         # Anti-bruteforce / submitting keys too quickly
         if utils.get_kpm(session['id']) > 10:

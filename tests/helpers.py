@@ -85,7 +85,7 @@ def get_scores(user):
 
 
 def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard', hidden=False):
-    chal = Challenges(name, description, value, category)
+    chal = Challenges(name=name, description=description, value=value, category=category)
     if hidden:
         chal.hidden = hidden
     db.session.add(chal)

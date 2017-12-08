@@ -94,7 +94,7 @@ def init_logs(app):
 
     try:
         parent = os.path.dirname(__file__)
-    except:
+    except Exception:
         parent = os.path.dirname(os.path.realpath(sys.argv[0]))
 
     log_dir = os.path.join(parent, 'logs')

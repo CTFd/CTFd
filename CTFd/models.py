@@ -43,11 +43,11 @@ class Pages(db.Model):
 
 class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    description = db.Column(db.Text)
+    name = db.Column(db.Unicode(80))
+    description = db.Column(db.UnicodeText)
     max_attempts = db.Column(db.Integer, default=0)
     value = db.Column(db.Integer)
-    category = db.Column(db.String(80))
+    category = db.Column(db.Unicode(80))
     type = db.Column(db.String(80))
     hidden = db.Column(db.Boolean)
     __mapper_args__ = {
@@ -55,12 +55,14 @@ class Challenges(db.Model):
         'polymorphic_on': type
     }
 
-    def __init__(self, name, description, value, category, type='standard'):
-        self.name = name
-        self.description = description
-        self.value = value
-        self.category = category
-        self.type = type
+    def __init__(self, **kwargs):
+        self.type = 'standard'
+
+        for col in Challenges.__mapper__.columns:
+            if col.name in kwargs:
+                self.__setattr__(
+                    col.name, kwargs[col.name]
+                )
 
     def __repr__(self):
         return '<chal %r>' % self.name
