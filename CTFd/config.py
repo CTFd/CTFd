@@ -63,6 +63,11 @@ class Config(object):
     PERMANENT_SESSION_LIFETIME = 604800  # 7 days in seconds
 
     '''
+    APPLICATION_ROOT is the directory where CTFd runs. You need to change that when you deploy CTFd in a subdirectory.
+    '''
+    APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT') or '/'
+    
+    '''
     HOST specifies the hostname where the CTFd instance will exist. It is currently unused.
     '''
     HOST = ".ctfd.io"
