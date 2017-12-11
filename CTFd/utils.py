@@ -883,6 +883,11 @@ def import_ctf(backup, segments=None, erase=False):
                 saved = json.loads(data)
                 for entry in saved['results']:
                     entry_id = entry.pop('id', None)
+                    if item == 'keys':
+                        key_type = entry.get('key_type', None)
+                        if key_type is not None:
+                            entry['type'] = key_type
+                            del entry['key_type']
                     # This is a hack to get SQlite to properly accept datetime values from dataset
                     # See Issue #246
                     if get_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
