@@ -85,7 +85,7 @@
 
 					<div class="form-group">
 						<label>CSS editor</label>
-						<textarea class="form-control" id="css-editor" name="css" rows="7">{{ css }}</textarea>
+						<textarea class="form-control" id="css-editor" name="css" rows="7">{{ css|default('', True) }}</textarea>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="accounts-section">
