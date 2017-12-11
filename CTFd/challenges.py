@@ -18,8 +18,9 @@ challenges = Blueprint('challenges', __name__)
 
 @challenges.route('/hints/<int:hintid>', methods=['GET', 'POST'])
 def hints_view(hintid):
-    if not utils.ctf_started():
-        abort(403)
+    if utils.ctf_started() is False:
+        if utils.is_admin() is False:
+            abort(403)
     hint = Hints.query.filter_by(id=hintid).first_or_404()
     chal = Challenges.query.filter_by(id=hint.chal).first()
     unlock = Unlocks.query.filter_by(model='hints', itemid=hintid, teamid=session['id']).first()
@@ -37,7 +38,7 @@ def hints_view(hintid):
             })
     elif request.method == 'POST':
         if unlock is None:  # The user does not have an unlock.
-            if utils.ctftime() or (utils.ctf_ended() and utils.view_after_ctf()):
+            if utils.ctftime() or (utils.ctf_ended() and utils.view_after_ctf()) or utils.is_admin() is True:
                 # It's ctftime or the CTF has ended (but we allow views after)
                 team = Teams.query.filter_by(id=session['id']).first()
                 if team.score() < hint.cost:
@@ -68,9 +69,12 @@ def hints_view(hintid):
 
 @challenges.route('/challenges', methods=['GET'])
 def challenges_view():
+    infos = []
     errors = []
     start = utils.get_config('start') or 0
     end = utils.get_config('end') or 0
+    if utils.ctf_paused():
+        infos.append('{} is paused'.format(utils.ctf_name()))
     if not utils.is_admin():  # User is not an admin
         if not utils.ctftime():
             # It is not CTF time
@@ -81,7 +85,7 @@ def challenges_view():
                     errors.append('{} has not started yet'.format(utils.ctf_name()))
                 if (utils.get_config('end') and utils.ctf_ended()) and not utils.view_after_ctf():
                     errors.append('{} has ended'.format(utils.ctf_name()))
-                return render_template('chals.html', errors=errors, start=int(start), end=int(end))
+                return render_template('challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
 
     if utils.get_config('verify_emails'):
         if utils.authed():
@@ -93,7 +97,7 @@ def challenges_view():
             errors.append('{} has not started yet'.format(utils.ctf_name()))
         if (utils.get_config('end') and utils.ctf_ended()) and not utils.view_after_ctf():
             errors.append('{} has ended'.format(utils.ctf_name()))
-        return render_template('chals.html', errors=errors, start=int(start), end=int(end))
+        return render_template('challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
     else:
         return redirect(url_for('auth.login', next='challenges'))
 
@@ -311,6 +315,11 @@ def who_solved(chalid):
 
 @challenges.route('/chal/<int:chalid>', methods=['POST'])
 def chal(chalid):
+    if utils.ctf_paused():
+        return jsonify({
+            'status': 3,
+            'message': '{} is paused'.format(utils.ctf_name())
+        })
     if utils.ctf_ended() and not utils.view_after_ctf():
         abort(403)
     if not utils.user_can_view_challenges():

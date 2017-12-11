@@ -1,5 +1,5 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, cache
+from CTFd.utils import admins_only, is_admin, cache, ratelimit
 from CTFd.models import db, Teams, Solves, Awards, Unlocks, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
@@ -184,13 +184,21 @@ def admin_team(teamid):
 
 @admin_teams.route('/admin/team/<int:teamid>/mail', methods=['POST'])
 @admins_only
+@ratelimit(method="POST", limit=10, interval=60)
 def email_user(teamid):
-    message = request.form.get('msg', None)
-    team = Teams.query.filter(Teams.id == teamid).first()
-    if message and team:
-        if utils.sendmail(team.email, message):
-            return '1'
-    return '0'
+    msg = request.form.get('msg', None)
+    team = Teams.query.filter(Teams.id == teamid).first_or_404()
+    if msg and team:
+        result, response = utils.sendmail(team.email, msg)
+        return jsonify({
+            'result': result,
+            'message': response
+        })
+    else:
+        return jsonify({
+            'result': False,
+            'message': "Missing information"
+        })
 
 
 @admin_teams.route('/admin/team/<int:teamid>/ban', methods=['POST'])
@@ -236,6 +244,7 @@ def delete_team(teamid):
 def admin_solves(teamid="all"):
     if teamid == "all":
         solves = Solves.query.all()
+        awards = []
     else:
         solves = Solves.query.filter_by(teamid=teamid).all()
         awards = Awards.query.filter_by(teamid=teamid).all()

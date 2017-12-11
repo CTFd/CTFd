@@ -20,6 +20,54 @@ def test_index():
     destroy_ctfd(app)
 
 
+def test_page():
+    """Test that users can access pages that are created in the database"""
+    app = create_ctfd()
+    with app.app_context():
+
+        gen_page(app.db, title="Title", route="this-is-a-route", html="This is some HTML")
+
+        with app.test_client() as client:
+            r = client.get('/this-is-a-route')
+            assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_draft_pages():
+    """Test that draft pages can't be seen"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_page(app.db, title="Title", route="this-is-a-route", html="This is some HTML", draft=True)
+
+        with app.test_client() as client:
+            r = client.get('/this-is-a-route')
+            assert r.status_code == 404
+
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/this-is-a-route')
+        assert r.status_code == 404
+    destroy_ctfd(app)
+
+
+def test_page_requiring_auth():
+    """Test that pages properly require authentication"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_page(app.db, title="Title", route="this-is-a-route", html="This is some HTML", auth_required=True)
+
+        with app.test_client() as client:
+            r = client.get('/this-is-a-route')
+            assert r.status_code == 302
+            assert r.location == 'http://localhost/login?next=%2Fthis-is-a-route'
+
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/this-is-a-route')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
 def test_register_user():
     """Can a user be registered"""
     app = create_ctfd()
@@ -113,9 +161,9 @@ def test_user_isnt_admin():
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
-        for page in ['graphs', 'pages', 'teams', 'scoreboard', 'chals', 'statistics', 'config']:
+        for page in ['pages', 'teams', 'scoreboard', 'chals', 'statistics', 'config']:
             r = client.get('/admin/{}'.format(page))
-            assert r.location == "http://localhost/login"
+            assert r.location.startswith("http://localhost/login?next=")
             assert r.status_code == 302
     destroy_ctfd(app)
 
@@ -385,7 +433,8 @@ def test_pages_routing_and_rendering():
     with app.app_context():
         html = '''##The quick brown fox jumped over the lazy dog'''
         route = 'test'
-        page = gen_page(app.db, route, html)
+        title = 'Test'
+        page = gen_page(app.db, title, route, html)
 
         with app.test_client() as client:
             r = client.get('/test')
@@ -399,17 +448,17 @@ def test_themes_handler():
     app = create_ctfd()
     with app.app_context():
         with app.test_client() as client:
-            r = client.get('/themes/original/static/css/style.css')
+            r = client.get('/themes/core/static/css/style.css')
             assert r.status_code == 200
-            r = client.get('/themes/original/static/css/404_NOT_FOUND')
+            r = client.get('/themes/core/static/css/404_NOT_FOUND')
             assert r.status_code == 404
-            r = client.get('/themes/original/static/%2e%2e/%2e%2e/%2e%2e/utils.py')
+            r = client.get('/themes/core/static/%2e%2e/%2e%2e/%2e%2e/utils.py')
             assert r.status_code == 404
-            r = client.get('/themes/original/static/%2e%2e%2f%2e%2e%2f%2e%2e%2futils.py')
+            r = client.get('/themes/core/static/%2e%2e%2f%2e%2e%2f%2e%2e%2futils.py')
             assert r.status_code == 404
-            r = client.get('/themes/original/static/..%2f..%2f..%2futils.py')
+            r = client.get('/themes/core/static/..%2f..%2f..%2futils.py')
             assert r.status_code == 404
-            r = client.get('/themes/original/static/../../../utils.py')
+            r = client.get('/themes/core/static/../../../utils.py')
             assert r.status_code == 404
     destroy_ctfd(app)
 
@@ -424,7 +473,7 @@ def test_ctfd_setup_redirect():
             assert r.location == "http://localhost/setup"
 
             # Files in /themes load properly
-            r = client.get('/themes/original/static/css/style.css')
+            r = client.get('/themes/core/static/css/style.css')
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -561,8 +610,7 @@ def test_user_can_reset_password(mock_smtp):
             to_addr = 'user@user.com'
 
             # Build the email
-            msg = """
-Did you initiate a password reset?
+            msg = """Did you initiate a password reset? Click the following link to reset your password:
 
 http://localhost/reset_password/InVzZXIxIi5BZktHUGcuTVhkTmZtOWU2U2xwSXZ1MlFwTjdwa3F5V3hR
 

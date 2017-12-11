@@ -1,33 +1,34 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
-<style>
-.btn-primary { background-color: #337ab7; }
-.btn-danger { background-color: #d9534f; }
-.col-md-4 { margin-bottom: 15px; }
-.key-remove-button { margin-top: 10px; }
-.delete-tag { color: white; margin-left: 3px; cursor: pointer; }
-</style>
 {% endblock %}
 
 {% block content %}
-<div id="create-challenge" class="container main-container">
-	<h1 class="text-center">Create Challenge</h1>
+<div class="jumbotron">
+	<div class="container">
+		<h1>Create Challenge</h1>
+	</div>
+</div>
+
+<div class="container">
 	<div class="row">
-		<div class="col-md-6 col-md-offset-3">
-			<div class="create-chals-select-div">
-				<label for="create-chals-select" class="control-label">Choose Challenge Type</label>
-				<select class="form-control" id="create-chals-select">
-				</select>
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-md-6 offset-md-3">
+					<div id="create-chals-select-div" style="display: none;">
+						<label for="create-chals-select" class="control-label">Choose Challenge Type</label>
+						<select class="form-control" id="create-chals-select">
+						</select>
+					</div>
+					<br>
+					<div id="create-chal-entry-div">
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<br>
-	<div class="row">
-		<div id="create-chal-entry-div">
-		</div>
-	</div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -36,5 +37,6 @@
 	<script>
 	nonce = "{{ nonce }}";
 	</script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/chal-new.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/chal-new.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/style.js"></script>
 {% endblock %}

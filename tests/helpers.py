@@ -1,5 +1,6 @@
 from CTFd import create_app
 from CTFd.models import *
+from CTFd.utils import cache
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.engine.url import make_url
 import datetime
@@ -45,6 +46,7 @@ def destroy_ctfd(app):
         app.db.session.close_all()
         gc.collect()  # Garbage collect (necessary in the case of dataset freezes to clean database connections)
         app.db.drop_all()
+        cache.clear()
     drop_database(app.config['SQLALCHEMY_DATABASE_URI'])
 
 
@@ -156,8 +158,8 @@ def gen_tracking(db, ip, team):
     return tracking
 
 
-def gen_page(db, route, html):
-    page = Pages(route, html)
+def gen_page(db, title, route, html, draft=False, auth_required=False):
+    page = Pages(title, route, html, draft, auth_required)
     db.session.add(page)
     db.session.commit()
     return page

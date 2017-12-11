@@ -2,14 +2,6 @@
 
 {% block stylesheets %}
 	<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/themes/admin/static/css/vendor/codemirror.min.css">
-	<style>
-	.row-fluid { margin: 25px; padding-bottom: 25px; }
-	.media-item-wrapper { height: 120px; margin: 5px;
-		float: left; border: 1px solid #eee; text-align: center; text-overflow: ellipsis; overflow: hidden;}
-	.media-item-wrapper > a > i {line-height: 90px;}
-	.media-item-title{ font-size: 10px; }
-	#media-item{display: none;}
-	</style>
 {% endblock %}
 
 {% block content %}
@@ -18,43 +10,60 @@
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h3 class="text-center">Media Library</h3>
-
-				<div class="row">
-					<div class="col-md-8 col-md-offset-1" id="media-library-list">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<h3 class="text-center">Media Library</h3>
+						</div>
 					</div>
-					<div class="col-md-2">
-						<h4 class="text-center">Media Details</h4>
-						<div id="media-item">
-							<div class="row text-center" id="media-icon">
+				</div>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="modal-header">
+					<div class="container">
+						<div class="row mh-100">
+							<div class="col-md-8" id="media-library-list">
 							</div>
-							<br>
-							<div class="row text-center" id="media-filename">
-							</div>
-							<br>
-							<div class="row form-group">
-								Link: <input class="form-control" type="text" id="media-link">
-							</div>
+							<div class="col-md-4">
+								<h4 class="text-center">Media Details</h4>
+								<div id="media-item">
+									<div class="text-center" id="media-icon">
+									</div>
+									<br>
+									<div class="text-center" id="media-filename">
+									</div>
+									<br>
+									<div class="form-group">
+										Link: <input class="form-control" type="text" id="media-link" readonly>
+									</div>
 
-							<div class="row form-group text-center">
-								<button class="btn btn-success" id="media-insert">Insert</button>
+									<div class="form-group text-center">
+										<button class="btn btn-success w-100" id="media-insert">Insert</button>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<hr>
-
 				<form id="media-library-upload">
 					<div class="form-group">
-						<label for="media-files">Upload Files
+						<label for="media-files">
+							Upload Files
 						</label>
-						<input type="file" name="files[]" id="media-files" multiple>
-						<sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
+						<input type="file" name="files[]" id="media-files" class="form-control-file" multiple>
+						<sub class="help-block">
+							Attach multiple files using Control+Click or Cmd+Click.
+						</sub>
 					</div>
 					<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
 				</form>
+
+			</div>
+			<div class="modal-footer">
 				<div class="pull-right">
 					<button type="submit" class="btn btn-primary" onclick="uploadfiles();">Upload</button>
 				</div>
@@ -64,72 +73,108 @@
 	</div>
 </div>
 
-<div class="row">
-	<div class="row">
-	{% for error in errors %}
-		<div class="large-8 large-centered columns">
-			<div data-alert class="alert-box alert radius centered text-center">
-				<span>{{ error }}</span>
-				<a href="#" class="close">×</a>
-			</div>
-		</div>
-	{% endfor %}
-	</div>
 
-	<form id="page-edit" method="POST">
-		<div class="row-fluid">
-			<div class="col-md-12">
-				<h3>Route: </h3>
-				<p class="help-block">This is the URL route that your page will be at (e.g. /page)</p>
-				<input name='nonce' type='hidden' value="{{ nonce }}">
-				<input class="form-control radius" id="route" type="text" name="route" value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
-			</div>
-		</div>
-		<br>
-		<div class="row-fluid">
-			<div class="col-md-12">
-
-				<h3>Content: </h3>
-				<p class="help-block">This is the HTML content of your page</p>
-
-				<ul class="nav nav-tabs" role="tablist" id="content-edit">
-					<li role="presentation" class="active"><a href="#content-write" aria-controls="home" role="tab" data-toggle="tab">Write</a></li>
-					<li role="presentation"><a href="#content-preview" aria-controls="home" role="tab" data-toggle="tab">Preview</a></li>
-				</ul>
-
-				<div class="tab-content">
-					<div role="tabpanel" class="tab-pane active" id="content-write" style="height:400px">
-						<div class="form-group">
-							<br>
-							<div class="btn-group btn-group-sm" role="group" aria-label="...">
-								<div class="btn-group" role="group">
-									<button type="button" class="btn btn-default" id="media-button"><i class="fa fa-camera-retro" aria-hidden="true"></i> Media Library</button>
-								</div>
-							</div>
-							<br>
-							<br>
-
-							<textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
-						</div>
-					</div>
-					<div role="tabpanel" class="tab-pane content" id="content-preview" style="height:400px">
+<div class="container">
+	<div class="row pt-5">
+		<div class="col-md-12">
+			<div class="row">
+			{% for error in errors %}
+				<div class="large-12 large-centered columns">
+					<div data-alert class="alert-box alert centered text-center">
+						<span>{{ error }}</span>
+						<a href="#" class="close">×</a>
 					</div>
 				</div>
+			{% endfor %}
 			</div>
-			<button class="btn btn-theme btn-outlined create-challenge pull-right">
-				{% if page is defined %}
-					Update
-				{% else %}
-					Create
-				{% endif %}
-			</button>
-		</div>
-	</form>
-</div>
 
-<br>
-<br> <!-- Don't compete with footer for bottom of page -->
-<br>
+			<form id="page-edit" method="POST">
+				<div class="form-group">
+					<div class="col-md-12">
+						<h3>Title</h3>
+						<p class="text-muted">This is the title shown on the navigation bar</p>
+						<input class="form-control radius" id="route" type="text" name="title"
+							   value="{% if page is defined %}{{ page.title }}{% endif %}" placeholder="Title">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-md-12">
+						<h3>Route</h3>
+						<p class="text-muted">This is the URL route that your page will be at (e.g. /page). You can also enter links to link to that page.</p>
+						<input name='nonce' type='hidden' value="{{ nonce }}">
+						<input class="form-control radius" id="route" type="text" name="route" value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
+
+						<div class="form-check">
+							<label class="form-check-label float-right">
+								<input class="form-check-input" type="checkbox" name="auth_required" {% if page is defined and page.auth_required %}checked{% endif %}>
+								Users must be logged in to see this page
+							</label>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-md-12">
+
+						<h3>Content</h3>
+						<p class="text-muted">This is the HTML content of your page</p>
+
+						<ul class="nav nav-tabs" role="tablist" id="content-edit">
+							<li class="nav-item" role="presentation" class="active">
+								<a class="nav-link active" href="#content-write" aria-controls="home" role="tab" data-toggle="tab">Write</a>
+							</li>
+							<li class="nav-item" role="presentation">
+								<a class="nav-link" onclick="preview_page(); return true;" href="#"">Preview</a>
+							</li>
+						</ul>
+
+						<div class="tab-content">
+							<div role="tabpanel" class="tab-pane active" id="content-write" style="height:400px">
+								<br>
+
+								<div class="form-inline">
+									<div class="btn-group btn-group-sm">
+										<div class="btn-group">
+											<button type="button" class="btn btn-primary" id="media-button">
+												<i class="fa fa-camera-retro"></i>
+												Media Library
+											</button>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<textarea id="admin-pages-editor" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea><br>
+									{% if page is defined %}
+										<input name='id' type='hidden' value="{{ page.id }}">
+									{% endif %}
+								</div>
+							</div>
+							<div role="tabpanel" class="tab-pane content" id="content-preview" style="height:400px">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group float-right">
+					<button class="btn btn-success" id="publish-page">
+						Publish
+					</button>
+					<button class="btn btn-primary" id="save-page">
+						{% if page is defined %}
+							Update
+						{% else %}
+							Save
+						{% endif %}
+					</button>
+				</div>
+
+			</form>
+		</div>
+	</div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -206,15 +251,17 @@
 			var ext = f.location.split('.').pop();
 			var fname = f.location.split('/')[1];
 
-			var wrapper = $('<div>').attr('class', 'media-item-wrapper col-md-2')
+			var wrapper = $('<div>').attr('class', 'media-item-wrapper');
 
 			var link = $('<a>');
 			link.attr('href', '##');
 
 			if (mapping[ext] == undefined)
-				link.append('<i class="fa fa-file-o fa-4x" aria-hidden="true"></i>'.format(mapping[ext]));
+				link.append('<i class="fa fa-file-o" aria-hidden="true"></i> '.format(mapping[ext]));
 			else
-				link.append('<i class="fa {0} fa-4x" aria-hidden="true"></i>'.format(mapping[ext]));
+				link.append('<i class="fa {0}" aria-hidden="true"></i> '.format(mapping[ext]));
+
+            link.append($('<small>').attr('class', 'media-item-title').text(fname));
 
 			link.click(function(e){
 				var media_div = $(this).parent();
@@ -222,14 +269,18 @@
 				var f_loc = media_div.attr('data-location');
 				var fname = media_div.attr('data-filename');
 				$('#media-link').val(f_loc);
-				$('#media-filename').text(fname);
+				$('#media-filename').html(
+				    $('<a>').attr('href', f_loc).attr('target', '_blank').text(fname)
+				);
 
-				$('#media-icon').empty()
+				$('#media-icon').empty();
 				if ($(icon).hasClass('fa-file-image-o')){
-					$('#media-icon').append($('<img>').attr('src', f_loc).attr('width', '100%'));
+					$('#media-icon').append($('<img>').attr('src', f_loc).css({'max-width':'100%', 'max-height': '100%', 'object-fit': 'contain'}));
 				} else {
 					// icon is empty so we need to pull outerHTML
-					$('#media-icon').append(icon.outerHTML);
+					var copy_icon = $(icon).clone();
+					$(copy_icon).addClass('fa-4x');
+					$('#media-icon').append(copy_icon);
 				}
 				$('#media-item').show();
 			});
@@ -239,7 +290,7 @@
 			wrapper.attr('data-filename',  fname);
 			list.append(wrapper);
 
-			wrapper.append($('<span>').attr('class', 'media-item-title').text(fname));
+
 		}
 	}
 
@@ -271,8 +322,46 @@
 		insert_at_cursor(editor, entry);
 	});
 
-	$('#page-edit').submit(function (e){
-		$(this).attr('action', '{{ request.script_root }}/admin/pages');
+
+	function submit_form(){
+		editor.save(); // Save the CodeMirror data to the Textarea
+		$.ajax({
+			type: "POST",
+			url: $("#page-edit").attr('action'),
+			data: $("#page-edit").serialize(),
+			success: function (data) {
+				if (data.result == 'success'){
+					if (data.operation == 'publish'){
+						window.location = script_root + '/admin/pages'
+					} else if (data.operation == 'save'){
+						ezal({
+							title: 'Saved',
+							body: 'Your changes have been saved',
+							button: 'Okay'
+						})
+					}
+				}
+			}
+		});
+	}
+
+	function preview_page(){
+        editor.save(); // Save the CodeMirror data to the Textarea
+        $('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=preview');
+        $('#page-edit').attr('target', '_blank');
+        $('#page-edit').submit();
+    }
+
+	$('#publish-page').click(function (e) {
+		e.preventDefault();
+		$('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=publish');
+		submit_form();
+	});
+
+	$('#save-page').click(function (e) {
+		e.preventDefault();
+		$('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=save');
+		submit_form();
 	});
 
 	// Markdown Preview

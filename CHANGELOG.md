@@ -1,10 +1,50 @@
+1.1.0 / TBD
+==================
+
+**Themes**
+
+* The original theme has been replaced by the core theme. The core theme is written in Bootstrap v4.0.0-beta.2 and significantly reduces the amount of custom styles/classes used.
+* Challenges can now be previewed from the admin panel.
+* The modals to modify files, flags, tags, and hints are no longer controlled by Challenge Type Plugins and are defined in CTFd itself.
+* The admin graphs and admin statistics pages have been combined.
+* Percentage solved for challenges has been moved to the new statistics page.
+* The scoregraph on the scoreboard has been cleaned up to better fit the page width.
+* Score graphs now use user-specific colors.
+* Hints can now be previewed from the admin panel.
+* Various confirmation modals have been replaced with `ezq.js`, a simple Bootstrap modal wrapper.
+* Fixed a bug where challenge buttons on the challenge board would load before being styled as solved.
+
+**Database**
+
+* `Keys.key_type` has been renamed to `Keys.type`.
+* Pages Improvements:
+    * Page previews are now independent of the editor page.
+    * Pages now have a title which refer to the link's name on the navbar.
+    * Pages can now be drafts which cannot be seen by regular users.
+    * Pages can now require authentication to view.
+    * CSS editing has been moved to the config panel.
+
+**Challenge Type Plugins**
+
+* Handlebars has been replaced with Nunjucks which means Challenge Type Plugins using Handlebars must be updated to work with 1.1.0
+
+**General**
+
+* CTFs can now be paused to prevent solves.
+* A new authed_only decorator is available to restrict pages to logged-in users.
+* CTFd will now check for updates on start against `versioning.ctfd.io`. Admins will see in the admin panel that CTFd can be updated.
+* A ratelimit function has been implemented. Authentication and email related functions are now ratelimited.
+* Code coverage from codecov.
+* Admins can now see the reason why an email to a team failed to send.
+
+
 1.0.5 / 2017-10-25
 ==================
 
 * Challenge Type Plugins now have a static interface which should be implemented by all challenge types.
     * Challenge Type Plugins are now self-contained in the plugin system meaning you no longer need to manipulate themes in order to register Challenge Type Plugins.
     * Challenge Type plugins should implement the create, read, update, delete, attempt, solve, and fail static methods.
-    * Challenge Type plugins now use strings for both their IDs and names. 
+    * Challenge Type plugins now use strings for both their IDs and names.
     * Challenge Type plugins now contain references to their related modal template files.
 * Plugins can now register directories and files to be served by CTFd
     * `CTFd.plugins.register_plugin_assets_directory` registers a directory to be served

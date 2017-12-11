@@ -1,5 +1,5 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, cache
+from CTFd.utils import admins_only, is_admin, cache, markdown
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 
 from CTFd import utils
@@ -7,65 +7,88 @@ from CTFd import utils
 admin_pages = Blueprint('admin_pages', __name__)
 
 
-@admin_pages.route('/admin/css', methods=['GET', 'POST'])
-@admins_only
-def admin_css():
-    if request.method == 'POST':
-        css = request.form['css']
-        css = utils.set_config('css', css)
-        with app.app_context():
-            cache.clear()
-        return '1'
-    return '0'
-
-
 @admin_pages.route('/admin/pages', methods=['GET', 'POST'])
 @admins_only
 def admin_pages_view():
-    route = request.args.get('route')
+    page_id = request.args.get('id')
+    page_op = request.args.get('operation')
 
-    if request.method == 'GET' and request.args.get('mode') == 'create':
+    if request.method == 'GET' and page_op == 'preview':
+        page = Pages.query.filter_by(id=page_id).first_or_404()
+        return render_template('page.html', content=markdown(page.html))
+
+    if request.method == 'GET' and page_op == 'create':
         return render_template('admin/editor.html')
 
-    if route and request.method == 'GET':
-        page = Pages.query.filter_by(route=route).first()
+    if page_id and request.method == 'GET':
+        page = Pages.query.filter_by(id=page_id).first()
         return render_template('admin/editor.html', page=page)
 
     if request.method == 'POST':
+        page_form_id = request.form.get('id')
+        title = request.form['title']
         html = request.form['html']
         route = request.form['route'].lstrip('/')
-        page = Pages.query.filter_by(route=route).first()
+        auth_required = 'auth_required' in request.form
+
+        if page_op == 'preview':
+            page = Pages(title, route, html, draft=False)
+            return render_template('page.html', content=markdown(page.html))
+
+        page = Pages.query.filter_by(id=page_form_id).first()
+
         errors = []
         if not route:
             errors.append('Missing URL route')
+
         if errors:
-            page = Pages(html, route)
+            page = Pages(title, html, route)
             return render_template('/admin/editor.html', page=page)
+
         if page:
+            page.title = title
             page.route = route
             page.html = html
+            page.auth_required = auth_required
+
+            if page_op == 'publish':
+                page.draft = False
+
             db.session.commit()
             db.session.close()
-            with app.app_context():
-                cache.clear()
-            return redirect(url_for('admin_pages.admin_pages_view'))
-        page = Pages(route, html)
+
+            cache.clear()
+
+            return jsonify({
+                'result': 'success',
+                'operation': page_op
+            })
+
+        if page_op == 'publish':
+            page = Pages(title, route, html, draft=False, auth_required=auth_required)
+        elif page_op == 'save':
+            page = Pages(title, route, html, auth_required=auth_required)
+
         db.session.add(page)
         db.session.commit()
         db.session.close()
-        with app.app_context():
-            cache.clear()
-        return redirect(url_for('admin_pages.admin_pages_view'))
+
+        cache.clear()
+
+        return jsonify({
+            'result': 'success',
+            'operation': page_op
+        })
 
     pages = Pages.query.all()
-    return render_template('admin/pages.html', routes=pages, css=utils.get_config('css'))
+    return render_template('admin/pages.html', pages=pages)
 
 
 @admin_pages.route('/admin/pages/delete', methods=['POST'])
 @admins_only
 def delete_page():
-    route = request.form['route']
-    page = Pages.query.filter_by(route=route).first_or_404()
+    id = request.form['id']
+    page = Pages.query.filter_by(id=id).first_or_404()
     db.session.delete(page)
     db.session.commit()
     db.session.close()

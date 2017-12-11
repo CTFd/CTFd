@@ -14,10 +14,10 @@ class BaseChallenge(object):
 class CTFdStandardChallenge(BaseChallenge):
     id = "standard"  # Unique identifier used to register challenges
     name = "standard"  # Name of a challenge type
-    templates = {  # Handlebars templates used for each aspect of challenge editing & viewing
-        'create': '/plugins/challenges/assets/standard-challenge-create.hbs',
-        'update': '/plugins/challenges/assets/standard-challenge-update.hbs',
-        'modal': '/plugins/challenges/assets/standard-challenge-modal.hbs',
+    templates = {  # Nunjucks templates used for each aspect of challenge editing & viewing
+        'create': '/plugins/challenges/assets/standard-challenge-create.njk',
+        'update': '/plugins/challenges/assets/standard-challenge-update.njk',
+        'modal': '/plugins/challenges/assets/standard-challenge-modal.njk',
     }
     scripts = {  # Scripts that are loaded when a template is loaded
         'create': '/plugins/challenges/assets/standard-challenge-create.js',
@@ -33,12 +33,10 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request:
         :return:
         """
-        files = request.files.getlist('files[]')
-
         # Create challenge
         chal = Challenges(
             name=request.form['name'],
-            description=request.form['desc'],
+            description=request.form['description'],
             value=request.form['value'],
             category=request.form['category'],
             type=request.form['chaltype']
@@ -63,6 +61,7 @@ class CTFdStandardChallenge(BaseChallenge):
 
         db.session.commit()
 
+        files = request.files.getlist('files[]')
         for f in files:
             utils.upload_file(file=f, chalid=chal.id)
 
@@ -105,7 +104,7 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         challenge.name = request.form['name']
-        challenge.description = request.form['desc']
+        challenge.description = request.form['description']
         challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
         challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
         challenge.category = request.form['category']
@@ -146,7 +145,7 @@ class CTFdStandardChallenge(BaseChallenge):
         provided_key = request.form['key'].strip()
         chal_keys = Keys.query.filter_by(chal=chal.id).all()
         for chal_key in chal_keys:
-            if get_key_class(chal_key.key_type).compare(chal_key.flag, provided_key):
+            if get_key_class(chal_key.type).compare(chal_key.flag, provided_key):
                 return True, 'Correct'
         return False, 'Incorrect'
 

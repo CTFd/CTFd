@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<title>{{ ctf_name() }}</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="shortcut icon" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/img/favicon.ico" type="image/x-icon">
+		<link rel="icon" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/img/favicon.ico" type="image/x-icon">
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/bootstrap.min.css">
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/font-awesome/css/font-awesome.min.css" />
+		<link href='{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/font.css' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/jumbotron.css">
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/sticky-footer.css">
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/base.css">
+		<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/static/user.css">
+		{% block stylesheets %}{% endblock %}
+		{% for stylesheet in get_registered_stylesheets() %}
+		{% if stylesheet.startswith('http') %}
+		<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+		{% elif request.script_root %}
+		<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/{{ stylesheet }}">
+		{% else %}
+		<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+		{% endif %}
+		{% endfor %}
+		<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/moment.min.js"></script>
+		<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/nunjucks.min.js"></script>
+		<script type="text/javascript">
+				var script_root = "{{ request.script_root }}";
+		</script>
+</head>
+<div>
+
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+		<div class="container">
+			<a href="{{ request.script_root }}/" class="navbar-brand">{{ ctf_name() }}</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
+					aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="base-navbars">
+				<ul class="navbar-nav mr-auto">
+					{% for page in get_user_page_menu_bar() %}
+						{% if page.route.startswith('http://') or page.route.startswith('https://') %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ page.route }}">{{ page.title }}</a>
+							</li>
+						{% else %}
+							<li class="nav-item">
+								{% if request.script_root %}
+									{% set route = '/' + request.script_root + '/' + page.route %}
+								{% else %}
+									{% set route = '/' + page.route %}
+								{% endif %}
+								<a class="nav-link" href="{{ route }}">{{ page.title }}</a>
+							</li>
+						{% endif %}
+					{% endfor %}
+
+					{% if not get_config('workshop_mode') %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ request.script_root }}/teams">Teams</a>
+						</li>
+					{% endif %}
+					{% if not hide_scores() %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ request.script_root }}/scoreboard">Scoreboard</a>
+						</li>
+					{% endif %}
+					<li>
+						<a class="nav-link" href="{{ request.script_root }}/challenges">Challenges</a>
+					</li>
+				</ul>
+
+				<hr class="d-sm-flex d-md-flex d-lg-none">
+
+				<ul class="navbar-nav ml-md-auto d-block d-sm-flex d-md-flex">
+					{% if username is defined %}
+						{% if admin %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ request.script_root }}/admin">Admin</a>
+							</li>
+						{% endif %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ request.script_root }}/team">Team</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ request.script_root }}/profile">Profile</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ request.script_root }}/logout">Logout</a>
+						</li>
+					{% else %}
+						{% if can_register() %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ request.script_root }}/register">Register</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link d-none d-md-block d-lg-block">|</a>
+							</li>
+						{% endif %}
+						<li><a class="nav-link" href="{{ request.script_root }}/login">Login</a></li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<main role="main">
+		{% block content %}
+		{% endblock %}
+	</main>
+
+	<footer class="footer">
+		<div class="container text-center">
+			<a href="https://ctfd.io">
+				<small class="text-muted">Powered by CTFd</small>
+			</a>
+		</div>
+	</footer>
+
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/jquery.min.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/marked.min.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/bootstrap.bundle.min.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/style.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/ezq.js"></script>
+	{% block scripts %}
+	{% endblock %}
+
+	{% for script in get_registered_scripts() %}
+	{% if script.startswith('http') %}
+	<script src="{{ script }}"></script>
+	{% elif request.script_root %}
+	<script src="{{ request.script_root }}/{{ script }}"></script>
+	{% else %}
+	<script src="{{ script }}"></script>
+	{% endif %}
+	{% endfor %}
+</body>
+</html>

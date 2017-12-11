@@ -2,96 +2,123 @@
 <html>
 
 <head>
-		<title>Admin Panel</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="shortcut icon" href="{{ request.script_root }}/themes/original/static/img/favicon.ico" type="image/x-icon">
-		<link rel="icon" href="{{ request.script_root }}/themes/original/static/img/favicon.ico" type="image/x-icon">
-		<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/vendor/bootstrap.min.css">
-		<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/vendor/font-awesome/css/font-awesome.min.css" />
-		<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/style.css">
-		<link href='{{ request.script_root }}/themes/admin/static/css/vendor/font.css' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/themes/admin/static/css/style.css">
-		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
-		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment-timezone-with-data.min.js"></script>
-		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/handlebars.min.js"></script>
-		<script type="text/javascript">
-				var script_root = "{{ request.script_root }}";
-		</script>
-		{% block stylesheets %} {% endblock %}
+	<title>Admin Panel</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="{{ request.script_root }}/themes/core/static/img/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="{{ request.script_root }}/themes/core/static/img/favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/vendor/bootstrap.min.css">
+	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/vendor/font-awesome/css/font-awesome.min.css" />
+	<link rel="stylesheet" href='{{ request.script_root }}/themes/admin/static/css/vendor/font.css'>
+	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/jumbotron.css">
+	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/sticky-footer.css">
+	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/base.css">
+	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment-timezone-with-data.min.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/nunjucks.min.js"></script>
+	<script type="text/javascript">
+			var script_root = "{{ request.script_root }}";
+	</script>
+	{% block stylesheets %} {% endblock %}
 </head>
 
 <body>
-	<div class="body-container">
-		<div class="navbar navbar-inverse home">
-			<div class="container">
-				<div class="navbar-header">
-					<button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a href="{{ request.script_root }}/" class="navbar-brand">CTFd</a>
-				</div>
-				<div class="navbar-collapse collapse" aria-expanded="false" style="height: 0px">
-					<ul class="nav navbar-nav navbar-nav-right">
-						<li><a href="{{ request.script_root }}/admin/graphs">Graphs</a></li>
-						<li>
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-									 aria-expanded="false">Pages <span class="caret"></span></a>
-								<ul class="dropdown-menu">
-										<li><a href="{{ request.script_root }}/admin/pages">All Pages</a></li>
-										<li><a href="{{ request.script_root }}/admin/pages?mode=create">New Page</a></li>
-								</ul>
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+		<div class="container">
+			<a href="{{ request.script_root }}/" class="navbar-brand">CTFd</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
+					aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="base-navbars">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}/admin/statistics">Statistics</a></li>
+					<li class="nav-item dropdown">
+							<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Pages</a>
+							<div class="dropdown-menu">
+									<a class="dropdown-item" href="{{ request.script_root }}/admin/pages">All Pages</a>
+									<a class="dropdown-item" href="{{ request.script_root }}/admin/pages?mode=create">New Page</a>
+							</div>
+					</li>
+					<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}/admin/teams">Teams</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}/admin/scoreboard">Scoreboard</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}/admin/chals">Challenges</a></li>
+					<li class="nav-item dropdown">
+						<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+						   aria-haspopup="true" aria-expanded="true">Submissions</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="{{ request.script_root }}/admin/correct_keys/1">Correct Submissions</a>
+							<a class="dropdown-item" href="{{ request.script_root }}/admin/wrong_keys/1">Wrong Submissions</a>
+						</div>
+					</li>
+					<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}/admin/config">Config</a></li>
+
+					{% set plugin_menu = get_admin_plugin_menu_bar() %}
+					{% set plugins = get_configurable_plugins() %}
+					{% if plugin_menu or plugins %}
+						<li class="nav-item">
+							<a class="nav-link d-none d-md-block d-lg-block">|</a>
 						</li>
-						<li><a href="{{ request.script_root }}/admin/teams">Teams</a></li>
-						<li><a href="{{ request.script_root }}/admin/scoreboard">Scoreboard</a></li>
-						<li><a href="{{ request.script_root }}/admin/chals">Challenges</a></li>
-						<li><a href="{{ request.script_root }}/admin/statistics">Statistics</a></li>
-						<li><a href="{{ request.script_root }}/admin/config">Config</a></li>
 
-						{% set plugin_menu = get_admin_plugin_menu_bar() %}
-						{% set plugins = get_configurable_plugins() %}
-						{% if plugin_menu or plugins %}
-							<li><a style="padding-left:0px;padding-right:0px;">|</a></li>
-
-							{% for menu in plugin_menu %}
-								<li><a href="{{ request.script_root }}{{ menu.route }}">{{ menu.name }}</a></li>
-							{% endfor %}
-
-							{% if plugins %}
-							<li>
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plugins <span class="caret"></span></a>
-								<ul class="dropdown-menu">
-										{% for plugin in plugins %}
-												<li><a href="{{ request.script_root }}{{ plugin.route }}">{{ plugin.name }}</a></li>
-										{% endfor %}
-								</ul>
-							</li>
+						{% for menu in plugin_menu %}
+							{% if request.script_root %}
+								{% set route = '/' + request.script_root + '/' + menu.route %}
+							{% else %}
+								{% set route = '/' + menu.route %}
 							{% endif %}
+							<li class="nav-item"><a class="nav-link" href="{{ route }}">{{ menu.title }}</a></li>
+						{% endfor %}
+
+						{% if plugins %}
+						<li>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plugins <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+									{% for plugin in plugins %}
+											<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}{{ plugin.route }}">{{ plugin.name }}</a></li>
+									{% endfor %}
+							</ul>
+						</li>
 						{% endif %}
-					</ul>
-				</div>
+					{% endif %}
+				</ul>
 			</div>
 		</div>
+	</nav>
 
-		<div class="container main-container">
-				{% block content %}
-				{% endblock %}
-		</div>
-
-		<div class="navbar navbar-bottom footer">
-			<p class="text-muted text-center">
-				<a style="text-decoration:none;" href="https://ctfd.io"><sub>Powered by CTFd</sub></a>
-			</p>
+	{% if get_config('version_latest') %}
+	<div class="container-fluid bg-warning text-center py-3">
+		<div class="row">
+			<div class="col-md-12">
+				<a class="btn btn-warning" href="{{ get_config('version_latest') }}">
+					A new CTFd version is available!
+				</a>
+			</div>
 		</div>
 	</div>
-		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/jquery.min.js"></script>
-		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/marked.min.js"></script>
-		<script src="{{ request.script_root }}/themes/admin/static/js/vendor/bootstrap.min.js"></script>
-		<script src="{{ request.script_root }}/themes/admin/static/js/main.js"></script>
-		<script src="{{ request.script_root }}/themes/admin/static/js/utils.js"></script>
-		{% block scripts %} {% endblock %}
+	{% endif %}
+
+
+	<main role="main">
+		{% block content %}
+		{% endblock %}
+	</main>
+
+	<footer class="footer">
+		<div class="container text-center">
+			<a href="https://ctfd.io">
+				<small class="text-muted">Powered by CTFd</small>
+			</a>
+		</div>
+	</footer>
+
+	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/jquery.min.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/marked.min.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/bootstrap.bundle.min.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/main.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/utils.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/ezq.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/style.js"></script>
+	{% block scripts %} {% endblock %}
 </body>
 
 </html>

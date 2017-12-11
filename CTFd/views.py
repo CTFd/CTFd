@@ -37,20 +37,25 @@ def setup():
             admin.banned = True
 
             # Index page
-            page = Pages('index', """<div class="container main-container">
-    <img class="logo" src="themes/original/static/img/logo.png" />
-    <h3 class="text-center">
-        <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
-        <p>Follow us on social media:</p>
-        <a href="https://twitter.com/ctfdio"><i class="fa fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
-        <a href="https://facebook.com/ctfdio"><i class="fa fa-facebook-official fa-2x" aria-hidden="true"></i></a>&nbsp;
-        <a href="https://github.com/ctfd"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>
-    </h3>
-    <br>
-    <h4 class="text-center">
-        <a href="admin">Click here</a> to login and setup your CTF
-    </h4>
-</div>""".format(request.script_root))
+
+            index = """<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="themes/core/static/img/logo.png" />
+        <h3 class="text-center">
+            <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
+            <p>Follow us on social media:</p>
+            <a href="https://twitter.com/ctfdio"><i class="fa fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
+            <a href="https://facebook.com/ctfdio"><i class="fa fa-facebook-official fa-2x" aria-hidden="true"></i></a>&nbsp;
+            <a href="https://github.com/ctfd"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>
+        </h3>
+        <br>
+        <h4 class="text-center">
+            <a href="admin">Click here</a> to login and setup your CTF
+        </h4>
+    </div>
+</div>""".format(request.script_root)
+
+            page = Pages(title=None, route='index', html=index, draft=False)
 
             # max attempts per challenge
             max_tries = utils.set_config('max_tries', 0)
@@ -108,12 +113,16 @@ def custom_css():
 @views.route("/", defaults={'template': 'index'})
 @views.route("/<path:template>")
 def static_html(template):
-    try:
-        return render_template('%s.html' % template)
-    except TemplateNotFound:
-        page = utils.get_page(template)
-        if page is None:
+    page = utils.get_page(template)
+    if page is None:
+        try:
+            return render_template('%s.html' % template)
+        except TemplateNotFound:
             abort(404)
+    else:
+        if page.auth_required and utils.authed() is False:
+            return redirect(url_for('auth.login', next=request.path))
+
         return render_template('page.html', content=markdown(page.html))
 
 

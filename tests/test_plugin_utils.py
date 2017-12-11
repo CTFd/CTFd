@@ -77,7 +77,7 @@ def test_admin_override_template():
 
 
 def test_register_plugin_script():
-    '''Test that register_plugin_script adds script paths to the original theme when used from a plugin'''
+    '''Test that register_plugin_script adds script paths to the core theme when used from a plugin'''
     app = create_ctfd()
     with app.app_context():
         register_plugin_script('/fake/script/path.js')
@@ -91,7 +91,7 @@ def test_register_plugin_script():
 
 
 def test_register_plugin_stylesheet():
-    '''Test that register_plugin_stylesheet adds stylesheet paths to the original theme when used from a plugin'''
+    '''Test that register_plugin_stylesheet adds stylesheet paths to the core theme when used from a plugin'''
     app = create_ctfd()
     with app.app_context():
         register_plugin_script('/fake/stylesheet/path.css')
@@ -111,16 +111,16 @@ def test_register_admin_plugin_menu_bar():
     """
     app = create_ctfd()
     with app.app_context():
-        register_admin_plugin_menu_bar(name='test_admin_plugin_name', route='/test_plugin')
+        register_admin_plugin_menu_bar(title='test_admin_plugin_name', route='/test_plugin')
 
         client = login_as_user(app, name="admin", password="password")
-        r = client.get('/admin/graphs')
+        r = client.get('/admin/statistics')
         output = r.get_data(as_text=True)
         assert '/test_plugin' in output
         assert 'test_admin_plugin_name' in output
 
         menu_item = get_admin_plugin_menu_bar()[0]
-        assert menu_item.name == 'test_admin_plugin_name'
+        assert menu_item.title == 'test_admin_plugin_name'
         assert menu_item.route == '/test_plugin'
     destroy_ctfd(app)
 
@@ -132,7 +132,7 @@ def test_register_user_page_menu_bar():
     """
     app = create_ctfd()
     with app.app_context():
-        register_user_page_menu_bar(name='test_user_menu_link', route='/test_user_href')
+        register_user_page_menu_bar(title='test_user_menu_link', route='/test_user_href')
 
         client = login_as_user(app)
         r = client.get('/')
@@ -142,6 +142,6 @@ def test_register_user_page_menu_bar():
         assert 'test_user_menu_link' in output
 
         menu_item = get_user_page_menu_bar()[0]
-        assert menu_item.name == 'test_user_menu_link'
+        assert menu_item.title == 'test_user_menu_link'
         assert menu_item.route == '/test_user_href'
     destroy_ctfd(app)

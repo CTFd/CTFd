@@ -354,6 +354,33 @@ def test_unlocking_hints_with_cost_during_ctf_without_points():
     destroy_ctfd(app)
 
 
+def test_unlocking_hints_with_cost_before_ctf():
+    """Test that hints without a cost are not unlocked if the CTF hasn't begun"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+        hint = gen_hint(app.db, chal_id)
+        gen_award(app.db, teamid=2)
+
+        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+
+        with freeze_time("2017-10-1"):
+            client = login_as_user(app)
+            with client.session_transaction() as sess:
+                data = {
+                    "nonce": sess.get('nonce')
+                }
+            r = client.post('/hints/1', data=data)
+            assert r.status_code == 403
+            user = Teams.query.filter_by(id=2).first()
+            assert user.score() == 100
+            assert Unlocks.query.count() == 0
+    destroy_ctfd(app)
+
+
 def test_unlocking_hints_with_cost_during_ended_ctf():
     """Test that hints with a cost are not unlocked if the CTF has ended"""
     app = create_ctfd()
@@ -491,6 +518,47 @@ def test_hidden_challenge_is_unsolveable():
         solves = Solves.query.all()
         assert len(solves) == 0
 
+        wrong_keys = WrongKeys.query.all()
+        assert len(wrong_keys) == 0
+    destroy_ctfd(app)
+
+
+def test_challenges_cannot_be_solved_while_paused():
+    """Test that challenges cannot be solved when the CTF is paused"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config('paused', True)
+
+        register_user(app)
+        client = login_as_user(app)
+
+        r = client.get('/challenges')
+        assert r.status_code == 200
+
+        # Assert that there is a paused message
+        data = r.get_data(as_text=True)
+        assert 'paused' in data
+
+        chal = gen_challenge(app.db, hidden=True)
+        flag = gen_flag(app.db, chal=chal.id, flag='flag')
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+
+        # Assert that the JSON message is correct
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+        assert data['status'] == 3
+        assert data['message'] == 'CTFd is paused'
+
+        # There are no solves saved
+        solves = Solves.query.all()
+        assert len(solves) == 0
+
+        # There are no wrong keys saved
         wrong_keys = WrongKeys.query.all()
         assert len(wrong_keys) == 0
     destroy_ctfd(app)

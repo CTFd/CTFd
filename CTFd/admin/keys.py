@@ -35,13 +35,13 @@ def admin_keys_view(keyid):
     if request.method == 'GET':
         if keyid:
             saved_key = Keys.query.filter_by(id=keyid).first_or_404()
-            key_class = get_key_class(saved_key.key_type)
+            key_class = get_key_class(saved_key.type)
             json_data = {
                 'id': saved_key.id,
                 'key': saved_key.flag,
                 'data': saved_key.data,
                 'chal': saved_key.chal,
-                'type': saved_key.key_type,
+                'type': saved_key.type,
                 'type_name': key_class.name,
                 'templates': key_class.templates,
             }
@@ -60,7 +60,7 @@ def admin_keys_view(keyid):
             k = Keys.query.filter_by(id=keyid).first()
             k.flag = flag
             k.data = data
-            k.key_type = key_type
+            k.type = key_type
         db.session.commit()
         db.session.close()
         return '1'

@@ -10,7 +10,7 @@ from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy_utils.functions import get_tables
 from six.moves import input
 
-from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
+from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp, update_check
 from CTFd import utils
 
 # Hack to support Unicode in Python 2 properly
@@ -18,7 +18,7 @@ if sys.version_info[0] < 3:
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
-__version__ = '1.0.5'
+__version__ = '1.1.0a1'
 
 
 class ThemeLoader(FileSystemLoader):
@@ -33,7 +33,7 @@ class ThemeLoader(FileSystemLoader):
 
         # Check if the template requested is for the admin panel
         if template.startswith('admin/'):
-            template = template.lstrip('admin/')
+            template = template[6:]  # Strip out admin/
             template = "/".join(['admin', 'templates', template])
             return super(ThemeLoader, self).get_source(environment, template)
 
@@ -109,9 +109,12 @@ def create_app(config='CTFd.config.Config'):
                     exit()
 
         app.db = db
+        app.VERSION = __version__
 
         cache.init_app(app)
         app.cache = cache
+
+        update_check()
 
         version = utils.get_config('ctf_version')
 
@@ -123,7 +126,7 @@ def create_app(config='CTFd.config.Config'):
                 exit()
 
         if not utils.get_config('ctf_theme'):
-            utils.set_config('ctf_theme', 'original')
+            utils.set_config('ctf_theme', 'core')
 
         from CTFd.views import views
         from CTFd.challenges import challenges

@@ -33,18 +33,8 @@ def admin_chals():
     if request.method == 'POST':
         chals = Challenges.query.add_columns('id', 'type', 'name', 'value', 'description', 'category', 'hidden', 'max_attempts').order_by(Challenges.value).all()
 
-        teams_with_points = db.session.query(Solves.teamid).join(Teams).filter(
-            Teams.banned == False).group_by(Solves.teamid).count()
-
         json_data = {'game': []}
         for x in chals:
-            solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(
-                Solves.chalid == x[1], Teams.banned == False).count()
-            if teams_with_points > 0:
-                percentage = (float(solve_count) / float(teams_with_points))
-            else:
-                percentage = 0.0
-
             type_class = CHALLENGE_CLASSES.get(x.type)
             type_name = type_class.name if type_class else None
 
@@ -58,7 +48,6 @@ def admin_chals():
                 'max_attempts': x.max_attempts,
                 'type': x.type,
                 'type_name': type_name,
-                'percentage_solved': percentage,
                 'type_data': {
                     'id': type_class.id,
                     'name': type_class.name,
@@ -70,17 +59,23 @@ def admin_chals():
         db.session.close()
         return jsonify(json_data)
     else:
-        return render_template('admin/chals.html')
+        challenges = Challenges.query.all()
+        return render_template('admin/challenges.html', challenges=challenges)
 
 
-@admin_challenges.route('/admin/chals/<int:chalid>', methods=['GET', 'POST'])
+@admin_challenges.route('/admin/chal/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_chal_detail(chalid):
+    chal = Challenges.query.filter_by(id=chalid).first_or_404()
+    chal_class = get_chal_class(chal.type)
+
     if request.method == 'POST':
-        pass
+        status, message = chal_class.attempt(chal, request)
+        if status:
+            return jsonify({'status': 1, 'message': message})
+        else:
+            return jsonify({'status': 0, 'message': message})
     elif request.method == 'GET':
-        chal = Challenges.query.filter_by(id=chalid).first_or_404()
-        chal_class = get_chal_class(chal.type)
         obj, data = chal_class.read(chal)
         return jsonify(data)
 
@@ -211,11 +206,11 @@ def admin_get_values(chalid, prop):
         chal_keys = Keys.query.filter_by(chal=challenge.id).all()
         json_data = {'keys': []}
         for x in chal_keys:
-            key_class = get_key_class(x.key_type)
+            key_class = get_key_class(x.type)
             json_data['keys'].append({
                 'id': x.id,
                 'key': x.flag,
-                'type': x.key_type,
+                'type': x.type,
                 'type_name': key_class.name,
                 'templates': key_class.templates,
             })

@@ -23,18 +23,21 @@ import io
 
 from collections import namedtuple
 from email.mime.text import MIMEText
-from flask import current_app as app, request, redirect, url_for, session, render_template, abort
+from flask import current_app as app, request, redirect, url_for, session, render_template, abort, jsonify
 from flask_caching import Cache
 from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
+from socket import timeout
 from werkzeug.utils import secure_filename
 
 from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
 
 from datafreeze.format import SERIALIZERS
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
+
+from distutils.version import StrictVersion
 
 if six.PY2:
     text_type = unicode
@@ -232,14 +235,15 @@ def register_plugin_stylesheet(url):
     plugin_stylesheets.append(url)
 
 
+@cache.memoize()
 def pages():
-    pages = Pages.query.filter(Pages.route != "index").all()
-    return pages
+    db_pages = Pages.query.filter(Pages.route != "index", Pages.draft != True).all()
+    return db_pages
 
 
 @cache.memoize()
 def get_page(template):
-    return Pages.query.filter_by(route=template).first()
+    return Pages.query.filter(Pages.route == template, Pages.draft != True).first()
 
 
 def authed():
@@ -284,8 +288,44 @@ def admins_only(f):
         if session.get('admin'):
             return f(*args, **kwargs)
         else:
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login', next=request.path))
     return decorated_function
+
+
+def authed_only(f):
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('id'):
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('auth.login', next=request.path))
+    return decorated_function
+
+
+def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
+    def ratelimit_decorator(f):
+        @functools.wraps(f)
+        def decorated_function(*args, **kwargs):
+            ip_address = get_ip()
+            key = "{}:{}:{}".format(key_prefix, ip_address, request.endpoint)
+            current = cache.get(key)
+
+            if request.method == method:
+                if current and int(current) > limit - 1:  # -1 in order to align expected limit with the real value
+                    resp = jsonify({
+                        'code': 429,
+                        "message": "Too many requests. Limit is %s requests in %s seconds" % (limit, interval)
+                    })
+                    resp.status_code = 429
+                    return resp
+                else:
+                    if current is None:
+                        cache.set(key, 1, timeout=interval)
+                    else:
+                        cache.set(key, int(current) + 1, timeout=interval)
+            return f(*args, **kwargs)
+        return decorated_function
+    return ratelimit_decorator
 
 
 @cache.memoize()
@@ -337,6 +377,10 @@ def ctftime():
         return True
 
     return False
+
+
+def ctf_paused():
+    return get_config('paused')
 
 
 def ctf_started():
@@ -535,9 +579,9 @@ def mailserver():
 
 def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=None):
     if SSL is None:
-        smtp = smtplib.SMTP(host, port)
+        smtp = smtplib.SMTP(host, port, timeout=3)
     else:
-        smtp = smtplib.SMTP_SSL(host, port)
+        smtp = smtplib.SMTP_SSL(host, port, timeout=3)
 
     if TLS:
         smtp.starttls()
@@ -562,9 +606,9 @@ def sendmail(addr, text):
                   "subject": "Message from {0}".format(ctf_name),
                   "text": text})
         if r.status_code == 200:
-            return True
+            return True, "Email sent"
         else:
-            return False
+            return False, "Mailgun settings are incorrect"
     elif mailserver():
         data = {
             'host': get_config('mail_server'),
@@ -581,17 +625,24 @@ def sendmail(addr, text):
         if get_config('mail_useauth'):
             data['auth'] = get_config('mail_useauth')
 
-        smtp = get_smtp(**data)
-        msg = MIMEText(text)
-        msg['Subject'] = "Message from {0}".format(ctf_name)
-        msg['From'] = mailfrom_addr
-        msg['To'] = addr
+        try:
+            smtp = get_smtp(**data)
+            msg = MIMEText(text)
+            msg['Subject'] = "Message from {0}".format(ctf_name)
+            msg['From'] = mailfrom_addr
+            msg['To'] = addr
 
-        smtp.sendmail(msg['From'], [msg['To']], msg.as_string())
-        smtp.quit()
-        return True
+            smtp.sendmail(msg['From'], [msg['To']], msg.as_string())
+            smtp.quit()
+            return True, "Email sent"
+        except smtplib.SMTPException as e:
+            return False, str(e)
+        except timeout:
+            return False, "SMTP server connection timed out"
+        except Exception as e:
+            return False, str(e)
     else:
-        return False
+        return False, "No mail settings configured"
 
 
 def verify_email(addr):
@@ -603,6 +654,18 @@ def verify_email(addr):
         token=base64encode(token, urlencode=True)
     )
     sendmail(addr, text)
+
+
+def forgot_password(email, team_name):
+    s = TimedSerializer(app.config['SECRET_KEY'])
+    token = s.dumps(team_name)
+    text = """Did you initiate a password reset? Click the following link to reset your password:
+
+{0}/{1}
+
+""".format(url_for('auth.reset_password', _external=True), base64encode(token, urlencode=True))
+
+    sendmail(email, text)
 
 
 def rmdir(dir):
@@ -656,6 +719,34 @@ def base64decode(s, urldecode=False):
     if six.PY3:
         decoded = decoded.decode('utf-8')
     return decoded
+
+
+def update_check():
+    update = app.config.get('UPDATE_CHECK')
+    if update:
+        try:
+            params = {
+                'current': app.VERSION
+            }
+            check = requests.get(
+                'https://versioning.ctfd.io/versions/latest',
+                params=params,
+                timeout=0.1
+            ).json()
+        except requests.exceptions.RequestException as e:
+            pass
+        else:
+            try:
+                latest = check['resource']['tag']
+                html_url = check['resource']['html_url']
+                if StrictVersion(latest) > StrictVersion(app.VERSION):
+                    set_config('version_latest', html_url)
+                elif StrictVersion(latest) <= StrictVersion(app.VERSION):
+                    set_config('version_latest', None)
+            except KeyError:
+                set_config('version_latest', None)
+    else:
+        set_config('version_latest', None)
 
 
 def export_ctf(segments=None):

@@ -1,214 +1,216 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
-<style>
-td { text-align:center; }
-.checkbox { margin: 0px !important; }
-input[type="checkbox"] { margin: 0px !important; position: relative; top: 5px; }
-</style>
 {% endblock %}
 
 {% block content %}
-<div class="row">
-	<h1>
-		Teams
-		<i class="fa fa-plus-circle create-team" role="button" data-toggle="tooltip" title="Create Team"></i>
-	</h1>
-	<div id="confirm" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h2 class="text-center">Delete User</h2>
-				</div>
-				<div class="modal-body" style="height:110px">
-					<div class="row-fluid">
-						<div class="col-md-12">
-							<form method="POST">
-								<input type="hidden" name="route">
-								<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
-								<div class="small-6 small-centered text-center columns">
-									<p>Are you sure you want to delete <strong id="confirm-team-name"></strong>?</p>
-									<button type="button" data-dismiss="modal" class="btn btn-theme btn-outlined">No</button>
-									<button type="button" id="delete-user" class="btn btn-theme btn-outlined">Yes</button>
-								</div>
-							</form>
-						</div>
+<div class="jumbotron">
+	<div class="container">
+		<h1>Teams <i class="fa fa-plus-circle create-team" role="button" data-toggle="tooltip" title="Create Team"></i></h1>
+	</div>
+</div>
+
+<div id="email-user" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>Email Team</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form method="POST">
+					<input type="hidden" name="id">
+					<input type="hidden" name="nonce" value="{{ nonce }}">
+					<textarea class="form-control" name="msg" placeholder="Enter your message here"
+							  rows="15"></textarea>
+					<br>
+					<div id="email-user-errors"></div>
+					<button type="button" id="send-user-email" class="btn btn-primary float-right">
+						Send Message
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="update-user-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action">Edit Team</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				<form method="POST" action="{{ request.script_root }}/admin/teams/">
+					<input type="hidden" name="nonce" value="{{ nonce }}">
+					<input type="hidden" name="id">
+					<div class="form-group">
+						<label for="name">Team Name</label>
+						<input type="text" class="form-control" name="name" id="name"
+							   placeholder="Enter new team name" required>
 					</div>
-				</div>
+					<div class="form-group">
+						<label for="email">Email</label>
+						<input type="email" class="form-control" name="email" id="email"
+							   placeholder="Enter new email" required>
+					</div>
+					<div class="form-group">
+						<label for="password">Password</label>
+						<input type="password" class="form-control" name="password" id="password"/>
+					</div>
+					<div class="form-group">
+						<label for="website">Website</label>
+						<input type="text" class="form-control" name="website" id="website"
+							   placeholder="Enter website">
+					</div>
+					<div class="form-group">
+						<label for="affiliation">Affiliation</label>
+						<input type="text" class="form-control" name="affiliation" id="affiliation"
+							   placeholder="Enter affiliation">
+					</div>
+					<div class="form-group">
+						<label for="affiliation">Country</label>
+						<input type="text" class="form-control" name="country" id="country"
+							   placeholder="Enter country">
+					</div>
+					<div id="results">
+
+					</div>
+					<button id="update-user" type="submit"
+							class="btn btn-primary btn-outlined pull-right modal-action">Update
+					</button>
+				</form>
 			</div>
 		</div>
 	</div>
-	<div id="email-user" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h2 class="text-center">Email Team</h2>
-				</div>
-				<div class="modal-body">
-					<form method="POST">
-						<input type="hidden" name="id">
-						<input type="hidden" name="nonce" value="{{ nonce }}">
-						<textarea class="form-control" name="msg" placeholder="Enter your message here" rows="15"></textarea>
-						<br>
-						<div id="email-user-errors"></div>
-						<button type="button" id="send-user-email" class="btn btn-theme btn-outlined">Send Message</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div id="user" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h2 class="text-center modal-action">Edit Team</h2>
-				</div>
-				<div class="modal-body clearfix" style="padding:20px;">
-					<form method="POST" action="{{ request.script_root }}/admin/teams/">
-						<input type="hidden" name="nonce" value="{{ nonce }}">
-						<input type="hidden" name="id">
-						<div class="form-group">
-							<label for="name">Team Name</label>
-							<input type="text" class="form-control" name="name" id="name" placeholder="Enter new team name" required>
-						</div>
-						<div class="form-group">
-							<label for="email">Email</label>
-							<input type="email" class="form-control" name="email" id="email" placeholder="Enter new email" required>
-						</div>
-						<div class="form-group">
-							<label for="password">Password</label>
-							<input type="password" class="form-control" name="password" id="password" />
-						</div>
-						<div class="form-group">
-							<label for="website">Website</label>
-							<input type="text" class="form-control" name="website" id="website" placeholder="Enter website">
-						</div>
-						<div class="form-group">
-							<label for="affiliation">Affiliation</label>
-							<input type="text" class="form-control" name="affiliation" id="affiliation" placeholder="Enter affiliation">
-						</div>
-						<div class="form-group">
-							<label for="affiliation">Country</label>
-							<input type="text" class="form-control" name="country" id="country" placeholder="Enter country">
-						</div>
-						<div id="results">
+</div>
 
-						</div>
-						<button id="update-user" type="submit" class="btn btn-theme btn-outlined pull-right modal-action">Update</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	{% if q and field%}
-	<h4 class="text-center">Searching for teams with {{field}} matching {{q}}</h4>
-	{% endif %}
-
+<div class="container">
 	<div class="row">
-		<form method="GET">
-			<div class="col-md-2 form-group">
-				<label for="sel1">Search Field</label>
-				<select name="field" class="form-control" id="sel1">
-					<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
-					<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
-					<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
-					<option value="affiliation" {% if field == 'affiliation' %}selected{% endif %}>Affiliation</option>
-					<option value="country" {% if field == 'country' %}selected{% endif %}>Country</option>
-			  </select>
-			</div>
-			<div class="col-md-8 form-group">
-				<label for="team-name-search">Parameter</label>
-				<input type="text" class="form-control" id="team-name-search" name="q" placeholder="Search for matching team names" {% if q %}value="{{q}}"{% endif %}>
-			</div>
-			<div class="col-md-2 form-group">
-				<label for="team-name-search">&nbsp;</label>
-				<input type="submit" class="form-control btn btn-default" value="Search">
-			</div>
-		</form>
-	</div>
-
-
-	<table id="teamsboard" class="table table-striped">
-		<thead>
-			<tr>
-				<td width="10px" class="text-center"><b>ID</b>
-				</td>
-				<td class="text-center"><b>Team</b>
-				</td>
-				<td class="text-center"><b>Email</b>
-				</td>
-				<td class="text-center"><b>Website</b>
-				</td>
-				<td class="text-center"><b>Affiliation</b>
-				</td>
-				<td class="text-center"><b>Country</b>
-				</td>
-				<td class="text-center"><b>Admin</b>
-				</td>
-				<td class="text-center"><b>Verified</b>
-				</td>
-				<td class="text-center"><b>Settings</b>
-				</td>
-			</tr>
-		</thead>
-		<tbody>
-			{% for team in teams %}
-			<tr name="{{ team.id }}">
-				<td class="team-id" value="{{ team.id }}">{{ team.id }}</td>
-				<td class="team-name" value="{{ team.name }}"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
-				</td>
-				<td class="team-email" value="{{ team.email }}">{{ team.email | truncate(32) }}</td>
-				<td class="team-website">{% if team.website %}<a href="{{ team.website }}">{{ team.website | truncate(32) }}</a>{% endif %}
-				</td>
-				<td class="team-affiliation" value="{{ team.affiliation if team.affiliation is not none }}"><span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
-				</td>
-				<td class="team-country" value="{{ team.country if team.country is not none }}"><span>{% if team.country %}{{ team.country }}{% endif %}</span>
-				</td>
-				<td class="team-admin">
-					<div class="center-block checkbox text-center">
-						<input type="checkbox" {% if team.admin %}checked{% endif %}>
-					</div>
-				</td>
-				<td class="team-verified">
-					<div class="center-block checkbox text-center">
-						<input type="checkbox" {% if team.verified %}checked{% endif %}>
-					</div>
-				</td>
-				<td class="text-center"><span>
-					<i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="top" title="Modify {{ team.name }}"></i>
-					{% if can_send_mail() %}<i class="fa fa-envelope"></i>{% endif %}
-					<i class="fa fa-times" data-toggle="tooltip" data-placement="top" title="Delete {{ team.name }}"></i>
-				</span>
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	{% if pages > 1 %}
-	<div class="text-center">Page
-		<br>
-		{% if curr_page != 1 %}<a href="{{ request.script_root }}/admin/teams/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
-		{% for page in range(1, pages + 1) %}
-			{% if curr_page != page %}
-				<a href="{{ request.script_root }}/admin/teams/{{ page }}">{{ page }}</a>
-			{% else %}
-				<b>{{ page }}</b>
+		<div class="col-md-12">
+			{% if q and field%}
+			<h4 class="text-center">Searching for teams with {{field}} matching {{q}}</h4>
 			{% endif %}
-		{% endfor %}
-		{% if curr_page != pages %}<a href="{{ request.script_root }}/admin/teams/{{ curr_page+1 }}">&gt;&gt;&gt;</a>{% endif %}
+
+			<form method="GET" class="form-inline">
+					<div class="form-group col-md-2">
+						<label for="sel1" class="sr-only" >Search Field</label>
+						<select name="field" class="form-control w-100" id="sel1">
+							<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
+							<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
+							<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
+							<option value="affiliation" {% if field == 'affiliation' %}selected{% endif %}>Affiliation</option>
+							<option value="country" {% if field == 'country' %}selected{% endif %}>Country</option>
+					  </select>
+					</div>
+					<div class="form-group col-md-8">
+						<label for="team-name-search" class="sr-only">Parameter</label>
+						<input type="text" class="form-control w-100" id="team-name-search" name="q" placeholder="Search for matching team names" {% if q %}value="{{q}}"{% endif %}>
+					</div>
+					<div class="form-group col-md-2">
+						<label for="team-name-search" class="sr-only">Search</label>
+						<button type="submit" class="btn btn-primary w-100"><i class="fa fa-search" aria-hidden="true"></i></button>
+					</div>
+			</form>
+
+			<br>
+
+			<table id="teamsboard" class="table table-striped">
+				<thead>
+					<tr>
+						<td width="10px" class="text-center"><b>ID</b>
+						</td>
+						<td class="text-center"><b>Team</b>
+						</td>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
+						</td>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Website</b>
+						</td>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Affiliation</b>
+						</td>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Country</b>
+						</td>
+						<td class="text-center"><b>Admin</b>
+						</td>
+						<td class="text-center"><b>Verified</b>
+						</td>
+						<td class="text-center"><b>Settings</b>
+						</td>
+					</tr>
+				</thead>
+				<tbody>
+					{% for team in teams %}
+					<tr name="{{ team.id }}">
+						<td class="team-id" value="{{ team.id }}">{{ team.id }}</td>
+						<td class="team-name" value="{{ team.name }}"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
+						</td>
+						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ team.email }}">{{ team.email | truncate(32) }}</td>
+						<td class="team-website d-none d-md-table-cell d-lg-table-cell text-center">
+							{% if team.website %}
+								<a href="{{ team.website }}" target="_blank">
+									<i class="fa fa-globe fa-2" data-toggle="tooltip" data-placement="top"
+									   title="{{ team.website }}" aria-hidden="true"></i>
+								</a>
+							{% endif %}
+						</td>
+						<td class="team-affiliation d-none d-md-table-cell d-lg-table-cell" value="{{ team.affiliation if team.affiliation is not none }}">
+							<span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
+						</td>
+						<td class="team-country d-none d-md-table-cell d-lg-table-cell" value="{{ team.country if team.country is not none }}">
+							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
+						</td>
+						<td class="team-admin">
+							<div class="center-block checkbox text-center">
+								<input type="checkbox" {% if team.admin %}checked{% endif %}>
+							</div>
+						</td>
+						<td class="team-verified">
+							<div class="center-block checkbox text-center">
+								<input type="checkbox" {% if team.verified %}checked{% endif %}>
+							</div>
+						</td>
+						<td class="text-center"><span>
+							<i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="top" title="Modify {{ team.name }}"></i>
+							{% if can_send_mail() %}
+							<i class="fa fa-envelope" data-toggle="tooltip" data-placement="top" title="Email {{ team.name }}"></i>
+							{% endif %}
+							<i class="fa fa-times" data-toggle="tooltip" data-placement="top" title="Delete {{ team.name }}"></i>
+						</span>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% if pages > 1 %}
+			<div class="text-center">Page
+				<br>
+				{% if curr_page != 1 %}<a href="{{ request.script_root }}/admin/teams/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
+				{% for page in range(1, pages + 1) %}
+					{% if curr_page != page %}
+						<a href="{{ request.script_root }}/admin/teams/{{ page }}">{{ page }}</a>
+					{% else %}
+						<b>{{ page }}</b>
+					{% endif %}
+				{% endfor %}
+				{% if curr_page != pages %}<a href="{{ request.script_root }}/admin/teams/{{ curr_page + 1 }}">&gt;&gt;&gt;</a>{% endif %}
+			</div>
+			{% endif %}
+		</div>
 	</div>
-	{% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
+var nonce = "{{ nonce }}";
+
 function load_update_modal(id, name, email, website, affiliation, country){
-	var modal_form = $('#user form');
+	var modal_form = $('#update-user-modal form');
 
 	modal_form.find('input[name=name]').val(name);
 	modal_form.find('input[name=id]').val(id);
@@ -219,26 +221,26 @@ function load_update_modal(id, name, email, website, affiliation, country){
 	modal_form.find('input[name=password]').val('');
 
 	if (id == 'new'){
-		$('#user .modal-action').text('Create Team');
+		$('#update-user-modal .modal-action').text('Create Team');
 	} else {
-		$('#user .modal-action').text('Edit Team');
+		$('#update-user-modal .modal-action').text('Edit Team');
 	}
 
 	$('#results').empty();
-	$('#user form').attr('action', '{{ request.script_root }}/admin/team/'+id);
-	$('#user').modal("show");
+	$('#update-user-modal form').attr('action', '{{ request.script_root }}/admin/team/'+id);
+	$('#update-user-modal').modal("show");
 }
 
 $('#update-user').click(function(e){
 	e.preventDefault();
-	var id = $('#user input[name="id"]').val()
-	var user_data = $('#user form').serializeArray()
+	var id = $('#update-user-modal input[name="id"]').val()
+	var user_data = $('#update-user-modal form').serializeArray()
 	$('#results').empty();
-	$.post($('#user form').attr('action'), $('#user form').serialize(), function(data){
+	$.post($('#update-user-modal form').attr('action'), $('#update-user-modal form').serialize(), function(data){
 		var data = $.parseJSON(JSON.stringify(data))
 		for (var i = 0; i < data['data'].length; i++) {
 			if (data['data'][i] == 'success'){
-				$('#user').modal('hide');
+				$('#update-user-modal').modal('hide');
 				location.reload();
 			}
 			else{
@@ -270,32 +272,28 @@ $('.team-verified input').on('change', function () {
 	console.log(verified);
 
 	$.post('{{ request.script_root }}/admin/team/' + id, {'verified': verified, 'nonce': nonce});
-})
+});
 
 $('#send-user-email').click(function(e){
 	e.preventDefault();
 	var id = $('#email-user input[name="id"]').val();
 	var email_data = $('#email-user form').serializeArray();
 	$.post($('#email-user form').attr('action'), $('#email-user form').serialize(), function(data){
-		if (data == "1"){
-			$('#email-user').modal('hide');
+		if (data.result){
+			var error = $('<div class="alert alert-success alert-dismissable">\n' +
+				'  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
+				'  {0}\n'.format(data.message) +
+				'</div>');
+			$('#email-user-errors').append(error);
 		}
 		else{
-			$('#email-user-errors').append("<b>Failed to send email</b>");
+			var error = $('<div class="alert alert-danger alert-dismissable">\n' +
+				'  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
+				'  {0}\n'.format(data.message) +
+				'</div>');
+			$('#email-user-errors').append(error);
 		}
 	});
-});
-
-$('#delete-user').click(function(e){
-	e.preventDefault();
-	var id = $('#confirm input[name="id"]').val()
-	var user_data = $('#confirm form').serializeArray()
-	$.post($('#confirm form').attr('action'), $('#confirm form').serialize(), function(data){
-		var data = $.parseJSON(JSON.stringify(data))
-		if (data == "1"){
-			location.reload()
-		}
-	})
 });
 
 $('.fa-pencil-square-o').click(function(){
@@ -314,26 +312,32 @@ $('.create-team').click(function(){
 	load_update_modal('new', '', '', '', '', '');
 });
 
-function load_confirm_modal(id, name){
-	var modal = $('#confirm')
-	modal.find('input[name=id]').val(id)
-	modal.find('#confirm-team-name').text(name)
-	$('#confirm form').attr('action', '{{ request.script_root }}/admin/team/'+id+'/delete');
-	$('#confirm').modal();
-}
-
 $('.fa-times').click(function(){
 	var elem = $(this).parent().parent().parent();
-	var id = elem.find('.team-id').text().trim();
+	var team_id = elem.find('.team-id').text().trim();
 	var name = elem.find('.team-name').text().trim();
-	load_confirm_modal(id, name)
+	ezq({
+		title: "Delete User",
+		body: "Are you sure you want to delete {0}".format("<strong>"+name+"</strong>"),
+		success: function(){
+			var route = script_root + '/admin/team/' + team_id + '/delete';
+			$.post(route, {
+				nonce: nonce,
+			}, function (data) {
+				var data = $.parseJSON(JSON.stringify(data));
+				if (data == "1") {
+					location.reload();
+				}
+			});
+		}
+	})
 });
 
 function load_email_modal(id){
-	var modal = $('#email-user')
-	modal.find('textarea').val("")
-	modal.find('input[name=id]').val(id)
-	$('#email-user-errors').empty()
+	var modal = $('#email-user');
+	modal.find('textarea').val("");
+	modal.find('input[name=id]').val(id);
+	$('#email-user-errors').empty();
 	$('#email-user form').attr('action', '{{ request.script_root }}/admin/team/'+id+'/mail');
 	$('#email-user').modal();
 }

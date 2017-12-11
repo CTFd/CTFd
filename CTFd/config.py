@@ -121,6 +121,11 @@ class Config(object):
     else:
         CACHE_TYPE = 'simple'
 
+    '''
+    UPDATE_CHECK specifies whether or not CTFd will check whether or not there is a new version of CTFd
+    '''
+    UPDATE_CHECK = True
+
 
 class TestingConfig(Config):
     SECRET_KEY = 'AAAAAAAAAAAAAAAAAAAA'
@@ -129,3 +134,6 @@ class TestingConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TESTING_DATABASE_URL') or 'sqlite://'
     SERVER_NAME = 'localhost'
+    UPDATE_CHECK = False
+    CACHE_REDIS_URL = None
+    CACHE_TYPE = 'simple'

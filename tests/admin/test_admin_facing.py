@@ -18,7 +18,7 @@ def test_admin_panel():
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin')
         assert r.status_code == 302
-        r = client.get('/admin/graphs')
+        r = client.get('/admin/statistics')
         assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -121,7 +121,7 @@ def test_admins_can_create_challenges():
             data = {
                 'name': '💫',
                 'category': '💫',
-                'desc': 'description',
+                'description': 'description',
                 'value': 100,
                 'key_type[0]': 'static',
                 'key': 'flag',
@@ -143,7 +143,7 @@ def test_admins_can_create_challenges():
 
         assert Keys.query.count() == 1
         key = Keys.query.filter_by(id=1).first()
-        assert key.key_type == 'static'
+        assert key.type == 'static'
         assert key.flag == 'flag'
     destroy_ctfd(app)
 
@@ -164,7 +164,7 @@ def test_admins_can_update_challenges():
                 'id': chal_id,
                 'name': '💫',
                 'category': '💫',
-                'desc': 'description',
+                'description': 'description',
                 'value': 100,
                 'key_type[0]': 'static',
                 'max_attempts': '',
@@ -229,7 +229,7 @@ def test_admin_chal_detail_returns_proper_data():
 
         assert Challenges.query.count() == 1
 
-        r = client.get('/admin/chals/1')
+        r = client.get('/admin/chal/1')
         response = json.loads(r.get_data(as_text=True))
 
         assert data == response
