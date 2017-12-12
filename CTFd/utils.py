@@ -871,6 +871,7 @@ def import_ctf(backup, segments=None, erase=False):
                 elif item == 'pages':
                     saved = json.loads(data)
                     for entry in saved['results']:
+                        # Support migration c12d2a1b0926_add_draft_and_title_to_pages
                         route = entry['route']
                         title = entry.get('title', route.title())
                         html = entry['html']
@@ -897,11 +898,6 @@ def import_ctf(backup, segments=None, erase=False):
                 saved = json.loads(data)
                 for entry in saved['results']:
                     entry_id = entry.pop('id', None)
-                    if item == 'keys':
-                        key_type = entry.get('key_type', None)
-                        if key_type is not None:
-                            entry['type'] = key_type
-                            del entry['key_type']
                     # This is a hack to get SQlite to properly accept datetime values from dataset
                     # See Issue #246
                     if get_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
@@ -923,6 +919,13 @@ def import_ctf(backup, segments=None, erase=False):
 
                     if item == 'teams':
                         table.insert_ignore(entry, ['email'])
+                    elif item == 'keys':
+                        # Support migration 2539d8b5082e_rename_key_type_to_type
+                        key_type = entry.get('key_type', None)
+                        if key_type is not None:
+                            entry['type'] = key_type
+                            del entry['key_type']
+                        table.insert(entry)
                     else:
                         table.insert(entry)
             else:
