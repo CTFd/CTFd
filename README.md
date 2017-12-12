@@ -1,4 +1,4 @@
-![](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/original/static/img/logo.png?raw=true)
+![](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/logo.png?raw=true)
 ====
 
 [![Build Status](https://travis-ci.org/CTFd/CTFd.svg?branch=master)](https://travis-ci.org/CTFd/CTFd)
@@ -7,7 +7,7 @@
 ## What is CTFd?
 CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.
 
-![CTFd is a CTF in a can.](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/original/static/img/scoreboard.png?raw=true)
+![CTFd is a CTF in a can.](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/scoreboard.png?raw=true)
 
 ## Features
  * Create your own challenges, categories, hints, and flags from the Admin Interface
