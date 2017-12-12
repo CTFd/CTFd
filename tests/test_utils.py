@@ -386,8 +386,8 @@ def test_import_ctf():
 
             app.db.session.commit()
 
-            print Teams.query.count()
-            print Challenges.query.count()
+            print(Teams.query.count())
+            print(Challenges.query.count())
 
             assert Teams.query.count() == 11
             assert Challenges.query.count() == 10
