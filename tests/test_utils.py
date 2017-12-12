@@ -381,8 +381,7 @@ def test_import_ctf():
 
         app = create_ctfd()
         with app.app_context():
-            with open('export.zip') as f:
-                import_ctf(f)
+            import_ctf('export.zip')
 
             app.db.session.commit()
 
