@@ -365,7 +365,8 @@ def test_import_ctf():
             base_user = 'user'
             for x in range(10):
                 user = base_user + str(x)
-                gen_team(app.db, name=user, email=user+"@ctfd.io")
+                user_email = user + "@ctfd.io"
+                gen_team(app.db, name=user, email=user_email)
 
             for x in range(10):
                 gen_challenge(app.db, name='chal_name{}'.format(x))
