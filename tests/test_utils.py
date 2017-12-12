@@ -369,7 +369,8 @@ def test_import_ctf():
                 gen_team(app.db, name=user, email=user_email)
 
             for x in range(10):
-                gen_challenge(app.db, name='chal_name{}'.format(x))
+                chal = gen_challenge(app.db, name='chal_name{}'.format(x))
+                gen_flag(app.db, chal=chal.id, flag='flag')
 
             app.db.session.commit()
 
@@ -390,6 +391,7 @@ def test_import_ctf():
 
             assert Teams.query.count() == 11
             assert Challenges.query.count() == 10
+            assert Keys.query.count() == 10
     destroy_ctfd(app)
 
 
