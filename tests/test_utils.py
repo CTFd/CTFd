@@ -349,7 +349,7 @@ def test_export_ctf():
         output = json.loads(output)
         app.db.session.commit()
         backup = export_ctf()
-        backup.seek(0)
+
         with open('export.zip', 'wb') as f:
             f.write(backup.getvalue())
         os.remove('export.zip')
@@ -359,37 +359,37 @@ def test_export_ctf():
 def test_import_ctf():
     """Test that CTFd can import a CTF"""
     app = create_ctfd()
-    if app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite'):
+    # TODO: Unrelated to an in-memory database, imports in a test environment are not working with SQLite...
+    if app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite') is False:
+        with app.app_context():
+            base_user = 'user'
+            for x in range(10):
+                user = base_user + str(x)
+                gen_team(app.db, name=user, email=user+"@ctfd.io")
+
+            for x in range(10):
+                gen_challenge(app.db, name='chal_name{}'.format(x))
+
+            app.db.session.commit()
+
+            backup = export_ctf()
+
+            with open('export.zip', 'wb') as f:
+                f.write(backup.read())
         destroy_ctfd(app)
-        return
 
-    with app.app_context():
-        base_user = 'user'
-        for x in range(10):
-            user = base_user + str(x)
-            gen_team(app.db, name=user, email=user+"@ctfd.io")
+        app = create_ctfd()
+        with app.app_context():
+            with open('export.zip') as f:
+                import_ctf(f)
 
-        for x in range(10):
-            gen_challenge(app.db, name='chal_name{}'.format(x))
+            app.db.session.commit()
 
-        backup = export_ctf()
-        backup.seek(0)
+            print Teams.query.count()
+            print Challenges.query.count()
 
-        with open('export.zip', 'wb') as f:
-            f.write(backup.getvalue())
-    destroy_ctfd(app)
-
-    app = create_ctfd()
-    with app.app_context():
-        import_ctf('export.zip')
-
-        print Teams.query.count()
-        print Challenges.query.count()
-
-        assert Teams.query.count() == 11
-        assert Challenges.query.count() == 10
-
-    os.remove('export.zip')
+            assert Teams.query.count() == 11
+            assert Challenges.query.count() == 10
     destroy_ctfd(app)
 
 
