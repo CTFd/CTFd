@@ -32,7 +32,7 @@ from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from socket import timeout
 from werkzeug.utils import secure_filename
 
-from CTFd.models import db, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
+from CTFd.models import db, Challenges, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
 
 from datafreeze.format import SERIALIZERS
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
@@ -793,6 +793,14 @@ def export_ctf(segments=None):
             result_file.seek(0)
             backup_zip.writestr('db/{}.json'.format(item), result_file.read())
 
+    # Guarantee that alembic_version is saved into the export
+    if 'metadata' not in segments:
+        result = db['alembic_version'].all()
+        result_file = six.BytesIO()
+        datafreeze.freeze(result, format='ctfd', fileobj=result_file)
+        result_file.seek(0)
+        backup_zip.writestr('db/alembic_version.json', result_file.read())
+
     # Backup uploads
     upload_folder = os.path.join(os.path.normpath(app.root_path), get_config('UPLOAD_FOLDER'))
     for root, dirs, files in os.walk(upload_folder):
@@ -864,14 +872,20 @@ def import_ctf(backup, segments=None, erase=False):
                     saved = json.loads(data)
                     for entry in saved['results']:
                         route = entry['route']
+                        title = entry.get('title', route.title())
                         html = entry['html']
+                        draft = entry.get('draft', False)
+                        auth_required = entry.get('auth_required', False)
                         page = Pages.query.filter_by(route=route).first()
                         if page:
                             page.html = html
                         else:
-                            page = Pages(route, html)
+                            page = Pages(title, route, html, draft=draft, auth_required=auth_required)
                             db.session.add(page)
                         db.session.commit()
+
+    teams_base = db.session.query(db.func.max(Teams.id)).scalar() or 0
+    chals_base = db.session.query(db.func.max(Challenges.id)).scalar() or 0
 
     for segment in segments:
         group = groups[segment]
@@ -888,11 +902,24 @@ def import_ctf(backup, segments=None, erase=False):
                     if get_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
                         for k, v in entry.items():
                             if isinstance(v, six.string_types):
-                                try:
+                                match = re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v)
+                                if match:
+                                    entry[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%S.%f')
+                                    continue
+                                match = re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", v)
+                                if match:
                                     entry[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')
-                                except ValueError as e:
-                                    pass
-                    table.insert(entry)
+                                    continue
+                    for k, v in entry.items():
+                        if k == 'chal' or k == 'chalid':
+                            entry[k] += chals_base
+                        if k == 'team' or k == 'teamid':
+                            entry[k] += teams_base
+
+                    if item == 'teams':
+                        table.insert_ignore(entry, ['email'])
+                    else:
+                        table.insert(entry)
             else:
                 continue
 
