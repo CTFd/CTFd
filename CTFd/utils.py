@@ -949,6 +949,6 @@ def import_ctf(backup, segments=None, erase=False):
             os.makedirs(dirname)
 
         source = backup.open(f)
-        target = file(full_path, "wb")
+        target = open(full_path, "wb")
         with source, target:
             shutil.copyfileobj(source, target)
