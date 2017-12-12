@@ -29,6 +29,10 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.challenge-button {
+    box-shadow: 3px 3px 3px grey;
+}
+
 .solved-challenge {
     background-color: #37d63e !important;
     opacity: 0.4;

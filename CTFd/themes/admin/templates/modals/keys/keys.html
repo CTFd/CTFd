@@ -1,7 +1,7 @@
 
 
 <div id="update-keys" class="modal fade" tabindex="-1" chal-id="">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header text-center">
 				<div class="container">
@@ -16,14 +16,18 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="row text-center">
-					<div class="col-md-12">
-						<button id="create-key" class="btn btn-primary d-inline-block">New Flag</button>
-						<form method="POST" action="{{ request.script_root }}/admin/keys">
-							<input name='nonce' type='hidden' value="{{ nonce }}">
-							<input id="keys-chal" name='chal' type='hidden'>
-							<div id="current-keys" class="row"></div>
-						</form>
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<button id="create-key" class="btn btn-primary d-inline-block text-center">New Flag</button>
+						</div>
+						<div class="col-md-12">
+							<form method="POST" action="{{ request.script_root }}/admin/keys">
+								<input name='nonce' type='hidden' value="{{ nonce }}">
+								<input id="keys-chal" name='chal' type='hidden'>
+								<div id="current-keys" class="row"></div>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>

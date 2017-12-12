@@ -64,17 +64,17 @@
 							{% if request.script_root %}
 								{% set route = '/' + request.script_root + '/' + menu.route %}
 							{% else %}
-								{% set route = '/' + menu.route %}
+								{% set route = menu.route %}
 							{% endif %}
 							<li class="nav-item"><a class="nav-link" href="{{ route }}">{{ menu.title }}</a></li>
 						{% endfor %}
 
 						{% if plugins %}
-						<li>
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plugins <span class="caret"></span></a>
+						<li class="nav-item dropdown">
+							<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plugins <span class="caret"></span></a>
 							<ul class="dropdown-menu">
 									{% for plugin in plugins %}
-											<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}{{ plugin.route }}">{{ plugin.name }}</a></li>
+											<a class="dropdown-item" href="{{ request.script_root }}{{ plugin.route }}">{{ plugin.name }}</a>
 									{% endfor %}
 							</ul>
 						</li>
