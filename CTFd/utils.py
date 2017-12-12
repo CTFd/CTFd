@@ -882,7 +882,6 @@ def import_ctf(backup, segments=None, erase=False):
             if data:
                 saved = json.loads(data)
                 for entry in saved['results']:
-                    entry_id = entry.pop('id', None)
                     # This is a hack to get SQlite to properly accept datetime values from dataset
                     # See Issue #246
                     if get_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
@@ -892,7 +891,7 @@ def import_ctf(backup, segments=None, erase=False):
                                     entry[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')
                                 except ValueError as e:
                                     pass
-                    table.insert(entry)
+                    table.upsert(entry, ['id'])
             else:
                 continue
 
