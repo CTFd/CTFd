@@ -580,7 +580,7 @@ def test_user_can_confirm_email(mock_smtp):
 @patch('smtplib.SMTP')
 @freeze_time("2012-01-14 03:21:34")
 def test_user_can_reset_password(mock_smtp):
-    '''Test that a user is capable of resetting their password'''
+    """Test that a user is capable of resetting their password"""
     from email.mime.text import MIMEText
     app = create_ctfd()
     with app.app_context():
@@ -635,7 +635,7 @@ http://localhost/reset_password/InVzZXIxIi5BZktHUGcuTVhkTmZtOWU2U2xwSXZ1MlFwTjdw
                 }
 
             # Do the password reset
-            r = client.get('/reset_password')
+            r = client.get('/reset_password/InVzZXIxIi5BZktHUGcuTVhkTmZtOWU2U2xwSXZ1MlFwTjdwa3F5V3hR')
             r = client.post('/reset_password/InVzZXIxIi5BZktHUGcuTVhkTmZtOWU2U2xwSXZ1MlFwTjdwa3F5V3hR', data=data)
 
             # Make sure that the user's password changed

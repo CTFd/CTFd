@@ -11,6 +11,8 @@ from CTFd.models import db, Teams
 from CTFd import utils
 from CTFd.utils import ratelimit
 
+import base64
+
 auth = Blueprint('auth', __name__)
 
 
@@ -30,8 +32,8 @@ def confirm_user(data=None):
             email = s.loads(utils.base64decode(data, urldecode=True), max_age=1800)
         except BadTimeSignature:
             return render_template('confirm.html', errors=['Your confirmation link has expired'])
-        except BadSignature:
-            return render_template('confirm.html', errors=['Your confirmation link seems wrong'])
+        except (BadSignature, TypeError, base64.binascii.Error):
+            return render_template('confirm.html', errors=['Your confirmation token is invalid'])
         team = Teams.query.filter_by(email=email).first_or_404()
         team.verified = True
         db.session.commit()
@@ -80,26 +82,29 @@ def confirm_user(data=None):
 @ratelimit(method="POST", limit=10, interval=60)
 def reset_password(data=None):
     logger = logging.getLogger('logins')
-    if data is not None and request.method == "GET":
-        return render_template('reset_password.html', mode='set')
-    if data is not None and request.method == "POST":
+
+    if data is not None:
         try:
             s = TimedSerializer(app.config['SECRET_KEY'])
             name = s.loads(utils.base64decode(data, urldecode=True), max_age=1800)
         except BadTimeSignature:
             return render_template('reset_password.html', errors=['Your link has expired'])
-        except:
-            return render_template('reset_password.html', errors=['Your link appears broken, please try again'])
-        team = Teams.query.filter_by(name=name).first_or_404()
-        team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
-        db.session.commit()
-        logger.warn("[{date}] {ip} -  successful password reset for {username}".format(
-            date=time.strftime("%m/%d/%Y %X"),
-            ip=utils.get_ip(),
-            username=team.name.encode('utf-8')
-        ))
-        db.session.close()
-        return redirect(url_for('auth.login'))
+        except (BadSignature, TypeError, base64.binascii.Error):
+            return render_template('reset_password.html', errors=['Your reset token is invalid'])
+
+        if request.method == "GET":
+            return render_template('reset_password.html', mode='set')
+        if request.method == "POST":
+            team = Teams.query.filter_by(name=name).first_or_404()
+            team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
+            db.session.commit()
+            logger.warn("[{date}] {ip} -  successful password reset for {username}".format(
+                date=time.strftime("%m/%d/%Y %X"),
+                ip=utils.get_ip(),
+                username=team.name.encode('utf-8')
+            ))
+            db.session.close()
+            return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
         email = request.form['email'].strip()
