@@ -1,5 +1,5 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, cache
+from CTFd.utils import admins_only, is_admin, cache, update_check
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 
 from CTFd import utils
@@ -60,6 +60,7 @@ def admin_graph(graph_type):
 @admin_statistics.route('/admin/statistics', methods=['GET'])
 @admins_only
 def admin_stats():
+    update_check()
     teams_registered = db.session.query(db.func.count(Teams.id)).first()[0]
 
     wrong_count = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned == False).count()
