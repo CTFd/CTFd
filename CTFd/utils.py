@@ -727,30 +727,36 @@ def base64decode(s, urldecode=False):
     return decoded
 
 
-def update_check():
-    update = app.config.get('UPDATE_CHECK')
+def update_check(force=False):
+    update = app.config.get('UPDATE_CHECK') or force
     if update:
-        try:
-            params = {
-                'current': app.VERSION
-            }
-            check = requests.get(
-                'https://versioning.ctfd.io/versions/latest',
-                params=params,
-                timeout=0.1
-            ).json()
-        except requests.exceptions.RequestException as e:
-            pass
-        else:
+        next_update_check = get_config('next_update_check') or 0
+        if (next_update_check < time.time()) or force:
             try:
-                latest = check['resource']['tag']
-                html_url = check['resource']['html_url']
-                if StrictVersion(latest) > StrictVersion(app.VERSION):
-                    set_config('version_latest', html_url)
-                elif StrictVersion(latest) <= StrictVersion(app.VERSION):
+                params = {
+                    'current': app.VERSION
+                }
+                check = requests.get(
+                    'https://versioning.ctfd.io/versions/latest',
+                    params=params,
+                    timeout=0.1
+                ).json()
+            except requests.exceptions.RequestException as e:
+                pass
+            else:
+                try:
+                    latest = check['resource']['tag']
+                    html_url = check['resource']['html_url']
+                    if StrictVersion(latest) > StrictVersion(app.VERSION):
+                        set_config('version_latest', html_url)
+                    elif StrictVersion(latest) <= StrictVersion(app.VERSION):
+                        set_config('version_latest', None)
+                except KeyError:
                     set_config('version_latest', None)
-            except KeyError:
-                set_config('version_latest', None)
+            finally:
+                # 12 hours later
+                next_update_check_time = int(time.time() + 43200)
+                set_config('next_update_check', next_update_check_time)
     else:
         set_config('version_latest', None)
 
