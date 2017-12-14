@@ -699,7 +699,10 @@ def base64encode(s, urlencode=False):
 
     encoded = base64.urlsafe_b64encode(s)
     if six.PY3:
-        encoded = encoded.decode('utf-8')
+        try:
+            encoded = encoded.decode('utf-8')
+        except UnicodeDecodeError:
+            pass
     if urlencode:
         encoded = quote(encoded)
     return encoded
@@ -717,7 +720,10 @@ def base64decode(s, urldecode=False):
 
     decoded = base64.urlsafe_b64decode(s)
     if six.PY3:
-        decoded = decoded.decode('utf-8')
+        try:
+            decoded = decoded.decode('utf-8')
+        except UnicodeDecodeError:
+            pass
     return decoded
 
 
