@@ -316,6 +316,9 @@ $('.fa-times').click(function(){
 	var elem = $(this).parent().parent().parent();
 	var team_id = elem.find('.team-id').text().trim();
 	var name = elem.find('.team-name').text().trim();
+
+	var td_row = $(this).parent().parent().parent();
+
 	ezq({
 		title: "Delete User",
 		body: "Are you sure you want to delete {0}".format("<strong>"+name+"</strong>"),
@@ -326,7 +329,7 @@ $('.fa-times').click(function(){
 			}, function (data) {
 				var data = $.parseJSON(JSON.stringify(data));
 				if (data == "1") {
-					location.reload();
+					td_row.remove();
 				}
 			});
 		}
