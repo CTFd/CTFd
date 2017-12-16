@@ -20,13 +20,13 @@
 }
 
 .btn-file:nth-child(1):before {
-    content: "\f0ed";
-    display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
-    font-size: inherit;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    /*content: "\f0ed";*/
+    /*display: inline-block;*/
+    /*font: normal normal normal 14px/1 FontAwesome;*/
+    /*font-size: inherit;*/
+    /*text-rendering: auto;*/
+    /*-webkit-font-smoothing: antialiased;*/
+    /*-moz-osx-font-smoothing: grayscale;*/
 }
 
 .challenge-button {
@@ -39,13 +39,7 @@
     border: none;
 }
 
-.solved-challenge p:after {
-    content: "\f00c";
-    display: inline-block;
-    font: normal normal normal 18px/1 FontAwesome;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+.corner-button-check {
     margin-top: -10px;
     margin-right: 25px;
     position: absolute;

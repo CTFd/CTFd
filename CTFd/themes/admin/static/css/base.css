@@ -19,11 +19,15 @@ table > thead > tr > td {
     border-top: none !important;
 }
 
+.table td, .table th {
+    vertical-align: inherit;
+}
+
 pre {
     white-space: pre-wrap;
 }
 
-.fa.spinner {
+.fa-spin.spinner {
     margin-top: 225px;
     text-align: center;
     opacity: 0.5;

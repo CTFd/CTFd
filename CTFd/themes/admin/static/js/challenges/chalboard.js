@@ -36,9 +36,9 @@ function load_challenge_preview(id){
 
 function render_challenge_preview(chal, modal_template, modal_script){
     var preview_window = $('#challenge-preview');
-    preview_window.empty();
     $.get(script_root + modal_template, function (template_data) {
-
+        preview_window.empty();
+        console.log(chal.description);
         var template = nunjucks.compile(template_data);
         var data = {
             id: chal.id,
@@ -151,33 +151,36 @@ function submitkey(chal, key, nonce){
     });
 }
 
+$(document).ready(function () {
+    $('.delete-challenge').click(function (e) {
+        var chal_id = $(this).attr('chal-id');
+        var td_row = $(this).parent().parent();
 
-$('.delete-challenge').click(function (e) {
-    var chal_id = $(this).attr('chal-id');
-    var td_row = $(this).parent().parent();
-
-    ezq({
-        title: "Delete Challenge",
-        body: "Are you sure you want to delete this challenge?",
-        success: function () {
-            $.post(script_root + '/admin/chal/delete', {'id': chal_id, 'nonce': $('#nonce').val()}, function (data) {
-                if (data == 1) {
-                    td_row.remove();
-                }
-                else {
-                    ezal({
-                        title: "Error",
-                        body: "There was an error"
-                    });
-                }
-            });
-        }
+        ezq({
+            title: "Delete Challenge",
+            body: "Are you sure you want to delete this challenge?",
+            success: function () {
+                $.post(script_root + '/admin/chal/delete', {
+                    'id': chal_id,
+                    'nonce': $('#nonce').val()
+                }, function (data) {
+                    if (data == 1) {
+                        td_row.remove();
+                    }
+                    else {
+                        ezal({
+                            title: "Error",
+                            body: "There was an error"
+                        });
+                    }
+                });
+            }
+        });
     });
-});
 
+    $('.preview-challenge').click(function (e) {
+        var chal_id = $(this).attr('chal-id');
 
-$('.preview-challenge').click(function (e) {
-    var chal_id = $(this).attr('chal-id');
-
-    load_challenge_preview(chal_id);
+        load_challenge_preview(chal_id);
+    });
 });

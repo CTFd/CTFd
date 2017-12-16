@@ -35,29 +35,29 @@ function updatetags(){
     $('#update-tags').modal('toggle');
 }
 
+$(document).ready(function () {
+    $('.edit-tags').click(function (e) {
+        var chal_id = $(this).attr('chal-id');
+        loadtags(chal_id, function () {
+            $('#update-tags').modal();
+        });
+    });
 
-$('.edit-tags').click(function (e) {
-    var chal_id = $(this).attr('chal-id');
-    loadtags(chal_id, function(){
-        $('#update-tags').modal();
+
+    $(".tag-insert").keyup(function (e) {
+        if (e.keyCode == 13) {
+            var tag = $('.tag-insert').val()
+            tag = tag.replace(/'/g, '');
+            if (tag.length > 0) {
+                tag = "<span class='badge badge-primary mx-1 chal-tag'><span>" + tag + "</span><a class='delete-tag' onclick='$(this).parent().remove()'> &times;</a></span>"
+                $('#chal-tags').append(tag);
+            }
+            $('.tag-insert').val("");
+        }
+    });
+
+    $('#submit-tags').click(function (e) {
+        e.preventDefault();
+        updatetags()
     });
 });
-
-
-$(".tag-insert").keyup(function (e) {
-    if (e.keyCode == 13) {
-        var tag = $('.tag-insert').val()
-        tag = tag.replace(/'/g, '');
-        if (tag.length > 0) {
-            tag = "<span class='badge badge-primary mx-1 chal-tag'><span>" + tag + "</span><a class='delete-tag' onclick='$(this).parent().remove()'> &times;</a></span>"
-            $('#chal-tags').append(tag);
-        }
-        $('.tag-insert').val("");
-    }
-});
-
-$('#submit-tags').click(function (e) {
-    e.preventDefault();
-    updatetags()
-});
-
