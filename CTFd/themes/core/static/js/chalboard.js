@@ -79,7 +79,7 @@ $("#answer-input").keyup(function(event){
 });
 
 
-function submitkey(chal, key, nonce) {
+function submitkey(chal, key, nonce, cb) {
     $('#submit-key').addClass("disabled-button");
     $('#submit-key').prop('disabled', true);
     $.post(script_root + "/chal/" + chal, {
@@ -140,6 +140,10 @@ function submitkey(chal, key, nonce) {
           $('#submit-key').removeClass("disabled-button");
           $('#submit-key').prop('disabled', false);
         }, 3000);
+
+        if (cb) {
+            cb(result);
+        }
     })
 }
 

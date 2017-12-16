@@ -325,6 +325,8 @@ $('.fa-times').click(function () {
 		action : action,
 	};
 
+	var td_row = $(this).parent().parent();
+
 	ezq({
 		title: title,
 		body: description,
@@ -335,7 +337,7 @@ $('.fa-times').click(function () {
 			}, function (data) {
 				var data = $.parseJSON(JSON.stringify(data));
 				if (data == "1") {
-					location.reload();
+					td_row.remove();
 				}
 			});
 		}
@@ -365,6 +367,8 @@ $('.mark-correct').click(function () {
 		"as solved for team " +
 		"<strong>{0}</strong>?</span>".format(chal_name);
 
+	var td_row = $(this).parent().parent();
+
 	ezq({
 		title: title,
 		body: description,
@@ -375,7 +379,7 @@ $('.mark-correct').click(function () {
 			}, function (data) {
 				var data = $.parseJSON(JSON.stringify(data));
 				if (data == "1") {
-					location.reload();
+					td_row.remove();
 				}
 			});
 		}

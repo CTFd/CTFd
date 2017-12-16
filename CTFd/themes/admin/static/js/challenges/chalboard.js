@@ -154,6 +154,7 @@ function submitkey(chal, key, nonce){
 
 $('.delete-challenge').click(function (e) {
     var chal_id = $(this).attr('chal-id');
+    var td_row = $(this).parent().parent();
 
     ezq({
         title: "Delete Challenge",
@@ -161,7 +162,7 @@ $('.delete-challenge').click(function (e) {
         success: function () {
             $.post(script_root + '/admin/chal/delete', {'id': chal_id, 'nonce': $('#nonce').val()}, function (data) {
                 if (data == 1) {
-                    location.reload();
+                    td_row.remove();
                 }
                 else {
                     ezal({
