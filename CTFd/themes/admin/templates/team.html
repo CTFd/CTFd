@@ -374,7 +374,7 @@ $('.mark-correct').click(function () {
 		body: description,
 		success: function(){
 			var route = script_root + '/admin/solves/' + team + '/' + chal + '/solve';
-	$.post(route, {
+		$.post(route, {
 				nonce: nonce,
 			}, function (data) {
 				var data = $.parseJSON(JSON.stringify(data));
