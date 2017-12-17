@@ -57,7 +57,7 @@ function updatekeys(){
     });
     $('#current-keys input[name*="key_type"]:checked').each(function(){
         vals.push($(this).val());
-    });
+    })
     $.post(script_root + '/admin/keys/'+chal, {'keys':keys, 'vals':vals, 'nonce': $('#nonce').val()})
     loadchal(chal, true)
     $('#update-keys').modal('hide');

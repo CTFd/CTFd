@@ -44,8 +44,8 @@ function loadhints(chal, cb){
             "<td class='hint-entry d-table-cell w-75'><pre>{0}</pre></td>".format(htmlentities(hint.hint)) +
             "<td class='hint-cost d-table-cell text-center'>{0}</td>".format(hint.cost) +
             "<td class='hint-settings d-table-cell text-center'><span>" +
-                "<i role='button' class='fas fa-edit' onclick=javascript:load_hint_modal('update',{0})></i>".format(hint.id)+
-                "<i role='button' class='fas fa-times' onclick=javascript:deletehint({0})></i>".format(hint.id)+
+                "<i role='button' class='btn-fa fas fa-edit' onclick=javascript:load_hint_modal('update',{0})></i>".format(hint.id)+
+                "<i role='button' class='btn-fa fas fa-times' onclick=javascript:deletehint({0})></i>".format(hint.id)+
                 "</span></td>" +
             "</tr>";
             table.append(hint_row);

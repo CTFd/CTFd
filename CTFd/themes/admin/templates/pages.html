@@ -8,7 +8,7 @@
 	<div class="container">
 		<h1>Pages
 			<a class="no-decoration" href="{{ request.script_root }}/admin/pages?operation=create">
-				<i class="fas fa-plus-circle create-page" role="button" data-toggle="tooltip" title="Create Page"></i>
+				<i class="btn-fa fas fa-plus-circle create-page" role="button" data-toggle="tooltip" title="Create Page"></i>
 			</a>
 		</h1>
 	</div>
@@ -52,8 +52,8 @@
 							{% endif %}
 						</td>
 						<td class="text-center">
-							<a class="no-decoration" href="{{ request.script_root }}/admin/pages?id={{ page.id }}"><i class="fas fa-edit"></i></a>
-							<i class="fas fa-times" page-id="{{ page.id }}" page-route="{{ page.route }}" page-title="{{ page.title }}"></i>
+							<a class="no-decoration" href="{{ request.script_root }}/admin/pages?id={{ page.id }}"><i class="btn-fa fas fa-edit"></i></a>
+							<i class="btn-fa fas fa-times" page-id="{{ page.id }}" page-route="{{ page.route }}" page-title="{{ page.title }}"></i>
 						</td>
 					</tr>
 				{% endfor %}

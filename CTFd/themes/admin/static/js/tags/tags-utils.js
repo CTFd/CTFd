@@ -6,7 +6,7 @@ function loadtags(chal, cb){
         tags = $.parseJSON(JSON.stringify(data))
         tags = tags['tags']
         for (var i = 0; i < tags.length; i++) {
-            tag = "<span class='badge badge-primary mx-1 chal-tag'><span>"+tags[i].tag+"</span><a name='"+tags[i].id+"'' class='delete-tag'> &#215;</a></span>"
+            tag = "<span class='badge badge-primary mx-1 chal-tag'><span>"+tags[i].tag+"</span><a name='"+tags[i].id+"'' class='btn-fa delete-tag'> &#215;</a></span>"
             $('#current-tags').append(tag)
         };
         $('.delete-tag').click(function(e){
@@ -49,7 +49,7 @@ $(document).ready(function () {
             var tag = $('.tag-insert').val()
             tag = tag.replace(/'/g, '');
             if (tag.length > 0) {
-                tag = "<span class='badge badge-primary mx-1 chal-tag'><span>" + tag + "</span><a class='delete-tag' onclick='$(this).parent().remove()'> &times;</a></span>"
+                tag = "<span class='badge badge-primary mx-1 chal-tag'><span>" + tag + "</span><a class='btn-fa delete-tag' onclick='$(this).parent().remove()'> &times;</a></span>"
                 $('#chal-tags').append(tag);
             }
             $('.tag-insert').val("");

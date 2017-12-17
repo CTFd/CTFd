@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Teams <i class="fas fa-plus-circle create-team" role="button" data-toggle="tooltip" title="Create Team"></i></h1>
+		<h1>Teams <i class="btn-fa fas fa-plus-circle create-team" role="button" data-toggle="tooltip" title="Create Team"></i></h1>
 	</div>
 </div>
 
@@ -153,7 +153,7 @@
 						<td class="team-website d-none d-md-table-cell d-lg-table-cell text-center">
 							{% if team.website %}
 								<a href="{{ team.website }}" target="_blank">
-									<i class="fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
 									   title="{{ team.website }}" aria-hidden="true"></i>
 								</a>
 							{% endif %}
@@ -175,11 +175,11 @@
 							</div>
 						</td>
 						<td class="text-center"><span>
-							<i class="fas fa-edit" data-toggle="tooltip" data-placement="top" title="Modify {{ team.name }}"></i>
+							<i class="btn-fa fas fa-edit" data-toggle="tooltip" data-placement="top" title="Modify {{ team.name }}"></i>
 							{% if can_send_mail() %}
-							<i class="fas fa-envelope" data-toggle="tooltip" data-placement="top" title="Email {{ team.name }}"></i>
+							<i class="btn-fa fas fa-envelope" data-toggle="tooltip" data-placement="top" title="Email {{ team.name }}"></i>
 							{% endif %}
-							<i class="fas fa-times" data-toggle="tooltip" data-placement="top" title="Delete {{ team.name }}"></i>
+							<i class="btn-fa fas fa-times" data-toggle="tooltip" data-placement="top" title="Delete {{ team.name }}"></i>
 						</span>
 						</td>
 					</tr>

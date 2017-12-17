@@ -27,7 +27,7 @@ function loadfiles(chal, cb){
             filename = files[x].file.split('/');
             filename = filename[filename.length - 1];
 
-            var curr_file = '<div class="col-md-12"><a href="{2}/files/{3}">{4}</a> <i class="fas fa-times float-right" onclick="deletefile({0}, {1}, $(this))" value="{2}" ></i></div>'.format(
+            var curr_file = '<div class="col-md-12"><a href="{2}/files/{3}">{4}</a> <i class="btn-fa fas fa-times float-right" onclick="deletefile({0}, {1}, $(this))" value="{2}" ></i></div>'.format(
                 chal,
                 files[x].id,
                 script_root,
