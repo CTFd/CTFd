@@ -19,11 +19,17 @@ table > thead > tr > td {
     border-top: none !important;
 }
 
-pre {
-    white-space: pre-wrap;
+.table td, .table th {
+    vertical-align: inherit;
 }
 
-.fa.spinner {
+pre {
+    white-space: pre-wrap;
+    margin: 0;
+    padding: 0;
+}
+
+.fa-spin.spinner {
     margin-top: 225px;
     text-align: center;
     opacity: 0.5;
@@ -141,4 +147,20 @@ pre {
 .no-decoration:hover {
     color: inherit !important;
     text-decoration: none !important;
+}
+
+.btn-fa {
+    cursor: pointer;
+}
+
+.close {
+    cursor: pointer;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-help {
+    cursor: help;
 }

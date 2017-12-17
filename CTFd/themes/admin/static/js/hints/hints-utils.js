@@ -44,8 +44,8 @@ function loadhints(chal, cb){
             "<td class='hint-entry d-table-cell w-75'><pre>{0}</pre></td>".format(htmlentities(hint.hint)) +
             "<td class='hint-cost d-table-cell text-center'>{0}</td>".format(hint.cost) +
             "<td class='hint-settings d-table-cell text-center'><span>" +
-                "<i role='button' class='fa fa-pencil-square-o' onclick=javascript:load_hint_modal('update',{0})></i>".format(hint.id)+
-                "<i role='button' class='fa fa-times' onclick=javascript:deletehint({0})></i>".format(hint.id)+
+                "<i role='button' class='btn-fa fas fa-edit' onclick=javascript:load_hint_modal('update',{0})></i>".format(hint.id)+
+                "<i role='button' class='btn-fa fas fa-times' onclick=javascript:deletehint({0})></i>".format(hint.id)+
                 "</span></td>" +
             "</tr>";
             table.append(hint_row);
@@ -56,40 +56,43 @@ function loadhints(chal, cb){
     });
 }
 
-$('.edit-hints').click(function (e) {
-    var chal_id = $(this).attr('chal-id');
-    loadhints(chal_id, function () {
-        $("#chal-id-for-hint").val(chal_id);  // Preload the challenge ID so the form submits properly. Remove in later iterations
-        $("#update-hints").attr('chal-id', chal_id);
-        $('#update-hints').modal();
+$(document).ready(function () {
+    $('.edit-hints').click(function (e) {
+        var chal_id = $(this).attr('chal-id');
+        loadhints(chal_id, function () {
+            $("#chal-id-for-hint").val(chal_id);  // Preload the challenge ID so the form submits properly. Remove in later iterations
+            $("#update-hints").attr('chal-id', chal_id);
+            $('#update-hints').modal();
+        });
     });
-});
 
 
-$('#create-hint').click(function (e) {
-    e.preventDefault();
-    load_hint_modal('create');
-});
-
-
-$('#hint-modal-submit').submit(function (e) {
-    e.preventDefault();
-    var params = {};
-    $(this).serializeArray().map(function (x) {
-        params[x.name] = x.value;
+    $('#create-hint').click(function (e) {
+        e.preventDefault();
+        load_hint_modal('create');
     });
-    $.post(script_root + $(this).attr('action'), params, function (data) {
-        loadhints(params['chal']);
+
+
+    $('#hint-modal-submit').submit(function (e) {
+        e.preventDefault();
+        var params = {};
+        $(this).serializeArray().map(function (x) {
+            params[x.name] = x.value;
+        });
+        $.post(script_root + $(this).attr('action'), params, function (data) {
+            loadhints(params['chal']);
+        });
+        $("#hint-modal").modal('hide');
     });
-    $("#hint-modal").modal('hide');
-});
 
 
-$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-    var target = $(e.target).attr("href");
-    if (target == '#hint-preview') {
-        var obj = $('#hint-modal-hint');
-        var data = marked(obj.val());
-        $(event.target.hash).html(data, {'gfm': true, 'breaks': true});
-    }
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href");
+        if (target == '#hint-preview') {
+            var obj = $('#hint-modal-hint');
+            var data = marked(obj.val());
+            $('#hint-preview').html(data, {'gfm': true, 'breaks': true});
+        }
+    });
+
 });

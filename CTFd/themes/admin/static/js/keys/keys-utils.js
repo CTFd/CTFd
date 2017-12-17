@@ -49,12 +49,12 @@ function loadkeys(chal, cb){
 }
 
 function updatekeys(){
-    keys = [];
-    vals = [];
-    chal = $('#keys-chal').val()
+    var keys = [];
+    var vals = [];
+    var chal = $('#keys-chal').val()
     $('.current-key').each(function(){
         keys.push($(this).val());
-    })
+    });
     $('#current-keys input[name*="key_type"]:checked').each(function(){
         vals.push($(this).val());
     })
@@ -92,46 +92,47 @@ function updatekey(){
 }
 
 
-$('.edit-keys').click(function (e) {
-    var chal_id = $(this).attr('chal-id');
-    loadkeys(chal_id, function () {
-        $("#update-keys").attr('chal-id', chal_id);
-        $('#update-keys').modal();
-    });
-});
-
-
-
-$('#create-key').click(function (e) {
-    $.get(script_root + '/admin/key_types', function (data) {
-        $("#create-keys-select").empty();
-        var option = "<option> -- </option>";
-        $("#create-keys-select").append(option);
-        for (var key in data) {
-            var option = "<option value='{0}'>{1}</option>".format(key, data[key]);
-            $("#create-keys-select").append(option);
-        }
-        $("#create-keys").modal();
-    });
-});
-
-$('#create-keys-select').change(function () {
-    var key_type_name = $(this).find("option:selected").text();
-
-    $.get(script_root + '/admin/key_types/' + key_type_name, function (key_data) {
-        $.get(script_root + key_data.templates.create, function (template_data) {
-            var template = nunjucks.compile(template_data);
-            $("#create-keys-entry-div").html(template.render());
-            $("#create-keys-button-div").show();
+$(document).ready(function () {
+    $('.edit-keys').click(function (e) {
+        var chal_id = $(this).attr('chal-id');
+        loadkeys(chal_id, function () {
+            $("#update-keys").attr('chal-id', chal_id);
+            $('#update-keys').modal();
         });
-    })
-});
+    });
 
 
-$('#create-keys-submit').click(function (e) {
-    e.preventDefault();
-    var chalid = $("#update-keys").attr('chal-id');
-    var key_data = $('#create-keys').find('input[name=key]').val();
-    var key_type = $('#create-keys-select').val();
-    create_key(chalid, key_data, key_type);
+    $('#create-key').click(function (e) {
+        $.get(script_root + '/admin/key_types', function (data) {
+            $("#create-keys-select").empty();
+            var option = "<option> -- </option>";
+            $("#create-keys-select").append(option);
+            for (var key in data) {
+                var option = "<option value='{0}'>{1}</option>".format(key, data[key]);
+                $("#create-keys-select").append(option);
+            }
+            $("#create-keys").modal();
+        });
+    });
+
+    $('#create-keys-select').change(function () {
+        var key_type_name = $(this).find("option:selected").text();
+
+        $.get(script_root + '/admin/key_types/' + key_type_name, function (key_data) {
+            $.get(script_root + key_data.templates.create, function (template_data) {
+                var template = nunjucks.compile(template_data);
+                $("#create-keys-entry-div").html(template.render());
+                $("#create-keys-button-div").show();
+            });
+        })
+    });
+
+
+    $('#create-keys-submit').click(function (e) {
+        e.preventDefault();
+        var chalid = $("#update-keys").attr('chal-id');
+        var key_data = $('#create-keys').find('input[name=key]').val();
+        var key_type = $('#create-keys-select').val();
+        create_key(chalid, key_data, key_type);
+    });
 });

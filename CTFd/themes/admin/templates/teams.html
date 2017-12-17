@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Teams <i class="fa fa-plus-circle create-team" role="button" data-toggle="tooltip" title="Create Team"></i></h1>
+		<h1>Teams <i class="btn-fa fas fa-plus-circle create-team" role="button" data-toggle="tooltip" title="Create Team"></i></h1>
 	</div>
 </div>
 
@@ -82,7 +82,7 @@
 
 					</div>
 					<button id="update-user" type="submit"
-							class="btn btn-primary btn-outlined pull-right modal-action">Update
+							class="btn btn-primary btn-outlined float-right modal-action">Update
 					</button>
 				</form>
 			</div>
@@ -114,7 +114,7 @@
 					</div>
 					<div class="form-group col-md-2">
 						<label for="team-name-search" class="sr-only">Search</label>
-						<button type="submit" class="btn btn-primary w-100"><i class="fa fa-search" aria-hidden="true"></i></button>
+						<button type="submit" class="btn btn-primary w-100"><i class="fas fa-search" aria-hidden="true"></i></button>
 					</div>
 			</form>
 
@@ -153,7 +153,7 @@
 						<td class="team-website d-none d-md-table-cell d-lg-table-cell text-center">
 							{% if team.website %}
 								<a href="{{ team.website }}" target="_blank">
-									<i class="fa fa-globe fa-2" data-toggle="tooltip" data-placement="top"
+									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
 									   title="{{ team.website }}" aria-hidden="true"></i>
 								</a>
 							{% endif %}
@@ -175,11 +175,11 @@
 							</div>
 						</td>
 						<td class="text-center"><span>
-							<i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="top" title="Modify {{ team.name }}"></i>
+							<i class="btn-fa fas fa-edit" data-toggle="tooltip" data-placement="top" title="Modify {{ team.name }}"></i>
 							{% if can_send_mail() %}
-							<i class="fa fa-envelope" data-toggle="tooltip" data-placement="top" title="Email {{ team.name }}"></i>
+							<i class="btn-fa fas fa-envelope" data-toggle="tooltip" data-placement="top" title="Email {{ team.name }}"></i>
 							{% endif %}
-							<i class="fa fa-times" data-toggle="tooltip" data-placement="top" title="Delete {{ team.name }}"></i>
+							<i class="btn-fa fas fa-times" data-toggle="tooltip" data-placement="top" title="Delete {{ team.name }}"></i>
 						</span>
 						</td>
 					</tr>
@@ -231,110 +231,6 @@ function load_update_modal(id, name, email, website, affiliation, country){
 	$('#update-user-modal').modal("show");
 }
 
-$('#update-user').click(function(e){
-	e.preventDefault();
-	var id = $('#update-user-modal input[name="id"]').val()
-	var user_data = $('#update-user-modal form').serializeArray()
-	$('#results').empty();
-	$.post($('#update-user-modal form').attr('action'), $('#update-user-modal form').serialize(), function(data){
-		var data = $.parseJSON(JSON.stringify(data))
-		for (var i = 0; i < data['data'].length; i++) {
-			if (data['data'][i] == 'success'){
-				$('#update-user-modal').modal('hide');
-				location.reload();
-			}
-			else{
-				var error = $('<div class="alert alert-danger alert-dismissable">\n' +
-					'  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
-					'  {0}\n'.format(data['data'][i]) +
-					'</div>');
-				$('#results').append(error);
-			}
-		};
-	})
-});
-
-$('.team-admin input').on('change', function(){
-	var elem = $(this).parent().parent().parent();
-	var id = elem.find('.team-id').text().trim();
-	var admin = $(this).prop('checked');
-	var nonce = $('#nonce').val();
-	console.log(admin);
-
-	$.post('{{ request.script_root }}/admin/team/'+id, {'admin':admin, 'nonce':nonce});
-});
-
-$('.team-verified input').on('change', function () {
-	var elem = $(this).parent().parent().parent();
-	var id = elem.find('.team-id').text().trim();
-	var verified = $(this).prop('checked');
-	var nonce = $('#nonce').val();
-	console.log(verified);
-
-	$.post('{{ request.script_root }}/admin/team/' + id, {'verified': verified, 'nonce': nonce});
-});
-
-$('#send-user-email').click(function(e){
-	e.preventDefault();
-	var id = $('#email-user input[name="id"]').val();
-	var email_data = $('#email-user form').serializeArray();
-	$.post($('#email-user form').attr('action'), $('#email-user form').serialize(), function(data){
-		if (data.result){
-			var error = $('<div class="alert alert-success alert-dismissable">\n' +
-				'  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
-				'  {0}\n'.format(data.message) +
-				'</div>');
-			$('#email-user-errors').append(error);
-		}
-		else{
-			var error = $('<div class="alert alert-danger alert-dismissable">\n' +
-				'  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
-				'  {0}\n'.format(data.message) +
-				'</div>');
-			$('#email-user-errors').append(error);
-		}
-	});
-});
-
-$('.fa-pencil-square-o').click(function(){
-	var elem = $(this).parent().parent().parent();
-	var id = elem.find('.team-id').attr('value') || '';
-	var name = elem.find('.team-name').attr('value')  || '';
-	var email = elem.find('.team-email').attr('value')  || '';
-	var website = elem.find('.team-website > a').attr('href')  || '';
-	var affiliation = elem.find('.team-affiliation').attr('value')  || '';
-	var country = elem.find('.team-country').attr('value')  || '';
-
-	load_update_modal(id, name, email, website, affiliation, country);
-});
-
-$('.create-team').click(function(){
-	load_update_modal('new', '', '', '', '', '');
-});
-
-$('.fa-times').click(function(){
-	var elem = $(this).parent().parent().parent();
-	var team_id = elem.find('.team-id').text().trim();
-	var name = elem.find('.team-name').text().trim();
-
-	var td_row = $(this).parent().parent().parent();
-
-	ezq({
-		title: "Delete User",
-		body: "Are you sure you want to delete {0}".format("<strong>"+name+"</strong>"),
-		success: function(){
-			var route = script_root + '/admin/team/' + team_id + '/delete';
-			$.post(route, {
-				nonce: nonce,
-			}, function (data) {
-				var data = $.parseJSON(JSON.stringify(data));
-				if (data == "1") {
-					td_row.remove();
-				}
-			});
-		}
-	})
-});
 
 function load_email_modal(id){
 	var modal = $('#email-user');
@@ -345,10 +241,121 @@ function load_email_modal(id){
 	$('#email-user').modal();
 }
 
-$('.fa-envelope').click(function(){
-	var elem = $(this).parent().parent().parent();
-	var id = elem.find('.team-id').text().trim();
-	load_email_modal(id);
+
+$(document).ready(function () {
+    $('#update-user').click(function (e) {
+        e.preventDefault();
+        var id = $('#update-user-modal input[name="id"]').val()
+        var user_data = $('#update-user-modal form').serializeArray()
+        $('#results').empty();
+        $.post($('#update-user-modal form').attr('action'), $('#update-user-modal form').serialize(), function (data) {
+            var data = $.parseJSON(JSON.stringify(data))
+            for (var i = 0; i < data['data'].length; i++) {
+                if (data['data'][i] == 'success') {
+                    $('#update-user-modal').modal('hide');
+                    location.reload();
+                }
+                else {
+                    var error = $('<div class="alert alert-danger alert-dismissable">\n' +
+                        '  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
+                        '  {0}\n'.format(data['data'][i]) +
+                        '</div>');
+                    $('#results').append(error);
+                }
+            }
+            ;
+        })
+    });
+
+    $('.team-admin input').on('change', function () {
+        var elem = $(this).parent().parent().parent();
+        var id = elem.find('.team-id').text().trim();
+        var admin = $(this).prop('checked');
+        var nonce = $('#nonce').val();
+        console.log(admin);
+
+        $.post('{{ request.script_root }}/admin/team/' + id, {'admin': admin, 'nonce': nonce});
+    });
+
+    $('.team-verified input').on('change', function () {
+        var elem = $(this).parent().parent().parent();
+        var id = elem.find('.team-id').text().trim();
+        var verified = $(this).prop('checked');
+        var nonce = $('#nonce').val();
+        console.log(verified);
+
+        $.post('{{ request.script_root }}/admin/team/' + id, {'verified': verified, 'nonce': nonce});
+    });
+
+    $('#send-user-email').click(function (e) {
+        e.preventDefault();
+        var id = $('#email-user input[name="id"]').val();
+        var email_data = $('#email-user form').serializeArray();
+        $.post($('#email-user form').attr('action'), $('#email-user form').serialize(), function (data) {
+            if (data.result) {
+                var error = $('<div class="alert alert-success alert-dismissable">\n' +
+                    '  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
+                    '  {0}\n'.format(data.message) +
+                    '</div>');
+                $('#email-user-errors').append(error);
+            }
+            else {
+                var error = $('<div class="alert alert-danger alert-dismissable">\n' +
+                    '  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
+                    '  {0}\n'.format(data.message) +
+                    '</div>');
+                $('#email-user-errors').append(error);
+            }
+        });
+    });
+
+    $('.fa-edit').click(function () {
+        var elem = $(this).parent().parent().parent();
+        var id = elem.find('.team-id').attr('value') || '';
+        var name = elem.find('.team-name').attr('value') || '';
+        var email = elem.find('.team-email').attr('value') || '';
+        var website = elem.find('.team-website > a').attr('href') || '';
+        var affiliation = elem.find('.team-affiliation').attr('value') || '';
+        var country = elem.find('.team-country').attr('value') || '';
+
+        load_update_modal(id, name, email, website, affiliation, country);
+    });
+
+    $('.create-team').click(function () {
+        load_update_modal('new', '', '', '', '', '');
+    });
+
+    $('.fa-times').click(function () {
+        var elem = $(this).parent().parent().parent();
+        var team_id = elem.find('.team-id').text().trim();
+        var name = elem.find('.team-name').text().trim();
+
+        var td_row = $(this).parent().parent().parent();
+
+        ezq({
+            title: "Delete User",
+            body: "Are you sure you want to delete {0}".format("<strong>" + name + "</strong>"),
+            success: function () {
+                var route = script_root + '/admin/team/' + team_id + '/delete';
+                $.post(route, {
+                    nonce: nonce,
+                }, function (data) {
+                    var data = $.parseJSON(JSON.stringify(data));
+                    if (data == "1") {
+                        td_row.remove();
+                    }
+                });
+            }
+        })
+    });
+
+
+    $('.fa-envelope').click(function () {
+        var elem = $(this).parent().parent().parent();
+        var id = elem.find('.team-id').text().trim();
+        load_email_modal(id);
+    });
+
 });
 </script>
 {% endblock %}

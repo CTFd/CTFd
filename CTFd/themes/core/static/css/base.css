@@ -25,7 +25,7 @@ table > thead > tr > td {
     clear: both;
 }
 
-.fa.spinner {
+.fa-spin.spinner {
     margin-top: 225px;
     text-align: center;
     opacity: 0.5;
@@ -108,4 +108,20 @@ table > thead > tr > td {
 .alert {
     border-radius: 0 !important;
     padding: 0.8em;
+}
+
+.btn-fa {
+    cursor: pointer;
+}
+
+.close {
+    cursor: pointer;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-help {
+    cursor: help;
 }

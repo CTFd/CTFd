@@ -152,8 +152,9 @@ function marksolves(cb) {
         var solves = $.parseJSON(JSON.stringify(data));
         for (var i = solves['solves'].length - 1; i >= 0; i--) {
             var id = solves['solves'][i].chalid;
-            $('button[value="' + id + '"]').removeClass('theme-background');
-            $('button[value="' + id + '"]').addClass('solved-challenge');
+            var btn = $('button[value="' + id + '"]');
+            btn.addClass('solved-challenge');
+            btn.prepend("<i class='fas fa-check corner-button-check'></i>")
         }
         if (cb) {
             cb();
@@ -253,9 +254,8 @@ function loadchals(cb) {
             if (user_solves.indexOf(chalinfo.id) == -1){
                 var chalbutton = $("<button class='btn btn-dark challenge-button w-100 text-truncate pt-3 pb-3 mb-2' value='{0}'></button>".format(chalinfo.id));
             } else {
-                var chalbutton = $("<button class='btn btn-dark challenge-button solved-challenge w-100 text-truncate pt-3 pb-3 mb-2' value='{0}'></button>".format(chalinfo.id));
+                var chalbutton = $("<button class='btn btn-dark challenge-button solved-challenge w-100 text-truncate pt-3 pb-3 mb-2' value='{0}'><i class='fas fa-check corner-button-check'></i></button>".format(chalinfo.id));
             }
-
 
             var chalheader = $("<p>{0}</p>".format(chalinfo.name));
             var chalscore = $("<span>{0}</span>".format(chalinfo.value));

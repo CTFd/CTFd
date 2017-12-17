@@ -8,7 +8,7 @@
 	<div class="container">
 		<h1>Pages
 			<a class="no-decoration" href="{{ request.script_root }}/admin/pages?operation=create">
-				<i class="fa fa-plus-circle create-page" role="button" data-toggle="tooltip" title="Create Page"></i>
+				<i class="btn-fa fas fa-plus-circle create-page" role="button" data-toggle="tooltip" title="Create Page"></i>
 			</a>
 		</h1>
 	</div>
@@ -52,8 +52,8 @@
 							{% endif %}
 						</td>
 						<td class="text-center">
-							<a class="no-decoration" href="{{ request.script_root }}/admin/pages?id={{ page.id }}"><i class="fa fa-edit"></i></a>
-							<i class="fa fa-times" page-id="{{ page.id }}" page-route="{{ page.route }}" page-title="{{ page.title }}"></i>
+							<a class="no-decoration" href="{{ request.script_root }}/admin/pages?id={{ page.id }}"><i class="btn-fa fas fa-edit"></i></a>
+							<i class="btn-fa fas fa-times" page-id="{{ page.id }}" page-route="{{ page.route }}" page-title="{{ page.title }}"></i>
 						</td>
 					</tr>
 				{% endfor %}
@@ -69,29 +69,31 @@
 <script>
 var nonce = "{{ nonce }}";
 
-$('.fa-times').click(function(){
-	var elem = $(this);
-	var name = elem.attr("page-route");
-	var page_id = elem.attr("page-id");
-	ezq({
-		title: 'Delete '+ name,
-		body: "Are you sure you want to delete {0}?".format(
-			"<strong>" + htmlentities(name) + "</strong>"
-		),
-		success: function(){
-		    var page_delete_route = '{{ request.script_root }}/admin/pages/delete';
-			$.post(page_delete_route, {
-				route: name,
-				id: page_id,
-				nonce: nonce,
-			}, function (data) {
-				var data = $.parseJSON(JSON.stringify(data));
-				if (data == "1") {
-					location.reload();
-				}
-			});
-		}
-	});
+$(document).ready(function () {
+    $('.fa-times').click(function () {
+        var elem = $(this);
+        var name = elem.attr("page-route");
+        var page_id = elem.attr("page-id");
+        ezq({
+            title: 'Delete ' + name,
+            body: "Are you sure you want to delete {0}?".format(
+                "<strong>" + htmlentities(name) + "</strong>"
+            ),
+            success: function () {
+                var page_delete_route = '{{ request.script_root }}/admin/pages/delete';
+                $.post(page_delete_route, {
+                    route: name,
+                    id: page_id,
+                    nonce: nonce,
+                }, function (data) {
+                    var data = $.parseJSON(JSON.stringify(data));
+                    if (data == "1") {
+                        location.reload();
+                    }
+                });
+            }
+        });
+    });
 });
 </script>
 {% endblock %}

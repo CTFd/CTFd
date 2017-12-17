@@ -60,7 +60,7 @@
 						<label>
 							<input id="workshop_mode" name="workshop_mode" type="checkbox"
 								   {% if workshop_mode %}checked{% endif %}>
-							Workshop Mode <i class="fa fa-question-circle gray-text" data-toggle="tooltip"
+							Workshop Mode <i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip"
 											 data-placement="right"
 											 title="Hide all public team and score information."></i>
 						</label>
@@ -70,7 +70,7 @@
 						<label>
 							<input id="paused" name="paused" type="checkbox"
 								   {% if paused %}checked{% endif %}>
-							Pause CTF <i class="fa fa-question-circle gray-text" data-toggle="tooltip"
+							Pause CTF <i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip"
 										 data-placement="right"
 										 title="Prevent users from submitting answers until unpaused. Challenges can still be viewed."></i>
 						</label>
@@ -602,66 +602,67 @@
 			return m;
 		}
 
-		$('.start-date').change(function(){
-			load_date_values('start');
-		});
-
-		$('.end-date').change(function () {
-			load_date_values('end');
-		});
-
-		$('.freeze-date').change(function () {
-			load_date_values('freeze');
-		});
-
-		$('#export-button').click(function(e){
-			e.preventDefault();
-			var segments = [];
-			$.each($('.export-config:checked'), function(key, value){
-				segments.push($(value).val());
-			});
-			segments = segments.join(',');
-			var href = script_root + '/admin/export';
-			$('#export-button').attr('href', href+'?segments='+segments);
-			window.location.href = $('#export-button').attr('href');
-		});
-
-		$('#import-button').click(function(e){
-			e.preventDefault();
-			var segments = [];
-			$.each($('.import-config:checked'), function(key, value){
-				segments.push($(value).val());
-			});
-			segments = segments.join(',');
-			console.log(segments);
-
-			var import_file = document.getElementById('import-file').files[0];
-			var nonce = $('#nonce').val();
-
-			var form_data = new FormData();
-			form_data.append('segments', segments);
-			form_data.append('backup', import_file);
-			form_data.append('nonce', nonce);
-
-			$.ajax({
-				url : script_root + '/admin/import',
-				type : 'POST',
-				data : form_data,
-				processData: false,
-				contentType: false,
-				statusCode: {
-						500: function(resp) {
-							console.log(resp.responseText);
-							alert(resp.responseText);
-						}
-				},
-				success : function(data) {
-					window.location.reload()
-				}
-			});
-		});
-
 		$(function () {
+            $('.start-date').change(function () {
+                load_date_values('start');
+            });
+
+            $('.end-date').change(function () {
+                load_date_values('end');
+            });
+
+            $('.freeze-date').change(function () {
+                load_date_values('freeze');
+            });
+
+            $('#export-button').click(function (e) {
+                e.preventDefault();
+                var segments = [];
+                $.each($('.export-config:checked'), function (key, value) {
+                    segments.push($(value).val());
+                });
+                segments = segments.join(',');
+                var href = script_root + '/admin/export';
+                $('#export-button').attr('href', href + '?segments=' + segments);
+                window.location.href = $('#export-button').attr('href');
+            });
+
+            $('#import-button').click(function (e) {
+                e.preventDefault();
+                var segments = [];
+                $.each($('.import-config:checked'), function (key, value) {
+                    segments.push($(value).val());
+                });
+                segments = segments.join(',');
+                console.log(segments);
+
+                var import_file = document.getElementById('import-file').files[0];
+                var nonce = $('#nonce').val();
+
+                var form_data = new FormData();
+                form_data.append('segments', segments);
+                form_data.append('backup', import_file);
+                form_data.append('nonce', nonce);
+
+                $.ajax({
+                    url: script_root + '/admin/import',
+                    type: 'POST',
+                    data: form_data,
+                    processData: false,
+                    contentType: false,
+                    statusCode: {
+                        500: function (resp) {
+                            console.log(resp.responseText);
+                            alert(resp.responseText);
+                        }
+                    },
+                    success: function (data) {
+                        window.location.reload()
+                    }
+                });
+            });
+
+
 			var hash = window.location.hash;
 			if (hash) {
 				hash = hash.replace("<>[]'\"", "");
