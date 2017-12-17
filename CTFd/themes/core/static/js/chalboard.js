@@ -152,8 +152,9 @@ function marksolves(cb) {
         var solves = $.parseJSON(JSON.stringify(data));
         for (var i = solves['solves'].length - 1; i >= 0; i--) {
             var id = solves['solves'][i].chalid;
-            $('button[value="' + id + '"]').removeClass('theme-background');
-            $('button[value="' + id + '"]').addClass('solved-challenge');
+            var btn = $('button[value="' + id + '"]');
+            btn.addClass('solved-challenge');
+            btn.prepend("<i class='fas fa-check corner-button-check'></i>")
         }
         if (cb) {
             cb();
