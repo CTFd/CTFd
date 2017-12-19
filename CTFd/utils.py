@@ -558,21 +558,21 @@ def set_config(key, value):
 
 @cache.memoize()
 def can_send_mail():
-    return mailgun() or mailserver()
+    return mailserver() or mailgun()
 
 
 @cache.memoize()
 def mailgun():
     if app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_BASE_URL'):
         return True
-    if (get_config('mg_api_key') and get_config('mg_base_url')):
+    if get_config('mg_api_key') and get_config('mg_base_url'):
         return True
     return False
 
 
 @cache.memoize()
 def mailserver():
-    if (get_config('mail_server') and get_config('mail_port')):
+    if get_config('mail_server') and get_config('mail_port'):
         return True
     return False
 
@@ -595,16 +595,28 @@ def sendmail(addr, text):
     ctf_name = get_config('ctf_name')
     mailfrom_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
     if mailgun():
-        mg_api_key = get_config('mg_api_key') or app.config.get('MAILGUN_API_KEY')
-        mg_base_url = get_config('mg_base_url') or app.config.get('MAILGUN_BASE_URL')
+        if get_config('mg_api_key') and get_config('mg_base_url'):
+            mg_api_key = get_config('mg_api_key')
+            mg_base_url = get_config('mg_base_url')
+        elif app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_BASE_URL'):
+            mg_api_key = app.config.get('MAILGUN_API_KEY')
+            mg_base_url = app.config.get('MAILGUN_BASE_URL')
+        else:
+            return False, "Mailgun settings are missing"
 
-        r = requests.post(
-            mg_base_url + '/messages',
-            auth=("api", mg_api_key),
-            data={"from": "{} Admin <{}>".format(ctf_name, mailfrom_addr),
-                  "to": [addr],
-                  "subject": "Message from {0}".format(ctf_name),
-                  "text": text})
+        try:
+            r = requests.post(
+                mg_base_url + '/messages',
+                auth=("api", mg_api_key),
+                data={"from": "{} Admin <{}>".format(ctf_name, mailfrom_addr),
+                      "to": [addr],
+                      "subject": "Message from {0}".format(ctf_name),
+                      "text": text},
+                timeout=1.0
+            )
+        except requests.RequestException as e:
+            return False, "{error} exception occured while handling your request".format(error=type(e).__name__)
+
         if r.status_code == 200:
             return True, "Email sent"
         else:
