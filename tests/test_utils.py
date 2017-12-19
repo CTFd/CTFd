@@ -8,6 +8,7 @@ from CTFd.utils import register_plugin_script, register_plugin_stylesheet
 from CTFd.utils import base64encode, base64decode
 from CTFd.utils import check_email_format
 from CTFd.utils import update_check
+from email.mime.text import MIMEText
 from freezegun import freeze_time
 from mock import patch, Mock
 import json
@@ -117,7 +118,6 @@ def test_admin_override_template():
 @patch('smtplib.SMTP')
 def test_sendmail_with_smtp(mock_smtp):
     """Does sendmail work properly with simple SMTP mail servers"""
-    from email.mime.text import MIMEText
     app = create_ctfd()
     with app.app_context():
         set_config('mail_server', 'localhost')
@@ -141,11 +141,92 @@ def test_sendmail_with_smtp(mock_smtp):
     destroy_ctfd(app)
 
 
+@patch.object(requests, 'post')
+def test_sendmail_with_mailgun_from_config_file(fake_post_request):
+    """Does sendmail work properly with Mailgun using file configuration"""
+    app = create_ctfd()
+    with app.app_context():
+        app.config['MAILGUN_API_KEY'] = 'key-1234567890-file-config'
+        app.config['MAILGUN_BASE_URL'] = 'https://api.mailgun.net/v3/file.faked.com'
+
+        from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+        to_addr = 'user@user.com'
+        msg = 'this is a test'
+
+        sendmail(to_addr, msg)
+
+        ctf_name = get_config('ctf_name')
+        email_msg = MIMEText(msg)
+        email_msg['Subject'] = "Message from {0}".format(ctf_name)
+        email_msg['From'] = from_addr
+        email_msg['To'] = to_addr
+
+        fake_response = Mock()
+        fake_post_request.return_value = fake_response
+        fake_response.status_code = 200
+
+        status, message = sendmail(to_addr, msg)
+
+        args, kwargs = fake_post_request.call_args
+        assert args[0] == 'https://api.mailgun.net/v3/file.faked.com/messages'
+        assert kwargs['auth'] == ('api', u'key-1234567890-file-config')
+        assert kwargs['timeout'] == 1.0
+        assert kwargs['data'] == {'to': ['user@user.com'], 'text': 'this is a test',
+                                  'from': 'CTFd Admin <noreply@ctfd.io>', 'subject': 'Message from CTFd'}
+
+        assert fake_response.status_code == 200
+        assert status is True
+        assert message == "Email sent"
+    destroy_ctfd(app)
+
+
+@patch.object(requests, 'post')
+def test_sendmail_with_mailgun_from_db_config(fake_post_request):
+    """Does sendmail work properly with Mailgun using database configuration"""
+    app = create_ctfd()
+    with app.app_context():
+        app.config['MAILGUN_API_KEY'] = 'key-1234567890-file-config'
+        app.config['MAILGUN_BASE_URL'] = 'https://api.mailgun.net/v3/file.faked.com'
+
+        # db values should take precedence over file values
+        set_config('mg_api_key', 'key-1234567890-db-config')
+        set_config('mg_base_url', 'https://api.mailgun.net/v3/db.faked.com')
+
+        from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+        to_addr = 'user@user.com'
+        msg = 'this is a test'
+
+        sendmail(to_addr, msg)
+
+        ctf_name = get_config('ctf_name')
+        email_msg = MIMEText(msg)
+        email_msg['Subject'] = "Message from {0}".format(ctf_name)
+        email_msg['From'] = from_addr
+        email_msg['To'] = to_addr
+
+        fake_response = Mock()
+        fake_post_request.return_value = fake_response
+        fake_response.status_code = 200
+
+        status, message = sendmail(to_addr, msg)
+
+        args, kwargs = fake_post_request.call_args
+        assert args[0] == 'https://api.mailgun.net/v3/db.faked.com/messages'
+        assert kwargs['auth'] == ('api', u'key-1234567890-db-config')
+        assert kwargs['timeout'] == 1.0
+        assert kwargs['data'] == {'to': ['user@user.com'], 'text': 'this is a test',
+                                  'from': 'CTFd Admin <noreply@ctfd.io>', 'subject': 'Message from CTFd'}
+
+        assert fake_response.status_code == 200
+        assert status is True
+        assert message == "Email sent"
+    destroy_ctfd(app)
+
+
 @patch('smtplib.SMTP')
 @freeze_time("2012-01-14 03:21:34")
 def test_verify_email(mock_smtp):
     """Does verify_email send emails"""
-    from email.mime.text import MIMEText
     app = create_ctfd()
     with app.app_context():
         set_config('mail_server', 'localhost')
