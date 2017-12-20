@@ -20,7 +20,7 @@ if sys.version_info[0] < 3:
 __version__ = '1.1.0a1'
 
 
-class FlaskCTFd(Flask):
+class CTFdFlask(Flask):
     def __init__(self, *args, **kwargs):
         """Overriden Jinja constructor setting a custom jinja_environment"""
         self.jinja_environment = SandboxedBaseEnvironment
@@ -28,7 +28,7 @@ class FlaskCTFd(Flask):
 
     def create_jinja_environment(self):
         """Overridden jinja environment constructor"""
-        return super(FlaskCTFd, self).create_jinja_environment()
+        return super(CTFdFlask, self).create_jinja_environment()
 
 
 class SandboxedBaseEnvironment(SandboxedEnvironment):
@@ -80,7 +80,7 @@ def run_upgrade():
 
 
 def create_app(config='CTFd.config.Config'):
-    app = FlaskCTFd(__name__)
+    app = CTFdFlask(__name__)
     with app.app_context():
         app.config.from_object(config)
 
