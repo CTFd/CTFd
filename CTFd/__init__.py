@@ -3,12 +3,10 @@ import os
 
 from distutils.version import StrictVersion
 from flask import Flask
-from jinja2 import FileSystemLoader, select_autoescape
+from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from sqlalchemy.engine.url import make_url
-from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy_utils import database_exists, create_database
-from sqlalchemy_utils.functions import get_tables
 from six.moves import input
 
 from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp, update_check
@@ -22,7 +20,28 @@ if sys.version_info[0] < 3:
 __version__ = '1.1.0a1'
 
 
+class CTFdFlask(Flask):
+    def __init__(self, *args, **kwargs):
+        """Overriden Jinja constructor setting a custom jinja_environment"""
+        self.jinja_environment = SandboxedBaseEnvironment
+        Flask.__init__(self, *args, **kwargs)
+
+    def create_jinja_environment(self):
+        """Overridden jinja environment constructor"""
+        return super(CTFdFlask, self).create_jinja_environment()
+
+
+class SandboxedBaseEnvironment(SandboxedEnvironment):
+    """SandboxEnvironment that mimics the Flask BaseEnvironment"""
+    def __init__(self, app, **options):
+        if 'loader' not in options:
+            options['loader'] = app.create_global_jinja_loader()
+        SandboxedEnvironment.__init__(self, **options)
+        self.app = app
+
+
 class ThemeLoader(FileSystemLoader):
+    """Custom FileSystemLoader that switches themes based on the configuration value"""
     def __init__(self, searchpath, encoding='utf-8', followlinks=False):
         super(ThemeLoader, self).__init__(searchpath, encoding, followlinks)
         self.overriden_templates = {}
@@ -61,14 +80,11 @@ def run_upgrade():
 
 
 def create_app(config='CTFd.config.Config'):
-    app = Flask(__name__)
+    app = CTFdFlask(__name__)
     with app.app_context():
         app.config.from_object(config)
+
         theme_loader = ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True)
-        app.jinja_env = SandboxedEnvironment(
-            loader=theme_loader,
-            autoescape=select_autoescape(['html', 'xml'])
-        )
         app.jinja_loader = theme_loader
 
         from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
