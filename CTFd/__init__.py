@@ -3,7 +3,8 @@ import os
 
 from distutils.version import StrictVersion
 from flask import Flask
-from jinja2 import FileSystemLoader
+from jinja2 import FileSystemLoader, select_autoescape
+from jinja2.sandbox import SandboxedEnvironment
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy_utils import database_exists, create_database
@@ -63,7 +64,12 @@ def create_app(config='CTFd.config.Config'):
     app = Flask(__name__)
     with app.app_context():
         app.config.from_object(config)
-        app.jinja_loader = ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True)
+        theme_loader = ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True)
+        app.jinja_env = SandboxedEnvironment(
+            loader=theme_loader,
+            autoescape=select_autoescape(['html', 'xml'])
+        )
+        app.jinja_loader = theme_loader
 
         from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
 
