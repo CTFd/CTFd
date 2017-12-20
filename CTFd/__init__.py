@@ -22,6 +22,7 @@ __version__ = '1.1.0a1'
 
 class FlaskCTFd(Flask):
     def __init__(self, *args, **kwargs):
+        """Overriden Jinja constructor setting a custom jinja_environment"""
         self.jinja_environment = SandboxedBaseEnvironment
         Flask.__init__(self, *args, **kwargs)
 
