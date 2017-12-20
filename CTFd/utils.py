@@ -516,18 +516,13 @@ def delete_file(file_id):
 
 
 @cache.memoize()
-def get_config(key):
+def get_app_config(key):
     value = app.config.get(key)
-    if value:
-        if value and value.isdigit():
-            return int(value)
-        elif value and isinstance(value, six.string_types):
-            if value.lower() == 'true':
-                return True
-            elif value.lower() == 'false':
-                return False
-            else:
-                return value
+    return value
+
+
+@cache.memoize()
+def get_config(key):
     config = Config.query.filter_by(key=key).first()
     if config and config.value:
         value = config.value
@@ -774,7 +769,7 @@ def update_check(force=False):
 
 
 def export_ctf(segments=None):
-    db = dataset.connect(get_config('SQLALCHEMY_DATABASE_URI'))
+    db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
     if segments is None:
         segments = ['challenges', 'teams', 'both', 'metadata']
 
@@ -826,7 +821,7 @@ def export_ctf(segments=None):
         backup_zip.writestr('db/alembic_version.json', result_file.read())
 
     # Backup uploads
-    upload_folder = os.path.join(os.path.normpath(app.root_path), get_config('UPLOAD_FOLDER'))
+    upload_folder = os.path.join(os.path.normpath(app.root_path), app.config.get('UPLOAD_FOLDER'))
     for root, dirs, files in os.walk(upload_folder):
         for file in files:
             parent_dir = os.path.basename(root)
@@ -838,7 +833,7 @@ def export_ctf(segments=None):
 
 
 def import_ctf(backup, segments=None, erase=False):
-    side_db = dataset.connect(get_config('SQLALCHEMY_DATABASE_URI'))
+    side_db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
     if segments is None:
         segments = ['challenges', 'teams', 'both', 'metadata']
 
@@ -924,7 +919,7 @@ def import_ctf(backup, segments=None, erase=False):
                     entry_id = entry.pop('id', None)
                     # This is a hack to get SQlite to properly accept datetime values from dataset
                     # See Issue #246
-                    if get_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
+                    if get_app_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
                         for k, v in entry.items():
                             if isinstance(v, six.string_types):
                                 match = re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v)
