@@ -13,6 +13,8 @@
 * Hints can now be previewed from the admin panel.
 * Various confirmation modals have been replaced with `ezq.js`, a simple Bootstrap modal wrapper.
 * Fixed a bug where challenge buttons on the challenge board would load before being styled as solved.
+* FontAwesome has been upgraded to FontAwesome 5.
+* Themes are now rendered using the Jinja2 SandboxedEnvironment.
 
 **Database**
 
@@ -32,10 +34,13 @@
 
 * CTFs can now be paused to prevent solves.
 * A new authed_only decorator is available to restrict pages to logged-in users.
-* CTFd will now check for updates on start against `versioning.ctfd.io`. Admins will see in the admin panel that CTFd can be updated.
+* CTFd will now check for updates against `versioning.ctfd.io`. Admins will see in the admin panel that CTFd can be updated.
 * A ratelimit function has been implemented. Authentication and email related functions are now ratelimited.
 * Code coverage from codecov.
 * Admins can now see the reason why an email to a team failed to send.
+* SMTP email connections take priority over mailgun settings now. The opposite used to be true.
+* The JavaScript `submitkey()` function now takes an optional callback.
+* `utils.get_config()` no longer looks at `app.config` values. Instead use `utils.get_app_config()`.
 
 
 1.0.5 / 2017-10-25
