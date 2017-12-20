@@ -64,10 +64,12 @@ def create_app(config='CTFd.config.Config'):
     app = Flask(__name__)
     with app.app_context():
         app.config.from_object(config)
+        theme_loader = ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True)
         app.jinja_env = SandboxedEnvironment(
-            loader=ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True),
+            loader=theme_loader,
             autoescape=select_autoescape(['html', 'xml'])
         )
+        app.jinja_loader = theme_loader
 
         from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
 
