@@ -41,6 +41,7 @@
 * SMTP email connections take priority over mailgun settings now. The opposite used to be true.
 * The JavaScript `submitkey()` function now takes an optional callback.
 * `utils.get_config()` no longer looks at `app.config` values. Instead use `utils.get_app_config()`.
+* Only prompt about upgrades when running with a TTY.
 
 
 1.0.5 / 2017-10-25
