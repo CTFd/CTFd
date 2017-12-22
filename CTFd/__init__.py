@@ -150,6 +150,9 @@ def create_app(config='CTFd.config.Config'):
             else:
                 exit()
 
+        if not version:
+            utils.set_config('ctf_version', __version__)
+
         if not utils.get_config('ctf_theme'):
             utils.set_config('ctf_theme', 'core')
 
