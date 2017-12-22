@@ -17,7 +17,7 @@ if sys.version_info[0] < 3:
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
-__version__ = '1.1.0a1'
+__version__ = '1.1.0'
 
 
 class CTFdFlask(Flask):
@@ -64,14 +64,17 @@ class ThemeLoader(FileSystemLoader):
 
 
 def confirm_upgrade():
-    print("/*\\ CTFd has updated and must update the database! /*\\")
-    print("/*\\ Please backup your database before proceeding! /*\\")
-    print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")
-    if input('Run database migrations (Y/N)').lower().strip() == 'y':
-        return True
+    if sys.stdin.isatty():
+        print("/*\\ CTFd has updated and must update the database! /*\\")
+        print("/*\\ Please backup your database before proceeding! /*\\")
+        print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")
+        if input('Run database migrations (Y/N)').lower().strip() == 'y':
+            return True
+        else:
+            print('/*\\ Ignored database migrations... /*\\')
+            return False
     else:
-        print('/*\\ Ignored database migrations... /*\\')
-        return False
+        return True
 
 
 def run_upgrade():
