@@ -1,14 +1,3 @@
-
-
-
-// function deletechal(chalid){
-//     $.post(script_root + '/admin/chal/delete', {'nonce':$('#nonce').val(), 'id':chalid});
-// }
-
-
-
-
-
 $('#submit-key').click(function (e) {
     submitkey($('#chalid').val(), $('#answer').val())
 });
@@ -17,10 +6,6 @@ $('#submit-keys').click(function (e) {
     e.preventDefault();
     $('#update-keys').modal('hide');
 });
-
-
-
-
 
 $('#limit_max_attempts').change(function() {
     if(this.checked) {
@@ -42,8 +27,6 @@ $('#new-desc-edit').on('shown.bs.tab', function (event) {
         $(event.target.hash).html(marked($('#new-desc-editor').val(), {'gfm':true, 'breaks':true}))
     }
 });
-
-
 
 function loadchal(id, update) {
     $.get(script_root + '/admin/chal/' + id, function(obj){
@@ -73,10 +56,6 @@ function loadchal(id, update) {
 
 function openchal(id){
     loadchal(id);
-    loadkeys(id);
-    loadhints(id);
-    loadtags(id);
-    loadfiles(id);
 }
 
 $(document).ready(function(){
