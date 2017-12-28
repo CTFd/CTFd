@@ -335,14 +335,14 @@
 		});
 	}
 
-	$(document).ready(function () {
-		function preview_page() {
-			editor.save(); // Save the CodeMirror data to the Textarea
-			$('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=preview');
-			$('#page-edit').attr('target', '_blank');
-			$('#page-edit').submit();
-		}
+	function preview_page() {
+		editor.save(); // Save the CodeMirror data to the Textarea
+		$('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=preview');
+		$('#page-edit').attr('target', '_blank');
+		$('#page-edit').submit();
+	}
 
+	$(document).ready(function () {
 		$('#media-insert').click(function (e) {
 			var tag = $('#media-icon').children()[0].nodeName.toLowerCase();
 			console.log(tag);
