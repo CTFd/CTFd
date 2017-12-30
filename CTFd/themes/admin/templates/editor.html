@@ -154,9 +154,7 @@
 
 								<div class="form-group">
 									<textarea id="admin-pages-editor" class="d-none" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea>
-									{% if page is defined %}
-										<input name='id' type='hidden' value="{{ page.id }}">
-									{% endif %}
+									<input name='id' type='hidden' {% if page is defined %}value="{{ page.id }}"{% endif %}>
 								</div>
 							</div>
 							<div role="tabpanel" class="tab-pane content" id="content-preview" style="height:400px">
@@ -322,13 +320,14 @@
 			success: function (data) {
 				if (data.result == 'success'){
 					if (data.operation == 'publish'){
-						window.location = script_root + '/admin/pages'
+						window.location = script_root + '/admin/pages';
 					} else if (data.operation == 'save'){
+						$('input[name=id]').val(data.page.id);
 						ezal({
 							title: 'Saved',
 							body: 'Your changes have been saved',
 							button: 'Okay'
-						})
+						});
 					}
 				}
 			}
