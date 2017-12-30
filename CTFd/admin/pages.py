@@ -55,14 +55,20 @@ def admin_pages_view():
                 page.draft = False
 
             db.session.commit()
-            db.session.close()
 
-            cache.clear()
-
-            return jsonify({
+            data = {
                 'result': 'success',
-                'operation': page_op
-            })
+                'operation': page_op,
+                'page': {
+                    'id': page.id,
+                    'route': page.route,
+                    'title': page.title
+                }
+            }
+
+            db.session.close()
+            cache.clear()
+            return jsonify(data)
 
         if page_op == 'publish':
             page = Pages(title, route, html, draft=False, auth_required=auth_required)
@@ -71,14 +77,21 @@ def admin_pages_view():
 
         db.session.add(page)
         db.session.commit()
-        db.session.close()
 
+        data = {
+            'result': 'success',
+            'operation': page_op,
+            'page': {
+                'id': page.id,
+                'route': page.route,
+                'title': page.title
+            }
+        }
+
+        db.session.close()
         cache.clear()
 
-        return jsonify({
-            'result': 'success',
-            'operation': page_op
-        })
+        return jsonify(data)
 
     pages = Pages.query.all()
     return render_template('admin/pages.html', pages=pages)
