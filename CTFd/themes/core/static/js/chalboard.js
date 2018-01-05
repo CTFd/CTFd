@@ -342,16 +342,18 @@ var load_location_hash = function () {
     }
 };
 
-function update(){
+function update(cb){
     load_user_solves(function () { // Load the user's solved challenge ids
         loadchals(function () { //  Load the full list of challenges
-            updatesolves(load_location_hash); // Load the counts of all challenge solves and then load the location hash specified challenge
+            updatesolves(cb); // Load the counts of all challenge solves and then load the location hash specified challenge
         });
     });
 }
 
 $(function() {
-    update();
+    update(function(){
+        load_location_hash();
+    });
 });
 
 $('.nav-tabs a').click(function (e) {
