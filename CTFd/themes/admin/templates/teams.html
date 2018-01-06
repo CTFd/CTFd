@@ -271,7 +271,6 @@ $(document).ready(function () {
         var elem = $(this).parent().parent().parent();
         var id = elem.find('.team-id').text().trim();
         var admin = $(this).prop('checked');
-        var nonce = $('#nonce').val();
         console.log(admin);
 
         $.post('{{ request.script_root }}/admin/team/' + id, {'admin': admin, 'nonce': nonce});
@@ -281,7 +280,6 @@ $(document).ready(function () {
         var elem = $(this).parent().parent().parent();
         var id = elem.find('.team-id').text().trim();
         var verified = $(this).prop('checked');
-        var nonce = $('#nonce').val();
         console.log(verified);
 
         $.post('{{ request.script_root }}/admin/team/' + id, {'verified': verified, 'nonce': nonce});
