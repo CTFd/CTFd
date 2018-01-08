@@ -69,7 +69,6 @@ function loadchal(chalid, cb){
         var categories = [];
         var challenge = $.parseJSON(JSON.stringify(data));
 
-
         for (var i = challenges['game'].length - 1; i >= 0; i--) {
             if (challenges['game'][i]['id'] == challenge.id) {
                 challenges['game'][i] = challenge
@@ -88,7 +87,6 @@ function loadchals(cb){
     }, function (data) {
         var categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
-
 
         for (var i = challenges['game'].length - 1; i >= 0; i--) {
             if ($.inArray(challenges['game'][i].category, categories) == -1) {
