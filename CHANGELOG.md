@@ -1,3 +1,21 @@
+1.1.1 / 2018-01-08
+==================
+
+**General**
+
+* Fixed regression where users could not be promoted to admins or verified.
+* Fixed two icons in the Media Library which were not updated to Font Awesome 5.
+* Challenge previews now include tags, hints, and files. 
+* Fixed an issue where a page could not be published immediately after being saved.
+
+**Themes**
+
+* Upgraded to Bootstrap 4 Beta v3. No major changes needed by themes. 
+* Fixed issue where the frozen message was not centered in the team page.
+* The JavaScript `update()` function now has a callback instead of being hardcoded.
+* `chalboard.js` now passes `script_root` into the Nunjucks templates so that file downloads work properly under subdirectories.
+
+
 1.1.0 / 2017-12-22
 ==================
 
