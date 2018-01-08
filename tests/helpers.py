@@ -110,8 +110,11 @@ def gen_tag(db, chal, tag='tag_tag'):
     return tag
 
 
-def gen_file():
-    pass
+def gen_file(db, chal, location):
+    f = Files(chal, location)
+    db.session.add(f)
+    db.session.commit()
+    return f
 
 
 def gen_flag(db, chal, flag='flag', key_type='static'):
