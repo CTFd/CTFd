@@ -21,9 +21,6 @@ function loadchalbyname(chalname) {
 function updateChalWindow(obj) {
     $.get(script_root + obj.template, function(template_data){
         $('#chal-window').empty();
-        templates[obj.type] = template_data;
-        var template_data = templates[obj.type];
-        template_data['script_root'] = script_root;
         var template = nunjucks.compile(template_data);
         var solves = obj.solves == 1 ? " Solve" : " Solves";
         var solves = obj.solves + solves;
@@ -37,7 +34,8 @@ function updateChalWindow(obj) {
             desc: obj.description,
             solves: solves,
             files: obj.files,
-            hints: obj.hints
+            hints: obj.hints,
+            script_root: script_root
         };
 
         $('#chal-window').append(template.render(wrapper));

@@ -31,22 +31,31 @@ def admin_chal_types():
 @admins_only
 def admin_chals():
     if request.method == 'POST':
-        chals = Challenges.query.add_columns('id', 'type', 'name', 'value', 'description', 'category', 'hidden', 'max_attempts').order_by(Challenges.value).all()
+        chals = Challenges.query.order_by(Challenges.value).all()
 
         json_data = {'game': []}
-        for x in chals:
-            type_class = CHALLENGE_CLASSES.get(x.type)
+        for chal in chals:
+            tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=chal.id).all()]
+            files = [str(f.location) for f in Files.query.filter_by(chal=chal.id).all()]
+            hints = []
+            for hint in Hints.query.filter_by(chal=chal.id).all():
+                hints.append({'id': hint.id, 'cost': hint.cost, 'hint': hint.hint})
+
+            type_class = CHALLENGE_CLASSES.get(chal.type)
             type_name = type_class.name if type_class else None
 
             json_data['game'].append({
-                'id': x.id,
-                'name': x.name,
-                'value': x.value,
-                'description': x.description,
-                'category': x.category,
-                'hidden': x.hidden,
-                'max_attempts': x.max_attempts,
-                'type': x.type,
+                'id': chal.id,
+                'name': chal.name,
+                'value': chal.value,
+                'description': chal.description,
+                'category': chal.category,
+                'files': files,
+                'tags': tags,
+                'hints': hints,
+                'hidden': chal.hidden,
+                'max_attempts': chal.max_attempts,
+                'type': chal.type,
                 'type_name': type_name,
                 'type_data': {
                     'id': type_class.id,
@@ -77,6 +86,17 @@ def admin_chal_detail(chalid):
             return jsonify({'status': 0, 'message': message})
     elif request.method == 'GET':
         obj, data = chal_class.read(chal)
+
+        tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=chal.id).all()]
+        files = [str(f.location) for f in Files.query.filter_by(chal=chal.id).all()]
+        hints = []
+        for hint in Hints.query.filter_by(chal=chal.id).all():
+            hints.append({'id': hint.id, 'cost': hint.cost, 'hint': hint.hint})
+
+        data['tags'] = tags
+        data['files'] = files
+        data['hints'] = hints
+
         return jsonify(data)
 
 

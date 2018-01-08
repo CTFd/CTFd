@@ -19,16 +19,6 @@
     background-color: #5B7290 !important;
 }
 
-.btn-file:nth-child(1):before {
-    /*content: "\f0ed";*/
-    /*display: inline-block;*/
-    /*font: normal normal normal 14px/1 FontAwesome;*/
-    /*font-size: inherit;*/
-    /*text-rendering: auto;*/
-    /*-webkit-font-smoothing: antialiased;*/
-    /*-moz-osx-font-smoothing: grayscale;*/
-}
-
 .challenge-button {
     box-shadow: 3px 3px 3px grey;
 }

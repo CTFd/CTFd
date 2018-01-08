@@ -105,6 +105,10 @@ table > thead > tr > td {
     border-color: #5B7290 !important;
 }
 
+.badge-info {
+    background-color: #5B7290 !important;
+}
+
 .alert {
     border-radius: 0 !important;
     padding: 0.8em;

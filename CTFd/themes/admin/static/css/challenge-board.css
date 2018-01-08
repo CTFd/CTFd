@@ -1,3 +1,8 @@
+pre {
+    margin: 0;
+    padding: 0;
+}
+
 .chal-desc {
     padding-left: 30px;
     padding-right: 30px;
@@ -23,8 +28,4 @@
     background-color: #37d63e !important;
     opacity: 0.4;
     border: none;
-}
-
-.key-submit .btn {
-    height: 51px;
 }
