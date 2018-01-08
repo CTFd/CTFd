@@ -1,5 +1,5 @@
 function updatefiles(){
-    chal = $('#files-chal').val();
+    var chal = $('#files-chal').val();
     var form = $('#update-files form')[0];
     var formData = new FormData(form);
     $.ajax({
@@ -20,12 +20,12 @@ function loadfiles(chal, cb){
     $('#update-files form').attr('action', script_root+'/admin/files/'+chal)
     $.get(script_root + '/admin/files/' + chal, function(data){
         $('#files-chal').val(chal);
-        files = $.parseJSON(JSON.stringify(data));
-        files = files['files'];
+        var files = $.parseJSON(JSON.stringify(data));
+        var files = files['files'];
         $('#current-files').empty();
-        for(x=0; x<files.length; x++){
-            filename = files[x].file.split('/');
-            filename = filename[filename.length - 1];
+        for(var x = 0; x < files.length; x++){
+            var filename = files[x].file.split('/');
+            var filename = filename[filename.length - 1];
 
             var curr_file = '<div class="col-md-12"><a href="{2}/files/{3}">{4}</a> <i class="btn-fa fas fa-times float-right" onclick="deletefile({0}, {1}, $(this))" value="{2}" ></i></div>'.format(
                 chal,

@@ -27,18 +27,19 @@ function get_challenge(id){
 
 
 function load_challenge_preview(id){
-    var chal = get_challenge(id);
-    var modal_template = chal.type_data.templates.modal;
-    var modal_script = chal.type_data.scripts.modal;
+    loadchal(id, function(){
+        var chal = get_challenge(id);
+        var modal_template = chal.type_data.templates.modal;
+        var modal_script = chal.type_data.scripts.modal;
 
-    render_challenge_preview(chal, modal_template, modal_script)
+        render_challenge_preview(chal, modal_template, modal_script);
+    });
 }
 
 function render_challenge_preview(chal, modal_template, modal_script){
     var preview_window = $('#challenge-preview');
     $.get(script_root + modal_template, function (template_data) {
         preview_window.empty();
-        console.log(chal.description);
         var template = nunjucks.compile(template_data);
         var data = {
             id: chal.id,
@@ -47,7 +48,8 @@ function render_challenge_preview(chal, modal_template, modal_script){
             tags: chal.tags,
             desc: chal.description,
             files: chal.files,
-            hints: chal.hints
+            hints: chal.hints,
+            script_root: script_root
         };
 
         var challenge = template.render(data);
@@ -61,13 +63,30 @@ function render_challenge_preview(chal, modal_template, modal_script){
 }
 
 
+function loadchal(chalid, cb){
+    $.get(script_root + "/admin/chal/"+chalid, {
+    }, function (data) {
+        var categories = [];
+        var challenge = $.parseJSON(JSON.stringify(data));
+
+        for (var i = challenges['game'].length - 1; i >= 0; i--) {
+            if (challenges['game'][i]['id'] == challenge.id) {
+                challenges['game'][i] = challenge
+            }
+        }
+
+        if (cb) {
+            cb();
+        }
+    });
+}
+
 function loadchals(cb){
     $.post(script_root + "/admin/chals", {
         'nonce': $('#nonce').val()
     }, function (data) {
         var categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
-
 
         for (var i = challenges['game'].length - 1; i >= 0; i--) {
             if ($.inArray(challenges['game'][i].category, categories) == -1) {
@@ -90,6 +109,29 @@ loadchals(function(){
     });
 });
 
+function loadhint(hintid) {
+    ezq({
+        title: "Unlock Hint?",
+        body: "Are you sure you want to open this hint?",
+        success: function () {
+            $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function (data) {
+                if (data.errors) {
+                    ezal({
+                        title: "Error!",
+                        body: data.errors,
+                        button: "Okay"
+                    });
+                } else {
+                    ezal({
+                        title: "Hint",
+                        body: marked(data.hint, {'gfm': true, 'breaks': true}),
+                        button: "Got it!"
+                    });
+                }
+            });
+        }
+    });
+}
 
 function submitkey(chal, key, nonce){
     $.post(script_root + "/admin/chal/" + chal, {

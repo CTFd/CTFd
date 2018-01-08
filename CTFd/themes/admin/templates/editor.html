@@ -225,7 +225,7 @@
 			'svg': 'fa-file-image',
 
 			// Text Files
-			'txt': 'fa-file-text',
+			'txt': 'fa-file-alt',
 
 			// Video Files
 			'mov': 'fa-file-video',
@@ -270,7 +270,7 @@
 			link.attr('href', '##');
 
 			if (mapping[ext] == undefined)
-				link.append('<i class="far fa-file-o" aria-hidden="true"></i> '.format(mapping[ext]));
+				link.append('<i class="far fa-file" aria-hidden="true"></i> '.format(mapping[ext]));
 			else
 				link.append('<i class="far {0}" aria-hidden="true"></i> '.format(mapping[ext]));
 

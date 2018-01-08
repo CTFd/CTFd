@@ -1,12 +1,7 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
-<style>
-	pre {
-		margin: 0;
-		padding: 0;
-	}
-</style>
+	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/challenge-board.css">
 {% endblock %}
 
 
@@ -97,13 +92,13 @@
 								<span>&nbsp; &nbsp;</span>
 
 								<i class="btn-fa fas fa-flag edit-keys" aria-hidden="true" data-toggle="tooltip" data-placement="top"
-								   title="Edit Flags" chal-id="{{ challenge.id }}"></i>
+								   title="Edit {{ challenge.name }} flags" chal-id="{{ challenge.id }}"></i>
 								<i class="btn-fa fas fa-download edit-files" aria-hidden="true" data-toggle="tooltip"
-								   data-placement="top" title="Edit Files" chal-id="{{ challenge.id }}"></i>
+								   data-placement="top" title="Edit {{ challenge.name }} files" chal-id="{{ challenge.id }}"></i>
 								<i class="btn-fa fas fa-tags edit-tags" aria-hidden="true" data-toggle="tooltip" data-placement="top"
-								   title="Edit Tags" chal-id="{{ challenge.id }}"></i>
+								   title="Edit {{ challenge.name }} tags" chal-id="{{ challenge.id }}"></i>
 								<i class="btn-fa fas fa-question-circle edit-hints" aria-hidden="true" data-toggle="tooltip"
-								   data-placement="top" title="Edit Hints" chal-id="{{ challenge.id }}"></i>
+								   data-placement="top" title="Edit {{ challenge.name }} hints" chal-id="{{ challenge.id }}"></i>
 
 								<span>&nbsp; &nbsp;</span>
 

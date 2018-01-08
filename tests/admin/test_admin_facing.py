@@ -209,6 +209,10 @@ def test_admin_chal_detail_returns_proper_data():
         client = login_as_user(app, name="admin", password="password")
 
         chal = gen_challenge(app.db)
+        tag = gen_tag(app.db, chal.id, 'test-tag')
+        hint = gen_hint(app.db, chal.id, 'test-hint', 5)
+        f = gen_file(app.db, chal.id, '0bf1a55a5cd327c07af15df260979668/bird.swf')
+
         chal_class = get_chal_class(chal.type)
         data = {
             'id': chal.id,
@@ -216,6 +220,9 @@ def test_admin_chal_detail_returns_proper_data():
             'value': chal.value,
             'description': chal.description,
             'category': chal.category,
+            'files': ['0bf1a55a5cd327c07af15df260979668/bird.swf'],
+            'tags': ['test-tag'],
+            'hints': [{'id': 1, 'cost': 5, 'hint': 'test-hint'}],
             'hidden': chal.hidden,
             'max_attempts': chal.max_attempts,
             'type': chal.type,
