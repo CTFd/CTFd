@@ -48,7 +48,7 @@
 						{% else %}
 							<li class="nav-item">
 								{% if request.script_root %}
-									{% set route = '/' + request.script_root + '/' + page.route %}
+									{% set route = request.script_root + '/' + page.route %}
 								{% else %}
 									{% set route = '/' + page.route %}
 								{% endif %}
