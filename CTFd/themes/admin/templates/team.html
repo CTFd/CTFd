@@ -129,7 +129,12 @@
 							<td class="text-center solve-time">
 								<script>document.write(moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
-							<td class="text-center"><i class="fas fa-times"></i></td>
+							<td class="text-center">
+								<span class="delete-item" data-toggle="tooltip"
+									  data-placement="top" title="Delete solve #{{ solve.id }}">
+									<i class="fas fa-times"></i>
+								</span>
+							</td>
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -159,7 +164,12 @@
 							<td class="text-center solve-time">
 								<script>document.write(moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
-							<td class="text-center"><i class="fas fa-times"></i></td>
+							<td class="text-center">
+								<span class="delete-item" data-toggle="tooltip"
+									  data-placement="top" title="Delete fail #{{ wrong_key.id }}">
+									<i class="fas fa-times"></i>
+								</span>
+							</td>
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -196,7 +206,12 @@
 								<td class="text-center">{{ award.category }}</td>
 								<td class="text-center">{{ award.icon }}</td>
 
-								<td class="text-center"><i class="fas fa-times"></i></td>
+								<td class="text-center">
+									<span class="delete-item" data-toggle="tooltip"
+										  data-placement="top" title="Delete award #{{ award.id }}">
+										<i class="fas fa-times"></i>
+									</span>
+								</td>
 							</tr>
 						{% endfor %}
 						</tbody>
@@ -229,7 +244,12 @@
 							<td class="text-center chal" id="{{ chal.id }}">{{ chal.name }}</td>
 							<td class="text-center">{{ chal.category }}</td>
 							<td class="text-center">{{ chal.value }}</td>
-							<td class="text-center"><i class="fas fa-check mark-correct"></i></td>
+							<td class="text-center">
+								<span class="mark-correct" data-toggle="tooltip"
+									  data-placement="top" title="Mark {{ chal.name }} correct for {{ team.name }}">
+									<i class="fas fa-check"></i>
+								</span>
+							</td>
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -275,7 +295,7 @@
 var nonce = "{{ nonce }}";
 
 $(document).ready(function () {
-    $('.fa-times').click(function () {
+    $('.delete-item').click(function () {
         var elem = $(this).parent().parent();
         var type = elem.attr('class');
         var chal_name = elem.find('.chal').text().trim();

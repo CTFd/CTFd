@@ -344,15 +344,13 @@
 	$(document).ready(function () {
 		$('#media-insert').click(function (e) {
 			var tag = $('#media-icon').children()[0].nodeName.toLowerCase();
-			console.log(tag);
 			var link = $('#media-link').val();
 			var fname = $('#media-filename').text();
 			if (tag == 'img') {
 				var entry = '![{0}]({1})'.format(fname, link);
-			} else if (tag == 'i') {
+			} else {
 				var entry = '[{0}]({1})'.format(fname, link);
 			}
-
 			insert_at_cursor(editor, entry);
 		});
 
