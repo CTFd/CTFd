@@ -308,7 +308,7 @@
 	function insert_at_cursor(editor, text) {
 		var doc = editor.getDoc();
 		var cursor = doc.getCursor();
-		doc.replaceRange(text, cursor, cursor);
+		doc.replaceRange(text, cursor);
 	}
 
 	function submit_form(){
