@@ -13,38 +13,20 @@
 	{% include "admin/modals/hints/hints.html" %}
 	{% include "admin/modals/keys/keys.html" %}
 
-	<div class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-				</div>
-				<div class="modal-body">
-				</div>
-			</div>
-		</div>
-	</div>
 
-	<input type="hidden" value="{{ nonce }}" id="nonce">
+<input type="hidden" value="{{ nonce }}" id="nonce">
 
-	<div id="create-challenge" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h3>New Challenge</h3>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div id="update-modals-entry-div">
-	</div>
+{#	Div used to inject update modal #}
+<div id="update-modals-entry-div">
+</div>
 
 <div class="jumbotron">
 	<div class="container">
 		<h1>Challenges
 			<a class="no-decoration" href="{{ request.script_root }}/admin/chal/new">
-				<i class="btn-fa fas fa-plus-circle" role="button" data-toggle="tooltip" title="Create Challenge"></i>
+				<span role="button" data-toggle="tooltip" title="Create Challenge">
+					<i class="btn-fa fas fa-plus-circle"></i>
+				</span>
 			</a>
 		</h1>
 	</div>
@@ -81,29 +63,46 @@
 								{% endif %}
 							</td>
 							<td>
-								<i class="btn-fa fas fa-pencil-alt edit-challenge" aria-hidden="true" data-toggle="tooltip"
-								   data-placement="top" chal-id="{{ challenge.id }}"
-								   title="Edit {{ challenge.name }}"></i>
+								<span class="edit-challenge" data-toggle="tooltip"
+									  data-placement="top" chal-id="{{ challenge.id }}"
+									  title="Edit {{ challenge.name }}">
+									<i class="btn-fa fas fa-pencil-alt" aria-hidden="true"></i>
+								</span>
 
-								<i class="btn-fa fas fa-file-alt preview-challenge" aria-hidden="true" data-toggle="tooltip"
-								   data-placement="top" chal-id="{{ challenge.id }}"
-								   title="Preview {{ challenge.name }}"></i>
-
-								<span>&nbsp; &nbsp;</span>
-
-								<i class="btn-fa fas fa-flag edit-keys" aria-hidden="true" data-toggle="tooltip" data-placement="top"
-								   title="Edit {{ challenge.name }} flags" chal-id="{{ challenge.id }}"></i>
-								<i class="btn-fa fas fa-download edit-files" aria-hidden="true" data-toggle="tooltip"
-								   data-placement="top" title="Edit {{ challenge.name }} files" chal-id="{{ challenge.id }}"></i>
-								<i class="btn-fa fas fa-tags edit-tags" aria-hidden="true" data-toggle="tooltip" data-placement="top"
-								   title="Edit {{ challenge.name }} tags" chal-id="{{ challenge.id }}"></i>
-								<i class="btn-fa fas fa-question-circle edit-hints" aria-hidden="true" data-toggle="tooltip"
-								   data-placement="top" title="Edit {{ challenge.name }} hints" chal-id="{{ challenge.id }}"></i>
+								<span class="preview-challenge" data-toggle="tooltip"
+									  data-placement="top" chal-id="{{ challenge.id }}"
+									  title="Preview {{ challenge.name }}">
+									<i class="btn-fa fas fa-file-alt" aria-hidden="true"></i>
+								</span>
 
 								<span>&nbsp; &nbsp;</span>
 
-								<i class="btn-fa fas fa-times delete-challenge" aria-hidden="true" data-toggle="tooltip"
-								   data-placement="top" title="Delete {{ challenge.name }}" chal-id="{{ challenge.id }}"></i>
+								<span class="edit-keys" data-toggle="tooltip" data-placement="top"
+									  title="Edit {{ challenge.name }} flags" chal-id="{{ challenge.id }}">
+									<i class="btn-fa fas fa-flag" aria-hidden="true"></i>
+								</span>
+								<span class="edit-files" data-toggle="tooltip"
+									  data-placement="top" title="Edit {{ challenge.name }} files"
+									  chal-id="{{ challenge.id }}">
+									<i class="btn-fa fas fa-download edit-files" aria-hidden="true"></i>
+								</span>
+								<span class="edit-tags" data-toggle="tooltip" data-placement="top"
+									  title="Edit {{ challenge.name }} tags" chal-id="{{ challenge.id }}">
+									<i class="btn-fa fas fa-tags" aria-hidden="true"></i>
+								</span>
+								<span class="edit-hints" data-toggle="tooltip"
+									  data-placement="top" title="Edit {{ challenge.name }} hints"
+									  chal-id="{{ challenge.id }}">
+									<i class="btn-fa fas fa-question-circle" aria-hidden="true"></i>
+								</span>
+
+								<span>&nbsp; &nbsp;</span>
+
+								<span class="delete-challenge" data-toggle="tooltip"
+									  data-placement="top" title="Delete {{ challenge.name }}"
+									  chal-id="{{ challenge.id }}">
+								<i class="btn-fa fas fa-times" aria-hidden="true"></i>
+								</span>
 							</td>
 						</tr>
 					{% endfor %}

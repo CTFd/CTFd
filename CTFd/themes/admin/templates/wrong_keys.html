@@ -49,7 +49,10 @@
 							</small>
 						</td>
 						<td class="text-center">
-							<i class="fas fa-times"></i>
+							<span class="delete-incorrect-submission" data-toggle="tooltip"
+								  data-placement="top" title="Delete fail #{{ wrong_key.id }}">
+								<i class="fas fa-times"></i>
+							</span>
 						</td>
 					</tr>
 					{% endfor %}
@@ -79,7 +82,7 @@
 var nonce = "{{ nonce }}";
 
 $(document).ready(function () {
-    $('.fa-times').click(function () {
+    $('.delete-incorrect-submission').click(function () {
         var elem = $(this).parent().parent();
         var chal = elem.find('.chal').attr('id');
         var chal_name = elem.find('.chal').text().trim();

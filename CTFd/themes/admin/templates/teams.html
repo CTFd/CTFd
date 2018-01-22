@@ -6,7 +6,11 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Teams <i class="btn-fa fas fa-plus-circle create-team" role="button" data-toggle="tooltip" title="Create Team"></i></h1>
+		<h1>Teams
+			<span class="create-team" role="button" data-toggle="tooltip" title="Create Team">
+				<i class="btn-fa fas fa-plus-circle"></i>
+			</span>
+		</h1>
 	</div>
 </div>
 
@@ -175,11 +179,20 @@
 							</div>
 						</td>
 						<td class="text-center"><span>
-							<i class="btn-fa fas fa-edit" data-toggle="tooltip" data-placement="top" title="Modify {{ team.name }}"></i>
+							<span class="edit-team" data-toggle="tooltip" data-placement="top"
+								  title="Modify {{ team.name }}">
+								<i class="btn-fa fas fa-edit"></i>
+							</span>
 							{% if can_send_mail() %}
-							<i class="btn-fa fas fa-envelope" data-toggle="tooltip" data-placement="top" title="Email {{ team.name }}"></i>
+							<span class="email-team" data-toggle="tooltip" data-placement="top"
+								  title="Email {{ team.name }}">
+								<i class="btn-fa fas fa-envelope"></i>
+							</span>
 							{% endif %}
-							<i class="btn-fa fas fa-times" data-toggle="tooltip" data-placement="top" title="Delete {{ team.name }}"></i>
+							<span class="delete-team" data-toggle="tooltip" data-placement="top"
+								  title="Delete {{ team.name }}">
+								<i class="btn-fa fas fa-times"></i>
+							</span>
 						</span>
 						</td>
 					</tr>
@@ -307,7 +320,7 @@ $(document).ready(function () {
         });
     });
 
-    $('.fa-edit').click(function () {
+    $('.edit-team').click(function () {
         var elem = $(this).parent().parent().parent();
         var id = elem.find('.team-id').attr('value') || '';
         var name = elem.find('.team-name').attr('value') || '';
@@ -323,7 +336,7 @@ $(document).ready(function () {
         load_update_modal('new', '', '', '', '', '');
     });
 
-    $('.fa-times').click(function () {
+    $('.delete-team').click(function () {
         var elem = $(this).parent().parent().parent();
         var team_id = elem.find('.team-id').text().trim();
         var name = elem.find('.team-name').text().trim();
@@ -348,7 +361,7 @@ $(document).ready(function () {
     });
 
 
-    $('.fa-envelope').click(function () {
+    $('.email-team').click(function () {
         var elem = $(this).parent().parent().parent();
         var id = elem.find('.team-id').text().trim();
         load_email_modal(id);

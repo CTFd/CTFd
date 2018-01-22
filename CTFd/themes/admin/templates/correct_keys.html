@@ -45,7 +45,12 @@
 								<script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
 							</small>
 						</td>
-						<td class="text-center"><i class="fas fa-times"></i></td>
+						<td class="text-center">
+							<span class="delete-correct-submission" data-toggle="tooltip"
+								  data-placement="top" title="Delete solve #{{ solve.id }}">
+								<i class="fas fa-times"></i>
+							</span>
+						</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -74,7 +79,7 @@
 var nonce = "{{ nonce }}";
 
 $(document).ready(function () {
-    $('.fa-times').click(function () {
+    $('.delete-correct-submission').click(function () {
         var elem = $(this).parent().parent();
         var chal = elem.find('.chal').attr('id');
         var chal_name = elem.find('.chal').text().trim();

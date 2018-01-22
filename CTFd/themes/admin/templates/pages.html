@@ -8,7 +8,9 @@
 	<div class="container">
 		<h1>Pages
 			<a class="no-decoration" href="{{ request.script_root }}/admin/pages?operation=create">
-				<i class="btn-fa fas fa-plus-circle create-page" role="button" data-toggle="tooltip" title="Create Page"></i>
+				<span class="create-page" role="button" data-toggle="tooltip" title="Create Page">
+					<i class="btn-fa fas fa-plus-circle"></i>
+				</span>
 			</a>
 		</h1>
 	</div>
@@ -52,8 +54,15 @@
 							{% endif %}
 						</td>
 						<td class="text-center">
-							<a class="no-decoration" href="{{ request.script_root }}/admin/pages?id={{ page.id }}"><i class="btn-fa fas fa-edit"></i></a>
-							<i class="btn-fa fas fa-times" page-id="{{ page.id }}" page-route="{{ page.route }}" page-title="{{ page.title }}"></i>
+							<span class="edit-page" data-toggle="tooltip" data-placement="top"
+								  title="Edit {{ page.route }}">
+								<a class="no-decoration" href="{{ request.script_root }}/admin/pages?id={{ page.id }}"><i class="btn-fa fas fa-edit"></i></a>
+							</span>
+							<span class="delete-page" page-id="{{ page.id }}" page-route="{{ page.route }}"
+								  page-title="{{ page.title }}" data-toggle="tooltip" data-placement="top"
+								  title="Delete {{ page.route }}">
+								<i class="btn-fa fas fa-times"></i>
+							</span>
 						</td>
 					</tr>
 				{% endfor %}
@@ -70,7 +79,7 @@
 var nonce = "{{ nonce }}";
 
 $(document).ready(function () {
-    $('.fa-times').click(function () {
+    $('.delete-page').click(function () {
         var elem = $(this);
         var name = elem.attr("page-route");
         var page_id = elem.attr("page-id");
