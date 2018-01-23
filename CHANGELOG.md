@@ -1,3 +1,19 @@
+1.1.2 / 2018-01-23
+==================
+
+**General**
+
+* Fixed page links on subdirectory deployments
+* Fixed challenge updating on subdirectory deployments
+* Fixed broken icon buttons on Safari
+
+**Themes**
+
+* Upgraded to Bootstrap 4.0.0
+* Upgraded to jQuery 3.3.1
+* Upgraded to FontAwesome 5.0.4
+
+
 1.1.1 / 2018-01-08
 ==================
 
