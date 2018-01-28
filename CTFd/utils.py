@@ -95,28 +95,23 @@ def init_logs(app):
     logger_logins.setLevel(logging.INFO)
     logger_regs.setLevel(logging.INFO)
 
-    try:
-        parent = os.path.dirname(__file__)
-    except:
-        parent = os.path.dirname(os.path.realpath(sys.argv[0]))
-
-    log_dir = os.path.join(parent, 'logs')
+    log_dir = app.config['LOG_FOLDER']
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
-    logs = [
-        os.path.join(parent, 'logs', 'keys.log'),
-        os.path.join(parent, 'logs', 'logins.log'),
-        os.path.join(parent, 'logs', 'registers.log')
-    ]
+    logs = {
+        'keys': os.path.join(log_dir, 'keys.log'),
+        'logins': os.path.join(log_dir, 'logins.log'),
+        'registers': os.path.join(log_dir, 'registers.log')
+    }
 
-    for log in logs:
+    for log in logs.values():
         if not os.path.exists(log):
             open(log, 'a').close()
 
-    key_log = logging.handlers.RotatingFileHandler(os.path.join(parent, 'logs', 'keys.log'), maxBytes=10000)
-    login_log = logging.handlers.RotatingFileHandler(os.path.join(parent, 'logs', 'logins.log'), maxBytes=10000)
-    register_log = logging.handlers.RotatingFileHandler(os.path.join(parent, 'logs', 'registers.log'), maxBytes=10000)
+    key_log = logging.handlers.RotatingFileHandler(logs['keys'], maxBytes=10000)
+    login_log = logging.handlers.RotatingFileHandler(logs['logins'], maxBytes=10000)
+    register_log = logging.handlers.RotatingFileHandler(logs['registers'], maxBytes=10000)
 
     logger_keys.addHandler(key_log)
     logger_logins.addHandler(login_log)

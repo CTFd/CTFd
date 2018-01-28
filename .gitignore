@@ -69,3 +69,6 @@ CTFd/uploads
 
 # CTFd Exports
 *.zip
+
+# SSL certs and keys folder
+ssl
