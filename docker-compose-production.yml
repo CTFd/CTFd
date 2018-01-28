@@ -1,0 +1,56 @@
+version: '2.1'
+
+services:
+  proxy:
+    image: nginx:alpine
+    # Included NGINX config used hostname to determine what it's server_name will be
+    # Either set NGINX_HOSTNAME to it's public DNS name, change this line, or the config
+    hostname: ${NGINX_HOSTNAME:-localhost}
+    ports:
+      - "80:8000"
+      - "443:8443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/ssl:ro
+      - .data/nginx/logs:/var/log/nginx
+    networks:
+      default:
+      internal:
+    depends_on:
+      - ctfd
+
+  ctfd:
+    build: .
+    restart: always
+    expose:
+      - "8000"
+    environment:
+      - UPLOAD_FOLDER=/var/uploads
+      - LOG_FOLDER=/var/log/CTFd
+      - USE_SSL=false
+      - USE_RELOAD=false
+    env_file:
+      - mysql_secrets.env
+    volumes:
+      - .data/CTFd/logs:/var/log/CTFd
+      - .data/CTFd/uploads:/var/uploads
+      - .:/opt/CTfd:ro
+    depends_on:
+      - db
+    networks:
+      internal:
+
+  db:
+    image: mariadb:10.2
+    restart: always
+    env_file:
+      - mysql_secrets.env
+    volumes:
+      - .data/mysql:/var/lib/mysql
+    networks:
+        internal:
+
+networks:
+    default:
+    internal:
+        internal: true

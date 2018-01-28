@@ -16,19 +16,21 @@ loglevel='info'
 accesslog=os.path.join(os.environ['LOG_FOLDER'], 'access.log')
 errorlog=os.path.join(os.environ['LOG_FOLDER'], 'error.log')
 
-# Reload on code changes. Useful for development
-reload=True
-# poll consumes more resources than inotify, but is more compatible
-reload_engine='poll'
+if not os.environ.get('USE_RELOAD') or os.environ.get('USE_RELOAD').lower() == 'true':
+    # Reload on code changes. Useful for development
+    reload=True
+    # poll consumes more resources than inotify, but is more compatible
+    reload_engine='poll'
 
 # SSL
 # For development, you can generate a self-signed cert with:
 #   openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./ssl/ctfd.key -out ./ssl/ctfd.crt
 # For production, check out Let's Encrypt for free certificates https://letsencrypt.org/
-ssl_dir=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ssl') # Not a gunicorn setting
-if os.path.isdir(ssl_dir):
-    keyfile=os.path.join(ssl_dir, 'ctfd.key')
-    certfile=os.path.join(ssl_dir, 'ctfd.crt')
+if not os.environ.get('USE_SSL') or os.environ.get('USE_SSL').lower() == 'true':
+    ssl_dir=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ssl') # Not a gunicorn setting
+    if os.path.isdir(ssl_dir):
+        keyfile=os.path.join(ssl_dir, 'ctfd.key')
+        certfile=os.path.join(ssl_dir, 'ctfd.crt')
 
 # Set the database url for CTFd
 os.environ['DATABASE_URL']='mysql+pymysql://root:{MYSQL_ROOT_PASSWORD}@db/ctfd'.format(**os.environ)
