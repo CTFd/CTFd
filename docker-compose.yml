@@ -17,6 +17,9 @@ services:
       - .:/opt/CTFd:ro
     depends_on:
       - db
+    networks:
+        default:
+        internal:
 
   db:
     image: mariadb:10.2
@@ -25,3 +28,10 @@ services:
       - mysql_secrets.env
     volumes:
       - .data/mysql:/var/lib/mysql
+    networks:
+        internal:
+
+networks:
+    default:
+    internal:
+        internal: true
