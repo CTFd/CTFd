@@ -23,7 +23,7 @@ services:
 
   db:
     image: mariadb:10.2
-    restart: unless-stopped
+    restart: always
     env_file:
       - mysql_secrets.env
     volumes:
