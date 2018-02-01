@@ -9,8 +9,7 @@ services:
     environment:
       - UPLOAD_FOLDER=/var/uploads
       - LOG_FOLDER=/var/log/CTFd
-    env_file:
-      - mysql_secrets.env
+      - DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfd
     volumes:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
@@ -24,8 +23,10 @@ services:
   db:
     image: mariadb:10.2
     restart: always
-    env_file:
-      - mysql_secrets.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=ctfd
+      - MYSQL_USER=ctfd
+      - MYSQL_PASSWORD=ctfd
     volumes:
       - .data/mysql:/var/lib/mysql
     networks:

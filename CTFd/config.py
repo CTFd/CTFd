@@ -3,13 +3,25 @@ import os
 ''' GENERATE SECRET KEY '''
 
 if not os.environ.get('SECRET_KEY'):
-    with open('.ctfd_secret_key', 'a+b') as secret:
-        secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
-        key = secret.read()
-        if not key:
-            key = os.urandom(64)
-            secret.write(key)
-            secret.flush()
+    # Attempt to read the secret from the secret file
+    # This will fail if the secret has not been written
+    try:
+        with open('.ctfd_secret_key', 'rb') as secret:
+            key = secret.read()
+    except OSError:
+        key = None
+
+    if not key:
+        key = os.urandom(64)
+        # Attempt to write the secret file
+        # This will fail if the filesystem is read-only
+        try:
+            with open('.ctfd_secret_key', 'wb') as secret:
+                secret.write(key)
+                secret.flush()
+        except OSError:
+            pass
+
 
 ''' SERVER SETTINGS '''
 
