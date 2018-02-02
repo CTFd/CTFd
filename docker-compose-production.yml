@@ -34,7 +34,7 @@ services:
     volumes:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
-      - .:/opt/CTfd:ro
+      - .:/opt/CTFd:ro
     depends_on:
       - db
     networks:
