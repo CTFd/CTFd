@@ -3,6 +3,7 @@ version: '2.1'
 services:
   proxy:
     image: nginx:alpine
+    restart: always
     # Included NGINX config used hostname to determine what it's server_name will be
     # Either set NGINX_HOSTNAME to it's public DNS name, change this line, or the config
     hostname: ${NGINX_HOSTNAME:-localhost}
