@@ -8,7 +8,7 @@ if not os.environ.get('SECRET_KEY'):
     try:
         with open('.ctfd_secret_key', 'rb') as secret:
             key = secret.read()
-    except OSError:
+    except (OSError, IOError):
         key = None
 
     if not key:
@@ -19,7 +19,7 @@ if not os.environ.get('SECRET_KEY'):
             with open('.ctfd_secret_key', 'wb') as secret:
                 secret.write(key)
                 secret.flush()
-        except OSError:
+        except (OSError, IOError):
             pass
 
 
