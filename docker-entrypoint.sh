@@ -15,4 +15,9 @@ if [ -n "$DATABASE_URL" ]
 fi
 
 echo "Starting CTFd"
-gunicorn --config ./gunicorn_config.py 'CTFd:create_app()'
+gunicorn 'CTFd:create_app()' \
+    --bind '0.0.0.0:8000' \
+    --workers 4 \
+    --worker-class 'gevent' \
+    --access-logfile "${LOG_FOLDER:-/opt/CTFd/CTFd/logs}/access.log" \
+    --error-logfile "${LOG_FOLDER:-/opt/CTFd/CTFd/logs}/error.log"
