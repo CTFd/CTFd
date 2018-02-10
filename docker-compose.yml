@@ -31,6 +31,8 @@ services:
       - .data/mysql:/var/lib/mysql
     networks:
         internal:
+    # This command is required to set important mariadb defaults
+    command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800]
 
 networks:
     default:
