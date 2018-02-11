@@ -2,13 +2,26 @@ import os
 
 ''' GENERATE SECRET KEY '''
 
-with open('.ctfd_secret_key', 'a+b') as secret:
-    secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
-    key = secret.read()
+if not os.environ.get('SECRET_KEY'):
+    # Attempt to read the secret from the secret file
+    # This will fail if the secret has not been written
+    try:
+        with open('.ctfd_secret_key', 'rb') as secret:
+            key = secret.read()
+    except (OSError, IOError):
+        key = None
+
     if not key:
         key = os.urandom(64)
-        secret.write(key)
-        secret.flush()
+        # Attempt to write the secret file
+        # This will fail if the filesystem is read-only
+        try:
+            with open('.ctfd_secret_key', 'wb') as secret:
+                secret.write(key)
+                secret.flush()
+        except (OSError, IOError):
+            pass
+
 
 ''' SERVER SETTINGS '''
 
@@ -71,6 +84,13 @@ class Config(object):
     MAILFROM_ADDR is the email address that emails are sent from if not overridden in the configuration panel.
     '''
     MAILFROM_ADDR = "noreply@ctfd.io"
+
+    '''
+    LOG_FOLDER is the location where logs are written
+    These are the logs for CTFd key submissions, registrations, and logins
+    The default location is the CTFd/logs folder
+    '''
+    LOG_FOLDER = os.environ.get('LOG_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
 
     '''
     UPLOAD_FOLDER is the location where files are uploaded.

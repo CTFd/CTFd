@@ -7,20 +7,34 @@ services:
     ports:
       - "8000:8000"
     environment:
+      - UPLOAD_FOLDER=/var/uploads
+      - LOG_FOLDER=/var/log/CTFd
       - DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfd
     volumes:
-      - .data/CTFd/logs:/opt/CTFd/CTFd/logs
-      - .data/CTFd/uploads:/opt/CTFd/CTFd/uploads
+      - .data/CTFd/logs:/var/log/CTFd
+      - .data/CTFd/uploads:/var/uploads
+      - .:/opt/CTFd:ro
     depends_on:
       - db
+    networks:
+        default:
+        internal:
 
   db:
     image: mariadb:10.2
-    # This command is required to set important mariadb defaults
-    command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800]
+    restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=ctfd
       - MYSQL_USER=ctfd
       - MYSQL_PASSWORD=ctfd
     volumes:
       - .data/mysql:/var/lib/mysql
+    networks:
+        internal:
+    # This command is required to set important mariadb defaults
+    command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800]
+
+networks:
+    default:
+    internal:
+        internal: true

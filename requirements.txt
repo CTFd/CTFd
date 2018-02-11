@@ -18,3 +18,4 @@ mistune==0.8.3
 netaddr==0.7.19
 redis==2.10.6
 datafreeze==0.1.0
+gevent==1.2.2
