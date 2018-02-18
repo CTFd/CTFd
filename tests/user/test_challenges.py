@@ -45,6 +45,18 @@ def test_viewing_challenges():
     destroy_ctfd(app)
 
 
+def test_viewing_challenge():
+    """Test that users can see individual challenges"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        gen_challenge(app.db)
+        r = client.get('/chals/1')
+        assert json.loads(r.get_data(as_text=True))
+    destroy_ctfd(app)
+
+
 def test_chals_solves():
     '''Test that the /chals/solves endpoint works properly'''
     app = create_ctfd()
