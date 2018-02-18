@@ -223,13 +223,46 @@ def test_user_get_solves_per_chal():
     destroy_ctfd(app)
 
 
-def test_user_get_solves():
+def test_user_get_private_solves():
     """Can a registered user load /solves"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
         r = client.get('/solves')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_get_public_solves():
+    """Can a registered user load /solves"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/solves/2')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_get_private_fails():
+    """Can a registered user load /fails"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/solves')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_get_public_fails():
+    """Can a registered user load /fails/2"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/fails/2')
         assert r.status_code == 200
     destroy_ctfd(app)
 
