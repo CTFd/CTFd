@@ -48,7 +48,8 @@ def test_verify_emails_config():
         assert r.status_code == 302
 
         r = client.get('/chals')
-        assert r.status_code == 403
+        assert r.location == "http://localhost/confirm"
+        assert r.status_code == 302
 
         user = Teams.query.filter_by(id=2).first()
         user.verified = True
@@ -90,7 +91,8 @@ def test_verify_and_view_unregistered():
         assert r.status_code == 302
 
         r = client.get('/chals')
-        assert r.status_code == 403
+        assert r.location == "http://localhost/confirm"
+        assert r.status_code == 302
 
         user = Teams.query.filter_by(id=2).first()
         user.verified = True

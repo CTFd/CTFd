@@ -223,7 +223,7 @@ def test_user_get_solves_per_chal():
     destroy_ctfd(app)
 
 
-def test_user_get_solves():
+def test_user_get_private_solves():
     """Can a registered user load /solves"""
     app = create_ctfd()
     with app.app_context():
@@ -234,13 +234,79 @@ def test_user_get_solves():
     destroy_ctfd(app)
 
 
-def test_user_get_team_page():
+def test_user_get_public_solves():
+    """Can a registered user load /solves/2"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/solves/2')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_get_another_public_solves():
+    """Can a registered user load public solves page of another user"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/solves/1')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_get_private_fails():
+    """Can a registered user load /fails"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/solves')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_get_public_fails():
+    """Can a registered user load /fails/2"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/fails/2')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_get_another_public_fails():
+    """Can a registered user load public fails page of another user"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/fails/1')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_get_public_team_page():
     """Can a registered user load their public profile (/team/2)"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
         r = client.get('/team/2')
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_get_another_public_team_page():
+    """Can a registered user load the public profile of another user (/team/1)"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get('/team/1')
         assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -304,7 +370,7 @@ def test_user_get_logout():
         client = login_as_user(app)
         client.get('/logout', follow_redirects=True)
         r = client.get('/challenges')
-        assert r.location == "http://localhost/login?next=challenges"
+        assert r.location == "http://localhost/login?next=%2Fchallenges"
         assert r.status_code == 302
     destroy_ctfd(app)
 

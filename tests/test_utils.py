@@ -276,7 +276,7 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
         chal_id = chal.id
         flag = gen_flag(app.db, chal=chal.id, flag=u'flag')
 
-        with freeze_time("2017-10-3"):
+        with freeze_time("2017-10-3"):  # CTF has not started yet.
             client = login_as_user(app)
             r = client.get('/chals')
             assert r.status_code == 403
@@ -288,8 +288,7 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
                 }
             r = client.post('/chal/{}'.format(chal_id), data=data)
             data = r.get_data(as_text=True)
-            data = json.loads(data)
-            assert data['status'] == -1
+            assert r.status_code == 403
         solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
         assert solve_count == 0
     destroy_ctfd(app)
