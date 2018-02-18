@@ -28,6 +28,11 @@ function updateChalWindow(obj) {
 
             var nonce = $('#nonce').val();
 
+            var md = window.markdownit({
+                html: true,
+            });
+
+            challenge_data['description'] = md.render(challenge_data['description']);
             challenge_data['script_root'] = script_root;
 
             $('#chal-window').append(template.render(challenge_data));
