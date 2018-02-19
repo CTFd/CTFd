@@ -34,6 +34,7 @@ function updateChalWindow(obj) {
 
             challenge_data['description'] = md.render(challenge_data['description']);
             challenge_data['script_root'] = script_root;
+            challenge_data['solves'] = solves;
 
             $('#chal-window').append(template.render(challenge_data));
             $.getScript(script_root + obj.script,
