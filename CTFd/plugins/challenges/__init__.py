@@ -2,7 +2,7 @@ from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.keys import get_key_class
 from CTFd.models import db, Solves, WrongKeys, Keys, Challenges, Files, Tags
 from CTFd import utils
-
+import re
 
 class BaseChallenge(object):
     id = None
@@ -10,6 +10,10 @@ class BaseChallenge(object):
     templates = {}
     scripts = {}
 
+def is_check(text):
+    match = re.match("""^[a-zA-Z0-9 !?:;/.,]+$""", text)
+    return bool(match)    
+    
 
 class CTFdStandardChallenge(BaseChallenge):
     id = "standard"  # Unique identifier used to register challenges
@@ -34,38 +38,39 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         # Create challenge
-        chal = Challenges(
-            name=request.form['name'],
-            description=request.form['description'],
-            value=request.form['value'],
-            category=request.form['category'],
-            type=request.form['chaltype']
-        )
+        if is_check(request.form['name']) and is_check(request.form['description']) and request.form['value'].isdigit() and is_check(request.form['category']) and is_check(request.form['chaltype']):
+            chal = Challenges(
+                name=request.form['name'],
+                description=request.form['description'],
+                value=request.form['value'],
+                category=request.form['category'],
+                type=request.form['chaltype']
+            )
 
-        if 'hidden' in request.form:
-            chal.hidden = True
-        else:
-            chal.hidden = False
+            if 'hidden' in request.form:
+                chal.hidden = True
+            else:
+                chal.hidden = False
 
-        max_attempts = request.form.get('max_attempts')
-        if max_attempts and max_attempts.isdigit():
-            chal.max_attempts = int(max_attempts)
+            max_attempts = request.form.get('max_attempts')
+            if max_attempts and max_attempts.isdigit():
+                chal.max_attempts = int(max_attempts)
 
-        db.session.add(chal)
-        db.session.commit()
+            db.session.add(chal)
+            db.session.commit()
 
-        flag = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
-        if request.form.get('keydata'):
-            flag.data = request.form.get('keydata')
-        db.session.add(flag)
+            flag = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
+            if request.form.get('keydata'):
+                flag.data = request.form.get('keydata')
+            db.session.add(flag)
 
-        db.session.commit()
+            db.session.commit()
 
-        files = request.files.getlist('files[]')
-        for f in files:
-            utils.upload_file(file=f, chalid=chal.id)
+            files = request.files.getlist('files[]')
+            for f in files:
+                utils.upload_file(file=f, chalid=chal.id)
 
-        db.session.commit()
+            db.session.commit()
 
     @staticmethod
     def read(challenge):
@@ -103,14 +108,15 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request:
         :return:
         """
-        challenge.name = request.form['name']
-        challenge.description = request.form['description']
-        challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
-        challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
-        challenge.category = request.form['category']
-        challenge.hidden = 'hidden' in request.form
-        db.session.commit()
-        db.session.close()
+        if is_check(request.form['name']) and is_check(request.form['description']) and is_check(request.form['category']):
+            challenge.name = request.form['name']
+            challenge.description = request.form['description']
+            challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
+            challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
+            challenge.category = request.form['category']
+            challenge.hidden = 'hidden' in request.form
+            db.session.commit()
+            db.session.close()
 
     @staticmethod
     def delete(challenge):
