@@ -38,26 +38,24 @@ function load_challenge_preview(id){
 
 function render_challenge_preview(chal, modal_template, modal_script){
     var preview_window = $('#challenge-preview');
-    $.get(script_root + modal_template, function (template_data) {
-        preview_window.empty();
-        var template = nunjucks.compile(template_data);
-        var data = {
-            id: chal.id,
-            name: chal.name,
-            value: chal.value,
-            tags: chal.tags,
-            desc: chal.description,
-            files: chal.files,
-            hints: chal.hints,
-            script_root: script_root
-        };
+    var md = window.markdownit({
+        html: true,
+    });
+    $.get(script_root + "/admin/chal/" + chal.id, function(challenge_data){
+        $.get(script_root + modal_template, function (template_data) {
+            preview_window.empty();
+            var template = nunjucks.compile(template_data);
 
-        var challenge = template.render(data);
+            challenge_data['description'] = md.render(challenge_data['description']);
+            challenge_data['script_root'] = script_root;
 
-        preview_window.append(challenge);
+            var challenge = template.render(challenge_data);
 
-        $.getScript(script_root + modal_script, function () {
-            preview_window.modal();
+            preview_window.append(challenge);
+
+            $.getScript(script_root + modal_script, function () {
+                preview_window.modal();
+            });
         });
     });
 }
@@ -110,6 +108,9 @@ loadchals(function(){
 });
 
 function loadhint(hintid) {
+    var md = window.markdownit({
+        html: true,
+    });
     ezq({
         title: "Unlock Hint?",
         body: "Are you sure you want to open this hint?",
@@ -124,7 +125,7 @@ function loadhint(hintid) {
                 } else {
                     ezal({
                         title: "Hint",
-                        body: marked(data.hint, {'gfm': true, 'breaks': true}),
+                        body: md.render(data.hint),
                         button: "Got it!"
                     });
                 }

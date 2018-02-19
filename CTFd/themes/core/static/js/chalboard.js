@@ -28,6 +28,11 @@ function updateChalWindow(obj) {
 
             var nonce = $('#nonce').val();
 
+            var md = window.markdownit({
+                html: true,
+            });
+
+            challenge_data['description'] = md.render(challenge_data['description']);
             challenge_data['script_root'] = script_root;
 
             $('#chal-window').append(template.render(challenge_data));
@@ -275,6 +280,9 @@ function loadchals(cb) {
 }
 
 function loadhint(hintid){
+    var md = window.markdownit({
+        html: true,
+    });
     ezq({
         title: "Unlock Hint?",
         body: "Are you sure you want to open this hint?",
@@ -287,9 +295,10 @@ function loadhint(hintid){
                         button: "Okay"
                     });
                 } else {
+
                     ezal({
                         title: "Hint",
-                        body: marked(data.hint, {'gfm': true, 'breaks': true}),
+                        body: md.render(data.hint),
                         button: "Got it!"
                     });
                 }
