@@ -9,19 +9,23 @@ scoreboard = Blueprint('scoreboard', __name__)
 
 
 def get_standings(admin=False, count=None):
+    """
+    Get sum of scores and awards for each team
+    Filters out values with score == 0 to prevent them from influencing the scoreboard ordering (see issue #577)
+    """
     scores = db.session.query(
         Solves.teamid.label('teamid'),
         db.func.sum(Challenges.value).label('score'),
         db.func.max(Solves.id).label('id'),
         db.func.max(Solves.date).label('date')
-    ).join(Challenges).group_by(Solves.teamid)
+    ).join(Challenges).filter(Challenges.value != 0).group_by(Solves.teamid)
 
     awards = db.session.query(
         Awards.teamid.label('teamid'),
         db.func.sum(Awards.value).label('score'),
         db.func.max(Awards.id).label('id'),
         db.func.max(Awards.date).label('date')
-    ).group_by(Awards.teamid)
+    ).filter(Awards.value != 0).group_by(Awards.teamid)
 
     """
     Filter out solves and awards that are before a specific time point.
