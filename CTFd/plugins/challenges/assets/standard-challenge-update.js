@@ -43,24 +43,6 @@ $('#new-desc-edit').on('shown.bs.tab', function (event) {
 function loadchal(id, update) {
     $.get(script_root + '/admin/chal/' + id, function(obj){
         $('#desc-write-link').click(); // Switch to Write tab
-        $('.chal-title').text(obj.name);
-        $('.chal-name').val(obj.name);
-        $('.chal-desc-editor').val(obj.description);
-        $('.chal-value').val(obj.value);
-        if (parseInt(obj.max_attempts) > 0){
-            $('.chal-attempts').val(obj.max_attempts);
-            $('#limit_max_attempts').prop('checked', true);
-            $('#chal-attempts-group').show();
-        }
-        $('.chal-category').val(obj.category);
-        $('.chal-id').val(obj.id);
-        $('.chal-hidden').prop('checked', false);
-        if (obj.hidden) {
-            $('.chal-hidden').prop('checked', true);
-        }
-        //$('#update-challenge .chal-delete').attr({
-        //    'href': '/admin/chal/close/' + (id + 1)
-        //})
         if (typeof update === 'undefined')
             $('#update-challenge').modal();
     });

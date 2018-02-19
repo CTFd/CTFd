@@ -5,44 +5,36 @@ function load_chal_template(id, success_cb){
     var obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
     })[0];
-    $.get(script_root + obj.type_data.templates.update, function(template_data){
-        var template = nunjucks.compile(template_data);
-        $("#update-modals-entry-div").html(template.render({'nonce':$('#nonce').val(), 'script_root':script_root}));
-        $.ajax({
-          url: script_root + obj.type_data.scripts.update,
-          dataType: "script",
-          success: success_cb,
-          cache: false,
+    $.get(script_root + "/admin/chal/" + id, function (challenge_data) {
+        $.get(script_root + obj.type_data.templates.update, function (template_data) {
+            var template = nunjucks.compile(template_data);
+
+            challenge_data['nonce'] = $('#nonce').val();
+            challenge_data['script_root'] = script_root;
+
+            $("#update-modals-entry-div").html(template.render(challenge_data));
+
+            $.ajax({
+                url: script_root + obj.type_data.scripts.update,
+                dataType: "script",
+                success: success_cb,
+                cache: false,
+            });
         });
     });
 }
 
-
-function get_challenge(id){
-    var obj = $.grep(challenges['game'], function (e) {
-        return e.id == id;
-    })[0];
-    return obj;
-}
-
-
 function load_challenge_preview(id){
-    loadchal(id, function(){
-        var chal = get_challenge(id);
-        var modal_template = chal.type_data.templates.modal;
-        var modal_script = chal.type_data.scripts.modal;
-
-        render_challenge_preview(chal, modal_template, modal_script);
-    });
+    render_challenge_preview(id);
 }
 
-function render_challenge_preview(chal, modal_template, modal_script){
+function render_challenge_preview(chal_id){
     var preview_window = $('#challenge-preview');
     var md = window.markdownit({
         html: true,
     });
-    $.get(script_root + "/admin/chal/" + chal.id, function(challenge_data){
-        $.get(script_root + modal_template, function (template_data) {
+    $.get(script_root + "/admin/chal/" + chal_id, function(challenge_data){
+        $.get(script_root + challenge_data.type_data.templates.modal, function (template_data) {
             preview_window.empty();
             var template = nunjucks.compile(template_data);
 
@@ -53,29 +45,10 @@ function render_challenge_preview(chal, modal_template, modal_script){
 
             preview_window.append(challenge);
 
-            $.getScript(script_root + modal_script, function () {
+            $.getScript(script_root + challenge_data.type_data.scripts.modal, function () {
                 preview_window.modal();
             });
         });
-    });
-}
-
-
-function loadchal(chalid, cb){
-    $.get(script_root + "/admin/chal/"+chalid, {
-    }, function (data) {
-        var categories = [];
-        var challenge = $.parseJSON(JSON.stringify(data));
-
-        for (var i = challenges['game'].length - 1; i >= 0; i--) {
-            if (challenges['game'][i]['id'] == challenge.id) {
-                challenges['game'][i] = challenge
-            }
-        }
-
-        if (cb) {
-            cb();
-        }
     });
 }
 
