@@ -280,6 +280,9 @@ function loadchals(cb) {
 }
 
 function loadhint(hintid){
+    var md = window.markdownit({
+        html: true,
+    });
     ezq({
         title: "Unlock Hint?",
         body: "Are you sure you want to open this hint?",
@@ -292,9 +295,10 @@ function loadhint(hintid){
                         button: "Okay"
                     });
                 } else {
+
                     ezal({
                         title: "Hint",
-                        body: marked(data.hint, {'gfm': true, 'breaks': true}),
+                        body: md.render(data.hint),
                         button: "Got it!"
                     });
                 }
