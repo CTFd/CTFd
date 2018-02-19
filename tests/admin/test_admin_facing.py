@@ -96,6 +96,11 @@ def test_admins_can_access_challenges_before_ctftime():
 
         with freeze_time("2017-10-2"):
             client = login_as_user(app, name='admin', password='password')
+
+            r = client.get('/challenges')
+            assert r.status_code == 200
+            assert "has not started" in r.get_data(as_text=True)
+
             r = client.get('/chals')
             assert r.status_code == 200
 
