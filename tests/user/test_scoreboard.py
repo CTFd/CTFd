@@ -166,7 +166,7 @@ def test_scoring_logic_with_zero_point_challenges():
         flag2 = gen_flag(app.db, chal=chal2.id, flag='flag')
         chal2_id = chal2.id
 
-        # A 0 point challenge that shouldn't influence the scoreboard (see #577)
+        # A 0 point challenge shouldn't influence the scoreboard (see #577)
         chal0 = gen_challenge(app.db, value=0)
         flag0 = gen_flag(app.db, chal=chal0.id, flag='flag')
         chal0_id = chal0.id
