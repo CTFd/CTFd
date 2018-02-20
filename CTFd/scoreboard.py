@@ -9,19 +9,31 @@ scoreboard = Blueprint('scoreboard', __name__)
 
 
 def get_standings(admin=False, count=None):
+    """
+    Get team standings as a list of tuples containing team_id, team_name, and score e.g. [(team_id, team_name, score)].
+
+    Ties are broken by who reached a given score first based on the solve ID. Two users can have the same score but one
+    user will have a solve ID that is before the others. That user will be considered the tie-winner.
+
+    Challenges & Awards with a value of zero are filtered out of the calculations to avoid incorrect tie breaks.
+    """
     scores = db.session.query(
         Solves.teamid.label('teamid'),
         db.func.sum(Challenges.value).label('score'),
         db.func.max(Solves.id).label('id'),
         db.func.max(Solves.date).label('date')
-    ).join(Challenges).group_by(Solves.teamid)
+    ).join(Challenges)\
+        .filter(Challenges.value != 0)\
+        .group_by(Solves.teamid)
 
     awards = db.session.query(
         Awards.teamid.label('teamid'),
         db.func.sum(Awards.value).label('score'),
         db.func.max(Awards.id).label('id'),
         db.func.max(Awards.date).label('date')
-    ).group_by(Awards.teamid)
+    )\
+        .filter(Awards.value != 0)\
+        .group_by(Awards.teamid)
 
     """
     Filter out solves and awards that are before a specific time point.
@@ -44,7 +56,8 @@ def get_standings(admin=False, count=None):
         db.func.sum(results.columns.score).label('score'),
         db.func.max(results.columns.id).label('id'),
         db.func.max(results.columns.date).label('date')
-    ).group_by(results.columns.teamid).subquery()
+    ).group_by(results.columns.teamid)\
+        .subquery()
 
     """
     Admins can see scores for all users but the public cannot see banned users.
