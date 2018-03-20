@@ -26,7 +26,7 @@
 
 	<div class="team-info">
 		<h2 id="team-place" class="text-center">
-			{%if place %}
+			{%if not get_config('workshop_mode') and place %}
 				{{ place }} <small>place</small>
 			{% endif %}
 		</h2>

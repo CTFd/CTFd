@@ -624,4 +624,8 @@ def test_workshop_mode():
         received = json.loads(output)
         assert saved == received
 
+        r = client.get('/team')
+        output = r.get_data(as_text=True)
+        assert "1st <small>place</small>" not in output
+
     destroy_ctfd(app)
