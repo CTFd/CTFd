@@ -626,6 +626,6 @@ def test_workshop_mode():
 
         r = client.get('/team')
         output = r.get_data(as_text=True)
-        assert "1st place" not in output
+        assert "1st <small>place</small>" not in output
 
     destroy_ctfd(app)

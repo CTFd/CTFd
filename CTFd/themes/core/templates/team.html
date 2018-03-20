@@ -25,13 +25,11 @@
 	{% endif %}
 
 	<div class="team-info">
-        {% if not get_config('workshop_mode') %}
-            <h2 id="team-place" class="text-center">
-                {%if place %}
-                    {{ place }} <small>place</small>
-                {% endif %}
-            </h2>
-        {% endif %}
+        <h2 id="team-place" class="text-center">
+            {%if not get_config('workshop_mode') and place %}
+                {{ place }} <small>place</small>
+            {% endif %}
+        </h2>
 		<h2 id="team-score" class="text-center">
 			{%if score %}
 				{{ score }} <small>points</small>
