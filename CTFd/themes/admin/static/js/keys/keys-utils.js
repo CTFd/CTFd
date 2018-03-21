@@ -111,6 +111,8 @@ $(document).ready(function () {
                 var option = "<option value='{0}'>{1}</option>".format(key, data[key]);
                 $("#create-keys-select").append(option);
             }
+            $("#create-keys-entry-div").empty();
+            $("#create-keys-button-div").hide();
             $("#create-keys").modal();
         });
     });
