@@ -339,7 +339,7 @@ $(document).ready(function () {
     $('.delete-team').click(function () {
         var elem = $(this).parent().parent().parent();
         var team_id = elem.find('.team-id').text().trim();
-        var name = elem.find('.team-name').text().trim();
+        var name = htmlentities(elem.find('.team-name').text().trim());
 
         var td_row = $(this).parent().parent().parent();
 
