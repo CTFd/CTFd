@@ -139,7 +139,7 @@ def create_app(config='CTFd.config.Config'):
         cache.init_app(app)
         app.cache = cache
 
-        update_check()
+        update_check(force=True)
 
         version = utils.get_config('ctf_version')
 
