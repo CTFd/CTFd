@@ -115,10 +115,7 @@ def custom_css():
 def static_html(template):
     page = utils.get_page(template)
     if page is None:
-        try:
-            return render_template('%s.html' % template)
-        except TemplateNotFound:
-            abort(404)
+        abort(404)
     else:
         if page.auth_required and utils.authed() is False:
             return redirect(url_for('auth.login', next=request.path))
