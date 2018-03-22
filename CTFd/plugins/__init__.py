@@ -129,6 +129,8 @@ def bypass_csrf_protection(f):
     """
     Decorator that allows a route to bypass the need for a CSRF nonce on POST requests.
 
+    This should be considered beta and may change in future versions. 
+
     :param f: A function that needs to bypass CSRF protection
     :return: Returns a function with the _bypass_csrf attribute set which tells CTFd to not require CSRF protection.
     """
