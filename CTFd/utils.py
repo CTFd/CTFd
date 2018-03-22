@@ -190,6 +190,9 @@ def init_utils(app):
 
     @app.before_request
     def csrf():
+        func = app.view_functions[request.endpoint]
+        if hasattr(func, '_bypass_csrf'):
+            return
         if not session.get('nonce'):
             session['nonce'] = sha512(os.urandom(10))
         if request.method == "POST":
