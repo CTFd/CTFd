@@ -12,7 +12,8 @@ from CTFd.plugins import (
     register_admin_plugin_menu_bar,
     get_admin_plugin_menu_bar,
     register_user_page_menu_bar,
-    get_user_page_menu_bar
+    get_user_page_menu_bar,
+    bypass_csrf_protection
 )
 from freezegun import freeze_time
 from mock import patch
@@ -144,4 +145,30 @@ def test_register_user_page_menu_bar():
         menu_item = get_user_page_menu_bar()[0]
         assert menu_item.title == 'test_user_menu_link'
         assert menu_item.route == '/test_user_href'
+    destroy_ctfd(app)
+
+
+def test_bypass_csrf_protection():
+    """
+    Test that the bypass_csrf_protection decorator functions properly
+    """
+    app = create_ctfd()
+
+    with app.app_context():
+        with app.test_client() as client:
+            r = client.post('/login')
+            output = r.get_data(as_text=True)
+            assert r.status_code == 403
+
+        def bypass_csrf_protection_test_route():
+            return "Success", 200
+
+        # Hijack an existing route to avoid any kind of hacks to create a test route
+        app.view_functions['auth.login'] = bypass_csrf_protection(bypass_csrf_protection_test_route)
+
+        with app.test_client() as client:
+            r = client.post('/login')
+            output = r.get_data(as_text=True)
+            assert r.status_code == 200
+            assert output == "Success"
     destroy_ctfd(app)
