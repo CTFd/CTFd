@@ -3,7 +3,7 @@
 
 **General**
 
-* Fixed XSS in team name field on team deletion. (#592)
+* [SECURITY] Fixed XSS in team name field on team deletion. (#592)
 * Fixed an issue where MariaDB defaults in Docker Compose caused difficult to debug 500 errors. (#566)
 * Improved Docker usage:
     * Redis cache
