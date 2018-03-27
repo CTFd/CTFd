@@ -35,8 +35,13 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
  1. Run `./prepare.sh` to install dependencies using apt.
  2. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
  3. Use `python serve.py` in a terminal to drop into debug mode.
- 4. [Here](https://github.com/CTFd/CTFd/wiki/Deployment) are some deployment options
- 5. You can check out the [Getting Started](https://github.com/CTFd/CTFd/wiki/Getting-Started) guide for a breakdown of some of the features you need to get started.
+
+Or you can use Docker with the following command:
+
+`docker run -p 8000:8000 -it ctfd/ctfd`
+
+ * [Here](https://github.com/CTFd/CTFd/wiki/Basic-Deployment) are some deployment options
+ * You can check out the [Getting Started](https://github.com/CTFd/CTFd/wiki/Getting-Started) guide for a breakdown of some of the features you need to get started.
 
 ## Live Demo
 https://demo.ctfd.io/
@@ -47,10 +52,10 @@ To get basic support, you can join the [CTFd Slack Community](https://slack.ctfd
 If you prefer commercial support or have a special project, send us an email: [support@ctfd.io](mailto:support@ctfd.io).
 
 ## Managed Hosting
-Looking to use CTFd but don't want to deal with managing infrastructure? Check out [the CTFd website](https://ctfd.io/) for managed CTFd deployments. 
+Looking to use CTFd but don't want to deal with managing infrastructure? Check out [the CTFd website](https://ctfd.io/) for managed CTFd deployments.
 
 ## HackerFire
-Looking for CTF challenges to work on? [HackerFire](https://hackerfire.com/) is a learning focused CTF built using CTFd. It features a wide variety of challenges and is updated with new content frequently. It also contains custom knowledge resources to teach newcomers about the techniques used to solve a challenge. 
+Looking for CTF challenges to work on? [HackerFire](https://hackerfire.com/) is a learning focused CTF built using CTFd. It features a wide variety of challenges and is updated with new content frequently. It also contains custom knowledge resources to teach newcomers about the techniques used to solve a challenge.
 
 ## Credits
  * Logo by [Laura Barbera](http://www.laurabb.com/)

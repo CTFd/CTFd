@@ -1,3 +1,34 @@
+1.1.3 / 2018-03-26
+==================
+
+**General**
+
+* [SECURITY] Fixed XSS in team name field on team deletion. (#592)
+* Fixed an issue where MariaDB defaults in Docker Compose caused difficult to debug 500 errors. (#566)
+* Improved Docker usage:
+    * Redis cache
+    * Configurable amount of workers
+    * Easier to access logs
+    * Plugin requirements are installed on image build.
+    * Switched from the default gunicorn synchronous worker to gevent
+* Fixed an issue where ties would be broken incorrectly if there are challenges that are worth 0 points. (#577)
+* Fixed update checks not happening on CTFd start. (#595)
+* Removed the static_html handler to access raw HTML files. (#561)
+    * Pages is now the only supported means of accessing/creating a page.
+* Removed uwsgi specific configuration files.
+* Fixed issue with Docker image having a hard coded database host name. (#587)
+
+**Themes**
+
+* Fixed scrollbar showing on pages that are smaller than the screen size (#589)
+* Fixed displaying the team rank while in workshop mode. (#590)
+* Fixed flag modal not clearing when creating multiple new flags. (#594)
+
+**Plugins**
+
+* Add a utility decorator to allow routes to forego CSRF protection. (#596)
+
+
 1.1.2 / 2018-01-23
 ==================
 
@@ -21,12 +52,12 @@
 
 * Fixed regression where users could not be promoted to admins or verified.
 * Fixed two icons in the Media Library which were not updated to Font Awesome 5.
-* Challenge previews now include tags, hints, and files. 
+* Challenge previews now include tags, hints, and files.
 * Fixed an issue where a page could not be published immediately after being saved.
 
 **Themes**
 
-* Upgraded to Bootstrap 4 Beta v3. No major changes needed by themes. 
+* Upgraded to Bootstrap 4 Beta v3. No major changes needed by themes.
 * Fixed issue where the frozen message was not centered in the team page.
 * The JavaScript `update()` function now has a callback instead of being hardcoded.
 * `chalboard.js` now passes `script_root` into the Nunjucks templates so that file downloads work properly under subdirectories.
