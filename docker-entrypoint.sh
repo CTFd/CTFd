@@ -28,7 +28,6 @@ fi
 if [ -z "$WORKERS" ]; then
     WORKERS=1
 fi
-echo $WORKERS
 
 # Start CTFd
 echo "Starting CTFd"
