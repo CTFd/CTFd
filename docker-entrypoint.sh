@@ -25,6 +25,11 @@ if [ -n "$DATABASE_URL" ]
     sleep 1;
 fi
 
+if [ -z "$WORKERS" ]; then
+    WORKERS=1
+fi
+echo $WORKERS
+
 # Start CTFd
 echo "Starting CTFd"
 gunicorn 'CTFd:create_app()' \
