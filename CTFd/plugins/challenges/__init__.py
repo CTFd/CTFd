@@ -1,6 +1,6 @@
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.keys import get_key_class
-from CTFd.models import db, Solves, WrongKeys, Keys, Challenges, Files, Tags
+from CTFd.models import db, Solves, WrongKeys, Keys, Challenges, Files, Tags, Hints
 from CTFd import utils
 
 
@@ -128,6 +128,7 @@ class CTFdStandardChallenge(BaseChallenge):
             utils.delete_file(f.id)
         Files.query.filter_by(chal=challenge.id).delete()
         Tags.query.filter_by(chal=challenge.id).delete()
+        Hints.query.filter_by(chal=challenge.id).delete()
         Challenges.query.filter_by(id=challenge.id).delete()
         db.session.commit()
 
