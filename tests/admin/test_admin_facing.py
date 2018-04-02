@@ -202,6 +202,31 @@ def test_admins_can_delete_challenges():
     destroy_ctfd(app)
 
 
+def test_admins_can_delete_challenges_with_extras():
+    """"Test that admins can delete challenges that have a hint"""
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+
+        hint = gen_hint(app.db, chal_id)
+
+        assert Challenges.query.count() == 1
+
+        with client.session_transaction() as sess:
+            data = {
+                'id': chal_id,
+                'nonce': sess.get('nonce'),
+            }
+            r = client.post('/admin/chal/delete', data=data)
+            assert r.get_data(as_text=True) == '1'
+
+        assert Challenges.query.count() == 0
+    destroy_ctfd(app)
+
+
 def test_admin_chal_detail_returns_proper_data():
     """Test that the /admin/chals/<int:chalid> endpoint returns the proper data"""
     app = create_ctfd()
