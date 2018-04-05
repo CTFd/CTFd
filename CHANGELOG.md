@@ -1,3 +1,12 @@
+1.1.4 / 2018-04-05
+==================
+
+**General**
+
+* [SECURITY] Fixed XSS in team website. (#604)
+* Fixed deleting challenges that have a hint associated. (#601)
+
+
 1.1.3 / 2018-03-26
 ==================
 
