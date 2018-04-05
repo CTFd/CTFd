@@ -343,7 +343,12 @@
 
 	$(document).ready(function () {
 		$('#media-insert').click(function (e) {
-			var tag = $('#media-icon').children()[0].nodeName.toLowerCase();
+			var tag = ''
+			try {
+				var tag = $('#media-icon').children()[0].nodeName.toLowerCase();
+			} catch(err) {
+				var tag = '';
+			}
 			var link = $('#media-link').val();
 			var fname = $('#media-filename').text();
 			if (tag == 'img') {
