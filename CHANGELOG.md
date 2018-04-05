@@ -6,6 +6,10 @@
 * [SECURITY] Fixed XSS in team website. (#604)
 * Fixed deleting challenges that have a hint associated. (#601)
 
+**Themes**
+
+* Removed "SVG with JavaScript" in favor of "Web Fonts with CSS". (#604)
+
 
 1.1.3 / 2018-03-26
 ==================
