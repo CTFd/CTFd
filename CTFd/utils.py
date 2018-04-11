@@ -1,3 +1,4 @@
+#coding: utf-8
 import base64
 import datetime
 import functools
@@ -33,7 +34,7 @@ from socket import timeout
 from werkzeug.utils import secure_filename
 
 from CTFd.models import db, Challenges, WrongKeys, Pages, Config, Tracking, Teams, Files, ip2long, long2ip
-
+import CTFd.language
 from datafreeze.format import SERIALIZERS
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
 
@@ -441,7 +442,9 @@ def get_kpm(teamid):  # keys per minute
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
     return len(db.session.query(WrongKeys).filter(WrongKeys.teamid == teamid, WrongKeys.date >= one_min_ago).all())
 
-
+def get_langs():
+    return [name for name in CTFd.language.langs]
+    
 def get_themes():
     dir = os.path.join(app.root_path, 'themes')
     return [name for name in os.listdir(dir)
@@ -512,13 +515,26 @@ def delete_file(file_id):
     db.session.commit()
     return True
 
+@cache.memoize()
+def get_lang():
+    value = get_app_config('USE_LANG')
+    tmp = get_config('ctf_lang')
+    if CTFd.language.langs.has_key(tmp):
+        value = tmp
+    else:
+        set_config('ctf_lang', value)
+    return value
 
 @cache.memoize()
 def get_app_config(key):
     value = app.config.get(key)
     return value
 
-
+@cache.memoize()
+def get_tip(key):
+    value = CTFd.language.langs[get_lang()][key]
+    return value
+    
 @cache.memoize()
 def get_config(key):
     config = Config.query.filter_by(key=key).first()
@@ -572,17 +588,23 @@ def mailserver():
 
 def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=None):
     if SSL is None:
-        smtp = smtplib.SMTP(host, port, timeout=3)
+        smtp = smtplib.SMTP(host,port,timeout=3)
     else:
-        smtp = smtplib.SMTP_SSL(host, port, timeout=3)
-
+        smtp = smtplib.SMTP_SSL(host,port,timeout=3)
     if TLS:
         smtp.starttls()
-
     if auth:
-        smtp.login(username, password)
+        #use AUTH LOGIN add by gd
+        smtp.ehlo("PZCTF")
+        smtp.docmd("AUTH LOGIN")
+        smtp.send(base64.encodestring(username))
+        smtp.getreply()
+        smtp.send(base64.encodestring(password))
+        smtp.getreply()
+        #end
+        #smtplib.login is use AUTH PLAIN LOGIN not work at some smtp server
+        #smtp.login(username, password)
     return smtp
-
 
 def sendmail(addr, text):
     ctf_name = get_config('ctf_name')
@@ -595,7 +617,7 @@ def sendmail(addr, text):
             mg_api_key = app.config.get('MAILGUN_API_KEY')
             mg_base_url = app.config.get('MAILGUN_BASE_URL')
         else:
-            return False, "Mailgun settings are missing"
+            return False, get_tip('MAILGUN_MISS')
 
         try:
             r = requests.post(
@@ -603,17 +625,17 @@ def sendmail(addr, text):
                 auth=("api", mg_api_key),
                 data={"from": "{} Admin <{}>".format(ctf_name, mailfrom_addr),
                       "to": [addr],
-                      "subject": "Message from {0}".format(ctf_name),
+                      "subject": get_tip('MAIL_MSG_FORM').format(ctf_name),
                       "text": text},
                 timeout=1.0
             )
         except requests.RequestException as e:
-            return False, "{error} exception occured while handling your request".format(error=type(e).__name__)
+            return False, get_tip('MAILGUN_EXECPTION').format(error=type(e).__name__)
 
         if r.status_code == 200:
-            return True, "Email sent"
+            return True, get_tip('MAIL_SENT')
         else:
-            return False, "Mailgun settings are incorrect"
+            return False, get_tip('MAILGUN_ERR_SET')
     elif mailserver():
         data = {
             'host': get_config('mail_server'),
@@ -632,28 +654,28 @@ def sendmail(addr, text):
 
         try:
             smtp = get_smtp(**data)
-            msg = MIMEText(text)
-            msg['Subject'] = "Message from {0}".format(ctf_name)
+            msg = MIMEText(text, 'plain', 'utf-8')
+            msg['Subject'] = get_tip('MAIL_MSG_FORM').format(ctf_name)
             msg['From'] = mailfrom_addr
             msg['To'] = addr
 
             smtp.sendmail(msg['From'], [msg['To']], msg.as_string())
             smtp.quit()
-            return True, "Email sent"
+            return True, get_tip('MAIL_SENT')
         except smtplib.SMTPException as e:
             return False, str(e)
         except timeout:
-            return False, "SMTP server connection timed out"
+            return False, get_tip('SMTP_TIME_OUT')
         except Exception as e:
             return False, str(e)
     else:
-        return False, "No mail settings configured"
+        return False, get_tip('MAIL_SENT')
 
 
 def verify_email(addr):
     s = TimedSerializer(app.config['SECRET_KEY'])
     token = s.dumps(addr)
-    text = """Please click the following link to confirm your email address for {ctf_name}: {url}/{token}""".format(
+    text = get_tip('MAIL_MSG_TEXT').format(
         ctf_name=get_config('ctf_name'),
         url=url_for('auth.confirm_user', _external=True),
         token=base64encode(token, urlencode=True)
@@ -664,12 +686,7 @@ def verify_email(addr):
 def forgot_password(email, team_name):
     s = TimedSerializer(app.config['SECRET_KEY'])
     token = s.dumps(team_name)
-    text = """Did you initiate a password reset? Click the following link to reset your password:
-
-{0}/{1}
-
-""".format(url_for('auth.reset_password', _external=True), base64encode(token, urlencode=True))
-
+    text = get_tip('MAIL_MSG_FORGOT').format(url_for('auth.reset_password', _external=True), base64encode(token, urlencode=True))
     sendmail(email, text)
 
 

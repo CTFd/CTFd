@@ -1,3 +1,17 @@
+## pZCTF
+## 开始安装
+# Windows
+ 1. install python2.76 https://www.python.org/ftp/python/2.7.6/python-2.7.6.amd64.msi
+ 2. pip install win_inet_pton  pip install -r requirements.txt
+ 3. Modify [CTFd/config.py] [.ctfd_secret_key] 
+ 4. Use `python serve.py` in a terminal to drop into debug mode.
+#Docker
+ 1.pleaese install docker & docker-compose
+ 2.cd /home/docker &  git clone https://github.com/CoolDUp/CTFd.git
+ 3.docker-compose build  & docker-compose up -d
+
+#后面再加详细的了
+
 ![](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/logo.png?raw=true)
 ====
 

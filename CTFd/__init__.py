@@ -9,7 +9,7 @@ from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
-from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp, update_check
+from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp, update_check, get_lang
 from CTFd import utils
 
 # Hack to support Unicode in Python 2 properly
@@ -54,7 +54,7 @@ class ThemeLoader(FileSystemLoader):
         # Check if the template requested is for the admin panel
         if template.startswith('admin/'):
             template = template[6:]  # Strip out admin/
-            template = "/".join(['admin', 'templates', template])
+            template = "/".join(['admin/{0}/'.format(get_lang()), 'templates', template])
             return super(ThemeLoader, self).get_source(environment, template)
 
         # Load regular theme data

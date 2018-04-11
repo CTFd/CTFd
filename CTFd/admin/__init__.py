@@ -148,6 +148,7 @@ def admin_config():
             utils.set_config("mail_password", None)
 
         utils.set_config("ctf_name", request.form.get('ctf_name', None))
+        utils.set_config("ctf_lang", request.form.get('ctf_lang', None))
         utils.set_config("ctf_theme", request.form.get('ctf_theme', None))
         utils.set_config('css', request.form.get('css', None))
 
@@ -177,6 +178,7 @@ def admin_config():
 
     ctf_name = utils.get_config('ctf_name')
     ctf_theme = utils.get_config('ctf_theme')
+    ctf_lang = utils.get_lang()
     hide_scores = utils.get_config('hide_scores')
     css = utils.get_config('css')
 
@@ -212,10 +214,12 @@ def admin_config():
 
     themes = utils.get_themes()
     themes.remove(ctf_theme)
-
+    langs = utils.get_langs()
+    langs.remove(ctf_lang)
     return render_template(
         'admin/config.html',
         ctf_name=ctf_name,
+        ctf_lang_config=ctf_lang,
         ctf_theme_config=ctf_theme,
         css=css,
         start=start,
@@ -239,6 +243,7 @@ def admin_config():
         verify_emails=verify_emails,
         view_after_ctf=view_after_ctf,
         themes=themes,
+        langs=langs,
         workshop_mode=workshop_mode,
         paused=paused
     )

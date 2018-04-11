@@ -1,6 +1,5 @@
 import os
-
-''' GENERATE SECRET KEY '''
+''' AUTO GENERATE SECRET KEY '''
 
 if not os.environ.get('SECRET_KEY'):
     # Attempt to read the secret from the secret file
@@ -27,6 +26,11 @@ if not os.environ.get('SECRET_KEY'):
 
 
 class Config(object):
+    '''language support
+       you can edit language.py to add a language
+       en,zh_cn
+    ''' 
+    USE_LANG = 'zh_cn'
     '''
     SECRET_KEY is the secret value used to creation sessions and sign strings. This should be set to a random string. In the
     interest of ease, CTFd will automatically create a secret key file for you. If you wish to add this secret key to
