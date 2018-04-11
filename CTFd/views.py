@@ -304,8 +304,15 @@ def file_handler(path):
 
 @views.route('/themes/<theme>/static/<path:path>')
 def themes_handler(theme, path):
+    if theme=='admin':
+        theme = safe_join(theme,utils.get_lang())
     filename = safe_join(app.root_path, 'themes', theme, 'static', path)
     if os.path.isfile(filename):
         return send_file(filename)
     else:
         abort(404)
+ 
+
+
+        
+        
