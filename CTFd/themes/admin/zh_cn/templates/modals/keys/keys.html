@@ -1,0 +1,75 @@
+
+
+<div id="update-keys" class="modal fade" tabindex="-1" chal-id="">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<h3 class="text-center">Flags</h3>
+						</div>
+					</div>
+				</div>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<button id="create-key" class="btn btn-primary d-inline-block text-center">New Flag</button>
+						</div>
+						<div class="col-md-12">
+							<form method="POST" action="{{ request.script_root }}/admin/keys">
+								<input name='nonce' type='hidden' value="{{ nonce }}">
+								<input id="keys-chal" name='chal' type='hidden'>
+								<div id="current-keys" class="row"></div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="create-keys" class="modal fade" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<input type="hidden" class="chal-id" name="chal-id">
+			<div class="modal-header text-center">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<h3>Create Flag</h3>
+						</div>
+					</div>
+				</div>
+
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="create-keys-select-div">
+					<label for="create-keys-select" class="control-label">Choose Flag Type</label>
+					<select class="form-control" id="create-keys-select">
+					</select>
+				</div>
+				<br>
+				<div id="create-keys-entry-div">
+				</div>
+				<br>
+				<div style="display:none;" id="create-keys-button-div" class="text-center">
+				   <button id="create-keys-submit" class="btn btn-success">Create Flag</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div id="edit-keys" class="modal fade" tabindex="-1">
+</div>

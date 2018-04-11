@@ -1,0 +1,47 @@
+<div id="update-files" class="modal fade" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<h3 class="text-center">Files</h3>
+						</div>
+					</div>
+				</div>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form method="POST" action="{{ request.script_root }}/admin/files/" enctype="multipart/form-data">
+				<div class="modal-body">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<input name='nonce' type='hidden' value="{{ nonce }}">
+								<input id="files-chal" name='chal' type='hidden'>
+								<input name='method' type='hidden' value='upload'>
+								<div id="current-files" class="pb-3">
+
+								</div>
+								<input type="hidden" name="method" value="upload">
+								<input class="form-control-file" type="file" name="files[]" multiple="multiple">
+								<sub>Attach multiple files using Control+Click or Cmd+Click</sub>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+								<button class="btn btn-primary float-right" id="submit-files">Upload</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

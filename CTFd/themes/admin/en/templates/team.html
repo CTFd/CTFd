@@ -1,0 +1,430 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+
+<div class="modal fade" id="create-award-modal" tabindex="-1" role="dialog" aria-labelledby="create-award-label">
+	<div class="modal-dialog" role="document">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h4 class="modal-title" id="create-award-label">Create Award</h4>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+		<form id="award-create-form" method="POST" action="{{ request.script_root }}/admin/awards/add">
+			<div class="form-group">
+			<label for="award-name-input">Name</label>
+			<input type="text" class="form-control" id="award-name-input" name="name" placeholder="Enter award name">
+			</div>
+			<div class="form-group">
+			<label for="award-value-input">Value</label>
+			<input type="number" class="form-control" id="award-value-input" name="value" placeholder="Enter award value">
+			</div>
+			<div class="form-group">
+				<label for="award-category-input">Category</label>
+				<input type="text" class="form-control" id="award-category-input" name="category" placeholder="Enter award category">
+			</div>
+			<div class="form-group">
+				<label for="award-description-input" class="control-label">Description</label>
+				<textarea id="award-description-input" class="form-control" name="description" rows="10" placeholder="Description of what the award is for"></textarea>
+			</div>
+			<div class="form-group">
+			<label for="award-icon-input">Award Icon</label>
+			<input type="file" id="award-icon-input" name="icon">
+			</div>
+			<input type="hidden" value="{{ team.id }}" name="teamid" id="teamid">
+			<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+			<div class="modal-footer">
+			<button type="submit" id="award-create-button" class="btn btn-primary">Create</button>
+			</div>
+		</form>
+		</div>
+	</div>
+	</div>
+</div>
+
+<div class="jumbotron">
+	<div class="container">
+		<h1 id="team-id" class="text-center">{{ team.name }}</h1>
+		<h2 id="team-email" class="text-center">{{ team.email }}</h2>
+		<h2 id="team-place" class="text-center">
+			{% if place %}
+				{{ place }}
+				<small>place</small>
+			{% endif %}
+		</h2>
+		<h2 id="team-score" class="text-center">
+			{% if score %}
+				{{ score }}
+				<small>points</small>
+			{% endif %}
+		</h2>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+			{% if solves %}
+				<div id="keys-pie-graph" class="col-md-6">
+					<div class="text-center">
+						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+					</div>
+				</div>
+				<div id="categories-pie-graph" class="col-md-6">
+					<div class="text-center">
+						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+					</div>
+				</div>
+				<div id="score-graph" class="col-md-12">
+					<div class="text-center">
+						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+					</div>
+				</div>
+			{% else %}
+				<div class="row">
+					<div class="text-center"><h3 class="spinner-error">No solves yet</h3></div>
+				</div>
+			{% endif %}
+	</div>
+
+
+	<nav class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+		<a class="nav-item nav-link active" id="nav-solves-tab" data-toggle="tab" href="#nav-solves" role="tab"
+		   aria-controls="nav-solves" aria-selected="true">Solves</a>
+
+		<a class="nav-item nav-link" id="nav-wrong-tab" data-toggle="tab" href="#nav-wrong" role="tab"
+		   aria-controls="nav-wrong" aria-selected="false">Wrong</a>
+
+		<a class="nav-item nav-link" id="nav-awards-tab" data-toggle="tab" href="#nav-awards" role="tab"
+		   aria-controls="nav-awards" aria-selected="false">Awards</a>
+
+		<a class="nav-item nav-link" id="nav-missing-tab" data-toggle="tab" href="#nav-missing" role="tab"
+		   aria-controls="nav-missing" aria-selected="false">Missing</a>
+	</nav>
+	<div class="tab-content" id="nav-tabContent">
+		<div class="tab-pane fade show active" id="nav-solves" role="tabpanel" aria-labelledby="nav-solves-tab">
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped">
+					<h3 class="text-center py-3 d-block">Solves</h3>
+					<thead>
+					<tr>
+						<td class="text-center"><b>Challenge</b></td>
+						<td class="text-center"><b>Submitted</b></td>
+						<td class="text-center"><b>Category</b></td>
+						<td class="text-center"><b>Value</b></td>
+						<td class="text-center"><b>Time</b></td>
+						<td class="text-center"><b>Delete</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for solve in solves %}
+						<tr class="chal-solve">
+							<td class="text-center chal" id="{{ solve.chalid }}">{{ solve.chal.name }}</td>
+							<td class="flag" id="{{ solve.id }}"><pre>{{ solve.flag }}</pre></td>
+							<td class="text-center">{{ solve.chal.category }}</td>
+							<td class="text-center">{{ solve.chal.value }}</td>
+							<td class="text-center solve-time">
+								<script>document.write(moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+							</td>
+							<td class="text-center">
+								<span class="delete-item" data-toggle="tooltip"
+									  data-placement="top" title="Delete solve #{{ solve.id }}">
+									<i class="fas fa-times"></i>
+								</span>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="nav-wrong" role="tabpanel" aria-labelledby="nav-wrong-tab">
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped">
+					<h3 class="text-center py-3 d-block">Wrong Keys</h3>
+					<thead>
+					<tr>
+						<td class="text-center"><b>Challenge</b></td>
+						<td class="text-center"><b>Submitted</b></td>
+						<td class="text-center"><b>Time</b></td>
+						<td class="text-center"><b>Delete</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for wrong_key in wrong_keys %}
+						<tr class="chal-wrong">
+							<td class="text-center chal" id="{{ wrong_key.chalid }}">{{ wrong_key.chal.name }}</td>
+							<td class="flag" id="{{ wrong_key.id }}"><pre>{{ wrong_key.flag }}</pre></td>
+							<td class="text-center solve-time">
+								<script>document.write(moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+							</td>
+							<td class="text-center">
+								<span class="delete-item" data-toggle="tooltip"
+									  data-placement="top" title="Delete fail #{{ wrong_key.id }}">
+									<i class="fas fa-times"></i>
+								</span>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="nav-awards" role="tabpanel" aria-labelledby="nav-awards-tab">
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped">
+						<h3 class="text-center py-3 d-block">Awards</h3>
+						<thead>
+						<tr>
+							<td class="text-center"><b>Name</b></td>
+							<td class="text-center"><b>Description</b></td>
+							<td class="text-center"><b>Date</b></td>
+							<td class="text-center"><b>Value</b></td>
+							<td class="text-center"><b>Category</b></td>
+							<td class="text-center"><b>Icon</b></td>
+							<td class="text-center"><b>Delete</b></td>
+						</tr>
+						</thead>
+						<tbody id="awards-body">
+						{% for award in awards %}
+							<tr class="award-row">
+								<td class="text-center chal" id="{{ award.id }}">{{ award.name }}</td>
+								<td class=""><pre>{{ award.description }}</pre></td>
+								<td class="text-center solve-time">
+									<script>document.write(moment({{ award.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+								</td>
+								<td class="text-center">{{ award.value }}</td>
+								<td class="text-center">{{ award.category }}</td>
+								<td class="text-center">{{ award.icon }}</td>
+
+								<td class="text-center">
+									<span class="delete-item" data-toggle="tooltip"
+										  data-placement="top" title="Delete award #{{ award.id }}">
+										<i class="fas fa-times"></i>
+									</span>
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+
+					<button type="button" data-toggle="modal" data-target="#create-award-modal"
+							class="btn btn-primary float-right d-block">Create Award
+					</button>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="nav-missing" role="tabpanel" aria-labelledby="nav-missing-tab">
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped">
+					<h3 class="text-center py-3 d-block">Missing</h3>
+					<thead>
+					<tr>
+						<td class="text-center"><b>Challenge</b></td>
+						<td class="text-center"><b>Category</b></td>
+						<td class="text-center"><b>Value</b></td>
+						<td class="text-center"><b>Mark Solved</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for chal in missing %}
+						<tr class="chal-solve">
+							<td class="text-center chal" id="{{ chal.id }}">{{ chal.name }}</td>
+							<td class="text-center">{{ chal.category }}</td>
+							<td class="text-center">{{ chal.value }}</td>
+							<td class="text-center">
+								<span class="mark-correct" data-toggle="tooltip"
+									  data-placement="top" title="Mark {{ chal.name }} correct for {{ team.name }}">
+									<i class="fas fa-check"></i>
+								</span>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped">
+				<h3>IP Addresses</h3>
+				<thead>
+				<tr>
+					<td class="text-center"><b>IP Address</b></td>
+					<td class="text-center"><b>Last Seen</b></td>
+				</tr>
+				</thead>
+				<tbody>
+				{% for addr in addrs %}
+					<tr>
+						<td class="text-center">{{ addr[0] }}</td>
+						<td class="text-center solve-time">
+							<script>document.write(moment({{ addr[1]|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/team.js"></script>
+<script>
+var nonce = "{{ nonce }}";
+
+$(document).ready(function () {
+    $('.delete-item').click(function () {
+        var elem = $(this).parent().parent();
+        var type = elem.attr('class');
+        var chal_name = elem.find('.chal').text().trim();
+        var team_name = $("#team-id").text();
+        var key_id = elem.find('.flag').attr('id');
+
+        if (type == 'chal-solve') {
+            var title = 'Delete Solve';
+            var description = "<span>Are you sure you want to delete " +
+                "<strong>correct</strong> " +
+                "submission from " +
+                "<strong id='confirm-team-name'></strong> " +
+                "for challenge: " +
+                "<strong id='confirm-chal-name'></strong>?</span>"
+
+
+            var description = $($.parseHTML(description));
+            description.find('#confirm-team-name').text(team_name);
+            description.find('#confirm-chal-name').text(chal_name);
+            description = description.html();
+
+            var action = '{{ request.script_root }}/admin/solves/' + key_id + '/delete';
+        } else if (type == 'chal-wrong') {
+            var title = 'Delete Wrong Key';
+            var description = "<span>Are you sure you want to delete " +
+                "<strong>incorrect</strong> " +
+                "submission from " +
+                "<strong id='confirm-team-name'></strong> " +
+                "for <strong id='confirm-chal-name'></strong>?</span>";
+
+            var description = $($.parseHTML(description));
+            description.find('#confirm-team-name').text(team_name);
+            description.find('#confirm-chal-name').text(chal_name);
+            description = description.html();
+
+            var action = '{{ request.script_root }}/admin/wrong_keys/' + key_id + '/delete';
+        } else if (type == 'award-row') {
+            var title = 'Delete Award';
+            var award_id = elem.find('.chal').attr('id');
+            var description = "<span>Are you sure you want to delete the " +
+                "<strong>{0}</strong> award?</span>".format(chal_name);
+            var action = '{{ request.script_root }}/admin/awards/{0}/delete'.format(award_id);
+        }
+
+        var msg = {
+            title: title,
+            description: description,
+            action: action,
+        };
+
+        var td_row = $(this).parent().parent();
+
+        ezq({
+            title: title,
+            body: description,
+            success: function () {
+                var route = action;
+                $.post(route, {
+                    nonce: nonce,
+                }, function (data) {
+                    var data = $.parseJSON(JSON.stringify(data));
+                    if (data == "1") {
+                        td_row.remove();
+                    }
+                });
+            }
+        });
+    });
+
+    $('.mark-correct').click(function () {
+        var elem = $(this).parent().parent();
+        var type = elem.attr('class');
+        var chal = elem.find('.chal').attr('id');
+        var team = window.location.pathname.split('/').pop();
+
+        var chal_name = htmlentities(elem.find('.chal').text().trim());
+        var team_name = htmlentities($("#team-id").text());
+
+
+        var description = $($.parseHTML(description));
+        description.find('#confirm-team-name').text(team_name);
+        description.find('#confirm-chal-name').text(chal_name);
+        description = description.html();
+
+        var action = '{{request.script_root }}/admin/solves/' + team + '/' + chal + '/solve';
+
+        var title = 'Mark ' + chal_name + ' solved for ' + team_name;
+        var description = "<span>Are you sure you want to mark " +
+            "<strong>{0}</strong> ".format(team_name) +
+            "as solved for team " +
+            "<strong>{0}</strong>?</span>".format(chal_name);
+
+        var td_row = $(this).parent().parent();
+
+        ezq({
+            title: title,
+            body: description,
+            success: function () {
+                var route = script_root + '/admin/solves/' + team + '/' + chal + '/solve';
+                $.post(route, {
+                    nonce: nonce,
+                }, function (data) {
+                    var data = $.parseJSON(JSON.stringify(data));
+                    if (data == "1") {
+                        td_row.remove();
+                    }
+                });
+            }
+        })
+    });
+
+    $('#award-create-form').submit(function (e) {
+        $.post($(this).attr('action'), $(this).serialize(), function (res) {
+            if (res == '1') {
+                var award = $('#award-create-form').serializeObject();
+                var award_text = '<td class="text-center">{0}</td>'.format(award.name) +
+                    '<td class="text-center">{0}</td>'.format(award.description) +
+                    '<td class="text-center solve-time">{0}</td>'.format(moment().local().format('MMMM Do, h:mm:ss A')) +
+                    '<td class="text-center">{0}</td>'.format(award.value) +
+                    '<td class="text-center">{0}</td>'.format(award.category) +
+                    '<td class="text-center">{0}</td>'.format('None') +
+                    '<td class="text-center"><i class="fas fa-times"></i></td>'
+                $('#awards-body').append(award_text);
+                $('#create-award-modal').modal('hide');
+            }
+        })
+        e.preventDefault();
+    });
+});
+
+</script>
+{% endblock %}

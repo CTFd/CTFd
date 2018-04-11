@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Scoreboard</h1>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<table id="scoreboard" class="table table-striped">
+				<thead>
+					<tr>
+						<td width="10px"><b>Place</b></td>
+						<td><b>Team</b></td>
+						<td><b>Score</b></td>
+						<td><b>Visibility</b></td>
+					</tr>
+				</thead>
+				<tbody>
+				{% for team in teams %}
+					<tr>
+						<td>{{ loop.index }}</td>
+						<td><a href="{{ request.script_root }}/admin/team/{{ team.teamid }}">{{ team.name }}</a></td>
+						<td>{{ team.score }}</td>
+						<td>
+						{% if not team.banned %}
+						<form method="POST" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/ban">
+							<button class="btn-sm btn-success cursor-pointer" type="submit">Visible</button>
+							<input type="hidden" value="{{ nonce }}" name="nonce">
+						</form>
+						{%else %}
+						<form method="POST" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/unban">
+							<button class="btn-sm btn-danger cursor-pointer" type="submit">Hidden</button>
+							<input type="hidden" value="{{ nonce }}" name="nonce">
+						</form>
+						{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

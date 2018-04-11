@@ -1,0 +1,274 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Statistics</h1>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-4 text-right">
+			<h5><b>{{ team_count }}</b> teams registered</h5>
+			<h5><b>{{ ip_count }}</b> IP addresses</h5>
+			<hr>
+			<h5><b>{{ challenge_count }}</b> challenges</h5>
+			{% if most_solved %}
+				<h5><b>{{ most_solved }}</b> has the most solves with <br>{{ solve_data[most_solved] }} solves</h5>
+			{% endif %}
+			{% if least_solved %}
+			<h5><b>{{ least_solved }}</b> has the least solves with <br>{{ solve_data[least_solved] }} solves</h5>
+			{% endif %}
+		</div>
+
+		<div class="col-md-8">
+			<div id="solves-graph">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div id="solve-percentages-graph">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div id="keys-pie-graph">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
+			<div class="text-center">
+				<h5><b>{{ solve_count }}</b> right submissions</h5>
+				<h5><b>{{ wrong_count }}</b> wrong submissions</h5>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div id="categories-pie-graph">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
+<script type="text/javascript">
+	// $.distint(array)
+	// Unique elements in array
+	$.extend({
+		distinct: function (anArray) {
+			var result = [];
+			$.each(anArray, function (i, v) {
+				if ($.inArray(v, result) == -1) result.push(v);
+			});
+			return result;
+		}
+	});
+
+	// Praise Resig: http://ejohn.org/blog/fast-javascript-maxmin/
+	Array.max = function (array) {
+		return Math.max.apply(Math, array);
+	};
+
+	function solves_graph() {
+		$.get('{{ request.script_root }}/admin/graphs/solves', function (data) {
+			var solves = $.parseJSON(JSON.stringify(data));
+			var chals = [];
+			var counts = [];
+			var colors = [];
+			var annotations = [];
+			var i = 1;
+			var solves_order = Object.keys(solves).sort(function (a, b) {
+				return solves[b] - solves[a]
+			});
+			$.each(solves_order, function (key, value) {
+				chals.push(value);
+				counts.push(solves[value]);
+				{#					colors.push(colorhash(value));#}
+				var result = {
+					x: value,
+					y: solves[value],
+					text: solves[value],
+					xanchor: 'center',
+					yanchor: 'bottom',
+					showarrow: false,
+				};
+				annotations.push(result);
+			});
+
+			var data = [{
+				type: 'bar',
+				x: chals,
+				y: counts,
+				text: counts,
+				orientation: 'v',
+				{#                    marker: {#}
+				{#                        color: colors#}
+				{#                    },#}
+			}];
+
+			var layout = {
+				title: 'Solve Counts',
+				annotations: annotations,
+                xaxis: {
+                    title: 'Challenge Name'
+                },
+                yaxis: {
+                    title: 'Amount of Solves'
+                }
+			};
+
+			$('#solves-graph').empty();
+			Plotly.newPlot('solves-graph', data, layout);
+		});
+	}
+
+	function keys_percentage_graph() {
+		// Solves and Fails pie chart
+		$.get('{{ request.script_root }}/admin/fails/all', function (data) {
+			var res = $.parseJSON(JSON.stringify(data));
+			var solves = res['solves'];
+			var fails = res['fails'];
+
+			var data = [{
+				values: [solves, fails],
+				labels: ['Solves', 'Fails'],
+				marker: {
+					colors: [
+						"rgb(0, 209, 64)",
+						"rgb(207, 38, 0)"
+					]
+				},
+				hole: .4,
+				type: 'pie'
+			}];
+
+			var layout = {
+				title: 'Submission Percentages'
+			};
+
+			$('#keys-pie-graph').empty();
+			Plotly.newPlot('keys-pie-graph', data, layout);
+		});
+	}
+
+	function category_breakdown_graph() {
+		$.get('{{ request.script_root }}/admin/graphs/categories', function (data) {
+			var res = $.parseJSON(JSON.stringify(data));
+			res = res['categories'];
+
+			var categories = [];
+			var count = [];
+			for (var i = 0; i < res.length; i++) {
+				categories.push(res[i].category);
+				count.push(res[i].count);
+			}
+
+			var data = [{
+				values: count,
+				labels: categories,
+				hole: .4,
+				type: 'pie'
+			}];
+
+			var layout = {
+				title: 'Category Breakdown'
+			};
+
+			$('#categories-pie-graph').empty();
+			Plotly.newPlot('categories-pie-graph', data, layout);
+		});
+	}
+
+	function solve_percentages_graph() {
+		$.get('{{ request.script_root }}/admin/graphs/solve-percentages', function (data) {
+			var res = $.parseJSON(JSON.stringify(data));
+			res = res['percentages'];
+
+			var names = [];
+			var percents = [];
+			var labels = [];
+
+			var annotations = [];
+
+			for (var key in res) {
+				names.push(res[key].name);
+				percents.push( (res[key].percentage * 100) );
+
+				var result = {
+					x: res[key].name,
+					y: (res[key].percentage * 100),
+					text: Math.round(res[key].percentage * 100) + '%',
+					xanchor: 'center',
+					yanchor: 'bottom',
+					showarrow: false,
+				};
+				annotations.push(result);
+			}
+
+			var data = [{
+				type: 'bar',
+				x: names,
+				y: percents,
+				orientation: 'v'
+			}];
+
+			var layout = {
+				title: 'Solve Percentages per Challenge',
+				xaxis: {
+					title: 'Challenge Name'
+				},
+				yaxis: {
+					title: 'Percentage of Teams (%)',
+					range: [0, 100]
+				},
+				annotations: annotations
+			};
+
+			$('#solve-percentages-graph').empty();
+			Plotly.newPlot('solve-percentages-graph', data, layout);
+		});
+	}
+
+	function update() {
+		solves_graph();
+		keys_percentage_graph();
+		category_breakdown_graph();
+        solve_percentages_graph();
+	}
+
+	$(function () {
+		update();
+		window.onresize = function () {
+			console.log('resizing');
+			Plotly.Plots.resize(document.getElementById('keys-pie-graph'));
+			Plotly.Plots.resize(document.getElementById('categories-pie-graph'));
+			Plotly.Plots.resize(document.getElementById('solves-graph'));
+            Plotly.Plots.resize(document.getElementById('solve-percentages-graph'));
+		};
+	});
+
+	setInterval(update, 300000);
+
+</script>
+{% endblock %}

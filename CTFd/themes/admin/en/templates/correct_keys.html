@@ -1,0 +1,113 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron">
+	<div class="container">
+		<h1>Correct Submissions</h1>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<table id="teamsboard" class=" table table-striped">
+				<thead>
+					<tr>
+						<td class="text-center"><b>ID</b></td>
+						<td><b>Team</b></td>
+						<td><b>Challenge</b></td>
+						<td><b>Submission</b></td>
+						<td class="text-center"><b>Date</b></td>
+						<td class="text-center"><b>Delete</b></td>
+					</tr>
+				</thead>
+				<tbody>
+					{% for solve in solves %}
+					<tr>
+						<td class="text-center" id="{{ solve.id }}">
+							{{ solve.id }}
+						</td>
+						<td class="team" id="{{ solve.teamid }}">
+							<a href="{{ request.script_root }}/admin/team/{{ solve.teamid }}">{{ solve.team_name }}</a>
+						</td>
+						<td class="chal" id="{{ solve.chalid }}">
+							{{ solve.chal_name }}
+						</td>
+						<td class="flag" id="{{ solve.id }}">
+							<pre class="mb-0">{{ solve.flag }}</pre>
+						</td>
+						<td class="text-center solve-time">
+							<small>
+								<script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+							</small>
+						</td>
+						<td class="text-center">
+							<span class="delete-correct-submission" data-toggle="tooltip"
+								  data-placement="top" title="Delete solve #{{ solve.id }}">
+								<i class="fas fa-times"></i>
+							</span>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% if pages > 1 %}
+			<div class="text-center">Page
+				<br>
+				{% if curr_page != 1 %}<a href="{{ request.script_root }}/admin/correct_keys/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
+				{% for page in range(1, pages + 1) %}
+					{% if curr_page != page %}
+						<a href="{{ request.script_root }}/admin/correct_keys/{{ page }}">{{ page }}</a>
+					{% else %}
+						<b>{{ page }}</b>
+					{% endif %}
+				{% endfor %}
+				{% if curr_page != pages %}<a href="{{ request.script_root }}/admin/correct_keys/{{ curr_page + 1 }}">&gt;&gt;&gt;</a>{% endif %}
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+var nonce = "{{ nonce }}";
+
+$(document).ready(function () {
+    $('.delete-correct-submission').click(function () {
+        var elem = $(this).parent().parent();
+        var chal = elem.find('.chal').attr('id');
+        var chal_name = elem.find('.chal').text().trim();
+        var team = elem.find('.team').attr('id');
+        var team_name = elem.find('.team').text().trim();
+        var key_id = elem.find('.flag').attr('id');
+
+        var td_row = $(this).parent().parent();
+
+        ezq({
+            title: 'Delete Submission',
+            body: "Are you sure you want to delete correct submission from {0} for challenge {1}".format(
+                "<strong>" + htmlentities(team_name) + "</strong>",
+                "<strong>" + htmlentities(chal_name) + "</strong>"
+            ),
+            success: function () {
+                var route = script_root + '/admin/solves/' + key_id + '/delete';
+                $.post(route, {
+                    nonce: nonce,
+                }, function (data) {
+                    var data = $.parseJSON(JSON.stringify(data));
+                    if (data == "1") {
+                        td_row.remove();
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

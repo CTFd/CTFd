@@ -1,0 +1,111 @@
+<div id="hint-modal" class="modal fade" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<h3 id="hint-modal-title"></h3>
+						</div>
+					</div>
+				</div>
+
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="hint-modal-submit" method='POST'>
+				<div class="modal-body">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<ul class="nav nav-tabs" role="tablist" id="new-hint-edit">
+									<li class="nav-item">
+										<a class="nav-link active" href="#hint-write" aria-controls="home" role="tab" data-toggle="tab">Write</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#hint-preview" aria-controls="home" role="tab" data-toggle="tab">Preview</a>
+									</li>
+								</ul>
+
+								<div class="tab-content">
+									<div role="tabpanel" class="tab-pane active" id="hint-write">
+										<div class="form-group">
+											<label class="text-muted">
+												<small>Markdown &amp; HTML are supported</small>
+											</label>
+											<textarea id="hint-modal-hint" type="text" class="form-control" name="hint"
+													  placeholder="Hint" rows="7"></textarea>
+										</div>
+									</div>
+									<div role="tabpanel" class="tab-pane content" id="hint-preview"
+										 style="height:234px; overflow-y: scroll;">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<input id="hint-modal-cost" type="number" class="form-control" name="cost" placeholder="Cost">
+								</div>
+								<input type="hidden" id="chal-id-for-hint" name="chal">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+								<button class="btn btn-primary float-right" id="hint-modal-button">Add Hint</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+<div id="update-hints" class="modal fade" tabindex="-1" chal-id="">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<h3 class="text-center">Hints</h3>
+						</div>
+					</div>
+				</div>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="container text-center">
+					<a href="#" id="create-hint" class="btn btn-primary text-center">New Hint</a>
+				</div>
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class='current-hints'>
+								<table id="hintsboard" class="table table-striped">
+									<thead>
+										<tr>
+											<td class="text-center"><b>Hint</b></td>
+											<td class="text-center"><b>Cost</b></td>
+											<td class="text-center"><b>Settings</b></td>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

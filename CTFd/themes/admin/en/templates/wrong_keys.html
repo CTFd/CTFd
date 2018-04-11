@@ -1,0 +1,116 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Incorrect Submissions</h1>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<table id="teamsboard" class="table table-striped">
+				<thead>
+					<tr>
+						<td class="text-center"><b>ID</b>
+						</td>
+						<td><b>Team</b>
+						</td>
+						<td><b>Challenge</b>
+						</td>
+						<td><b>Submitted Key</b>
+						</td>
+						<td class="text-center"><b>Date</b>
+						</td>
+						<td class="text-center"><b>Delete</b>
+						</td>
+					</tr>
+				</thead>
+				<tbody>
+					{% for wrong_key in wrong_keys %}
+					<tr>
+						<td class="text-center">{{ wrong_key.id }}</td>
+						<td class="team" id="{{ wrong_key.teamid }}">
+							<a href="{{ request.script_root }}/admin/team/{{ wrong_key.teamid }}">{{ wrong_key.team_name }}</a>
+						</td>
+						<td class="chal" id="{{ wrong_key.chalid }}">
+							{{ wrong_key.chal_name }}
+						</td>
+						<td class="flag" id="{{ wrong_key.id }}">
+							<pre class="mb-0">{{ wrong_key.flag }}</pre>
+						</td>
+						<td class="text-center solve-time">
+							<small>
+								<script>document.write( moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+							</small>
+						</td>
+						<td class="text-center">
+							<span class="delete-incorrect-submission" data-toggle="tooltip"
+								  data-placement="top" title="Delete fail #{{ wrong_key.id }}">
+								<i class="fas fa-times"></i>
+							</span>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% if pages > 1 %}
+			<div class="text-center">Page
+				<br>
+				{% if curr_page != 1 %}<a href="{{ request.script_root }}/admin/wrong_keys/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
+				{% for page in range(1, pages + 1) %}
+					{% if curr_page != page %}
+						<a href="{{ request.script_root }}/admin/wrong_keys/{{ page }}">{{ page }}</a>
+					{% else %}
+						<b>{{ page }}</b>
+					{% endif %}
+				{% endfor %}
+				{% if curr_page != pages %}<a href="{{ request.script_root }}/admin/wrong_keys/{{ curr_page + 1 }}">&gt;&gt;&gt;</a>{% endif %}
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+var nonce = "{{ nonce }}";
+
+$(document).ready(function () {
+    $('.delete-incorrect-submission').click(function () {
+        var elem = $(this).parent().parent();
+        var chal = elem.find('.chal').attr('id');
+        var chal_name = elem.find('.chal').text().trim();
+        var team = elem.find('.team').attr('id');
+        var team_name = elem.find('.team').text().trim();
+        var key_id = elem.find('.flag').attr('id');
+
+        var td_row = $(this).parent().parent();
+
+        ezq({
+            title: 'Delete Submission',
+            body: "Are you sure you want to delete incorrect submission from {0} for challenge {1}".format(
+                "<strong>" + team_name + "</strong>",
+                "<strong>" + chal_name + "</strong>"
+            ),
+            success: function () {
+                var route = script_root + '/admin/wrong_keys/' + key_id + '/delete';
+                $.post(route, {
+                    nonce: nonce,
+                }, function (data) {
+                    var data = $.parseJSON(JSON.stringify(data));
+                    if (data == "1") {
+                        td_row.remove();
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

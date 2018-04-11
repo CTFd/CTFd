@@ -1,0 +1,108 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Pages
+			<a class="no-decoration" href="{{ request.script_root }}/admin/pages?operation=create">
+				<span class="create-page" role="button" data-toggle="tooltip" title="Create Page">
+					<i class="btn-fa fas fa-plus-circle"></i>
+				</span>
+			</a>
+		</h1>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<table id="pages" class="table table-striped">
+				<thead>
+				<tr>
+					<td><b>Title</b></td>
+					<td><b>Route</b></td>
+					<td><b>Authentication</b></td>
+					<td class="text-center"><b>Published</b></td>
+					<td class="text-center" width="10px"><b>Settings</b></td>
+				</tr>
+				</thead>
+				<tbody>
+				{% for page in pages %}
+					<tr>
+						<td class="page-title">
+							{{ page.title }}
+						</td>
+						<td class="page-route" page-id="{{ page.id }}" page-route="{{ page.route }}">
+							<a href="{{ request.script_root }}/admin/pages?id={{ page.id }}">
+								{{ page.route }}
+							</a>
+						</td>
+						<td class="page-authentication">
+							{% if page.auth_required %}
+							Required
+							{% else %}
+							{% endif %}
+						</td>
+						<td class="text-center">
+							{% if page.draft %}
+								Draft
+							{% else %}
+								Published
+							{% endif %}
+						</td>
+						<td class="text-center">
+							<span class="edit-page" data-toggle="tooltip" data-placement="top"
+								  title="Edit {{ page.route }}">
+								<a class="no-decoration" href="{{ request.script_root }}/admin/pages?id={{ page.id }}"><i class="btn-fa fas fa-edit"></i></a>
+							</span>
+							<span class="delete-page" page-id="{{ page.id }}" page-route="{{ page.route }}"
+								  page-title="{{ page.title }}" data-toggle="tooltip" data-placement="top"
+								  title="Delete {{ page.route }}">
+								<i class="btn-fa fas fa-times"></i>
+							</span>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ request.script_root }}/themes/admin/static/js/vendor/codemirror.min.js"></script>
+<script>
+var nonce = "{{ nonce }}";
+
+$(document).ready(function () {
+    $('.delete-page').click(function () {
+        var elem = $(this);
+        var name = elem.attr("page-route");
+        var page_id = elem.attr("page-id");
+        ezq({
+            title: 'Delete ' + name,
+            body: "Are you sure you want to delete {0}?".format(
+                "<strong>" + htmlentities(name) + "</strong>"
+            ),
+            success: function () {
+                var page_delete_route = '{{ request.script_root }}/admin/pages/delete';
+                $.post(page_delete_route, {
+                    route: name,
+                    id: page_id,
+                    nonce: nonce,
+                }, function (data) {
+                    var data = $.parseJSON(JSON.stringify(data));
+                    if (data == "1") {
+                        location.reload();
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
