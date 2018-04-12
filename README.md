@@ -3,7 +3,7 @@
 # Windows
  1. install python2.76 https://www.python.org/ftp/python/2.7.6/python-2.7.6.amd64.msi
  2. pip install win_inet_pton  pip install -r requirements.txt
- 3. Modify [CTFd/config.py] [.ctfd_secret_key] 
+ 3. Modify [CTFd/config.py] [CTFd/.ctfd_secret_key](you can use genkey.py) 
  4. Use `python serve.py` in a terminal to drop into debug mode.
 #Docker
  1.pleaese install docker & docker-compose
