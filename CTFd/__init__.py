@@ -3,6 +3,7 @@ import os
 
 from distutils.version import StrictVersion
 from flask import Flask
+from flask_compress import Compress
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from sqlalchemy.engine.url import make_url
@@ -54,6 +55,8 @@ class ThemeLoader(FileSystemLoader):
         # Check if the template requested is for the admin panel
         if template.startswith('admin/'):
             template = template[6:]  # Strip out admin/
+            print '11111111111111'
+            print get_lang()
             template = "/".join(['admin/{0}/'.format(get_lang()), 'templates', template])
             return super(ThemeLoader, self).get_source(environment, template)
 
@@ -84,6 +87,7 @@ def run_upgrade():
 
 def create_app(config='CTFd.config.Config'):
     app = CTFdFlask(__name__)
+    Compress(app)
     with app.app_context():
         app.config.from_object(config)
 
