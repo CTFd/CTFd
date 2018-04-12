@@ -3,16 +3,6 @@
 # The number of worker is recommended for the current CPU is  CPU number * 2 + 1 eg:2 CPU is 5
 WORKERS=5
 
-# Check that a CTFd/.ctfd_secret_key file or SECRET_KEY envvar is set
-if [ ! -f CTFd/.ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
-    if [ $WORKERS -gt 1 ]; then
-        echo "[ WARNING ] You are configured to use more than 1 worker."
-        echo "[ WARNING ] To do this, you must define the SECRET_KEY environment variable or create a CTFd/.ctfd_secret_key file."
-        echo "[ WARNING ] WORKERS will set to 1"
-        WORKERS=1
-    fi
-fi
-
 # Check that the database is available
 if [ -n "$DATABASE_URL" ]
     then
@@ -32,8 +22,8 @@ if [ -z "$WORKERS" ]; then
     WORKERS=1
 fi
 
-# Start CTFd
-echo "Starting CTFd"
+# Start CTFd *  
+echo "Starting CTFd with $WORKERS  workers"
 gunicorn 'CTFd:create_app()' \
     --bind '0.0.0.0:8000' \
     --workers $WORKERS \
