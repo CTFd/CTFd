@@ -5,7 +5,7 @@ if not os.environ.get('SECRET_KEY'):
     # Attempt to read the secret from the secret file
     # This will fail if the secret has not been written
     try:
-        with open('.ctfd_secret_key', 'rb') as secret:
+        with open('CTFd/.ctfd_secret_key', 'rb') as secret:
             key = secret.read()
     except (OSError, IOError):
         key = None
@@ -15,7 +15,7 @@ if not os.environ.get('SECRET_KEY'):
         # Attempt to write the secret file
         # This will fail if the filesystem is read-only
         try:
-            with open('.ctfd_secret_key', 'wb') as secret:
+            with open('CTFd/.ctfd_secret_key', 'wb') as secret:
                 secret.write(key)
                 secret.flush()
         except (OSError, IOError):
