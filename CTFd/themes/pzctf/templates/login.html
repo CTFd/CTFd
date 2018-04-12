@@ -14,7 +14,7 @@
 		<div class="col-md-6 offset-md-3">
 			{% for error in errors %}
 				<div class="alert alert-danger alert-dismissable" role="alert">
-				  <span class="sr-only">Error:</span>
+				  <span class="sr-only">错误:</span>
 				  {{ error }}
 				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
 				</div>
@@ -22,7 +22,7 @@
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
 				<div class="form-group">
 					<label for="name-input">
-						团队名称 或 Email
+						战队名 或 邮箱
 					</label>
 					<input class="form-control" type="text" name="name" id="name-input" />
 				</div>
@@ -40,7 +40,7 @@
 					</div>
 					<div class="col-md-6">
 						<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined float-right">
-							提交
+							确定
 						</button>
 					</div>
 				</div>

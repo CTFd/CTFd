@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Profile</h1>
+		<h1>个人简介</h1>
 	</div>
 </div>
 <div class="container">
@@ -15,14 +15,14 @@
 			{% if success %}
 				<div class="alert alert-success alert-dismissable submit-row" role="alert">
 					<strong>Success!</strong>
-					Your profile has been updated
+					你的个人简介已更新。
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
 				</div>
 			{% else %}
 				{% for error in errors %}
 				<div class="submit-row">
 					<div class="alert alert-danger alert-dismissable" role="alert">
-					  <span class="sr-only">Error:</span>
+					  <span class="sr-only">错误:</span>
 					  {{ error }}
 					  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
 				  </div>
@@ -31,12 +31,11 @@
 			{% endif %}
 			{% if confirm_email %}
 				<div class="alert alert-info alert-dismissable submit-row" role="alert">
-					Your email address isn't confirmed!
-					Please check your email to confirm your email address.
+					你的邮箱未确认!
+					请检查并确认你的邮箱地址。
 					<br>
 					<br>
-					To have the confirmation email resent please <a href="{{ request.script_root }}/confirm">click
-					here.</a>
+					请查收并确认邮件。 <a href="{{ request.script_root }}/confirm">点击此处.</a>
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
 							aria-hidden="true">×</span></button>
 				</div>
@@ -44,25 +43,25 @@
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
 				<div class="form-group">
 					<label for="name-input">
-						Team Name
+						团队名
 					</label>
 					<input class="form-control" type="text" name="name" id="name-input" value="{{name}}"/>
 				</div>
 				<div class="form-group">
 					<label for="email-input">
-						Email
+						邮箱
 					</label>
 					<input class="form-control" type="email" name="email" id="email-input" value="{{email}}"/>
 				</div>
 				<div class="form-group">
 					<label for="confirm-input">
-						Current Password
+						原密码
 					</label>
 					<input class="form-control" type="password" name="confirm" id="confirm-input" />
 				</div>
 				<div class="form-group">
 					<label for="password-input">
-						New Password
+						新密码
 					</label>
 					<input class="form-control" type="password" name="password" id="password-input" />
 				</div>
@@ -71,19 +70,19 @@
 
 				<div class="form-group">
 					<label for="affiliation-input">
-						Affiliation
+						学校/单位
 					</label>
 					<input class="form-control" type="text" name="affiliation" id="affiliation-input" value="{% if affiliation %}{{affiliation}}{% endif %}" />
 				</div>
 				<div class="form-group">
 					<label for="website-input">
-						Website
+						网站
 					</label>
 					<input class="form-control" type="text" name="website" id="website-input" value="{% if website %}{{website}}{% endif %}" />
 				</div>
 				<div class="form-group">
 					<label for="country-input">
-						Country
+						国家
 					</label>
 					<input class="form-control" type="text" name="country" id="country-input" value="{% if country %}{{country}}{% endif %}" />
 				</div>

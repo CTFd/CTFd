@@ -59,16 +59,16 @@
 
 					{% if not get_config('workshop_mode') %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/teams">Teams</a>
+							<a class="nav-link" href="{{ request.script_root }}/teams">比赛战队</a>
 						</li>
 					{% endif %}
 					{% if not hide_scores() %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/scoreboard">Scoreboard</a>
+							<a class="nav-link" href="{{ request.script_root }}/scoreboard">积分排行</a>
 						</li>
 					{% endif %}
 					<li class="nav-item">
-						<a class="nav-link" href="{{ request.script_root }}/challenges">Challenges</a>
+						<a class="nav-link" href="{{ request.script_root }}/challenges">比赛关卡</a>
 					</li>
 				</ul>
 
@@ -78,29 +78,29 @@
 					{% if username is defined %}
 						{% if admin %}
 							<li class="nav-item">
-								<a class="nav-link" href="{{ request.script_root }}/admin">Admin</a>
+								<a class="nav-link" href="{{ request.script_root }}/admin">管理</a>
 							</li>
 						{% endif %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/team">Team</a>
+							<a class="nav-link" href="{{ request.script_root }}/team">战队</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/profile">Profile</a>
+							<a class="nav-link" href="{{ request.script_root }}/profile">简介</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/logout">Logout</a>
+							<a class="nav-link" href="{{ request.script_root }}/logout">登出</a>
 						</li>
 					{% else %}
 						{% if can_register() %}
 							<li class="nav-item">
-								<a class="nav-link" href="{{ request.script_root }}/register">Register</a>
+								<a class="nav-link" href="{{ request.script_root }}/register">注册</a>
 							</li>
 							<li class="nav-item">
 								<a class="nav-link d-none d-md-block d-lg-block">|</a>
 							</li>
 						{% endif %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/login">Login</a>
+							<a class="nav-link" href="{{ request.script_root }}/login">登录</a>
 						</li>
 					{% endif %}
 				</ul>
@@ -116,7 +116,7 @@
 	<footer class="footer">
 		<div class="container text-center">
 			<a href="https://ctfd.io">
-				<small class="text-muted">Powered by CTFd</small>
+				<small class="text-muted">CopyRgith© Shell01 | Powered by CTFd</small>
 			</a>
 		</div>
 	</footer>

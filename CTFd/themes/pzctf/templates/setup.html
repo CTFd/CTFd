@@ -6,16 +6,16 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Setup</h1>
+			<h1>网站安装</h1>
 		</div>
 	</div>
 	<div class="container">
 		<div class="col-md-6 offset-md-3">
-			<h2 class="text-center">CTF Settings</h2>
+			<h2 class="text-center">比赛设置</h2>
 			{% for error in errors %}
 				<div class="submit-row">
 					<div class="alert alert-danger alert-dismissable" role="alert">
-						<span class="sr-only">Error:</span>
+						<span class="sr-only">错误:</span>
 						{{ error }}
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
 								aria-hidden="true">×</span></button>
@@ -27,31 +27,31 @@
 				{# This nonce is implemented specially in the route itself #}
 				<div class="form-group">
 					<label for="ctf_name-input">
-						CTF Name
+						网站名称
 					</label>
 					<input class="form-control" type="text" name="ctf_name" id="ctf_name-input"/>
 				</div>
 				<div class="form-group">
 					<label for="username-input">
-						Admin Username
+						管理员账户
 					</label>
 					<input class="form-control" type="text" name="name" id="username-input"/>
 				</div>
 				<div class="form-group">
 					<label for="email-input">
-						Admin Email
+						管理员邮箱
 					</label>
 					<input class="form-control" type="email" name="email" id="email-input"/>
 				</div>
 				<div class="form-group">
 					<label for="password-input">
-						Admin Password
+						管理员密码
 					</label>
 					<input class="form-control" type="password" name="password" id="password-input"/>
 				</div>
 				<br/>
 				<div class="submit-row text-center">
-					<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined">Submit
+					<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined">确定
 					</button>
 				</div>
 			</form>
