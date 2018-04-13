@@ -16,6 +16,11 @@ var modal = '<div class="modal fade" tabindex="-1" role="dialog">' +
     '  </div>' +
     '</div>';
 
+var progress = '<div class="progress">' +
+    '  <div class="progress-bar progress-bar-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: \{0\}%">' +
+    '  </div>' +
+    '</div>';
+
 function ezal(args){
     var res = modal.format(args.title, args.body);
     var obj = $(res);
@@ -28,7 +33,9 @@ function ezal(args){
 
     $(obj).on('hidden.bs.modal', function (e) {
         $(this).modal('dispose');
-    })
+    });
+
+    return obj;
 }
 
 function ezq(args){
@@ -51,4 +58,16 @@ function ezq(args){
     });
 
     obj.modal('show');
+
+    return obj;
+}
+
+function ezpg(args){
+    var bar = progress.format(args.width);
+    var res = modal.format(args.title, bar);
+
+    var obj = $(res);
+    $('main').append(obj);
+
+    return obj.modal('show');
 }
