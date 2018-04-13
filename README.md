@@ -10,7 +10,7 @@
 
 ![CTFd+ is a CTF in a can.](https://github.com/CoolDUp/CTFdPlus/blob/master/CTFd/themes/pzctf/static/img/scoreboard.png?raw=true)
 
-##Preview
+## Preview
 * English https://ctfdplus.cooldup.com/
 * 中文版 https://pzctf.cooldup.com/
 
