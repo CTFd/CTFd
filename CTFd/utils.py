@@ -848,14 +848,15 @@ def import_ctf(backup, segments=None, erase=False):
     backup = zipfile.ZipFile(backup)
 
     members = backup.namelist()
-    max_content_length = get_app_config('MAX_CONTENT_LENGTH') or 0
+    max_content_length = get_app_config('MAX_CONTENT_LENGTH')
     for f in members:
         if f.startswith('/') or '..' in f:
             # Abort on malicious zip files
             raise zipfile.BadZipfile
         info = backup.getinfo(f)
-        if info.file_size > max_content_length:
-            raise zipfile.LargeZipFile
+        if max_content_length:
+            if info.file_size > max_content_length:
+                raise zipfile.LargeZipFile
 
     groups = {
         'challenges': [
