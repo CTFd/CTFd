@@ -15,32 +15,32 @@
 * 中文版 https://pzctf.cooldup.com/
 
 ## Install
-* ###Ubuntu
+* ### Ubuntu
  1. cd <you_work_dir> Run `git clone https://github.com/CoolDUp/CTFdPlus.git` (`sudo apt-get install git`)
  2. Run `./uprepare.sh` to install dependencies using apt.
  3. Modify Config `vi CTFd/config.py`
  4. Run `python genkey.py` get your secret_key and save it
  5. Use `python serve.py` in a terminal to drop into debug mode.
-* ###Centos
+* ### Centos
  1. cd <you_work_dir> Run `git clone https://github.com/CoolDUp/CTFdPlus.git` (`sudo yum install -y git`)
  2. Run `./cprepare.sh` to install dependencies using yum.
  3. Modify Config `vi CTFd/config.py`
  4. Run `python genkey.py` get your secret_key and save it
  5. Use `python serve.py` in a terminal to drop into debug mode.
-* ###Windows
+* ### Windows
  1. Download https://github.com/CoolDUp/CTFdPlus/archive/master.zip & cd <you_work_dir>
  2. Run `./prepare.bat` to install dependencies.
  3. Modify Config [CTFd/config.py]
  4. Run `python genkey.py` get your secret_key and save it
  5. Use `python serve.py` in a terminal to drop into debug mode.
-* ###Docker
+* ### Docker
     * how to install docker or docker-compose ?
     > * `docker run -p 8000:8000 -it ctfd/ctfd`
     * With docker-compose you can   
     > * `cd /home/docker` & `git clone https://github.com/CoolDUp/CTFdPlus.git`
     > * `docker-compose build`
     > * `docker-compose up -d`
-* ###Solution
+* ### Solution
     * Install lamp farmework or install nginx only
     * Modify nginx config like /solution 's file
     * Install docker &  docker-compose  
