@@ -1,0 +1,99 @@
+<form method="POST" action="{{ script_root }}/admin/chal/new" enctype="multipart/form-data">
+	<div class="form-group">
+		<label for="name">名称
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="关卡名称"></i>
+		</label>
+		<input type="text" class="form-control" name="name" placeholder="输入关卡名称">
+	</div>
+	<div class="form-group">
+		<label for="category">类型
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="关卡类型"></i>
+		</label>
+		<input type="text" class="form-control" name="category" placeholder="输入关卡类型">
+	</div>
+
+	<ul class="nav nav-tabs" role="tablist" id="new-desc-edit">
+		<li class="nav-item">
+			<a class="nav-link active" href="#new-desc-write" aria-controls="home" role="tab" data-toggle="tab">输入</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#new-desc-preview" aria-controls="home" role="tab" data-toggle="tab">预览</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="new-desc-write">
+			<div class="form-group">
+				<label for="message-text" class="control-label">信息:
+					<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="在此简要的介绍关卡.支持 HTML&Markdown."></i>
+				</label>
+				<textarea id="new-desc-editor" class="form-control" name="description" rows="10"></textarea>
+			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane content" id="new-desc-preview" style="height:234px; overflow-y: scroll;">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="value">分值
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="挑战成功获得的分值"></i>
+		</label>
+		<input type="number" class="form-control" name="value" placeholder="输入分值" required>
+	</div>
+
+	<div class="form-group">
+		<label>Flag
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="在此输入正确的Flag. 支持静态和正则匹配."></i>
+		</label>
+		<input type="text" class="form-control" name="key" placeholder="输入 Flag">
+	</div>
+
+	<div class="form-group">
+		<select class="custom-select" name="key_type[0]">
+			<option value="static">静态</option>
+			<option value="regex">正则匹配</option>
+		</select>
+	</div>
+
+	<div class="form-check">
+		<div class="checkbox">
+			<label class="form-check-label">
+				<input class="form-check-input" name="hidden" type="checkbox">
+				隐藏该关卡
+			</label>
+		</div>
+	</div>
+
+	<div class="form-check">
+		<div class="checkbox">
+			<label class="form-check-label">
+				<input class="form-check-input" type="checkbox" id="solve-attempts-checkbox">
+				限制尝试次数
+			</label>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div id="solve-attempts-input" style="display: none;">
+			<label for="max_attempts">最大尝试次数
+				<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="在此设置允许尝试的次数? 无限制请输入0"></i>
+			</label>
+			<input class="form-control" id='max_attempts' name='max_attempts' type='number' placeholder="0">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label>Upload Challenge Files
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="关卡文件提供给用户下载"></i>
+		</label>
+		<input class="form-control-file" type="file" name="files[]" multiple="multiple">
+		<sub class="help-block">选择多个文件请 按住 Ctrt/Cmd + 单击 </sub>
+	</div>
+
+	<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+	<input type="hidden" value="standard" name="chaltype" id="chaltype">
+
+	<div class="form-group">
+		<button class="btn btn-primary float-right create-challenge-submit" type="submit">创建</button>
+	</div>
+</form>
