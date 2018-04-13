@@ -75,7 +75,7 @@
 ## Features of CTFd+
 * Add Language Support
 * Add Team-Token to Verify Flag
-* Add Dynamic Flag Support
+* Add Dynamic Flag Support (see plugins/keys/ReadMe)
 
 
 ## Credits
