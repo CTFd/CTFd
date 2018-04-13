@@ -16,6 +16,9 @@ RUN for d in CTFd/plugins/*; do \
 COPY ./migrations/ /opt/CTFd/migrations/
 COPY ./CTFd/ /opt/CTFd/CTFd/
 COPY docker-entrypoint.sh /opt/CTFd/
+COPY populate.py /opt/CTFd/
+COPY export.py /opt/CTFd/
+COPY import.py /opt/CTFd/
 VOLUME ["/opt/CTFd/CTFd"]
 RUN chmod +x /opt/CTFd/docker-entrypoint.sh
 EXPOSE 8000

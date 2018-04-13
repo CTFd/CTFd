@@ -245,7 +245,7 @@ if __name__ == '__main__':
             if name not in used:
                 used.append(name)
                 token = os.urandom(16).encode('hex')
-                team = Teams(name, name.lower() + gen_email(), token)
+                team = Teams(name, name.lower() + gen_email(), 'password', token)
                 team.verified = True
                 db.session.add(team)
                 count += 1
