@@ -102,7 +102,7 @@ def scoreboard_view():
     if utils.get_config('view_scoreboard_if_authed') and not utils.authed():
         return redirect(url_for('auth.login', next=request.path))
     if utils.hide_scores():
-        return render_template('scoreboard.html', errors=['Scores are currently hidden'])
+        return render_template('scoreboard.html', errors=[utils.get_tip('SCORE_HIDDEN')])
     standings = get_standings()
     return render_template('scoreboard.html', teams=standings, score_frozen=utils.is_scoreboard_frozen())
 

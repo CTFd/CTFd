@@ -161,6 +161,7 @@ class Teams(db.Model):
     name = db.Column(db.String(128), unique=True)
     email = db.Column(db.String(128), unique=True)
     password = db.Column(db.String(128))
+    token = db.Column(db.String(64), unique=True)
     website = db.Column(db.String(128))
     affiliation = db.Column(db.String(128))
     country = db.Column(db.String(32))
@@ -170,10 +171,11 @@ class Teams(db.Model):
     admin = db.Column(db.Boolean, default=False)
     joined = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, name, email, password):
+    def __init__(self, name, email, password, token):
         self.name = name
         self.email = email
         self.password = bcrypt_sha256.encrypt(str(password))
+        self.token = token
 
     def __repr__(self):
         return '<team %r>' % self.name

@@ -588,9 +588,9 @@ def mailserver():
 
 def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=None):
     if SSL is None:
-        smtp = smtplib.SMTP(host,port,timeout=3)
+        smtp = smtplib.SMTP(host,port,timeout=10)
     else:
-        smtp = smtplib.SMTP_SSL(host,port,timeout=3)
+        smtp = smtplib.SMTP_SSL(host,port,timeout=10)
     if TLS:
         smtp.starttls()
     if auth:
@@ -670,16 +670,49 @@ def sendmail(addr, text):
             return False, str(e)
     else:
         return False, get_tip('MAIL_SENT')
-
-
+'''Get Team-Token ganerate at regist
+    it's use to identity user at some challengs
+    Stop unregistered users or Check the dynamic Flag
+'''
+def get_team_token():
+    if not authed():
+        return 'NULL';
+    user = Teams.query.filter_by(id=session['id']).first()
+    if not user:
+        return 'NULL';
+    return user.token
+    
+def team_token_exist(tk):
+    user = Teams.query.filter_by(token=tk).first()
+    if not user:
+        return False;
+    return True
+    
+def team_token_info(tk):
+    user = Teams.query.filter_by(token=tk).first()
+    if not user:
+        return False;
+    return user
+    
+@cache.memoize()
+def get_authcode():
+    ac = hashlib.sha256(app.config['SECRET_KEY']).hexdigest()
+    return ac
+    
 def verify_email(addr):
+    team = Teams.query.filter_by(email=addr).first()
+    if team:
+        tk = team.token
+    else:
+        tk='NULL'
     s = TimedSerializer(app.config['SECRET_KEY'])
     token = s.dumps(addr)
     text = get_tip('MAIL_MSG_TEXT').format(
         ctf_name=get_config('ctf_name'),
         url=url_for('auth.confirm_user', _external=True),
-        token=base64encode(token, urlencode=True)
-    )
+        token=base64encode(token, urlencode=True),
+        team_token=tk
+    )      
     sendmail(addr, text)
 
 

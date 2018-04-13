@@ -3,6 +3,10 @@ from CTFd.plugins.keys import get_key_class
 from CTFd.models import db, Solves, WrongKeys, Keys, Challenges, Files, Tags, Hints
 from CTFd import utils
 
+PluginAssets = '/plugins/challenges/assets/{0}/'.format(utils.get_lang())
+
+def JoinAssets(res):
+    return PluginAssets + res
 
 class BaseChallenge(object):
     id = None
@@ -15,14 +19,14 @@ class CTFdStandardChallenge(BaseChallenge):
     id = "standard"  # Unique identifier used to register challenges
     name = "standard"  # Name of a challenge type
     templates = {  # Nunjucks templates used for each aspect of challenge editing & viewing
-        'create': '/plugins/challenges/assets/standard-challenge-create.njk',
-        'update': '/plugins/challenges/assets/standard-challenge-update.njk',
-        'modal': '/plugins/challenges/assets/standard-challenge-modal.njk',
+        'create': JoinAssets('standard-challenge-create.njk'),
+        'update': JoinAssets('standard-challenge-update.njk'),
+        'modal' : JoinAssets('standard-challenge-modal.njk'),
     }
     scripts = {  # Scripts that are loaded when a template is loaded
-        'create': '/plugins/challenges/assets/standard-challenge-create.js',
-        'update': '/plugins/challenges/assets/standard-challenge-update.js',
-        'modal': '/plugins/challenges/assets/standard-challenge-modal.js',
+        'create': JoinAssets('standard-challenge-create.js'),
+        'update': JoinAssets('standard-challenge-update.js'),
+        'modal' : JoinAssets('standard-challenge-modal.js'),
     }
 
     @staticmethod
@@ -147,8 +151,8 @@ class CTFdStandardChallenge(BaseChallenge):
         chal_keys = Keys.query.filter_by(chal=chal.id).all()
         for chal_key in chal_keys:
             if get_key_class(chal_key.type).compare(chal_key.flag, provided_key):
-                return True, 'Correct'
-        return False, 'Incorrect'
+                return True, utils.get_tip('T_CORRECT')
+        return False, utils.get_tip('T_INCORRECT')
 
     @staticmethod
     def solve(team, chal, request):
@@ -206,4 +210,4 @@ CHALLENGE_CLASSES = {
 
 
 def load(app):
-    register_plugin_assets_directory(app, base_path='/plugins/challenges/assets/')
+    register_plugin_assets_directory(app, base_path=PluginAssets)

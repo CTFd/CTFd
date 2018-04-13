@@ -43,7 +43,7 @@
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
 				<div class="form-group">
 					<label for="name-input">
-						团队名
+						战队名称
 					</label>
 					<input class="form-control" type="text" name="name" id="name-input" value="{{name}}"/>
 				</div>
@@ -76,18 +76,18 @@
 				</div>
 				<div class="form-group">
 					<label for="website-input">
-						网站
+						博客
 					</label>
 					<input class="form-control" type="text" name="website" id="website-input" value="{% if website %}{{website}}{% endif %}" />
 				</div>
 				<div class="form-group">
 					<label for="country-input">
-						国家
+						专业
 					</label>
 					<input class="form-control" type="text" name="country" id="country-input" value="{% if country %}{{country}}{% endif %}" />
 				</div>
 				<div class="form-group">
-					<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
+					<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined float-right">更新</button>
 				</div>
 				<input type="hidden" name="nonce" value="{{ nonce }}">
 			</form>

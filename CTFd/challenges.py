@@ -11,7 +11,7 @@ from CTFd.plugins.keys import get_key_class
 from CTFd.plugins.challenges import get_chal_class
 
 from CTFd import utils
-from CTFd.utils import text_type
+from CTFd.utils import text_type, get_tip
 
 challenges = Blueprint('challenges', __name__)
 
@@ -42,9 +42,9 @@ def hints_view(hintid):
                 # It's ctftime or the CTF has ended (but we allow views after)
                 team = Teams.query.filter_by(id=session['id']).first()
                 if team.score() < hint.cost:
-                    return jsonify({'errors': 'Not enough points'})
+                    return jsonify({'errors': get_tip('NOT_ENOUGH_POINT')})
                 unlock = Unlocks(model='hints', teamid=session['id'], itemid=hint.id)
-                award = Awards(teamid=session['id'], name=text_type('Hint for {}'.format(chal.name)), value=(-hint.cost))
+                award = Awards(teamid=session['id'], name=text_type(get_tip('HIT_FOR').format(chal.name)), value=(-hint.cost))
                 db.session.add(unlock)
                 db.session.add(award)
                 db.session.commit()
@@ -74,7 +74,7 @@ def challenges_view():
     start = utils.get_config('start') or 0
     end = utils.get_config('end') or 0
     if utils.ctf_paused():
-        infos.append('{} is paused'.format(utils.ctf_name()))
+        infos.append(get_tip('IS_PAUSED').format(utils.ctf_name()))
     if not utils.is_admin():  # User is not an admin
         if not utils.ctftime():
             # It is not CTF time
@@ -82,9 +82,9 @@ def challenges_view():
                 pass
             else:  # We are NOT allowed to view after the CTF ends
                 if utils.get_config('start') and not utils.ctf_started():
-                    errors.append('{} has not started yet'.format(utils.ctf_name()))
+                    errors.append(get_tip('NOT_START').format(utils.ctf_name()))
                 if (utils.get_config('end') and utils.ctf_ended()) and not utils.view_after_ctf():
-                    errors.append('{} has ended'.format(utils.ctf_name()))
+                    errors.append(get_tip('HAS_END').format(utils.ctf_name()))
                 return render_template('challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
 
     if utils.get_config('verify_emails'):
@@ -94,9 +94,9 @@ def challenges_view():
 
     if utils.user_can_view_challenges():  # Do we allow unauthenticated users?
         if utils.get_config('start') and not utils.ctf_started():
-            errors.append('{} has not started yet'.format(utils.ctf_name()))
+            errors.append(get_tip('NOT_START').format(utils.ctf_name()))
         if (utils.get_config('end') and utils.ctf_ended()) and not utils.view_after_ctf():
-            errors.append('{} has ended'.format(utils.ctf_name()))
+            errors.append(get_tip('HAS_END').format(utils.ctf_name()))
         return render_template('challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
     else:
         return redirect(url_for('auth.login', next='challenges'))
@@ -318,7 +318,7 @@ def chal(chalid):
     if utils.ctf_paused():
         return jsonify({
             'status': 3,
-            'message': '{} is paused'.format(utils.ctf_name())
+            'message': get_tip('IS_PAUSED').format(utils.ctf_name())
         })
     if utils.ctf_ended() and not utils.view_after_ctf():
         abort(403)
@@ -342,7 +342,7 @@ def chal(chalid):
                 chal_class.fail(team=team, chal=chal, request=request)
             logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
             # return '3' # Submitting too fast
-            return jsonify({'status': 3, 'message': "You're submitting keys too fast. Slow down."})
+            return jsonify({'status': 3, 'message': get_tip('SUBMIT_TOO_FAST')})
 
         solves = Solves.query.filter_by(teamid=session['id'], chalid=chalid).first()
 
@@ -356,7 +356,7 @@ def chal(chalid):
             if max_tries and fails >= max_tries > 0:
                 return jsonify({
                     'status': 0,
-                    'message': "You have 0 tries remaining"
+                    'message': get_tip('ZERO_CAN_TRY')
                 })
 
             status, message = chal_class.attempt(chal, request)
@@ -377,7 +377,7 @@ def chal(chalid):
                         tries_str = 'try'
                     if message[-1] not in '!().;?[]\{\}':  # Add a punctuation mark if there isn't one
                         message = message + '.'
-                    return jsonify({'status': 0, 'message': '{} You have {} {} remaining.'.format(message, attempts_left, tries_str)})
+                    return jsonify({'status': 0, 'message': get_tip('MANY_CAN_TRY').format(message, attempts_left, tries_str)})
                 else:
                     return jsonify({'status': 0, 'message': message})
 
@@ -385,9 +385,9 @@ def chal(chalid):
         else:
             logger.info("{0} submitted {1} with kpm {2} [ALREADY SOLVED]".format(*data))
             # return '2' # challenge was already solved
-            return jsonify({'status': 2, 'message': 'You already solved this'})
+            return jsonify({'status': 2, 'message': get_tip('HAVE_SOLVE')})
     else:
         return jsonify({
             'status': -1,
-            'message': "You must be logged in to solve a challenge"
+            'message': get_tip('MUST_LOGGED')
         })

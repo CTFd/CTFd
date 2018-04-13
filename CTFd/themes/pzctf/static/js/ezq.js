@@ -34,8 +34,8 @@ function ezal(args){
 function ezq(args){
     var res = modal.format(args.title, args.body);
     var obj = $(res);
-    var deny = '<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>';
-    var confirm = $('<button type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>');
+    var deny = '<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>';
+    var confirm = $('<button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>');
 
     obj.find('.modal-footer').append(deny);
     obj.find('.modal-footer').append(confirm);

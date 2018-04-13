@@ -9,7 +9,7 @@ from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Teams
 from CTFd import utils
-from CTFd.utils import ratelimit
+from CTFd.utils import ratelimit, get_tip
 
 import base64
 
@@ -31,13 +31,13 @@ def confirm_user(data=None):
             s = TimedSerializer(app.config['SECRET_KEY'])
             email = s.loads(utils.base64decode(data, urldecode=True), max_age=1800)
         except BadTimeSignature:
-            return render_template('confirm.html', errors=['Your confirmation link has expired'])
+            return render_template('confirm.html', errors=[get_tip('LINK_EXPIRED')])
         except (BadSignature, TypeError, base64.binascii.Error):
-            return render_template('confirm.html', errors=['Your confirmation token is invalid'])
+            return render_template('confirm.html', errors=[get_tip('INVIDE_RESET_TOKEN')])
         team = Teams.query.filter_by(email=email).first_or_404()
         team.verified = True
         db.session.commit()
-        logger.warn("[{date}] {ip} - {username} confirmed their account".format(
+        logger.warn(get_tip('USER_HAVE_CM').format(
             date=time.strftime("%m/%d/%Y %X"),
             ip=utils.get_ip(),
             username=team.name.encode('utf-8'),
@@ -61,13 +61,13 @@ def confirm_user(data=None):
                 return redirect(url_for('views.profile'))
             else:
                 utils.verify_email(team.email)
-                logger.warn("[{date}] {ip} - {username} initiated a confirmation email resend".format(
+                logger.warn(get_tip('EMAIL_CF_RESENT').format(
                     date=time.strftime("%m/%d/%Y %X"),
                     ip=utils.get_ip(),
                     username=team.name.encode('utf-8'),
                     email=team.email.encode('utf-8')
                 ))
-            return render_template('confirm.html', team=team, infos=['Your confirmation email has been resent!'])
+            return render_template('confirm.html', team=team, infos=[get_tip('EMAIL_CF_SENT')])
         elif request.method == "GET":
             # User has been directed to the confirm page
             team = Teams.query.filter_by(id=session['id']).first_or_404()
@@ -88,9 +88,9 @@ def reset_password(data=None):
             s = TimedSerializer(app.config['SECRET_KEY'])
             name = s.loads(utils.base64decode(data, urldecode=True), max_age=1800)
         except BadTimeSignature:
-            return render_template('reset_password.html', errors=['Your link has expired'])
+            return render_template('reset_password.html', errors=[get_tip('LINK_EXPIRED')])
         except (BadSignature, TypeError, base64.binascii.Error):
-            return render_template('reset_password.html', errors=['Your reset token is invalid'])
+            return render_template('reset_password.html', errors=[get_tip('INVIDE_RESET_TOKEN')])
 
         if request.method == "GET":
             return render_template('reset_password.html', mode='set')
@@ -98,7 +98,7 @@ def reset_password(data=None):
             team = Teams.query.filter_by(name=name).first_or_404()
             team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
             db.session.commit()
-            logger.warn("[{date}] {ip} -  successful password reset for {username}".format(
+            logger.warn(get_tip('PASS_HAVE_RESET').format(
                 date=time.strftime("%m/%d/%Y %X"),
                 ip=utils.get_ip(),
                 username=team.name.encode('utf-8')
@@ -115,20 +115,20 @@ def reset_password(data=None):
         if utils.can_send_mail() is False:
             return render_template(
                 'reset_password.html',
-                errors=['Email could not be sent due to server misconfiguration']
+                errors=[get_tip('EMAIL_NOT_CONFIG')]
             )
 
         if not team:
             return render_template(
                 'reset_password.html',
-                errors=['If that account exists you will receive an email, please check your inbox']
+                errors=[get_tip('FORGOT_PASS_NOTICE')]
             )
 
         utils.forgot_password(email, team.name)
 
         return render_template(
             'reset_password.html',
-            errors=['If that account exists you will receive an email, please check your inbox']
+            errors=[get_tip('FORGOT_PASS_NOTICE')]
         )
     return render_template('reset_password.html')
 
@@ -154,25 +154,26 @@ def register():
         team_name_email_check = utils.check_email_format(name)
 
         if not valid_email:
-            errors.append("Please enter a valid email address")
+            errors.append(get_tip('INVIDE_EMAIL'))
         if names:
-            errors.append('That team name is already taken')
+            errors.append(get_tip('TEAM_EXIST'))
         if team_name_email_check is True:
-            errors.append('Your team name cannot be an email address')
+            errors.append(get_tip('EMAIL_NOT_TEAM'))
         if emails:
-            errors.append('That email has already been used')
+            errors.append(get_tip('EMAIL_HAVE_USE'))
         if pass_short:
-            errors.append('Pick a longer password')
+            errors.append(get_tip('TOO_SHORT_PASS'))
         if pass_long:
-            errors.append('Pick a shorter password')
+            errors.append(get_tip('TOO_LONG_PASS'))
         if name_len:
-            errors.append('Pick a longer team name')
+            errors.append(get_tip('TOO_SHORT_TEAM'))
 
         if len(errors) > 0:
             return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
         else:
             with app.app_context():
-                team = Teams(name, email.lower(), password)
+                token = os.urandom(16).encode('hex')
+                team = Teams(name, email.lower(), password, token.lower())
                 db.session.add(team)
                 db.session.commit()
                 db.session.flush()
@@ -184,7 +185,7 @@ def register():
 
                 if utils.can_send_mail() and utils.get_config('verify_emails'):  # Confirming users is enabled and we can send email.
                     logger = logging.getLogger('regs')
-                    logger.warn("[{date}] {ip} - {username} registered (UNCONFIRMED) with {email}".format(
+                    logger.warn(get_tip('USER_REG_WARN').format(
                         date=time.strftime("%m/%d/%Y %X"),
                         ip=utils.get_ip(),
                         username=request.form['name'].encode('utf-8'),
@@ -195,9 +196,9 @@ def register():
                     return redirect(url_for('auth.confirm_user'))
                 else:  # Don't care about confirming users
                     if utils.can_send_mail():  # We want to notify the user that they have registered.
-                        utils.sendmail(request.form['email'], "You've successfully registered for {}".format(utils.get_config('ctf_name')))
+                        utils.sendmail(request.form['email'], get_tip('USER_REG_SUCCESS').format(utils.get_config('ctf_name')))
 
-        logger.warn("[{date}] {ip} - {username} registered with {email}".format(
+        logger.warn(get_tip('USER_REGISTRED').format(
             date=time.strftime("%m/%d/%Y %X"),
             ip=utils.get_ip(),
             username=request.form['name'].encode('utf-8'),
@@ -235,7 +236,7 @@ def login():
                 session['nonce'] = utils.sha512(os.urandom(10))
                 db.session.close()
 
-                logger.warn("[{date}] {ip} - {username} logged in".format(
+                logger.warn(get_tip('USER_LOGINED').format(
                     date=time.strftime("%m/%d/%Y %X"),
                     ip=utils.get_ip(),
                     username=session['username'].encode('utf-8')
@@ -246,21 +247,21 @@ def login():
                 return redirect(url_for('challenges.challenges_view'))
 
             else:  # This user exists but the password is wrong
-                logger.warn("[{date}] {ip} - submitted invalid password for {username}".format(
+                logger.warn(get_tip('INVIDE_PASS').format(
                     date=time.strftime("%m/%d/%Y %X"),
                     ip=utils.get_ip(),
                     username=team.name.encode('utf-8')
                 ))
-                errors.append("Your username or password is incorrect")
+                errors.append(get_tip('INVIDE_USER_PASS'))
                 db.session.close()
                 return render_template('login.html', errors=errors)
 
         else:  # This user just doesn't exist
-            logger.warn("[{date}] {ip} - submitted invalid account information".format(
+            logger.warn(get_tip('INVIDE_USER').format(
                 date=time.strftime("%m/%d/%Y %X"),
                 ip=utils.get_ip()
             ))
-            errors.append("Your username or password is incorrect")
+            errors.append(get_tip('INVIDE_USER_PASS'))
             db.session.close()
             return render_template('login.html', errors=errors)
 

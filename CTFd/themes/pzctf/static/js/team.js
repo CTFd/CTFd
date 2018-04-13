@@ -44,7 +44,7 @@ function scoregraph() {
         ];
 
         var layout = {
-            title: 'Score over Time',
+            title: '分值-时间表',
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             hovermode: 'closest',
@@ -75,7 +75,7 @@ function keys_percentage_graph() {
 
         var data = [{
             values: [solves, fails],
-            labels: ['Solves', 'Fails'],
+            labels: ['已解决', '未解决'],
             marker: {
                 colors: [
                     "rgb(0, 209, 64)",
@@ -87,7 +87,7 @@ function keys_percentage_graph() {
         }];
 
         var layout = {
-            title: 'Key Percentages',
+            title: '解题百分比',
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             legend: {
@@ -136,7 +136,7 @@ function category_breakdown_graph() {
         }];
 
         var layout = {
-            title: 'Category Breakdown',
+            title: '类型分布',
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             legend: {

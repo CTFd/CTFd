@@ -6,7 +6,7 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>邮箱确认</h1>
+			<h1>邮箱验证</h1>
 		</div>
 	</div>
 	<div class="container">
@@ -30,23 +30,23 @@
 				{% endfor %}
 				{% if team %}
 				<h3 class="text-center">
-					我们已经向 {{ team.email }} 发了一封确认邮件。
+					我们已经向 {{ team.email }} 发了一封验证邮件
 				</h3>
 
 				<br>
 
 				<h4 class="text-center">
-					请点击邮件中的链接确认你的账号。
+					请点击邮件中的链接验证您的邮箱
 				</h4>
 				{% endif %}
 
 				{% if username %}
 				<form method="POST" action="{{ request.script_root }}/confirm">
 					<h4 class="text-center">
-						重新发送?
+						没有收到 ?
 					</h4>
 					<div class="col-md-12 text-center">
-						<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined">重新发送!</button>
+						<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined">重新发送</button>
 					</div>
 					<input type="hidden" name="nonce" value="{{ nonce }}">
 				</form>

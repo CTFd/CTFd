@@ -7,7 +7,7 @@ from jinja2.exceptions import TemplateNotFound
 from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Teams, Solves, Awards, Files, Pages
-from CTFd.utils import cache, markdown
+from CTFd.utils import cache, markdown, get_tip
 from CTFd import utils
 
 views = Blueprint('views', __name__)
@@ -32,7 +32,8 @@ def setup():
             name = request.form['name']
             email = request.form['email']
             password = request.form['password']
-            admin = Teams(name, email, password)
+            token = os.urandom(16).encode('hex')
+            admin = Teams(name, email, password, token.lower())
             admin.admin = True
             admin.banned = True
 
@@ -198,7 +199,7 @@ def team(teamid):
     db.session.close()
 
     if utils.hide_scores() and teamid != session.get('id'):
-        errors.append('Scores are currently hidden')
+        errors.append(get_tip('SCORE_HIDDEN'))
 
     if errors:
         return render_template('team.html', team=user, errors=errors)
@@ -234,21 +235,21 @@ def profile():
             valid_email = utils.check_email_format(email)
 
             if utils.check_email_format(name) is True:
-                errors.append('Team name cannot be an email address')
+                errors.append(get_tip('EMAIL_NOT_TEAM'))
 
             if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
                     (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):
-                errors.append("Your old password doesn't match what we have.")
+                errors.append(get_tip('PASS_NOT_MATCH'))
             if not valid_email:
-                errors.append("That email doesn't look right")
+                errors.append(get_tip('INVIDE_EMAIL'))
             if not utils.get_config('prevent_name_change') and names and name != session['username']:
-                errors.append('That team name is already taken')
+                errors.append(get_tip('TEAM_EXIST'))
             if emails and emails.id != session['id']:
-                errors.append('That email has already been used')
+                errors.append(get_tip('EMAIL_HAVE_USE'))
             if not utils.get_config('prevent_name_change') and name_len:
-                errors.append('Pick a longer team name')
+                errors.append(get_tip('TOO_SHORT_TEAM'))
             if website.strip() and not utils.validate_url(website):
-                errors.append("That doesn't look like a valid URL")
+                errors.append(get_tip('INVIDE_LINK_FORMAT'))
 
             if len(errors) > 0:
                 return render_template('profile.html', name=name, email=email, website=website,

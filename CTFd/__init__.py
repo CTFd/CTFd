@@ -55,8 +55,6 @@ class ThemeLoader(FileSystemLoader):
         # Check if the template requested is for the admin panel
         if template.startswith('admin/'):
             template = template[6:]  # Strip out admin/
-            print '11111111111111'
-            print get_lang()
             template = "/".join(['admin/{0}/'.format(get_lang()), 'templates', template])
             return super(ThemeLoader, self).get_source(environment, template)
 

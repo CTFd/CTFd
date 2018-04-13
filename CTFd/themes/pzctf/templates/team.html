@@ -20,7 +20,7 @@
 
 	{% if score_frozen %}
 	<div class="row">
-		<h1 class="text-center">积分榜暂停刷新</h1>
+		<h1 class="text-center">积分排行-P</h1>
 	</div>
 	{% endif %}
 
@@ -32,7 +32,7 @@
 		</h2>
 		<h2 id="team-score" class="text-center">
 			{%if score %}
-				{{ score }} <small>分</small>
+				{{ score }} <small>分值</small>
 			{% endif %}
 		</h2>
 	</div>
@@ -62,7 +62,7 @@
 	{% if awards %}
 	<div class="row">
 		<div class="col-md-12">
-			<h3>获奖人员/战队</h3>
+			<h3>奖励/扣分</h3>
 		</div>
 		{% for award in awards %}
 				<div class="col-md-3 col-sm-6">
@@ -79,13 +79,13 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<h3>已解出人数</h3>
+			<h3>解题总计</h3>
 			<table class="table table-striped">
 				<thead>
 					<tr>
-						<td><b>比赛关卡</b></td>
+						<td><b>关卡</b></td>
 						<td class="d-none d-md-block d-lg-block"><b>类型</b></td>
-						<td><b>评估</b></td>
+						<td><b>分值</b></td>
 						<td><b>时间</b></td>
 					</tr>
 				</thead>
@@ -102,7 +102,7 @@
 		</div>
 	</div>
 	{% else %}
-		<div class="text-center"><h3 class="spinner-error">还没有小伙伴能解决呢</h3></div>
+		<div class="text-center"><h3 class="spinner-error">还没有已解决的题目哦</h3></div>
 	{% endif %}
 	{% endif %}
 </div>

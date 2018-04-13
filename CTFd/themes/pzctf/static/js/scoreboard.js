@@ -35,7 +35,7 @@ function scoregraph () {
         if (Object.keys(places).length === 0 ){
             // Replace spinner
             $('#score-graph').html(
-                '<div class="text-center"><h3 class="spinner-error">No solves yet</h3></div>'
+                '<div class="text-center"><h3 class="spinner-error">还没有人解出题目呢</h3></div>'
             );
             return;
         }
@@ -75,7 +75,7 @@ function scoregraph () {
         });
 
         var layout = {
-            title: 'Top 10 Teams',
+            title: '十强战队',
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             hovermode: 'closest',

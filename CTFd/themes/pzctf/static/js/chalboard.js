@@ -22,7 +22,7 @@ function updateChalWindow(obj) {
     $.get(script_root + obj.template, function(template_data){
         $('#chal-window').empty();
         var template = nunjucks.compile(template_data);
-        var solves = obj.solves == 1 ? " Solve" : " Solves";
+        var solves = obj.solves == 1 ? " 队已解决" : " 队已解决";
         var solves = obj.solves + solves;
 
         var nonce = $('#nonce').val();
@@ -202,7 +202,7 @@ function updatesolves(cb){
 function getsolves(id){
   $.get(script_root + '/chal/'+id+'/solves', function (data) {
     var teams = data['teams'];
-    $('.chal-solves').text((parseInt(teams.length) + " Solves"));
+    $('.chal-solves').text((parseInt(teams.length) + " 队已解决"));
     var box = $('#chal-solves-names');
     box.empty();
     for (var i = 0; i < teams.length; i++) {
@@ -283,21 +283,21 @@ function loadchals(cb) {
 
 function loadhint(hintid){
     ezq({
-        title: "Unlock Hint?",
-        body: "Are you sure you want to open this hint?",
+        title: "解锁提示?",
+        body: "您确定要打开这个提示吗?",
         success: function(){
             $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function (data) {
                 if (data.errors) {
                     ezal({
-                        title: "Error!",
+                        title: "错误!",
                         body: data.errors,
-                        button: "Okay"
+                        button: "确定"
                     });
                 } else {
                     ezal({
-                        title: "Hint",
+                        title: "提示",
                         body: marked(data.hint, {'gfm': true, 'breaks': true}),
-                        button: "Got it!"
+                        button: "确定"
                     });
                 }
             });
