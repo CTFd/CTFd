@@ -1,0 +1,5 @@
+Dynamic Key Verify [Usage]
+
+1.modify [index.php] and then put php/index.php to your web_root
+2.set dynamic_data "http://127.0.0.1/4d94eb3d5a/" in admin page
+3.test it

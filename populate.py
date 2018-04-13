@@ -4,7 +4,7 @@
 import datetime
 import hashlib
 import random
-
+import os
 from CTFd import create_app
 from CTFd.models import Teams, Solves, Challenges, WrongKeys, Keys, Files, Awards
 
@@ -244,7 +244,8 @@ if __name__ == '__main__':
             name = gen_name()
             if name not in used:
                 used.append(name)
-                team = Teams(name, name.lower() + gen_email(), 'password')
+                token = os.urandom(16).encode('hex')
+                team = Teams(name, name.lower() + gen_email(), token)
                 team.verified = True
                 db.session.add(team)
                 count += 1

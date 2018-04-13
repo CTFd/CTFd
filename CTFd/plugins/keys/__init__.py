@@ -68,7 +68,7 @@ class CTFdDynamicKey(BaseKey):
         *key is flag provide by user (Don't be trusted)
         *token is user's Team-Token
         *auth is generate by system_sectet_key,use to identify we self
-        **http_status_code=200 will return true, other is false
+        **http_status_code=200 & Text='OKAY' will return true, other is false
         '''
         token = get_team_token()
         if token=='NULL':
@@ -87,7 +87,7 @@ class CTFdDynamicKey(BaseKey):
              except requests.RequestException as e:
                 return False
              print r.status_code
-             if r.status_code == 200:
+             if r.status_code == 200 and r.text == 'OKAY':
                 return True
              else:
                 return False
