@@ -843,9 +843,20 @@ def import_ctf(backup, segments=None, erase=False):
         segments = ['challenges', 'teams', 'both', 'metadata']
 
     if not zipfile.is_zipfile(backup):
-        raise TypeError
+        raise zipfile.BadZipfile
 
     backup = zipfile.ZipFile(backup)
+
+    members = backup.namelist()
+    max_content_length = get_app_config('MAX_CONTENT_LENGTH')
+    for f in members:
+        if f.startswith('/') or '..' in f:
+            # Abort on malicious zip files
+            raise zipfile.BadZipfile
+        info = backup.getinfo(f)
+        if max_content_length:
+            if info.file_size > max_content_length:
+                raise zipfile.LargeZipFile
 
     groups = {
         'challenges': [
