@@ -4,10 +4,7 @@ import json
 import netaddr
 import platform
 if platform.system()=='Windows':
-    print "+++++++++++++++++++\nnotice:windows need run [pip install win_inet_pton]\n-------------------"
     import win_inet_pton
-    
-    
 from socket import inet_pton, inet_ntop, AF_INET, AF_INET6
 from struct import unpack, pack, error as struct_error
 
