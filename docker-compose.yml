@@ -9,7 +9,7 @@ services:
     environment:
       - UPLOAD_FOLDER=/var/uploads
       - LOG_FOLDER=/var/log/CTFd
-      - DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfdplus
+      - DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfd
       - REDIS_URL=redis://cache:6379
     volumes:
       - .data/CTFd/logs:/var/log/CTFd
