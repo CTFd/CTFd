@@ -8,7 +8,7 @@ import sys
 
 app = create_app()
 with app.app_context():
-    if sys.argv[2]:
+    if len(sys.argv) == 2:
         segments = sys.argv[2].split(',')
     else:
         segments = None
