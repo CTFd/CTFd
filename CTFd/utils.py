@@ -948,9 +948,11 @@ def import_ctf(backup, segments=None, erase=False):
                                     continue
                     for k, v in entry.items():
                         if k == 'chal' or k == 'chalid':
-                            entry[k] += chals_base
+                            if entry[k]:
+                                entry[k] += chals_base
                         if k == 'team' or k == 'teamid':
-                            entry[k] += teams_base
+                            if entry[k]:
+                                entry[k] += teams_base
 
                     if item == 'teams':
                         table.insert_ignore(entry, ['email'])
