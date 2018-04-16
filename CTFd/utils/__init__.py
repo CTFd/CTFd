@@ -191,6 +191,9 @@ def init_utils(app):
 
     @app.before_request
     def csrf():
+        func = app.view_functions[request.endpoint]
+        if hasattr(func, '_bypass_csrf'):
+            return
         if not session.get('nonce'):
             session['nonce'] = sha512(os.urandom(10))
         if request.method == "POST":
@@ -735,35 +738,42 @@ def base64decode(s, urldecode=False):
 
 
 def update_check(force=False):
-    update = app.config.get('UPDATE_CHECK') or force
+    # If UPDATE_CHECK is disabled don't check for updates at all.
+    if app.config.get('UPDATE_CHECK') is False:
+        return
+
+    # Get when we should check for updates next.
+    next_update_check = get_config('next_update_check') or 0
+
+    # If we have passed our saved time or we are forcing we should check.
+    update = (next_update_check < time.time()) or force
+
     if update:
-        next_update_check = get_config('next_update_check') or 0
-        if (next_update_check < time.time()) or force:
+        try:
+            params = {
+                'current': app.VERSION
+            }
+            check = requests.get(
+                'https://versioning.ctfd.io/versions/latest',
+                params=params,
+                timeout=0.1
+            ).json()
+        except requests.exceptions.RequestException as e:
+            pass
+        else:
             try:
-                params = {
-                    'current': app.VERSION
-                }
-                check = requests.get(
-                    'https://versioning.ctfd.io/versions/latest',
-                    params=params,
-                    timeout=0.1
-                ).json()
-            except requests.exceptions.RequestException as e:
-                pass
-            else:
-                try:
-                    latest = check['resource']['tag']
-                    html_url = check['resource']['html_url']
-                    if StrictVersion(latest) > StrictVersion(app.VERSION):
-                        set_config('version_latest', html_url)
-                    elif StrictVersion(latest) <= StrictVersion(app.VERSION):
-                        set_config('version_latest', None)
-                except KeyError:
+                latest = check['resource']['tag']
+                html_url = check['resource']['html_url']
+                if StrictVersion(latest) > StrictVersion(app.VERSION):
+                    set_config('version_latest', html_url)
+                elif StrictVersion(latest) <= StrictVersion(app.VERSION):
                     set_config('version_latest', None)
-            finally:
-                # 12 hours later
-                next_update_check_time = int(time.time() + 43200)
-                set_config('next_update_check', next_update_check_time)
+            except KeyError:
+                set_config('version_latest', None)
+        finally:
+            # 12 hours later
+            next_update_check_time = int(time.time() + 43200)
+            set_config('next_update_check', next_update_check_time)
     else:
         set_config('version_latest', None)
 
@@ -838,9 +848,20 @@ def import_ctf(backup, segments=None, erase=False):
         segments = ['challenges', 'teams', 'both', 'metadata']
 
     if not zipfile.is_zipfile(backup):
-        raise TypeError
+        raise zipfile.BadZipfile
 
     backup = zipfile.ZipFile(backup)
+
+    members = backup.namelist()
+    max_content_length = get_app_config('MAX_CONTENT_LENGTH')
+    for f in members:
+        if f.startswith('/') or '..' in f:
+            # Abort on malicious zip files
+            raise zipfile.BadZipfile
+        info = backup.getinfo(f)
+        if max_content_length:
+            if info.file_size > max_content_length:
+                raise zipfile.LargeZipFile
 
     groups = {
         'challenges': [

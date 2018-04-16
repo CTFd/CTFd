@@ -17,7 +17,7 @@ if sys.version_info[0] < 3:
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
-__version__ = '1.1.2'
+__version__ = '1.1.4'
 
 
 class CTFdFlask(Flask):
@@ -139,7 +139,7 @@ def create_app(config='CTFd.config.Config'):
         cache.init_app(app)
         app.cache = cache
 
-        update_check()
+        update_check(force=True)
 
         version = utils.get_config('ctf_version')
 
