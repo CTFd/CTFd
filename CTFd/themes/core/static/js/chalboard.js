@@ -19,53 +19,52 @@ function loadchalbyname(chalname) {
 }
 
 function updateChalWindow(obj) {
-    $.get(script_root + obj.template, function(template_data){
-        $('#chal-window').empty();
-        var template = nunjucks.compile(template_data);
-        var solves = obj.solves == 1 ? " Solve" : " Solves";
-        var solves = obj.solves + solves;
+    $.get(script_root + "/chals/" + obj.id, function(challenge_data){
+        $.get(script_root + obj.template, function (template_data) {
+            $('#chal-window').empty();
+            var template = nunjucks.compile(template_data);
+            var solves = obj.solves == 1 ? " Solve" : " Solves";
+            var solves = obj.solves + solves;
 
-        var nonce = $('#nonce').val();
-        var wrapper  = {
-            id: obj.id,
-            name: obj.name,
-            value: obj.value,
-            tags: obj.tags,
-            desc: obj.description,
-            solves: solves,
-            files: obj.files,
-            hints: obj.hints,
-            script_root: script_root
-        };
+            var nonce = $('#nonce').val();
 
-        $('#chal-window').append(template.render(wrapper));
-        $.getScript(script_root + obj.script,
-            function() {
-                // Handle Solves tab
-                $('.chal-solves').click(function (e) {
-                    getsolves($('#chal-id').val())
+            var md = window.markdownit({
+                html: true,
+            });
+
+            challenge_data['description'] = md.render(challenge_data['description']);
+            challenge_data['script_root'] = script_root;
+            challenge_data['solves'] = solves;
+
+            $('#chal-window').append(template.render(challenge_data));
+            $.getScript(script_root + obj.script,
+                function () {
+                    // Handle Solves tab
+                    $('.chal-solves').click(function (e) {
+                        getsolves($('#chal-id').val())
+                    });
+                    $('.nav-tabs a').click(function (e) {
+                        e.preventDefault();
+                        $(this).tab('show')
+                    });
+
+                    // Handle modal toggling
+                    $('#chal-window').on('hide.bs.modal', function (event) {
+                        $("#answer-input").removeClass("wrong");
+                        $("#answer-input").removeClass("correct");
+                        $("#incorrect-key").slideUp();
+                        $("#correct-key").slideUp();
+                        $("#already-solved").slideUp();
+                        $("#too-fast").slideUp();
+                    });
+
+                    // $('pre code').each(function(i, block) {
+                    //     hljs.highlightBlock(block);
+                    // });
+
+                    window.location.replace(window.location.href.split('#')[0] + '#' + obj.name);
+                    $('#chal-window').modal();
                 });
-                $('.nav-tabs a').click(function (e) {
-                    e.preventDefault();
-                    $(this).tab('show')
-                });
-
-                // Handle modal toggling
-                $('#chal-window').on('hide.bs.modal', function (event) {
-                    $("#answer-input").removeClass("wrong");
-                    $("#answer-input").removeClass("correct");
-                    $("#incorrect-key").slideUp();
-                    $("#correct-key").slideUp();
-                    $("#already-solved").slideUp();
-                    $("#too-fast").slideUp();
-                });
-
-                // $('pre code').each(function(i, block) {
-                //     hljs.highlightBlock(block);
-                // });
-
-                window.location.replace(window.location.href.split('#')[0] + '#' + obj.name);
-                $('#chal-window').modal();
         });
     });
 }
@@ -282,6 +281,9 @@ function loadchals(cb) {
 }
 
 function loadhint(hintid){
+    var md = window.markdownit({
+        html: true,
+    });
     ezq({
         title: "Unlock Hint?",
         body: "Are you sure you want to open this hint?",
@@ -294,9 +296,10 @@ function loadhint(hintid){
                         button: "Okay"
                     });
                 } else {
+
                     ezal({
                         title: "Hint",
-                        body: marked(data.hint, {'gfm': true, 'breaks': true}),
+                        body: md.render(data.hint),
                         button: "Got it!"
                     });
                 }

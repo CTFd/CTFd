@@ -58,6 +58,7 @@ class CTFdSerializer(JSONSerializer):
     Slightly modified datafreeze serializer so that we can properly
     export the CTFd database into a zip file.
     """
+
     def close(self):
         for path, result in self.buckets.items():
             result = self.wrap(result)
@@ -125,19 +126,19 @@ def init_logs(app):
 def init_errors(app):
     @app.errorhandler(404)
     def page_not_found(error):
-        return render_template('errors/404.html'), 404
+        return render_template('errors/404.html', error=error.description), 404
 
     @app.errorhandler(403)
     def forbidden(error):
-        return render_template('errors/403.html'), 403
+        return render_template('errors/403.html', error=error.description), 403
 
     @app.errorhandler(500)
     def general_error(error):
-        return render_template('errors/500.html'), 500
+        return render_template('errors/500.html', error=error.description), 500
 
     @app.errorhandler(502)
     def gateway_error(error):
-        return render_template('errors/502.html'), 502
+        return render_template('errors/502.html', error=error.description), 502
 
 
 def init_utils(app):
@@ -287,6 +288,7 @@ def admins_only(f):
             return f(*args, **kwargs)
         else:
             return redirect(url_for('auth.login', next=request.path))
+
     return decorated_function
 
 
@@ -297,6 +299,7 @@ def authed_only(f):
             return f(*args, **kwargs)
         else:
             return redirect(url_for('auth.login', next=request.path))
+
     return decorated_function
 
 
@@ -322,7 +325,9 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
                     else:
                         cache.set(key, int(current) + 1, timeout=interval)
             return f(*args, **kwargs)
+
         return decorated_function
+
     return ratelimit_decorator
 
 

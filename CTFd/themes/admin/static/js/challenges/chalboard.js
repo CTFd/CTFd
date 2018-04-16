@@ -5,79 +5,50 @@ function load_chal_template(id, success_cb){
     var obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
     })[0];
-    $.get(script_root + obj.type_data.templates.update, function(template_data){
-        var template = nunjucks.compile(template_data);
-        $("#update-modals-entry-div").html(template.render({'nonce':$('#nonce').val(), 'script_root':script_root}));
-        $.ajax({
-          url: script_root + obj.type_data.scripts.update,
-          dataType: "script",
-          success: success_cb,
-          cache: false,
+    $.get(script_root + "/admin/chal/" + id, function (challenge_data) {
+        $.get(script_root + obj.type_data.templates.update, function (template_data) {
+            var template = nunjucks.compile(template_data);
+
+            challenge_data['nonce'] = $('#nonce').val();
+            challenge_data['script_root'] = script_root;
+
+            $("#update-modals-entry-div").html(template.render(challenge_data));
+
+            $.ajax({
+                url: script_root + obj.type_data.scripts.update,
+                dataType: "script",
+                success: success_cb,
+                cache: false,
+            });
         });
     });
 }
-
-
-function get_challenge(id){
-    var obj = $.grep(challenges['game'], function (e) {
-        return e.id == id;
-    })[0];
-    return obj;
-}
-
 
 function load_challenge_preview(id){
-    loadchal(id, function(){
-        var chal = get_challenge(id);
-        var modal_template = chal.type_data.templates.modal;
-        var modal_script = chal.type_data.scripts.modal;
-
-        render_challenge_preview(chal, modal_template, modal_script);
-    });
+    render_challenge_preview(id);
 }
 
-function render_challenge_preview(chal, modal_template, modal_script){
+function render_challenge_preview(chal_id){
     var preview_window = $('#challenge-preview');
-    $.get(script_root + modal_template, function (template_data) {
-        preview_window.empty();
-        var template = nunjucks.compile(template_data);
-        var data = {
-            id: chal.id,
-            name: chal.name,
-            value: chal.value,
-            tags: chal.tags,
-            desc: chal.description,
-            files: chal.files,
-            hints: chal.hints,
-            script_root: script_root
-        };
-
-        var challenge = template.render(data);
-
-        preview_window.append(challenge);
-
-        $.getScript(script_root + modal_script, function () {
-            preview_window.modal();
-        });
+    var md = window.markdownit({
+        html: true,
     });
-}
+    $.get(script_root + "/admin/chal/" + chal_id, function(challenge_data){
+        $.get(script_root + challenge_data.type_data.templates.modal, function (template_data) {
+            preview_window.empty();
+            var template = nunjucks.compile(template_data);
 
+            challenge_data['description'] = md.render(challenge_data['description']);
+            challenge_data['script_root'] = script_root;
 
-function loadchal(chalid, cb){
-    $.get(script_root + "/admin/chal/"+chalid, {
-    }, function (data) {
-        var categories = [];
-        var challenge = $.parseJSON(JSON.stringify(data));
+            var challenge = template.render(challenge_data);
 
-        for (var i = challenges['game'].length - 1; i >= 0; i--) {
-            if (challenges['game'][i]['id'] == challenge.id) {
-                challenges['game'][i] = challenge
-            }
-        }
+            preview_window.append(challenge);
 
-        if (cb) {
-            cb();
-        }
+            $.getScript(script_root + challenge_data.type_data.scripts.modal, function () {
+                preview_window.modal();
+            });
+        });
     });
 }
 
@@ -110,6 +81,9 @@ loadchals(function(){
 });
 
 function loadhint(hintid) {
+    var md = window.markdownit({
+        html: true,
+    });
     ezq({
         title: "Unlock Hint?",
         body: "Are you sure you want to open this hint?",
@@ -124,7 +98,7 @@ function loadhint(hintid) {
                 } else {
                     ezal({
                         title: "Hint",
-                        body: marked(data.hint, {'gfm': true, 'breaks': true}),
+                        body: md.render(data.hint),
                         button: "Got it!"
                     });
                 }

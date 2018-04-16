@@ -372,13 +372,6 @@
 			submit_form();
 		});
 
-		// Markdown Preview
-		$('#content-edit').on('shown.bs.tab', function (event) {
-			if (event.target.hash == '#content-preview') {
-				$(event.target.hash).html(marked(editor.getValue(), {'gfm': true, 'breaks': true}));
-			}
-		});
-
 		$('#media-button').click(function () {
 			$.get(script_root + '/admin/media', function (data) {
 				$('#media-library-list').empty();

@@ -87,11 +87,14 @@ $(document).ready(function () {
 
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var md = window.markdownit({
+            html: true,
+        });
         var target = $(e.target).attr("href");
         if (target == '#hint-preview') {
             var obj = $('#hint-modal-hint');
-            var data = marked(obj.val());
-            $('#hint-preview').html(data, {'gfm': true, 'breaks': true});
+            var data = md.render(obj.val());
+            $('#hint-preview').html(data);
         }
     });
 

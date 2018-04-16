@@ -25,7 +25,7 @@
                             <span class='badge badge-info chal-tag'>{{tag}}</span>
                         {% endfor %}
                         </div>
-                        <span class="chal-desc">{{ desc }}</span>
+                        <span class="chal-desc">{{ description | safe }}</span>
                         <div class="chal-hints hint-row row">
                             {% for hint in hints %}
                             <div class='col-md-12 hint-button-wrapper text-center mb-3'>
