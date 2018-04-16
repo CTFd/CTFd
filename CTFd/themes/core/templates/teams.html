@@ -28,7 +28,7 @@
 						{% if hide_scores() %}
 							<span>{{ team.name | truncate(50) }}</span>
 						{% else %}
-							<a href="{{ request.script_root }}/team/{{ team.id }}">{{ team.name }}</a>
+							<a href="{{ request.script_root }}/team/{{ team.id }}">{{ team.name | truncate(50) }}</a>
 						{% endif %}
 						</td>
 						<td class="text-center" style="width: 10px;">
