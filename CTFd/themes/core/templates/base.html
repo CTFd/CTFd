@@ -28,6 +28,7 @@
 		<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/nunjucks.min.js"></script>
 		<script type="text/javascript">
 				var script_root = "{{ request.script_root }}";
+				var csrf_nonce = "{{ nonce }}"
 		</script>
 </head>
 <body>
