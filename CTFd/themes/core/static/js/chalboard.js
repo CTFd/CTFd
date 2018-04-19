@@ -2,6 +2,8 @@ var challenges;
 var user_solves = [];
 var templates = {};
 
+window.challenge = new Object();
+
 function loadchal(id) {
     var obj = $.grep(challenges['game'], function (e) {
         return e.id == id;
@@ -20,51 +22,74 @@ function loadchalbyname(chalname) {
 
 function updateChalWindow(obj) {
     $.get(script_root + "/chals/" + obj.id, function(challenge_data){
-        $.get(script_root + obj.template, function (template_data) {
-            $('#chal-window').empty();
-            var template = nunjucks.compile(template_data);
-            var solves = obj.solves == 1 ? " Solve" : " Solves";
-            var solves = obj.solves + solves;
+        $.getScript(script_root + obj.script, function(){
+            $.get(script_root + obj.template, function (template_data) {
+                $('#chal-window').empty();
 
-            var nonce = $('#nonce').val();
+                var template = nunjucks.compile(template_data);
 
-            var md = window.markdownit({
-                html: true,
-            });
+                var solves = obj.solves == 1 ? " Solve" : " Solves";
+                var solves = obj.solves + solves;
 
-            challenge_data['description'] = md.render(challenge_data['description']);
-            challenge_data['script_root'] = script_root;
-            challenge_data['solves'] = solves;
+                var nonce = $('#nonce').val();
 
-            $('#chal-window').append(template.render(challenge_data));
-            $.getScript(script_root + obj.script,
-                function () {
-                    // Handle Solves tab
-                    $('.chal-solves').click(function (e) {
-                        getsolves($('#chal-id').val())
-                    });
-                    $('.nav-tabs a').click(function (e) {
-                        e.preventDefault();
-                        $(this).tab('show')
-                    });
+                window.challenge.preRender();
 
-                    // Handle modal toggling
-                    $('#chal-window').on('hide.bs.modal', function (event) {
-                        $("#answer-input").removeClass("wrong");
-                        $("#answer-input").removeClass("correct");
-                        $("#incorrect-key").slideUp();
-                        $("#correct-key").slideUp();
-                        $("#already-solved").slideUp();
-                        $("#too-fast").slideUp();
-                    });
+                challenge_data['description'] = window.challenge.render(challenge_data['description']);
+                challenge_data['script_root'] = script_root;
+                challenge_data['solves'] = solves;
 
-                    // $('pre code').each(function(i, block) {
-                    //     hljs.highlightBlock(block);
-                    // });
+                $('#chal-window').append(template.render(challenge_data));
 
-                    window.location.replace(window.location.href.split('#')[0] + '#' + obj.name);
-                    $('#chal-window').modal();
+                $('.chal-solves').click(function (e) {
+                    getsolves($('#chal-id').val())
                 });
+                $('.nav-tabs a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show')
+                });
+
+                // Handle modal toggling
+                $('#chal-window').on('hide.bs.modal', function (event) {
+                    $("#answer-input").removeClass("wrong");
+                    $("#answer-input").removeClass("correct");
+                    $("#incorrect-key").slideUp();
+                    $("#correct-key").slideUp();
+                    $("#already-solved").slideUp();
+                    $("#too-fast").slideUp();
+                });
+
+                $('#submit-key').unbind('click');
+                $('#submit-key').click(function (e) {
+                    e.preventDefault();
+                    submitkey($('#chal-id').val(), $('#answer-input').val(), $('#nonce').val())
+                });
+
+                $("#answer-input").keyup(function (event) {
+                    if (event.keyCode == 13) {
+                        $("#submit-key").click();
+                    }
+                });
+
+                $(".input-field").bind({
+                    focus: function () {
+                        $(this).parent().addClass('input--filled');
+                        $label = $(this).siblings(".input-label");
+                    },
+                    blur: function () {
+                        if ($(this).val() === '') {
+                            $(this).parent().removeClass('input--filled');
+                            $label = $(this).siblings(".input-label");
+                            $label.removeClass('input--hide');
+                        }
+                    }
+                });
+
+                window.challenge.postRender();
+
+                window.location.replace(window.location.href.split('#')[0] + '#' + obj.name);
+                $('#chal-window').modal();
+            });
         });
     });
 }
