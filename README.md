@@ -12,7 +12,7 @@
 
 ## Preview
 * English https://ctfdplus.cooldup.com/
-* 中文版 https://pzctf.cooldup.com/
+* 中文版 https://ctf.cooldup.com/
 
 ## Install
 * ### Ubuntu
