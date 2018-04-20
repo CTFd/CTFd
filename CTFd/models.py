@@ -162,6 +162,8 @@ class Teams(db.Model):
     website = db.Column(db.String(128))
     affiliation = db.Column(db.String(128))
     country = db.Column(db.String(32))
+    member = db.Column(db.String(64))
+    number = db.Column(db.String(64))
     bracket = db.Column(db.String(32))
     banned = db.Column(db.Boolean, default=False)
     verified = db.Column(db.Boolean, default=False)

@@ -6,9 +6,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="shortcut icon" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/img/favicon.ico" type="image/x-icon">
 		<link rel="icon" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/img/favicon.ico" type="image/x-icon">
-		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/bootstrap.min.css">
-		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/font-awesome/fontawesome-fonts.css" type='text/css'>
-		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/font-awesome/fontawesome-all.css" type='text/css'>
+		<link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/font-awesome/fontawesome-all.min.css" type='text/css'>
 		<link href='{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/vendor/font.css' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/jumbotron.css">
 		<link rel="stylesheet" href="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/css/sticky-footer.css">
@@ -24,8 +23,8 @@
 		<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
 		{% endif %}
 		{% endfor %}
-		<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/moment.min.js"></script>
-		<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/nunjucks.min.js"></script>
+		<script src="https://cdn.bootcss.com/moment.js/2.22.1/moment.min.js"></script>
+		<script src="https://cdn.bootcss.com/nunjucks/3.0.1/nunjucks.min.js"></script>
 		<script type="text/javascript">
 				var script_root = "{{ request.script_root }}";
 		</script>
@@ -121,9 +120,9 @@
 		</div>
 	</footer>
 
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/jquery.min.js"></script>
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/marked.min.js"></script>
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/marked/0.3.19/marked.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
 	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/style.js"></script>
 	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/ezq.js"></script>
 	{% block scripts %}

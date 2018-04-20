@@ -6,7 +6,7 @@ from sqlalchemy.sql import not_
 
 from CTFd import utils
 
-import re
+import re,os
 
 admin_teams = Blueprint('admin_teams', __name__)
 
@@ -86,8 +86,8 @@ def admin_create_team():
     if errors:
         db.session.close()
         return jsonify({'data': errors})
-
-    team = Teams(name, email, password)
+    token = os.urandom(16).encode('hex')
+    team = Teams(name, email, password, token)
     team.website = website
     team.affiliation = affiliation
     team.country = country

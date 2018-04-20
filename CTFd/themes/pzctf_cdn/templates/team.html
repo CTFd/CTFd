@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
+	</div>
+</div>
+<div class="container">
+	{% if errors %}
+	<div id='errors' class="row">
+	{% for error in errors %}
+		<h1>{{ error }}</h1>
+	{% endfor %}
+	</div>
+	{% else %}
+
+	{% if score_frozen %}
+	<div class="row">
+		<h1 class="text-center">积分排行-P</h1>
+	</div>
+	{% endif %}
+
+	<div class="team-info">
+		<h2 id="team-place" class="text-center">
+			{%if not get_config('workshop_mode') and place %}
+				{{ place }} <small>排名</small>
+			{% endif %}
+		</h2>
+		<h2 id="team-score" class="text-center">
+			{%if score %}
+				{{ score }} <small>分值</small>
+			{% endif %}
+		</h2>
+	</div>
+
+	<br>
+
+	{% if solves %}
+	<div id="keys-pie-graph" class="w-50 mr-0 pr-0 float-left d-none d-md-block d-lg-block">
+		<div class="text-center">
+			<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+		</div>
+	</div>
+	<div id="categories-pie-graph" class="w-50 mr-0 pr-0 float-left d-none d-md-block d-lg-block">
+		<div class="text-center">
+			<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+		</div>
+	</div>
+	<br class="clearfix">
+	<div id="score-graph" class="w-100 float-right d-none d-md-block d-lg-block">
+		<div class="text-center">
+			<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	{% if awards %}
+	<div class="row">
+		<div class="col-md-12">
+			<h3>奖励/扣分</h3>
+		</div>
+		{% for award in awards %}
+				<div class="col-md-3 col-sm-6">
+					<p class="text-center"><strong>{{ award.name }}</strong></p>
+					{% if award.category %}<p class="text-center">{{ award.category }}</p>{% endif %}
+					{% if award.description %}<p class="text-center">{{ award.description }}</p>{% endif %}
+					<p class="text-center">{{ award.value }}</p>
+				</div>
+		{% endfor %}
+	</div>
+
+	<br>
+	{% endif %}
+
+	<div class="row">
+		<div class="col-md-12">
+			<h3>解题总计</h3>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<td><b>关卡</b></td>
+						<td class="d-none d-md-block d-lg-block"><b>类型</b></td>
+						<td><b>分值</b></td>
+						<td><b>时间</b></td>
+					</tr>
+				</thead>
+				<tbody>
+				{% for solve in solves %}
+					<tr>
+						<td><a href="{{ request.script_root }}/challenges#{{ solve.chal.name }}">{{ solve.chal.name }}</a></td>
+						<td class="d-none d-md-block d-lg-block">{{ solve.chal.category }}</td><td>{{ solve.chal.value }}</td>
+						<td class="solve-time"><script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% else %}
+		<div class="text-center"><h3 class="spinner-error">还没有已解决的题目哦</h3></div>
+	{% endif %}
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="https://cdn.bootcss.com/plotly.js/1.35.2/plotly-basic.min.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/utils.js"></script>
+	{% if solves %}
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/team.js"></script>
+	{% endif %}
+{% endblock %}

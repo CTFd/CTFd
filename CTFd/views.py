@@ -224,7 +224,10 @@ def profile():
             website = request.form.get('website').strip()
             affiliation = request.form.get('affiliation').strip()
             country = request.form.get('country').strip()
-
+            member = request.form.get('member').strip()
+            number = request.form.get('number').strip()
+            print member,number
+            
             user = Teams.query.filter_by(id=session['id']).first()
 
             if not utils.get_config('prevent_name_change'):
@@ -253,7 +256,7 @@ def profile():
 
             if len(errors) > 0:
                 return render_template('profile.html', name=name, email=email, website=website,
-                                       affiliation=affiliation, country=country, errors=errors)
+                                       affiliation=affiliation, country=country,member=member, number=number, errors=errors)
             else:
                 team = Teams.query.filter_by(id=session['id']).first()
                 if team.name != name:
@@ -269,7 +272,11 @@ def profile():
                     team.password = bcrypt_sha256.encrypt(request.form.get('password'))
                 team.website = website
                 team.affiliation = affiliation
-                team.country = country
+                '''member info need lock '''
+                if not utils.get_config('prevent_name_change'):
+                    team.country = country
+                    team.member = member
+                    team.number = number
                 db.session.commit()
                 db.session.close()
                 return redirect(url_for('views.profile'))
@@ -280,10 +287,12 @@ def profile():
             website = user.website
             affiliation = user.affiliation
             country = user.country
+            member = user.member
+            number = user.number
             prevent_name_change = utils.get_config('prevent_name_change')
             confirm_email = utils.get_config('verify_emails') and not user.verified
             return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
-                                   country=country, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
+                                   country=country,member=member,number=number, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
     else:
         return redirect(url_for('auth.login'))
 

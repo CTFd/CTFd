@@ -1,4 +1,4 @@
-"""Change theme from original to core
+"""Adding token to teams
 
 Revision ID: d5a224bf5863
 Revises: d5a224bf5862

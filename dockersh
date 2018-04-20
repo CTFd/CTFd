@@ -1,0 +1,4 @@
+#!/bin/sh
+#use this script to run a shell
+id=`docker ps -q -f name=ctfdplus_ctfd`
+docker exec -it $id sh
