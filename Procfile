@@ -1,1 +1,1 @@
-web: gunicorn run
+web: gunicorn CTFd:create_app
