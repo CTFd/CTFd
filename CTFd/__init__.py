@@ -100,6 +100,7 @@ def create_app(config='CTFd.config.Config'):
             url.query['charset'] = 'utf8mb4'
 
         # Creates database if the database database does not exist
+        print('URL CHECK FOR DB: {}'.format(url))
         if not database_exists(url):
             if url.drivername.startswith('mysql'):
                 create_database(url, encoding='utf8mb4')
