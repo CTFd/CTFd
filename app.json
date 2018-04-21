@@ -2,7 +2,7 @@
   "environments": {
     "test": {
       "addons": [
-        "heroku-postgres:hobby-dev"
+        "heroku-postgresql:hobby-dev"
       ],
       "env": {
         "ON_HEROKU": "True"
