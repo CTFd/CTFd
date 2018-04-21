@@ -1,0 +1,15 @@
+{
+  "environments": {
+    "test": {
+      "addons": [
+        "heroku-postgres:hobby-dev"
+      ]
+      "env": {
+        "ON_HEROKU": "True"
+      }
+      "scripts": {
+        "test" : "tests"
+      }
+    }
+  }
+}
