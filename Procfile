@@ -1,1 +1,1 @@
-web: gunicorn CTFd:app
+web: gunicorn run:app
