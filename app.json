@@ -8,7 +8,7 @@
         "ON_HEROKU": "True"
       },
       "scripts": {
-        "test-setup": "pip install nose"
+        "test-setup": "pip install nose",
         "test" : "nosetests -d"
       }
     }
