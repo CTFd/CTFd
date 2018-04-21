@@ -8,7 +8,7 @@
         "ON_HEROKU": "True"
       },
       "scripts": {
-        "test" : "nosetests -d"
+        "test" : "nose test"
       }
     }
   }
