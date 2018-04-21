@@ -9,7 +9,10 @@
       },
       "scripts": {
         "test-setup": "pip install -r development.txt",
-        "test" : "nosetests -d"
+        "test" : [
+          "pep8 --ignore E501,E712 CTFd/ tests/",
+          "nosetests -d"
+        ]
       }
     }
   }
