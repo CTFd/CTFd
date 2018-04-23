@@ -99,7 +99,10 @@ def create_app(config='CTFd.config.Config'):
         if url.drivername.startswith('mysql'):
             url.query['charset'] = 'utf8mb4'
 
-        # Creates database if the database database does not exist
+        # Creates database if the database does not exist and ON_HEROKU is set to False; This is a slightly hacky
+        # workaround to make CTFd work on Heroku due to some upstream issue with SQLAlchemy's database_exists function
+        # and Heroku
+        # (For some reason, the database isn't found, so it tries to create it; which isn't allowed on Heroku)
         if not app.config['ON_HEROKU']:
             if not database_exists(url):
                 if url.drivername.startswith('mysql'):
