@@ -146,7 +146,7 @@ class CTFdStandardChallenge(BaseChallenge):
         provided_key = request.form['key'].strip()
         chal_keys = Keys.query.filter_by(chal=chal.id).all()
         for chal_key in chal_keys:
-            if get_key_class(chal_key.type).compare(chal_key.flag, provided_key):
+            if get_key_class(chal_key.type).compare(chal_key, provided_key):
                 return True, 'Correct'
         return False, 'Incorrect'
 
