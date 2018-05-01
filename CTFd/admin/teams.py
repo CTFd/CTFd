@@ -138,8 +138,6 @@ def admin_team(teamid):
         verified = True if request.form.get('verified', None) == 'on' else False
         hidden = True if request.form.get('hidden', None) == 'on' else False
 
-        print admin_user, verified, hidden
-
         errors = []
 
         if email:
