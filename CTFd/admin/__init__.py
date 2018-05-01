@@ -147,6 +147,13 @@ def admin_config():
             utils.set_config("mail_username", None)
             utils.set_config("mail_password", None)
 
+        if request.files.get('ctf_logo', None):
+            ctf_logo = request.files['ctf_logo']
+            file_id, file_loc = utils.upload_file(ctf_logo, None)
+            utils.set_config("ctf_logo", file_loc)
+        elif request.form.get('ctf_logo') == '':
+            utils.set_config("ctf_logo", None)
+
         utils.set_config("ctf_name", request.form.get('ctf_name', None))
         utils.set_config("ctf_theme", request.form.get('ctf_theme', None))
         utils.set_config('css', request.form.get('css', None))
@@ -176,6 +183,7 @@ def admin_config():
     cache.clear()
 
     ctf_name = utils.get_config('ctf_name')
+    ctf_logo = utils.get_config('ctf_logo')
     ctf_theme = utils.get_config('ctf_theme')
     hide_scores = utils.get_config('hide_scores')
     css = utils.get_config('css')
@@ -216,6 +224,7 @@ def admin_config():
     return render_template(
         'admin/config.html',
         ctf_name=ctf_name,
+        ctf_logo=ctf_logo,
         ctf_theme_config=ctf_theme,
         css=css,
         start=start,

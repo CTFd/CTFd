@@ -150,6 +150,7 @@ def init_utils(app):
     app.jinja_env.globals.update(can_register=can_register)
     app.jinja_env.globals.update(can_send_mail=can_send_mail)
     app.jinja_env.globals.update(ctf_name=ctf_name)
+    app.jinja_env.globals.update(ctf_logo=ctf_logo)
     app.jinja_env.globals.update(ctf_theme=ctf_theme)
     app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
     app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
@@ -209,6 +210,11 @@ def init_utils(app):
 def ctf_name():
     name = get_config('ctf_name')
     return name if name else 'CTFd'
+
+
+@cache.memoize()
+def ctf_logo():
+    return get_config('ctf_logo')
 
 
 @cache.memoize()
