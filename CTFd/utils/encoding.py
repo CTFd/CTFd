@@ -1,6 +1,7 @@
 import base64
 import six
 
+
 def urlsafe_base64_encode(s):
     """
     Encode a bytestring in base64 for use in URLs. Strip any trailing equal
