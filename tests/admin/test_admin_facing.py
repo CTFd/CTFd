@@ -274,6 +274,24 @@ def test_admin_chal_detail_returns_proper_data():
     destroy_ctfd(app)
 
 
+def test_admin_load_chal_solves():
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        chal1 = gen_challenge(app.db)
+        flag1 = gen_flag(app.db, chal=chal1.id, flag='flag')
+        chal1_id = chal1.id
+
+        gen_solve(app.db, teamid=1, chalid=chal1_id)
+
+        r = client.get('/admin/chal/1/solves')
+        data = r.get_data(as_text=True)
+        assert json.loads(data)
+
+    destroy_ctfd(app)
+
+
 def test_admins_can_create_teams():
     '''Test that admins can create new teams'''
     app = create_ctfd()
