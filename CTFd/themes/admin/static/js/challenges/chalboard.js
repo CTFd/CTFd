@@ -80,8 +80,8 @@ function loadsolves(id) {
         for (var i = 0; i < teams.length; i++) {
             var id = teams[i].id;
             var name = teams[i].name;
-            var date = moment(teams[i].date).local().fromNow();
-            box.append('<tr><td><a href="team/{0}">{1}</td><td>{2}</td></tr>'.format(id, htmlentities(name), date));
+            var date = moment(teams[i].date).local().format('MMMM Do, h:mm:ss A');
+            box.append('<tr><td><a href="team/{0}">{1}</td><td><small>{2}</small></td></tr>'.format(id, htmlentities(name), date));
         }
         modal.modal();
     });
@@ -215,6 +215,8 @@ $(document).ready(function () {
 
     $('.stats-challenge').click(function (e) {
         var chal_id = $(this).attr('chal-id');
+        var title = $(this).attr('title') || $(this).attr('data-original-title');
+        $('#challenge-solves-title').text(title);
 
         loadsolves(chal_id);
     });
