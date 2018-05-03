@@ -3,11 +3,35 @@
 
 **General**
 
+* Updated to Flask 1.0 & switched documentation to suggest using `flask run` instead of `python serve.py`.
+* Added the ability to make static & regex flags case insensitive.
+* The `/chals` endpoint no longer lists the details of every challenge.
+    * The `/chals/:id` endpoint is now used to load challenge information before display.
+* Admins can now see what users have solved a given challenge from the admin panel. 
+* Fixed issue with imports extracting files outside of the CTFd directory.
+* Added Import zipfile validation and optional size restriction.
+* The ctftime, authentication, and admin restrictions have been converted to decorators to improve code reuse.
+* Challenge previews now work consistently instead of occasionally failing to show.
+* Tests are now randomly ordered with `nose-randomly`.
 
 **Themes**
 
+* Admins now have the ability to upload a CTF logo from the config panel.
+* Switched from the `marked` library to `Markdown-It` for client side markdown rendering.
+    * This will break Challenge Type plugins that override the markdown renderer.
+* Introduced the `ezpg()` JS function to make it easier to draw a progressbar modal.
+* Introduced the `$.patch()` AJAX wrapper.
+* Team names are truncated properly to 50 characters in `teams.html`.
+* The admin panel now uses Bootstrap badges instead of buttons .
 
 **Plugins**
+
+* Challenge type plugins now use a global challenge object with exposed functions to specify how to display a challenge. 
+(`preRender()`, `render()`, `postRender()`, `submit()`)
+* Challenge type plugins now get full control over how a challenge is displayed via the nunjucks files.
+* Challenge modals (`modal.njk`) now use `{{ description }}` instead of `{{ desc }}` properly aligning with the database schema
+* The update and create modals now inject data into the modal via nunjucks instead of client side Javascript.
+* The `utils.base64decode()` & `utils.base64encode()` functions no longer expose url encoding/decoding parameters.
 
 
 1.1.4 / 2018-04-05
