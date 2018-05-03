@@ -34,7 +34,7 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
 ## Install
  1. Run `./prepare.sh` to install dependencies using apt.
  2. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
- 3. Use `python serve.py` in a terminal to drop into debug mode.
+ 3. Use `flask run` in a terminal to drop into debug mode.
 
 Or you can use Docker with the following command:
 
