@@ -70,6 +70,24 @@ function render_challenge_preview(chal_id){
     });
 }
 
+
+function loadsolves(id) {
+    $.get(script_root + '/admin/chal/' + id + '/solves', function (data) {
+        var teams = data['teams'];
+        var box = $('#challenge-solves-body');
+        var modal = $('#challenge-solves-modal')
+        box.empty();
+        for (var i = 0; i < teams.length; i++) {
+            var id = teams[i].id;
+            var name = teams[i].name;
+            var date = moment(teams[i].date).local().fromNow();
+            box.append('<tr><td><a href="team/{0}">{1}</td><td>{2}</td></tr>'.format(id, htmlentities(name), date));
+        }
+        modal.modal();
+    });
+}
+
+
 function loadhint(hintid) {
     var md = window.markdownit({
         html: true,
@@ -193,5 +211,11 @@ $(document).ready(function () {
         var chal_id = $(this).attr('chal-id');
 
         load_challenge_preview(chal_id);
+    });
+
+    $('.stats-challenge').click(function (e) {
+        var chal_id = $(this).attr('chal-id');
+
+        loadsolves(chal_id);
     });
 });

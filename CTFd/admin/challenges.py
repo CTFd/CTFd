@@ -100,6 +100,19 @@ def admin_chal_detail(chalid):
         return jsonify(data)
 
 
+@admin_challenges.route('/admin/chal/<int:chalid>/solves', methods=['GET'])
+@admins_only
+def admin_chal_solves(chalid):
+    response = {'teams': []}
+    if utils.hide_scores():
+        return jsonify(response)
+    solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid).order_by(
+        Solves.date.asc())
+    for solve in solves:
+        response['teams'].append({'id': solve.team.id, 'name': solve.team.name, 'date': solve.date})
+    return jsonify(response)
+
+
 @admin_challenges.route('/admin/tags/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_tags(chalid):
