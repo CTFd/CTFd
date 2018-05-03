@@ -7,6 +7,11 @@ def urlsafe_base64_encode(s):
     Encode a bytestring in base64 for use in URLs. Strip any trailing equal
     signs.
     """
+    if six.PY3 and isinstance(s, six.string_types):
+        s = s.encode('utf-8')
+    else:
+        # Python 2 support because the base64 module doesnt like unicode
+        s = str(s)
     return base64.urlsafe_b64encode(s).rstrip(b'\n=')
 
 
