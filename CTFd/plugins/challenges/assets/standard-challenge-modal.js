@@ -1,25 +1,35 @@
-$('#submit-key').unbind('click');
-$('#submit-key').click(function (e) {
-    e.preventDefault();
-    submitkey($('#chal-id').val(), $('#answer-input').val(), $('#nonce').val())
+window.challenge.renderer = new markdownit({
+    html: true,
 });
 
-$("#answer-input").keyup(function(event){
-    if(event.keyCode == 13){
-        $("#submit-key").click();
-    }
-});
+window.challenge.preRender = function(){
 
-$(".input-field").bind({
-    focus: function() {
-        $(this).parent().addClass('input--filled' );
-        $label = $(this).siblings(".input-label");
-    },
-    blur: function() {
-        if ($(this).val() === '') {
-            $(this).parent().removeClass('input--filled' );
-            $label = $(this).siblings(".input-label");
-            $label.removeClass('input--hide' );
-        }
+};
+
+window.challenge.render = function(markdown){
+    return window.challenge.renderer.render(markdown);
+};
+
+
+window.challenge.postRender = function(){
+
+};
+
+
+window.challenge.submit = function(cb, preview){
+    var chal_id = $('#chal-id').val();
+    var answer = $('#answer-input').val();
+    var nonce = $('#nonce').val();
+
+    var url = "/chal/";
+    if (preview) {
+        url = "/admin/chal/";
     }
-});
+
+    $.post(script_root + url + chal_id, {
+        key: answer,
+        nonce: nonce
+    }, function (data) {
+        cb(data);
+    });
+};

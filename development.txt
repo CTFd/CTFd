@@ -6,4 +6,6 @@ rednose>=1.1.1
 pep8>=1.7.0
 freezegun>=0.3.9
 psycopg2>=2.7.3.1
+psycopg2-binary>=2.7.3.1
 codecov>=2.0.9
+nose-randomly>=1.2.5

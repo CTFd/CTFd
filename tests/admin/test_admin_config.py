@@ -16,6 +16,7 @@ def test_admin_post_config_values():
             data = {
                 'nonce': sess.get('nonce'),
                 'ctf_name': 'CTFd',
+                'ctf_logo': '',
                 'ctf_theme': 'core',
                 'workshop_mode': 'on',
                 'paused': 'on',
@@ -59,6 +60,7 @@ def test_admin_post_config_values():
 
         result = {
             'ctf_name': 'CTFd',
+            'ctf_logo': None,
             'ctf_theme': 'core',
             'workshop_mode': True,
             'paused': True,

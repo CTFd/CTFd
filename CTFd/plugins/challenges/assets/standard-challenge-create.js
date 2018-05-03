@@ -1,28 +1,22 @@
 // Markdown Preview
 $('#desc-edit').on('shown.bs.tab', function (event) {
-    var md = window.markdownit({
-        html: true,
-    });
-    if (event.target.hash == '#desc-preview'){
+    if (event.target.hash == '#desc-preview') {
         var editor_value = $('#desc-editor').val();
         $(event.target.hash).html(
-            md.render(editor_value)
+            window.challenge.render(editor_value)
         );
     }
 });
 $('#new-desc-edit').on('shown.bs.tab', function (event) {
-    var md = window.markdownit({
-        html: true,
-    });
-    if (event.target.hash == '#new-desc-preview'){
+    if (event.target.hash == '#new-desc-preview') {
         var editor_value = $('#new-desc-editor').val();
         $(event.target.hash).html(
-            md.render(editor_value)
+            window.challenge.render(editor_value)
         );
     }
 });
-$("#solve-attempts-checkbox").change(function() {
-    if(this.checked) {
+$("#solve-attempts-checkbox").change(function () {
+    if (this.checked) {
         $('#solve-attempts-input').show();
     } else {
         $('#solve-attempts-input').hide();
@@ -30,6 +24,6 @@ $("#solve-attempts-checkbox").change(function() {
     }
 });
 
-$(document).ready(function(){
+$(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
 });

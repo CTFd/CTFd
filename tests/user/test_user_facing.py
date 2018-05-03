@@ -567,7 +567,7 @@ def test_user_can_confirm_email(mock_smtp):
             assert r.location == "http://localhost/confirm"  # We got redirected to /confirm
 
             # Use precalculated confirmation secret
-            r = client.get('http://localhost/confirm/InVzZXJAdXNlci5jb20iLkFmS0dQZy5kLUJnVkgwaUhadzFHaXVENHczWTJCVVJwdWc%3D')
+            r = client.get('http://localhost/confirm/InVzZXJAdXNlci5jb20iLkFmS0dQZy5kLUJnVkgwaUhadzFHaXVENHczWTJCVVJwdWc')
             assert r.location == 'http://localhost/challenges'
 
             # The team is now verified

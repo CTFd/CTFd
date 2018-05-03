@@ -132,6 +132,46 @@ def test_submitting_correct_flag():
     destroy_ctfd(app)
 
 
+def test_submitting_correct_static_case_insensitive_flag():
+    """Test that correct static flags are correct if the static flag is marked case_insensitive"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        flag = gen_flag(app.db, chal=chal.id, flag='flag', data="case_insensitive")
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'FLAG',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 200
+        resp = json.loads(r.data.decode('utf8'))
+        assert resp.get('status') == 1 and resp.get('message') == "Correct"
+    destroy_ctfd(app)
+
+
+def test_submitting_correct_regex_case_insensitive_flag():
+    """Test that correct regex flags are correct if the regex flag is marked case_insensitive"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        flag = gen_flag(app.db, chal=chal.id, key_type='regex', flag='flag', data="case_insensitive")
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'FLAG',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 200
+        resp = json.loads(r.data.decode('utf8'))
+        assert resp.get('status') == 1 and resp.get('message') == "Correct"
+    destroy_ctfd(app)
+
+
 def test_submitting_incorrect_flag():
     """Test that incorrect flags are incorrect"""
     app = create_ctfd()

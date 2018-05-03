@@ -150,6 +150,7 @@ def init_utils(app):
     app.jinja_env.globals.update(can_register=can_register)
     app.jinja_env.globals.update(can_send_mail=can_send_mail)
     app.jinja_env.globals.update(ctf_name=ctf_name)
+    app.jinja_env.globals.update(ctf_logo=ctf_logo)
     app.jinja_env.globals.update(ctf_theme=ctf_theme)
     app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
     app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
@@ -209,6 +210,11 @@ def init_utils(app):
 def ctf_name():
     name = get_config('ctf_name')
     return name if name else 'CTFd'
+
+
+@cache.memoize()
+def ctf_logo():
+    return get_config('ctf_logo')
 
 
 @cache.memoize()
@@ -661,7 +667,7 @@ def verify_email(addr):
     text = """Please click the following link to confirm your email address for {ctf_name}: {url}/{token}""".format(
         ctf_name=get_config('ctf_name'),
         url=url_for('auth.confirm_user', _external=True),
-        token=base64encode(token, urlencode=True)
+        token=base64encode(token)
     )
     sendmail(addr, text)
 
@@ -673,7 +679,7 @@ def forgot_password(email, team_name):
 
 {0}/{1}
 
-""".format(url_for('auth.reset_password', _external=True), base64encode(token, urlencode=True))
+""".format(url_for('auth.reset_password', _external=True), base64encode(token))
 
     sendmail(email, text)
 
@@ -700,35 +706,30 @@ def sha512(string):
     return hashlib.sha512(string).hexdigest()
 
 
-def base64encode(s, urlencode=False):
+def base64encode(s):
     if six.PY3 and isinstance(s, six.string_types):
         s = s.encode('utf-8')
     else:
         # Python 2 support because the base64 module doesnt like unicode
         s = str(s)
 
-    encoded = base64.urlsafe_b64encode(s)
+    encoded = base64.urlsafe_b64encode(s).rstrip(b'\n=')
     if six.PY3:
         try:
             encoded = encoded.decode('utf-8')
         except UnicodeDecodeError:
             pass
-    if urlencode:
-        encoded = quote(encoded)
     return encoded
 
 
-def base64decode(s, urldecode=False):
-    if urldecode:
-        s = unquote(s)
-
+def base64decode(s):
     if six.PY3 and isinstance(s, six.string_types):
         s = s.encode('utf-8')
     else:
         # Python 2 support because the base64 module doesnt like unicode
         s = str(s)
 
-    decoded = base64.urlsafe_b64decode(s)
+    decoded = base64.urlsafe_b64decode(s.ljust(len(s) + len(s) % 4, b'='))
     if six.PY3:
         try:
             decoded = decoded.decode('utf-8')

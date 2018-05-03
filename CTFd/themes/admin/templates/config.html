@@ -28,7 +28,7 @@
 			</ul>
 		</div>
 		<div class="col-md-9">
-			<form method="POST" autocomplete="off" class="w-100">
+			<form method="POST" enctype="multipart/form-data" autocomplete="off" class="w-100">
 			{% for error in errors %}
 				<div class="alert alert-danger alert-dismissable" role="alert">
 					<span class="sr-only">Error:</span>
@@ -43,7 +43,31 @@
 				<div role="tabpanel" class="tab-pane active" id="appearance-section">
 					<div class="form-group">
 						<label for="ctf_name">CTF Name:</label>
-						<input class="form-control" id='ctf_name' name='ctf_name' type='text' placeholder="CTF Name" {% if ctf_name is defined and ctf_name != None %}value="{{ ctf_name }}"{% endif %}>
+						<input class="form-control" id='ctf_name' name='ctf_name' type='text' placeholder="CTF Name"
+							   {% if ctf_name is defined and ctf_name != None %}value="{{ ctf_name }}"{% endif %}>
+					</div>
+
+					<div class="form-group">
+						<label for="ctf_logo">CTF Logo:</label>
+
+						{% if ctf_logo %}
+						<div class="d-block py-3">
+							<img id="ctf_logo_preview" class="img-responsive ctf_logo" src="{{ request.script_root }}/files/{{ ctf_logo }}"
+								 height="25">
+							<button type="button" class="btn-sm btn-danger float-right" onclick="
+							    $('#ctf_logo').attr('type', 'text');
+							    $('#ctf_logo').attr('placeholder', 'Logo will be removed on next update');
+							    $('#ctf_logo').attr('value', '');
+							    $('#ctf_logo').attr('readonly', 'true');
+							    $('#ctf_logo_preview').css('visibility', 'hidden');
+							">
+								Remove Logo
+							</button>
+						</div>
+						{% endif %}
+
+						<input class="form-control" id='ctf_logo' name='ctf_logo' type='file' placeholder="CTF Logo"
+							   {% if ctf_logo is defined and ctf_logo != None %}value="{{ ctf_logo }}"{% endif %}>
 					</div>
 
 					<div class="form-group">

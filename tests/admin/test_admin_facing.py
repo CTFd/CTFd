@@ -208,7 +208,7 @@ def test_admins_can_delete_challenges():
 
 
 def test_admins_can_delete_challenges_with_extras():
-    """"Test that admins can delete challenges that have a hint"""
+    """Test that admins can delete challenges that have a hint"""
     app = create_ctfd()
     with app.app_context():
         client = login_as_user(app, name="admin", password="password")
@@ -270,6 +270,24 @@ def test_admin_chal_detail_returns_proper_data():
         response = json.loads(r.get_data(as_text=True))
 
         assert data == response
+
+    destroy_ctfd(app)
+
+
+def test_admin_load_chal_solves():
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        chal1 = gen_challenge(app.db)
+        flag1 = gen_flag(app.db, chal=chal1.id, flag='flag')
+        chal1_id = chal1.id
+
+        gen_solve(app.db, teamid=1, chalid=chal1_id)
+
+        r = client.get('/admin/chal/1/solves')
+        data = r.get_data(as_text=True)
+        assert json.loads(data)
 
     destroy_ctfd(app)
 

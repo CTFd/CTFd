@@ -19,6 +19,7 @@
 	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/nunjucks.min.js"></script>
 	<script type="text/javascript">
 			var script_root = "{{ request.script_root }}";
+			var csrf_nonce = "{{ nonce }}";
 	</script>
 	{% block stylesheets %} {% endblock %}
 </head>

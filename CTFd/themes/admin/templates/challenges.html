@@ -7,6 +7,7 @@
 
 {% block content %}
 	{% include "admin/modals/challenges/challenges.html" %}
+	{% include "admin/modals/challenges/challenges-solves.html" %}
 
 	{% include "admin/modals/tags/tags.html" %}
 	{% include "admin/modals/files/files.html" %}
@@ -57,9 +58,9 @@
 							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.type }}</td>
 							<td class="d-none d-md-table-cell d-lg-table-cell text-center">
 								{% if challenge.hidden %}
-									<button class="btn-sm btn-danger" type="submit" disabled>Hidden</button>
+									<span class="badge badge-danger">hidden</span>
 								{% else %}
-									<button class="btn-sm btn-success" type="submit" disabled>Visible</button>
+									<span class="badge badge-success">visible</span>
 								{% endif %}
 							</td>
 							<td>
@@ -73,6 +74,13 @@
 									  data-placement="top" chal-id="{{ challenge.id }}"
 									  title="Preview {{ challenge.name }}">
 									<i class="btn-fa fas fa-file-alt" aria-hidden="true" chal-id="{{ challenge.id }}"></i>
+								</span>
+
+								<span class="stats-challenge" data-toggle="tooltip"
+									  data-placement="top" chal-id="{{ challenge.id }}"
+									  title="{{ challenge.name }} solves">
+									<i class="btn-fa fas fa-chart-bar" aria-hidden="true"
+									   chal-id="{{ challenge.id }}"></i>
 								</span>
 
 								<span>&nbsp; &nbsp;</span>

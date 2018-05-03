@@ -15,6 +15,6 @@ before_script:
     - psql -c 'create database ctfd;' -U postgres
 script:
     - pep8 --ignore E501,E712 CTFd/ tests/
-    - nosetests -d
+    - nosetests -v -d --with-randomly
 after_success:
     - codecov
