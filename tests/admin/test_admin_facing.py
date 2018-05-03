@@ -208,7 +208,7 @@ def test_admins_can_delete_challenges():
 
 
 def test_admins_can_delete_challenges_with_extras():
-    """"Test that admins can delete challenges that have a hint"""
+    """Test that admins can delete challenges that have a hint"""
     app = create_ctfd()
     with app.app_context():
         client = login_as_user(app, name="admin", password="password")

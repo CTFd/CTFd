@@ -29,7 +29,7 @@ def confirm_user(data=None):
     if data and request.method == "GET":
         try:
             s = TimedSerializer(app.config['SECRET_KEY'])
-            email = s.loads(utils.base64decode(data, urldecode=True), max_age=1800)
+            email = s.loads(utils.base64decode(data), max_age=1800)
         except BadTimeSignature:
             return render_template('confirm.html', errors=['Your confirmation link has expired'])
         except (BadSignature, TypeError, base64.binascii.Error):
@@ -86,7 +86,7 @@ def reset_password(data=None):
     if data is not None:
         try:
             s = TimedSerializer(app.config['SECRET_KEY'])
-            name = s.loads(utils.base64decode(data, urldecode=True), max_age=1800)
+            name = s.loads(utils.base64decode(data), max_age=1800)
         except BadTimeSignature:
             return render_template('reset_password.html', errors=['Your link has expired'])
         except (BadSignature, TypeError, base64.binascii.Error):
