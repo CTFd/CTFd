@@ -172,7 +172,6 @@ def test_submitting_correct_regex_case_insensitive_flag():
     destroy_ctfd(app)
 
 
-
 def test_submitting_incorrect_flag():
     """Test that incorrect flags are incorrect"""
     app = create_ctfd()
