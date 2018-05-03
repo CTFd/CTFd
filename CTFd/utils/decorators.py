@@ -4,11 +4,11 @@ import functools
 
 
 def during_ctf_time_only(f):
-    '''
+    """
     Decorator to restrict an endpoint to only be seen during a CTF
     :param f:
     :return:
-    '''
+    """
     @functools.wraps(f)
     def during_ctf_time_only_wrapper(*args, **kwargs):
         if utils.ctftime() or utils.is_admin():
@@ -28,6 +28,11 @@ def during_ctf_time_only(f):
 
 
 def require_verified_emails(f):
+    """
+    Decorator to restrict an endpoint to users with confirmed active email addresses
+    :param f:
+    :return:
+    """
     @functools.wraps(f)
     def require_verified_emails_wrapper(*args, **kwargs):
         if utils.get_config('verify_emails'):
@@ -39,6 +44,11 @@ def require_verified_emails(f):
 
 
 def viewable_without_authentication(status_code=None):
+    """
+    Decorator that allows users to view the specified endpoint if viewing challenges without authentication is enabled
+    :param status_code:
+    :return:
+    """
     def viewable_without_authentication_decorator(f):
         @functools.wraps(f)
         def viewable_without_authentication_wrapper(*args, **kwargs):
@@ -55,6 +65,11 @@ def viewable_without_authentication(status_code=None):
 
 
 def authed_only(f):
+    """
+    Decorator that requires the user to be authenticated
+    :param f:
+    :return:
+    """
     @functools.wraps(f)
     def authed_only_wrapper(*args, **kwargs):
         if session.get('id'):
@@ -66,6 +81,11 @@ def authed_only(f):
 
 
 def admins_only(f):
+    """
+    Decorator that requires the user to be authenticated and an admin
+    :param f:
+    :return:
+    """
     @functools.wraps(f)
     def admins_only_wrapper(*args, **kwargs):
         if session.get('admin'):
