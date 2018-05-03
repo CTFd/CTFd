@@ -57,9 +57,9 @@
 							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.type }}</td>
 							<td class="d-none d-md-table-cell d-lg-table-cell text-center">
 								{% if challenge.hidden %}
-									<button class="btn-sm btn-danger" type="submit" disabled>Hidden</button>
+									<span class="badge badge-danger">hidden</span>
 								{% else %}
-									<button class="btn-sm btn-success" type="submit" disabled>Visible</button>
+									<span class="badge badge-success">visible</span>
 								{% endif %}
 							</td>
 							<td>
