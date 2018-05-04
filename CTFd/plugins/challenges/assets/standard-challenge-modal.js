@@ -1,3 +1,5 @@
+window.challenge.data = undefined;
+
 window.challenge.renderer = new markdownit({
     html: true,
 });

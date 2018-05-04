@@ -37,6 +37,8 @@ function render_challenge_preview(chal_id){
             $.get(script_root + obj.type_data.templates.modal, function (template_data) {
                 var template = nunjucks.compile(template_data);
 
+                window.challenge.data = obj;
+
                 window.challenge.preRender()
 
                 obj['description'] = window.challenge.render(obj['description']);

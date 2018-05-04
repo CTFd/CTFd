@@ -31,6 +31,8 @@
 * Challenge type plugins now use a global challenge object with exposed functions to specify how to display a challenge. 
 (`preRender()`, `render()`, `postRender()`, `submit()`)
 * Challenge type plugins now get full control over how a challenge is displayed via the nunjucks files.
+* Challenge plugins should now pass the entire flag/key object to a Custom flag type.
+    * This allows the flag type to make use of the data column to decide how to operate on the flag. 
 * Challenge modals (`modal.njk`) now use `{{ description }}` instead of `{{ desc }}` properly aligning with the database schema
 * The update and create modals now inject data into the modal via nunjucks instead of client side Javascript.
 * The `utils.base64decode()` & `utils.base64encode()` functions no longer expose url encoding/decoding parameters.

@@ -192,7 +192,10 @@ def init_utils(app):
 
     @app.before_request
     def csrf():
-        func = app.view_functions[request.endpoint]
+        try:
+            func = app.view_functions[request.endpoint]
+        except KeyError:
+            abort(404)
         if hasattr(func, '_bypass_csrf'):
             return
         if not session.get('nonce'):

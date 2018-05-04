@@ -33,6 +33,8 @@ function updateChalWindow(obj) {
 
                 var nonce = $('#nonce').val();
 
+                window.challenge.data = challenge_data;
+
                 window.challenge.preRender();
 
                 challenge_data['description'] = window.challenge.render(challenge_data['description']);
