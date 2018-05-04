@@ -5,12 +5,14 @@
 
 * Updated to Flask 1.0 & switched documentation to suggest using `flask run` instead of `python serve.py`.
 * Added the ability to make static & regex flags case insensitive.
-* The `/chals` endpoint no longer lists the details of every challenge.
+* The `/chals` endpoint no longer lists the details of challenges.
     * The `/chals/:id` endpoint is now used to load challenge information before display.
 * Admins can now see what users have solved a given challenge from the admin panel. 
 * Fixed issue with imports extracting files outside of the CTFd directory.
 * Added Import zipfile validation and optional size restriction.
 * The ctftime, authentication, and admin restrictions have been converted to decorators to improve code reuse.
+    * 403 is now a more common status code. Previously it only indicated CSRF failure, now it can indicate login failure
+    or other Forbidden access situations.
 * Challenge previews now work consistently instead of occasionally failing to show.
 * Tests are now randomly ordered with `nose-randomly`.
 
