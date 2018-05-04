@@ -20,6 +20,18 @@ def test_index():
     destroy_ctfd(app)
 
 
+def test_not_found():
+    """Should return a 404 for pages that are not found"""
+    app = create_ctfd()
+    with app.app_context():
+        with app.test_client() as client:
+            r = client.get('/this-should-404')
+            assert r.status_code == 404
+            r = client.post('/this-should-404')
+            assert r.status_code == 404
+    destroy_ctfd(app)
+
+
 def test_page():
     """Test that users can access pages that are created in the database"""
     app = create_ctfd()

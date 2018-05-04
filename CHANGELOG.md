@@ -1,3 +1,46 @@
+1.2.0 / 2018-05-04
+==================
+
+**General**
+
+* Updated to Flask 1.0 & switched documentation to suggest using `flask run` instead of `python serve.py`.
+* Added the ability to make static & regex flags case insensitive.
+* The `/chals` endpoint no longer lists the details of challenges.
+    * The `/chals/:id` endpoint is now used to load challenge information before display.
+* Admins can now see what users have solved a given challenge from the admin panel.
+* Fixed issue with imports extracting files outside of the CTFd directory.
+* Added import zipfile validation and optional size restriction.
+* The ctftime, authentication, and admin restrictions have been converted to decorators to improve code reuse.
+    * 403 is now a more common status code. Previously it only indicated CSRF failure, now it can indicate login failure
+    or other Forbidden access situations.
+* Challenge previews now work consistently instead of occasionally failing to show.
+* Tests are now randomly ordered with `nose-randomly`.
+
+**Themes**
+
+* Admins now have the ability to upload a CTF logo from the config panel.
+* Switched from the `marked` library to `Markdown-It` for client side markdown rendering.
+    * This will break Challenge type plugins that override the markdown renderer since we are no longer using the marked renderers.
+* Introduced the `ezpg()` JS function to make it easier to draw a progressbar modal.
+* Introduced the `$.patch()` AJAX wrapper.
+* Team names are truncated properly to 50 characters in `teams.html`.
+* The admin panel now uses Bootstrap badges instead of buttons to indicate properties such as `admin`, `verified`, `visible`.
+
+**Plugins**
+
+* Challenge type plugins now use a global challenge object with exposed functions to specify how to display a challenge.
+(`preRender()`, `render()`, `postRender()`, `submit()`).
+    * Challenge type plugins also have access to window.challenge.data which allow for the previously mentioned functions to
+    process challenge data and change logic accordingly.
+* Challenge type plugins now get full control over how a challenge is displayed via the nunjucks files.
+* Challenge plugins should now pass the entire flag/key object to a Custom flag type.
+    * This allows the flag type to make use of the data column to decide how to operate on the flag. This is used to implement
+    case insensitive flags.
+* Challenge modals (`modal.njk`) now use `{{ description }}` instead of `{{ desc }}` properly aligning with the database schema.
+* The update and create modals now inject data into the modal via nunjucks instead of client side Javascript.
+* The `utils.base64decode()` & `utils.base64encode()` functions no longer expose url encoding/decoding parameters.
+
+
 1.1.4 / 2018-04-05
 ==================
 

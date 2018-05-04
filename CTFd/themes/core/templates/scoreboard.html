@@ -46,7 +46,7 @@
 				{% for team in teams %}
 					<tr>
 						<th scope="row" class="text-center">{{ loop.index }}</th>
-						<td><a href="{{ request.script_root }}/team/{{ team.teamid }}">{{ team.name }}</a></td>
+						<td><a href="{{ request.script_root }}/team/{{ team.teamid }}">{{ team.name | truncate(50) }}</a></td>
 						<td>{{ team.score }}</td>
 					</tr>
 				{% endfor %}
