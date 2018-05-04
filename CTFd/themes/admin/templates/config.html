@@ -55,19 +55,20 @@
 							<img id="ctf_logo_preview" class="img-responsive ctf_logo" src="{{ request.script_root }}/files/{{ ctf_logo }}"
 								 height="25">
 							<button type="button" class="btn-sm btn-danger float-right" onclick="
-							    $('#ctf_logo').attr('type', 'text');
-							    $('#ctf_logo').attr('placeholder', 'Logo will be removed on next update');
-							    $('#ctf_logo').attr('value', '');
-							    $('#ctf_logo').attr('readonly', 'true');
-							    $('#ctf_logo_preview').css('visibility', 'hidden');
+								$('#ctf_logo').attr('placeholder', 'Logo will be removed on next update');
+								$('#ctf_logo').attr('value', '');
+								$('#ctf_logo').attr('readonly', 'true');
+								$('#ctf_logo_preview').css('visibility', 'hidden');
+								$(this).text('Logo will be removed on next update');
 							">
 								Remove Logo
 							</button>
 						</div>
 						{% endif %}
 
-						<input class="form-control" id='ctf_logo' name='ctf_logo' type='file' placeholder="CTF Logo"
-							   {% if ctf_logo is defined and ctf_logo != None %}value="{{ ctf_logo }}"{% endif %}>
+						<input class="form-control" id="ctf_logo_file" name='ctf_logo_file' type='file' placeholder="CTF Logo">
+						<input id='ctf_logo' name='ctf_logo' type='hidden' value="{% if ctf_logo is defined %}{{ ctf_logo }}{% endif %}"
+							   placeholder="CTF Logo">
 					</div>
 
 					<div class="form-group">

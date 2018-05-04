@@ -147,8 +147,8 @@ def admin_config():
             utils.set_config("mail_username", None)
             utils.set_config("mail_password", None)
 
-        if request.files.get('ctf_logo', None):
-            ctf_logo = request.files['ctf_logo']
+        if request.files.get('ctf_logo_file', None):
+            ctf_logo = request.files['ctf_logo_file']
             file_id, file_loc = utils.upload_file(ctf_logo, None)
             utils.set_config("ctf_logo", file_loc)
         elif request.form.get('ctf_logo') == '':
