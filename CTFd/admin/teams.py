@@ -1,10 +1,12 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, cache
-from CTFd.models import db, Teams, Solves, Awards, Unlocks, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
+from CTFd.utils import admins_only, is_admin, cache, ratelimit
+from CTFd.models import db, Teams, Solves, Awards, Unlocks, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
 
 from CTFd import utils
+
+import re
 
 admin_teams = Blueprint('admin_teams', __name__)
 
@@ -45,6 +47,65 @@ def admin_teams_view(page):
     return render_template('admin/teams.html', teams=teams, pages=pages, curr_page=page)
 
 
+@admin_teams.route('/admin/team/new', methods=['POST'])
+@admins_only
+def admin_create_team():
+    name = request.form.get('name', None)
+    password = request.form.get('password', None)
+    email = request.form.get('email', None)
+    website = request.form.get('website', None)
+    affiliation = request.form.get('affiliation', None)
+    country = request.form.get('country', None)
+
+    admin_user = True if request.form.get('admin', None) == 'on' else False
+    verified = True if request.form.get('verified', None) == 'on' else False
+    hidden = True if request.form.get('hidden', None) == 'on' else False
+
+    errors = []
+
+    if not name:
+        errors.append('The team requires a name')
+    elif Teams.query.filter(Teams.name == name).first():
+        errors.append('That name is taken')
+
+    if utils.check_email_format(name) is True:
+        errors.append('Team name cannot be an email address')
+
+    if not email:
+        errors.append('The team requires an email')
+    elif Teams.query.filter(Teams.email == email).first():
+        errors.append('That email is taken')
+
+    if email:
+        valid_email = utils.check_email_format(email)
+        if not valid_email:
+            errors.append("That email address is invalid")
+
+    if not password:
+        errors.append('The team requires a password')
+
+    if website and (website.startswith('http://') or website.startswith('https://')) is False:
+        errors.append('Websites must start with http:// or https://')
+
+    if errors:
+        db.session.close()
+        return jsonify({'data': errors})
+
+    team = Teams(name, email, password)
+    team.website = website
+    team.affiliation = affiliation
+    team.country = country
+
+    team.admin = admin_user
+    team.verified = verified
+    team.hidden = hidden
+
+    db.session.add(team)
+    db.session.commit()
+    db.session.close()
+    return jsonify({'data': ['success']})
+
+
 @admin_teams.route('/admin/team/<int:teamid>', methods=['GET', 'POST'])
 @admins_only
 def admin_team(teamid):
@@ -66,24 +127,6 @@ def admin_team(teamid):
         return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, missing=missing,
                                place=place, wrong_keys=wrong_keys, awards=awards)
     elif request.method == 'POST':
-        admin_user = request.form.get('admin', None)
-        if admin_user:
-            admin_user = True if admin_user == 'true' else False
-            user.admin = admin_user
-            # Set user.banned to hide admins from scoreboard
-            user.banned = admin_user
-            db.session.commit()
-            db.session.close()
-            return jsonify({'data': ['success']})
-
-        verified = request.form.get('verified', None)
-        if verified:
-            verified = True if verified == 'true' else False
-            user.verified = verified
-            db.session.commit()
-            db.session.close()
-            return jsonify({'data': ['success']})
-
         name = request.form.get('name', None)
         password = request.form.get('password', None)
         email = request.form.get('email', None)
@@ -91,15 +134,30 @@ def admin_team(teamid):
         affiliation = request.form.get('affiliation', None)
         country = request.form.get('country', None)
 
+        admin_user = True if request.form.get('admin', None) == 'on' else False
+        verified = True if request.form.get('verified', None) == 'on' else False
+        hidden = True if request.form.get('hidden', None) == 'on' else False
+
         errors = []
+
+        if email:
+            valid_email = utils.check_email_format(email)
+            if not valid_email:
+                errors.append("That email address is invalid")
 
         name_used = Teams.query.filter(Teams.name == name).first()
         if name_used and int(name_used.id) != int(teamid):
             errors.append('That name is taken')
 
+        if utils.check_email_format(name) is True:
+            errors.append('Team name cannot be an email address')
+
         email_used = Teams.query.filter(Teams.email == email).first()
         if email_used and int(email_used.id) != int(teamid):
             errors.append('That email is taken')
+
+        if website and (website.startswith('http://') or website.startswith('https://')) is False:
+            errors.append('Websites must start with http:// or https://')
 
         if errors:
             db.session.close()
@@ -113,6 +171,9 @@ def admin_team(teamid):
             user.website = website
             user.affiliation = affiliation
             user.country = country
+            user.admin = admin_user
+            user.verified = verified
+            user.banned = hidden
             db.session.commit()
             db.session.close()
             return jsonify({'data': ['success']})
@@ -120,13 +181,21 @@ def admin_team(teamid):
 
 @admin_teams.route('/admin/team/<int:teamid>/mail', methods=['POST'])
 @admins_only
+@ratelimit(method="POST", limit=10, interval=60)
 def email_user(teamid):
-    message = request.form.get('msg', None)
-    team = Teams.query.filter(Teams.id == teamid).first()
-    if message and team:
-        if utils.sendmail(team.email, message):
-            return '1'
-    return '0'
+    msg = request.form.get('msg', None)
+    team = Teams.query.filter(Teams.id == teamid).first_or_404()
+    if msg and team:
+        result, response = utils.sendmail(team.email, msg)
+        return jsonify({
+            'result': result,
+            'message': response
+        })
+    else:
+        return jsonify({
+            'result': False,
+            'message': "Missing information"
+        })
 
 
 @admin_teams.route('/admin/team/<int:teamid>/ban', methods=['POST'])
@@ -172,6 +241,7 @@ def delete_team(teamid):
 def admin_solves(teamid="all"):
     if teamid == "all":
         solves = Solves.query.all()
+        awards = []
     else:
         solves = Solves.query.filter_by(teamid=teamid).all()
         awards = Awards.query.filter_by(teamid=teamid).all()

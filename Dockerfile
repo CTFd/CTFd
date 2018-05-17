@@ -8,6 +8,11 @@ WORKDIR /opt/CTFd
 VOLUME ["/opt/CTFd"]
 
 RUN pip install -r requirements.txt
+RUN for d in CTFd/plugins/*; do \
+      if [ -f "$d/requirements.txt" ]; then \
+        pip install -r $d/requirements.txt; \
+      fi; \
+    done;
 
 RUN chmod +x /opt/CTFd/docker-entrypoint.sh
 

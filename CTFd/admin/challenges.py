@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils import admins_only, is_admin, cache
-from CTFd.models import db, Teams, Solves, Awards, Containers, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, Hints, Unlocks, DatabaseError
+from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, Hints, Unlocks, DatabaseError
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
 
@@ -16,7 +16,13 @@ admin_challenges = Blueprint('admin_challenges', __name__)
 def admin_chal_types():
     data = {}
     for class_id in CHALLENGE_CLASSES:
-        data[class_id] = CHALLENGE_CLASSES.get(class_id).name
+        challenge_class = CHALLENGE_CLASSES.get(class_id)
+        data[challenge_class.id] = {
+            'id': challenge_class.id,
+            'name': challenge_class.name,
+            'templates': challenge_class.templates,
+            'scripts': challenge_class.scripts,
+        }
 
     return jsonify(data)
 
@@ -25,40 +31,86 @@ def admin_chal_types():
 @admins_only
 def admin_chals():
     if request.method == 'POST':
-        chals = Challenges.query.add_columns('id', 'type', 'name', 'value', 'description', 'category', 'hidden', 'max_attempts').order_by(Challenges.value).all()
-
-        teams_with_points = db.session.query(Solves.teamid).join(Teams).filter(
-            Teams.banned == False).group_by(Solves.teamid).count()
+        chals = Challenges.query.order_by(Challenges.value).all()
 
         json_data = {'game': []}
-        for x in chals:
-            solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(
-                Solves.chalid == x[1], Teams.banned == False).count()
-            if teams_with_points > 0:
-                percentage = (float(solve_count) / float(teams_with_points))
-            else:
-                percentage = 0.0
+        for chal in chals:
+            tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=chal.id).all()]
+            files = [str(f.location) for f in Files.query.filter_by(chal=chal.id).all()]
+            hints = []
+            for hint in Hints.query.filter_by(chal=chal.id).all():
+                hints.append({'id': hint.id, 'cost': hint.cost, 'hint': hint.hint})
 
-            type_class = CHALLENGE_CLASSES.get(x.type)
+            type_class = CHALLENGE_CLASSES.get(chal.type)
             type_name = type_class.name if type_class else None
 
             json_data['game'].append({
-                'id': x.id,
-                'name': x.name,
-                'value': x.value,
-                'description': x.description,
-                'category': x.category,
-                'hidden': x.hidden,
-                'max_attempts': x.max_attempts,
-                'type': x.type,
+                'id': chal.id,
+                'name': chal.name,
+                'value': chal.value,
+                'description': chal.description,
+                'category': chal.category,
+                'files': files,
+                'tags': tags,
+                'hints': hints,
+                'hidden': chal.hidden,
+                'max_attempts': chal.max_attempts,
+                'type': chal.type,
                 'type_name': type_name,
-                'percentage_solved': percentage
+                'type_data': {
+                    'id': type_class.id,
+                    'name': type_class.name,
+                    'templates': type_class.templates,
+                    'scripts': type_class.scripts,
+                }
             })
 
         db.session.close()
         return jsonify(json_data)
     else:
-        return render_template('admin/chals.html')
+        challenges = Challenges.query.all()
+        return render_template('admin/challenges.html', challenges=challenges)
+
+
+@admin_challenges.route('/admin/chal/<int:chalid>', methods=['GET', 'POST'])
+@admins_only
+def admin_chal_detail(chalid):
+    chal = Challenges.query.filter_by(id=chalid).first_or_404()
+    chal_class = get_chal_class(chal.type)
+
+    if request.method == 'POST':
+        status, message = chal_class.attempt(chal, request)
+        if status:
+            return jsonify({'status': 1, 'message': message})
+        else:
+            return jsonify({'status': 0, 'message': message})
+    elif request.method == 'GET':
+        obj, data = chal_class.read(chal)
+
+        tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=chal.id).all()]
+        files = [str(f.location) for f in Files.query.filter_by(chal=chal.id).all()]
+        hints = []
+        for hint in Hints.query.filter_by(chal=chal.id).all():
+            hints.append({'id': hint.id, 'cost': hint.cost, 'hint': hint.hint})
+
+        data['tags'] = tags
+        data['files'] = files
+        data['hints'] = hints
+
+        return jsonify(data)
+
+
+@admin_challenges.route('/admin/chal/<int:chalid>/solves', methods=['GET'])
+@admins_only
+def admin_chal_solves(chalid):
+    response = {'teams': []}
+    if utils.hide_scores():
+        return jsonify(response)
+    solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid).order_by(
+        Solves.date.asc())
+    for solve in solves:
+        response['teams'].append({'id': solve.team.id, 'name': solve.team.name, 'date': solve.date})
+    return jsonify(response)
 
 
 @admin_challenges.route('/admin/tags/<int:chalid>', methods=['GET', 'POST'])
@@ -102,7 +154,7 @@ def admin_hints(hintid):
         if request.method == 'POST':
             hint.hint = request.form.get('hint')
             hint.chal = int(request.form.get('chal'))
-            hint.cost = int(request.form.get('cost'))
+            hint.cost = int(request.form.get('cost') or 0)
             db.session.commit()
 
         elif request.method == 'DELETE':
@@ -136,7 +188,7 @@ def admin_hints(hintid):
         elif request.method == 'POST':
             hint = request.form.get('hint')
             chalid = int(request.form.get('chal'))
-            cost = int(request.form.get('cost'))
+            cost = int(request.form.get('cost') or 0)
             hint_type = request.form.get('type', 0)
             hint = Hints(chal=chalid, hint=hint, cost=cost)
             db.session.add(hint)
@@ -187,11 +239,13 @@ def admin_get_values(chalid, prop):
         chal_keys = Keys.query.filter_by(chal=challenge.id).all()
         json_data = {'keys': []}
         for x in chal_keys:
+            key_class = get_key_class(x.type)
             json_data['keys'].append({
                 'id': x.id,
                 'key': x.flag,
-                'type': x.key_type,
-                'type_name': get_key_class(x.key_type).name
+                'type': x.type,
+                'type_name': key_class.name,
+                'templates': key_class.templates,
             })
         return jsonify(json_data)
     elif prop == 'tags':
@@ -222,34 +276,9 @@ def admin_get_values(chalid, prop):
 @admins_only
 def admin_create_chal():
     if request.method == 'POST':
-        files = request.files.getlist('files[]')
-
-        # Create challenge
-        chal = Challenges(request.form['name'], request.form['desc'], request.form['value'], request.form['category'], int(request.form['chaltype']))
-        if 'hidden' in request.form:
-            chal.hidden = True
-        else:
-            chal.hidden = False
-
-        max_attempts = request.form.get('max_attempts')
-        if max_attempts and max_attempts.isdigit():
-            chal.max_attempts = int(max_attempts)
-
-        db.session.add(chal)
-        db.session.flush()
-
-        flag = Keys(chal.id, request.form['key'], int(request.form['key_type[0]']))
-        if request.form.get('keydata'):
-            flag.data = request.form.get('keydata')
-        db.session.add(flag)
-
-        db.session.commit()
-
-        for f in files:
-            utils.upload_file(file=f, chalid=chal.id)
-
-        db.session.commit()
-        db.session.close()
+        chal_type = request.form['chaltype']
+        chal_class = get_chal_class(chal_type)
+        chal_class.create(request)
         return redirect(url_for('admin_challenges.admin_chals'))
     else:
         return render_template('admin/chals/create.html')
@@ -259,17 +288,8 @@ def admin_create_chal():
 @admins_only
 def admin_delete_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
-    WrongKeys.query.filter_by(chalid=challenge.id).delete()
-    Solves.query.filter_by(chalid=challenge.id).delete()
-    Keys.query.filter_by(chal=challenge.id).delete()
-    files = Files.query.filter_by(chal=challenge.id).all()
-    for f in files:
-        utils.delete_file(f.id)
-    Files.query.filter_by(chal=challenge.id).delete()
-    Tags.query.filter_by(chal=challenge.id).delete()
-    Challenges.query.filter_by(id=challenge.id).delete()
-    db.session.commit()
-    db.session.close()
+    chal_class = get_chal_class(challenge.type)
+    chal_class.delete(challenge)
     return '1'
 
 
@@ -277,13 +297,6 @@ def admin_delete_chal():
 @admins_only
 def admin_update_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
-    challenge.name = request.form['name']
-    challenge.description = request.form['desc']
-    challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
-    challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
-    challenge.category = request.form['category']
-    challenge.hidden = 'hidden' in request.form
-    db.session.add(challenge)
-    db.session.commit()
-    db.session.close()
+    chal_class = get_chal_class(challenge.type)
+    chal_class.update(challenge, request)
     return redirect(url_for('admin_challenges.admin_chals'))

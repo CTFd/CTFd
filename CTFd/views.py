@@ -37,20 +37,25 @@ def setup():
             admin.banned = True
 
             # Index page
-            page = Pages('index', """<div class="container main-container">
-    <img class="logo" src="themes/original/static/img/logo.png" />
-    <h3 class="text-center">
-        <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
-        <p>Follow us on social media:</p>
-        <a href="https://twitter.com/ctfdio"><i class="fa fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
-        <a href="https://facebook.com/ctfdio"><i class="fa fa-facebook-official fa-2x" aria-hidden="true"></i></a>&nbsp;
-        <a href="https://github.com/ctfd"><i class="fa fa-github fa-2x" aria-hidden="true"></i></a>
-    </h3>
-    <br>
-    <h4 class="text-center">
-        <a href="admin">Click here</a> to login and setup your CTF
-    </h4>
-</div>""".format(request.script_root))
+
+            index = """<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="themes/core/static/img/logo.png" />
+        <h3 class="text-center">
+            <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
+            <p>Follow us on social media:</p>
+            <a href="https://twitter.com/ctfdio"><i class="fab fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
+            <a href="https://facebook.com/ctfdio"><i class="fab fa-facebook fa-2x" aria-hidden="true"></i></a>&nbsp;
+            <a href="https://github.com/ctfd"><i class="fab fa-github fa-2x" aria-hidden="true"></i></a>
+        </h3>
+        <br>
+        <h4 class="text-center">
+            <a href="admin">Click here</a> to login and setup your CTF
+        </h4>
+    </div>
+</div>""".format(request.script_root)
+
+            page = Pages(title=None, route='index', html=index, draft=False)
 
             # max attempts per challenge
             max_tries = utils.set_config('max_tries', 0)
@@ -75,6 +80,7 @@ def setup():
             mail_ssl = utils.set_config('mail_ssl', None)
             mail_username = utils.set_config('mail_username', None)
             mail_password = utils.set_config('mail_password', None)
+            mail_useauth = utils.set_config('mail_useauth', None)
 
             setup = utils.set_config('setup', True)
 
@@ -105,18 +111,23 @@ def custom_css():
 
 # Static HTML files
 @views.route("/", defaults={'template': 'index'})
-@views.route("/<template>")
+@views.route("/<path:template>")
 def static_html(template):
-    try:
-        return render_template('%s.html' % template)
-    except TemplateNotFound:
-        page = Pages.query.filter_by(route=template).first_or_404()
+    page = utils.get_page(template)
+    if page is None:
+        abort(404)
+    else:
+        if page.auth_required and utils.authed() is False:
+            return redirect(url_for('auth.login', next=request.path))
+
         return render_template('page.html', content=markdown(page.html))
 
 
 @views.route('/teams', defaults={'page': '1'})
 @views.route('/teams/<int:page>')
 def teams(page):
+    if utils.get_config('workshop_mode'):
+        abort(404)
     page = abs(int(page))
     results_per_page = 50
     page_start = results_per_page * (page - 1)
@@ -132,8 +143,38 @@ def teams(page):
     return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
 
 
+@views.route('/team', methods=['GET'])
+def private_team():
+    if utils.authed():
+        teamid = session['id']
+
+        freeze = utils.get_config('freeze')
+        user = Teams.query.filter_by(id=teamid).first_or_404()
+        solves = Solves.query.filter_by(teamid=teamid)
+        awards = Awards.query.filter_by(teamid=teamid)
+
+        place = user.place()
+        score = user.score()
+
+        if freeze:
+            freeze = utils.unix_time_to_utc(freeze)
+            if teamid != session.get('id'):
+                solves = solves.filter(Solves.date < freeze)
+                awards = awards.filter(Awards.date < freeze)
+
+        solves = solves.all()
+        awards = awards.all()
+
+        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place, score_frozen=utils.is_scoreboard_frozen())
+    else:
+        return redirect(url_for('auth.login'))
+
+
 @views.route('/team/<int:teamid>', methods=['GET', 'POST'])
 def team(teamid):
+    if utils.get_config('workshop_mode'):
+        abort(404)
+
     if utils.get_config('view_scoreboard_if_utils.authed') and not utils.authed():
         return redirect(url_for('auth.login', next=request.path))
     errors = []
@@ -177,11 +218,11 @@ def profile():
         if request.method == "POST":
             errors = []
 
-            name = request.form.get('name')
-            email = request.form.get('email')
-            website = request.form.get('website')
-            affiliation = request.form.get('affiliation')
-            country = request.form.get('country')
+            name = request.form.get('name').strip()
+            email = request.form.get('email').strip()
+            website = request.form.get('website').strip()
+            affiliation = request.form.get('affiliation').strip()
+            country = request.form.get('country').strip()
 
             user = Teams.query.filter_by(id=session['id']).first()
 
@@ -190,7 +231,10 @@ def profile():
                 name_len = len(request.form['name']) == 0
 
             emails = Teams.query.filter_by(email=email).first()
-            valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email)
+            valid_email = utils.check_email_format(email)
+
+            if utils.check_email_format(name) is True:
+                errors.append('Team name cannot be an email address')
 
             if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
                     (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):
@@ -211,13 +255,14 @@ def profile():
                                        affiliation=affiliation, country=country, errors=errors)
             else:
                 team = Teams.query.filter_by(id=session['id']).first()
-                if not utils.get_config('prevent_name_change'):
-                    team.name = name
+                if team.name != name:
+                    if not utils.get_config('prevent_name_change'):
+                        team.name = name
+                        session['username'] = team.name
                 if team.email != email.lower():
                     team.email = email.lower()
                     if utils.get_config('verify_emails'):
                         team.verified = False
-                session['username'] = team.name
 
                 if 'password' in request.form.keys() and not len(request.form['password']) == 0:
                     team.password = bcrypt_sha256.encrypt(request.form.get('password'))

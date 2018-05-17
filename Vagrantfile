@@ -1,0 +1,50 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Install tmux and virtualenv to support development
+$preProvision= <<SCRIPT
+sudo apt-get install tmux virtualenvwrapper -y
+SCRIPT
+
+# Wrap provisioning script with a virutalenv for pip packages
+$provision= <<SCRIPT
+source /usr/share/virtualenvwrapper/virtualenvwrapper_lazy.sh
+mkvirtualenv ctfd
+workon ctfd
+cd /vagrant
+./prepare.sh
+pip install -r development.txt
+SCRIPT
+
+# Start development server in a tmux session
+$startServer= <<SCRIPT
+source /usr/share/virtualenvwrapper/virtualenvwrapper_lazy.sh
+workon ctfd
+tmux new-session -d -n "ctfd" -c "/vagrant" -s "ctfd" "gunicorn --bind 0.0.0.0:8000 -w 4 'CTFd:create_app()'"
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-16.04"
+
+  # Create a private network, which allows host-only access to the machine
+  config.vm.network "private_network", ip: "10.9.8.7"
+
+  # Forward the default port for the development server (4000)
+  # and docker or gunicorn (8000) to host machine
+  config.vm.network "forwarded_port", guest: 4000, host: 4000
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
+
+  # Pre-provision
+  config.vm.provision "shell", inline: $preProvision
+  
+  # Provisioning scripts
+  config.vm.provision "shell", inline: $provision, privileged: false
+
+  # Start server in tmux session (every reboot)
+  config.vm.provision "shell", inline: $startServer, privileged: false,
+                      run: "always"
+
+  # Install docker (convenience)
+  config.vm.provision "shell", path: "scripts/install_docker_ubuntu.sh"
+
+end

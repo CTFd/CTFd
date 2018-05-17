@@ -2,13 +2,26 @@ import os
 
 ''' GENERATE SECRET KEY '''
 
-with open('.ctfd_secret_key', 'a+b') as secret:
-    secret.seek(0)  # Seek to beginning of file since a+ mode leaves you at the end and w+ deletes the file
-    key = secret.read()
+if not os.environ.get('SECRET_KEY'):
+    # Attempt to read the secret from the secret file
+    # This will fail if the secret has not been written
+    try:
+        with open('.ctfd_secret_key', 'rb') as secret:
+            key = secret.read()
+    except (OSError, IOError):
+        key = None
+
     if not key:
         key = os.urandom(64)
-        secret.write(key)
-        secret.flush()
+        # Attempt to write the secret file
+        # This will fail if the filesystem is read-only
+        try:
+            with open('.ctfd_secret_key', 'wb') as secret:
+                secret.write(key)
+                secret.flush()
+        except (OSError, IOError):
+            pass
+
 
 ''' SERVER SETTINGS '''
 
@@ -73,11 +86,18 @@ class Config(object):
     MAILFROM_ADDR = "noreply@ctfd.io"
 
     '''
+    LOG_FOLDER is the location where logs are written
+    These are the logs for CTFd key submissions, registrations, and logins
+    The default location is the CTFd/logs folder
+    '''
+    LOG_FOLDER = os.environ.get('LOG_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+
+    '''
     UPLOAD_FOLDER is the location where files are uploaded.
     The default destination is the CTFd/uploads folder. If you need Amazon S3 files
     you can use the CTFd S3 plugin: https://github.com/ColdHeat/CTFd-S3-plugin
     '''
-    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(os.path.dirname(__file__), 'uploads')
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
 
     '''
     TEMPLATES_AUTO_RELOAD specifies whether Flask should check for modifications to templates and
@@ -108,18 +128,32 @@ class Config(object):
     CACHE_TYPE specifies how CTFd should cache configuration values. If CACHE_TYPE is set to 'redis', CTFd will make use
     of the REDIS_URL specified in environment variables. You can also choose to hardcode the REDIS_URL here.
 
+    It is important that you specify some sort of cache as CTFd uses it to store values received from the database.
+
     CACHE_REDIS_URL is the URL to connect to Redis server.
-    Example: redis://user:password@localhost:6379/2.
+    Example: redis://user:password@localhost:6379
 
     http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     '''
-    CACHE_TYPE = "simple"
-    if CACHE_TYPE == 'redis':
-        CACHE_REDIS_URL = os.environ.get('REDIS_URL')
+    CACHE_REDIS_URL = os.environ.get('REDIS_URL')
+    if CACHE_REDIS_URL:
+        CACHE_TYPE = 'redis'
+    else:
+        CACHE_TYPE = 'simple'
+
+    '''
+    UPDATE_CHECK specifies whether or not CTFd will check whether or not there is a new version of CTFd
+    '''
+    UPDATE_CHECK = True
 
 
 class TestingConfig(Config):
+    SECRET_KEY = 'AAAAAAAAAAAAAAAAAAAA'
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TESTING_DATABASE_URL') or 'sqlite://'
+    SERVER_NAME = 'localhost'
+    UPDATE_CHECK = False
+    CACHE_REDIS_URL = None
+    CACHE_TYPE = 'simple'

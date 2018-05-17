@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Login</h1>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			{% for error in errors %}
+				<div class="alert alert-danger alert-dismissable" role="alert">
+				  <span class="sr-only">Error:</span>
+				  {{ error }}
+				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+				</div>
+			{% endfor %}
+			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+				<div class="form-group">
+					<label for="name-input">
+						Team Name or Email
+					</label>
+					<input class="form-control" type="text" name="name" id="name-input" />
+				</div>
+				<div class="form-group">
+					<label for="password-input">
+						Password
+					</label>
+					<input class="form-control" type="password" name="password" id="password-input" />
+				</div>
+				<div class="row pt-3">
+					<div class="col-md-6">
+						<a class="float-left align-text-to-button" href="{{ request.script_root }}/reset_password">
+							Forgot your password?
+						</a>
+					</div>
+					<div class="col-md-6">
+						<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined float-right">
+							Submit
+						</button>
+					</div>
+				</div>
+				<input type="hidden" name="nonce" value="{{ nonce }}">
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+

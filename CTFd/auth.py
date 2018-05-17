@@ -2,7 +2,6 @@ import logging
 import os
 import re
 import time
-import urllib
 
 from flask import current_app as app, render_template, request, redirect, url_for, session, Blueprint
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
@@ -10,37 +9,41 @@ from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Teams
 from CTFd import utils
+from CTFd.utils import ratelimit
+
+import base64
 
 auth = Blueprint('auth', __name__)
 
 
 @auth.route('/confirm', methods=['POST', 'GET'])
 @auth.route('/confirm/<data>', methods=['GET'])
+@ratelimit(method="POST", limit=10, interval=60)
 def confirm_user(data=None):
     if not utils.get_config('verify_emails'):
         # If the CTF doesn't care about confirming email addresses then redierct to challenges
         return redirect(url_for('challenges.challenges_view'))
 
-    logger = logging.getLogger('logins')
+    logger = logging.getLogger('regs')
     # User is confirming email account
     if data and request.method == "GET":
         try:
-            s = Signer(app.config['SECRET_KEY'])
-            email = s.unsign(urllib.unquote_plus(data.decode('base64')))
-        except BadSignature:
-            return render_template('confirm.html', errors=['Your confirmation link seems wrong'])
-        except:
-            return render_template('confirm.html', errors=['Your link appears broken, please try again.'])
+            s = TimedSerializer(app.config['SECRET_KEY'])
+            email = s.loads(utils.base64decode(data), max_age=1800)
+        except BadTimeSignature:
+            return render_template('confirm.html', errors=['Your confirmation link has expired'])
+        except (BadSignature, TypeError, base64.binascii.Error):
+            return render_template('confirm.html', errors=['Your confirmation token is invalid'])
         team = Teams.query.filter_by(email=email).first_or_404()
         team.verified = True
         db.session.commit()
-        db.session.close()
         logger.warn("[{date}] {ip} - {username} confirmed their account".format(
             date=time.strftime("%m/%d/%Y %X"),
             ip=utils.get_ip(),
             username=team.name.encode('utf-8'),
             email=team.email.encode('utf-8')
         ))
+        db.session.close()
         if utils.authed():
             return redirect(url_for('challenges.challenges_view'))
         return redirect(url_for('auth.login'))
@@ -76,49 +79,62 @@ def confirm_user(data=None):
 
 @auth.route('/reset_password', methods=['POST', 'GET'])
 @auth.route('/reset_password/<data>', methods=['POST', 'GET'])
+@ratelimit(method="POST", limit=10, interval=60)
 def reset_password(data=None):
-    if data is not None and request.method == "GET":
-        return render_template('reset_password.html', mode='set')
-    if data is not None and request.method == "POST":
+    logger = logging.getLogger('logins')
+
+    if data is not None:
         try:
             s = TimedSerializer(app.config['SECRET_KEY'])
-            name = s.loads(urllib.unquote_plus(data.decode('base64')), max_age=1800)
+            name = s.loads(utils.base64decode(data), max_age=1800)
         except BadTimeSignature:
             return render_template('reset_password.html', errors=['Your link has expired'])
-        except:
-            return render_template('reset_password.html', errors=['Your link appears broken, please try again.'])
-        team = Teams.query.filter_by(name=name).first_or_404()
-        team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
-        db.session.commit()
-        db.session.close()
-        logger.warn("[{date}] {ip} -  successful password reset for {username}".format(
-            date=time.strftime("%m/%d/%Y %X"),
-            ip=utils.get_ip(),
-            username=team.name.encode('utf-8')
-        ))
-        return redirect(url_for('auth.login'))
+        except (BadSignature, TypeError, base64.binascii.Error):
+            return render_template('reset_password.html', errors=['Your reset token is invalid'])
+
+        if request.method == "GET":
+            return render_template('reset_password.html', mode='set')
+        if request.method == "POST":
+            team = Teams.query.filter_by(name=name).first_or_404()
+            team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
+            db.session.commit()
+            logger.warn("[{date}] {ip} -  successful password reset for {username}".format(
+                date=time.strftime("%m/%d/%Y %X"),
+                ip=utils.get_ip(),
+                username=team.name.encode('utf-8')
+            ))
+            db.session.close()
+            return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
         email = request.form['email'].strip()
         team = Teams.query.filter_by(email=email).first()
+
+        errors = []
+
+        if utils.can_send_mail() is False:
+            return render_template(
+                'reset_password.html',
+                errors=['Email could not be sent due to server misconfiguration']
+            )
+
         if not team:
-            return render_template('reset_password.html', errors=['If that account exists you will receive an email, please check your inbox'])
-        s = TimedSerializer(app.config['SECRET_KEY'])
-        token = s.dumps(team.name)
-        text = """
-Did you initiate a password reset?
+            return render_template(
+                'reset_password.html',
+                errors=['If that account exists you will receive an email, please check your inbox']
+            )
 
-{0}/{1}
+        utils.forgot_password(email, team.name)
 
-""".format(url_for('auth.reset_password', _external=True), urllib.quote_plus(token.encode('base64')))
-
-        utils.sendmail(email, text)
-
-        return render_template('reset_password.html', errors=['If that account exists you will receive an email, please check your inbox'])
+        return render_template(
+            'reset_password.html',
+            errors=['If that account exists you will receive an email, please check your inbox']
+        )
     return render_template('reset_password.html')
 
 
 @auth.route('/register', methods=['POST', 'GET'])
+@ratelimit(method="POST", limit=10, interval=5)
 def register():
     logger = logging.getLogger('regs')
     if not utils.can_register():
@@ -134,12 +150,15 @@ def register():
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
         pass_short = len(password) == 0
         pass_long = len(password) > 128
-        valid_email = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", request.form['email'])
+        valid_email = utils.check_email_format(request.form['email'])
+        team_name_email_check = utils.check_email_format(name)
 
         if not valid_email:
-            errors.append("That email doesn't look right")
+            errors.append("Please enter a valid email address")
         if names:
             errors.append('That team name is already taken')
+        if team_name_email_check is True:
+            errors.append('Your team name cannot be an email address')
         if emails:
             errors.append('That email has already been used')
         if pass_short:
@@ -164,7 +183,6 @@ def register():
                 session['nonce'] = utils.sha512(os.urandom(10))
 
                 if utils.can_send_mail() and utils.get_config('verify_emails'):  # Confirming users is enabled and we can send email.
-                    db.session.close()
                     logger = logging.getLogger('regs')
                     logger.warn("[{date}] {ip} - {username} registered (UNCONFIRMED) with {email}".format(
                         date=time.strftime("%m/%d/%Y %X"),
@@ -172,15 +190,12 @@ def register():
                         username=request.form['name'].encode('utf-8'),
                         email=request.form['email'].encode('utf-8')
                     ))
-
                     utils.verify_email(team.email)
-
+                    db.session.close()
                     return redirect(url_for('auth.confirm_user'))
                 else:  # Don't care about confirming users
                     if utils.can_send_mail():  # We want to notify the user that they have registered.
                         utils.sendmail(request.form['email'], "You've successfully registered for {}".format(utils.get_config('ctf_name')))
-
-        db.session.close()
 
         logger.warn("[{date}] {ip} - {username} registered with {email}".format(
             date=time.strftime("%m/%d/%Y %X"),
@@ -188,18 +203,26 @@ def register():
             username=request.form['name'].encode('utf-8'),
             email=request.form['email'].encode('utf-8')
         ))
+        db.session.close()
         return redirect(url_for('challenges.challenges_view'))
     else:
         return render_template('register.html')
 
 
 @auth.route('/login', methods=['POST', 'GET'])
+@ratelimit(method="POST", limit=10, interval=5)
 def login():
     logger = logging.getLogger('logins')
     if request.method == 'POST':
         errors = []
         name = request.form['name']
-        team = Teams.query.filter_by(name=name).first()
+
+        # Check if the user submitted an email address or a team name
+        if utils.check_email_format(name) is True:
+            team = Teams.query.filter_by(email=name).first()
+        else:
+            team = Teams.query.filter_by(name=name).first()
+
         if team:
             if team and bcrypt_sha256.verify(request.form['password'], team.password):
                 try:

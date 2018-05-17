@@ -1,0 +1,29 @@
+pre {
+    margin: 0;
+    padding: 0;
+}
+
+.chal-desc {
+    font-size: 14px;
+}
+
+.modal-content {
+    border-radius: 0px;
+    max-width: 1000px;
+    padding: 1em;
+    margin: 0 auto;
+}
+
+.btn-info {
+    background-color: #5B7290 !important;
+}
+
+.badge-info {
+    background-color: #5B7290 !important;
+}
+
+.solved-challenge {
+    background-color: #37d63e !important;
+    opacity: 0.4;
+    border: none;
+}
