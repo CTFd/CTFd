@@ -177,6 +177,7 @@ def admin_config():
         db.session.close()
         with app.app_context():
             cache.clear()
+            app.jinja_env.cache = {}
         return redirect(url_for('admin.admin_config'))
 
     # Clear the cache so that we don't get stale values

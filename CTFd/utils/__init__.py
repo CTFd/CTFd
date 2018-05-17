@@ -204,10 +204,6 @@ def init_utils(app):
             if session['nonce'] != request.form.get('nonce'):
                 abort(403)
 
-    @app.before_request
-    def disable_jinja_cache():
-        app.jinja_env.cache = {}
-
 
 @cache.memoize()
 def ctf_name():
