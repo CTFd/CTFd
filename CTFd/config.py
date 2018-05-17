@@ -148,7 +148,7 @@ class Config(object):
 
 
 class TestingConfig(Config):
-    SECRET_KEY = 'AAAAAAAAAAAAAAAAAAAA'
+    SECRET_KEY = 'Hlju_S3creT_key_KEY'
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
     DEBUG = True
