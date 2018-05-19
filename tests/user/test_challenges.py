@@ -624,12 +624,16 @@ def test_challenge_solves_can_be_seen():
 
         with app.test_client() as client:
             r = client.get('/solves')
-            data = r.get_data(as_text=True)
-            data = json.loads(data)
-
-            assert len(data['solves']) == 0
+            assert r.location.startswith("http://localhost/login?next=")
+            assert r.status_code == 302
 
         client = login_as_user(app)
+
+        r = client.get('/solves')
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+
+        assert len(data['solves']) == 0
 
         chal = gen_challenge(app.db)
         chal_id = chal.id
