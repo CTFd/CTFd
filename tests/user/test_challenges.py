@@ -614,3 +614,55 @@ def test_challenges_cannot_be_solved_while_paused():
         wrong_keys = WrongKeys.query.all()
         assert len(wrong_keys) == 0
     destroy_ctfd(app)
+
+
+def test_challenge_solves_can_be_seen():
+    """Test that the /solves endpoint works properly for users"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+
+        with app.test_client() as client:
+            r = client.get('/solves')
+            assert r.location.startswith("http://localhost/login?next=")
+            assert r.status_code == 302
+
+        client = login_as_user(app)
+
+        r = client.get('/solves')
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+
+        assert len(data['solves']) == 0
+
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+        flag = gen_flag(app.db, chal=chal_id, flag='flag')
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal_id), data=data)
+
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+
+        r = client.get('/solves')
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+
+        assert len(data['solves']) > 0
+
+        team = Teams.query.filter_by(id=2).first()
+        team.banned = True
+        db.session.commit()
+
+        r = client.get('/solves')
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+
+        team = Teams.query.filter_by(id=2).first()
+        assert team.banned
+        assert len(data['solves']) > 0
+    destroy_ctfd(app)

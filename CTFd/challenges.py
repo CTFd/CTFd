@@ -208,7 +208,7 @@ def solves_private():
         if utils.authed():
             solves = Solves.query\
                 .join(Teams, Solves.teamid == Teams.id)\
-                .filter(Solves.teamid == session['id'], Teams.banned == False)\
+                .filter(Solves.teamid == session['id'])\
                 .all()
         else:
             return jsonify({'solves': []})
