@@ -621,13 +621,15 @@ def test_challenge_solves_can_be_seen():
     app = create_ctfd()
     with app.app_context():
         register_user(app)
+
+        with app.test_client() as client:
+            r = client.get('/solves')
+            data = r.get_data(as_text=True)
+            data = json.loads(data)
+
+            assert len(data['solves']) == 0
+
         client = login_as_user(app)
-
-        r = client.get('/solves')
-        data = r.get_data(as_text=True)
-        data = json.loads(data)
-
-        assert len(data['solves']) == 0
 
         chal = gen_challenge(app.db)
         chal_id = chal.id
