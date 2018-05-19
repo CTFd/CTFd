@@ -623,6 +623,12 @@ def test_challenge_solves_can_be_seen():
         register_user(app)
         client = login_as_user(app)
 
+        r = client.get('/solves')
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+
+        assert len(data['solves']) == 0
+
         chal = gen_challenge(app.db)
         chal_id = chal.id
         flag = gen_flag(app.db, chal=chal_id, flag='flag')
