@@ -362,7 +362,7 @@ $.extend({
 
 var load_location_hash = function () {
     if (window.location.hash.length > 0) {
-        loadchalbyname(window.location.hash.substring(1));
+        loadchalbyname(decodeURIComponent(window.location.hash.substring(1)));
     }
 };
 
