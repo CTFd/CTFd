@@ -25,6 +25,9 @@ if [ -n "$DATABASE_URL" ]
     sleep 1;
 fi
 
+# Initialize database
+python manage.py db upgrade
+
 if [ -z "$WORKERS" ]; then
     WORKERS=1
 fi
