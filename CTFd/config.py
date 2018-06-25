@@ -45,7 +45,8 @@ class Config(object):
 
     http://flask-sqlalchemy.pocoo.org/2.1/config/#configuration-keys
     '''
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(os.path.abspath(__file__)))
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        'DATABASE_URL') or 'sqlite:///{}/data/ctfd.db'.format(os.path.dirname(os.path.abspath(__file__)))
 
     '''
     SQLALCHEMY_TRACK_MODIFICATIONS is automatically disabled to suppress warnings and save memory. You should only enable
@@ -90,14 +91,16 @@ class Config(object):
     These are the logs for CTFd key submissions, registrations, and logins
     The default location is the CTFd/logs folder
     '''
-    LOG_FOLDER = os.environ.get('LOG_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+    LOG_FOLDER = os.environ.get('LOG_FOLDER') or os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'logs')
 
     '''
     UPLOAD_FOLDER is the location where files are uploaded.
     The default destination is the CTFd/uploads folder. If you need Amazon S3 files
     you can use the CTFd S3 plugin: https://github.com/ColdHeat/CTFd-S3-plugin
     '''
-    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'uploads')
 
     '''
     TEMPLATES_AUTO_RELOAD specifies whether Flask should check for modifications to templates and
@@ -152,7 +155,8 @@ class TestingConfig(Config):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TESTING_DATABASE_URL') or 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        'TESTING_DATABASE_URL') or 'sqlite://'
     SERVER_NAME = 'localhost'
     UPDATE_CHECK = False
     CACHE_REDIS_URL = None
