@@ -110,9 +110,12 @@ def init_logs(app):
         if not os.path.exists(log):
             open(log, 'a').close()
 
-    key_log = logging.handlers.RotatingFileHandler(logs['keys'], maxBytes=10000)
-    login_log = logging.handlers.RotatingFileHandler(logs['logins'], maxBytes=10000)
-    register_log = logging.handlers.RotatingFileHandler(logs['registers'], maxBytes=10000)
+    key_log = logging.handlers.RotatingFileHandler(
+        logs['keys'], maxBytes=10000)
+    login_log = logging.handlers.RotatingFileHandler(
+        logs['logins'], maxBytes=10000)
+    register_log = logging.handlers.RotatingFileHandler(
+        logs['registers'], maxBytes=10000)
 
     logger_keys.addHandler(key_log)
     logger_logins.addHandler(login_log)
@@ -152,9 +155,11 @@ def init_utils(app):
     app.jinja_env.globals.update(ctf_name=ctf_name)
     app.jinja_env.globals.update(ctf_logo=ctf_logo)
     app.jinja_env.globals.update(ctf_theme=ctf_theme)
-    app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
+    app.jinja_env.globals.update(
+        get_configurable_plugins=get_configurable_plugins)
     app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
-    app.jinja_env.globals.update(get_registered_stylesheets=get_registered_stylesheets)
+    app.jinja_env.globals.update(
+        get_registered_stylesheets=get_registered_stylesheets)
     app.jinja_env.globals.update(get_config=get_config)
     app.jinja_env.globals.update(hide_scores=hide_scores)
 
@@ -174,7 +179,8 @@ def init_utils(app):
     @app.before_request
     def tracker():
         if authed():
-            track = Tracking.query.filter_by(ip=get_ip(), team=session['id']).first()
+            track = Tracking.query.filter_by(
+                ip=get_ip(), team=session['id']).first()
             if not track:
                 visit = Tracking(ip=get_ip(), team=session['id'])
                 db.session.add(visit)
@@ -245,7 +251,8 @@ def register_plugin_stylesheet(url):
 
 @cache.memoize()
 def pages():
-    db_pages = Pages.query.filter(Pages.route != "index", Pages.draft != True).all()
+    db_pages = Pages.query.filter(
+        Pages.route != "index", Pages.draft != True).all()
     return db_pages
 
 
@@ -321,7 +328,8 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
             current = cache.get(key)
 
             if request.method == method:
-                if current and int(current) > limit - 1:  # -1 in order to align expected limit with the real value
+                # -1 in order to align expected limit with the real value
+                if current and int(current) > limit - 1:
                     resp = jsonify({
                         'code': 429,
                         "message": "Too many requests. Limit is %s requests in %s seconds" % (limit, interval)
@@ -506,7 +514,8 @@ def upload_file(file, chalid):
 
     md5hash = hashlib.md5(os.urandom(64)).hexdigest()
 
-    upload_folder = os.path.join(os.path.normpath(app.root_path), app.config['UPLOAD_FOLDER'])
+    upload_folder = os.path.join(os.path.normpath(
+        app.root_path), app.config['UPLOAD_FOLDER'])
     if not os.path.exists(os.path.join(upload_folder, md5hash)):
         os.makedirs(os.path.join(upload_folder, md5hash))
 
@@ -520,7 +529,8 @@ def upload_file(file, chalid):
 def delete_file(file_id):
     f = Files.query.filter_by(id=file_id).first_or_404()
     upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-    if os.path.exists(os.path.join(upload_folder, f.location)):  # Some kind of os.path.isfile issue on Windows...
+    # Some kind of os.path.isfile issue on Windows...
+    if os.path.exists(os.path.join(upload_folder, f.location)):
         os.unlink(os.path.join(upload_folder, f.location))
     db.session.delete(f)
     db.session.commit()
@@ -600,7 +610,8 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=
 
 def sendmail(addr, text):
     ctf_name = get_config('ctf_name')
-    mailfrom_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+    mailfrom_addr = get_config(
+        'mailfrom_addr') or app.config.get('MAILFROM_ADDR')
     if mailgun():
         if get_config('mg_api_key') and get_config('mg_base_url'):
             mg_api_key = get_config('mg_api_key')
@@ -835,11 +846,13 @@ def export_ctf(segments=None):
         backup_zip.writestr('db/alembic_version.json', result_file.read())
 
     # Backup uploads
-    upload_folder = os.path.join(os.path.normpath(app.root_path), app.config.get('UPLOAD_FOLDER'))
+    upload_folder = os.path.join(os.path.normpath(
+        app.root_path), app.config.get('UPLOAD_FOLDER'))
     for root, dirs, files in os.walk(upload_folder):
         for file in files:
             parent_dir = os.path.basename(root)
-            backup_zip.write(os.path.join(root, file), arcname=os.path.join('uploads', parent_dir, file))
+            backup_zip.write(os.path.join(root, file),
+                             arcname=os.path.join('uploads', parent_dir, file))
 
     backup_zip.close()
     backup.seek(0)
@@ -925,7 +938,8 @@ def import_ctf(backup, segments=None, erase=False):
                         if page:
                             page.html = html
                         else:
-                            page = Pages(title, route, html, draft=draft, auth_required=auth_required)
+                            page = Pages(
+                                title, route, html, draft=draft, auth_required=auth_required)
                             db.session.add(page)
                         db.session.commit()
 
@@ -947,13 +961,17 @@ def import_ctf(backup, segments=None, erase=False):
                     if get_app_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
                         for k, v in entry.items():
                             if isinstance(v, six.string_types):
-                                match = re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v)
+                                match = re.match(
+                                    r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v)
                                 if match:
-                                    entry[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%S.%f')
+                                    entry[k] = datetime.datetime.strptime(
+                                        v, '%Y-%m-%dT%H:%M:%S.%f')
                                     continue
-                                match = re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", v)
+                                match = re.match(
+                                    r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", v)
                                 if match:
-                                    entry[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')
+                                    entry[k] = datetime.datetime.strptime(
+                                        v, '%Y-%m-%dT%H:%M:%S')
                                     continue
                     for k, v in entry.items():
                         if k == 'chal' or k == 'chalid':
@@ -986,7 +1004,8 @@ def import_ctf(backup, segments=None, erase=False):
         if len(filename) < 2:  # just an empty uploads directory (e.g. uploads/)
             continue
 
-        filename = filename[1]  # Get the second entry in the list (the actual filename)
+        # Get the second entry in the list (the actual filename)
+        filename = filename[1]
         full_path = os.path.join(upload_folder, filename)
         dirname = os.path.dirname(full_path)
 
@@ -998,3 +1017,33 @@ def import_ctf(backup, segments=None, erase=False):
         target = open(full_path, "wb")
         with source, target:
             shutil.copyfileobj(source, target)
+
+
+VIRT_SERVER = os.getenv('ADMIN_HOST', 'localhost')
+VIRT_SERVER_PORT = os.getenv('ADMIN_PORT', 3331)
+
+
+class EmptyCapacityException(Exception):
+    pass
+
+
+def get_machine_set():
+    r = requests.post(
+        'http://{}:{}/register'.format(VIRT_SERVER, VIRT_SERVER_PORT))
+
+    if r.status_code != 200:
+        raise Exception('Unexpected status code: {}'.format(r.status_code))
+
+    resp = r.json()
+
+    if 'status' not in resp:
+        raise Exception('Unexpected response: Missing "status"')
+
+    if resp['status'] != 'ok':
+        raise EmptyCapacityException()
+
+    for k in ['username', 'password']:
+        if k not in resp:
+            raise Exception('Unexpected response: Missing "{}"'.format(k))
+
+    return (resp['username'], resp['password'])

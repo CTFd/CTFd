@@ -23,10 +23,11 @@ if [ -n "$DATABASE_URL" ]
     echo "$database is ready"
     # Give it another second.
     sleep 1;
+
+    # Initialize database
+    python manage.py db upgrade
 fi
 
-# Initialize database
-python manage.py db upgrade
 
 if [ -z "$WORKERS" ]; then
     WORKERS=1

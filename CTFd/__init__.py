@@ -33,6 +33,7 @@ class CTFdFlask(Flask):
 
 class SandboxedBaseEnvironment(SandboxedEnvironment):
     """SandboxEnvironment that mimics the Flask BaseEnvironment"""
+
     def __init__(self, app, **options):
         if 'loader' not in options:
             options['loader'] = app.create_global_jinja_loader()
@@ -42,6 +43,7 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
 
 class ThemeLoader(FileSystemLoader):
     """Custom FileSystemLoader that switches themes based on the configuration value"""
+
     def __init__(self, searchpath, encoding='utf-8', followlinks=False):
         super(ThemeLoader, self).__init__(searchpath, encoding, followlinks)
         self.overriden_templates = {}
@@ -84,10 +86,12 @@ def run_upgrade():
 
 def create_app(config='CTFd.config.Config'):
     app = CTFdFlask(__name__)
+
     with app.app_context():
         app.config.from_object(config)
 
-        theme_loader = ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True)
+        theme_loader = ThemeLoader(os.path.join(
+            app.root_path, 'themes'), followlinks=True)
         app.jinja_loader = theme_loader
 
         from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking

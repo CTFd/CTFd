@@ -39,20 +39,28 @@ def setup():
             # Index page
 
             index = """<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="themes/core/static/img/logo.png" />
-        <h3 class="text-center">
-            <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
-            <p>Follow us on social media:</p>
-            <a href="https://twitter.com/ctfdio"><i class="fab fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
-            <a href="https://facebook.com/ctfdio"><i class="fab fa-facebook fa-2x" aria-hidden="true"></i></a>&nbsp;
-            <a href="https://github.com/ctfd"><i class="fab fa-github fa-2x" aria-hidden="true"></i></a>
-        </h3>
-        <br>
-        <h4 class="text-center">
-            <a href="admin">Click here</a> to login and setup your CTF
-        </h4>
-    </div>
+  <div class="col-md-6 offset-md-3">
+    <h3 class="text-center" style="padding-top: 10vh;">
+      <p>National Training Platform</p>
+    </h3>
+    <p class="text-center">
+      A platform for Cyber Security Exercises, created at Aalborg University
+    </p>
+    <img class="w-100 mx-auto d-block" style="max-width: 300px; padding: 3vh 0 4vh 0;" src="themes/core/static/img/logo.png" />
+    <p class="text-center">
+      In collaboration with <a href="http://danishcybersecurityclusters.dk/">Danish Cyber Security Clusters</a>
+
+      <a href="http://danishcybersecurityclusters.dk/">
+        <img class="w-100 mx-auto d-block" style="max-width: 180px;padding: 1vh 0 3vh 0;" src="themes/core/static/img/dcsc_logo.png" />
+      </a>
+    </p>
+    <p class="text-center">
+      Feel free to join our local Facebook Group:
+    </p>
+    <p class="text-center">
+      <a href="https://www.facebook.com/groups/957517617737780/"><i class="fab fa-facebook" aria-hidden="true"></i>&nbsp;AAU Hackers & Friends</a>
+    </p>
+  </div>
 </div>""".format(request.script_root)
 
             page = Pages(title=None, route='index', html=index, draft=False)
@@ -66,10 +74,12 @@ def setup():
             freeze = utils.set_config('freeze', None)
 
             # Challenges cannot be viewed by unregistered users
-            view_challenges_unregistered = utils.set_config('view_challenges_unregistered', None)
+            view_challenges_unregistered = utils.set_config(
+                'view_challenges_unregistered', None)
 
             # Allow/Disallow registration
-            prevent_registration = utils.set_config('prevent_registration', None)
+            prevent_registration = utils.set_config(
+                'prevent_registration', None)
 
             # Verify emails
             verify_emails = utils.set_config('verify_emails', None)
@@ -135,10 +145,12 @@ def teams(page):
 
     if utils.get_config('verify_emails'):
         count = Teams.query.filter_by(verified=True, banned=False).count()
-        teams = Teams.query.filter_by(verified=True, banned=False).slice(page_start, page_end).all()
+        teams = Teams.query.filter_by(verified=True, banned=False).slice(
+            page_start, page_end).all()
     else:
         count = Teams.query.filter_by(banned=False).count()
-        teams = Teams.query.filter_by(banned=False).slice(page_start, page_end).all()
+        teams = Teams.query.filter_by(banned=False).slice(
+            page_start, page_end).all()
     pages = int(count / results_per_page) + (count % results_per_page > 0)
     return render_template('teams.html', teams=teams, team_pages=pages, curr_page=page)
 
@@ -208,7 +220,8 @@ def team(teamid):
     elif request.method == 'POST':
         json = {'solves': []}
         for x in solves:
-            json['solves'].append({'id': x.id, 'chal': x.chalid, 'team': x.teamid})
+            json['solves'].append(
+                {'id': x.id, 'chal': x.chalid, 'team': x.teamid})
         return jsonify(json)
 
 
@@ -259,13 +272,16 @@ def profile():
                     if not utils.get_config('prevent_name_change'):
                         team.name = name
                         session['username'] = team.name
+                        session['guacamole_user'] = team.guacamole_user
+                        session['guacamole_password'] = team.guacamole_password
                 if team.email != email.lower():
                     team.email = email.lower()
                     if utils.get_config('verify_emails'):
                         team.verified = False
 
                 if 'password' in request.form.keys() and not len(request.form['password']) == 0:
-                    team.password = bcrypt_sha256.encrypt(request.form.get('password'))
+                    team.password = bcrypt_sha256.encrypt(
+                        request.form.get('password'))
                 team.website = website
                 team.affiliation = affiliation
                 team.country = country
@@ -280,7 +296,8 @@ def profile():
             affiliation = user.affiliation
             country = user.country
             prevent_name_change = utils.get_config('prevent_name_change')
-            confirm_email = utils.get_config('verify_emails') and not user.verified
+            confirm_email = utils.get_config(
+                'verify_emails') and not user.verified
             return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
                                    country=country, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
     else:

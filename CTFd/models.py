@@ -159,22 +159,27 @@ class Teams(db.Model):
     affiliation = db.Column(db.String(128))
     country = db.Column(db.String(32))
     bracket = db.Column(db.String(32))
+    guacamole_user = db.Column(db.String(128))
+    guacamole_password = db.Column(db.String(128))
     banned = db.Column(db.Boolean, default=False)
     verified = db.Column(db.Boolean, default=False)
     admin = db.Column(db.Boolean, default=False)
     joined = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, name, email, password):
+    def __init__(self, name, email, password, guac_user=None, guac_pass=None):
         self.name = name
         self.email = email
         self.password = bcrypt_sha256.encrypt(str(password))
+        self.guacamole_user = guac_user
+        self.guacamole_password = guac_pass
 
     def __repr__(self):
         return '<team %r>' % self.name
 
     def score(self, admin=False):
         score = db.func.sum(Challenges.value).label('score')
-        team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.id == self.id)
+        team = db.session.query(Solves.teamid, score).join(
+            Teams).join(Challenges).filter(Teams.id == self.id)
         award_score = db.func.sum(Awards.value).label('award_score')
         award = db.session.query(award_score).filter_by(teamid=self.id)
 
@@ -269,8 +274,10 @@ class Solves(db.Model):
     ip = db.Column(db.String(46))
     flag = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    team = db.relationship('Teams', foreign_keys="Solves.teamid", lazy='joined')
-    chal = db.relationship('Challenges', foreign_keys="Solves.chalid", lazy='joined')
+    team = db.relationship(
+        'Teams', foreign_keys="Solves.teamid", lazy='joined')
+    chal = db.relationship(
+        'Challenges', foreign_keys="Solves.chalid", lazy='joined')
     # value = db.Column(db.Integer)
 
     def __init__(self, teamid, chalid, ip, flag):
@@ -291,7 +298,8 @@ class WrongKeys(db.Model):
     ip = db.Column(db.String(46))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     flag = db.Column(db.Text)
-    chal = db.relationship('Challenges', foreign_keys="WrongKeys.chalid", lazy='joined')
+    chal = db.relationship(
+        'Challenges', foreign_keys="WrongKeys.chalid", lazy='joined')
 
     def __init__(self, teamid, chalid, ip, flag):
         self.ip = ip

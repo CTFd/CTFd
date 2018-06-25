@@ -3,9 +3,8 @@ RUN apk update && \
     apk add python python-dev libffi-dev gcc make musl-dev py-pip mysql-client
 
 RUN mkdir -p /opt/CTFd
-COPY . /opt/CTFd
+COPY requirements.txt /opt/CTFd/requirements.txt
 WORKDIR /opt/CTFd
-VOLUME ["/opt/CTFd"]
 
 RUN pip install -r requirements.txt
 RUN for d in CTFd/plugins/*; do \
@@ -13,6 +12,9 @@ RUN for d in CTFd/plugins/*; do \
         pip install -r $d/requirements.txt; \
       fi; \
     done;
+
+COPY . /opt/CTFd
+VOLUME ["/opt/CTFd"]
 
 RUN chmod +x /opt/CTFd/docker-entrypoint.sh
 

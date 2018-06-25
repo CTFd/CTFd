@@ -82,23 +82,47 @@
 				<hr class="d-sm-flex d-md-flex d-lg-none">
 
 				<ul class="navbar-nav ml-md-auto d-block d-sm-flex d-md-flex">
-					{% if username is defined %}
-						{% if admin %}
-							<li class="nav-item">
-								<a class="nav-link" href="{{ request.script_root }}/admin">Admin</a>
-							</li>
-						{% endif %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/team">Team</a>
-						</li>
-						<li class="nav-item">
+				  {% if username is defined %}
+				  {% if admin %}
+				  <li class="nav-item">
+					<a class="nav-link" href="{{ request.script_root }}/admin">Admin</a>
+				  </li>
+				  {% endif %}
+				  <li class="nav-item">
+					<a class="nav-link" href="{{ request.script_root }}/team">Team</a>
+					</li>
+					<li class="nav-item">
 							<a class="nav-link" href="{{ request.script_root }}/profile">Profile</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/logout">Logout</a>
+						  <a class="nav-link" href="{{ request.script_root }}/logout">Logout</a>
 						</li>
-					{% else %}
-						{% if can_register() %}
+
+                        {% if guacamole_user is defined %}
+                  <li class="nav-item" style="margin-left: 10px; border-radius: 6px; padding-right: .6rem; padding-left: .6rem; background: rgba(255,255,255,.5); cursor: pointer;">
+                    <script>
+                      function connect_guacamole() {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', '/guacamole/api/tokens', false);
+                        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                        xhr.onload = function () {
+                          document.cookie='GUAC_AUTH=' + encodeURI(this.responseText) + '; path=/guacamole/;';
+                          window.location.replace('/guacamole');
+                        };
+                        xhr.send('username={{ guacamole_user }}&password={{ guacamole_pass }}');
+                      }
+                    </script>
+                    <a class="nav-link"
+                       style="color: #211A52"
+                       onclick="connect_guacamole()">
+                      <i class="btn-fa fas fa-laptop"></i>
+                      &nbsp;
+                      Connect
+                    </a>
+				  </li>
+                  {% endif %}
+				  {% else %}
+				  {% if can_register() %}
 							<li class="nav-item">
 								<a class="nav-link" href="{{ request.script_root }}/register">Register</a>
 							</li>
