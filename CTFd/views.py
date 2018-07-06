@@ -39,26 +39,25 @@ def setup():
             # Index page
 
             index = """<div class="row">
-  <div class="col-md-6 offset-md-3">
+<div class="col-md-6 offset-md-3">
     <h3 class="text-center" style="padding-top: 10vh;">
       <p>National Training Platform</p>
     </h3>
     <p class="text-center">
-      A platform for Cyber Security Exercises, created at Aalborg University
+      A platform for Cyber Security Exercises by <a href="http://danishcybersecurityclusters.dk/">Danish Cyber Security Clusters</a>
     </p>
-    <img class="w-100 mx-auto d-block" style="max-width: 300px; padding: 3vh 0 4vh 0;" src="themes/core/static/img/logo.png" />
+    <a href="http://danishcybersecurityclusters.dk/">
+        <img class="w-100 mx-auto d-block" style="max-width: 300px; padding: 3vh 0 4vh 0;" src="themes/core/static/img/dcsc_logo.png">
+    </a>
     <p class="text-center">
-      In collaboration with <a href="http://danishcybersecurityclusters.dk/">Danish Cyber Security Clusters</a>
-
-      <a href="http://danishcybersecurityclusters.dk/">
-        <img class="w-100 mx-auto d-block" style="max-width: 180px;padding: 1vh 0 3vh 0;" src="themes/core/static/img/dcsc_logo.png" />
-      </a>
+      Created at <a href="http://danishcybersecurityclusters.dk/">Aalborg University</a>
+      <img class="w-100 mx-auto d-block" src="themes/core/static/img/logo.png" style="max-width: 120px;padding: 5vh 0 3vh 0;">
     </p>
     <p class="text-center">
       Feel free to join our local Facebook Group:
     </p>
     <p class="text-center">
-      <a href="https://www.facebook.com/groups/957517617737780/"><i class="fab fa-facebook" aria-hidden="true"></i>&nbsp;AAU Hackers & Friends</a>
+      <a href="https://www.facebook.com/groups/957517617737780/"><i class="fab fa-facebook" aria-hidden="true"></i>&nbsp;AAU Hackers &amp; Friends</a>
     </p>
   </div>
 </div>""".format(request.script_root)
