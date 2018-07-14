@@ -70,7 +70,7 @@ def admin_import_ctf():
             import_ctf(backup)
     except Exception as e:
         print(e)
-        errors.append(type(e).__name__)
+        errors.append(repr(e))
 
     if errors:
         return errors[0], 500
