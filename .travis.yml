@@ -23,7 +23,7 @@ before_script:
   - psql -c 'create database ctfd;' -U postgres
   - python tests/helper_virt_server.py || true > /dev/null 2>&1 &
 script:
-  - pep8 --ignore E501,E712 CTFd/ tests/
+  - pep8 --ignore E501,E712 --exclude "helper_virt_server.py" CTFd/ tests/ 
   - nosetests -v -d --with-randomly
 after_success:
   - codecov
