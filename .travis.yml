@@ -1,20 +1,38 @@
 language: python
 services:
-    - mysql
-    - postgresql
+  - docker
+  - mysql
+  - postgresql
 env:
+  global:
+    - IMAGE_NAME=aau/ctfd
+    - VERSION=1.2.0
+    - REGISTRY_HOST=registry.sec-aau.dk
+    - REGISTRY_USER=travis
+    - REGISTRY_PASS=T5CBgSJfMfJfUAyreMBHz96DhFE89ADK
+  matrix:
     - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
     - TESTING_DATABASE_URL='sqlite://'
     - TESTING_DATABASE_URL='postgres://postgres@localhost/ctfd'
 python:
-    - 2.7
-    - 3.6
+  - 2.7
+  - 3.6
 install:
-    - pip install -r development.txt
+  - pip install -r development.txt
 before_script:
-    - psql -c 'create database ctfd;' -U postgres
+  - psql -c 'create database ctfd;' -U postgres
 script:
-    - pep8 --ignore E501,E712 CTFd/ tests/
-    - nosetests -v -d --with-randomly
+  - pep8 --ignore E501,E712 CTFd/ tests/
+  - nosetests -v -d --with-randomly
 after_success:
-    - codecov
+  - codecov
+before_deploy:
+  - docker login "$REGISTRY_HOST" -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+  - docker build --pull --cache-from "$IMAGE_NAME" --tag "$IMAGE_NAME" -f Dockerfile .
+  - docker tag "$IMAGE_NAME" "${REGISTRY_HOST}/${IMAGE_NAME}:latest"
+  - docker tag "$IMAGE_NAME" "${REGISTRY_HOST}/${IMAGE_NAME}:${VERSION}"
+deploy:
+  provider: script
+  script: docker push "${REGISTRY_HOST}/${IMAGE_NAME}:latest" && docker push "${REGISTRY_HOST}/${IMAGE_NAME}:${VERSION}" 
+  on:
+    branch: master
