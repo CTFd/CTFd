@@ -21,6 +21,7 @@ install:
   - pip install -r development.txt
 before_script:
   - psql -c 'create database ctfd;' -U postgres
+  - python tests/helper_virt_server.py &
 script:
   - pep8 --ignore E501,E712 CTFd/ tests/
   - nosetests -v -d --with-randomly
