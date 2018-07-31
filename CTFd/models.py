@@ -28,6 +28,15 @@ def long2ip(ip_int):
 db = SQLAlchemy()
 
 
+class Announcements(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text)
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    def __init__(self, content):
+        self.content = content
+
+
 class Pages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     auth_required = db.Column(db.Boolean)
