@@ -20,3 +20,4 @@ redis==2.10.6
 datafreeze==0.1.0
 gevent==1.2.2
 python-dotenv==0.8.2
+flask-restful==0.3.6
