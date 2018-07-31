@@ -159,6 +159,20 @@ class Keys(db.Model):
         return "<Flag {0} for challenge {1}>".format(self.flag, self.chal)
 
 
+class Users(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), unique=True)
+    email = db.Column(db.String(128), unique=True)
+    admin = db.Column(db.Boolean, default=False)
+    password = db.Column(db.String(128))
+    website = db.Column(db.String(128))
+    affiliation = db.Column(db.String(128))
+    country = db.Column(db.String(32))
+    bracket = db.Column(db.String(32))
+    banned = db.Column(db.Boolean, default=False)
+    joined = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+
 class Teams(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True)
@@ -310,6 +324,13 @@ class WrongKeys(db.Model):
 
     def __repr__(self):
         return '<wrong {}, {}, {}, {}>'.format(self.teamid, self.chalid, self.ip, self.flag)
+
+
+class Requirements(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    itemid = db.Column(db.Integer)
+    data = db.Column(db.Text)
+    model = db.Column(db.String(32))
 
 
 class Unlocks(db.Model):
