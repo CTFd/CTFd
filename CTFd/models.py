@@ -332,6 +332,11 @@ class Requirements(db.Model):
     data = db.Column(db.Text)
     model = db.Column(db.String(32))
 
+    def __init__(self, itemid, data, model):
+        self.itemid = itemid
+        self.data = data
+        self.model = model
+
 
 class Unlocks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
