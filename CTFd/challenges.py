@@ -378,7 +378,7 @@ def chal(chalid):
 
         solves = Solves.query.filter_by(teamid=session['id'], chalid=chalid).first()
 
-        # Challange not solved yet
+        # Challenge not solved yet
         if not solves:
             provided_key = request.form['key'].strip()
             saved_keys = Keys.query.filter_by(chal=chal.id).all()
