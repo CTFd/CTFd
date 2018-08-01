@@ -54,6 +54,13 @@ If you prefer commercial support or have a special project, send us an email: [s
 ## Managed Hosting
 Looking to use CTFd but don't want to deal with managing infrastructure? Check out [the CTFd website](https://ctfd.io/) for managed CTFd deployments.
 
+## Heroku
+CTFd supports deployments to Heroku for with one-click automatic deploy
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+If you choose to deploy to Heroku utilizing source; please note that an environment variable called "ON_HEROKU" MUST BE configured with a value of "True"
+
 ## HackerFire
 Looking for CTF challenges to work on? [HackerFire](https://hackerfire.com/) is a learning focused CTF built using CTFd. It features a wide variety of challenges and is updated with new content frequently. It also contains custom knowledge resources to teach newcomers about the techniques used to solve a challenge.
 

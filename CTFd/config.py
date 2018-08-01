@@ -22,7 +22,6 @@ if not os.environ.get('SECRET_KEY'):
         except (OSError, IOError):
             pass
 
-
 ''' SERVER SETTINGS '''
 
 
@@ -145,6 +144,16 @@ class Config(object):
     UPDATE_CHECK specifies whether or not CTFd will check whether or not there is a new version of CTFd
     '''
     UPDATE_CHECK = True
+
+    '''
+    ON_HEROKU Specifies whether or not CTFd is hosted on Heroku; if so it skips the DB check and assumes the 
+    DATABASE_URL is prepopulated
+    '''
+    HEROKU_CHECK = os.environ.get('ON_HEROKU')
+    if HEROKU_CHECK:
+        ON_HEROKU = HEROKU_CHECK
+    else:
+        ON_HEROKU = False
 
 
 class TestingConfig(Config):
