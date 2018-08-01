@@ -17,13 +17,9 @@ function load_edit_key_modal(key_id, key_type_name) {
 }
 
 
-function create_key(chal, key, key_type) {
-    $.post(script_root + "/admin/keys", {
-        chal: chal,
-        key: key,
-        key_type: key_type,
-        nonce: $('#nonce').val()
-    }, function (data) {
+function create_key(chal, chal_data) {
+    chal_data.push({name: 'nonce', value: $('#nonce').val()});
+    $.post(script_root + "/admin/keys", chal_data, function (data) {
         if (data == "1"){
             loadkeys(chal);
             $("#create-keys").modal('toggle');
@@ -73,17 +69,12 @@ function deletekey(key_id){
 }
 
 function updatekey(){
+    var edit_key_modal = $('#edit-keys form').serializeArray();
+
     var key_id = $('#key-id').val();
     var chal = $("#update-keys").attr('chal-id');
-    var key_data = $('#key-data').val();
-    var key_type = $('#key-type').val();
-    var nonce = $('#nonce').val();
-    $.post(script_root + '/admin/keys/'+key_id, {
-        'chal':chal,
-        'key':key_data,
-        'key_type': key_type,
-        'nonce': nonce
-    }, function(data){
+
+    $.post(script_root + '/admin/keys/'+key_id, edit_key_modal, function(data){
         if (data == "1") {
             loadkeys(chal);
             $('#edit-keys').modal('toggle');
@@ -132,9 +123,13 @@ $(document).ready(function () {
 
     $('#create-keys-submit').click(function (e) {
         e.preventDefault();
+        var chal_data = $('#create-keys-entry-div :input').serializeArray();
+
         var chalid = $("#update-keys").attr('chal-id');
-        var key_data = $('#create-keys').find('input[name=key]').val();
+        chal_data.push({name: 'chal', value: chalid});
+
         var key_type = $('#create-keys-select').val();
-        create_key(chalid, key_data, key_type);
+        chal_data.push({name: 'key_type', value: key_type});
+        create_key(chalid, chal_data);
     });
 });

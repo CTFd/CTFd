@@ -24,12 +24,20 @@ class CTFdStaticKey(BaseKey):
     }
 
     @staticmethod
-    def compare(saved, provided):
+    def compare(chal_key_obj, provided):
+        saved = chal_key_obj.flag
+        data = chal_key_obj.data
+
         if len(saved) != len(provided):
             return False
         result = 0
-        for x, y in zip(saved, provided):
-            result |= ord(x) ^ ord(y)
+
+        if data == "case_insensitive":
+            for x, y in zip(saved.lower(), provided.lower()):
+                result |= ord(x) ^ ord(y)
+        else:
+            for x, y in zip(saved, provided):
+                result |= ord(x) ^ ord(y)
         return result == 0
 
 
@@ -42,8 +50,15 @@ class CTFdRegexKey(BaseKey):
     }
 
     @staticmethod
-    def compare(saved, provided):
-        res = re.match(saved, provided, re.IGNORECASE)
+    def compare(chal_key_obj, provided):
+        saved = chal_key_obj.flag
+        data = chal_key_obj.data
+
+        if data == "case_insensitive":
+            res = re.match(saved, provided, re.IGNORECASE)
+        else:
+            res = re.match(saved, provided)
+
         return res and res.group() == provided
 
 

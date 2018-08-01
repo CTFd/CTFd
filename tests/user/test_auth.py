@@ -118,7 +118,7 @@ def test_expired_confirmation_links():
         client = login_as_user(app, name="user", password="password")
 
         # user@user.com "2012-01-14 03:21:34"
-        confirm_link = 'http://localhost/confirm/InVzZXJAdXNlci5jb20iLkFmS0dQZy5kLUJnVkgwaUhadzFHaXVENHczWTJCVVJwdWc%3D'
+        confirm_link = 'http://localhost/confirm/InVzZXJAdXNlci5jb20iLkFmS0dQZy5kLUJnVkgwaUhadzFHaXVENHczWTJCVVJwdWc'
         r = client.get(confirm_link)
 
         assert "Your confirmation link has expired" in r.get_data(as_text=True)
@@ -137,7 +137,7 @@ def test_invalid_confirmation_links():
         client = login_as_user(app, name="user", password="password")
 
         # user@user.com "2012-01-14 03:21:34"
-        confirm_link = 'http://localhost/confirm/a8375iyu<script>alert(1)<script>hn3048wueorighkgnsfg%3D%3D'
+        confirm_link = 'http://localhost/confirm/a8375iyu<script>alert(1)<script>hn3048wueorighkgnsfg'
         r = client.get(confirm_link)
 
         assert "Your confirmation token is invalid" in r.get_data(as_text=True)
@@ -180,7 +180,7 @@ def test_invalid_reset_password_link():
 
         with app.test_client() as client:
             # user@user.com "2012-01-14 03:21:34"
-            forgot_link = 'http://localhost/reset_password/5678ytfghjiu876tyfg<>hvbnmkoi9u87y6trdfcgvhbnm,lp09iujmk%3D'
+            forgot_link = 'http://localhost/reset_password/5678ytfghjiu876tyfg<>hvbnmkoi9u87y6trdfcgvhbnm,lp09iujmk'
             r = client.get(forgot_link)
 
             assert "Your reset token is invalid" in r.get_data(as_text=True)

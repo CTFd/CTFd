@@ -3,7 +3,7 @@
 
 # Install tmux and virtualenv to support development
 $preProvision= <<SCRIPT
-sudo apt-get install tmux virtualenvwrapper -y
+sudo apt-get install tmux virtualenvwrapper mariadb-server -y
 SCRIPT
 
 # Wrap provisioning script with a virutalenv for pip packages
@@ -14,12 +14,26 @@ workon ctfd
 cd /vagrant
 ./prepare.sh
 pip install -r development.txt
+
+echo "Initialising database"
+commands="CREATE DATABASE ctfd;
+CREATE USER 'ctfduser'@'localhost' IDENTIFIED BY 'ctfd';
+GRANT USAGE ON *.* TO 'ctfduser'@'localhost' IDENTIFIED BY 'ctfd';
+GRANT ALL privileges ON ctfd.* TO 'ctfduser'@'localhost';FLUSH PRIVILEGES;"
+echo "${commands}" | sudo /usr/bin/mysql -u root -pctfd
 SCRIPT
 
 # Start development server in a tmux session
 $startServer= <<SCRIPT
 source /usr/share/virtualenvwrapper/virtualenvwrapper_lazy.sh
 workon ctfd
+
+export DATABASE_URL="mysql+pymysql://ctfduser:ctfd@localhost/ctfd"
+
+cd /vagrant
+python manage.py db upgrade
+
+echo "Starting CTFd"
 tmux new-session -d -n "ctfd" -c "/vagrant" -s "ctfd" "gunicorn --bind 0.0.0.0:8000 -w 4 'CTFd:create_app()'"
 SCRIPT
 
@@ -36,7 +50,7 @@ Vagrant.configure("2") do |config|
 
   # Pre-provision
   config.vm.provision "shell", inline: $preProvision
-  
+
   # Provisioning scripts
   config.vm.provision "shell", inline: $provision, privileged: false
 

@@ -57,6 +57,10 @@ def admin_create_team():
     affiliation = request.form.get('affiliation', None)
     country = request.form.get('country', None)
 
+    admin_user = True if request.form.get('admin', None) == 'on' else False
+    verified = True if request.form.get('verified', None) == 'on' else False
+    hidden = True if request.form.get('hidden', None) == 'on' else False
+
     errors = []
 
     if not name:
@@ -92,6 +96,10 @@ def admin_create_team():
     team.affiliation = affiliation
     team.country = country
 
+    team.admin = admin_user
+    team.verified = verified
+    team.hidden = hidden
+
     db.session.add(team)
     db.session.commit()
     db.session.close()
@@ -119,30 +127,16 @@ def admin_team(teamid):
         return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, missing=missing,
                                place=place, wrong_keys=wrong_keys, awards=awards)
     elif request.method == 'POST':
-        admin_user = request.form.get('admin', None)
-        if admin_user:
-            admin_user = True if admin_user == 'true' else False
-            user.admin = admin_user
-            # Set user.banned to hide admins from scoreboard
-            user.banned = admin_user
-            db.session.commit()
-            db.session.close()
-            return jsonify({'data': ['success']})
-
-        verified = request.form.get('verified', None)
-        if verified:
-            verified = True if verified == 'true' else False
-            user.verified = verified
-            db.session.commit()
-            db.session.close()
-            return jsonify({'data': ['success']})
-
         name = request.form.get('name', None)
         password = request.form.get('password', None)
         email = request.form.get('email', None)
         website = request.form.get('website', None)
         affiliation = request.form.get('affiliation', None)
         country = request.form.get('country', None)
+
+        admin_user = True if request.form.get('admin', None) == 'on' else False
+        verified = True if request.form.get('verified', None) == 'on' else False
+        hidden = True if request.form.get('hidden', None) == 'on' else False
 
         errors = []
 
@@ -177,6 +171,9 @@ def admin_team(teamid):
             user.website = website
             user.affiliation = affiliation
             user.country = country
+            user.admin = admin_user
+            user.verified = verified
+            user.banned = hidden
             db.session.commit()
             db.session.close()
             return jsonify({'data': ['success']})

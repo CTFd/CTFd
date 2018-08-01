@@ -132,6 +132,46 @@ def test_submitting_correct_flag():
     destroy_ctfd(app)
 
 
+def test_submitting_correct_static_case_insensitive_flag():
+    """Test that correct static flags are correct if the static flag is marked case_insensitive"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        flag = gen_flag(app.db, chal=chal.id, flag='flag', data="case_insensitive")
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'FLAG',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 200
+        resp = json.loads(r.data.decode('utf8'))
+        assert resp.get('status') == 1 and resp.get('message') == "Correct"
+    destroy_ctfd(app)
+
+
+def test_submitting_correct_regex_case_insensitive_flag():
+    """Test that correct regex flags are correct if the regex flag is marked case_insensitive"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        flag = gen_flag(app.db, chal=chal.id, key_type='regex', flag='flag', data="case_insensitive")
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'FLAG',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal.id), data=data)
+        assert r.status_code == 200
+        resp = json.loads(r.data.decode('utf8'))
+        assert resp.get('status') == 1 and resp.get('message') == "Correct"
+    destroy_ctfd(app)
+
+
 def test_submitting_incorrect_flag():
     """Test that incorrect flags are incorrect"""
     app = create_ctfd()
@@ -573,4 +613,56 @@ def test_challenges_cannot_be_solved_while_paused():
         # There are no wrong keys saved
         wrong_keys = WrongKeys.query.all()
         assert len(wrong_keys) == 0
+    destroy_ctfd(app)
+
+
+def test_challenge_solves_can_be_seen():
+    """Test that the /solves endpoint works properly for users"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+
+        with app.test_client() as client:
+            r = client.get('/solves')
+            assert r.location.startswith("http://localhost/login?next=")
+            assert r.status_code == 302
+
+        client = login_as_user(app)
+
+        r = client.get('/solves')
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+
+        assert len(data['solves']) == 0
+
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+        flag = gen_flag(app.db, chal=chal_id, flag='flag')
+        with client.session_transaction() as sess:
+            data = {
+                "key": 'flag',
+                "nonce": sess.get('nonce')
+            }
+        r = client.post('/chal/{}'.format(chal_id), data=data)
+
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+
+        r = client.get('/solves')
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+
+        assert len(data['solves']) > 0
+
+        team = Teams.query.filter_by(id=2).first()
+        team.banned = True
+        db.session.commit()
+
+        r = client.get('/solves')
+        data = r.get_data(as_text=True)
+        data = json.loads(data)
+
+        team = Teams.query.filter_by(id=2).first()
+        assert team.banned
+        assert len(data['solves']) > 0
     destroy_ctfd(app)

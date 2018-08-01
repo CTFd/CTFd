@@ -28,12 +28,19 @@
 		<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/nunjucks.min.js"></script>
 		<script type="text/javascript">
 				var script_root = "{{ request.script_root }}";
+				var csrf_nonce = "{{ nonce }}"
 		</script>
 </head>
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
 		<div class="container">
-			<a href="{{ request.script_root }}/" class="navbar-brand">{{ ctf_name() }}</a>
+			<a href="{{ request.script_root }}/" class="navbar-brand">
+				{% if ctf_logo() %}
+				<img class="img-responsive ctf_logo" src="{{ request.script_root }}/files/{{ ctf_logo() }}" height="25" alt="{{ ctf_name() }}">
+				{% else %}
+				{{ ctf_name() }}
+				{% endif %}
+			</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
 					aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>

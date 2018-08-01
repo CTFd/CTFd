@@ -1,11 +1,16 @@
 $.ajaxSetup({ cache: false });
 
+window.challenge = new Object();
+
 function load_chal_template(challenge){
-    $.get(script_root + challenge.templates.create, function(template_data){
-        var template = nunjucks.compile(template_data);
-        $("#create-chal-entry-div").html(template.render({'nonce':nonce, 'script_root':script_root}));
-        $.getScript(script_root + challenge.scripts.create, function(){
-            console.log('loaded');
+    $.getScript(script_root + challenge.scripts.modal, function () {
+        console.log('loaded renderer');
+        $.get(script_root + challenge.templates.create, function (template_data) {
+            var template = nunjucks.compile(template_data);
+            $("#create-chal-entry-div").html(template.render({'nonce': nonce, 'script_root': script_root}));
+            $.getScript(script_root + challenge.scripts.create, function () {
+                console.log('loaded');
+            });
         });
     });
 }

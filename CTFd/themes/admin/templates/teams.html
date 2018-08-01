@@ -82,6 +82,20 @@
 						<input type="text" class="form-control" name="country" id="country"
 							   placeholder="Enter country">
 					</div>
+					<div class="form-group">
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="checkbox" name="admin" id="admin-checkbox">
+							<label class="form-check-label" for="admin-checkbox">Admin</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="checkbox" name="verified" id="verified-checkbox">
+							<label class="form-check-label" for="verified-checkbox">Verified</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="checkbox" name="hidden" id="hidden-checkbox">
+							<label class="form-check-label" for="hidden-checkbox">Hidden</label>
+						</div>
+					</div>
 					<div id="results">
 
 					</div>
@@ -133,15 +147,17 @@
 						</td>
 						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
 						</td>
-						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Website</b>
+						<td class="d-none"><b>Website</b>
 						</td>
-						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Affiliation</b>
+						<td class="d-none"><b>Affiliation</b>
 						</td>
-						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Country</b>
+						<td class="d-none"><b>Country</b>
 						</td>
 						<td class="text-center"><b>Admin</b>
 						</td>
 						<td class="text-center"><b>Verified</b>
+						</td>
+						<td class="text-center"><b>Hidden</b>
 						</td>
 						<td class="text-center"><b>Settings</b>
 						</td>
@@ -154,7 +170,7 @@
 						<td class="team-name" value="{{ team.name }}"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
 						</td>
 						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ team.email }}">{{ team.email | truncate(32) }}</td>
-						<td class="team-website d-none d-md-table-cell d-lg-table-cell text-center">
+						<td class="team-website d-none text-center">
 							{% if team.website %}
 								<a href="{{ team.website }}" target="_blank">
 									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
@@ -162,21 +178,26 @@
 								</a>
 							{% endif %}
 						</td>
-						<td class="team-affiliation d-none d-md-table-cell d-lg-table-cell" value="{{ team.affiliation if team.affiliation is not none }}">
+						<td class="team-affiliation d-none" value="{{ team.affiliation if team.affiliation is not none }}">
 							<span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
 						</td>
-						<td class="team-country d-none d-md-table-cell d-lg-table-cell" value="{{ team.country if team.country is not none }}">
+						<td class="team-country d-none" value="{{ team.country if team.country is not none }}">
 							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
 						</td>
-						<td class="team-admin">
-							<div class="center-block checkbox text-center">
-								<input type="checkbox" {% if team.admin %}checked{% endif %}>
-							</div>
+						<td class="team-admin d-none d-md-table-cell d-lg-table-cell text-center" value="{{ team.admin }}">
+							{% if team.admin %}
+								<span class="badge badge-primary">admin</span>
+							{% endif %}
 						</td>
-						<td class="team-verified">
-							<div class="center-block checkbox text-center">
-								<input type="checkbox" {% if team.verified %}checked{% endif %}>
-							</div>
+						<td class="team-verified d-none d-md-table-cell d-lg-table-cell text-center" value="{{ team.verified }}">
+							{% if team.verified %}
+								<span class="badge badge-success">verified</span>
+							{% endif %}
+						</td>
+						<td class="team-hidden d-none d-md-table-cell d-lg-table-cell text-center" value="{{ team.banned }}">
+							{% if team.banned %}
+								<span class="badge badge-danger">hidden</span>
+							{% endif %}
 						</td>
 						<td class="text-center"><span>
 							<span class="edit-team" data-toggle="tooltip" data-placement="top"
@@ -222,7 +243,7 @@
 <script>
 var nonce = "{{ nonce }}";
 
-function load_update_modal(id, name, email, website, affiliation, country){
+function load_update_modal(id, name, email, website, affiliation, country, admin, verified, hidden){
 	var modal_form = $('#update-user-modal form');
 
 	modal_form.find('input[name=name]').val(name);
@@ -232,6 +253,10 @@ function load_update_modal(id, name, email, website, affiliation, country){
 	modal_form.find('input[name=affiliation]').val(affiliation);
 	modal_form.find('input[name=country]').val(country);
 	modal_form.find('input[name=password]').val('');
+
+    modal_form.find('input[name=admin]').prop('checked', admin);
+    modal_form.find('input[name=verified]').prop('checked', verified);
+    modal_form.find('input[name=hidden]').prop('checked', hidden);
 
 	if (id == 'new'){
 		$('#update-user-modal .modal-action').text('Create Team');
@@ -280,24 +305,6 @@ $(document).ready(function () {
         })
     });
 
-    $('.team-admin input').on('change', function () {
-        var elem = $(this).parent().parent().parent();
-        var id = elem.find('.team-id').text().trim();
-        var admin = $(this).prop('checked');
-        console.log(admin);
-
-        $.post('{{ request.script_root }}/admin/team/' + id, {'admin': admin, 'nonce': nonce});
-    });
-
-    $('.team-verified input').on('change', function () {
-        var elem = $(this).parent().parent().parent();
-        var id = elem.find('.team-id').text().trim();
-        var verified = $(this).prop('checked');
-        console.log(verified);
-
-        $.post('{{ request.script_root }}/admin/team/' + id, {'verified': verified, 'nonce': nonce});
-    });
-
     $('#send-user-email').click(function (e) {
         e.preventDefault();
         var id = $('#email-user input[name="id"]').val();
@@ -329,11 +336,15 @@ $(document).ready(function () {
         var affiliation = elem.find('.team-affiliation').attr('value') || '';
         var country = elem.find('.team-country').attr('value') || '';
 
-        load_update_modal(id, name, email, website, affiliation, country);
+        var admin = elem.find('.team-admin').attr('value') == 'True' || false;
+		var verified = elem.find('.team-verified').attr('value') == 'True' || false;
+		var hidden = elem.find('.team-hidden').attr('value') == 'True' || false;
+
+        load_update_modal(id, name, email, website, affiliation, country, admin, verified, hidden);
     });
 
     $('.create-team').click(function () {
-        load_update_modal('new', '', '', '', '', '');
+        load_update_modal('new', '', '', '', '', '', false, false, false);
     });
 
     $('.delete-team').click(function () {

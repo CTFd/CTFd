@@ -117,8 +117,10 @@ def gen_file(db, chal, location):
     return f
 
 
-def gen_flag(db, chal, flag='flag', key_type='static'):
+def gen_flag(db, chal, flag='flag', key_type='static', data=None):
     key = Keys(chal, flag, key_type)
+    if data:
+        key.data = data
     db.session.add(key)
     db.session.commit()
     return key

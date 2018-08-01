@@ -20,6 +20,18 @@ def test_index():
     destroy_ctfd(app)
 
 
+def test_not_found():
+    """Should return a 404 for pages that are not found"""
+    app = create_ctfd()
+    with app.app_context():
+        with app.test_client() as client:
+            r = client.get('/this-should-404')
+            assert r.status_code == 404
+            r = client.post('/this-should-404')
+            assert r.status_code == 404
+    destroy_ctfd(app)
+
+
 def test_page():
     """Test that users can access pages that are created in the database"""
     app = create_ctfd()
@@ -567,7 +579,7 @@ def test_user_can_confirm_email(mock_smtp):
             assert r.location == "http://localhost/confirm"  # We got redirected to /confirm
 
             # Use precalculated confirmation secret
-            r = client.get('http://localhost/confirm/InVzZXJAdXNlci5jb20iLkFmS0dQZy5kLUJnVkgwaUhadzFHaXVENHczWTJCVVJwdWc%3D')
+            r = client.get('http://localhost/confirm/InVzZXJAdXNlci5jb20iLkFmS0dQZy5kLUJnVkgwaUhadzFHaXVENHczWTJCVVJwdWc')
             assert r.location == 'http://localhost/challenges'
 
             # The team is now verified
