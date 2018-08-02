@@ -1,4 +1,9 @@
+from distutils.version import StrictVersion
+from flask import current_app as app
+from CTFd.utils import get_config, set_config
 import requests
+import time
+
 
 def update_check(force=False):
     # If UPDATE_CHECK is disabled don't check for updates at all.

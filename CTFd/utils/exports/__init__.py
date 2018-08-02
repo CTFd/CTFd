@@ -1,3 +1,17 @@
+from CTFd.utils import get_app_config, get_config, set_config
+from CTFd.models import db, Pages, Teams, Challenges
+from flask import current_app as app
+import dataset
+import datafreeze
+import datetime
+import json
+import os
+import re
+import six
+import shutil
+import zipfile
+
+
 
 def export_ctf(segments=None):
     db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))

@@ -27,7 +27,6 @@ from flask import current_app as app, request, redirect, url_for, session, rende
 from flask_caching import Cache
 from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
-from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from socket import timeout
 from werkzeug.utils import secure_filename
@@ -36,8 +35,6 @@ from CTFd.models import db, Challenges, WrongKeys, Pages, Config, Tracking, Team
 
 from datafreeze.format import SERIALIZERS
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
-
-from distutils.version import StrictVersion
 
 if six.PY2:
     text_type = unicode

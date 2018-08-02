@@ -1,4 +1,7 @@
 import six
+import base64
+
+# TODO: Add more encodings. Potentially break into an encode and decode packages
 
 
 def base64encode(s):

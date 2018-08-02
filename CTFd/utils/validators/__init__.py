@@ -1,3 +1,6 @@
+from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
+from flask import request
+
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)

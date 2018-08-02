@@ -1,3 +1,14 @@
+from CTFd.models import db, Files
+from flask import current_app as app
+from werkzeug.utils import secure_filename
+import hashlib
+import os
+import shutil
+
+# TODO: Restructure this to use UploadSets
+# TODO: Remove hashes from file paths
+
+
 def upload_file(file, chalid):
     filename = secure_filename(file.filename)
 

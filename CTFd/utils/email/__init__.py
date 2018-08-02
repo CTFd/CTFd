@@ -1,3 +1,6 @@
+from flask import current_app as app
+from CTFd.utils import get_config, get_app_config
+import re
 import smtplib
 import requests
 

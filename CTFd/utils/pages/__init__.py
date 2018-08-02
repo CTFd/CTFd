@@ -1,3 +1,6 @@
+from CTFd.utils import cache
+from CTFd.models import Pages
+
 
 @cache.memoize()
 def pages():

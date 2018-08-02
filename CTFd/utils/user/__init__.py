@@ -1,7 +1,9 @@
-from flask import session
+from flask import current_app as app, session, request
 from CTFd.models import Teams
 from CTFd.utils import get_config
+from CTFd.models import db, WrongKeys
 import datetime
+import re
 
 
 def authed():
