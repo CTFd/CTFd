@@ -1,6 +1,7 @@
 from flask import request, redirect, url_for, session, abort, jsonify
 from CTFd import utils
-from CTFd.utils import cache, get_ip
+from CTFd.utils import cache
+from CTFd.utils.user import get_ip
 import functools
 
 

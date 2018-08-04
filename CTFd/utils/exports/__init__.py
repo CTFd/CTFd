@@ -1,6 +1,7 @@
 from CTFd.utils import get_app_config, get_config, set_config
 from CTFd.models import db, Pages, Teams, Challenges
 from flask import current_app as app
+from datafreeze.format.fjson import JSONSerializer, JSONEncoder
 import dataset
 import datafreeze
 import datetime
@@ -11,6 +12,36 @@ import six
 import shutil
 import zipfile
 
+
+class CTFdSerializer(JSONSerializer):
+    """
+    Slightly modified datafreeze serializer so that we can properly
+    export the CTFd database into a zip file.
+    """
+
+    def close(self):
+        for path, result in self.buckets.items():
+            result = self.wrap(result)
+
+            if self.fileobj is None:
+                fh = open(path, 'wb')
+            else:
+                fh = self.fileobj
+
+            data = json.dumps(result,
+                              cls=JSONEncoder,
+                              indent=self.export.get_int('indent'))
+
+            callback = self.export.get('callback')
+            if callback:
+                data = "%s && %s(%s);" % (callback, callback, data)
+
+            if six.PY3:
+                fh.write(bytes(data, encoding='utf-8'))
+            else:
+                fh.write(data)
+            if self.fileobj is None:
+                fh.close()
 
 
 def export_ctf(segments=None):

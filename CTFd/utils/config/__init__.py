@@ -1,7 +1,10 @@
+from flask import current_app as app
 from CTFd.models import Config
 from CTFd.utils import cache
 from CTFd.utils import get_config
+from CTFd.utils.user import authed
 import time
+import os
 
 
 @cache.memoize()
@@ -85,3 +88,9 @@ def user_can_view_challenges():
         return authed() or config
     else:
         return authed()
+
+
+def get_themes():
+    dir = os.path.join(app.root_path, 'themes')
+    return [name for name in os.listdir(dir)
+            if os.path.isdir(os.path.join(dir, name)) and name != 'admin']

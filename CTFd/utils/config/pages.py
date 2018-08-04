@@ -3,7 +3,7 @@ from CTFd.models import Pages
 
 
 @cache.memoize()
-def pages():
+def get_pages():
     db_pages = Pages.query.filter(Pages.route != "index", Pages.draft != True).all()
     return db_pages
 
