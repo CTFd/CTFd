@@ -1,13 +1,13 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, cache, update_check
+from CTFd.utils import cache
+from CTFd.utils.decorators import admins_only
+from CTFd.utils.updates import update_check
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 
-from CTFd import utils
-
-admin_statistics = Blueprint('admin_statistics', __name__)
+from CTFd.admin import admin
 
 
-@admin_statistics.route('/admin/graphs/<graph_type>')
+@admin.route('/admin/graphs/<graph_type>')
 @admins_only
 def admin_graph(graph_type):
     if graph_type == 'categories':
@@ -57,7 +57,7 @@ def admin_graph(graph_type):
         return jsonify(json_data)
 
 
-@admin_statistics.route('/admin/statistics', methods=['GET'])
+@admin.route('/admin/statistics', methods=['GET'])
 @admins_only
 def admin_stats():
     update_check()
@@ -101,8 +101,8 @@ def admin_stats():
     )
 
 
-@admin_statistics.route('/admin/wrong_keys', defaults={'page': '1'}, methods=['GET'])
-@admin_statistics.route('/admin/wrong_keys/<int:page>', methods=['GET'])
+@admin.route('/admin/wrong_keys', defaults={'page': '1'}, methods=['GET'])
+@admin.route('/admin/wrong_keys/<int:page>', methods=['GET'])
 @admins_only
 def admin_wrong_key(page):
     page = abs(int(page))
@@ -124,8 +124,8 @@ def admin_wrong_key(page):
     return render_template('admin/wrong_keys.html', wrong_keys=wrong_keys, pages=pages, curr_page=page)
 
 
-@admin_statistics.route('/admin/correct_keys', defaults={'page': '1'}, methods=['GET'])
-@admin_statistics.route('/admin/correct_keys/<int:page>', methods=['GET'])
+@admin.route('/admin/correct_keys', defaults={'page': '1'}, methods=['GET'])
+@admin.route('/admin/correct_keys/<int:page>', methods=['GET'])
 @admins_only
 def admin_correct_key(page):
     page = abs(int(page))

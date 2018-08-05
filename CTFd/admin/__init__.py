@@ -1,25 +1,22 @@
-import hashlib
-import json
 import os
 import datetime
 
-from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint, \
+from flask import current_app as app, render_template, request, redirect, url_for, Blueprint, \
     abort, render_template_string, send_file
-from passlib.hash import bcrypt_sha256
-from sqlalchemy.sql import not_
-from sqlalchemy.exc import IntegrityError
 
-from CTFd.utils import admins_only, is_admin, cache, export_ctf, import_ctf
-from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, \
-    DatabaseError
-from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 
-from CTFd.admin.statistics import admin_statistics
-from CTFd.admin.challenges import admin_challenges
-from CTFd.admin.scoreboard import admin_scoreboard
-from CTFd.admin.pages import admin_pages
-from CTFd.admin.keys import admin_keys
-from CTFd.admin.teams import admin_teams
+from CTFd.utils.decorators import admins_only
+from CTFd.utils.user import is_admin
+from CTFd.utils import cache
+from CTFd.utils.exports import export_ctf, import_ctf
+from CTFd.models import db, Config
+
+from CTFd.admin.statistics import admin
+from CTFd.admin.challenges import admin
+from CTFd.admin.scoreboard import admin
+from CTFd.admin.pages import admin
+from CTFd.admin.keys import admin
+from CTFd.admin.teams import admin
 
 from CTFd import utils
 

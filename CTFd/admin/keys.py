@@ -1,15 +1,13 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, cache
+from CTFd.utils.decorators import admins_only
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 
-from CTFd import utils
-
-admin_keys = Blueprint('admin_keys', __name__)
+from CTFd.admin import admin
 
 
-@admin_keys.route('/admin/key_types', methods=['GET'])
-@admin_keys.route('/admin/key_types/<key_id>', methods=['GET'])
+@admin.route('/admin/key_types', methods=['GET'])
+@admin.route('/admin/key_types/<key_id>', methods=['GET'])
 @admins_only
 def admin_key_types(key_id=None):
     if key_id is None:
@@ -28,8 +26,8 @@ def admin_key_types(key_id=None):
         return jsonify(data)
 
 
-@admin_keys.route('/admin/keys', defaults={'keyid': None}, methods=['POST', 'GET'])
-@admin_keys.route('/admin/keys/<int:keyid>', methods=['POST', 'GET'])
+@admin.route('/admin/keys', defaults={'keyid': None}, methods=['POST', 'GET'])
+@admin.route('/admin/keys/<int:keyid>', methods=['POST', 'GET'])
 @admins_only
 def admin_keys_view(keyid):
     if request.method == 'GET':
@@ -66,7 +64,7 @@ def admin_keys_view(keyid):
         return '1'
 
 
-@admin_keys.route('/admin/keys/<int:keyid>/delete', methods=['POST'])
+@admin.route('/admin/keys/<int:keyid>/delete', methods=['POST'])
 @admins_only
 def admin_delete_keys(keyid):
     if request.method == 'POST':

@@ -4,18 +4,17 @@ from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, 
 from CTFd.scoreboard import get_standings
 
 from CTFd import utils
+from CTFd.admin import admin
 
-admin_scoreboard = Blueprint('admin_scoreboard', __name__)
 
-
-@admin_scoreboard.route('/admin/scoreboard')
+@admin.route('/admin/scoreboard')
 @admins_only
 def admin_scoreboard_view():
     standings = get_standings(admin=True)
     return render_template('admin/scoreboard.html', teams=standings)
 
 
-@admin_scoreboard.route('/admin/scores')
+@admin.route('/admin/scores')
 @admins_only
 def admin_scores():
     score = db.func.sum(Challenges.value).label('score')

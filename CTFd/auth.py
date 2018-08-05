@@ -9,7 +9,7 @@ from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Teams
 from CTFd import utils
-from CTFd.utils import ratelimit
+from CTFd.utils.decorators import ratelimit
 
 import base64
 

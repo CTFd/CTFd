@@ -1,18 +1,17 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, cache, ratelimit
+from CTFd.utils.decorators import admins_only, ratelimit
 from CTFd.models import db, Teams, Solves, Awards, Unlocks, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
 
 from CTFd import utils
+from CTFd.admin import admin
 
 import re
 
-admin_teams = Blueprint('admin_teams', __name__)
 
-
-@admin_teams.route('/admin/teams', defaults={'page': '1'})
-@admin_teams.route('/admin/teams/<int:page>')
+@admin.route('/admin/teams', defaults={'page': '1'})
+@admin.route('/admin/teams/<int:page>')
 @admins_only
 def admin_teams_view(page):
     q = request.args.get('q')
@@ -47,7 +46,7 @@ def admin_teams_view(page):
     return render_template('admin/teams.html', teams=teams, pages=pages, curr_page=page)
 
 
-@admin_teams.route('/admin/team/new', methods=['POST'])
+@admin.route('/admin/team/new', methods=['POST'])
 @admins_only
 def admin_create_team():
     name = request.form.get('name', None)
@@ -106,7 +105,7 @@ def admin_create_team():
     return jsonify({'data': ['success']})
 
 
-@admin_teams.route('/admin/team/<int:teamid>', methods=['GET', 'POST'])
+@admin.route('/admin/team/<int:teamid>', methods=['GET', 'POST'])
 @admins_only
 def admin_team(teamid):
     user = Teams.query.filter_by(id=teamid).first_or_404()
@@ -179,7 +178,7 @@ def admin_team(teamid):
             return jsonify({'data': ['success']})
 
 
-@admin_teams.route('/admin/team/<int:teamid>/mail', methods=['POST'])
+@admin.route('/admin/team/<int:teamid>/mail', methods=['POST'])
 @admins_only
 @ratelimit(method="POST", limit=10, interval=60)
 def email_user(teamid):
@@ -198,7 +197,7 @@ def email_user(teamid):
         })
 
 
-@admin_teams.route('/admin/team/<int:teamid>/ban', methods=['POST'])
+@admin.route('/admin/team/<int:teamid>/ban', methods=['POST'])
 @admins_only
 def ban(teamid):
     user = Teams.query.filter_by(id=teamid).first_or_404()
@@ -208,7 +207,7 @@ def ban(teamid):
     return redirect(url_for('admin_scoreboard.admin_scoreboard_view'))
 
 
-@admin_teams.route('/admin/team/<int:teamid>/unban', methods=['POST'])
+@admin.route('/admin/team/<int:teamid>/unban', methods=['POST'])
 @admins_only
 def unban(teamid):
     user = Teams.query.filter_by(id=teamid).first_or_404()
@@ -218,7 +217,7 @@ def unban(teamid):
     return redirect(url_for('admin_scoreboard.admin_scoreboard_view'))
 
 
-@admin_teams.route('/admin/team/<int:teamid>/delete', methods=['POST'])
+@admin.route('/admin/team/<int:teamid>/delete', methods=['POST'])
 @admins_only
 def delete_team(teamid):
     try:
@@ -236,7 +235,7 @@ def delete_team(teamid):
         return '1'
 
 
-@admin_teams.route('/admin/solves/<teamid>', methods=['GET'])
+@admin.route('/admin/solves/<teamid>', methods=['GET'])
 @admins_only
 def admin_solves(teamid="all"):
     if teamid == "all":
@@ -270,8 +269,8 @@ def admin_solves(teamid="all"):
     return jsonify(json_data)
 
 
-@admin_teams.route('/admin/fails/all', defaults={'teamid': 'all'}, methods=['GET'])
-@admin_teams.route('/admin/fails/<int:teamid>', methods=['GET'])
+@admin.route('/admin/fails/all', defaults={'teamid': 'all'}, methods=['GET'])
+@admin.route('/admin/fails/<int:teamid>', methods=['GET'])
 @admins_only
 def admin_fails(teamid):
     if teamid == "all":
@@ -288,7 +287,7 @@ def admin_fails(teamid):
         return jsonify(json_data)
 
 
-@admin_teams.route('/admin/solves/<int:teamid>/<int:chalid>/solve', methods=['POST'])
+@admin.route('/admin/solves/<int:teamid>/<int:chalid>/solve', methods=['POST'])
 @admins_only
 def create_solve(teamid, chalid):
     solve = Solves(teamid=teamid, chalid=chalid, ip='127.0.0.1', flag='MARKED_AS_SOLVED_BY_ADMIN')
@@ -298,7 +297,7 @@ def create_solve(teamid, chalid):
     return '1'
 
 
-@admin_teams.route('/admin/solves/<int:keyid>/delete', methods=['POST'])
+@admin.route('/admin/solves/<int:keyid>/delete', methods=['POST'])
 @admins_only
 def delete_solve(keyid):
     solve = Solves.query.filter_by(id=keyid).first_or_404()
@@ -308,7 +307,7 @@ def delete_solve(keyid):
     return '1'
 
 
-@admin_teams.route('/admin/wrong_keys/<int:keyid>/delete', methods=['POST'])
+@admin.route('/admin/wrong_keys/<int:keyid>/delete', methods=['POST'])
 @admins_only
 def delete_wrong_key(keyid):
     wrong_key = WrongKeys.query.filter_by(id=keyid).first_or_404()
@@ -318,7 +317,7 @@ def delete_wrong_key(keyid):
     return '1'
 
 
-@admin_teams.route('/admin/awards/<int:award_id>/delete', methods=['POST'])
+@admin.route('/admin/awards/<int:award_id>/delete', methods=['POST'])
 @admins_only
 def delete_award(award_id):
     award = Awards.query.filter_by(id=award_id).first_or_404()
@@ -328,7 +327,7 @@ def delete_award(award_id):
     return '1'
 
 
-@admin_teams.route('/admin/teams/<int:teamid>/awards', methods=['GET'])
+@admin.route('/admin/teams/<int:teamid>/awards', methods=['GET'])
 @admins_only
 def admin_awards(teamid):
     awards = Awards.query.filter_by(teamid=teamid).all()
@@ -348,7 +347,7 @@ def admin_awards(teamid):
     return jsonify(json_data)
 
 
-@admin_teams.route('/admin/awards/add', methods=['POST'])
+@admin.route('/admin/awards/add', methods=['POST'])
 @admins_only
 def create_award():
     try:

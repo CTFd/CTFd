@@ -1,17 +1,14 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, cache
+from CTFd.utils.decorators import admins_only
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, Hints, Unlocks, DatabaseError
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
 
 from CTFd import utils
-
-import os
-
-admin_challenges = Blueprint('admin_challenges', __name__)
+from CTFd.admin import admin
 
 
-@admin_challenges.route('/admin/chal_types', methods=['GET'])
+@admin.route('/admin/chal_types', methods=['GET'])
 @admins_only
 def admin_chal_types():
     data = {}
@@ -27,7 +24,7 @@ def admin_chal_types():
     return jsonify(data)
 
 
-@admin_challenges.route('/admin/chals', methods=['POST', 'GET'])
+@admin.route('/admin/chals', methods=['POST', 'GET'])
 @admins_only
 def admin_chals():
     if request.method == 'POST':
@@ -72,7 +69,7 @@ def admin_chals():
         return render_template('admin/challenges.html', challenges=challenges)
 
 
-@admin_challenges.route('/admin/chal/<int:chalid>', methods=['GET', 'POST'])
+@admin.route('/admin/chal/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_chal_detail(chalid):
     chal = Challenges.query.filter_by(id=chalid).first_or_404()
@@ -100,7 +97,7 @@ def admin_chal_detail(chalid):
         return jsonify(data)
 
 
-@admin_challenges.route('/admin/chal/<int:chalid>/solves', methods=['GET'])
+@admin.route('/admin/chal/<int:chalid>/solves', methods=['GET'])
 @admins_only
 def admin_chal_solves(chalid):
     response = {'teams': []}
@@ -113,7 +110,7 @@ def admin_chal_solves(chalid):
     return jsonify(response)
 
 
-@admin_challenges.route('/admin/tags/<int:chalid>', methods=['GET', 'POST'])
+@admin.route('/admin/tags/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_tags(chalid):
     if request.method == 'GET':
@@ -133,7 +130,7 @@ def admin_tags(chalid):
         return '1'
 
 
-@admin_challenges.route('/admin/tags/<int:tagid>/delete', methods=['POST'])
+@admin.route('/admin/tags/<int:tagid>/delete', methods=['POST'])
 @admins_only
 def admin_delete_tags(tagid):
     if request.method == 'POST':
@@ -144,8 +141,8 @@ def admin_delete_tags(tagid):
         return '1'
 
 
-@admin_challenges.route('/admin/hints', defaults={'hintid': None}, methods=['POST', 'GET'])
-@admin_challenges.route('/admin/hints/<int:hintid>', methods=['GET', 'POST', 'DELETE'])
+@admin.route('/admin/hints', defaults={'hintid': None}, methods=['POST', 'GET'])
+@admin.route('/admin/hints/<int:hintid>', methods=['GET', 'POST', 'DELETE'])
 @admins_only
 def admin_hints(hintid):
     if hintid:
@@ -204,7 +201,7 @@ def admin_hints(hintid):
             return jsonify(json_data)
 
 
-@admin_challenges.route('/admin/files/<int:chalid>', methods=['GET', 'POST'])
+@admin.route('/admin/files/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_files(chalid):
     if request.method == 'GET':
@@ -231,7 +228,7 @@ def admin_files(chalid):
             return '1'
 
 
-@admin_challenges.route('/admin/chal/<int:chalid>/<prop>', methods=['GET'])
+@admin.route('/admin/chal/<int:chalid>/<prop>', methods=['GET'])
 @admins_only
 def admin_get_values(chalid, prop):
     challenge = Challenges.query.filter_by(id=chalid).first_or_404()
@@ -272,7 +269,7 @@ def admin_get_values(chalid, prop):
         return jsonify(json_data)
 
 
-@admin_challenges.route('/admin/chal/new', methods=['GET', 'POST'])
+@admin.route('/admin/chal/new', methods=['GET', 'POST'])
 @admins_only
 def admin_create_chal():
     if request.method == 'POST':
@@ -284,7 +281,7 @@ def admin_create_chal():
         return render_template('admin/chals/create.html')
 
 
-@admin_challenges.route('/admin/chal/delete', methods=['POST'])
+@admin.route('/admin/chal/delete', methods=['POST'])
 @admins_only
 def admin_delete_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
@@ -293,7 +290,7 @@ def admin_delete_chal():
     return '1'
 
 
-@admin_challenges.route('/admin/chal/update', methods=['POST'])
+@admin.route('/admin/chal/update', methods=['POST'])
 @admins_only
 def admin_update_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()

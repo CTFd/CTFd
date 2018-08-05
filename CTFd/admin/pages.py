@@ -3,11 +3,10 @@ from CTFd.utils import admins_only, is_admin, cache, markdown
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 
 from CTFd import utils
+from CTFd.admin import admin
 
-admin_pages = Blueprint('admin_pages', __name__)
 
-
-@admin_pages.route('/admin/pages', methods=['GET', 'POST'])
+@admin.route('/admin/pages', methods=['GET', 'POST'])
 @admins_only
 def admin_pages_view():
     page_id = request.args.get('id')
@@ -97,7 +96,7 @@ def admin_pages_view():
     return render_template('admin/pages.html', pages=pages)
 
 
-@admin_pages.route('/admin/pages/delete', methods=['POST'])
+@admin.route('/admin/pages/delete', methods=['POST'])
 @admins_only
 def delete_page():
     id = request.form['id']
@@ -110,7 +109,7 @@ def delete_page():
     return '1'
 
 
-@admin_pages.route('/admin/media', methods=['GET', 'POST', 'DELETE'])
+@admin.route('/admin/media', methods=['GET', 'POST', 'DELETE'])
 @admins_only
 def admin_pages_media():
     if request.method == 'POST':
