@@ -1,29 +1,7 @@
-import datetime
-import hashlib
-import json
-import netaddr
-from socket import inet_pton, inet_ntop, AF_INET, AF_INET6
-from struct import unpack, pack, error as struct_error
-
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import bcrypt_sha256
-from sqlalchemy.exc import DatabaseError
 from sqlalchemy.sql.expression import union_all
-
-
-def sha512(string):
-    return str(hashlib.sha512(string).hexdigest())
-
-
-def ip2long(ip):
-    '''Converts a user's IP address into an integer/long'''
-    return int(netaddr.IPAddress(ip))
-
-
-def long2ip(ip_int):
-    '''Converts a saved integer/long back into an IP address'''
-    return str(netaddr.IPAddress(ip_int))
-
+import datetime
 
 db = SQLAlchemy()
 

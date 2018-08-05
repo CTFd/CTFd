@@ -100,7 +100,7 @@ def get_standings(admin=False, count=None):
 
 
 @scoreboard.route('/scoreboard')
-def scoreboard():
+def scoreboard_view():
     if get_config('view_scoreboard_if_authed') and not config.authed():
         return redirect(url_for('auth.login', next=request.path))
     if config.hide_scores():

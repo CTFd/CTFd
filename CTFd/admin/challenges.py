@@ -1,11 +1,10 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils.decorators import admins_only
-from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, Hints, Unlocks, DatabaseError
+from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, Hints, Unlocks
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
-
-from CTFd import utils
 from CTFd.admin import admin
+from CTFd.utils import config, validators, uploads
 
 
 @admin.route('/admin/chal_types', methods=['GET'])
@@ -101,7 +100,7 @@ def admin_chal_detail(chalid):
 @admins_only
 def admin_chal_solves(chalid):
     response = {'teams': []}
-    if utils.hide_scores():
+    if config.hide_scores():
         return jsonify(response)
     solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid).order_by(
         Solves.date.asc())
@@ -212,7 +211,7 @@ def admin_files(chalid):
         return jsonify(json_data)
     if request.method == 'POST':
         if request.form['method'] == "delete":
-            utils.delete_file(request.form['file'])
+            uploads.delete_file(request.form['file'])
 
             db.session.commit()
             db.session.close()
@@ -221,7 +220,7 @@ def admin_files(chalid):
             files = request.files.getlist('files[]')
 
             for f in files:
-                utils.upload_file(file=f, chalid=chalid)
+                uploads.upload_file(file=f, chalid=chalid)
 
             db.session.commit()
             db.session.close()
