@@ -53,6 +53,6 @@ def get_ip(req=None):
     return remote_addr
 
 
-def get_kpm(teamid):  # keys per minute
+def get_wrong_submissions_per_minute(teamid):  # keys per minute
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
     return len(db.session.query(WrongKeys).filter(WrongKeys.teamid == teamid, WrongKeys.date >= one_min_ago).all())

@@ -5,7 +5,6 @@ from CTFd.utils.encoding import base64decode, base64encode
 from email.mime.text import MIMEText
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from socket import timeout
-import re
 import smtplib
 import requests
 
@@ -88,7 +87,7 @@ def forgot_password(email, team_name):
     sendmail(email, text)
 
 
-def verify_email(addr):
+def verify_email_address(addr):
     s = TimedSerializer(app.config['SECRET_KEY'])
     token = s.dumps(addr)
     text = """Please click the following link to confirm your email address for {ctf_name}: {url}/{token}""".format(

@@ -1,8 +1,8 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import admins_only, is_admin, cache, markdown
+from CTFd.utils.decorators import admins_only
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError
 
-from CTFd import utils
+from CTFd.utils import config, validators, cache, markdown, uploads
 from CTFd.admin import admin
 
 
@@ -117,14 +117,14 @@ def admin_pages_media():
 
         uploaded = []
         for f in files:
-            data = utils.upload_file(file=f, chalid=None)
+            data = uploads.upload_file(file=f, chalid=None)
             if data:
                 uploaded.append({'id': data[0], 'location': data[1]})
         return jsonify({'results': uploaded})
     elif request.method == 'DELETE':
         file_ids = request.form.getlist('file_ids[]')
         for file_id in file_ids:
-            utils.delete_file(file_id)
+            uploads.delete_file(file_id)
         return True
     else:
         files = [{'id': f.id, 'location': f.location} for f in Files.query.filter_by(chal=None).all()]

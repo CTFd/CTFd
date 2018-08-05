@@ -17,7 +17,7 @@ from CTFd.views import views
 from CTFd.challenges import challenges
 from CTFd.scoreboard import scoreboard
 from CTFd.auth import auth
-from CTFd.admin import admin, admin, admin, admin, admin, admin, admin
+from CTFd.admin import admin
 from CTFd.errors import page_not_found, forbidden, general_error, gateway_error
 
 from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals
@@ -177,12 +177,6 @@ def create_app(config='CTFd.config.Config'):
         app.register_blueprint(scoreboard)
         app.register_blueprint(auth)
 
-        app.register_blueprint(admin)
-        app.register_blueprint(admin)
-        app.register_blueprint(admin)
-        app.register_blueprint(admin)
-        app.register_blueprint(admin)
-        app.register_blueprint(admin)
         app.register_blueprint(admin)
 
         app.register_error_handler(404, page_not_found)

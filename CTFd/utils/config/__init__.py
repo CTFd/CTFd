@@ -82,6 +82,7 @@ def mailserver():
 
 
 def user_can_view_challenges():
+    # TODO: This function could use a rename or a rewrite
     config = bool(get_config('view_challenges_unregistered'))
     verify_emails = bool(get_config('verify_emails'))
     if config:

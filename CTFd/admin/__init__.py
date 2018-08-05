@@ -1,25 +1,32 @@
-import os
-import datetime
-
 from flask import current_app as app, render_template, request, redirect, url_for, Blueprint, \
     abort, render_template_string, send_file
 
 
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.user import is_admin
-from CTFd.utils import cache
+from CTFd.utils import config, cache, validators, uploads, user as current_user, get_config, set_config
 from CTFd.utils.exports import export_ctf, import_ctf
 from CTFd.models import db, Config
 
-from CTFd import utils
+import datetime
+import os
+
 
 admin = Blueprint('admin', __name__)
+
+
+from CTFd.admin import challenges
+from CTFd.admin import keys
+from CTFd.admin import pages
+from CTFd.admin import scoreboard
+from CTFd.admin import statistics
+from CTFd.admin import teams
 
 
 @admin.route('/admin', methods=['GET'])
 def admin_view():
     if is_admin():
-        return redirect(url_for('admin_statistics.admin_stats'))
+        return redirect(url_for('admin.admin_stats'))
 
     return redirect(url_for('auth.login'))
 
@@ -34,14 +41,14 @@ def admin_plugin_config(plugin):
                                if os.path.isfile(os.path.join(plugins_path, name, 'config.html'))]
 
         if plugin in config_html_plugins:
-            config = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
-            return render_template_string(config)
+            config_html = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
+            return render_template_string(config_html)
         abort(404)
     elif request.method == 'POST':
         for k, v in request.form.items():
             if k == "nonce":
                 continue
-            utils.set_config(k, v)
+            set_config(k, v)
         with app.app_context():
             cache.clear()
         return '1'
@@ -76,7 +83,7 @@ def admin_export_ctf():
         backup = export_ctf(segments.split(','))
     else:
         backup = export_ctf()
-    ctf_name = utils.ctf_name()
+    ctf_name = config.ctf_name()
     day = datetime.datetime.now().strftime("%Y-%m-%d")
     full_name = "{}.{}.zip".format(ctf_name, day)
     return send_file(backup, as_attachment=True, attachment_filename=full_name)
@@ -111,48 +118,48 @@ def admin_config():
             workshop_mode = 'workshop_mode' in request.form
             paused = 'paused' in request.form
         finally:
-            utils.set_config('view_challenges_unregistered', view_challenges_unregistered)
-            utils.set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
-            utils.set_config('hide_scores', hide_scores)
-            utils.set_config('prevent_registration', prevent_registration)
-            utils.set_config('prevent_name_change', prevent_name_change)
-            utils.set_config('view_after_ctf', view_after_ctf)
-            utils.set_config('verify_emails', verify_emails)
-            utils.set_config('mail_tls', mail_tls)
-            utils.set_config('mail_ssl', mail_ssl)
-            utils.set_config('mail_useauth', mail_useauth)
-            utils.set_config('workshop_mode', workshop_mode)
-            utils.set_config('paused', paused)
+            set_config('view_challenges_unregistered', view_challenges_unregistered)
+            set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
+            set_config('hide_scores', hide_scores)
+            set_config('prevent_registration', prevent_registration)
+            set_config('prevent_name_change', prevent_name_change)
+            set_config('view_after_ctf', view_after_ctf)
+            set_config('verify_emails', verify_emails)
+            set_config('mail_tls', mail_tls)
+            set_config('mail_ssl', mail_ssl)
+            set_config('mail_useauth', mail_useauth)
+            set_config('workshop_mode', workshop_mode)
+            set_config('paused', paused)
 
-        utils.set_config("mail_server", request.form.get('mail_server', None))
-        utils.set_config("mail_port", request.form.get('mail_port', None))
+        set_config("mail_server", request.form.get('mail_server', None))
+        set_config("mail_port", request.form.get('mail_port', None))
 
         if request.form.get('mail_useauth', None) and (request.form.get('mail_u', None) or request.form.get('mail_p', None)):
             if len(request.form.get('mail_u')) > 0:
-                utils.set_config("mail_username", request.form.get('mail_u', None))
+                set_config("mail_username", request.form.get('mail_u', None))
             if len(request.form.get('mail_p')) > 0:
-                utils.set_config("mail_password", request.form.get('mail_p', None))
+                set_config("mail_password", request.form.get('mail_p', None))
 
         elif request.form.get('mail_useauth', None) is None:
-            utils.set_config("mail_username", None)
-            utils.set_config("mail_password", None)
+            set_config("mail_username", None)
+            set_config("mail_password", None)
 
         if request.files.get('ctf_logo_file', None):
             ctf_logo = request.files['ctf_logo_file']
-            file_id, file_loc = utils.upload_file(ctf_logo, None)
-            utils.set_config("ctf_logo", file_loc)
+            file_id, file_loc = uploads.upload_file(ctf_logo, None)
+            set_config("ctf_logo", file_loc)
         elif request.form.get('ctf_logo') == '':
-            utils.set_config("ctf_logo", None)
+            set_config("ctf_logo", None)
 
-        utils.set_config("ctf_name", request.form.get('ctf_name', None))
-        utils.set_config("ctf_theme", request.form.get('ctf_theme', None))
-        utils.set_config('css', request.form.get('css', None))
+        set_config("ctf_name", request.form.get('ctf_name', None))
+        set_config("ctf_theme", request.form.get('ctf_theme', None))
+        set_config('css', request.form.get('css', None))
 
-        utils.set_config("mailfrom_addr", request.form.get('mailfrom_addr', None))
-        utils.set_config("mg_base_url", request.form.get('mg_base_url', None))
-        utils.set_config("mg_api_key", request.form.get('mg_api_key', None))
+        set_config("mailfrom_addr", request.form.get('mailfrom_addr', None))
+        set_config("mg_base_url", request.form.get('mg_base_url', None))
+        set_config("mg_api_key", request.form.get('mg_api_key', None))
 
-        utils.set_config("freeze", freeze)
+        set_config("freeze", freeze)
 
         db_start = Config.query.filter_by(key='start').first()
         db_start.value = start
@@ -172,43 +179,43 @@ def admin_config():
     # Clear the cache so that we don't get stale values
     cache.clear()
 
-    ctf_name = utils.get_config('ctf_name')
-    ctf_logo = utils.get_config('ctf_logo')
-    ctf_theme = utils.get_config('ctf_theme')
-    hide_scores = utils.get_config('hide_scores')
-    css = utils.get_config('css')
+    ctf_name = get_config('ctf_name')
+    ctf_logo = get_config('ctf_logo')
+    ctf_theme = get_config('ctf_theme')
+    hide_scores = get_config('hide_scores')
+    css = get_config('css')
 
-    mail_server = utils.get_config('mail_server')
-    mail_port = utils.get_config('mail_port')
-    mail_username = utils.get_config('mail_username')
-    mail_password = utils.get_config('mail_password')
+    mail_server = get_config('mail_server')
+    mail_port = get_config('mail_port')
+    mail_username = get_config('mail_username')
+    mail_password = get_config('mail_password')
 
-    mailfrom_addr = utils.get_config('mailfrom_addr')
-    mg_api_key = utils.get_config('mg_api_key')
-    mg_base_url = utils.get_config('mg_base_url')
+    mailfrom_addr = get_config('mailfrom_addr')
+    mg_api_key = get_config('mg_api_key')
+    mg_base_url = get_config('mg_base_url')
 
-    view_after_ctf = utils.get_config('view_after_ctf')
-    start = utils.get_config('start')
-    end = utils.get_config('end')
-    freeze = utils.get_config('freeze')
+    view_after_ctf = get_config('view_after_ctf')
+    start = get_config('start')
+    end = get_config('end')
+    freeze = get_config('freeze')
 
-    mail_tls = utils.get_config('mail_tls')
-    mail_ssl = utils.get_config('mail_ssl')
-    mail_useauth = utils.get_config('mail_useauth')
+    mail_tls = get_config('mail_tls')
+    mail_ssl = get_config('mail_ssl')
+    mail_useauth = get_config('mail_useauth')
 
-    view_challenges_unregistered = utils.get_config('view_challenges_unregistered')
-    view_scoreboard_if_authed = utils.get_config('view_scoreboard_if_authed')
-    prevent_registration = utils.get_config('prevent_registration')
-    prevent_name_change = utils.get_config('prevent_name_change')
-    verify_emails = utils.get_config('verify_emails')
+    view_challenges_unregistered = get_config('view_challenges_unregistered')
+    view_scoreboard_if_authed = get_config('view_scoreboard_if_authed')
+    prevent_registration = get_config('prevent_registration')
+    prevent_name_change = get_config('prevent_name_change')
+    verify_emails = get_config('verify_emails')
 
-    workshop_mode = utils.get_config('workshop_mode')
-    paused = utils.get_config('paused')
+    workshop_mode = get_config('workshop_mode')
+    paused = get_config('paused')
 
     db.session.commit()
     db.session.close()
 
-    themes = utils.get_themes()
+    themes = config.get_themes()
     themes.remove(ctf_theme)
 
     return render_template(

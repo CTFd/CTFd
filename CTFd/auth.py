@@ -12,7 +12,7 @@ from CTFd.utils import get_config
 from CTFd.utils.encoding import base64encode, base64decode
 from CTFd.utils.decorators import ratelimit
 from CTFd.utils import user as current_user
-from CTFd.utils import config, validators
+from CTFd.utils import config, validators, email
 from CTFd.utils.security.csrf import generate_nonce
 
 import base64
@@ -33,12 +33,12 @@ def confirm_user(data=None):
     if data and request.method == "GET":
         try:
             s = TimedSerializer(app.config['SECRET_KEY'])
-            email = s.loads(base64decode(data), max_age=1800)
+            user_email = s.loads(base64decode(data), max_age=1800)
         except BadTimeSignature:
             return render_template('confirm.html', errors=['Your confirmation link has expired'])
         except (BadSignature, TypeError, base64.binascii.Error):
             return render_template('confirm.html', errors=['Your confirmation token is invalid'])
-        team = Teams.query.filter_by(email=email).first_or_404()
+        team = Teams.query.filter_by(email=user_email).first_or_404()
         team.verified = True
         db.session.commit()
         logger.warn("[{date}] {ip} - {username} confirmed their account".format(
@@ -64,7 +64,7 @@ def confirm_user(data=None):
             if team.verified:
                 return redirect(url_for('views.profile'))
             else:
-                utils.verify_email(team.email)
+                email.verify_email_address(team.email)
                 logger.warn("[{date}] {ip} - {username} initiated a confirmation email resend".format(
                     date=time.strftime("%m/%d/%Y %X"),
                     ip=current_user.get_ip(),
@@ -116,7 +116,7 @@ def reset_password(data=None):
 
         errors = []
 
-        if utils.can_send_mail() is False:
+        if config.can_send_mail() is False:
             return render_template(
                 'reset_password.html',
                 errors=['Email could not be sent due to server misconfiguration']
@@ -128,7 +128,7 @@ def reset_password(data=None):
                 errors=['If that account exists you will receive an email, please check your inbox']
             )
 
-        utils.forgot_password(email, team.name)
+        email.forgot_password(email, team.name)
 
         return render_template(
             'reset_password.html',
@@ -141,7 +141,7 @@ def reset_password(data=None):
 @ratelimit(method="POST", limit=10, interval=5)
 def register():
     logger = logging.getLogger('regs')
-    if not utils.can_register():
+    if not config.can_register():
         return redirect(url_for('auth.login'))
     if request.method == 'POST':
         errors = []
@@ -194,12 +194,12 @@ def register():
                         username=request.form['name'].encode('utf-8'),
                         email=request.form['email'].encode('utf-8')
                     ))
-                    utils.verify_email(team.email)
+                    email.verify_email_address(team.email)
                     db.session.close()
                     return redirect(url_for('auth.confirm_user'))
                 else:  # Don't care about confirming users
                     if config.can_send_mail():  # We want to notify the user that they have registered.
-                        utils.sendmail(request.form['email'], "You've successfully registered for {}".format(get_config('ctf_name')))
+                        email.sendmail(request.form['email'], "You've successfully registered for {}".format(get_config('ctf_name')))
 
         logger.warn("[{date}] {ip} - {username} registered with {email}".format(
             date=time.strftime("%m/%d/%Y %X"),

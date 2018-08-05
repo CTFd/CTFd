@@ -10,15 +10,16 @@ from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Te
 from CTFd.plugins.keys import get_key_class
 from CTFd.plugins.challenges import get_chal_class
 
-from CTFd import utils
 from CTFd.utils.decorators import (
     authed_only,
     admins_only,
     during_ctf_time_only,
     require_verified_emails,
-    viewable_without_authentication
+    viewable_without_authentication,
+    ratelimit
 )
-from CTFd.utils import text_type
+from CTFd.utils import config, validators, text_type, user as current_user, get_config
+from CTFd.utils.dates import ctftime, ctf_started, ctf_paused, ctf_ended, unix_time, unix_time_to_utc
 
 challenges = Blueprint('challenges', __name__)
 
@@ -44,7 +45,7 @@ def hints_view(hintid):
             })
     elif request.method == 'POST':
         if unlock is None:  # The user does not have an unlock.
-            if utils.ctftime() or (utils.ctf_ended() and utils.view_after_ctf()) or utils.is_admin() is True:
+            if ctftime() or (ctf_ended() and config.view_after_ctf()) or current_user.is_admin() is True:
                 # It's ctftime or the CTF has ended (but we allow views after)
                 team = Teams.query.filter_by(id=session['id']).first()
                 if team.score() < hint.cost:
@@ -61,7 +62,7 @@ def hints_view(hintid):
                 }
                 db.session.close()
                 return jsonify(json_data)
-            elif utils.ctf_ended():  # The CTF has ended. No views after.
+            elif ctf_ended():  # The CTF has ended. No views after.
                 abort(403)
         else:  # The user does have an unlock, we should give them their hint.
             json_data = {
@@ -80,21 +81,21 @@ def hints_view(hintid):
 def challenges_view():
     infos = []
     errors = []
-    start = utils.get_config('start') or 0
-    end = utils.get_config('end') or 0
+    start = get_config('start') or 0
+    end = get_config('end') or 0
 
-    if utils.ctf_paused():
-        infos.append('{} is paused'.format(utils.ctf_name()))
+    if ctf_paused():
+        infos.append('{} is paused'.format(config.ctf_name()))
 
-    if not utils.ctftime():
+    if not ctftime():
         # It is not CTF time
-        if utils.view_after_ctf():  # But we are allowed to view after the CTF ends
+        if config.view_after_ctf():  # But we are allowed to view after the CTF ends
             pass
         else:  # We are NOT allowed to view after the CTF ends
-            if utils.get_config('start') and not utils.ctf_started():
-                errors.append('{} has not started yet'.format(utils.ctf_name()))
-            if (utils.get_config('end') and utils.ctf_ended()) and not utils.view_after_ctf():
-                errors.append('{} has ended'.format(utils.ctf_name()))
+            if get_config('start') and not ctf_started():
+                errors.append('{} has not started yet'.format(config.ctf_name()))
+            if (get_config('end') and ctf_ended()) and not config.view_after_ctf():
+                errors.append('{} has ended'.format(config.ctf_name()))
             return render_template('challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
 
     return render_template('challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
@@ -141,7 +142,7 @@ def chal_view(chal_id):
     hints = []
 
     for hint in Hints.query.filter_by(chal=chal.id).all():
-        if hint.id in unlocked_hints or utils.ctf_ended():
+        if hint.id in unlocked_hints or ctf_ended():
             hints.append({'id': hint.id, 'cost': hint.cost, 'hint': hint.hint})
         else:
             hints.append({'id': hint.id, 'cost': hint.cost})
@@ -180,7 +181,7 @@ def solves_per_chal():
         .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
 
     data = {}
-    if utils.hide_scores():
+    if config.hide_scores():
         for chal, count, name in solves:
             data[chal] = -1
         for c in chals:
@@ -202,10 +203,10 @@ def solves_private():
     solves = None
     awards = None
 
-    if utils.is_admin():
+    if current_user.is_admin():
         solves = Solves.query.filter_by(teamid=session['id']).all()
-    elif utils.user_can_view_challenges():
-        if utils.authed():
+    elif config.user_can_view_challenges():
+        if current_user.authed():
             solves = Solves.query\
                 .join(Teams, Solves.teamid == Teams.id)\
                 .filter(Solves.teamid == session['id'])\
@@ -224,7 +225,7 @@ def solves_private():
             'team': solve.teamid,
             'value': solve.chal.value,
             'category': solve.chal.category,
-            'time': utils.unix_time(solve.date)
+            'time': unix_time(solve.date)
         })
     if awards:
         for award in awards:
@@ -234,7 +235,7 @@ def solves_private():
                 'team': award.teamid,
                 'value': award.value,
                 'category': award.category or "Award",
-                'time': utils.unix_time(award.date)
+                'time': unix_time(award.date)
             })
     response['solves'].sort(key=lambda k: k['time'])
     return jsonify(response)
@@ -245,20 +246,20 @@ def solves_public(teamid=None):
     solves = None
     awards = None
 
-    if utils.authed() and session['id'] == teamid:
+    if current_user.authed() and session['id'] == teamid:
         solves = Solves.query.filter_by(teamid=teamid)
         awards = Awards.query.filter_by(teamid=teamid)
 
-        freeze = utils.get_config('freeze')
+        freeze = get_config('freeze')
         if freeze:
-            freeze = utils.unix_time_to_utc(freeze)
+            freeze = unix_time_to_utc(freeze)
             if teamid != session.get('id'):
                 solves = solves.filter(Solves.date < freeze)
                 awards = awards.filter(Awards.date < freeze)
 
         solves = solves.all()
         awards = awards.all()
-    elif utils.hide_scores():
+    elif config.hide_scores():
         # Use empty values to hide scores
         solves = []
         awards = []
@@ -266,9 +267,9 @@ def solves_public(teamid=None):
         solves = Solves.query.filter_by(teamid=teamid)
         awards = Awards.query.filter_by(teamid=teamid)
 
-        freeze = utils.get_config('freeze')
+        freeze = get_config('freeze')
         if freeze:
-            freeze = utils.unix_time_to_utc(freeze)
+            freeze = unix_time_to_utc(freeze)
             if teamid != session.get('id'):
                 solves = solves.filter(Solves.date < freeze)
                 awards = awards.filter(Awards.date < freeze)
@@ -285,7 +286,7 @@ def solves_public(teamid=None):
             'team': solve.teamid,
             'value': solve.chal.value,
             'category': solve.chal.category,
-            'time': utils.unix_time(solve.date)
+            'time': unix_time(solve.date)
         })
     if awards:
         for award in awards:
@@ -295,7 +296,7 @@ def solves_public(teamid=None):
                 'team': award.teamid,
                 'value': award.value,
                 'category': award.category or "Award",
-                'time': utils.unix_time(award.date)
+                'time': unix_time(award.date)
             })
     response['solves'].sort(key=lambda k: k['time'])
     return jsonify(response)
@@ -317,10 +318,10 @@ def fails_private():
 
 @challenges.route('/fails/<int:teamid>')
 def fails_public(teamid=None):
-    if utils.authed() and session['id'] == teamid:
+    if current_user.authed() and session['id'] == teamid:
         fails = WrongKeys.query.filter_by(teamid=teamid).count()
         solves = Solves.query.filter_by(teamid=teamid).count()
-    elif utils.hide_scores():
+    elif config.hide_scores():
         fails = 0
         solves = 0
     else:
@@ -339,7 +340,7 @@ def fails_public(teamid=None):
 @viewable_without_authentication(status_code=403)
 def who_solved(chalid):
     response = {'teams': []}
-    if utils.hide_scores():
+    if config.hide_scores():
         return jsonify(response)
     solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid, Teams.banned == False).order_by(Solves.date.asc())
     for solve in solves:
@@ -351,16 +352,17 @@ def who_solved(chalid):
 @during_ctf_time_only
 @viewable_without_authentication()
 def chal(chalid):
-    if utils.ctf_paused():
+    if ctf_paused():
         return jsonify({
             'status': 3,
-            'message': '{} is paused'.format(utils.ctf_name())
+            'message': '{} is paused'.format(config.ctf_name())
         })
-    if (utils.authed() and utils.is_verified() and (utils.ctf_started() or utils.view_after_ctf())) or utils.is_admin():
+    if (current_user.authed() and current_user.is_verified() and (ctf_started() or config.view_after_ctf())) or current_user.is_admin():
         team = Teams.query.filter_by(id=session['id']).first()
         fails = WrongKeys.query.filter_by(teamid=session['id'], chalid=chalid).count()
         logger = logging.getLogger('keys')
-        data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'), utils.get_kpm(session['id']))
+        data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'),
+                current_user.get_wrong_submissions_per_minute(session['id']))
         print("[{0}] {1} submitted {2} with kpm {3}".format(*data))
 
         chal = Challenges.query.filter_by(id=chalid).first_or_404()
@@ -369,8 +371,8 @@ def chal(chalid):
         chal_class = get_chal_class(chal.type)
 
         # Anti-bruteforce / submitting keys too quickly
-        if utils.get_kpm(session['id']) > 10:
-            if utils.ctftime():
+        if current_user.get_wrong_submissions_per_minute(session['id']) > 10:
+            if ctftime():
                 chal_class.fail(team=team, chal=chal, request=request)
             logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
             # return '3' # Submitting too fast
@@ -393,12 +395,12 @@ def chal(chalid):
 
             status, message = chal_class.attempt(chal, request)
             if status:  # The challenge plugin says the input is right
-                if utils.ctftime() or utils.is_admin():
+                if ctftime() or current_user.is_admin():
                     chal_class.solve(team=team, chal=chal, request=request)
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
                 return jsonify({'status': 1, 'message': message})
             else:  # The challenge plugin says the input is wrong
-                if utils.ctftime() or utils.is_admin():
+                if ctftime() or current_user.is_admin():
                     chal_class.fail(team=team, chal=chal, request=request)
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
                 # return '0' # key was wrong

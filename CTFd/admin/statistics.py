@@ -1,5 +1,5 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils import cache
+from CTFd.utils import cache, config
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.updates import update_check
 from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, DatabaseError

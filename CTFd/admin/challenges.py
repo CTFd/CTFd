@@ -276,7 +276,7 @@ def admin_create_chal():
         chal_type = request.form['chaltype']
         chal_class = get_chal_class(chal_type)
         chal_class.create(request)
-        return redirect(url_for('admin_challenges.admin_chals'))
+        return redirect(url_for('admin.admin_chals'))
     else:
         return render_template('admin/chals/create.html')
 
@@ -296,4 +296,4 @@ def admin_update_chal():
     challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
     chal_class = get_chal_class(challenge.type)
     chal_class.update(challenge, request)
-    return redirect(url_for('admin_challenges.admin_chals'))
+    return redirect(url_for('admin.admin_chals'))

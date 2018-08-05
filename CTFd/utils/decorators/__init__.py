@@ -1,7 +1,8 @@
 from flask import request, redirect, url_for, session, abort, jsonify
 from CTFd import utils
-from CTFd.utils import cache
-from CTFd.utils.user import get_ip
+from CTFd.utils import config, cache
+from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime
+from CTFd.utils import user as current_user
 import functools
 
 
@@ -14,18 +15,18 @@ def during_ctf_time_only(f):
 
     @functools.wraps(f)
     def during_ctf_time_only_wrapper(*args, **kwargs):
-        if utils.ctftime() or utils.is_admin():
+        if ctftime() or current_user.is_admin():
             return f(*args, **kwargs)
         else:
-            if utils.ctf_ended():
-                if utils.view_after_ctf():
+            if ctf_ended():
+                if config.view_after_ctf():
                     return f(*args, **kwargs)
                 else:
-                    error = '{} has ended'.format(utils.ctf_name())
+                    error = '{} has ended'.format(config.ctf_name())
                     abort(403, description=error)
 
-            if utils.ctf_started() is False:
-                error = '{} has not started yet'.format(utils.ctf_name())
+            if ctf_started() is False:
+                error = '{} has not started yet'.format(config.ctf_name())
                 abort(403, description=error)
 
     return during_ctf_time_only_wrapper
@@ -41,8 +42,8 @@ def require_verified_emails(f):
     @functools.wraps(f)
     def require_verified_emails_wrapper(*args, **kwargs):
         if utils.get_config('verify_emails'):
-            if utils.authed():
-                if utils.is_admin() is False and utils.is_verified() is False:  # User is not confirmed
+            if current_user.authed():
+                if current_user.is_admin() is False and current_user.is_verified() is False:  # User is not confirmed
                     return redirect(url_for('auth.confirm_user'))
         return f(*args, **kwargs)
 
@@ -59,7 +60,7 @@ def viewable_without_authentication(status_code=None):
     def viewable_without_authentication_decorator(f):
         @functools.wraps(f)
         def viewable_without_authentication_wrapper(*args, **kwargs):
-            if utils.user_can_view_challenges():
+            if config.user_can_view_challenges():
                 return f(*args, **kwargs)
             else:
                 if status_code:
@@ -110,8 +111,8 @@ def admins_only(f):
 def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
     def ratelimit_decorator(f):
         @functools.wraps(f)
-        def decorated_function(*args, **kwargs):
-            ip_address = get_ip()
+        def ratelimit_function(*args, **kwargs):
+            ip_address = current_user.get_ip()
             key = "{}:{}:{}".format(key_prefix, ip_address, request.endpoint)
             current = cache.get(key)
 
@@ -130,6 +131,6 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
                         cache.set(key, int(current) + 1, timeout=interval)
             return f(*args, **kwargs)
 
-        return decorated_function
+        return ratelimit_function
 
     return ratelimit_decorator
