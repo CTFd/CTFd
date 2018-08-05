@@ -1,14 +1,20 @@
-import os
-import re
-
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, url_for, session, Blueprint, Response, send_file
 from flask.helpers import safe_join
-from jinja2.exceptions import TemplateNotFound
 from passlib.hash import bcrypt_sha256
+from sqlalchemy.exc import InvalidRequestError, IntegrityError
 
-from CTFd.models import db, Teams, Solves, Awards, Files, Pages
+from CTFd.models import db, Teams, Solves, Awards, Files, Pages, Tracking
 from CTFd.utils import cache, markdown
-from CTFd import utils
+from CTFd.utils.user import authed, get_ip
+from CTFd.utils.config import is_setup
+from CTFd.utils.security.csrf import generate_nonce
+
+
+import datetime
+import os
+
+# Preprocessors
+
 
 views = Blueprint('views', __name__)
 

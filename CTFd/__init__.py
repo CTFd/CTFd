@@ -9,8 +9,20 @@ from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
-from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp, update_check
+from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
+from CTFd.utils.updates import update_check
 from CTFd import utils
+
+from CTFd.views import views
+from CTFd.challenges import challenges
+from CTFd.scoreboard import scoreboard
+from CTFd.auth import auth
+from CTFd.admin import admin, admin_statistics, admin_challenges, admin_pages, admin_scoreboard, admin_keys, admin_teams
+from CTFd.errors import page_not_found, forbidden, general_error, gateway_error
+
+from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals
+
+from CTFd.plugins import init_plugins
 
 # Hack to support Unicode in Python 2 properly
 if sys.version_info[0] < 3:
@@ -156,16 +168,9 @@ def create_app(config='CTFd.config.Config'):
         if not utils.get_config('ctf_theme'):
             utils.set_config('ctf_theme', 'core')
 
-        from CTFd.views import views
-        from CTFd.challenges import challenges
-        from CTFd.scoreboard import scoreboard
-        from CTFd.auth import auth
-        from CTFd.admin import admin, admin_statistics, admin_challenges, admin_pages, admin_scoreboard, admin_keys, admin_teams
-        from CTFd.utils import init_utils, init_errors, init_logs
-
-        init_utils(app)
-        init_errors(app)
-        init_logs(app)
+        init_request_processors(app)
+        init_template_filters(app)
+        init_template_globals(app)
 
         app.register_blueprint(views)
         app.register_blueprint(challenges)
@@ -180,7 +185,10 @@ def create_app(config='CTFd.config.Config'):
         app.register_blueprint(admin_keys)
         app.register_blueprint(admin_pages)
 
-        from CTFd.plugins import init_plugins
+        app.register_error_handler(404, page_not_found)
+        app.register_error_handler(403, forbidden)
+        app.register_error_handler(500, general_error)
+        app.register_error_handler(502, gateway_error)
 
         init_plugins(app)
 

@@ -1,5 +1,6 @@
 from CTFd.utils import get_app_config, get_config, set_config
 from CTFd.models import db, Pages, Teams, Challenges
+from datafreeze.format import SERIALIZERS
 from flask import current_app as app
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
 import dataset
@@ -42,6 +43,9 @@ class CTFdSerializer(JSONSerializer):
                 fh.write(data)
             if self.fileobj is None:
                 fh.close()
+
+
+SERIALIZERS['ctfd'] = CTFdSerializer  # Load the custom serializer
 
 
 def export_ctf(segments=None):
