@@ -100,7 +100,7 @@ def get_standings(admin=False, count=None):
 
 
 @scoreboard.route('/scoreboard')
-def scoreboard_view():
+def scoreboard():
     if get_config('view_scoreboard_if_authed') and not config.authed():
         return redirect(url_for('auth.login', next=request.path))
     if config.hide_scores():
@@ -125,7 +125,7 @@ def scores():
 
 
 @scoreboard.route('/top/<int:count>')
-def topteams(count):
+def top(count):
     json = {'places': {}}
     if get_config('view_scoreboard_if_authed') and not current_user.authed():
         return redirect(url_for('auth.login', next=request.path))

@@ -92,7 +92,7 @@ def verify_email_address(addr):
     token = s.dumps(addr)
     text = """Please click the following link to confirm your email address for {ctf_name}: {url}/{token}""".format(
         ctf_name=get_config('ctf_name'),
-        url=url_for('auth.confirm_user', _external=True),
+        url=url_for('auth.confirm', _external=True),
         token=base64encode(token)
     )
     sendmail(addr, text)

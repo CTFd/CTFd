@@ -20,7 +20,7 @@ auth = Blueprint('auth', __name__)
 @auth.route('/confirm', methods=['POST', 'GET'])
 @auth.route('/confirm/<data>', methods=['GET'])
 @ratelimit(method="POST", limit=10, interval=60)
-def confirm_user(data=None):
+def confirm(data=None):
     if not get_config('verify_emails'):
         # If the CTF doesn't care about confirming email addresses then redierct to challenges
         return redirect(url_for('challenges.challenges_view'))
@@ -78,6 +78,7 @@ def confirm_user(data=None):
             return render_template('confirm.html', team=team)
 
 
+# TODO: Maybe consider renaming this to just /reset. Includes the function name as well
 @auth.route('/reset_password', methods=['POST', 'GET'])
 @auth.route('/reset_password/<data>', methods=['POST', 'GET'])
 @ratelimit(method="POST", limit=10, interval=60)
@@ -193,7 +194,7 @@ def register():
                     ))
                     email.verify_email_address(team.email)
                     db.session.close()
-                    return redirect(url_for('auth.confirm_user'))
+                    return redirect(url_for('auth.confirm'))
                 else:  # Don't care about confirming users
                     if config.can_send_mail():  # We want to notify the user that they have registered.
                         email.sendmail(request.form['email'], "You've successfully registered for {}".format(get_config('ctf_name')))
