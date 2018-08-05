@@ -1,15 +1,6 @@
-import json
-import logging
-import re
-import time
-
 from flask import render_template, request, redirect, jsonify, url_for, session, Blueprint, abort
-from sqlalchemy.sql import or_
-
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards, Hints, Unlocks
-from CTFd.plugins.keys import get_key_class
 from CTFd.plugins.challenges import get_chal_class
-
 from CTFd.utils.decorators import (
     authed_only,
     admins_only,
@@ -18,8 +9,11 @@ from CTFd.utils.decorators import (
     viewable_without_authentication,
     ratelimit
 )
-from CTFd.utils import config, validators, text_type, user as current_user, get_config
+from CTFd.utils import config, text_type, user as current_user, get_config
 from CTFd.utils.dates import ctftime, ctf_started, ctf_paused, ctf_ended, unix_time, unix_time_to_utc
+from sqlalchemy.sql import or_
+import logging
+import time
 
 challenges = Blueprint('challenges', __name__)
 

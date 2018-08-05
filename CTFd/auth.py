@@ -1,8 +1,3 @@
-import logging
-import os
-import re
-import time
-
 from flask import current_app as app, render_template, request, redirect, url_for, session, Blueprint
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from passlib.hash import bcrypt_sha256
@@ -16,6 +11,8 @@ from CTFd.utils import config, validators, email
 from CTFd.utils.security.csrf import generate_nonce
 
 import base64
+import logging
+import time
 
 auth = Blueprint('auth', __name__)
 
