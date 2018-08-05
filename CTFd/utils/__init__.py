@@ -36,22 +36,30 @@ def get_app_config(key):
 
 
 @cache.memoize()
-def get_config(key, default=None):
-    c = Config.query.filter_by(key=key).first()
-    if c and c.value:
-        value = c.value
-        return json.loads(value)
+def get_config(key):
+    config = Config.query.filter_by(key=key).first()
+    if config and config.value:
+        value = config.value
+        if value and value.isdigit():
+            return int(value)
+        elif value and isinstance(value, six.string_types):
+            if value.lower() == 'true':
+                return True
+            elif value.lower() == 'false':
+                return False
+            else:
+                return value
     else:
-        return default
+        set_config(key, None)
+        return None
 
 
 def set_config(key, value):
-    c = Config.query.filter_by(key=key).first()
-    value = json.dumps(value)
-    if c:
-        c.value = value
+    config = Config.query.filter_by(key=key).first()
+    if config:
+        config.value = value
     else:
-        c = Config(key, value)
-        db.session.add(c)
+        config = Config(key, value)
+        db.session.add(config)
     db.session.commit()
-    return c
+    return config

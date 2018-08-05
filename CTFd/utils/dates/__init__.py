@@ -62,4 +62,5 @@ def unix_time_millis(dt):
 
 
 def unix_time_to_utc(t):
+    # TODO: We should probably deprecate this function somehow
     return datetime.datetime.utcfromtimestamp(t)

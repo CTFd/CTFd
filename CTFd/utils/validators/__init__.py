@@ -1,5 +1,6 @@
 from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
 from flask import request
+import re
 
 
 def is_safe_url(target):
@@ -10,3 +11,7 @@ def is_safe_url(target):
 
 def validate_url(url):
     return urlparse(url).scheme.startswith('http')
+
+
+def validate_email(email):
+    return bool(re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email))

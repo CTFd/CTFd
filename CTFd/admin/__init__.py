@@ -11,13 +11,6 @@ from CTFd.utils import cache
 from CTFd.utils.exports import export_ctf, import_ctf
 from CTFd.models import db, Config
 
-from CTFd.admin.statistics import admin
-from CTFd.admin.challenges import admin
-from CTFd.admin.scoreboard import admin
-from CTFd.admin.pages import admin
-from CTFd.admin.keys import admin
-from CTFd.admin.teams import admin
-
 from CTFd import utils
 
 admin = Blueprint('admin', __name__)

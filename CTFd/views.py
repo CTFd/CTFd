@@ -1,38 +1,34 @@
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, url_for, session, Blueprint, Response, send_file
 from flask.helpers import safe_join
 from passlib.hash import bcrypt_sha256
-from sqlalchemy.exc import InvalidRequestError, IntegrityError
 
 from CTFd.models import db, Teams, Solves, Awards, Files, Pages, Tracking
 from CTFd.utils import cache, markdown
+from CTFd.utils import get_config, set_config
 from CTFd.utils.user import authed, get_ip
-from CTFd.utils.config import is_setup
+from CTFd.utils import config
+from CTFd.utils.config.pages import get_page
 from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils import user as current_user
+from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime, unix_time_to_utc
+from CTFd.utils import validators
 
-
-import datetime
 import os
-
-# Preprocessors
-
 
 views = Blueprint('views', __name__)
 
 
 @views.route('/setup', methods=['GET', 'POST'])
 def setup():
-    # with app.app_context():
-        # admin = Teams.query.filter_by(admin=True).first()
-
-    if not utils.is_setup():
+    if not config.is_setup():
         if not session.get('nonce'):
-            session['nonce'] = utils.sha512(os.urandom(10))
+            session['nonce'] = generate_nonce()
         if request.method == 'POST':
             ctf_name = request.form['ctf_name']
-            ctf_name = utils.set_config('ctf_name', ctf_name)
+            ctf_name = set_config('ctf_name', ctf_name)
 
             # CSS
-            css = utils.set_config('start', '')
+            css = set_config('start', '')
 
             # Admin user
             name = request.form['name']
@@ -64,31 +60,31 @@ def setup():
             page = Pages(title=None, route='index', html=index, draft=False)
 
             # max attempts per challenge
-            max_tries = utils.set_config('max_tries', 0)
+            max_tries = set_config('max_tries', 0)
 
             # Start time
-            start = utils.set_config('start', None)
-            end = utils.set_config('end', None)
-            freeze = utils.set_config('freeze', None)
+            start = set_config('start', None)
+            end = set_config('end', None)
+            freeze = set_config('freeze', None)
 
             # Challenges cannot be viewed by unregistered users
-            view_challenges_unregistered = utils.set_config('view_challenges_unregistered', None)
+            view_challenges_unregistered = set_config('view_challenges_unregistered', None)
 
             # Allow/Disallow registration
-            prevent_registration = utils.set_config('prevent_registration', None)
+            prevent_registration = set_config('prevent_registration', None)
 
             # Verify emails
-            verify_emails = utils.set_config('verify_emails', None)
+            verify_emails = set_config('verify_emails', None)
 
-            mail_server = utils.set_config('mail_server', None)
-            mail_port = utils.set_config('mail_port', None)
-            mail_tls = utils.set_config('mail_tls', None)
-            mail_ssl = utils.set_config('mail_ssl', None)
-            mail_username = utils.set_config('mail_username', None)
-            mail_password = utils.set_config('mail_password', None)
-            mail_useauth = utils.set_config('mail_useauth', None)
+            mail_server = set_config('mail_server', None)
+            mail_port = set_config('mail_port', None)
+            mail_tls = set_config('mail_tls', None)
+            mail_ssl = set_config('mail_ssl', None)
+            mail_username = set_config('mail_username', None)
+            mail_password = set_config('mail_password', None)
+            mail_useauth = set_config('mail_useauth', None)
 
-            setup = utils.set_config('setup', True)
+            setup = set_config('setup', True)
 
             db.session.add(page)
             db.session.add(admin)
@@ -97,7 +93,7 @@ def setup():
             session['username'] = admin.name
             session['id'] = admin.id
             session['admin'] = admin.admin
-            session['nonce'] = utils.sha512(os.urandom(10))
+            session['nonce'] = generate_nonce()
 
             db.session.close()
             app.setup = False
@@ -112,18 +108,18 @@ def setup():
 # Custom CSS handler
 @views.route('/static/user.css')
 def custom_css():
-    return Response(utils.get_config('css'), mimetype='text/css')
+    return Response(get_config('css'), mimetype='text/css')
 
 
 # Static HTML files
 @views.route("/", defaults={'template': 'index'})
 @views.route("/<path:template>")
 def static_html(template):
-    page = utils.get_page(template)
+    page = get_page(template)
     if page is None:
         abort(404)
     else:
-        if page.auth_required and utils.authed() is False:
+        if page.auth_required and authed() is False:
             return redirect(url_for('auth.login', next=request.path))
 
         return render_template('page.html', content=markdown(page.html))
@@ -132,14 +128,14 @@ def static_html(template):
 @views.route('/teams', defaults={'page': '1'})
 @views.route('/teams/<int:page>')
 def teams(page):
-    if utils.get_config('workshop_mode'):
+    if get_config('workshop_mode'):
         abort(404)
     page = abs(int(page))
     results_per_page = 50
     page_start = results_per_page * (page - 1)
     page_end = results_per_page * (page - 1) + results_per_page
 
-    if utils.get_config('verify_emails'):
+    if get_config('verify_emails'):
         count = Teams.query.filter_by(verified=True, banned=False).count()
         teams = Teams.query.filter_by(verified=True, banned=False).slice(page_start, page_end).all()
     else:
@@ -151,10 +147,10 @@ def teams(page):
 
 @views.route('/team', methods=['GET'])
 def private_team():
-    if utils.authed():
+    if authed():
         teamid = session['id']
 
-        freeze = utils.get_config('freeze')
+        freeze = get_config('freeze')
         user = Teams.query.filter_by(id=teamid).first_or_404()
         solves = Solves.query.filter_by(teamid=teamid)
         awards = Awards.query.filter_by(teamid=teamid)
@@ -163,7 +159,7 @@ def private_team():
         score = user.score()
 
         if freeze:
-            freeze = utils.unix_time_to_utc(freeze)
+            freeze = unix_time_to_utc(freeze)
             if teamid != session.get('id'):
                 solves = solves.filter(Solves.date < freeze)
                 awards = awards.filter(Awards.date < freeze)
@@ -171,20 +167,20 @@ def private_team():
         solves = solves.all()
         awards = awards.all()
 
-        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place, score_frozen=utils.is_scoreboard_frozen())
+        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place, score_frozen=config.is_scoreboard_frozen())
     else:
         return redirect(url_for('auth.login'))
 
 
 @views.route('/team/<int:teamid>', methods=['GET', 'POST'])
 def team(teamid):
-    if utils.get_config('workshop_mode'):
+    if get_config('workshop_mode'):
         abort(404)
 
-    if utils.get_config('view_scoreboard_if_utils.authed') and not utils.authed():
+    if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
     errors = []
-    freeze = utils.get_config('freeze')
+    freeze = get_config('freeze')
     user = Teams.query.filter_by(id=teamid).first_or_404()
     solves = Solves.query.filter_by(teamid=teamid)
     awards = Awards.query.filter_by(teamid=teamid)
@@ -193,7 +189,7 @@ def team(teamid):
     score = user.score()
 
     if freeze:
-        freeze = utils.unix_time_to_utc(freeze)
+        freeze = unix_time_to_utc(freeze)
         if teamid != session.get('id'):
             solves = solves.filter(Solves.date < freeze)
             awards = awards.filter(Awards.date < freeze)
@@ -203,14 +199,14 @@ def team(teamid):
 
     db.session.close()
 
-    if utils.hide_scores() and teamid != session.get('id'):
+    if config.hide_scores() and teamid != session.get('id'):
         errors.append('Scores are currently hidden')
 
     if errors:
         return render_template('team.html', team=user, errors=errors)
 
     if request.method == 'GET':
-        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place, score_frozen=utils.is_scoreboard_frozen())
+        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place, score_frozen=config.is_scoreboard_frozen())
     elif request.method == 'POST':
         json = {'solves': []}
         for x in solves:
@@ -220,7 +216,7 @@ def team(teamid):
 
 @views.route('/profile', methods=['POST', 'GET'])
 def profile():
-    if utils.authed():
+    if authed():
         if request.method == "POST":
             errors = []
 
@@ -232,14 +228,14 @@ def profile():
 
             user = Teams.query.filter_by(id=session['id']).first()
 
-            if not utils.get_config('prevent_name_change'):
+            if not get_config('prevent_name_change'):
                 names = Teams.query.filter_by(name=name).first()
                 name_len = len(request.form['name']) == 0
 
             emails = Teams.query.filter_by(email=email).first()
-            valid_email = utils.check_email_format(email)
+            valid_email = validators.validate_email(email)
 
-            if utils.check_email_format(name) is True:
+            if validators.validate_email(name) is True:
                 errors.append('Team name cannot be an email address')
 
             if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
@@ -247,13 +243,13 @@ def profile():
                 errors.append("Your old password doesn't match what we have.")
             if not valid_email:
                 errors.append("That email doesn't look right")
-            if not utils.get_config('prevent_name_change') and names and name != session['username']:
+            if not get_config('prevent_name_change') and names and name != session['username']:
                 errors.append('That team name is already taken')
             if emails and emails.id != session['id']:
                 errors.append('That email has already been used')
-            if not utils.get_config('prevent_name_change') and name_len:
+            if not get_config('prevent_name_change') and name_len:
                 errors.append('Pick a longer team name')
-            if website.strip() and not utils.validate_url(website):
+            if website.strip() and not validators.validate_url(website):
                 errors.append("That doesn't look like a valid URL")
 
             if len(errors) > 0:
@@ -262,12 +258,12 @@ def profile():
             else:
                 team = Teams.query.filter_by(id=session['id']).first()
                 if team.name != name:
-                    if not utils.get_config('prevent_name_change'):
+                    if not get_config('prevent_name_change'):
                         team.name = name
                         session['username'] = team.name
                 if team.email != email.lower():
                     team.email = email.lower()
-                    if utils.get_config('verify_emails'):
+                    if get_config('verify_emails'):
                         team.verified = False
 
                 if 'password' in request.form.keys() and not len(request.form['password']) == 0:
@@ -285,8 +281,8 @@ def profile():
             website = user.website
             affiliation = user.affiliation
             country = user.country
-            prevent_name_change = utils.get_config('prevent_name_change')
-            confirm_email = utils.get_config('verify_emails') and not user.verified
+            prevent_name_change = get_config('prevent_name_change')
+            confirm_email = get_config('verify_emails') and not user.verified
             return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
                                    country=country, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
     else:
@@ -298,9 +294,9 @@ def profile():
 def file_handler(path):
     f = Files.query.filter_by(location=path).first_or_404()
     if f.chal:
-        if not utils.is_admin():
-            if not utils.ctftime():
-                if utils.view_after_ctf() and utils.ctf_started():
+        if not current_user.is_admin():
+            if not ctftime():
+                if config.view_after_ctf() and ctf_started():
                     pass
                 else:
                     abort(403)

@@ -10,10 +10,6 @@ import smtplib
 import requests
 
 
-def check_email_format(email):
-    return bool(re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email))
-
-
 def sendmail(addr, text):
     ctf_name = get_config('ctf_name')
     mailfrom_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')

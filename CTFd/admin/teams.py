@@ -7,8 +7,6 @@ from sqlalchemy.sql import not_
 from CTFd import utils
 from CTFd.admin import admin
 
-import re
-
 
 @admin.route('/admin/teams', defaults={'page': '1'})
 @admin.route('/admin/teams/<int:page>')

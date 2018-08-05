@@ -8,8 +8,12 @@ from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Teams
-from CTFd import utils
+from CTFd.utils import get_config
+from CTFd.utils.encoding import base64encode, base64decode
 from CTFd.utils.decorators import ratelimit
+from CTFd.utils import user as current_user
+from CTFd.utils import config, validators
+from CTFd.utils.security.csrf import generate_nonce
 
 import base64
 
@@ -20,7 +24,7 @@ auth = Blueprint('auth', __name__)
 @auth.route('/confirm/<data>', methods=['GET'])
 @ratelimit(method="POST", limit=10, interval=60)
 def confirm_user(data=None):
-    if not utils.get_config('verify_emails'):
+    if not get_config('verify_emails'):
         # If the CTF doesn't care about confirming email addresses then redierct to challenges
         return redirect(url_for('challenges.challenges_view'))
 
@@ -29,7 +33,7 @@ def confirm_user(data=None):
     if data and request.method == "GET":
         try:
             s = TimedSerializer(app.config['SECRET_KEY'])
-            email = s.loads(utils.base64decode(data), max_age=1800)
+            email = s.loads(base64decode(data), max_age=1800)
         except BadTimeSignature:
             return render_template('confirm.html', errors=['Your confirmation link has expired'])
         except (BadSignature, TypeError, base64.binascii.Error):
@@ -39,17 +43,17 @@ def confirm_user(data=None):
         db.session.commit()
         logger.warn("[{date}] {ip} - {username} confirmed their account".format(
             date=time.strftime("%m/%d/%Y %X"),
-            ip=utils.get_ip(),
+            ip=current_user.get_ip(),
             username=team.name.encode('utf-8'),
             email=team.email.encode('utf-8')
         ))
         db.session.close()
-        if utils.authed():
+        if current_user.authed():
             return redirect(url_for('challenges.challenges_view'))
         return redirect(url_for('auth.login'))
 
     # User is trying to start or restart the confirmation flow
-    if not utils.authed():
+    if not current_user.authed():
         return redirect(url_for('auth.login'))
 
     team = Teams.query.filter_by(id=session['id']).first_or_404()
@@ -63,7 +67,7 @@ def confirm_user(data=None):
                 utils.verify_email(team.email)
                 logger.warn("[{date}] {ip} - {username} initiated a confirmation email resend".format(
                     date=time.strftime("%m/%d/%Y %X"),
-                    ip=utils.get_ip(),
+                    ip=current_user.get_ip(),
                     username=team.name.encode('utf-8'),
                     email=team.email.encode('utf-8')
                 ))
@@ -86,7 +90,7 @@ def reset_password(data=None):
     if data is not None:
         try:
             s = TimedSerializer(app.config['SECRET_KEY'])
-            name = s.loads(utils.base64decode(data), max_age=1800)
+            name = s.loads(base64decode(data), max_age=1800)
         except BadTimeSignature:
             return render_template('reset_password.html', errors=['Your link has expired'])
         except (BadSignature, TypeError, base64.binascii.Error):
@@ -100,7 +104,7 @@ def reset_password(data=None):
             db.session.commit()
             logger.warn("[{date}] {ip} -  successful password reset for {username}".format(
                 date=time.strftime("%m/%d/%Y %X"),
-                ip=utils.get_ip(),
+                ip=current_user.get_ip(),
                 username=team.name.encode('utf-8')
             ))
             db.session.close()
@@ -150,8 +154,8 @@ def register():
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
         pass_short = len(password) == 0
         pass_long = len(password) > 128
-        valid_email = utils.check_email_format(request.form['email'])
-        team_name_email_check = utils.check_email_format(name)
+        valid_email = validators.validate_email(request.form['email'])
+        team_name_email_check = validators.validate_email(name)
 
         if not valid_email:
             errors.append("Please enter a valid email address")
@@ -180,13 +184,13 @@ def register():
                 session['username'] = team.name
                 session['id'] = team.id
                 session['admin'] = team.admin
-                session['nonce'] = utils.sha512(os.urandom(10))
+                session['nonce'] = generate_nonce()
 
-                if utils.can_send_mail() and utils.get_config('verify_emails'):  # Confirming users is enabled and we can send email.
+                if config.can_send_mail() and get_config('verify_emails'):  # Confirming users is enabled and we can send email.
                     logger = logging.getLogger('regs')
                     logger.warn("[{date}] {ip} - {username} registered (UNCONFIRMED) with {email}".format(
                         date=time.strftime("%m/%d/%Y %X"),
-                        ip=utils.get_ip(),
+                        ip=current_user.get_ip(),
                         username=request.form['name'].encode('utf-8'),
                         email=request.form['email'].encode('utf-8')
                     ))
@@ -194,12 +198,12 @@ def register():
                     db.session.close()
                     return redirect(url_for('auth.confirm_user'))
                 else:  # Don't care about confirming users
-                    if utils.can_send_mail():  # We want to notify the user that they have registered.
-                        utils.sendmail(request.form['email'], "You've successfully registered for {}".format(utils.get_config('ctf_name')))
+                    if config.can_send_mail():  # We want to notify the user that they have registered.
+                        utils.sendmail(request.form['email'], "You've successfully registered for {}".format(get_config('ctf_name')))
 
         logger.warn("[{date}] {ip} - {username} registered with {email}".format(
             date=time.strftime("%m/%d/%Y %X"),
-            ip=utils.get_ip(),
+            ip=current_user.get_ip(),
             username=request.form['name'].encode('utf-8'),
             email=request.form['email'].encode('utf-8')
         ))
@@ -218,7 +222,7 @@ def login():
         name = request.form['name']
 
         # Check if the user submitted an email address or a team name
-        if utils.check_email_format(name) is True:
+        if validators.validate_email(name) is True:
             team = Teams.query.filter_by(email=name).first()
         else:
             team = Teams.query.filter_by(name=name).first()
@@ -232,23 +236,23 @@ def login():
                 session['username'] = team.name
                 session['id'] = team.id
                 session['admin'] = team.admin
-                session['nonce'] = utils.sha512(os.urandom(10))
+                session['nonce'] = generate_nonce()
                 db.session.close()
 
                 logger.warn("[{date}] {ip} - {username} logged in".format(
                     date=time.strftime("%m/%d/%Y %X"),
-                    ip=utils.get_ip(),
+                    ip=current_user.get_ip(),
                     username=session['username'].encode('utf-8')
                 ))
 
-                if request.args.get('next') and utils.is_safe_url(request.args.get('next')):
+                if request.args.get('next') and validators.is_safe_url(request.args.get('next')):
                     return redirect(request.args.get('next'))
                 return redirect(url_for('challenges.challenges_view'))
 
             else:  # This user exists but the password is wrong
                 logger.warn("[{date}] {ip} - submitted invalid password for {username}".format(
                     date=time.strftime("%m/%d/%Y %X"),
-                    ip=utils.get_ip(),
+                    ip=current_user.get_ip(),
                     username=team.name.encode('utf-8')
                 ))
                 errors.append("Your username or password is incorrect")
@@ -258,7 +262,7 @@ def login():
         else:  # This user just doesn't exist
             logger.warn("[{date}] {ip} - submitted invalid account information".format(
                 date=time.strftime("%m/%d/%Y %X"),
-                ip=utils.get_ip()
+                ip=current_user.get_ip()
             ))
             errors.append("Your username or password is incorrect")
             db.session.close()
@@ -271,6 +275,6 @@ def login():
 
 @auth.route('/logout')
 def logout():
-    if utils.authed():
+    if current_user.authed():
         session.clear()
     return redirect(url_for('views.static_html'))

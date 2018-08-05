@@ -2,8 +2,10 @@ from flask import render_template, jsonify, Blueprint, redirect, url_for, reques
 from sqlalchemy.sql.expression import union_all
 
 from CTFd.models import db, Teams, Solves, Awards, Challenges
-
-from CTFd import utils
+from CTFd.utils import config
+from CTFd.utils.dates import unix_time_to_utc, unix_time
+from CTFd.utils import get_config
+from CTFd.utils import user as current_user
 
 scoreboard = Blueprint('scoreboard', __name__)
 
@@ -38,10 +40,10 @@ def get_standings(admin=False, count=None):
     """
     Filter out solves and awards that are before a specific time point.
     """
-    freeze = utils.get_config('freeze')
+    freeze = get_config('freeze')
     if not admin and freeze:
-        scores = scores.filter(Solves.date < utils.unix_time_to_utc(freeze))
-        awards = awards.filter(Awards.date < utils.unix_time_to_utc(freeze))
+        scores = scores.filter(Solves.date < unix_time_to_utc(freeze))
+        awards = awards.filter(Awards.date < unix_time_to_utc(freeze))
 
     """
     Combine awards and solves with a union. They should have the same amount of columns
@@ -99,20 +101,20 @@ def get_standings(admin=False, count=None):
 
 @scoreboard.route('/scoreboard')
 def scoreboard_view():
-    if utils.get_config('view_scoreboard_if_authed') and not utils.authed():
+    if get_config('view_scoreboard_if_authed') and not config.authed():
         return redirect(url_for('auth.login', next=request.path))
-    if utils.hide_scores():
+    if config.hide_scores():
         return render_template('scoreboard.html', errors=['Scores are currently hidden'])
     standings = get_standings()
-    return render_template('scoreboard.html', teams=standings, score_frozen=utils.is_scoreboard_frozen())
+    return render_template('scoreboard.html', teams=standings, score_frozen=config.is_scoreboard_frozen())
 
 
 @scoreboard.route('/scores')
 def scores():
     json = {'standings': []}
-    if utils.get_config('view_scoreboard_if_authed') and not utils.authed():
+    if get_config('view_scoreboard_if_authed') and not config.authed():
         return redirect(url_for('auth.login', next=request.path))
-    if utils.hide_scores():
+    if config.hide_scores():
         return jsonify(json)
 
     standings = get_standings()
@@ -125,9 +127,9 @@ def scores():
 @scoreboard.route('/top/<int:count>')
 def topteams(count):
     json = {'places': {}}
-    if utils.get_config('view_scoreboard_if_authed') and not utils.authed():
+    if get_config('view_scoreboard_if_authed') and not current_user.authed():
         return redirect(url_for('auth.login', next=request.path))
-    if utils.hide_scores():
+    if config.hide_scores():
         return jsonify(json)
 
     if count > 20 or count < 0:
@@ -140,11 +142,11 @@ def topteams(count):
     solves = Solves.query.filter(Solves.teamid.in_(team_ids))
     awards = Awards.query.filter(Awards.teamid.in_(team_ids))
 
-    freeze = utils.get_config('freeze')
+    freeze = get_config('freeze')
 
     if freeze:
-        solves = solves.filter(Solves.date < utils.unix_time_to_utc(freeze))
-        awards = awards.filter(Awards.date < utils.unix_time_to_utc(freeze))
+        solves = solves.filter(Solves.date < unix_time_to_utc(freeze))
+        awards = awards.filter(Awards.date < unix_time_to_utc(freeze))
 
     solves = solves.all()
     awards = awards.all()
@@ -161,7 +163,7 @@ def topteams(count):
                     'chal': solve.chalid,
                     'team': solve.teamid,
                     'value': solve.chal.value,
-                    'time': utils.unix_time(solve.date)
+                    'time': unix_time(solve.date)
                 })
         for award in awards:
             if award.teamid == team:
@@ -169,7 +171,7 @@ def topteams(count):
                     'chal': None,
                     'team': award.teamid,
                     'value': award.value,
-                    'time': utils.unix_time(award.date)
+                    'time': unix_time(award.date)
                 })
         json['places'][i + 1]['solves'] = sorted(json['places'][i + 1]['solves'], key=lambda k: k['time'])
 
