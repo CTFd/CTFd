@@ -22,6 +22,7 @@ class Pages(db.Model):
     route = db.Column(db.Text, unique=True)
     html = db.Column(db.Text)
     draft = db.Column(db.Boolean)
+    hidden = db.Column(db.Boolean)
 
     def __init__(self, title, route, html, draft=True, auth_required=False):
         self.title = title
@@ -31,7 +32,7 @@ class Pages(db.Model):
         self.auth_required = auth_required
 
     def __repr__(self):
-        return "<Pages route {0}>".format(self.route)
+        return "<Pages {0}>".format(self.route)
 
 
 class Challenges(db.Model):
@@ -43,6 +44,11 @@ class Challenges(db.Model):
     category = db.Column(db.String(80))
     type = db.Column(db.String(80))
     hidden = db.Column(db.Boolean)
+
+    files = db.relationship("Files", backref="challenge")
+    tags = db.relationship("Tags", backref="challenge")
+    hints = db.relationship("Hints", backref="challenge")
+
     __mapper_args__ = {
         'polymorphic_identity': 'standard',
         'polymorphic_on': type
@@ -56,7 +62,7 @@ class Challenges(db.Model):
         self.type = type
 
     def __repr__(self):
-        return '<chal %r>' % self.name
+        return '<Challenge %r>' % self.name
 
 
 class Hints(db.Model):
@@ -73,7 +79,7 @@ class Hints(db.Model):
         self.type = type
 
     def __repr__(self):
-        return '<hint %r>' % self.hint
+        return '<Hint %r>' % self.hint
 
 
 class Awards(db.Model):
@@ -92,7 +98,7 @@ class Awards(db.Model):
         self.value = value
 
     def __repr__(self):
-        return '<award %r>' % self.name
+        return '<Award %r>' % self.name
 
 
 class Tags(db.Model):
@@ -171,7 +177,7 @@ class Teams(db.Model):
         self.password = bcrypt_sha256.encrypt(str(password))
 
     def __repr__(self):
-        return '<team %r>' % self.name
+        return '<Team %r>' % self.name
 
     def score(self, admin=False):
         score = db.func.sum(Challenges.value).label('score')
@@ -282,7 +288,7 @@ class Solves(db.Model):
         # self.value = value
 
     def __repr__(self):
-        return '<solve {}, {}, {}, {}>'.format(self.teamid, self.chalid, self.ip, self.flag)
+        return '<Solve {}, {}, {}, {}>'.format(self.teamid, self.chalid, self.ip, self.flag)
 
 
 class WrongKeys(db.Model):
@@ -301,7 +307,7 @@ class WrongKeys(db.Model):
         self.flag = flag
 
     def __repr__(self):
-        return '<wrong {}, {}, {}, {}>'.format(self.teamid, self.chalid, self.ip, self.flag)
+        return '<Wrong {}, {}, {}, {}>'.format(self.teamid, self.chalid, self.ip, self.flag)
 
 
 class Requirements(db.Model):
@@ -329,7 +335,7 @@ class Unlocks(db.Model):
         self.itemid = itemid
 
     def __repr__(self):
-        return '<unlock %r>' % self.teamid
+        return '<Unlock %r>' % self.teamid
 
 
 class Tracking(db.Model):
@@ -343,7 +349,7 @@ class Tracking(db.Model):
         self.team = team
 
     def __repr__(self):
-        return '<ip %r>' % self.team
+        return '<Tracking %r>' % self.team
 
 
 class Config(db.Model):

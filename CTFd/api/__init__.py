@@ -3,6 +3,6 @@ from flask_restful import Api, Resource, url_for
 from CTFd.api.challenges import Challenges
 
 api = Blueprint('api', __name__, url_prefix='/api')
-CTFdAPI = Api(api)
+CTFd_API = Api(api)
 
-CTFdAPI.add_resource(Challenges, '/challenges')
+CTFd_API.add_resource(Challenges, '/challenges')
