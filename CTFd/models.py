@@ -51,7 +51,7 @@ class Challenges(db.Model):
     requirements = db.Column(JSON)
     # TODO: Consider adding an association attribute for Files here
 
-    files = db.relationship("Files", backref="challenge")
+    files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
     hints = db.relationship("Hints", backref="challenge")
 
@@ -77,8 +77,7 @@ class Hints(db.Model):
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     hint = db.Column(db.Text)
     cost = db.Column(db.Integer, default=0)
-
-    challenge = db.relationship('Challenges', foreign_keys="Hints.challenge_id", lazy='select')
+    requirements = db.Column(JSON)
 
     def __init__(self, challenge_id, hint, cost=0, type=0):
         self.challenge_id = challenge_id
@@ -99,6 +98,7 @@ class Awards(db.Model):
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     icon = db.Column(db.Text)
+    requirements = db.Column(JSON)
 
     def __init__(self, teamid, name, value):
         self.teamid = teamid
@@ -138,14 +138,14 @@ class Files(db.Model):
         return "<File {0} for challenge {1}>".format(self.location, self.chal)
 
 
-class ChallengeFile(Files):
+class ChallengeFiles(Files):
     __mapper_args__ = {
         'polymorphic_identity': 'challenges'
     }
     chal_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
 
 
-class PageFile(Files):
+class PageFiles(Files):
     __mapper_args__ = {
         'polymorphic_identity': 'pages'
     }
@@ -312,7 +312,7 @@ class Teams(db.Model):
 
 class Submissions(db.Model):
     __tablename__ = 'submissions'
-    __table_args__ = (db.UniqueConstraint('chal_id', 'team_id'), {})
+    __table_args__ = (db.UniqueConstraint('challenge_id', 'team_id'), {})
     id = db.Column(db.Integer, primary_key=True)
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -323,9 +323,9 @@ class Submissions(db.Model):
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     # Relationships
-    user = db.relationship('Teams', foreign_keys="Submissions.user_id", lazy='select')
+    user = db.relationship('Users', foreign_keys="Submissions.user_id", lazy='select')
     team = db.relationship('Teams', foreign_keys="Submissions.team_id", lazy='select')
-    challenge = db.relationship('Challenges', foreign_keys="Submissions.chal_id", lazy='select')
+    challenge = db.relationship('Challenges', foreign_keys="Submissions.challenge_id", lazy='select')
 
     __mapper_args__ = {
         'polymorphic_on': status,
@@ -410,7 +410,7 @@ class Tracking(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    user = db.relationship('Teams', foreign_keys="Solves.user_id", lazy='select')
+    user = db.relationship('Users', foreign_keys="Tracking.user_id", lazy='select')
 
     def __init__(self, ip, user_id):
         self.ip = ip
