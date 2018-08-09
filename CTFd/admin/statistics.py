@@ -2,7 +2,7 @@ from flask import current_app as app, render_template, request, redirect, jsonif
 from CTFd.utils import cache, config
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.updates import update_check
-from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
+from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Config
 
 from CTFd.admin import admin
 
@@ -63,7 +63,7 @@ def admin_stats():
     update_check()
     teams_registered = db.session.query(db.func.count(Teams.id)).first()[0]
 
-    wrong_count = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned == False).count()
+    wrong_count = Fails.query.join(Teams, Fails.teamid == Teams.id).filter(Teams.banned == False).count()
     solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).count()
 
     challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
@@ -110,15 +110,15 @@ def admin_wrong_key(page):
     page_start = results_per_page * (page - 1)
     page_end = results_per_page * (page - 1) + results_per_page
 
-    wrong_keys = WrongKeys.query.add_columns(WrongKeys.id, WrongKeys.chalid, WrongKeys.flag, WrongKeys.teamid, WrongKeys.date,
+    wrong_keys = Fails.query.add_columns(Fails.id, Fails.chalid, Fails.flag, Fails.teamid, Fails.date,
                                              Challenges.name.label('chal_name'), Teams.name.label('team_name')) \
         .join(Challenges) \
         .join(Teams) \
-        .order_by(WrongKeys.date.desc()) \
+        .order_by(Fails.date.desc()) \
         .slice(page_start, page_end) \
         .all()
 
-    wrong_count = db.session.query(db.func.count(WrongKeys.id)).first()[0]
+    wrong_count = db.session.query(db.func.count(Fails.id)).first()[0]
     pages = int(wrong_count / results_per_page) + (wrong_count % results_per_page > 0)
 
     return render_template('admin/wrong_keys.html', wrong_keys=wrong_keys, pages=pages, curr_page=page)

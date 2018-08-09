@@ -1,10 +1,49 @@
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import bcrypt_sha256
+from sqlalchemy import TypeDecorator, String, func, types
 from sqlalchemy.sql.expression import union_all
-from sqlalchemy.types import JSON
+from sqlalchemy.types import JSON, NullType
 import datetime
+import json
 
 db = SQLAlchemy()
+
+
+class SQLiteJson(TypeDecorator):
+    impl = String
+
+    class Comparator(String.Comparator):
+        def __getitem__(self, index):
+            if isinstance(index, tuple):
+                index = "$%s" % (
+                    "".join([
+                        "[%s]" % elem if isinstance(elem, int)
+                        else '."%s"' % elem for elem in index
+                    ])
+                )
+            elif isinstance(index, int):
+                index = "$[%s]" % index
+            else:
+                index = '$."%s"' % index
+
+            # json_extract does not appear to return JSON sub-elements
+            # which is weird.
+            return func.json_extract(self.expr, index, type_=NullType)
+
+    comparator_factory = Comparator
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            value = json.dumps(value)
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            value = json.loads(value)
+        return value
+
+
+JSONLite = types.JSON().with_variant(SQLiteJson, 'sqlite')
 
 
 class Announcements(db.Model):
@@ -48,7 +87,7 @@ class Challenges(db.Model):
     category = db.Column(db.String(80))
     type = db.Column(db.String(80))
     hidden = db.Column(db.Boolean)
-    requirements = db.Column(JSON)
+    requirements = db.Column(JSONLite)
     # TODO: Consider adding an association attribute for Files here
 
     files = db.relationship("ChallengeFiles", backref="challenge")
@@ -77,7 +116,7 @@ class Hints(db.Model):
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     hint = db.Column(db.Text)
     cost = db.Column(db.Integer, default=0)
-    requirements = db.Column(JSON)
+    requirements = db.Column(JSONLite)
 
     def __init__(self, challenge_id, hint, cost=0, type=0):
         self.challenge_id = challenge_id
@@ -98,7 +137,7 @@ class Awards(db.Model):
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     icon = db.Column(db.Text)
-    requirements = db.Column(JSON)
+    requirements = db.Column(JSONLite)
 
     def __init__(self, teamid, name, value):
         self.teamid = teamid

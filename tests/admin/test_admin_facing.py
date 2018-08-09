@@ -146,8 +146,8 @@ def test_admins_can_create_challenges():
         assert chal.value == 100
         assert chal.type == 'standard'
 
-        assert Keys.query.count() == 1
-        key = Keys.query.filter_by(id=1).first()
+        assert Flags.query.count() == 1
+        key = Flags.query.filter_by(id=1).first()
         assert key.type == 'static'
         assert key.flag == 'flag'
     destroy_ctfd(app)

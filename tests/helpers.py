@@ -118,7 +118,7 @@ def gen_file(db, chal, location):
 
 
 def gen_flag(db, chal, flag='flag', key_type='static', data=None):
-    key = Keys(chal, flag, key_type)
+    key = Flags(chal, flag, key_type)
     if data:
         key.data = data
     db.session.add(key)
@@ -149,7 +149,7 @@ def gen_solve(db, teamid, chalid, ip='127.0.0.1', flag='rightkey'):
 
 
 def gen_wrongkey(db, teamid, chalid, ip='127.0.0.1', flag='wrongkey'):
-    wrongkey = WrongKeys(teamid, chalid, ip, flag)
+    wrongkey = Fails(teamid, chalid, ip, flag)
     wrongkey.date = datetime.datetime.utcnow()
     db.session.add(wrongkey)
     db.session.commit()

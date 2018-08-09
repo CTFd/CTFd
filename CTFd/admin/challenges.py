@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils.decorators import admins_only
-from CTFd.models import db, Teams, Solves, Awards, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config, Hints, Unlocks
+from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Config, Hints, Unlocks
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
 from CTFd.admin import admin
@@ -232,7 +232,7 @@ def admin_files(chalid):
 def admin_get_values(chalid, prop):
     challenge = Challenges.query.filter_by(id=chalid).first_or_404()
     if prop == 'keys':
-        chal_keys = Keys.query.filter_by(chal=challenge.id).all()
+        chal_keys = Flags.query.filter_by(chal=challenge.id).all()
         json_data = {'keys': []}
         for x in chal_keys:
             key_class = get_key_class(x.type)

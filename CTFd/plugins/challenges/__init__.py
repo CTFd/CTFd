@@ -54,7 +54,7 @@ class CTFdStandardChallenge(BaseChallenge):
         db.session.add(chal)
         db.session.commit()
 
-        flag = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
+        flag = Flags(chal.id, request.form['key'], request.form['key_type[0]'])
         if request.form.get('keydata'):
             flag.data = request.form.get('keydata')
         db.session.add(flag)
@@ -120,9 +120,9 @@ class CTFdStandardChallenge(BaseChallenge):
         :param challenge:
         :return:
         """
-        WrongKeys.query.filter_by(chalid=challenge.id).delete()
+        Fails.query.filter_by(chalid=challenge.id).delete()
         Solves.query.filter_by(chalid=challenge.id).delete()
-        Keys.query.filter_by(chal=challenge.id).delete()
+        Flags.query.filter_by(chal=challenge.id).delete()
         files = Files.query.filter_by(chal=challenge.id).all()
         for f in files:
             utils.delete_file(f.id)
@@ -144,7 +144,7 @@ class CTFdStandardChallenge(BaseChallenge):
         :return: (boolean, string)
         """
         provided_key = request.form['key'].strip()
-        chal_keys = Keys.query.filter_by(chal=chal.id).all()
+        chal_keys = Flags.query.filter_by(chal=chal.id).all()
         for chal_key in chal_keys:
             if get_key_class(chal_key.type).compare(chal_key, provided_key):
                 return True, 'Correct'
@@ -169,7 +169,7 @@ class CTFdStandardChallenge(BaseChallenge):
     @staticmethod
     def fail(team, chal, request):
         """
-        This method is used to insert WrongKeys into the database in order to mark an answer incorrect.
+        This method is used to insert Fails into the database in order to mark an answer incorrect.
 
         :param team: The Team object from the database
         :param chal: The Challenge object from the database
@@ -177,7 +177,7 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         provided_key = request.form['key'].strip()
-        wrong = WrongKeys(teamid=team.id, chalid=chal.id, ip=utils.get_ip(request), flag=provided_key)
+        wrong = Fails(teamid=team.id, chalid=chal.id, ip=utils.get_ip(request), flag=provided_key)
         db.session.add(wrong)
         db.session.commit()
         db.session.close()

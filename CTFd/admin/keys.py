@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils.decorators import admins_only
-from CTFd.models import db, Keys
+from CTFd.models import db, Flags
 from CTFd.plugins.keys import get_key_class, KEY_CLASSES
 
 from CTFd.admin import admin
@@ -32,7 +32,7 @@ def admin_key_types(key_id=None):
 def admin_keys_view(keyid):
     if request.method == 'GET':
         if keyid:
-            saved_key = Keys.query.filter_by(id=keyid).first_or_404()
+            saved_key = Flags.query.filter_by(id=keyid).first_or_404()
             key_class = get_key_class(saved_key.type)
             json_data = {
                 'id': saved_key.id,
@@ -51,11 +51,11 @@ def admin_keys_view(keyid):
         data = request.form.get('keydata')
         key_type = request.form.get('key_type')
         if not keyid:
-            k = Keys(chal, flag, key_type)
+            k = Flags(chal, flag, key_type)
             k.data = data
             db.session.add(k)
         else:
-            k = Keys.query.filter_by(id=keyid).first()
+            k = Flags.query.filter_by(id=keyid).first()
             k.flag = flag
             k.data = data
             k.type = key_type
@@ -68,7 +68,7 @@ def admin_keys_view(keyid):
 @admins_only
 def admin_delete_keys(keyid):
     if request.method == 'POST':
-        key = Keys.query.filter_by(id=keyid).first_or_404()
+        key = Flags.query.filter_by(id=keyid).first_or_404()
         db.session.delete(key)
         db.session.commit()
         db.session.close()

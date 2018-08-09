@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Teams, Solves, WrongKeys, Challenges
+from CTFd.models import Teams, Solves, Fails, Challenges
 from CTFd.utils import get_config, set_config
 from CTFd import utils
 from tests.helpers import *
@@ -233,7 +233,7 @@ def test_challenges_with_max_attempts():
                 }
             r = client.post('/chal/{}'.format(chal_id), data=data)
 
-        wrong_keys = WrongKeys.query.all()
+        wrong_keys = Fails.query.all()
         assert len(wrong_keys) == 3
 
         with client.session_transaction() as sess:
@@ -270,7 +270,7 @@ def test_challenge_kpm_limit():
                 }
             r = client.post('/chal/{}'.format(chal_id), data=data)
 
-        wrong_keys = WrongKeys.query.all()
+        wrong_keys = Fails.query.all()
         assert len(wrong_keys) == 11
 
         with client.session_transaction() as sess:
@@ -281,7 +281,7 @@ def test_challenge_kpm_limit():
         r = client.post('/chal/{}'.format(chal_id), data=data)
         assert r.status_code == 200
 
-        wrong_keys = WrongKeys.query.all()
+        wrong_keys = Fails.query.all()
         assert len(wrong_keys) == 12
 
         resp = json.loads(r.data.decode('utf8'))
@@ -322,7 +322,7 @@ def test_submitting_flags_with_large_ips():
             assert r.status_code == 200
             resp = json.loads(r.data.decode('utf8'))
             assert resp.get('status') == 0 and resp.get('message') == "Incorrect"
-            assert WrongKeys.query.filter_by(ip=ip_address).first()
+            assert Fails.query.filter_by(ip=ip_address).first()
 
             # Submit correct key
             with client.session_transaction() as sess:
@@ -570,7 +570,7 @@ def test_hidden_challenge_is_unsolveable():
         solves = Solves.query.all()
         assert len(solves) == 0
 
-        wrong_keys = WrongKeys.query.all()
+        wrong_keys = Fails.query.all()
         assert len(wrong_keys) == 0
     destroy_ctfd(app)
 
@@ -611,7 +611,7 @@ def test_challenges_cannot_be_solved_while_paused():
         assert len(solves) == 0
 
         # There are no wrong keys saved
-        wrong_keys = WrongKeys.query.all()
+        wrong_keys = Fails.query.all()
         assert len(wrong_keys) == 0
     destroy_ctfd(app)
 

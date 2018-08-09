@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils.decorators import admins_only, ratelimit
-from CTFd.models import db, Teams, Solves, Awards, Unlocks, Challenges, WrongKeys, Keys, Tags, Files, Tracking, Pages, Config
+from CTFd.models import db, Teams, Solves, Awards, Unlocks, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Config
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
 
@@ -117,7 +117,7 @@ def admin_team(teamid):
                           .filter_by(team=teamid) \
                           .group_by(Tracking.ip) \
                           .order_by(last_seen.desc()).all()
-        wrong_keys = WrongKeys.query.filter_by(teamid=teamid).order_by(WrongKeys.date.asc()).all()
+        wrong_keys = Fails.query.filter_by(teamid=teamid).order_by(Fails.date.asc()).all()
         awards = Awards.query.filter_by(teamid=teamid).order_by(Awards.date.asc()).all()
         score = user.score(admin=True)
         place = user.place(admin=True)
@@ -221,7 +221,7 @@ def delete_team(teamid):
     try:
         Unlocks.query.filter_by(teamid=teamid).delete()
         Awards.query.filter_by(teamid=teamid).delete()
-        WrongKeys.query.filter_by(teamid=teamid).delete()
+        Fails.query.filter_by(teamid=teamid).delete()
         Solves.query.filter_by(teamid=teamid).delete()
         Tracking.query.filter_by(team=teamid).delete()
         Teams.query.filter_by(id=teamid).delete()
@@ -272,13 +272,13 @@ def admin_solves(teamid="all"):
 @admins_only
 def admin_fails(teamid):
     if teamid == "all":
-        fails = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned == False).count()
+        fails = Fails.query.join(Teams, Fails.teamid == Teams.id).filter(Teams.banned == False).count()
         solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).count()
         db.session.close()
         json_data = {'fails': str(fails), 'solves': str(solves)}
         return jsonify(json_data)
     else:
-        fails = WrongKeys.query.filter_by(teamid=teamid).count()
+        fails = Fails.query.filter_by(teamid=teamid).count()
         solves = Solves.query.filter_by(teamid=teamid).count()
         db.session.close()
         json_data = {'fails': str(fails), 'solves': str(solves)}
@@ -308,7 +308,7 @@ def delete_solve(keyid):
 @admin.route('/admin/wrong_keys/<int:keyid>/delete', methods=['POST'])
 @admins_only
 def delete_wrong_key(keyid):
-    wrong_key = WrongKeys.query.filter_by(id=keyid).first_or_404()
+    wrong_key = Fails.query.filter_by(id=keyid).first_or_404()
     db.session.delete(wrong_key)
     db.session.commit()
     db.session.close()

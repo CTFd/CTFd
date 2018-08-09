@@ -6,7 +6,7 @@ import hashlib
 import random
 
 from CTFd import create_app
-from CTFd.models import Teams, Solves, Challenges, WrongKeys, Keys, Files, Awards
+from CTFd.models import Teams, Solves, Challenges, Fails, Flags, Files, Awards
 
 app = create_app()
 
@@ -222,7 +222,7 @@ if __name__ == '__main__':
             word = gen_word()
             db.session.add(Challenges(word, gen_sentence(), gen_value(), gen_category()))
             db.session.commit()
-            db.session.add(Keys(x + 1, word, 'static'))
+            db.session.add(Flags(x + 1, word, 'static'))
             db.session.commit()
 
         # Generating Files
@@ -284,8 +284,8 @@ if __name__ == '__main__':
 
         db.session.commit()
 
-        # Generating Wrong Keys
-        print("GENERATING WRONG KEYS")
+        # Generating Wrong Flags
+        print("GENERATING WRONG Flags")
         for x in range(USER_AMOUNT):
             used = []
             base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
@@ -293,7 +293,7 @@ if __name__ == '__main__':
                 chalid = random.randint(1, CHAL_AMOUNT)
                 if chalid not in used:
                     used.append(chalid)
-                    wrong = WrongKeys(x + 1, chalid, '127.0.0.1', gen_word())
+                    wrong = Fails(x + 1, chalid, '127.0.0.1', gen_word())
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     wrong.date = new_base

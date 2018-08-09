@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Teams, Solves, WrongKeys
+from CTFd.models import Teams, Solves, Fails
 from CTFd.utils import get_config, set_config
 from CTFd import utils
 from tests.helpers import *

@@ -470,7 +470,7 @@ def test_import_ctf():
 
             assert Teams.query.count() == 11
             assert Challenges.query.count() == 10
-            assert Keys.query.count() == 10
+            assert Flags.query.count() == 10
     destroy_ctfd(app)
 
 
