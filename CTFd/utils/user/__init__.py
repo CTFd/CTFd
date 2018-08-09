@@ -1,7 +1,7 @@
 from flask import current_app as app, session, request
 from CTFd.models import Teams
 from CTFd.utils import get_config
-from CTFd.models import db, WrongKeys
+from CTFd.models import db, Fails
 import datetime
 import re
 
@@ -55,4 +55,4 @@ def get_ip(req=None):
 
 def get_wrong_submissions_per_minute(teamid):  # keys per minute
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
-    return len(db.session.query(WrongKeys).filter(WrongKeys.teamid == teamid, WrongKeys.date >= one_min_ago).all())
+    return len(db.session.query(Fails).filter(Fails.teamid == teamid, Fails.date >= one_min_ago).all())

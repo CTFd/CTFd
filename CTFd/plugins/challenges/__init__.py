@@ -1,6 +1,6 @@
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.keys import get_key_class
-from CTFd.models import db, Solves, WrongKeys, Keys, Challenges, Files, Tags, Hints
+from CTFd.models import db, Solves, Fails, Flags, Challenges, Files, Tags, Hints
 from CTFd import utils
 
 

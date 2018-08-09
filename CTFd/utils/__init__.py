@@ -9,7 +9,7 @@ from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_
 from CTFd.models import (
     db,
     Challenges,
-    WrongKeys,
+    Fails,
     Pages,
     Config,
     Tracking,

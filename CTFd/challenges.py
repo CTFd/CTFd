@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, jsonify, url_for, session, Blueprint, abort
-from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards, Hints, Unlocks
+from CTFd.models import db, Challenges, Files, Solves, Fails, Flags, Tags, Teams, Awards, Hints, Unlocks
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.decorators import (
     authed_only,
@@ -299,7 +299,7 @@ def solves_public(teamid=None):
 @challenges.route('/fails')
 @authed_only
 def fails_private():
-    fails = WrongKeys.query.filter_by(teamid=session['id']).count()
+    fails = Fails.query.filter_by(teamid=session['id']).count()
     solves = Solves.query.filter_by(teamid=session['id']).count()
 
     db.session.close()
@@ -313,13 +313,13 @@ def fails_private():
 @challenges.route('/fails/<int:teamid>')
 def fails_public(teamid=None):
     if current_user.authed() and session['id'] == teamid:
-        fails = WrongKeys.query.filter_by(teamid=teamid).count()
+        fails = Fails.query.filter_by(teamid=teamid).count()
         solves = Solves.query.filter_by(teamid=teamid).count()
     elif config.hide_scores():
         fails = 0
         solves = 0
     else:
-        fails = WrongKeys.query.filter_by(teamid=teamid).count()
+        fails = Fails.query.filter_by(teamid=teamid).count()
         solves = Solves.query.filter_by(teamid=teamid).count()
     db.session.close()
     response = {
@@ -353,8 +353,8 @@ def chal(chalid):
         })
     if (current_user.authed() and current_user.is_verified() and (ctf_started() or config.view_after_ctf())) or current_user.is_admin():
         team = Teams.query.filter_by(id=session['id']).first()
-        fails = WrongKeys.query.filter_by(teamid=session['id'], chalid=chalid).count()
-        logger = logging.getLogger('keys')
+        fails = Fails.query.filter_by(teamid=session['id'], chalid=chalid).count()
+        logger = logging.getLogger('Flags')
         data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'),
                 current_user.get_wrong_submissions_per_minute(session['id']))
         print("[{0}] {1} submitted {2} with kpm {3}".format(*data))
@@ -364,20 +364,20 @@ def chal(chalid):
             abort(404)
         chal_class = get_chal_class(chal.type)
 
-        # Anti-bruteforce / submitting keys too quickly
+        # Anti-bruteforce / submitting Flags too quickly
         if current_user.get_wrong_submissions_per_minute(session['id']) > 10:
             if ctftime():
                 chal_class.fail(team=team, chal=chal, request=request)
             logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
             # return '3' # Submitting too fast
-            return jsonify({'status': 3, 'message': "You're submitting keys too fast. Slow down."})
+            return jsonify({'status': 3, 'message': "You're submitting Flags too fast. Slow down."})
 
         solves = Solves.query.filter_by(teamid=session['id'], chalid=chalid).first()
 
         # Challange not solved yet
         if not solves:
             provided_key = request.form['key'].strip()
-            saved_keys = Keys.query.filter_by(chal=chal.id).all()
+            saved_Flags = Flags.query.filter_by(chal=chal.id).all()
 
             # Hit max attempts
             max_tries = chal.max_attempts

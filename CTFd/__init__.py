@@ -11,7 +11,7 @@ from six.moves import input
 
 from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
 from CTFd.utils.updates import update_check
-from CTFd import utils
+# from CTFd import utils
 
 from CTFd.views import views
 from CTFd.challenges import challenges
@@ -103,7 +103,7 @@ def create_app(config='CTFd.config.Config'):
         theme_loader = ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True)
         app.jinja_loader = theme_loader
 
-        from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
+        from CTFd.models import db, Teams, Solves, Challenges, Fails, Flags, Tags, Files, Tracking
 
         url = make_url(app.config['SQLALCHEMY_DATABASE_URI'])
         if url.drivername == 'postgres':

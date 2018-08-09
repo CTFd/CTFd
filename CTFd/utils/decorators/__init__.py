@@ -1,6 +1,5 @@
 from flask import request, redirect, url_for, session, abort, jsonify
-from CTFd import utils
-from CTFd.utils import config, cache
+from CTFd.utils import config, cache, get_config, get_app_config
 from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime
 from CTFd.utils import user as current_user
 import functools
@@ -41,7 +40,7 @@ def require_verified_emails(f):
 
     @functools.wraps(f)
     def require_verified_emails_wrapper(*args, **kwargs):
-        if utils.get_config('verify_emails'):
+        if get_config('verify_emails'):
             if current_user.authed():
                 if current_user.is_admin() is False and current_user.is_verified() is False:  # User is not confirmed
                     return redirect(url_for('auth.confirm'))
