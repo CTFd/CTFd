@@ -47,6 +47,7 @@ JSONLite = types.JSON().with_variant(SQLiteJson, 'sqlite')
 
 
 class Announcements(db.Model):
+    __tablename__ = 'announcements'
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -56,6 +57,7 @@ class Announcements(db.Model):
 
 
 class Pages(db.Model):
+    __tablename__ = 'pages'
     id = db.Column(db.Integer, primary_key=True)
     auth_required = db.Column(db.Boolean)
     title = db.Column(db.String(80))
@@ -79,6 +81,7 @@ class Pages(db.Model):
 
 
 class Challenges(db.Model):
+    __tablename__ = 'challenges'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
@@ -88,7 +91,6 @@ class Challenges(db.Model):
     type = db.Column(db.String(80))
     hidden = db.Column(db.Boolean)
     requirements = db.Column(JSONLite)
-    # TODO: Consider adding an association attribute for Files here
 
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
@@ -111,6 +113,7 @@ class Challenges(db.Model):
 
 
 class Hints(db.Model):
+    __tablename__ = 'hints'
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.Integer, default=0)
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
@@ -129,6 +132,7 @@ class Hints(db.Model):
 
 
 class Awards(db.Model):
+    __tablename__ = 'awards'
     id = db.Column(db.Integer, primary_key=True)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
     name = db.Column(db.String(80))
@@ -149,6 +153,7 @@ class Awards(db.Model):
 
 
 class Tags(db.Model):
+    __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
     chal_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     tag = db.Column(db.String(80))
@@ -162,6 +167,7 @@ class Tags(db.Model):
 
 
 class Files(db.Model):
+    __tablename__ = 'files'
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(80))
     location = db.Column(db.Text)
@@ -192,6 +198,7 @@ class PageFiles(Files):
 
 
 class Flags(db.Model):
+    __tablename__ = 'flags'
     id = db.Column(db.Integer, primary_key=True)
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     type = db.Column(db.String(80))
@@ -212,6 +219,7 @@ class Flags(db.Model):
 
 
 class Users(db.Model):
+    __tablename__ = 'users'
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
     oauth_id = db.Column(db.Integer)
@@ -219,6 +227,7 @@ class Users(db.Model):
     password = db.Column(db.String(128))
     email = db.Column(db.String(128), unique=True)
     admin = db.Column(db.Boolean, default=False)
+    type = db.Column(db.String(80))
 
     # Supplementary attributes
     website = db.Column(db.String(128))
@@ -230,6 +239,11 @@ class Users(db.Model):
     verified = db.Column(db.Boolean, default=False)
 
     joined = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'user',
+        'polymorphic_on': type
+    }
 
     def __init__(self, name, email, password):
         self.name = name
@@ -243,7 +257,14 @@ class Users(db.Model):
         pass
 
 
+class Admins(Users):
+    __mapper_args__ = {
+        'polymorphic_identity': 'admin'
+    }
+
+
 class Teams(db.Model):
+    __tablename__ = 'teams'
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
     oauth_id = db.Column(db.Integer)
@@ -393,19 +414,8 @@ class Fails(Submissions):
     }
 
 
-# class Requirements(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     itemid = db.Column(db.Integer)
-#     data = db.Column(db.Text)
-#     model = db.Column(db.String(32))
-#
-#     def __init__(self, itemid, data, model):
-#         self.itemid = itemid
-#         self.data = data
-#         self.model = model
-
-
 class Unlocks(db.Model):
+    __tablename__ = 'unlocks'
     id = db.Column(db.Integer, primary_key=True)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
     item_id = db.Column(db.Integer)
@@ -444,6 +454,7 @@ class HintUnlocks(Unlocks):
 
 
 class Tracking(db.Model):
+    __tablename__ = 'tracking'
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(db.String(46))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -460,6 +471,7 @@ class Tracking(db.Model):
 
 
 class Config(db.Model):
+    __tablename__ = 'config'
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.Text)
     value = db.Column(db.Text)
