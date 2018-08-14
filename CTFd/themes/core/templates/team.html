@@ -92,8 +92,8 @@
 				<tbody>
 				{% for solve in solves %}
 					<tr>
-						<td><a href="{{ request.script_root }}/challenges#{{ solve.chal.name }}">{{ solve.chal.name }}</a></td>
-						<td class="d-none d-md-block d-lg-block">{{ solve.chal.category }}</td><td>{{ solve.chal.value }}</td>
+						<td><a href="{{ request.script_root }}/challenges#{{ solve.challenge.name }}">{{ solve.challenge.name }}</a></td>
+						<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td><td>{{ solve.challenge.value }}</td>
 						<td class="solve-time"><script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
 					</tr>
 				{% endfor %}

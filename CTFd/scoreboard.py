@@ -20,22 +20,22 @@ def get_standings(admin=False, count=None):
     Challenges & Awards with a value of zero are filtered out of the calculations to avoid incorrect tie breaks.
     """
     scores = db.session.query(
-        Solves.teamid.label('teamid'),
+        Solves.team_id.label('team_id'),
         db.func.sum(Challenges.value).label('score'),
         db.func.max(Solves.id).label('id'),
         db.func.max(Solves.date).label('date')
     ).join(Challenges)\
         .filter(Challenges.value != 0)\
-        .group_by(Solves.teamid)
+        .group_by(Solves.team_id)
 
     awards = db.session.query(
-        Awards.teamid.label('teamid'),
+        Awards.team_id.label('team_id'),
         db.func.sum(Awards.value).label('score'),
         db.func.max(Awards.id).label('id'),
         db.func.max(Awards.date).label('date')
     )\
         .filter(Awards.value != 0)\
-        .group_by(Awards.teamid)
+        .group_by(Awards.team_id)
 
     """
     Filter out solves and awards that are before a specific time point.
@@ -54,11 +54,11 @@ def get_standings(admin=False, count=None):
     Sum each of the results by the team id to get their score.
     """
     sumscores = db.session.query(
-        results.columns.teamid,
+        results.columns.team_id,
         db.func.sum(results.columns.score).label('score'),
         db.func.max(results.columns.id).label('id'),
         db.func.max(results.columns.date).label('date')
-    ).group_by(results.columns.teamid)\
+    ).group_by(results.columns.team_id)\
         .subquery()
 
     """
@@ -71,19 +71,19 @@ def get_standings(admin=False, count=None):
     """
     if admin:
         standings_query = db.session.query(
-            Teams.id.label('teamid'),
+            Teams.id.label('team_id'),
             Teams.name.label('name'),
             Teams.banned, sumscores.columns.score
         )\
-            .join(sumscores, Teams.id == sumscores.columns.teamid) \
+            .join(sumscores, Teams.id == sumscores.columns.team_id) \
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
     else:
         standings_query = db.session.query(
-            Teams.id.label('teamid'),
+            Teams.id.label('team_id'),
             Teams.name.label('name'),
             sumscores.columns.score
         )\
-            .join(sumscores, Teams.id == sumscores.columns.teamid) \
+            .join(sumscores, Teams.id == sumscores.columns.team_id) \
             .filter(Teams.banned == False) \
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
@@ -120,7 +120,7 @@ def scores():
     standings = get_standings()
 
     for i, x in enumerate(standings):
-        json['standings'].append({'pos': i + 1, 'id': x.teamid, 'team': x.name, 'score': int(x.score)})
+        json['standings'].append({'pos': i + 1, 'id': x.team_id, 'team': x.name, 'score': int(x.score)})
     return jsonify(json)
 
 
@@ -137,10 +137,10 @@ def top(count):
 
     standings = get_standings(count=count)
 
-    team_ids = [team.teamid for team in standings]
+    team_ids = [team.team_id for team in standings]
 
-    solves = Solves.query.filter(Solves.teamid.in_(team_ids))
-    awards = Awards.query.filter(Awards.teamid.in_(team_ids))
+    solves = Solves.query.filter(Solves.team_id.in_(team_ids))
+    awards = Awards.query.filter(Awards.team_id.in_(team_ids))
 
     freeze = get_config('freeze')
 
@@ -153,23 +153,23 @@ def top(count):
 
     for i, team in enumerate(team_ids):
         json['places'][i + 1] = {
-            'id': standings[i].teamid,
+            'id': standings[i].team_id,
             'name': standings[i].name,
             'solves': []
         }
         for solve in solves:
-            if solve.teamid == team:
+            if solve.team_id == team:
                 json['places'][i + 1]['solves'].append({
-                    'chal': solve.chalid,
-                    'team': solve.teamid,
-                    'value': solve.chal.value,
+                    'chal': solve.challenge_id,
+                    'team': solve.team_id,
+                    'value': solve.challenge.value,
                     'time': unix_time(solve.date)
                 })
         for award in awards:
-            if award.teamid == team:
+            if award.team_id == team:
                 json['places'][i + 1]['solves'].append({
                     'chal': None,
-                    'team': award.teamid,
+                    'team': award.team_id,
                     'value': award.value,
                     'time': unix_time(award.date)
                 })

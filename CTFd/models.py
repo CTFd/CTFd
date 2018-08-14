@@ -135,6 +135,7 @@ class Hints(db.Model):
 class Awards(db.Model):
     __tablename__ = 'awards'
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
@@ -144,8 +145,12 @@ class Awards(db.Model):
     icon = db.Column(db.Text)
     requirements = db.Column(JSONLite)
 
-    def __init__(self, teamid, name, value):
-        self.teamid = teamid
+    user = db.relationship('Users', foreign_keys="Awards.user_id", lazy='select')
+    team = db.relationship('Teams', foreign_keys="Awards.team_id", lazy='select')
+
+    def __init__(self, user_id, team_id, name, value):
+        self.user_id = user_id
+        self.team_id = team_id
         self.name = name
         self.value = value
 
@@ -262,11 +267,93 @@ class Users(db.Model):
         self.email = email
         self.password = bcrypt_sha256.encrypt(str(password))
 
-    def score(self):
-        pass
+    def score(self, admin=False):
+        score = db.func.sum(Challenges.value).label('score')
+        user = db.session.query(Solves.user_id, score).join(Users).join(Challenges).filter(Users.id == self.id)
+        award_score = db.func.sum(Awards.value).label('award_score')
+        award = db.session.query(award_score).filter_by(user_id=self.id)
 
-    def place(self):
-        pass
+        if not admin:
+            freeze = Config.query.filter_by(key='freeze').first()
+            if freeze and freeze.value:
+                freeze = int(freeze.value)
+                freeze = datetime.datetime.utcfromtimestamp(freeze)
+                user = user.filter(Solves.date < freeze)
+                award = award.filter(Awards.date < freeze)
+
+        user = user.group_by(Solves.user_id).first()
+        award = award.first()
+
+        if user and award:
+            return int(user.score or 0) + int(award.award_score or 0)
+        elif user:
+            return int(user.score or 0)
+        elif award:
+            return int(award.award_score or 0)
+        else:
+            return 0
+
+    def place(self, admin=False):
+        """
+        This method is generally a clone of CTFd.scoreboard.get_standings.
+        The point being that models.py must be self-reliant and have little
+        to no imports within the CTFd application as importing from the
+        application itself will result in a circular import.
+        """
+        scores = db.session.query(
+            Solves.user_id.label('user_id'),
+            db.func.sum(Challenges.value).label('score'),
+            db.func.max(Solves.id).label('id'),
+            db.func.max(Solves.date).label('date')
+        ).join(Challenges).filter(Challenges.value != 0).group_by(Solves.user_id)
+
+        awards = db.session.query(
+            Awards.user_id.label('user_id'),
+            db.func.sum(Awards.value).label('score'),
+            db.func.max(Awards.id).label('id'),
+            db.func.max(Awards.date).label('date')
+        ).filter(Awards.value != 0).group_by(Awards.user_id)
+
+        if not admin:
+            freeze = Config.query.filter_by(key='freeze').first()
+            if freeze and freeze.value:
+                freeze = int(freeze.value)
+                freeze = datetime.datetime.utcfromtimestamp(freeze)
+                scores = scores.filter(Solves.date < freeze)
+                awards = awards.filter(Awards.date < freeze)
+
+        results = union_all(scores, awards).alias('results')
+
+        sumscores = db.session.query(
+            results.columns.user_id,
+            db.func.sum(results.columns.score).label('score'),
+            db.func.max(results.columns.id).label('id'),
+            db.func.max(results.columns.date).label('date')
+        ).group_by(results.columns.user_id).subquery()
+
+        if admin:
+            standings_query = db.session.query(
+                Users.id.label('user_id'),
+            )\
+                .join(sumscores, Users.id == sumscores.columns.user_id) \
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+        else:
+            standings_query = db.session.query(
+                Users.id.label('user_id'),
+            )\
+                .join(sumscores, Users.id == sumscores.columns.user_id) \
+                .filter(Users.banned == False) \
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+
+        standings = standings_query.all()
+
+        # http://codegolf.stackexchange.com/a/4712
+        try:
+            i = standings.index((self.id,)) + 1
+            k = i % 10
+            return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
+        except ValueError:
+            return 0
 
 
 class Admins(Users):
@@ -296,93 +383,93 @@ class Teams(db.Model):
     def __init__(self, name):
         self.name = name
 
-    # def score(self, admin=False):
-    #     score = db.func.sum(Challenges.value).label('score')
-    #     team = db.session.query(Solves.teamid, score).join(Teams).join(Challenges).filter(Teams.id == self.id)
-    #     award_score = db.func.sum(Awards.value).label('award_score')
-    #     award = db.session.query(award_score).filter_by(teamid=self.id)
-    #
-    #     if not admin:
-    #         freeze = Config.query.filter_by(key='freeze').first()
-    #         if freeze and freeze.value:
-    #             freeze = int(freeze.value)
-    #             freeze = datetime.datetime.utcfromtimestamp(freeze)
-    #             team = team.filter(Solves.date < freeze)
-    #             award = award.filter(Awards.date < freeze)
-    #
-    #     team = team.group_by(Solves.teamid).first()
-    #     award = award.first()
-    #
-    #     if team and award:
-    #         return int(team.score or 0) + int(award.award_score or 0)
-    #     elif team:
-    #         return int(team.score or 0)
-    #     elif award:
-    #         return int(award.award_score or 0)
-    #     else:
-    #         return 0
-    #
-    # def place(self, admin=False):
-    #     """
-    #     This method is generally a clone of CTFd.scoreboard.get_standings.
-    #     The point being that models.py must be self-reliant and have little
-    #     to no imports within the CTFd application as importing from the
-    #     application itself will result in a circular import.
-    #     """
-    #     scores = db.session.query(
-    #         Solves.teamid.label('teamid'),
-    #         db.func.sum(Challenges.value).label('score'),
-    #         db.func.max(Solves.id).label('id'),
-    #         db.func.max(Solves.date).label('date')
-    #     ).join(Challenges).filter(Challenges.value != 0).group_by(Solves.teamid)
-    #
-    #     awards = db.session.query(
-    #         Awards.teamid.label('teamid'),
-    #         db.func.sum(Awards.value).label('score'),
-    #         db.func.max(Awards.id).label('id'),
-    #         db.func.max(Awards.date).label('date')
-    #     ).filter(Awards.value != 0).group_by(Awards.teamid)
-    #
-    #     if not admin:
-    #         freeze = Config.query.filter_by(key='freeze').first()
-    #         if freeze and freeze.value:
-    #             freeze = int(freeze.value)
-    #             freeze = datetime.datetime.utcfromtimestamp(freeze)
-    #             scores = scores.filter(Solves.date < freeze)
-    #             awards = awards.filter(Awards.date < freeze)
-    #
-    #     results = union_all(scores, awards).alias('results')
-    #
-    #     sumscores = db.session.query(
-    #         results.columns.teamid,
-    #         db.func.sum(results.columns.score).label('score'),
-    #         db.func.max(results.columns.id).label('id'),
-    #         db.func.max(results.columns.date).label('date')
-    #     ).group_by(results.columns.teamid).subquery()
-    #
-    #     if admin:
-    #         standings_query = db.session.query(
-    #             Teams.id.label('teamid'),
-    #         )\
-    #             .join(sumscores, Teams.id == sumscores.columns.teamid) \
-    #             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
-    #     else:
-    #         standings_query = db.session.query(
-    #             Teams.id.label('teamid'),
-    #         )\
-    #             .join(sumscores, Teams.id == sumscores.columns.teamid) \
-    #             .filter(Teams.banned == False) \
-    #             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
-    #
-    #     standings = standings_query.all()
-    #
-    #     # http://codegolf.stackexchange.com/a/4712
-    #     try:
-    #         i = standings.index((self.id,)) + 1
-    #         k = i % 10
-    #         return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
-    #     except ValueError:
-    #         return 0
+    def score(self, admin=False):
+        score = db.func.sum(Challenges.value).label('score')
+        team = db.session.query(Solves.team_id, score).join(Teams).join(Challenges).filter(Teams.id == self.id)
+        award_score = db.func.sum(Awards.value).label('award_score')
+        award = db.session.query(award_score).filter_by(team_id=self.id)
+
+        if not admin:
+            freeze = Config.query.filter_by(key='freeze').first()
+            if freeze and freeze.value:
+                freeze = int(freeze.value)
+                freeze = datetime.datetime.utcfromtimestamp(freeze)
+                team = team.filter(Solves.date < freeze)
+                award = award.filter(Awards.date < freeze)
+
+        team = team.group_by(Solves.team_id).first()
+        award = award.first()
+
+        if team and award:
+            return int(team.score or 0) + int(award.award_score or 0)
+        elif team:
+            return int(team.score or 0)
+        elif award:
+            return int(award.award_score or 0)
+        else:
+            return 0
+
+    def place(self, admin=False):
+        """
+        This method is generally a clone of CTFd.scoreboard.get_standings.
+        The point being that models.py must be self-reliant and have little
+        to no imports within the CTFd application as importing from the
+        application itself will result in a circular import.
+        """
+        scores = db.session.query(
+            Solves.team_id.label('team_id'),
+            db.func.sum(Challenges.value).label('score'),
+            db.func.max(Solves.id).label('id'),
+            db.func.max(Solves.date).label('date')
+        ).join(Challenges).filter(Challenges.value != 0).group_by(Solves.team_id)
+
+        awards = db.session.query(
+            Awards.team_id.label('team_id'),
+            db.func.sum(Awards.value).label('score'),
+            db.func.max(Awards.id).label('id'),
+            db.func.max(Awards.date).label('date')
+        ).filter(Awards.value != 0).group_by(Awards.team_id)
+
+        if not admin:
+            freeze = Config.query.filter_by(key='freeze').first()
+            if freeze and freeze.value:
+                freeze = int(freeze.value)
+                freeze = datetime.datetime.utcfromtimestamp(freeze)
+                scores = scores.filter(Solves.date < freeze)
+                awards = awards.filter(Awards.date < freeze)
+
+        results = union_all(scores, awards).alias('results')
+
+        sumscores = db.session.query(
+            results.columns.team_id,
+            db.func.sum(results.columns.score).label('score'),
+            db.func.max(results.columns.id).label('id'),
+            db.func.max(results.columns.date).label('date')
+        ).group_by(results.columns.team_id).subquery()
+
+        if admin:
+            standings_query = db.session.query(
+                Teams.id.label('team_id'),
+            )\
+                .join(sumscores, Teams.id == sumscores.columns.team_id) \
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+        else:
+            standings_query = db.session.query(
+                Teams.id.label('team_id'),
+            )\
+                .join(sumscores, Teams.id == sumscores.columns.team_id) \
+                .filter(Teams.banned == False) \
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+
+        standings = standings_query.all()
+
+        # http://codegolf.stackexchange.com/a/4712
+        try:
+            i = standings.index((self.id,)) + 1
+            k = i % 10
+            return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
+        except ValueError:
+            return 0
 
 
 class Submissions(db.Model):

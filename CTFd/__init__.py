@@ -14,6 +14,7 @@ from CTFd.utils.updates import update_check
 # from CTFd import utils
 
 from CTFd.views import views
+from CTFd.teams import teams
 from CTFd.challenges import challenges
 from CTFd.scoreboard import scoreboard
 from CTFd.auth import auth
@@ -174,6 +175,7 @@ def create_app(config='CTFd.config.Config'):
         init_template_globals(app)
 
         app.register_blueprint(views)
+        app.register_blueprint(teams)
         app.register_blueprint(challenges)
         app.register_blueprint(scoreboard)
         app.register_blueprint(auth)

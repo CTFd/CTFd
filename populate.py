@@ -285,7 +285,7 @@ if __name__ == '__main__':
                 if chalid not in used:
                     used.append(chalid)
                     user = Users.query.filter_by(id=x+1).first()
-                    solve = Solves(x + 1, user.team_id, chalid, '127.0.0.1', gen_word())
+                    solve = Solves(user.id, user.team_id, chalid, '127.0.0.1', gen_word())
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     solve.date = new_base
@@ -297,21 +297,22 @@ if __name__ == '__main__':
         db.session.commit()
 
         # Generating Awards
-        # print("GENERATING AWARDS")
-        # for x in range(USER_AMOUNT):
-        #     base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
-        #     for _ in range(random.randint(0, AWARDS_AMOUNT)):
-        #         award = Awards(x + 1, gen_word(), random.randint(-10, 10))
-        #         new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
-        #         award.date = new_base
-        #         base_time = new_base
+        print("GENERATING AWARDS")
+        for x in range(USER_AMOUNT):
+            base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
+            for _ in range(random.randint(0, AWARDS_AMOUNT)):
+                user = Users.query.filter_by(id=x + 1).first()
+                award = Awards(user.id, user.team_id, gen_word(), random.randint(-10, 10))
+                new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
+                award.date = new_base
+                base_time = new_base
 
-        #         db.session.add(award)
+                db.session.add(award)
 
         db.session.commit()
 
         # Generating Wrong Flags
-        print("GENERATING WRONG Flags")
+        print("GENERATING WRONG FLAGS")
         for x in range(USER_AMOUNT):
             used = []
             base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
@@ -320,7 +321,7 @@ if __name__ == '__main__':
                 if chalid not in used:
                     used.append(chalid)
                     user = Users.query.filter_by(id=x+1).first()
-                    wrong = Fails(x + 1, user.team_id, chalid, '127.0.0.1', gen_word())
+                    wrong = Fails(user.id, user.team_id, chalid, '127.0.0.1', gen_word())
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     wrong.date = new_base
