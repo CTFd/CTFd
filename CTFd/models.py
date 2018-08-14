@@ -186,17 +186,17 @@ class Files(db.Model):
         self.location = location
 
     def __repr__(self):
-        return "<File {0} for challenge {1}>".format(self.location, self.chal)
+        return "<File type={type} location={location}>".format(type=self.type, location=self.location)
 
 
 class ChallengeFiles(Files):
     __mapper_args__ = {
         'polymorphic_identity': 'challenges'
     }
-    chal_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
 
-    def __init__(self, chal_id, location):
-        self.chal_id = chal_id
+    def __init__(self, challenge_id, location):
+        self.challenge_id = challenge_id
         self.location = location
 
 

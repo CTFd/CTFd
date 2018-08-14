@@ -107,6 +107,7 @@ def setup():
 
 # Custom CSS handler
 @views.route('/static/user.css')
+@cache.cached(timeout=300)
 def custom_css():
     return Response(get_config('css'), mimetype='text/css')
 
@@ -204,7 +205,7 @@ def profile():
 @views.route('/files/<path:path>')
 def file_handler(path):
     f = Files.query.filter_by(location=path).first_or_404()
-    if f.chal:
+    if f.challenge_id:
         if not current_user.is_admin():
             if not ctftime():
                 if config.view_after_ctf() and ctf_started():
