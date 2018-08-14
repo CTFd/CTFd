@@ -292,6 +292,7 @@ if __name__ == '__main__':
                     base_time = new_base
 
                     db.session.add(solve)
+                    db.session.commit()
 
         db.session.commit()
 
@@ -319,13 +320,14 @@ if __name__ == '__main__':
                 if chalid not in used:
                     used.append(chalid)
                     user = Users.query.filter_by(id=x+1).first()
-                    wrong = Fails(x + 1, user.team_id,chalid, '127.0.0.1', gen_word())
+                    wrong = Fails(x + 1, user.team_id, chalid, '127.0.0.1', gen_word())
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     wrong.date = new_base
                     base_time = new_base
 
                     db.session.add(wrong)
+                    db.session.commit()
 
         db.session.commit()
         db.session.close()

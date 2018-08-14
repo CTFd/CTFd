@@ -3,6 +3,7 @@ from passlib.hash import bcrypt_sha256
 from sqlalchemy import TypeDecorator, String, func, types
 from sqlalchemy.sql.expression import union_all
 from sqlalchemy.types import JSON, NullType
+from sqlalchemy.orm import validates
 import datetime
 import json
 
@@ -386,7 +387,9 @@ class Teams(db.Model):
 
 class Submissions(db.Model):
     __tablename__ = 'submissions'
-    __table_args__ = (db.UniqueConstraint('challenge_id', 'team_id'), {})
+    # __table_args__ = (
+    #     db.UniqueConstraint('challenge_id', 'user_id', 'team_id')
+    # )
     id = db.Column(db.Integer, primary_key=True)
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -405,10 +408,10 @@ class Submissions(db.Model):
         'polymorphic_on': status,
     }
 
-    def __init__(self, user_id, team_id, chal_id, ip, provided):
+    def __init__(self, user_id, team_id, challenge_id, ip, provided):
         self.user_id = user_id
-        self.chal_id = chal_id
         self.team_id = team_id
+        self.challenge_id = challenge_id
         self.ip = ip
         self.provided = provided
 
@@ -468,6 +471,7 @@ class HintUnlocks(Unlocks):
 
 
 class Tracking(db.Model):
+    # TODO: Perhaps add polymorphic here and create types of Tracking so that we can have an audit log
     __tablename__ = 'tracking'
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(db.String(46))
