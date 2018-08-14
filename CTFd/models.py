@@ -387,6 +387,7 @@ class Teams(db.Model):
 
 class Submissions(db.Model):
     __tablename__ = 'submissions'
+    # TODO: Is it possible to have the database enforce a single solve per user/team?
     # __table_args__ = (
     #     db.UniqueConstraint('challenge_id', 'user_id', 'team_id')
     # )
