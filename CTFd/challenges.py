@@ -24,7 +24,7 @@ challenges = Blueprint('challenges', __name__)
 def hints_view(hintid):
     hint = Hints.query.filter_by(id=hintid).first_or_404()
     chal = Challenges.query.filter_by(id=hint.chal).first()
-    unlock = Unlocks.query.filter_by(model='hints', itemid=hintid, teamid=session['id']).first()
+    unlock = Unlocks.query.filter_by(model='hints', itemid=hintid, team_id=session['id']).first()
     if request.method == 'GET':
         if unlock:
             return jsonify({
@@ -44,8 +44,8 @@ def hints_view(hintid):
                 team = Teams.query.filter_by(id=session['id']).first()
                 if team.score() < hint.cost:
                     return jsonify({'errors': 'Not enough points'})
-                unlock = Unlocks(model='hints', teamid=session['id'], itemid=hint.id)
-                award = Awards(teamid=session['id'], name=text_type('Hint for {}'.format(chal.name)), value=(-hint.cost))
+                unlock = Unlocks(model='hints', team_id=session['id'], itemid=hint.id)
+                award = Awards(team_id=session['id'], name=text_type('Hint for {}'.format(chal.name)), value=(-hint.cost))
                 db.session.add(unlock)
                 db.session.add(award)
                 db.session.commit()
@@ -125,14 +125,14 @@ def chals():
 @require_verified_emails
 @viewable_without_authentication(status_code=403)
 def chal_view(chal_id):
-    teamid = session.get('id')
+    team_id = session.get('id')
 
     chal = Challenges.query.filter_by(id=chal_id).first_or_404()
     chal_class = get_chal_class(chal.type)
 
     tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=chal.id).all()]
     files = [str(f.location) for f in Files.query.filter_by(chal=chal.id).all()]
-    unlocked_hints = set([u.itemid for u in Unlocks.query.filter_by(model='hints', teamid=teamid)])
+    unlocked_hints = set([u.itemid for u in Unlocks.query.filter_by(model='hints', team_id=team_id)])
     hints = []
 
     for hint in Hints.query.filter_by(chal=chal.id).all():
@@ -160,19 +160,19 @@ def solves_per_chal():
         .all()
 
     solves_sub = db.session.query(
-        Solves.chalid,
-        db.func.count(Solves.chalid).label('solves')
+        Solves.challenge_id,
+        db.func.count(Solves.challenge_id).label('solves')
     )\
-        .join(Teams, Solves.teamid == Teams.id) \
+        .join(Teams, Solves.team_id == Teams.id) \
         .filter(Teams.banned == False) \
-        .group_by(Solves.chalid).subquery()
+        .group_by(Solves.challenge_id).subquery()
 
     solves = db.session.query(
-        solves_sub.columns.chalid,
+        solves_sub.columns.challenge_id,
         solves_sub.columns.solves,
         Challenges.name
     ) \
-        .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
+        .join(Challenges, solves_sub.columns.challenge_id == Challenges.id).all()
 
     data = {}
     if config.hide_scores():
@@ -198,12 +198,12 @@ def solves_private():
     awards = None
 
     if current_user.is_admin():
-        solves = Solves.query.filter_by(teamid=session['id']).all()
+        solves = Solves.query.filter_by(team_id=session['id']).all()
     elif config.user_can_view_challenges():
         if current_user.authed():
             solves = Solves.query\
-                .join(Teams, Solves.teamid == Teams.id)\
-                .filter(Solves.teamid == session['id'])\
+                .join(Teams, Solves.team_id == Teams.id)\
+                .filter(Solves.team_id == session['id'])\
                 .all()
         else:
             return jsonify({'solves': []})
@@ -215,8 +215,8 @@ def solves_private():
     for solve in solves:
         response['solves'].append({
             'chal': solve.chal.name,
-            'chalid': solve.chalid,
-            'team': solve.teamid,
+            'challenge_id': solve.challenge_id,
+            'team': solve.team_id,
             'value': solve.chal.value,
             'category': solve.chal.category,
             'time': unix_time(solve.date)
@@ -225,8 +225,8 @@ def solves_private():
         for award in awards:
             response['solves'].append({
                 'chal': award.name,
-                'chalid': None,
-                'team': award.teamid,
+                'challenge_id': None,
+                'team': award.team_id,
                 'value': award.value,
                 'category': award.category or "Award",
                 'time': unix_time(award.date)
@@ -235,19 +235,19 @@ def solves_private():
     return jsonify(response)
 
 
-@challenges.route('/solves/<int:teamid>')
-def solves_public(teamid=None):
+@challenges.route('/solves/<int:team_id>')
+def solves_public(team_id=None):
     solves = None
     awards = None
 
-    if current_user.authed() and session['id'] == teamid:
-        solves = Solves.query.filter_by(teamid=teamid)
-        awards = Awards.query.filter_by(teamid=teamid)
+    if current_user.authed() and session['id'] == team_id:
+        solves = Solves.query.filter_by(team_id=team_id)
+        awards = Awards.query.filter_by(team_id=team_id)
 
         freeze = get_config('freeze')
         if freeze:
             freeze = unix_time_to_utc(freeze)
-            if teamid != session.get('id'):
+            if team_id != session.get('id'):
                 solves = solves.filter(Solves.date < freeze)
                 awards = awards.filter(Awards.date < freeze)
 
@@ -258,13 +258,13 @@ def solves_public(teamid=None):
         solves = []
         awards = []
     else:
-        solves = Solves.query.filter_by(teamid=teamid)
-        awards = Awards.query.filter_by(teamid=teamid)
+        solves = Solves.query.filter_by(team_id=team_id)
+        awards = Awards.query.filter_by(team_id=team_id)
 
         freeze = get_config('freeze')
         if freeze:
             freeze = unix_time_to_utc(freeze)
-            if teamid != session.get('id'):
+            if team_id != session.get('id'):
                 solves = solves.filter(Solves.date < freeze)
                 awards = awards.filter(Awards.date < freeze)
 
@@ -276,8 +276,8 @@ def solves_public(teamid=None):
     for solve in solves:
         response['solves'].append({
             'chal': solve.chal.name,
-            'chalid': solve.chalid,
-            'team': solve.teamid,
+            'challenge_id': solve.challenge_id,
+            'team': solve.team_id,
             'value': solve.chal.value,
             'category': solve.chal.category,
             'time': unix_time(solve.date)
@@ -286,8 +286,8 @@ def solves_public(teamid=None):
         for award in awards:
             response['solves'].append({
                 'chal': award.name,
-                'chalid': None,
-                'team': award.teamid,
+                'challenge_id': None,
+                'team': award.team_id,
                 'value': award.value,
                 'category': award.category or "Award",
                 'time': unix_time(award.date)
@@ -299,8 +299,8 @@ def solves_public(teamid=None):
 @challenges.route('/fails')
 @authed_only
 def fails_private():
-    fails = Fails.query.filter_by(teamid=session['id']).count()
-    solves = Solves.query.filter_by(teamid=session['id']).count()
+    fails = Fails.query.filter_by(team_id=session['id']).count()
+    solves = Solves.query.filter_by(team_id=session['id']).count()
 
     db.session.close()
     response = {
@@ -310,17 +310,17 @@ def fails_private():
     return jsonify(response)
 
 
-@challenges.route('/fails/<int:teamid>')
-def fails_public(teamid=None):
-    if current_user.authed() and session['id'] == teamid:
-        fails = Fails.query.filter_by(teamid=teamid).count()
-        solves = Solves.query.filter_by(teamid=teamid).count()
+@challenges.route('/fails/<int:team_id>')
+def fails_public(team_id=None):
+    if current_user.authed() and session['id'] == team_id:
+        fails = Fails.query.filter_by(team_id=team_id).count()
+        solves = Solves.query.filter_by(team_id=team_id).count()
     elif config.hide_scores():
         fails = 0
         solves = 0
     else:
-        fails = Fails.query.filter_by(teamid=teamid).count()
-        solves = Solves.query.filter_by(teamid=teamid).count()
+        fails = Fails.query.filter_by(team_id=team_id).count()
+        solves = Solves.query.filter_by(team_id=team_id).count()
     db.session.close()
     response = {
         'fails': str(fails),
@@ -329,23 +329,23 @@ def fails_public(teamid=None):
     return jsonify(response)
 
 
-@challenges.route('/chal/<int:chalid>/solves', methods=['GET'])
+@challenges.route('/chal/<int:challenge_id>/solves', methods=['GET'])
 @during_ctf_time_only
 @viewable_without_authentication(status_code=403)
-def who_solved(chalid):
+def who_solved(challenge_id):
     response = {'teams': []}
     if config.hide_scores():
         return jsonify(response)
-    solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid, Teams.banned == False).order_by(Solves.date.asc())
+    solves = Solves.query.join(Teams, Solves.team_id == Teams.id).filter(Solves.challenge_id == challenge_id, Teams.banned == False).order_by(Solves.date.asc())
     for solve in solves:
         response['teams'].append({'id': solve.team.id, 'name': solve.team.name, 'date': solve.date})
     return jsonify(response)
 
 
-@challenges.route('/chal/<int:chalid>', methods=['POST'])
+@challenges.route('/chal/<int:challenge_id>', methods=['POST'])
 @during_ctf_time_only
 @viewable_without_authentication()
-def chal(chalid):
+def chal(challenge_id):
     if ctf_paused():
         return jsonify({
             'status': 3,
@@ -353,13 +353,13 @@ def chal(chalid):
         })
     if (current_user.authed() and current_user.is_verified() and (ctf_started() or config.view_after_ctf())) or current_user.is_admin():
         team = Teams.query.filter_by(id=session['id']).first()
-        fails = Fails.query.filter_by(teamid=session['id'], chalid=chalid).count()
+        fails = Fails.query.filter_by(team_id=session['id'], challenge_id=challenge_id).count()
         logger = logging.getLogger('Flags')
         data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'),
                 current_user.get_wrong_submissions_per_minute(session['id']))
         print("[{0}] {1} submitted {2} with kpm {3}".format(*data))
 
-        chal = Challenges.query.filter_by(id=chalid).first_or_404()
+        chal = Challenges.query.filter_by(id=challenge_id).first_or_404()
         if chal.hidden:
             abort(404)
         chal_class = get_chal_class(chal.type)
@@ -372,7 +372,7 @@ def chal(chalid):
             # return '3' # Submitting too fast
             return jsonify({'status': 3, 'message': "You're submitting Flags too fast. Slow down."})
 
-        solves = Solves.query.filter_by(teamid=session['id'], chalid=chalid).first()
+        solves = Solves.query.filter_by(team_id=session['id'], challenge_id=challenge_id).first()
 
         # Challange not solved yet
         if not solves:
