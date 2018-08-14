@@ -189,12 +189,20 @@ class ChallengeFiles(Files):
     }
     chal_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
 
+    def __init__(self, chal_id, location):
+        self.chal_id = chal_id
+        self.location = location
+
 
 class PageFiles(Files):
     __mapper_args__ = {
         'polymorphic_identity': 'pages'
     }
     page_id = db.Column(db.Integer, db.ForeignKey('pages.id'))
+
+    def __init__(self, page_id, location):
+        self.page_id = page_id
+        self.location = location
 
 
 class Flags(db.Model):
@@ -238,6 +246,9 @@ class Users(db.Model):
     banned = db.Column(db.Boolean, default=False)
     verified = db.Column(db.Boolean, default=False)
 
+    # Relationship for Teams
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+
     joined = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     __mapper_args__ = {
@@ -280,6 +291,9 @@ class Teams(db.Model):
     banned = db.Column(db.Boolean, default=False)
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    def __init__(self, name):
+        self.name = name
 
     # def score(self, admin=False):
     #     score = db.func.sum(Challenges.value).label('score')

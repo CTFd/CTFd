@@ -54,10 +54,11 @@ def init_request_processors(app):
 
     @app.before_request
     def tracker():
+        # TODO: This function shouldn't cause a DB hit.
         if authed():
-            track = Tracking.query.filter_by(ip=get_ip(), team=session['id']).first()
+            track = Tracking.query.filter_by(ip=get_ip(), user_id=session['id']).first()
             if not track:
-                visit = Tracking(ip=get_ip(), team=session['id'])
+                visit = Tracking(ip=get_ip(), user_id=session['id'])
                 db.session.add(visit)
             else:
                 track.date = datetime.datetime.utcnow()

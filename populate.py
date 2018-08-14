@@ -6,11 +6,12 @@ import hashlib
 import random
 
 from CTFd import create_app
-from CTFd.models import Teams, Solves, Challenges, Fails, Flags, Files, Awards
+from CTFd.models import *
 
 app = create_app()
 
 USER_AMOUNT = 50
+TEAM_AMOUNT = 10
 CHAL_AMOUNT = 20
 AWARDS_AMOUNT = 5
 
@@ -187,6 +188,10 @@ def gen_name():
     return random.choice(names)
 
 
+def gen_team_name():
+    return random.choice(hipsters).capitalize() + str(random.randint(1,1000))
+
+
 def gen_email():
     return random.choice(emails)
 
@@ -232,9 +237,24 @@ if __name__ == '__main__':
             chal = random.randint(1, CHAL_AMOUNT)
             filename = gen_file()
             md5hash = hashlib.md5(filename.encode('utf-8')).hexdigest()
-            db.session.add(Files(chal, md5hash + '/' + filename))
+            db.session.add(ChallengeFiles(chal, md5hash + '/' + filename))
 
         db.session.commit()
+
+        # Generating Teams
+        print("GENERATING TEAMS")
+        used = []
+        count = 0
+        while count < TEAM_AMOUNT:
+            name = gen_team_name()
+            if name not in used:
+                used.append(name)
+                team = Teams(name)
+                db.session.add(team)
+                count += 1
+
+        db.session.commit()
+
 
         # Generating Users
         print("GENERATING USERS")
@@ -244,10 +264,14 @@ if __name__ == '__main__':
             name = gen_name()
             if name not in used:
                 used.append(name)
-                team = Teams(name, name.lower() + gen_email(), 'password')
-                team.verified = True
-                db.session.add(team)
-                count += 1
+                try:
+                    user = Users(name, name + gen_email(), 'password')
+                    user.verified = True
+                    user.team_id = random.randint(1, TEAM_AMOUNT)
+                    db.session.add(user)
+                    count += 1
+                except:
+                    pass
 
         db.session.commit()
 
@@ -260,7 +284,8 @@ if __name__ == '__main__':
                 chalid = random.randint(1, CHAL_AMOUNT)
                 if chalid not in used:
                     used.append(chalid)
-                    solve = Solves(x + 1, chalid, '127.0.0.1', gen_word())
+                    user = Users.query.filter_by(id=x+1).first()
+                    solve = Solves(x + 1, user.team_id, chalid, '127.0.0.1', gen_word())
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     solve.date = new_base
@@ -271,16 +296,16 @@ if __name__ == '__main__':
         db.session.commit()
 
         # Generating Awards
-        print("GENERATING AWARDS")
-        for x in range(USER_AMOUNT):
-            base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
-            for _ in range(random.randint(0, AWARDS_AMOUNT)):
-                award = Awards(x + 1, gen_word(), random.randint(-10, 10))
-                new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
-                award.date = new_base
-                base_time = new_base
+        # print("GENERATING AWARDS")
+        # for x in range(USER_AMOUNT):
+        #     base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
+        #     for _ in range(random.randint(0, AWARDS_AMOUNT)):
+        #         award = Awards(x + 1, gen_word(), random.randint(-10, 10))
+        #         new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
+        #         award.date = new_base
+        #         base_time = new_base
 
-                db.session.add(award)
+        #         db.session.add(award)
 
         db.session.commit()
 
@@ -293,7 +318,8 @@ if __name__ == '__main__':
                 chalid = random.randint(1, CHAL_AMOUNT)
                 if chalid not in used:
                     used.append(chalid)
-                    wrong = Fails(x + 1, chalid, '127.0.0.1', gen_word())
+                    user = Users.query.filter_by(id=x+1).first()
+                    wrong = Fails(x + 1, user.team_id,chalid, '127.0.0.1', gen_word())
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     wrong.date = new_base
