@@ -1,9 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import bcrypt_sha256
-from sqlalchemy import TypeDecorator, String, func, types
+from sqlalchemy import TypeDecorator, String, func, types, CheckConstraint, and_
 from sqlalchemy.sql.expression import union_all
 from sqlalchemy.types import JSON, NullType
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, column_property
 import datetime
 import json
 
@@ -474,17 +474,13 @@ class Teams(db.Model):
 
 class Submissions(db.Model):
     __tablename__ = 'submissions'
-    # TODO: Is it possible to have the database enforce a single solve per user/team?
-    # __table_args__ = (
-    #     db.UniqueConstraint('challenge_id', 'user_id', 'team_id')
-    # )
     id = db.Column(db.Integer, primary_key=True)
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
     ip = db.Column(db.String(46))
     provided = db.Column(db.Text)
-    status = db.Column(db.String(32))
+    type = db.Column(db.String(32))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     # Relationships
@@ -493,7 +489,7 @@ class Submissions(db.Model):
     challenge = db.relationship('Challenges', foreign_keys="Submissions.challenge_id", lazy='select')
 
     __mapper_args__ = {
-        'polymorphic_on': status,
+        'polymorphic_on': type,
     }
 
     def __init__(self, user_id, team_id, challenge_id, ip, provided):
@@ -508,6 +504,11 @@ class Submissions(db.Model):
 
 
 class Solves(Submissions):
+    __table_args__ = (db.UniqueConstraint('challenge_id', 'user_id'), {})
+    id = db.Column(None, db.ForeignKey('submissions.id'), primary_key=True)
+    challenge_id = column_property(db.Column(db.Integer, db.ForeignKey('challenges.id')), Submissions.challenge_id)
+    user_id = column_property(db.Column(db.Integer, db.ForeignKey('users.id')), Submissions.user_id)
+
     __mapper_args__ = {
         'polymorphic_identity': 'correct'
     }
