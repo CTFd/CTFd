@@ -94,7 +94,7 @@ def init_logs(app):
 
     logger_keys.setLevel(logging.INFO)
     logger_logins.setLevel(logging.INFO)
-    logger_regs.setLevel(logging.INFO)
+    logger_regs.setLevel(logging.DEBUG)
 
     log_dir = app.config['LOG_FOLDER']
     if not os.path.exists(log_dir):
