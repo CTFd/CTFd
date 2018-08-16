@@ -222,7 +222,7 @@ function updatesolves(cb){
 }
 
 function getsolves(id){
-  $.get(script_root + '/chal/'+id+'/solves', function (data) {
+  return $.get(script_root + '/chal/'+id+'/solves', function (data) {
     var teams = data['teams'];
     $('.chal-solves').text((parseInt(teams.length) + " Solves"));
     var box = $('#chal-solves-names');
