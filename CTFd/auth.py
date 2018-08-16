@@ -2,7 +2,7 @@ from flask import current_app as app, render_template, request, redirect, url_fo
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from passlib.hash import bcrypt_sha256
 
-from CTFd.models import db, Teams
+from CTFd.models import db, Users
 from CTFd.utils import get_config
 from CTFd.utils.encoding import base64encode, base64decode
 from CTFd.utils.decorators import ratelimit
@@ -35,7 +35,7 @@ def confirm(data=None):
             return render_template('confirm.html', errors=['Your confirmation link has expired'])
         except (BadSignature, TypeError, base64.binascii.Error):
             return render_template('confirm.html', errors=['Your confirmation token is invalid'])
-        team = Teams.query.filter_by(email=user_email).first_or_404()
+        team = Users.query.filter_by(email=user_email).first_or_404()
         team.verified = True
         db.session.commit()
         logger.warn("[{date}] {ip} - {username} confirmed their account".format(
@@ -53,7 +53,7 @@ def confirm(data=None):
     if not current_user.authed():
         return redirect(url_for('auth.login'))
 
-    team = Teams.query.filter_by(id=session['id']).first_or_404()
+    team = Users.query.filter_by(id=session['id']).first_or_404()
 
     if data is None:
         if request.method == "POST":
@@ -71,7 +71,7 @@ def confirm(data=None):
             return render_template('confirm.html', team=team, infos=['Your confirmation email has been resent!'])
         elif request.method == "GET":
             # User has been directed to the confirm page
-            team = Teams.query.filter_by(id=session['id']).first_or_404()
+            team = Users.query.filter_by(id=session['id']).first_or_404()
             if team.verified:
                 # If user is already verified, redirect to their profile
                 return redirect(url_for('views.profile'))
@@ -97,7 +97,7 @@ def reset_password(data=None):
         if request.method == "GET":
             return render_template('reset_password.html', mode='set')
         if request.method == "POST":
-            team = Teams.query.filter_by(name=name).first_or_404()
+            team = Users.query.filter_by(name=name).first_or_404()
             team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
             db.session.commit()
             logger.warn("[{date}] {ip} -  successful password reset for {username}".format(
@@ -110,7 +110,7 @@ def reset_password(data=None):
 
     if request.method == 'POST':
         email = request.form['email'].strip()
-        team = Teams.query.filter_by(email=email).first()
+        team = Users.query.filter_by(email=email).first()
 
         errors = []
 
@@ -148,8 +148,8 @@ def register():
         password = request.form['password']
 
         name_len = len(name) == 0
-        names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
-        emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
+        names = Users.query.add_columns('name', 'id').filter_by(name=name).first()
+        emails = Users.query.add_columns('email', 'id').filter_by(email=email).first()
         pass_short = len(password) == 0
         pass_long = len(password) > 128
         valid_email = validators.validate_email(request.form['email'])
@@ -174,7 +174,7 @@ def register():
             return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
         else:
             with app.app_context():
-                team = Teams(name, email.lower(), password)
+                team = Users(name, email.lower(), password)
                 db.session.add(team)
                 db.session.commit()
                 db.session.flush()
@@ -221,9 +221,9 @@ def login():
 
         # Check if the user submitted an email address or a team name
         if validators.validate_email(name) is True:
-            team = Teams.query.filter_by(email=name).first()
+            team = Users.query.filter_by(email=name).first()
         else:
-            team = Teams.query.filter_by(name=name).first()
+            team = Users.query.filter_by(name=name).first()
 
         if team:
             if team and bcrypt_sha256.verify(request.form['password'], team.password):

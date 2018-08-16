@@ -2,7 +2,7 @@ from flask import current_app as app, render_template, request, redirect, abort,
 from flask.helpers import safe_join
 from passlib.hash import bcrypt_sha256
 
-from CTFd.models import db, Users, Teams, Solves, Awards, Files, Pages, Tracking
+from CTFd.models import db, Users, Users, Solves, Awards, Files, Pages, Tracking
 from CTFd.utils import cache, markdown
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import authed, get_ip
@@ -138,13 +138,13 @@ def profile():
             affiliation = request.form.get('affiliation').strip()
             country = request.form.get('country').strip()
 
-            user = Teams.query.filter_by(id=session['id']).first()
+            user = Users.query.filter_by(id=session['id']).first()
 
             if not get_config('prevent_name_change'):
-                names = Teams.query.filter_by(name=name).first()
+                names = Users.query.filter_by(name=name).first()
                 name_len = len(request.form['name']) == 0
 
-            emails = Teams.query.filter_by(email=email).first()
+            emails = Users.query.filter_by(email=email).first()
             valid_email = validators.validate_email(email)
 
             if validators.validate_email(name) is True:
@@ -168,7 +168,7 @@ def profile():
                 return render_template('profile.html', name=name, email=email, website=website,
                                        affiliation=affiliation, country=country, errors=errors)
             else:
-                team = Teams.query.filter_by(id=session['id']).first()
+                team = Users.query.filter_by(id=session['id']).first()
                 if team.name != name:
                     if not get_config('prevent_name_change'):
                         team.name = name
@@ -187,7 +187,7 @@ def profile():
                 db.session.close()
                 return redirect(url_for('views.profile'))
         else:
-            user = Teams.query.filter_by(id=session['id']).first()
+            user = Users.query.filter_by(id=session['id']).first()
             name = user.name
             email = user.email
             website = user.website
