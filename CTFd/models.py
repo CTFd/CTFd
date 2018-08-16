@@ -504,6 +504,7 @@ class Submissions(db.Model):
 
 
 class Solves(Submissions):
+    __tablename__ = 'solves'
     __table_args__ = (db.UniqueConstraint('challenge_id', 'user_id'), {})
     id = db.Column(None, db.ForeignKey('submissions.id'), primary_key=True)
     challenge_id = column_property(db.Column(db.Integer, db.ForeignKey('challenges.id')), Submissions.challenge_id)

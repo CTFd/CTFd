@@ -45,7 +45,7 @@ class CTFdSerializer(JSONSerializer):
                 fh.close()
 
 
-SERIALIZERS['ctfd'] = CTFdSerializer  # Load the custom serializer
+# SERIALIZERS['ctfd'] = CTFdSerializer  # Load the custom serializer
 
 
 def export_ctf(segments=None):
@@ -83,22 +83,30 @@ def export_ctf(segments=None):
 
     backup_zip = zipfile.ZipFile(backup, 'w')
 
-    for segment in segments:
-        group = groups[segment]
-        for item in group:
-            result = db[item].all()
-            result_file = six.BytesIO()
-            datafreeze.freeze(result, format='ctfd', fileobj=result_file)
-            result_file.seek(0)
-            backup_zip.writestr('db/{}.json'.format(item), result_file.read())
-
-    # Guarantee that alembic_version is saved into the export
-    if 'metadata' not in segments:
-        result = db['alembic_version'].all()
+    tables = db.tables
+    for table in tables:
+        result = db[table].all()
         result_file = six.BytesIO()
-        datafreeze.freeze(result, format='ctfd', fileobj=result_file)
+        datafreeze.freeze(result, format='json', fileobj=result_file)
         result_file.seek(0)
-        backup_zip.writestr('db/alembic_version.json', result_file.read())
+        backup_zip.writestr('db/{}.json'.format(table), result_file.read())
+
+    # for segment in segments:
+    #     group = groups[segment]
+    #     for item in group:
+    #         result = db[item].all()
+    #         result_file = six.BytesIO()
+    #         datafreeze.freeze(result, format='ctfd', fileobj=result_file)
+    #         result_file.seek(0)
+    #         backup_zip.writestr('db/{}.json'.format(item), result_file.read())
+    #
+    # # Guarantee that alembic_version is saved into the export
+    # if 'metadata' not in segments:
+    #     result = db['alembic_version'].all()
+    #     result_file = six.BytesIO()
+    #     datafreeze.freeze(result, format='ctfd', fileobj=result_file)
+    #     result_file.seek(0)
+    #     backup_zip.writestr('db/alembic_version.json', result_file.read())
 
     # Backup uploads
     upload_folder = os.path.join(os.path.normpath(app.root_path), app.config.get('UPLOAD_FOLDER'))
