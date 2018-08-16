@@ -267,9 +267,21 @@ class Users(db.Model):
         self.email = email
         self.password = bcrypt_sha256.encrypt(str(password))
 
-    def score(self, admin=False):
+    @property
+    def score(self):
+        return self.get_score(admin=False)
+
+    def get_score(self, admin=False):
         score = db.func.sum(Challenges.value).label('score')
-        user = db.session.query(Solves.user_id, score).join(Users).join(Challenges).filter(Users.id == self.id)
+        user = db.session.query(
+            Solves.user_id,
+            Solves.challenge_id,
+            score
+        ) \
+            .join(Users, Solves.user_id == Users.id) \
+            .join(Challenges, Solves.challenge_id == Challenges.id) \
+            .filter(Users.id == self.id)
+
         award_score = db.func.sum(Awards.value).label('award_score')
         award = db.session.query(award_score).filter_by(user_id=self.id)
 
@@ -293,7 +305,11 @@ class Users(db.Model):
         else:
             return 0
 
-    def place(self, admin=False):
+    @property
+    def place(self):
+        return self.get_place(admin=False)
+
+    def get_place(self, admin=False, numeric=False):
         """
         This method is generally a clone of CTFd.scoreboard.get_standings.
         The point being that models.py must be self-reliant and have little
@@ -350,8 +366,11 @@ class Users(db.Model):
         # http://codegolf.stackexchange.com/a/4712
         try:
             i = standings.index((self.id,)) + 1
-            k = i % 10
-            return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
+            if numeric:
+                return i
+            else:
+                k = i % 10
+                return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
         except ValueError:
             return 0
 
@@ -370,6 +389,8 @@ class Teams(db.Model):
     name = db.Column(db.String(128), unique=True)
     email = db.Column(db.String(128), unique=True)
 
+    members = db.relationship("Users")
+
     # Supplementary attributes
     website = db.Column(db.String(128))
     affiliation = db.Column(db.String(128))
@@ -383,32 +404,14 @@ class Teams(db.Model):
     def __init__(self, name):
         self.name = name
 
+    @property
     def score(self, admin=False):
-        score = db.func.sum(Challenges.value).label('score')
-        team = db.session.query(Solves.team_id, score).join(Teams).join(Challenges).filter(Teams.id == self.id)
-        award_score = db.func.sum(Awards.value).label('award_score')
-        award = db.session.query(award_score).filter_by(team_id=self.id)
+        score = 0
+        for member in self.members:
+            score += member.score()
+        return score
 
-        if not admin:
-            freeze = Config.query.filter_by(key='freeze').first()
-            if freeze and freeze.value:
-                freeze = int(freeze.value)
-                freeze = datetime.datetime.utcfromtimestamp(freeze)
-                team = team.filter(Solves.date < freeze)
-                award = award.filter(Awards.date < freeze)
-
-        team = team.group_by(Solves.team_id).first()
-        award = award.first()
-
-        if team and award:
-            return int(team.score or 0) + int(award.award_score or 0)
-        elif team:
-            return int(team.score or 0)
-        elif award:
-            return int(award.award_score or 0)
-        else:
-            return 0
-
+    @property
     def place(self, admin=False):
         """
         This method is generally a clone of CTFd.scoreboard.get_standings.
@@ -509,6 +512,9 @@ class Solves(Submissions):
     id = db.Column(None, db.ForeignKey('submissions.id'), primary_key=True)
     challenge_id = column_property(db.Column(db.Integer, db.ForeignKey('challenges.id')), Submissions.challenge_id)
     user_id = column_property(db.Column(db.Integer, db.ForeignKey('users.id')), Submissions.user_id)
+
+    user = db.relationship('Users', foreign_keys="Solves.user_id", lazy='select')
+    challenge = db.relationship('Challenges', foreign_keys="Solves.challenge_id", lazy='select')
 
     __mapper_args__ = {
         'polymorphic_identity': 'correct'

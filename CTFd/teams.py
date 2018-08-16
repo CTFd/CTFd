@@ -40,7 +40,7 @@ def listing(page):
 
 
 @teams.route('/team', methods=['GET'])
-def private_team():
+def private():
     if authed():
         team_id = session['id']
 
@@ -77,7 +77,7 @@ def private_team():
 
 
 @teams.route('/team/<int:team_id>', methods=['GET', 'POST'])
-def public_team(team_id):
+def public(team_id):
     if get_config('workshop_mode'):
         abort(404)
 
