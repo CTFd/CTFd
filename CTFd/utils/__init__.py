@@ -94,7 +94,7 @@ def init_logs(app):
 
     logger_keys.setLevel(logging.INFO)
     logger_logins.setLevel(logging.INFO)
-    logger_regs.setLevel(logging.DEBUG)
+    logger_regs.setLevel(logging.INFO)
 
     log_dir = app.config['LOG_FOLDER']
     if not os.path.exists(log_dir):
@@ -1035,12 +1035,6 @@ def get_machine_set():
         raise Exception('Unexpected status code: {}'.format(r.status_code))
 
     resp = r.json()
-
-    if 'status' not in resp:
-        raise Exception('Unexpected response: Missing "status"')
-
-    if resp['status'] != 'ok':
-        raise EmptyCapacityException()
 
     for k in ['username', 'password']:
         if k not in resp:
