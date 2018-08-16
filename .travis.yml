@@ -1,8 +1,6 @@
 language: python
 services:
   - docker
-  - mysql
-  - postgresql
 env:
   global:
     - IMAGE_NAME=aau/ctfd
@@ -11,16 +9,12 @@ env:
     - REGISTRY_USER=travis
     - REGISTRY_PASS=T5CBgSJfMfJfUAyreMBHz96DhFE89ADK
   matrix:
-    - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
     - TESTING_DATABASE_URL='sqlite://'
-    - TESTING_DATABASE_URL='postgres://postgres@localhost/ctfd'
 python:
-  - 2.7
   - 3.6
 install:
   - pip install -r development.txt
 before_script:
-  - psql -c 'create database ctfd;' -U postgres
   - python tests/helper_virt_server.py || true > /dev/null 2>&1 &
 script:
   - pep8 --ignore E501,E712 --exclude "helper_virt_server.py" CTFd/ tests/ 
