@@ -83,6 +83,8 @@ def export_ctf(segments=None):
 
     backup_zip = zipfile.ZipFile(backup, 'w')
 
+    # TODO: Sqlite has very little alembic support. We should fake out an alembic version.
+
     tables = db.tables
     for table in tables:
         result = db[table].all()
@@ -90,6 +92,8 @@ def export_ctf(segments=None):
         datafreeze.freeze(result, format='json', fileobj=result_file)
         result_file.seek(0)
         backup_zip.writestr('db/{}.json'.format(table), result_file.read())
+
+    # TODO: Reimplement partial exports
 
     # for segment in segments:
     #     group = groups[segment]
