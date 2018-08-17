@@ -1027,9 +1027,10 @@ class EmptyCapacityException(Exception):
     pass
 
 
-def get_machine_set():
+def get_machine_set(name):
     r = requests.post(
-        'http://{}:{}/register'.format(VIRT_SERVER, VIRT_SERVER_PORT))
+        'http://{}:{}/register'.format(VIRT_SERVER, VIRT_SERVER_PORT),
+        data={'name': name})
 
     if r.status_code != 200:
         raise Exception('Unexpected status code: {}'.format(r.status_code))

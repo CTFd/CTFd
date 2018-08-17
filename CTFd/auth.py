@@ -175,7 +175,7 @@ def register():
 
         if len(errors) == 0:
             try:
-                guser, gpass = utils.get_machine_set()
+                guser, gpass = utils.get_machine_set(name)
             except utils.EmptyCapacityException:
                 errors.append(
                     'No more virtual environments are available. Please contact an administrator')
