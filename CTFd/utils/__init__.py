@@ -667,7 +667,7 @@ def sendmail(addr, text):
 def verify_email(addr):
     s = TimedSerializer(app.config['SECRET_KEY'])
     token = s.dumps(addr)
-    text = """Please click the following link to confirm your email address for {ctf_name}: {url}/{token}""".format(
+    text = """Please click the following link to confirm your email address for {ctf_name}: {url}/confirm/{token}""".format(
         ctf_name=get_config('ctf_name'),
         url=url_for('auth.confirm_user', _external=True),
         token=base64encode(token)
