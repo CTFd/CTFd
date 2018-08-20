@@ -1030,7 +1030,7 @@ class EmptyCapacityException(Exception):
 def get_machine_set(name):
     r = requests.post(
         'http://{}:{}/register'.format(VIRT_SERVER, VIRT_SERVER_PORT),
-        data={'name': name})
+        json={'name': name})
 
     try:
         resp = r.json()
