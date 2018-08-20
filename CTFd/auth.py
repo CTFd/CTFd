@@ -180,8 +180,7 @@ def register():
                 errors.append(
                     'No more virtual environments are available. Please contact an administrator')
             except Exception as e:
-                errors.append(
-                    'Unexpected error when requesting virtual environment')
+                errors.append(str(e))
 
                 logger.warn("[{date}] {ip} - ERROR_VIRT_HOST: {err}".format(
                     date=time.strftime("%m/%d/%Y %X"),
