@@ -1032,14 +1032,17 @@ def get_machine_set(name):
         'http://{}:{}/register'.format(VIRT_SERVER, VIRT_SERVER_PORT),
         data={'name': name})
 
-    resp = r.json()
+    try:
+        resp = r.json()
+    except Exception :
+        raise Exception('Unable to parse JSON response')
+    
 
     if r.status_code != 200:
         if 'error' in resp:
             raise Exception(resp['error'])
         else:
             raise Exception('Unexpected error without description')
-
 
     for k in ['username', 'password']:
         if k not in resp:
