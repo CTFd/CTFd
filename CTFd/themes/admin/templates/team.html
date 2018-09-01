@@ -384,9 +384,9 @@ $(document).ready(function () {
 
         var title = 'Mark ' + chal_name + ' solved for ' + team_name;
         var description = "<span>Are you sure you want to mark " +
-            "<strong>{0}</strong> ".format(team_name) +
+            "<strong>{0}</strong> ".format(chal_name) +
             "as solved for team " +
-            "<strong>{0}</strong>?</span>".format(chal_name);
+            "<strong>{0}</strong>?</span>".format(team_name);
 
         var td_row = $(this).parent().parent();
 
