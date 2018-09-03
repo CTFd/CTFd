@@ -1,9 +1,10 @@
-from flask import current_app as app, render_template, request, redirect, url_for, session, Blueprint
+from flask import current_app as app, render_template, request, redirect, url_for, session, Blueprint, abort
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from passlib.hash import bcrypt_sha256
 
-from CTFd.models import db, Users
-from CTFd.utils import get_config
+from CTFd.models import db, Users, Teams
+
+from CTFd.utils import get_config, get_app_config
 from CTFd.utils.encoding import base64encode, base64decode
 from CTFd.utils.decorators import ratelimit
 from CTFd.utils import user as current_user
@@ -12,6 +13,7 @@ from CTFd.utils.security.csrf import generate_nonce
 
 import base64
 import logging
+import requests
 import time
 
 auth = Blueprint('auth', __name__)
@@ -269,6 +271,84 @@ def login():
     else:
         db.session.close()
         return render_template('login.html')
+
+
+@auth.route('/oauth', methods=['GET', 'POST'])
+def oauth_login():
+    endpoint = get_app_config('OAUTH_AUTHORIZATION_ENDPOINT') or get_config('oauth_authorization_endpoint')
+
+    client_id = get_app_config('OAUTH_CLIENT_ID') or get_config('oauth_client_id')
+    redirect_url = "{endpoint}?response_type=code&client_id={client_id}".format(
+        endpoint=endpoint,
+        client_id=client_id
+    )
+    return redirect(redirect_url)
+
+
+@auth.route('/redirect', methods=['GET'])
+def oauth_redirect():
+    oauth_code = request.args.get('code')
+    if oauth_code:
+        url = get_app_config('OAUTH_TOKEN_ENDPOINT') or get_config('oauth_token_endpoint')
+        client_id = get_app_config('OAUTH_CLIENT_ID') or get_config('oauth_client_id')
+        client_secret = get_app_config('OAUTH_CLIENT_SECRET') or get_config('oauth_client_secret')
+        headers = {
+            'content-type': 'application/x-www-form-urlencoded'
+        }
+        data = {
+            'code': oauth_code,
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'grant_type': 'authorization_code'
+        }
+        token_request = requests.post(url, data=data, headers=headers)
+
+        if token_request.status_code == requests.codes.ok:
+            token = token_request.json()['access_token']
+            user_url = get_app_config('OAUTH_API_ENDPOINT') or get_config('oauth_api_endpoint')
+            headers = {
+                'Authorization': 'Bearer ' + str(token),
+                'Content-type': 'application/json'
+            }
+            api_data = requests.get(url=user_url, headers=headers).json()
+
+            user_id = api_data['id']
+            user_name = api_data['name']
+            user_email = api_data['email']
+
+            team_id = api_data['team']['id']
+            team_name = api_data['team']['name']
+
+            user = Users.query.filter_by(email=user_email).first()
+            if user is None:
+                user = Users(
+                    name=user_name,
+                    email=user_email,
+                    oauth_id=user_id
+                )
+                db.session.add(user)
+                db.session.commit()
+
+            team = Teams.query.filter_by(oauth_id=team_id).first()
+            if team is None:
+                team = Teams(
+                    name=team_name
+                )
+                db.session.add(team)
+                db.session.commit()
+
+            team.members.append(user)
+
+            session['id'] = user.id
+            session['username'] = user.name
+            session['email'] = user.email
+            session['admin'] = user.admin
+            session['nonce'] = generate_nonce()
+
+            return redirect(url_for('challenges.challenges_view'))
+    else:
+        # TODO: Change this to redirect back to login with an error
+        abort(500)
 
 
 @auth.route('/logout')

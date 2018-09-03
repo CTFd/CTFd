@@ -262,10 +262,10 @@ class Users(db.Model):
         'polymorphic_on': type
     }
 
-    def __init__(self, name, email, password):
-        self.name = name
-        self.email = email
-        self.password = bcrypt_sha256.encrypt(str(password))
+    # def __init__(self, name, email, password):
+    #     self.name = name
+    #     self.email = email
+    #     self.password = bcrypt_sha256.encrypt(str(password))
 
     @property
     def score(self):
@@ -401,8 +401,8 @@ class Teams(db.Model):
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, name):
-        self.name = name
+    # def __init__(self, name):
+    #     self.name = name
 
     @property
     def score(self, admin=False):
