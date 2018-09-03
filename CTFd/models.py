@@ -262,10 +262,9 @@ class Users(db.Model):
         'polymorphic_on': type
     }
 
-    # def __init__(self, name, email, password):
-    #     self.name = name
-    #     self.email = email
-    #     self.password = bcrypt_sha256.encrypt(str(password))
+    def __init__(self, **kwargs):
+        super(Users, self).__init__(**kwargs)
+        self.password = bcrypt_sha256.encrypt(str(kwargs['password']))
 
     @property
     def score(self):
@@ -494,13 +493,6 @@ class Submissions(db.Model):
     __mapper_args__ = {
         'polymorphic_on': type,
     }
-
-    def __init__(self, user_id, team_id, challenge_id, ip, provided):
-        self.user_id = user_id
-        self.team_id = team_id
-        self.challenge_id = challenge_id
-        self.ip = ip
-        self.provided = provided
 
     def __repr__(self):
         return '<Submission {}, {}, {}, {}>'.format(self.team_id, self.chal_id, self.ip, self.provided)

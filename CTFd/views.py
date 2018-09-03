@@ -34,7 +34,11 @@ def setup():
             name = request.form['name']
             email = request.form['email']
             password = request.form['password']
-            admin = Users(name, email, password)
+            admin = Users(
+                name=name,
+                email=email,
+                password=password
+            )
             admin.admin = True
             admin.banned = True
 
@@ -57,7 +61,12 @@ def setup():
     </div>
 </div>""".format(request.script_root)
 
-            page = Pages(title=None, route='index', html=index, draft=False)
+            page = Pages(
+                title=None,
+                route='index',
+                html=index,
+                draft=False
+            )
 
             # max attempts per challenge
             max_tries = set_config('max_tries', 0)

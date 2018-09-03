@@ -225,9 +225,20 @@ if __name__ == '__main__':
         print("GENERATING CHALLENGES")
         for x in range(CHAL_AMOUNT):
             word = gen_word()
-            db.session.add(Challenges(word, gen_sentence(), gen_value(), gen_category()))
+            chal = Challenges(
+                name=word,
+                description=gen_sentence(),
+                value=gen_value(),
+                category=gen_category()
+            )
+            db.session.add(chal)
             db.session.commit()
-            db.session.add(Flags(x + 1, word, 'static'))
+            f = Flags(
+                challenge_id=x + 1,
+                flag=word,
+                type='static'
+            )
+            db.session.add(f)
             db.session.commit()
 
         # Generating Files
@@ -237,7 +248,11 @@ if __name__ == '__main__':
             chal = random.randint(1, CHAL_AMOUNT)
             filename = gen_file()
             md5hash = hashlib.md5(filename.encode('utf-8')).hexdigest()
-            db.session.add(ChallengeFiles(chal, md5hash + '/' + filename))
+            chal_file = ChallengeFiles(
+                challenge_id=chal,
+                location=md5hash + '/' + filename
+            )
+            db.session.add(chal_file)
 
         db.session.commit()
 
@@ -249,7 +264,9 @@ if __name__ == '__main__':
             name = gen_team_name()
             if name not in used:
                 used.append(name)
-                team = Teams(name)
+                team = Teams(
+                    name=name
+                )
                 db.session.add(team)
                 count += 1
 
@@ -265,7 +282,11 @@ if __name__ == '__main__':
             if name not in used:
                 used.append(name)
                 try:
-                    user = Users(name, name + gen_email(), 'password')
+                    user = Users(
+                        name=name,
+                        email=name + gen_email(),
+                        password='password'
+                    )
                     user.verified = True
                     user.team_id = random.randint(1, TEAM_AMOUNT)
                     db.session.add(user)
@@ -285,7 +306,13 @@ if __name__ == '__main__':
                 if chalid not in used:
                     used.append(chalid)
                     user = Users.query.filter_by(id=x+1).first()
-                    solve = Solves(user.id, user.team_id, chalid, '127.0.0.1', gen_word())
+                    solve = Solves(
+                        user_id=user.id,
+                        team_id=user.team_id,
+                        challenge_id=chalid,
+                        ip='127.0.0.1',
+                        provided=gen_word()
+                    )
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     solve.date = new_base
@@ -302,7 +329,12 @@ if __name__ == '__main__':
             base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
             for _ in range(random.randint(0, AWARDS_AMOUNT)):
                 user = Users.query.filter_by(id=x + 1).first()
-                award = Awards(user.id, user.team_id, gen_word(), random.randint(-10, 10))
+                award = Awards(
+                    user_id=user.id,
+                    team_id=user.team_id,
+                    name=gen_word(),
+                    value=random.randint(-10, 10)
+                )
                 new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                 award.date = new_base
                 base_time = new_base
@@ -321,7 +353,13 @@ if __name__ == '__main__':
                 if chalid not in used:
                     used.append(chalid)
                     user = Users.query.filter_by(id=x+1).first()
-                    wrong = Fails(user.id, user.team_id, chalid, '127.0.0.1', gen_word())
+                    wrong = Fails(
+                        user_id=user.id,
+                        team_id=user.team_id,
+                        challenge_id=chalid,
+                        ip='127.0.0.1',
+                        provided=gen_word()
+                    )
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     wrong.date = new_base
