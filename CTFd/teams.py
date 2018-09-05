@@ -4,6 +4,7 @@ from flask.helpers import safe_join
 from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Users, Teams, Solves, Awards, Files, Pages, Tracking
+from CTFd.utils.decorators import authed_only
 from CTFd.utils import cache, markdown
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import authed, get_ip
@@ -40,40 +41,36 @@ def listing(page):
 
 
 @teams.route('/team', methods=['GET'])
+@authed_only
 def private():
-    if authed():
-        team_id = session['id']
+    team_id = session['id']
 
-        freeze = get_config('freeze')
-        team = Teams.query.filter_by(id=team_id).first_or_404()
-        solves = Solves.query.filter_by(team_id=team_id)
-        awards = Awards.query.filter_by(team_id=team_id)
+    freeze = get_config('freeze')
+    team = Teams.query.filter_by(id=team_id).first_or_404()
+    solves = Solves.query.filter_by(team_id=team_id)
+    awards = Awards.query.filter_by(team_id=team_id)
 
-        place = team.place()
-        score = team.score()
+    place = team.place()
+    score = team.score()
 
-        if freeze:
-            freeze = unix_time_to_utc(freeze)
-            if team_id != session.get('id'):
-                solves = solves.filter(Solves.date < freeze)
-                awards = awards.filter(Awards.date < freeze)
+    if freeze:
+        freeze = unix_time_to_utc(freeze)
+        if team_id != session.get('id'):
+            solves = solves.filter(Solves.date < freeze)
+            awards = awards.filter(Awards.date < freeze)
 
-        solves = solves.all()
-        awards = awards.all()
+    solves = solves.all()
+    awards = awards.all()
 
-        return render_template(
-            'team.html',
-            solves=solves,
-            awards=awards,
-            team=team,
-            score=score,
-            place=place,
-            score_frozen=config.is_scoreboard_frozen()
-        )
-    else:
-        return redirect(
-            url_for('auth.login')
-        )
+    return render_template(
+        'team.html',
+        solves=solves,
+        awards=awards,
+        team=team,
+        score=score,
+        place=place,
+        score_frozen=config.is_scoreboard_frozen()
+    )
 
 
 @teams.route('/team/<int:team_id>', methods=['GET', 'POST'])
@@ -108,9 +105,18 @@ def public(team_id):
         return render_template('team.html', team=user, errors=errors)
 
     if request.method == 'GET':
-        return render_template('team.html', solves=solves, awards=awards, team=user, score=score, place=place, score_frozen=config.is_scoreboard_frozen())
-    elif request.method == 'POST':
-        json = {'solves': []}
-        for x in solves:
-            json['solves'].append({'id': x.id, 'chal': x.chalid, 'team': x.team_id})
-        return jsonify(json)
+        return render_template(
+            'team.html',
+            solves=solves,
+            awards=awards,
+            team=user,
+            score=score,
+            place=place,
+            score_frozen=config.is_scoreboard_frozen()
+        )
+    # TODO: Move this to /api/team/<id>.json
+    # elif request.method == 'POST':
+    #     json = {'solves': []}
+    #     for x in solves:
+    #         json['solves'].append({'id': x.id, 'chal': x.chalid, 'team': x.team_id})
+    #     return jsonify(json)

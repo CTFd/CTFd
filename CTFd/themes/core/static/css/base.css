@@ -129,3 +129,7 @@ table > thead > tr > td {
 .cursor-help {
     cursor: help;
 }
+
+select.form-control {
+    height: auto !important;
+}
