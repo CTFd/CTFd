@@ -18,16 +18,20 @@ import os
 
 users = Blueprint('users', __name__)
 
+
 @users.route('/users')
 def listing(page):
+    # TODO: Implement this logic to either mimic the teams page or to only be visible when the ctf is in user only mode
     pass
 
 
 @users.route('/user')
 def private_page():
+    # TODO: This should be visible if user's login as themselves (user+team login, or user only login)
     pass
 
 
 @users.route('/user/<int:user_id>')
 def public_page(user_id):
+    # TODO: This should be visible if user's login as themselves (user+team login, or user only login)
     pass

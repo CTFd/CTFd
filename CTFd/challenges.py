@@ -22,6 +22,7 @@ challenges = Blueprint('challenges', __name__)
 @during_ctf_time_only
 @authed_only
 def hints_view(hintid):
+    # TODO: Move this to the API
     hint = Hints.query.filter_by(id=hintid).first_or_404()
     chal = Challenges.query.filter_by(id=hint.chal).first()
     unlock = Unlocks.query.filter_by(type='hints', item_id=hintid, team_id=session['id']).first()
@@ -100,6 +101,7 @@ def challenges_view():
 @require_verified_emails
 @viewable_without_authentication(status_code=403)
 def chals():
+    # TODO: Move this to the API
     db_chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).order_by(Challenges.value).all()
     response = {'game': []}
     for chal in db_chals:
@@ -125,6 +127,7 @@ def chals():
 @require_verified_emails
 @viewable_without_authentication(status_code=403)
 def chal_view(chal_id):
+    # TODO: Move this to the API
     team_id = session.get('id')
 
     chal = Challenges.query.filter_by(id=chal_id).first_or_404()
@@ -154,6 +157,7 @@ def chal_view(chal_id):
 @challenges.route('/chals/solves')
 @viewable_without_authentication(status_code=403)
 def solves_per_chal():
+    # TODO: Move this to the API
     chals = Challenges.query\
         .filter(or_(Challenges.hidden != True, Challenges.hidden == None))\
         .order_by(Challenges.value)\
@@ -194,6 +198,7 @@ def solves_per_chal():
 @challenges.route('/solves')
 @authed_only
 def solves_private():
+    # TODO: Move this to the API
     solves = None
     awards = None
 
@@ -237,6 +242,7 @@ def solves_private():
 
 @challenges.route('/solves/<int:team_id>')
 def solves_public(team_id=None):
+    # TODO: Move this to the API
     solves = None
     awards = None
 
@@ -299,6 +305,7 @@ def solves_public(team_id=None):
 @challenges.route('/fails')
 @authed_only
 def fails_private():
+    # TODO: Move this to the API
     fails = Fails.query.filter_by(team_id=session['id']).count()
     solves = Solves.query.filter_by(team_id=session['id']).count()
 
@@ -312,6 +319,7 @@ def fails_private():
 
 @challenges.route('/fails/<int:team_id>')
 def fails_public(team_id=None):
+    # TODO: Move this to the API
     if current_user.authed() and session['id'] == team_id:
         fails = Fails.query.filter_by(team_id=team_id).count()
         solves = Solves.query.filter_by(team_id=team_id).count()
@@ -333,6 +341,7 @@ def fails_public(team_id=None):
 @during_ctf_time_only
 @viewable_without_authentication(status_code=403)
 def who_solved(challenge_id):
+    # TODO: Move this to the API
     response = {'teams': []}
     if config.hide_scores():
         return jsonify(response)
@@ -346,6 +355,7 @@ def who_solved(challenge_id):
 @during_ctf_time_only
 @viewable_without_authentication()
 def chal(challenge_id):
+    # TODO: Move this to the API
     if ctf_paused():
         return jsonify({
             'status': 3,

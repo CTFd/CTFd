@@ -111,6 +111,7 @@ def scoreboard_view():
 
 @scoreboard.route('/scores')
 def scores():
+    # TODO: Move this to the API
     json = {'standings': []}
     if get_config('view_scoreboard_if_authed') and not config.authed():
         return redirect(url_for('auth.login', next=request.path))
@@ -126,6 +127,7 @@ def scores():
 
 @scoreboard.route('/top/<int:count>')
 def top(count):
+    # TODO: Move this to the API
     json = {'places': {}}
     if get_config('view_scoreboard_if_authed') and not current_user.authed():
         return redirect(url_for('auth.login', next=request.path))
