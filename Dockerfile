@@ -2,12 +2,17 @@ FROM python:2.7-alpine
 RUN apk update && \
     apk add python python-dev libffi-dev gcc make musl-dev py-pip mysql-client
 
-RUN mkdir -p /opt/CTFd
-COPY . /opt/CTFd
 WORKDIR /opt/CTFd
-VOLUME ["/opt/CTFd"]
+RUN mkdir -p /opt/CTFd
+
+COPY requirements.txt .
 
 RUN pip install -r requirements.txt
+
+COPY . .
+
+VOLUME ["/opt/CTFd"]
+
 RUN for d in CTFd/plugins/*; do \
       if [ -f "$d/requirements.txt" ]; then \
         pip install -r $d/requirements.txt; \
