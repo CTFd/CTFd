@@ -64,6 +64,9 @@
 						{% endif %}
 					{% endfor %}
 
+					<li class="nav-item">
+						<a class="nav-link" href="{{ request.script_root }}/users">Users</a>
+					</li>
 					{% if not get_config('workshop_mode') %}
 						<li class="nav-item">
 							<a class="nav-link" href="{{ request.script_root }}/teams">Teams</a>

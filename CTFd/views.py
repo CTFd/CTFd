@@ -42,8 +42,8 @@ def setup():
             admin.admin = True
             admin.banned = True
 
-            ctf_mode = request.form['ctf_mode']
-            ctf_mode = set_config('ctf_mode', ctf_mode)
+            user_mode = request.form['user_mode']
+            user_mode = set_config('user_mode', user_mode)
 
             # Index page
 
