@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - .data/nginx/logs:/var/log/nginx
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    restart: unless-stopped
+    depends_on:
+      - ctfd
