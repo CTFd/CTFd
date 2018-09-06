@@ -25,6 +25,11 @@ def ctf_theme():
 
 
 @cache.memoize()
+def user_mode():
+    return get_config('user_mode')
+
+
+@cache.memoize()
 def hide_scores():
     return get_config('hide_scores') or get_config('workshop_mode')
 

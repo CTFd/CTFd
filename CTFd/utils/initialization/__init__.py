@@ -4,6 +4,7 @@ from CTFd.models import db, Tracking
 from CTFd.utils import markdown, get_config
 from CTFd.utils.dates import unix_time_millis, unix_time
 
+from CTFd.utils import config
 from CTFd.utils.config import can_register, can_send_mail, ctf_logo, ctf_name, ctf_theme, hide_scores
 from CTFd.utils.config.pages import get_pages
 
@@ -25,6 +26,7 @@ def init_template_filters(app):
 
 
 def init_template_globals(app):
+    app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
     app.jinja_env.globals.update(can_register=can_register)
     app.jinja_env.globals.update(can_send_mail=can_send_mail)

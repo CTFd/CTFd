@@ -91,11 +91,16 @@
 								<a class="nav-link" href="{{ request.script_root }}/admin">Admin</a>
 							</li>
 						{% endif %}
+						{% if config.user_mode() == "teams" %}
 						<li class="nav-item">
 							<a class="nav-link" href="{{ request.script_root }}/team">Team</a>
 						</li>
+						{% endif %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/profile">Profile</a>
+							<a class="nav-link" href="{{ request.script_root }}/user">Profile</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ request.script_root }}/settings">Settings</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="{{ request.script_root }}/logout">Logout</a>

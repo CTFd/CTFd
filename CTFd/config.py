@@ -147,11 +147,11 @@ class Config(object):
     '''
     UPDATE_CHECK = True
 
-    OAUTH_AUTHORIZATION_ENDPOINT = 'http://auth.lvh.me:5000/oauth/authorize'
-    OAUTH_TOKEN_ENDPOINT = 'http://auth.lvh.me:5000/oauth/token'
-    OAUTH_API_ENDPOINT = 'http://api.lvh.me:5000/user'
-    OAUTH_CLIENT_ID = '3fffbdc90c5507435f81ee73091bd37b'
-    OAUTH_CLIENT_SECRET = '8b5c7b0f14ba34d651457419325980e6'
+    OAUTH_AUTHORIZATION_ENDPOINT = None
+    OAUTH_TOKEN_ENDPOINT = None
+    OAUTH_API_ENDPOINT = None
+    OAUTH_CLIENT_ID = None
+    OAUTH_CLIENT_SECRET = None
 
 
 class TestingConfig(Config):

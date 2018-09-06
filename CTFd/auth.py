@@ -176,14 +176,18 @@ def register():
             return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
         else:
             with app.app_context():
-                team = Users(name, email.lower(), password)
-                db.session.add(team)
+                user = Users(
+                    name=name.strip(),
+                    email=email.lower(),
+                    password=password.strip()
+                )
+                db.session.add(user)
                 db.session.commit()
                 db.session.flush()
 
-                session['username'] = team.name
-                session['id'] = team.id
-                session['admin'] = team.admin
+                session['username'] = user.name
+                session['id'] = user.id
+                session['admin'] = user.admin
                 session['nonce'] = generate_nonce()
 
                 if config.can_send_mail() and get_config('verify_emails'):  # Confirming users is enabled and we can send email.
@@ -194,7 +198,7 @@ def register():
                         username=request.form['name'].encode('utf-8'),
                         email=request.form['email'].encode('utf-8')
                     ))
-                    email.verify_email_address(team.email)
+                    email.verify_email_address(user.email)
                     db.session.close()
                     return redirect(url_for('auth.confirm'))
                 else:  # Don't care about confirming users
@@ -223,19 +227,19 @@ def login():
 
         # Check if the user submitted an email address or a team name
         if validators.validate_email(name) is True:
-            team = Users.query.filter_by(email=name).first()
+            user = Users.query.filter_by(email=name).first()
         else:
-            team = Users.query.filter_by(name=name).first()
+            user = Users.query.filter_by(name=name).first()
 
-        if team:
-            if team and bcrypt_sha256.verify(request.form['password'], team.password):
+        if user:
+            if user and bcrypt_sha256.verify(request.form['password'], user.password):
                 try:
                     session.regenerate()  # NO SESSION FIXATION FOR YOU
                 except:
                     pass  # TODO: Some session objects don't implement regenerate :(
-                session['username'] = team.name
-                session['id'] = team.id
-                session['admin'] = team.admin
+                session['username'] = user.name
+                session['id'] = user.id
+                session['admin'] = user.admin
                 session['nonce'] = generate_nonce()
                 db.session.close()
 
@@ -253,7 +257,7 @@ def login():
                 logger.warn("[{date}] {ip} - submitted invalid password for {username}".format(
                     date=time.strftime("%m/%d/%Y %X"),
                     ip=current_user.get_ip(),
-                    username=team.name.encode('utf-8')
+                    username=user.name.encode('utf-8')
                 ))
                 errors.append("Your username or password is incorrect")
                 db.session.close()

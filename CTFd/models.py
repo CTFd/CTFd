@@ -4,6 +4,7 @@ from sqlalchemy import TypeDecorator, String, func, types, CheckConstraint, and_
 from sqlalchemy.sql.expression import union_all
 from sqlalchemy.types import JSON, NullType
 from sqlalchemy.orm import validates, column_property
+from utils.crypto import hash_password
 import datetime
 import json
 
@@ -242,6 +243,7 @@ class Users(db.Model):
     email = db.Column(db.String(128), unique=True)
     admin = db.Column(db.Boolean, default=False)
     type = db.Column(db.String(80))
+    secret = db.Column(db.String(128))
 
     # Supplementary attributes
     website = db.Column(db.String(128))
@@ -264,7 +266,7 @@ class Users(db.Model):
 
     def __init__(self, **kwargs):
         super(Users, self).__init__(**kwargs)
-        self.password = bcrypt_sha256.encrypt(str(kwargs['password']))
+        self.password = hash_password(str(kwargs['password']))
 
     @property
     def score(self):
@@ -387,6 +389,8 @@ class Teams(db.Model):
     oauth_id = db.Column(db.Integer)
     name = db.Column(db.String(128), unique=True)
     email = db.Column(db.String(128), unique=True)
+    password = db.Column(db.String(128))
+    secret = db.Column(db.String(128))
 
     members = db.relationship("Users")
 
@@ -407,7 +411,7 @@ class Teams(db.Model):
     def score(self, admin=False):
         score = 0
         for member in self.members:
-            score += member.score()
+            score += member.score
         return score
 
     @property

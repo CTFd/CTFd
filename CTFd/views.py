@@ -138,8 +138,8 @@ def static_html(template):
         return render_template('page.html', content=markdown(page.html))
 
 
-@views.route('/profile', methods=['POST', 'GET'])
-def profile():
+@views.route('/settings', methods=['POST', 'GET'])
+def settings():
     if authed():
         if request.method == "POST":
             errors = []
