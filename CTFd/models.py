@@ -392,7 +392,7 @@ class Teams(db.Model):
     password = db.Column(db.String(128))
     secret = db.Column(db.String(128))
 
-    members = db.relationship("Users")
+    members = db.relationship("Users", backref="team")
 
     # Supplementary attributes
     website = db.Column(db.String(128))
@@ -404,8 +404,9 @@ class Teams(db.Model):
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    # def __init__(self, name):
-    #     self.name = name
+    def __init__(self, **kwargs):
+        super(Teams, self).__init__(**kwargs)
+        self.password = hash_password(str(kwargs['password']))
 
     @property
     def score(self, admin=False):

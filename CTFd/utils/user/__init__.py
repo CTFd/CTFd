@@ -14,6 +14,14 @@ def get_current_user():
         return None
 
 
+def get_current_team():
+    if authed():
+        user = get_current_user()
+        return user.team
+    else:
+        return None
+
+
 def authed():
     return bool(session.get('id', False))
 
@@ -63,4 +71,8 @@ def get_ip(req=None):
 
 def get_wrong_submissions_per_minute(teamid):  # keys per minute
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
-    return len(db.session.query(Fails).filter(Fails.teamid == teamid, Fails.date >= one_min_ago).all())
+    fails = db.session.query(Fails).filter(
+        Fails.team_id == teamid,
+        Fails.date >= one_min_ago
+    ).all()
+    return len(fails)

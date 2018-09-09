@@ -265,7 +265,8 @@ if __name__ == '__main__':
             if name not in used:
                 used.append(name)
                 team = Teams(
-                    name=name
+                    name=name,
+                    password="password"
                 )
                 db.session.add(team)
                 count += 1

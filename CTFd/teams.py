@@ -55,12 +55,10 @@ def join():
         if team and verify_password(passphrase, team.password):
             user.team_id = team.id
             db.session.commit()
-            return redirect(url_for('challenges.challenge_view'))
+            return redirect(url_for('challenges.challenges_view'))
         else:
             errors = ['That information is incorrect']
             return render_template('teams/join_team.html', errors=errors)
-
-
 
 
 @teams.route('/teams/new', methods=['GET', 'POST'])
@@ -69,7 +67,22 @@ def new():
     if request.method == 'GET':
         return render_template("teams/new_team.html")
     elif request.method == 'POST':
-        pass
+        teamname = request.form.get('name')
+        passphrase = request.form.get('password', '').strip()
+
+        user = get_current_user()
+
+        team = Teams(
+            name=teamname,
+            password=passphrase
+        )
+
+        db.session.add(team)
+        db.session.commit()
+
+        user.team_id = team.id
+        db.session.commit()
+        return redirect(url_for('challenges.challenges_view'))
 
 
 @teams.route('/team', methods=['GET'])
@@ -120,12 +133,12 @@ def public(team_id):
         return redirect(url_for('auth.login', next=request.path))
     errors = []
     freeze = get_config('freeze')
-    user = Teams.query.filter_by(id=team_id).first_or_404()
+    team = Teams.query.filter_by(id=team_id).first_or_404()
     solves = Solves.query.filter_by(team_id=team_id)
     awards = Awards.query.filter_by(team_id=team_id)
 
-    place = user.place()
-    score = user.score()
+    place = team.place
+    score = team.score
 
     if freeze:
         freeze = unix_time_to_utc(freeze)
@@ -140,14 +153,14 @@ def public(team_id):
         errors.append('Scores are currently hidden')
 
     if errors:
-        return render_template('teams/team.html', team=user, errors=errors)
+        return render_template('teams/team.html', team=team, errors=errors)
 
     if request.method == 'GET':
         return render_template(
             'teams/team.html',
             solves=solves,
             awards=awards,
-            team=user,
+            team=team,
             score=score,
             place=place,
             score_frozen=config.is_scoreboard_frozen()

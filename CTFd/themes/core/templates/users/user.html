@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
+		<h1 id="user-id" user-id="{{ user.id }}">{{ user.name }}</h1>
 	</div>
 </div>
 <div class="container">
@@ -24,13 +24,13 @@
 	</div>
 	{% endif %}
 
-	<div class="team-info">
-		<h2 id="team-place" class="text-center">
+	<div class="user-info">
+		<h2 id="user-place" class="text-center">
 			{%if not get_config('workshop_mode') and place %}
 				{{ place }} <small>place</small>
 			{% endif %}
 		</h2>
-		<h2 id="team-score" class="text-center">
+		<h2 id="user-score" class="text-center">
 			{%if score %}
 				{{ score }} <small>points</small>
 			{% endif %}
@@ -112,6 +112,6 @@
 	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/plotly.min.js"></script>
 	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/utils.js"></script>
 	{% if solves %}
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/team.js"></script>
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/user.js"></script>
 	{% endif %}
 {% endblock %}

@@ -23,7 +23,11 @@ users = Blueprint('users', __name__)
 @users.route('/users')
 def listing():
     # TODO: Implement this logic to either mimic the teams page or to only be visible when the ctf is in user only mode
-    return render_template('users.html')
+    users = Users.query.all()
+    return render_template(
+        'users/users.html',
+        users=users
+    )
 
 
 @users.route('/profile')
@@ -50,7 +54,7 @@ def private():
     awards = awards.all()
 
     return render_template(
-        'user.html',
+        'users/user.html',
         solves=solves,
         awards=awards,
         team=team,
@@ -63,4 +67,4 @@ def private():
 @users.route('/user/<int:user_id>')
 def public(user_id):
     # TODO: This should be visible if user's login as themselves (user+team login, or user only login)
-    return render_template('user.html')
+    return render_template('users/user.html')

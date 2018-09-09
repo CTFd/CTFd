@@ -2,6 +2,7 @@ from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.keys import get_key_class
 from CTFd.models import db, Solves, Fails, Flags, Challenges, Files, Tags, Hints
 from CTFd import utils
+from CTFd.utils.user import get_ip
 
 
 class BaseChallenge(object):
@@ -120,15 +121,15 @@ class CTFdStandardChallenge(BaseChallenge):
         :param challenge:
         :return:
         """
-        Fails.query.filter_by(chalid=challenge.id).delete()
-        Solves.query.filter_by(chalid=challenge.id).delete()
-        Flags.query.filter_by(chal=challenge.id).delete()
-        files = Files.query.filter_by(chal=challenge.id).all()
+        Fails.query.filter_by(challenge_id=challenge.id).delete()
+        Solves.query.filter_by(challenge_id=challenge.id).delete()
+        Flags.query.filter_by(challenge_id=challenge.id).delete()
+        files = Files.query.filter_by(challenge_id=challenge.id).all()
         for f in files:
             utils.delete_file(f.id)
-        Files.query.filter_by(chal=challenge.id).delete()
-        Tags.query.filter_by(chal=challenge.id).delete()
-        Hints.query.filter_by(chal=challenge.id).delete()
+        Files.query.filter_by(challenge_id=challenge.id).delete()
+        Tags.query.filter_by(challenge_id=challenge.id).delete()
+        Hints.query.filter_by(challenge_id=challenge.id).delete()
         Challenges.query.filter_by(id=challenge.id).delete()
         db.session.commit()
 
@@ -144,14 +145,14 @@ class CTFdStandardChallenge(BaseChallenge):
         :return: (boolean, string)
         """
         provided_key = request.form['key'].strip()
-        chal_keys = Flags.query.filter_by(chal=chal.id).all()
+        chal_keys = Flags.query.filter_by(challenge_id=chal.id).all()
         for chal_key in chal_keys:
             if get_key_class(chal_key.type).compare(chal_key, provided_key):
                 return True, 'Correct'
         return False, 'Incorrect'
 
     @staticmethod
-    def solve(team, chal, request):
+    def solve(user, team, challenge, request):
         """
         This method is used to insert Solves into the database in order to mark a challenge as solved.
 
@@ -161,13 +162,19 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         provided_key = request.form['key'].strip()
-        solve = Solves(teamid=team.id, chalid=chal.id, ip=utils.get_ip(req=request), flag=provided_key)
+        solve = Solves(
+            user_id=user.id,
+            team_id=team.id if team else None,
+            challenge_id=challenge.id,
+            ip=get_ip(req=request),
+            provided=provided_key
+        )
         db.session.add(solve)
         db.session.commit()
         db.session.close()
 
     @staticmethod
-    def fail(team, chal, request):
+    def fail(user, team, challenge, request):
         """
         This method is used to insert Fails into the database in order to mark an answer incorrect.
 
@@ -177,7 +184,13 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         provided_key = request.form['key'].strip()
-        wrong = Fails(teamid=team.id, chalid=chal.id, ip=utils.get_ip(request), flag=provided_key)
+        wrong = Fails(
+            user_id=user.id,
+            team_id=team.id if team else None,
+            challenge_id=challenge.id,
+            ip=get_ip(request),
+            provided=provided_key
+        )
         db.session.add(wrong)
         db.session.commit()
         db.session.close()

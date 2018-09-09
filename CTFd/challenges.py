@@ -11,6 +11,7 @@ from CTFd.utils.decorators import (
 )
 from CTFd.utils import config, text_type, user as current_user, get_config
 from CTFd.utils.dates import ctftime, ctf_started, ctf_paused, ctf_ended, unix_time, unix_time_to_utc
+from CTFd.utils.user import get_current_user, get_current_team
 from sqlalchemy.sql import or_
 import logging
 import time
@@ -281,11 +282,11 @@ def solves_public(team_id=None):
     response = {'solves': []}
     for solve in solves:
         response['solves'].append({
-            'chal': solve.chal.name,
+            'chal': solve.challenge.name,
             'challenge_id': solve.challenge_id,
             'team': solve.team_id,
-            'value': solve.chal.value,
-            'category': solve.chal.category,
+            'value': solve.challenge.value,
+            'category': solve.challenge.category,
             'time': unix_time(solve.date)
         })
     if awards:
@@ -362,8 +363,13 @@ def chal(challenge_id):
             'message': '{} is paused'.format(config.ctf_name())
         })
     if (current_user.authed() and current_user.is_verified() and (ctf_started() or config.view_after_ctf())) or current_user.is_admin():
-        team = Teams.query.filter_by(id=session['id']).first()
-        fails = Fails.query.filter_by(team_id=session['id'], challenge_id=challenge_id).count()
+        user = get_current_user()
+        team = get_current_team()
+
+        fails = Fails.query.filter_by(
+            user_id=session['id'],
+            challenge_id=challenge_id
+        ).count()
         logger = logging.getLogger('Flags')
         data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'),
                 current_user.get_wrong_submissions_per_minute(session['id']))
@@ -377,17 +383,25 @@ def chal(challenge_id):
         # Anti-bruteforce / submitting Flags too quickly
         if current_user.get_wrong_submissions_per_minute(session['id']) > 10:
             if ctftime():
-                chal_class.fail(team=team, chal=chal, request=request)
+                chal_class.fail(
+                    user=user,
+                    team=team,
+                    challenge=chal,
+                    request=request
+                )
             logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
             # return '3' # Submitting too fast
             return jsonify({'status': 3, 'message': "You're submitting Flags too fast. Slow down."})
 
-        solves = Solves.query.filter_by(team_id=session['id'], challenge_id=challenge_id).first()
+        solves = Solves.query.filter_by(
+            user_id=session['id'],
+            challenge_id=challenge_id
+        ).first()
 
         # Challange not solved yet
         if not solves:
             provided_key = request.form['key'].strip()
-            saved_Flags = Flags.query.filter_by(chal=chal.id).all()
+            saved_Flags = Flags.query.filter_by(challenge_id=chal.id).all()
 
             # Hit max attempts
             max_tries = chal.max_attempts
@@ -400,12 +414,22 @@ def chal(challenge_id):
             status, message = chal_class.attempt(chal, request)
             if status:  # The challenge plugin says the input is right
                 if ctftime() or current_user.is_admin():
-                    chal_class.solve(team=team, chal=chal, request=request)
+                    chal_class.solve(
+                        user=user,
+                        team=team,
+                        challenge=chal,
+                        request=request
+                    )
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
                 return jsonify({'status': 1, 'message': message})
             else:  # The challenge plugin says the input is wrong
                 if ctftime() or current_user.is_admin():
-                    chal_class.fail(team=team, chal=chal, request=request)
+                    chal_class.fail(
+                        user=user,
+                        team=team,
+                        challenge=chal,
+                        request=request
+                    )
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
                 # return '0' # key was wrong
                 if max_tries:

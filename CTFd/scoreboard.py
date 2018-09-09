@@ -18,7 +18,7 @@ def scoreboard_view():
         return redirect(url_for('auth.login', next=request.path))
     if config.hide_scores():
         return render_template('scoreboard.html', errors=['Scores are currently hidden'])
-    standings = get_team_standings()
+    standings = get_standings()
     return render_template('scoreboard.html', teams=standings, score_frozen=config.is_scoreboard_frozen())
 
 
@@ -31,7 +31,7 @@ def scores():
     if config.hide_scores():
         return jsonify(json)
 
-    standings = get_team_standings()
+    standings = get_standings()
 
     for i, x in enumerate(standings):
         json['standings'].append({'pos': i + 1, 'id': x.team_id, 'team': x.name, 'score': int(x.score)})
