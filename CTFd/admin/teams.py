@@ -83,7 +83,7 @@ def admin_create_team():
             errors.append("That email address is invalid")
 
     if not white_listed_user:
-            errors.append("User e-mail address should belongsto the whitelisted domains or to the whitelisted users' list")
+            errors.append("User e-mail address should belong to the whitelisted domains or to the whitelisted users' list")
 
     if not password:
         errors.append('The team requires a password')
@@ -151,7 +151,7 @@ def admin_team(teamid):
                 errors.append("That email address is invalid")
 
         if not white_listed_user:
-            errors.append("User e-mail address should belongsto the whitelisted domains or to the whitelisted users' list")
+            errors.append("User e-mail address should belong to the whitelisted domains or to the whitelisted users' list")
 
         name_used = Teams.query.filter(Teams.name == name).first()
         if name_used and int(name_used.id) != int(teamid):
