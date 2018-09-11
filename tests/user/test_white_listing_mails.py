@@ -68,7 +68,7 @@ def test_user_can_change_to_allowed_mail_domain():
         allowed_domains = ['ctfd.io', 'ctfd2.io']
         set_config('allowed_domains', json.dumps(allowed_domains))
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        client = login_as_user(app, name="user1", email="user1@ctfd.io", password="password")
+        client = login_as_user(app, name="user1", password="password")
         r = client.get('/profile')
         with client.session_transaction() as sess:
             data = {
@@ -100,7 +100,7 @@ def test_user_cannot_change_to_disallowed_mail_domain():
         allowed_domains = ['ctfd.io', 'ctfd2.io']
         set_config('allowed_domains', json.dumps(allowed_domains))
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        client = login_as_user(app, name="user1", email="user1@ctfd.io", password="password")
+        client = login_as_user(app, name="user1", password="password")
         r = client.get('/profile')
         with client.session_transaction() as sess:
             data = {
@@ -132,7 +132,7 @@ def test_user_can_change_to_allowed_mail():
         allowed_mails = ['user1@ctfd.io', 'user1@ctfd2.io']
         set_config('allowed_mails', json.dumps(allowed_mails))
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        client = login_as_user(app, name="user1", email="user1@ctfd.io", password="password")
+        client = login_as_user(app, name="user1", password="password")
         r = client.get('/profile')
         with client.session_transaction() as sess:
             data = {
@@ -164,7 +164,7 @@ def test_user_cannot_change_to_disallowed_mail():
         allowed_mails = ['user1@ctfd.io', 'user1@ctfd2.io']
         set_config('allowed_mails', json.dumps(allowed_mails))
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        client = login_as_user(app, name="user1", email="user1@ctfd.io", password="password")
+        client = login_as_user(app, name="user1", password="password")
         r = client.get('/profile')
         with client.session_transaction() as sess:
             data = {
