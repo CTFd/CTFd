@@ -269,13 +269,13 @@ def is_verified():
         return True
 
 
-def is_allowed_to_register(user):
-    for domain in get_config('allowed_domains'):
-        if user.split('@')[-1] == domain:
-            return True
-    if user in get_config('allowed_mails'):
+def is_white_listed(email):
+    white_listed_domains = json.loads(utils.get_config('white_listed_domains'))
+    white_listed_addresses = json.loads(utils.get_config('white_listed_addresses'))
+    if (white_listed_domains + white_listed_addresses == []) or (email.split('@')[-1] in white_listed_domains) or (email in white_listed_addresses):
         return True
-    return False
+    else:
+        return False
 
 
 @cache.memoize()

@@ -153,14 +153,12 @@ def register():
         pass_long = len(password) > 128
         valid_email = utils.check_email_format(request.form['email'])
         team_name_email_check = utils.check_email_format(name)
-        allowed_user = (json.loads(utils.get_config('allowed_domains')) + json.loads(utils.get_config('allowed_mails'))) == []
-        allowed_user = allowed_user or email.split('@')[-1] in json.loads(utils.get_config('allowed_domains'))
-        allowed_user = allowed_user or (email in json.loads(utils.get_config('allowed_mails')))
+        white_listed_user = utils.is_white_listed(email)
 
         if not valid_email:
             errors.append("Please enter a valid email address")
-        if not allowed_user:
-            errors.append("Please enter an e-mail address that belongs to the allowed domains or to the allowed users' list")
+        if not white_listed_user:
+            errors.append("Please enter a whitelisted e-mail address that belongs to the whitelisted domains or to the whitelisted users' list")
         if names:
             errors.append('That team name is already taken')
         if team_name_email_check is True:

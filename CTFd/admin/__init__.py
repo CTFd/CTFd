@@ -158,28 +158,29 @@ def admin_config():
         utils.set_config("ctf_theme", request.form.get('ctf_theme', None))
         utils.set_config('css', request.form.get('css', None))
 
-        allowed_users = request.form.get('allowed_users', None)
+        white_listed_users = request.form.get('white_listed_users', None)
 
-        if allowed_users is None:
-            allowed_users = []
+        if white_listed_users is None:
+            white_listed_users = []
         else:
-            allowed_users = allowed_users.split('\n')
-        allowed_domains = []
-        allowed_mails = []
+            white_listed_users = white_listed_users.split('\n')
+        white_listed_domains = []
+        white_listed_addresses = []
         errors = []
 
-        for item in allowed_users:
-            if utils.check_domain_format(item.strip()):
-                allowed_domains.append(item.strip())
-            elif utils.check_email_format(item.strip()):
-                allowed_mails.append(item.strip())
+        for it in white_listed_users:
+            item = it.strip()
+            if utils.check_domain_format(item):
+                white_listed_domains.append(item)
+            elif utils.check_email_format(item):
+                white_listed_addresses.append(item)
             else:
-                errors.append(item.strip())
-        allowed_domains.sort()
-        allowed_mails.sort()
+                errors.append(item)
+        white_listed_domains.sort()
+        white_listed_addresses.sort()
 
-        utils.set_config('allowed_domains', json.dumps(allowed_domains))
-        utils.set_config('allowed_mails', json.dumps(allowed_mails))
+        utils.set_config('white_listed_domains', json.dumps(white_listed_domains))
+        utils.set_config('white_listed_addresses', json.dumps(white_listed_addresses))
 
         utils.set_config("mailfrom_addr", request.form.get('mailfrom_addr', None))
         utils.set_config("mg_base_url", request.form.get('mg_base_url', None))
@@ -234,9 +235,9 @@ def admin_config():
     prevent_registration = utils.get_config('prevent_registration')
     prevent_name_change = utils.get_config('prevent_name_change')
     verify_emails = utils.get_config('verify_emails')
-    allowed_domains = json.loads(utils.get_config('allowed_domains'))
-    allowed_mails = json.loads(utils.get_config('allowed_mails'))
-    allowed_users = "\n".join(allowed_domains + allowed_mails)
+    white_listed_domains = json.loads(utils.get_config('white_listed_domains'))
+    white_listed_addresses = json.loads(utils.get_config('white_listed_addresses'))
+    white_listed_users = "\n".join(white_listed_domains + white_listed_addresses)
 
     workshop_mode = utils.get_config('workshop_mode')
     paused = utils.get_config('paused')
@@ -264,7 +265,7 @@ def admin_config():
         mail_password=mail_password,
         mail_tls=mail_tls,
         mail_ssl=mail_ssl,
-        allowed_users=allowed_users,
+        white_listed_users=white_listed_users,
         view_challenges_unregistered=view_challenges_unregistered,
         view_scoreboard_if_authed=view_scoreboard_if_authed,
         prevent_registration=prevent_registration,

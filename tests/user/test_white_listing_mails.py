@@ -13,60 +13,60 @@ import json
 # Any user can register if there is allowed domain and allowed mail is undefined is the default registration. No need for new test.
 
 
-def test_user_can_register_allowed_mail_domain():
+def test_user_can_register_mail_from_whitelisted_domain():
     """User can register a mail from a white-listed domain"""
     app = create_ctfd()
     with app.app_context():
-        allowed_domains = ['ctfd.io']
-        set_config('allowed_domains', json.dumps(allowed_domains))
+        white_listed_domains = ['ctfd.io']
+        set_config('white_listed_domains', json.dumps(white_listed_domains))
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
         team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
         assert team_count == 2  # There's the admin user and the created user
     destroy_ctfd(app)
 
 
-def test_user_cannot_register_disallowed_mail_domain():
+def test_user_cannot_register_mail_not_in_whitelisted_domain():
     """User cannot register a mail that is not in a white-listed domain"""
     app = create_ctfd()
     with app.app_context():
-        allowed_domains = ['ctfd.io']
-        set_config('allowed_domains', json.dumps(allowed_domains))
+        white_listed_domains = ['ctfd.io']
+        set_config('white_listed_domains', json.dumps(white_listed_domains))
         register_user(app, name="user1", email="user1@ctfd2.io", password="password")
         team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
         assert team_count == 1  # There's only the admin user
     destroy_ctfd(app)
 
 
-def test_user_can_register_allowed_mail():
+def test_user_can_register_mail_from_whitelisted_addresses():
     """User can register a white-listed mail"""
     app = create_ctfd()
     with app.app_context():
-        allowed_mails = ['user1@ctfd.io']
-        set_config('allowed_mails', json.dumps(allowed_mails))
+        white_listed_addresses = ['user1@ctfd.io']
+        set_config('white_listed_addresses', json.dumps(white_listed_addresses))
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
         team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
         assert team_count == 2  # There's the admin user and the created user
     destroy_ctfd(app)
 
 
-def test_user_cannot_register_disallowed_mail():
+def test_user_cannot_register_mail_not_in_whitelisted_addresses():
     """User cannot register a mail that is not white-listed"""
     app = create_ctfd()
     with app.app_context():
-        allowed_mails = ['user1@ctfd.io']
-        set_config('allowed_mails', json.dumps(allowed_mails))
+        white_listed_addresses = ['user1@ctfd.io']
+        set_config('white_listed_addresses', json.dumps(white_listed_addresses))
         register_user(app, name="user1", email="user2@ctfd.io", password="password")
         team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
         assert team_count == 1  # There's only the admin user
     destroy_ctfd(app)
 
 
-def test_user_can_change_to_allowed_mail_domain():
-    """User can change to a mail from a white-listed domain"""
+def test_user_can_change_mail_to_whitelisted_domain():
+    """User can change to a mail in a white-listed domain"""
     app = create_ctfd()
     with app.app_context():
-        allowed_domains = ['ctfd.io', 'ctfd2.io']
-        set_config('allowed_domains', json.dumps(allowed_domains))
+        white_listed_domains = ['ctfd.io', 'ctfd2.io']
+        set_config('white_listed_domains', json.dumps(white_listed_domains))
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
         client = login_as_user(app, name="user1", password="password")
         r = client.get('/profile')
@@ -86,18 +86,15 @@ def test_user_can_change_to_allowed_mail_domain():
 
         user = Teams.query.filter_by(name='user1').first()
         assert user.email == 'user1@ctfd2.io'
-        assert user.affiliation == 'affiliation_test'
-        assert user.website == 'https://ctfd.io'
-        assert user.country == 'United States of America'
     destroy_ctfd(app)
 
 
-def test_user_cannot_change_to_disallowed_mail_domain():
+def test_user_cannot_change_mail_not_in_whitelisted_domain():
     """User cannot change to a mail that is not in a white-listed domain"""
     app = create_ctfd()
     with app.app_context():
-        allowed_domains = ['ctfd.io', 'ctfd2.io']
-        set_config('allowed_domains', json.dumps(allowed_domains))
+        white_listed_domains = ['ctfd.io', 'ctfd2.io']
+        set_config('white_listed_domains', json.dumps(white_listed_domains))
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
         client = login_as_user(app, name="user1", password="password")
         r = client.get('/profile')
@@ -117,18 +114,15 @@ def test_user_cannot_change_to_disallowed_mail_domain():
 
         user = Teams.query.filter_by(name='user1').first()
         assert user.email == 'user1@ctfd.io'
-        assert user.affiliation is None
-        assert user.website is None
-        assert user.country is None
     destroy_ctfd(app)
 
 
-def test_user_can_change_to_allowed_mail():
+def test_user_can_change_mail_to_whitelisted_addresses():
     """User can change to a mail that is white-listed"""
     app = create_ctfd()
     with app.app_context():
-        allowed_mails = ['user1@ctfd.io', 'user1@ctfd2.io']
-        set_config('allowed_mails', json.dumps(allowed_mails))
+        white_listed_addresses = ['user1@ctfd.io', 'user1@ctfd2.io']
+        set_config('white_listed_addresses', json.dumps(white_listed_addresses))
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
         client = login_as_user(app, name="user1", password="password")
         r = client.get('/profile')
@@ -148,18 +142,15 @@ def test_user_can_change_to_allowed_mail():
 
         user = Teams.query.filter_by(name='user1').first()
         assert user.email == 'user1@ctfd2.io'
-        assert user.affiliation == 'affiliation_test'
-        assert user.website == 'https://ctfd.io'
-        assert user.country == 'United States of America'
     destroy_ctfd(app)
 
 
-def test_user_cannot_change_to_disallowed_mail():
+def test_user_cannot_change_mail_not_in_whitelisted_addresses():
     """User cannot change to a mail that is not white-listed"""
     app = create_ctfd()
     with app.app_context():
-        allowed_mails = ['user1@ctfd.io', 'user1@ctfd2.io']
-        set_config('allowed_mails', json.dumps(allowed_mails))
+        white_listed_addresses = ['user1@ctfd.io', 'user1@ctfd2.io']
+        set_config('white_listed_addresses', json.dumps(white_listed_addresses))
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
         client = login_as_user(app, name="user1", password="password")
         r = client.get('/profile')
@@ -179,7 +170,4 @@ def test_user_cannot_change_to_disallowed_mail():
 
         user = Teams.query.filter_by(name='user1').first()
         assert user.email == 'user1@ctfd.io'
-        assert user.affiliation is None
-        assert user.website is None
-        assert user.country is None
     destroy_ctfd(app)

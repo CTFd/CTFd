@@ -121,11 +121,11 @@
 						</label>
 					</div>
 					<div class="form-group">
-						<label>Restrict users to those below <i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip"
+						<label>Whitelist users to those below <i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip"
 							data-placement="right"
 							title="Restrict users to the list of e-mails or domains defined below. One per line."></i>
 						</label>
-						<textarea class="form-control" id="allowed_users" name="allowed_users" rows="7">{{ allowed_users |default('', True) }}</textarea>
+						<textarea class="form-control" id="white_listed_users" name="white_listed_users" rows="7">{{ white_listed_users |default('', True) }}</textarea>
 					</div>
 
 					<div class="form-check">

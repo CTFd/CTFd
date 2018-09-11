@@ -60,6 +60,7 @@ def admin_create_team():
     admin_user = True if request.form.get('admin', None) == 'on' else False
     verified = True if request.form.get('verified', None) == 'on' else False
     hidden = True if request.form.get('hidden', None) == 'on' else False
+    white_listed_user = utils.is_white_listed(email)
 
     errors = []
 
@@ -80,6 +81,9 @@ def admin_create_team():
         valid_email = utils.check_email_format(email)
         if not valid_email:
             errors.append("That email address is invalid")
+
+    if not white_listed_user:
+            errors.append("User e-mail address should belongsto the whitelisted domains or to the whitelisted users' list")
 
     if not password:
         errors.append('The team requires a password')
@@ -137,6 +141,7 @@ def admin_team(teamid):
         admin_user = True if request.form.get('admin', None) == 'on' else False
         verified = True if request.form.get('verified', None) == 'on' else False
         hidden = True if request.form.get('hidden', None) == 'on' else False
+        white_listed_user = utils.is_white_listed(email)
 
         errors = []
 
@@ -144,6 +149,9 @@ def admin_team(teamid):
             valid_email = utils.check_email_format(email)
             if not valid_email:
                 errors.append("That email address is invalid")
+
+        if not white_listed_user:
+            errors.append("User e-mail address should belongsto the whitelisted domains or to the whitelisted users' list")
 
         name_used = Teams.query.filter(Teams.name == name).first()
         if name_used and int(name_used.id) != int(teamid):
