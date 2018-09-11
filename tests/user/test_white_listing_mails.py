@@ -83,7 +83,6 @@ def test_user_can_change_to_allowed_mail_domain():
             }
 
         r = client.post('/profile', data=data)
-        #assert r.status_code == 302
 
         user = Teams.query.filter_by(name='user1').first()
         assert user.email == 'user1@ctfd2.io'
@@ -115,13 +114,12 @@ def test_user_cannot_change_to_disallowed_mail_domain():
             }
 
         r = client.post('/profile', data=data)
-        #assert r.status_code == 302
 
         user = Teams.query.filter_by(name='user1').first()
         assert user.email == 'user1@ctfd.io'
-        assert user.affiliation == 'affiliation_test'
-        assert user.website == 'https://ctfd.io'
-        assert user.country == 'United States of America'
+        assert user.affiliation == ''
+        assert user.website == ''
+        assert user.country == ''
     destroy_ctfd(app)
 
 
@@ -147,7 +145,6 @@ def test_user_can_change_to_allowed_mail():
             }
 
         r = client.post('/profile', data=data)
-        #assert r.status_code == 302
 
         user = Teams.query.filter_by(name='user1').first()
         assert user.email == 'user1@ctfd2.io'
@@ -179,11 +176,10 @@ def test_user_cannot_change_to_disallowed_mail():
             }
 
         r = client.post('/profile', data=data)
-        #assert r.status_code == 302
 
         user = Teams.query.filter_by(name='user1').first()
         assert user.email == 'user1@ctfd.io'
-        assert user.affiliation == 'affiliation_test'
-        assert user.website == 'https://ctfd.io'
-        assert user.country == 'United States of America'
+        assert user.affiliation == ''
+        assert user.website == ''
+        assert user.country == ''
     destroy_ctfd(app)
