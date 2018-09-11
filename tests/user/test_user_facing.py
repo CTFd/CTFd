@@ -132,6 +132,16 @@ def test_register_duplicate_email():
     destroy_ctfd(app)
 
 
+def test_register_invalid_email():
+    """A user shouldn't be able to register an email address that fails utils.check_email_format"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1.ctfd.io", password="password")
+        team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
+        assert team_count == 1  # There's only the admin user
+    destroy_ctfd(app)
+    
+    
 def test_user_bad_login():
     """A user should not be able to login with an incorrect password"""
     app = create_ctfd()
@@ -371,6 +381,102 @@ def test_user_set_profile():
         assert user.affiliation == 'affiliation_test'
         assert user.website == 'https://ctfd.io'
         assert user.country == 'United States of America'
+    destroy_ctfd(app)
+
+
+def test_user_set_profile_invalid_team_name():
+    """Fail to change a team name to an e-mail"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        client = login_as_user(app, name="user1", password="password")
+        r = client.get('/profile')
+        with client.session_transaction() as sess:
+            data = {
+                'name': 'user@ctfd.io',
+                'email': 'user@ctfd.io',
+                'confirm': '',
+                'password': '',
+                'affiliation': 'affiliation_test',
+                'website': 'https://ctfd.io',
+                'country': 'United States of America',
+                'nonce': sess.get('nonce')
+            }
+
+        r = client.post('/profile', data=data)
+        assert r.status_code == 302
+
+        user = Teams.query.filter_by(id=2).first()
+        assert user.name == 'user1'
+        assert user.email == 'user1@ctfd.io'
+        assert user.password == 'password'
+        assert user.affiliation is None
+        assert user.website is None
+        assert user.country is None
+    destroy_ctfd(app)
+
+
+def test_user_set_profile_invalid_password():
+    """Fail to change a profile when old password is wrong"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        client = login_as_user(app, name="user1", password="password")
+        r = client.get('/profile')
+        with client.session_transaction() as sess:
+            data = {
+                'name': 'user',
+                'email': 'user@ctfd.io',
+                'confirm': 'wrong_password',
+                'password': '',
+                'affiliation': 'affiliation_test',
+                'website': 'https://ctfd.io',
+                'country': 'United States of America',
+                'nonce': sess.get('nonce')
+            }
+
+        r = client.post('/profile', data=data)
+        assert r.status_code == 302
+
+        user = Teams.query.filter_by(id=2).first()
+        assert user.name == 'user1'
+        assert user.email == 'user1@ctfd.io'
+        assert user.password == 'password'
+        assert user.affiliation is None
+        assert user.website is None
+        assert user.country is None
+    destroy_ctfd(app)
+
+
+def test_user_set_profile_invalid_email():
+    """Fail to change a profile when the email fails utils.check_email_format"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        client = login_as_user(app, name="user1", password="password")
+        r = client.get('/profile')
+        with client.session_transaction() as sess:
+            data = {
+                'name': 'user',
+                'email': 'user.ctfd.io',
+                'confirm': '',
+                'password': '',
+                'affiliation': 'affiliation_test',
+                'website': 'https://ctfd.io',
+                'country': 'United States of America',
+                'nonce': sess.get('nonce')
+            }
+
+        r = client.post('/profile', data=data)
+        assert r.status_code == 302
+
+        user = Teams.query.filter_by(id=2).first()
+        assert user.name == 'user1'
+        assert user.email == 'user1@ctfd.io'
+        assert user.password == 'password'
+        assert user.affiliation is None
+        assert user.website is None
+        assert user.country is None
     destroy_ctfd(app)
 
 
