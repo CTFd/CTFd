@@ -158,7 +158,10 @@ def admin_config():
         utils.set_config("ctf_theme", request.form.get('ctf_theme', None))
         utils.set_config('css', request.form.get('css', None))
 
-        allowed_users = request.form.get('allowed_users', None).split('\n')
+        if allowed_users == None:
+            allowed_users = []
+        else:
+            allowed_users = request.form.get('allowed_users', None).split('\n')
         allowed_domains = []
         allowed_mails = []
         errors = []
@@ -175,7 +178,7 @@ def admin_config():
 
         utils.set_config('allowed_domains', json.dumps(allowed_domains))
         utils.set_config('allowed_mails', json.dumps(allowed_mails))
-        
+
         utils.set_config("mailfrom_addr", request.form.get('mailfrom_addr', None))
         utils.set_config("mg_base_url", request.form.get('mg_base_url', None))
         utils.set_config("mg_api_key", request.form.get('mg_api_key', None))
