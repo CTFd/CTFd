@@ -160,7 +160,7 @@ def admin_config():
 
         allowed_users = request.form.get('allowed_users', None)
 
-        if allowed_users == None:
+        if allowed_users is None:
             allowed_users = []
         else:
             allowed_users = allowed_users.split('\n')
