@@ -140,8 +140,8 @@ def test_register_invalid_email():
         team_count = app.db.session.query(app.db.func.count(Teams.id)).first()[0]
         assert team_count == 1  # There's only the admin user
     destroy_ctfd(app)
-    
-    
+
+
 def test_user_bad_login():
     """A user should not be able to login with an incorrect password"""
     app = create_ctfd()
@@ -408,16 +408,11 @@ def test_user_set_profile_invalid_team_name():
 
         user = Teams.query.filter_by(id=2).first()
         assert user.name == 'user1'
-        assert user.email == 'user1@ctfd.io'
-        assert user.password == 'password'
-        assert user.affiliation is None
-        assert user.website is None
-        assert user.country is None
     destroy_ctfd(app)
 
 
 def test_user_set_profile_invalid_password():
-    """Fail to change a profile when old password is wrong"""
+    """Fail to change a team password when old password is wrong"""
     app = create_ctfd()
     with app.app_context():
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
@@ -428,7 +423,7 @@ def test_user_set_profile_invalid_password():
                 'name': 'user',
                 'email': 'user@ctfd.io',
                 'confirm': 'wrong_password',
-                'password': '',
+                'password': 'new_password',
                 'affiliation': 'affiliation_test',
                 'website': 'https://ctfd.io',
                 'country': 'United States of America',
@@ -439,17 +434,12 @@ def test_user_set_profile_invalid_password():
         assert r.status_code == 302
 
         user = Teams.query.filter_by(id=2).first()
-        assert user.name == 'user1'
-        assert user.email == 'user1@ctfd.io'
         assert user.password == 'password'
-        assert user.affiliation is None
-        assert user.website is None
-        assert user.country is None
     destroy_ctfd(app)
 
 
 def test_user_set_profile_invalid_email():
-    """Fail to change a profile when the email fails utils.check_email_format"""
+    """Fail to change a team email when utils.check_email_format fails"""
     app = create_ctfd()
     with app.app_context():
         register_user(app, name="user1", email="user1@ctfd.io", password="password")
@@ -471,12 +461,7 @@ def test_user_set_profile_invalid_email():
         assert r.status_code == 302
 
         user = Teams.query.filter_by(id=2).first()
-        assert user.name == 'user1'
         assert user.email == 'user1@ctfd.io'
-        assert user.password == 'password'
-        assert user.affiliation is None
-        assert user.website is None
-        assert user.country is None
     destroy_ctfd(app)
 
 
