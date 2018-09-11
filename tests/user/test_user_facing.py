@@ -404,7 +404,6 @@ def test_user_set_profile_invalid_team_name():
             }
 
         r = client.post('/profile', data=data)
-        assert r.status_code == 302
 
         user = Teams.query.filter_by(id=2).first()
         assert user.name == 'user1'
@@ -431,7 +430,6 @@ def test_user_set_profile_invalid_password():
             }
 
         r = client.post('/profile', data=data)
-        assert r.status_code == 302
 
         user = Teams.query.filter_by(id=2).first()
         assert user.password == 'password'
@@ -458,7 +456,6 @@ def test_user_set_profile_invalid_email():
             }
 
         r = client.post('/profile', data=data)
-        assert r.status_code == 302
 
         user = Teams.query.filter_by(id=2).first()
         assert user.email == 'user1@ctfd.io'
