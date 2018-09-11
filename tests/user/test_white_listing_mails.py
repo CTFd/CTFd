@@ -117,9 +117,9 @@ def test_user_cannot_change_to_disallowed_mail_domain():
 
         user = Teams.query.filter_by(name='user1').first()
         assert user.email == 'user1@ctfd.io'
-        assert user.affiliation == ''
-        assert user.website == ''
-        assert user.country == ''
+        assert user.affiliation is None
+        assert user.website is None
+        assert user.country is None
     destroy_ctfd(app)
 
 
@@ -179,7 +179,7 @@ def test_user_cannot_change_to_disallowed_mail():
 
         user = Teams.query.filter_by(name='user1').first()
         assert user.email == 'user1@ctfd.io'
-        assert user.affiliation == ''
-        assert user.website == ''
-        assert user.country == ''
+        assert user.affiliation is None
+        assert user.website is None
+        assert user.country is None
     destroy_ctfd(app)
