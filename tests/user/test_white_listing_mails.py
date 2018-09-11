@@ -185,8 +185,7 @@ def test_admin_can_create_team_with_mail_in_whitelisted_domain():
             data = {
                 'name': 'user1',
                 'email': 'user1@ctfd.io',
-                'confirm': '',
-                'password': '',
+                'password': 'password',
                 'affiliation': 'affiliation_test',
                 'website': 'https://ctfd.io',
                 'country': 'United States of America',
@@ -212,8 +211,7 @@ def test_admin_cannot_create_team_with_mail_not_in_whitelisted_domain():
             data = {
                 'name': 'user1',
                 'email': 'user1@ctfd2.io',
-                'confirm': '',
-                'password': '',
+                'password': 'password',
                 'affiliation': 'affiliation_test',
                 'website': 'https://ctfd.io',
                 'country': 'United States of America',
@@ -241,8 +239,7 @@ def test_admin_can_create_team_with_mail_in_whitelisted_address():
             data = {
                 'name': 'user1',
                 'email': 'user1@ctfd.io',
-                'confirm': '',
-                'password': '',
+                'password': 'password',
                 'affiliation': 'affiliation_test',
                 'website': 'https://ctfd.io',
                 'country': 'United States of America',
@@ -268,8 +265,7 @@ def test_admin_cannot_create_team_with_mail_not_in_whitelisted_adress():
             data = {
                 'name': 'user1',
                 'email': 'user2@ctfd.io',
-                'confirm': '',
-                'password': '',
+                'password': 'password',
                 'affiliation': 'affiliation_test',
                 'website': 'https://ctfd.io',
                 'country': 'United States of America',
@@ -283,24 +279,6 @@ def test_admin_cannot_create_team_with_mail_not_in_whitelisted_adress():
         assert len(response['data']) == 1
         assert "User e-mail address should belong to the whitelisted domains or to the whitelisted users' list" in response['data']
     destroy_ctfd(app)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def test_admin_can_change_team_with_mail_in_whitelisted_domain():
