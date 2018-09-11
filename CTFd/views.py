@@ -74,8 +74,8 @@ def setup():
 
             # Verify emails
             verify_emails = utils.set_config('verify_emails', None)
-            allowed_domains = utils.set_config('allowed_domains', None)
-            allowed_mails = utils.set_config('allowed_mails', None)
+            allowed_domains = utils.set_config('allowed_domains', json.dumps([]))
+            allowed_mails = utils.set_config('allowed_mails', json.dumps([]))
 
             mail_server = utils.set_config('mail_server', None)
             mail_port = utils.set_config('mail_port', None)
