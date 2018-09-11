@@ -496,23 +496,23 @@ def test_check_email_format():
 
 def test_check_domain_format():
     """Test that the check_domain_format() works properly"""
-    assert check_email_format('user@ctfd.io') is False
-    assert check_email_format('user+plus@gmail.com') is False
-    assert check_email_format('user.period1234@gmail.com') is False
-    assert check_email_format('user.period1234@b.c') is False
-    assert check_email_format('user.period1234@b') is False
-    assert check_email_format('no.ampersand') is True
-    assert check_email_format('yes.no.ampersand') is True
-    assert check_email_format('no.yes.no.ampersand') is True
-    assert check_email_format('ampersand') is False
-    assert check_email_format('user@') is False
-    assert check_email_format('@ctfd.io') is False
-    assert check_email_format('user.io@ctfd') is False
-    assert check_email_format('user\@ctfd') is False
+    assert check_domain_format('user@ctfd.io') is False
+    assert check_domain_format('user+plus@gmail.com') is False
+    assert check_domain_format('user.period1234@gmail.com') is False
+    assert check_domain_format('user.period1234@b.c') is False
+    assert check_domain_format('user.period1234@b') is False
+    assert check_domain_format('no.ampersand') is True
+    assert check_domain_format('yes.no.ampersand') is True
+    assert check_domain_format('no.yes.no.ampersand') is True
+    assert check_domain_format('ampersand') is False
+    assert check_domain_format('user@') is False
+    assert check_domain_format('@ctfd.io') is False
+    assert check_domain_format('user.io@ctfd') is False
+    assert check_domain_format('user\@ctfd') is False
 
     for invalid_domain in ['user.@ctfd.io', '.user@ctfd.io', 'user@ctfd..io']:
         try:
-            assert check_email_format(invalid_domain) is False
+            assert check_domain_format(invalid_domain) is False
         except AssertionError:
             print(invalid_domain, 'did not pass validation')
 
