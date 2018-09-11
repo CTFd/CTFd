@@ -1,5 +1,6 @@
 import os
 import re
+import json
 
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, url_for, session, Blueprint, Response, send_file
 from flask.helpers import safe_join
@@ -73,6 +74,8 @@ def setup():
 
             # Verify emails
             verify_emails = utils.set_config('verify_emails', None)
+            allowed_domains = utils.set_config('allowed_domains', None)            
+            allowed_mails = utils.set_config('allowed_mails', None)            
 
             mail_server = utils.set_config('mail_server', None)
             mail_port = utils.set_config('mail_port', None)
@@ -233,6 +236,10 @@ def profile():
             emails = Teams.query.filter_by(email=email).first()
             valid_email = utils.check_email_format(email)
 
+            allowed_user = (json.loads(utils.get_config('allowed_domains')) + json.loads(utils.get_config('allowed_mails'))) == []
+            allowed_user = allowed_user or email.split('@')[-1] in json.loads(utils.get_config('allowed_domains'))
+            allowed_user = allowed_user or (email in json.loads(utils.get_config('allowed_mails')))
+
             if utils.check_email_format(name) is True:
                 errors.append('Team name cannot be an email address')
 
@@ -241,6 +248,8 @@ def profile():
                 errors.append("Your old password doesn't match what we have.")
             if not valid_email:
                 errors.append("That email doesn't look right")
+            if not allowed_user:
+                errors.append("Please enter an e-mail address that belongs to the allowed domains or to the allowed users' list")
             if not utils.get_config('prevent_name_change') and names and name != session['username']:
                 errors.append('That team name is already taken')
             if emails and emails.id != session['id']:

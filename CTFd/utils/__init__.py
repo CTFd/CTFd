@@ -269,6 +269,15 @@ def is_verified():
         return True
 
 
+def is_allowed_to_register(user):
+    for domain in get_config('allowed_domains'):
+        if user.split('@')[-1] == domain:
+            return True
+    if user in get_config('allowed_mails'):
+        return True
+    return False
+
+
 @cache.memoize()
 def is_setup():
     setup = Config.query.filter_by(key='setup').first()
@@ -703,6 +712,10 @@ def validate_url(url):
 
 def check_email_format(email):
     return bool(re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email))
+
+
+def check_domain_format(email):
+    return bool(re.match(r"(^[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email))
 
 
 def sha512(string):
