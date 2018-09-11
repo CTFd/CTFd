@@ -432,7 +432,7 @@ def test_user_set_profile_invalid_password():
         r = client.post('/profile', data=data)
 
         user = Teams.query.filter_by(id=2).first()
-        assert user.password == 'password'
+        assert bcrypt_sha256.verify('password', user.password):
     destroy_ctfd(app)
 
 
