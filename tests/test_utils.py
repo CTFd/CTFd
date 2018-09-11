@@ -6,7 +6,7 @@ from CTFd.models import ip2long, long2ip
 from CTFd.utils import get_config, set_config, override_template, sendmail, verify_email, ctf_started, ctf_ended, export_ctf, import_ctf
 from CTFd.utils import register_plugin_script, register_plugin_stylesheet
 from CTFd.utils import base64encode, base64decode
-from CTFd.utils import check_email_format
+from CTFd.utils import check_email_format, check_domain_format
 from CTFd.utils import update_check
 from email.mime.text import MIMEText
 from freezegun import freeze_time
