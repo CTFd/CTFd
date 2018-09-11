@@ -158,10 +158,12 @@ def admin_config():
         utils.set_config("ctf_theme", request.form.get('ctf_theme', None))
         utils.set_config('css', request.form.get('css', None))
 
+        allowed_users = request.form.get('allowed_users', None)
+
         if allowed_users == None:
             allowed_users = []
         else:
-            allowed_users = request.form.get('allowed_users', None).split('\n')
+            allowed_users = allowed_users.split('\n')
         allowed_domains = []
         allowed_mails = []
         errors = []
