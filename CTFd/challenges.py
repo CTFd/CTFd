@@ -159,6 +159,7 @@ def chal_view(chal_id):
 @viewable_without_authentication(status_code=403)
 def solves_per_chal():
     # TODO: Move this to the API
+    # TODO: This gets counts of solves per challenge. Change the route accordingly.
     chals = Challenges.query\
         .filter(or_(Challenges.hidden != True, Challenges.hidden == None))\
         .order_by(Challenges.value)\
