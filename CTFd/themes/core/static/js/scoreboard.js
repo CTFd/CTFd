@@ -1,9 +1,9 @@
 function updatescores () {
-  $.get(script_root + '/scores', function( data ) {
+  $.get(script_root + '/api/v1/scoreboard', function( data ) {
     var teams = $.parseJSON(JSON.stringify(data));
     var table = $('#scoreboard tbody');
     table.empty();
-    for (var i = 0; i < teams['standings'].length; i++) {
+    for (var i = 0; i < teams.length; i++) {
         var row="<tr>\n" +
             "<th scope=\"row\" class=\"text-center\">{0}</th>".format(i + 1) +
             "<td><a href=\"{0}/team/{1}\">{2}</a></td>".format(script_root, teams['standings'][i].id, htmlentities(teams['standings'][i].team)) +
@@ -29,9 +29,8 @@ function UTCtoDate(utc){
 }
 
 function scoregraph () {
-    $.get(script_root + '/top/10', function( data ) {
+    $.get(script_root + '/api/v1/scoreboard/top/10', function( data ) {
         var places = $.parseJSON(JSON.stringify(data));
-        places = places['places'];
         if (Object.keys(places).length === 0 ){
             // Replace spinner
             $('#score-graph').html(

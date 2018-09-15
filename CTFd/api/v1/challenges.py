@@ -3,6 +3,7 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Challenges, Unlocks, Hints
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_ended
+from CTFd.utils.decorators import during_ctf_time_only, require_verified_emails, viewable_without_authentication
 from sqlalchemy.sql import or_
 
 challenges_namespace = Namespace('challenges', description="Endpoint to retrieve Challenges")
@@ -19,6 +20,9 @@ challenges_namespace = Namespace('challenges', description="Endpoint to retrieve
 @challenges_namespace.route('')
 class ChallengeList(Resource):
     # TODO: Implement @during_ctf_time_only, @require_verified_emails, @viewable_without_authentication(status_code=403)
+    @during_ctf_time_only
+    @require_verified_emails
+    @viewable_without_authentication(status_code=403)
     def get(self):
         challenges = Challenges.query.filter(
             or_(Challenges.hidden != True, Challenges.hidden == None)
@@ -47,6 +51,9 @@ class ChallengeList(Resource):
 @challenges_namespace.param('id', 'A Challenge ID')
 class Challenge(Resource):
     # TODO: Implement @during_ctf_time_only, @require_verified_emails, @viewable_without_authentication(status_code=403)
+    @during_ctf_time_only
+    @require_verified_emails
+    @viewable_without_authentication(status_code=403)
     def get(self, id):
         team_id = session.get('id')
 

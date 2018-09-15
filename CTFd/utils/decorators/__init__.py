@@ -31,6 +31,19 @@ def during_ctf_time_only(f):
     return during_ctf_time_only_wrapper
 
 
+def require_authentication_if_config(config_key):
+    def _require_authentication_if_config(f):
+        @functools.wraps(f)
+        def __require_authentication_if_config(*args, **kwargs):
+            value = get_config(config_key)
+            if value and current_user.authed():
+                return redirect(url_for('auth.login', next=request.path))
+            else:
+                return f(*args, **kwargs)
+        return __require_authentication_if_config
+    return _require_authentication_if_config
+
+
 def require_verified_emails(f):
     """
     Decorator to restrict an endpoint to users with confirmed active email addresses
@@ -39,36 +52,37 @@ def require_verified_emails(f):
     """
 
     @functools.wraps(f)
-    def require_verified_emails_wrapper(*args, **kwargs):
+    def _require_verified_emails(*args, **kwargs):
         if get_config('verify_emails'):
             if current_user.authed():
                 if current_user.is_admin() is False and current_user.is_verified() is False:  # User is not confirmed
                     return redirect(url_for('auth.confirm'))
         return f(*args, **kwargs)
 
-    return require_verified_emails_wrapper
+    return _require_verified_emails
 
 
-def viewable_without_authentication(status_code=None):
+def viewable_without_authentication(status_code=None, message=None):
     """
     Decorator that allows users to view the specified endpoint if viewing challenges without authentication is enabled
     :param status_code:
+    :param message:
     :return:
     """
 
     def viewable_without_authentication_decorator(f):
         @functools.wraps(f)
-        def viewable_without_authentication_wrapper(*args, **kwargs):
+        def _viewable_without_authentication(*args, **kwargs):
             if config.user_can_view_challenges():
                 return f(*args, **kwargs)
             else:
                 if status_code:
                     if status_code == 403:
-                        error = "An authorization error has occured"
+                        error = message or "An authorization error has occured"
                     abort(status_code, description=error)
                 return redirect(url_for('auth.login', next=request.path))
 
-        return viewable_without_authentication_wrapper
+        return _viewable_without_authentication
 
     return viewable_without_authentication_decorator
 
