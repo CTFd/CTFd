@@ -1,5 +1,5 @@
 from flask import current_app as app
-from CTFd.models import Config
+from CTFd.models import Config, Users, Teams
 from CTFd.utils import cache
 from CTFd.utils import get_config
 from CTFd.utils.user import authed
@@ -11,6 +11,11 @@ import os
 def ctf_name():
     name = get_config('ctf_name')
     return name if name else 'CTFd'
+
+
+@cache.memoize()
+def user_mode():
+    return get_config('user_mode')
 
 
 @cache.memoize()
