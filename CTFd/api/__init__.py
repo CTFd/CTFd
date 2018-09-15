@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask_restplus import Api
 from CTFd.api.v1.challenges import challenges_namespace
+
 from CTFd.api.v1.teams import teams_namespace
 from CTFd.api.v1.users import users_namespace
 from CTFd.api.v1.scoreboard import scoreboard_namespace

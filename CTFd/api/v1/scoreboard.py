@@ -1,4 +1,3 @@
-from flask import session
 from flask_restplus import Namespace, Resource
 
 from CTFd.models import Solves, Awards

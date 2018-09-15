@@ -155,6 +155,19 @@ class Awards(db.Model):
         self.name = name
         self.value = value
 
+    def get_dict(self, admin=False):
+        obj = {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'category': self.category,
+            'value': self.value,
+            'user_id': self.user_id,
+            'team_id': self.team_id,
+            'date': self.date.isoformat()
+        }
+        return obj
+
     def __repr__(self):
         return '<Award %r>' % self.name
 
@@ -520,6 +533,16 @@ class Submissions(db.Model):
     __mapper_args__ = {
         'polymorphic_on': type,
     }
+
+    def get_dict(self, admin=False):
+        obj = {
+            'id': self.id,
+            'challenge_id': self.challenge_id,
+            'user_id': self.user_id,
+            'team_id': self.team_id,
+            'date': self.date.isoformat()
+        }
+        return obj
 
     def __repr__(self):
         return '<Submission {}, {}, {}, {}>'.format(self.team_id, self.chal_id, self.ip, self.provided)
