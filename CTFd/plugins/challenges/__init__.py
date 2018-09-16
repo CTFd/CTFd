@@ -55,7 +55,8 @@ class CTFdStandardChallenge(BaseChallenge):
         db.session.add(chal)
         db.session.commit()
 
-        flag = Flags(chal.id, request.form['key'], request.form['key_type[0]'])
+        flag = Flags(chal.id, request.form['submission'], request.form['key_type[0]'])
+        # TODO: replace keydata because it feels sloppy
         if request.form.get('keydata'):
             flag.data = request.form.get('keydata')
         db.session.add(flag)
@@ -144,10 +145,10 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return: (boolean, string)
         """
-        provided_key = request.form['key'].strip()
+        submission = request.form['submission'].strip()
         chal_keys = Flags.query.filter_by(challenge_id=chal.id).all()
         for chal_key in chal_keys:
-            if get_key_class(chal_key.type).compare(chal_key, provided_key):
+            if get_key_class(chal_key.type).compare(chal_key, submission):
                 return True, 'Correct'
         return False, 'Incorrect'
 
@@ -161,13 +162,13 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return:
         """
-        provided_key = request.form['key'].strip()
+        submission = request.form['submission'].strip()
         solve = Solves(
             user_id=user.id,
             team_id=team.id if team else None,
             challenge_id=challenge.id,
             ip=get_ip(req=request),
-            provided=provided_key
+            provided=submission
         )
         db.session.add(solve)
         db.session.commit()

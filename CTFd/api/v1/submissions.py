@@ -54,8 +54,11 @@ class SubmissionsList(Resource):
             ).count()
             logger = logging.getLogger('Flags')
             data = (
-            time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'),
-            current_user.get_wrong_submissions_per_minute(session['id']))
+                time.strftime("%m/%d/%Y %X"),
+                session['username'].encode('utf-8'),
+                request.form['submission'].encode('utf-8'),
+                current_user.get_wrong_submissions_per_minute(session['id'])
+            )
             print("[{0}] {1} submitted {2} with kpm {3}".format(*data))
 
             chal = Challenges.query.filter_by(id=challenge_id).first_or_404()
@@ -86,7 +89,6 @@ class SubmissionsList(Resource):
 
             # Challange not solved yet
             if not solves:
-                provided_key = request.form['key'].strip()
                 saved_Flags = Flags.query.filter_by(challenge_id=chal.id).all()
 
                 # Hit max attempts

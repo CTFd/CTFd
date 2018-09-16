@@ -285,6 +285,7 @@ class Users(db.Model):
         obj = {
             'id': self.id,
             'name': self.name,
+            'team_id': self.team_id,
             'website': self.website,
             'country': self.country,
             'bracket': self.bracket
