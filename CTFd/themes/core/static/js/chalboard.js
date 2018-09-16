@@ -5,7 +5,7 @@ var templates = {};
 window.challenge = new Object();
 
 function loadchal(id) {
-    var obj = $.grep(challenges['game'], function (e) {
+    var obj = $.grep(challenges, function (e) {
         return e.id == id;
     })[0];
 
@@ -13,7 +13,7 @@ function loadchal(id) {
 }
 
 function loadchalbyname(chalname) {
-    var obj = $.grep(challenges['game'], function (e) {
+    var obj = $.grep(challenges, function (e) {
       return e.name == chalname;
     })[0];
 
@@ -21,7 +21,7 @@ function loadchalbyname(chalname) {
 }
 
 function updateChalWindow(obj) {
-    $.get(script_root + "/chals/" + obj.id, function(challenge_data){
+    $.get(script_root + "/api/v1/challenges/" + obj.id, function(challenge_data){
         $.getScript(script_root + obj.script, function(){
             $.get(script_root + obj.template, function (template_data) {
                 $('#chal-window').empty();
@@ -168,10 +168,10 @@ function renderSubmissionResponse(data, cb){
 }
 
 function marksolves(cb) {
-    $.get(script_root + '/solves', function (data) {
+    $.get(script_root + '/api/v1/users/me/solves', function (data) {
         var solves = $.parseJSON(JSON.stringify(data));
-        for (var i = solves['solves'].length - 1; i >= 0; i--) {
-            var id = solves['solves'][i].chalid;
+        for (var i = solves.length - 1; i >= 0; i--) {
+            var id = solves[i].challenge_id;
             var btn = $('button[value="' + id + '"]');
             btn.addClass('solved-challenge');
             btn.prepend("<i class='fas fa-check corner-button-check'></i>")
@@ -183,11 +183,11 @@ function marksolves(cb) {
 }
 
 function load_user_solves(cb){
-    $.get(script_root + '/solves', function (data) {
+    $.get(script_root + '/api/v1/users/me/solves', function (data) {
         var solves = $.parseJSON(JSON.stringify(data));
 
-        for (var i = solves['solves'].length - 1; i >= 0; i--) {
-            var chal_id = solves['solves'][i].chalid;
+        for (var i = solves.length - 1; i >= 0; i--) {
+            var chal_id = solves[i].challenge_id;
             user_solves.push(chal_id);
 
         }
@@ -198,14 +198,14 @@ function load_user_solves(cb){
 }
 
 function updatesolves(cb){
-    $.get(script_root + '/chals/solves', function (data) {
+    $.get(script_root + '/api/v1/statistics/challenges/solves', function (data) {
         var solves = $.parseJSON(JSON.stringify(data));
         var chalids = Object.keys(solves);
 
         for (var i = 0; i < chalids.length; i++) {
-            for (var z = 0; z < challenges['game'].length; z++) {
-                var obj = challenges['game'][z];
-                var solve_cnt = solves[chalids[i]];
+            for (var z = 0; z < challenges.length; z++) {
+                var obj = challenges[z];
+                var solve_cnt = solves[chalids[i]]['solves'];
                 if (obj.id == chalids[i]){
                     if (solve_cnt) {
                         obj.solves = solve_cnt;
@@ -222,7 +222,7 @@ function updatesolves(cb){
 }
 
 function getsolves(id){
-  $.get(script_root + '/chal/'+id+'/solves', function (data) {
+  $.get(script_root + '/api/v1/challenges/'+id+'/solves', function (data) {
     var teams = data['teams'];
     $('.chal-solves').text((parseInt(teams.length) + " Solves"));
     var box = $('#chal-solves-names');
@@ -237,16 +237,16 @@ function getsolves(id){
 }
 
 function loadchals(cb) {
-    $.get(script_root + "/chals", function (data) {
+    $.get(script_root + "/api/v1/challenges", function (data) {
         var categories = [];
         challenges = $.parseJSON(JSON.stringify(data));
 
         $('#challenges-board').empty();
 
-        for (var i = challenges['game'].length - 1; i >= 0; i--) {
-            challenges['game'][i].solves = 0;
-            if ($.inArray(challenges['game'][i].category, categories) == -1) {
-                var category = challenges['game'][i].category;
+        for (var i = challenges.length - 1; i >= 0; i--) {
+            challenges[i].solves = 0;
+            if ($.inArray(challenges[i].category, categories) == -1) {
+                var category = challenges[i].category;
                 categories.push(category);
 
                 var categoryid = category.replace(/ /g,"-").hashCode();
@@ -264,8 +264,8 @@ function loadchals(cb) {
             }
         }
 
-        for (var i = 0; i <= challenges['game'].length - 1; i++) {
-            var chalinfo = challenges['game'][i];
+        for (var i = 0; i <= challenges.length - 1; i++) {
+            var chalinfo = challenges[i];
             var challenge = chalinfo.category.replace(/ /g,"-").hashCode();
             var chalid = chalinfo.name.replace(/ /g,"-").hashCode();
             var catid = chalinfo.category.replace(/ /g,"-").hashCode();

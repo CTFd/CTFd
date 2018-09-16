@@ -1,6 +1,6 @@
 from flask import session
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Challenges, Unlocks, Hints
+from CTFd.models import db, Challenges, Unlocks, Hints, Solves, Teams
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import during_ctf_time_only, require_verified_emails, viewable_without_authentication
@@ -19,7 +19,6 @@ challenges_namespace = Namespace('challenges', description="Endpoint to retrieve
 
 @challenges_namespace.route('')
 class ChallengeList(Resource):
-    # TODO: Implement @during_ctf_time_only, @require_verified_emails, @viewable_without_authentication(status_code=403)
     @during_ctf_time_only
     @require_verified_emails
     @viewable_without_authentication(status_code=403)
@@ -47,17 +46,16 @@ class ChallengeList(Resource):
         return response
 
 
-@challenges_namespace.route('/<id>')
+@challenges_namespace.route('/<challenge_id>')
 @challenges_namespace.param('id', 'A Challenge ID')
 class Challenge(Resource):
-    # TODO: Implement @during_ctf_time_only, @require_verified_emails, @viewable_without_authentication(status_code=403)
     @during_ctf_time_only
     @require_verified_emails
     @viewable_without_authentication(status_code=403)
-    def get(self, id):
+    def get(self, challenge_id):
         team_id = session.get('id')
 
-        chal = Challenges.query.filter_by(id=id).first_or_404()
+        chal = Challenges.query.filter_by(id=challenge_id).first_or_404()
         chal_class = get_chal_class(chal.type)
 
         tags = chal.tags
@@ -78,4 +76,29 @@ class Challenge(Resource):
         response['hints'] = hints
 
         db.session.close()
+        return response
+
+
+@challenges_namespace.route('/<challenge_id>/solves')
+@challenges_namespace.param('id', 'A Challenge ID')
+class ChallengeSolves(Resource):
+    @during_ctf_time_only
+    @require_verified_emails
+    @viewable_without_authentication(status_code=403)
+    def get(self, challenge_id):
+        response = []
+        # if config.hide_scores():
+        #     return jsonify(response)
+
+        solves = Solves.query.join(Teams, Solves.team_id == Teams.id)\
+            .filter(Solves.challenge_id == challenge_id, Teams.banned == False)\
+            .order_by(Solves.date.asc())
+
+        for solve in solves:
+            response['teams'].append({
+                'id': solve.team.id,
+                'name': solve.team.name,
+                'date': solve.date
+            })
+
         return response

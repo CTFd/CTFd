@@ -23,13 +23,14 @@ window.challenge.submit = function(cb, preview){
     var answer = $('#answer-input').val();
     var nonce = $('#nonce').val();
 
-    var url = "/chal/";
-    if (preview) {
-        url = "/admin/chal/";
-    }
+    var url = "/api/v1/submissions";
+    // if (preview) {
+    //     url = "/admin/chal/";
+    // }
 
-    $.post(script_root + url + chal_id, {
-        key: answer,
+    $.post(script_root + url, {
+        challenge_id: chal_id,
+        submission: answer,
         nonce: nonce
     }, function (data) {
         cb(data);

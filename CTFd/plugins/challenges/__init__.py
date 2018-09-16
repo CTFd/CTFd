@@ -183,13 +183,13 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return:
         """
-        provided_key = request.form['key'].strip()
+        submission = request.form['submission'].strip()
         wrong = Fails(
             user_id=user.id,
             team_id=team.id if team else None,
             challenge_id=challenge.id,
             ip=get_ip(request),
-            provided=provided_key
+            provided=submission
         )
         db.session.add(wrong)
         db.session.commit()

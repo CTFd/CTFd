@@ -1,7 +1,9 @@
-from flask import session
+from flask import session, abort
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Users, Solves, Awards
+from CTFd.utils.decorators import authed_only
 from CTFd.utils.dates import unix_time_to_utc, unix_time
+from CTFd.utils.user import get_current_user
 from CTFd.utils import get_config
 
 
@@ -17,27 +19,57 @@ class UserList(Resource):
 
 
 @users_namespace.route('/<user_id>')
-@users_namespace.param('user_id', 'User ID')
+@users_namespace.param('user_id', "User ID or 'me'")
 class User(Resource):
     def get(self, user_id):
-        user = Users.query.filter_by(id=user_id).first_or_404()
+        if user_id == 'me':
+            user = get_current_user()
+        else:
+            user = Users.query.filter_by(id=user_id).first_or_404()
 
-        solves = Solves.query.filter_by(user_id=user_id)
-        awards = Awards.query.filter_by(user_id=user_id)
+        response = user.get_dict()
+        response['place'] = user.place
+        response['score'] = user.score
+        return response
+
+
+@users_namespace.route('/<user_id>/solves')
+@users_namespace.param('user_id', "User ID or 'me'")
+class UserSolves(Resource):
+    def get(self, user_id):
+        if user_id == 'me':
+            user = get_current_user()
+        else:
+            user = Users.query.filter_by(id=user_id).first_or_404()
+
+        solves = Solves.query.filter_by(user_id=user.id)
 
         freeze = get_config('freeze')
         if freeze:
             freeze = unix_time_to_utc(freeze)
             if user_id != session.get('id'):
                 solves = solves.filter(Solves.date < freeze)
+
+        response = [solve.get_dict() for solve in solves.all()]
+        return response
+
+
+@users_namespace.route('/<user_id>/awards')
+@users_namespace.param('user_id', "User ID or 'me'")
+class UserAwards(Resource):
+    def get(self, user_id):
+        if user_id == 'me':
+            user = get_current_user()
+        else:
+            user = Users.query.filter_by(id=user_id).first_or_404()
+
+        awards = Awards.query.filter_by(user_id=user.id)
+
+        freeze = get_config('freeze')
+        if freeze:
+            freeze = unix_time_to_utc(freeze)
+            if user_id != session.get('id'):
                 awards = awards.filter(Awards.date < freeze)
 
-        solves = [solve.get_dict() for solve in solves.all()]
-        awards = [award.get_dict() for award in awards.all()]
-
-        response = user.get_dict()
-        response['place'] = user.place
-        response['score'] = user.score
-        response['solves'] = solves
-        response['awards'] = awards
+        response = [award.get_dict() for award in awards.all()]
         return response
