@@ -4,7 +4,7 @@ from sqlalchemy import TypeDecorator, String, func, types, CheckConstraint, and_
 from sqlalchemy.sql.expression import union_all
 from sqlalchemy.types import JSON, NullType
 from sqlalchemy.orm import validates, column_property
-from utils.crypto import hash_password
+from CTFd.utils.crypto import hash_password
 import datetime
 import json
 

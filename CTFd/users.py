@@ -37,12 +37,12 @@ def private():
     user_id = session['id']
 
     freeze = get_config('freeze')
-    team = Users.query.filter_by(id=user_id).first_or_404()
+    user = Users.query.filter_by(id=user_id).first_or_404()
     solves = Solves.query.filter_by(user_id=user_id)
     awards = Awards.query.filter_by(user_id=user_id)
 
-    place = team.place
-    score = team.score
+    place = user.place
+    score = user.score
 
     if freeze:
         freeze = unix_time_to_utc(freeze)
@@ -57,7 +57,7 @@ def private():
         'users/user.html',
         solves=solves,
         awards=awards,
-        team=team,
+        user=user,
         score=score,
         place=place,
         score_frozen=config.is_scoreboard_frozen()

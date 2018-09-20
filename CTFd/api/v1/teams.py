@@ -1,6 +1,6 @@
 from flask import session
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Teams, Solves, Awards
+from CTFd.models import db, Teams, Solves, Awards, Fails
 from CTFd.utils.user import get_current_team
 from CTFd.utils.decorators import authed_only
 from CTFd.utils.dates import unix_time_to_utc, unix_time
@@ -48,6 +48,27 @@ class TeamSolves(Resource):
                 solves = solves.filter(Solves.date < freeze)
 
         response = [solve.get_dict() for solve in solves.all()]
+        return response
+
+
+@teams_namespace.route('/<team_id>/solves')
+@teams_namespace.param('team_id', "Team ID or 'me'")
+class TeamFails(Resource):
+    def get(self, team_id):
+        if team_id == 'me':
+            team = get_current_team()
+        else:
+            team = Teams.query.filter_by(id=team_id).first_or_404()
+
+        fails = Fails.query.filter_by(team_id=team_id)
+
+        freeze = get_config('freeze')
+        if freeze:
+            freeze = unix_time_to_utc(freeze)
+            if team_id != session.get('team_id'):
+                fails = fails.filter(Solves.date < freeze)
+
+        response = [fail.get_dict() for fail in fails.all()]
         return response
 
 
