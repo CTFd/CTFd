@@ -1,31 +1,16 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils.decorators import admins_only
 from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Config, Hints, Unlocks
-from CTFd.plugins.keys import get_key_class, KEY_CLASSES
+from CTFd.plugins.flags import get_key_class, FLAG_CLASSES
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
 from CTFd.admin import admin
 from CTFd.utils import config, validators, uploads
 
 
-@admin.route('/admin/chal_types', methods=['GET'])
-@admins_only
-def admin_chal_types():
-    data = {}
-    for class_id in CHALLENGE_CLASSES:
-        challenge_class = CHALLENGE_CLASSES.get(class_id)
-        data[challenge_class.id] = {
-            'id': challenge_class.id,
-            'name': challenge_class.name,
-            'templates': challenge_class.templates,
-            'scripts': challenge_class.scripts,
-        }
-
-    return jsonify(data)
-
-
 @admin.route('/admin/chals', methods=['POST', 'GET'])
 @admins_only
 def admin_chals():
+    # TODO: Move to API
     if request.method == 'POST':
         chals = Challenges.query.order_by(Challenges.value).all()
 
@@ -71,6 +56,7 @@ def admin_chals():
 @admin.route('/admin/chal/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_chal_detail(chalid):
+    # TODO: Move to API
     chal = Challenges.query.filter_by(id=chalid).first_or_404()
     chal_class = get_chal_class(chal.type)
 
@@ -99,6 +85,7 @@ def admin_chal_detail(chalid):
 @admin.route('/admin/chal/<int:chalid>/solves', methods=['GET'])
 @admins_only
 def admin_chal_solves(chalid):
+    # TODO: Move to API
     response = {'teams': []}
     if config.hide_scores():
         return jsonify(response)
@@ -112,6 +99,7 @@ def admin_chal_solves(chalid):
 @admin.route('/admin/tags/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_tags(chalid):
+    # TODO: Move to API
     if request.method == 'GET':
         tags = Tags.query.filter_by(chal=chalid).all()
         json_data = {'tags': []}
@@ -129,21 +117,11 @@ def admin_tags(chalid):
         return '1'
 
 
-@admin.route('/admin/tags/<int:tagid>/delete', methods=['POST'])
-@admins_only
-def admin_delete_tags(tagid):
-    if request.method == 'POST':
-        tag = Tags.query.filter_by(id=tagid).first_or_404()
-        db.session.delete(tag)
-        db.session.commit()
-        db.session.close()
-        return '1'
-
-
 @admin.route('/admin/hints', defaults={'hintid': None}, methods=['POST', 'GET'])
 @admin.route('/admin/hints/<int:hintid>', methods=['GET', 'POST', 'DELETE'])
 @admins_only
 def admin_hints(hintid):
+    # TODO: Move to API
     if hintid:
         hint = Hints.query.filter_by(id=hintid).first_or_404()
 
@@ -203,6 +181,7 @@ def admin_hints(hintid):
 @admin.route('/admin/files/<int:chalid>', methods=['GET', 'POST'])
 @admins_only
 def admin_files(chalid):
+    # TODO: Potentially move to API?
     if request.method == 'GET':
         files = Files.query.filter_by(chal=chalid).all()
         json_data = {'files': []}
@@ -230,6 +209,7 @@ def admin_files(chalid):
 @admin.route('/admin/chal/<int:chalid>/<prop>', methods=['GET'])
 @admins_only
 def admin_get_values(chalid, prop):
+    # TODO: Move to API
     challenge = Challenges.query.filter_by(id=chalid).first_or_404()
     if prop == 'keys':
         chal_keys = Flags.query.filter_by(chal=challenge.id).all()
@@ -271,6 +251,7 @@ def admin_get_values(chalid, prop):
 @admin.route('/admin/chal/new', methods=['GET', 'POST'])
 @admins_only
 def admin_create_chal():
+    # TODO: Move to API
     if request.method == 'POST':
         chal_type = request.form['chaltype']
         chal_class = get_chal_class(chal_type)
@@ -279,20 +260,3 @@ def admin_create_chal():
     else:
         return render_template('admin/chals/create.html')
 
-
-@admin.route('/admin/chal/delete', methods=['POST'])
-@admins_only
-def admin_delete_chal():
-    challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
-    chal_class = get_chal_class(challenge.type)
-    chal_class.delete(challenge)
-    return '1'
-
-
-@admin.route('/admin/chal/update', methods=['POST'])
-@admins_only
-def admin_update_chal():
-    challenge = Challenges.query.filter_by(id=request.form['id']).first_or_404()
-    chal_class = get_chal_class(challenge.type)
-    chal_class.update(challenge, request)
-    return redirect(url_for('admin.admin_chals'))

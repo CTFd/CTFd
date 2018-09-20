@@ -1,7 +1,10 @@
 from flask import session, abort
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Users, Solves, Awards, Fails
-from CTFd.utils.decorators import authed_only
+from CTFd.models import db, Users, Solves, Awards, Fails, Tracking
+from CTFd.utils.decorators import (
+    authed_only,
+    admins_only
+)
 from CTFd.utils.dates import unix_time_to_utc, unix_time
 from CTFd.utils.user import get_current_user
 from CTFd.utils import get_config
@@ -30,6 +33,22 @@ class User(Resource):
         response = user.get_dict()
         response['place'] = user.place
         response['score'] = user.score
+        return response
+
+    @admins_only
+    def delete(self, user_id):
+        # Unlocks.query.filter_by(user_id=user_id).delete()
+        Awards.query.filter_by(user_id=user_id).delete()
+        Fails.query.filter_by(user_id=user_id).delete()
+        Solves.query.filter_by(user_id=user_id).delete()
+        Tracking.query.filter_by(user_id=user_id).delete()
+        Users.query.filter_by(user_id=user_id).delete()
+        db.session.commit()
+        db.session.close()
+
+        response = {
+            'success': True
+        }
         return response
 
 

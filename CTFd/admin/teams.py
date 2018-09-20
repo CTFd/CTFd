@@ -47,6 +47,7 @@ def admin_teams_view(page):
 @admin.route('/admin/team/new', methods=['POST'])
 @admins_only
 def admin_create_team():
+    # TODO: Move to API
     name = request.form.get('name', None)
     password = request.form.get('password', None)
     email = request.form.get('email', None)
@@ -180,6 +181,7 @@ def admin_team(teamid):
 @admins_only
 @ratelimit(method="POST", limit=10, interval=60)
 def email_user(teamid):
+    # TODO: Not sure where to move this.
     msg = request.form.get('msg', None)
     team = Teams.query.filter(Teams.id == teamid).first_or_404()
     if msg and team:
@@ -198,6 +200,7 @@ def email_user(teamid):
 @admin.route('/admin/team/<int:teamid>/ban', methods=['POST'])
 @admins_only
 def ban(teamid):
+    # TODO: Move to API
     user = Teams.query.filter_by(id=teamid).first_or_404()
     user.banned = True
     db.session.commit()
@@ -208,6 +211,7 @@ def ban(teamid):
 @admin.route('/admin/team/<int:teamid>/unban', methods=['POST'])
 @admins_only
 def unban(teamid):
+    # TODO: Move to API
     user = Teams.query.filter_by(id=teamid).first_or_404()
     user.banned = False
     db.session.commit()
@@ -215,79 +219,85 @@ def unban(teamid):
     return redirect(url_for('admin.admin_scoreboard_view'))
 
 
-@admin.route('/admin/team/<int:teamid>/delete', methods=['POST'])
-@admins_only
-def delete_team(teamid):
-    try:
-        Unlocks.query.filter_by(teamid=teamid).delete()
-        Awards.query.filter_by(teamid=teamid).delete()
-        Fails.query.filter_by(teamid=teamid).delete()
-        Solves.query.filter_by(teamid=teamid).delete()
-        Tracking.query.filter_by(team=teamid).delete()
-        Teams.query.filter_by(id=teamid).delete()
-        db.session.commit()
-        db.session.close()
-    except DatabaseError:
-        return '0'
-    else:
-        return '1'
+# @admin.route('/admin/team/<int:teamid>/delete', methods=['POST'])
+# @admins_only
+# def delete_team(teamid):
+#     # TODO: Move to API
+#     try:
+#         Unlocks.query.filter_by(teamid=teamid).delete()
+#         Awards.query.filter_by(teamid=teamid).delete()
+#         Fails.query.filter_by(teamid=teamid).delete()
+#         Solves.query.filter_by(teamid=teamid).delete()
+#         Tracking.query.filter_by(team=teamid).delete()
+#         Teams.query.filter_by(id=teamid).delete()
+#         db.session.commit()
+#         db.session.close()
+#     except DatabaseError:
+#         return '0'
+#     else:
+#         return '1'
 
 
-@admin.route('/admin/solves/<teamid>', methods=['GET'])
-@admins_only
-def admin_solves(teamid="all"):
-    if teamid == "all":
-        solves = Solves.query.all()
-        awards = []
-    else:
-        solves = Solves.query.filter_by(teamid=teamid).all()
-        awards = Awards.query.filter_by(teamid=teamid).all()
-    db.session.close()
-    json_data = {'solves': []}
-    for x in solves:
-        json_data['solves'].append({
-            'id': x.id,
-            'chal': x.chal.name,
-            'chalid': x.chalid,
-            'team': x.teamid,
-            'value': x.chal.value,
-            'category': x.chal.category,
-            'time': utils.unix_time(x.date)
-        })
-    for award in awards:
-        json_data['solves'].append({
-            'chal': award.name,
-            'chalid': None,
-            'team': award.teamid,
-            'value': award.value,
-            'category': award.category or "Award",
-            'time': utils.unix_time(award.date)
-        })
-    json_data['solves'].sort(key=lambda k: k['time'])
-    return jsonify(json_data)
-
-
-@admin.route('/admin/fails/all', defaults={'teamid': 'all'}, methods=['GET'])
-@admin.route('/admin/fails/<int:teamid>', methods=['GET'])
-@admins_only
-def admin_fails(teamid):
-    if teamid == "all":
-        fails = Fails.query.join(Teams, Fails.teamid == Teams.id).filter(Teams.banned == False).count()
-        solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).count()
-        db.session.close()
-        json_data = {'fails': str(fails), 'solves': str(solves)}
-        return jsonify(json_data)
-    else:
-        fails = Fails.query.filter_by(teamid=teamid).count()
-        solves = Solves.query.filter_by(teamid=teamid).count()
-        db.session.close()
-        json_data = {'fails': str(fails), 'solves': str(solves)}
-        return jsonify(json_data)
+# @admin.route('/admin/solves/<teamid>', methods=['GET'])
+# @admins_only
+# def admin_solves(teamid="all"):
+#     # TODO: Move to API
+#     # TODO: This is implemented off of /v1/submissions?type=incorrect
+#     if teamid == "all":
+#         solves = Solves.query.all()
+#         awards = []
+#     else:
+#         solves = Solves.query.filter_by(teamid=teamid).all()
+#         awards = Awards.query.filter_by(teamid=teamid).all()
+#     db.session.close()
+#     json_data = {'solves': []}
+#     for x in solves:
+#         json_data['solves'].append({
+#             'id': x.id,
+#             'chal': x.chal.name,
+#             'chalid': x.chalid,
+#             'team': x.teamid,
+#             'value': x.chal.value,
+#             'category': x.chal.category,
+#             'time': utils.unix_time(x.date)
+#         })
+#     for award in awards:
+#         json_data['solves'].append({
+#             'chal': award.name,
+#             'chalid': None,
+#             'team': award.teamid,
+#             'value': award.value,
+#             'category': award.category or "Award",
+#             'time': utils.unix_time(award.date)
+#         })
+#     json_data['solves'].sort(key=lambda k: k['time'])
+#     return jsonify(json_data)
+#
+#
+# @admin.route('/admin/fails/all', defaults={'teamid': 'all'}, methods=['GET'])
+# @admin.route('/admin/fails/<int:teamid>', methods=['GET'])
+# @admins_only
+# def admin_fails(teamid):
+#     # TODO: Move to API
+#     # TODO: This is implemented off of /v1/submissions?type=incorrect
+#     if teamid == "all":
+#         fails = Fails.query.join(Teams, Fails.teamid == Teams.id).filter(Teams.banned == False).count()
+#         solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).count()
+#         db.session.close()
+#         json_data = {'fails': str(fails), 'solves': str(solves)}
+#         return jsonify(json_data)
+#     else:
+#         fails = Fails.query.filter_by(teamid=teamid).count()
+#         solves = Solves.query.filter_by(teamid=teamid).count()
+#         db.session.close()
+#         json_data = {'fails': str(fails), 'solves': str(solves)}
+#         return jsonify(json_data)
 
 
 @admin.route('/admin/solves/<int:teamid>/<int:chalid>/solve', methods=['POST'])
 @admins_only
 def create_solve(teamid, chalid):
+    # TODO: Move to API
     solve = Solves(teamid=teamid, chalid=chalid, ip='127.0.0.1', flag='MARKED_AS_SOLVED_BY_ADMIN')
     db.session.add(solve)
     db.session.commit()
@@ -295,70 +305,41 @@ def create_solve(teamid, chalid):
     return '1'
 
 
-@admin.route('/admin/solves/<int:keyid>/delete', methods=['POST'])
-@admins_only
-def delete_solve(keyid):
-    solve = Solves.query.filter_by(id=keyid).first_or_404()
-    db.session.delete(solve)
-    db.session.commit()
-    db.session.close()
-    return '1'
+# @admin.route('/admin/teams/<int:teamid>/awards', methods=['GET'])
+# @admins_only
+# def admin_awards(teamid):
+#     awards = Awards.query.filter_by(teamid=teamid).all()
+#
+#     awards_list = []
+#     for award in awards:
+#         awards_list.append({
+#             'id': award.id,
+#             'name': award.name,
+#             'description': award.description,
+#             'date': award.date,
+#             'value': award.value,
+#             'category': award.category,
+#             'icon': award.icon
+#         })
+#     json_data = {'awards': awards_list}
+#     return jsonify(json_data)
 
 
-@admin.route('/admin/wrong_keys/<int:keyid>/delete', methods=['POST'])
-@admins_only
-def delete_wrong_key(keyid):
-    wrong_key = Fails.query.filter_by(id=keyid).first_or_404()
-    db.session.delete(wrong_key)
-    db.session.commit()
-    db.session.close()
-    return '1'
-
-
-@admin.route('/admin/awards/<int:award_id>/delete', methods=['POST'])
-@admins_only
-def delete_award(award_id):
-    award = Awards.query.filter_by(id=award_id).first_or_404()
-    db.session.delete(award)
-    db.session.commit()
-    db.session.close()
-    return '1'
-
-
-@admin.route('/admin/teams/<int:teamid>/awards', methods=['GET'])
-@admins_only
-def admin_awards(teamid):
-    awards = Awards.query.filter_by(teamid=teamid).all()
-
-    awards_list = []
-    for award in awards:
-        awards_list.append({
-            'id': award.id,
-            'name': award.name,
-            'description': award.description,
-            'date': award.date,
-            'value': award.value,
-            'category': award.category,
-            'icon': award.icon
-        })
-    json_data = {'awards': awards_list}
-    return jsonify(json_data)
-
-
-@admin.route('/admin/awards/add', methods=['POST'])
-@admins_only
-def create_award():
-    try:
-        teamid = request.form['teamid']
-        name = request.form.get('name', 'Award')
-        value = request.form.get('value', 0)
-        award = Awards(teamid, name, value)
-        award.description = request.form.get('description')
-        award.category = request.form.get('category')
-        db.session.add(award)
-        db.session.commit()
-        db.session.close()
-        return '1'
-    except Exception as e:
-        print(e)
-        return '0'
+# @admin.route('/admin/awards/add', methods=['POST'])
+# @admins_only
+# def create_award():
+#     # TODO: Move to API
+#     try:
+#         teamid = request.form['teamid']
+#         name = request.form.get('name', 'Award')
+#         value = request.form.get('value', 0)
+#         award = Awards(teamid, name, value)
+#         award.description = request.form.get('description')
+#         award.category = request.form.get('category')
+#         db.session.add(award)
+#         db.session.commit()
+#         db.session.close()
+#         return '1'
+#     except Exception as e:
+#         print(e)
+#         return '0'

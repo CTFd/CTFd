@@ -10,6 +10,7 @@ from CTFd.admin import admin
 @admin.route('/admin/graphs/<graph_type>')
 @admins_only
 def admin_graph(graph_type):
+    # TODO: Move to API
     if graph_type == 'categories':
         categories = db.session.query(Challenges.category, db.func.count(Challenges.category)).group_by(Challenges.category).all()
         json_data = {'categories': []}

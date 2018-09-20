@@ -1,7 +1,7 @@
 from flask import session, jsonify, request, abort
-from flask_restplus import Namespace, Resource
+from flask_restplus import Namespace, Resource, reqparse
 
-from CTFd.models import db, Challenges, Unlocks, Fails, Solves, Teams, Flags
+from CTFd.models import db, Challenges, Unlocks, Fails, Solves, Teams, Flags, Submissions
 from CTFd.utils import config
 from CTFd.utils import user as current_user
 from CTFd.utils.user import get_current_team
@@ -24,9 +24,15 @@ submissions_namespace = Namespace('submissions', description="Endpoint to retrie
 
 @submissions_namespace.route('')
 class SubmissionsList(Resource):
+
     @admins_only
     def get(self):
-        pass
+        args = request.args.to_dict()
+        if args:
+            submissions = Submissions.query.filter_by(**args).all()
+        else:
+            submissions = Submissions.query.all()
+        return [submission.get_dict(admin=True) for submission in submissions]
 
     @during_ctf_time_only
     @viewable_without_authentication()
@@ -152,3 +158,24 @@ class SubmissionsList(Resource):
                 'status': -1,
                 'message': "You must be logged in to solve a challenge"
             }, 302
+
+
+@submissions_namespace.route('/<submission_id>')
+@submissions_namespace.param('submission_id', 'A Submission ID')
+class Submission(Resource):
+    @admins_only
+    def get(self, submission_id):
+        submission = Submissions.query.filter_by(id=submission_id).first_or_404()
+        return submission.get_dict(admin=True)
+
+    @admins_only
+    def delete(self, submission_id):
+        submission = Submissions.query.filter_by(id=submission_id).first_or_404()
+        db.session.delete(submission)
+        db.session.commit()
+        db.session.close()
+
+        response = {
+            'success': True
+        }
+        return response

@@ -16,7 +16,6 @@ admin = Blueprint('admin', __name__)
 
 
 from CTFd.admin import challenges
-from CTFd.admin import keys
 from CTFd.admin import pages
 from CTFd.admin import scoreboard
 from CTFd.admin import statistics
