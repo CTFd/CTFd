@@ -129,6 +129,16 @@ class Hints(db.Model):
         self.cost = cost
         self.type = type
 
+    def get_dict(self, admin=False):
+        obj = {
+            'id': self.id,
+            'type': self.type,
+            'challenge_id': self.challenge_id,
+            'hint': self.hint,
+            'cost': self.cost,
+        }
+        return obj
+
     def __repr__(self):
         return '<Hint %r>' % self.hint
 
@@ -149,11 +159,8 @@ class Awards(db.Model):
     user = db.relationship('Users', foreign_keys="Awards.user_id", lazy='select')
     team = db.relationship('Teams', foreign_keys="Awards.team_id", lazy='select')
 
-    def __init__(self, user_id, team_id, name, value):
-        self.user_id = user_id
-        self.team_id = team_id
-        self.name = name
-        self.value = value
+    def __init__(self, *args, **kwargs):
+        super(Awards, self).__init__(**kwargs)
 
     def get_dict(self, admin=False):
         obj = {
@@ -175,12 +182,20 @@ class Awards(db.Model):
 class Tags(db.Model):
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
-    chal_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
-    tag = db.Column(db.String(80))
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    value = db.Column(db.String(80))
 
-    def __init__(self, chal, tag):
-        self.chal = chal
-        self.tag = tag
+    def __init__(self, challenge_id, value):
+        self.challenge_id = challenge_id
+        self.value = value
+
+    def get_dict(self, admin=False):
+        obj = {
+            'id': self.id,
+            'challenge_id': self.challenge_id,
+            'value': self.tag,
+        }
+        return obj
 
     def __repr__(self):
         return "<Tag {0} for challenge {1}>".format(self.tag, self.chal)
@@ -230,17 +245,27 @@ class Flags(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     type = db.Column(db.String(80))
-    flag = db.Column(db.Text)
+    content = db.Column(db.Text)
     data = db.Column(db.Text)
 
     challenge = db.relationship('Challenges', foreign_keys="Flags.challenge_id", lazy='select')
 
-    ## TODO: Perhaps this should also be Polymorphic so that plugins can subclass it.
+    __mapper_args__ = {
+        'polymorphic_on': type
+    }
 
-    def __init__(self, challenge_id, flag, type):
-        self.challenge_id = challenge_id
-        self.flag = flag
-        self.type = type
+    def __init__(self, *args, **kwargs):
+        super(Flags, self).__init__(**kwargs)
+
+    def get_dict(self, admin=False):
+        obj = {
+            'id': self.id,
+            'challenge_id': self.challenge_id,
+            'type': self.type,
+            'content': self.flag,
+            'data': self.data,
+        }
+        return obj
 
     def __repr__(self):
         return "<Flag {0} for challenge {1}>".format(self.flag, self.chal)
@@ -518,9 +543,9 @@ class Teams(db.Model):
 class Submissions(db.Model):
     __tablename__ = 'submissions'
     id = db.Column(db.Integer, primary_key=True)
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.id', ondelete='CASCADE'))
     ip = db.Column(db.String(46))
     provided = db.Column(db.Text)
     type = db.Column(db.String(32))
@@ -538,10 +563,12 @@ class Submissions(db.Model):
     def get_dict(self, admin=False):
         obj = {
             'id': self.id,
+            'type': self.type,
             'challenge_id': self.challenge_id,
             'user_id': self.user_id,
             'team_id': self.team_id,
-            'date': self.date.isoformat()
+            'provided': self.provided,
+            'date': self.date.isoformat(),
         }
         return obj
 
@@ -552,9 +579,9 @@ class Submissions(db.Model):
 class Solves(Submissions):
     __tablename__ = 'solves'
     __table_args__ = (db.UniqueConstraint('challenge_id', 'user_id'), {})
-    id = db.Column(None, db.ForeignKey('submissions.id'), primary_key=True)
-    challenge_id = column_property(db.Column(db.Integer, db.ForeignKey('challenges.id')), Submissions.challenge_id)
-    user_id = column_property(db.Column(db.Integer, db.ForeignKey('users.id')), Submissions.user_id)
+    id = db.Column(None, db.ForeignKey('submissions.id', ondelete='CASCADE'), primary_key=True)
+    challenge_id = column_property(db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE')), Submissions.challenge_id)
+    user_id = column_property(db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE')), Submissions.user_id)
 
     user = db.relationship('Users', foreign_keys="Solves.user_id", lazy='select')
     challenge = db.relationship('Challenges', foreign_keys="Solves.challenge_id", lazy='select')

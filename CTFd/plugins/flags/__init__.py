@@ -5,8 +5,7 @@ import string
 import hmac
 
 
-class BaseKey(object):
-    id = None
+class BaseFlag(object):
     name = None
     templates = {}
 
@@ -15,8 +14,7 @@ class BaseKey(object):
         return True
 
 
-class CTFdStaticKey(BaseKey):
-    id = 0
+class CTFdStaticFlag(BaseFlag):
     name = "static"
     templates = {  # Nunjucks templates used for key editing & viewing
         'create': '/plugins/keys/assets/static/create-static-modal.njk',
@@ -41,8 +39,7 @@ class CTFdStaticKey(BaseKey):
         return result == 0
 
 
-class CTFdRegexKey(BaseKey):
-    id = 1
+class CTFdRegexFlag(BaseFlag):
     name = "regex"
     templates = {  # Nunjucks templates used for key editing & viewing
         'create': '/plugins/keys/assets/regex/create-regex-modal.njk',
@@ -62,14 +59,14 @@ class CTFdRegexKey(BaseKey):
         return res and res.group() == provided
 
 
-KEY_CLASSES = {
-    'static': CTFdStaticKey,
-    'regex': CTFdRegexKey
+FLAG_CLASSES = {
+    'static': CTFdStaticFlag,
+    'regex': CTFdRegexFlag
 }
 
 
 def get_key_class(class_id):
-    cls = KEY_CLASSES.get(class_id)
+    cls = FLAG_CLASSES.get(class_id)
     if cls is None:
         raise KeyError
     return cls

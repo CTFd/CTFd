@@ -1,9 +1,14 @@
-from flask import session
+from flask import session, request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Challenges, Unlocks, Hints, Solves, Teams
-from CTFd.plugins.challenges import get_chal_class
+from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
 from CTFd.utils.dates import ctf_ended
-from CTFd.utils.decorators import during_ctf_time_only, require_verified_emails, viewable_without_authentication
+from CTFd.utils.decorators import (
+    during_ctf_time_only,
+    require_verified_emails,
+    viewable_without_authentication,
+    admins_only
+)
 from sqlalchemy.sql import or_
 
 challenges_namespace = Namespace('challenges', description="Endpoint to retrieve Challenges")
@@ -45,9 +50,34 @@ class ChallengeList(Resource):
         db.session.close()
         return response
 
+    @admins_only
+    def post(self):
+        challenge_type = request.form['type']
+        challenge_class = get_chal_class(challenge_type)
+        challenge = challenge_class.create(request)
+        response = challenge.read()
+        return response
+
+
+@challenges_namespace.route('/types')
+class ChallengeTypes(Resource):
+    @admins_only
+    def get(self):
+        response = {}
+
+        for class_id in CHALLENGE_CLASSES:
+            challenge_class = CHALLENGE_CLASSES.get(class_id)
+            response[challenge_class.id] = {
+                'id': challenge_class.id,
+                'name': challenge_class.name,
+                'templates': challenge_class.templates,
+                'scripts': challenge_class.scripts,
+            }
+        return response
+
 
 @challenges_namespace.route('/<challenge_id>')
-@challenges_namespace.param('id', 'A Challenge ID')
+@challenges_namespace.param('challenge_id', 'A Challenge ID')
 class Challenge(Resource):
     @during_ctf_time_only
     @require_verified_emails
@@ -78,6 +108,25 @@ class Challenge(Resource):
         db.session.close()
         return response
 
+    @admins_only
+    def put(self, challenge_id):
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        challenge_class = get_chal_class(challenge.type)
+        challenge = challenge_class.update(challenge, request)
+
+        return challenge.read()
+
+    @admins_only
+    def delete(self, challenge_id):
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        chal_class = get_chal_class(challenge.type)
+        chal_class.delete(challenge)
+
+        response = {
+            'success': True,
+        }
+        return response
+
 
 @challenges_namespace.route('/<challenge_id>/solves')
 @challenges_namespace.param('id', 'A Challenge ID')
@@ -95,10 +144,10 @@ class ChallengeSolves(Resource):
             .order_by(Solves.date.asc())
 
         for solve in solves:
-            response['teams'].append({
+            response.append({
                 'id': solve.team.id,
                 'name': solve.team.name,
-                'date': solve.date
+                'date': solve.date.isoformat()
             })
 
         return response
