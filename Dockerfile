@@ -13,6 +13,13 @@ COPY . /opt/CTFd
 
 VOLUME ["/opt/CTFd"]
 
+RUN apk update
+RUN for d in CTFd/plugins/*; do \
+      if [ -f "$d/apk-requirements.txt" ]; then \
+        cat "$d/apk-requirements.txt" | xargs -n1 apk add; \
+      fi; \
+    done;
+
 RUN for d in CTFd/plugins/*; do \
       if [ -f "$d/requirements.txt" ]; then \
         pip install -r $d/requirements.txt; \
