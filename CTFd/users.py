@@ -57,6 +57,7 @@ def private():
         'users/user.html',
         solves=solves,
         awards=awards,
+        team=team,
         user=user,
         score=score,
         place=place,
