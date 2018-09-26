@@ -7,7 +7,6 @@ env:
     - VERSION=1.2.0
     - REGISTRY_HOST=registry.sec-aau.dk
     - REGISTRY_USER=travis
-    - REGISTRY_PASS=T5CBgSJfMfJfUAyreMBHz96DhFE89ADK
   matrix:
     - TESTING_DATABASE_URL='sqlite://'
 python:
