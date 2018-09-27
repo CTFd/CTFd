@@ -35,6 +35,13 @@ class Team(Resource):
         response = team.get_dict()
         return response
 
+    def patch(self, team_id):
+        if team_id == 'me':
+            team = get_current_team()
+        else:
+            team = Teams.query.filter_by(id=team_id).first_or_404()
+        pass
+
     @admins_only
     def delete(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()

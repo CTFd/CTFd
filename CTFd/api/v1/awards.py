@@ -19,6 +19,7 @@ class AwardList(Resource):
     def get(self):
         pass
 
+    @admins_only
     def post(self):
         data = request.get_json()
 

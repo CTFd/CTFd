@@ -19,17 +19,18 @@ class HintList(Resource):
     def get(self):
         pass
 
+    @admins_only
     def post(self):
         pass
 
 
 @hints_namespace.route('/<hint_id>')
 class Hint(Resource):
-
     def get(self, hint_id):
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
         return hint.get_dict()
 
+    @admins_only
     def delete(self, hint_id):
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
         db.session.delete(hint)
@@ -41,5 +42,6 @@ class Hint(Resource):
         }
         return response
 
-    def post(self, hint_id):
+    @admins_only
+    def put(self, hint_id):
         pass

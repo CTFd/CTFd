@@ -99,6 +99,7 @@ def admin_pages_view():
 @admin.route('/admin/pages/delete', methods=['POST'])
 @admins_only
 def delete_page():
+    # TODO: Move to API
     id = request.form['id']
     page = Pages.query.filter_by(id=id).first_or_404()
     db.session.delete(page)
@@ -112,6 +113,7 @@ def delete_page():
 @admin.route('/admin/media', methods=['GET', 'POST', 'DELETE'])
 @admins_only
 def admin_pages_media():
+    # TODO: Maybe move to API?
     if request.method == 'POST':
         files = request.files.getlist('files[]')
 
