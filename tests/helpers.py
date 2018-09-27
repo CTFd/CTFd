@@ -157,7 +157,8 @@ def gen_wrongkey(db, teamid, chalid, ip='127.0.0.1', flag='wrongkey'):
 
 
 def gen_tracking(db, ip, team):
-    tracking = Tracking(ip, team)
+    # TODO: This might not make sense for user mode teams
+    tracking = Tracking(ip=ip, user_id=team)
     db.session.add(tracking)
     db.session.commit()
     return tracking

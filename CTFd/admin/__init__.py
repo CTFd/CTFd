@@ -1,6 +1,14 @@
-from flask import current_app as app, render_template, request, redirect, url_for, Blueprint, \
-    abort, render_template_string, send_file
-
+from flask import (
+    current_app as app,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    Blueprint,
+    abort,
+    render_template_string,
+    send_file
+)
 
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.user import is_admin

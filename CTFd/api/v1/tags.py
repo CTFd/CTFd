@@ -22,6 +22,7 @@ class TagList(Resource):
         tags = Tags.query.all()
         return [tag.get_dict() for tag in tags]
 
+    @admins_only
     def post(self):
         pass
 
@@ -29,10 +30,12 @@ class TagList(Resource):
 @tags_namespace.route('/<tag_id>')
 @tags_namespace.param('tag_id', 'A Tag ID')
 class Tag(Resource):
+    @admins_only
     def get(self, tag_id):
         tag = Tags.query.filter_by(id=tag_id).first_or_404()
         return tag.get_dict()
 
+    @admins_only
     def delete(self, tag_id):
         tag = Tags.query.filter_by(id=tag_id).first_or_404()
         db.session.delete(tag)
@@ -44,5 +47,6 @@ class Tag(Resource):
         }
         return response
 
+    @admins_only
     def put(self):
         pass

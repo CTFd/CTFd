@@ -23,7 +23,7 @@ class CTFdStaticFlag(BaseFlag):
 
     @staticmethod
     def compare(chal_key_obj, provided):
-        saved = chal_key_obj.flag
+        saved = chal_key_obj.content
         data = chal_key_obj.data
 
         if len(saved) != len(provided):
@@ -48,7 +48,7 @@ class CTFdRegexFlag(BaseFlag):
 
     @staticmethod
     def compare(chal_key_obj, provided):
-        saved = chal_key_obj.flag
+        saved = chal_key_obj.content
         data = chal_key_obj.data
 
         if data == "case_insensitive":

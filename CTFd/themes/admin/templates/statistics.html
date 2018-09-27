@@ -91,24 +91,33 @@
 	};
 
 	function solves_graph() {
-		$.get('{{ request.script_root }}/admin/graphs/solves', function (data) {
-			var solves = $.parseJSON(JSON.stringify(data));
+		$.get('{{ request.script_root }}/api/v1/statistics/challenges/solves', function (data) {
+			var res = $.parseJSON(JSON.stringify(data));
 			var chals = [];
 			var counts = [];
 			var colors = [];
 			var annotations = [];
 			var i = 1;
+			var solves = {};
+            for (var c = 0; c < res.length; c++) {
+				solves[res[c]['id']] = {
+				    name: res[c]['name'],
+				    solves: res[c]['solves'],
+                };
+            }
+
 			var solves_order = Object.keys(solves).sort(function (a, b) {
-				return solves[b] - solves[a]
+				return solves[b].solves - solves[a].solves
 			});
+
 			$.each(solves_order, function (key, value) {
-				chals.push(value);
-				counts.push(solves[value]);
-				{#					colors.push(colorhash(value));#}
+				chals.push(solves[value].name);
+				counts.push(solves[value].solves);
+				/*colors.push(colorhash(value));*/
 				var result = {
-					x: value,
-					y: solves[value],
-					text: solves[value],
+					x: solves[value].name,
+					y: solves[value].solves,
+					text: solves[value].solves,
 					xanchor: 'center',
 					yanchor: 'bottom',
 					showarrow: false,
@@ -122,9 +131,9 @@
 				y: counts,
 				text: counts,
 				orientation: 'v',
-				{#                    marker: {#}
-				{#                        color: colors#}
-				{#                    },#}
+				/*marker: {
+					color: colors
+				},*/
 			}];
 
 			var layout = {
@@ -145,20 +154,21 @@
 
 	function keys_percentage_graph() {
 		// Solves and Fails pie chart
-		$.get('{{ request.script_root }}/admin/fails/all', function (data) {
+		$.get('{{ request.script_root }}/api/v1/statistics/submissions/type', function (data) {
 			var res = $.parseJSON(JSON.stringify(data));
-			var solves = res['solves'];
-			var fails = res['fails'];
+			var solves = res['correct'];
+			var fails = res['incorrect'];
 
 			var data = [{
 				values: [solves, fails],
-				labels: ['Solves', 'Fails'],
+				labels: ['Correct', 'Incorrect'],
 				marker: {
 					colors: [
 						"rgb(0, 209, 64)",
 						"rgb(207, 38, 0)"
 					]
 				},
+				text: [solves, fails],
 				hole: .4,
 				type: 'pie'
 			}];
@@ -173,13 +183,20 @@
 	}
 
 	function category_breakdown_graph() {
-		$.get('{{ request.script_root }}/admin/graphs/categories', function (data) {
+		$.get('{{ request.script_root }}/api/v1/statistics/challenges/category', function (data) {
 			var res = $.parseJSON(JSON.stringify(data));
-			res = res['categories'];
 
 			var categories = [];
 			var count = [];
-			for (var i = 0; i < res.length; i++) {
+
+            for (var category in res) {
+                if (res.hasOwnProperty(category)){
+                    categories.push(category);
+                    count.push(res[category]);
+				}
+            }
+
+            for (var i = 0; i < res.length; i++) {
 				categories.push(res[i].category);
 				count.push(res[i].count);
 			}
@@ -201,9 +218,8 @@
 	}
 
 	function solve_percentages_graph() {
-		$.get('{{ request.script_root }}/admin/graphs/solve-percentages', function (data) {
+		$.get('{{ request.script_root }}/api/v1/statistics/challenges/solves/percentages', function (data) {
 			var res = $.parseJSON(JSON.stringify(data));
-			res = res['percentages'];
 
 			var names = [];
 			var percents = [];

@@ -235,7 +235,7 @@ if __name__ == '__main__':
             db.session.commit()
             f = Flags(
                 challenge_id=x + 1,
-                flag=word,
+                content=word,
                 type='static'
             )
             db.session.add(f)

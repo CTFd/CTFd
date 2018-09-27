@@ -7,55 +7,58 @@ from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tag
 from CTFd.admin import admin
 
 
-@admin.route('/admin/graphs/<graph_type>')
-@admins_only
-def admin_graph(graph_type):
-    # TODO: Move to API
-    if graph_type == 'categories':
-        categories = db.session.query(Challenges.category, db.func.count(Challenges.category)).group_by(Challenges.category).all()
-        json_data = {'categories': []}
-        for category, count in categories:
-            json_data['categories'].append({'category': category, 'count': count})
-        return jsonify(json_data)
-    elif graph_type == "solves":
-        solves_sub = db.session.query(Solves.challenge_id, db.func.count(Solves.challenge_id).label('solves_cnt')) \
-                               .join(Teams, Solves.team_id == Teams.id).filter(Teams.banned == False) \
-                               .group_by(Solves.challenge_id).subquery()
-        solves = db.session.query(solves_sub.columns.challenge_id, solves_sub.columns.solves_cnt, Challenges.name) \
-                           .join(Challenges, solves_sub.columns.challenge_id == Challenges.id).all()
-        json_data = {}
-        for chal, count, name in solves:
-            json_data[name] = count
-        return jsonify(json_data)
-    elif graph_type == "solve-percentages":
-        chals = Challenges.query.add_columns('id', 'name', 'hidden', 'max_attempts').order_by(Challenges.value).all()
-
-        teams_with_points = db.session.query(Solves.team_id)\
-            .join(Teams)\
-            .filter(Teams.banned == False)\
-            .group_by(Solves.team_id)\
-            .count()
-
-        percentage_data = []
-        for x in chals:
-            solve_count = Solves.query.join(Teams, Solves.team_id == Teams.id)\
-                .filter(Solves.challenge_id == x[1], Teams.banned == False)\
-                .count()
-
-            if teams_with_points > 0:
-                percentage = (float(solve_count) / float(teams_with_points))
-            else:
-                percentage = 0.0
-
-            percentage_data.append({
-                'id': x.id,
-                'name': x.name,
-                'percentage': percentage,
-            })
-
-        percentage_data = sorted(percentage_data, key=lambda x: x['percentage'], reverse=True)
-        json_data = {'percentages': percentage_data}
-        return jsonify(json_data)
+# @admin.route('/admin/graphs/<graph_type>')
+# @admins_only
+# def admin_graph(graph_type):
+#     # TODO: Move to API
+#     if graph_type == 'categories':
+#         # categories = db.session.query(Challenges.category, db.func.count(Challenges.category)).group_by(Challenges.category).all()
+#         # json_data = {'categories': []}
+#         # for category, count in categories:
+#         #     json_data['categories'].append({'category': category, 'count': count})
+#         # return jsonify(json_data)
+#         pass
+#     elif graph_type == "solves":
+#         # solves_sub = db.session.query(Solves.challenge_id, db.func.count(Solves.challenge_id).label('solves_cnt')) \
+#         #                        .join(Teams, Solves.team_id == Teams.id).filter(Teams.banned == False) \
+#         #                        .group_by(Solves.challenge_id).subquery()
+#         # solves = db.session.query(solves_sub.columns.challenge_id, solves_sub.columns.solves_cnt, Challenges.name) \
+#         #                    .join(Challenges, solves_sub.columns.challenge_id == Challenges.id).all()
+#         # json_data = {}
+#         # for chal, count, name in solves:
+#         #     json_data[name] = count
+#         # return jsonify(json_data)
+#         pass
+#     elif graph_type == "solve-percentages":
+#         # chals = Challenges.query.add_columns('id', 'name', 'hidden', 'max_attempts').order_by(Challenges.value).all()
+#         #
+#         # teams_with_points = db.session.query(Solves.team_id)\
+#         #     .join(Teams)\
+#         #     .filter(Teams.banned == False)\
+#         #     .group_by(Solves.team_id)\
+#         #     .count()
+#         #
+#         # percentage_data = []
+#         # for x in chals:
+#         #     solve_count = Solves.query.join(Teams, Solves.team_id == Teams.id)\
+#         #         .filter(Solves.challenge_id == x[1], Teams.banned == False)\
+#         #         .count()
+#         #
+#         #     if teams_with_points > 0:
+#         #         percentage = (float(solve_count) / float(teams_with_points))
+#         #     else:
+#         #         percentage = 0.0
+#         #
+#         #     percentage_data.append({
+#         #         'id': x.id,
+#         #         'name': x.name,
+#         #         'percentage': percentage,
+#         #     })
+#         #
+#         # percentage_data = sorted(percentage_data, key=lambda x: x['percentage'], reverse=True)
+#         # json_data = {'percentages': percentage_data}
+#         # return jsonify(json_data)
+#         pass
 
 
 @admin.route('/admin/statistics', methods=['GET'])

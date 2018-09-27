@@ -59,7 +59,7 @@ def set_config(key, value):
     if config:
         config.value = value
     else:
-        config = Config(key, value)
+        config = Config(key=key, value=value)
         db.session.add(config)
     db.session.commit()
     return config
