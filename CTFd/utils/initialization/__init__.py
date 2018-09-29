@@ -85,8 +85,9 @@ def init_request_processors(app):
         if not session.get('nonce'):
             session['nonce'] = generate_nonce()
         if request.method == "POST":
-            if session['nonce'] != request.form.get('nonce'):
-                abort(403)
+            if request.content_type != 'application/json':
+                if session['nonce'] != request.form.get('nonce'):
+                    abort(403)
 
     @app.before_request
     def disable_jinja_cache():

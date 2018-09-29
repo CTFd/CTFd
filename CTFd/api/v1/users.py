@@ -52,6 +52,42 @@ class User(Resource):
         return response
 
 
+# @users_namespace.route('/<user_id>/ban')
+# @users_namespace.param('user_id', "User ID")
+# class UserBans(Resource):
+#     def get(self, user_id):
+#         user = Users.query.filter_by(id=user_id).first_or_404()
+#         response = {
+#             'banned': user.banned
+#         }
+#         return response
+#
+#     def put(self, user_id):
+#         user = Users.query.filter_by(id=user_id).first_or_404()
+#         user.banned = True
+#         db.session.commit()
+#         response = {
+#             'banned': user.banned
+#         }
+#         return response
+#
+#     def delete(self, user_id):
+#         user = Users.query.filter_by(id=user_id).first_or_404()
+#         user.banned = False
+#         db.session.commit()
+#         response = {
+#             'banned': user.banned
+#         }
+#         return response
+
+
+@users_namespace.route('/<team_id>/mail')
+@users_namespace.param('team_id', "Team ID or 'me'")
+class TeamMails(Resource):
+    def post(self, team_id):
+        pass
+
+
 @users_namespace.route('/<user_id>/solves')
 @users_namespace.param('user_id', "User ID or 'me'")
 class UserSolves(Resource):

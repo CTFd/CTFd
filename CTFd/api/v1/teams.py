@@ -1,4 +1,4 @@
-from flask import session
+from flask import session, request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Teams, Solves, Awards, Fails
 from CTFd.utils.user import get_current_team
@@ -20,7 +20,11 @@ class TeamList(Resource):
         return response
 
     def post(self):
-        pass
+        req = request.get_json()
+        t = Teams(**req)
+        db.session.add(t)
+        db.session.commit()
+        return t.get_dict()
 
 
 @teams_namespace.route('/<team_id>')
@@ -57,6 +61,42 @@ class Team(Resource):
             'success': True,
         }
         return response
+
+
+# @teams_namespace.route('/<team_id>/ban')
+# @teams_namespace.param('team_id', "Team ID")
+# class TeamBans(Resource):
+#     def get(self, team_id):
+#         team = Teams.query.filter_by(id=team_id).first_or_404()
+#         response = {
+#             'banned': team.banned
+#         }
+#         return response
+#
+#     def put(self, team_id):
+#         team = Teams.query.filter_by(id=team_id).first_or_404()
+#         team.banned = True
+#         db.session.commit()
+#         response = {
+#             'banned': team.banned
+#         }
+#         return response
+#
+#     def delete(self, team_id):
+#         team = Teams.query.filter_by(id=team_id).first_or_404()
+#         team.banned = False
+#         db.session.commit()
+#         response = {
+#             'banned': team.banned
+#         }
+#         return response
+
+
+@teams_namespace.route('/<team_id>/mail')
+@teams_namespace.param('team_id', "Team ID or 'me'")
+class TeamMails(Resource):
+    def post(self, team_id):
+        pass
 
 
 @teams_namespace.route('/<team_id>/solves')
