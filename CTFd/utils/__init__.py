@@ -17,6 +17,11 @@ from CTFd.models import (
     Files
 )
 
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
+
 if six.PY2:
     text_type = unicode
     binary_type = str

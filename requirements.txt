@@ -21,3 +21,4 @@ datafreeze==0.1.0
 gevent==1.3.5
 python-dotenv==0.9.1
 flask-restplus==0.11.0
+pathlib2==2.3.2
