@@ -3,6 +3,7 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Tags
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_ended
+from CTFd.schemas.tags import TagSchema
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
@@ -16,15 +17,28 @@ tags_namespace = Namespace('tags', description="Endpoint to retrieve Tags")
 
 @tags_namespace.route('')
 class TagList(Resource):
-
     @admins_only
     def get(self):
+        # TODO: Filter by challenge_id
         tags = Tags.query.all()
-        return [tag.get_dict() for tag in tags]
+        schema = TagSchema(many=True)
+        result = schema.dump(tags)
+        return result.data
 
     @admins_only
     def post(self):
-        pass
+        req = request.get_json()
+        schema = TagSchema()
+        tag = schema.load(req, session=db.session)
+
+        if tag.errors:
+            return tag.errors
+
+        db.session.add(tag.data)
+        db.session.commit()
+        db.session.close()
+
+        return schema.dump(tag)
 
 
 @tags_namespace.route('/<tag_id>')
@@ -33,7 +47,7 @@ class Tag(Resource):
     @admins_only
     def get(self, tag_id):
         tag = Tags.query.filter_by(id=tag_id).first_or_404()
-        return tag.get_dict()
+        return TagSchema().dump(tag)
 
     @admins_only
     def delete(self, tag_id):
@@ -48,5 +62,16 @@ class Tag(Resource):
         return response
 
     @admins_only
-    def put(self):
-        pass
+    def put(self, tag_id):
+        tag = Tags.query.filter_by(id=tag_id).first_or_404()
+        schema = TagSchema()
+        req = request.get_json()
+
+        tag = schema.load(req, session=db.session, instance=tag)
+        if tag.errors:
+            return tag.errors
+
+        db.session.commit()
+        response = schema.dump(tag.data)
+        db.session.close()
+        return response

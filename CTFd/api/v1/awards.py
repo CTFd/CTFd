@@ -1,7 +1,7 @@
 from flask import session, request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Awards
-from CTFd.models.awards import AwardSchema
+from CTFd.schemas.awards import AwardSchema
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
@@ -23,29 +23,26 @@ class AwardList(Resource):
 
     @admins_only
     def post(self):
-        data = request.get_json()
+        req = request.get_json()
+        schema = AwardSchema()
 
-        award = Awards(
-            **data
-        )
-        db.session.add(award)
+        award = schema.load(req, session=db.session)
+        if award.errors:
+            return award.errors
+        db.session.add(award.data)
         db.session.commit()
         db.session.close()
 
-        response = {
-            'success': True
-        }
-        return response
+        return schema.dump(award)
 
 
 @awards_namespace.route('/<award_id>')
 @awards_namespace.param('award_id', 'An Award ID')
 class Award(Resource):
-
     @admins_only
     def get(self, award_id):
         award = Awards.query.filter_by(id=award_id).first_or_404()
-        return AwardSchema().load(award)
+        return AwardSchema().dump(award)
 
     @admins_only
     def delete(self, award_id):

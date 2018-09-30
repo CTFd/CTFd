@@ -1,6 +1,7 @@
 from flask import session, request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Flags
+from CTFd.schemas.flags import FlagSchema
 from CTFd.plugins.flags import get_key_class, FLAG_CLASSES
 from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
@@ -16,27 +17,28 @@ flags_namespace = Namespace('flags', description="Endpoint to retrieve Flags")
 
 @flags_namespace.route('')
 class FlagList(Resource):
+    @admins_only
     def get(self):
-        pass
+        # TODO: Sort by challenge ID
+        flags = Flags.query.all()
+        schema = FlagSchema(many=True)
+        result = schema.dump(flags)
+        return result.data
 
     @admins_only
     def post(self):
-        challenge_id = request.form.get('challenge_id')
-        content = request.form.get('flag')
-        data = request.form.get('metadata')
-        type = request.form.get('type')
+        req = request.get_json()
+        schema = FlagSchema()
+        flag = schema.load(req, session=db.session)
 
-        flag = Flag(
-            challenge_id=challenge_id,
-            content=content,
-            data=data,
-            type=type
-        )
-        db.session.add(flag)
+        if flag.errors:
+            return flag.errors
+
+        db.session.add(flag.data)
         db.session.commit()
         db.session.close()
 
-        return flag.get_dict()
+        return schema.dump(flag)
 
 
 @flags_namespace.route('/types')
@@ -56,12 +58,11 @@ class FlagTypes(Resource):
 
 @flags_namespace.route('/<flag_id>')
 class Flag(Resource):
-
     @admins_only
     def get(self, flag_id):
         # TODO: This should probably defer to the read method of a flag plugin
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
-        return flag.get_dict(admin=True)
+        return FlagSchema().dump(flag)
 
     @admins_only
     def delete(self, flag_id):
@@ -73,4 +74,19 @@ class Flag(Resource):
         response = {
             'success': True
         }
+        return response
+
+    @admins_only
+    def put(self, flag_id):
+        flag = Flags.query.filter_by(id=flag_id).first_or_404()
+        schema = FlagSchema()
+        req = request.get_json()
+
+        flag = schema.load(req, session=db.session, instance=flag)
+        if flag.errors:
+            return flag.errors
+
+        db.session.commit()
+        response = schema.dump(flag.data)
+        db.session.close()
         return response

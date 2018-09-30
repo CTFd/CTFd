@@ -1,7 +1,7 @@
 from flask import session, request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Teams, Solves, Awards, Fails
-from CTFd.models.teams import TeamSchema
+from CTFd.schemas.teams import TeamSchema
 from CTFd.utils.user import get_current_team
 from CTFd.utils.decorators import (
     authed_only,
