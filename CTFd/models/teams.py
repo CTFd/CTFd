@@ -8,7 +8,6 @@ from CTFd.models.submissions import Solves
 from CTFd.models.awards import Awards
 from CTFd.models.config import Config
 from CTFd.utils.crypto import hash_password
-from CTFd.utils.validators import unique_team_name
 import datetime
 
 
@@ -119,6 +118,12 @@ class Teams(db.Model):
             return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
         except ValueError:
             return 0
+
+
+def unique_team_name(name):
+    if Teams.query.filter_by(name=name):
+        raise ValidationError('Team name has already been taken')
+    return True
 
 
 class TeamSchema(ma.ModelSchema):

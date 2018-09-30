@@ -17,9 +17,3 @@ def validate_url(url):
 
 def validate_email(email):
     return bool(re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email))
-
-
-def unique_team_name(name):
-    if Teams.query.filter_by(name=name):
-        raise ValidationError('Team name has already been taken')
-    return True
