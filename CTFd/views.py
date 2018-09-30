@@ -2,7 +2,7 @@ from flask import current_app as app, render_template, request, redirect, abort,
 from flask.helpers import safe_join
 from passlib.hash import bcrypt_sha256
 
-from CTFd.models import db, Users, Users, Solves, Awards, Files, Pages, Tracking
+from CTFd.models import db, Admins, Users, Users, Solves, Awards, Files, Pages, Tracking
 from CTFd.utils import cache, markdown
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import authed, get_ip
@@ -34,7 +34,7 @@ def setup():
             name = request.form['name']
             email = request.form['email']
             password = request.form['password']
-            admin = Users(
+            admin = Admins(
                 name=name,
                 email=email,
                 password=password
@@ -104,6 +104,7 @@ def setup():
 
             session['username'] = admin.name
             session['id'] = admin.id
+            session['id'] = admin.type
             session['admin'] = admin.admin
             session['nonce'] = generate_nonce()
 

@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 from passlib.hash import bcrypt_sha256
 from sqlalchemy import TypeDecorator, String, func, types, CheckConstraint, and_
 from sqlalchemy.sql.expression import union_all
@@ -9,6 +10,7 @@ import datetime
 import json
 
 db = SQLAlchemy()
+ma = Marshmallow()
 
 class SQLiteJson(TypeDecorator):
     impl = String
@@ -46,18 +48,18 @@ class SQLiteJson(TypeDecorator):
 
 JSONLite = types.JSON().with_variant(SQLiteJson, 'sqlite')
 
-
-from CTFd.models.announcements import Announcements
-from CTFd.models.awards import Awards
-from CTFd.models.challenges import Challenges
 from CTFd.models.config import Config
 from CTFd.models.files import Files, ChallengeFiles, PageFiles
-from CTFd.models.flags import Flags
+from CTFd.models.tags import Tags
 from CTFd.models.hints import Hints
+from CTFd.models.challenges import Challenges
+from CTFd.models.users import Users, Admins
+from CTFd.models.teams import Teams
+from CTFd.models.flags import Flags
+from CTFd.models.announcements import Announcements
+from CTFd.models.awards import Awards
 from CTFd.models.pages import Pages
 from CTFd.models.submissions import Submissions, Solves, Fails
-from CTFd.models.tags import Tags
-from CTFd.models.teams import Teams
 from CTFd.models.tracking import Tracking
 from CTFd.models.unlocks import Unlocks, AwardUnlocks, ChallengesUnlocks, HintUnlocks
-from CTFd.models.users import Users, Admins
+

@@ -36,6 +36,10 @@ class User(Resource):
         return response
 
     @admins_only
+    def patch(self, user_id):
+        pass
+
+    @admins_only
     def delete(self, user_id):
         # Unlocks.query.filter_by(user_id=user_id).delete()
         Awards.query.filter_by(user_id=user_id).delete()

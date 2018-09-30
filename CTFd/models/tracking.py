@@ -23,6 +23,3 @@ class Tracking(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Tracking, self).__init__(**kwargs)
-
-    def __repr__(self):
-        return '<Tracking %r>' % self.team

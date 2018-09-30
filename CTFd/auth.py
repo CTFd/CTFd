@@ -187,6 +187,7 @@ def register():
 
                 session['username'] = user.name
                 session['id'] = user.id
+                session['type'] = user.type
                 session['admin'] = user.admin
                 session['nonce'] = generate_nonce()
 
@@ -239,6 +240,7 @@ def login():
                     pass  # TODO: Some session objects don't implement regenerate :(
                 session['username'] = user.name
                 session['id'] = user.id
+                session['type'] = user.type
                 session['admin'] = user.admin
                 session['nonce'] = generate_nonce()
                 db.session.close()

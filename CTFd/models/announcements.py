@@ -8,5 +8,8 @@ class Announcements(db.Model):
     content = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, content):
-        self.content = content
+    def __init__(self, *args, **kwargs):
+        super(Announcements, self).__init__(**kwargs)
+
+    # def __init__(self, content):
+    #     self.content = content

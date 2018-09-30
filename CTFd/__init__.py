@@ -148,6 +148,10 @@ def create_app(config='CTFd.config.Config'):
                 else:
                     exit()
 
+        from CTFd.models import ma
+
+        ma.init_app(app)
+
         app.db = db
         app.VERSION = __version__
 

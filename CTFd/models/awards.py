@@ -1,6 +1,7 @@
 from CTFd.models import db, JSONLite
 import datetime
 
+
 class Awards(db.Model):
     __tablename__ = 'awards'
     id = db.Column(db.Integer, primary_key=True)

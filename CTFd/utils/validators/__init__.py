@@ -1,5 +1,7 @@
+from CTFd.models.teams import Teams
 from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
 from flask import request
+from marshmallow import ValidationError
 import re
 
 
@@ -15,3 +17,9 @@ def validate_url(url):
 
 def validate_email(email):
     return bool(re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email))
+
+
+def unique_team_name(name):
+    if Teams.query.filter_by(name=name):
+        raise ValidationError('Team name has already been taken')
+    return True
