@@ -1,6 +1,7 @@
 from flask import session, request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Awards
+from CTFd.models.awards import AwardSchema
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
@@ -16,6 +17,7 @@ awards_namespace = Namespace('awards', description="Endpoint to retrieve Awards"
 
 @awards_namespace.route('')
 class AwardList(Resource):
+    @admins_only
     def get(self):
         pass
 
@@ -43,7 +45,7 @@ class Award(Resource):
     @admins_only
     def get(self, award_id):
         award = Awards.query.filter_by(id=award_id).first_or_404()
-        return award.get_dict(admin=True)
+        return AwardSchema().load(award)
 
     @admins_only
     def delete(self, award_id):
