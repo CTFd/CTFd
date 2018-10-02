@@ -139,6 +139,7 @@
 			};
 
 			$('#solves-graph').empty();
+                        document.getElementById('solves-graph').fn = 'CTFd_solves_' + (new Date).toISOString().slice(0,19);
 			Plotly.newPlot('solves-graph', data, layout);
 		});
 	}
@@ -168,6 +169,7 @@
 			};
 
 			$('#keys-pie-graph').empty();
+                        document.getElementById('keys-pie-graph').fn = 'CTFd_keys_' + (new Date).toISOString().slice(0,19);
 			Plotly.newPlot('keys-pie-graph', data, layout);
 		});
 	}
@@ -196,6 +198,7 @@
 			};
 
 			$('#categories-pie-graph').empty();
+                        document.getElementById('categories-pie-graph').fn = 'CTFd_categories_' + (new Date).toISOString().slice(0,19);
 			Plotly.newPlot('categories-pie-graph', data, layout);
 		});
 	}
@@ -246,6 +249,7 @@
 			};
 
 			$('#solve-percentages-graph').empty();
+                        document.getElementById('solve-percentages-graph').fn = 'CTFd_challenges_' + (new Date).toISOString().slice(0,19);
 			Plotly.newPlot('solve-percentages-graph', data, layout);
 		});
 	}

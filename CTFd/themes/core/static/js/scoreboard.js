@@ -94,7 +94,7 @@ function scoregraph () {
         console.log(traces);
 
         $('#score-graph').empty(); // Remove spinners
-        document.getElementById('score-graph').fn = 'CTFd_export_' + (new Date).toISOString().slice(0,19);
+        document.getElementById('score-graph').fn = 'CTFd_scoreboard_' + (new Date).toISOString().slice(0,19);
         Plotly.newPlot('score-graph', traces, layout, {
             // displayModeBar: false,
             displaylogo: false
