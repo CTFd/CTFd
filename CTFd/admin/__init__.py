@@ -28,6 +28,8 @@ from CTFd.admin import pages
 from CTFd.admin import scoreboard
 from CTFd.admin import statistics
 from CTFd.admin import teams
+from CTFd.admin import users
+from CTFd.admin import submissions
 
 
 @admin.route('/admin', methods=['GET'])
