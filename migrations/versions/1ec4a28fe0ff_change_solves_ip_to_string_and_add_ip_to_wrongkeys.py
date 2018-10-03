@@ -11,6 +11,7 @@ import sqlalchemy as sa
 from sqlalchemy.sql import text, table, column
 import netaddr
 
+
 def ip2long(ip):
     '''Converts a user's IP address into an integer/long'''
     return int(netaddr.IPAddress(ip))

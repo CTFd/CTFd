@@ -82,7 +82,7 @@ def get_standings(admin=False, count=None):
             sumscores.columns.score
         )\
             .join(sumscores, Teams.id == sumscores.columns.teamid) \
-            .filter(Teams.banned == False) \
+            .filter(Teams.banned is False) \
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
     """

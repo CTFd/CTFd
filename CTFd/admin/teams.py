@@ -275,8 +275,8 @@ def admin_solves(teamid="all"):
 @admins_only
 def admin_fails(teamid):
     if teamid == "all":
-        fails = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned == False).count()
-        solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).count()
+        fails = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned is False).count()
+        solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned is False).count()
         db.session.close()
         json_data = {'fails': str(fails), 'solves': str(solves)}
         return jsonify(json_data)

@@ -227,7 +227,7 @@ def login():
             if team and bcrypt_sha256.verify(request.form['password'], team.password):
                 try:
                     session.regenerate()  # NO SESSION FIXATION FOR YOU
-                except:
+                except Exception:
                     pass  # TODO: Some session objects don't implement regenerate :(
                 session['username'] = team.name
                 session['id'] = team.id

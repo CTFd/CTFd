@@ -105,7 +105,7 @@ def challenges_view():
 @require_verified_emails
 @viewable_without_authentication(status_code=403)
 def chals():
-    db_chals = Challenges.query.filter(or_(Challenges.hidden != True, Challenges.hidden == None)).order_by(Challenges.value).all()
+    db_chals = Challenges.query.filter(or_(Challenges.hidden is not True, Challenges.hidden is None)).order_by(Challenges.value).all()
     response = {'game': []}
     for chal in db_chals:
         tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=chal.id).all()]
@@ -160,7 +160,7 @@ def chal_view(chal_id):
 @viewable_without_authentication(status_code=403)
 def solves_per_chal():
     chals = Challenges.query\
-        .filter(or_(Challenges.hidden != True, Challenges.hidden == None))\
+        .filter(or_(Challenges.hidden is not True, Challenges.hidden is None))\
         .order_by(Challenges.value)\
         .all()
 
@@ -169,7 +169,7 @@ def solves_per_chal():
         db.func.count(Solves.chalid).label('solves')
     )\
         .join(Teams, Solves.teamid == Teams.id) \
-        .filter(Teams.banned == False) \
+        .filter(Teams.banned is False) \
         .group_by(Solves.chalid).subquery()
 
     solves = db.session.query(
@@ -341,7 +341,7 @@ def who_solved(chalid):
     response = {'teams': []}
     if utils.hide_scores():
         return jsonify(response)
-    solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid, Teams.banned == False).order_by(Solves.date.asc())
+    solves = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid == chalid, Teams.banned is False).order_by(Solves.date.asc())
     for solve in solves:
         response['teams'].append({'id': solve.team.id, 'name': solve.team.name, 'date': solve.date})
     return jsonify(response)
@@ -407,7 +407,7 @@ def chal(chalid):
                     tries_str = 'tries'
                     if attempts_left == 1:
                         tries_str = 'try'
-                    if message[-1] not in '!().;?[]\{\}':  # Add a punctuation mark if there isn't one
+                    if message[-1] not in '!().;?[]\\{\\}':  # Add a punctuation mark if there isn't one
                         message = message + '.'
                     return jsonify({'status': 0, 'message': '{} You have {} {} remaining.'.format(message, attempts_left, tries_str)})
                 else:

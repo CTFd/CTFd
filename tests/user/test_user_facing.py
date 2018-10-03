@@ -564,7 +564,7 @@ def test_user_can_confirm_email(mock_smtp):
 
         # Teams are not verified by default
         team = Teams.query.filter_by(email='user@user.com').first()
-        assert team.verified == False
+        assert team.verified is False
 
         client = login_as_user(app, name="user1", password="password")
 
@@ -584,7 +584,7 @@ def test_user_can_confirm_email(mock_smtp):
 
             # The team is now verified
             team = Teams.query.filter_by(email='user@user.com').first()
-            assert team.verified == True
+            assert team.verified is True
     destroy_ctfd(app)
 
 

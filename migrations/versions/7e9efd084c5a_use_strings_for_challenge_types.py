@@ -38,8 +38,7 @@ def upgrade():
                    existing_type=sa.INTEGER(),
                    type_=sa.String(length=80),
                    existing_nullable=True,
-                   postgresql_using="COALESCE(NULLIF(type, 0)::CHARACTER, 'standard')"
-                   )
+                   postgresql_using="COALESCE(NULLIF(type, 0)::CHARACTER, 'standard')")
     # ### end Alembic commands ###
 
 
@@ -59,6 +58,5 @@ def downgrade():
                     existing_type=sa.String(length=80),
                     type_=sa.INTEGER(),
                     existing_nullable=True,
-                    postgresql_using="COALESCE(NULLIF(type, 'standard')::NUMERIC, 0)"
-                    )
+                    postgresql_using="COALESCE(NULLIF(type, 'standard')::NUMERIC, 0)")
     # ### end Alembic commands ###
