@@ -247,7 +247,7 @@ class Teams(db.Model):
                 Teams.id.label('teamid'),
             )\
                 .join(sumscores, Teams.id == sumscores.columns.teamid) \
-                .filter(Teams.banned == False) \
+                .filter(Teams.banned is False) \
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
         standings = standings_query.all()

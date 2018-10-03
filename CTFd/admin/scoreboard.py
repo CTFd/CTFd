@@ -21,7 +21,7 @@ def admin_scores():
     score = db.func.sum(Challenges.value).label('score')
     quickest = db.func.max(Solves.date).label('quickest')
     teams = db.session.query(Solves.teamid, Teams.name, score)\
-        .join(Teams).join(Challenges).filter(Teams.banned == False)\
+        .join(Teams).join(Challenges).filter(Teams.banned is False)\
         .group_by(Solves.teamid).order_by(score.desc(), quickest)
     db.session.close()
     json_data = {'teams': []}

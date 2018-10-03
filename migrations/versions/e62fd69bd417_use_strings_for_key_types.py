@@ -32,8 +32,7 @@ def upgrade():
                    existing_type=sa.INTEGER(),
                    type_=sa.String(length=80),
                    existing_nullable=True,
-                   postgresql_using="CASE WHEN key_type=0 THEN 'static' WHEN key_type=1 THEN 'regex' ELSE NULL END"
-                   )
+                   postgresql_using="CASE WHEN key_type=0 THEN 'static' WHEN key_type=1 THEN 'regex' ELSE NULL END")
     # ### end Alembic commands ###
 
 
@@ -53,6 +52,5 @@ def downgrade():
                     existing_type=sa.String(length=80),
                     type_=sa.INTEGER(),
                     existing_nullable=True,
-                    postgresql_using="CASE WHEN key_type='static' THEN 0 WHEN key_type='regex' THEN 1 ELSE NULL END"
-                    )
+                    postgresql_using="CASE WHEN key_type='static' THEN 0 WHEN key_type='regex' THEN 1 ELSE NULL END")
     # ### end Alembic commands ###

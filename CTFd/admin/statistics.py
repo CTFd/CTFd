@@ -18,7 +18,7 @@ def admin_graph(graph_type):
         return jsonify(json_data)
     elif graph_type == "solves":
         solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves_cnt')) \
-                               .join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False) \
+                               .join(Teams, Solves.teamid == Teams.id).filter(Teams.banned is False) \
                                .group_by(Solves.chalid).subquery()
         solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves_cnt, Challenges.name) \
                            .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()
@@ -31,14 +31,14 @@ def admin_graph(graph_type):
 
         teams_with_points = db.session.query(Solves.teamid)\
             .join(Teams)\
-            .filter(Teams.banned == False)\
+            .filter(Teams.banned is False)\
             .group_by(Solves.teamid)\
             .count()
 
         percentage_data = []
         for x in chals:
             solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id)\
-                .filter(Solves.chalid == x[1], Teams.banned == False)\
+                .filter(Solves.chalid == x[1], Teams.banned is False)\
                 .count()
 
             if teams_with_points > 0:
@@ -63,14 +63,14 @@ def admin_stats():
     update_check()
     teams_registered = db.session.query(db.func.count(Teams.id)).first()[0]
 
-    wrong_count = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned == False).count()
-    solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False).count()
+    wrong_count = WrongKeys.query.join(Teams, WrongKeys.teamid == Teams.id).filter(Teams.banned is False).count()
+    solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Teams.banned is False).count()
 
     challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
     ip_count = db.session.query(db.func.count(Tracking.ip.distinct())).first()[0]
 
     solves_sub = db.session.query(Solves.chalid, db.func.count(Solves.chalid).label('solves_cnt')) \
-                           .join(Teams, Solves.teamid == Teams.id).filter(Teams.banned == False) \
+                           .join(Teams, Solves.teamid == Teams.id).filter(Teams.banned is False) \
                            .group_by(Solves.chalid).subquery()
     solves = db.session.query(solves_sub.columns.chalid, solves_sub.columns.solves_cnt, Challenges.name) \
                        .join(Challenges, solves_sub.columns.chalid == Challenges.id).all()

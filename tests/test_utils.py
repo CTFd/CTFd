@@ -29,7 +29,7 @@ def test_get_config_and_set_config():
     """Does get_config and set_config work properly"""
     app = create_ctfd()
     with app.app_context():
-        assert get_config('setup') == True
+        assert get_config('setup') is True
         config = set_config('TEST_CONFIG_ENTRY', 'test_config_entry')
         assert config.value == 'test_config_entry'
         assert get_config('TEST_CONFIG_ENTRY') == 'test_config_entry'
@@ -345,19 +345,19 @@ def test_ctf_started():
     '''Tests that the ctf_started function returns the correct value'''
     app = create_ctfd()
     with app.app_context():
-        assert ctf_started() == True
+        assert ctf_started() is True
 
         set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
         set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
 
         with freeze_time("2017-10-3"):
-            assert ctf_started() == False
+            assert ctf_started() is False
 
         with freeze_time("2017-10-5"):
-            assert ctf_started() == True
+            assert ctf_started() is True
 
         with freeze_time("2017-10-7"):
-            assert ctf_started() == True
+            assert ctf_started() is True
     destroy_ctfd(app)
 
 
@@ -365,19 +365,19 @@ def test_ctf_ended():
     '''Tests that the ctf_ended function returns the correct value'''
     app = create_ctfd()
     with app.app_context():
-        assert ctf_ended() == False
+        assert ctf_ended() is False
 
         set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
         set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
 
         with freeze_time("2017-10-3"):
-            assert ctf_ended() == False
+            assert ctf_ended() is False
 
         with freeze_time("2017-10-5"):
-            assert ctf_ended() == False
+            assert ctf_ended() is False
 
         with freeze_time("2017-10-7"):
-            assert ctf_ended() == True
+            assert ctf_ended() is True
     destroy_ctfd(app)
 
 
@@ -485,7 +485,7 @@ def test_check_email_format():
     assert check_email_format('user@') is False
     assert check_email_format('@ctfd.io') is False
     assert check_email_format('user.io@ctfd') is False
-    assert check_email_format('user\@ctfd') is False
+    assert check_email_format('user@ctfd') is False
 
     for invalid_email in ['user.@ctfd.io', '.user@ctfd.io', 'user@ctfd..io']:
         try:
