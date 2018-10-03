@@ -9,7 +9,7 @@ from CTFd.utils.validators import unique_team_name
 class TeamSchema(ma.ModelSchema):
     class Meta:
         model = Teams
-        dump_only = ('id', 'oauth_id', 'created')
+        dump_only = ('id', 'oauth_id', 'created', 'members')
         load_only = ('password',)
 
     name = field_for(
@@ -34,6 +34,11 @@ class TeamSchema(ma.ModelSchema):
             schemes={'http', 'https'}
         )
     )
+    # TODO: Countries should be validated against the countries list
+    # country = field_for(
+    #     Teams,
+    #     'country'
+    # )
 
     views = {
         'user': [
@@ -72,7 +77,6 @@ class TeamSchema(ma.ModelSchema):
             'hidden',
             'id',
             'oauth_id',
-            'type',
             'password'
         ]
     }

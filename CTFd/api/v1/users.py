@@ -9,6 +9,9 @@ from CTFd.utils.dates import unix_time_to_utc, unix_time
 from CTFd.utils.user import get_current_user
 from CTFd.utils import get_config
 
+from CTFd.schemas.submissions import SubmissionSchema
+from CTFd.schemas.awards import AwardSchema
+
 
 users_namespace = Namespace('users', description="Endpoint to retrieve Users")
 
@@ -35,7 +38,7 @@ class User(Resource):
         response['score'] = user.score
         return response
 
-    @admins_only
+    # @admins_only
     def patch(self, user_id):
         pass
 
@@ -109,7 +112,7 @@ class UserSolves(Resource):
             if user_id != session.get('id'):
                 solves = solves.filter(Solves.date < freeze)
 
-        response = [solve.get_dict() for solve in solves.all()]
+        response = SubmissionSchema(many=True).dump(solves.all())
         return response
 
 
@@ -130,7 +133,7 @@ class UserFails(Resource):
             if user_id != session.get('id'):
                 fails = fails.filter(Solves.date < freeze)
 
-        response = [fail.get_dict() for fail in fails.all()]
+        response = SubmissionSchema(many=True).dump(fails.all())
         return response
 
 
@@ -151,5 +154,5 @@ class UserAwards(Resource):
             if user_id != session.get('id'):
                 awards = awards.filter(Awards.date < freeze)
 
-        response = [award.get_dict() for award in awards.all()]
+        response = AwardSchema(many=True).dump(awards)
         return response

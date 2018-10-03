@@ -1,3 +1,5 @@
+from flask import session
+from CTFd.utils.user import is_admin, get_current_team
 from CTFd.models import Teams
 from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
 from flask import request
@@ -20,6 +22,16 @@ def validate_email(email):
 
 
 def unique_team_name(name):
-    if Teams.query.filter_by(name=name):
-        raise ValidationError('Team name has already been taken')
-    return True
+    existing_team = Teams.query.filter_by(name=name).first()
+    # Admins should be able to patch anyone but they cannot cause a collision.
+    if is_admin():
+        if existing_team:
+            raise ValidationError('Team name has already been taken')
+    else:
+        current_team = get_current_team()
+        # We need to allow teams to edit themselves and allow the "conflict"
+        if name == current_team.name:
+            return True  # True means input is satisfied
+        else:
+            if existing_team:
+                raise ValidationError('Team name has already been taken')

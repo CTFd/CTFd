@@ -2,10 +2,13 @@ from flask import session, request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Teams, Solves, Awards, Fails
 from CTFd.schemas.teams import TeamSchema
-from CTFd.utils.user import get_current_team
+from CTFd.utils.user import (
+    get_current_team,
+    is_admin
+)
 from CTFd.utils.decorators import (
     authed_only,
-    admins_only
+    admins_only,
 )
 from CTFd.utils.dates import unix_time_to_utc, unix_time
 from CTFd.utils import get_config
@@ -17,13 +20,16 @@ teams_namespace = Namespace('teams', description="Endpoint to retrieve Teams")
 class TeamList(Resource):
     def get(self):
         teams = Teams.query.filter_by(banned=False)
-        response = [team.get_dict() for team in teams]
+        view = list(TeamSchema.views.get(session.get('type')))
+        view.remove('members')
+        response = TeamSchema(view=view, many=True).dump(teams)
         return response
 
     def post(self):
         req = request.get_json()
-        schema = TeamSchema(session.get('type', 'self'))
-        team = schema.load(req, session=db.session)
+        view = TeamSchema.views.get(session.get('type', 'self'))
+        schema = TeamSchema(view=view)
+        team = schema.load(req)
         if team.errors:
             return team.errors
         db.session.add(team.data)
@@ -44,7 +50,15 @@ class TeamPublic(Resource):
     @admins_only
     def patch(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
-        pass
+        data = request.get_json()
+        response = TeamSchema(view='self', instance=team, partial=True).load(data)
+        if response.errors:
+            return response.errors
+
+        db.session.commit()
+        response = TeamSchema('self').dump(response.data)
+        db.session.close()
+        return response
 
     @admins_only
     def delete(self, team_id):
@@ -59,6 +73,7 @@ class TeamPublic(Resource):
 
         response = {
             'success': True,
+            'message': ''
         }
         return response
 
@@ -76,7 +91,16 @@ class TeamPrivate(Resource):
 
     @authed_only
     def patch(self):
-        pass
+        team = get_current_team()
+        data = request.get_json()
+        response = TeamSchema(view='self', instance=team, partial=True).load(data)
+        if response.errors:
+            return response.errors
+
+        db.session.commit()
+        response = TeamSchema('self').dump(response.data)
+        db.session.close()
+        return response
 
 
 @teams_namespace.route('/<team_id>/mail')

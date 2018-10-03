@@ -553,17 +553,17 @@ class Submissions(db.Model):
         'polymorphic_on': type,
     }
 
-    def get_dict(self, admin=False):
-        obj = {
-            'id': self.id,
-            'type': self.type,
-            'challenge_id': self.challenge_id,
-            'user_id': self.user_id,
-            'team_id': self.team_id,
-            'provided': self.provided,
-            'date': self.date.isoformat(),
-        }
-        return obj
+    # def get_dict(self, admin=False):
+    #     obj = {
+    #         'id': self.id,
+    #         'type': self.type,
+    #         'challenge_id': self.challenge_id,
+    #         'user_id': self.user_id,
+    #         'team_id': self.team_id,
+    #         'provided': self.provided,
+    #         'date': self.date.isoformat(),
+    #     }
+    #     return obj
 
     def __repr__(self):
         return '<Submission {}, {}, {}, {}>'.format(self.team_id, self.chal_id, self.ip, self.provided)

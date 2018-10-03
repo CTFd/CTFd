@@ -10,6 +10,17 @@ class TagSchema(ma.ModelSchema):
         model = Tags
         dump_only = ('id',)
 
+    views = {
+        'admin': [
+            'id',
+            'challenge',
+            'value'
+        ],
+        'user': [
+            'value'
+        ]
+    }
+
     def __init__(self, view=None, *args, **kwargs):
         if view:
             if type(view) == str:

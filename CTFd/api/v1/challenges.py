@@ -9,6 +9,7 @@ from CTFd.utils.decorators import (
     viewable_without_authentication,
     admins_only
 )
+from CTFd.schemas.tags import TagSchema
 from sqlalchemy.sql import or_
 
 challenges_namespace = Namespace('challenges', description="Endpoint to retrieve Challenges")
@@ -33,18 +34,18 @@ class ChallengeList(Resource):
         ).order_by(Challenges.value).all()
 
         response = []
+        tag_schema = TagSchema(view='user', many=True)
         for challenge in challenges:
-            tags = challenge.tags
-            chal_type = get_chal_class(challenge.type)
+            challenge_type = get_chal_class(challenge.type)
             response.append({
                 'id': challenge.id,
-                'type': chal_type.name,
+                'type': challenge_type.name,
                 'name': challenge.name,
                 'value': challenge.value,
                 'category': challenge.category,
-                'tags': tags,
-                'template': chal_type.templates['modal'],
-                'script': chal_type.scripts['modal'],
+                'tags': tag_schema.dump(challenge.tags).data,
+                'template': challenge_type.templates['modal'],
+                'script': challenge_type.scripts['modal'],
             })
 
         db.session.close()
