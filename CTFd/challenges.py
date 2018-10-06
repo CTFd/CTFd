@@ -133,6 +133,8 @@ def chal_view(chal_id):
     teamid = session.get('id')
 
     chal = Challenges.query.filter_by(id=chal_id).first_or_404()
+    if chal.hidden:
+        abort(404)
     chal_class = get_chal_class(chal.type)
 
     tags = [tag.tag for tag in Tags.query.add_columns('tag').filter_by(chal=chal.id).all()]
