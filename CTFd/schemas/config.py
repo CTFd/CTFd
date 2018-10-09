@@ -2,30 +2,20 @@ from sqlalchemy.sql.expression import union_all
 from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError
 from marshmallow_sqlalchemy import field_for
-from CTFd.models import ma, Hints
+from CTFd.models import ma, Configs
 
 
-class HintSchema(ma.ModelSchema):
+class ConfigSchema(ma.ModelSchema):
     class Meta:
-        model = Hints
+        model = Configs
         dump_only = ('id',)
 
     views = {
-        'user': [
-            'id',
-            'type',
-            'challenge_id',
-            'content',
-            'cost'
-        ],
         'admin': [
             'id',
-            'type',
-            'challenge_id',
-            'content',
-            'cost',
-            'requirements'
-        ]
+            'key',
+            'value'
+        ],
     }
 
     def __init__(self, view=None, *args, **kwargs):
@@ -35,4 +25,4 @@ class HintSchema(ma.ModelSchema):
             elif type(view) == list:
                 kwargs['only'] = view
 
-        super(HintSchema, self).__init__(*args, **kwargs)
+        super(ConfigSchema, self).__init__(*args, **kwargs)

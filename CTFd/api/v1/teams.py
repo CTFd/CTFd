@@ -23,7 +23,7 @@ class TeamList(Resource):
         view = list(TeamSchema.views.get(session.get('type')))
         view.remove('members')
         response = TeamSchema(view=view, many=True).dump(teams)
-        return response
+        return response.data
 
     def post(self):
         req = request.get_json()
@@ -51,12 +51,12 @@ class TeamPublic(Resource):
     def patch(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
         data = request.get_json()
-        response = TeamSchema(view='self', instance=team, partial=True).load(data)
+        response = TeamSchema(view='admin', instance=team, partial=True).load(data)
         if response.errors:
             return response.errors
 
         db.session.commit()
-        response = TeamSchema('self').dump(response.data)
+        response = TeamSchema('admin').dump(response.data)
         db.session.close()
         return response
 

@@ -1,6 +1,7 @@
 from flask import session
-from CTFd.utils.user import is_admin, get_current_team
-from CTFd.models import Teams
+from CTFd.utils.user import is_admin, get_current_team, get_current_user
+from CTFd.models import Teams, Users
+from CTFd.utils.countries import lookup_country_code
 from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
 from flask import request
 from marshmallow import ValidationError
@@ -35,3 +36,31 @@ def unique_team_name(name):
         else:
             if existing_team:
                 raise ValidationError('Team name has already been taken')
+
+
+def unique_user_name(name):
+    existing_user = Users.query.filter_by(name=name).first()
+    if is_admin():
+        if existing_user:
+            raise ValidationError('User name has already been taken')
+    else:
+        current_user = get_current_user()
+        if name == current_user.name:
+            return True
+        else:
+            if current_user:
+                raise ValidationError('User name has already been taken')
+
+
+def unique_email(email, model=Users):
+    obj = model.query.filter_by(email=email).first()
+    if is_admin():
+        if obj:
+            raise ValidationError('Email address has already been used')
+    if obj and obj.id != get_current_user().id:
+        raise ValidationError('Email address has already been used')
+
+
+def validate_country_code(country_code):
+    if lookup_country_code(country_code) is None:
+        raise ValidationError('Invalid Country')

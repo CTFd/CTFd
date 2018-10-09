@@ -3,6 +3,7 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Hints
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_ended
+from CTFd.schemas.hints import HintSchema
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
@@ -16,8 +17,12 @@ hints_namespace = Namespace('hints', description="Endpoint to retrieve Hints")
 
 @hints_namespace.route('')
 class HintList(Resource):
+    @admins_only
     def get(self):
-        pass
+        # TODO sort by challenge ID
+        hints = Hints.query.all()
+        result = HintSchema(many=True).dump(hints)
+        return result.data
 
     @admins_only
     def post(self):
@@ -28,7 +33,10 @@ class HintList(Resource):
 class Hint(Resource):
     def get(self, hint_id):
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
-        return hint.get_dict()
+        view = HintSchema.views.get(session.get('type'))
+        # TODO: Ensure that the requesting user can actually access the hint
+        response = HintSchema(view=view).dump(hint)
+        return response.data
 
     @admins_only
     def delete(self, hint_id):
@@ -43,5 +51,5 @@ class Hint(Resource):
         return response
 
     @admins_only
-    def put(self, hint_id):
+    def patch(self, hint_id):
         pass

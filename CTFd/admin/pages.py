@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils.decorators import admins_only
-from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Config
+from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Configs
 
 from CTFd.utils import config, validators, cache, markdown, uploads
 from CTFd.admin import admin

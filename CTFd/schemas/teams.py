@@ -3,7 +3,8 @@ from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Teams
-from CTFd.utils.validators import unique_team_name
+from CTFd.utils.validators import unique_team_name, validate_country_code
+from CTFd.utils.countries import lookup_country_code
 
 
 class TeamSchema(ma.ModelSchema):
@@ -34,11 +35,13 @@ class TeamSchema(ma.ModelSchema):
             schemes={'http', 'https'}
         )
     )
-    # TODO: Countries should be validated against the countries list
-    # country = field_for(
-    #     Teams,
-    #     'country'
-    # )
+    country = field_for(
+        Teams,
+        'country',
+        validate=[
+            validate_country_code
+        ]
+    )
 
     views = {
         'user': [

@@ -14,7 +14,7 @@ from CTFd.utils.decorators import admins_only
 from CTFd.utils.user import is_admin
 from CTFd.utils import config, cache, validators, uploads, user as current_user, get_config, set_config
 from CTFd.utils.exports import export_ctf, import_ctf
-from CTFd.models import db, Config
+from CTFd.models import db, Configs
 
 import datetime
 import os
@@ -170,10 +170,10 @@ def admin_config():
 
         set_config("freeze", freeze)
 
-        db_start = Config.query.filter_by(key='start').first()
+        db_start = Configs.query.filter_by(key='start').first()
         db_start.value = start
 
-        db_end = Config.query.filter_by(key='end').first()
+        db_end = Configs.query.filter_by(key='end').first()
         db_end.value = end
 
         db.session.add(db_start)

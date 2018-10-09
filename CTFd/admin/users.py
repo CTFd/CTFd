@@ -1,7 +1,7 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils.decorators import admins_only, ratelimit
 from CTFd.models import db, Teams, Solves, Awards, Unlocks, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, \
-    Config
+    Configs
 from passlib.hash import bcrypt_sha256
 from sqlalchemy.sql import not_
 

@@ -1,6 +1,6 @@
-from flask import session, abort
+from flask import session, request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Users, Solves, Awards, Fails, Tracking
+from CTFd.models import db, Users, Solves, Awards, Fails, Tracking, Unlocks
 from CTFd.utils.decorators import (
     authed_only,
     admins_only
@@ -11,6 +11,7 @@ from CTFd.utils import get_config
 
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
+from CTFd.schemas.users import UserSchema
 
 
 users_namespace = Namespace('users', description="Endpoint to retrieve Users")
@@ -20,31 +21,37 @@ users_namespace = Namespace('users', description="Endpoint to retrieve Users")
 class UserList(Resource):
     def get(self):
         users = Users.query.filter_by(banned=False)
-        response = [user.get_dict() for user in users]
+        response = UserSchema(view='user', many=True).dump(users)
         return response
 
 
 @users_namespace.route('/<user_id>')
-@users_namespace.param('user_id', "User ID or 'me'")
+@users_namespace.param('user_id', "User ID")
 class User(Resource):
     def get(self, user_id):
-        if user_id == 'me':
-            user = get_current_user()
-        else:
-            user = Users.query.filter_by(id=user_id).first_or_404()
+        user = Users.query.filter_by(id=user_id).first_or_404()
 
-        response = user.get_dict()
+        response = UserSchema('self').dump(user)
         response['place'] = user.place
         response['score'] = user.score
         return response
 
-    # @admins_only
+    @admins_only
     def patch(self, user_id):
-        pass
+        user = Users.query.filter_by(id=user_id).first_or_404()
+        data = request.get_json()
+        response = UserSchema(view='admin', instance=user, partial=True).load(data)
+        if response.errors:
+            return response.errors
+
+        db.session.commit()
+        response = UserSchema('admin').dump(response.data)
+        db.session.close()
+        return response
 
     @admins_only
     def delete(self, user_id):
-        # Unlocks.query.filter_by(user_id=user_id).delete()
+        Unlocks.query.filter_by(user_id=user_id).delete()
         Awards.query.filter_by(user_id=user_id).delete()
         Fails.query.filter_by(user_id=user_id).delete()
         Solves.query.filter_by(user_id=user_id).delete()
@@ -59,40 +66,51 @@ class User(Resource):
         return response
 
 
-# @users_namespace.route('/<user_id>/ban')
-# @users_namespace.param('user_id', "User ID")
-# class UserBans(Resource):
-#     def get(self, user_id):
-#         user = Users.query.filter_by(id=user_id).first_or_404()
-#         response = {
-#             'banned': user.banned
-#         }
-#         return response
-#
-#     def put(self, user_id):
-#         user = Users.query.filter_by(id=user_id).first_or_404()
-#         user.banned = True
-#         db.session.commit()
-#         response = {
-#             'banned': user.banned
-#         }
-#         return response
-#
-#     def delete(self, user_id):
-#         user = Users.query.filter_by(id=user_id).first_or_404()
-#         user.banned = False
-#         db.session.commit()
-#         response = {
-#             'banned': user.banned
-#         }
-#         return response
+@users_namespace.route('/me')
+class User(Resource):
+    def get(self):
+        user = get_current_user()
+        response = UserSchema('self').dump(user)
+        response['place'] = user.place
+        response['score'] = user.score
+        return response
+
+    @authed_only
+    def patch(self):
+        team = get_current_user()
+        data = request.get_json()
+        response = UserSchema(view='self', instance=team, partial=True).load(data)
+        if response.errors:
+            return response.errors
+
+        db.session.commit()
+        response = UserSchema('self').dump(response.data)
+        db.session.close()
+        return response
+
+    @admins_only
+    def delete(self):
+        user_id = get_current_user().id
+        Unlocks.query.filter_by(user_id=user_id).delete()
+        Awards.query.filter_by(user_id=user_id).delete()
+        Fails.query.filter_by(user_id=user_id).delete()
+        Solves.query.filter_by(user_id=user_id).delete()
+        Tracking.query.filter_by(user_id=user_id).delete()
+        Users.query.filter_by(user_id=user_id).delete()
+        db.session.commit()
+        db.session.close()
+
+        response = {
+            'success': True
+        }
+        return response
 
 
-@users_namespace.route('/<team_id>/mail')
-@users_namespace.param('team_id', "Team ID or 'me'")
-class TeamMails(Resource):
-    def post(self, team_id):
-        pass
+# @users_namespace.route('/<team_id>/mail')
+# @users_namespace.param('team_id', "Team ID or 'me'")
+# class TeamMails(Resource):
+#     def post(self, team_id):
+#         pass
 
 
 @users_namespace.route('/<user_id>/solves')

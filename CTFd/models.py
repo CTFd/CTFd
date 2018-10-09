@@ -121,7 +121,7 @@ class Hints(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.Integer, default=0)
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
-    hint = db.Column(db.Text)
+    content = db.Column(db.Text)
     cost = db.Column(db.Integer, default=0)
     requirements = db.Column(JSONLite)
 
@@ -139,13 +139,13 @@ class Hints(db.Model):
             'id': self.id,
             'type': self.type,
             'challenge_id': self.challenge_id,
-            'hint': self.hint,
+            'hint': self.content,
             'cost': self.cost,
         }
         return obj
 
     def __repr__(self):
-        return '<Hint %r>' % self.hint
+        return '<Hint %r>' % self.content
 
 
 class Awards(db.Model):
@@ -329,7 +329,7 @@ class Users(db.Model):
         award = db.session.query(award_score).filter_by(user_id=self.id)
 
         if not admin:
-            freeze = Config.query.filter_by(key='freeze').first()
+            freeze = Configs.query.filter_by(key='freeze').first()
             if freeze and freeze.value:
                 freeze = int(freeze.value)
                 freeze = datetime.datetime.utcfromtimestamp(freeze)
@@ -374,7 +374,7 @@ class Users(db.Model):
         ).filter(Awards.value != 0).group_by(Awards.user_id)
 
         if not admin:
-            freeze = Config.query.filter_by(key='freeze').first()
+            freeze = Configs.query.filter_by(key='freeze').first()
             if freeze and freeze.value:
                 freeze = int(freeze.value)
                 freeze = datetime.datetime.utcfromtimestamp(freeze)
@@ -492,7 +492,7 @@ class Teams(db.Model):
         ).filter(Awards.value != 0).group_by(Awards.team_id)
 
         if not admin:
-            freeze = Config.query.filter_by(key='freeze').first()
+            freeze = Configs.query.filter_by(key='freeze').first()
             if freeze and freeze.value:
                 freeze = int(freeze.value)
                 freeze = datetime.datetime.utcfromtimestamp(freeze)
@@ -655,11 +655,11 @@ class Tracking(db.Model):
         return '<Tracking %r>' % self.team
 
 
-class Config(db.Model):
+class Configs(db.Model):
     __tablename__ = 'config'
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.Text)
     value = db.Column(db.Text)
 
     def __init__(self, *args, **kwargs):
-        super(Config, self).__init__(**kwargs)
+        super(Configs, self).__init__(**kwargs)

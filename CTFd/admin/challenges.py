@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils.decorators import admins_only
-from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Config, Hints, Unlocks
+from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Configs, Hints, Unlocks
 from CTFd.plugins.flags import get_key_class, FLAG_CLASSES
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
 from CTFd.admin import admin
@@ -168,7 +168,7 @@ def admin_hints(hintid):
             db.session.add(hint)
             db.session.commit()
             json_data = {
-                'hint': hint.hint,
+                'hint': hint.content,
                 'type': hint.type,
                 'chal': hint.chal,
                 'cost': hint.cost,

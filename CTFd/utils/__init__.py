@@ -11,7 +11,7 @@ from CTFd.models import (
     Challenges,
     Fails,
     Pages,
-    Config,
+    Configs,
     Tracking,
     Teams,
     Files
@@ -42,7 +42,7 @@ def get_app_config(key):
 
 @cache.memoize()
 def get_config(key):
-    config = Config.query.filter_by(key=key).first()
+    config = Configs.query.filter_by(key=key).first()
     if config and config.value:
         value = config.value
         if value and value.isdigit():
@@ -60,11 +60,11 @@ def get_config(key):
 
 
 def set_config(key, value):
-    config = Config.query.filter_by(key=key).first()
+    config = Configs.query.filter_by(key=key).first()
     if config:
         config.value = value
     else:
-        config = Config(key=key, value=value)
+        config = Configs(key=key, value=value)
         db.session.add(config)
     db.session.commit()
     return config

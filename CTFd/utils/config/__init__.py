@@ -1,5 +1,5 @@
 from flask import current_app as app
-from CTFd.models import Config, Users, Teams
+from CTFd.models import Configs, Users, Teams
 from CTFd.utils import cache
 from CTFd.utils import get_config
 from CTFd.utils.user import authed
@@ -41,7 +41,7 @@ def hide_scores():
 
 @cache.memoize()
 def is_setup():
-    setup = Config.query.filter_by(key='setup').first()
+    setup = Configs.query.filter_by(key='setup').first()
     if setup:
         return setup.value
     else:

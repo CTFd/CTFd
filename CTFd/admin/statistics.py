@@ -2,7 +2,7 @@ from flask import current_app as app, render_template, request, redirect, jsonif
 from CTFd.utils import cache, config
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.updates import update_check
-from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Config
+from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Configs
 
 from CTFd.admin import admin
 
