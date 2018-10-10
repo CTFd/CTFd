@@ -17,7 +17,6 @@ def get_user_standings(admin=False, count=None):
 
 
 def get_team_standings(admin=False, count=None):
-    print(count)
     """
     Get team standings as a list of tuples containing team_id, team_name, and score e.g. [(team_id, team_name, score)].
 
