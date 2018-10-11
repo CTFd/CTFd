@@ -11,6 +11,7 @@ from CTFd.api.v1.tags import tags_namespace
 from CTFd.api.v1.awards import awards_namespace
 from CTFd.api.v1.hints import hints_namespace
 from CTFd.api.v1.flags import flags_namespace
+from CTFd.api.v1.files import files_namespace
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 CTFd_API_v1 = Api(api, version='v1')
@@ -25,3 +26,4 @@ CTFd_API_v1.add_namespace(scoreboard_namespace, '/scoreboard')
 CTFd_API_v1.add_namespace(teams_namespace, '/teams')
 CTFd_API_v1.add_namespace(users_namespace, '/users')
 CTFd_API_v1.add_namespace(statistics_namespace, '/statistics')
+CTFd_API_v1.add_namespace(files_namespace, '/files')

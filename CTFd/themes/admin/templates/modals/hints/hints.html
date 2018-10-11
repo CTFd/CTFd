@@ -34,7 +34,7 @@
 											<label class="text-muted">
 												<small>Markdown &amp; HTML are supported</small>
 											</label>
-											<textarea id="hint-modal-hint" type="text" class="form-control" name="hint"
+											<textarea id="hint-modal-hint" type="text" class="form-control" name="content"
 													  placeholder="Hint" rows="7"></textarea>
 										</div>
 									</div>
@@ -46,7 +46,8 @@
 								<div class="form-group">
 									<input id="hint-modal-cost" type="number" class="form-control" name="cost" placeholder="Cost">
 								</div>
-								<input type="hidden" id="chal-id-for-hint" name="chal">
+								<input type="hidden" id="chal-id-for-hint" name="challenge">
+								<input type="hidden" id="hint-id-for-hint" name="id">
 							</div>
 						</div>
 					</div>
@@ -55,7 +56,6 @@
 					<div class="container">
 						<div class="row">
 							<div class="col-md-12">
-								<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
 								<button class="btn btn-primary float-right" id="hint-modal-button">Add Hint</button>
 							</div>
 						</div>

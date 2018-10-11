@@ -26,7 +26,18 @@ class HintList(Resource):
 
     @admins_only
     def post(self):
-        pass
+        req = request.get_json()
+        schema = HintSchema('admin')
+        hint = schema.load(req, session=db.session)
+
+        if hint.errors:
+            return hint.errors
+
+        db.session.add(hint.data)
+        db.session.commit()
+        response = schema.dump(hint.data)
+
+        return response
 
 
 @hints_namespace.route('/<hint_id>')
@@ -39,6 +50,22 @@ class Hint(Resource):
         return response.data
 
     @admins_only
+    def patch(self, hint_id):
+        hint = Hints.query.filter_by(id=hint_id).first_or_404()
+        req = request.get_json()
+
+        schema = HintSchema()
+        hint = schema.load(req, instance=hint, partial=True, session=db.session)
+
+        if hint.errors:
+            return hint.errors
+
+        db.session.add(hint.data)
+        db.session.commit()
+        response = schema.dump(hint.data)
+        return response
+
+    @admins_only
     def delete(self, hint_id):
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
         db.session.delete(hint)
@@ -49,7 +76,3 @@ class Hint(Resource):
             'success': True
         }
         return response
-
-    @admins_only
-    def patch(self, hint_id):
-        pass

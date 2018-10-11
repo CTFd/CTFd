@@ -8,20 +8,20 @@ from CTFd.models import ma, Hints
 class HintSchema(ma.ModelSchema):
     class Meta:
         model = Hints
-        dump_only = ('id',)
+        dump_only = ('id', 'type')
 
     views = {
         'user': [
             'id',
             'type',
-            'challenge_id',
+            'challenge',
             'content',
             'cost'
         ],
         'admin': [
             'id',
             'type',
-            'challenge_id',
+            'challenge',
             'content',
             'cost',
             'requirements'

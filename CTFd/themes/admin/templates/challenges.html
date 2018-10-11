@@ -12,7 +12,7 @@
 	{% include "admin/modals/tags/tags.html" %}
 	{% include "admin/modals/files/files.html" %}
 	{% include "admin/modals/hints/hints.html" %}
-	{% include "admin/modals/keys/keys.html" %}
+	{% include "admin/modals/flags/flags.html" %}
 
 
 <input type="hidden" value="{{ nonce }}" id="nonce">
@@ -24,7 +24,7 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1>Challenges
-			<a class="no-decoration" href="{{ request.script_root }}/admin/chal/new">
+			<a class="no-decoration" href="{{ request.script_root }}/admin/challenges/new">
 				<span role="button" data-toggle="tooltip" title="Create Challenge">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</span>
@@ -85,7 +85,7 @@
 
 								<span>&nbsp; &nbsp;</span>
 
-								<span class="edit-keys" data-toggle="tooltip" data-placement="top"
+								<span class="edit-flags" data-toggle="tooltip" data-placement="top"
 									  title="Edit {{ challenge.name }} flags" chal-id="{{ challenge.id }}">
 									<i class="btn-fa fas fa-flag" aria-hidden="true" chal-id="{{ challenge.id }}"></i>
 								</span>
@@ -126,7 +126,7 @@
 	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/chalboard.js"></script>
 	<script src="{{ request.script_root }}/themes/admin/static/js/files/files-utils.js"></script>
 	<script src="{{ request.script_root }}/themes/admin/static/js/hints/hints-utils.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/keys/keys-utils.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/flags/flags-utils.js"></script>
 	<script src="{{ request.script_root }}/themes/admin/static/js/tags/tags-utils.js"></script>
 	<script src="{{ request.script_root }}/themes/admin/static/js/multi-modal.js"></script>
 {% endblock %}

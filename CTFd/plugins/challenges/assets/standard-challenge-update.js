@@ -35,7 +35,7 @@ $('#new-desc-edit').on('shown.bs.tab', function (event) {
 });
 
 function loadchal(id, update) {
-    $.get(script_root + '/admin/chal/' + id, function(obj){
+    $.get(script_root + '/api/v1/challenges/' + id, function(obj){
         $('#desc-write-link').click(); // Switch to Write tab
         if (typeof update === 'undefined')
             $('#update-challenge').modal();

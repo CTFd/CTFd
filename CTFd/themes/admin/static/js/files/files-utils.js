@@ -18,20 +18,18 @@ function updatefiles(){
 
 function loadfiles(chal, cb){
     $('#update-files form').attr('action', script_root+'/admin/files/'+chal)
-    $.get(script_root + '/admin/files/' + chal, function(data){
+    $.get(script_root + '/api/v1/challenges/'+chal+'/files', function(data){
         $('#files-chal').val(chal);
-        var files = $.parseJSON(JSON.stringify(data));
-        var files = files['files'];
         $('#current-files').empty();
-        for(var x = 0; x < files.length; x++){
-            var filename = files[x].file.split('/');
+        for(var x = 0; x < data.length; x++){
+            var filename = data[x].location.split('/');
             var filename = filename[filename.length - 1];
 
-            var curr_file = '<div class="col-md-12"><a href="{2}/files/{3}">{4}</a> <i class="btn-fa fas fa-times float-right" onclick="deletefile({0}, {1}, $(this))" value="{2}" ></i></div>'.format(
+            var curr_file = '<div class="col-md-12"><a href="{2}/files/{3}">{4}</a> <i class="btn-fa fas fa-times float-right" onclick="deletefile({1}, this)" value="{2}" ></i></div>'.format(
                 chal,
-                files[x].id,
+                data[x].id,
                 script_root,
-                files[x].file,
+                data[x].file,
                 filename
             );
 
@@ -44,14 +42,10 @@ function loadfiles(chal, cb){
     });
 }
 
-function deletefile(chal, file, elem){
-    $.post(script_root + '/admin/files/' + chal,{
-        'nonce': $('#nonce').val(),
-        'method': 'delete',
-        'file': file
-    }, function (data){
-        if (data == "1") {
-            elem.parent().remove();
+function deletefile(file_id, elem){
+    $.delete(script_root + '/api/v1/files/'+file_id, {}, function (data){
+        if (data.success) {
+            $(elem).parent().remove();
         }
     });
 }

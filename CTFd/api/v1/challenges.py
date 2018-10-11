@@ -1,6 +1,16 @@
 from flask import session, request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Challenges, Unlocks, Hints, Solves, Teams
+from CTFd.models import (
+    db,
+    Challenges,
+    Unlocks,
+    Tags,
+    Hints,
+    Flags,
+    Solves,
+    Teams,
+    ChallengeFiles as ChallengeFilesModel,
+)
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
 from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
@@ -10,17 +20,11 @@ from CTFd.utils.decorators import (
     admins_only
 )
 from CTFd.schemas.tags import TagSchema
+from CTFd.schemas.hints import HintSchema
+from CTFd.schemas.flags import FlagSchema
 from sqlalchemy.sql import or_
 
 challenges_namespace = Namespace('challenges', description="Endpoint to retrieve Challenges")
-
-
-'''
-/challenges
-/challenges/1
-/challenges/1/solves
-/solves/count
-'''
 
 
 @challenges_namespace.route('')
@@ -89,7 +93,7 @@ class Challenge(Resource):
         chal = Challenges.query.filter_by(id=challenge_id).first_or_404()
         chal_class = get_chal_class(chal.type)
 
-        tags = chal.tags
+        tags = [tag['value'] for tag in TagSchema("user", many=True).dump(chal.tags).data]
         files = [f.location for f in chal.files]
         unlocked_hints = set([u.item_id for u in Unlocks.query.filter_by(type='hints', team_id=team_id)])
         hints = []
@@ -152,3 +156,61 @@ class ChallengeSolves(Resource):
             })
 
         return response
+
+
+@challenges_namespace.route('/<challenge_id>/files')
+@challenges_namespace.param('id', 'A Challenge ID')
+class ChallengeFiles(Resource):
+    @admins_only
+    def get(self, challenge_id):
+        response = []
+
+        challenge_files = ChallengeFilesModel.query.filter_by(challenge_id=challenge_id).all()
+
+        for f in challenge_files:
+            response.append({
+                'id': f.id,
+                'type': f.type,
+                'location': f.location
+            })
+        return response
+
+
+@challenges_namespace.route('/<challenge_id>/tags')
+@challenges_namespace.param('id', 'A Challenge ID')
+class ChallengeFiles(Resource):
+    @admins_only
+    def get(self, challenge_id):
+        response = []
+
+        tags = Tags.query.filter_by(challenge_id=challenge_id).all()
+
+        for t in tags:
+            response.append({
+                'id': t.id,
+                'challenge_id': t.challenge_id,
+                'value': t.value
+            })
+        return response
+
+
+@challenges_namespace.route('/<challenge_id>/hints')
+@challenges_namespace.param('id', 'A Challenge ID')
+class ChallengeHints(Resource):
+    @admins_only
+    def get(self, challenge_id):
+        hints = Hints.query.filter_by(challenge_id=challenge_id).all()
+        schema = HintSchema(many=True)
+
+        return schema.dump(hints)
+
+
+@challenges_namespace.route('/<challenge_id>/flags')
+@challenges_namespace.param('id', 'A Challenge ID')
+class ChallengeFlags(Resource):
+    @admins_only
+    def get(self, challenge_id):
+        flags = Flags.query.filter_by(challenge_id=challenge_id).all()
+        schema = FlagSchema(many=True)
+
+        return schema.dump(flags)

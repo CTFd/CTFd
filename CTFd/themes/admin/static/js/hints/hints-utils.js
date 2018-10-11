@@ -2,13 +2,14 @@ function load_hint_modal(method, hintid){
     $('#hint-modal-hint').val('');
     $('#hint-modal-cost').val('');
     if (method == 'create'){
-        $('#hint-modal-submit').attr('action', '/admin/hints');
         $('#hint-modal-title').text('Create Hint');
+        $('#hint-id-for-hint').removeAttr('value');
         $("#hint-modal").modal();
     } else if (method == 'update'){
-        $.get(script_root + '/admin/hints/' + hintid, function(data){
+        $.get(script_root + '/api/v1/hints/' + hintid, function(data){
             $('#hint-modal-submit').attr('action', '/admin/hints/' + hintid);
-            $('#hint-modal-hint').val(data.hint);
+            $('#hint-id-for-hint').val(data.id);
+            $('#hint-modal-hint').val(data.content);
             $('#hint-modal-cost').val(data.cost);
             $('#hint-modal-title').text('Update Hint');
             $("#hint-modal-button").text('Update Hint');
@@ -17,16 +18,16 @@ function load_hint_modal(method, hintid){
     }
 }
 
-function edithint(hintid){
-    $.get(script_root + '/admin/hints/' + hintid, function(data){
+function edithint(hint_id){
+    $.get(script_root + '/api/v1/hints/' + hint_id, function(data){
         console.log(data);
     })
 }
 
 
-function deletehint(hintid){
-    $.delete(script_root + '/admin/hints/' + hintid, function(data, textStatus, jqXHR){
-        if (jqXHR.status == 204){
+function deletehint(hint_id){
+    $.delete(script_root + '/api/v1/hints/' + hint_id, function(data){
+        if (data.success){
             var chalid = $("#update-hints").attr('chal-id');
             loadhints(chalid);
         }
@@ -34,14 +35,14 @@ function deletehint(hintid){
 }
 
 
-function loadhints(chal, cb){
-    $.get(script_root + '/admin/chal/{0}/hints'.format(chal), function(data){
+function loadhints(challenge_id, cb){
+    $.get(script_root + '/api/v1/challenges/{0}/hints'.format(challenge_id), function(data){
         var table = $('#hintsboard > tbody');
         table.empty();
-        for (var i = 0; i < data.hints.length; i++) {
-            var hint = data.hints[i]
+        for (var i = 0; i < data.length; i++) {
+            var hint = data[i];
             var hint_row = "<tr>" +
-            "<td class='hint-entry d-table-cell w-75'><pre>{0}</pre></td>".format(htmlentities(hint.hint)) +
+            "<td class='hint-entry d-table-cell w-75'><pre>{0}</pre></td>".format(htmlentities(hint.content)) +
             "<td class='hint-cost d-table-cell text-center'>{0}</td>".format(hint.cost) +
             "<td class='hint-settings d-table-cell text-center'><span>" +
                 "<i role='button' class='btn-fa fas fa-edit' onclick=javascript:load_hint_modal('update',{0})></i>".format(hint.id)+
@@ -79,10 +80,24 @@ $(document).ready(function () {
         $(this).serializeArray().map(function (x) {
             params[x.name] = x.value;
         });
-        $.post(script_root + $(this).attr('action'), params, function (data) {
-            loadhints(params['chal']);
+        console.log(params);
+        var target = '/api/v1/hints';
+        var method = 'POST';
+        if (params.id){
+            target += '/' + params.id;
+            method = 'PATCH';
+        }
+        fetch(script_root + target, {
+            method: method,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(params)
+        }).then(function (response) {
+            loadhints(params['challenge']);
+            $("#hint-modal").modal('hide');
         });
-        $("#hint-modal").modal('hide');
     });
 
 

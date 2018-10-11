@@ -1,16 +1,14 @@
 function loadtags(chal, cb){
-    $('#tags-chal').val(chal)
-    $('#current-tags').empty()
-    $('#chal-tags').empty()
-    $.get(script_root + '/admin/tags/'+chal, function(data){
-        tags = $.parseJSON(JSON.stringify(data))
-        tags = tags['tags']
-        for (var i = 0; i < tags.length; i++) {
-            tag = "<span class='badge badge-primary mx-1 chal-tag'><span>"+tags[i].tag+"</span><a name='"+tags[i].id+"'' class='btn-fa delete-tag'> &#215;</a></span>"
-            $('#current-tags').append(tag)
+    $('#tags-chal').val(chal);
+    $('#current-tags').empty();
+    $('#chal-tags').empty();
+    $.get(script_root + '/api/v1/challenges/'+chal+'/tags', function(data){
+        for (var i = 0; i < data.length; i++) {
+            var tag = "<span class='badge badge-primary mx-1 chal-tag'><span>"+data[i].value+"</span><a name='"+data[i].id+"'' class='btn-fa delete-tag'> &#215;</a></span>"
+            $('#current-tags').append(tag);
         };
         $('.delete-tag').click(function(e){
-            deletetag(e.target.name)
+            deletetag(e.target.name);
             $(e.target).parent().remove()
         });
 
@@ -21,17 +19,28 @@ function loadtags(chal, cb){
 }
 
 function deletetag(tagid){
-    $.post(script_root + '/admin/tags/'+tagid+'/delete', {'nonce': $('#nonce').val()});
+    $.delete(script_root + '/api/v1/tags/'+tagid);
 }
 
 
 function updatetags(){
-    tags = [];
-    chal = $('#tags-chal').val();
+    var tags = [];
+    var challenge_id = $('#tags-chal').val();
     $('#chal-tags > span > span').each(function(i, e){
-        tags.push($(e).text());
+        tags.push({
+            'value': $(e).text(),
+            'challenge': challenge_id,
+        });
     });
-    $.post(script_root + '/admin/tags/'+chal, {'tags':tags, 'nonce': $('#nonce').val()});
+    console.log(tags);
+    fetch(script_root + '/api/v1/tags', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tags)
+    });
     $('#update-tags').modal('toggle');
 }
 

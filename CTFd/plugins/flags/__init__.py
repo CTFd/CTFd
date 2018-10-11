@@ -17,8 +17,8 @@ class BaseFlag(object):
 class CTFdStaticFlag(BaseFlag):
     name = "static"
     templates = {  # Nunjucks templates used for key editing & viewing
-        'create': '/plugins/keys/assets/static/create-static-modal.njk',
-        'update': '/plugins/keys/assets/static/edit-static-modal.njk',
+        'create': '/plugins/flags/assets/static/create-static-modal.njk',
+        'update': '/plugins/flags/assets/static/edit-static-modal.njk',
     }
 
     @staticmethod
@@ -42,8 +42,8 @@ class CTFdStaticFlag(BaseFlag):
 class CTFdRegexFlag(BaseFlag):
     name = "regex"
     templates = {  # Nunjucks templates used for key editing & viewing
-        'create': '/plugins/keys/assets/regex/create-regex-modal.njk',
-        'update': '/plugins/keys/assets/regex/edit-regex-modal.njk',
+        'create': '/plugins/flags/assets/regex/create-regex-modal.njk',
+        'update': '/plugins/flags/assets/regex/edit-regex-modal.njk',
     }
 
     @staticmethod
@@ -65,7 +65,7 @@ FLAG_CLASSES = {
 }
 
 
-def get_key_class(class_id):
+def get_flag_class(class_id):
     cls = FLAG_CLASSES.get(class_id)
     if cls is None:
         raise KeyError
@@ -73,4 +73,4 @@ def get_key_class(class_id):
 
 
 def load(app):
-    register_plugin_assets_directory(app, base_path='/plugins/keys/assets/')
+    register_plugin_assets_directory(app, base_path='/plugins/flags/assets/')

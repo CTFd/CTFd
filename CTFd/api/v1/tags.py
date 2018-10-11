@@ -28,17 +28,19 @@ class TagList(Resource):
     @admins_only
     def post(self):
         req = request.get_json()
-        schema = TagSchema()
-        tag = schema.load(req, session=db.session)
+        schema = TagSchema(many=True)
+        tags = schema.load(req)
 
-        if tag.errors:
-            return tag.errors
+        if tags.errors:
+            return tags.errors
 
-        db.session.add(tag.data)
+        for tag in tags.data:
+            db.session.add(tag)
         db.session.commit()
+        response = schema.dump(tags.data)
         db.session.close()
 
-        return schema.dump(tag)
+        return response
 
 
 @tags_namespace.route('/<tag_id>')

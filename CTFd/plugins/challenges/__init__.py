@@ -1,6 +1,6 @@
 from CTFd.plugins import register_plugin_assets_directory
-from CTFd.plugins.flags import get_key_class
-from CTFd.models import db, Solves, Fails, Flags, Challenges, Files, Tags, Hints
+from CTFd.plugins.flags import get_flag_class
+from CTFd.models import db, Solves, Fails, Flags, Challenges, ChallengeFiles, Tags, Hints
 from CTFd import utils
 from CTFd.utils.user import get_ip
 
@@ -125,10 +125,10 @@ class CTFdStandardChallenge(BaseChallenge):
         Fails.query.filter_by(challenge_id=challenge.id).delete()
         Solves.query.filter_by(challenge_id=challenge.id).delete()
         Flags.query.filter_by(challenge_id=challenge.id).delete()
-        files = Files.query.filter_by(challenge_id=challenge.id).all()
+        files = ChallengeFiles.query.filter_by(challenge_id=challenge.id).all()
         for f in files:
             utils.delete_file(f.id)
-        Files.query.filter_by(challenge_id=challenge.id).delete()
+        ChallengeFiles.query.filter_by(challenge_id=challenge.id).delete()
         Tags.query.filter_by(challenge_id=challenge.id).delete()
         Hints.query.filter_by(challenge_id=challenge.id).delete()
         Challenges.query.filter_by(id=challenge.id).delete()
@@ -148,7 +148,7 @@ class CTFdStandardChallenge(BaseChallenge):
         submission = request.form['submission'].strip()
         chal_keys = Flags.query.filter_by(challenge_id=chal.id).all()
         for chal_key in chal_keys:
-            if get_key_class(chal_key.type).compare(chal_key, submission):
+            if get_flag_class(chal_key.type).compare(chal_key, submission):
                 return True, 'Correct'
         return False, 'Incorrect'
 

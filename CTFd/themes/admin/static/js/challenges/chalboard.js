@@ -2,7 +2,7 @@ var challenges = {};
 window.challenge = new Object();
 
 function load_chal_template(id, success_cb){
-    $.get(script_root + "/admin/chal/" + id, function (obj) {
+    $.get(script_root + "/api/v1/challenges/" + id, function (obj) {
         $.getScript(script_root + obj.type_data.scripts.modal, function () {
             console.log('loaded renderer');
             $.get(script_root + obj.type_data.templates.update, function (template_data) {
@@ -30,7 +30,7 @@ function load_challenge_preview(id){
 
 function render_challenge_preview(chal_id){
     var preview_window = $('#challenge-preview');
-    $.get(script_root + "/admin/chal/" + chal_id, function(obj){
+    $.get(script_root + "/api/v1/challenges/" + chal_id, function(obj){
         $.getScript(script_root + obj.type_data.scripts.modal, function () {
             console.log('loaded renderer');
 
@@ -39,7 +39,7 @@ function render_challenge_preview(chal_id){
 
                 window.challenge.data = obj;
 
-                window.challenge.preRender()
+                window.challenge.preRender();
 
                 obj['description'] = window.challenge.render(obj['description']);
                 obj['script_root'] = script_root;
@@ -74,15 +74,14 @@ function render_challenge_preview(chal_id){
 
 
 function loadsolves(id) {
-    $.get(script_root + '/admin/chal/' + id + '/solves', function (data) {
-        var teams = data['teams'];
+    $.get(script_root + '/api/v1/challenges/' + id + '/solves', function (data) {
         var box = $('#challenge-solves-body');
-        var modal = $('#challenge-solves-modal')
+        var modal = $('#challenge-solves-modal');
         box.empty();
-        for (var i = 0; i < teams.length; i++) {
-            var id = teams[i].id;
-            var name = teams[i].name;
-            var date = moment(teams[i].date).local().format('MMMM Do, h:mm:ss A');
+        for (var i = 0; i < data.length; i++) {
+            var id = data[i].id;
+            var name = data[i].name;
+            var date = moment(data[i].date).local().format('MMMM Do, h:mm:ss A');
             box.append('<tr><td><a href="team/{0}">{1}</td><td><small>{2}</small></td></tr>'.format(id, htmlentities(name), date));
         }
         modal.modal();
@@ -177,18 +176,17 @@ function renderSubmissionResponse(data, cb) {
 
 $(document).ready(function () {
     $('.delete-challenge').click(function (e) {
-        var chal_id = $(this).attr('chal-id');
+        var challenge_id = $(this).attr('chal-id');
         var td_row = $(this).parent().parent();
 
         ezq({
             title: "Delete Challenge",
             body: "Are you sure you want to delete this challenge?",
             success: function () {
-                $.post(script_root + '/admin/chal/delete', {
-                    'id': chal_id,
-                    'nonce': $('#nonce').val()
+                $.delete(script_root + '/api/v1/challenges/' + challenge_id, {
+                    'id': challenge_id
                 }, function (data) {
-                    if (data == 1) {
+                    if (data.success) {
                         td_row.remove();
                     }
                     else {
