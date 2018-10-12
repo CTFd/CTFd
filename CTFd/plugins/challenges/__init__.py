@@ -69,6 +69,8 @@ class CTFdStandardChallenge(BaseChallenge):
 
         db.session.commit()
 
+        return chal
+
     @staticmethod
     def read(challenge):
         """
@@ -105,14 +107,15 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request:
         :return:
         """
-        challenge.name = request.form['name']
-        challenge.description = request.form['description']
-        challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
-        challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
-        challenge.category = request.form['category']
-        challenge.hidden = 'hidden' in request.form
+        data = request.form or request.get_json()
+        challenge.name = data['name']
+        challenge.description = data['description']
+        challenge.value = int(data['value'])
+        challenge.max_attempts = int(data.get('max_attempts')) if data.get('max_attempts') else None
+        challenge.category = data['category']
+        challenge.hidden = data.get('hidden', False)
         db.session.commit()
-        db.session.close()
+        return challenge
 
     @staticmethod
     def delete(challenge):

@@ -60,7 +60,7 @@ class ChallengeList(Resource):
         challenge_type = request.form['type']
         challenge_class = get_chal_class(challenge_type)
         challenge = challenge_class.create(request)
-        response = challenge.read()
+        response = challenge_class.read(challenge)
         return response
 
 
@@ -113,13 +113,21 @@ class Challenge(Resource):
         db.session.close()
         return response
 
+    # @admins_only
+    # def put(self, challenge_id):
+    #     challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+    #     challenge_class = get_chal_class(challenge.type)
+    #     challenge = challenge_class.update(challenge, request)
+    #
+    #     return challenge.read()
+
     @admins_only
-    def put(self, challenge_id):
+    def patch(self, challenge_id):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         challenge_class = get_chal_class(challenge.type)
         challenge = challenge_class.update(challenge, request)
-
-        return challenge.read()
+        challenge, response = challenge_class.read(challenge)
+        return response
 
     @admins_only
     def delete(self, challenge_id):

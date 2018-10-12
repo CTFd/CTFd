@@ -15,7 +15,7 @@ function load_chal_template(challenge){
     });
 }
 
-$.get(script_root + '/admin/chal_types', function(data){
+$.get(script_root + '/api/v1/challenges/types', function(data){
     $("#create-chals-select").empty();
     var chal_type_amt = Object.keys(data).length;
     if (chal_type_amt > 1){
