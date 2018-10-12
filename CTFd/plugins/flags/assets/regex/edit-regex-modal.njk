@@ -13,18 +13,17 @@
 			</button>
 		</div>
 		<div class="modal-body">
-			<form method="POST" action="{{ script_root }}/admin/keys/{{id}}">
-				<input type="text" id="key-data" class="form-control" name="key" value="{{key}}" placeholder="Enter regex key data">
+			<form method="POST">
+				<input type="text" id="key-data" class="form-control" name="content" value="{{content}}" placeholder="Enter regex key data">
 				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="checkbox" id="keydata" name="keydata" value="case_insensitive"
+					<input class="form-check-input" type="checkbox" id="data" name="data" value="case_insensitive"
 						   {% if data %}checked{% endif %}>
-					<label class="form-check-label" for="keydata">Case Insensitive</label>
+					<label class="form-check-label" for="data">Case Insensitive</label>
 				</div>
-				<input type="hidden" id="key-type" name="key_type" value="regex">
-				<input type="hidden" id="key-id">
+				<input type="hidden" id="key-type" name="type" value="regex">
+				<input type="hidden" id="key-id" value="{{ id }}">
 				<hr>
 				<div class="form-group">
-					<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
 					<button id="submit-keys" class="btn btn-success float-right">Update</button>
 				</div>
 			</form>

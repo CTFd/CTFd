@@ -91,12 +91,12 @@ class Flag(Resource):
         return response
 
     @admins_only
-    def put(self, flag_id):
+    def patch(self, flag_id):
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
         schema = FlagSchema()
         req = request.get_json()
 
-        flag = schema.load(req, session=db.session, instance=flag)
+        flag = schema.load(req, session=db.session, instance=flag, partial=True)
         if flag.errors:
             return flag.errors
 

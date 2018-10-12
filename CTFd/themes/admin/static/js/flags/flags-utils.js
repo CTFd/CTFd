@@ -49,21 +49,6 @@ function loadkeys(challenge_id, cb){
     });
 }
 
-function updatekeys(){
-    var keys = [];
-    var vals = [];
-    var chal = $('#keys-chal').val();
-    $('.current-key').each(function(){
-        keys.push($(this).val());
-    });
-    $('#current-keys input[name*="key_type"]:checked').each(function(){
-        vals.push($(this).val());
-    });
-    $.post(script_root + '/admin/keys/'+chal, {'keys':keys, 'vals':vals, 'nonce': $('#nonce').val()})
-    loadchal(chal, true);
-    $('#update-keys').modal('hide');
-}
-
 
 function deletekey(flag_id){
     $.delete(script_root + '/api/v1/flags/'+flag_id, function(data){
@@ -74,16 +59,29 @@ function deletekey(flag_id){
 }
 
 function updatekey(){
-    var edit_key_modal = $('#edit-flags form').serializeArray();
+    var params = {};
+    $('#edit-flags form').serializeArray().map(function (x) {
+        params[x.name] = x.value;
+    });
+    if (!params.data){
+        params.data = null;
+    }
 
     var flag_id = $('#key-id').val();
     var challenge_id = $("#update-keys").attr('chal-id');
 
-    $.post(script_root + '/api/v1/flags/'+flag_id, edit_key_modal, function(data){
-        if (data.success) {
-            loadkeys(challenge_id);
-            $('#edit-flags').modal('toggle');
-        }
+    fetch(script_root + '/api/v1/flags/'+flag_id, {
+        method: 'PATCH',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+    }).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        loadkeys(challenge_id);
+        $('#edit-flags').modal('toggle');
     });
 }
 
