@@ -21,9 +21,11 @@ from CTFd.scoreboard import scoreboard
 from CTFd.auth import auth
 from CTFd.admin import admin
 from CTFd.api import api
+from CTFd.events import events
 from CTFd.errors import page_not_found, forbidden, general_error, gateway_error
 
 from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals
+from CTFd.utils.events import socketio
 
 from CTFd.plugins import init_plugins
 
@@ -158,6 +160,8 @@ def create_app(config='CTFd.config.Config'):
         cache.init_app(app)
         app.cache = cache
 
+        socketio.init_app(app)
+
         update_check(force=True)
 
         version = utils.get_config('ctf_version')
@@ -186,6 +190,7 @@ def create_app(config='CTFd.config.Config'):
         app.register_blueprint(scoreboard)
         app.register_blueprint(auth)
         app.register_blueprint(api)
+        app.register_blueprint(events)
 
         app.register_blueprint(admin)
 
