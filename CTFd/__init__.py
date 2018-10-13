@@ -160,7 +160,11 @@ def create_app(config='CTFd.config.Config'):
         cache.init_app(app)
         app.cache = cache
 
-        socketio.init_app(app)
+        # If you have multiple workers you must have a shared cache
+        socketio.init_app(
+            app,
+            message_queue=app.config.get('CACHE_REDIS_URL')
+        )
 
         update_check(force=True)
 
