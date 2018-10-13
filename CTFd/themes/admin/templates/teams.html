@@ -143,19 +143,13 @@
 					<tr>
 						<td width="10px" class="text-center"><b>ID</b>
 						</td>
-						<td class="text-center"><b>Team</b>
+						<td class="text-left"><b>Team</b>
 						</td>
-						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
+						<td class="text-center"><b>Website</b>
 						</td>
-						<td class="d-none"><b>Website</b>
-						</td>
-						<td class="d-none"><b>Affiliation</b>
-						</td>
-						<td class="d-none"><b>Country</b>
-						</td>
-						<td class="text-center"><b>Admin</b>
-						</td>
-						<td class="text-center"><b>Verified</b>
+{#						<td class="text-center"><b>Affiliation</b>#}
+{#						</td>#}
+						<td class="text-center"><b>Country</b>
 						</td>
 						<td class="text-center"><b>Hidden</b>
 						</td>
@@ -167,14 +161,16 @@
 					{% for team in teams %}
 					<tr name="{{ team.id }}">
 						<td class="team-id" value="{{ team.id }}">{{ team.id }}</td>
-						<td class="team-name" value="{{ team.name }}"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
-						</td>
-						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ team.email }}">
-							{% if team.email %}
-								{{ team.email | truncate(32) }}
+						<td class="team-name" value="{{ team.name }}">
+							<a href="{{ request.script_root }}/admin/team/{{ team.id }}">
+								{{ team.name | truncate(32) }}
+							</a>
+							{% if team.affiliation %}
+								<span class="d-block text-muted"><small>{{ team.affiliation | truncate(20) }}</small></span>
 							{% endif %}
 						</td>
-						<td class="team-website d-none text-center">
+
+						<td class="team-website text-center">
 							{% if team.website %}
 								<a href="{{ team.website }}" target="_blank">
 									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
@@ -182,23 +178,14 @@
 								</a>
 							{% endif %}
 						</td>
-						<td class="team-affiliation d-none" value="{{ team.affiliation if team.affiliation is not none }}">
-							<span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
-						</td>
-						<td class="team-country d-none" value="{{ team.country if team.country is not none }}">
+{#						<td class="team-affiliation" value="{{ team.affiliation if team.affiliation is not none }}">#}
+{#							<span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>#}
+{#						</td>#}
+						<td class="team-country" value="{{ team.country if team.country is not none }}">
 							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
 						</td>
-						<td class="team-admin d-none d-md-table-cell d-lg-table-cell text-center" value="{{ team.admin }}">
-							{% if team.admin %}
-								<span class="badge badge-primary">admin</span>
-							{% endif %}
-						</td>
-						<td class="team-verified d-none d-md-table-cell d-lg-table-cell text-center" value="{{ team.verified }}">
-							{% if team.verified %}
-								<span class="badge badge-success">verified</span>
-							{% endif %}
-						</td>
-						<td class="team-hidden d-none d-md-table-cell d-lg-table-cell text-center" value="{{ team.banned }}">
+
+						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ team.banned }}">
 							{% if team.banned %}
 								<span class="badge badge-danger">hidden</span>
 							{% endif %}

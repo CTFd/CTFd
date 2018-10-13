@@ -1,0 +1,117 @@
+<form method="POST" action="{{ script_root }}/admin/chal/new" enctype="multipart/form-data">
+	<div class="form-group">
+		Dynamic value challenges decrease in value as they receive solves. The more solves a dynamic challenge has, the lower its value is to everyone who has solved it.
+	</div>
+
+	<div class="form-group">
+		<label for="name">Name
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="The name of your challenge"></i>
+		</label>
+		<input type="text" class="form-control" name="name" placeholder="Enter challenge name">
+	</div>
+	<div class="form-group">
+		<label for="category">Category
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="The category of your challenge"></i>
+		</label>
+		<input type="text" class="form-control" name="category" placeholder="Enter challenge category">
+	</div>
+
+	<ul class="nav nav-tabs" role="tablist" id="new-desc-edit">
+		<li class="nav-item">
+			<a class="nav-link active" href="#new-desc-write" aria-controls="home" role="tab" data-toggle="tab">Write</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#new-desc-preview" aria-controls="home" role="tab" data-toggle="tab">Preview</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="new-desc-write">
+			<div class="form-group">
+				<label for="message-text" class="control-label">Message:
+					<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="Use this to give a brief introduction to your challenge. The description supports HTML and Markdown."></i>
+				</label>
+				<textarea id="new-desc-editor" class="form-control" name="description" rows="10"></textarea>
+			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane content" id="new-desc-preview" style="height:234px; overflow-y: scroll;">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="value">Initial Value
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="This is how many points the challenge is worth initially."></i>
+		</label>
+		<input type="number" class="form-control" name="value" placeholder="Enter value" required>
+	</div>
+
+	<div class="form-group">
+		<label for="value">Decay Limit
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="The amount of solves before the challenge reaches its minimum value"></i>
+		</label>
+		<input type="number" class="form-control" name="decay" placeholder="Enter decay limit" required>
+	</div>
+
+	<div class="form-group">
+		<label for="value">Minimum Value
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="This is the lowest that the challenge can be worth"></i>
+		</label>
+		<input type="number" class="form-control" name="minimum" placeholder="Enter minimum value" required>
+	</div>
+
+	<div class="form-group">
+		<label>Flag
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="This is the flag or solution for your challenge. You can choose whether your flag is a static string or a regular expression."></i>
+		</label>
+		<input type="text" class="form-control" name="key" placeholder="Enter flag">
+	</div>
+
+	<div class="form-group">
+		<select class="custom-select" name="key_type[0]">
+			<option value="static">Static</option>
+			<option value="regex">Regex</option>
+		</select>
+	</div>
+
+	<div class="form-check">
+		<div class="checkbox">
+			<label class="form-check-label">
+				<input class="form-check-input" name="hidden" type="checkbox">
+				Hide challenge on creation
+			</label>
+		</div>
+	</div>
+
+	<div class="form-check">
+		<div class="checkbox">
+			<label class="form-check-label">
+				<input class="form-check-input" type="checkbox" id="solve-attempts-checkbox">
+				Limit amount of solve attempts
+			</label>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div id="solve-attempts-input" style="display: none;">
+			<label for="max_attempts">Maximum Attempts
+				<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="How many attempts should a user have for this challenge? For unlimited attempts, use the value 0"></i>
+			</label>
+			<input class="form-control" id='max_attempts' name='max_attempts' type='number' placeholder="0">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label>Upload Challenge Files
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="Challenges files are provided to users for download alongside your challenge description"></i>
+		</label>
+		<input class="form-control-file" type="file" name="files[]" multiple="multiple">
+		<sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
+	</div>
+
+	<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+	<input type="hidden" value="dynamic" name="chaltype" id="chaltype">
+
+	<div class="form-group">
+		<button class="btn btn-primary float-right create-challenge-submit" type="submit">Create</button>
+	</div>
+</form>

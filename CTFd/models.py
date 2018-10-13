@@ -277,7 +277,7 @@ class Users(db.Model):
     # Relationship for Teams
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
 
-    joined = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     __mapper_args__ = {
         'polymorphic_identity': 'user',
@@ -582,6 +582,7 @@ class Fails(Submissions):
 class Unlocks(db.Model):
     __tablename__ = 'unlocks'
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
     item_id = db.Column(db.Integer)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)

@@ -1,0 +1,104 @@
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-body">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" href="#challenge">Challenge</a>
+              </li>
+              {% if solves == '-1 Solves' %}
+              {% else %}
+              <li class="nav-item">
+                <a class="nav-link chal-solves" href="#solves">{{solves}}</a>
+              </li>
+              {% endif %}
+            </ul>
+            <div role="tabpanel">
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade show active" id="challenge">
+                        <h2 class='chal-name text-center pt-3'>{{ name }}</h2>
+                        <h3 class="chal-value text-center">{{ value }}</h3>
+                        <div class="chal-tags text-center">
+                        {% for tag in tags %}
+                            <span class='badge badge-info chal-tag'>{{tag}}</span>
+                        {% endfor %}
+                        </div>
+                        <span class="chal-desc">{{ description | safe }}</span>
+                        <div class="chal-hints hint-row row">
+                            {% for hint in hints %}
+                            <div class='col-md-12 hint-button-wrapper text-center mb-3'>
+                                <a class="btn btn-info btn-hint btn-block" href="javascript:;" onclick="javascript:loadhint({{hint.id}})">
+                                    {% if hint.hint %}
+                                        <small>
+                                        View Hint
+                                        </small>
+                                    {% else %}
+                                        {% if hint.cost %}
+                                            <small>
+                                            Unlock Hint for {{hint.cost}} points
+                                            </small>
+                                        {% else %}
+                                            <small>
+                                            View Hint
+                                            </small>
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row chal-files text-center pb-3">
+                            {% for file in files %}
+                            <div class='col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block'>
+                                <a class='btn btn-info btn-file mb-1 d-inline-block px-2 w-100 text-truncate' href='{{script_root}}/files/{{file}}'>
+                                    <i class="fas fa-download"></i>
+                                    <small>
+                                    {{ file.split('/')[1] }}
+                                    </small>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="row submit-row">
+                            <div class="col-md-9 form-group">
+                                <input class="form-control" type="text" name="answer" id="answer-input" placeholder="Flag" />
+                                <input id="chal-id" type="hidden" value="{{id}}">
+                            </div>
+                            <div class="col-md-3 form-group key-submit">
+                                <button type="submit" id="submit-key" tabindex="5" class="btn btn-md btn-outline-secondary float-right">Submit</button>
+                            </div>
+                        </div>
+                        <div class="row notification-row">
+                            <div class="col-md-12">
+                                <div id="result-notification" class="alert alert-dismissable text-center w-100" role="alert" style="display: none;">
+                                  <strong id="result-message"></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="solves">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-striped text-center">
+                                    <thead>
+                                        <tr>
+                                            <td><b>Name</b>
+                                            </td>
+                                            <td><b>Date</b>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="chal-solves-names">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

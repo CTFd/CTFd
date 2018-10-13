@@ -51,7 +51,6 @@
 			</div>
 			<div class="modal-body clearfix">
 				<form method="POST" action="{{ request.script_root }}/admin/teams/">
-					<input type="hidden" name="nonce" value="{{ nonce }}">
 					<input type="hidden" name="id">
 					<div class="form-group">
 						<label for="name">Team Name</label>
@@ -145,13 +144,11 @@
 						</td>
 						<td class="text-center"><b>Team</b>
 						</td>
-						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
+						<td class="d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
 						</td>
-						<td class="d-none"><b>Website</b>
+						<td class=""><b>Website</b>
 						</td>
-						<td class="d-none"><b>Affiliation</b>
-						</td>
-						<td class="d-none"><b>Country</b>
+						<td class=""><b>Country</b>
 						</td>
 						<td class="text-center"><b>Admin</b>
 						</td>
@@ -167,14 +164,20 @@
 					{% for user in users %}
 					<tr name="{{ user.id }}">
 						<td class="team-id" value="{{ user.id }}">{{ user.id }}</td>
-						<td class="team-name" value="{{ user.name }}"><a href="{{ request.script_root }}/admin/team/{{ user.id }}">{{ user.name | truncate(32) }}</a>
+						<td class="team-name" value="{{ user.name }}">
+							<a href="{{ request.script_root }}/admin/team/{{ user.id }}">
+								{{ user.name | truncate(32) }}
+							</a>
+							{% if user.affiliation %}
+								<span class="d-block text-muted"><small>{{ user.affiliation | truncate(20) }}</small></span>
+							{% endif %}
 						</td>
 						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ user.email }}">
 							{% if user.email %}
 								{{ user.email | truncate(32) }}
 							{% endif %}
 						</td>
-						<td class="team-website d-none text-center">
+						<td class="team-website text-center">
 							{% if user.website %}
 								<a href="{{ user.website }}" target="_blank">
 									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
@@ -182,23 +185,20 @@
 								</a>
 							{% endif %}
 						</td>
-						<td class="team-affiliation d-none" value="{{ user.affiliation if user.affiliation is not none }}">
-							<span>{% if user.affiliation %}{{ user.affiliation | truncate(20) }}{% endif %}</span>
-						</td>
-						<td class="team-country d-none" value="{{ user.country if user.country is not none }}">
+						<td class="team-country" value="{{ user.country if user.country is not none }}">
 							<span>{% if user.country %}{{ user.country }}{% endif %}</span>
 						</td>
-						<td class="team-admin d-none d-md-table-cell d-lg-table-cell text-center" value="{{ user.admin }}">
+						<td class="team-admin d-md-table-cell d-lg-table-cell text-center" value="{{ user.admin }}">
 							{% if user.admin %}
 								<span class="badge badge-primary">admin</span>
 							{% endif %}
 						</td>
-						<td class="team-verified d-none d-md-table-cell d-lg-table-cell text-center" value="{{ user.verified }}">
+						<td class="team-verified d-md-table-cell d-lg-table-cell text-center" value="{{ user.verified }}">
 							{% if user.verified %}
 								<span class="badge badge-success">verified</span>
 							{% endif %}
 						</td>
-						<td class="team-hidden d-none d-md-table-cell d-lg-table-cell text-center" value="{{ user.banned }}">
+						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ user.banned }}">
 							{% if user.banned %}
 								<span class="badge badge-danger">hidden</span>
 							{% endif %}
@@ -263,9 +263,9 @@ function load_update_modal(id, name, email, website, affiliation, country, admin
     modal_form.find('input[name=hidden]').prop('checked', hidden);
 
 	if (id == 'new'){
-		$('#update-user-modal .modal-action').text('Create Team');
+		$('#update-user-modal .modal-action').text('Create User');
 	} else {
-		$('#update-user-modal .modal-action').text('Edit Team');
+		$('#update-user-modal .modal-action').text('Edit User');
 	}
 
 	$('#results').empty();
@@ -287,26 +287,47 @@ function load_email_modal(id){
 $(document).ready(function () {
     $('#update-user').click(function (e) {
         e.preventDefault();
-        var id = $('#update-user-modal input[name="id"]').val()
-        var user_data = $('#update-user-modal form').serializeArray()
+        var id = $('#update-user-modal input[name="id"]').val();
+        var params = {};
+
+		var params = {};
+		var form = $("#update-user-modal form");
+		var values = form.serializeArray();
+		values = values.concat(
+			form.find('input[type=checkbox]:checked').map(
+				function () {
+					return {"name": this.name, "value": true}
+				}).get(),
+            form.find('input[type=checkbox]:not(:checked)').map(
+                function () {
+                    return {"name": this.name, "value": false}
+                }).get()
+		);
+		values.map(function (x) {
+			params[x.name] = x.value;
+		});
         $('#results').empty();
-        $.post($('#update-user-modal form').attr('action'), $('#update-user-modal form').serialize(), function (data) {
-            var data = $.parseJSON(JSON.stringify(data))
-            for (var i = 0; i < data['data'].length; i++) {
-                if (data['data'][i] == 'success') {
-                    $('#update-user-modal').modal('hide');
-                    location.reload();
-                }
-                else {
-                    var error = $('<div class="alert alert-danger alert-dismissable">\n' +
-                        '  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
-                        '  {0}\n'.format(data['data'][i]) +
-                        '</div>');
-                    $('#results').append(error);
-                }
-            }
-            ;
-        })
+        console.log(params);
+
+        var target = '/api/v1/users';
+        var method = 'POST';
+        if (params.id) {
+            target += '/' + params.id;
+            method = 'PATCH';
+        }
+        fetch(script_root + target, {
+            method: method,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(params)
+        }).then(function (response) {
+			{#window.location.reload();#}
+        });
+
+
+        return;
     });
 
     $('#send-user-email').click(function (e) {
@@ -353,7 +374,7 @@ $(document).ready(function () {
 
     $('.delete-team').click(function () {
         var elem = $(this).parent().parent().parent();
-        var team_id = elem.find('.team-id').text().trim();
+        var user_id = elem.find('.team-id').text().trim();
         var name = htmlentities(elem.find('.team-name').text().trim());
 
         var td_row = $(this).parent().parent().parent();
@@ -362,12 +383,9 @@ $(document).ready(function () {
             title: "Delete User",
             body: "Are you sure you want to delete {0}".format("<strong>" + name + "</strong>"),
             success: function () {
-                var route = script_root + '/admin/team/' + team_id + '/delete';
-                $.post(route, {
-                    nonce: nonce,
-                }, function (data) {
-                    var data = $.parseJSON(JSON.stringify(data));
-                    if (data == "1") {
+                var route = script_root + '/api/v1/users/' + user_id;
+                $.delete(route, {}, function (data) {
+                    if (data.success) {
                         td_row.remove();
                     }
                 });
