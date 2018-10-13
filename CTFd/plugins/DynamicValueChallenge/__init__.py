@@ -1,8 +1,8 @@
 from __future__ import division # Use floating point for math calculations
 from CTFd.plugins.challenges import BaseChallenge, CHALLENGE_CLASSES
 from CTFd.plugins import register_plugin_assets_directory
-from CTFd.plugins.keys import get_key_class
-from CTFd.models import db, Solves, WrongKeys, Keys, Challenges, Files, Tags, Teams, Hints
+from CTFd.plugins.flags import get_flag_class
+from CTFd.models import db, Solves, Fails, Flags, Challenges, Files, Tags, Teams, Hints
 from CTFd import utils
 import math
 
@@ -54,7 +54,7 @@ class DynamicValueChallenge(BaseChallenge):
         db.session.add(chal)
         db.session.commit()
 
-        flag = Keys(chal.id, request.form['key'], request.form['key_type[0]'])
+        flag = Flags(chal.id, request.form['key'], request.form['key_type[0]'])
         if request.form.get('keydata'):
             flag.data = request.form.get('keydata')
         db.session.add(flag)
@@ -62,7 +62,7 @@ class DynamicValueChallenge(BaseChallenge):
         db.session.commit()
 
         for f in files:
-            utils.upload_file(file=f, chalid=chal.id)
+            utils.upload_file(file=f, challenge_id=chal.id)
 
         db.session.commit()
 
@@ -130,9 +130,9 @@ class DynamicValueChallenge(BaseChallenge):
         :param challenge:
         :return:
         """
-        WrongKeys.query.filter_by(chalid=challenge.id).delete()
-        Solves.query.filter_by(chalid=challenge.id).delete()
-        Keys.query.filter_by(chal=challenge.id).delete()
+        Fails.query.filter_by(challenge_id=challenge.id).delete()
+        Solves.query.filter_by(challenge_id=challenge.id).delete()
+        Flags.query.filter_by(chal=challenge.id).delete()
         files = Files.query.filter_by(chal=challenge.id).all()
         for f in files:
             utils.delete_file(f.id)
@@ -155,8 +155,8 @@ class DynamicValueChallenge(BaseChallenge):
         :return: (boolean, string)
         """
         provided_key = request.form['key'].strip()
-        chal_keys = Keys.query.filter_by(chal=chal.id).all()
-        for chal_key in chal_keys:
+        chal_Flags = Flags.query.filter_by(chal=chal.id).all()
+        for chal_key in chal_Flags:
             if get_key_class(chal_key.type).compare(chal_key, provided_key):
                 return True, 'Correct'
         return False, 'Incorrect'
@@ -173,7 +173,7 @@ class DynamicValueChallenge(BaseChallenge):
         """
         chal = DynamicChallenge.query.filter_by(id=chal.id).first()
 
-        solve_count = Solves.query.join(Teams, Solves.teamid == Teams.id).filter(Solves.chalid==chal.id, Teams.banned==False).count()
+        solve_count = Solves.query.join(Teams, Solves.team_id == Teams.id).filter(Solves.challenge_id==chal.id, Teams.banned==False).count()
 
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division
@@ -191,7 +191,7 @@ class DynamicValueChallenge(BaseChallenge):
         chal.value = value
 
         provided_key = request.form['key'].strip()
-        solve = Solves(teamid=team.id, chalid=chal.id, ip=utils.get_ip(req=request), flag=provided_key)
+        solve = Solves(team_id=team.id, challenge_id=chal.id, ip=utils.get_ip(req=request), flag=provided_key)
         db.session.add(solve)
 
         db.session.commit()
@@ -200,7 +200,7 @@ class DynamicValueChallenge(BaseChallenge):
     @staticmethod
     def fail(team, chal, request):
         """
-        This method is used to insert WrongKeys into the database in order to mark an answer incorrect.
+        This method is used to insert Fails into the database in order to mark an answer incorrect.
 
         :param team: The Team object from the database
         :param chal: The Challenge object from the database
@@ -208,7 +208,7 @@ class DynamicValueChallenge(BaseChallenge):
         :return:
         """
         provided_key = request.form['key'].strip()
-        wrong = WrongKeys(teamid=team.id, chalid=chal.id, ip=utils.get_ip(request), flag=provided_key)
+        wrong = Fails(team_id=team.id, challenge_id=chal.id, ip=utils.get_ip(request), flag=provided_key)
         db.session.add(wrong)
         db.session.commit()
         db.session.close()
