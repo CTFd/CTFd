@@ -132,13 +132,13 @@ class DynamicValueChallenge(BaseChallenge):
         """
         Fails.query.filter_by(challenge_id=challenge.id).delete()
         Solves.query.filter_by(challenge_id=challenge.id).delete()
-        Flags.query.filter_by(chal=challenge.id).delete()
-        files = Files.query.filter_by(chal=challenge.id).all()
+        Flags.query.filter_by(challenge_id=challenge.id).delete()
+        files = Files.query.filter_by(challenge_id=challenge.id).all()
         for f in files:
             utils.delete_file(f.id)
-        Files.query.filter_by(chal=challenge.id).delete()
-        Tags.query.filter_by(chal=challenge.id).delete()
-        Hints.query.filter_by(chal=challenge.id).delete()
+        Files.query.filter_by(challenge_id=challenge.id).delete()
+        Tags.query.filter_by(challenge_id=challenge.id).delete()
+        Hints.query.filter_by(challenge_id=challenge.id).delete()
         DynamicChallenge.query.filter_by(id=challenge.id).delete()
         Challenges.query.filter_by(id=challenge.id).delete()
         db.session.commit()
