@@ -9,4 +9,4 @@ from CTFd.scoreboard import get_standings
 @admins_only
 def admin_scoreboard_view():
     standings = get_standings(admin=True)
-    return render_template('admin/scoreboard.html', teams=standings)
+    return render_template('admin/scoreboard.html', standings=standings)

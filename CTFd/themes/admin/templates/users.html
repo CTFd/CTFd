@@ -6,8 +6,8 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Teams
-			<span class="create-team" role="button" data-toggle="tooltip" title="Create Team">
+		<h1>Users
+			<span class="create-team" role="button" data-toggle="tooltip" title="Create User">
 				<i class="btn-fa fas fa-plus-circle"></i>
 			</span>
 		</h1>
@@ -44,7 +44,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-action">Edit Team</h2>
+				<h2 class="modal-action">Edit User</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -111,7 +111,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
-			{% if q and field%}
+			{% if q and field %}
 			<h4 class="text-center">Searching for teams with {{field}} matching {{q}}</h4>
 			{% endif %}
 
@@ -164,58 +164,58 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for team in teams %}
-					<tr name="{{ team.id }}">
-						<td class="team-id" value="{{ team.id }}">{{ team.id }}</td>
-						<td class="team-name" value="{{ team.name }}"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
+					{% for user in users %}
+					<tr name="{{ user.id }}">
+						<td class="team-id" value="{{ user.id }}">{{ user.id }}</td>
+						<td class="team-name" value="{{ user.name }}"><a href="{{ request.script_root }}/admin/team/{{ user.id }}">{{ user.name | truncate(32) }}</a>
 						</td>
-						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ team.email }}">
-							{% if team.email %}
-								{{ team.email | truncate(32) }}
+						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ user.email }}">
+							{% if user.email %}
+								{{ user.email | truncate(32) }}
 							{% endif %}
 						</td>
 						<td class="team-website d-none text-center">
-							{% if team.website %}
-								<a href="{{ team.website }}" target="_blank">
+							{% if user.website %}
+								<a href="{{ user.website }}" target="_blank">
 									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
-									   title="{{ team.website }}" aria-hidden="true"></i>
+									   title="{{ user.website }}" aria-hidden="true"></i>
 								</a>
 							{% endif %}
 						</td>
-						<td class="team-affiliation d-none" value="{{ team.affiliation if team.affiliation is not none }}">
-							<span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
+						<td class="team-affiliation d-none" value="{{ user.affiliation if user.affiliation is not none }}">
+							<span>{% if user.affiliation %}{{ user.affiliation | truncate(20) }}{% endif %}</span>
 						</td>
-						<td class="team-country d-none" value="{{ team.country if team.country is not none }}">
-							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
+						<td class="team-country d-none" value="{{ user.country if user.country is not none }}">
+							<span>{% if user.country %}{{ user.country }}{% endif %}</span>
 						</td>
-						<td class="team-admin d-none d-md-table-cell d-lg-table-cell text-center" value="{{ team.admin }}">
-							{% if team.admin %}
+						<td class="team-admin d-none d-md-table-cell d-lg-table-cell text-center" value="{{ user.admin }}">
+							{% if user.admin %}
 								<span class="badge badge-primary">admin</span>
 							{% endif %}
 						</td>
-						<td class="team-verified d-none d-md-table-cell d-lg-table-cell text-center" value="{{ team.verified }}">
-							{% if team.verified %}
+						<td class="team-verified d-none d-md-table-cell d-lg-table-cell text-center" value="{{ user.verified }}">
+							{% if user.verified %}
 								<span class="badge badge-success">verified</span>
 							{% endif %}
 						</td>
-						<td class="team-hidden d-none d-md-table-cell d-lg-table-cell text-center" value="{{ team.banned }}">
-							{% if team.banned %}
+						<td class="team-hidden d-none d-md-table-cell d-lg-table-cell text-center" value="{{ user.banned }}">
+							{% if user.banned %}
 								<span class="badge badge-danger">hidden</span>
 							{% endif %}
 						</td>
 						<td class="text-center"><span>
 							<span class="edit-team" data-toggle="tooltip" data-placement="top"
-								  title="Modify {{ team.name }}">
+								  title="Modify {{ user.name }}">
 								<i class="btn-fa fas fa-edit"></i>
 							</span>
 							{% if can_send_mail() %}
 							<span class="email-team" data-toggle="tooltip" data-placement="top"
-								  title="Email {{ team.name }}">
+								  title="Email {{ user.name }}">
 								<i class="btn-fa fas fa-envelope"></i>
 							</span>
 							{% endif %}
 							<span class="delete-team" data-toggle="tooltip" data-placement="top"
-								  title="Delete {{ team.name }}">
+								  title="Delete {{ user.name }}">
 								<i class="btn-fa fas fa-times"></i>
 							</span>
 						</span>

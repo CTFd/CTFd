@@ -79,7 +79,9 @@ def get_team_standings(admin=False, count=None):
         standings_query = db.session.query(
             Teams.id.label('team_id'),
             Teams.name.label('name'),
-            Teams.banned, sumscores.columns.score
+            Teams.hidden,
+            Teams.banned,
+            sumscores.columns.score
         ) \
             .join(sumscores, Teams.id == sumscores.columns.team_id) \
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
@@ -90,7 +92,7 @@ def get_team_standings(admin=False, count=None):
             sumscores.columns.score
         ) \
             .join(sumscores, Teams.id == sumscores.columns.team_id) \
-            .filter(Teams.banned == False) \
+            .filter(Teams.banned == False, Teams.hidden == False) \
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
     """
