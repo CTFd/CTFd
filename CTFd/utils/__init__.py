@@ -1017,35 +1017,3 @@ def import_ctf(backup, segments=None, erase=False):
         target = open(full_path, "wb")
         with source, target:
             shutil.copyfileobj(source, target)
-
-
-VIRT_SERVER = os.getenv('ADMIN_HOST', 'localhost')
-VIRT_SERVER_PORT = os.getenv('ADMIN_PORT', 3331)
-
-
-class EmptyCapacityException(Exception):
-    pass
-
-
-def get_machine_set(name):
-    r = requests.post(
-        'http://{}:{}/register'.format(VIRT_SERVER, VIRT_SERVER_PORT),
-        json={'name': name})
-
-    try:
-        resp = r.json()
-    except Exception :
-        raise Exception('Unable to parse JSON response')
-    
-
-    if r.status_code != 200:
-        if 'error' in resp:
-            raise Exception(resp['error'])
-        else:
-            raise Exception('Unexpected error without description')
-
-    for k in ['username', 'password']:
-        if k not in resp:
-            raise Exception('Unexpected response: Missing "{}"'.format(k))
-
-    return (resp['username'], resp['password'])

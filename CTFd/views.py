@@ -271,8 +271,6 @@ def profile():
                     if not utils.get_config('prevent_name_change'):
                         team.name = name
                         session['username'] = team.name
-                        session['guacamole_user'] = team.guacamole_user
-                        session['guacamole_password'] = team.guacamole_password
                 if team.email != email.lower():
                     team.email = email.lower()
                     if utils.get_config('verify_emails'):

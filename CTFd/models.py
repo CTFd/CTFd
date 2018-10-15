@@ -159,19 +159,15 @@ class Teams(db.Model):
     affiliation = db.Column(db.String(128))
     country = db.Column(db.String(32))
     bracket = db.Column(db.String(32))
-    guacamole_user = db.Column(db.String(128))
-    guacamole_password = db.Column(db.String(128))
     banned = db.Column(db.Boolean, default=False)
     verified = db.Column(db.Boolean, default=False)
     admin = db.Column(db.Boolean, default=False)
     joined = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, name, email, password, guac_user=None, guac_pass=None):
+    def __init__(self, name, email, password):
         self.name = name
         self.email = email
         self.password = bcrypt_sha256.encrypt(str(password))
-        self.guacamole_user = guac_user
-        self.guacamole_password = guac_pass
 
     def __repr__(self):
         return '<team %r>' % self.name

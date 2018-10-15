@@ -173,34 +173,16 @@ def register():
         if name_len:
             errors.append('Pick a longer team name')
 
-        if len(errors) == 0:
-            try:
-                guser, gpass = utils.get_machine_set(name)
-            except utils.EmptyCapacityException:
-                errors.append(
-                    'No more virtual environments are available. Please contact an administrator')
-            except Exception as e:
-                errors.append(str(e))
-
-                logger.warn("[{date}] {ip} - ERROR_VIRT_HOST: {err}".format(
-                    date=time.strftime("%m/%d/%Y %X"),
-                    ip=utils.get_ip(),
-                    err=str(e)
-                ))
-
         if len(errors) > 0:
             return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
         else:
             with app.app_context():
-                team = Teams(name, email.lower(), password,
-                             guac_user=guser, guac_pass=gpass)
+                team = Teams(name, email.lower(), password)
                 db.session.add(team)
                 db.session.commit()
                 db.session.flush()
 
                 session['username'] = team.name
-                session['guacamole_user'] = team.guacamole_user
-                session['guacamole_pass'] = team.guacamole_password
                 session['id'] = team.id
                 session['admin'] = team.admin
                 session['nonce'] = utils.sha512(os.urandom(10))
@@ -257,11 +239,6 @@ def login():
                 session['username'] = team.name
                 session['id'] = team.id
                 session['admin'] = team.admin
-
-                if team.guacamole_user != '':
-                    session['guacamole_user'] = team.guacamole_user
-                    session['guacamole_pass'] = team.guacamole_password
-
                 session['nonce'] = utils.sha512(os.urandom(10))
                 db.session.close()
 
