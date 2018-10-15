@@ -82,35 +82,42 @@
 				<hr class="d-sm-flex d-md-flex d-lg-none">
 
 				<ul class="navbar-nav ml-md-auto d-block d-sm-flex d-md-flex">
-					{% if username is defined %}
-						{% if admin %}
-							<li class="nav-item">
-								<a class="nav-link" href="{{ request.script_root }}/admin">Admin</a>
-							</li>
-						{% endif %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/team">Team</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/profile">Profile</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/logout">Logout</a>
-						</li>
-					{% else %}
-						{% if can_register() %}
-							<li class="nav-item">
-								<a class="nav-link" href="{{ request.script_root }}/register">Register</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link d-none d-md-block d-lg-block">|</a>
-							</li>
-						{% endif %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ request.script_root }}/login">Login</a>
-						</li>
+				    {% if username is defined %}
+				    {% if admin %}
+                    <li class="nav-item">
+					    <a class="nav-link" href="{{ request.script_root }}/admin">Admin</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ request.script_root }}/team">Team</a>
+                    </li>
+					<li class="nav-item">
+                        <a class="nav-link" href="{{ request.script_root }}/profile">Profile</a>
+                    </li>
+					<li class="nav-item">
+					    <a class="nav-link" href="{{ request.script_root }}/logout">Logout</a>
+                    </li>
+                    <li class="nav-item" style="margin-left: 10px; border-radius: 6px; padding-right: .6rem; padding-left: .6rem; background: rgba(255,255,255,.5); cursor: pointer;">
+                        <a class="nav-link" style="color: #211A52" href="{{  request.script_root }}/guaclogin">
+                            <i class="btn-fa fas fa-laptop"></i>
+                            &nbsp;
+                            Connect
+                        </a>
+                    </li>
+                    {% else %}
+                    {% if can_register() %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ request.script_root }}/register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-none d-md-block d-lg-block">|</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ request.script_root }}/login">Login</a>
+                    </li>
 					{% endif %}
-				</ul>
+                </ul>
 			</div>
 		</div>
 	</nav>
