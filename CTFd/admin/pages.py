@@ -14,7 +14,7 @@ def admin_pages_view():
 
     if request.method == 'GET' and page_op == 'preview':
         page = Pages.query.filter_by(id=page_id).first_or_404()
-        return render_template('page.html', content=markdown(page.html))
+        return render_template('page.html', content=markdown(page.content))
 
     if request.method == 'GET' and page_op == 'create':
         return render_template('admin/editor.html')
@@ -32,7 +32,7 @@ def admin_pages_view():
 
         if page_op == 'preview':
             page = Pages(title, route, html, draft=False)
-            return render_template('page.html', content=markdown(page.html))
+            return render_template('page.html', content=markdown(page.content))
 
         page = Pages.query.filter_by(id=page_form_id).first()
 
@@ -47,7 +47,7 @@ def admin_pages_view():
         if page:
             page.title = title
             page.route = route
-            page.html = html
+            page.content = html
             page.auth_required = auth_required
 
             if page_op == 'publish':

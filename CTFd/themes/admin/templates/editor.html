@@ -153,7 +153,7 @@
 								<br>
 
 								<div class="form-group">
-									<textarea id="admin-pages-editor" class="d-none" name="html">{% if page is defined %}{{ page.html }}{% endif %}</textarea>
+									<textarea id="admin-pages-editor" class="d-none" name="html">{% if page is defined %}{{ page.content }}{% endif %}</textarea>
 									<input name='id' type='hidden' {% if page is defined %}value="{{ page.id }}"{% endif %}>
 								</div>
 							</div>

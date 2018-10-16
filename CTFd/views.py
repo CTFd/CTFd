@@ -67,7 +67,7 @@ def setup():
             page = Pages(
                 title=None,
                 route='index',
-                html=index,
+                content=index,
                 draft=False
             )
 
@@ -136,7 +136,7 @@ def static_html(template):
         if page.auth_required and authed() is False:
             return redirect(url_for('auth.login', next=request.path))
 
-        return render_template('page.html', content=markdown(page.html))
+        return render_template('page.html', content=markdown(page.content))
 
 
 @views.route('/settings', methods=['POST', 'GET'])

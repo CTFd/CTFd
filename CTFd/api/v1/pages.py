@@ -24,14 +24,30 @@ class PageList(Resource):
 
     @admins_only
     def post(self):
-        pass
+        req = request.get_json()
+        schema = PageSchema()
+        page = schema.load(req)
+        if page.errors:
+            return page.errors
+
+        db.session.add(page.data)
+        db.session.commit()
+        response = schema.dump(page.data)
+        db.session.close()
+
+        return response
 
 
 @pages_namespace.route('/<page_id>')
 class PageDetail(Resource):
     @admins_only
     def get(self, page_id):
-        pass
+        page = Pages.query.filter_by(id=page_id).first()
+        schema = PageSchema()
+        result = schema.dump(pages)
+        if result.errors:
+            return result.errors
+        return result.data
 
     @admins_only
     def patch(self, page_id):

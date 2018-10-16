@@ -201,7 +201,7 @@ def import_ctf(backup, segments=None, erase=False):
                         auth_required = entry.get('auth_required', False)
                         page = Pages.query.filter_by(route=route).first()
                         if page:
-                            page.html = html
+                            page.content = html
                         else:
                             page = Pages(title, route, html, draft=draft, auth_required=auth_required)
                             db.session.add(page)
