@@ -14,32 +14,6 @@
 	</div>
 </div>
 
-<div id="email-user" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2>Email Team</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<form method="POST">
-					<input type="hidden" name="id">
-					<input type="hidden" name="nonce" value="{{ nonce }}">
-					<textarea class="form-control" name="msg" placeholder="Enter your message here"
-							  rows="15"></textarea>
-					<br>
-					<div id="email-user-errors"></div>
-					<button type="button" id="send-user-email" class="btn btn-primary float-right">
-						Send Message
-					</button>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
 <div id="update-user-modal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -147,8 +121,6 @@
 						</td>
 						<td class="text-center"><b>Website</b>
 						</td>
-{#						<td class="text-center"><b>Affiliation</b>#}
-{#						</td>#}
 						<td class="text-center"><b>Country</b>
 						</td>
 						<td class="text-center"><b>Hidden</b>
@@ -178,9 +150,6 @@
 								</a>
 							{% endif %}
 						</td>
-{#						<td class="team-affiliation" value="{{ team.affiliation if team.affiliation is not none }}">#}
-{#							<span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>#}
-{#						</td>#}
 						<td class="team-country" value="{{ team.country if team.country is not none }}">
 							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
 						</td>
@@ -195,12 +164,6 @@
 								  title="Modify {{ team.name }}">
 								<i class="btn-fa fas fa-edit"></i>
 							</span>
-							{% if can_send_mail() %}
-							<span class="email-team" data-toggle="tooltip" data-placement="top"
-								  title="Email {{ team.name }}">
-								<i class="btn-fa fas fa-envelope"></i>
-							</span>
-							{% endif %}
 							<span class="delete-team" data-toggle="tooltip" data-placement="top"
 								  title="Delete {{ team.name }}">
 								<i class="btn-fa fas fa-times"></i>
@@ -261,16 +224,6 @@ function load_update_modal(id, name, email, website, affiliation, country, admin
 }
 
 
-function load_email_modal(id){
-	var modal = $('#email-user');
-	modal.find('textarea').val("");
-	modal.find('input[name=id]').val(id);
-	$('#email-user-errors').empty();
-	$('#email-user form').attr('action', '{{ request.script_root }}/admin/team/'+id+'/mail');
-	$('#email-user').modal();
-}
-
-
 $(document).ready(function () {
     $('#update-user').click(function (e) {
         e.preventDefault();
@@ -294,28 +247,6 @@ $(document).ready(function () {
             }
             ;
         })
-    });
-
-    $('#send-user-email').click(function (e) {
-        e.preventDefault();
-        var id = $('#email-user input[name="id"]').val();
-        var email_data = $('#email-user form').serializeArray();
-        $.post($('#email-user form').attr('action'), $('#email-user form').serialize(), function (data) {
-            if (data.result) {
-                var error = $('<div class="alert alert-success alert-dismissable">\n' +
-                    '  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
-                    '  {0}\n'.format(data.message) +
-                    '</div>');
-                $('#email-user-errors').append(error);
-            }
-            else {
-                var error = $('<div class="alert alert-danger alert-dismissable">\n' +
-                    '  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
-                    '  {0}\n'.format(data.message) +
-                    '</div>');
-                $('#email-user-errors').append(error);
-            }
-        });
     });
 
     $('.edit-team').click(function () {
@@ -361,14 +292,6 @@ $(document).ready(function () {
             }
         })
     });
-
-
-    $('.email-team').click(function () {
-        var elem = $(this).parent().parent().parent();
-        var id = elem.find('.team-id').text().trim();
-        load_email_modal(id);
-    });
-
 });
 </script>
 {% endblock %}

@@ -174,7 +174,7 @@
 						</td>
 						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ user.email }}">
 							{% if user.email %}
-								{{ user.email | truncate(32) }}
+								<a href="mailto:{{ user.email }}">{{ user.email | truncate(32) }}</a>
 							{% endif %}
 						</td>
 						<td class="team-website text-center">
