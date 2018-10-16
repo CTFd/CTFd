@@ -8,27 +8,24 @@ from CTFd.admin import admin
 
 @admin.route('/admin/pages', methods=['GET', 'POST'])
 @admins_only
-def admin_pages_view():
-    page_id = request.args.get('id')
-    page_op = request.args.get('operation')
+def admin_pages_list():
+    pages = Pages.query.all()
+    return render_template('admin/pages.html', pages=pages)
 
-    if request.method == 'GET' and page_op == 'preview':
-        page = Pages.query.filter_by(id=page_id).first_or_404()
-        return render_template('page.html', content=markdown(page.content))
 
-    if request.method == 'GET' and page_op == 'create':
+@admin.route('/admin/pages/new', methods=['GET', 'POST'])
+@admins_only
+def admin_pages_new():
+    if request.method == 'GET':
         return render_template('admin/editor.html')
-
-    if page_id and request.method == 'GET':
-        page = Pages.query.filter_by(id=page_id).first()
-        return render_template('admin/editor.html', page=page)
-
-    if request.method == 'POST':
+    elif request.method == 'POST':
         page_form_id = request.form.get('id')
         title = request.form['title']
         html = request.form['html']
         route = request.form['route'].lstrip('/')
         auth_required = 'auth_required' in request.form
+
+        page_op = request.args.get('operation')
 
         if page_op == 'preview':
             page = Pages(title, route, html, draft=False)
@@ -92,22 +89,20 @@ def admin_pages_view():
 
         return jsonify(data)
 
-    pages = Pages.query.all()
-    return render_template('admin/pages.html', pages=pages)
 
-
-@admin.route('/admin/pages/delete', methods=['POST'])
+@admin.route('/admin/pages/<int:page_id>', methods=['GET', 'POST'])
 @admins_only
-def delete_page():
-    # TODO: Move to API
-    id = request.form['id']
-    page = Pages.query.filter_by(id=id).first_or_404()
-    db.session.delete(page)
-    db.session.commit()
-    db.session.close()
-    with app.app_context():
-        cache.clear()
-    return '1'
+def admin_pages_detail(page_id):
+    page = Pages.query.filter_by(id=page_id).first_or_404()
+    page_op = request.args.get('operation')
+
+    if request.method == 'GET' and page_op == 'preview':
+        return render_template('page.html', content=markdown(page.content))
+
+    if request.method == 'GET' and page_op == 'create':
+        return render_template('admin/editor.html')
+
+    return render_template('admin/editor.html', page=page)
 
 
 @admin.route('/admin/media', methods=['GET', 'POST', 'DELETE'])
