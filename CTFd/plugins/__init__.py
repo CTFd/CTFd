@@ -146,7 +146,7 @@ def init_plugins(app):
     :param app: A CTFd application
     :return:
     """
-    modules = glob.glob(os.path.dirname(__file__) + "/*")
+    modules = sorted(glob.glob(os.path.dirname(__file__) + "/*"))
     blacklist = {'__pycache__'}
     for module in modules:
         module_name = os.path.basename(module)
