@@ -13,7 +13,6 @@ announcements_namespace = Namespace('announcements', description="Endpoint to re
 
 @announcements_namespace.route('')
 class AnnouncementList(Resource):
-    @admins_only
     def get(self):
         announcements = Announcements.query.all()
         schema = AnnouncementSchema(many=True)
