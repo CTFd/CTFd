@@ -41,6 +41,7 @@ class CTFdFlask(Flask):
     def __init__(self, *args, **kwargs):
         """Overriden Jinja constructor setting a custom jinja_environment"""
         self.jinja_environment = SandboxedBaseEnvironment
+        self.jinja_environment.cache = None
         Flask.__init__(self, *args, **kwargs)
 
     def create_jinja_environment(self):
