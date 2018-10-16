@@ -42,17 +42,35 @@ class PageList(Resource):
 class PageDetail(Resource):
     @admins_only
     def get(self, page_id):
-        page = Pages.query.filter_by(id=page_id).first()
+        page = Pages.query.filter_by(id=page_id).first_or_404()
         schema = PageSchema()
-        result = schema.dump(pages)
+        result = schema.dump(page)
         if result.errors:
             return result.errors
         return result.data
 
     @admins_only
     def patch(self, page_id):
-        pass
+        page = Pages.query.filter_by(id=page_id).first_or_404()
+        req = request.get_json()
+
+        schema = PageSchema(partial=True)
+        page = schema.load(req, instance=page, partial=True)
+        if page.errors:
+            return page.errors
+
+        db.session.commit()
+        response = schema.dump(page.data)
+        db.session.close()
+        return response
 
     @admins_only
     def delete(self, page_id):
-        pass
+        page = Pages.query.filter_by(id=page_id).first_or_404()
+        db.session.delete(page)
+        db.session.commit()
+        db.session.close()
+
+        return {
+            'success': True
+        }
