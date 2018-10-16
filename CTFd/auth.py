@@ -186,6 +186,7 @@ def register():
                 db.session.flush()
 
                 session['username'] = user.name
+                session['email'] = user.email
                 session['id'] = user.id
                 session['type'] = user.type
                 session['admin'] = user.admin
@@ -239,6 +240,7 @@ def login():
                 except:
                     pass  # TODO: Some session objects don't implement regenerate :(
                 session['username'] = user.name
+                session['email'] = user.email
                 session['id'] = user.id
                 session['type'] = user.type
                 session['admin'] = user.admin

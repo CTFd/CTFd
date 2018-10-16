@@ -188,6 +188,7 @@ def settings():
                         session['username'] = team.name
                 if team.email != email.lower():
                     team.email = email.lower()
+                    session['email'] = team.email
                     if get_config('verify_emails'):
                         team.verified = False
 
