@@ -50,7 +50,7 @@
 				</button>
 			</div>
 			<div class="modal-body clearfix">
-				<form method="POST" action="{{ request.script_root }}/admin/teams/">
+				<form>
 					<input type="hidden" name="id">
 					<div class="form-group">
 						<label for="name">Team Name</label>
@@ -93,6 +93,10 @@
 						<div class="form-check form-check-inline">
 							<input class="form-check-input" type="checkbox" name="hidden" id="hidden-checkbox">
 							<label class="form-check-label" for="hidden-checkbox">Hidden</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="checkbox" name="banned" id="banned-checkbox">
+							<label class="form-check-label" for="banned-checkbox">Banned</label>
 						</div>
 					</div>
 					<div id="results">
@@ -156,6 +160,8 @@
 						</td>
 						<td class="text-center"><b>Hidden</b>
 						</td>
+						<td class="text-center"><b>Banned</b>
+						</td>
 						<td class="text-center"><b>Settings</b>
 						</td>
 					</tr>
@@ -174,7 +180,7 @@
 						</td>
 						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ user.email }}">
 							{% if user.email %}
-								<a href="mailto:{{ user.email }}">{{ user.email | truncate(32) }}</a>
+								<a href="mailto:{{ user.email }}" target="_blank">{{ user.email | truncate(32) }}</a>
 							{% endif %}
 						</td>
 						<td class="team-website text-center">
@@ -198,9 +204,14 @@
 								<span class="badge badge-success">verified</span>
 							{% endif %}
 						</td>
-						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ user.banned }}">
-							{% if user.banned %}
+						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ user.hidden }}">
+							{% if user.hidden %}
 								<span class="badge badge-danger">hidden</span>
+							{% endif %}
+						</td>
+						<td class="team-banned d-md-table-cell d-lg-table-cell text-center" value="{{ user.banned }}">
+							{% if user.banned %}
+								<span class="badge badge-danger">banned</span>
 							{% endif %}
 						</td>
 						<td class="text-center"><span>
@@ -244,162 +255,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-var nonce = "{{ nonce }}";
-
-function load_update_modal(id, name, email, website, affiliation, country, admin, verified, hidden){
-	var modal_form = $('#update-user-modal form');
-
-	modal_form.find('input[name=name]').val(name);
-	modal_form.find('input[name=id]').val(id);
-	modal_form.find('input[name=email]').val(email);
-	modal_form.find('input[name=website]').val(website);
-	modal_form.find('input[name=affiliation]').val(affiliation);
-	modal_form.find('input[name=country]').val(country);
-	modal_form.find('input[name=password]').val('');
-
-    modal_form.find('input[name=admin]').prop('checked', admin);
-    modal_form.find('input[name=verified]').prop('checked', verified);
-    modal_form.find('input[name=hidden]').prop('checked', hidden);
-
-	if (id == 'new'){
-		$('#update-user-modal .modal-action').text('Create User');
-	} else {
-		$('#update-user-modal .modal-action').text('Edit User');
-	}
-
-	$('#results').empty();
-	$('#update-user-modal form').attr('action', '{{ request.script_root }}/admin/team/'+id);
-	$('#update-user-modal').modal("show");
-}
-
-
-function load_email_modal(id){
-	var modal = $('#email-user');
-	modal.find('textarea').val("");
-	modal.find('input[name=id]').val(id);
-	$('#email-user-errors').empty();
-	$('#email-user form').attr('action', '{{ request.script_root }}/admin/team/'+id+'/mail');
-	$('#email-user').modal();
-}
-
-
-$(document).ready(function () {
-    $('#update-user').click(function (e) {
-        e.preventDefault();
-        var id = $('#update-user-modal input[name="id"]').val();
-        var params = {};
-
-		var params = {};
-		var form = $("#update-user-modal form");
-		var values = form.serializeArray();
-		values = values.concat(
-			form.find('input[type=checkbox]:checked').map(
-				function () {
-					return {"name": this.name, "value": true}
-				}).get(),
-            form.find('input[type=checkbox]:not(:checked)').map(
-                function () {
-                    return {"name": this.name, "value": false}
-                }).get()
-		);
-		values.map(function (x) {
-			params[x.name] = x.value;
-		});
-        $('#results').empty();
-        console.log(params);
-
-        var target = '/api/v1/users';
-        var method = 'POST';
-        if (params.id) {
-            target += '/' + params.id;
-            method = 'PATCH';
-        }
-        fetch(script_root + target, {
-            method: method,
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(params)
-        }).then(function (response) {
-			{#window.location.reload();#}
-        });
-
-
-        return;
-    });
-
-    $('#send-user-email').click(function (e) {
-        e.preventDefault();
-        var id = $('#email-user input[name="id"]').val();
-        var email_data = $('#email-user form').serializeArray();
-        $.post($('#email-user form').attr('action'), $('#email-user form').serialize(), function (data) {
-            if (data.result) {
-                var error = $('<div class="alert alert-success alert-dismissable">\n' +
-                    '  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
-                    '  {0}\n'.format(data.message) +
-                    '</div>');
-                $('#email-user-errors').append(error);
-            }
-            else {
-                var error = $('<div class="alert alert-danger alert-dismissable">\n' +
-                    '  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>\n' +
-                    '  {0}\n'.format(data.message) +
-                    '</div>');
-                $('#email-user-errors').append(error);
-            }
-        });
-    });
-
-    $('.edit-team').click(function () {
-        var elem = $(this).parent().parent().parent();
-        var id = elem.find('.team-id').attr('value') || '';
-        var name = elem.find('.team-name').attr('value') || '';
-        var email = elem.find('.team-email').attr('value') || '';
-        var website = elem.find('.team-website > a').attr('href') || '';
-        var affiliation = elem.find('.team-affiliation').attr('value') || '';
-        var country = elem.find('.team-country').attr('value') || '';
-
-        var admin = elem.find('.team-admin').attr('value') == 'True' || false;
-		var verified = elem.find('.team-verified').attr('value') == 'True' || false;
-		var hidden = elem.find('.team-hidden').attr('value') == 'True' || false;
-
-        load_update_modal(id, name, email, website, affiliation, country, admin, verified, hidden);
-    });
-
-    $('.create-team').click(function () {
-        load_update_modal('new', '', '', '', '', '', false, false, false);
-    });
-
-    $('.delete-team').click(function () {
-        var elem = $(this).parent().parent().parent();
-        var user_id = elem.find('.team-id').text().trim();
-        var name = htmlentities(elem.find('.team-name').text().trim());
-
-        var td_row = $(this).parent().parent().parent();
-
-        ezq({
-            title: "Delete User",
-            body: "Are you sure you want to delete {0}".format("<strong>" + name + "</strong>"),
-            success: function () {
-                var route = script_root + '/api/v1/users/' + user_id;
-                $.delete(route, {}, function (data) {
-                    if (data.success) {
-                        td_row.remove();
-                    }
-                });
-            }
-        })
-    });
-
-
-    $('.email-team').click(function () {
-        var elem = $(this).parent().parent().parent();
-        var id = elem.find('.team-id').text().trim();
-        load_email_modal(id);
-    });
-
-});
-</script>
+<script src="{{ request.script_root }}/themes/admin/static/js/users/users.js"></script>
 {% endblock %}

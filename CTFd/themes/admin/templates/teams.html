@@ -138,9 +138,13 @@
 							<a href="{{ request.script_root }}/admin/team/{{ team.id }}">
 								{{ team.name | truncate(32) }}
 							</a>
-							{% if team.affiliation %}
-								<span class="d-block text-muted"><small>{{ team.affiliation | truncate(20) }}</small></span>
-							{% endif %}
+							<span class="d-block text-muted">
+								<small>
+									{% if team.affiliation %}
+										{{ team.affiliation | truncate(20) }}
+									{% endif %}
+								</small>
+							</span>
 						</td>
 
 						<td class="team-website text-center">
@@ -161,7 +165,7 @@
 							{% endif %}
 						</td>
 
-						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ team.banned }}">
+						<td class="team-banned d-md-table-cell d-lg-table-cell text-center" value="{{ team.banned }}">
 							{% if team.banned %}
 								<span class="badge badge-danger">banned</span>
 							{% endif %}

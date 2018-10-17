@@ -1,4 +1,4 @@
-function load_update_modal(id, name, email, website, affiliation, country, admin, verified, hidden) {
+function load_update_modal(id, name, email, website, affiliation, country, admin, verified, hidden, banned) {
     var modal_form = $('#update-team-modal form');
 
     modal_form.find('input[name=name]').val(name);
@@ -12,6 +12,7 @@ function load_update_modal(id, name, email, website, affiliation, country, admin
     modal_form.find('input[name=admin]').prop('checked', admin);
     modal_form.find('input[name=verified]').prop('checked', verified);
     modal_form.find('input[name=hidden]').prop('checked', hidden);
+    modal_form.find('input[name=banned]').prop('checked', banned);
 
     if (id == 'new') {
         $('#update-team-modal .modal-action').text('Create Team');
@@ -66,8 +67,9 @@ $(document).ready(function () {
 
         var admin = elem.find('.team-admin').attr('value') == 'True' || false;
         var hidden = elem.find('.team-hidden').attr('value') == 'True' || false;
+        var banned = elem.find('.team-banned').attr('value') == 'True' || false;
 
-        load_update_modal(id, name, email, website, affiliation, country, admin, hidden);
+        load_update_modal(id, name, email, website, affiliation, country, admin, hidden, banned);
     });
 
     $('.create-team').click(function () {
