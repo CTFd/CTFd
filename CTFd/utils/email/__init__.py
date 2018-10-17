@@ -112,3 +112,8 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=
     return smtp
 
 
+check_email_format_regex = r"(^[^@\s]+@[^@\s]+\.[^@\s]+$)"
+
+
+def check_email_format(email):
+    return bool(re.match(check_email_format_regex, email))
