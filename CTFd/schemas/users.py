@@ -60,7 +60,7 @@ class UserSchema(ma.ModelSchema):
         if obj:
             if is_admin():
                 target_user = Users.query.filter_by(id=data['id']).first()
-                if obj.id != target_user.id:
+                if target_user and obj.id != target_user.id:
                     raise ValidationError('Email address has already been used')
             else:
                 if obj.id != get_current_user().id:

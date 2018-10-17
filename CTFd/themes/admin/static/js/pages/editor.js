@@ -131,21 +131,7 @@ function insert_at_cursor(editor, text) {
 
 function submit_form() {
     editor.save(); // Save the CodeMirror data to the Textarea
-
-    var params = {};
-    var form = $("#page-edit");
-    var values = form.serializeArray();
-
-    values = values.concat(
-        form.find('input[type=checkbox]:checked').map(
-            function () {
-                return {"name": this.name, "value": true}
-            }).get()
-    );
-    values.map(function (x) {
-        params[x.name] = x.value || null;
-    });
-
+    var params = $("#page-edit").serializeJSON();
     var target = '/api/v1/pages';
     var method = 'POST';
 
@@ -153,8 +139,6 @@ function submit_form() {
         target += '/' + params.id;
         method = 'PATCH';
     }
-    console.log(params);
-    console.log(target);
 
     fetch(script_root + target, {
         method: method,
@@ -188,18 +172,19 @@ function preview_page() {
 
 $(document).ready(function () {
     $('#media-insert').click(function (e) {
-        var tag = ''
+        var tag = '';
         try {
-            var tag = $('#media-icon').children()[0].nodeName.toLowerCase();
+            tag = $('#media-icon').children()[0].nodeName.toLowerCase();
         } catch (err) {
-            var tag = '';
+            tag = '';
         }
         var link = $('#media-link').val();
         var fname = $('#media-filename').text();
-        if (tag == 'img') {
-            var entry = '![{0}]({1})'.format(fname, link);
+        var entry = null;
+        if (tag === 'img') {
+            entry = '![{0}]({1})'.format(fname, link);
         } else {
-            var entry = '[{0}]({1})'.format(fname, link);
+            entry = '[{0}]({1})'.format(fname, link);
         }
         insert_at_cursor(editor, entry);
     });
@@ -207,13 +192,11 @@ $(document).ready(function () {
 
     $('#publish-page').click(function (e) {
         e.preventDefault();
-        $('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=publish');
         submit_form();
     });
 
     $('#save-page').click(function (e) {
         e.preventDefault();
-        $('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=save');
         submit_form();
     });
 

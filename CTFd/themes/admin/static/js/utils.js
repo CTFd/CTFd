@@ -16,6 +16,32 @@ $.fn.serializeObject = function()
     return o;
 };
 
+$.fn.serializeJSON = function(omit_nulls) {
+    var omit_nulls = omit_nulls === undefined ? false: true;
+
+    var params = {};
+    var form = $(this);
+    var values = form.serializeArray();
+
+    values = values.concat(
+        form.find('input[type=checkbox]:checked').map(
+            function () {
+                return {"name": this.name, "value": true}
+            }).get()
+    );
+    values = values.concat(
+        form.find('input[type=checkbox]:not(:checked)').map(
+            function () {
+                return {"name": this.name, "value": false}
+            }).get()
+    );
+    values.map(function (x) {
+        if (omit_nulls && x.value !== null) {
+            params[x.name] = x.value;
+        }
+    });
+    return params;
+};
 
 //http://stackoverflow.com/a/2648463 - wizardry!
 String.prototype.format = String.prototype.f = function() {

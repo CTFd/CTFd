@@ -1,10 +1,11 @@
 from sqlalchemy.sql.expression import union_all
 from marshmallow import fields, post_load
-from marshmallow import validate, ValidationError
+from marshmallow import validate, ValidationError, pre_load
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Teams
 from CTFd.utils.validators import unique_team_name, validate_country_code
 from CTFd.utils.countries import lookup_country_code
+from CTFd.utils.user import is_admin, get_current_team
 
 
 class TeamSchema(ma.ModelSchema):
@@ -18,7 +19,6 @@ class TeamSchema(ma.ModelSchema):
         'name',
         required=True,
         validate=[
-            unique_team_name,
             validate.Length(min=1, max=128, error='Team names must not be empty')
         ]
     )
@@ -42,6 +42,31 @@ class TeamSchema(ma.ModelSchema):
             validate_country_code
         ]
     )
+
+    @pre_load
+    def validate_parameters(self, data):
+        obj = Teams.query.filter_by(id=data['id']).first()
+
+        if obj:
+            email = data.get('email')
+            if email:
+                if is_admin():
+                    target_user = Teams.query.filter_by(email=email).first()
+                    if target_user and obj.id != target_user.id:
+                        raise ValidationError('Email address has already been used')
+                else:
+                    if obj.id != get_current_team().id:
+                        raise ValidationError('Email address has already been used')
+
+            name = data.get('name')
+            if name:
+                if is_admin():
+                    target_user = Teams.query.filter_by(name=name).first()
+                    if target_user and obj.id != target_user.id:
+                        raise ValidationError('Team name has already been taken')
+                else:
+                    if obj.id != get_current_team().id:
+                        raise ValidationError('Team name has already been taken')
 
     views = {
         'user': [
