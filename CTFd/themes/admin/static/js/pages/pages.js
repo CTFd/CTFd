@@ -12,7 +12,7 @@ $(document).ready(function () {
                 var page_delete_route = '{{ request.script_root }}/admin/pages/delete';
                 $.delete(script_root + '/api/v1/pages/' + page_id, {}, function (data) {
                     if (data.success) {
-                        elem.parent().parent().remove()
+                        elem.parent().parent().remove();
                     }
                 });
             }

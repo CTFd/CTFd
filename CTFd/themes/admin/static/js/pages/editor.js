@@ -166,7 +166,7 @@ function submit_form() {
     }).then(function (response) {
         return response.json();
     }).then(function(data){
-        if (method == 'PATCH') {
+        if (method === 'PATCH') {
             ezal({
                 title: 'Saved',
                 body: 'Your changes have been saved',
