@@ -17,8 +17,6 @@ $.fn.serializeObject = function()
 };
 
 $.fn.serializeJSON = function(omit_nulls) {
-    var omit_nulls = omit_nulls === undefined ? false: true;
-
     var params = {};
     var form = $(this);
     var values = form.serializeArray();
@@ -36,7 +34,11 @@ $.fn.serializeJSON = function(omit_nulls) {
             }).get()
     );
     values.map(function (x) {
-        if (omit_nulls && x.value !== null) {
+        if (omit_nulls){
+            if (x.value !== null && x.value !== ""){
+                params[x.name] = x.value;
+            }
+        } else {
             params[x.name] = x.value;
         }
     });
