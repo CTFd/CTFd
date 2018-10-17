@@ -284,17 +284,6 @@ class Users(db.Model):
         super(Users, self).__init__(**kwargs)
         self.password = hash_password(str(kwargs['password']))
 
-    def get_dict(self, admin=False):
-        obj = {
-            'id': self.id,
-            'name': self.name,
-            'team_id': self.team_id,
-            'website': self.website,
-            'country': self.country,
-            'bracket': self.bracket
-        }
-        return obj
-
     @property
     def score(self):
         return self.get_score(admin=False)

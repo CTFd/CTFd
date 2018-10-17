@@ -45,7 +45,9 @@ $(document).ready(function () {
             return response.json();
         }).then(function (data) {
             if (data.id) {
-                $('#update-team-modal').modal("toggle");
+                // TODO: Update row in place
+                window.location.reload();
+                // $('#update-team-modal').modal("toggle");
             } else {
                 ezal({
                     title: 'Error!',

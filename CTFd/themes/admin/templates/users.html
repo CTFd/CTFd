@@ -194,8 +194,8 @@
 						<td class="team-country" value="{{ user.country if user.country is not none }}">
 							<span>{% if user.country %}{{ user.country }}{% endif %}</span>
 						</td>
-						<td class="team-admin d-md-table-cell d-lg-table-cell text-center" value="{{ user.admin }}">
-							{% if user.admin %}
+						<td class="team-admin d-md-table-cell d-lg-table-cell text-center" value="{{ user.type }}">
+							{% if user.type == 'admin' %}
 								<span class="badge badge-primary">admin</span>
 							{% endif %}
 						</td>
@@ -238,15 +238,15 @@
 			{% if pages > 1 %}
 			<div class="text-center">Page
 				<br>
-				{% if curr_page != 1 %}<a href="{{ request.script_root }}/admin/teams/{{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
+				{% if curr_page != 1 %}<a href="{{ request.script_root }}/admin/users?page={{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
 				{% for page in range(1, pages + 1) %}
 					{% if curr_page != page %}
-						<a href="{{ request.script_root }}/admin/teams/{{ page }}">{{ page }}</a>
+						<a href="{{ request.script_root }}/admin/users?page={{ page }}">{{ page }}</a>
 					{% else %}
 						<b>{{ page }}</b>
 					{% endif %}
 				{% endfor %}
-				{% if curr_page != pages %}<a href="{{ request.script_root }}/admin/teams/{{ curr_page + 1 }}">&gt;&gt;&gt;</a>{% endif %}
+				{% if curr_page != pages %}<a href="{{ request.script_root }}/admin/users?page={{ curr_page + 1 }}">&gt;&gt;&gt;</a>{% endif %}
 			</div>
 			{% endif %}
 		</div>
