@@ -101,7 +101,8 @@ class UserSchema(ma.ModelSchema):
             'hidden',
             'id',
             'oauth_id',
-            'password'
+            'password',
+            'type'
         ]
     }
 

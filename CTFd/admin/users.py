@@ -10,7 +10,7 @@ from CTFd.admin import admin
 
 @admin.route('/admin/users')
 @admins_only
-def list(page):
+def user_list():
     page = request.args.get('page', 1)
 
     page = abs(int(page))

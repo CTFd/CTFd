@@ -83,8 +83,11 @@
 					</div>
 					<div class="form-group">
 						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="checkbox" name="admin" id="admin-checkbox">
-							<label class="form-check-label" for="admin-checkbox">Admin</label>
+{#							TODO: Properly align this with what the user type actually is#}
+							<select class="form-control form-inline" id="type-select" name="type">
+								<option value="user">User</option>
+								<option value="admin">Admin</option>
+							</select>
 						</div>
 						<div class="form-check form-check-inline">
 							<input class="form-check-input" type="checkbox" name="verified" id="verified-checkbox">
