@@ -95,7 +95,7 @@ function update_configs(obj){
 }
 
 $(function () {
-    $('.config-section > form').submit(function(e){
+    $('.config-section > form:not(.form-upload)').submit(function(e){
         e.preventDefault();
         var obj = $(this).serializeJSON();
         update_configs(obj);
