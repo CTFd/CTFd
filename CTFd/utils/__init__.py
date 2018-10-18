@@ -42,6 +42,7 @@ def get_app_config(key):
 
 @cache.memoize()
 def get_config(key):
+    # TODO: Perhaps this should be serialized to JSON.
     config = Configs.query.filter_by(key=key).first()
     if config and config.value:
         value = config.value

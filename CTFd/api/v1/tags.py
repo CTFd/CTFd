@@ -65,6 +65,7 @@ class Tag(Resource):
 
     @admins_only
     def put(self, tag_id):
+        # TODO: This should be PATCH probably
         tag = Tags.query.filter_by(id=tag_id).first_or_404()
         schema = TagSchema()
         req = request.get_json()

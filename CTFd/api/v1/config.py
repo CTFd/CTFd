@@ -5,6 +5,7 @@ from CTFd.schemas.config import ConfigSchema
 from CTFd.utils.decorators import (
     admins_only
 )
+from CTFd.utils import get_config, set_config
 
 configs_namespace = Namespace('configs', description="Endpoint to retrieve Configs")
 
@@ -22,7 +23,7 @@ class ConfigList(Resource):
     def post(self):
         req = request.get_json()
         schema = ConfigSchema()
-        config = schema.load(req, session=db.session)
+        config = schema.load(req)
 
         if config.errors:
             return config.errors
@@ -33,13 +34,23 @@ class ConfigList(Resource):
 
         return schema.dump(config)
 
+    @admins_only
+    def patch(self):
+        req = request.get_json()
+
+        for key, value in req.iteritems():
+            set_config(key=key, value=value)
+
+        return {
+            'success': True
+        }
+
 
 @configs_namespace.route('/<config_key>')
 class Config(Resource):
     @admins_only
     def get(self, config_key):
-        config = Configs.query.filter_by(key=config_key).first_or_404()
-        return ConfigSchema().dump(config)
+        return get_config(config_key)
 
     @admins_only
     def patch(self, config_key):
