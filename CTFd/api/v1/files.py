@@ -48,20 +48,6 @@ class FilesDetail(Resource):
         f = Files.query.filter_by(id=file_id).first_or_404()
         return FileSchema().dump(f)
 
-    # @admins_only
-    # def patch(self, config_key):
-    #     config = Configs.query.filter_by(key=config_key).first_or_404()
-    #     data = request.get_json()
-    #     response = ConfigSchema(instance=config, partial=True).load(data)
-    #
-    #     if response.errors:
-    #         return response.errors
-    #
-    #     db.session.commit()
-    #     response = ConfigSchema().dump(response.data)
-    #     db.session.close()
-    #     return response
-    #
     @admins_only
     def delete(self, file_id):
         f = Files.query.filter_by(id=file_id).first_or_404()

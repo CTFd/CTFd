@@ -113,7 +113,7 @@ function submit_form() {
 
 function preview_page() {
     editor.save(); // Save the CodeMirror data to the Textarea
-    $('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=preview');
+    $('#page-edit').attr('action', script_root + '/admin/pages/preview');
     $('#page-edit').attr('target', '_blank');
     $('#page-edit').submit();
 }
