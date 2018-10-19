@@ -11,6 +11,28 @@ class SubmissionSchema(ma.ModelSchema):
         dump_only = ('id', )
         # load_only = ('password',)
 
+    views = {
+        'admin': [
+            'provided',
+            'ip',
+            'challenge',
+            'user',
+            'team',
+            'date',
+            'type',
+            'id'
+        ],
+        'user': [
+            'ip',
+            'challenge',
+            'user',
+            'team',
+            'date',
+            'type',
+            'id'
+        ]
+    }
+
     def __init__(self, view=None, *args, **kwargs):
         if view:
             if type(view) == str:

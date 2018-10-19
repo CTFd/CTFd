@@ -152,19 +152,6 @@ class Awards(db.Model):
     def __init__(self, *args, **kwargs):
         super(Awards, self).__init__(**kwargs)
 
-    def get_dict(self, admin=False):
-        obj = {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'category': self.category,
-            'value': self.value,
-            'user_id': self.user_id,
-            'team_id': self.team_id,
-            'date': self.date.isoformat()
-        }
-        return obj
-
     def __repr__(self):
         return '<Award %r>' % self.name
 
@@ -233,16 +220,6 @@ class Flags(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Flags, self).__init__(**kwargs)
-
-    def get_dict(self, admin=False):
-        obj = {
-            'id': self.id,
-            'challenge_id': self.challenge_id,
-            'type': self.type,
-            'content': self.flag,
-            'data': self.data,
-        }
-        return obj
 
     def __repr__(self):
         return "<Flag {0} for challenge {1}>".format(self.content, self.challenge_id)
@@ -513,18 +490,6 @@ class Submissions(db.Model):
     __mapper_args__ = {
         'polymorphic_on': type,
     }
-
-    # def get_dict(self, admin=False):
-    #     obj = {
-    #         'id': self.id,
-    #         'type': self.type,
-    #         'challenge_id': self.challenge_id,
-    #         'user_id': self.user_id,
-    #         'team_id': self.team_id,
-    #         'provided': self.provided,
-    #         'date': self.date.isoformat(),
-    #     }
-    #     return obj
 
     def __repr__(self):
         return '<Submission {}, {}, {}, {}>'.format(self.team_id, self.chal_id, self.ip, self.provided)

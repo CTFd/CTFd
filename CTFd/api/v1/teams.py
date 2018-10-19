@@ -2,6 +2,8 @@ from flask import session, request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Teams, Solves, Awards, Fails
 from CTFd.schemas.teams import TeamSchema
+from CTFd.schemas.submissions import SubmissionSchema
+from CTFd.schemas.awards import AwardSchema
 from CTFd.utils.user import (
     get_current_team,
     is_admin
@@ -127,7 +129,10 @@ class TeamSolves(Resource):
             if team_id != session.get('team_id'):
                 solves = solves.filter(Solves.date < freeze)
 
-        response = [solve.get_dict() for solve in solves.all()]
+        view = 'admin' if is_admin() else 'user'
+
+        schema = SubmissionSchema(view=view, many=True)
+        response = schema.dump(solves.all()).data
         return response
 
 
@@ -148,7 +153,10 @@ class TeamFails(Resource):
             if team_id != session.get('team_id'):
                 fails = fails.filter(Solves.date < freeze)
 
-        response = [fail.get_dict() for fail in fails.all()]
+        view = 'admin' if is_admin() else 'user'
+
+        schema = SubmissionSchema(view=view, many=True)
+        response = schema.dump(fails.all()).data
         return response
 
 
@@ -169,5 +177,6 @@ class TeamAwards(Resource):
             if team_id != session.get('team_id'):
                 awards = awards.filter(Awards.date < freeze)
 
-        response = [award.get_dict() for award in awards.all()]
+        schema = SubmissionSchema(many=True)
+        response = schema.dump(awards.all()).data
         return response
