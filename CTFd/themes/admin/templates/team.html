@@ -48,7 +48,7 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1 id="team-id" class="text-center">{{ team.name }}</h1>
-		<h2 id="team-email" class="text-center">{{ team.email }}</h2>
+		<h2 id="team-email" class="text-center">{{ members | length }} members</h2>
 		<h2 id="team-place" class="text-center">
 			{% if place %}
 				{{ place }}
@@ -89,8 +89,29 @@
 			{% endif %}
 	</div>
 
+	<div class="row pt-5">
+		<div class="col-md-12">
+			<table class="table table-striped">
+				<h3 class="text-center">Team Members</h3>
+				<thead>
+				<tr>
+					<td class="text-center"><b>User Name</b></td>
+					<td class="text-center"><b>E-Mail</b></td>
+				</tr>
+				</thead>
+				<tbody>
+				{% for member in members %}
+					<tr>
+						<td class="text-center">{{ member.name }}</td>
+						<td class="text-center">{{ member.email }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
 
-	<nav class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+	<nav class="nav nav-tabs nav-fill pt-5" id="myTab" role="tablist">
 		<a class="nav-item nav-link active" id="nav-solves-tab" data-toggle="tab" href="#nav-solves" role="tab"
 		   aria-controls="nav-solves" aria-selected="true">Solves</a>
 
@@ -122,10 +143,10 @@
 					<tbody>
 					{% for solve in solves %}
 						<tr class="chal-solve">
-							<td class="text-center chal" id="{{ solve.chalid }}">{{ solve.chal.name }}</td>
-							<td class="flag" id="{{ solve.id }}"><pre>{{ solve.flag }}</pre></td>
-							<td class="text-center">{{ solve.chal.category }}</td>
-							<td class="text-center">{{ solve.chal.value }}</td>
+							<td class="text-center chal" id="{{ solve.challenge_id }}">{{ solve.challenge.name }}</td>
+							<td class="flag" id="{{ solve.id }}"><pre>{{ solve.provided }}</pre></td>
+							<td class="text-center">{{ solve.challenge.category }}</td>
+							<td class="text-center">{{ solve.challenge.value }}</td>
 							<td class="text-center solve-time">
 								<script>document.write(moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
@@ -157,16 +178,16 @@
 					</tr>
 					</thead>
 					<tbody>
-					{% for wrong_key in wrong_keys %}
+					{% for fail in fails %}
 						<tr class="chal-wrong">
-							<td class="text-center chal" id="{{ wrong_key.chalid }}">{{ wrong_key.chal.name }}</td>
-							<td class="flag" id="{{ wrong_key.id }}"><pre>{{ wrong_key.flag }}</pre></td>
+							<td class="text-center chal" id="{{ fail.challenge_id }}">{{ fail.challenge.name }}</td>
+							<td class="flag" id="{{ fail.id }}"><pre>{{ fail.provided }}</pre></td>
 							<td class="text-center solve-time">
-								<script>document.write(moment({{ wrong_key.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+								<script>document.write(moment({{ fail.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
 							<td class="text-center">
 								<span class="delete-item" data-toggle="tooltip"
-									  data-placement="top" title="Delete fail #{{ wrong_key.id }}">
+									  data-placement="top" title="Delete fail #{{ fail.id }}">
 									<i class="fas fa-times"></i>
 								</span>
 							</td>
@@ -239,14 +260,14 @@
 					</tr>
 					</thead>
 					<tbody>
-					{% for chal in missing %}
+					{% for challenge in missing %}
 						<tr class="chal-solve">
-							<td class="text-center chal" id="{{ chal.id }}">{{ chal.name }}</td>
-							<td class="text-center">{{ chal.category }}</td>
-							<td class="text-center">{{ chal.value }}</td>
+							<td class="text-center chal" id="{{ challenge.id }}">{{ challenge.name }}</td>
+							<td class="text-center">{{ challenge.category }}</td>
+							<td class="text-center">{{ challenge.value }}</td>
 							<td class="text-center">
 								<span class="mark-correct" data-toggle="tooltip"
-									  data-placement="top" title="Mark {{ chal.name }} correct for {{ team.name }}">
+									  data-placement="top" title="Mark {{ challenge.name }} correct for {{ team.name }}">
 									<i class="fas fa-check"></i>
 								</span>
 							</td>
@@ -259,10 +280,10 @@
 		</div>
 	</div>
 
-	<div class="row">
+	<div class="row pt-5">
 		<div class="col-md-12">
 			<table class="table table-striped">
-				<h3>IP Addresses</h3>
+				<h3 class="text-center">IP Addresses</h3>
 				<thead>
 				<tr>
 					<td class="text-center"><b>IP Address</b></td>

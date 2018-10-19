@@ -107,38 +107,55 @@ def admin_teams_view():
 @admin.route('/admin/teams/<int:team_id>')
 @admins_only
 def admin_team(team_id):
-    # TODO: This doesn't work
     team = Teams.query.filter_by(id=team_id).first_or_404()
 
-    # TODO: This is wrong
-    solves = Solves.query.filter_by(team_id=team_id).all()
-    solve_ids = [s.challenge_id for s in solves]
+    # Get members
+    members = team.members
 
+    member_ids = [member.id for member in members]
+
+    # Get Solves for all members
+    solves = Solves.query.filter(
+        Solves.user_id.in_(member_ids)
+    ).all()
+
+    # Get missing Challenges for all members
+    # TODO: How do you mark a missing challenge for a team?
+    solve_ids = [s.challenge_id for s in solves]
     missing = Challenges.query.filter(not_(Challenges.id.in_(solve_ids))).all()
 
-    # This needs to be based off of members
+    # Get addresses for all members
     last_seen = db.func.max(Tracking.date).label('last_seen')
     addrs = db.session.query(Tracking.ip, last_seen) \
-                      .filter_by(team_id=team_id) \
+                      .filter(Tracking.user_id.in_(member_ids)) \
                       .group_by(Tracking.ip) \
                       .order_by(last_seen.desc()).all()
 
-    # TODO: This is wrong
-    wrong_keys = Fails.query.filter_by(team_id=team_id).order_by(Fails.date.asc()).all()
-    awards = Awards.query.filter_by(teamid=team_id).order_by(Awards.date.asc()).all()
-    score = team.score(admin=True)
-    place = team.place(admin=True)
+    # Get Fails for every member
+    fails = Fails.query.filter(
+        Fails.user_id.in_(member_ids)
+    ).order_by(
+        Fails.date.asc()
+    ).all()
+
+    awards = Awards.query.filter(
+        Awards.user_id.in_(member_ids)
+    ).order_by(Awards.date.asc()).all()
+
+    score = team.get_score(admin=True)
+    place = team.get_place(admin=True)
 
     return render_template(
         'admin/team.html',
-        solves=solves,
         team=team,
-        addrs=addrs,
+        members=members,
         score=score,
-        missing=missing,
         place=place,
-        wrong_keys=wrong_keys,
-        awards=awards
+        solves=solves,
+        fails=fails,
+        missing=missing,
+        awards=awards,
+        addrs=addrs,
     )
 
 

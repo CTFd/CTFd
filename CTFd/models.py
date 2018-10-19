@@ -401,14 +401,20 @@ class Teams(db.Model):
         self.password = hash_password(str(kwargs['password']))
 
     @property
-    def score(self, admin=False):
+    def score(self):
+        return self.get_score(admin=False)
+
+    def get_score(self, admin=False):
         score = 0
         for member in self.members:
-            score += member.score
+            score += member.get_score(admin=admin)
         return score
 
     @property
-    def place(self, admin=False):
+    def place(self):
+        return self.get_place(admin=False)
+
+    def get_place(self, admin=False):
         """
         This method is generally a clone of CTFd.scoreboard.get_standings.
         The point being that models.py must be self-reliant and have little
@@ -449,13 +455,13 @@ class Teams(db.Model):
         if admin:
             standings_query = db.session.query(
                 Teams.id.label('team_id'),
-            )\
+            ) \
                 .join(sumscores, Teams.id == sumscores.columns.team_id) \
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
         else:
             standings_query = db.session.query(
                 Teams.id.label('team_id'),
-            )\
+            ) \
                 .join(sumscores, Teams.id == sumscores.columns.team_id) \
                 .filter(Teams.banned == False) \
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
