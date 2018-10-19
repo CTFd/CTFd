@@ -8,10 +8,10 @@ from CTFd import utils
 from CTFd.admin import admin
 
 
-@admin.route('/admin/teams', defaults={'page': '1'})
-@admin.route('/admin/teams/<int:page>')
+@admin.route('/admin/teams')
 @admins_only
-def admin_teams_view(page):
+def admin_teams_view():
+    page = request.args.get('page', 1)
     q = request.args.get('q')
     if q:
         field = request.args.get('field')
@@ -104,28 +104,35 @@ def admin_teams_view(page):
 #     return jsonify({'data': ['success']})
 
 
-@admin.route('/admin/teams/<int:teamid>')
+@admin.route('/admin/teams/<int:team_id>')
 @admins_only
-def admin_team(teamid):
+def admin_team(team_id):
     # TODO: This doesn't work
-    user = Teams.query.filter_by(id=teamid).first_or_404()
+    team = Teams.query.filter_by(id=team_id).first_or_404()
 
-    solves = Solves.query.filter_by(teamid=teamid).all()
-    solve_ids = [s.chalid for s in solves]
+    # TODO: This is wrong
+    solves = Solves.query.filter_by(team_id=team_id).all()
+    solve_ids = [s.challenge_id for s in solves]
+
     missing = Challenges.query.filter(not_(Challenges.id.in_(solve_ids))).all()
+
+    # This needs to be based off of members
     last_seen = db.func.max(Tracking.date).label('last_seen')
     addrs = db.session.query(Tracking.ip, last_seen) \
-                      .filter_by(team=teamid) \
+                      .filter_by(team_id=team_id) \
                       .group_by(Tracking.ip) \
                       .order_by(last_seen.desc()).all()
-    wrong_keys = Fails.query.filter_by(teamid=teamid).order_by(Fails.date.asc()).all()
-    awards = Awards.query.filter_by(teamid=teamid).order_by(Awards.date.asc()).all()
-    score = user.score(admin=True)
-    place = user.place(admin=True)
+
+    # TODO: This is wrong
+    wrong_keys = Fails.query.filter_by(team_id=team_id).order_by(Fails.date.asc()).all()
+    awards = Awards.query.filter_by(teamid=team_id).order_by(Awards.date.asc()).all()
+    score = team.score(admin=True)
+    place = team.place(admin=True)
+
     return render_template(
         'admin/team.html',
         solves=solves,
-        team=user,
+        team=team,
         addrs=addrs,
         score=score,
         missing=missing,
@@ -154,28 +161,6 @@ def admin_team(teamid):
 #             'result': False,
 #             'message': "Missing information"
 #         })
-
-#
-# @admin.route('/admin/team/<int:teamid>/ban', methods=['POST'])
-# @admins_only
-# def ban(teamid):
-#     # TODO: Move to API via Team PATCH method
-#     user = Teams.query.filter_by(id=teamid).first_or_404()
-#     user.banned = True
-#     db.session.commit()
-#     db.session.close()
-#     return redirect(url_for('admin.admin_scoreboard_view'))
-#
-#
-# @admin.route('/admin/team/<int:teamid>/unban', methods=['POST'])
-# @admins_only
-# def unban(teamid):
-#     # TODO: Move to API via Team PATCH method
-#     user = Teams.query.filter_by(id=teamid).first_or_404()
-#     user.banned = False
-#     db.session.commit()
-#     db.session.close()
-#     return redirect(url_for('admin.admin_scoreboard_view'))
 
 
 @admin.route('/admin/solves/<int:teamid>/<int:chalid>/solve', methods=['POST'])

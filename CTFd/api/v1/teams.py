@@ -120,7 +120,7 @@ class TeamSolves(Resource):
         else:
             team = Teams.query.filter_by(id=team_id).first_or_404()
 
-        solves = Solves.query.filter_by(team_id=team_id)
+        solves = Solves.query.filter_by(team_id=team.id)
 
         freeze = get_config('freeze')
         if freeze:

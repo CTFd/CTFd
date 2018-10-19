@@ -28,29 +28,41 @@ def user_list():
 @admin.route('/admin/users/<int:user_id>')
 @admins_only
 def user_detail(user_id):
+    # Get user object
     user = Users.query.filter_by(id=user_id).first_or_404()
 
+    # Get the user's solves
     solves = Solves.query.filter_by(user_id=user_id).all()
-    solve_ids = [s.chalid for s in solves]
+
+    # Get challenges that the user is missing
+    solve_ids = [s.challenge_id for s in solves]
     missing = Challenges.query.filter(not_(Challenges.id.in_(solve_ids))).all()
+
+    # Get IP addresses that the User has used
     last_seen = db.func.max(Tracking.date).label('last_seen')
     addrs = db.session.query(Tracking.ip, last_seen) \
         .filter_by(user_id=user_id) \
         .group_by(Tracking.ip) \
         .order_by(last_seen.desc()).all()
 
-    wrong_keys = Fails.query.filter_by(user_id=user_id).order_by(Fails.date.asc()).all()
+    # Get Fails
+    fails = Fails.query.filter_by(user_id=user_id).order_by(Fails.date.asc()).all()
+
+    # Get Awards
     awards = Awards.query.filter_by(user_id=user_id).order_by(Awards.date.asc()).all()
-    score = user.score
-    place = user.place
+
+    # Get user properties
+    score = user.get_score(admin=True)
+    place = user.get_place(admin=True)
+
     return render_template(
         'admin/user.html',
         solves=solves,
-        team=user,
+        user=user,
         addrs=addrs,
         score=score,
         missing=missing,
         place=place,
-        wrong_keys=wrong_keys,
+        fails=fails,
         awards=awards
     )

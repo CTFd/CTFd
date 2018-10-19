@@ -31,6 +31,7 @@
 		<script type="text/javascript">
 				var script_root = "{{ request.script_root }}";
 				var csrf_nonce = "{{ nonce }}";
+                var user_mode = "{{ get_config('user_mode') }}";
 				CTFd.urlRoot = script_root;
 		</script>
 </head>

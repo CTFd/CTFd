@@ -19,19 +19,21 @@
 					</tr>
 				</thead>
 				<tbody>
+				{% set user_mode = get_config('user_mode') %}
+				{% set attr = 'team_id' if user_mode == 'teams' else 'user_id' %}
 				{% for standing in standings %}
 					<tr>
 						<td>{{ loop.index }}</td>
-						<td><a href="{{ request.script_root }}/admin/team/{{ standing.team_id }}">{{ standing.name }}</a></td>
+						<td><a href="{{ request.script_root }}/admin/{{ user_mode }}/{{ standing[attr] }}">{{ standing.name }}</a></td>
 						<td>{{ standing.score }}</td>
 						<td>
 						{% if standing.hidden %}
 							<button class="btn-sm btn-danger cursor-pointer" type="submit"
-									onclick="toggle_team(this)" team-id="{{ standing.team_id }}" state="hidden">Hidden
+									onclick="toggle_team(this)" team-id="{{ standing[attr] }}" state="hidden">Hidden
 							</button>
 						{%else %}
 							<button class="btn-sm btn-success cursor-pointer" type="submit"
-									onclick="toggle_team(this)" team-id="{{ standing.team_id }}" state="visible">Visible
+									onclick="toggle_team(this)" team-id="{{ standing[attr] }}" state="visible">Visible
 							</button>
 						{% endif %}
 						</td>
