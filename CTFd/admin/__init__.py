@@ -101,94 +101,11 @@ def admin_export_ctf():
 @admin.route('/admin/config', methods=['GET', 'POST'])
 @admins_only
 def admin_config():
-    if request.method == "POST":
-        start = None
-        end = None
-        freeze = None
-        if request.form.get('start'):
-            start = int(request.form['start'])
-        if request.form.get('end'):
-            end = int(request.form['end'])
-        if request.form.get('freeze'):
-            freeze = int(request.form['freeze'])
-
-        try:
-            # Set checkbox config values
-            view_challenges_unregistered = 'view_challenges_unregistered' in request.form
-            view_scoreboard_if_authed = 'view_scoreboard_if_authed' in request.form
-            hide_scores = 'hide_scores' in request.form
-            prevent_registration = 'prevent_registration' in request.form
-            prevent_name_change = 'prevent_name_change' in request.form
-            view_after_ctf = 'view_after_ctf' in request.form
-            verify_emails = 'verify_emails' in request.form
-            mail_tls = 'mail_tls' in request.form
-            mail_ssl = 'mail_ssl' in request.form
-            mail_useauth = 'mail_useauth' in request.form
-            workshop_mode = 'workshop_mode' in request.form
-            paused = 'paused' in request.form
-        finally:
-            set_config('view_challenges_unregistered', view_challenges_unregistered)
-            set_config('view_scoreboard_if_authed', view_scoreboard_if_authed)
-            set_config('hide_scores', hide_scores)
-            set_config('prevent_registration', prevent_registration)
-            set_config('prevent_name_change', prevent_name_change)
-            set_config('view_after_ctf', view_after_ctf)
-            set_config('verify_emails', verify_emails)
-            set_config('mail_tls', mail_tls)
-            set_config('mail_ssl', mail_ssl)
-            set_config('mail_useauth', mail_useauth)
-            set_config('workshop_mode', workshop_mode)
-            set_config('paused', paused)
-
-        set_config("mail_server", request.form.get('mail_server', None))
-        set_config("mail_port", request.form.get('mail_port', None))
-
-        if request.form.get('mail_useauth', None) and (request.form.get('mail_u', None) or request.form.get('mail_p', None)):
-            if len(request.form.get('mail_u')) > 0:
-                set_config("mail_username", request.form.get('mail_u', None))
-            if len(request.form.get('mail_p')) > 0:
-                set_config("mail_password", request.form.get('mail_p', None))
-
-        elif request.form.get('mail_useauth', None) is None:
-            set_config("mail_username", None)
-            set_config("mail_password", None)
-
-        if request.files.get('ctf_logo_file', None):
-            ctf_logo = request.files['ctf_logo_file']
-            file_id, file_loc = uploads.upload_file(ctf_logo, None)
-            set_config("ctf_logo", file_loc)
-        elif request.form.get('ctf_logo') == '':
-            set_config("ctf_logo", None)
-
-        set_config("ctf_name", request.form.get('ctf_name', None))
-        set_config("ctf_theme", request.form.get('ctf_theme', None))
-        set_config('css', request.form.get('css', None))
-
-        set_config("mailfrom_addr", request.form.get('mailfrom_addr', None))
-        set_config("mg_base_url", request.form.get('mg_base_url', None))
-        set_config("mg_api_key", request.form.get('mg_api_key', None))
-
-        set_config("freeze", freeze)
-
-        db_start = Configs.query.filter_by(key='start').first()
-        db_start.value = start
-
-        db_end = Configs.query.filter_by(key='end').first()
-        db_end.value = end
-
-        db.session.add(db_start)
-        db.session.add(db_end)
-
-        db.session.commit()
-        db.session.close()
-        with app.app_context():
-            cache.clear()
-        return redirect(url_for('admin.admin_config'))
-
     # Clear the cache so that we don't get stale values
     cache.clear()
 
     ctf_name = get_config('ctf_name')
+    user_mode = get_config('user_mode')
     ctf_logo = get_config('ctf_logo')
     ctf_theme = get_config('ctf_theme')
     hide_scores = get_config('hide_scores')
@@ -230,6 +147,7 @@ def admin_config():
     return render_template(
         'admin/config.html',
         ctf_name=ctf_name,
+        user_mode=user_mode,
         ctf_logo=ctf_logo,
         ctf_theme_config=ctf_theme,
         css=css,
