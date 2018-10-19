@@ -68,6 +68,9 @@
 									</div>
 								</div>
 							</div>
+							<small class="form-text text-muted">
+								Logo to use for the website instead of a CTF name.
+							</small>
 						</div>
 					</form>
 
@@ -78,6 +81,7 @@
 							<label for="ctf_name">CTF Name:</label>
 							<input class="form-control" id='ctf_name' name='ctf_name' type='text' placeholder="CTF Name"
 								   {% if ctf_name is defined and ctf_name != None %}value="{{ ctf_name }}"{% endif %}>
+							<small class="form-text text-muted">Competition name displayed instead of a logo</small>
 						</div>
 
 						<div class="form-group">
@@ -90,6 +94,8 @@
 									Users
 								</option>
 							</select>
+							<small class="form-text text-muted">User mode allows users to register as themselves
+								or choose to form teams</small>
 						</div>
 
 						<div class="form-group">
@@ -100,6 +106,9 @@
 									<option>{{ theme }}</option>
 								{% endfor %}
 							</select>
+							<small class="form-text text-muted">
+								Switch themes to change CTFd's aesthetics. The core theme is default and best supported.
+							</small>
 						</div>
 
 						<div class="form-check">
@@ -125,13 +134,19 @@
 						<div class="form-check">
 							<label>
 								<input id="hide_scores" name="hide_scores" type="checkbox" {% if hide_scores %}checked{% endif %}>
-								Hide Scores from public view
+								Hide Scores from public view <i class="far fa-question-circle text-muted cursor-help"
+																data-toggle="tooltip"
+																data-placement="right"
+																title="Prevent teams from seeing scores."></i>
 							</label>
 						</div>
 
 						<div class="form-group">
 							<label>CSS editor</label>
 							<textarea class="form-control" id="css-editor" name="css" rows="7">{{ css|default('', True) }}</textarea>
+							<small class="form-text text-muted">
+								CSS is applied to all public facing pages if the theme used supports custom CSS.
+							</small>
 						</div>
 
 						<button type="submit" class="btn btn-md btn-primary float-right">Update</button>

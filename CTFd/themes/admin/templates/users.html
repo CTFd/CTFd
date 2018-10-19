@@ -174,7 +174,7 @@
 					<tr name="{{ user.id }}">
 						<td class="team-id" value="{{ user.id }}">{{ user.id }}</td>
 						<td class="team-name" value="{{ user.name }}">
-							<a href="{{ request.script_root }}/admin/team/{{ user.id }}">
+							<a href="{{ request.script_root }}/admin/users/{{ user.id }}">
 								{{ user.name | truncate(32) }}
 							</a>
 							{% if user.affiliation %}

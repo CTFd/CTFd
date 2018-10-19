@@ -423,18 +423,6 @@ class Teams(db.Model):
         super(Teams, self).__init__(**kwargs)
         self.password = hash_password(str(kwargs['password']))
 
-    def get_dict(self, admin=False):
-        obj = {
-            'id': self.id,
-            'name': self.name,
-            'website': self.website,
-            'country': self.country,
-            'bracket': self.bracket,
-            'members': [member.get_dict() for member in self.members]
-        }
-        return obj
-
-
     @property
     def score(self, admin=False):
         score = 0
