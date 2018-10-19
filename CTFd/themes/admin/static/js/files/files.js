@@ -18,34 +18,3 @@ function upload_file(form, cb) {
         }
     });
 }
-
-function upload_logo(form) {
-    upload_file(form, function(data){
-        var upload = data[0];
-        if (upload.location) {
-            var params = {
-                'value': upload.location
-            };
-            fetch(script_root + '/api/v1/configs/ctf_logo', {
-                method: 'PATCH',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(params)
-            }).then(function (response) {
-                return response.json();
-            }).then(function (data) {
-                if (data.id){
-                    window.location.reload()
-                } else {
-                    ezal({
-                        title: "Error!",
-                        body: "Logo uploading failed!",
-                        button: "Okay"
-                    });
-                }
-            });
-        }
-    })
-}
