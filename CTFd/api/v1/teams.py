@@ -53,6 +53,7 @@ class TeamPublic(Resource):
     def patch(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
         data = request.get_json()
+        data['id'] = team_id
         response = TeamSchema(view='admin', instance=team, partial=True).load(data)
         if response.errors:
             return response.errors
@@ -86,9 +87,7 @@ class TeamPrivate(Resource):
     @authed_only
     def get(self):
         team = get_current_team()
-
-        view = TeamSchema.views.get('self')
-        response = TeamSchema(view=view).dump(team)
+        response = TeamSchema(view='self').dump(team)
         return response
 
     @authed_only
@@ -105,11 +104,11 @@ class TeamPrivate(Resource):
         return response
 
 
-@teams_namespace.route('/<team_id>/mail')
-@teams_namespace.param('team_id', "Team ID or 'me'")
-class TeamMails(Resource):
-    def post(self, team_id):
-        pass
+# @teams_namespace.route('/<team_id>/mail')
+# @teams_namespace.param('team_id', "Team ID or 'me'")
+# class TeamMails(Resource):
+#     def post(self, team_id):
+#         pass
 
 
 @teams_namespace.route('/<team_id>/solves')
