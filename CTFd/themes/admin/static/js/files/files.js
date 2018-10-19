@@ -1,4 +1,4 @@
-function upload_file(form, cb) {
+function upload_files(form, cb) {
     if (form instanceof jQuery) {
         form = form[0];
     }

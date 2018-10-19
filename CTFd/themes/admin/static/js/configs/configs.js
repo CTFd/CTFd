@@ -95,7 +95,7 @@ function update_configs(obj){
 }
 
 function upload_logo(form) {
-    upload_file(form, function (data) {
+    upload_files(form, function (data) {
         var upload = data[0];
         if (upload.location) {
             var params = {

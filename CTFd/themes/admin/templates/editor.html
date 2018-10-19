@@ -52,26 +52,23 @@
 						</div>
 					</div>
 				</div>
-
-				<form id="media-library-upload">
+				<form id="media-library-upload" enctype="multipart/form-data">
 					<div class="form-group">
 						<label for="media-files">
 							Upload Files
 						</label>
-						<input type="file" name="files[]" id="media-files" class="form-control-file" multiple>
+						<input type="file" name="file" id="media-files" class="form-control-file" multiple>
 						<sub class="help-block">
 							Attach multiple files using Control+Click or Cmd+Click.
 						</sub>
 					</div>
-					<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
+					<input type="hidden" value="page" name="type">
 				</form>
-
 			</div>
 			<div class="modal-footer">
 				<div class="float-right">
-					<button type="submit" class="btn btn-primary" onclick="uploadfiles();">Upload</button>
+					<button type="submit" class="btn btn-primary" onclick="upload_media()">Upload</button>
 				</div>
-
 			</div>
 		</div>
 	</div>
@@ -189,5 +186,7 @@
 {% block scripts %}
 <script src="{{ request.script_root }}/themes/admin/static/js/utils.js"></script>
 <script src="{{ request.script_root }}/themes/admin/static/js/vendor/codemirror.min.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/files/files.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/pages/media.js"></script>
 <script src="{{ request.script_root }}/themes/admin/static/js/pages/editor.js"></script>
 {% endblock %}

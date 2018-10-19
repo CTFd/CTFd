@@ -14,7 +14,8 @@ files_namespace = Namespace('files', description="Endpoint to retrieve Files")
 class FilesList(Resource):
     @admins_only
     def get(self):
-        files = Files.query.all()
+        file_type = request.args.get('type')
+        files = Files.query.filter_by(type=file_type).all()
         schema = FileSchema(many=True)
         result = schema.dump(files)
         return result.data
@@ -28,7 +29,7 @@ class FilesList(Resource):
         objs = []
         for f in files:
             # uploads.upload_file(file=f, chalid=req.get('challenge'))
-            obj = uploads.upload_file(file=f, **request.form)
+            obj = uploads.upload_file(file=f, **request.form.to_dict())
             objs.append(obj)
 
         schema = FileSchema(many=True)

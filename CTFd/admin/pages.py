@@ -18,6 +18,7 @@ def admin_pages_list():
 def admin_pages_new():
     return render_template('admin/editor.html')
 
+
 @admin.route('/admin/pages/<int:page_id>', methods=['GET', 'POST'])
 @admins_only
 def admin_pages_detail(page_id):

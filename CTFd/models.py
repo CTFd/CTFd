@@ -199,7 +199,7 @@ class Files(db.Model):
 
 class ChallengeFiles(Files):
     __mapper_args__ = {
-        'polymorphic_identity': 'challenges'
+        'polymorphic_identity': 'challenge'
     }
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
 
@@ -209,7 +209,7 @@ class ChallengeFiles(Files):
 
 class PageFiles(Files):
     __mapper_args__ = {
-        'polymorphic_identity': 'pages'
+        'polymorphic_identity': 'page'
     }
     page_id = db.Column(db.Integer, db.ForeignKey('pages.id'))
 

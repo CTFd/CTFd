@@ -13,17 +13,18 @@ def upload_file(*args, **kwargs):
     file_obj = kwargs.get('file')
     challenge_id = kwargs.get('challenge_id')
     page_id = kwargs.get('page_id')
+    file_type = kwargs.get('type', 'standard')
 
     model_args = {
-        'type': 'standard',
+        'type': file_type,
         'location': None,
     }
 
     model = Files
-    if challenge_id:
+    if file_type == 'challenge':
         model = ChallengeFiles
         model_args['challenge_id'] = challenge_id
-    if page_id:
+    if file_type == 'page':
         model = PageFiles
         model_args['page_id'] = page_id
 
