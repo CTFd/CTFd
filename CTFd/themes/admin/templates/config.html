@@ -40,7 +40,7 @@
 
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane config-section active" id="appearance">
-					<form class="form-upload" method="POST" enctype="multipart/form-data">
+					<form id="logo-upload" class="form-upload" method="POST" enctype="multipart/form-data">
 						<div class="form-group">
 							<label for="ctf_logo">CTF Logo:</label>
 
@@ -55,19 +55,18 @@
 								</div>
 							{% endif %}
 
-							<input class="form-control" id='ctf_logo' name='ctf_logo' type='hidden'
-								   value="{% if ctf_logo is defined %}{{ ctf_logo }}{% endif %}"
-								   placeholder="CTF Logo">
+{#							<input class="form-control" id='ctf_logo' name='file' type='hidden'#}
+{#								   value="{% if ctf_logo is defined %}{{ ctf_logo }}{% endif %}"#}
+{#								   placeholder="CTF Logo">#}
 							<div class="row">
 								<div class="col-md-9">
-							<input class="form-control-file" id="ctf_logo_file" name='ctf_logo_file' type='file'
-								   placeholder="CTF Logo">
+									<input class="form-control-file" id="ctf_logo_file" name='file' type='file'
+										   placeholder="CTF Logo">
 								</div>
 								<div class="col-md-3">
 									<div class="form-group">
 										<div class="d-inline-block float-right">
-											<button type="submit" class="btn-sm btn-primary float-right">Update
-											</button>
+											<button type="submit" class="btn-sm btn-primary float-right">Upload</button>
 										</div>
 									</div>
 								</div>
@@ -570,7 +569,6 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
@@ -578,5 +576,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ request.script_root }}/themes/admin/static/js/files/files.js"></script>
 <script src="{{ request.script_root }}/themes/admin/static/js/configs/configs.js"></script>
 {% endblock %}

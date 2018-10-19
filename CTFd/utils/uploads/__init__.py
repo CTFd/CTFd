@@ -1,4 +1,4 @@
-from CTFd.models import db, Files
+from CTFd.models import db, Files, ChallengeFiles, PageFiles
 from flask import current_app as app
 from werkzeug.utils import secure_filename
 import hashlib
@@ -9,8 +9,25 @@ import shutil
 # TODO: Remove hashes from file paths
 
 
-def upload_file(file, chalid):
-    filename = secure_filename(file.filename)
+def upload_file(*args, **kwargs):
+    file_obj = kwargs.get('file')
+    challenge_id = kwargs.get('challenge_id')
+    page_id = kwargs.get('page_id')
+
+    model_args = {
+        'type': 'standard',
+        'location': None,
+    }
+
+    model = Files
+    if challenge_id:
+        model = ChallengeFiles
+        model_args['challenge_id'] = challenge_id
+    if page_id:
+        model = PageFiles
+        model_args['page_id'] = page_id
+
+    filename = secure_filename(file_obj.filename)
 
     if len(filename) <= 0:
         return False
@@ -21,11 +38,14 @@ def upload_file(file, chalid):
     if not os.path.exists(os.path.join(upload_folder, md5hash)):
         os.makedirs(os.path.join(upload_folder, md5hash))
 
-    file.save(os.path.join(upload_folder, md5hash, filename))
-    db_f = Files(chalid, (md5hash + '/' + filename))
-    db.session.add(db_f)
+    file_obj.save(os.path.join(upload_folder, md5hash, filename))
+
+    model_args['location'] = (md5hash + '/' + filename)
+
+    file_row = model(**model_args)
+    db.session.add(file_row)
     db.session.commit()
-    return db_f.id, (md5hash + '/' + filename)
+    return file_row
 
 
 def delete_file(file_id):
@@ -38,5 +58,5 @@ def delete_file(file_id):
     return True
 
 
-def rmdir(dir):
-    shutil.rmtree(dir, ignore_errors=True)
+def rmdir(directory):
+    shutil.rmtree(directory, ignore_errors=True)

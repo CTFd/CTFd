@@ -21,25 +21,23 @@ class FilesList(Resource):
 
     @admins_only
     def post(self):
-        req = request.get_json()
-        files = request.files.getlist('files[]')
+        files = request.files.getlist('file')
+        # challenge_id
+        # page_id
 
+        objs = []
         for f in files:
-            uploads.upload_file(file=f, chalid=req.get('challenge'))
+            # uploads.upload_file(file=f, chalid=req.get('challenge'))
+            obj = uploads.upload_file(file=f, **request.form)
+            objs.append(obj)
 
-        db.session.commit()
-        db.session.close()
-        schema = FileSchema()
-        config = schema.load(req, session=db.session)
+        schema = FileSchema(many=True)
+        files = schema.dump(objs)
 
-        if config.errors:
-            return config.errors
+        if files.errors:
+            return files.errors
 
-        db.session.add(config.data)
-        db.session.commit()
-        db.session.close()
-
-        return schema.dump(config)
+        return schema.dump(files.data)
 
 
 @files_namespace.route('/<file_id>')

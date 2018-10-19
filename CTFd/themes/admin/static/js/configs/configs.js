@@ -101,6 +101,12 @@ $(function () {
         update_configs(obj);
     });
 
+    $('#logo-upload').submit(function(e){
+        e.preventDefault();
+        var form = e.target;
+        upload_logo(form);
+    });
+
 
     $('.start-date').change(function () {
         load_date_values('start');

@@ -219,8 +219,8 @@ def settings():
 @views.route('/files/<path:path>')
 def file_handler(path):
     f = Files.query.filter_by(location=path).first_or_404()
-    if f.challenge_id:
-        if not current_user.is_admin():
+    if f.type == 'challenge':
+        if current_user.is_admin() is False:
             if not ctftime():
                 if config.view_after_ctf() and ctf_started():
                     pass
