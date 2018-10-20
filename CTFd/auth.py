@@ -8,7 +8,8 @@ from CTFd.utils import get_config, get_app_config
 from CTFd.utils.encoding import base64encode, base64decode
 from CTFd.utils.decorators import ratelimit
 from CTFd.utils import user as current_user
-from CTFd.utils import config, validators, email
+from CTFd.utils import config, validators
+from CTFd.utils.email import sendmail
 from CTFd.utils.security.csrf import generate_nonce
 
 import base64
@@ -205,7 +206,10 @@ def register():
                     return redirect(url_for('auth.confirm'))
                 else:  # Don't care about confirming users
                     if config.can_send_mail():  # We want to notify the user that they have registered.
-                        email.sendmail(request.form['email'], "You've successfully registered for {}".format(get_config('ctf_name')))
+                        sendmail(
+                            request.form['email'],
+                            "You've successfully registered for {}".format(get_config('ctf_name'))
+                        )
 
         logger.warn("[{date}] {ip} - {username} registered with {email}".format(
             date=time.strftime("%m/%d/%Y %X"),

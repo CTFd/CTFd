@@ -23,8 +23,8 @@ teams = Blueprint('teams', __name__)
 
 
 @teams.route('/teams', defaults={'page': '1'})
-@teams.route('/teams/<int:page>')
 def list(page):
+    page = request.args.get('page', 1)
     if get_config('workshop_mode'):
         abort(404)
     page = abs(int(page))

@@ -18,7 +18,7 @@ class ScoreboardList(Resource):
             response.append(
                 {
                     'pos': i + 1,
-                    'id': x.team_id,
+                    'id': x.account_id,
                     'team': x.name,
                     'score': int(x.score)
                 }
