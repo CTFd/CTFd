@@ -8,10 +8,12 @@
               <li class="nav-item">
                 <a class="nav-link active" href="#challenge">Challenge</a>
               </li>
-              {% if solves == '-1 Solves' %}
+              {% if solves == None %}
               {% else %}
               <li class="nav-item">
-                <a class="nav-link chal-solves" href="#solves">{{solves}}</a>
+                <a class="nav-link chal-solves" href="#solves">
+					{{solves}} {% if solves > 1 %}Solves{% else %}Solves{% endif %}
+				</a>
               </li>
               {% endif %}
             </ul>

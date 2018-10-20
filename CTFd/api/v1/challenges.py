@@ -19,6 +19,7 @@ from CTFd.utils.decorators import (
     viewable_without_authentication,
     admins_only
 )
+from CTFd.utils.modes import get_model
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.flags import FlagSchema
@@ -149,17 +150,17 @@ class ChallengeSolves(Resource):
     @viewable_without_authentication(status_code=403)
     def get(self, challenge_id):
         response = []
-        # if config.hide_scores():
-        #     return jsonify(response)
+        # TODO: Hide scores and other configs
+        Model = get_model()
 
-        solves = Solves.query.join(Teams, Solves.team_id == Teams.id)\
-            .filter(Solves.challenge_id == challenge_id, Teams.banned == False)\
+        solves = Solves.query.join(Model, Solves.account_id == Model.id)\
+            .filter(Solves.challenge_id == challenge_id, Model.banned == False, Model.hidden == False)\
             .order_by(Solves.date.asc())
 
         for solve in solves:
             response.append({
-                'id': solve.team.id,
-                'name': solve.team.name,
+                'account_id': solve.account_id,
+                'name': solve.account.name,
                 'date': solve.date.isoformat()
             })
 

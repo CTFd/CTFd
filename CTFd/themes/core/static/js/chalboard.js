@@ -28,8 +28,9 @@ function updateChalWindow(obj) {
 
                 var template = nunjucks.compile(template_data);
 
-                var solves = obj.solves == 1 ? " Solve" : " Solves";
-                var solves = obj.solves + solves;
+                console.log(obj);
+
+                var solves = obj.solves;
 
                 var nonce = $('#nonce').val();
 
@@ -221,19 +222,20 @@ function updatesolves(cb){
     });
 }
 
-function getsolves(id){
-  $.get(script_root + '/api/v1/challenges/'+id+'/solves', function (data) {
-    var teams = data['teams'];
-    $('.chal-solves').text((parseInt(teams.length) + " Solves"));
-    var box = $('#chal-solves-names');
-    box.empty();
-    for (var i = 0; i < teams.length; i++) {
-      var id = teams[i].id;
-      var name = teams[i].name;
-      var date = moment(teams[i].date).local().fromNow();
-      box.append('<tr><td><a href="team/{0}">{1}</td><td>{2}</td></tr>'.format(id, htmlentities(name), date));
-    };
-  });
+function getsolves(id) {
+    $.get(script_root + '/api/v1/challenges/' + id + '/solves', function (data) {
+        $('.chal-solves').text(
+            (parseInt(data.length) + " Solves")
+        );
+        var box = $('#chal-solves-names');
+        box.empty();
+        for (var i = 0; i < data.length; i++) {
+            var id = data[i].account_id;
+            var name = data[i].name;
+            var date = moment(data[i].date).local().fromNow();
+            box.append('<tr><td><a href="teams/{0}">{1}</td><td>{2}</td></tr>'.format(id, htmlentities(name), date));
+        }
+    });
 }
 
 function loadchals(cb) {
@@ -295,6 +297,7 @@ function loadchals(cb) {
 
         $('.challenge-button').click(function (e) {
             loadchal(this.value);
+            getsolves(this.value);
         });
 
         if (cb){

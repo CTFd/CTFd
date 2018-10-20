@@ -612,6 +612,14 @@ class Submissions(db.Model):
         elif user_mode == 'users':
             return self.user_id
 
+    @hybrid_property
+    def account(self):
+        user_mode = get_config('user_mode')
+        if user_mode == 'teams':
+            return self.team
+        elif user_mode == 'users':
+            return self.user
+
     def __repr__(self):
         return '<Submission {}, {}, {}, {}>'.format(self.team_id, self.challenge_id, self.ip, self.provided)
 
