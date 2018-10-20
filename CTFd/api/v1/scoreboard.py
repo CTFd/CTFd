@@ -55,7 +55,7 @@ class ScoreboardList(Resource):
                 'solves': []
             }
             for solve in solves:
-                if solve.team_id == team:
+                if solve.account_id == team:
                     response[i + 1]['solves'].append({
                         'challenge_id': solve.challenge_id,
                         'account_id': solve.account_id,
@@ -63,7 +63,7 @@ class ScoreboardList(Resource):
                         'time': unix_time(solve.date)
                     })
             for award in awards:
-                if award.team_id == team:
+                if award.account_id == team:
                     response[i + 1]['solves'].append({
                         'challenge_id': None,
                         'account_id': award.account_id,

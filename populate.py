@@ -4,14 +4,20 @@
 import datetime
 import hashlib
 import random
+import sys
 
 from CTFd import create_app
 from CTFd.models import *
 
+try:
+    mode = sys.argv[1]
+except IndexError:
+    mode = 'teams'
+
 app = create_app()
 
 USER_AMOUNT = 50
-TEAM_AMOUNT = 10
+TEAM_AMOUNT = 10 if mode == 'teams' else 0
 CHAL_AMOUNT = 20
 AWARDS_AMOUNT = 5
 
@@ -289,7 +295,8 @@ if __name__ == '__main__':
                         password='password'
                     )
                     user.verified = True
-                    user.team_id = random.randint(1, TEAM_AMOUNT)
+                    if mode == 'teams':
+                        user.team_id = random.randint(1, TEAM_AMOUNT)
                     db.session.add(user)
                     count += 1
                 except:

@@ -107,9 +107,19 @@ class Challenge(Resource):
 
         challenge, response = chal_class.read(challenge=chal)
 
+        Model = get_model()
+
+        # TODO: Hide solves if config says so
+
+        solves = Solves.query\
+            .join(Model, Solves.account_id == Model.id)\
+            .filter(Solves.challenge_id == chal.id, Model.banned == False, Model.hidden == False)\
+            .count()
+
         response['files'] = files
         response['tags'] = tags
         response['hints'] = hints
+        response['solves'] = solves
 
         db.session.close()
         return response

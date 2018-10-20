@@ -11,6 +11,7 @@ from CTFd.utils.decorators import (
     viewable_without_authentication
 )
 from CTFd.api.v1.statistics import statistics_namespace
+from CTFd.utils.modes import get_model
 from sqlalchemy import func
 from sqlalchemy.sql import or_
 
@@ -41,22 +42,15 @@ class ChallengeSolveStatistics(Resource):
             .order_by(Challenges.value) \
             .all()
 
-        if config.user_mode() == TEAMS_MODE:
-            solves_sub = db.session.query(
-                Solves.challenge_id,
-                db.func.count(Solves.challenge_id).label('solves')
-            ) \
-                .join(Teams, Solves.team_id == Teams.id) \
-                .filter(Teams.banned == False) \
-                .group_by(Solves.challenge_id).subquery()
-        elif config.user_mode() == USERS_MODE:
-            solves_sub = db.session.query(
-                Solves.challenge_id,
-                db.func.count(Solves.challenge_id).label('solves')
-            ) \
-                .join(Users, Solves.user_id == Users.id) \
-                .filter(Users.banned == False) \
-                .group_by(Solves.challenge_id).subquery()
+        Model = get_model()
+
+        solves_sub = db.session.query(
+            Solves.challenge_id,
+            db.func.count(Solves.challenge_id).label('solves')
+        ) \
+            .join(Model, Solves.account_id == Model.id) \
+            .filter(Model.banned == False, Model.hidden == False) \
+            .group_by(Solves.challenge_id).subquery()
 
         solves = db.session.query(
             solves_sub.columns.challenge_id,
