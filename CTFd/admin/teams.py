@@ -111,13 +111,14 @@ def admin_team(team_id):
 
     # Get members
     members = team.members
-
     member_ids = [member.id for member in members]
 
     # Get Solves for all members
-    solves = Solves.query.filter(
-        Solves.user_id.in_(member_ids)
-    ).all()
+    solves = team.get_solves(admin=True)
+    fails = team.get_fails(admin=True)
+    awards = team.get_awards(admin=True)
+    score = team.get_score(admin=True)
+    place = team.get_place(admin=True)
 
     # Get missing Challenges for all members
     # TODO: How do you mark a missing challenge for a team?
@@ -130,20 +131,6 @@ def admin_team(team_id):
                       .filter(Tracking.user_id.in_(member_ids)) \
                       .group_by(Tracking.ip) \
                       .order_by(last_seen.desc()).all()
-
-    # Get Fails for every member
-    fails = Fails.query.filter(
-        Fails.user_id.in_(member_ids)
-    ).order_by(
-        Fails.date.asc()
-    ).all()
-
-    awards = Awards.query.filter(
-        Awards.user_id.in_(member_ids)
-    ).order_by(Awards.date.asc()).all()
-
-    score = team.get_score(admin=True)
-    place = team.get_place(admin=True)
 
     return render_template(
         'admin/team.html',

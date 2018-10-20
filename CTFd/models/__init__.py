@@ -448,18 +448,78 @@ class Teams(db.Model):
         self.password = hash_password(str(kwargs['password']))
 
     @property
+    def solves(self):
+        return self.get_solves(admin=False)
+
+    @property
+    def fails(self):
+        return self.get_fails(admin=False)
+
+    @property
+    def awards(self):
+        return self.get_awards(admin=False)
+
+    @property
     def score(self):
         return self.get_score(admin=False)
+
+    @property
+    def place(self):
+        return self.get_place(admin=False)
+
+    def get_solves(self, admin=False):
+        member_ids = [member.id for member in self.members]
+
+        solves = Solves.query.filter(
+            Solves.user_id.in_(member_ids)
+        ).order_by(
+            Fails.date.asc()
+        )
+
+        freeze = get_config('freeze')
+        if freeze and admin is False:
+            dt = datetime.datetime.utcfromtimestamp(freeze)
+            fails = solves.filter(Solves.date < dt)
+
+        return solves.all()
+
+    def get_fails(self, admin=False):
+        member_ids = [member.id for member in self.members]
+
+        fails = Fails.query.filter(
+            Fails.user_id.in_(member_ids)
+        ).order_by(
+            Fails.date.asc()
+        )
+
+        freeze = get_config('freeze')
+        if freeze and admin is False:
+            dt = datetime.datetime.utcfromtimestamp(freeze)
+            fails = fails.filter(Solves.date < dt)
+
+        return fails.all()
+
+    def get_awards(self, admin=False):
+        member_ids = [member.id for member in self.members]
+
+        awards = Awards.query.filter(
+            Awards.user_id.in_(member_ids)
+        ).order_by(
+            Awards.date.asc()
+        )
+
+        freeze = get_config('freeze')
+        if freeze and admin is False:
+            dt = datetime.datetime.utcfromtimestamp(freeze)
+            awards = awards.filter(Solves.date < dt)
+
+        return awards.all()
 
     def get_score(self, admin=False):
         score = 0
         for member in self.members:
             score += member.get_score(admin=admin)
         return score
-
-    @property
-    def place(self):
-        return self.get_place(admin=False)
 
     def get_place(self, admin=False):
         """
