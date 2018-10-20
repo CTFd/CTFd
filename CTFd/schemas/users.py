@@ -12,6 +12,7 @@ from CTFd.utils.countries import lookup_country_code
 class UserSchema(ma.ModelSchema):
     class Meta:
         model = Users
+        include_fk = True
         dump_only = ('id', 'oauth_id', 'created')
         load_only = ('password',)
 

@@ -21,6 +21,7 @@ def scoreboard_view():
         )
 
     standings = get_standings()
+    print standings
     return render_template(
         'scoreboard.html',
         standings=standings,

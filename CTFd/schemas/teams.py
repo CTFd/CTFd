@@ -11,6 +11,7 @@ from CTFd.utils.user import is_admin, get_current_team
 class TeamSchema(ma.ModelSchema):
     class Meta:
         model = Teams
+        include_fk = True
         dump_only = ('id', 'oauth_id', 'created', 'members')
         load_only = ('password',)
 

@@ -8,6 +8,7 @@ from CTFd.models import ma, Announcements
 class AnnouncementSchema(ma.ModelSchema):
     class Meta:
         model = Announcements
+        include_fk = True
         dump_only = ('id', 'date')
 
     def __init__(self, view=None, *args, **kwargs):

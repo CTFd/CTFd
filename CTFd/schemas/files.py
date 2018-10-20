@@ -8,6 +8,7 @@ from CTFd.models import ma, Files, ChallengeFiles, PageFiles
 class FileSchema(ma.ModelSchema):
     class Meta:
         model = Files
+        include_fk = True
         dump_only = ('id', 'type', 'location')
 
     def __init__(self, view=None, *args, **kwargs):

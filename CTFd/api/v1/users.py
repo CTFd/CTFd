@@ -6,7 +6,7 @@ from CTFd.utils.decorators import (
     admins_only
 )
 from CTFd.utils.dates import unix_time_to_utc, unix_time
-from CTFd.utils.user import get_current_user
+from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils import get_config
 
 from CTFd.schemas.submissions import SubmissionSchema
@@ -122,15 +122,11 @@ class UserSolves(Resource):
         else:
             user = Users.query.filter_by(id=user_id).first_or_404()
 
-        solves = Solves.query.filter_by(user_id=user.id)
+        solves = user.get_solves(
+            admin=is_admin()
+        )
 
-        freeze = get_config('freeze')
-        if freeze:
-            freeze = unix_time_to_utc(freeze)
-            if user_id != session.get('id'):
-                solves = solves.filter(Solves.date < freeze)
-
-        response = SubmissionSchema(many=True).dump(solves.all())
+        response = SubmissionSchema(many=True).dump(solves)
         return response
 
 

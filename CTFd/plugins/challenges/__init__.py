@@ -55,10 +55,12 @@ class CTFdStandardChallenge(BaseChallenge):
         db.session.add(chal)
         db.session.commit()
 
-        flag = Flags(chal.id, request.form['submission'], request.form['key_type[0]'])
-        # TODO: replace keydata because it feels sloppy
-        if request.form.get('keydata'):
-            flag.data = request.form.get('keydata')
+        flag = Flags(
+            challenge_id=chal.id,
+            content=request.form['content'],
+            type=request.form['key_type[0]'],
+            data=request.form.get('data')
+        )
         db.session.add(flag)
 
         db.session.commit()

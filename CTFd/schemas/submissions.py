@@ -8,6 +8,7 @@ from CTFd.models import ma, Submissions
 class SubmissionSchema(ma.ModelSchema):
     class Meta:
         model = Submissions
+        include_fk = True
         dump_only = ('id', )
         # load_only = ('password',)
 
@@ -24,7 +25,7 @@ class SubmissionSchema(ma.ModelSchema):
         ],
         'user': [
             'ip',
-            'challenge',
+            'challenge_id',
             'user',
             'team',
             'date',
