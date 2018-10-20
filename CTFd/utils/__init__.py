@@ -4,8 +4,8 @@ import logging
 import mistune
 import six
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort, jsonify
-from flask_caching import Cache
 from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
+from CTFd.cache import cache
 from CTFd.models import (
     db,
     Challenges,
@@ -29,7 +29,6 @@ else:
     text_type = str
     binary_type = bytes
 
-cache = Cache()
 migrate = Migrate()
 markdown = mistune.Markdown()
 
@@ -55,6 +54,7 @@ def get_config(key):
                 return False
             else:
                 return value
+    # TODO: This is probably a weird side effect leftover from when we didnt have migrations
     else:
         set_config(key, None)
         return None

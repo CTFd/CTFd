@@ -5,9 +5,12 @@ from sqlalchemy import TypeDecorator, String, func, types, CheckConstraint, and_
 from sqlalchemy.sql.expression import union_all
 from sqlalchemy.types import JSON, NullType
 from sqlalchemy.orm import validates, column_property
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from CTFd.utils.crypto import hash_password
+from CTFd.cache import cache
 import datetime
 import json
+import six
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -89,7 +92,7 @@ class Challenges(db.Model):
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     type = db.Column(db.String(80))
-    hidden = db.Column(db.Boolean) # TODO: Change to state
+    hidden = db.Column(db.Boolean)  # TODO: Change to state
     requirements = db.Column(JSONLite)
 
     files = db.relationship("ChallengeFiles", backref="challenge")
@@ -148,6 +151,14 @@ class Awards(db.Model):
 
     user = db.relationship('Users', foreign_keys="Awards.user_id", lazy='select')
     team = db.relationship('Teams', foreign_keys="Awards.team_id", lazy='select')
+
+    @hybrid_property
+    def account_id(self):
+        user_mode = get_config('user_mode')
+        if user_mode == 'teams':
+            return self.team_id
+        elif user_mode == 'users':
+            return self.user_id
 
     def __init__(self, *args, **kwargs):
         super(Awards, self).__init__(**kwargs)
@@ -261,8 +272,25 @@ class Users(db.Model):
         self.password = hash_password(str(kwargs['password']))
 
     @property
+    def solves(self):
+        return self.get_solves(admin=False)
+
+    @property
     def score(self):
         return self.get_score(admin=False)
+
+    @property
+    def place(self):
+        return self.get_place(admin=False)
+
+    def get_solves(self, admin=False):
+        solves = Solves.query.filter_by(user_id=self.id)
+        print solves.all()
+        freeze = get_config('freeze')
+        if freeze and admin is False:
+            dt = datetime.datetime.utcfromtimestamp(freeze)
+            solves = solves.filter(Solves.date < freeze)
+        return solves.all()
 
     def get_score(self, admin=False):
         score = db.func.sum(Challenges.value).label('score')
@@ -297,10 +325,6 @@ class Users(db.Model):
             return int(award.award_score or 0)
         else:
             return 0
-
-    @property
-    def place(self):
-        return self.get_place(admin=False)
 
     def get_place(self, admin=False, numeric=False):
         """
@@ -343,13 +367,13 @@ class Users(db.Model):
         if admin:
             standings_query = db.session.query(
                 Users.id.label('user_id'),
-            )\
+            ) \
                 .join(sumscores, Users.id == sumscores.columns.user_id) \
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
         else:
             standings_query = db.session.query(
                 Users.id.label('user_id'),
-            )\
+            ) \
                 .join(sumscores, Users.id == sumscores.columns.user_id) \
                 .filter(Users.banned == False) \
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
@@ -497,15 +521,24 @@ class Submissions(db.Model):
         'polymorphic_on': type,
     }
 
+    @hybrid_property
+    def account_id(self):
+        user_mode = get_config('user_mode')
+        if user_mode == 'teams':
+            return self.team_id
+        elif user_mode == 'users':
+            return self.user_id
+
     def __repr__(self):
-        return '<Submission {}, {}, {}, {}>'.format(self.team_id, self.chal_id, self.ip, self.provided)
+        return '<Submission {}, {}, {}, {}>'.format(self.team_id, self.challenge_id, self.ip, self.provided)
 
 
 class Solves(Submissions):
     __tablename__ = 'solves'
     __table_args__ = (db.UniqueConstraint('challenge_id', 'user_id'), {})
     id = db.Column(None, db.ForeignKey('submissions.id', ondelete='CASCADE'), primary_key=True)
-    challenge_id = column_property(db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE')), Submissions.challenge_id)
+    challenge_id = column_property(db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE')),
+                                   Submissions.challenge_id)
     user_id = column_property(db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE')), Submissions.user_id)
 
     user = db.relationship('Users', foreign_keys="Solves.user_id", lazy='select')
@@ -573,10 +606,6 @@ class Tracking(db.Model):
 
     user = db.relationship('Users', foreign_keys="Tracking.user_id", lazy='select')
 
-    # def __init__(self, ip, user_id):
-    #     self.ip = ip
-    #     self.user_id = user_id
-
     __mapper_args__ = {
         'polymorphic_on': type,
     }
@@ -596,3 +625,22 @@ class Configs(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Configs, self).__init__(**kwargs)
+
+
+@cache.memoize()
+def get_config(key):
+    """
+    This should be a direct clone of its implementation in utils. It is used to avoid a circular import.
+    """
+    config = Configs.query.filter_by(key=key).first()
+    if config and config.value:
+        value = config.value
+        if value and value.isdigit():
+            return int(value)
+        elif value and isinstance(value, six.string_types):
+            if value.lower() == 'true':
+                return True
+            elif value.lower() == 'false':
+                return False
+            else:
+                return value

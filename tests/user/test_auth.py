@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import CTFd.cache
 from CTFd.models import Teams, Solves, Fails
 from CTFd.utils import get_config, set_config
 from CTFd import utils
@@ -15,14 +15,14 @@ def test_user_can_view_challenges():
     app = create_ctfd()
     with app.app_context():
         set_config('view_challenges_unregistered', True)
-        utils.cache.clear()  # Need to clear the cached configuration
+        CTFd.cache.cache.clear()  # Need to clear the cached configuration
         chal = gen_challenge(app.db)
         with app.test_client() as client:
             r = client.get('/challenges')
             assert r.status_code == 200
             r = client.get('/chals')
             assert r.status_code == 200
-        utils.cache.clear()  # Need to clear the cached configuration
+        CTFd.cache.cache.clear()  # Need to clear the cached configuration
         set_config('view_challenges_unregistered', False)
         with app.test_client() as client:
             r = client.get('/challenges')
@@ -36,7 +36,7 @@ def test_verify_emails_config():
     """Test that users can only solve challenges if they are logged in and verified if verify_emails is set"""
     app = create_ctfd()
     with app.app_context():
-        utils.cache.clear()  # Need to clear the cached configuration
+        CTFd.cache.cache.clear()  # Need to clear the cached configuration
         set_config('verify_emails', True)
         chal = gen_challenge(app.db)
 
@@ -68,7 +68,7 @@ def test_verify_and_view_unregistered():
     but be locked out if they register until they confirm their email address"""
     app = create_ctfd()
     with app.app_context():
-        utils.cache.clear()  # Need to clear the cached configuration
+        CTFd.cache.cache.clear()  # Need to clear the cached configuration
         set_config('view_challenges_unregistered', True)
         set_config('verify_emails', True)
         chal = gen_challenge(app.db)

@@ -7,6 +7,21 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1 id="user-id" user-id="{{ user.id }}">{{ user.name }}</h1>
+
+		<div class="user-info">
+			<h2 id="user-place" class="text-center">
+				{% if not get_config('workshop_mode') and place %}
+					{{ user.place }}
+					<small>place</small>
+				{% endif %}
+			</h2>
+			<h2 id="user-score" class="text-center">
+				{% if score %}
+					{{ user.score }}
+					<small>points</small>
+				{% endif %}
+			</h2>
+		</div>
 	</div>
 </div>
 <div class="container">
@@ -24,20 +39,10 @@
 	</div>
 	{% endif %}
 
-	<div class="user-info">
-		<h2 id="user-place" class="text-center">
-			{%if not get_config('workshop_mode') and place %}
-				{{ place }} <small>place</small>
-			{% endif %}
-		</h2>
-		<h2 id="user-score" class="text-center">
-			{%if score %}
-				{{ score }} <small>points</small>
-			{% endif %}
-		</h2>
-	</div>
-
 	<br>
+
+	{% set solves = user.solves %}
+	{% set awards = user.awards %}
 
 	{% if solves %}
 	<div id="keys-pie-graph" class="w-50 mr-0 pr-0 float-left d-none d-md-block d-lg-block">

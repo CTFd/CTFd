@@ -1,6 +1,6 @@
 from CTFd import create_app
 from CTFd.models import *
-from CTFd.utils import cache
+from CTFd.cache import cache
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.engine.url import make_url
 import datetime

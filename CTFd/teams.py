@@ -5,7 +5,8 @@ from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Users, Teams, Solves, Awards, Files, Pages, Tracking
 from CTFd.utils.decorators import authed_only
-from CTFd.utils import cache, markdown
+from CTFd.utils import markdown
+from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import get_current_user, authed, get_ip
 from CTFd.utils import config
@@ -31,12 +32,14 @@ def list(page):
     page_start = results_per_page * (page - 1)
     page_end = results_per_page * (page - 1) + results_per_page
 
-    if get_config('verify_emails'):
-        count = Teams.query.filter_by(verified=True, banned=False).count()
-        teams = Teams.query.filter_by(verified=True, banned=False).slice(page_start, page_end).all()
-    else:
-        count = Teams.query.filter_by(banned=False).count()
-        teams = Teams.query.filter_by(banned=False).slice(page_start, page_end).all()
+    # TODO: Should teams confirm emails?
+    # if get_config('verify_emails'):
+    #     count = Teams.query.filter_by(verified=True, banned=False).count()
+    #     teams = Teams.query.filter_by(verified=True, banned=False).slice(page_start, page_end).all()
+    # else:
+    count = Teams.query.filter_by(banned=False).count()
+    teams = Teams.query.filter_by(banned=False).slice(page_start, page_end).all()
+
     pages = int(count / results_per_page) + (count % results_per_page > 0)
     return render_template('teams/teams.html', teams=teams, team_pages=pages, curr_page=page)
 
@@ -124,7 +127,7 @@ def private():
     )
 
 
-@teams.route('/team/<int:team_id>', methods=['GET', 'POST'])
+@teams.route('/teams/<int:team_id>', methods=['GET', 'POST'])
 def public(team_id):
     if get_config('workshop_mode'):
         abort(404)

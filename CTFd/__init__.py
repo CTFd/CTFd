@@ -9,7 +9,8 @@ from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
-from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
+from CTFd.utils import migrate, migrate_upgrade, migrate_stamp
+from CTFd.cache import cache
 from CTFd.utils.updates import update_check
 # from CTFd import utils
 

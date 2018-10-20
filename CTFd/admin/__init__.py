@@ -12,7 +12,8 @@ from flask import (
 
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.user import is_admin
-from CTFd.utils import config, cache, validators, uploads, user as current_user, get_config, set_config
+from CTFd.utils import config, validators, uploads, user as current_user, get_config, set_config
+from CTFd.cache import cache
 from CTFd.utils.exports import export_ctf, import_ctf
 from CTFd.models import db, Configs
 

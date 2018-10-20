@@ -11,8 +11,18 @@ scoreboard = Blueprint('scoreboard', __name__)
 @scoreboard.route('/scoreboard')
 def scoreboard_view():
     if get_config('view_scoreboard_if_authed') and not config.authed():
-        return redirect(url_for('auth.login', next=request.path))
+        return redirect(
+            url_for('auth.login', next=request.path)
+        )
     if config.hide_scores():
-        return render_template('scoreboard.html', errors=['Scores are currently hidden'])
+        return render_template(
+            'scoreboard.html',
+            errors=['Scores are currently hidden']
+        )
+
     standings = get_standings()
-    return render_template('scoreboard.html', teams=standings, score_frozen=config.is_scoreboard_frozen())
+    return render_template(
+        'scoreboard.html',
+        standings=standings,
+        score_frozen=config.is_scoreboard_frozen()
+    )

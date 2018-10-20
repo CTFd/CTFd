@@ -3,15 +3,17 @@ from flask.helpers import safe_join
 from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Admins, Users, Users, Solves, Awards, Files, Pages, Tracking
-from CTFd.utils import cache, markdown
+from CTFd.utils import markdown
+from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
-from CTFd.utils.user import authed, get_ip
+from CTFd.utils.user import authed, get_current_user
 from CTFd.utils import config
 from CTFd.utils.config.pages import get_page
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
 from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime, unix_time_to_utc
 from CTFd.utils import validators
+from CTFd.utils.decorators import authed_only
 
 import os
 
@@ -104,7 +106,7 @@ def setup():
 
             session['username'] = admin.name
             session['id'] = admin.id
-            session['id'] = admin.type
+            session['type'] = admin.type
             session['admin'] = admin.admin
             session['nonce'] = generate_nonce()
 
@@ -140,79 +142,87 @@ def static_html(template):
 
 
 @views.route('/settings', methods=['POST', 'GET'])
+@authed_only
 def settings():
-    if authed():
-        if request.method == "POST":
-            errors = []
-
-            name = request.form.get('name').strip()
-            email = request.form.get('email').strip()
-            website = request.form.get('website').strip()
-            affiliation = request.form.get('affiliation').strip()
-            country = request.form.get('country').strip()
-
-            user = Users.query.filter_by(id=session['id']).first()
-
-            if not get_config('prevent_name_change'):
-                names = Users.query.filter_by(name=name).first()
-                name_len = len(request.form['name']) == 0
-
-            emails = Users.query.filter_by(email=email).first()
-            valid_email = validators.validate_email(email)
-
-            if validators.validate_email(name) is True:
-                errors.append('Team name cannot be an email address')
-
-            if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
-                    (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):
-                errors.append("Your old password doesn't match what we have.")
-            if not valid_email:
-                errors.append("That email doesn't look right")
-            if not get_config('prevent_name_change') and names and name != session['username']:
-                errors.append('That team name is already taken')
-            if emails and emails.id != session['id']:
-                errors.append('That email has already been used')
-            if not get_config('prevent_name_change') and name_len:
-                errors.append('Pick a longer team name')
-            if website.strip() and not validators.validate_url(website):
-                errors.append("That doesn't look like a valid URL")
-
-            if len(errors) > 0:
-                return render_template('profile.html', name=name, email=email, website=website,
-                                       affiliation=affiliation, country=country, errors=errors)
-            else:
-                team = Users.query.filter_by(id=session['id']).first()
-                if team.name != name:
-                    if not get_config('prevent_name_change'):
-                        team.name = name
-                        session['username'] = team.name
-                if team.email != email.lower():
-                    team.email = email.lower()
-                    session['email'] = team.email
-                    if get_config('verify_emails'):
-                        team.verified = False
-
-                if 'password' in request.form.keys() and not len(request.form['password']) == 0:
-                    team.password = bcrypt_sha256.encrypt(request.form.get('password'))
-                team.website = website
-                team.affiliation = affiliation
-                team.country = country
-                db.session.commit()
-                db.session.close()
-                return redirect(url_for('views.profile'))
-        else:
-            user = Users.query.filter_by(id=session['id']).first()
-            name = user.name
-            email = user.email
-            website = user.website
-            affiliation = user.affiliation
-            country = user.country
-            prevent_name_change = get_config('prevent_name_change')
-            confirm_email = get_config('verify_emails') and not user.verified
-            return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
-                                   country=country, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
+    if request.method == "POST":
+        pass
+        # TODO: Move to API
+        # errors = []
+        #
+        # name = request.form.get('name').strip()
+        # email = request.form.get('email').strip()
+        # website = request.form.get('website').strip()
+        # affiliation = request.form.get('affiliation').strip()
+        # country = request.form.get('country').strip()
+        #
+        # user = Users.query.filter_by(id=session['id']).first()
+        #
+        # if not get_config('prevent_name_change'):
+        #     names = Users.query.filter_by(name=name).first()
+        #     name_len = len(request.form['name']) == 0
+        #
+        # emails = Users.query.filter_by(email=email).first()
+        # valid_email = validators.validate_email(email)
+        #
+        # if validators.validate_email(name) is True:
+        #     errors.append('Team name cannot be an email address')
+        #
+        # if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
+        #         (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):
+        #     errors.append("Your old password doesn't match what we have.")
+        # if not valid_email:
+        #     errors.append("That email doesn't look right")
+        # if not get_config('prevent_name_change') and names and name != session['username']:
+        #     errors.append('That team name is already taken')
+        # if emails and emails.id != session['id']:
+        #     errors.append('That email has already been used')
+        # if not get_config('prevent_name_change') and name_len:
+        #     errors.append('Pick a longer team name')
+        # if website.strip() and not validators.validate_url(website):
+        #     errors.append("That doesn't look like a valid URL")
+        #
+        # if len(errors) > 0:
+        #     return render_template('settings.html', name=name, email=email, website=website,
+        #                            affiliation=affiliation, country=country, errors=errors)
+        # else:
+        #     team = Users.query.filter_by(id=session['id']).first()
+        #     if team.name != name:
+        #         if not get_config('prevent_name_change'):
+        #             team.name = name
+        #             session['username'] = team.name
+        #     if team.email != email.lower():
+        #         team.email = email.lower()
+        #         session['email'] = team.email
+        #         if get_config('verify_emails'):
+        #             team.verified = False
+        #
+        #     if 'password' in request.form.keys() and not len(request.form['password']) == 0:
+        #         team.password = bcrypt_sha256.encrypt(request.form.get('password'))
+        #     team.website = website
+        #     team.affiliation = affiliation
+        #     team.country = country
+        #     db.session.commit()
+        #     db.session.close()
+        #     return redirect(url_for('views.profile'))
     else:
-        return redirect(url_for('auth.login'))
+        user = get_current_user()
+        name = user.name
+        email = user.email
+        website = user.website
+        affiliation = user.affiliation
+        country = user.country
+        prevent_name_change = get_config('prevent_name_change')
+        confirm_email = get_config('verify_emails') and not user.verified
+        return render_template(
+            'settings.html',
+            name=name,
+            email=email,
+            website=website,
+            affiliation=affiliation,
+            country=country,
+            prevent_name_change=prevent_name_change,
+            confirm_email=confirm_email
+        )
 
 
 @views.route('/files', defaults={'path': ''})
@@ -231,6 +241,7 @@ def file_handler(path):
 
 
 @views.route('/themes/<theme>/static/<path:path>')
+# @cache.cached(timeout=300)
 def themes_handler(theme, path):
     filename = safe_join(app.root_path, 'themes', theme, 'static', path)
     if os.path.isfile(filename):

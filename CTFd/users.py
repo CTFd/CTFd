@@ -4,7 +4,8 @@ from flask.helpers import safe_join
 from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Users, Teams, Solves, Awards, Files, Pages, Tracking
-from CTFd.utils import cache, markdown
+from CTFd.utils import markdown
+from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import authed, get_ip
 from CTFd.utils.decorators import authed_only
@@ -64,7 +65,8 @@ def private():
     )
 
 
-@users.route('/user/<int:user_id>')
+@users.route('/users/<int:user_id>')
 def public(user_id):
     # TODO: This should be visible if user's login as themselves (user+team login, or user only login)
-    return render_template('users/user.html')
+    user = Users.query.filter_by(id=user_id).first_or_404()
+    return render_template('users/user.html', user=user)

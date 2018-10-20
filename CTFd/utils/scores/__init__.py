@@ -73,7 +73,7 @@ def get_user_standings(admin=False, count=None):
     """
     if admin:
         standings_query = db.session.query(
-            Users.id.label('user_id'),
+            Users.id.label('account_id'),
             Users.name.label('name'),
             Users.hidden,
             Users.banned,
@@ -83,7 +83,7 @@ def get_user_standings(admin=False, count=None):
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
     else:
         standings_query = db.session.query(
-            Users.id.label('user_id'),
+            Users.id.label('account_id'),
             Users.name.label('name'),
             sumscores.columns.score
         ) \
@@ -164,7 +164,7 @@ def get_team_standings(admin=False, count=None):
     """
     if admin:
         standings_query = db.session.query(
-            Teams.id.label('team_id'),
+            Teams.id.label('account_id'),
             Teams.name.label('name'),
             Teams.hidden,
             Teams.banned,
@@ -174,7 +174,7 @@ def get_team_standings(admin=False, count=None):
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
     else:
         standings_query = db.session.query(
-            Teams.id.label('team_id'),
+            Teams.id.label('account_id'),
             Teams.name.label('name'),
             sumscores.columns.score
         ) \

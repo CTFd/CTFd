@@ -1,4 +1,4 @@
-from CTFd.utils import cache
+from CTFd.cache import cache
 from CTFd.models import Pages
 
 

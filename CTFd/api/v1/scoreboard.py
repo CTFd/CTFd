@@ -34,10 +34,10 @@ class ScoreboardList(Resource):
 
         standings = get_standings(count=count)
 
-        team_ids = [team.team_id for team in standings]
+        team_ids = [team.account_id for team in standings]
 
-        solves = Solves.query.filter(Solves.team_id.in_(team_ids))
-        awards = Awards.query.filter(Awards.team_id.in_(team_ids))
+        solves = Solves.query.filter(Solves.account_id.in_(team_ids))
+        awards = Awards.query.filter(Awards.account_id.in_(team_ids))
 
         freeze = get_config('freeze')
 
@@ -50,23 +50,23 @@ class ScoreboardList(Resource):
 
         for i, team in enumerate(team_ids):
             response[i + 1] = {
-                'id': standings[i].team_id,
+                'id': standings[i].account_id,
                 'name': standings[i].name,
                 'solves': []
             }
             for solve in solves:
                 if solve.team_id == team:
                     response[i + 1]['solves'].append({
-                        'chal': solve.challenge_id,
-                        'team': solve.team_id,
+                        'challenge_id': solve.challenge_id,
+                        'account_id': solve.account_id,
                         'value': solve.challenge.value,
                         'time': unix_time(solve.date)
                     })
             for award in awards:
                 if award.team_id == team:
                     response[i + 1]['solves'].append({
-                        'chal': None,
-                        'team': award.team_id,
+                        'challenge_id': None,
+                        'account_id': award.account_id,
                         'value': award.value,
                         'time': unix_time(award.date)
                     })
