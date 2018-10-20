@@ -3,8 +3,8 @@ from CTFd.utils import config
 from CTFd.cache import cache
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.updates import update_check
-from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Configs
-
+from CTFd.utils.modes import get_model
+from CTFd.models import db, Teams, Solves, Challenges, Fails, Tracking
 from CTFd.admin import admin
 
 
@@ -12,19 +12,53 @@ from CTFd.admin import admin
 @admins_only
 def admin_stats():
     update_check()
-    teams_registered = db.session.query(db.func.count(Teams.id)).first()[0]
 
-    wrong_count = Fails.query.join(Teams, Fails.team_id == Teams.id).filter(Teams.banned == False).count()
-    solve_count = Solves.query.join(Teams, Solves.team_id == Teams.id).filter(Teams.banned == False).count()
+    Model = get_model()
 
-    challenge_count = db.session.query(db.func.count(Challenges.id)).first()[0]
-    ip_count = db.session.query(db.func.count(Tracking.ip.distinct())).first()[0]
+    teams_registered = Model.query.count()
 
-    solves_sub = db.session.query(Solves.challenge_id, db.func.count(Solves.challenge_id).label('solves_cnt')) \
-                           .join(Teams, Solves.team_id == Teams.id).filter(Teams.banned == False) \
-                           .group_by(Solves.challenge_id).subquery()
-    solves = db.session.query(solves_sub.columns.challenge_id, solves_sub.columns.solves_cnt, Challenges.name) \
-                       .join(Challenges, solves_sub.columns.challenge_id == Challenges.id).all()
+    wrong_count = Fails.query.join(
+        Model,
+        Fails.account_id == Model.id
+    ).filter(
+        Model.banned == False,
+        Model.hidden == False
+    ).count()
+
+    solve_count = Solves.query.join(
+        Model,
+        Solves.account_id == Model.id
+    ).filter(
+        Model.banned == False,
+        Model.hidden == False
+    ).count()
+
+    challenge_count = Challenges.query.count()
+
+    ip_count = Tracking.query.with_entities(Tracking.ip).distinct().count()
+
+    solves_sub = db.session.query(
+        Solves.challenge_id,
+        db.func.count(Solves.challenge_id).label('solves_cnt')
+    ).join(
+        Model,
+        Solves.account_id == Model.id
+    ).filter(
+        Model.banned == False,
+        Model.hidden == False
+    ).group_by(
+        Solves.challenge_id
+    ).subquery()
+
+    solves = db.session.query(
+        solves_sub.columns.challenge_id,
+        solves_sub.columns.solves_cnt,
+        Challenges.name
+    ).join(
+        Challenges,
+        solves_sub.columns.challenge_id == Challenges.id
+    ).all()
+
     solve_data = {}
     for chal, count, name in solves:
         solve_data[name] = count
@@ -35,8 +69,6 @@ def admin_stats():
         most_solved = max(solve_data, key=solve_data.get)
         least_solved = min(solve_data, key=solve_data.get)
 
-    db.session.expunge_all()
-    db.session.commit()
     db.session.close()
 
     return render_template(

@@ -90,6 +90,7 @@ class ChallengeSolveStatistics(Resource):
 
 @statistics_namespace.route('/challenges/solves/percentages')
 class ChallengeSolvePercentages(Resource):
+    @admins_only
     def get(self):
         challenges = Challenges.query\
             .add_columns('id', 'name', 'hidden', 'max_attempts')\

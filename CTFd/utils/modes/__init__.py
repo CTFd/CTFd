@@ -18,6 +18,7 @@ def generate_account_url(account_id, admin=False):
         else:
             return url_for('teams.public', team_id=account_id)
 
+
 def get_model():
     if get_config('user_mode') == USERS_MODE:
         return Users
