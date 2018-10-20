@@ -1,4 +1,4 @@
-function toggle_team(elem) {
+function toggle_account(elem) {
     var btn = $(elem);
     var teamId = btn.attr('team-id');
     var state = btn.attr('state');
@@ -13,7 +13,7 @@ function toggle_team(elem) {
         'hidden': hidden
     };
 
-    fetch(script_root + '/api/v1/teams/' + teamId, {
+    fetch(script_root + '/api/v1/'+ user_mode +'/' + teamId, {
         method: 'PATCH',
         headers: {
             'Accept': 'application/json',

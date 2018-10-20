@@ -27,11 +27,11 @@
 						<td>
 						{% if standing.hidden %}
 							<button class="btn-sm btn-danger cursor-pointer" type="submit"
-									onclick="toggle_team(this)" team-id="{{ standing.account_id }}" state="hidden">Hidden
+									onclick="toggle_account(this)" team-id="{{ standing.account_id }}" state="hidden">Hidden
 							</button>
 						{%else %}
 							<button class="btn-sm btn-success cursor-pointer" type="submit"
-									onclick="toggle_team(this)" team-id="{{ standing.account_id }}" state="visible">Visible
+									onclick="toggle_account(this)" team-id="{{ standing.account_id }}" state="visible">Visible
 							</button>
 						{% endif %}
 						</td>
