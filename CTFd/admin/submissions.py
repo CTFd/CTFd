@@ -1,11 +1,7 @@
-from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils.decorators import admins_only, ratelimit
-from CTFd.models import db, Teams, Solves, Challenges, Fails, Submissions
+from flask import render_template, request
+from CTFd.utils.decorators import admins_only
+from CTFd.models import Challenges, Submissions
 from CTFd.utils.modes import get_model
-from passlib.hash import bcrypt_sha256
-from sqlalchemy.sql import not_
-
-from CTFd import utils
 from CTFd.admin import admin
 
 
@@ -28,6 +24,7 @@ def list_submissions(submission_type):
 
     submissions = Submissions.query.add_columns(
         Submissions.id,
+        Submissions.type,
         Submissions.challenge_id,
         Submissions.provided,
         Submissions.account_id,
@@ -38,7 +35,7 @@ def list_submissions(submission_type):
         .filter_by(**filters) \
         .join(Challenges)\
         .join(Model)\
-        .order_by(Fails.date.desc())\
+        .order_by(Submissions.date.desc())\
         .slice(page_start, page_end)\
         .all()
 
