@@ -276,6 +276,14 @@ class Users(db.Model):
         return self.get_solves(admin=False)
 
     @property
+    def fails(self):
+        return self.get_fails(admin=False)
+
+    @property
+    def awards(self):
+        return self.get_awards(admin=False)
+
+    @property
     def score(self):
         return self.get_score(admin=False)
 
@@ -285,12 +293,27 @@ class Users(db.Model):
 
     def get_solves(self, admin=False):
         solves = Solves.query.filter_by(user_id=self.id)
-        print solves.all()
         freeze = get_config('freeze')
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
-            solves = solves.filter(Solves.date < freeze)
+            solves = solves.filter(Solves.date < dt)
         return solves.all()
+
+    def get_fails(self, admin=False):
+        fails = Fails.query.filter_by(user_id=self.id)
+        freeze = get_config('freeze')
+        if freeze and admin is False:
+            dt = datetime.datetime.utcfromtimestamp(freeze)
+            fails = fails.filter(Solves.date < dt)
+        return fails.all()
+
+    def get_awards(self, admin=False):
+        awards = Awards.query.filter_by(user_id=self.id)
+        freeze = get_config('freeze')
+        if freeze and admin is False:
+            dt = datetime.datetime.utcfromtimestamp(freeze)
+            awards = awards.filter(Solves.date < dt)
+        return awards.all()
 
     def get_score(self, admin=False):
         score = db.func.sum(Challenges.value).label('score')
