@@ -120,18 +120,13 @@ class TeamSolves(Resource):
         else:
             team = Teams.query.filter_by(id=team_id).first_or_404()
 
-        solves = Solves.query.filter_by(team_id=team.id)
-
-        freeze = get_config('freeze')
-        if freeze:
-            freeze = unix_time_to_utc(freeze)
-            if team_id != session.get('team_id'):
-                solves = solves.filter(Solves.date < freeze)
+        solves = team.get_solves(
+            admin=is_admin()
+        )
 
         view = 'admin' if is_admin() else 'user'
-
         schema = SubmissionSchema(view=view, many=True)
-        response = schema.dump(solves.all()).data
+        response = schema.dump(solves).data
         return response
 
 
@@ -144,18 +139,14 @@ class TeamFails(Resource):
         else:
             team = Teams.query.filter_by(id=team_id).first_or_404()
 
-        fails = Fails.query.filter_by(team_id=team_id)
-
-        freeze = get_config('freeze')
-        if freeze:
-            freeze = unix_time_to_utc(freeze)
-            if team_id != session.get('team_id'):
-                fails = fails.filter(Solves.date < freeze)
+        fails = team.get_fails(
+            admin=is_admin()
+        )
 
         view = 'admin' if is_admin() else 'user'
 
         schema = SubmissionSchema(view=view, many=True)
-        response = schema.dump(fails.all()).data
+        response = schema.dump(fails).data
         return response
 
 
@@ -168,14 +159,10 @@ class TeamAwards(Resource):
         else:
             team = Teams.query.filter_by(id=team_id).first_or_404()
 
-        awards = Awards.query.filter_by(team_id=team_id)
-
-        freeze = get_config('freeze')
-        if freeze:
-            freeze = unix_time_to_utc(freeze)
-            if team_id != session.get('team_id'):
-                awards = awards.filter(Awards.date < freeze)
+        awards = team.get_awards(
+            admin=is_admin()
+        )
 
         schema = SubmissionSchema(many=True)
-        response = schema.dump(awards.all()).data
+        response = schema.dump(awards).data
         return response
