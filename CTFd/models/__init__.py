@@ -625,13 +625,19 @@ class Submissions(db.Model):
 
 class Solves(Submissions):
     __tablename__ = 'solves'
-    __table_args__ = (db.UniqueConstraint('challenge_id', 'user_id'), {})
+    __table_args__ = (
+        db.UniqueConstraint('challenge_id', 'user_id'),
+        db.UniqueConstraint('challenge_id', 'team_id'),
+        {}
+    )
     id = db.Column(None, db.ForeignKey('submissions.id', ondelete='CASCADE'), primary_key=True)
     challenge_id = column_property(db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE')),
                                    Submissions.challenge_id)
     user_id = column_property(db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE')), Submissions.user_id)
+    team_id = column_property(db.Column(db.Integer, db.ForeignKey('teams.id', ondelete='CASCADE')), Submissions.team_id)
 
     user = db.relationship('Users', foreign_keys="Solves.user_id", lazy='select')
+    team = db.relationship('Teams', foreign_keys="Solves.team_id", lazy='select')
     challenge = db.relationship('Challenges', foreign_keys="Solves.challenge_id", lazy='select')
 
     __mapper_args__ = {
