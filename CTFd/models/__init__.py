@@ -147,7 +147,6 @@ class Awards(db.Model):
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     icon = db.Column(db.Text)
-    requirements = db.Column(JSONLite)
 
     user = db.relationship('Users', foreign_keys="Awards.user_id", lazy='select')
     team = db.relationship('Teams', foreign_keys="Awards.team_id", lazy='select')

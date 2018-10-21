@@ -192,6 +192,7 @@ function load_user_solves(cb) {
     });
 }
 
+// TODO: I think this function can be deprecated
 function updatesolves(cb) {
     $.get(script_root + '/api/v1/statistics/challenges/solves', function (data) {
         var solves = $.parseJSON(JSON.stringify(data));
@@ -210,7 +211,6 @@ function updatesolves(cb) {
                 }
             }
         }
-        ;
         if (cb) {
             cb();
         }

@@ -31,7 +31,7 @@ class User(Resource):
     def get(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
 
-        response = UserSchema('self').dump(user)
+        response = UserSchema('self').dump(user).data
         response['place'] = user.place
         response['score'] = user.score
         return response
@@ -125,8 +125,11 @@ class UserSolves(Resource):
         solves = user.get_solves(
             admin=is_admin()
         )
+        for solve in solves:
+            setattr(solve, 'value', 100)
 
-        response = SubmissionSchema(many=True).dump(solves)
+        view = 'user' if not is_admin() else 'admin'
+        response = SubmissionSchema(view=view, many=True).dump(solves)
         return response
 
 
@@ -139,15 +142,12 @@ class UserFails(Resource):
         else:
             user = Users.query.filter_by(id=user_id).first_or_404()
 
-        fails = Fails.query.filter_by(user_id=user.id)
+        fails = user.get_fails(
+            admin=is_admin()
+        )
 
-        freeze = get_config('freeze')
-        if freeze:
-            freeze = unix_time_to_utc(freeze)
-            if user_id != session.get('id'):
-                fails = fails.filter(Solves.date < freeze)
-
-        response = SubmissionSchema(many=True).dump(fails.all())
+        view = 'user' if not is_admin() else 'admin'
+        response = SubmissionSchema(view=view, many=True).dump(fails)
         return response
 
 
@@ -160,13 +160,10 @@ class UserAwards(Resource):
         else:
             user = Users.query.filter_by(id=user_id).first_or_404()
 
-        awards = Awards.query.filter_by(user_id=user.id)
+        awards = user.get_awards(
+            admin=is_admin()
+        )
 
-        freeze = get_config('freeze')
-        if freeze:
-            freeze = unix_time_to_utc(freeze)
-            if user_id != session.get('id'):
-                awards = awards.filter(Awards.date < freeze)
-
-        response = AwardSchema(many=True).dump(awards)
+        view = 'user' if not is_admin() else 'admin'
+        response = AwardSchema(view=view, many=True).dump(awards)
         return response

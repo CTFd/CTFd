@@ -1,21 +1,23 @@
 from sqlalchemy.sql.expression import union_all
-from marshmallow import fields, post_load
-from marshmallow import validate, ValidationError
+from marshmallow import fields, post_load, validate, ValidationError
 from marshmallow_sqlalchemy import field_for
+from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.models import ma, Submissions
 
 
 class SubmissionSchema(ma.ModelSchema):
+    challenge = fields.Nested(ChallengeSchema, only=["value"])
+
     class Meta:
         model = Submissions
         include_fk = True
         dump_only = ('id', )
-        # load_only = ('password',)
 
     views = {
         'admin': [
             'provided',
             'ip',
+            'challenge_id',
             'challenge',
             'user',
             'team',
@@ -24,8 +26,8 @@ class SubmissionSchema(ma.ModelSchema):
             'id'
         ],
         'user': [
-            'ip',
             'challenge_id',
+            'challenge',
             'user',
             'team',
             'date',
