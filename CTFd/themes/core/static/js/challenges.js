@@ -163,7 +163,7 @@ function renderSubmissionResponse(data, cb) {
 }
 
 function marksolves(cb) {
-    $.get(script_root + '/api/v1/users/me/solves', function (data) {
+    $.get(script_root + '/api/v1/' + user_mode + '/me/solves', function (data) {
         var solves = $.parseJSON(JSON.stringify(data));
         for (var i = solves.length - 1; i >= 0; i--) {
             var id = solves[i].challenge_id;
@@ -178,7 +178,7 @@ function marksolves(cb) {
 }
 
 function load_user_solves(cb) {
-    $.get(script_root + '/api/v1/users/me/solves', function (data) {
+    $.get(script_root + '/api/v1/'+ user_mode +'/me/solves', function (data) {
         var solves = $.parseJSON(JSON.stringify(data));
 
         for (var i = solves.length - 1; i >= 0; i--) {

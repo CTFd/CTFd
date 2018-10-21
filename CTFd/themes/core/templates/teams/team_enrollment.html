@@ -13,18 +13,22 @@
 		<div class="row">
 			<div class="col-md-6 offset-md-3 text-center">
 				<p>Welcome to {{ ctf_name() }}!</p>
-
 				<p>
 					In order to participate you must either join or create a team.
 				</p>
 			</div>
 		</div>
 		<div class="row">
+			<div class="col-md-6 offset-md-3 text-center">
+				<a class="btn btn-primary w-100" href="">Play with Official Team</a>
+			</div>
+		</div>
+		<div class="row pt-3">
 			<div class="col-md-3 offset-md-3 text-center">
-				<a class="btn btn-primary" href="{{ url_for('teams.join') }}">Join Team</a>
+				<a class="btn btn-light w-100" href="{{ url_for('teams.join') }}">Join Unofficial Team</a>
 			</div>
 			<div class="col-md-3 text-center">
-				<a class="btn btn-success" href="{{ url_for('teams.new') }}">Create Team</a>
+				<a class="btn btn-light w-100" href="{{ url_for('teams.new') }}">Create Unofficial Team</a>
 			</div>
 		</div>
 	</div>

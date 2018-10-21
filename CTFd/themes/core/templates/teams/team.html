@@ -7,6 +7,18 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
+		<h2 id="team-place" class="text-center">
+			{% if not get_config('workshop_mode') and place %}
+				{{ place }}
+				<small>place</small>
+			{% endif %}
+		</h2>
+		<h2 id="team-score" class="text-center">
+			{% if score %}
+				{{ score }}
+				<small>points</small>
+			{% endif %}
+		</h2>
 	</div>
 </div>
 <div class="container">
@@ -23,19 +35,6 @@
 		<h1 class="text-center">Scoreboard has been frozen.</h1>
 	</div>
 	{% endif %}
-
-	<div class="team-info">
-		<h2 id="team-place" class="text-center">
-			{%if not get_config('workshop_mode') and place %}
-				{{ place }} <small>place</small>
-			{% endif %}
-		</h2>
-		<h2 id="team-score" class="text-center">
-			{%if score %}
-				{{ score }} <small>points</small>
-			{% endif %}
-		</h2>
-	</div>
 
 	<br>
 

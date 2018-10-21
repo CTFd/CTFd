@@ -87,7 +87,7 @@ function keys_percentage_graph() {
         }];
 
         var layout = {
-            title: 'Key Percentages',
+            title: 'Solve Percentages',
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             legend: {

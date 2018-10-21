@@ -72,8 +72,16 @@ def new():
     elif request.method == 'POST':
         teamname = request.form.get('name')
         passphrase = request.form.get('password', '').strip()
+        errors = []
 
         user = get_current_user()
+
+        existing_team = Teams.query.filter_by(name=teamname).first()
+        if existing_team:
+            errors.append('That team name is already taken')
+
+        if errors:
+            return render_template("teams/new_team.html", errors=errors)
 
         team = Teams(
             name=teamname,

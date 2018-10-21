@@ -7,7 +7,8 @@ from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
     viewable_without_authentication,
-    ratelimit
+    ratelimit,
+    require_team
 )
 from CTFd.utils import config, text_type, user as current_user, get_config
 from CTFd.utils.dates import ctftime, ctf_started, ctf_paused, ctf_ended, unix_time, unix_time_to_utc
@@ -74,6 +75,7 @@ def hints_view(hintid):
 @during_ctf_time_only
 @require_verified_emails
 @viewable_without_authentication()
+@require_team
 def challenges_view():
     infos = []
     errors = []

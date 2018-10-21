@@ -3,6 +3,8 @@ from CTFd.utils import config, get_config, get_app_config
 from CTFd.cache import cache
 from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime
 from CTFd.utils import user as current_user
+from CTFd.utils.user import get_current_user, get_current_team
+from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
 import functools
 
 
@@ -120,6 +122,18 @@ def admins_only(f):
             return redirect(url_for('auth.login', next=request.path))
 
     return admins_only_wrapper
+
+
+def require_team(f):
+    @functools.wraps(f)
+    def require_team_wrapper(*args, **kwargs):
+        if get_config('user_mode') == TEAMS_MODE:
+            team = get_current_team()
+            if team is None:
+                return redirect(url_for('teams.private', next=request.path))
+        return f(*args, **kwargs)
+
+    return require_team_wrapper
 
 
 def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
