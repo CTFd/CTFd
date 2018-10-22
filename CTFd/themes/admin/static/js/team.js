@@ -1,33 +1,30 @@
 function teamid (){
-    loc = window.location.pathname
+    var loc = window.location.pathname;
     return loc.substring(loc.lastIndexOf('/')+1, loc.length);
 }
 
 
-function cumulativesum (arr) {
+function cumulativesum(arr) {
     var result = arr.concat();
-    for (var i = 0; i < arr.length; i++){
-        result[i] = arr.slice(0, i + 1).reduce(function(p, i){ return p + i; });
+    for (var i = 0; i < arr.length; i++) {
+        result[i] = arr.slice(0, i + 1).reduce(function (p, i) {
+            return p + i;
+        });
     }
     return result
 }
 
-function scoregraph () {
+function scoregraph() {
     var times = [];
     var scores = [];
-    var teamname = $('#team-id').text()
-    $.get(script_root + '/admin/solves/'+teamid(), function( data ) {
+    var teamname = $('#team-id').text();
+    $.get(script_root + '/api/v1/teams/' + teamid() + '/solves', function (data) {
         var solves = $.parseJSON(JSON.stringify(data));
-        solves = solves['solves'];
-
-        if (solves.length == 0) {
-            return;
-        }
 
         for (var i = 0; i < solves.length; i++) {
-            var date = moment(solves[i].time * 1000);
+            var date = moment(solves[i].date);
             times.push(date.toDate());
-            scores.push(solves[i].value);
+            scores.push(solves[i].challenge.value);
         }
         scores = cumulativesum(scores);
 
@@ -37,10 +34,10 @@ function scoregraph () {
                 y: scores,
                 type: 'scatter',
                 marker: {
-                    color: colorhash(teamname + teamid())
+                    color: colorhash(teamname + teamid()),
                 },
                 line: {
-                    color: colorhash(teamname + teamid())
+                    color: colorhash(teamname + teamid()),
                 }
             }
         ];
@@ -64,52 +61,57 @@ function scoregraph () {
         };
 
         $('#score-graph').empty();
-        document.getElementById('score-graph').fn = 'CTFd_score_team' + teamid() + '_' + (new Date).toISOString().slice(0,19);
+        document.getElementById('score-graph').fn = 'CTFd_score_team' + teamid() + '_' + (new Date).toISOString().slice(0, 19);
         Plotly.newPlot('score-graph', data, layout);
     });
 }
 
-function keys_percentage_graph(){
-    // Solves and Fails pie chart
-    $.get(script_root + '/admin/fails/'+teamid(), function(data){
-        var res = $.parseJSON(JSON.stringify(data));
-        var solves = res['solves'];
-        var fails = res['fails'];
+function keys_percentage_graph() {
+    var base_url = script_root + '/api/v1/teams/' + teamid();
+    $.get(base_url + '/fails', function (fails) {
+        $.get(base_url + '/solves', function (solves) {
+            var solves_count = solves.length;
+            var fails_count = fails.length;
 
-        var data = [{
-            values: [solves, fails],
-            labels: ['Solves', 'Fails'],
-            marker: {
-                colors: [
-                    "rgb(0, 209, 64)",
-                    "rgb(207, 38, 0)"
-                ]
-            },
-            hole: .4,
-            type: 'pie'
-        }];
+            var graph_data = [{
+                values: [solves_count, fails_count],
+                labels: ['Solves', 'Fails'],
+                marker: {
+                    colors: [
+                        "rgb(0, 209, 64)",
+                        "rgb(207, 38, 0)"
+                    ]
+                },
+                hole: .4,
+                type: 'pie'
+            }];
 
-        var layout = {
-            title: 'Key Percentages'
-        };
-        $('#keys-pie-graph').empty();
-        document.getElementById('keys-pie-graph').fn = 'CTFd_keys_team' +teamid() + '_' + (new Date).toISOString().slice(0,19);
-        Plotly.newPlot('keys-pie-graph', data, layout);
+            var layout = {
+                title: 'Solve Percentages',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                legend: {
+                    "orientation": "h"
+                }
+            };
+
+            $('#keys-pie-graph').empty();
+            document.getElementById('keys-pie-graph').fn = 'CTFd_submissions_team' + teamid() + '_' + (new Date).toISOString().slice(0, 19);
+            Plotly.newPlot('keys-pie-graph', graph_data, layout);
+        });
     });
 }
 
-function category_breakdown_graph(){
-    $.get(script_root + '/admin/solves/'+teamid(), function(data){
-        var solves = $.parseJSON(JSON.stringify(data));
-        solves = solves['solves'];
-
-        if (solves.length == 0)
-            return;
+function category_breakdown_graph() {
+    $.get(script_root + '/api/v1/teams/' + teamid() + '/solves', function (data) {
+        var solves = data;
 
         var categories = [];
         for (var i = 0; i < solves.length; i++) {
-            categories.push(solves[i].category)
+            categories.push(solves[i].challenge.category)
         }
+
+        console.log(categories);
 
         var keys = categories.filter(function (elem, pos) {
             return categories.indexOf(elem) == pos;
@@ -119,7 +121,7 @@ function category_breakdown_graph(){
         for (var i = 0; i < keys.length; i++) {
             var count = 0;
             for (var x = 0; x < categories.length; x++) {
-                if (categories[x] == keys[i]){
+                if (categories[x] == keys[i]) {
                     count++;
                 }
             }
@@ -134,11 +136,16 @@ function category_breakdown_graph(){
         }];
 
         var layout = {
-            title:'Category Breakdown'
+            title: 'Category Breakdown',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            legend: {
+                "orientation": "v"
+            }
         };
 
         $('#categories-pie-graph').empty();
-        document.getElementById('categories-pie-graph').fn = 'CTFd_categories_team' +teamid() + '_' + (new Date).toISOString().slice(0,19);
+        document.getElementById('categories-pie-graph').fn = 'CTFd_categories_team' + teamid() + '_' + (new Date).toISOString().slice(0, 19);
         Plotly.newPlot('categories-pie-graph', data, layout);
     });
 }

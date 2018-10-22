@@ -152,7 +152,6 @@ category_breakdown_graph();
 keys_percentage_graph();
 scoregraph();
 
-
 window.onresize = function () {
     Plotly.Plots.resize(document.getElementById('keys-pie-graph'));
     Plotly.Plots.resize(document.getElementById('categories-pie-graph'));
