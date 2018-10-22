@@ -6,7 +6,7 @@ from CTFd.models import ma, Submissions
 
 
 class SubmissionSchema(ma.ModelSchema):
-    challenge = fields.Nested(ChallengeSchema, only=["value"])
+    challenge = fields.Nested(ChallengeSchema, only=['name', 'category', 'value'])
 
     class Meta:
         model = Submissions

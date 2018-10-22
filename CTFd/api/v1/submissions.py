@@ -41,7 +41,6 @@ class SubmissionsList(Resource):
         request_form = request.form
 
         challenge_id = request.form.get('challenge_id') or request_json.get('challenge_id')
-        user_id = session['id']
 
         if ctf_paused():
             return {
@@ -55,10 +54,11 @@ class SubmissionsList(Resource):
             team = get_current_team()
 
             fails = Fails.query.filter_by(
-                user_id=user_id,
+                account_id=user.account_id,
                 challenge_id=challenge_id
             ).count()
-            logger = logging.getLogger('Flags')
+
+            logger = logging.getLogger('keys')
             data = (
                 time.strftime("%m/%d/%Y %X"),
                 session['username'].encode('utf-8'),
@@ -67,10 +67,10 @@ class SubmissionsList(Resource):
             )
             print("[{0}] {1} submitted {2} with kpm {3}".format(*data))
 
-            chal = Challenges.query.filter_by(id=challenge_id).first_or_404()
-            if chal.hidden:
+            challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+            if challenge.hidden:
                 abort(404)
-            chal_class = get_chal_class(chal.type)
+            chal_class = get_chal_class(challenge.type)
 
             # Anti-bruteforce / submitting Flags too quickly
             if current_user.get_wrong_submissions_per_minute(session['id']) > 10:
@@ -78,7 +78,7 @@ class SubmissionsList(Resource):
                     chal_class.fail(
                         user=user,
                         team=team,
-                        challenge=chal,
+                        challenge=challenge,
                         request=request
                     )
                 logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
@@ -89,29 +89,27 @@ class SubmissionsList(Resource):
                 }, 403
 
             solves = Solves.query.filter_by(
-                user_id=user_id,
+                account_id=user.account_id,
                 challenge_id=challenge_id
             ).first()
 
-            # Challange not solved yet
+            # Challenge not solved yet
             if not solves:
-                saved_Flags = Flags.query.filter_by(challenge_id=chal.id).all()
-
                 # Hit max attempts
-                max_tries = chal.max_attempts
+                max_tries = challenge.max_attempts
                 if max_tries and fails >= max_tries > 0:
                     return {
                         'status': 0,
                         'message': "You have 0 tries remaining"
                     }, 403
 
-                status, message = chal_class.attempt(chal, request)
+                status, message = chal_class.attempt(challenge, request)
                 if status:  # The challenge plugin says the input is right
                     if ctftime() or current_user.is_admin():
                         chal_class.solve(
                             user=user,
                             team=team,
-                            challenge=chal,
+                            challenge=challenge,
                             request=request
                         )
                     logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
@@ -124,7 +122,7 @@ class SubmissionsList(Resource):
                         chal_class.fail(
                             user=user,
                             team=team,
-                            challenge=chal,
+                            challenge=challenge,
                             request=request
                         )
                     logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))

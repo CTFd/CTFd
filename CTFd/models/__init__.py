@@ -270,6 +270,14 @@ class Users(db.Model):
         super(Users, self).__init__(**kwargs)
         self.password = hash_password(str(kwargs['password']))
 
+    @hybrid_property
+    def account_id(self):
+        user_mode = get_config('user_mode')
+        if user_mode == 'teams':
+            return self.team_id
+        elif user_mode == 'users':
+            return self.id
+
     @property
     def solves(self):
         return self.get_solves(admin=False)
@@ -415,6 +423,9 @@ class Users(db.Model):
 
 
 class Admins(Users):
+    __tablename__ = 'admins'
+    id = db.Column(None, db.ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
+
     __mapper_args__ = {
         'polymorphic_identity': 'admin'
     }

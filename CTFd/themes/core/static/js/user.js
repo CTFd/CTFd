@@ -20,8 +20,7 @@ function scoregraph() {
         var solves = $.parseJSON(JSON.stringify(data));
 
         for (var i = 0; i < solves.length; i++) {
-            var date = moment(solves[i].date * 1000);
-            // TODO: This date is wrong
+            var date = moment(solves[i].date);
             times.push(date.toDate());
             scores.push(solves[i].challenge.value);
         }
@@ -107,12 +106,9 @@ function category_breakdown_graph() {
     $.get(script_root + '/api/v1/users/' + user_id + '/solves', function (data) {
         var solves = data;
 
-        if (solves.length == 0)
-            return;
-
         var categories = [];
         for (var i = 0; i < solves.length; i++) {
-            categories.push(solves[i].category)
+            categories.push(solves[i].challenge.category)
         }
 
         var keys = categories.filter(function (elem, pos) {

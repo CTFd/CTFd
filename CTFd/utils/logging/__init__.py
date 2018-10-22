@@ -37,3 +37,7 @@ def init_logs(app):
     logger_keys.propagate = 0
     logger_logins.propagate = 0
     logger_regs.propagate = 0
+
+
+def log():
+    pass
