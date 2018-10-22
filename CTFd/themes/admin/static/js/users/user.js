@@ -63,7 +63,7 @@ function scoregraph() {
         };
 
         $('#score-graph').empty();
-        document.getElementById('score-graph').fn = 'CTFd_score_user' + userid() + '_' + (new Date).toISOString().slice(0, 19);
+        document.getElementById('score-graph').fn = 'CTFd_score_user_' + userid() + '_' + (new Date).toISOString().slice(0, 19);
         Plotly.newPlot('score-graph', data, layout);
     });
 }
@@ -100,7 +100,7 @@ function keys_percentage_graph() {
             };
 
             $('#keys-pie-graph').empty();
-            document.getElementById('keys-pie-graph').fn = 'CTFd_submissions_user' + user_id + '_' + (new Date).toISOString().slice(0, 19);
+            document.getElementById('keys-pie-graph').fn = 'CTFd_submissions_user_' + user_id + '_' + (new Date).toISOString().slice(0, 19);
             Plotly.newPlot('keys-pie-graph', graph_data, layout);
         });
     });
@@ -148,7 +148,7 @@ function category_breakdown_graph() {
         };
 
         $('#categories-pie-graph').empty();
-        document.getElementById('categories-pie-graph').fn = 'CTFd_categories_team' + user_id + '_' + (new Date).toISOString().slice(0, 19);
+        document.getElementById('categories-pie-graph').fn = 'CTFd_categories_team_' + user_id + '_' + (new Date).toISOString().slice(0, 19);
         Plotly.newPlot('categories-pie-graph', data, layout);
     });
 }
