@@ -32,7 +32,7 @@ class FlagList(Resource):
         flag = schema.load(req, session=db.session)
 
         if flag.errors:
-            return flag.errors
+            return flag.errors, 400
 
         db.session.add(flag.data)
         db.session.commit()
@@ -73,7 +73,7 @@ class Flag(Resource):
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
         response = FlagSchema().dump(flag)
         if response.errors:
-            return response.errors
+            return response.errors, 400
 
         response.data['templates'] = get_flag_class(flag.type).templates
         return response.data
@@ -98,7 +98,7 @@ class Flag(Resource):
 
         flag = schema.load(req, session=db.session, instance=flag, partial=True)
         if flag.errors:
-            return flag.errors
+            return flag.errors, 400
 
         db.session.commit()
         response = schema.dump(flag.data)

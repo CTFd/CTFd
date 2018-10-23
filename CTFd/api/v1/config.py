@@ -26,7 +26,7 @@ class ConfigList(Resource):
         config = schema.load(req)
 
         if config.errors:
-            return config.errors
+            return config.errors, 400
 
         db.session.add(config.data)
         db.session.commit()
@@ -59,7 +59,7 @@ class Config(Resource):
         response = ConfigSchema(instance=config, partial=True).load(data)
 
         if response.errors:
-            return response.errors
+            return response.errors, 400
 
         db.session.commit()
         response = ConfigSchema().dump(response.data)

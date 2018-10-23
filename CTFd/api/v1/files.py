@@ -36,7 +36,7 @@ class FilesList(Resource):
         files = schema.dump(objs)
 
         if files.errors:
-            return files.errors
+            return files.errors, 400
 
         return schema.dump(files.data)
 

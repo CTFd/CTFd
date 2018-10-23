@@ -42,7 +42,7 @@ class User(Resource):
         data = request.get_json()
         response = UserSchema(view='admin', instance=user, partial=True).load(data)
         if response.errors:
-            return response.errors
+            return response.errors, 400
 
         db.session.commit()
         response = UserSchema('admin').dump(response.data)
@@ -70,23 +70,29 @@ class User(Resource):
 class User(Resource):
     def get(self):
         user = get_current_user()
-        response = UserSchema('self').dump(user)
+        response = UserSchema('self').dump(user).data
         response['place'] = user.place
         response['score'] = user.score
         return response
 
     @authed_only
     def patch(self):
-        team = get_current_user()
+        user = get_current_user()
         data = request.get_json()
-        response = UserSchema(view='self', instance=team, partial=True).load(data)
+        response = UserSchema(view='self', instance=user, partial=True).load(data)
         if response.errors:
-            return response.errors
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
         db.session.commit()
         response = UserSchema('self').dump(response.data)
         db.session.close()
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
     @admins_only
     def delete(self):

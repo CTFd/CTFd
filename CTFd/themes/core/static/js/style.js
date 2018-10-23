@@ -1,10 +1,12 @@
 $(".form-control").bind({
     focus: function() {
+        $(this).removeClass('input-filled-invalid');
         $(this).addClass('input-filled-valid' );
     },
     blur: function() {
         if ($(this).val() === '') {
-            $(this).removeClass('input-filled-valid' );
+            $(this).removeClass('input-filled-invalid');
+            $(this).removeClass('input-filled-valid');
         }
     }
 });
@@ -15,6 +17,4 @@ $(function () {
             $(this).addClass("input-filled-valid");
         }
     });
-
-    $('[data-toggle="tooltip"]').tooltip()
-})
+});

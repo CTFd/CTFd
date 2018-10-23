@@ -1,3 +1,4 @@
+from flask import session
 from sqlalchemy.sql.expression import union_all
 from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError, pre_load
@@ -7,6 +8,7 @@ from CTFd.models import ma, Users
 from CTFd.utils.validators import unique_email, unique_team_name, validate_country_code
 from CTFd.utils.user import is_admin, get_current_user
 from CTFd.utils.countries import lookup_country_code
+from CTFd.utils.crypto import verify_password, hash_password
 
 
 class UserSchema(ma.ModelSchema):
@@ -48,9 +50,13 @@ class UserSchema(ma.ModelSchema):
             validate_country_code
         ]
     )
-    # password = field_for(
-    #
-    # )
+    password = field_for(
+        Users,
+        'password',
+        validate=[
+            validate.Length(min=1, error='Passwords must not be empty'),
+        ]
+    )
 
     @pre_load
     def validate_email(self, data):
@@ -60,14 +66,44 @@ class UserSchema(ma.ModelSchema):
         obj = Users.query.filter_by(email=email).first()
         if obj:
             if is_admin():
-                target_user = Users.query.filter_by(id=data['id']).first()
+                if data.get('id'):
+                    target_user = Users.query.filter_by(id=data['id']).first()
+                else:
+                    target_user = get_current_user()
+
                 if target_user and obj.id != target_user.id:
-                    raise ValidationError('Email address has already been used')
+                    raise ValidationError('Email address has already been used', field_names=['email'])
             else:
                 if obj.id != get_current_user().id:
-                    raise ValidationError('Email address has already been used')
-                # data['verified'] = False
-                # return data
+                    raise ValidationError('Email address has already been used', field_names=['email'])
+
+    @pre_load
+    def validate_password_confirmation(self, data):
+        password = data.get('password')
+        confirm = data.get('confirm')
+
+        if password and (confirm is None):
+            raise ValidationError('Please confirm your current password', field_names=['confirm'])
+
+        if password and confirm:
+            target_user = get_current_user()
+            if data.get('id'):
+                # Admins can set passwords for any user
+                if is_admin():
+                    target_user = Users.query.filter_by(id=data['id']).first()
+
+            if target_user.id == session['id']:
+                test = verify_password(plaintext=confirm, ciphertext=target_user.password)
+                if test:
+                    data['password'] = hash_password(password)
+                    return data
+                else:
+                    raise ValidationError('Your previous password is incorrect', field_names=['confirm'])
+            else:
+                if is_admin():
+                    data['password'] = hash_password(password)
+                    return data
+
     views = {
         'user': [
             'website',

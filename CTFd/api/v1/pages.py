@@ -19,7 +19,7 @@ class PageList(Resource):
         schema = PageSchema(exclude=['content'], many=True)
         result = schema.dump(pages)
         if result.errors:
-            return result.errors
+            return result.errors, 400
         return result.data
 
     @admins_only
@@ -28,7 +28,7 @@ class PageList(Resource):
         schema = PageSchema()
         page = schema.load(req)
         if page.errors:
-            return page.errors
+            return page.errors, 400
 
         db.session.add(page.data)
         db.session.commit()
@@ -46,7 +46,7 @@ class PageDetail(Resource):
         schema = PageSchema()
         result = schema.dump(page)
         if result.errors:
-            return result.errors
+            return result.errors, 400
         return result.data
 
     @admins_only
@@ -57,7 +57,7 @@ class PageDetail(Resource):
         schema = PageSchema(partial=True)
         page = schema.load(req, instance=page, partial=True)
         if page.errors:
-            return page.errors
+            return page.errors, 400
 
         db.session.commit()
         response = schema.dump(page.data)

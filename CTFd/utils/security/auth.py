@@ -7,7 +7,6 @@ def login_user(user):
     session['name'] = user.name
     session['type'] = user.type
     session['email'] = user.email
-    session['admin'] = user.admin
     session['nonce'] = generate_nonce()
 
 

@@ -32,7 +32,7 @@ class TagList(Resource):
         tags = schema.load(req)
 
         if tags.errors:
-            return tags.errors
+            return tags.errors, 400
 
         for tag in tags.data:
             db.session.add(tag)
@@ -72,7 +72,7 @@ class Tag(Resource):
 
         tag = schema.load(req, session=db.session, instance=tag)
         if tag.errors:
-            return tag.errors
+            return tag.errors, 400
 
         db.session.commit()
         response = schema.dump(tag.data)

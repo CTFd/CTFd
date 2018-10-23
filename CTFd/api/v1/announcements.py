@@ -18,7 +18,7 @@ class AnnouncementList(Resource):
         schema = AnnouncementSchema(many=True)
         result = schema.dump(announcements)
         if result.errors:
-            return result.errors
+            return result.errors, 400
         return result.data
 
     @admins_only

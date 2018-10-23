@@ -31,7 +31,7 @@ class HintList(Resource):
         hint = schema.load(req, session=db.session)
 
         if hint.errors:
-            return hint.errors
+            return hint.errors, 400
 
         db.session.add(hint.data)
         db.session.commit()
@@ -58,7 +58,7 @@ class Hint(Resource):
         hint = schema.load(req, instance=hint, partial=True, session=db.session)
 
         if hint.errors:
-            return hint.errors
+            return hint.errors, 400
 
         db.session.add(hint.data)
         db.session.commit()

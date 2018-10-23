@@ -28,7 +28,7 @@ class AwardList(Resource):
 
         award = schema.load(req, session=db.session)
         if award.errors:
-            return award.errors
+            return award.errors, 400
         db.session.add(award.data)
         db.session.commit()
         db.session.close()

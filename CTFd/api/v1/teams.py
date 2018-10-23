@@ -33,7 +33,7 @@ class TeamList(Resource):
         schema = TeamSchema(view=view)
         team = schema.load(req)
         if team.errors:
-            return team.errors
+            return team.errors, 400
         db.session.add(team.data)
         db.session.commit()
         return schema.dump(team.data)
@@ -56,7 +56,7 @@ class TeamPublic(Resource):
         data['id'] = team_id
         response = TeamSchema(view='admin', instance=team, partial=True).load(data)
         if response.errors:
-            return response.errors
+            return response.errors, 400
 
         db.session.commit()
         response = TeamSchema('admin').dump(response.data)
@@ -96,7 +96,7 @@ class TeamPrivate(Resource):
         data = request.get_json()
         response = TeamSchema(view='self', instance=team, partial=True).load(data)
         if response.errors:
-            return response.errors
+            return response.errors, 400
 
         db.session.commit()
         response = TeamSchema('self').dump(response.data)
