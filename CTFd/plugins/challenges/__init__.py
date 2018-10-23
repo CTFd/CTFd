@@ -44,9 +44,9 @@ class CTFdStandardChallenge(BaseChallenge):
         )
 
         if 'hidden' in request.form:
-            chal.hidden = True
+            chal.state = 'hidden'
         else:
-            chal.hidden = False
+            chal.state = None
 
         max_attempts = request.form.get('max_attempts')
         if max_attempts and max_attempts.isdigit():

@@ -92,7 +92,7 @@ class Challenges(db.Model):
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     type = db.Column(db.String(80))
-    hidden = db.Column(db.Boolean)  # TODO: Change to state
+    state = db.Column(db.String(80))
     requirements = db.Column(JSONLite)
 
     files = db.relationship("ChallengeFiles", backref="challenge")

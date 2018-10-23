@@ -37,7 +37,7 @@ class ChallengePropertyCounts(Resource):
 class ChallengeSolveStatistics(Resource):
     def get(self):
         chals = Challenges.query \
-            .filter(or_(Challenges.hidden != True, Challenges.hidden == None)) \
+            .filter(or_(Challenges.state != 'hidden', Challenges.state != 'locked')) \
             .order_by(Challenges.value) \
             .all()
 

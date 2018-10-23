@@ -35,7 +35,7 @@ class ChallengeList(Resource):
     @viewable_without_authentication(status_code=403)
     def get(self):
         challenges = Challenges.query.filter(
-            or_(Challenges.hidden != True, Challenges.hidden == None)
+            or_(Challenges.state != 'hidden', Challenges.state != 'locked')
         ).order_by(Challenges.value).all()
 
         response = []
