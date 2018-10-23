@@ -54,7 +54,10 @@ class ChallengeList(Resource):
             })
 
         db.session.close()
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
     @admins_only
     def post(self):
@@ -62,7 +65,10 @@ class ChallengeList(Resource):
         challenge_class = get_chal_class(challenge_type)
         challenge = challenge_class.create(request)
         response = challenge_class.read(challenge)
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @challenges_namespace.route('/types')
@@ -79,7 +85,10 @@ class ChallengeTypes(Resource):
                 'templates': challenge_class.templates,
                 'scripts': challenge_class.scripts,
             }
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @challenges_namespace.route('/<challenge_id>')
@@ -122,15 +131,10 @@ class Challenge(Resource):
         response['solves'] = solves
 
         db.session.close()
-        return response
-
-    # @admins_only
-    # def put(self, challenge_id):
-    #     challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
-    #     challenge_class = get_chal_class(challenge.type)
-    #     challenge = challenge_class.update(challenge, request)
-    #
-    #     return challenge.read()
+        return {
+            'success': True,
+            'data': response
+        }
 
     @admins_only
     def patch(self, challenge_id):
@@ -138,7 +142,10 @@ class Challenge(Resource):
         challenge_class = get_chal_class(challenge.type)
         challenge = challenge_class.update(challenge, request)
         challenge, response = challenge_class.read(challenge)
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
     @admins_only
     def delete(self, challenge_id):
@@ -146,10 +153,9 @@ class Challenge(Resource):
         chal_class = get_chal_class(challenge.type)
         chal_class.delete(challenge)
 
-        response = {
+        return {
             'success': True,
         }
-        return response
 
 
 @challenges_namespace.route('/<challenge_id>/solves')
@@ -174,7 +180,10 @@ class ChallengeSolves(Resource):
                 'date': solve.date.isoformat()
             })
 
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @challenges_namespace.route('/<challenge_id>/files')
@@ -192,7 +201,10 @@ class ChallengeFiles(Resource):
                 'type': f.type,
                 'location': f.location
             })
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @challenges_namespace.route('/<challenge_id>/tags')
@@ -210,7 +222,10 @@ class ChallengeFiles(Resource):
                 'challenge_id': t.challenge_id,
                 'value': t.value
             })
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @challenges_namespace.route('/<challenge_id>/hints')
@@ -220,8 +235,18 @@ class ChallengeHints(Resource):
     def get(self, challenge_id):
         hints = Hints.query.filter_by(challenge_id=challenge_id).all()
         schema = HintSchema(many=True)
+        response = schema.dump(hints)
 
-        return schema.dump(hints)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @challenges_namespace.route('/<challenge_id>/flags')
@@ -231,5 +256,15 @@ class ChallengeFlags(Resource):
     def get(self, challenge_id):
         flags = Flags.query.filter_by(challenge_id=challenge_id).all()
         schema = FlagSchema(many=True)
+        response = schema.dump(flags)
 
-        return schema.dump(flags)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }

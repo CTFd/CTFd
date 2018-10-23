@@ -25,18 +25,37 @@ class TeamList(Resource):
         view = list(TeamSchema.views.get(session.get('type')))
         view.remove('members')
         response = TeamSchema(view=view, many=True).dump(teams)
-        return response.data
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     def post(self):
         req = request.get_json()
         view = TeamSchema.views.get(session.get('type', 'self'))
         schema = TeamSchema(view=view)
-        team = schema.load(req)
-        if team.errors:
-            return team.errors, 400
-        db.session.add(team.data)
+        response = schema.load(req)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        db.session.add(response.data)
         db.session.commit()
-        return schema.dump(team.data)
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @teams_namespace.route('/<team_id>')
@@ -45,23 +64,40 @@ class TeamPublic(Resource):
     def get(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
 
-        view = TeamSchema.views.get(session.get('type'))
+        view = TeamSchema.views.get(session.get('type', 'user'))
         response = TeamSchema(view=view).dump(team)
-        return response
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def patch(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
         data = request.get_json()
         data['id'] = team_id
+
         response = TeamSchema(view='admin', instance=team, partial=True).load(data)
         if response.errors:
-            return response.errors, 400
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
         db.session.commit()
-        response = TeamSchema('admin').dump(response.data)
         db.session.close()
-        return response
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def delete(self, team_id):
@@ -74,11 +110,9 @@ class TeamPublic(Resource):
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True,
-            'message': ''
         }
-        return response
 
 
 @teams_namespace.route('/me')
@@ -88,27 +122,39 @@ class TeamPrivate(Resource):
     def get(self):
         team = get_current_team()
         response = TeamSchema(view='self').dump(team)
-        return response
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @authed_only
     def patch(self):
         team = get_current_team()
         data = request.get_json()
+
         response = TeamSchema(view='self', instance=team, partial=True).load(data)
+
         if response.errors:
-            return response.errors, 400
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
         db.session.commit()
-        response = TeamSchema('self').dump(response.data)
+        # response = TeamSchema('self').dump(response.data)
         db.session.close()
-        return response
 
-
-# @teams_namespace.route('/<team_id>/mail')
-# @teams_namespace.param('team_id', "Team ID or 'me'")
-# class TeamMails(Resource):
-#     def post(self, team_id):
-#         pass
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @teams_namespace.route('/<team_id>/solves')
@@ -126,8 +172,18 @@ class TeamSolves(Resource):
 
         view = 'admin' if is_admin() else 'user'
         schema = SubmissionSchema(view=view, many=True)
-        response = schema.dump(solves).data
-        return response
+        response = schema.dump(solves)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @teams_namespace.route('/<team_id>/fails')
@@ -146,8 +202,18 @@ class TeamFails(Resource):
         view = 'admin' if is_admin() else 'user'
 
         schema = SubmissionSchema(view=view, many=True)
-        response = schema.dump(fails).data
-        return response
+        response = schema.dump(fails)
+
+        if response.errors:
+            return {
+               'success': False,
+               'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @teams_namespace.route('/<team_id>/awards')
@@ -164,5 +230,15 @@ class TeamAwards(Resource):
         )
 
         schema = SubmissionSchema(many=True)
-        response = schema.dump(awards).data
-        return response
+        response = schema.dump(awards)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }

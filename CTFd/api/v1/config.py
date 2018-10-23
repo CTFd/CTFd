@@ -16,23 +16,38 @@ class ConfigList(Resource):
     def get(self):
         configs = Configs.query.all()
         schema = ConfigSchema(many=True)
-        result = schema.dump(configs)
-        return result.data
+        response = schema.dump(configs)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors,
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def post(self):
         req = request.get_json()
         schema = ConfigSchema()
-        config = schema.load(req)
+        response = schema.load(req)
 
-        if config.errors:
-            return config.errors, 400
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
-        db.session.add(config.data)
+        db.session.add(response.data)
         db.session.commit()
         db.session.close()
 
-        return schema.dump(config)
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def patch(self):
@@ -50,7 +65,11 @@ class ConfigList(Resource):
 class Config(Resource):
     @admins_only
     def get(self, config_key):
-        return get_config(config_key)
+
+        return {
+            'success': True,
+            'data': get_config(config_key)
+        }
 
     @admins_only
     def patch(self, config_key):
@@ -62,9 +81,13 @@ class Config(Resource):
             return response.errors, 400
 
         db.session.commit()
-        response = ConfigSchema().dump(response.data)
+        # response = ConfigSchema().dump(response.data)
         db.session.close()
-        return response
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def delete(self, config_key):
@@ -74,7 +97,6 @@ class Config(Resource):
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True,
         }
-        return response

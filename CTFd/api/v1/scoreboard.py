@@ -23,7 +23,10 @@ class ScoreboardList(Resource):
                     'score': int(x.score)
                 }
             )
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @scoreboard_namespace.route('/top/<count>')
@@ -72,4 +75,7 @@ class ScoreboardList(Resource):
                     })
             response[i + 1]['solves'] = sorted(response[i + 1]['solves'], key=lambda k: k['time'])
 
-        return response
+        return {
+            'success': True,
+            'data': response
+        }

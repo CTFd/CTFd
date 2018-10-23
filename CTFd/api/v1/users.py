@@ -112,13 +112,6 @@ class User(Resource):
         return response
 
 
-# @users_namespace.route('/<team_id>/mail')
-# @users_namespace.param('team_id', "Team ID or 'me'")
-# class TeamMails(Resource):
-#     def post(self, team_id):
-#         pass
-
-
 @users_namespace.route('/<user_id>/solves')
 @users_namespace.param('user_id', "User ID or 'me'")
 class UserSolves(Resource):

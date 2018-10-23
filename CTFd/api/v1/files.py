@@ -17,8 +17,18 @@ class FilesList(Resource):
         file_type = request.args.get('type')
         files = Files.query.filter_by(type=file_type).all()
         schema = FileSchema(many=True)
-        result = schema.dump(files)
-        return result.data
+        response = schema.dump(files)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def post(self):
@@ -33,12 +43,18 @@ class FilesList(Resource):
             objs.append(obj)
 
         schema = FileSchema(many=True)
-        files = schema.dump(objs)
+        response = schema.dump(objs)
 
-        if files.errors:
-            return files.errors, 400
+        if response.errors:
+            return {
+                       'success': False,
+                       'errors': response.errors
+                   }, 400
 
-        return schema.dump(files.data)
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @files_namespace.route('/<file_id>')
@@ -46,7 +62,19 @@ class FilesDetail(Resource):
     @admins_only
     def get(self, file_id):
         f = Files.query.filter_by(id=file_id).first_or_404()
-        return FileSchema().dump(f)
+        schema = FileSchema()
+        response = schema.dump(f)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def delete(self, file_id):
@@ -56,7 +84,6 @@ class FilesDetail(Resource):
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True,
         }
-        return response

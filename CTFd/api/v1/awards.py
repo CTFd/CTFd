@@ -26,14 +26,21 @@ class AwardList(Resource):
         req = request.get_json()
         schema = AwardSchema()
 
-        award = schema.load(req, session=db.session)
-        if award.errors:
-            return award.errors, 400
-        db.session.add(award.data)
+        response = schema.load(req, session=db.session)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        db.session.add(response.data)
         db.session.commit()
         db.session.close()
 
-        return schema.dump(award)
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @awards_namespace.route('/<award_id>')
@@ -42,7 +49,17 @@ class Award(Resource):
     @admins_only
     def get(self, award_id):
         award = Awards.query.filter_by(id=award_id).first_or_404()
-        return AwardSchema().dump(award)
+        response = AwardSchema().dump(award)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def delete(self, award_id):
@@ -51,7 +68,6 @@ class Award(Resource):
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True,
         }
-        return response

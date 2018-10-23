@@ -17,25 +17,38 @@ class PageList(Resource):
     def get(self):
         pages = Pages.query.all()
         schema = PageSchema(exclude=['content'], many=True)
-        result = schema.dump(pages)
-        if result.errors:
-            return result.errors, 400
-        return result.data
+        response = schema.dump(pages)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def post(self):
         req = request.get_json()
         schema = PageSchema()
-        page = schema.load(req)
-        if page.errors:
-            return page.errors, 400
+        response = schema.load(req)
 
-        db.session.add(page.data)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        db.session.add(response.data)
         db.session.commit()
-        response = schema.dump(page.data)
         db.session.close()
 
-        return response
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @pages_namespace.route('/<page_id>')
@@ -44,10 +57,18 @@ class PageDetail(Resource):
     def get(self, page_id):
         page = Pages.query.filter_by(id=page_id).first_or_404()
         schema = PageSchema()
-        result = schema.dump(page)
-        if result.errors:
-            return result.errors, 400
-        return result.data
+        response = schema.dump(page)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def patch(self, page_id):
@@ -55,14 +76,21 @@ class PageDetail(Resource):
         req = request.get_json()
 
         schema = PageSchema(partial=True)
-        page = schema.load(req, instance=page, partial=True)
-        if page.errors:
-            return page.errors, 400
+        response = schema.load(req, instance=page, partial=True)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
         db.session.commit()
-        response = schema.dump(page.data)
         db.session.close()
-        return response
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def delete(self, page_id):

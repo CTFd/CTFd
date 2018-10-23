@@ -8,6 +8,7 @@ from CTFd.utils.user import get_current_team
 from CTFd.utils.user import get_current_user
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_started, ctf_ended, ctf_paused, ctftime
+from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import (
     admins_only,
     during_ctf_time_only,
@@ -28,15 +29,29 @@ class SubmissionsList(Resource):
     @admins_only
     def get(self):
         args = request.args.to_dict()
+        schema = SubmissionSchema(many=True)
         if args:
             submissions = Submissions.query.filter_by(**args).all()
         else:
             submissions = Submissions.query.all()
-        return [submission.get_dict(admin=True) for submission in submissions]
+
+        response = schema.dump(submissions)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @during_ctf_time_only
     @viewable_without_authentication()
     def post(self):
+        # TODO: This doesn't really conform to the JSON API
         request_json = request.get_json() or {}
         request_form = request.form
 
@@ -164,7 +179,19 @@ class Submission(Resource):
     @admins_only
     def get(self, submission_id):
         submission = Submissions.query.filter_by(id=submission_id).first_or_404()
-        return submission.get_dict(admin=True)
+        schema = SubmissionSchema()
+        response = schema.dump(submission)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def delete(self, submission_id):
@@ -173,7 +200,6 @@ class Submission(Resource):
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True
         }
-        return response
