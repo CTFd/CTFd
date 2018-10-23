@@ -243,7 +243,7 @@ class Users(db.Model):
     name = db.Column(db.String(128), unique=True)
     password = db.Column(db.String(128))
     email = db.Column(db.String(128), unique=True)
-    admin = db.Column(db.Boolean, default=False)
+    # admin = db.Column(db.Boolean, default=False)
     type = db.Column(db.String(80))
     secret = db.Column(db.String(128))
 

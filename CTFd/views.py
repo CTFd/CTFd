@@ -9,6 +9,7 @@ from CTFd.utils import get_config, set_config
 from CTFd.utils.user import authed, get_current_user
 from CTFd.utils import config
 from CTFd.utils.config.pages import get_page
+from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
 from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime, unix_time_to_utc
@@ -27,10 +28,10 @@ def setup():
             session['nonce'] = generate_nonce()
         if request.method == 'POST':
             ctf_name = request.form['ctf_name']
-            ctf_name = set_config('ctf_name', ctf_name)
+            set_config('ctf_name', ctf_name)
 
             # CSS
-            css = set_config('start', '')
+            set_config('start', '')
 
             # Admin user
             name = request.form['name']
@@ -39,13 +40,14 @@ def setup():
             admin = Admins(
                 name=name,
                 email=email,
-                password=password
+                password=password,
+                type='admin',
+                hidden=True
             )
-            admin.admin = True
-            admin.banned = True
 
             user_mode = request.form['user_mode']
-            user_mode = set_config('user_mode', user_mode)
+
+            set_config('user_mode', user_mode)
 
             # Index page
 
@@ -74,29 +76,29 @@ def setup():
             )
 
             # max attempts per challenge
-            max_tries = set_config('max_tries', 0)
+            set_config('max_tries', 0)
 
             # Start time
-            start = set_config('start', None)
-            end = set_config('end', None)
-            freeze = set_config('freeze', None)
+            set_config('start', None)
+            set_config('end', None)
+            set_config('freeze', None)
 
             # Challenges cannot be viewed by unregistered users
-            view_challenges_unregistered = set_config('view_challenges_unregistered', None)
+            set_config('view_challenges_unregistered', None)
 
             # Allow/Disallow registration
-            prevent_registration = set_config('prevent_registration', None)
+            set_config('prevent_registration', None)
 
             # Verify emails
-            verify_emails = set_config('verify_emails', None)
+            set_config('verify_emails', None)
 
-            mail_server = set_config('mail_server', None)
-            mail_port = set_config('mail_port', None)
-            mail_tls = set_config('mail_tls', None)
-            mail_ssl = set_config('mail_ssl', None)
-            mail_username = set_config('mail_username', None)
-            mail_password = set_config('mail_password', None)
-            mail_useauth = set_config('mail_useauth', None)
+            set_config('mail_server', None)
+            set_config('mail_port', None)
+            set_config('mail_tls', None)
+            set_config('mail_ssl', None)
+            set_config('mail_username', None)
+            set_config('mail_password', None)
+            set_config('mail_useauth', None)
 
             setup = set_config('setup', True)
 
@@ -104,11 +106,7 @@ def setup():
             db.session.add(admin)
             db.session.commit()
 
-            session['username'] = admin.name
-            session['id'] = admin.id
-            session['type'] = admin.type
-            session['admin'] = admin.admin
-            session['nonce'] = generate_nonce()
+            login_user(admin)
 
             db.session.close()
             app.setup = False

@@ -28,7 +28,7 @@ def authed():
 
 def is_admin():
     if authed():
-        return session['admin']
+        return session['type'] == 'admin'
     else:
         return False
 
@@ -70,6 +70,7 @@ def get_ip(req=None):
 
 
 def get_wrong_submissions_per_minute(teamid):  # keys per minute
+    # TODO: This is probably broken
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
     fails = db.session.query(Fails).filter(
         Fails.team_id == teamid,

@@ -61,7 +61,7 @@ class SubmissionsList(Resource):
             logger = logging.getLogger('keys')
             data = (
                 time.strftime("%m/%d/%Y %X"),
-                session['username'].encode('utf-8'),
+                session['name'].encode('utf-8'),
                 request.form['submission'].encode('utf-8'),
                 current_user.get_wrong_submissions_per_minute(session['id'])
             )

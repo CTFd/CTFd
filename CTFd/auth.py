@@ -10,7 +10,7 @@ from CTFd.utils.decorators import ratelimit
 from CTFd.utils import user as current_user
 from CTFd.utils import config, validators
 from CTFd.utils.email import sendmail
-from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils.security.auth import login_user, logout_user
 
 import base64
 import logging
@@ -186,12 +186,7 @@ def register():
                 db.session.commit()
                 db.session.flush()
 
-                session['username'] = user.name
-                session['email'] = user.email
-                session['id'] = user.id
-                session['type'] = user.type
-                session['admin'] = user.admin
-                session['nonce'] = generate_nonce()
+                login_user(user)
 
                 if config.can_send_mail() and get_config('verify_emails'):  # Confirming users is enabled and we can send email.
                     logger = logging.getLogger('regs')
@@ -243,18 +238,15 @@ def login():
                     session.regenerate()  # NO SESSION FIXATION FOR YOU
                 except:
                     pass  # TODO: Some session objects don't implement regenerate :(
-                session['username'] = user.name
-                session['email'] = user.email
-                session['id'] = user.id
-                session['type'] = user.type
-                session['admin'] = user.admin
-                session['nonce'] = generate_nonce()
+
+                login_user(user)
+
                 db.session.close()
 
                 logger.warn("[{date}] {ip} - {username} logged in".format(
                     date=time.strftime("%m/%d/%Y %X"),
                     ip=current_user.get_ip(),
-                    username=session['username'].encode('utf-8')
+                    username=session['name'].encode('utf-8')
                 ))
 
                 if request.args.get('next') and validators.is_safe_url(request.args.get('next')):
@@ -351,11 +343,7 @@ def oauth_redirect():
 
             team.members.append(user)
 
-            session['id'] = user.id
-            session['username'] = user.name
-            session['email'] = user.email
-            session['admin'] = user.admin
-            session['nonce'] = generate_nonce()
+            login_user(user)
 
             return redirect(url_for('challenges.challenges_view'))
     else:
@@ -366,5 +354,5 @@ def oauth_redirect():
 @auth.route('/logout')
 def logout():
     if current_user.authed():
-        session.clear()
+        logout_user()
     return redirect(url_for('views.static_html'))
