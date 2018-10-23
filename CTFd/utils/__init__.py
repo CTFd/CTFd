@@ -34,13 +34,13 @@ markdown = mistune.Markdown()
 
 
 @cache.memoize()
-def get_app_config(key):
-    value = app.config.get(key)
+def get_app_config(key, default=None):
+    value = app.config.get(key, default)
     return value
 
 
 @cache.memoize()
-def get_config(key):
+def get_config(key, default=None):
     # TODO: Perhaps this should be serialized to JSON.
     config = Configs.query.filter_by(key=key).first()
     if config and config.value:
@@ -54,10 +54,7 @@ def get_config(key):
                 return False
             else:
                 return value
-    # TODO: This is probably a weird side effect leftover from when we didnt have migrations
-    else:
-        set_config(key, None)
-        return None
+    return default
 
 
 def set_config(key, value):
