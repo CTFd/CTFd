@@ -243,7 +243,6 @@ class Users(db.Model):
     name = db.Column(db.String(128), unique=True)
     password = db.Column(db.String(128))
     email = db.Column(db.String(128), unique=True)
-    # admin = db.Column(db.Boolean, default=False)
     type = db.Column(db.String(80))
     secret = db.Column(db.String(128))
 
@@ -664,6 +663,7 @@ class Fails(Submissions):
 
 class Unlocks(db.Model):
     __tablename__ = 'unlocks'
+    # TODO: This requires implementation
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
@@ -703,7 +703,6 @@ class HintUnlocks(Unlocks):
 
 
 class Tracking(db.Model):
-    # TODO: Perhaps add polymorphic here and create types of Tracking so that we can have an audit log
     __tablename__ = 'tracking'
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(32))
