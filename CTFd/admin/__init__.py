@@ -173,6 +173,8 @@ def admin_config():
     workshop_mode = get_config('workshop_mode')
     paused = get_config('paused')
 
+    domain_whitelist = get_config('domain_whitelist')
+
     db.session.commit()
     db.session.close()
 
@@ -209,5 +211,6 @@ def admin_config():
         themes=themes,
         workshop_mode=workshop_mode,
         paused=paused,
-        database_tables=database_tables
+        database_tables=database_tables,
+        domain_whitelist=domain_whitelist
     )

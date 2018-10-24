@@ -2,24 +2,23 @@
 	<form method="POST" autocomplete="off" class="w-100">
 		<ul class="nav nav-tabs mb-3" role="tablist">
 			<li class="nav-item active">
-				<a class="nav-link active" href="#mailserver" aria-controls="mailserver" role="tab" data-toggle="tab">Mail
+				<a class="nav-link active" href="#mailserver" role="tab" data-toggle="tab">Mail
 					Server</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#whitelist" aria-controls="whitelist" role="tab"
-				   data-toggle="tab">Domain Whitelist</a>
+				<a class="nav-link" href="#mailgun" role="tab" data-toggle="tab">Mailgun</a>
 			</li>
 		</ul>
 
+		<div class="form-group">
+			<label>Mail From Address:</label>
+			<input class="form-control" id='mailfrom_addr' name='mailfrom_addr' type='text'
+				   placeholder="Email address used to send email"
+				   {% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
+		</div>
+
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="mailserver">
-
-				<div class="form-group">
-					<label>Mail From Address:</label>
-					<input class="form-control" id='mailfrom_addr' name='mailfrom_addr' type='text'
-						   placeholder="Email address used to send email"
-						   {% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
-				</div>
 
 				<div class="form-group">
 					<label>Mail Server Address:</label>
@@ -74,8 +73,8 @@
 						TLS
 					</label>
 				</div>
-
-
+			</div>
+			<div role="tabpanel" class="tab-pane" id="mailgun">
 				<div class="form-group">
 					<label>Mailgun API Base URL:</label>
 					<input class="form-control" id='mg_base_url' name='mg_base_url' type='text'
@@ -89,24 +88,7 @@
 						   {% if mg_api_key is defined and mg_api_key != None %}value="{{ mg_api_key }}"{% endif %}>
 				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="whitelist">
-				<div class="form-group">
-					<label>
-						Account Email Whitelist
-						<small class="form-text text-muted">
-							Comma-seperated email domains which users can register under.
-						</small>
-					</label>
-					<input class="form-control" id='domain-whitelist' name='domain_whitelist' type='text'
-						   placeholder=""
-						   {% if domain_whitelist is defined and domain_whitelist != None %}value="{{ domain_whitelist }}"{% endif %}>
-					<small class="form-text text-muted">
-						e.g. ctfd.io,gmail.com,yahoo.com
-					</small>
-				</div>
-			</div>
 		</div>
-
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
 	</form>
 </div>

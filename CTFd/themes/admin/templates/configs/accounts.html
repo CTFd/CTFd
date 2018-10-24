@@ -1,5 +1,22 @@
 <div role="tabpanel" class="tab-pane config-section" id="accounts">
 	<form method="POST" autocomplete="off" class="w-100">
+
+		<div class="form-group">
+			<label>
+				Account Email Whitelist
+				<small class="form-text text-muted">
+					Comma-seperated email domains which users can register under.
+				</small>
+			</label>
+			<input class="form-control" id='domain-whitelist' name='domain_whitelist' type='text'
+				   placeholder=""
+				   {% if domain_whitelist is defined and domain_whitelist != None %}value="{{ domain_whitelist }}"{% endif %}>
+			<small class="form-text text-muted">
+				e.g. ctfd.io,gmail.com,yahoo.com
+			</small>
+		</div>
+
+
 		<div class="form-check">
 			<label>
 				<input id="verify_emails" name="verify_emails" type="checkbox" {% if verify_emails %}checked{% endif %}>

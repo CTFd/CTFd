@@ -141,7 +141,7 @@ def register():
 
         local_id, _, domain = email_address.partition('@')
 
-        domain_whitelist = get_config('email_whitelist')
+        domain_whitelist = get_config('domain_whitelist')
 
         if not valid_email:
             errors.append("Please enter a valid email address")
@@ -149,7 +149,7 @@ def register():
             domain_whitelist = domain_whitelist.split(',')
             if domain not in domain_whitelist:
                 errors.append(
-                    "Email is not under an allowed domain: {domains}".format(
+                    "Only email addresses under {domains} may register".format(
                         domains=', '.join(domain_whitelist))
                 )
         if names:

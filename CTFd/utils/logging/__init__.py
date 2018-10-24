@@ -49,7 +49,7 @@ def init_logs(app):
 
 
 def log(logger, format, **kwargs):
-    logger = logging.getLogger(log)
+    logger = logging.getLogger(logger)
     props = {
         'id': session.get('id'),
         'name': session.get('name'),
