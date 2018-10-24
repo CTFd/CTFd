@@ -2,7 +2,7 @@ from flask import current_app as app, render_template, request, redirect, abort,
 from flask.helpers import safe_join
 from passlib.hash import bcrypt_sha256
 
-from CTFd.models import db, Admins, Users, Users, Solves, Awards, Files, Pages, Tracking
+from CTFd.models import db, Admins, Files, Pages, Announcements
 from CTFd.utils import markdown
 from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
@@ -118,10 +118,42 @@ def setup():
     return redirect(url_for('views.static_html'))
 
 
-# Custom CSS handler
+@views.route('/announcements', methods=['GET'])
+def announcements():
+    announce_list = Announcements.query.order_by(Announcements.id.desc()).all()
+    return render_template('announcements.html', announcements=announce_list)
+
+
+@views.route('/settings', methods=['GET'])
+@authed_only
+def settings():
+    user = get_current_user()
+    name = user.name
+    email = user.email
+    website = user.website
+    affiliation = user.affiliation
+    country = user.country
+    prevent_name_change = get_config('prevent_name_change')
+    confirm_email = get_config('verify_emails') and not user.verified
+    return render_template(
+        'settings.html',
+        name=name,
+        email=email,
+        website=website,
+        affiliation=affiliation,
+        country=country,
+        prevent_name_change=prevent_name_change,
+        confirm_email=confirm_email
+    )
+
+
 @views.route('/static/user.css')
 @cache.cached(timeout=300)
 def custom_css():
+    """
+    Custom CSS Handler route
+    :return:
+    """
     return Response(get_config('css'), mimetype='text/css')
 
 
@@ -129,6 +161,11 @@ def custom_css():
 @views.route("/", defaults={'template': 'index'})
 @views.route("/<path:template>")
 def static_html(template):
+    """
+    Route in charge of routing users to Pages.
+    :param template:
+    :return:
+    """
     page = get_page(template)
     if page is None:
         abort(404)
@@ -139,93 +176,14 @@ def static_html(template):
         return render_template('page.html', content=markdown(page.content))
 
 
-@views.route('/settings', methods=['POST', 'GET'])
-@authed_only
-def settings():
-    if request.method == "POST":
-        pass
-        # TODO: Move to API
-        # errors = []
-        #
-        # name = request.form.get('name').strip()
-        # email = request.form.get('email').strip()
-        # website = request.form.get('website').strip()
-        # affiliation = request.form.get('affiliation').strip()
-        # country = request.form.get('country').strip()
-        #
-        # user = Users.query.filter_by(id=session['id']).first()
-        #
-        # if not get_config('prevent_name_change'):
-        #     names = Users.query.filter_by(name=name).first()
-        #     name_len = len(request.form['name']) == 0
-        #
-        # emails = Users.query.filter_by(email=email).first()
-        # valid_email = validators.validate_email(email)
-        #
-        # if validators.validate_email(name) is True:
-        #     errors.append('Team name cannot be an email address')
-        #
-        # if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
-        #         (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):
-        #     errors.append("Your old password doesn't match what we have.")
-        # if not valid_email:
-        #     errors.append("That email doesn't look right")
-        # if not get_config('prevent_name_change') and names and name != session['username']:
-        #     errors.append('That team name is already taken')
-        # if emails and emails.id != session['id']:
-        #     errors.append('That email has already been used')
-        # if not get_config('prevent_name_change') and name_len:
-        #     errors.append('Pick a longer team name')
-        # if website.strip() and not validators.validate_url(website):
-        #     errors.append("That doesn't look like a valid URL")
-        #
-        # if len(errors) > 0:
-        #     return render_template('settings.html', name=name, email=email, website=website,
-        #                            affiliation=affiliation, country=country, errors=errors)
-        # else:
-        #     team = Users.query.filter_by(id=session['id']).first()
-        #     if team.name != name:
-        #         if not get_config('prevent_name_change'):
-        #             team.name = name
-        #             session['username'] = team.name
-        #     if team.email != email.lower():
-        #         team.email = email.lower()
-        #         session['email'] = team.email
-        #         if get_config('verify_emails'):
-        #             team.verified = False
-        #
-        #     if 'password' in request.form.keys() and not len(request.form['password']) == 0:
-        #         team.password = bcrypt_sha256.encrypt(request.form.get('password'))
-        #     team.website = website
-        #     team.affiliation = affiliation
-        #     team.country = country
-        #     db.session.commit()
-        #     db.session.close()
-        #     return redirect(url_for('views.profile'))
-    else:
-        user = get_current_user()
-        name = user.name
-        email = user.email
-        website = user.website
-        affiliation = user.affiliation
-        country = user.country
-        prevent_name_change = get_config('prevent_name_change')
-        confirm_email = get_config('verify_emails') and not user.verified
-        return render_template(
-            'settings.html',
-            name=name,
-            email=email,
-            website=website,
-            affiliation=affiliation,
-            country=country,
-            prevent_name_change=prevent_name_change,
-            confirm_email=confirm_email
-        )
-
-
 @views.route('/files', defaults={'path': ''})
 @views.route('/files/<path:path>')
 def file_handler(path):
+    """
+    Route in charge of dealing with making sure that CTF challenges are only accessible during the competition.
+    :param path:
+    :return:
+    """
     f = Files.query.filter_by(location=path).first_or_404()
     if f.type == 'challenge':
         if current_user.is_admin() is False:
@@ -239,8 +197,13 @@ def file_handler(path):
 
 
 @views.route('/themes/<theme>/static/<path:path>')
-# @cache.cached(timeout=300)
 def themes_handler(theme, path):
+    """
+    General static file handler
+    :param theme:
+    :param path:
+    :return:
+    """
     filename = safe_join(app.root_path, 'themes', theme, 'static', path)
     if os.path.isfile(filename):
         return send_file(filename)
