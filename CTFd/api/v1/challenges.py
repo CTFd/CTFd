@@ -8,7 +8,6 @@ from CTFd.models import (
     Hints,
     Flags,
     Solves,
-    Teams,
     ChallengeFiles as ChallengeFilesModel,
 )
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
@@ -23,7 +22,7 @@ from CTFd.utils.modes import get_model
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.flags import FlagSchema
-from sqlalchemy.sql import or_
+from sqlalchemy.sql import or_, and_, any_
 
 challenges_namespace = Namespace('challenges', description="Endpoint to retrieve Challenges")
 
@@ -35,7 +34,7 @@ class ChallengeList(Resource):
     @viewable_without_authentication(status_code=403)
     def get(self):
         challenges = Challenges.query.filter(
-            or_(Challenges.state != 'hidden', Challenges.state != 'locked')
+            Challenges.state.isnot('hidden'), Challenges.state.isnot('locked')
         ).order_by(Challenges.value).all()
 
         response = []

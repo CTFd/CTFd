@@ -21,16 +21,14 @@ function loadchalbyname(chalname) {
 }
 
 function updateChalWindow(obj) {
-    $.get(script_root + "/api/v1/challenges/" + obj.id, function (challenge_data) {
+    $.get(script_root + "/api/v1/challenges/" + obj.id, function (response) {
+        var challenge_data = response.data;
+
         $.getScript(script_root + obj.script, function () {
             $.get(script_root + obj.template, function (template_data) {
                 $('#chal-window').empty();
-
                 var template = nunjucks.compile(template_data);
-
-
                 window.challenge.data = challenge_data;
-
                 window.challenge.preRender();
 
                 challenge_data['description'] = window.challenge.render(challenge_data['description']);
@@ -234,9 +232,9 @@ function getsolves(id) {
 }
 
 function loadchals(cb) {
-    $.get(script_root + "/api/v1/challenges", function (data) {
+    $.get(script_root + "/api/v1/challenges", function (response) {
         var categories = [];
-        challenges = $.parseJSON(JSON.stringify(data));
+        challenges = response.data;
 
         $('#challenges-board').empty();
 
