@@ -11,14 +11,14 @@ class DynamicValueChallenge(BaseChallenge):
     id = "dynamic"  # Unique identifier used to register challenges
     name = "dynamic"  # Name of a challenge type
     templates = {  # Handlebars templates used for each aspect of challenge editing & viewing
-        'create': '/plugins/DynamicValueChallenge/assets/dynamic-challenge-create.njk',
-        'update': '/plugins/DynamicValueChallenge/assets/dynamic-challenge-update.njk',
-        'modal': '/plugins/DynamicValueChallenge/assets/dynamic-challenge-modal.njk',
+        'create': '/plugins/dynamic_challenges/assets/dynamic-challenge-create.njk',
+        'update': '/plugins/dynamic_challenges/assets/dynamic-challenge-update.njk',
+        'modal': '/plugins/dynamic_challenges/assets/dynamic-challenge-modal.njk',
     }
     scripts = {  # Scripts that are loaded when a template is loaded
-        'create': '/plugins/DynamicValueChallenge/assets/dynamic-challenge-create.js',
-        'update': '/plugins/DynamicValueChallenge/assets/dynamic-challenge-update.js',
-        'modal': '/plugins/DynamicValueChallenge/assets/dynamic-challenge-modal.js',
+        'create': '/plugins/dynamic_challenges/assets/dynamic-challenge-create.js',
+        'update': '/plugins/dynamic_challenges/assets/dynamic-challenge-update.js',
+        'modal': '/plugins/dynamic_challenges/assets/dynamic-challenge-modal.js',
     }
 
     @staticmethod
@@ -235,4 +235,4 @@ class DynamicChallenge(Challenges):
 def load(app):
     app.db.create_all()
     CHALLENGE_CLASSES['dynamic'] = DynamicValueChallenge
-    register_plugin_assets_directory(app, base_path='/plugins/DynamicValueChallenge/assets/')
+    register_plugin_assets_directory(app, base_path='/plugins/dynamic_challenges/assets/')
