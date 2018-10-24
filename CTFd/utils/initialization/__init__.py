@@ -10,6 +10,7 @@ from CTFd.utils.config.pages import get_pages
 
 from CTFd.utils.plugins import get_registered_stylesheets, get_registered_scripts, get_configurable_plugins
 
+from CTFd.utils.countries import get_countries
 from CTFd.utils.user import authed, get_ip
 from CTFd.utils.modes import generate_account_url
 from CTFd.utils.config import is_setup
@@ -40,6 +41,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_config=get_config)
     app.jinja_env.globals.update(hide_scores=hide_scores)
     app.jinja_env.globals.update(generate_account_url=generate_account_url)
+    app.jinja_env.globals.update(get_countries=get_countries)
 
 
 def init_request_processors(app):
