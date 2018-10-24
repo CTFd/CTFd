@@ -3,7 +3,7 @@ from CTFd.utils import config, get_config, get_app_config
 from CTFd.cache import cache
 from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime
 from CTFd.utils import user as current_user
-from CTFd.utils.user import get_current_user, get_current_team
+from CTFd.utils.user import get_current_user, get_current_team, is_admin, authed
 from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
 import functools
 
@@ -116,7 +116,7 @@ def admins_only(f):
 
     @functools.wraps(f)
     def admins_only_wrapper(*args, **kwargs):
-        if session.get('admin'):
+        if is_admin():
             return f(*args, **kwargs)
         else:
             return redirect(url_for('auth.login', next=request.path))

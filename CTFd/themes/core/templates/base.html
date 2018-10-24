@@ -90,7 +90,7 @@
 
 				<ul class="navbar-nav ml-md-auto d-block d-sm-flex d-md-flex">
 					{% if name is defined %}
-						{% if admin %}
+						{% if type == 'admin' %}
 							<li class="nav-item">
 								<a class="nav-link" href="{{ request.script_root }}/admin">Admin</a>
 							</li>

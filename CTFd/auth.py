@@ -9,7 +9,7 @@ from CTFd.utils.encoding import base64encode, base64decode
 from CTFd.utils.decorators import ratelimit
 from CTFd.utils import user as current_user
 from CTFd.utils import config, validators
-from CTFd.utils.email import sendmail
+from CTFd.utils import email
 from CTFd.utils.security.auth import login_user, logout_user
 
 import base64
@@ -147,19 +147,30 @@ def register():
     if request.method == 'POST':
         errors = []
         name = request.form['name']
-        email = request.form['email']
+        email_address = request.form['email']
         password = request.form['password']
 
         name_len = len(name) == 0
         names = Users.query.add_columns('name', 'id').filter_by(name=name).first()
-        emails = Users.query.add_columns('email', 'id').filter_by(email=email).first()
+        emails = Users.query.add_columns('email', 'id').filter_by(email=email_address).first()
         pass_short = len(password) == 0
         pass_long = len(password) > 128
         valid_email = validators.validate_email(request.form['email'])
         team_name_email_check = validators.validate_email(name)
 
+        local_id, _, domain = email_address.partition('@')
+
+        domain_whitelist = get_config('email_whitelist')
+
         if not valid_email:
             errors.append("Please enter a valid email address")
+        if domain_whitelist:
+            domain_whitelist = domain_whitelist.split(',')
+            if domain not in domain_whitelist:
+                errors.append(
+                    "Email is not under an allowed domain: {domains}".format(
+                        domains=', '.join(domain_whitelist))
+                )
         if names:
             errors.append('That team name is already taken')
         if team_name_email_check is True:
@@ -174,12 +185,18 @@ def register():
             errors.append('Pick a longer team name')
 
         if len(errors) > 0:
-            return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
+            return render_template(
+                'register.html',
+                errors=errors,
+                name=request.form['name'],
+                email=request.form['email'],
+                password=request.form['password']
+            )
         else:
             with app.app_context():
                 user = Users(
                     name=name.strip(),
-                    email=email.lower(),
+                    email=email_address.lower(),
                     password=password.strip()
                 )
                 db.session.add(user)
@@ -196,12 +213,12 @@ def register():
                         username=request.form['name'].encode('utf-8'),
                         email=request.form['email'].encode('utf-8')
                     ))
-                    email.verify_email_address(user.email)
+                    email_address.verify_email_address(user.email)
                     db.session.close()
                     return redirect(url_for('auth.confirm'))
                 else:  # Don't care about confirming users
                     if config.can_send_mail():  # We want to notify the user that they have registered.
-                        sendmail(
+                        email_address.sendmail(
                             request.form['email'],
                             "You've successfully registered for {}".format(get_config('ctf_name'))
                         )
