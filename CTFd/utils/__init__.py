@@ -1,6 +1,3 @@
-import datetime
-import json
-import logging
 import mistune
 import six
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort, jsonify
