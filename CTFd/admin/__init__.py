@@ -106,6 +106,7 @@ def admin_export_ctf():
 def admin_export_csv():
     table = request.args.get('table')
 
+    # TODO: It might make sense to limit dumpable tables. Config could potentially leak sensitive information.
     model = get_class_by_tablename(table)
     if model is None:
         abort(404)
