@@ -8,6 +8,7 @@ from CTFd.utils.user import get_current_team
 from CTFd.utils.user import get_current_user
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_started, ctf_ended, ctf_paused, ctftime
+from CTFd.utils.logging import log
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import (
     admins_only,
@@ -50,12 +51,16 @@ class SubmissionsList(Resource):
 
     @during_ctf_time_only
     @viewable_without_authentication()
+    @require_verified_emails
     def post(self):
         # TODO: This doesn't really conform to the JSON API
-        request_json = request.get_json() or {}
-        request_form = request.form
+        if request.content_type != 'application/json':
+            request_data = request.form
+        else:
+            request_data = request.get_json()
 
-        challenge_id = request.form.get('challenge_id') or request_json.get('challenge_id')
+
+        challenge_id = request_data.get('challenge_id') or request_data.get('challenge_id')
 
         if ctf_paused():
             return {
@@ -63,8 +68,7 @@ class SubmissionsList(Resource):
                 'message': '{} is paused'.format(config.ctf_name())
             }, 403
 
-        if (current_user.authed() and current_user.is_verified() and (
-                ctf_started() or config.view_after_ctf())) or current_user.is_admin():
+        if (current_user.authed() and (ctf_started() or config.view_after_ctf())) or current_user.is_admin():
             user = get_current_user()
             team = get_current_team()
 
@@ -73,18 +77,11 @@ class SubmissionsList(Resource):
                 challenge_id=challenge_id
             ).count()
 
-            logger = logging.getLogger('keys')
-            data = (
-                time.strftime("%m/%d/%Y %X"),
-                session['name'].encode('utf-8'),
-                request.form['submission'].encode('utf-8'),
-                current_user.get_wrong_submissions_per_minute(session['id'])
-            )
-            print("[{0}] {1} submitted {2} with kpm {3}".format(*data))
-
             challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+            # TODO: This should change to somethinge else.
             if challenge.hidden:
-                abort(404)
+                abort(403)
+
             chal_class = get_chal_class(challenge.type)
 
             # Anti-bruteforce / submitting Flags too quickly
@@ -96,8 +93,13 @@ class SubmissionsList(Resource):
                         challenge=challenge,
                         request=request
                     )
-                logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
-                # return '3' # Submitting too fast
+                log(
+                    'submissions',
+                    "[{date}] {name} submitted {submission} with kpm {kpm} [TOO FAST]",
+                    submission=request_data['submission'].encode('utf-8'),
+                    kpm=current_user.get_wrong_submissions_per_minute(session['id'])
+                )
+                # Submitting too fast
                 return {
                     'status': 3,
                     'message': "You're submitting Flags too fast. Slow down."
@@ -127,7 +129,13 @@ class SubmissionsList(Resource):
                             challenge=challenge,
                             request=request
                         )
-                    logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
+
+                    log(
+                        'submissions',
+                        "[{date}] {name} submitted {submission} with kpm {kpm} [CORRECT]",
+                        submission=request_data['submission'].encode('utf-8'),
+                        kpm=current_user.get_wrong_submissions_per_minute(session['id'])
+                    )
                     return {
                         'status': 1,
                         'message': message
@@ -140,7 +148,13 @@ class SubmissionsList(Resource):
                             challenge=challenge,
                             request=request
                         )
-                    logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
+
+                    log(
+                        'submissions',
+                        "[{date}] {name} submitted {submission} with kpm {kpm} [WRONG]",
+                        submission=request_data['submission'].encode('utf-8'),
+                        kpm=current_user.get_wrong_submissions_per_minute(session['id'])
+                    )
 
                     if max_tries:
                         attempts_left = max_tries - fails - 1  # Off by one since fails has changed since it was gotten
@@ -161,7 +175,12 @@ class SubmissionsList(Resource):
 
             # Challenge already solved
             else:
-                logger.info("{0} submitted {1} with kpm {2} [ALREADY SOLVED]".format(*data))
+                log(
+                    'submissions',
+                    "[{date}] {name} submitted {submission} with kpm {kpm} [ALREADY SOLVED]",
+                    submission=request_data['submission'].encode('utf-8'),
+                    kpm=current_user.get_wrong_submissions_per_minute(session['id'])
+                )
                 return {
                     'status': 2,
                     'message': 'You already solved this'
