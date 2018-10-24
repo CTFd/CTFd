@@ -1,0 +1,36 @@
+<div role="tabpanel" class="tab-pane config-section" id="accounts">
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-check">
+			<label>
+				<input id="verify_emails" name="verify_emails" type="checkbox" {% if verify_emails %}checked{% endif %}>
+				Only allow users with verified emails
+			</label>
+		</div>
+
+		<div class="form-check">
+			<label>
+				<input id="view_challenges_unregistered" name="view_challenges_unregistered" type="checkbox"
+					   {% if view_challenges_unregistered %}checked{% endif %}>
+				Unregistered users can view challenges
+			</label>
+		</div>
+
+		<div class="form-check">
+			<label>
+				<input id="prevent_registration" name="prevent_registration" type="checkbox"
+					   {% if prevent_registration %}checked{% endif %}>
+				Prevent public registration
+			</label>
+		</div>
+
+		<div class="form-check">
+			<label>
+				<input id="prevent_name_change" name="prevent_name_change" type="checkbox"
+					   {% if prevent_name_change %}checked{% endif %}>
+				Prevent team name changes
+			</label>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+</div>
