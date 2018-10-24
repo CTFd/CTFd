@@ -18,8 +18,8 @@ $(document).ready(function () {
             ),
             success: function () {
                 var route = script_root + '/api/v1/submissions/' + key_id;
-                $.delete(route, function (data) {
-                    if (data.success) {
+                $.delete(route, function (response) {
+                    if (response.success) {
                         td_row.remove();
                     }
                 });

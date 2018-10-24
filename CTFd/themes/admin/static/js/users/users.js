@@ -1,5 +1,4 @@
-var nonce = "{{ nonce }}";
-
+// TODO: this likely doesn't work
 function load_update_modal(id, name, email, website, affiliation, country, admin, verified, hidden, banned) {
     var modal_form = $('#update-user-modal form');
 
@@ -58,13 +57,14 @@ $(document).ready(function () {
         }).then(function(response) {
             return response.json();
         }).then(function(data){
-            if (data.id) {
+            if (data.success) {
                 // TODO: Update row in place
                 window.location.reload();
             }
         });
     });
 
+    // TODO: This likely doesn't work
     $('#send-user-email').click(function (e) {
         e.preventDefault();
         var id = $('#email-user input[name="id"]').val();
@@ -87,6 +87,7 @@ $(document).ready(function () {
         });
     });
 
+    // TODO: This likely doesn't work
     $('.edit-team').click(function () {
         var elem = $(this).parent().parent().parent();
         var id = elem.find('.team-id').attr('value') || '';

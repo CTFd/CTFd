@@ -18,15 +18,9 @@ function load_hint_modal(method, hintid){
     }
 }
 
-function edithint(hint_id){
-    $.get(script_root + '/api/v1/hints/' + hint_id, function(data){
-        console.log(data);
-    })
-}
-
-
 function deletehint(hint_id){
-    $.delete(script_root + '/api/v1/hints/' + hint_id, function(data){
+    $.delete(script_root + '/api/v1/hints/' + hint_id, function(response){
+        var data = response.data;
         if (data.success){
             var chalid = $("#update-hints").attr('chal-id');
             loadhints(chalid);
@@ -36,7 +30,8 @@ function deletehint(hint_id){
 
 
 function loadhints(challenge_id, cb){
-    $.get(script_root + '/api/v1/challenges/{0}/hints'.format(challenge_id), function(data){
+    $.get(script_root + '/api/v1/challenges/{0}/hints'.format(challenge_id), function(response){
+        var data = response.data;
         var table = $('#hintsboard > tbody');
         table.empty();
         for (var i = 0; i < data.length; i++) {
@@ -76,11 +71,7 @@ $(document).ready(function () {
 
     $('#hint-modal-submit').submit(function (e) {
         e.preventDefault();
-        var params = {};
-        $(this).serializeArray().map(function (x) {
-            params[x.name] = x.value;
-        });
-        console.log(params);
+        var params = $(this).serializeJSON();
         var target = '/api/v1/hints';
         var method = 'POST';
         if (params.id){

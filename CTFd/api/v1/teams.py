@@ -65,7 +65,8 @@ class TeamPublic(Resource):
         team = Teams.query.filter_by(id=team_id).first_or_404()
 
         view = TeamSchema.views.get(session.get('type', 'user'))
-        response = TeamSchema(view=view).dump(team)
+        schema = TeamSchema(view=view)
+        response = schema.dump(team)
 
         if response.errors:
             return {
@@ -84,13 +85,16 @@ class TeamPublic(Resource):
         data = request.get_json()
         data['id'] = team_id
 
-        response = TeamSchema(view='admin', instance=team, partial=True).load(data)
+        schema = TeamSchema(view='admin', instance=team, partial=True)
+
+        response = schema.load(data)
         if response.errors:
             return {
                 'success': False,
                 'errors': response.errors
             }, 400
 
+        response = schema.dump(response.data)
         db.session.commit()
         db.session.close()
 

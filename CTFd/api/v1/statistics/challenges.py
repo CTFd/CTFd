@@ -25,7 +25,10 @@ class ChallengePropertyCounts(Resource):
                 .with_entities(prop, func.count(prop))\
                 .group_by(prop)\
                 .all()
-            return dict(data)
+            return {
+                'success': True,
+                'data': dict(data)
+            }
         else:
             response = {
                 'message': 'That could not be found'
@@ -85,7 +88,10 @@ class ChallengeSolveStatistics(Resource):
                     }
                     response.append(challenge)
         db.session.close()
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @statistics_namespace.route('/challenges/solves/percentages')
@@ -93,14 +99,14 @@ class ChallengeSolvePercentages(Resource):
     @admins_only
     def get(self):
         challenges = Challenges.query\
-            .add_columns('id', 'name', 'hidden', 'max_attempts')\
+            .add_columns('id', 'name', 'state', 'max_attempts')\
             .order_by(Challenges.value).all()
 
         Model = get_model()
 
         teams_with_points = db.session.query(Solves.account_id) \
             .join(Model) \
-            .filter(Model.banned == False) \
+            .filter(Model.banned == False, Model.hidden == False) \
             .group_by(Solves.account_id) \
             .count()
 
@@ -122,4 +128,7 @@ class ChallengeSolvePercentages(Resource):
             })
 
         response = sorted(percentage_data, key=lambda x: x['percentage'], reverse=True)
-        return response
+        return {
+            'success': True,
+            'data': response
+        }

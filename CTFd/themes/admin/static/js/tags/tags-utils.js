@@ -2,11 +2,12 @@ function loadtags(chal, cb){
     $('#tags-chal').val(chal);
     $('#current-tags').empty();
     $('#chal-tags').empty();
-    $.get(script_root + '/api/v1/challenges/'+chal+'/tags', function(data){
+    $.get(script_root + '/api/v1/challenges/'+chal+'/tags', function(response){
+        var data = response.data;
         for (var i = 0; i < data.length; i++) {
             var tag = "<span class='badge badge-primary mx-1 chal-tag'><span>"+data[i].value+"</span><a name='"+data[i].id+"'' class='btn-fa delete-tag'> &#215;</a></span>"
             $('#current-tags').append(tag);
-        };
+        }
         $('.delete-tag').click(function(e){
             deletetag(e.target.name);
             $(e.target).parent().remove()

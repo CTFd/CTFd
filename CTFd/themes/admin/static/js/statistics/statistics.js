@@ -1,5 +1,6 @@
 function solves_graph() {
-    $.get(script_root + '/api/v1/statistics/challenges/solves', function (data) {
+    $.get(script_root + '/api/v1/statistics/challenges/solves', function (response) {
+        var data = response.data;
         var res = $.parseJSON(JSON.stringify(data));
         var chals = [];
         var counts = [];
@@ -63,7 +64,8 @@ function solves_graph() {
 
 function keys_percentage_graph() {
     // Solves and Fails pie chart
-    $.get(script_root + '/api/v1/statistics/submissions/type', function (data) {
+    $.get(script_root + '/api/v1/statistics/submissions/type', function (response) {
+        var data = response.data;
         var res = $.parseJSON(JSON.stringify(data));
         var solves = res['correct'];
         var fails = res['incorrect'];
@@ -93,7 +95,8 @@ function keys_percentage_graph() {
 }
 
 function category_breakdown_graph() {
-    $.get(script_root + '/api/v1/statistics/challenges/category', function (data) {
+    $.get(script_root + '/api/v1/statistics/challenges/category', function (response) {
+        var data = response.data;
         var res = $.parseJSON(JSON.stringify(data));
 
         var categories = [];
@@ -129,8 +132,8 @@ function category_breakdown_graph() {
 }
 
 function solve_percentages_graph() {
-    $.get(script_root + '/api/v1/statistics/challenges/solves/percentages', function (data) {
-        var res = $.parseJSON(JSON.stringify(data));
+    $.get(script_root + '/api/v1/statistics/challenges/solves/percentages', function (response) {
+        var res = response.data;
 
         var names = [];
         var percents = [];

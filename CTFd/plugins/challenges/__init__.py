@@ -87,7 +87,7 @@ class CTFdStandardChallenge(BaseChallenge):
             'value': challenge.value,
             'description': challenge.description,
             'category': challenge.category,
-            'hidden': challenge.hidden,
+            'state': challenge.state,
             'max_attempts': challenge.max_attempts,
             'type': challenge.type,
             'type_data': {
@@ -115,7 +115,7 @@ class CTFdStandardChallenge(BaseChallenge):
         challenge.value = int(data['value'])
         challenge.max_attempts = int(data.get('max_attempts')) if data.get('max_attempts') else None
         challenge.category = data['category']
-        challenge.hidden = data.get('hidden', False)
+        challenge.state = data.get('state')
         db.session.commit()
         return challenge
 

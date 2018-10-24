@@ -17,8 +17,8 @@ function updatefiles(){
 }
 
 function loadfiles(chal, cb){
-    $('#update-files form').attr('action', script_root+'/admin/files/'+chal)
-    $.get(script_root + '/api/v1/challenges/'+chal+'/files', function(data){
+    $.get(script_root + '/api/v1/challenges/'+chal+'/files', function(response){
+        var data = response.data;
         $('#files-chal').val(chal);
         $('#current-files').empty();
         for(var x = 0; x < data.length; x++){

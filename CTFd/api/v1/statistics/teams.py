@@ -12,7 +12,10 @@ class TeamStatistics(Resource):
     @admins_only
     def get(self):
         registered = Teams.query.count()
-        response = {
+        data = {
             'registered': registered,
         }
-        return response
+        return {
+            'success': True,
+            'data': data
+        }

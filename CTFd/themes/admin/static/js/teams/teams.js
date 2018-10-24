@@ -1,4 +1,5 @@
 function load_update_modal(id, name, email, website, affiliation, country, admin, verified, hidden, banned) {
+    // TODO: This likely does not work.
     var modal_form = $('#update-team-modal form');
 
     modal_form.find('input[name=name]').val(name);
@@ -43,8 +44,8 @@ $(document).ready(function () {
             body: JSON.stringify(params)
         }).then(function (response) {
             return response.json();
-        }).then(function (data) {
-            if (data.id) {
+        }).then(function (response) {
+            if (response.success) {
                 // TODO: Update row in place
                 window.location.reload();
                 // $('#update-team-modal').modal("toggle");
@@ -89,8 +90,8 @@ $(document).ready(function () {
             body: "Are you sure you want to delete {0}".format("<strong>" + name + "</strong>"),
             success: function () {
                 var route = script_root + '/admin/team/' + team_id + '/delete';
-                $.delete(script_root + '/api/v1/teams/' + team_id, function(data){
-                    if (data.success) {
+                $.delete(script_root + '/api/v1/teams/' + team_id, function(response){
+                    if (response.success) {
                         td_row.remove();
                     }
                 })

@@ -110,8 +110,8 @@ function upload_logo(form) {
                 body: JSON.stringify(params)
             }).then(function (response) {
                 return response.json();
-            }).then(function (data) {
-                if (data.id) {
+            }).then(function (response) {
+                if (response.data.success) {
                     window.location.reload()
                 } else {
                     ezal({
@@ -175,6 +175,7 @@ $(function () {
         load_date_values('freeze');
     });
 
+    // TODO: This code is likely not working
     $('#export-button').click(function (e) {
         e.preventDefault();
         var segments = [];
@@ -187,6 +188,7 @@ $(function () {
         window.location.href = $('#export-button').attr('href');
     });
 
+    // TODO: This code is likely not working
     $('#import-button').click(function (e) {
         e.preventDefault();
         var segments = [];

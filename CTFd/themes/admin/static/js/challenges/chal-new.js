@@ -15,8 +15,9 @@ function load_chal_template(challenge){
     });
 }
 
-$.get(script_root + '/api/v1/challenges/types', function(data){
+$.get(script_root + '/api/v1/challenges/types', function(response){
     $("#create-chals-select").empty();
+    var data = response.data;
     var chal_type_amt = Object.keys(data).length;
     if (chal_type_amt > 1){
         var option = "<option> -- </option>";

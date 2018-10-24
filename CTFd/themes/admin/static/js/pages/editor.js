@@ -63,7 +63,8 @@ function show_files(data) {
 
 
 function refresh_files(cb){
-    get_page_files().then(function (data) {
+    get_page_files().then(function (response) {
+        var data = response.data;
         show_files(data);
         if (cb) {
             cb();
@@ -97,8 +98,8 @@ function submit_form() {
         body: JSON.stringify(params)
     }).then(function (response) {
         return response.json();
-    }).then(function(data){
-        if (method === 'PATCH') {
+    }).then(function(response){
+        if (method === 'PATCH' && response.success) {
             ezal({
                 title: 'Saved',
                 body: 'Your changes have been saved',
