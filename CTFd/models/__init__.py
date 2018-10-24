@@ -7,6 +7,7 @@ from sqlalchemy.types import JSON, NullType
 from sqlalchemy.orm import validates, column_property
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from CTFd.utils.crypto import hash_password
+from CTFd.utils.security.sessions import generate_session_identifier
 from CTFd.cache import cache
 import datetime
 import json
@@ -239,6 +240,7 @@ class Users(db.Model):
     __tablename__ = 'users'
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
+    # TODO: We need uniqueness between usernames and oauth_id
     oauth_id = db.Column(db.Integer)
     name = db.Column(db.String(128), unique=True)
     password = db.Column(db.String(128))
