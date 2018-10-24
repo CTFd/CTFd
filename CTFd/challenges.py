@@ -1,19 +1,15 @@
-import json
 import logging
-import re
 import time
 
 from flask import render_template, request, redirect, jsonify, url_for, session, Blueprint, abort
 from sqlalchemy.sql import or_
 
 from CTFd.models import db, Challenges, Files, Solves, WrongKeys, Keys, Tags, Teams, Awards, Hints, Unlocks
-from CTFd.plugins.keys import get_key_class
 from CTFd.plugins.challenges import get_chal_class
 
 from CTFd import utils
 from CTFd.utils.decorators import (
     authed_only,
-    admins_only,
     during_ctf_time_only,
     require_verified_emails,
     viewable_without_authentication
@@ -93,7 +89,7 @@ def challenges_view():
         else:  # We are NOT allowed to view after the CTF ends
             if utils.get_config('start') and not utils.ctf_started():
                 errors.append('{} has not started yet'.format(utils.ctf_name()))
-            if (utils.get_config('end') and utils.ctf_ended()) and not utils.view_after_ctf():
+            if utils.get_config('end') and utils.ctf_ended():
                 errors.append('{} has ended'.format(utils.ctf_name()))
             return render_template('challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
 
@@ -201,9 +197,6 @@ def solves_per_chal():
 @challenges.route('/solves')
 @authed_only
 def solves_private():
-    solves = None
-    awards = None
-
     if utils.is_admin():
         solves = Solves.query.filter_by(teamid=session['id']).all()
     elif utils.user_can_view_challenges():
@@ -228,25 +221,12 @@ def solves_private():
             'category': solve.chal.category,
             'time': utils.unix_time(solve.date)
         })
-    if awards:
-        for award in awards:
-            response['solves'].append({
-                'chal': award.name,
-                'chalid': None,
-                'team': award.teamid,
-                'value': award.value,
-                'category': award.category or "Award",
-                'time': utils.unix_time(award.date)
-            })
     response['solves'].sort(key=lambda k: k['time'])
     return jsonify(response)
 
 
 @challenges.route('/solves/<int:teamid>')
 def solves_public(teamid=None):
-    solves = None
-    awards = None
-
     if utils.authed() and session['id'] == teamid:
         solves = Solves.query.filter_by(teamid=teamid)
         awards = Awards.query.filter_by(teamid=teamid)
@@ -319,10 +299,7 @@ def fails_private():
 
 @challenges.route('/fails/<int:teamid>')
 def fails_public(teamid=None):
-    if utils.authed() and session['id'] == teamid:
-        fails = WrongKeys.query.filter_by(teamid=teamid).count()
-        solves = Solves.query.filter_by(teamid=teamid).count()
-    elif utils.hide_scores():
+    if utils.hide_scores():
         fails = 0
         solves = 0
     else:
@@ -380,11 +357,8 @@ def chal(chalid):
 
         solves = Solves.query.filter_by(teamid=session['id'], chalid=chalid).first()
 
-        # Challange not solved yet
+        # Challenge not solved yet
         if not solves:
-            provided_key = request.form['key'].strip()
-            saved_keys = Keys.query.filter_by(chal=chal.id).all()
-
             # Hit max attempts
             max_tries = chal.max_attempts
             if max_tries and fails >= max_tries > 0:
