@@ -310,18 +310,17 @@ function loadhint(hintid) {
         title: "Unlock Hint?",
         body: "Are you sure you want to open this hint?",
         success: function () {
-            $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function (data) {
-                if (data.errors) {
+            $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function (response) {
+                if (response.errors) {
                     ezal({
                         title: "Error!",
-                        body: data.errors,
+                        body: response.errors,
                         button: "Okay"
                     });
                 } else {
-
                     ezal({
                         title: "Hint",
-                        body: md.render(data.hint),
+                        body: md.render(response.data.hint),
                         button: "Got it!"
                     });
                 }

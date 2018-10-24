@@ -22,7 +22,17 @@ class UserList(Resource):
     def get(self):
         users = Users.query.filter_by(banned=False)
         response = UserSchema(view='user', many=True).dump(users)
-        return response
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @users_namespace.route('/<user_id>')
@@ -31,10 +41,21 @@ class User(Resource):
     def get(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
 
-        response = UserSchema('self').dump(user).data
-        response['place'] = user.place
-        response['score'] = user.score
-        return response
+        response = UserSchema('self').dump(user)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        response.data['place'] = user.place
+        response.data['score'] = user.score
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def patch(self, user_id):
@@ -42,12 +63,19 @@ class User(Resource):
         data = request.get_json()
         response = UserSchema(view='admin', instance=user, partial=True).load(data)
         if response.errors:
-            return response.errors, 400
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
         db.session.commit()
-        response = UserSchema('admin').dump(response.data)
+        # response = UserSchema('admin').dump(response.data)
         db.session.close()
-        return response
+
+        return {
+            'success': True,
+            'data': response
+        }
 
     @admins_only
     def delete(self, user_id):
@@ -60,10 +88,9 @@ class User(Resource):
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True
         }
-        return response
 
 
 @users_namespace.route('/me')
@@ -73,7 +100,10 @@ class User(Resource):
         response = UserSchema('self').dump(user).data
         response['place'] = user.place
         response['score'] = user.score
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
     @authed_only
     def patch(self):
@@ -87,7 +117,7 @@ class User(Resource):
             }, 400
 
         db.session.commit()
-        response = UserSchema('self').dump(response.data)
+        # response = UserSchema('self').dump(response.data)
         db.session.close()
         return {
             'success': True,
@@ -106,10 +136,9 @@ class User(Resource):
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True
         }
-        return response
 
 
 @users_namespace.route('/<user_id>/solves')
@@ -129,7 +158,17 @@ class UserSolves(Resource):
 
         view = 'user' if not is_admin() else 'admin'
         response = SubmissionSchema(view=view, many=True).dump(solves)
-        return response
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @users_namespace.route('/<user_id>/fails')
@@ -147,7 +186,16 @@ class UserFails(Resource):
 
         view = 'user' if not is_admin() else 'admin'
         response = SubmissionSchema(view=view, many=True).dump(fails)
-        return response
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @users_namespace.route('/<user_id>/awards')
@@ -165,4 +213,14 @@ class UserAwards(Resource):
 
         view = 'user' if not is_admin() else 'admin'
         response = AwardSchema(view=view, many=True).dump(awards)
-        return response
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }

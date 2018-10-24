@@ -1,17 +1,17 @@
 function updatescores () {
-  $.get(script_root + '/api/v1/scoreboard', function( data ) {
-    var teams = $.parseJSON(JSON.stringify(data));
-    var table = $('#scoreboard tbody');
-    table.empty();
-    for (var i = 0; i < teams.length; i++) {
-        var row="<tr>\n" +
-            "<th scope=\"row\" class=\"text-center\">{0}</th>".format(i + 1) +
-            "<td><a href=\"{0}/team/{1}\">{2}</a></td>".format(script_root, teams['standings'][i].id, htmlentities(teams['standings'][i].team)) +
-            "<td>{0}</td>".format(teams['standings'][i].score) +
-            "</tr>";
-        table.append(row);
-    }
-  });
+    $.get(script_root + '/api/v1/scoreboard', function (response) {
+        var teams = response.data;
+        var table = $('#scoreboard tbody');
+        table.empty();
+        for (var i = 0; i < teams.length; i++) {
+            var row = "<tr>\n" +
+                "<th scope=\"row\" class=\"text-center\">{0}</th>".format(i + 1) +
+                "<td><a href=\"{0}/team/{1}\">{2}</a></td>".format(script_root, teams['standings'][i].id, htmlentities(teams['standings'][i].team)) +
+                "<td>{0}</td>".format(teams['standings'][i].score) +
+                "</tr>";
+            table.append(row);
+        }
+    });
 }
 
 function cumulativesum (arr) {
@@ -29,8 +29,9 @@ function UTCtoDate(utc){
 }
 
 function scoregraph () {
-    $.get(script_root + '/api/v1/scoreboard/top/10', function( data ) {
-        var places = $.parseJSON(JSON.stringify(data));
+    $.get(script_root + '/api/v1/scoreboard/top/10', function( response ) {
+        var places = response.data;
+
         if (Object.keys(places).length === 0 ){
             // Replace spinner
             $('#score-graph').html(

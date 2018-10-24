@@ -53,7 +53,7 @@
 								{% endif %}
 							</td>
 							<td class="d-none d-md-table-cell d-lg-table-cell">
-								<span>{% if user.country %}{{ user.country }}{% endif %}</span>
+								<span>{% if user.country %}{{ lookup_country_code(user.country) }}{% endif %}</span>
 							</td>
 						</tr>
 					{% endfor %}

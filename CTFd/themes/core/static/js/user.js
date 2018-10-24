@@ -13,11 +13,12 @@ function cumulativesum(arr) {
 }
 
 function scoregraph() {
+    // TODO: This graph isn't taking awards into account
     var times = [];
     var scores = [];
     var teamname = $('#team-id').text();
-    $.get(script_root + '/api/v1/users/' + user_id + '/solves', function (data) {
-        var solves = $.parseJSON(JSON.stringify(data));
+    $.get(script_root + '/api/v1/users/' + user_id + '/solves', function (response) {
+        var solves = response.data;
 
         for (var i = 0; i < solves.length; i++) {
             var date = moment(solves[i].date);
@@ -70,8 +71,8 @@ function keys_percentage_graph() {
     var base_url = script_root + '/api/v1/users/' + user_id;
     $.get(base_url + '/fails', function (fails) {
         $.get(base_url + '/solves', function(solves) {
-            var solves_count = solves.length;
-            var fails_count = fails.length;
+            var solves_count = solves.data.length;
+            var fails_count = fails.data.length;
 
             var graph_data = [{
                 values: [solves_count, fails_count],
@@ -103,8 +104,8 @@ function keys_percentage_graph() {
 }
 
 function category_breakdown_graph() {
-    $.get(script_root + '/api/v1/users/' + user_id + '/solves', function (data) {
-        var solves = data;
+    $.get(script_root + '/api/v1/users/' + user_id + '/solves', function (response) {
+        var solves = response.data;
 
         var categories = [];
         for (var i = 0; i < solves.length; i++) {
