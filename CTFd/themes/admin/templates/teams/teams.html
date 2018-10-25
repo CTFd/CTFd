@@ -61,8 +61,6 @@
 						</td>
 						<td class="text-center"><b>Banned</b>
 						</td>
-						<td class="text-center"><b>Settings</b>
-						</td>
 					</tr>
 				</thead>
 				<tbody>
@@ -104,17 +102,6 @@
 							{% if team.banned %}
 								<span class="badge badge-danger">banned</span>
 							{% endif %}
-						</td>
-						<td class="text-center"><span>
-							<span class="edit-team" data-toggle="tooltip" data-placement="top"
-								  title="Modify {{ team.name }}">
-								<i class="btn-fa fas fa-edit"></i>
-							</span>
-							<span class="delete-team" data-toggle="tooltip" data-placement="top"
-								  title="Delete {{ team.name }}">
-								<i class="btn-fa fas fa-times"></i>
-							</span>
-						</span>
 						</td>
 					</tr>
 					{% endfor %}

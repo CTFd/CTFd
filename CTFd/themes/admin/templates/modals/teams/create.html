@@ -37,7 +37,15 @@
 	</div>
 	<div class="form-group">
 		<label for="affiliation">Country</label>
-		<input type="text" class="form-control" name="country" id="country">
+		<select class="form-control" id="country-input" name="country">
+			<option></option>
+			{% set countries = get_countries() %}
+			{% for country_code in countries.keys() %}
+				<option value="{{ country_code }}" {% if country == country_code %}selected{% endif %}>
+					{{ countries[country_code] }}
+				</option>
+			{% endfor %}
+		</select>
 	</div>
 	<div class="form-group">
 		<div class="form-check form-check-inline">
