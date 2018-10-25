@@ -163,6 +163,9 @@ class Config(object):
     '''
     === OPTIONAL ===
     
+    REVERSE_PROXY:
+        Specifies whether CTFd is behind a reverse proxy or not. Set to True if using a reverse proxy like nginx. 
+    
     TEMPLATES_AUTO_RELOAD:
         Specifies whether Flask should check for modifications to templates and reload them automatically.
     
@@ -173,6 +176,7 @@ class Config(object):
         Specifies whether or not CTFd will check whether or not there is a new version of CTFd
 
     '''
+    REVERSE_PROXY = False
     TEMPLATES_AUTO_RELOAD = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPDATE_CHECK = True

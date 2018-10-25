@@ -168,7 +168,7 @@ def create_app(config='CTFd.config.Config'):
             message_queue=app.config.get('CACHE_REDIS_URL')
         )
 
-        if app.config.get('PROXYFIX'):
+        if app.config.get('REVERSE_PROXY'):
             app.wsgi_app = ProxyFix(app.wsgi_app)
 
         update_check(force=True)
