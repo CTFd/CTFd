@@ -31,7 +31,7 @@ def admin_teams_view():
             teams = Teams.query.filter(Teams.affiliation.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
         elif field == 'country':
             teams = Teams.query.filter(Teams.country.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
-        return render_template('admin/teams.html', teams=teams, pages=None, curr_page=None, q=q, field=field)
+        return render_template('admin/teams/teams.html', teams=teams, pages=None, curr_page=None, q=q, field=field)
 
     page = abs(int(page))
     results_per_page = 50
@@ -41,67 +41,13 @@ def admin_teams_view():
     teams = Teams.query.order_by(Teams.id.asc()).slice(page_start, page_end).all()
     count = db.session.query(db.func.count(Teams.id)).first()[0]
     pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template('admin/teams.html', teams=teams, pages=pages, curr_page=page)
+    return render_template('admin/teams/teams.html', teams=teams, pages=pages, curr_page=page)
 
 
-# @admin.route('/admin/team/new', methods=['POST'])
-# @admins_only
-# def admin_create_team():
-#     # TODO: Move to API
-#     name = request.form.get('name', None)
-#     password = request.form.get('password', None)
-#     email = request.form.get('email', None)
-#     website = request.form.get('website', None)
-#     affiliation = request.form.get('affiliation', None)
-#     country = request.form.get('country', None)
-#
-#     admin_user = True if request.form.get('admin', None) == 'on' else False
-#     verified = True if request.form.get('verified', None) == 'on' else False
-#     hidden = True if request.form.get('hidden', None) == 'on' else False
-#
-#     errors = []
-#
-#     if not name:
-#         errors.append('The team requires a name')
-#     elif Teams.query.filter(Teams.name == name).first():
-#         errors.append('That name is taken')
-#
-#     if utils.check_email_format(name) is True:
-#         errors.append('Team name cannot be an email address')
-#
-#     if not email:
-#         errors.append('The team requires an email')
-#     elif Teams.query.filter(Teams.email == email).first():
-#         errors.append('That email is taken')
-#
-#     if email:
-#         valid_email = utils.check_email_format(email)
-#         if not valid_email:
-#             errors.append("That email address is invalid")
-#
-#     if not password:
-#         errors.append('The team requires a password')
-#
-#     if website and (website.startswith('http://') or website.startswith('https://')) is False:
-#         errors.append('Websites must start with http:// or https://')
-#
-#     if errors:
-#         db.session.close()
-#         return jsonify({'data': errors})
-#
-#     team = Teams(name, email, password)
-#     team.website = website
-#     team.affiliation = affiliation
-#     team.country = country
-#
-#     team.admin = admin_user
-#     team.verified = verified
-#     team.hidden = hidden
-#
-#     db.session.add(team)
-#     db.session.commit()
-#     db.session.close()
-#     return jsonify({'data': ['success']})
+@admin.route('/admin/teams/new', methods=['GET'])
+@admins_only
+def admin_create_team():
+    return render_template('admin/teams/new.html')
 
 
 @admin.route('/admin/teams/<int:team_id>')
@@ -133,7 +79,7 @@ def admin_team(team_id):
                       .order_by(last_seen.desc()).all()
 
     return render_template(
-        'admin/team.html',
+        'admin/teams/team.html',
         team=team,
         members=members,
         score=score,
@@ -144,27 +90,6 @@ def admin_team(team_id):
         awards=awards,
         addrs=addrs,
     )
-
-
-# TODO: Teams won't be emailed on first release
-# @admin.route('/admin/team/<int:teamid>/mail', methods=['POST'])
-# @admins_only
-# @ratelimit(method="POST", limit=10, interval=60)
-# def email_user(teamid):
-#     # TODO: Not sure where to move this.
-#     msg = request.form.get('msg', None)
-#     team = Teams.query.filter(Teams.id == teamid).first_or_404()
-#     if msg and team:
-#         result, response = utils.sendmail(team.email, msg)
-#         return jsonify({
-#             'result': result,
-#             'message': response
-#         })
-#     else:
-#         return jsonify({
-#             'result': False,
-#             'message': "Missing information"
-#         })
 
 
 @admin.route('/admin/solves/<int:teamid>/<int:chalid>/solve', methods=['POST'])

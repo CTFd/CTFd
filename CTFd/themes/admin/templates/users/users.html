@@ -8,7 +8,9 @@
 	<div class="container">
 		<h1>Users
 			<span class="create-team" role="button" data-toggle="tooltip" title="Create User">
-				<i class="btn-fa fas fa-plus-circle"></i>
+				<a href="{{ request.script_root }}/admin/users/new" style="color: inherit;">
+					<i class="btn-fa fas fa-plus-circle"></i>
+				</a>
 			</span>
 		</h1>
 	</div>
@@ -33,80 +35,6 @@
 					<div id="email-user-errors"></div>
 					<button type="button" id="send-user-email" class="btn btn-primary float-right">
 						Send Message
-					</button>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div id="update-user-modal" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-action">Edit User</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body clearfix">
-				<form>
-					<input type="hidden" name="id">
-					<div class="form-group">
-						<label for="name">Team Name</label>
-						<input type="text" class="form-control" name="name" id="name"
-							   placeholder="Enter new team name" required>
-					</div>
-					<div class="form-group">
-						<label for="email">Email</label>
-						<input type="email" class="form-control" name="email" id="email"
-							   placeholder="Enter new email" required>
-					</div>
-					<div class="form-group">
-						<label for="password">Password</label>
-						<input type="password" class="form-control" name="password" id="password"/>
-					</div>
-					<div class="form-group">
-						<label for="website">Website</label>
-						<input type="text" class="form-control" name="website" id="website"
-							   placeholder="Enter website">
-					</div>
-					<div class="form-group">
-						<label for="affiliation">Affiliation</label>
-						<input type="text" class="form-control" name="affiliation" id="affiliation"
-							   placeholder="Enter affiliation">
-					</div>
-					<div class="form-group">
-						<label for="affiliation">Country</label>
-						<input type="text" class="form-control" name="country" id="country"
-							   placeholder="Enter country">
-					</div>
-					<div class="form-group">
-						<div class="form-check form-check-inline">
-{#							TODO: Properly align this with what the user type actually is#}
-							<select class="form-control form-inline" id="type-select" name="type">
-								<option value="user">User</option>
-								<option value="admin">Admin</option>
-							</select>
-						</div>
-						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="checkbox" name="verified" id="verified-checkbox">
-							<label class="form-check-label" for="verified-checkbox">Verified</label>
-						</div>
-						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="checkbox" name="hidden" id="hidden-checkbox">
-							<label class="form-check-label" for="hidden-checkbox">Hidden</label>
-						</div>
-						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="checkbox" name="banned" id="banned-checkbox">
-							<label class="form-check-label" for="banned-checkbox">Banned</label>
-						</div>
-					</div>
-					<div id="results">
-
-					</div>
-					<button id="update-user" type="submit"
-							class="btn btn-primary btn-outlined float-right modal-action">Update
 					</button>
 				</form>
 			</div>
@@ -165,8 +93,6 @@
 						</td>
 						<td class="text-center"><b>Banned</b>
 						</td>
-						<td class="text-center"><b>Settings</b>
-						</td>
 					</tr>
 				</thead>
 				<tbody>
@@ -216,23 +142,6 @@
 							{% if user.banned %}
 								<span class="badge badge-danger">banned</span>
 							{% endif %}
-						</td>
-						<td class="text-center"><span>
-							<span class="edit-team" data-toggle="tooltip" data-placement="top"
-								  title="Modify {{ user.name }}">
-								<i class="btn-fa fas fa-edit"></i>
-							</span>
-							{% if can_send_mail() %}
-							<span class="email-team" data-toggle="tooltip" data-placement="top"
-								  title="Email {{ user.name }}">
-								<i class="btn-fa fas fa-envelope"></i>
-							</span>
-							{% endif %}
-							<span class="delete-team" data-toggle="tooltip" data-placement="top"
-								  title="Delete {{ user.name }}">
-								<i class="btn-fa fas fa-times"></i>
-							</span>
-						</span>
 						</td>
 					</tr>
 					{% endfor %}

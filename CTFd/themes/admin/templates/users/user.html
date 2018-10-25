@@ -5,50 +5,13 @@
 
 {% block content %}
 
-<div class="modal fade" id="create-award-modal" tabindex="-1" role="dialog" aria-labelledby="create-award-label">
-	<div class="modal-dialog" role="document">
-	<div class="modal-content">
-		<div class="modal-header">
-			<h4 class="modal-title" id="create-award-label">Create Award</h4>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		</div>
-		<div class="modal-body">
-		<form id="award-create-form" method="POST" action="{{ request.script_root }}/admin/awards/add">
-			<div class="form-group">
-			<label for="award-name-input">Name</label>
-			<input type="text" class="form-control" id="award-name-input" name="name" placeholder="Enter award name">
-			</div>
-			<div class="form-group">
-			<label for="award-value-input">Value</label>
-			<input type="number" class="form-control" id="award-value-input" name="value" placeholder="Enter award value">
-			</div>
-			<div class="form-group">
-				<label for="award-category-input">Category</label>
-				<input type="text" class="form-control" id="award-category-input" name="category" placeholder="Enter award category">
-			</div>
-			<div class="form-group">
-				<label for="award-description-input" class="control-label">Description</label>
-				<textarea id="award-description-input" class="form-control" name="description" rows="10" placeholder="Description of what the award is for"></textarea>
-			</div>
-			<div class="form-group">
-			<label for="award-icon-input">Award Icon</label>
-			<input type="file" id="award-icon-input" name="icon">
-			</div>
-			<input type="hidden" value="{{ team.id }}" name="teamid" id="teamid">
-			<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
-			<div class="modal-footer">
-			<button type="submit" id="award-create-button" class="btn btn-primary">Create</button>
-			</div>
-		</form>
-		</div>
-	</div>
-	</div>
-</div>
+{#	TODO: Move awards to its own modal#}
+
 
 <div class="jumbotron">
 	<div class="container">
-		<h1 id="team-id" class="text-center">{{ team.name }}</h1>
-		<h2 id="team-email" class="text-center">{{ members | length }} members</h2>
+		<h1 id="team-id" class="text-center">{{ user.name }}</h1>
+		<h2 id="team-email" class="text-center">{{ user.email }}</h2>
 		<h2 id="team-place" class="text-center">
 			{% if place %}
 				{{ place }}
@@ -61,63 +24,38 @@
 				<small>points</small>
 			{% endif %}
 		</h2>
+		<div class="pt-3">
+			<i class="btn-fa fas fa-edit fa-2x px-2"></i>
+			<i class="btn-fa fas fa-trophy fa-2x px-2"></i>
+			<i class="btn-fa fas fa-envelope fa-2x px-2"></i>
+			<i class="btn-fa fas fa-trash-alt fa-2x px-2"></i>
+		</div>
 	</div>
 </div>
 
 <div class="container">
 	<div class="row">
-			{% if solves %}
-				<div id="keys-pie-graph" class="col-md-6">
-					<div class="text-center">
-						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-					</div>
+		{% if solves %}
+			<div id="keys-pie-graph" class="col-md-6">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
 				</div>
-				<div id="categories-pie-graph" class="col-md-6">
-					<div class="text-center">
-						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-					</div>
+			</div>
+			<div id="categories-pie-graph" class="col-md-6">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
 				</div>
-				<div id="score-graph" class="col-md-12">
-					<div class="text-center">
-						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-					</div>
+			</div>
+			<div id="score-graph" class="col-md-12">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
 				</div>
-			{% else %}
-				<div class="row">
-					<div class="text-center"><h3 class="spinner-error">No solves yet</h3></div>
-				</div>
-			{% endif %}
+			</div>
+		{% else %}
+			<h3 class="spinner-error text-center w-100">No solves yet</h3>
+		{% endif %}
 	</div>
 
-	<div class="row pt-5">
-		<div class="col-md-12">
-			<table class="table table-striped">
-				<h3 class="text-center">Team Members</h3>
-				<thead>
-				<tr>
-					<td class="text-center"><b>User Name</b></td>
-					<td class="text-center"><b>E-Mail</b></td>
-				</tr>
-				</thead>
-				<tbody>
-				{% for member in members %}
-					<tr>
-						<td class="text-center">
-							<a href="{{ url_for('admin.user_detail', user_id=member.id) }}">
-								{{ member.name }}
-							</a>
-						</td>
-						<td class="text-center">
-							<a href="mailto:{{ member.email }}">
-								{{ member.email }}
-							</a>
-						</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
 
 	<nav class="nav nav-tabs nav-fill pt-5" id="myTab" role="tablist">
 		<a class="nav-item nav-link active" id="nav-solves-tab" data-toggle="tab" href="#nav-solves" role="tab"
@@ -188,8 +126,12 @@
 					<tbody>
 					{% for fail in fails %}
 						<tr class="chal-wrong">
-							<td class="text-center chal" id="{{ fail.challenge_id }}">{{ fail.challenge.name }}</td>
-							<td class="flag" id="{{ fail.id }}"><pre>{{ fail.provided }}</pre></td>
+							<td class="text-center chal" id="{{ fail.challenge_id }}">
+								{{ fail.challenge.name }}
+							</td>
+							<td class="flag" id="{{ fail.id }}">
+								<pre>{{ fail.provided }}</pre>
+							</td>
 							<td class="text-center solve-time">
 								<script>document.write(moment({{ fail.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
@@ -268,14 +210,14 @@
 					</tr>
 					</thead>
 					<tbody>
-					{% for challenge in missing %}
+					{% for chal in missing %}
 						<tr class="chal-solve">
-							<td class="text-center chal" id="{{ challenge.id }}">{{ challenge.name }}</td>
-							<td class="text-center">{{ challenge.category }}</td>
-							<td class="text-center">{{ challenge.value }}</td>
+							<td class="text-center chal" id="{{ chal.id }}">{{ chal.name }}</td>
+							<td class="text-center">{{ chal.category }}</td>
+							<td class="text-center">{{ chal.value }}</td>
 							<td class="text-center">
 								<span class="mark-correct" data-toggle="tooltip"
-									  data-placement="top" title="Mark {{ challenge.name }} correct for {{ team.name }}">
+									  data-placement="top" title="Mark {{ chal.name }} correct for {{ user.name }}">
 									<i class="fas fa-check"></i>
 								</span>
 							</td>
@@ -319,5 +261,8 @@
 {% block scripts %}
 <script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
 <script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/teams/team.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/users/user.js"></script>
+<script>
+
+</script>
 {% endblock %}

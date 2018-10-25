@@ -22,7 +22,13 @@ def user_list():
     count = db.session.query(db.func.count(Users.id)).first()[0]
     pages = int(count / results_per_page) + (count % results_per_page > 0)
 
-    return render_template('admin/users.html', users=users, pages=pages, curr_page=page)
+    return render_template('admin/users/users.html', users=users, pages=pages, curr_page=page)
+
+
+@admin.route('/admin/users/new')
+@admins_only
+def user_new():
+    return render_template('admin/users/new.html')
 
 
 @admin.route('/admin/users/<int:user_id>')
@@ -56,7 +62,7 @@ def user_detail(user_id):
     place = user.get_place(admin=True)
 
     return render_template(
-        'admin/user.html',
+        'admin/users/user.html',
         solves=solves,
         user=user,
         addrs=addrs,

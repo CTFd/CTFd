@@ -1,0 +1,28 @@
+<form method="POST">
+	<div class="form-group">
+		<label for="award-name-input">Name</label>
+		<input type="text" class="form-control" id="award-name-input" name="name">
+	</div>
+	<div class="form-group">
+		<label for="award-value-input">Value</label>
+		<input type="number" class="form-control" id="award-value-input" name="value">
+	</div>
+	<div class="form-group">
+		<label for="award-category-input">Category</label>
+		<input type="text" class="form-control" id="award-category-input" name="category">
+	</div>
+	<div class="form-group">
+		<label for="award-description-input" class="control-label">Description</label>
+		<textarea id="award-description-input" class="form-control" name="description" rows="10"></textarea>
+	</div>
+	<div class="form-group">
+		<label for="award-icon-input">Award Icon</label>
+		<input type="file" id="award-icon-input" name="icon">
+	</div>
+	<div id="results">
+		{# TODO: Surface error messages		#}
+	</div>
+	<div class="modal-footer">
+		<button type="submit" id="award-create-button" class="btn btn-primary">Create</button>
+	</div>
+</form>

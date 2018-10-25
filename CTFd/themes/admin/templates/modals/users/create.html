@@ -1,0 +1,70 @@
+{#<div id="update-user-modal" class="modal fade">#}
+{#	<div class="modal-dialog">#}
+{#		<div class="modal-content">#}
+{#			<div class="modal-header">#}
+{#				<h2 class="modal-action">Edit User</h2>#}
+{#				<button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#					<span aria-hidden="true">&times;</span>#}
+{#				</button>#}
+{#			</div>#}
+{#			<div class="modal-body clearfix">#}
+{##}
+{#			</div>#}
+{#		</div>#}
+{#	</div>#}
+{#</div>#}
+
+<form>
+	<input type="hidden" name="id">
+	<div class="form-group">
+		<label for="name">User Name</label>
+		<input type="text" class="form-control" name="name" id="name" required>
+	</div>
+	<div class="form-group">
+		<label for="email">Email</label>
+		<input type="email" class="form-control" name="email" id="email" required>
+	</div>
+	<div class="form-group">
+		<label for="password">Password</label>
+		<input type="password" class="form-control" name="password" id="password"/>
+	</div>
+	<div class="form-group">
+		<label for="website">Website</label>
+		<input type="text" class="form-control" name="website" id="website">
+	</div>
+	<div class="form-group">
+		<label for="affiliation">Affiliation</label>
+		<input type="text" class="form-control" name="affiliation" id="affiliation">
+	</div>
+	<div class="form-group">
+		<label for="affiliation">Country</label>
+		<input type="text" class="form-control" name="country" id="country">
+	</div>
+	<div class="form-group">
+		<div class="form-check form-check-inline">
+			{#							TODO: Properly align this with what the user type actually is#}
+			<select class="form-control form-inline" id="type-select" name="type">
+				<option value="user">User</option>
+				<option value="admin">Admin</option>
+			</select>
+		</div>
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="checkbox" name="verified" id="verified-checkbox">
+			<label class="form-check-label" for="verified-checkbox">Verified</label>
+		</div>
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="checkbox" name="hidden" id="hidden-checkbox">
+			<label class="form-check-label" for="hidden-checkbox">Hidden</label>
+		</div>
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="checkbox" name="banned" id="banned-checkbox">
+			<label class="form-check-label" for="banned-checkbox">Banned</label>
+		</div>
+	</div>
+	<div id="results">
+		{# TODO: Surface error messages		#}
+	</div>
+	<button id="update-user" type="submit" class="btn btn-primary btn-outlined float-right modal-action">
+		Submit
+	</button>
+</form>
