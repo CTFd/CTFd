@@ -34,6 +34,7 @@ def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", passwo
                     "name": name,
                     "email": email,
                     "password": password,
+                    "user_mode": "users",
                     "nonce": sess.get('nonce')
                 }
             client.post('/setup', data=data)
