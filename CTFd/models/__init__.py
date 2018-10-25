@@ -69,11 +69,12 @@ JSONLite = types.JSON().with_variant(SQLiteJson, 'sqlite')
 class Announcements(db.Model):
     __tablename__ = 'announcements'
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text)
     content = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, content):
-        self.content = content
+    def __init__(self, *args, **kwargs):
+        super(Announcements, self).__init__(**kwargs)
 
 
 class Pages(db.Model):

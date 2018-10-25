@@ -140,3 +140,7 @@ table > thead > tr > td {
 select.form-control {
     height: auto !important;
 }
+
+.card {
+    border-radius: 0 !important;
+}

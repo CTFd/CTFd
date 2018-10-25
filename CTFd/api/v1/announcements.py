@@ -13,7 +13,6 @@ announcements_namespace = Namespace('announcements', description="Endpoint to re
 
 @announcements_namespace.route('')
 class AnnouncementList(Resource):
-    # TODO: Front end to surface Announcements
     def get(self):
         announcements = Announcements.query.all()
         schema = AnnouncementSchema(many=True)
@@ -31,13 +30,23 @@ class AnnouncementList(Resource):
     @admins_only
     def post(self):
         req = request.get_json()
-        a = Announcements(
-            content=req['message']
-        )
-        db.session.add(a)
+
+        schema = AnnouncementSchema()
+        result = schema.load(req)
+
+        if result.errors:
+            return {
+                'success': False,
+                'errors': result.errors
+            }, 400
+
+        db.session.add(result.data)
         db.session.commit()
-        socketio.emit('announcement', req, broadcast=True)
+
+        response = schema.dump(result.data)
+        socketio.emit('announcement', response.data, broadcast=True)
+
         return {
             'success': True,
-            'data': req
+            'data': response.data
         }
