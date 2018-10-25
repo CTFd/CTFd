@@ -2,9 +2,8 @@ from flask import current_app as app, url_for
 from CTFd.utils import get_config, get_app_config
 from CTFd.utils.config import mailgun, can_send_mail, mailserver
 from CTFd.utils.encoding import base64decode, base64encode
+from CTFd.utils.email import mailgun, smtp
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
-import mailgun
-import smtp
 
 
 def sendmail(addr, text):
