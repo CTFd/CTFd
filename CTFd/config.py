@@ -116,8 +116,15 @@ class Config(object):
         The mail port that emails are sent from if not overriden in the configuration panel.
     '''
     MAILFROM_ADDR = "noreply@ctfd.io"
-    MAIL_SERVER = "localhost"
-    MAIL_PORT = 25
+    MAIL_SERVER = None
+    MAIL_PORT = None
+    MAIL_USERNAME = None
+    MAIL_PASSWORD = None
+    MAIL_TLS = False
+    MAIL_SSL = False
+    MAILGUN_API_KEY = None
+    MAILGUN_BASE_URL = None
+
 
     '''
     === LOGS ===
