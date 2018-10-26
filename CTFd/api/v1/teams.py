@@ -37,6 +37,7 @@ class TeamList(Resource):
             'data': response.data
         }
 
+    @admins_only
     def post(self):
         req = request.get_json()
         view = TeamSchema.views.get(session.get('type', 'self'))
@@ -51,6 +52,9 @@ class TeamList(Resource):
 
         db.session.add(response.data)
         db.session.commit()
+
+        response = schema.dump(response.data)
+        db.session.close()
 
         return {
             'success': True,

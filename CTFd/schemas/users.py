@@ -5,7 +5,7 @@ from marshmallow import validate, ValidationError, pre_load
 from marshmallow.decorators import validates_schema
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Users
-from CTFd.utils.validators import unique_email, unique_team_name, validate_country_code
+from CTFd.utils.validators import unique_email, unique_user_name, validate_country_code
 from CTFd.utils.user import is_admin, get_current_user
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.crypto import verify_password, hash_password
@@ -23,7 +23,7 @@ class UserSchema(ma.ModelSchema):
         'name',
         required=True,
         validate=[
-            unique_team_name,
+            unique_user_name,
             validate.Length(min=1, max=128, error='Team names must not be empty')
         ]
     )
