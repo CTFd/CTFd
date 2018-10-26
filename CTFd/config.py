@@ -71,7 +71,8 @@ class Config(object):
     if CACHE_REDIS_URL:
         CACHE_TYPE = 'redis'
     else:
-        CACHE_TYPE = 'simple'
+        CACHE_TYPE = 'filesystem'
+        CACHE_DIR = os.path.join(os.path.dirname(__file__), os.pardir, '.data', 'filesystem_cache')
 
     '''
     === SECURITY ===
