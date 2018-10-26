@@ -9,6 +9,15 @@ function loadchal(id) {
         return e.id == id;
     })[0];
 
+    if (obj.type === 'hidden') {
+        ezal({
+            title: "Challenge Hidden!",
+            body: "You haven't unlocked this challenge yet!",
+            button: "Got it!"
+        });
+        return;
+    }
+
     updateChalWindow(obj);
 }
 

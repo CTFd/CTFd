@@ -53,9 +53,22 @@ class ChallengeList(Resource):
             requirements = challenge.requirements
             if requirements:
                 prereqs = set(requirements.get('prerequisites', []))
+                anonymize = requirements.get('anonymize')
                 if solve_ids >= prereqs:
                     pass
                 else:
+                    if anonymize:
+                        response.append({
+                            'id': challenge.id,
+                            'type': 'hidden',
+                            'name': '???',
+                            'value': 0,
+                            'category': '???',
+                            'tags': [],
+                            'template': '',
+                            'script': ''
+                        })
+                    # Fallthrough to continue
                     continue
 
             challenge_type = get_chal_class(challenge.type)
