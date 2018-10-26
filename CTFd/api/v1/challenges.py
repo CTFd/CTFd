@@ -18,6 +18,7 @@ from CTFd.utils.decorators import (
     viewable_without_authentication,
     admins_only
 )
+from CTFd.utils.user import get_current_user
 from CTFd.utils.modes import get_model
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
@@ -33,13 +34,30 @@ class ChallengeList(Resource):
     @require_verified_emails
     @viewable_without_authentication(status_code=403)
     def get(self):
+        user = get_current_user()
+
         challenges = Challenges.query.filter(
             and_(Challenges.state != 'hidden', Challenges.state != 'locked')
         ).order_by(Challenges.value).all()
 
+        solve_ids = Solves.query\
+            .with_entities(Solves.challenge_id)\
+            .filter_by(account_id=user.account_id)\
+            .order_by(Solves.challenge_id.asc())\
+            .all()
+        solve_ids = set([value for value, in solve_ids])
+
         response = []
         tag_schema = TagSchema(view='user', many=True)
         for challenge in challenges:
+            requirements = challenge.requirements
+            if requirements:
+                prereqs = set(requirements.get('prerequisites', []))
+                if solve_ids >= prereqs:
+                    pass
+                else:
+                    continue
+
             challenge_type = get_chal_class(challenge.type)
             response.append({
                 'id': challenge.id,

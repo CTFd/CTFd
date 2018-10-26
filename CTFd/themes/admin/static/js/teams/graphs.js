@@ -12,7 +12,6 @@ $(document).ready(function () {
     function scoregraph() {
         var times = [];
         var scores = [];
-        var teamname = $('#team-id').text();
         $.get(script_root + '/api/v1/teams/' + TEAM_ID + '/solves', function (response) {
             var solves = response.data;
 
@@ -29,10 +28,10 @@ $(document).ready(function () {
                     y: scores,
                     type: 'scatter',
                     marker: {
-                        color: colorhash(teamname + TEAM_ID),
+                        color: colorhash(TEAM_NAME + TEAM_ID),
                     },
                     line: {
-                        color: colorhash(teamname + TEAM_ID),
+                        color: colorhash(TEAM_NAME + TEAM_ID),
                     }
                 }
             ];

@@ -77,9 +77,23 @@ class SubmissionsList(Resource):
             ).count()
 
             challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
-            # TODO: This should change to somethinge else.
-            if challenge.hidden:
+
+            if challenge.state == 'hidden':
                 abort(403)
+
+            requirements = challenge.requirements
+            if requirements:
+                solve_ids = Solves.query \
+                    .with_entities(Solves.challenge_id) \
+                    .filter_by(account_id=user.account_id) \
+                    .order_by(Solves.challenge_id.asc()) \
+                    .all()
+
+                prereqs = set(requirements.get('prerequisites', []))
+                if solve_ids >= prereqs:
+                    pass
+                else:
+                    abort(403)
 
             chal_class = get_chal_class(challenge.type)
 
