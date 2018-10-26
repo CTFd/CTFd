@@ -5,7 +5,7 @@ from marshmallow import validate, ValidationError, pre_load
 from marshmallow.decorators import validates_schema
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Users
-from CTFd.utils.validators import unique_email, unique_user_name, validate_country_code
+from CTFd.utils.validators import unique_email, validate_country_code
 from CTFd.utils.user import is_admin, get_current_user
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.crypto import verify_password, hash_password
@@ -23,7 +23,6 @@ class UserSchema(ma.ModelSchema):
         'name',
         required=True,
         validate=[
-            unique_user_name,
             validate.Length(min=1, max=128, error='Team names must not be empty')
         ]
     )
@@ -57,6 +56,21 @@ class UserSchema(ma.ModelSchema):
             validate.Length(min=1, error='Passwords must not be empty'),
         ]
     )
+
+    @pre_load
+    def validate_name(self, data):
+        existing_user = Users.query.filter_by(name=data['name']).first()
+        if is_admin():
+            user_id = data.get('id')
+            if existing_user.id != user_id:
+                raise ValidationError('User name has already been taken')
+        else:
+            current_user = get_current_user()
+            if data['name'] == current_user.name:
+                return data
+            else:
+                if current_user:
+                    raise ValidationError('User name has already been taken')
 
     @pre_load
     def validate_email(self, data):

@@ -3,7 +3,7 @@ from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError, pre_load
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Teams
-from CTFd.utils.validators import unique_team_name, validate_country_code
+from CTFd.utils.validators import validate_country_code
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.user import is_admin, get_current_team
 
@@ -20,7 +20,6 @@ class TeamSchema(ma.ModelSchema):
         'name',
         required=True,
         validate=[
-            unique_team_name,
             validate.Length(min=1, max=128, error='Team names must not be empty')
         ]
     )
@@ -44,6 +43,23 @@ class TeamSchema(ma.ModelSchema):
             validate_country_code
         ]
     )
+
+    @pre_load
+    def validate_name(self, data):
+        existing_team = Teams.query.filter_by(name=data['name']).first()
+        # Admins should be able to patch anyone but they cannot cause a collision.
+        if is_admin():
+            team_id = int(data.get('id', 0))
+            if existing_team.id != team_id:
+                raise ValidationError('Team name has already been taken')
+        else:
+            current_team = get_current_team()
+            # We need to allow teams to edit themselves and allow the "conflict"
+            if data['name'] == current_team.name:
+                return data
+            else:
+                if existing_team:
+                    raise ValidationError('Team name has already been taken')
 
     @pre_load
     def validate_email(self, data):
