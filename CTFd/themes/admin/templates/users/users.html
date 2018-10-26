@@ -16,32 +16,6 @@
 	</div>
 </div>
 
-<div id="email-user" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2>Email Team</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<form method="POST">
-					<input type="hidden" name="id">
-					<input type="hidden" name="nonce" value="{{ nonce }}">
-					<textarea class="form-control" name="msg" placeholder="Enter your message here"
-							  rows="15"></textarea>
-					<br>
-					<div id="email-user-errors"></div>
-					<button type="button" id="send-user-email" class="btn btn-primary float-right">
-						Send Message
-					</button>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">

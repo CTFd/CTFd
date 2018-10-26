@@ -38,7 +38,7 @@ def user_detail(user_id):
     user = Users.query.filter_by(id=user_id).first_or_404()
 
     # Get the user's solves
-    solves = Solves.query.filter_by(user_id=user_id).all()
+    solves = user.get_solves(admin=True)
 
     # Get challenges that the user is missing
     solve_ids = [s.challenge_id for s in solves]
@@ -52,10 +52,10 @@ def user_detail(user_id):
         .order_by(last_seen.desc()).all()
 
     # Get Fails
-    fails = Fails.query.filter_by(user_id=user_id).order_by(Fails.date.asc()).all()
+    fails = user.get_fails(admin=True)
 
     # Get Awards
-    awards = Awards.query.filter_by(user_id=user_id).order_by(Awards.date.asc()).all()
+    awards = user.get_awards(admin=True)
 
     # Get user properties
     score = user.get_score(admin=True)

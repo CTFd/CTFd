@@ -34,8 +34,30 @@ class UserList(Resource):
             'data': response.data
         }
 
+    @admins_only
+    def post(self):
+        req = request.get_json()
+        schema = UserSchema('admin')
+        response = schema.load(req)
 
-@users_namespace.route('/<user_id>')
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        db.session.add(response.data)
+        db.session.commit()
+
+        response = schema.dump(response.data)
+
+        return {
+            'success': True,
+            'data': response.data
+        }
+
+
+@users_namespace.route('/<int:user_id>')
 @users_namespace.param('user_id', "User ID")
 class User(Resource):
     def get(self, user_id):
@@ -61,7 +83,9 @@ class User(Resource):
     def patch(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
         data = request.get_json()
-        response = UserSchema(view='admin', instance=user, partial=True).load(data)
+        data['id'] = user_id
+        schema = UserSchema(view='admin', instance=user, partial=True)
+        response = schema.load(data)
         if response.errors:
             return {
                 'success': False,
@@ -69,7 +93,9 @@ class User(Resource):
             }, 400
 
         db.session.commit()
-        # response = UserSchema('admin').dump(response.data)
+
+        response = schema.dump(response.data)
+
         db.session.close()
 
         return {
@@ -79,12 +105,13 @@ class User(Resource):
 
     @admins_only
     def delete(self, user_id):
+        # TODO: There's probably other leftover data here
         Unlocks.query.filter_by(user_id=user_id).delete()
         Awards.query.filter_by(user_id=user_id).delete()
         Fails.query.filter_by(user_id=user_id).delete()
         Solves.query.filter_by(user_id=user_id).delete()
         Tracking.query.filter_by(user_id=user_id).delete()
-        Users.query.filter_by(user_id=user_id).delete()
+        Users.query.filter_by(id=user_id).delete()
         db.session.commit()
         db.session.close()
 
@@ -169,6 +196,20 @@ class UserSolves(Resource):
             'success': True,
             'data': response.data
         }
+
+    @admins_only
+    def post(self, user_id):
+        user = Users.query.filter_by(id=user_id).first_or_404()
+        req = request.get_json()
+        response = SubmissionSchema('admin').load(req)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        db.session.add(response.data)
 
 
 @users_namespace.route('/<user_id>/fails')

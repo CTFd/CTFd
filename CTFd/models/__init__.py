@@ -81,7 +81,7 @@ class Pages(db.Model):
     __tablename__ = 'pages'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80))
-    route = db.Column(db.Text, unique=True)
+    route = db.Column(db.String(128), unique=True)
     content = db.Column(db.Text)
     draft = db.Column(db.Boolean)
     hidden = db.Column(db.Boolean)

@@ -59,7 +59,6 @@ class SubmissionsList(Resource):
         else:
             request_data = request.get_json()
 
-
         challenge_id = request_data.get('challenge_id') or request_data.get('challenge_id')
 
         if ctf_paused():

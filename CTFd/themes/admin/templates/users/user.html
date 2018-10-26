@@ -4,9 +4,53 @@
 {% endblock %}
 
 {% block content %}
+<div id="user-info-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Edit User</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				{% include "admin/modals/users/create.html" %}
+			</div>
+		</div>
+	</div>
+</div>
 
-{#	TODO: Move awards to its own modal#}
+<div id="user-award-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Award User</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				{% include "admin/modals/awards/create.html" %}
+			</div>
+		</div>
+	</div>
+</div>
 
+<div id="user-email-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Email User</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				{% include "admin/modals/mail/send.html" %}
+			</div>
+		</div>
+	</div>
+</div>
 
 <div class="jumbotron">
 	<div class="container">
@@ -25,10 +69,18 @@
 			{% endif %}
 		</h2>
 		<div class="pt-3">
-			<i class="btn-fa fas fa-user-edit fa-2x px-2"></i>
-			<i class="btn-fa fas fa-trophy fa-2x px-2"></i>
-			<i class="btn-fa fas fa-envelope fa-2x px-2"></i>
-			<i class="btn-fa fas fa-trash-alt fa-2x px-2"></i>
+			<a class="edit-user">
+				<i class="btn-fa fas fa-user-edit fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Edit User"></i>
+			</a>
+			<a class="award-user">
+				<i class="btn-fa fas fa-trophy fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Award User"></i>
+			</a>
+			<a class="email-user">
+				<i class="btn-fa fas fa-envelope fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Email User"></i>
+			</a>
+			<a class="delete-user">
+				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Delete User"></i>
+			</a>
 		</div>
 	</div>
 </div>
@@ -62,7 +114,7 @@
 		   aria-controls="nav-solves" aria-selected="true">Solves</a>
 
 		<a class="nav-item nav-link" id="nav-wrong-tab" data-toggle="tab" href="#nav-wrong" role="tab"
-		   aria-controls="nav-wrong" aria-selected="false">Wrong</a>
+		   aria-controls="nav-wrong" aria-selected="false">Fails</a>
 
 		<a class="nav-item nav-link" id="nav-awards-tab" data-toggle="tab" href="#nav-awards" role="tab"
 		   aria-controls="nav-awards" aria-selected="false">Awards</a>
@@ -70,6 +122,7 @@
 		<a class="nav-item nav-link" id="nav-missing-tab" data-toggle="tab" href="#nav-missing" role="tab"
 		   aria-controls="nav-missing" aria-selected="false">Missing</a>
 	</nav>
+
 	<div class="tab-content" id="nav-tabContent">
 		<div class="tab-pane fade show active" id="nav-solves" role="tabpanel" aria-labelledby="nav-solves-tab">
 			<div class="row">
@@ -97,9 +150,10 @@
 								<script>document.write(moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
 							<td class="text-center">
-								<span class="delete-item" data-toggle="tooltip"
+								<span class="delete-submission" submission-id="{{ solve.id }}"
+									  submission-type="{{ solve.type }}" submission-challenge="{{ solve.challenge.name }}" data-toggle="tooltip"
 									  data-placement="top" title="Delete solve #{{ solve.id }}">
-									<i class="fas fa-times"></i>
+									<i class="btn-fa fas fa-times"></i>
 								</span>
 							</td>
 						</tr>
@@ -114,7 +168,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<table class="table table-striped">
-					<h3 class="text-center py-3 d-block">Wrong Keys</h3>
+					<h3 class="text-center py-3 d-block">Fails</h3>
 					<thead>
 					<tr>
 						<td class="text-center"><b>Challenge</b></td>
@@ -136,10 +190,11 @@
 								<script>document.write(moment({{ fail.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
 							<td class="text-center">
-								<span class="delete-item" data-toggle="tooltip"
+								<a class="delete-submission" submission-id="{{ fail.id }}"
+								   submission-type="{{ fail.type }}" submission-challenge="{{ fail.challenge.name }}" data-toggle="tooltip"
 									  data-placement="top" title="Delete fail #{{ fail.id }}">
 									<i class="fas fa-times"></i>
-								</span>
+								</a>
 							</td>
 						</tr>
 					{% endfor %}
@@ -178,8 +233,9 @@
 								<td class="text-center">{{ award.icon }}</td>
 
 								<td class="text-center">
-									<span class="delete-item" data-toggle="tooltip"
-										  data-placement="top" title="Delete award #{{ award.id }}">
+									<span class="delete-award" data-toggle="tooltip"
+										  data-placement="top" award-id="{{ award.id }}" award-name="{{ award.name }}"
+										  title="Delete award #{{ award.id }}">
 										<i class="fas fa-times"></i>
 									</span>
 								</td>
@@ -187,11 +243,6 @@
 						{% endfor %}
 						</tbody>
 					</table>
-
-					<button type="button" data-toggle="modal" data-target="#create-award-modal"
-							class="btn btn-primary float-right d-block">Create Award
-					</button>
-
 				</div>
 			</div>
 		</div>
@@ -201,6 +252,7 @@
 				<div class="col-md-12">
 					<table class="table table-striped">
 					<h3 class="text-center py-3 d-block">Missing</h3>
+{#					TODO: This needs API design thought. #}
 					<thead>
 					<tr>
 						<td class="text-center"><b>Challenge</b></td>
@@ -259,9 +311,16 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+var USER_ID = {{ user.id }};
+var USER_NAME = {{ user.name | tojson }};
+</script>
 <script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
 <script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
 <script src="{{ request.script_root }}/themes/admin/static/js/users/user.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/users/info.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/users/actions.js"></script>
+<script src="{{ request.script_root }}/themes/admin/static/js/users/graphs.js"></script>
 <script>
 
 </script>

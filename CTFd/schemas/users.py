@@ -82,27 +82,20 @@ class UserSchema(ma.ModelSchema):
         password = data.get('password')
         confirm = data.get('confirm')
 
-        if password and (confirm is None):
-            raise ValidationError('Please confirm your current password', field_names=['confirm'])
-
-        if password and confirm:
+        if is_admin():
+            return data
+        else:
             target_user = get_current_user()
-            if data.get('id'):
-                # Admins can set passwords for any user
-                if is_admin():
-                    target_user = Users.query.filter_by(id=data['id']).first()
+
+            if password and (confirm is None):
+                raise ValidationError('Please confirm your current password', field_names=['confirm'])
 
             if target_user.id == session['id']:
                 test = verify_password(plaintext=confirm, ciphertext=target_user.password)
-                if test:
-                    data['password'] = hash_password(password)
+                if test is True:
                     return data
                 else:
                     raise ValidationError('Your previous password is incorrect', field_names=['confirm'])
-            else:
-                if is_admin():
-                    data['password'] = hash_password(password)
-                    return data
 
     views = {
         'user': [

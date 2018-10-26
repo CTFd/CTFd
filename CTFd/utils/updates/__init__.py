@@ -48,6 +48,8 @@ def update_check(force=False):
             ).json()
         except requests.exceptions.RequestException as e:
             pass
+        except ValueError as e:
+            pass
         else:
             try:
                 latest = check['resource']['tag']
