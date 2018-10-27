@@ -11,6 +11,7 @@ from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
 from CTFd.utils import migrate, migrate_upgrade, migrate_stamp
+from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.cache import cache
 from CTFd.utils.updates import update_check
 
@@ -43,6 +44,7 @@ class CTFdFlask(Flask):
         """Overriden Jinja constructor setting a custom jinja_environment"""
         self.jinja_environment = SandboxedBaseEnvironment
         self.jinja_environment.cache = None
+        self.session_interface = CachingSessionInterface(key_prefix='session')
         Flask.__init__(self, *args, **kwargs)
 
     def create_jinja_environment(self):

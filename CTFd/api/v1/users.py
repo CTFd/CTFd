@@ -136,7 +136,8 @@ class User(Resource):
     def patch(self):
         user = get_current_user()
         data = request.get_json()
-        response = UserSchema(view='self', instance=user, partial=True).load(data)
+        schema = UserSchema(view='self', instance=user, partial=True)
+        response = schema.load(data)
         if response.errors:
             return {
                 'success': False,
@@ -144,8 +145,10 @@ class User(Resource):
             }, 400
 
         db.session.commit()
-        # response = UserSchema('self').dump(response.data)
+
+        response = schema.dump(response.data)
         db.session.close()
+        
         return {
             'success': True,
             'data': response

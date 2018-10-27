@@ -62,7 +62,9 @@ class UserSchema(ma.ModelSchema):
         existing_user = Users.query.filter_by(name=data['name']).first()
         if is_admin():
             user_id = data.get('id')
-            if existing_user.id != user_id:
+            if user_id is None:
+                return
+            elif existing_user.id != user_id:
                 raise ValidationError('User name has already been taken')
         else:
             current_user = get_current_user()
