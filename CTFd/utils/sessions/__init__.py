@@ -13,6 +13,11 @@ def total_seconds(td):
 
 
 class CachedSession(CallbackDict, SessionMixin):
+    """
+    This code is mostly based off of the ServerSideSession from Flask-Session.
+
+    https://github.com/fengsp/flask-session/blob/master/flask_session/sessions.py#L37
+    """
 
     def __init__(self, initial=None, sid=None, permanent=None):
         def on_update(self):
@@ -26,6 +31,12 @@ class CachedSession(CallbackDict, SessionMixin):
 
 
 class CachingSessionInterface(SessionInterface):
+    """
+    This code is partially based off of the RedisSessionInterface from Flask-Session with updates to properly
+    interoperate with Flask-Caching and be more inline with modern Flask (i.e. doesn't use pickle).
+
+    https://github.com/fengsp/flask-session/blob/master/flask_session/sessions.py#L90
+    """
 
     serializer = TaggedJSONSerializer()
     session_class = CachedSession
@@ -65,16 +76,6 @@ class CachingSessionInterface(SessionInterface):
                 response.delete_cookie(app.session_cookie_name,
                                        domain=domain, path=path)
             return
-
-        # Modification case.  There are upsides and downsides to
-        # emitting a set-cookie header each request.  The behavior
-        # is controlled by the :meth:`should_set_cookie` method
-        # which performs a quick check to figure out if the cookie
-        # should be set or not.  This is controlled by the
-        # SESSION_REFRESH_EACH_REQUEST config flag as well as
-        # the permanent flag on the session itself.
-        # if not self.should_set_cookie(app, session):
-        #    return
 
         if session.modified:
             httponly = self.get_cookie_httponly(app)
