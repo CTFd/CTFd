@@ -2,12 +2,12 @@ from sqlalchemy.sql.expression import union_all
 from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError
 from marshmallow_sqlalchemy import field_for
-from CTFd.models import ma, Announcements
+from CTFd.models import ma, Notifications
 
 
-class AnnouncementSchema(ma.ModelSchema):
+class NotificationSchema(ma.ModelSchema):
     class Meta:
-        model = Announcements
+        model = Notifications
         include_fk = True
         dump_only = ('id', 'date')
 
@@ -18,4 +18,4 @@ class AnnouncementSchema(ma.ModelSchema):
             elif type(view) == list:
                 kwargs['only'] = view
 
-        super(AnnouncementSchema, self).__init__(*args, **kwargs)
+        super(NotificationSchema, self).__init__(*args, **kwargs)

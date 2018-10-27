@@ -1,22 +1,22 @@
 from flask import session, request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Announcements
-from CTFd.schemas.announcements import AnnouncementSchema
+from CTFd.models import db, Notifications
+from CTFd.schemas.notifications import NotificationSchema
 from CTFd.utils.events import socketio
 
 from CTFd.utils.decorators import (
     admins_only
 )
 
-announcements_namespace = Namespace('announcements', description="Endpoint to retrieve Announcements")
+notifications_namespace = Namespace('notifications', description="Endpoint to retrieve Notifications")
 
 
-@announcements_namespace.route('')
-class AnnouncementList(Resource):
+@notifications_namespace.route('')
+class NotificantionList(Resource):
     def get(self):
-        announcements = Announcements.query.all()
-        schema = AnnouncementSchema(many=True)
-        result = schema.dump(announcements)
+        notifications = Notifications.query.all()
+        schema = NotificationSchema(many=True)
+        result = schema.dump(notifications)
         if result.errors:
             return {
                 'success': False,
@@ -31,7 +31,7 @@ class AnnouncementList(Resource):
     def post(self):
         req = request.get_json()
 
-        schema = AnnouncementSchema()
+        schema = NotificationSchema()
         result = schema.load(req)
 
         if result.errors:
@@ -44,7 +44,7 @@ class AnnouncementList(Resource):
         db.session.commit()
 
         response = schema.dump(result.data)
-        socketio.emit('announcement', response.data, broadcast=True)
+        socketio.emit('notification', response.data, broadcast=True)
 
         return {
             'success': True,

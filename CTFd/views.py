@@ -2,7 +2,7 @@ from flask import current_app as app, render_template, request, redirect, abort,
 from flask.helpers import safe_join
 from passlib.hash import bcrypt_sha256
 
-from CTFd.models import db, Admins, Files, Pages, Announcements
+from CTFd.models import db, Admins, Files, Pages, Notifications
 from CTFd.utils import markdown
 from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
@@ -118,10 +118,10 @@ def setup():
     return redirect(url_for('views.static_html'))
 
 
-@views.route('/announcements', methods=['GET'])
-def announcements():
-    announce_list = Announcements.query.order_by(Announcements.id.desc()).all()
-    return render_template('announcements.html', announcements=announce_list)
+@views.route('/notifications', methods=['GET'])
+def notifications():
+    notifications = Notifications.query.order_by(Notifications.id.desc()).all()
+    return render_template('notifications.html', notifications=notifications)
 
 
 @views.route('/settings', methods=['GET'])

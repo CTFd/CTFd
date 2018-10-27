@@ -3,16 +3,16 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Announcements</h1>
+			<h1>Notifications</h1>
 		</div>
 	</div>
 	<div class="container">
-		{% for announcement in announcements %}
+		{% for notification in notifications %}
 		<div class="card bg-light mb-4">
 			<div class="card-body">
 				<blockquote class="blockquote mb-0">
-					<p>{{ announcement.content | safe }}</p>
-					<small class="text-muted">{{ announcement.date.isoformat() }}</small>
+					<p>{{ notification.content | safe }}</p>
+					<small class="text-muted">{{ notification.date.isoformat() }}</small>
 				</blockquote>
 			</div>
 		</div>

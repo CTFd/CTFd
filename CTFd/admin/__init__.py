@@ -33,7 +33,7 @@ from CTFd.admin import statistics
 from CTFd.admin import teams
 from CTFd.admin import users
 from CTFd.admin import submissions
-from CTFd.admin import announcements
+from CTFd.admin import notifications
 
 
 @admin.route('/admin', methods=['GET'])

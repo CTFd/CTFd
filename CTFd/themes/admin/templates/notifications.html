@@ -3,18 +3,18 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Announcements</h1>
+			<h1>Notifications</h1>
 		</div>
 	</div>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<form method="POST" id="announcements_form">
+				<form method="POST" id="notifications_form">
 					<div class="form-group">
 						<label>
 							Title
 							<small class="form-text text-muted">
-								Announcement title
+								Notification title
 							</small>
 						</label>
 						<input class="form-control" type="text" name="title">
@@ -23,7 +23,7 @@
 						<label>
 							Content
 							<small class="form-text text-muted">
-								Announcement contents can be made up of HTML
+								Notification contents can be made up of HTML
 							</small>
 						</label>
 						<textarea class="form-control" type="text" name="content" rows="3"></textarea>
@@ -50,12 +50,12 @@
 						</tr>
 					</thead>
 					<tbody>
-					{% for announcement in announcements %}
+					{% for notification in notifications %}
 						<tr>
-							<td>{{ announcement.id }}</td>
-							<td>{{ announcement.title }}</td>
-							<td>{{ announcement.content | safe }}</td>
-							<td>{{ announcement.date.isoformat() }}</td>
+							<td>{{ notification.id }}</td>
+							<td>{{ notification.title }}</td>
+							<td>{{ notification.content | safe }}</td>
+							<td>{{ notification.date.isoformat() }}</td>
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -68,5 +68,5 @@
 {% block scripts %}
 	<script src="{{ request.script_root }}/themes/core/static/js/vendor/socket.io.min.js"></script>
 	<script src="{{ request.script_root }}/themes/core/static/js/events.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/announcements/announcements.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/notifications/notifications.js"></script>
 {% endblock %}

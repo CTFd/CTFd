@@ -1,10 +1,10 @@
 $(document).ready(function () {
-    $('#announcements_form').submit(function(e){
+    $('#notifications_form').submit(function(e){
         e.preventDefault();
-        var form = $('#announcements_form');
+        var form = $('#notifications_form');
         var params = form.serializeJSON();
 
-        fetch(script_root + '/api/v1/announcements', {
+        fetch(script_root + '/api/v1/notifications', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
