@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from tests.helpers import *
-from CTFd.models import ip2long, long2ip
 from CTFd.plugins import (
     register_plugin_assets_directory,
     register_plugin_asset,
