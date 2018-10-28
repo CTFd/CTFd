@@ -20,7 +20,7 @@ from CTFd.utils import (
     get_config,
     set_config
 )
-from CTFd.caching import cache
+from CTFd.cache import cache
 from CTFd.utils.exports import export_ctf, import_ctf
 from CTFd.models import db, Configs, get_class_by_tablename
 

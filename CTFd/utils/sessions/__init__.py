@@ -1,7 +1,7 @@
 from flask.sessions import SessionInterface, SessionMixin
 from flask.json.tag import TaggedJSONSerializer
 from werkzeug.datastructures import CallbackDict
-from CTFd.caching import cache
+from CTFd.cache import cache
 from CTFd.utils import text_type
 from uuid import uuid4
 from itsdangerous import Signer, BadSignature, want_bytes

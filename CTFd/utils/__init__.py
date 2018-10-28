@@ -2,7 +2,7 @@ import mistune
 import six
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort, jsonify
 from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
-from CTFd.caching import cache
+from CTFd.cache import cache
 from CTFd.models import (
     db,
     Challenges,

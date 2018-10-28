@@ -6,7 +6,7 @@ from passlib.hash import bcrypt_sha256
 from CTFd.models import db, Users, Teams, Solves, Awards, Files, Pages, Tracking
 from CTFd.utils.decorators import authed_only
 from CTFd.utils import markdown
-from CTFd.caching import cache
+from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import get_current_user, authed, get_ip
 from CTFd.utils import config

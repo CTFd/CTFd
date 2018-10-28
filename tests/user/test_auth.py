@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import CTFd.caching
+import CTFd.cache
 from CTFd.utils import set_config
 from tests.helpers import *
 from freezegun import freeze_time
