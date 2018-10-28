@@ -44,7 +44,6 @@ def upload_file(*args, **kwargs):
     location = uploader.upload(file_obj=file_obj, filename=file_obj.filename)
 
     model_args['location'] = location
-    print model_args
 
     file_row = model(**model_args)
     db.session.add(file_row)

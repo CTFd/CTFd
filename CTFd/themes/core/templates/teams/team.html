@@ -115,7 +115,7 @@
 				<tbody>
 				{% for solve in solves %}
 					<tr>
-						<td><a href="{{ request.script_root }}/challenges#{{ solve.challenge.name }}">{{ solve.challenge.name }}</a></td>
+						<td><a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}">{{ solve.challenge.name }}</a></td>
 						<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td><td>{{ solve.challenge.value }}</td>
 						<td class="solve-time"><script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
 					</tr>
@@ -132,9 +132,9 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/plotly.min.js"></script>
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/utils.js"></script>
+	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/vendor/plotly.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/utils.js') }}"></script>
 	{% if solves %}
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/team.js"></script>
+	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/team.js') }}"></script>
 	{% endif %}
 {% endblock %}

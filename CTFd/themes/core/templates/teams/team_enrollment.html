@@ -35,9 +35,9 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/plotly.min.js"></script>
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/utils.js"></script>
+	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/vendor/plotly.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/utils.js') }}"></script>
 	{% if solves %}
-		<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/team.js"></script>
+		<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/team.js') }}"></script>
 	{% endif %}
 {% endblock %}

@@ -179,7 +179,7 @@ def static_html(template):
 
 @views.route('/files', defaults={'path': ''})
 @views.route('/files/<path:path>')
-def file_handler(path):
+def files(path):
     """
     Route in charge of dealing with making sure that CTF challenges are only accessible during the competition.
     :param path:
@@ -198,7 +198,7 @@ def file_handler(path):
 
 
 @views.route('/themes/<theme>/static/<path:path>')
-def themes_handler(theme, path):
+def themes(theme, path):
     """
     General static file handler
     :param theme:

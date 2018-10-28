@@ -25,7 +25,7 @@ auth = Blueprint('auth', __name__)
 def confirm(data=None):
     if not get_config('verify_emails'):
         # If the CTF doesn't care about confirming email addresses then redierct to challenges
-        return redirect(url_for('challenges.challenges_view'))
+        return redirect(url_for('challenges.listing'))
 
     # User is confirming email account
     if data and request.method == "GET":
@@ -42,7 +42,7 @@ def confirm(data=None):
         db.session.commit()
         db.session.close()
         if current_user.authed():
-            return redirect(url_for('challenges.challenges_view'))
+            return redirect(url_for('challenges.listing'))
         return redirect(url_for('auth.login'))
 
     # User is trying to start or restart the confirmation flow
@@ -69,7 +69,6 @@ def confirm(data=None):
             return render_template('confirm.html', team=team)
 
 
-# TODO: Maybe consider renaming this to just /reset. Includes the function name as well
 @auth.route('/reset_password', methods=['POST', 'GET'])
 @auth.route('/reset_password/<data>', methods=['POST', 'GET'])
 @ratelimit(method="POST", limit=10, interval=60)
@@ -200,7 +199,7 @@ def register():
 
         log('registrations', "[{date}] {ip} - {name} registered with {email}")
         db.session.close()
-        return redirect(url_for('challenges.challenges_view'))
+        return redirect(url_for('challenges.listing'))
     else:
         return render_template('register.html')
 
@@ -231,7 +230,7 @@ def login():
                 db.session.close()
                 if request.args.get('next') and validators.is_safe_url(request.args.get('next')):
                     return redirect(request.args.get('next'))
-                return redirect(url_for('challenges.challenges_view'))
+                return redirect(url_for('challenges.listing'))
 
             else:
                 # This user exists but the password is wrong
@@ -318,7 +317,7 @@ def oauth_redirect():
 
             login_user(user)
 
-            return redirect(url_for('challenges.challenges_view'))
+            return redirect(url_for('challenges.listing'))
     else:
         # TODO: Change this to redirect back to login with an error
         abort(500)

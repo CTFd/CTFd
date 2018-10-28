@@ -9,7 +9,7 @@ scoreboard = Blueprint('scoreboard', __name__)
 
 
 @scoreboard.route('/scoreboard')
-def scoreboard_view():
+def listing():
     if get_config('view_scoreboard_if_authed') and not config.authed():
         return redirect(
             url_for('auth.login', next=request.path)

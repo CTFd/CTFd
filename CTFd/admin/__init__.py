@@ -37,16 +37,15 @@ from CTFd.admin import notifications
 
 
 @admin.route('/admin', methods=['GET'])
-def admin_view():
+def view():
     if is_admin():
         return redirect(url_for('admin.admin_stats'))
-
     return redirect(url_for('auth.login'))
 
 
 @admin.route('/admin/plugins/<plugin>', methods=['GET', 'POST'])
 @admins_only
-def admin_plugin_config(plugin):
+def plugin(plugin):
     if request.method == 'GET':
         plugins_path = os.path.join(app.root_path, 'plugins')
 
@@ -69,7 +68,7 @@ def admin_plugin_config(plugin):
 
 @admin.route('/admin/import', methods=['GET', 'POST'])
 @admins_only
-def admin_import_ctf():
+def import_ctf():
     backup = request.files['backup']
     segments = request.form.get('segments')
     errors = []
@@ -90,7 +89,7 @@ def admin_import_ctf():
 
 @admin.route('/admin/export', methods=['GET', 'POST'])
 @admins_only
-def admin_export_ctf():
+def export_ctf():
     segments = request.args.get('segments')
     if segments:
         backup = export_ctf(segments.split(','))

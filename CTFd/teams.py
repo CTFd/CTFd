@@ -23,7 +23,7 @@ teams = Blueprint('teams', __name__)
 
 
 @teams.route('/teams', defaults={'page': '1'})
-def list(page):
+def listing(page):
     page = request.args.get('page', 1)
     if get_config('workshop_mode'):
         abort(404)
@@ -58,7 +58,7 @@ def join():
         if team and verify_password(passphrase, team.password):
             user.team_id = team.id
             db.session.commit()
-            return redirect(url_for('challenges.challenges_view'))
+            return redirect(url_for('challenges.listing'))
         else:
             errors = ['That information is incorrect']
             return render_template('teams/join_team.html', errors=errors)
@@ -93,7 +93,7 @@ def new():
 
         user.team_id = team.id
         db.session.commit()
-        return redirect(url_for('challenges.challenges_view'))
+        return redirect(url_for('challenges.listing'))
 
 
 @teams.route('/team', methods=['GET'])

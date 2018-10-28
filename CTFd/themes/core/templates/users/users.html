@@ -28,7 +28,7 @@
 								{% if hide_scores() %}
 									<span>{{ user.name | truncate(50) }}</span>
 								{% else %}
-									<a href="{{ request.script_root }}/users/{{ user.id }}">{{ user.name | truncate(50) }}</a>
+									<a href="{{ url_for('users.public', user_id=user.id) }}">{{ user.name | truncate(50) }}</a>
 								{% endif %}
 							</td>
 							<td class="text-center" style="width: 10px;">

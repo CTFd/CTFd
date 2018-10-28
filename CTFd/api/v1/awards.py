@@ -17,9 +17,6 @@ awards_namespace = Namespace('awards', description="Endpoint to retrieve Awards"
 
 @awards_namespace.route('')
 class AwardList(Resource):
-    @admins_only
-    def get(self):
-        pass
 
     @admins_only
     def post(self):
