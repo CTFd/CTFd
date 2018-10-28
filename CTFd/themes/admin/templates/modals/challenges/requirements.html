@@ -10,7 +10,7 @@
 	{% if challenge.requirements %}
 		{% for prereq in requirements['prerequisites'] %}
 			<tr>
-				<td>{{ prereq }}</td>
+				<td>{{ challenges[prereq] }}</td>
 				<td>
 					<i role='button' class='btn-fa fas fa-times delete-requirement' challenge-id="{{ prereq }}"></i>
 				</td>
@@ -24,9 +24,9 @@
 	<div class="form-group">
 		<select class="form-control" name="prerequisite">
 			<option value=""> -- </option>
-			{% for c in challenges %}
-				{% if c.id != challenge.id and (requirements and c.id not in requirements['prerequisites']) %}
-				<option value="{{ c.id }}">{{ c.name }}</option>
+			{% for challenge_id in challenges %}
+				{% if challenge_id != challenge.id and (requirements and challenge_id not in requirements['prerequisites']) %}
+				<option value="{{ challenge_id }}">{{ challenges[challenge_id] }}</option>
 				{% endif %}
 			{% endfor %}
 		</select>

@@ -18,7 +18,7 @@ def admin_chals():
 @admin.route('/admin/challenges/<int:challenge_id>', methods=['GET'])
 @admins_only
 def admin_challenge_detail(challenge_id):
-    challenges = challenges = Challenges.query.all()
+    challenges = dict(Challenges.query.with_entities(Challenges.id, Challenges.name).all())
     challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
     solves = Solves.query.filter_by(challenge_id=challenge.id).all()
     flags = Flags.query.filter_by(challenge_id=challenge.id).all()
