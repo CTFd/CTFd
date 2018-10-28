@@ -43,7 +43,7 @@ def test_import_ctf():
 
             for x in range(10):
                 chal = gen_challenge(app.db, name='chal_name{}'.format(x))
-                gen_flag(app.db, chal=chal.id, flag='flag')
+                gen_flag(app.db, challenge_id=chal.id, flag='flag')
 
             app.db.session.commit()
 
