@@ -20,9 +20,11 @@ except ImportError:
     import pathlib2 as pathlib
 
 if six.PY2:
+    string_types = (str, unicode)
     text_type = unicode
     binary_type = str
 else:
+    string_types = (str,)
     text_type = str
     binary_type = bytes
 

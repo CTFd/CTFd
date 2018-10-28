@@ -8,6 +8,7 @@ from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import authed, get_current_user
 from CTFd.utils import config
+from CTFd.utils.uploads import get_uploader
 from CTFd.utils.config.pages import get_page
 from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
@@ -192,8 +193,8 @@ def file_handler(path):
                     pass
                 else:
                     abort(403)
-    upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-    return send_file(safe_join(upload_folder, f.location))
+    uploader = get_uploader()
+    return uploader.download(f.location)
 
 
 @views.route('/themes/<theme>/static/<path:path>')
