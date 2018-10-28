@@ -33,7 +33,7 @@
 							{{ sub.id }}
 						</td>
 						<td class="team" id="{{ sub.team_id }}">
-							<a href="{{ request.script_root }}{{ generate_account_url(sub.account_id, admin=True) }}">{{ sub.team_name }}</a>
+							<a href="{{ generate_account_url(sub.account_id, admin=True) }}">{{ sub.team_name }}</a>
 						</td>
 						<td class="chal" id="{{ sub.challenge_id }}">
 							{{ sub.challenge_name }}
@@ -51,7 +51,7 @@
 						</td>
 						<td class="text-center">
 							<span class="delete-correct-submission" data-toggle="tooltip"
-								  data-placement="top" title="Delete solve #{{ sub.id }}">
+								  data-placement="top" title="Delete submission #{{ sub.id }}">
 								<i class="fas fa-times"></i>
 							</span>
 						</td>
@@ -83,5 +83,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ request.script_root }}/themes/admin/static/js/submissions/submissions.js"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/submissions/submissions.js') }}"></script>
 {% endblock %}

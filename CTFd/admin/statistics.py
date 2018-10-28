@@ -8,7 +8,7 @@ from CTFd.admin import admin
 
 @admin.route('/admin/statistics', methods=['GET'])
 @admins_only
-def admin_stats():
+def statistics():
     update_check()
 
     Model = get_model()

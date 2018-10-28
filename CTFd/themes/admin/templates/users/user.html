@@ -315,12 +315,12 @@
 var USER_ID = {{ user.id }};
 var USER_NAME = {{ user.name | tojson }};
 </script>
-<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/users/user.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/users/info.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/users/actions.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/users/graphs.js"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/plotly.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/users/user.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/users/info.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/users/actions.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/users/graphs.js') }}"></script>
 <script>
 
 </script>

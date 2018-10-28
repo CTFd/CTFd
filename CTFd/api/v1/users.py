@@ -59,7 +59,7 @@ class UserList(Resource):
 
 @users_namespace.route('/<int:user_id>')
 @users_namespace.param('user_id', "User ID")
-class User(Resource):
+class UserPublic(Resource):
     def get(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
 
@@ -121,7 +121,7 @@ class User(Resource):
 
 
 @users_namespace.route('/me')
-class User(Resource):
+class UserPrivate(Resource):
     def get(self):
         user = get_current_user()
         response = UserSchema('self').dump(user).data
@@ -154,6 +154,7 @@ class User(Resource):
             'data': response
         }
 
+    # TODO: Does it even make sense to delete yourself?
     @admins_only
     def delete(self):
         user_id = get_current_user().id

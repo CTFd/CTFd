@@ -22,7 +22,7 @@
 				{% for standing in standings %}
 					<tr>
 						<td>{{ loop.index }}</td>
-						<td><a href="{{ request.script_root }}{{ generate_account_url(standing.account_id, admin=True) }}">{{ standing.name }}</a></td>
+						<td><a href="{{ generate_account_url(standing.account_id, admin=True) }}">{{ standing.name }}</a></td>
 						<td>{{ standing.score }}</td>
 						<td>
 						{% if standing.hidden %}
@@ -45,5 +45,5 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ request.script_root }}/themes/admin/static/js/scoreboard/scoreboard.js"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/scoreboard/scoreboard.js') }}"></script>
 {% endblock %}

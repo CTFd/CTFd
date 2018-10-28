@@ -46,7 +46,7 @@
 						<tr>
 							<th scope="row" class="text-center">{{ loop.index }}</th>
 							<td>
-								<a href="{{ request.script_root }}{{ generate_account_url(standing.account_id) }}">
+								<a href="{{ generate_account_url(standing.account_id) }}">
 									{{ standing.name | truncate(50) }}
 								</a>
 							</td>

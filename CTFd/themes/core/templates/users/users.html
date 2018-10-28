@@ -61,32 +61,32 @@
 				</table>
 			</div>
 		</div>
-{#		{% if team_pages > 1 %}#}
-{#			<div class="row">#}
-{#				<div class="col-md-12">#}
-{#					<div class="text-center">Page#}
-{#						<br>#}
-{#						{% if curr_page != 1 %}#}
-{#							<a href="{{ request.script_root }}/users/{{ curr_page-1 }}">#}
-{#								&lt;&lt;&lt;#}
-{#							</a>#}
-{#						{% endif %}#}
-{#						{% for page in range(1, team_pages + 1) %}#}
-{#							{% if curr_page != page %}#}
-{#								<a href="{{ request.script_root }}/users/{{ page }}">{{ page }}</a>#}
-{#							{% else %}#}
-{#								<b>{{ page }}</b>#}
-{#							{% endif %}#}
-{#						{% endfor %}#}
-{#						{% if curr_page != team_pages %}#}
-{#							<a href="{{ request.script_root }}/users/{{ curr_page + 1 }}">#}
-{#								&gt;&gt;&gt;#}
-{#							</a>#}
-{#						{% endif %}#}
-{#					</div>#}
-{#				</div>#}
-{#			</div>#}
-{#		{% endif %}#}
+		{% if pages > 1 %}
+			<div class="row">
+				<div class="col-md-12">
+					<div class="text-center">Page
+						<br>
+						{% if curr_page != 1 %}
+							<a href="{{ url_for('admin.users_listing', page=curr_page - 1) }}">
+								&lt;&lt;&lt;
+							</a>
+						{% endif %}
+						{% for page in range(1, team_pages + 1) %}
+							{% if curr_page != page %}
+								<a href="{{ url_for('admin.users_listing', page=page) }}">{{ page }}</a>
+							{% else %}
+								<b>{{ page }}</b>
+							{% endif %}
+						{% endfor %}
+						{% if curr_page != team_pages %}
+							<a href="{{ url_for('admin.users_listing', page=curr_page + 1) }}">
+								&gt;&gt;&gt;
+							</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		{% endif %}
 	</div>
 {% endblock %}
 

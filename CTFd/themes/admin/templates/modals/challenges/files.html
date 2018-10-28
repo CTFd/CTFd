@@ -9,7 +9,7 @@
 	{% for file in challenge.files %}
 		<tr>
 			<td class="text-center">
-				<a href="{{ request.script_root }}/files/{{ file.location }}">{{ file.location.split('/').pop() }}</a>
+				<a href="{{ url_for('views.files', path=file.location) }}">{{ file.location.split('/').pop() }}</a>
 			</td>
 
 			<td class="text-center">

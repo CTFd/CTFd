@@ -10,7 +10,7 @@ from CTFd.admin import admin
 
 @admin.route('/admin/users')
 @admins_only
-def user_list():
+def users_listing():
     page = request.args.get('page', 1)
 
     page = abs(int(page))
@@ -27,13 +27,13 @@ def user_list():
 
 @admin.route('/admin/users/new')
 @admins_only
-def user_new():
+def users_new():
     return render_template('admin/users/new.html')
 
 
 @admin.route('/admin/users/<int:user_id>')
 @admins_only
-def user_detail(user_id):
+def users_detail(user_id):
     # Get user object
     user = Users.query.filter_by(id=user_id).first_or_404()
 

@@ -22,5 +22,5 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ request.script_root }}/themes/admin/static/js/teams/new.js"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/teams/new.js') }}"></script>
 {% endblock %}

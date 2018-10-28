@@ -20,7 +20,7 @@
 							<button id="create-key" class="btn btn-primary d-inline-block text-center">New Flag</button>
 						</div>
 						<div class="col-md-12">
-							<form method="POST" action="{{ request.script_root }}/admin/keys">
+							<form method="POST">
 								<input name='nonce' type='hidden' value="{{ nonce }}">
 								<input id="keys-chal" name='chal' type='hidden'>
 								<div id="current-keys" class="row"></div>

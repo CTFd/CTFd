@@ -158,16 +158,15 @@ def custom_css():
     return Response(get_config('css'), mimetype='text/css')
 
 
-# Static HTML files
-@views.route("/", defaults={'template': 'index'})
-@views.route("/<path:template>")
-def static_html(template):
+@views.route("/", defaults={'route': 'index'})
+@views.route("/<path:route>")
+def static_html(route):
     """
     Route in charge of routing users to Pages.
-    :param template:
+    :param route:
     :return:
     """
-    page = get_page(template)
+    page = get_page(route)
     if page is None:
         abort(404)
     else:

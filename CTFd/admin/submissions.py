@@ -8,7 +8,7 @@ from CTFd.admin import admin
 @admin.route('/admin/submissions', defaults={'submission_type': None})
 @admin.route('/admin/submissions/<submission_type>')
 @admins_only
-def list_submissions(submission_type):
+def submissions_listing(submission_type):
     filters = {}
     if submission_type:
         filters['type'] = submission_type

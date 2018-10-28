@@ -10,7 +10,7 @@ from CTFd.admin import admin
 
 @admin.route('/admin/teams')
 @admins_only
-def admin_teams_view():
+def teams_listing():
     page = request.args.get('page', 1)
     q = request.args.get('q')
     if q:
@@ -46,13 +46,13 @@ def admin_teams_view():
 
 @admin.route('/admin/teams/new', methods=['GET'])
 @admins_only
-def admin_create_team():
+def teams_new():
     return render_template('admin/teams/new.html')
 
 
 @admin.route('/admin/teams/<int:team_id>')
 @admins_only
-def admin_team(team_id):
+def teams_detail(team_id):
     team = Teams.query.filter_by(id=team_id).first_or_404()
 
     # Get members

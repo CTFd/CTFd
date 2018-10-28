@@ -12,7 +12,14 @@ from flask import (
 
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.user import is_admin
-from CTFd.utils import config, validators, uploads, user as current_user, get_config, set_config
+from CTFd.utils import (
+    config as ctf_config,
+    validators,
+    uploads,
+    user as current_user,
+    get_config,
+    set_config
+)
 from CTFd.cache import cache
 from CTFd.utils.exports import export_ctf, import_ctf
 from CTFd.models import db, Configs, get_class_by_tablename
@@ -39,7 +46,7 @@ from CTFd.admin import notifications
 @admin.route('/admin', methods=['GET'])
 def view():
     if is_admin():
-        return redirect(url_for('admin.admin_stats'))
+        return redirect(url_for('admin.statistics'))
     return redirect(url_for('auth.login'))
 
 
@@ -95,7 +102,7 @@ def export_ctf():
         backup = export_ctf(segments.split(','))
     else:
         backup = export_ctf()
-    ctf_name = config.ctf_name()
+    ctf_name = ctf_config.ctf_name()
     day = datetime.datetime.now().strftime("%Y-%m-%d")
     full_name = "{}.{}.zip".format(ctf_name, day)
     return send_file(backup, as_attachment=True, attachment_filename=full_name)
@@ -103,7 +110,7 @@ def export_ctf():
 
 @admin.route('/admin/export/csv')
 @admins_only
-def admin_export_csv():
+def export_csv():
     table = request.args.get('table')
 
     # TODO: It might make sense to limit dumpable tables. Config could potentially leak sensitive information.
@@ -127,14 +134,15 @@ def admin_export_csv():
         output,
         as_attachment=True,
         cache_timeout=-1,
-        attachment_filename="{name}-{table}.csv".format(name=config.ctf_name(), table=table)
+        attachment_filename="{name}-{table}.csv".format(name=ctf_config.ctf_name(), table=table)
     )
 
 
 @admin.route('/admin/config', methods=['GET', 'POST'])
 @admins_only
-def admin_config():
+def config():
     # Clear the cache so that we don't get stale values
+    # TODO: This is going to force log users out. Needs to be replaced to only clear config values.
     cache.clear()
 
     database_tables = sorted(db.metadata.tables.keys())
@@ -178,7 +186,7 @@ def admin_config():
     db.session.commit()
     db.session.close()
 
-    themes = config.get_themes()
+    themes = ctf_config.get_themes()
     themes.remove(ctf_theme)
 
     return render_template(

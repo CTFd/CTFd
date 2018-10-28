@@ -239,7 +239,7 @@ class ChallengeFiles(Resource):
 
 @challenges_namespace.route('/<challenge_id>/tags')
 @challenges_namespace.param('id', 'A Challenge ID')
-class ChallengeFiles(Resource):
+class ChallengeTags(Resource):
     @admins_only
     def get(self, challenge_id):
         response = []

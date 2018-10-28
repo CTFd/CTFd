@@ -11,7 +11,7 @@
 			{% if ctf_logo %}
 				<div class="d-block py-3">
 					<img id="ctf_logo_preview" class="img-responsive ctf_logo"
-						 src="{{ request.script_root }}/files/{{ ctf_logo }}"
+						 src="{{ url_for('views.files', path=ctf_logo) }}"
 						 height="25">
 					<button type="button" class="btn-sm btn-danger" onclick="remove_logo()">
 						Remove Logo

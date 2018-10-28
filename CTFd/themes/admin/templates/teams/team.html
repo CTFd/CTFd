@@ -88,7 +88,7 @@
 				{% for member in members %}
 					<tr>
 						<td class="text-center">
-							<a href="{{ url_for('admin.user_detail', user_id=member.id) }}">
+							<a href="{{ url_for('admin.users_detail', user_id=member.id) }}">
 								{{ member.name }}
 							</a>
 						</td>
@@ -308,12 +308,12 @@
 
 {% block scripts %}
 <script>
-var TEAM_ID = {{ team.id }};
-var TEAM_NAME = {{ team.name | tojson }};
+	var TEAM_ID = {{ team.id }};
+	var TEAM_NAME = {{ team.name | tojson }};
 </script>
-<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/teams/info.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/teams/graphs.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/teams/actions.js"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/plotly.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/teams/info.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/teams/graphs.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/teams/actions.js') }}"></script>
 {% endblock %}

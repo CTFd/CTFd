@@ -71,6 +71,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/statistics/statistics.js"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/plotly.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/statistics/statistics.js') }}"></script>
 {% endblock %}

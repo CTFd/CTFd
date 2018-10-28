@@ -66,7 +66,7 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ request.script_root }}/themes/core/static/js/vendor/socket.io.min.js"></script>
-	<script src="{{ request.script_root }}/themes/core/static/js/events.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/notifications/notifications.js"></script>
+	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/socket.io.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='core', path='js/events.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/notifications/notifications.js') }}"></script>
 {% endblock %}

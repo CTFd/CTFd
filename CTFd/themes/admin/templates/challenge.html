@@ -94,12 +94,13 @@
         var CHALLENGE_ID = {{ challenge.id }};
         var CHALLENGE_NAME = {{ challenge.name | tojson }};
 	</script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/challenge.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/hints.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/flags.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/tags.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/files.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/requirements.js"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/plotly.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/multi-modal.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/challenge.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/hints.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/flags.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/tags.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/files.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/requirements.js') }}"></script>
 {% endblock %}

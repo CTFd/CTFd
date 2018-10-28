@@ -8,6 +8,6 @@ from CTFd.admin import admin
 
 @admin.route('/admin/notifications', methods=['GET'])
 @admins_only
-def admin_notifications():
-    notifications = Notifications.query.order_by(Notifications.id.desc()).all()
-    return render_template('admin/notifications.html', notifications=notifications)
+def notifications():
+    notifs = Notifications.query.order_by(Notifications.id.desc()).all()
+    return render_template('admin/notifications.html', notifications=notifs)

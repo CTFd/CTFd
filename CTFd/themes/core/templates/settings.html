@@ -18,7 +18,7 @@
 					Please check your email to confirm your email address.
 					<br>
 					<br>
-					To have the confirmation email resent please <a href="{{ request.script_root }}/confirm">click
+					To have the confirmation email resent please <a href="{{ url_for('auth.confirm') }}">click
 					here.</a>
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
 							aria-hidden="true">×</span></button>
@@ -94,5 +94,5 @@
 
 {% block scripts %}
 	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/style.js') }}"></script>
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/settings.js"></script>
+	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/settings.js') }}"></script>
 {% endblock %}

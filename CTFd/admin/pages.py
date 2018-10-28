@@ -9,20 +9,20 @@ from CTFd.admin import admin
 
 @admin.route('/admin/pages', methods=['GET', 'POST'])
 @admins_only
-def admin_pages_list():
+def pages_listing():
     pages = Pages.query.all()
     return render_template('admin/pages.html', pages=pages)
 
 
 @admin.route('/admin/pages/new', methods=['GET', 'POST'])
 @admins_only
-def admin_pages_new():
+def pages_new():
     return render_template('admin/editor.html')
 
 
 @admin.route('/admin/pages/preview', methods=['POST'])
 @admins_only
-def admin_pages_preview():
+def pages_preview():
     data = request.form.to_dict()
     schema = PageSchema()
     page = schema.load(data)
@@ -31,7 +31,7 @@ def admin_pages_preview():
 
 @admin.route('/admin/pages/<int:page_id>', methods=['GET', 'POST'])
 @admins_only
-def admin_pages_detail(page_id):
+def pages_detail(page_id):
     page = Pages.query.filter_by(id=page_id).first_or_404()
     page_op = request.args.get('operation')
 

@@ -38,7 +38,7 @@
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
 		<div class="container">
-			<a href="{{ request.script_root }}/" class="navbar-brand">
+			<a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">
 				{% if ctf_logo() %}
 				<img class="img-responsive ctf_logo" src="{{ url_for('views.files', path='/files/'+ctf_logo()) }}" height="25" alt="{{ ctf_name() }}">
 				{% else %}

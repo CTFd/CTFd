@@ -8,7 +8,7 @@
 	<div class="container">
 		<h1>Users
 			<span class="create-team" role="button" data-toggle="tooltip" title="Create User">
-				<a href="{{ request.script_root }}/admin/users/new" style="color: inherit;">
+				<a href="{{ url_for('admin.users_new') }}" style="color: inherit;">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</a>
 			</span>
@@ -74,7 +74,7 @@
 					<tr name="{{ user.id }}">
 						<td class="team-id" value="{{ user.id }}">{{ user.id }}</td>
 						<td class="team-name" value="{{ user.name }}">
-							<a href="{{ request.script_root }}/admin/users/{{ user.id }}">
+							<a href="{{ url_for('admin.users_detail', user_id=user.id) }}">
 								{{ user.name | truncate(32) }}
 							</a>
 							{% if user.affiliation %}
@@ -124,15 +124,15 @@
 			{% if pages > 1 %}
 			<div class="text-center">Page
 				<br>
-				{% if curr_page != 1 %}<a href="{{ request.script_root }}/admin/users?page={{ curr_page-1 }}">&lt;&lt;&lt;</a>{% endif %}
+				{% if curr_page != 1 %}<a href="{{ url_for('admin.users_listing', page=curr_page - 1) }}">&lt;&lt;&lt;</a>{% endif %}
 				{% for page in range(1, pages + 1) %}
 					{% if curr_page != page %}
-						<a href="{{ request.script_root }}/admin/users?page={{ page }}">{{ page }}</a>
+						<a href="{{ url_for('admin.users_listing', page=page) }}">{{ page }}</a>
 					{% else %}
 						<b>{{ page }}</b>
 					{% endif %}
 				{% endfor %}
-				{% if curr_page != pages %}<a href="{{ request.script_root }}/admin/users?page={{ curr_page + 1 }}">&gt;&gt;&gt;</a>{% endif %}
+				{% if curr_page != pages %}<a href="{{ url_for('admin.users_listing', page=curr_page + 1) }}">&gt;&gt;&gt;</a>{% endif %}
 			</div>
 			{% endif %}
 		</div>
@@ -141,5 +141,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ request.script_root }}/themes/admin/static/js/users/users.js"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/users/users.js') }}"></script>
 {% endblock %}

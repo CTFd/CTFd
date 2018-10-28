@@ -66,6 +66,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ request.script_root }}/themes/admin/static/js/files/files.js"></script>
-<script src="{{ request.script_root }}/themes/admin/static/js/configs/configs.js"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/files/files.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/configs/configs.js') }}"></script>
 {% endblock %}

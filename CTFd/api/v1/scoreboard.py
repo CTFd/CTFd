@@ -31,7 +31,7 @@ class ScoreboardList(Resource):
 
 @scoreboard_namespace.route('/top/<count>')
 @scoreboard_namespace.param('count', 'How many top teams to return')
-class ScoreboardList(Resource):
+class ScoreboardDetail(Resource):
     def get(self, count):
         response = {}
 

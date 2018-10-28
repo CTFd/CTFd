@@ -34,7 +34,7 @@
 						<input class="export-config" value="metadata" type="checkbox" checked> Configuration
 					</label>
 				</div>
-				<a href="{{ request.script_root }}/admin/export" id="export-button" class="btn btn-warning">Export</a>
+				<a href="{{ url_for('admin.export_ctf') }}" id="export-button" class="btn btn-warning">Export</a>
 			</div>
 		</div>
 		<div role="tabpanel" class="tab-pane" id="import-ctf">
@@ -45,7 +45,7 @@
 			<input id="import-button" type="submit" class="btn btn-warning" value="Import">
 		</div>
 		<div role="tabpanel" class="tab-pane" id="save-csv">
-			<form method="GET" action="{{ request.script_root }}/admin/export/csv">
+			<form method="GET" action="{{ url_for('admin.export_csv') }}">
 				<div class="form-group">
 					<label for="container-files">Database Table</label>
 					<select class="form-control" name="table">
