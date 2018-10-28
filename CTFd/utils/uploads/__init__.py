@@ -11,8 +11,8 @@ import shutil
 
 def upload_file(*args, **kwargs):
     file_obj = kwargs.get('file')
-    challenge_id = kwargs.get('challenge_id')
-    page_id = kwargs.get('page_id')
+    challenge_id = kwargs.get('challenge_id') or kwargs.get('challenge')
+    page_id = kwargs.get('page_id') or kwargs.get('page')
     file_type = kwargs.get('type', 'standard')
 
     model_args = {

@@ -176,3 +176,9 @@ pre {
 .cursor-help {
     cursor: help;
 }
+
+.modal-content {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+}

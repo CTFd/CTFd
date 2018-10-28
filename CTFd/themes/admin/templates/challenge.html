@@ -1,0 +1,105 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	{% include "admin/modals/hints/edit.html" %}
+	{% include "admin/modals/flags/create.html" %}
+	{% include "admin/modals/flags/edit.html" %}
+
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="text-center">{{ challenge.name }}</h1>
+			<h2 class="text-center">{{ challenge.category }}</h2>
+			<h2 class="text-center">{{ challenge.type }}</h2>
+			<h2 class="text-center">{{ challenge.value }}</h2>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<nav class="nav nav-tabs nav-fill" id="challenge-properties" role="tablist">
+					<a class="nav-item nav-link active" data-toggle="tab" href="#solves" role="tab" >Solves</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#flags" role="tab">Flags</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#files" role="tab">Files</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#tags" role="tab">Tags</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#hints" role="tab">Hints</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#requirements" role="tab">Requirements</a>
+				</nav>
+
+				<div class="tab-content" id="nav-tabContent">
+					<div class="tab-pane fade show active" id="solves" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Solves</h3>
+								{% include "admin/modals/challenges/solves.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="flags" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Flags</h3>
+								{% include "admin/modals/challenges/flags.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="files" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Files</h3>
+								{% include "admin/modals/challenges/files.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="tags" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Tags</h3>
+								{% include "admin/modals/challenges/tags.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="hints" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Hints</h3>
+								{% include "admin/modals/challenges/hints.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="requirements" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Requirements</h3>
+								{% include "admin/modals/challenges/requirements.html" %}
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div id="challenge-update-container" class="col-md-6">
+				{{ update | safe }}
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block scripts %}
+	<script>
+        var CHALLENGE_ID = {{ challenge.id }};
+        var CHALLENGE_NAME = {{ challenge.name | tojson }};
+	</script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/plotly.min.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/challenge.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/hints.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/flags.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/tags.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/files.js"></script>
+	<script src="{{ request.script_root }}/themes/admin/static/js/challenges/requirements.js"></script>
+{% endblock %}

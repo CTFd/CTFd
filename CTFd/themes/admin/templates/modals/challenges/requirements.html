@@ -1,0 +1,41 @@
+<table class="table table-striped text-center">
+	<thead>
+	<tr>
+		<td><b>Requirement</b></td>
+		<td><b>Settings</b></td>
+	</tr>
+	</thead>
+	<tbody id="challenge-solves-body">
+	{% set requirements = challenge.requirements %}
+	{% if challenge.requirements %}
+		{% for prereq in requirements['prerequisites'] %}
+			<tr>
+				<td>{{ prereq }}</td>
+				<td>
+					<i role='button' class='btn-fa fas fa-times delete-requirement' challenge-id="{{ prereq }}"></i>
+				</td>
+			</tr>
+		{% endfor %}
+	{% endif %}
+	</tbody>
+</table>
+
+<form id="prerequisite-add-form">
+	<div class="form-group">
+		<select class="form-control" name="prerequisite">
+			<option value=""> -- </option>
+			{% for c in challenges %}
+				{% if c.id != challenge.id and (requirements and c.id not in requirements['prerequisites']) %}
+				<option value="{{ c.id }}">{{ c.name }}</option>
+				{% endif %}
+			{% endfor %}
+		</select>
+	</div>
+	<div class="form-group">
+		<button class="btn btn-success float-right">Add Prerequisite</button>
+	</div>
+</form>
+
+<script>
+	var CHALLENGE_REQUIREMENTS = {{ challenge.requirements | tojson }} || {'prequisites': []};
+</script>

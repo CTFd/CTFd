@@ -4,6 +4,8 @@ from CTFd.models import db, Solves, Fails, Flags, Challenges, ChallengeFiles, Ta
 from CTFd import utils
 from CTFd.utils.user import get_ip
 from CTFd.utils.uploads import upload_file
+from flask import Blueprint
+import six
 
 
 class BaseChallenge(object):
@@ -26,6 +28,7 @@ class CTFdStandardChallenge(BaseChallenge):
         'update': '/plugins/challenges/assets/standard-challenge-update.js',
         'modal': '/plugins/challenges/assets/standard-challenge-modal.js',
     }
+    blueprint = Blueprint('standard', __name__, template_folder='templates', static_folder='assets')
 
     @staticmethod
     def create(request):
@@ -111,12 +114,14 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         data = request.form or request.get_json()
-        challenge.name = data['name']
-        challenge.description = data['description']
-        challenge.value = int(data['value'])
-        challenge.max_attempts = int(data.get('max_attempts')) if data.get('max_attempts') else None
-        challenge.category = data['category']
-        challenge.state = data.get('state')
+        for attr, value in data.iteritems():
+            setattr(challenge, attr, value)
+        # challenge.name = data['name']
+        # challenge.description = data['description']
+        # challenge.value = int(data['value'])
+        # challenge.max_attempts = int(data.get('max_attempts')) if data.get('max_attempts') else None
+        # challenge.category = data['category']
+        # challenge.state = data.get('state')
         db.session.commit()
         return challenge
 

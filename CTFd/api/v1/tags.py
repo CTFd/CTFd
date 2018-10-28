@@ -37,8 +37,8 @@ class TagList(Resource):
     @admins_only
     def post(self):
         req = request.get_json()
-        schema = TagSchema(many=True)
-        response = schema.load(req)
+        schema = TagSchema()
+        response = schema.load(req, session=db.session)
 
         if response.errors:
             return {
@@ -46,11 +46,10 @@ class TagList(Resource):
                 'errors': response.errors
             }, 400
 
-        for tag in response.data:
-            db.session.add(tag)
-
+        db.session.add(response.data)
         db.session.commit()
-        # response = schema.dump(tags.data)
+
+        response = schema.dump(response.data)
         db.session.close()
 
         return {

@@ -49,6 +49,8 @@ class HintList(Resource):
         db.session.add(response.data)
         db.session.commit()
 
+        response = schema.dump(response.data)
+
         return {
             'success': True,
             'data': response.data
@@ -88,8 +90,10 @@ class Hint(Resource):
                 'errors': response.errors
             }, 400
 
-        db.session.add(hint.data)
+        db.session.add(response.data)
         db.session.commit()
+
+        response = schema.dump(response.data)
 
         return {
             'success': True,

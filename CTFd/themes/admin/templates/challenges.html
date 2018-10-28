@@ -7,7 +7,6 @@
 
 {% block content %}
 	{% include "admin/modals/challenges/challenges.html" %}
-	{% include "admin/modals/challenges/challenges-solves.html" %}
 
 	{% include "admin/modals/tags/tags.html" %}
 	{% include "admin/modals/files/files.html" %}
@@ -44,73 +43,20 @@
 						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Category</b></td>
 						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Value</b></td>
 						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Type</b></td>
-						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Status</b></td>
-						<td style="width: 200px;"><b>Settings</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>State</b></td>
 					</tr>
 					</thead>
 					<tbody>
 					{% for challenge in challenges %}
 						<tr>
 							<td>{{ challenge.id }}</td>
-							<td>{{ challenge.name }}</td>
+							<td><a href="{{ request.script_root }}/admin/challenges/{{ challenge.id }}">{{ challenge.name }}</td>
 							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.category }}</td>
 							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.value }}</td>
 							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.type }}</td>
 							<td class="d-none d-md-table-cell d-lg-table-cell text-center">
-								{% if challenge.hidden %}
-									<span class="badge badge-danger">hidden</span>
-								{% else %}
-									<span class="badge badge-success">visible</span>
-								{% endif %}
-							</td>
-							<td>
-								<span class="edit-challenge" data-toggle="tooltip"
-									  data-placement="top" chal-id="{{ challenge.id }}"
-									  title="Edit {{ challenge.name }}">
-									<i class="btn-fa fas fa-pencil-alt" aria-hidden="true" chal-id="{{ challenge.id }}"></i>
-								</span>
-
-								<span class="preview-challenge" data-toggle="tooltip"
-									  data-placement="top" chal-id="{{ challenge.id }}"
-									  title="Preview {{ challenge.name }}">
-									<i class="btn-fa fas fa-file-alt" aria-hidden="true" chal-id="{{ challenge.id }}"></i>
-								</span>
-
-								<span class="stats-challenge" data-toggle="tooltip"
-									  data-placement="top" chal-id="{{ challenge.id }}"
-									  title="{{ challenge.name }} solves">
-									<i class="btn-fa fas fa-chart-bar" aria-hidden="true"
-									   chal-id="{{ challenge.id }}"></i>
-								</span>
-
-								<span>&nbsp; &nbsp;</span>
-
-								<span class="edit-flags" data-toggle="tooltip" data-placement="top"
-									  title="Edit {{ challenge.name }} flags" chal-id="{{ challenge.id }}">
-									<i class="btn-fa fas fa-flag" aria-hidden="true" chal-id="{{ challenge.id }}"></i>
-								</span>
-								<span class="edit-files" data-toggle="tooltip"
-									  data-placement="top" title="Edit {{ challenge.name }} files"
-									  chal-id="{{ challenge.id }}">
-									<i class="btn-fa fas fa-download edit-files" aria-hidden="true" chal-id="{{ challenge.id }}"></i>
-								</span>
-								<span class="edit-tags" data-toggle="tooltip" data-placement="top"
-									  title="Edit {{ challenge.name }} tags" chal-id="{{ challenge.id }}">
-									<i class="btn-fa fas fa-tags" aria-hidden="true" chal-id="{{ challenge.id }}"></i>
-								</span>
-								<span class="edit-hints" data-toggle="tooltip"
-									  data-placement="top" title="Edit {{ challenge.name }} hints"
-									  chal-id="{{ challenge.id }}">
-									<i class="btn-fa fas fa-question-circle" aria-hidden="true" chal-id="{{ challenge.id }}"></i>
-								</span>
-
-								<span>&nbsp; &nbsp;</span>
-
-								<span class="delete-challenge" data-toggle="tooltip"
-									  data-placement="top" title="Delete {{ challenge.name }}"
-									  chal-id="{{ challenge.id }}">
-								<i class="btn-fa fas fa-times" aria-hidden="true" chal-id="{{ challenge.id }}"></i>
-								</span>
+								{% set badge_state = 'badge-danger' if challenge.state == 'hidden' else 'badge-success' %}
+								<span class="badge {{ badge_state }}">{{ challenge.state }}</span>
 							</td>
 						</tr>
 					{% endfor %}
