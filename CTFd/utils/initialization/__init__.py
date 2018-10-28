@@ -15,7 +15,6 @@ from CTFd.utils.user import authed, get_ip
 from CTFd.utils.modes import generate_account_url
 from CTFd.utils.config import is_setup
 from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils.helpers import ctfd_url_for
 
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
 
@@ -44,7 +43,6 @@ def init_template_globals(app):
     app.jinja_env.globals.update(generate_account_url=generate_account_url)
     app.jinja_env.globals.update(get_countries=get_countries)
     app.jinja_env.globals.update(lookup_country_code=lookup_country_code)
-    app.jinja_env.globals.update(ctfd_url_for=ctfd_url_for)
 
 
 def init_request_processors(app):
