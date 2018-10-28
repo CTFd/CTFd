@@ -12,7 +12,7 @@ from six.moves import input
 
 from CTFd.utils import migrate, migrate_upgrade, migrate_stamp
 from CTFd.utils.sessions import CachingSessionInterface
-from CTFd.cache import cache
+from CTFd.caching import cache
 from CTFd.utils.updates import update_check
 
 from CTFd.views import views

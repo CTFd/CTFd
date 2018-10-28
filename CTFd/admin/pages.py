@@ -3,7 +3,7 @@ from CTFd.utils.decorators import admins_only
 from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Configs
 from CTFd.schemas.pages import PageSchema
 from CTFd.utils import config, validators, markdown, uploads
-from CTFd.cache import cache
+from CTFd.caching import cache
 from CTFd.admin import admin
 
 

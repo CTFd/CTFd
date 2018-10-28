@@ -4,7 +4,7 @@ from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Admins, Files, Pages, Notifications
 from CTFd.utils import markdown
-from CTFd.cache import cache
+from CTFd.caching import cache
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import authed, get_current_user
 from CTFd.utils import config

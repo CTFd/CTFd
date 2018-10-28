@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import CTFd.cache
-from CTFd.models import Teams, Solves, Fails
-from CTFd.utils import get_config, set_config
-from CTFd import utils
+import CTFd.caching
+from CTFd.utils import set_config
 from tests.helpers import *
 from freezegun import freeze_time
-from mock import patch
-import json
 
 
 def test_user_can_view_challenges():

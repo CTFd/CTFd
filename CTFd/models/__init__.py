@@ -7,7 +7,7 @@ from sqlalchemy.types import JSON, NullType
 from sqlalchemy.orm import validates, column_property
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from CTFd.utils.crypto import hash_password
-from CTFd.cache import cache
+from CTFd.caching import cache
 import datetime
 import json
 import six

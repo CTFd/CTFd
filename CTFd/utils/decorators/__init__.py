@@ -1,6 +1,6 @@
 from flask import request, redirect, url_for, session, abort, jsonify
 from CTFd.utils import config, get_config, get_app_config
-from CTFd.cache import cache
+from CTFd.caching import cache
 from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime
 from CTFd.utils import user as current_user
 from CTFd.utils.user import get_current_user, get_current_team, is_admin, authed
