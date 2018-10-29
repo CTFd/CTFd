@@ -25,4 +25,4 @@ pathlib2==2.3.2
 flask-marshmallow==0.9.0
 marshmallow-sqlalchemy==0.14.1
 Flask-SocketIO==3.0.2
-eventlet==0.24.1
+boto3==1.9.33
