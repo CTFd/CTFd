@@ -17,7 +17,7 @@ UPLOADERS = {
 
 def get_uploader():
     return UPLOADERS.get(
-        get_app_config('UPLOAD_PROVIDER', default='filesystem')
+        get_app_config('UPLOAD_PROVIDER') or 'filesystem'
     )()
 
 

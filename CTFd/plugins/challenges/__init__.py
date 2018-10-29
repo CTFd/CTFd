@@ -156,7 +156,8 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return: (boolean, string)
         """
-        submission = request.form['submission'].strip()
+        data = request.form or request.get_json()
+        submission = data['submission'].strip()
         chal_keys = Flags.query.filter_by(challenge_id=chal.id).all()
         for chal_key in chal_keys:
             if get_flag_class(chal_key.type).compare(chal_key, submission):

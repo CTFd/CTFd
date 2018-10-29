@@ -33,13 +33,13 @@ markdown = mistune.Markdown()
 
 
 @cache.memoize()
-def get_app_config(key, default=None):
-    value = app.config.get(key, default)
+def get_app_config(key):
+    value = app.config.get(key)
     return value
 
 
 @cache.memoize()
-def get_config(key, default=None):
+def get_config(key):
     config = Configs.query.filter_by(key=key).first()
     if config and config.value:
         value = config.value
@@ -52,7 +52,6 @@ def get_config(key, default=None):
                 return False
             else:
                 return value
-    return default
 
 
 def set_config(key, value):

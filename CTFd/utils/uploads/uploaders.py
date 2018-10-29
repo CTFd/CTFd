@@ -68,7 +68,7 @@ class S3Uploader(BaseUploader):
     def _get_s3_connection(self):
         access_key = get_app_config('AWS_ACCESS_KEY_ID')
         secret_key = get_app_config('AWS_SECRET_ACCESS_KEY')
-        endpoint = get_app_config('AWS_S3_ENDPOINT_URL', default=None)
+        endpoint = get_app_config('AWS_S3_ENDPOINT_URL')
         client = boto3.client(
             's3',
             aws_access_key_id=access_key,
