@@ -16,6 +16,13 @@ from CTFd.utils.modes import generate_account_url
 from CTFd.utils.config import is_setup
 from CTFd.utils.security.csrf import generate_nonce
 
+from CTFd.utils.config.visibility import (
+    accounts_visible,
+    challenges_visible,
+    registration_visible,
+    scores_visible
+)
+
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
 
 import datetime
@@ -42,6 +49,10 @@ def init_template_globals(app):
     app.jinja_env.globals.update(generate_account_url=generate_account_url)
     app.jinja_env.globals.update(get_countries=get_countries)
     app.jinja_env.globals.update(lookup_country_code=lookup_country_code)
+    app.jinja_env.globals.update(accounts_visible=accounts_visible)
+    app.jinja_env.globals.update(challenges_visible=challenges_visible)
+    app.jinja_env.globals.update(registration_visible=registration_visible)
+    app.jinja_env.globals.update(scores_visible=scores_visible)
 
 
 def init_request_processors(app):

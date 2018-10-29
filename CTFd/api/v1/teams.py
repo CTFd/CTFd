@@ -1,9 +1,13 @@
-from flask import session, request
+from flask import session, request, abort
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Teams, Solves, Awards, Fails
 from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
+from CTFd.utils.config.visibility import (
+    accounts_visible,
+    scores_visible
+)
 from CTFd.utils.user import (
     get_current_team,
     is_admin
@@ -12,7 +16,6 @@ from CTFd.utils.decorators import (
     authed_only,
     admins_only,
 )
-
 
 teams_namespace = Namespace('teams', description="Endpoint to retrieve Teams")
 
@@ -171,10 +174,11 @@ class TeamPrivate(Resource):
 @teams_namespace.param('team_id', "Team ID or 'me'")
 class TeamSolves(Resource):
     def get(self, team_id):
-        # TODO: This needs to be restricted using visibility utils
         if team_id == 'me':
             team = get_current_team()
         else:
+            if accounts_visible() is False or scores_visible() is False:
+                abort(404)
             team = Teams.query.filter_by(id=team_id).first_or_404()
 
         solves = team.get_solves(
@@ -201,10 +205,11 @@ class TeamSolves(Resource):
 @teams_namespace.param('team_id', "Team ID or 'me'")
 class TeamFails(Resource):
     def get(self, team_id):
-        # TODO: This needs to be restricted using visibility utils
         if team_id == 'me':
             team = get_current_team()
         else:
+            if accounts_visible() is False or scores_visible() is False:
+                abort(404)
             team = Teams.query.filter_by(id=team_id).first_or_404()
 
         fails = team.get_fails(
@@ -232,10 +237,11 @@ class TeamFails(Resource):
 @teams_namespace.param('team_id', "Team ID or 'me'")
 class TeamAwards(Resource):
     def get(self, team_id):
-        # TODO: This needs to be restricted using visibility utils
         if team_id == 'me':
             team = get_current_team()
         else:
+            if accounts_visible() is False or scores_visible() is False:
+                abort(404)
             team = Teams.query.filter_by(id=team_id).first_or_404()
 
         awards = team.get_awards(

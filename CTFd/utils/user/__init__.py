@@ -35,9 +35,9 @@ def is_admin():
 
 def is_verified():
     if get_config('verify_emails'):
-        team = Teams.query.filter_by(id=session.get('id')).first()
-        if team:
-            return team.verified
+        user = get_current_user()
+        if user:
+            return user.verified
         else:
             return False
     else:

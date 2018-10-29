@@ -73,6 +73,8 @@ def setup():
                 content=index,
                 draft=False
             )
+            # Challenge Visibility
+            set_config('challenge_visibility', 'private')
 
             # Start time
             set_config('start', None)

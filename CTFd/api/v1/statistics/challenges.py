@@ -7,8 +7,7 @@ from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
     admins_only,
     during_ctf_time_only,
-    require_verified_emails,
-    viewable_without_authentication
+    require_verified_emails
 )
 from CTFd.api.v1.statistics import statistics_namespace
 from sqlalchemy import func

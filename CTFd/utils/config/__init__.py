@@ -34,9 +34,11 @@ def user_mode():
     return get_config('user_mode')
 
 
+# TODO: Not sure if this needs to be removed or if it should stay.
+# It might be best to just lean on the freeze logic.
 @cache.memoize()
 def hide_scores():
-    return get_config('hide_scores') or get_config('workshop_mode')
+    return get_config('hide_scores')
 
 
 @cache.memoize()
@@ -86,5 +88,4 @@ def mailserver():
 @cache.memoize()
 def get_themes():
     dir = os.path.join(app.root_path, 'themes')
-    return [name for name in os.listdir(dir)
-            if os.path.isdir(os.path.join(dir, name)) and name != 'admin']
+    return [name for name in os.listdir(dir) if os.path.isdir(os.path.join(dir, name)) and name != 'admin']

@@ -1,4 +1,4 @@
-from flask import session, request
+from flask import request, abort
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Users, Solves, Awards, Fails, Tracking, Unlocks
 from CTFd.utils.decorators import (
@@ -7,6 +7,13 @@ from CTFd.utils.decorators import (
 )
 from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
+
+from CTFd.utils.config.visibility import (
+    accounts_visible,
+    challenges_visible,
+    registration_visible,
+    scores_visible
+)
 
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
@@ -178,10 +185,11 @@ class UserPrivate(Resource):
 @users_namespace.param('user_id', "User ID or 'me'")
 class UserSolves(Resource):
     def get(self, user_id):
-        # TODO: This needs to be restricted using visibility utils
         if user_id == 'me':
             user = get_current_user()
         else:
+            if accounts_visible() is False or scores_visible() is False:
+                abort(404)
             user = Users.query.filter_by(id=user_id).first_or_404()
 
         solves = user.get_solves(
@@ -224,10 +232,11 @@ class UserSolves(Resource):
 @users_namespace.param('user_id', "User ID or 'me'")
 class UserFails(Resource):
     def get(self, user_id):
-        # TODO: This needs to be restricted using visibility utils
         if user_id == 'me':
             user = get_current_user()
         else:
+            if accounts_visible() is False or scores_visible() is False:
+                abort(404)
             user = Users.query.filter_by(id=user_id).first_or_404()
 
         fails = user.get_fails(
@@ -252,10 +261,11 @@ class UserFails(Resource):
 @users_namespace.param('user_id', "User ID or 'me'")
 class UserAwards(Resource):
     def get(self, user_id):
-        # TODO: This needs to be restricted using visibility utils
         if user_id == 'me':
             user = get_current_user()
         else:
+            if accounts_visible() is False or scores_visible() is False:
+                abort(404)
             user = Users.query.filter_by(id=user_id).first_or_404()
 
         awards = user.get_awards(

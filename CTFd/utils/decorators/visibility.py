@@ -7,7 +7,7 @@ import functools
 def check_score_visibility(f):
     @functools.wraps(f)
     def _check_score_visibility(*args, **kwargs):
-        v = get_config('solve_visibility')
+        v = get_config('score_visibility')
         if v == 'public':
             return f(*args, **kwargs)
 

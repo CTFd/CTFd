@@ -43,14 +43,14 @@
 					Control whether solves are shown to the public, to logged in users, or only to admins
 				</small>
 			</label>
-			<select class="form-control" name="solve_visibility">
-				<option value="public" {% if solve_visibility == 'public' %}selected{% endif %}>
+			<select class="form-control" name="score_visibility">
+				<option value="public" {% if score_visibility == 'public' %}selected{% endif %}>
 					Public
 				</option>
-				<option value="private" {% if solve_visibility == 'private' %}selected{% endif %}>
+				<option value="private" {% if score_visibility == 'private' %}selected{% endif %}>
 					Private
 				</option>
-				<option value="admins" {% if solve_visibility == 'admins' %}selected{% endif %}>
+				<option value="admins" {% if score_visibility == 'admins' %}selected{% endif %}>
 					Admins Only
 				</option>
 			</select>

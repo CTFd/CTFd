@@ -1,4 +1,4 @@
-from flask import render_template, session, Blueprint
+from flask import request, render_template, session, Blueprint
 
 from CTFd.models import Users, Solves, Awards
 from CTFd.utils import get_config
@@ -14,10 +14,21 @@ users = Blueprint('users', __name__)
 @check_account_visibility
 def listing():
     # TODO: Implement this logic to either mimic the teams page or to only be visible when the ctf is in user only mode
-    users = Users.query.all()
+    page = request.args.get('page', 1)
+    page = abs(int(page))
+    results_per_page = 50
+    page_start = results_per_page * (page - 1)
+    page_end = results_per_page * (page - 1) + results_per_page
+
+    count = Users.query.filter_by(banned=False, hidden=False).count()
+    users = Users.query.filter_by(banned=False, hidden=False).slice(page_start, page_end).all()
+
+    pages = int(count / results_per_page) + (count % results_per_page > 0)
     return render_template(
         'users/users.html',
-        users=users
+        users=users,
+        pages=pages,
+        curr_page=page
     )
 
 

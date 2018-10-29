@@ -71,15 +71,15 @@
 					<li class="nav-item">
 						<a class="nav-link" href="{{ url_for('views.notifications') }}">Notifications</a>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{{ url_for('users.listing') }}">Users</a>
-					</li>
-					{% if not get_config('workshop_mode') %}
+					{% if get_config('account_visibility') != 'admins' %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('users.listing') }}">Users</a>
+						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('teams.listing') }}">Teams</a>
 						</li>
 					{% endif %}
-					{% if not hide_scores() %}
+					{% if get_config('score_visibility') != 'admins' %}
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('scoreboard.listing') }}">Scoreboard</a>
 						</li>
@@ -113,15 +113,14 @@
 							<a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
 						</li>
 					{% else %}
-{#						TODO: Implement visibility utils#}
-{#						{% if can_register() %}#}
+						{% if registration_visible() %}
 							<li class="nav-item">
 								<a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
 							</li>
 							<li class="nav-item">
 								<a class="nav-link d-none d-md-block d-lg-block">|</a>
 							</li>
-{#						{% endif %}#}
+						{% endif %}
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
 						</li>

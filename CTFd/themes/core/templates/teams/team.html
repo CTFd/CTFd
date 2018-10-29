@@ -8,7 +8,9 @@
 	<div class="container">
 		<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
 		<h2 id="team-place" class="text-center">
-			{% if not get_config('workshop_mode') and place %}
+			{# This intentionally hides the team's place because this can be their internal profile. #}
+			{# Public page hiding is done at the route level #}
+			{% if scores_visible() %}
 				{{ place }}
 				<small>place</small>
 			{% endif %}

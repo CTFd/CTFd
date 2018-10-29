@@ -12,12 +12,10 @@ from CTFd.utils.decorators.visibility import check_account_visibility, check_sco
 teams = Blueprint('teams', __name__)
 
 
-@teams.route('/teams', defaults={'page': '1'})
+@teams.route('/teams')
 @check_account_visibility
-def listing(page):
+def listing():
     page = request.args.get('page', 1)
-    if get_config('workshop_mode'):
-        abort(404)
     page = abs(int(page))
     results_per_page = 50
     page_start = results_per_page * (page - 1)
@@ -32,7 +30,7 @@ def listing(page):
     teams = Teams.query.filter_by(banned=False).slice(page_start, page_end).all()
 
     pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template('teams/teams.html', teams=teams, team_pages=pages, curr_page=page)
+    return render_template('teams/teams.html', teams=teams, pages=pages, curr_page=page)
 
 
 @teams.route('/teams/join', methods=['GET', 'POST'])
@@ -130,9 +128,6 @@ def private():
 @check_account_visibility
 @check_score_visibility
 def public(team_id):
-    if get_config('workshop_mode'):
-        abort(404)
-
     errors = []
     freeze = get_config('freeze')
     team = Teams.query.filter_by(id=team_id).first_or_404()

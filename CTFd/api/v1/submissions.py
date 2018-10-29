@@ -14,8 +14,7 @@ from CTFd.utils.decorators import (
     authed_only,
     admins_only,
     during_ctf_time_only,
-    require_verified_emails,
-    viewable_without_authentication
+    require_verified_emails
 )
 from sqlalchemy.sql import or_
 

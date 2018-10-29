@@ -71,14 +71,14 @@
 								&lt;&lt;&lt;
 							</a>
 						{% endif %}
-						{% for page in range(1, team_pages + 1) %}
+						{% for page in range(1, pages + 1) %}
 							{% if curr_page != page %}
 								<a href="{{ url_for('admin.users_listing', page=page) }}">{{ page }}</a>
 							{% else %}
 								<b>{{ page }}</b>
 							{% endif %}
 						{% endfor %}
-						{% if curr_page != team_pages %}
+						{% if curr_page != pages %}
 							<a href="{{ url_for('admin.users_listing', page=curr_page + 1) }}">
 								&gt;&gt;&gt;
 							</a>
