@@ -15,18 +15,17 @@ else:
     binary_type = bytes
 
 
-def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", setup=True):
+def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True):
     app = create_app('CTFd.config.TestingConfig')
 
     if setup:
-        app = setup_ctfd(app, ctf_name, name, email, password)
+        app = setup_ctfd(app, ctf_name, name, email, password, user_mode)
     return app
 
 
 def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users"):
     with app.app_context():
         with app.test_client() as client:
-            data = {}
             r = client.get('/setup')  # Populate session with nonce
             with client.session_transaction() as sess:
                 data = {

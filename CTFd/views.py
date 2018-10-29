@@ -73,8 +73,11 @@ def setup():
                 content=index,
                 draft=False
             )
-            # Challenge Visibility
+            # Visibility
             set_config('challenge_visibility', 'private')
+            set_config('registration_visibility', 'public')
+            set_config('score_visibility', 'public')
+            set_config('account_visibility', 'public')
 
             # Start time
             set_config('start', None)
