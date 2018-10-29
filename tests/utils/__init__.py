@@ -4,6 +4,7 @@
 from tests.helpers import *
 from CTFd.utils import get_config, set_config
 
+
 def test_ctf_version_is_set():
     """Does ctf_version get set correctly"""
     app = create_ctfd()

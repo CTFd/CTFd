@@ -19,4 +19,3 @@ class PageSchema(ma.ModelSchema):
                 kwargs['only'] = view
 
         super(PageSchema, self).__init__(*args, **kwargs)
-

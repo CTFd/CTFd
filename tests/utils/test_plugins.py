@@ -2,6 +2,7 @@ from tests.helpers import *
 from CTFd.utils.plugins import override_template
 from CTFd.plugins import register_plugin_script
 
+
 def test_override_template():
     """Does override_template work properly for regular themes"""
     app = create_ctfd()

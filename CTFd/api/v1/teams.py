@@ -223,8 +223,8 @@ class TeamFails(Resource):
 
         if response.errors:
             return {
-               'success': False,
-               'errors': response.errors
+                'success': False,
+                'errors': response.errors
             }, 400
 
         return {

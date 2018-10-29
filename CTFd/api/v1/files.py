@@ -47,9 +47,9 @@ class FilesList(Resource):
 
         if response.errors:
             return {
-                       'success': False,
-                       'errors': response.errors
-                   }, 400
+                'success': False,
+                'errors': response.errorss
+            }, 400
 
         return {
             'success': True,

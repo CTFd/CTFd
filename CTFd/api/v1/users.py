@@ -157,7 +157,7 @@ class UserPrivate(Resource):
 
         response = schema.dump(response.data)
         db.session.close()
-        
+
         return {
             'success': True,
             'data': response

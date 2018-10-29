@@ -1,4 +1,4 @@
-from __future__ import division # Use floating point for math calculations
+from __future__ import division  # Use floating point for math calculations
 from CTFd.plugins.challenges import BaseChallenge, CHALLENGE_CLASSES
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.flags import get_flag_class
@@ -110,8 +110,18 @@ class DynamicValueChallenge(BaseChallenge):
 
         challenge.name = request.form['name']
         challenge.description = request.form['description']
-        challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
-        challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
+        challenge.value = int(
+            request.form.get(
+                'value',
+                0)) if request.form.get(
+            'value',
+            0) else 0
+        challenge.max_attempts = int(
+            request.form.get(
+                'max_attempts',
+                0)) if request.form.get(
+            'max_attempts',
+            0) else 0
         challenge.category = request.form['category']
         challenge.hidden = 'hidden' in request.form
 
@@ -173,15 +183,18 @@ class DynamicValueChallenge(BaseChallenge):
         """
         chal = DynamicChallenge.query.filter_by(id=chal.id).first()
 
-        solve_count = Solves.query.join(Teams, Solves.team_id == Teams.id).filter(Solves.challenge_id==chal.id, Teams.banned==False).count()
+        solve_count = Solves.query\
+            .join(Teams, Solves.team_id == Teams.id)\
+            .filter(Solves.challenge_id == chal.id, Teams.banned == False)\
+            .count()
 
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division
         value = (
-                    (
-                        (chal.minimum - chal.initial)/(chal.decay**2)
-                    ) * (solve_count**2)
-                ) + chal.initial
+            (
+                (chal.minimum - chal.initial) / (chal.decay**2)
+            ) * (solve_count**2)
+        ) + chal.initial
 
         value = math.ceil(value)
 
@@ -191,7 +204,12 @@ class DynamicValueChallenge(BaseChallenge):
         chal.value = value
 
         provided_key = request.form['key'].strip()
-        solve = Solves(team_id=team.id, challenge_id=chal.id, ip=utils.get_ip(req=request), flag=provided_key)
+        solve = Solves(
+            team_id=team.id,
+            challenge_id=chal.id,
+            ip=utils.get_ip(
+                req=request),
+            flag=provided_key)
         db.session.add(solve)
 
         db.session.commit()
@@ -208,7 +226,11 @@ class DynamicValueChallenge(BaseChallenge):
         :return:
         """
         provided_key = request.form['key'].strip()
-        wrong = Fails(team_id=team.id, challenge_id=chal.id, ip=utils.get_ip(request), flag=provided_key)
+        wrong = Fails(
+            team_id=team.id,
+            challenge_id=chal.id,
+            ip=utils.get_ip(request),
+            flag=provided_key)
         db.session.add(wrong)
         db.session.commit()
         db.session.close()
@@ -221,7 +243,8 @@ class DynamicChallenge(Challenges):
     minimum = db.Column(db.Integer)
     decay = db.Column(db.Integer)
 
-    def __init__(self, name, description, value, category, type='dynamic', minimum=1, decay=50):
+    def __init__(self, name, description, value, category,
+                 type='dynamic', minimum=1, decay=50):
         self.name = name
         self.description = description
         self.value = value
@@ -235,4 +258,5 @@ class DynamicChallenge(Challenges):
 def load(app):
     app.db.create_all()
     CHALLENGE_CLASSES['dynamic'] = DynamicValueChallenge
-    register_plugin_assets_directory(app, base_path='/plugins/dynamic_challenges/assets/')
+    register_plugin_assets_directory(
+        app, base_path='/plugins/dynamic_challenges/assets/')

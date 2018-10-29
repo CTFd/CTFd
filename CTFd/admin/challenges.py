@@ -45,4 +45,3 @@ def challenges_detail(challenge_id):
 @admins_only
 def challenges_new():
     return render_template('admin/challenges/new.html')
-

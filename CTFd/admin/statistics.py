@@ -80,4 +80,3 @@ def statistics():
         most_solved=most_solved,
         least_solved=least_solved
     )
-

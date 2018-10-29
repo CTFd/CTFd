@@ -33,7 +33,7 @@ class Config(object):
 
     '''
     === REQUIRED SETTINGS ===
-    
+
     SECRET_KEY:
         The secret value used to creation sessions and sign strings. This should be set to a random string. In the
         interest of ease, CTFd will automatically create a secret key file for you. If you wish to add this secret key
@@ -49,21 +49,22 @@ class Config(object):
         used to hold the CTFd database.
 
         e.g. mysql+pymysql://root:<YOUR_PASSWORD_HERE>@localhost/ctfd
-        
+
     CACHE_TYPE:
         Specifies how CTFd should cache configuration values. If CACHE_TYPE is set to 'redis', CTFd will make use
         of the REDIS_URL specified in environment variables. You can also choose to hardcode the REDIS_URL here.
-    
+
         It is important that you specify some sort of cache as CTFd uses it to store values received from the database. If
-        no cache is specified, CTFd will default to a simple per-worker cache. The simple cache cannot be effectively used 
-        with multiple workers.  
-    
+        no cache is specified, CTFd will default to a simple per-worker cache. The simple cache cannot be effectively used
+        with multiple workers.
+
     REDIS_URL is the URL to connect to a Redis server.
         e.g. redis://user:password@localhost:6379
         http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     '''
     SECRET_KEY = os.environ.get('SECRET_KEY') or key
-    DATABASE_URL = os.environ.get('DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(os.path.abspath(__file__)))
+    DATABASE_URL = os.environ.get(
+        'DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(os.path.abspath(__file__)))
     REDIS_URL = os.environ.get('REDIS_URL')
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
@@ -72,31 +73,33 @@ class Config(object):
         CACHE_TYPE = 'redis'
     else:
         CACHE_TYPE = 'filesystem'
-        CACHE_DIR = os.path.join(os.path.dirname(__file__), os.pardir, '.data', 'filesystem_cache')
+        CACHE_DIR = os.path.join(os.path.dirname(
+            __file__), os.pardir, '.data', 'filesystem_cache')
 
     '''
     === SECURITY ===
-    
+
     SESSION_COOKIE_HTTPONLY:
         Controls if cookies should be set with the HttpOnly flag.
-        
+
     PERMANENT_SESSION_LIFETIME:
         The lifetime of a session. The default is 604800 seconds.
-        
+
     TRUSTED_PROXIES:
         Defines a set of regular expressions used for finding a user's IP address if the CTFd instance
         is behind a proxy. If you are running a CTF and users are on the same network as you, you may choose to remove
         some proxies from the list.
-    
+
         CTFd only uses IP addresses for cursory tracking purposes. It is ill-advised to do anything complicated based
         solely on IP addresses unless you know what you are doing.
     '''
     SESSION_COOKIE_HTTPONLY = True
     PERMANENT_SESSION_LIFETIME = 604800  # 7 days in seconds
     TRUSTED_PROXIES = [
-        '^127\.0\.0\.1$',
+        r'^127\.0\.0\.1$',
         # Remove the following proxies if you do not trust the local network
-        # For example if you are running a CTF on your laptop and the teams are all on the same network
+        # For example if you are running a CTF on your laptop and the teams are
+        # all on the same network
         '^::1$',
         '^fc00:',
         '^10\.',
@@ -105,14 +108,14 @@ class Config(object):
     ]
 
     '''
-    === EMAIL === 
-    
+    === EMAIL ===
+
     MAILFROM_ADDR:
         The email address that emails are sent from if not overridden in the configuration panel.
-    
+
     MAIL_SERVER:
         The mail server that emails are sent from if not overriden in the configuration panel.
-        
+
     MAIL_PORT:
         The mail port that emails are sent from if not overriden in the configuration panel.
     '''
@@ -126,60 +129,59 @@ class Config(object):
     MAILGUN_API_KEY = None
     MAILGUN_BASE_URL = None
 
-
     '''
     === LOGS ===
     LOG_FOLDER:
         The location where logs are written. These are the logs for CTFd key submissions, registrations, and logins.
         The default location is the CTFd/logs folder.
     '''
-    LOG_FOLDER = os.environ.get('LOG_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+    LOG_FOLDER = os.environ.get('LOG_FOLDER') or os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'logs')
 
     '''
     === UPLOADS ===
-    
+
     UPLOAD_PROVIDER:
         Specifies the service that CTFd should use to store files.
-    
+
     UPLOAD_FOLDER:
-        The location where files are uploaded. The default destination is the CTFd/uploads folder. 
-        
+        The location where files are uploaded. The default destination is the CTFd/uploads folder.
+
     AWS_ACCESS_KEY_ID:
-        AWS access token used to authenticate to the S3 bucket. 
-    
+        AWS access token used to authenticate to the S3 bucket.
+
     AWS_SECRET_ACCESS_KEY:
         AWS secret token used to authenticate to the S3 bucket.
-    
+
     AWS_S3_BUCKET:
         The unique identifier for your S3 bucket.
-    
+
     AWS_S3_ENDPOINT_URL:
         A URL pointing to a custom S3 implementation.
-    
+
     '''
     UPLOAD_PROVIDER = os.environ.get('UPLOAD_PROVIDER') or 'filesystem'
     if UPLOAD_PROVIDER == 'filesystem':
         UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or \
-                        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
     elif UPLOAD_PROVIDER == 's3':
         AWS_ACCESS_KEY_ID = None
         AWS_SECRET_ACCESS_KEY = None
         AWS_S3_BUCKET = None
         AWS_S3_ENDPOINT_URL = None
 
-
     '''
     === OPTIONAL ===
-    
+
     REVERSE_PROXY:
-        Specifies whether CTFd is behind a reverse proxy or not. Set to True if using a reverse proxy like nginx. 
-    
+        Specifies whether CTFd is behind a reverse proxy or not. Set to True if using a reverse proxy like nginx.
+
     TEMPLATES_AUTO_RELOAD:
         Specifies whether Flask should check for modifications to templates and reload them automatically.
-    
+
     SQLALCHEMY_TRACK_MODIFICATIONS:
         Automatically disabled to suppress warnings and save memory. You should only enable this if you need it.
-    
+
     UPDATE_CHECK:
         Specifies whether or not CTFd will check whether or not there is a new version of CTFd
 
@@ -201,7 +203,8 @@ class TestingConfig(Config):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TESTING_DATABASE_URL') or 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        'TESTING_DATABASE_URL') or 'sqlite://'
     SERVER_NAME = 'localhost'
     UPDATE_CHECK = False
     REDIS_URL = None
