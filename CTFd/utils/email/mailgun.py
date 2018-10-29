@@ -6,8 +6,8 @@ def sendmail(addr, text):
     # TODO: Get values from config.py or config panel
     ctf_name = get_config('ctf_name')
     mailfrom_addr = get_config('mailfrom_addr') or get_app_config('MAILFROM_ADDR')
-    mg_base_url = get_config('mg_base_url')
-    mg_api_key = get_config('mg_api_key')
+    mg_base_url = get_config('mg_base_url') or get_app_config('MAILGUN_BASE_URL')
+    mg_api_key = get_config('mg_api_key') or get_app_config('MAILGUN_API_KEY')
     try:
         r = requests.post(
             mg_base_url + '/messages',

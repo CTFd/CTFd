@@ -1,20 +1,21 @@
 from flask import current_app as app, url_for
 from CTFd.utils import get_config, get_app_config
-from CTFd.utils.config import mailgun, can_send_mail, mailserver
+from CTFd.utils.config import get_mail_provider, mailserver
 from CTFd.utils.encoding import base64decode, base64encode
 from CTFd.utils.email import mailgun, smtp
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
+import re
 
 
 EMAIL_REGEX = r"(^[^@\s]+@[^@\s]+\.[^@\s]+$)"
 
+
 def sendmail(addr, text):
-    if mailserver():
+    provider = get_mail_provider()
+    if provider == 'smtp':
         return smtp.sendmail(addr, text)
-
-    if mailgun():
+    if provider == 'mailgun':
         return mailgun.sendmail(addr, text)
-
     return False, "No mail settings configured"
 
 

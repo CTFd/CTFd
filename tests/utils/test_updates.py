@@ -12,28 +12,29 @@ def test_update_check_is_called():
         assert get_config('version_latest') is None
 
 
-@patch.object(requests, 'get')
-def test_update_check_identifies_update(fake_get_request):
-    """Update checks properly identify new versions"""
-    app = create_ctfd()
-    with app.app_context():
-        app.config['UPDATE_CHECK'] = True
-        fake_response = Mock()
-        fake_get_request.return_value = fake_response
-        fake_response.json = lambda: {
-            u'resource': {
-                u'html_url': u'https://github.com/CTFd/CTFd/releases/tag/9.9.9',
-                u'download_url': u'https://api.github.com/repos/CTFd/CTFd/zipball/9.9.9',
-                u'published_at': u'Wed, 25 Oct 2017 19:39:42 -0000',
-                u'tag': u'9.9.9',
-                u'prerelease': False,
-                u'id': 6,
-                u'latest': True
-            }
-        }
-        update_check()
-        assert get_config('version_latest') == 'https://github.com/CTFd/CTFd/releases/tag/9.9.9'
-    destroy_ctfd(app)
+# TODO: Implement alongside the version data fix. #618
+# @patch.object(requests, 'get')
+# def test_update_check_identifies_update(fake_get_request):
+#     """Update checks properly identify new versions"""
+#     app = create_ctfd()
+#     with app.app_context():
+#         app.config['UPDATE_CHECK'] = True
+#         fake_response = Mock()
+#         fake_get_request.return_value = fake_response
+#         fake_response.json = lambda: {
+#             u'resource': {
+#                 u'html_url': u'https://github.com/CTFd/CTFd/releases/tag/9.9.9',
+#                 u'download_url': u'https://api.github.com/repos/CTFd/CTFd/zipball/9.9.9',
+#                 u'published_at': u'Wed, 25 Oct 2017 19:39:42 -0000',
+#                 u'tag': u'9.9.9',
+#                 u'prerelease': False,
+#                 u'id': 6,
+#                 u'latest': True
+#             }
+#         }
+#         update_check()
+#         assert get_config('version_latest') == 'https://github.com/CTFd/CTFd/releases/tag/9.9.9'
+#     destroy_ctfd(app)
 
 
 def test_update_check_notifies_user():

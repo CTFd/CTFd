@@ -19,10 +19,10 @@ def test_admin_override_template():
     """Does override_template work properly for the admin panel"""
     app = create_ctfd()
     with app.app_context():
-        override_template('admin/team.html', 'ADMIN TEAM OVERRIDE')
+        override_template('admin/users/user.html', 'ADMIN TEAM OVERRIDE')
 
         client = login_as_user(app, name="admin", password="password")
-        r = client.get('/admin/team/1')
+        r = client.get('/admin/users/1')
         assert r.status_code == 200
         output = r.get_data(as_text=True)
         assert 'ADMIN TEAM OVERRIDE' in output

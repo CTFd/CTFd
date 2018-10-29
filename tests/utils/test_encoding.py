@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 from tests.helpers import *
 from CTFd.utils.encoding import base64encode, base64decode
+
 
 def test_base64encode():
     """The base64encode wrapper works properly"""

@@ -1,6 +1,6 @@
 from tests.helpers import *
 from CTFd.utils import get_config, set_config
-from CTFd.utils.email import sendmail, verify_email_address
+from CTFd.utils.email import sendmail, verify_email_address, check_email_format
 from freezegun import freeze_time
 from mock import patch, Mock
 from email.mime.text import MIMEText
@@ -155,7 +155,8 @@ def test_verify_email(mock_smtp):
         # This is currently not actually validated
         msg = ("Please click the following link to confirm"
                " your email address for CTFd:"
-               " http://localhost/confirm/InVzZXJAdXNlci5jb20iLkFmS0dQZy5kLUJnVkgwaUhadzFHaXVENHczWTJCVVJwdWc")
+               " http://localhost/confirm/InVzZXJAdXNlci5jb20iLlR4RDB2Zy5PRHFvWHNnZVhVajA4OS1zcWJhY3R"
+               "5OVlUOHFxQzRhUEpoSkxDcmVsOHVTdHVVRHlqY3ZZOE1wU2tqeEFGTWJTWm9Fb0w4WjljRVk2LVd5RHZjOXNfZw")
 
         ctf_name = get_config('ctf_name')
         email_msg = MIMEText(msg)
