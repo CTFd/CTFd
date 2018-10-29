@@ -2,10 +2,12 @@ from distutils.version import StrictVersion
 from flask import current_app as app
 from CTFd.utils import get_config, set_config, get_app_config
 from CTFd.models import db, Challenges, Users, Teams
+from CTFd.utils.security.passwords import sha256
 from platform import python_version
 import requests
 import time
 import sys
+import os
 
 
 def update_check(force=False):
@@ -30,6 +32,9 @@ def update_check(force=False):
     if update:
         try:
             params = {
+                'ctf_id': sha256(
+                    get_config('ctf_name') + os.getcwd()
+                ),
                 'current': app.VERSION,
                 'python_version_raw': sys.hexversion,
                 'python_version': python_version(),
