@@ -103,6 +103,7 @@ def user_can_view_challenges():
         return authed()
 
 
+@cache.memoize()
 def get_themes():
     dir = os.path.join(app.root_path, 'themes')
     return [name for name in os.listdir(dir)

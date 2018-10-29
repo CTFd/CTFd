@@ -40,16 +40,16 @@ def ctftime():
 
 
 def ctf_paused():
-    return get_config('paused')
+    return get_config('paused', default=False)
 
 
 def ctf_started():
-    return time.time() > int(get_config("start") or 0)
+    return time.time() > int(get_config("start", default=0))
 
 
 def ctf_ended():
     if int(get_config("end") or 0):
-        return time.time() > int(get_config("end") or 0)
+        return time.time() > int(get_config("end", default=0))
     return False
 
 

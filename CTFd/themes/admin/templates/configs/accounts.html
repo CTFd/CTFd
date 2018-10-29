@@ -17,36 +17,62 @@
 		</div>
 
 
-		<div class="form-check">
+		<div class="form-group">
 			<label>
-				<input id="verify_emails" name="verify_emails" type="checkbox" {% if verify_emails %}checked{% endif %}>
-				Only allow users with verified emails
+				Verify Emails<br>
+				<small class="form-text text-muted">
+					Control whether users must confirm their email addresses before playing
+				</small>
 			</label>
+			<select class="form-control" name="solve_visibility">
+				<option value="enabled">Enabled</option>
+				<option value="disabled">Disabled</option>
+			</select>
 		</div>
 
-		<div class="form-check">
+		<div class="form-group">
 			<label>
-				<input id="view_challenges_unregistered" name="view_challenges_unregistered" type="checkbox"
-					   {% if view_challenges_unregistered %}checked{% endif %}>
-				Unregistered users can view challenges
+				Team Name Changes<br>
+				<small class="form-text text-muted">
+					Control whether users can change their names
+				</small>
 			</label>
+			<select class="form-control" name="solve_visibility">
+				<option value="enabled">Enabled</option>
+				<option value="disabled">Disabled</option>
+			</select>
 		</div>
 
-		<div class="form-check">
-			<label>
-				<input id="prevent_registration" name="prevent_registration" type="checkbox"
-					   {% if prevent_registration %}checked{% endif %}>
-				Prevent public registration
-			</label>
-		</div>
+{#		<div class="form-check">#}
+{#			<label>#}
+{#				<input id="verify_emails" name="verify_emails" type="checkbox" {% if verify_emails %}checked{% endif %}>#}
+{#				Only allow users with verified emails#}
+{#			</label>#}
+{#		</div>#}
 
-		<div class="form-check">
-			<label>
-				<input id="prevent_name_change" name="prevent_name_change" type="checkbox"
-					   {% if prevent_name_change %}checked{% endif %}>
-				Prevent team name changes
-			</label>
-		</div>
+{#		<div class="form-check">#}
+{#			<label>#}
+{#				<input id="view_challenges_unregistered" name="view_challenges_unregistered" type="checkbox"#}
+{#					   {% if view_challenges_unregistered %}checked{% endif %}>#}
+{#				Unregistered users can view challenges#}
+{#			</label>#}
+{#		</div>#}
+
+{#		<div class="form-check">#}
+{#			<label>#}
+{#				<input id="prevent_registration" name="prevent_registration" type="checkbox"#}
+{#					   {% if prevent_registration %}checked{% endif %}>#}
+{#				Prevent public registration#}
+{#			</label>#}
+{#		</div>#}
+
+{#		<div class="form-check">#}
+{#			<label>#}
+{#				<input id="prevent_name_change" name="prevent_name_change" type="checkbox"#}
+{#					   {% if prevent_name_change %}checked{% endif %}>#}
+{#				Prevent team name changes#}
+{#			</label>#}
+{#		</div>#}
 
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
 	</form>

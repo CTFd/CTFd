@@ -1,22 +1,96 @@
 <div role="tabpanel" class="tab-pane config-section" id="settings">
 	<form method="POST" autocomplete="off" class="w-100">
-		<div class="form-check">
+{#		<div class="form-check">#}
+{#			<label>#}
+{#				<input id="workshop_mode" name="workshop_mode" type="checkbox"#}
+{#					   {% if workshop_mode %}checked{% endif %}>#}
+{#				Workshop Mode <i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip"#}
+{#								 data-placement="right"#}
+{#								 title="Hide all public team and score information."></i>#}
+{#			</label>#}
+{#		</div>#}
+{#		<div class="form-check">#}
+{#			<label>#}
+{#				<input id="paused" name="paused" type="checkbox"#}
+{#					   {% if paused %}checked{% endif %}>#}
+{#				Pause CTF <i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip"#}
+{#							 data-placement="right"#}
+{#							 title="Prevent users from submitting answers until unpaused. Challenges can still be viewed."></i>#}
+{#			</label>#}
+{#		</div>#}
+
+		<div class="form-group">
 			<label>
-				<input id="workshop_mode" name="workshop_mode" type="checkbox"
-					   {% if workshop_mode %}checked{% endif %}>
-				Workshop Mode <i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip"
-								 data-placement="right"
-								 title="Hide all public team and score information."></i>
+				Challenge Visibility<br>
+				<small class="form-text text-muted">
+					Control whether users must be logged in to see challenges
+				</small>
 			</label>
+			<select class="form-control" name="challenge_visibility">
+				<option value="public" {% if challenge_visibility == 'public' %}selected{% endif %}>
+					Public
+				</option>
+				<option value="private" {% if challenge_visibility == 'private' %}selected{% endif %}>
+					Private
+				</option>
+			</select>
 		</div>
-		<div class="form-check">
+
+		<div class="form-group">
 			<label>
-				<input id="paused" name="paused" type="checkbox"
-					   {% if paused %}checked{% endif %}>
-				Pause CTF <i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip"
-							 data-placement="right"
-							 title="Prevent users from submitting answers until unpaused. Challenges can still be viewed."></i>
+				Solve Visibility<br>
+				<small class="form-text text-muted">
+					Control whether solves are shown to the public, to logged in users, or only to admins
+				</small>
 			</label>
+			<select class="form-control" name="solve_visibility">
+				<option value="public" {% if solve_visibility == 'public' %}selected{% endif %}>
+					Public
+				</option>
+				<option value="private" {% if solve_visibility == 'private' %}selected{% endif %}>
+					Private
+				</option>
+				<option value="admins" {% if solve_visibility == 'admins' %}selected{% endif %}>
+					Admins Only
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Account Visibility<br>
+				<small class="form-text text-muted">
+					Control whether accounts (users &amp; teams) are shown to everyone or only to admins
+				</small>
+			</label>
+			<select class="form-control" name="account_visibility">
+				<option value="public" {% if account_visibility == 'public' %}selected{% endif %}>
+					Public
+				</option>
+				<option value="private" {% if account_visibility == 'private' %}selected{% endif %}>
+					Private
+				</option>
+				<option value="admins" {% if account_visibility == 'admins' %}selected{% endif %}>
+					Admins Only
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Registration Visibility<br>
+				<small class="form-text text-muted">
+					Control whether registration is enabled for everyone or disabled
+				</small>
+			</label>
+			<select class="form-control" name="registration_visibility">
+				<option value="public" {% if registration_visibility == 'public' %}selected{% endif %}>
+					Public
+				</option>
+				<option value="private" {% if registration_visibility == 'private' %}selected{% endif %}>
+					Private
+				</option>
+			</select>
 		</div>
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
 	</form>

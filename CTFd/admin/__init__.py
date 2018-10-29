@@ -18,6 +18,7 @@ from CTFd.utils import (
     uploads,
     user as current_user,
     get_config,
+    get_app_config,
     set_config
 )
 from CTFd.cache import cache
@@ -141,84 +142,21 @@ def export_csv():
 @admin.route('/admin/config', methods=['GET', 'POST'])
 @admins_only
 def config():
-    # Clear the cache so that we don't get stale values
-    # TODO: This is going to force log users out. Needs to be replaced to only clear config values.
-    cache.clear()
+    # Clear the config cache so that we don't get stale values
+    cache.delete_memoized(get_config)
+    cache.delete_memoized(get_app_config)
 
     database_tables = sorted(db.metadata.tables.keys())
 
-    ctf_name = get_config('ctf_name')
-    user_mode = get_config('user_mode')
-    ctf_logo = get_config('ctf_logo')
-    ctf_theme = get_config('ctf_theme')
-    hide_scores = get_config('hide_scores')
-    css = get_config('css')
-
-    mail_server = get_config('mail_server')
-    mail_port = get_config('mail_port')
-    mail_username = get_config('mail_username')
-    mail_password = get_config('mail_password')
-
-    mailfrom_addr = get_config('mailfrom_addr')
-    mg_api_key = get_config('mg_api_key')
-    mg_base_url = get_config('mg_base_url')
-
-    view_after_ctf = get_config('view_after_ctf')
-    start = get_config('start')
-    end = get_config('end')
-    freeze = get_config('freeze')
-
-    mail_tls = get_config('mail_tls')
-    mail_ssl = get_config('mail_ssl')
-    mail_useauth = get_config('mail_useauth')
-
-    view_challenges_unregistered = get_config('view_challenges_unregistered')
-    view_scoreboard_if_authed = get_config('view_scoreboard_if_authed')
-    prevent_registration = get_config('prevent_registration')
-    prevent_name_change = get_config('prevent_name_change')
-    verify_emails = get_config('verify_emails')
-
-    workshop_mode = get_config('workshop_mode')
-    paused = get_config('paused')
-
-    domain_whitelist = get_config('domain_whitelist')
-
-    db.session.commit()
-    db.session.close()
+    configs = Configs.query.all()
+    configs = dict([(c.key, get_config(c.key)) for c in configs])
 
     themes = ctf_config.get_themes()
-    themes.remove(ctf_theme)
+    themes.remove(get_config('ctf_theme'))
 
     return render_template(
         'admin/config.html',
-        ctf_name=ctf_name,
-        user_mode=user_mode,
-        ctf_logo=ctf_logo,
-        ctf_theme_config=ctf_theme,
-        css=css,
-        start=start,
-        end=end,
-        freeze=freeze,
-        hide_scores=hide_scores,
-        mail_server=mail_server,
-        mail_port=mail_port,
-        mail_useauth=mail_useauth,
-        mail_username=mail_username,
-        mail_password=mail_password,
-        mail_tls=mail_tls,
-        mail_ssl=mail_ssl,
-        view_challenges_unregistered=view_challenges_unregistered,
-        view_scoreboard_if_authed=view_scoreboard_if_authed,
-        prevent_registration=prevent_registration,
-        mailfrom_addr=mailfrom_addr,
-        mg_base_url=mg_base_url,
-        mg_api_key=mg_api_key,
-        prevent_name_change=prevent_name_change,
-        verify_emails=verify_emails,
-        view_after_ctf=view_after_ctf,
-        themes=themes,
-        workshop_mode=workshop_mode,
-        paused=paused,
         database_tables=database_tables,
-        domain_whitelist=domain_whitelist
+        themes=themes,
+        **configs
     )

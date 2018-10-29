@@ -34,6 +34,22 @@ def during_ctf_time_only(f):
     return during_ctf_time_only_wrapper
 
 
+def check_score_visibility(f):
+    pass
+
+
+def check_challenge_visibility(f):
+    pass
+
+
+def check_account_visibility(f):
+    pass
+
+
+def check_registration_visibility(f):
+    pass
+
+
 def require_authentication_if_config(config_key):
     def _require_authentication_if_config(f):
         @functools.wraps(f)
@@ -99,7 +115,7 @@ def authed_only(f):
 
     @functools.wraps(f)
     def authed_only_wrapper(*args, **kwargs):
-        if session.get('id'):
+        if authed():
             return f(*args, **kwargs)
         else:
             return redirect(url_for('auth.login', next=request.path))

@@ -76,9 +76,6 @@ def setup():
                 draft=False
             )
 
-            # max attempts per challenge
-            set_config('max_tries', 0)
-
             # Start time
             set_config('start', None)
             set_config('end', None)
