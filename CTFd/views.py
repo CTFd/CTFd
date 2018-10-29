@@ -1,6 +1,5 @@
-from flask import current_app as app, render_template, request, redirect, abort, jsonify, url_for, session, Blueprint, Response, send_file
+from flask import current_app as app, render_template, request, redirect, abort, url_for, session, Blueprint, Response, send_file
 from flask.helpers import safe_join
-from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Admins, Files, Pages, Notifications
 from CTFd.utils import markdown
@@ -13,11 +12,10 @@ from CTFd.utils.config.pages import get_page
 from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
-from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime, unix_time_to_utc
-from CTFd.utils import validators
+from CTFd.utils.dates import ctf_started, ctftime
 from CTFd.utils.decorators import authed_only
-
 import os
+
 
 views = Blueprint('views', __name__)
 
@@ -80,12 +78,6 @@ def setup():
             set_config('start', None)
             set_config('end', None)
             set_config('freeze', None)
-
-            # Challenges cannot be viewed by unregistered users
-            set_config('view_challenges_unregistered', None)
-
-            # Allow/Disallow registration
-            set_config('prevent_registration', None)
 
             # Verify emails
             set_config('verify_emails', None)
@@ -185,10 +177,7 @@ def files(path):
     if f.type == 'challenge':
         if current_user.is_admin() is False:
             if not ctftime():
-                if config.view_after_ctf() and ctf_started():
-                    pass
-                else:
-                    abort(403)
+                abort(403)
     uploader = get_uploader()
     return uploader.download(f.location)
 

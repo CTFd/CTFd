@@ -7,7 +7,6 @@ from CTFd.schemas.tags import TagSchema
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
-    viewable_without_authentication,
     admins_only
 )
 

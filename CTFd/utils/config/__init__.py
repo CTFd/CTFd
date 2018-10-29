@@ -49,16 +49,6 @@ def is_setup():
 
 
 @cache.memoize()
-## TODO: Rename to registration_allowed
-def can_register():
-    return not bool(get_config('prevent_registration'))
-
-
-@cache.memoize()
-def view_after_ctf():
-    return bool(get_config('view_after_ctf'))
-
-
 def is_scoreboard_frozen():
     freeze = get_config('freeze')
 
@@ -91,16 +81,6 @@ def mailserver():
     if get_config('mail_server') and get_config('mail_port'):
         return True
     return False
-
-
-def user_can_view_challenges():
-    # TODO: This function could use a rename or a rewrite
-    config = bool(get_config('view_challenges_unregistered'))
-    verify_emails = bool(get_config('verify_emails'))
-    if config:
-        return authed() or config
-    else:
-        return authed()
 
 
 @cache.memoize()

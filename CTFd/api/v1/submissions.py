@@ -11,6 +11,7 @@ from CTFd.utils.dates import ctf_started, ctf_ended, ctf_paused, ctftime
 from CTFd.utils.logging import log
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import (
+    authed_only,
     admins_only,
     during_ctf_time_only,
     require_verified_emails,
@@ -50,8 +51,8 @@ class SubmissionsList(Resource):
         }
 
     @during_ctf_time_only
-    @viewable_without_authentication()
     @require_verified_emails
+    # @ authed_only TODO: It's probably better to put authed_only here but I'm not sure the effects.
     def post(self):
         # TODO: This doesn't really conform to the JSON API
         if request.content_type != 'application/json':
@@ -67,7 +68,7 @@ class SubmissionsList(Resource):
                 'message': '{} is paused'.format(config.ctf_name())
             }, 403
 
-        if (current_user.authed() and (ctf_started() or config.view_after_ctf())) or current_user.is_admin():
+        if (current_user.authed() and (ctf_started() and ctftime())) or current_user.is_admin():
             user = get_current_user()
             team = get_current_team()
 

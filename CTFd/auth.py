@@ -12,6 +12,7 @@ from CTFd.utils import config, validators
 from CTFd.utils import email
 from CTFd.utils.security.auth import login_user, logout_user
 from CTFd.utils.logging import log
+from CTFd.utils.decorators.visibility import check_registration_visibility
 
 import base64
 import requests
@@ -120,10 +121,9 @@ def reset_password(data=None):
 
 
 @auth.route('/register', methods=['POST', 'GET'])
+@check_registration_visibility
 @ratelimit(method="POST", limit=10, interval=5)
 def register():
-    if not config.can_register():
-        return redirect(url_for('auth.login'))
     if request.method == 'POST':
         errors = []
         name = request.form['name']

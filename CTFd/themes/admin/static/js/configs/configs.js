@@ -95,8 +95,8 @@ function update_configs(obj){
 }
 
 function upload_logo(form) {
-    upload_files(form, function (data) {
-        var upload = data[0];
+    upload_files(form, function (response) {
+        var upload = response.data[0];
         if (upload.location) {
             var params = {
                 'value': upload.location
@@ -111,7 +111,7 @@ function upload_logo(form) {
             }).then(function (response) {
                 return response.json();
             }).then(function (response) {
-                if (response.data.success) {
+                if (response.success) {
                     window.location.reload()
                 } else {
                     ezal({

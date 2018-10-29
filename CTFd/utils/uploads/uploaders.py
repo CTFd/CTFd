@@ -46,7 +46,8 @@ class FilesystemUploader(BaseUploader):
         finally:
             dst_file.close()
 
-        return location
+        key = os.path.join(md5hash, filename)
+        return key
 
     def download(self, filename):
         return send_file(safe_join(self.base_path, filename))

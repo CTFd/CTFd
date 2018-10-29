@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme=ctf_theme(), path='css/challenge-board.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/challenge-board.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -53,10 +53,10 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/utils.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/multi-modal.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/utils.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/multi-modal.js') }}"></script>
 	{% if admin or not errors %}
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/challenges.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/challenges.js') }}"></script>
 	{% endif %}
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/style.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/style.js') }}"></script>
 {% endblock %}

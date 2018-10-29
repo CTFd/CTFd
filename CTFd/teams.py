@@ -1,28 +1,19 @@
 from flask import current_app as app, render_template, request, redirect, abort, jsonify, url_for, session, Blueprint, \
     Response, send_file
-from flask.helpers import safe_join
-from passlib.hash import bcrypt_sha256
-
 from CTFd.models import db, Users, Teams, Solves, Awards, Files, Pages, Tracking
 from CTFd.utils.decorators import authed_only
-from CTFd.utils import markdown
-from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import get_current_user, authed, get_ip
 from CTFd.utils import config
-from CTFd.utils.config.pages import get_page
-from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils import user as current_user
-from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime, unix_time_to_utc
-from CTFd.utils import validators
+from CTFd.utils.dates import unix_time_to_utc
 from CTFd.utils.crypto import verify_password
-
-import os
+from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 
 teams = Blueprint('teams', __name__)
 
 
 @teams.route('/teams', defaults={'page': '1'})
+@check_account_visibility
 def listing(page):
     page = request.args.get('page', 1)
     if get_config('workshop_mode'):
@@ -136,12 +127,12 @@ def private():
 
 
 @teams.route('/teams/<int:team_id>', methods=['GET', 'POST'])
+@check_account_visibility
+@check_score_visibility
 def public(team_id):
     if get_config('workshop_mode'):
         abort(404)
 
-    if get_config('view_scoreboard_if_authed') and not authed():
-        return redirect(url_for('auth.login', next=request.path))
     errors = []
     freeze = get_config('freeze')
     team = Teams.query.filter_by(id=team_id).first_or_404()

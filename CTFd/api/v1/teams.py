@@ -3,7 +3,7 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Teams, Solves, Awards, Fails
 from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.submissions import SubmissionSchema
-from CTFd.schemas.awards import AwardSchema
+from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 from CTFd.utils.user import (
     get_current_team,
     is_admin
@@ -12,14 +12,14 @@ from CTFd.utils.decorators import (
     authed_only,
     admins_only,
 )
-from CTFd.utils.dates import unix_time_to_utc, unix_time
-from CTFd.utils import get_config
+
 
 teams_namespace = Namespace('teams', description="Endpoint to retrieve Teams")
 
 
 @teams_namespace.route('')
 class TeamList(Resource):
+    @check_account_visibility
     def get(self):
         teams = Teams.query.filter_by(banned=False)
         view = list(TeamSchema.views.get(session.get('type')))
@@ -65,6 +65,7 @@ class TeamList(Resource):
 @teams_namespace.route('/<team_id>')
 @teams_namespace.param('team_id', "Team ID")
 class TeamPublic(Resource):
+    @check_account_visibility
     def get(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
 
@@ -156,7 +157,8 @@ class TeamPrivate(Resource):
             }, 400
 
         db.session.commit()
-        # response = TeamSchema('self').dump(response.data)
+
+        response = TeamSchema('self').dump(response.data)
         db.session.close()
 
         return {
@@ -169,6 +171,7 @@ class TeamPrivate(Resource):
 @teams_namespace.param('team_id', "Team ID or 'me'")
 class TeamSolves(Resource):
     def get(self, team_id):
+        # TODO: This needs to be restricted using visibility utils
         if team_id == 'me':
             team = get_current_team()
         else:
@@ -198,6 +201,7 @@ class TeamSolves(Resource):
 @teams_namespace.param('team_id', "Team ID or 'me'")
 class TeamFails(Resource):
     def get(self, team_id):
+        # TODO: This needs to be restricted using visibility utils
         if team_id == 'me':
             team = get_current_team()
         else:
@@ -228,6 +232,7 @@ class TeamFails(Resource):
 @teams_namespace.param('team_id', "Team ID or 'me'")
 class TeamAwards(Resource):
     def get(self, team_id):
+        # TODO: This needs to be restricted using visibility utils
         if team_id == 'me':
             team = get_current_team()
         else:

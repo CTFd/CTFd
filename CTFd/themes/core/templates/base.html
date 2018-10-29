@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{ ctf_name() }}</title>
+	<title>{{ get_ctf_name() }}</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" href="{{ url_for('views.themes', theme=ctf_theme(), path='img/favicon.ico') }}"
+	<link rel="shortcut icon" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='img/favicon.ico') }}"
 		  type="image/x-icon">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme=ctf_theme(), path='css/vendor/bootstrap.min.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme=ctf_theme(), path='css/vendor/font-awesome/fontawesome-fonts.css') }}" type='text/css'>
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme=ctf_theme(), path='css/vendor/font-awesome/fontawesome-all.css') }}" type='text/css'>
-	<link href='{{ url_for('views.themes', theme=ctf_theme(), path='css/vendor/font.css') }}' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme=ctf_theme(), path='css/jumbotron.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme=ctf_theme(), path='css/sticky-footer.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme=ctf_theme(), path='css/base.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/vendor/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/vendor/font-awesome/fontawesome-fonts.css') }}" type='text/css'>
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/vendor/font-awesome/fontawesome-all.css') }}" type='text/css'>
+	<link href='{{ url_for('views.themes', theme=get_ctf_theme(), path='css/vendor/font.css') }}' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/jumbotron.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/sticky-footer.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/base.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('views.custom_css') }}">
 	{% block stylesheets %}{% endblock %}
 	{% for stylesheet in get_registered_stylesheets() %}
@@ -24,10 +24,10 @@
 			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
 		{% endif %}
 	{% endfor %}
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/CTFd.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/vendor/moment.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/vendor/nunjucks.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/vendor/socket.io.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/CTFd.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/moment.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/nunjucks.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/socket.io.min.js') }}"></script>
 	<script type="text/javascript">
 		var script_root = "{{ request.script_root }}";
 		var csrf_nonce = "{{ nonce }}";
@@ -39,10 +39,10 @@
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
 		<div class="container">
 			<a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">
-				{% if ctf_logo() %}
-				<img class="img-responsive ctf_logo" src="{{ url_for('views.files', path='/files/'+ctf_logo()) }}" height="25" alt="{{ ctf_name() }}">
+				{% if get_ctf_logo() %}
+				<img class="img-responsive ctf_logo" src="{{ url_for('views.files', path='/files/'+get_ctf_logo()) }}" height="25" alt="{{ get_ctf_name() }}">
 				{% else %}
-				{{ ctf_name() }}
+				{{ get_ctf_name() }}
 				{% endif %}
 			</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
@@ -113,14 +113,15 @@
 							<a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
 						</li>
 					{% else %}
-						{% if can_register() %}
+{#						TODO: Implement visibility utils#}
+{#						{% if can_register() %}#}
 							<li class="nav-item">
 								<a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
 							</li>
 							<li class="nav-item">
 								<a class="nav-link d-none d-md-block d-lg-block">|</a>
 							</li>
-						{% endif %}
+{#						{% endif %}#}
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
 						</li>
@@ -143,13 +144,13 @@
 		</div>
 	</footer>
 
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/vendor/jquery.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/vendor/markdown-it.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/vendor/bootstrap.bundle.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/style.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/utils.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/ezq.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/events.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/jquery.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/markdown-it.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/bootstrap.bundle.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/style.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/utils.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/ezq.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/events.js') }}"></script>
 	{% block scripts %}
 	{% endblock %}
 

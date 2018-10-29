@@ -15,9 +15,9 @@ from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
-    viewable_without_authentication,
     admins_only
 )
+from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils.user import get_current_user
 from CTFd.utils.modes import get_model
 from CTFd.schemas.tags import TagSchema
@@ -30,9 +30,9 @@ challenges_namespace = Namespace('challenges', description="Endpoint to retrieve
 
 @challenges_namespace.route('')
 class ChallengeList(Resource):
+    @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
-    @viewable_without_authentication(status_code=403)
     def get(self):
         user = get_current_user()
 
@@ -124,9 +124,9 @@ class ChallengeTypes(Resource):
 @challenges_namespace.route('/<challenge_id>')
 @challenges_namespace.param('challenge_id', 'A Challenge ID')
 class Challenge(Resource):
+    @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
-    @viewable_without_authentication(status_code=403)
     def get(self, challenge_id):
         team_id = session.get('id')
 
@@ -191,9 +191,9 @@ class Challenge(Resource):
 @challenges_namespace.route('/<challenge_id>/solves')
 @challenges_namespace.param('id', 'A Challenge ID')
 class ChallengeSolves(Resource):
+    @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
-    @viewable_without_authentication(status_code=403)
     def get(self, challenge_id):
         response = []
         # TODO: Hide scores and other configs

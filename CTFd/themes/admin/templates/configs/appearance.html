@@ -73,7 +73,7 @@
 				</small>
 			</label>
 			<select class="form-control" id="ctf_theme" name="ctf_theme">
-				<option>{{ ctf_theme_config }}</option>
+				<option>{{ ctf_theme }}</option>
 				{% for theme in themes %}
 					<option>{{ theme }}</option>
 				{% endfor %}
@@ -87,7 +87,7 @@
 					CSS is applied to all public facing pages if the theme used supports custom CSS.
 				</small>
 			</label>
-			<textarea class="form-control" id="css-editor" name="css" rows="7">{{ css|default('', True) }}</textarea>
+			<textarea class="form-control" id="css-editor" name="css" rows="7">{{ css }}</textarea>
 		</div>
 
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>

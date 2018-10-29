@@ -5,9 +5,8 @@ from CTFd.utils.decorators import (
     authed_only,
     admins_only
 )
-from CTFd.utils.dates import unix_time_to_utc, unix_time
 from CTFd.utils.user import get_current_user, is_admin
-from CTFd.utils import get_config
+from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
@@ -19,6 +18,7 @@ users_namespace = Namespace('users', description="Endpoint to retrieve Users")
 
 @users_namespace.route('')
 class UserList(Resource):
+    @check_account_visibility
     def get(self):
         users = Users.query.filter_by(banned=False)
         response = UserSchema(view='user', many=True).dump(users)
@@ -60,6 +60,7 @@ class UserList(Resource):
 @users_namespace.route('/<int:user_id>')
 @users_namespace.param('user_id', "User ID")
 class UserPublic(Resource):
+    @check_account_visibility
     def get(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
 
@@ -122,6 +123,7 @@ class UserPublic(Resource):
 
 @users_namespace.route('/me')
 class UserPrivate(Resource):
+    @authed_only
     def get(self):
         user = get_current_user()
         response = UserSchema('self').dump(user).data
@@ -176,6 +178,7 @@ class UserPrivate(Resource):
 @users_namespace.param('user_id', "User ID or 'me'")
 class UserSolves(Resource):
     def get(self, user_id):
+        # TODO: This needs to be restricted using visibility utils
         if user_id == 'me':
             user = get_current_user()
         else:
@@ -203,6 +206,7 @@ class UserSolves(Resource):
 
     @admins_only
     def post(self, user_id):
+        # TODO: This should probably be replaced by /v1/solves
         user = Users.query.filter_by(id=user_id).first_or_404()
         req = request.get_json()
         response = SubmissionSchema('admin').load(req)
@@ -220,6 +224,7 @@ class UserSolves(Resource):
 @users_namespace.param('user_id', "User ID or 'me'")
 class UserFails(Resource):
     def get(self, user_id):
+        # TODO: This needs to be restricted using visibility utils
         if user_id == 'me':
             user = get_current_user()
         else:
@@ -247,6 +252,7 @@ class UserFails(Resource):
 @users_namespace.param('user_id', "User ID or 'me'")
 class UserAwards(Resource):
     def get(self, user_id):
+        # TODO: This needs to be restricted using visibility utils
         if user_id == 'me':
             user = get_current_user()
         else:

@@ -73,15 +73,23 @@ class Config(Resource):
 
     @admins_only
     def patch(self, config_key):
-        config = Configs.query.filter_by(key=config_key).first_or_404()
+        config = Configs.query.filter_by(key=config_key).first()
         data = request.get_json()
-        response = ConfigSchema(instance=config, partial=True).load(data)
+        if config:
+            schema = ConfigSchema(instance=config, partial=True)
+            response = schema.load(data)
+        else:
+            schema = ConfigSchema()
+            data['key'] = config_key
+            response = schema.load(data)
+            db.session.add(response.data)
 
         if response.errors:
             return response.errors, 400
 
         db.session.commit()
-        # response = ConfigSchema().dump(response.data)
+
+        response = schema.dump(response.data)
         db.session.close()
 
         return {

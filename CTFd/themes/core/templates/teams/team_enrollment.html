@@ -12,7 +12,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 offset-md-3 text-center">
-				<p>Welcome to {{ ctf_name() }}!</p>
+				<p>Welcome to {{ get_ctf_name() }}!</p>
 				<p>
 					In order to participate you must either join or create a team.
 				</p>
@@ -35,9 +35,9 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/vendor/plotly.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/utils.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/plotly.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/utils.js') }}"></script>
 	{% if solves %}
-		<script src="{{ url_for('views.themes', theme=ctf_theme(), path='js/team.js') }}"></script>
+		<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/team.js') }}"></script>
 	{% endif %}
 {% endblock %}

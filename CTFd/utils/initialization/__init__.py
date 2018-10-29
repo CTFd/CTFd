@@ -5,7 +5,7 @@ from CTFd.utils import markdown, get_config
 from CTFd.utils.dates import unix_time_millis, unix_time
 
 from CTFd.utils import config
-from CTFd.utils.config import can_register, can_send_mail, ctf_logo, ctf_name, ctf_theme, hide_scores
+from CTFd.utils.config import can_send_mail, ctf_logo, ctf_name, ctf_theme, hide_scores
 from CTFd.utils.config.pages import get_pages
 
 from CTFd.utils.plugins import get_registered_stylesheets, get_registered_scripts, get_configurable_plugins
@@ -30,11 +30,10 @@ def init_template_filters(app):
 def init_template_globals(app):
     app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
-    app.jinja_env.globals.update(can_register=can_register)
     app.jinja_env.globals.update(can_send_mail=can_send_mail)
-    app.jinja_env.globals.update(ctf_name=ctf_name)
-    app.jinja_env.globals.update(ctf_logo=ctf_logo)
-    app.jinja_env.globals.update(ctf_theme=ctf_theme)
+    app.jinja_env.globals.update(get_ctf_name=ctf_name)
+    app.jinja_env.globals.update(get_ctf_logo=ctf_logo)
+    app.jinja_env.globals.update(get_ctf_theme=ctf_theme)
     app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
     app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
     app.jinja_env.globals.update(get_registered_stylesheets=get_registered_stylesheets)
