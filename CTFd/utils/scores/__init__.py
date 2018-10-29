@@ -1,47 +1,39 @@
 from sqlalchemy.sql.expression import union_all
 
-from CTFd.models import db, Teams, Solves, Awards, Challenges
+from CTFd.models import db, Solves, Awards, Challenges
 from CTFd.utils.dates import unix_time_to_utc
-from CTFd.utils import config, get_config
+from CTFd.utils import get_config
+from CTFd.utils.modes import get_model
 
 
-def get_standings(*args, **kwargs):
-    if config.user_mode() == 'teams':
-        return get_team_standings(*args, **kwargs)
-    elif config.user_mode() == 'users':
-        return get_user_standings(*args, **kwargs)
-
-
-def get_user_standings(admin=False, count=None):
-    pass
-
-
-def get_team_standings(admin=False, count=None):
+def get_standings(count=None, admin=False):
     """
-    Get team standings as a list of tuples containing team_id, team_name, and score e.g. [(team_id, team_name, score)].
+    Get standings as a list of tuples containing account_id, name, and score e.g. [(account_id, team_name, score)].
 
     Ties are broken by who reached a given score first based on the solve ID. Two users can have the same score but one
     user will have a solve ID that is before the others. That user will be considered the tie-winner.
 
     Challenges & Awards with a value of zero are filtered out of the calculations to avoid incorrect tie breaks.
     """
+    Model = get_model()
+
     scores = db.session.query(
-        Solves.team_id.label('team_id'),
+        Solves.account_id.label('account_id'),
         db.func.sum(Challenges.value).label('score'),
         db.func.max(Solves.id).label('id'),
         db.func.max(Solves.date).label('date')
     ).join(Challenges) \
         .filter(Challenges.value != 0) \
-        .group_by(Solves.team_id)
+        .group_by(Solves.account_id)
 
     awards = db.session.query(
-        Awards.team_id.label('team_id'),
+        Awards.account_id.label('account_id'),
         db.func.sum(Awards.value).label('score'),
         db.func.max(Awards.id).label('id'),
         db.func.max(Awards.date).label('date')
     ) \
         .filter(Awards.value != 0) \
-        .group_by(Awards.team_id)
+        .group_by(Awards.account_id)
 
     """
     Filter out solves and awards that are before a specific time point.
@@ -60,11 +52,11 @@ def get_team_standings(admin=False, count=None):
     Sum each of the results by the team id to get their score.
     """
     sumscores = db.session.query(
-        results.columns.team_id,
+        results.columns.account_id,
         db.func.sum(results.columns.score).label('score'),
         db.func.max(results.columns.id).label('id'),
         db.func.max(results.columns.date).label('date')
-    ).group_by(results.columns.team_id) \
+    ).group_by(results.columns.account_id) \
         .subquery()
 
     """
@@ -77,22 +69,22 @@ def get_team_standings(admin=False, count=None):
     """
     if admin:
         standings_query = db.session.query(
-            Teams.id.label('team_id'),
-            Teams.name.label('name'),
-            Teams.hidden,
-            Teams.banned,
+            Model.id.label('account_id'),
+            Model.name.label('name'),
+            Model.hidden,
+            Model.banned,
             sumscores.columns.score
         ) \
-            .join(sumscores, Teams.id == sumscores.columns.team_id) \
+            .join(sumscores, Model.id == sumscores.columns.account_id) \
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
     else:
         standings_query = db.session.query(
-            Teams.id.label('team_id'),
-            Teams.name.label('name'),
+            Model.id.label('account_id'),
+            Model.name.label('name'),
             sumscores.columns.score
         ) \
-            .join(sumscores, Teams.id == sumscores.columns.team_id) \
-            .filter(Teams.banned == False, Teams.hidden == False) \
+            .join(sumscores, Model.id == sumscores.columns.account_id) \
+            .filter(Model.banned == False, Model.hidden == False) \
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
     """
@@ -102,6 +94,6 @@ def get_team_standings(admin=False, count=None):
         standings = standings_query.all()
     else:
         standings = standings_query.limit(count).all()
-    db.session.close()
 
+    db.session.close()
     return standings

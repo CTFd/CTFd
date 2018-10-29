@@ -1,20 +1,23 @@
 <form method="POST" action="{{ script_root }}/admin/challenges/new" enctype="multipart/form-data">
 	<div class="form-group">
 		<label for="name">Name
-			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="The name of your challenge"></i>
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right"
+			   title="The name of your challenge"></i>
 		</label>
 		<input type="text" class="form-control" name="name" placeholder="Enter challenge name">
 	</div>
 	<div class="form-group">
 		<label for="category">Category
-			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="The category of your challenge"></i>
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right"
+			   title="The category of your challenge"></i>
 		</label>
 		<input type="text" class="form-control" name="category" placeholder="Enter challenge category">
 	</div>
 
 	<ul class="nav nav-tabs" role="tablist" id="new-desc-edit">
 		<li class="nav-item">
-			<a class="nav-link active" href="#new-desc-write" aria-controls="home" role="tab" data-toggle="tab">Write</a>
+			<a class="nav-link active" href="#new-desc-write" aria-controls="home" role="tab"
+			   data-toggle="tab">Write</a>
 		</li>
 		<li class="nav-item">
 			<a class="nav-link" href="#new-desc-preview" aria-controls="home" role="tab" data-toggle="tab">Preview</a>
@@ -25,7 +28,9 @@
 		<div role="tabpanel" class="tab-pane active" id="new-desc-write">
 			<div class="form-group">
 				<label for="message-text" class="control-label">Message:
-					<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="Use this to give a brief introduction to your challenge. The description supports HTML and Markdown."></i>
+					<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip"
+					   data-placement="right"
+					   title="Use this to give a brief introduction to your challenge. The description supports HTML and Markdown."></i>
 				</label>
 				<textarea id="new-desc-editor" class="form-control" name="description" rows="10"></textarea>
 			</div>
@@ -36,16 +41,18 @@
 
 	<div class="form-group">
 		<label for="value">Value
-			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="This is how many points are rewarded for solving this challenge."></i>
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right"
+			   title="This is how many points are rewarded for solving this challenge."></i>
 		</label>
 		<input type="number" class="form-control" name="value" placeholder="Enter value" required>
 	</div>
 
 	<div class="form-group">
 		<label>Flag
-			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="This is the flag or solution for your challenge. You can choose whether your flag is a static string or a regular expression."></i>
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right"
+			   title="This is the flag or solution for your challenge. You can choose whether your flag is a static string or a regular expression."></i>
 		</label>
-		<input type="text" class="form-control" name="key" placeholder="Enter flag">
+		<input type="text" class="form-control" name="content" placeholder="Enter flag">
 	</div>
 
 	<div class="form-group">
@@ -76,7 +83,8 @@
 	<div class="form-group">
 		<div id="solve-attempts-input" style="display: none;">
 			<label for="max_attempts">Maximum Attempts
-				<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="How many attempts should a user have for this challenge? For unlimited attempts, use the value 0"></i>
+				<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right"
+				   title="How many attempts should a user have for this challenge? For unlimited attempts, use the value 0"></i>
 			</label>
 			<input class="form-control" id='max_attempts' name='max_attempts' type='number' placeholder="0">
 		</div>
@@ -84,7 +92,8 @@
 
 	<div class="form-group">
 		<label>Upload Challenge Files
-			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="Challenges files are provided to users for download alongside your challenge description"></i>
+			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right"
+			   title="Challenges files are provided to users for download alongside your challenge description"></i>
 		</label>
 		<input class="form-control-file" type="file" name="files[]" multiple="multiple">
 		<sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>

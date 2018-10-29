@@ -2,7 +2,8 @@ var challenges = {};
 window.challenge = new Object();
 
 function load_chal_template(id, success_cb){
-    $.get(script_root + "/api/v1/challenges/" + id, function (obj) {
+    $.get(script_root + "/api/v1/challenges/" + id, function (response) {
+        var obj = response.data;
         $.getScript(script_root + obj.type_data.scripts.modal, function () {
             console.log('loaded renderer');
             $.get(script_root + obj.type_data.templates.update, function (template_data) {
@@ -30,7 +31,8 @@ function load_challenge_preview(id){
 
 function render_challenge_preview(chal_id){
     var preview_window = $('#challenge-preview');
-    $.get(script_root + "/api/v1/challenges/" + chal_id, function(obj){
+    $.get(script_root + "/api/v1/challenges/" + chal_id, function(response){
+        var obj = response.data;
         $.getScript(script_root + obj.type_data.scripts.modal, function () {
             console.log('loaded renderer');
 
@@ -64,7 +66,7 @@ function render_challenge_preview(chal_id){
                     }
                 });
 
-                window.challenge.postRender()
+                window.challenge.postRender();
 
                 preview_window.modal();
             });
@@ -74,7 +76,8 @@ function render_challenge_preview(chal_id){
 
 
 function loadsolves(id) {
-    $.get(script_root + '/api/v1/challenges/' + id + '/solves', function (data) {
+    $.get(script_root + '/api/v1/challenges/' + id + '/solves', function (response) {
+        var data = response.data;
         var box = $('#challenge-solves-body');
         var modal = $('#challenge-solves-modal');
         box.empty();
@@ -85,34 +88,6 @@ function loadsolves(id) {
             box.append('<tr><td><a href="team/{0}">{1}</td><td><small>{2}</small></td></tr>'.format(id, htmlentities(name), date));
         }
         modal.modal();
-    });
-}
-
-
-function loadhint(hintid) {
-    var md = window.markdownit({
-        html: true,
-    });
-    ezq({
-        title: "Unlock Hint?",
-        body: "Are you sure you want to open this hint?",
-        success: function () {
-            $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function (data) {
-                if (data.errors) {
-                    ezal({
-                        title: "Error!",
-                        body: data.errors,
-                        button: "Okay"
-                    });
-                } else {
-                    ezal({
-                        title: "Hint",
-                        body: md.render(data.hint),
-                        button: "Got it!"
-                    });
-                }
-            });
-        }
     });
 }
 

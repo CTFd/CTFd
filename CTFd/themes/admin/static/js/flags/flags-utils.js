@@ -1,5 +1,6 @@
 function load_edit_key_modal(flag_id) {
     $.get(script_root + '/api/v1/flags/' + flag_id, function (flag_data) {
+        var flag_data = flag_data.data;
         $.get(script_root + flag_data.templates.update, function (template_data) {
             $('#edit-flags').empty();
             var template = nunjucks.compile(template_data);
@@ -32,7 +33,8 @@ function create_key(challenge_id, chal_data) {
 }
 
 function loadkeys(challenge_id, cb){
-    $.get(script_root + '/api/v1/challenges/' + challenge_id + '/flags', function(flags){
+    $.get(script_root + '/api/v1/challenges/' + challenge_id + '/flags', function(response){
+        var flags = response.data;
         $('#keys-chal').val(challenge_id);
         $('#current-keys').empty();
         $.get(script_root + "/themes/admin/static/js/templates/admin-flags-table.njk", function(data){
@@ -51,7 +53,8 @@ function loadkeys(challenge_id, cb){
 
 
 function deletekey(flag_id){
-    $.delete(script_root + '/api/v1/flags/'+flag_id, function(data){
+    $.delete(script_root + '/api/v1/flags/'+flag_id, function(response){
+        var data = response.data;
         if (data.success) {
             $('tr[name={0}]'.format(flag_id)).remove();
         }
@@ -79,7 +82,7 @@ function updatekey(){
         body: JSON.stringify(params)
     }).then(function (response) {
         return response.json();
-    }).then(function (data) {
+    }).then(function (response) {
         loadkeys(challenge_id);
         $('#edit-flags').modal('toggle');
     });
@@ -97,7 +100,8 @@ $(document).ready(function () {
 
 
     $('#create-key').click(function (e) {
-        $.get(script_root + '/api/v1/flags/types', function (data) {
+        $.get(script_root + '/api/v1/flags/types', function (response) {
+            var data = response.data;
             $("#create-keys-select").empty();
             var option = "<option> -- </option>";
             $("#create-keys-select").append(option);

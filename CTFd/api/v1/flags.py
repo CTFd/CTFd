@@ -7,7 +7,6 @@ from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
-    viewable_without_authentication,
     admins_only
 )
 from sqlalchemy.sql import or_
@@ -22,24 +21,40 @@ class FlagList(Resource):
         # TODO: Sort by challenge ID
         flags = Flags.query.all()
         schema = FlagSchema(many=True)
-        result = schema.dump(flags)
-        return result.data
+        response = schema.dump(flags)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def post(self):
         req = request.get_json()
         schema = FlagSchema()
-        flag = schema.load(req, session=db.session)
+        response = schema.load(req, session=db.session)
 
-        if flag.errors:
-            return flag.errors
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
-        db.session.add(flag.data)
+        db.session.add(response.data)
         db.session.commit()
-        response = schema.dump(flag)
+
+        response = schema.dump(response.data)
         db.session.close()
 
-        return response
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @flags_namespace.route('/types', defaults={'type_name': None})
@@ -53,7 +68,10 @@ class FlagTypes(Resource):
                 'name': flag_class.name,
                 'templates': flag_class.templates
             }
-            return response
+            return {
+                'success': True,
+                'data': response
+            }
         else:
             response = {}
             for class_id in FLAG_CLASSES:
@@ -62,7 +80,10 @@ class FlagTypes(Resource):
                     'name': flag_class.name,
                     'templates': flag_class.templates,
                 }
-            return response
+            return {
+                'success': True,
+                'data': response
+            }
 
 
 @flags_namespace.route('/<flag_id>')
@@ -71,24 +92,33 @@ class Flag(Resource):
     def get(self, flag_id):
         # TODO: Perhaps flag plugins should be similar to challenges and have CRUD methods
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
-        response = FlagSchema().dump(flag)
+        schema = FlagSchema()
+        response = schema.dump(flag)
+
         if response.errors:
-            return response.errors
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
         response.data['templates'] = get_flag_class(flag.type).templates
-        return response.data
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def delete(self, flag_id):
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
+
         db.session.delete(flag)
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True
         }
-        return response
 
     @admins_only
     def patch(self, flag_id):
@@ -96,11 +126,20 @@ class Flag(Resource):
         schema = FlagSchema()
         req = request.get_json()
 
-        flag = schema.load(req, session=db.session, instance=flag, partial=True)
-        if flag.errors:
-            return flag.errors
+        response = schema.load(req, session=db.session, instance=flag, partial=True)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
         db.session.commit()
-        response = schema.dump(flag.data)
+
+        response = schema.dump(response.data)
         db.session.close()
-        return response
+
+        return {
+            'success': True,
+            'data': response.data
+        }

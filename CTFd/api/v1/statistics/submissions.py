@@ -18,9 +18,13 @@ class SubmissionPropertyCounts(Resource):
                 .with_entities(prop, func.count(prop)) \
                 .group_by(prop) \
                 .all()
-            return dict(data)
+            return {
+                'success': True,
+                'data': dict(data)
+            }
         else:
             response = {
-                'message': 'That could not be found'
+                'success': False,
+                'errors': 'That could not be found'
             }, 404
             return response

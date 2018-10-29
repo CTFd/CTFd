@@ -12,28 +12,32 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 offset-md-3 text-center">
-				<p>Welcome to {{ ctf_name() }}!</p>
-
+				<p>Welcome to {{ get_ctf_name() }}!</p>
 				<p>
 					In order to participate you must either join or create a team.
 				</p>
 			</div>
 		</div>
 		<div class="row">
+			<div class="col-md-6 offset-md-3 text-center">
+				<a class="btn btn-primary w-100" href="">Play with Official Team</a>
+			</div>
+		</div>
+		<div class="row pt-3">
 			<div class="col-md-3 offset-md-3 text-center">
-				<a class="btn btn-primary" href="{{ url_for('teams.join') }}">Join Team</a>
+				<a class="btn btn-light w-100" href="{{ url_for('teams.join') }}">Join Unofficial Team</a>
 			</div>
 			<div class="col-md-3 text-center">
-				<a class="btn btn-success" href="{{ url_for('teams.new') }}">Create Team</a>
+				<a class="btn btn-light w-100" href="{{ url_for('teams.new') }}">Create Unofficial Team</a>
 			</div>
 		</div>
 	</div>
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/plotly.min.js"></script>
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/utils.js"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/plotly.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/utils.js') }}"></script>
 	{% if solves %}
-		<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/team.js"></script>
+		<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/team.js') }}"></script>
 	{% endif %}
 {% endblock %}

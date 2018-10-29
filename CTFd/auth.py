@@ -8,13 +8,14 @@ from CTFd.utils import get_config, get_app_config
 from CTFd.utils.encoding import base64encode, base64decode
 from CTFd.utils.decorators import ratelimit
 from CTFd.utils import user as current_user
-from CTFd.utils import config, validators, email
-from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils import config, validators
+from CTFd.utils import email
+from CTFd.utils.security.auth import login_user, logout_user
+from CTFd.utils.logging import log
+from CTFd.utils.decorators.visibility import check_registration_visibility
 
 import base64
-import logging
 import requests
-import time
 
 auth = Blueprint('auth', __name__)
 
@@ -25,9 +26,8 @@ auth = Blueprint('auth', __name__)
 def confirm(data=None):
     if not get_config('verify_emails'):
         # If the CTF doesn't care about confirming email addresses then redierct to challenges
-        return redirect(url_for('challenges.challenges_view'))
+        return redirect(url_for('challenges.listing'))
 
-    logger = logging.getLogger('regs')
     # User is confirming email account
     if data and request.method == "GET":
         try:
@@ -39,16 +39,11 @@ def confirm(data=None):
             return render_template('confirm.html', errors=['Your confirmation token is invalid'])
         team = Users.query.filter_by(email=user_email).first_or_404()
         team.verified = True
+        log('registrations', format="[{date}] {ip} -  successful password reset for {username}")
         db.session.commit()
-        logger.warn("[{date}] {ip} - {username} confirmed their account".format(
-            date=time.strftime("%m/%d/%Y %X"),
-            ip=current_user.get_ip(),
-            username=team.name.encode('utf-8'),
-            email=team.email.encode('utf-8')
-        ))
         db.session.close()
         if current_user.authed():
-            return redirect(url_for('challenges.challenges_view'))
+            return redirect(url_for('challenges.listing'))
         return redirect(url_for('auth.login'))
 
     # User is trying to start or restart the confirmation flow
@@ -64,12 +59,7 @@ def confirm(data=None):
                 return redirect(url_for('views.profile'))
             else:
                 email.verify_email_address(team.email)
-                logger.warn("[{date}] {ip} - {username} initiated a confirmation email resend".format(
-                    date=time.strftime("%m/%d/%Y %X"),
-                    ip=current_user.get_ip(),
-                    username=team.name.encode('utf-8'),
-                    email=team.email.encode('utf-8')
-                ))
+                log('registrations', format="[{date}] {ip} - {username} initiated a confirmation email resend")
             return render_template('confirm.html', team=team, infos=['Your confirmation email has been resent!'])
         elif request.method == "GET":
             # User has been directed to the confirm page
@@ -80,13 +70,10 @@ def confirm(data=None):
             return render_template('confirm.html', team=team)
 
 
-# TODO: Maybe consider renaming this to just /reset. Includes the function name as well
 @auth.route('/reset_password', methods=['POST', 'GET'])
 @auth.route('/reset_password/<data>', methods=['POST', 'GET'])
 @ratelimit(method="POST", limit=10, interval=60)
 def reset_password(data=None):
-    logger = logging.getLogger('logins')
-
     if data is not None:
         try:
             s = TimedSerializer(app.config['SECRET_KEY'])
@@ -102,11 +89,7 @@ def reset_password(data=None):
             team = Users.query.filter_by(name=name).first_or_404()
             team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
             db.session.commit()
-            logger.warn("[{date}] {ip} -  successful password reset for {username}".format(
-                date=time.strftime("%m/%d/%Y %X"),
-                ip=current_user.get_ip(),
-                username=team.name.encode('utf-8')
-            ))
+            log('logins', format="[{date}] {ip} -  successful password reset for {username}")
             db.session.close()
             return redirect(url_for('auth.login'))
 
@@ -138,27 +121,36 @@ def reset_password(data=None):
 
 
 @auth.route('/register', methods=['POST', 'GET'])
+@check_registration_visibility
 @ratelimit(method="POST", limit=10, interval=5)
 def register():
-    logger = logging.getLogger('regs')
-    if not config.can_register():
-        return redirect(url_for('auth.login'))
     if request.method == 'POST':
         errors = []
         name = request.form['name']
-        email = request.form['email']
+        email_address = request.form['email']
         password = request.form['password']
 
         name_len = len(name) == 0
         names = Users.query.add_columns('name', 'id').filter_by(name=name).first()
-        emails = Users.query.add_columns('email', 'id').filter_by(email=email).first()
+        emails = Users.query.add_columns('email', 'id').filter_by(email=email_address).first()
         pass_short = len(password) == 0
         pass_long = len(password) > 128
         valid_email = validators.validate_email(request.form['email'])
         team_name_email_check = validators.validate_email(name)
 
+        local_id, _, domain = email_address.partition('@')
+
+        domain_whitelist = get_config('domain_whitelist')
+
         if not valid_email:
             errors.append("Please enter a valid email address")
+        if domain_whitelist:
+            domain_whitelist = domain_whitelist.split(',')
+            if domain not in domain_whitelist:
+                errors.append(
+                    "Only email addresses under {domains} may register".format(
+                        domains=', '.join(domain_whitelist))
+                )
         if names:
             errors.append('That team name is already taken')
         if team_name_email_check is True:
@@ -173,48 +165,41 @@ def register():
             errors.append('Pick a longer team name')
 
         if len(errors) > 0:
-            return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
+            return render_template(
+                'register.html',
+                errors=errors,
+                name=request.form['name'],
+                email=request.form['email'],
+                password=request.form['password']
+            )
         else:
             with app.app_context():
                 user = Users(
                     name=name.strip(),
-                    email=email.lower(),
+                    email=email_address.lower(),
                     password=password.strip()
                 )
                 db.session.add(user)
                 db.session.commit()
                 db.session.flush()
 
-                session['username'] = user.name
-                session['email'] = user.email
-                session['id'] = user.id
-                session['type'] = user.type
-                session['admin'] = user.admin
-                session['nonce'] = generate_nonce()
+                login_user(user)
 
                 if config.can_send_mail() and get_config('verify_emails'):  # Confirming users is enabled and we can send email.
-                    logger = logging.getLogger('regs')
-                    logger.warn("[{date}] {ip} - {username} registered (UNCONFIRMED) with {email}".format(
-                        date=time.strftime("%m/%d/%Y %X"),
-                        ip=current_user.get_ip(),
-                        username=request.form['name'].encode('utf-8'),
-                        email=request.form['email'].encode('utf-8')
-                    ))
-                    email.verify_email_address(user.email)
+                    log('registrations', format="[{date}] {ip} - {name} registered (UNCONFIRMED) with {email}")
+                    email_address.verify_email_address(user.email)
                     db.session.close()
                     return redirect(url_for('auth.confirm'))
                 else:  # Don't care about confirming users
                     if config.can_send_mail():  # We want to notify the user that they have registered.
-                        email.sendmail(request.form['email'], "You've successfully registered for {}".format(get_config('ctf_name')))
+                        email_address.sendmail(
+                            request.form['email'],
+                            "You've successfully registered for {}".format(get_config('ctf_name'))
+                        )
 
-        logger.warn("[{date}] {ip} - {username} registered with {email}".format(
-            date=time.strftime("%m/%d/%Y %X"),
-            ip=current_user.get_ip(),
-            username=request.form['name'].encode('utf-8'),
-            email=request.form['email'].encode('utf-8')
-        ))
+        log('registrations', "[{date}] {ip} - {name} registered with {email}")
         db.session.close()
-        return redirect(url_for('challenges.challenges_view'))
+        return redirect(url_for('challenges.listing'))
     else:
         return render_template('register.html')
 
@@ -222,7 +207,6 @@ def register():
 @auth.route('/login', methods=['POST', 'GET'])
 @ratelimit(method="POST", limit=10, interval=5)
 def login():
-    logger = logging.getLogger('logins')
     if request.method == 'POST':
         errors = []
         name = request.form['name']
@@ -239,43 +223,27 @@ def login():
                     session.regenerate()  # NO SESSION FIXATION FOR YOU
                 except:
                     pass  # TODO: Some session objects don't implement regenerate :(
-                session['username'] = user.name
-                session['email'] = user.email
-                session['id'] = user.id
-                session['type'] = user.type
-                session['admin'] = user.admin
-                session['nonce'] = generate_nonce()
+
+                login_user(user)
+                log('logins', "[{date}] {ip} - {name} logged in")
+
                 db.session.close()
-
-                logger.warn("[{date}] {ip} - {username} logged in".format(
-                    date=time.strftime("%m/%d/%Y %X"),
-                    ip=current_user.get_ip(),
-                    username=session['username'].encode('utf-8')
-                ))
-
                 if request.args.get('next') and validators.is_safe_url(request.args.get('next')):
                     return redirect(request.args.get('next'))
-                return redirect(url_for('challenges.challenges_view'))
+                return redirect(url_for('challenges.listing'))
 
-            else:  # This user exists but the password is wrong
-                logger.warn("[{date}] {ip} - submitted invalid password for {username}".format(
-                    date=time.strftime("%m/%d/%Y %X"),
-                    ip=current_user.get_ip(),
-                    username=user.name.encode('utf-8')
-                ))
+            else:
+                # This user exists but the password is wrong
+                log('logins', "[{date}] {ip} - submitted invalid password for {name}")
                 errors.append("Your username or password is incorrect")
                 db.session.close()
                 return render_template('login.html', errors=errors)
-
-        else:  # This user just doesn't exist
-            logger.warn("[{date}] {ip} - submitted invalid account information".format(
-                date=time.strftime("%m/%d/%Y %X"),
-                ip=current_user.get_ip()
-            ))
+        else:
+            # This user just doesn't exist
+            log('logins', "[{date}] {ip} - submitted invalid account information")
             errors.append("Your username or password is incorrect")
             db.session.close()
             return render_template('login.html', errors=errors)
-
     else:
         db.session.close()
         return render_template('login.html')
@@ -347,13 +315,9 @@ def oauth_redirect():
 
             team.members.append(user)
 
-            session['id'] = user.id
-            session['username'] = user.name
-            session['email'] = user.email
-            session['admin'] = user.admin
-            session['nonce'] = generate_nonce()
+            login_user(user)
 
-            return redirect(url_for('challenges.challenges_view'))
+            return redirect(url_for('challenges.listing'))
     else:
         # TODO: Change this to redirect back to login with an error
         abort(500)
@@ -362,5 +326,5 @@ def oauth_redirect():
 @auth.route('/logout')
 def logout():
     if current_user.authed():
-        session.clear()
+        logout_user()
     return redirect(url_for('views.static_html'))

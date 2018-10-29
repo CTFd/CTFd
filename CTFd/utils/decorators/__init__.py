@@ -1,7 +1,10 @@
 from flask import request, redirect, url_for, session, abort, jsonify
-from CTFd.utils import config, cache, get_config, get_app_config
+from CTFd.utils import config, get_config, get_app_config
+from CTFd.cache import cache
 from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime
 from CTFd.utils import user as current_user
+from CTFd.utils.user import get_current_user, get_current_team, is_admin, authed
+from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
 import functools
 
 
@@ -18,11 +21,8 @@ def during_ctf_time_only(f):
             return f(*args, **kwargs)
         else:
             if ctf_ended():
-                if config.view_after_ctf():
-                    return f(*args, **kwargs)
-                else:
-                    error = '{} has ended'.format(config.ctf_name())
-                    abort(403, description=error)
+                error = '{} has ended'.format(config.ctf_name())
+                abort(403, description=error)
 
             if ctf_started() is False:
                 error = '{} has not started yet'.format(config.ctf_name())
@@ -62,31 +62,6 @@ def require_verified_emails(f):
     return _require_verified_emails
 
 
-def viewable_without_authentication(status_code=None, message=None):
-    """
-    Decorator that allows users to view the specified endpoint if viewing challenges without authentication is enabled
-    :param status_code:
-    :param message:
-    :return:
-    """
-
-    def viewable_without_authentication_decorator(f):
-        @functools.wraps(f)
-        def _viewable_without_authentication(*args, **kwargs):
-            if config.user_can_view_challenges():
-                return f(*args, **kwargs)
-            else:
-                if status_code:
-                    if status_code == 403:
-                        error = message or "An authorization error has occured"
-                    abort(status_code, description=error)
-                return redirect(url_for('auth.login', next=request.path))
-
-        return _viewable_without_authentication
-
-    return viewable_without_authentication_decorator
-
-
 def authed_only(f):
     """
     Decorator that requires the user to be authenticated
@@ -96,7 +71,7 @@ def authed_only(f):
 
     @functools.wraps(f)
     def authed_only_wrapper(*args, **kwargs):
-        if session.get('id'):
+        if authed():
             return f(*args, **kwargs)
         else:
             return redirect(url_for('auth.login', next=request.path))
@@ -113,12 +88,24 @@ def admins_only(f):
 
     @functools.wraps(f)
     def admins_only_wrapper(*args, **kwargs):
-        if session.get('admin'):
+        if is_admin():
             return f(*args, **kwargs)
         else:
             return redirect(url_for('auth.login', next=request.path))
 
     return admins_only_wrapper
+
+
+def require_team(f):
+    @functools.wraps(f)
+    def require_team_wrapper(*args, **kwargs):
+        if get_config('user_mode') == TEAMS_MODE:
+            team = get_current_team()
+            if team is None:
+                return redirect(url_for('teams.private', next=request.path))
+        return f(*args, **kwargs)
+
+    return require_team_wrapper
 
 
 def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):

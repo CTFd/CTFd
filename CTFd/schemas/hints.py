@@ -8,6 +8,7 @@ from CTFd.models import ma, Hints
 class HintSchema(ma.ModelSchema):
     class Meta:
         model = Hints
+        include_fk = True
         dump_only = ('id', 'type')
 
     views = {

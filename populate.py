@@ -4,14 +4,20 @@
 import datetime
 import hashlib
 import random
+import sys
 
 from CTFd import create_app
 from CTFd.models import *
 
+try:
+    mode = sys.argv[1]
+except IndexError:
+    mode = 'teams'
+
 app = create_app()
 
 USER_AMOUNT = 50
-TEAM_AMOUNT = 10
+TEAM_AMOUNT = 10 if mode == 'teams' else 0
 CHAL_AMOUNT = 20
 AWARDS_AMOUNT = 5
 
@@ -289,7 +295,8 @@ if __name__ == '__main__':
                         password='password'
                     )
                     user.verified = True
-                    user.team_id = random.randint(1, TEAM_AMOUNT)
+                    if mode == 'teams':
+                        user.team_id = random.randint(1, TEAM_AMOUNT)
                     db.session.add(user)
                     count += 1
                 except:
@@ -299,28 +306,58 @@ if __name__ == '__main__':
 
         # Generating Solves
         print("GENERATING SOLVES")
-        for x in range(USER_AMOUNT):
-            used = []
-            base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
-            for y in range(random.randint(1, CHAL_AMOUNT)):
-                chalid = random.randint(1, CHAL_AMOUNT)
-                if chalid not in used:
-                    used.append(chalid)
-                    user = Users.query.filter_by(id=x+1).first()
-                    solve = Solves(
-                        user_id=user.id,
-                        team_id=user.team_id,
-                        challenge_id=chalid,
-                        ip='127.0.0.1',
-                        provided=gen_word()
-                    )
+        if mode == 'users':
+            for x in range(USER_AMOUNT):
+                used = []
+                base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
+                for y in range(random.randint(1, CHAL_AMOUNT)):
+                    chalid = random.randint(1, CHAL_AMOUNT)
+                    if chalid not in used:
+                        used.append(chalid)
+                        user = Users.query.filter_by(id=x+1).first()
+                        solve = Solves(
+                            user_id=user.id,
+                            team_id=user.team_id,
+                            challenge_id=chalid,
+                            ip='127.0.0.1',
+                            provided=gen_word()
+                        )
 
-                    new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
-                    solve.date = new_base
-                    base_time = new_base
+                        new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
+                        solve.date = new_base
+                        base_time = new_base
 
-                    db.session.add(solve)
-                    db.session.commit()
+                        db.session.add(solve)
+                        db.session.commit()
+        elif mode == 'teams':
+            for x in range(1, TEAM_AMOUNT):
+                used_teams = []
+                used_users = []
+                base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
+                team = Teams.query.filter_by(id=x).first()
+                members_ids = [member.id for member in team.members]
+                for y in range(random.randint(1, CHAL_AMOUNT)):
+                    chalid = random.randint(1, CHAL_AMOUNT)
+                    user_id = random.choice(members_ids)
+                    if (chalid, team.id) not in used_teams:
+                        if (chalid, user_id) not in used_users:
+                            solve = Solves(
+                                user_id=user_id,
+                                team_id=team.id,
+                                challenge_id=chalid,
+                                ip='127.0.0.1',
+                                provided=gen_word()
+                            )
+                            new_base = random_date(
+                                base_time,
+                                base_time + datetime.timedelta(minutes=random.randint(30, 60))
+                            )
+                            solve.date = new_base
+                            base_time = new_base
+                            db.session.add(solve)
+                            db.session.commit()
+                            used_teams.append((chalid, team.id))
+                            used_users.append((chalid, user_id))
 
         db.session.commit()
 

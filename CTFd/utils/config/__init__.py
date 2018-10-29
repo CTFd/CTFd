@@ -1,6 +1,6 @@
 from flask import current_app as app
 from CTFd.models import Configs, Users, Teams
-from CTFd.utils import cache
+from CTFd.cache import cache
 from CTFd.utils import get_config
 from CTFd.utils.user import authed
 import time
@@ -34,9 +34,11 @@ def user_mode():
     return get_config('user_mode')
 
 
+# TODO: Not sure if this needs to be removed or if it should stay.
+# It might be best to just lean on the freeze logic.
 @cache.memoize()
 def hide_scores():
-    return get_config('hide_scores') or get_config('workshop_mode')
+    return get_config('hide_scores')
 
 
 @cache.memoize()
@@ -49,16 +51,6 @@ def is_setup():
 
 
 @cache.memoize()
-## TODO: Rename to registration_allowed
-def can_register():
-    return not bool(get_config('prevent_registration'))
-
-
-@cache.memoize()
-def view_after_ctf():
-    return bool(get_config('view_after_ctf'))
-
-
 def is_scoreboard_frozen():
     freeze = get_config('freeze')
 
@@ -86,22 +78,14 @@ def mailgun():
 
 @cache.memoize()
 def mailserver():
+    if app.config.get('MAIL_SERVER') and app.config.get('MAIL_PORT'):
+        return True
     if get_config('mail_server') and get_config('mail_port'):
         return True
     return False
 
 
-def user_can_view_challenges():
-    # TODO: This function could use a rename or a rewrite
-    config = bool(get_config('view_challenges_unregistered'))
-    verify_emails = bool(get_config('verify_emails'))
-    if config:
-        return authed() or config
-    else:
-        return authed()
-
-
+@cache.memoize()
 def get_themes():
     dir = os.path.join(app.root_path, 'themes')
-    return [name for name in os.listdir(dir)
-            if os.path.isdir(os.path.join(dir, name)) and name != 'admin']
+    return [name for name in os.listdir(dir) if os.path.isdir(os.path.join(dir, name)) and name != 'admin']

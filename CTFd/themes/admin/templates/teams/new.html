@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>
+			Create Team
+		</h1>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			{% include "admin/modals/teams/create.html" %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ url_for('views.themes', theme='admin', path='js/teams/new.js') }}"></script>
+{% endblock %}

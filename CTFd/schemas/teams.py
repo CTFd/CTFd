@@ -3,7 +3,7 @@ from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError, pre_load
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Teams
-from CTFd.utils.validators import unique_team_name, validate_country_code
+from CTFd.utils.validators import validate_country_code
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.user import is_admin, get_current_team
 
@@ -11,6 +11,7 @@ from CTFd.utils.user import is_admin, get_current_team
 class TeamSchema(ma.ModelSchema):
     class Meta:
         model = Teams
+        include_fk = True
         dump_only = ('id', 'oauth_id', 'created', 'members')
         load_only = ('password',)
 
@@ -44,29 +45,40 @@ class TeamSchema(ma.ModelSchema):
     )
 
     @pre_load
-    def validate_parameters(self, data):
-        obj = Teams.query.filter_by(id=data['id']).first()
+    def validate_name(self, data):
+        existing_team = Teams.query.filter_by(name=data['name']).first()
+        # Admins should be able to patch anyone but they cannot cause a collision.
+        if is_admin():
+            team_id = int(data.get('id', 0))
+            if existing_team.id != team_id:
+                raise ValidationError('Team name has already been taken')
+        else:
+            current_team = get_current_team()
+            # We need to allow teams to edit themselves and allow the "conflict"
+            if data['name'] == current_team.name:
+                return data
+            else:
+                if existing_team:
+                    raise ValidationError('Team name has already been taken')
 
+    @pre_load
+    def validate_email(self, data):
+        email = data.get('email')
+        if email is None:
+            return
+        obj = Teams.query.filter_by(email=email).first()
         if obj:
-            email = data.get('email')
-            if email:
-                if is_admin():
-                    target_user = Teams.query.filter_by(email=email).first()
-                    if target_user and obj.id != target_user.id:
-                        raise ValidationError('Email address has already been used')
+            if is_admin():
+                if data.get('id'):
+                    target_user = Teams.query.filter_by(id=data['id']).first()
                 else:
-                    if obj.id != get_current_team().id:
-                        raise ValidationError('Email address has already been used')
+                    target_user = get_current_team()
 
-            name = data.get('name')
-            if name:
-                if is_admin():
-                    target_user = Teams.query.filter_by(name=name).first()
-                    if target_user and obj.id != target_user.id:
-                        raise ValidationError('Team name has already been taken')
-                else:
-                    if obj.id != get_current_team().id:
-                        raise ValidationError('Team name has already been taken')
+                if target_user and obj.id != target_user.id:
+                    raise ValidationError('Email address has already been used', field_names=['email'])
+            else:
+                if obj.id != get_current_team().id:
+                    raise ValidationError('Email address has already been used', field_names=['email'])
 
     views = {
         'user': [

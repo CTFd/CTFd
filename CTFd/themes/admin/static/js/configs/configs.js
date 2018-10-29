@@ -94,11 +94,72 @@ function update_configs(obj){
     });
 }
 
+function upload_logo(form) {
+    upload_files(form, function (response) {
+        var upload = response.data[0];
+        if (upload.location) {
+            var params = {
+                'value': upload.location
+            };
+            fetch(script_root + '/api/v1/configs/ctf_logo', {
+                method: 'PATCH',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            }).then(function (response) {
+                return response.json();
+            }).then(function (response) {
+                if (response.success) {
+                    window.location.reload()
+                } else {
+                    ezal({
+                        title: "Error!",
+                        body: "Logo uploading failed!",
+                        button: "Okay"
+                    });
+                }
+            });
+        }
+    });
+}
+
+function remove_logo() {
+    ezq({
+        title: "Remove logo",
+        body: "Are you sure you'd like to remove the CTF logo?",
+        success: function () {
+            var params = {
+                'value': null
+            };
+            fetch(script_root + '/api/v1/configs/ctf_logo', {
+                method: 'PATCH',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            }).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                window.location.reload();
+            });
+        }
+    });
+}
+
 $(function () {
     $('.config-section > form:not(.form-upload)').submit(function(e){
         e.preventDefault();
         var obj = $(this).serializeJSON();
         update_configs(obj);
+    });
+
+    $('#logo-upload').submit(function(e){
+        e.preventDefault();
+        var form = e.target;
+        upload_logo(form);
     });
 
 
@@ -114,6 +175,7 @@ $(function () {
         load_date_values('freeze');
     });
 
+    // TODO: This code is likely not working
     $('#export-button').click(function (e) {
         e.preventDefault();
         var segments = [];
@@ -126,6 +188,7 @@ $(function () {
         window.location.href = $('#export-button').attr('href');
     });
 
+    // TODO: This code is likely not working
     $('#import-button').click(function (e) {
         e.preventDefault();
         var segments = [];

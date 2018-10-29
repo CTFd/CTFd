@@ -1,0 +1,61 @@
+<div role="tabpanel" class="tab-pane config-section" id="backup">
+	<ul class="nav nav-tabs mb-3" role="tablist">
+		<li class="nav-item">
+			<a class="nav-link active" href="#export-ctf" aria-controls="export-ctf" role="tab"
+			   data-toggle="tab">Export</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#import-ctf" aria-controls="import-ctf" role="tab" data-toggle="tab">Import</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link " href="#save-csv" aria-controls="save-csv" role="tab" data-toggle="tab">Download CSV</a>
+		</li>
+	</ul>
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="export-ctf">
+			<div class="form-group">
+				<div class="form-check">
+					<label>
+						<input class="export-config" value="challenges" type="checkbox" checked> Challenges
+					</label>
+				</div>
+				<div class="form-check">
+					<label>
+						<input class="export-config" value="teams" type="checkbox" checked> Teams
+					</label>
+				</div>
+				<div class="form-check">
+					<label>
+						<input class="export-config" value="both" type="checkbox" checked> Solves, Wrong Keys, Unlocks
+					</label>
+				</div>
+				<div class="form-check">
+					<label>
+						<input class="export-config" value="metadata" type="checkbox" checked> Configuration
+					</label>
+				</div>
+				<a href="{{ url_for('admin.export_ctf') }}" id="export-button" class="btn btn-warning">Export</a>
+			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane" id="import-ctf">
+			<div class="form-group">
+				<label for="container-files">Import File</label>
+				<input class="form-control-file" type="file" name="backup" id="import-file" accept=".zip">
+			</div>
+			<input id="import-button" type="submit" class="btn btn-warning" value="Import">
+		</div>
+		<div role="tabpanel" class="tab-pane" id="save-csv">
+			<form method="GET" action="{{ url_for('admin.export_csv') }}">
+				<div class="form-group">
+					<label for="container-files">Database Table</label>
+					<select class="form-control" name="table">
+						{% for table in database_tables %}
+							<option value="{{ table }}">{{ table }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<input type="submit" class="btn btn-warning" value="Download CSV">
+			</form>
+		</div>
+	</div>
+</div>

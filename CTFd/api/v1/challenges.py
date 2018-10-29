@@ -8,7 +8,6 @@ from CTFd.models import (
     Hints,
     Flags,
     Solves,
-    Teams,
     ChallengeFiles as ChallengeFilesModel,
 )
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
@@ -16,30 +15,62 @@ from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
-    viewable_without_authentication,
     admins_only
 )
+from CTFd.utils.decorators.visibility import check_challenge_visibility
+from CTFd.utils.user import get_current_user
+from CTFd.utils.modes import get_model
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.flags import FlagSchema
-from sqlalchemy.sql import or_
+from sqlalchemy.sql import or_, and_, any_
 
 challenges_namespace = Namespace('challenges', description="Endpoint to retrieve Challenges")
 
 
 @challenges_namespace.route('')
 class ChallengeList(Resource):
+    @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
-    @viewable_without_authentication(status_code=403)
     def get(self):
+        user = get_current_user()
+
         challenges = Challenges.query.filter(
-            or_(Challenges.hidden != True, Challenges.hidden == None)
+            and_(Challenges.state != 'hidden', Challenges.state != 'locked')
         ).order_by(Challenges.value).all()
+
+        solve_ids = Solves.query\
+            .with_entities(Solves.challenge_id)\
+            .filter_by(account_id=user.account_id)\
+            .order_by(Solves.challenge_id.asc())\
+            .all()
+        solve_ids = set([value for value, in solve_ids])
 
         response = []
         tag_schema = TagSchema(view='user', many=True)
         for challenge in challenges:
+            requirements = challenge.requirements
+            if requirements:
+                prereqs = set(requirements.get('prerequisites', []))
+                anonymize = requirements.get('anonymize')
+                if solve_ids >= prereqs:
+                    pass
+                else:
+                    if anonymize:
+                        response.append({
+                            'id': challenge.id,
+                            'type': 'hidden',
+                            'name': '???',
+                            'value': 0,
+                            'category': '???',
+                            'tags': [],
+                            'template': '',
+                            'script': ''
+                        })
+                    # Fallthrough to continue
+                    continue
+
             challenge_type = get_chal_class(challenge.type)
             response.append({
                 'id': challenge.id,
@@ -53,7 +84,10 @@ class ChallengeList(Resource):
             })
 
         db.session.close()
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
     @admins_only
     def post(self):
@@ -61,7 +95,10 @@ class ChallengeList(Resource):
         challenge_class = get_chal_class(challenge_type)
         challenge = challenge_class.create(request)
         response = challenge_class.read(challenge)
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @challenges_namespace.route('/types')
@@ -78,15 +115,18 @@ class ChallengeTypes(Resource):
                 'templates': challenge_class.templates,
                 'scripts': challenge_class.scripts,
             }
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @challenges_namespace.route('/<challenge_id>')
 @challenges_namespace.param('challenge_id', 'A Challenge ID')
 class Challenge(Resource):
+    @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
-    @viewable_without_authentication(status_code=403)
     def get(self, challenge_id):
         team_id = session.get('id')
 
@@ -106,20 +146,25 @@ class Challenge(Resource):
 
         challenge, response = chal_class.read(challenge=chal)
 
+        Model = get_model()
+
+        # TODO: Hide solves if config says so
+
+        solves = Solves.query\
+            .join(Model, Solves.account_id == Model.id)\
+            .filter(Solves.challenge_id == chal.id, Model.banned == False, Model.hidden == False)\
+            .count()
+
         response['files'] = files
         response['tags'] = tags
         response['hints'] = hints
+        response['solves'] = solves
 
         db.session.close()
-        return response
-
-    # @admins_only
-    # def put(self, challenge_id):
-    #     challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
-    #     challenge_class = get_chal_class(challenge.type)
-    #     challenge = challenge_class.update(challenge, request)
-    #
-    #     return challenge.read()
+        return {
+            'success': True,
+            'data': response
+        }
 
     @admins_only
     def patch(self, challenge_id):
@@ -127,7 +172,10 @@ class Challenge(Resource):
         challenge_class = get_chal_class(challenge.type)
         challenge = challenge_class.update(challenge, request)
         challenge, response = challenge_class.read(challenge)
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
     @admins_only
     def delete(self, challenge_id):
@@ -135,35 +183,37 @@ class Challenge(Resource):
         chal_class = get_chal_class(challenge.type)
         chal_class.delete(challenge)
 
-        response = {
+        return {
             'success': True,
         }
-        return response
 
 
 @challenges_namespace.route('/<challenge_id>/solves')
 @challenges_namespace.param('id', 'A Challenge ID')
 class ChallengeSolves(Resource):
+    @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
-    @viewable_without_authentication(status_code=403)
     def get(self, challenge_id):
         response = []
-        # if config.hide_scores():
-        #     return jsonify(response)
+        # TODO: Hide scores and other configs
+        Model = get_model()
 
-        solves = Solves.query.join(Teams, Solves.team_id == Teams.id)\
-            .filter(Solves.challenge_id == challenge_id, Teams.banned == False)\
+        solves = Solves.query.join(Model, Solves.account_id == Model.id)\
+            .filter(Solves.challenge_id == challenge_id, Model.banned == False, Model.hidden == False)\
             .order_by(Solves.date.asc())
 
         for solve in solves:
             response.append({
-                'id': solve.team.id,
-                'name': solve.team.name,
+                'account_id': solve.account_id,
+                'name': solve.account.name,
                 'date': solve.date.isoformat()
             })
 
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @challenges_namespace.route('/<challenge_id>/files')
@@ -181,12 +231,15 @@ class ChallengeFiles(Resource):
                 'type': f.type,
                 'location': f.location
             })
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @challenges_namespace.route('/<challenge_id>/tags')
 @challenges_namespace.param('id', 'A Challenge ID')
-class ChallengeFiles(Resource):
+class ChallengeTags(Resource):
     @admins_only
     def get(self, challenge_id):
         response = []
@@ -199,7 +252,10 @@ class ChallengeFiles(Resource):
                 'challenge_id': t.challenge_id,
                 'value': t.value
             })
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @challenges_namespace.route('/<challenge_id>/hints')
@@ -209,8 +265,18 @@ class ChallengeHints(Resource):
     def get(self, challenge_id):
         hints = Hints.query.filter_by(challenge_id=challenge_id).all()
         schema = HintSchema(many=True)
+        response = schema.dump(hints)
 
-        return schema.dump(hints)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @challenges_namespace.route('/<challenge_id>/flags')
@@ -220,5 +286,15 @@ class ChallengeFlags(Resource):
     def get(self, challenge_id):
         flags = Flags.query.filter_by(challenge_id=challenge_id).all()
         schema = FlagSchema(many=True)
+        response = schema.dump(flags)
 
-        return schema.dump(flags)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }

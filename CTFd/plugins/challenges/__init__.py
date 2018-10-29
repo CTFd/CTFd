@@ -3,6 +3,9 @@ from CTFd.plugins.flags import get_flag_class
 from CTFd.models import db, Solves, Fails, Flags, Challenges, ChallengeFiles, Tags, Hints
 from CTFd import utils
 from CTFd.utils.user import get_ip
+from CTFd.utils.uploads import upload_file
+from flask import Blueprint
+import six
 
 
 class BaseChallenge(object):
@@ -25,6 +28,7 @@ class CTFdStandardChallenge(BaseChallenge):
         'update': '/plugins/challenges/assets/standard-challenge-update.js',
         'modal': '/plugins/challenges/assets/standard-challenge-modal.js',
     }
+    blueprint = Blueprint('standard', __name__, template_folder='templates', static_folder='assets')
 
     @staticmethod
     def create(request):
@@ -44,9 +48,9 @@ class CTFdStandardChallenge(BaseChallenge):
         )
 
         if 'hidden' in request.form:
-            chal.hidden = True
+            chal.state = 'hidden'
         else:
-            chal.hidden = False
+            chal.state = None
 
         max_attempts = request.form.get('max_attempts')
         if max_attempts and max_attempts.isdigit():
@@ -55,17 +59,19 @@ class CTFdStandardChallenge(BaseChallenge):
         db.session.add(chal)
         db.session.commit()
 
-        flag = Flags(chal.id, request.form['submission'], request.form['key_type[0]'])
-        # TODO: replace keydata because it feels sloppy
-        if request.form.get('keydata'):
-            flag.data = request.form.get('keydata')
+        flag = Flags(
+            challenge_id=chal.id,
+            content=request.form['content'],
+            type=request.form['key_type[0]'],
+            data=request.form.get('data')
+        )
         db.session.add(flag)
 
         db.session.commit()
 
         files = request.files.getlist('files[]')
         for f in files:
-            utils.upload_file(file=f, chalid=chal.id)
+            upload_file(file=f, chalid=chal.id)
 
         db.session.commit()
 
@@ -85,7 +91,7 @@ class CTFdStandardChallenge(BaseChallenge):
             'value': challenge.value,
             'description': challenge.description,
             'category': challenge.category,
-            'hidden': challenge.hidden,
+            'state': challenge.state,
             'max_attempts': challenge.max_attempts,
             'type': challenge.type,
             'type_data': {
@@ -108,12 +114,14 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         data = request.form or request.get_json()
-        challenge.name = data['name']
-        challenge.description = data['description']
-        challenge.value = int(data['value'])
-        challenge.max_attempts = int(data.get('max_attempts')) if data.get('max_attempts') else None
-        challenge.category = data['category']
-        challenge.hidden = data.get('hidden', False)
+        for attr, value in data.iteritems():
+            setattr(challenge, attr, value)
+        # challenge.name = data['name']
+        # challenge.description = data['description']
+        # challenge.value = int(data['value'])
+        # challenge.max_attempts = int(data.get('max_attempts')) if data.get('max_attempts') else None
+        # challenge.category = data['category']
+        # challenge.state = data.get('state')
         db.session.commit()
         return challenge
 
@@ -148,7 +156,8 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return: (boolean, string)
         """
-        submission = request.form['submission'].strip()
+        data = request.form or request.get_json()
+        submission = data['submission'].strip()
         chal_keys = Flags.query.filter_by(challenge_id=chal.id).all()
         for chal_key in chal_keys:
             if get_flag_class(chal_key.type).compare(chal_key, submission):

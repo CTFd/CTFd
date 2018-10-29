@@ -5,14 +5,23 @@ from CTFd.utils import markdown, get_config
 from CTFd.utils.dates import unix_time_millis, unix_time
 
 from CTFd.utils import config
-from CTFd.utils.config import can_register, can_send_mail, ctf_logo, ctf_name, ctf_theme, hide_scores
+from CTFd.utils.config import can_send_mail, ctf_logo, ctf_name, ctf_theme, hide_scores
 from CTFd.utils.config.pages import get_pages
 
 from CTFd.utils.plugins import get_registered_stylesheets, get_registered_scripts, get_configurable_plugins
 
+from CTFd.utils.countries import get_countries, lookup_country_code
 from CTFd.utils.user import authed, get_ip
+from CTFd.utils.modes import generate_account_url
 from CTFd.utils.config import is_setup
 from CTFd.utils.security.csrf import generate_nonce
+
+from CTFd.utils.config.visibility import (
+    accounts_visible,
+    challenges_visible,
+    registration_visible,
+    scores_visible
+)
 
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
 
@@ -28,16 +37,22 @@ def init_template_filters(app):
 def init_template_globals(app):
     app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
-    app.jinja_env.globals.update(can_register=can_register)
     app.jinja_env.globals.update(can_send_mail=can_send_mail)
-    app.jinja_env.globals.update(ctf_name=ctf_name)
-    app.jinja_env.globals.update(ctf_logo=ctf_logo)
-    app.jinja_env.globals.update(ctf_theme=ctf_theme)
+    app.jinja_env.globals.update(get_ctf_name=ctf_name)
+    app.jinja_env.globals.update(get_ctf_logo=ctf_logo)
+    app.jinja_env.globals.update(get_ctf_theme=ctf_theme)
     app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
     app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
     app.jinja_env.globals.update(get_registered_stylesheets=get_registered_stylesheets)
     app.jinja_env.globals.update(get_config=get_config)
     app.jinja_env.globals.update(hide_scores=hide_scores)
+    app.jinja_env.globals.update(generate_account_url=generate_account_url)
+    app.jinja_env.globals.update(get_countries=get_countries)
+    app.jinja_env.globals.update(lookup_country_code=lookup_country_code)
+    app.jinja_env.globals.update(accounts_visible=accounts_visible)
+    app.jinja_env.globals.update(challenges_visible=challenges_visible)
+    app.jinja_env.globals.update(registration_visible=registration_visible)
+    app.jinja_env.globals.update(scores_visible=scores_visible)
 
 
 def init_request_processors(app):

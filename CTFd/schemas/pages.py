@@ -8,6 +8,7 @@ from CTFd.models import ma, Pages
 class PageSchema(ma.ModelSchema):
     class Meta:
         model = Pages
+        include_fk = True
         dump_only = ('id', )
 
     def __init__(self, view=None, *args, **kwargs):

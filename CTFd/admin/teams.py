@@ -8,10 +8,10 @@ from CTFd import utils
 from CTFd.admin import admin
 
 
-@admin.route('/admin/teams', defaults={'page': '1'})
-@admin.route('/admin/teams/<int:page>')
+@admin.route('/admin/teams')
 @admins_only
-def admin_teams_view(page):
+def teams_listing():
+    page = request.args.get('page', 1)
     q = request.args.get('q')
     if q:
         field = request.args.get('field')
@@ -31,7 +31,7 @@ def admin_teams_view(page):
             teams = Teams.query.filter(Teams.affiliation.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
         elif field == 'country':
             teams = Teams.query.filter(Teams.country.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
-        return render_template('admin/teams.html', teams=teams, pages=None, curr_page=None, q=q, field=field)
+        return render_template('admin/teams/teams.html', teams=teams, pages=None, curr_page=None, q=q, field=field)
 
     page = abs(int(page))
     results_per_page = 50
@@ -41,183 +41,55 @@ def admin_teams_view(page):
     teams = Teams.query.order_by(Teams.id.asc()).slice(page_start, page_end).all()
     count = db.session.query(db.func.count(Teams.id)).first()[0]
     pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template('admin/teams.html', teams=teams, pages=pages, curr_page=page)
+    return render_template('admin/teams/teams.html', teams=teams, pages=pages, curr_page=page)
 
 
-@admin.route('/admin/team/new', methods=['POST'])
+@admin.route('/admin/teams/new', methods=['GET'])
 @admins_only
-def admin_create_team():
-    # TODO: Move to API
-    name = request.form.get('name', None)
-    password = request.form.get('password', None)
-    email = request.form.get('email', None)
-    website = request.form.get('website', None)
-    affiliation = request.form.get('affiliation', None)
-    country = request.form.get('country', None)
-
-    admin_user = True if request.form.get('admin', None) == 'on' else False
-    verified = True if request.form.get('verified', None) == 'on' else False
-    hidden = True if request.form.get('hidden', None) == 'on' else False
-
-    errors = []
-
-    if not name:
-        errors.append('The team requires a name')
-    elif Teams.query.filter(Teams.name == name).first():
-        errors.append('That name is taken')
-
-    if utils.check_email_format(name) is True:
-        errors.append('Team name cannot be an email address')
-
-    if not email:
-        errors.append('The team requires an email')
-    elif Teams.query.filter(Teams.email == email).first():
-        errors.append('That email is taken')
-
-    if email:
-        valid_email = utils.check_email_format(email)
-        if not valid_email:
-            errors.append("That email address is invalid")
-
-    if not password:
-        errors.append('The team requires a password')
-
-    if website and (website.startswith('http://') or website.startswith('https://')) is False:
-        errors.append('Websites must start with http:// or https://')
-
-    if errors:
-        db.session.close()
-        return jsonify({'data': errors})
-
-    team = Teams(name, email, password)
-    team.website = website
-    team.affiliation = affiliation
-    team.country = country
-
-    team.admin = admin_user
-    team.verified = verified
-    team.hidden = hidden
-
-    db.session.add(team)
-    db.session.commit()
-    db.session.close()
-    return jsonify({'data': ['success']})
+def teams_new():
+    return render_template('admin/teams/new.html')
 
 
-@admin.route('/admin/team/<int:teamid>', methods=['GET', 'POST'])
+@admin.route('/admin/teams/<int:team_id>')
 @admins_only
-def admin_team(teamid):
-    # TODO: Move to API
-    user = Teams.query.filter_by(id=teamid).first_or_404()
+def teams_detail(team_id):
+    team = Teams.query.filter_by(id=team_id).first_or_404()
 
-    if request.method == 'GET':
-        solves = Solves.query.filter_by(teamid=teamid).all()
-        solve_ids = [s.chalid for s in solves]
-        missing = Challenges.query.filter(not_(Challenges.id.in_(solve_ids))).all()
-        last_seen = db.func.max(Tracking.date).label('last_seen')
-        addrs = db.session.query(Tracking.ip, last_seen) \
-                          .filter_by(team=teamid) \
-                          .group_by(Tracking.ip) \
-                          .order_by(last_seen.desc()).all()
-        wrong_keys = Fails.query.filter_by(teamid=teamid).order_by(Fails.date.asc()).all()
-        awards = Awards.query.filter_by(teamid=teamid).order_by(Awards.date.asc()).all()
-        score = user.score(admin=True)
-        place = user.place(admin=True)
-        return render_template('admin/team.html', solves=solves, team=user, addrs=addrs, score=score, missing=missing,
-                               place=place, wrong_keys=wrong_keys, awards=awards)
-    elif request.method == 'POST':
-        name = request.form.get('name', None)
-        password = request.form.get('password', None)
-        email = request.form.get('email', None)
-        website = request.form.get('website', None)
-        affiliation = request.form.get('affiliation', None)
-        country = request.form.get('country', None)
+    # Get members
+    members = team.members
+    member_ids = [member.id for member in members]
 
-        admin_user = True if request.form.get('admin', None) == 'on' else False
-        verified = True if request.form.get('verified', None) == 'on' else False
-        hidden = True if request.form.get('hidden', None) == 'on' else False
+    # Get Solves for all members
+    solves = team.get_solves(admin=True)
+    fails = team.get_fails(admin=True)
+    awards = team.get_awards(admin=True)
+    score = team.get_score(admin=True)
+    place = team.get_place(admin=True)
 
-        errors = []
+    # Get missing Challenges for all members
+    # TODO: How do you mark a missing challenge for a team?
+    solve_ids = [s.challenge_id for s in solves]
+    missing = Challenges.query.filter(not_(Challenges.id.in_(solve_ids))).all()
 
-        if email:
-            valid_email = utils.check_email_format(email)
-            if not valid_email:
-                errors.append("That email address is invalid")
+    # Get addresses for all members
+    last_seen = db.func.max(Tracking.date).label('last_seen')
+    addrs = db.session.query(Tracking.ip, last_seen) \
+                      .filter(Tracking.user_id.in_(member_ids)) \
+                      .group_by(Tracking.ip) \
+                      .order_by(last_seen.desc()).all()
 
-        name_used = Teams.query.filter(Teams.name == name).first()
-        if name_used and int(name_used.id) != int(teamid):
-            errors.append('That name is taken')
-
-        if utils.check_email_format(name) is True:
-            errors.append('Team name cannot be an email address')
-
-        email_used = Teams.query.filter(Teams.email == email).first()
-        if email_used and int(email_used.id) != int(teamid):
-            errors.append('That email is taken')
-
-        if website and (website.startswith('http://') or website.startswith('https://')) is False:
-            errors.append('Websites must start with http:// or https://')
-
-        if errors:
-            db.session.close()
-            return jsonify({'data': errors})
-        else:
-            user.name = name
-            if email:
-                user.email = email
-            if password:
-                user.password = bcrypt_sha256.encrypt(password)
-            user.website = website
-            user.affiliation = affiliation
-            user.country = country
-            user.admin = admin_user
-            user.verified = verified
-            user.banned = hidden
-            db.session.commit()
-            db.session.close()
-            return jsonify({'data': ['success']})
-
-
-@admin.route('/admin/team/<int:teamid>/mail', methods=['POST'])
-@admins_only
-@ratelimit(method="POST", limit=10, interval=60)
-def email_user(teamid):
-    # TODO: Not sure where to move this.
-    msg = request.form.get('msg', None)
-    team = Teams.query.filter(Teams.id == teamid).first_or_404()
-    if msg and team:
-        result, response = utils.sendmail(team.email, msg)
-        return jsonify({
-            'result': result,
-            'message': response
-        })
-    else:
-        return jsonify({
-            'result': False,
-            'message': "Missing information"
-        })
-
-
-@admin.route('/admin/team/<int:teamid>/ban', methods=['POST'])
-@admins_only
-def ban(teamid):
-    # TODO: Move to API via Team PATCH method
-    user = Teams.query.filter_by(id=teamid).first_or_404()
-    user.banned = True
-    db.session.commit()
-    db.session.close()
-    return redirect(url_for('admin.admin_scoreboard_view'))
-
-
-@admin.route('/admin/team/<int:teamid>/unban', methods=['POST'])
-@admins_only
-def unban(teamid):
-    # TODO: Move to API via Team PATCH method
-    user = Teams.query.filter_by(id=teamid).first_or_404()
-    user.banned = False
-    db.session.commit()
-    db.session.close()
-    return redirect(url_for('admin.admin_scoreboard_view'))
+    return render_template(
+        'admin/teams/team.html',
+        team=team,
+        members=members,
+        score=score,
+        place=place,
+        solves=solves,
+        fails=fails,
+        missing=missing,
+        awards=awards,
+        addrs=addrs,
+    )
 
 
 @admin.route('/admin/solves/<int:teamid>/<int:chalid>/solve', methods=['POST'])

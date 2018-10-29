@@ -7,6 +7,20 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
+		<h2 id="team-place" class="text-center">
+			{# This intentionally hides the team's place because this can be their internal profile. #}
+			{# Public page hiding is done at the route level #}
+			{% if scores_visible() %}
+				{{ place }}
+				<small>place</small>
+			{% endif %}
+		</h2>
+		<h2 id="team-score" class="text-center">
+			{% if score %}
+				{{ score }}
+				<small>points</small>
+			{% endif %}
+		</h2>
 	</div>
 </div>
 <div class="container">
@@ -24,20 +38,31 @@
 	</div>
 	{% endif %}
 
-	<div class="team-info">
-		<h2 id="team-place" class="text-center">
-			{%if not get_config('workshop_mode') and place %}
-				{{ place }} <small>place</small>
-			{% endif %}
-		</h2>
-		<h2 id="team-score" class="text-center">
-			{%if score %}
-				{{ score }} <small>points</small>
-			{% endif %}
-		</h2>
+	<br>
+
+	<div class="row">
+		<div class="col-md-12">
+			<h3>Members</h3>
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<td><b>User Name</b></td>
+					<td><b>Score</b></td>
+				</tr>
+				</thead>
+				<tbody>
+				{% for member in team.members %}
+					<tr>
+						<td><a href="{{ url_for('users.public', user_id=member.id) }}">{{ member.name }}</td>
+						<td>{{ member.score }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
 	</div>
 
-	<br>
+
 
 	{% if solves %}
 	<div id="keys-pie-graph" class="w-50 mr-0 pr-0 float-left d-none d-md-block d-lg-block">
@@ -92,7 +117,7 @@
 				<tbody>
 				{% for solve in solves %}
 					<tr>
-						<td><a href="{{ request.script_root }}/challenges#{{ solve.challenge.name }}">{{ solve.challenge.name }}</a></td>
+						<td><a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}">{{ solve.challenge.name }}</a></td>
 						<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td><td>{{ solve.challenge.value }}</td>
 						<td class="solve-time"><script>document.write( moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script></td>
 					</tr>
@@ -109,9 +134,9 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/vendor/plotly.min.js"></script>
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/utils.js"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/plotly.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/utils.js') }}"></script>
 	{% if solves %}
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/team.js"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/team.js') }}"></script>
 	{% endif %}
 {% endblock %}

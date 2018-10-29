@@ -13,7 +13,7 @@ from CTFd.api.v1.hints import hints_namespace
 from CTFd.api.v1.flags import flags_namespace
 from CTFd.api.v1.files import files_namespace
 from CTFd.api.v1.config import configs_namespace
-from CTFd.api.v1.announcements import announcements_namespace
+from CTFd.api.v1.notifications import notifications_namespace
 from CTFd.api.v1.pages import pages_namespace
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
@@ -30,6 +30,6 @@ CTFd_API_v1.add_namespace(teams_namespace, '/teams')
 CTFd_API_v1.add_namespace(users_namespace, '/users')
 CTFd_API_v1.add_namespace(statistics_namespace, '/statistics')
 CTFd_API_v1.add_namespace(files_namespace, '/files')
-CTFd_API_v1.add_namespace(announcements_namespace, '/announcements')
+CTFd_API_v1.add_namespace(notifications_namespace, '/notifications')
 CTFd_API_v1.add_namespace(configs_namespace, '/configs')
 CTFd_API_v1.add_namespace(pages_namespace, '/pages')

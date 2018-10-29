@@ -7,86 +7,24 @@ var editor = CodeMirror.fromTextArea(
     }
 );
 
-
-function uploadfiles() {
-    var form = $('#media-library-upload')[0];
-    var formData = new FormData(form);
-    console.log(formData);
-    $.ajax({
-        url: script_root + '/admin/media',
-        data: formData,
-        type: 'POST',
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: function (data) {
-            refreshfiles(data);
-            form.reset();
-        }
-    });
-}
-
-function refreshfiles(data) {
-    var data = data.results;
+function show_files(data) {
     var list = $('#media-library-list');
-    var mapping = {
-        // Image Files
-        'png': 'fa-file-image',
-        'jpg': 'fa-file-image',
-        'jpeg': 'fa-file-image',
-        'gif': 'fa-file-image',
-        'bmp': 'fa-file-image',
-        'svg': 'fa-file-image',
 
-        // Text Files
-        'txt': 'fa-file-alt',
-
-        // Video Files
-        'mov': 'fa-file-video',
-        'mp4': 'fa-file-video',
-        'wmv': 'fa-file-video',
-        'flv': 'fa-file-video',
-        'mkv': 'fa-file-video',
-        'avi': 'fa-file-video',
-
-        // PDF Files
-        'pdf': 'fa-file-pdf',
-
-        // Audio Files
-        'mp3': 'fa-file-sound',
-        'wav': 'fa-file-sound',
-        'aac': 'fa-file-sound',
-
-        // Archive Files
-        'zip': 'fa-file-archive',
-        'gz': 'fa-file-archive',
-        'tar': 'fa-file-archive',
-        '7z': 'fa-file-archive',
-        'rar': 'fa-file-archive',
-
-        // Code Files
-        'py': 'fa-file-code',
-        'c': 'fa-file-code',
-        'cpp': 'fa-file-code',
-        'html': 'fa-file-code',
-        'js': 'fa-file-code',
-        'rb': 'fa-file-code',
-        'go': 'fa-file-code',
-    };
     for (var i = 0; i < data.length; i++) {
         var f = data[i];
-        var ext = f.location.split('.').pop();
-        var fname = f.location.split('/')[1];
+        var fname = f.location.split('/').pop();
+        var ext = get_filetype_icon_class(f.location);
 
         var wrapper = $('<div>').attr('class', 'media-item-wrapper');
 
         var link = $('<a>');
         link.attr('href', '##');
 
-        if (mapping[ext] == undefined)
-            link.append('<i class="far fa-file" aria-hidden="true"></i> '.format(mapping[ext]));
-        else
-            link.append('<i class="far {0}" aria-hidden="true"></i> '.format(mapping[ext]));
+        if (ext === undefined){
+            link.append('<i class="far fa-file" aria-hidden="true"></i> '.format(ext));
+        } else {
+            link.append('<i class="far {0}" aria-hidden="true"></i> '.format(ext));
+        }
 
         link.append($('<small>').attr('class', 'media-item-title').text(fname));
 
@@ -123,6 +61,17 @@ function refreshfiles(data) {
     }
 }
 
+
+function refresh_files(cb){
+    get_page_files().then(function (response) {
+        var data = response.data;
+        show_files(data);
+        if (cb) {
+            cb();
+        }
+    });
+}
+
 function insert_at_cursor(editor, text) {
     var doc = editor.getDoc();
     var cursor = doc.getCursor();
@@ -149,8 +98,8 @@ function submit_form() {
         body: JSON.stringify(params)
     }).then(function (response) {
         return response.json();
-    }).then(function(data){
-        if (method === 'PATCH') {
+    }).then(function(response){
+        if (method === 'PATCH' && response.success) {
             ezal({
                 title: 'Saved',
                 body: 'Your changes have been saved',
@@ -165,10 +114,17 @@ function submit_form() {
 
 function preview_page() {
     editor.save(); // Save the CodeMirror data to the Textarea
-    $('#page-edit').attr('action', '{{ request.script_root }}/admin/pages?operation=preview');
+    $('#page-edit').attr('action', script_root + '/admin/pages/preview');
     $('#page-edit').attr('target', '_blank');
     $('#page-edit').submit();
 }
+
+function upload_media() {
+    upload_files($('#media-library-upload'), function (data) {
+        console.log(data);
+    });
+}
+
 
 $(document).ready(function () {
     $('#media-insert').click(function (e) {
@@ -201,10 +157,14 @@ $(document).ready(function () {
     });
 
     $('#media-button').click(function () {
-        $.get(script_root + '/admin/media', function (data) {
-            $('#media-library-list').empty();
-            refreshfiles(data);
+        $('#media-library-list').empty();
+        refresh_files(function(){
             $('#media-modal').modal();
         });
+        // get_page_files().then(function (data) {
+        //     var files = data;
+        //     console.log(files);
+        //     $('#media-modal').modal();
+        // });
     });
 });

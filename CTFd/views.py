@@ -1,19 +1,21 @@
-from flask import current_app as app, render_template, request, redirect, abort, jsonify, url_for, session, Blueprint, Response, send_file
+from flask import current_app as app, render_template, request, redirect, abort, url_for, session, Blueprint, Response, send_file
 from flask.helpers import safe_join
-from passlib.hash import bcrypt_sha256
 
-from CTFd.models import db, Admins, Users, Users, Solves, Awards, Files, Pages, Tracking
-from CTFd.utils import cache, markdown
+from CTFd.models import db, Admins, Files, Pages, Notifications
+from CTFd.utils import markdown
+from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
-from CTFd.utils.user import authed, get_ip
+from CTFd.utils.user import authed, get_current_user
 from CTFd.utils import config
+from CTFd.utils.uploads import get_uploader
 from CTFd.utils.config.pages import get_page
+from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
-from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime, unix_time_to_utc
-from CTFd.utils import validators
-
+from CTFd.utils.dates import ctf_started, ctftime
+from CTFd.utils.decorators import authed_only
 import os
+
 
 views = Blueprint('views', __name__)
 
@@ -25,10 +27,10 @@ def setup():
             session['nonce'] = generate_nonce()
         if request.method == 'POST':
             ctf_name = request.form['ctf_name']
-            ctf_name = set_config('ctf_name', ctf_name)
+            set_config('ctf_name', ctf_name)
 
             # CSS
-            css = set_config('start', '')
+            set_config('start', '')
 
             # Admin user
             name = request.form['name']
@@ -37,13 +39,14 @@ def setup():
             admin = Admins(
                 name=name,
                 email=email,
-                password=password
+                password=password,
+                type='admin',
+                hidden=True
             )
-            admin.admin = True
-            admin.banned = True
 
             user_mode = request.form['user_mode']
-            user_mode = set_config('user_mode', user_mode)
+
+            set_config('user_mode', user_mode)
 
             # Index page
 
@@ -70,31 +73,27 @@ def setup():
                 content=index,
                 draft=False
             )
-
-            # max attempts per challenge
-            max_tries = set_config('max_tries', 0)
+            # Visibility
+            set_config('challenge_visibility', 'private')
+            set_config('registration_visibility', 'public')
+            set_config('score_visibility', 'public')
+            set_config('account_visibility', 'public')
 
             # Start time
-            start = set_config('start', None)
-            end = set_config('end', None)
-            freeze = set_config('freeze', None)
-
-            # Challenges cannot be viewed by unregistered users
-            view_challenges_unregistered = set_config('view_challenges_unregistered', None)
-
-            # Allow/Disallow registration
-            prevent_registration = set_config('prevent_registration', None)
+            set_config('start', None)
+            set_config('end', None)
+            set_config('freeze', None)
 
             # Verify emails
-            verify_emails = set_config('verify_emails', None)
+            set_config('verify_emails', None)
 
-            mail_server = set_config('mail_server', None)
-            mail_port = set_config('mail_port', None)
-            mail_tls = set_config('mail_tls', None)
-            mail_ssl = set_config('mail_ssl', None)
-            mail_username = set_config('mail_username', None)
-            mail_password = set_config('mail_password', None)
-            mail_useauth = set_config('mail_useauth', None)
+            set_config('mail_server', None)
+            set_config('mail_port', None)
+            set_config('mail_tls', None)
+            set_config('mail_ssl', None)
+            set_config('mail_username', None)
+            set_config('mail_password', None)
+            set_config('mail_useauth', None)
 
             setup = set_config('setup', True)
 
@@ -102,11 +101,7 @@ def setup():
             db.session.add(admin)
             db.session.commit()
 
-            session['username'] = admin.name
-            session['id'] = admin.id
-            session['id'] = admin.type
-            session['admin'] = admin.admin
-            session['nonce'] = generate_nonce()
+            login_user(admin)
 
             db.session.close()
             app.setup = False
@@ -118,18 +113,54 @@ def setup():
     return redirect(url_for('views.static_html'))
 
 
-# Custom CSS handler
+@views.route('/notifications', methods=['GET'])
+def notifications():
+    notifications = Notifications.query.order_by(Notifications.id.desc()).all()
+    return render_template('notifications.html', notifications=notifications)
+
+
+@views.route('/settings', methods=['GET'])
+@authed_only
+def settings():
+    user = get_current_user()
+    name = user.name
+    email = user.email
+    website = user.website
+    affiliation = user.affiliation
+    country = user.country
+    prevent_name_change = get_config('prevent_name_change')
+    confirm_email = get_config('verify_emails') and not user.verified
+    return render_template(
+        'settings.html',
+        name=name,
+        email=email,
+        website=website,
+        affiliation=affiliation,
+        country=country,
+        prevent_name_change=prevent_name_change,
+        confirm_email=confirm_email
+    )
+
+
 @views.route('/static/user.css')
 @cache.cached(timeout=300)
 def custom_css():
+    """
+    Custom CSS Handler route
+    :return:
+    """
     return Response(get_config('css'), mimetype='text/css')
 
 
-# Static HTML files
-@views.route("/", defaults={'template': 'index'})
-@views.route("/<path:template>")
-def static_html(template):
-    page = get_page(template)
+@views.route("/", defaults={'route': 'index'})
+@views.route("/<path:route>")
+def static_html(route):
+    """
+    Route in charge of routing users to Pages.
+    :param route:
+    :return:
+    """
+    page = get_page(route)
     if page is None:
         abort(404)
     else:
@@ -139,99 +170,31 @@ def static_html(template):
         return render_template('page.html', content=markdown(page.content))
 
 
-@views.route('/settings', methods=['POST', 'GET'])
-def settings():
-    if authed():
-        if request.method == "POST":
-            errors = []
-
-            name = request.form.get('name').strip()
-            email = request.form.get('email').strip()
-            website = request.form.get('website').strip()
-            affiliation = request.form.get('affiliation').strip()
-            country = request.form.get('country').strip()
-
-            user = Users.query.filter_by(id=session['id']).first()
-
-            if not get_config('prevent_name_change'):
-                names = Users.query.filter_by(name=name).first()
-                name_len = len(request.form['name']) == 0
-
-            emails = Users.query.filter_by(email=email).first()
-            valid_email = validators.validate_email(email)
-
-            if validators.validate_email(name) is True:
-                errors.append('Team name cannot be an email address')
-
-            if ('password' in request.form.keys() and not len(request.form['password']) == 0) and \
-                    (not bcrypt_sha256.verify(request.form.get('confirm').strip(), user.password)):
-                errors.append("Your old password doesn't match what we have.")
-            if not valid_email:
-                errors.append("That email doesn't look right")
-            if not get_config('prevent_name_change') and names and name != session['username']:
-                errors.append('That team name is already taken')
-            if emails and emails.id != session['id']:
-                errors.append('That email has already been used')
-            if not get_config('prevent_name_change') and name_len:
-                errors.append('Pick a longer team name')
-            if website.strip() and not validators.validate_url(website):
-                errors.append("That doesn't look like a valid URL")
-
-            if len(errors) > 0:
-                return render_template('profile.html', name=name, email=email, website=website,
-                                       affiliation=affiliation, country=country, errors=errors)
-            else:
-                team = Users.query.filter_by(id=session['id']).first()
-                if team.name != name:
-                    if not get_config('prevent_name_change'):
-                        team.name = name
-                        session['username'] = team.name
-                if team.email != email.lower():
-                    team.email = email.lower()
-                    session['email'] = team.email
-                    if get_config('verify_emails'):
-                        team.verified = False
-
-                if 'password' in request.form.keys() and not len(request.form['password']) == 0:
-                    team.password = bcrypt_sha256.encrypt(request.form.get('password'))
-                team.website = website
-                team.affiliation = affiliation
-                team.country = country
-                db.session.commit()
-                db.session.close()
-                return redirect(url_for('views.profile'))
-        else:
-            user = Users.query.filter_by(id=session['id']).first()
-            name = user.name
-            email = user.email
-            website = user.website
-            affiliation = user.affiliation
-            country = user.country
-            prevent_name_change = get_config('prevent_name_change')
-            confirm_email = get_config('verify_emails') and not user.verified
-            return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
-                                   country=country, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
-    else:
-        return redirect(url_for('auth.login'))
-
-
 @views.route('/files', defaults={'path': ''})
 @views.route('/files/<path:path>')
-def file_handler(path):
+def files(path):
+    """
+    Route in charge of dealing with making sure that CTF challenges are only accessible during the competition.
+    :param path:
+    :return:
+    """
     f = Files.query.filter_by(location=path).first_or_404()
-    if f.challenge_id:
-        if not current_user.is_admin():
+    if f.type == 'challenge':
+        if current_user.is_admin() is False:
             if not ctftime():
-                if config.view_after_ctf() and ctf_started():
-                    pass
-                else:
-                    abort(403)
-    upload_folder = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'])
-    return send_file(safe_join(upload_folder, f.location))
+                abort(403)
+    uploader = get_uploader()
+    return uploader.download(f.location)
 
 
 @views.route('/themes/<theme>/static/<path:path>')
-def themes_handler(theme, path):
+def themes(theme, path):
+    """
+    General static file handler
+    :param theme:
+    :param path:
+    :return:
+    """
     filename = safe_join(app.root_path, 'themes', theme, 'static', path)
     if os.path.isfile(filename):
         return send_file(filename)

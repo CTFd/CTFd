@@ -7,7 +7,6 @@ from CTFd.schemas.hints import HintSchema
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
-    viewable_without_authentication,
     admins_only
 )
 from sqlalchemy.sql import or_
@@ -21,23 +20,40 @@ class HintList(Resource):
     def get(self):
         # TODO sort by challenge ID
         hints = Hints.query.all()
-        result = HintSchema(many=True).dump(hints)
-        return result.data
+        response = HintSchema(many=True).dump(hints)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def post(self):
         req = request.get_json()
         schema = HintSchema('admin')
-        hint = schema.load(req, session=db.session)
+        response = schema.load(req, session=db.session)
 
-        if hint.errors:
-            return hint.errors
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
-        db.session.add(hint.data)
+        db.session.add(response.data)
         db.session.commit()
-        response = schema.dump(hint.data)
 
-        return response
+        response = schema.dump(response.data)
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @hints_namespace.route('/<hint_id>')
@@ -47,7 +63,17 @@ class Hint(Resource):
         view = HintSchema.views.get(session.get('type'))
         # TODO: Ensure that the requesting user can actually access the hint
         response = HintSchema(view=view).dump(hint)
-        return response.data
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def patch(self, hint_id):
@@ -55,15 +81,23 @@ class Hint(Resource):
         req = request.get_json()
 
         schema = HintSchema()
-        hint = schema.load(req, instance=hint, partial=True, session=db.session)
+        response = schema.load(req, instance=hint, partial=True, session=db.session)
 
-        if hint.errors:
-            return hint.errors
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
 
-        db.session.add(hint.data)
+        db.session.add(response.data)
         db.session.commit()
-        response = schema.dump(hint.data)
-        return response
+
+        response = schema.dump(response.data)
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def delete(self, hint_id):
@@ -72,7 +106,6 @@ class Hint(Resource):
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True
         }
-        return response

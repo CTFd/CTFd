@@ -1,4 +1,4 @@
-from CTFd.utils import cache
+from CTFd.cache import cache
 from CTFd.models import Pages
 
 
@@ -9,5 +9,5 @@ def get_pages():
 
 
 @cache.memoize()
-def get_page(template):
-    return Pages.query.filter(Pages.route == template, Pages.draft != True).first()
+def get_page(route):
+    return Pages.query.filter(Pages.route == route, Pages.draft != True).first()

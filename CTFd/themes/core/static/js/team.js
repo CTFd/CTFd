@@ -14,17 +14,13 @@ function scoregraph() {
     var times = [];
     var scores = [];
     var teamname = $('#team-id').text();
-    $.get(script_root + '/api/v1/users/' + teamid() + '/solves', function (data) {
-        var solves = $.parseJSON(JSON.stringify(data));
-
-        if (solves.length == 0) {
-            return;
-        }
+    $.get(script_root + '/api/v1/teams/' + teamid() + '/solves', function (response) {
+        var solves = response.data;
 
         for (var i = 0; i < solves.length; i++) {
-            var date = moment(solves[i].time * 1000);
+            var date = moment(solves[i].date);
             times.push(date.toDate());
-            scores.push(solves[i].value);
+            scores.push(solves[i].challenge.value);
         }
         scores = cumulativesum(scores);
 
@@ -61,58 +57,58 @@ function scoregraph() {
         };
 
         $('#score-graph').empty();
-        document.getElementById('score-graph').fn = 'CTFd_score_team' + teamid() + '_' + (new Date).toISOString().slice(0,19);
+        document.getElementById('score-graph').fn = 'CTFd_score_team_' + teamid() + '_' + (new Date).toISOString().slice(0,19);
         Plotly.newPlot('score-graph', data, layout);
     });
 }
 
 function keys_percentage_graph() {
-    // Solves and Fails pie chart
-    $.get(script_root + '/api/v1/users/' + teamid() + '/fails', function (data) {
-        var res = $.parseJSON(JSON.stringify(data));
-        var solves = res['solves'];
-        var fails = res['fails'];
+    var base_url = script_root + '/api/v1/teams/' + teamid();
+    $.get(base_url + '/fails', function (fails) {
+        $.get(base_url + '/solves', function (solves) {
+            var solves_count = solves.data.length;
+            var fails_count = fails.data.length;
 
-        var data = [{
-            values: [solves, fails],
-            labels: ['Solves', 'Fails'],
-            marker: {
-                colors: [
-                    "rgb(0, 209, 64)",
-                    "rgb(207, 38, 0)"
-                ]
-            },
-            hole: .4,
-            type: 'pie'
-        }];
+            var graph_data = [{
+                values: [solves_count, fails_count],
+                labels: ['Solves', 'Fails'],
+                marker: {
+                    colors: [
+                        "rgb(0, 209, 64)",
+                        "rgb(207, 38, 0)"
+                    ]
+                },
+                hole: .4,
+                type: 'pie'
+            }];
 
-        var layout = {
-            title: 'Key Percentages',
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            legend: {
-                "orientation": "h"
-            }
-        };
+            var layout = {
+                title: 'Solve Percentages',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                legend: {
+                    "orientation": "h"
+                }
+            };
 
-        $('#keys-pie-graph').empty();
-        document.getElementById('keys-pie-graph').fn = 'CTFd_keys_team' +teamid() + '_' + (new Date).toISOString().slice(0,19);
-        Plotly.newPlot('keys-pie-graph', data, layout);
+            $('#keys-pie-graph').empty();
+            document.getElementById('keys-pie-graph').fn = 'CTFd_submissions_team_' + teamid() + '_' + (new Date).toISOString().slice(0, 19);
+            Plotly.newPlot('keys-pie-graph', graph_data, layout);
+        });
     });
 }
 
 function category_breakdown_graph() {
-    $.get(script_root + '/api/v1/users/' + teamid() + '/solves', function (data) {
-        var solves = $.parseJSON(JSON.stringify(data));
-        solves = solves['solves'];
-
-        if (solves.length == 0)
-            return;
+    // TODO: This graph isn't taking awards into account
+    $.get(script_root + '/api/v1/teams/' + teamid() + '/solves', function (response) {
+        var solves = response.data;
 
         var categories = [];
         for (var i = 0; i < solves.length; i++) {
-            categories.push(solves[i].category)
+            categories.push(solves[i].challenge.category)
         }
+
+        console.log(categories);
 
         var keys = categories.filter(function (elem, pos) {
             return categories.indexOf(elem) == pos;
@@ -146,7 +142,7 @@ function category_breakdown_graph() {
         };
 
         $('#categories-pie-graph').empty();
-        document.getElementById('categories-pie-graph').fn = 'CTFd_categories_team' +teamid() + '_' + (new Date).toISOString().slice(0,19);
+        document.getElementById('categories-pie-graph').fn = 'CTFd_categories_team_' +teamid() + '_' + (new Date).toISOString().slice(0,19);
         Plotly.newPlot('categories-pie-graph', data, layout);
     });
 }

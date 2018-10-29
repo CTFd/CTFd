@@ -28,16 +28,16 @@ def authed():
 
 def is_admin():
     if authed():
-        return session['admin']
+        return session['type'] == 'admin'
     else:
         return False
 
 
 def is_verified():
     if get_config('verify_emails'):
-        team = Teams.query.filter_by(id=session.get('id')).first()
-        if team:
-            return team.verified
+        user = get_current_user()
+        if user:
+            return user.verified
         else:
             return False
     else:
@@ -70,6 +70,7 @@ def get_ip(req=None):
 
 
 def get_wrong_submissions_per_minute(teamid):  # keys per minute
+    # TODO: This is probably broken
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
     fails = db.session.query(Fails).filter(
         Fails.team_id == teamid,

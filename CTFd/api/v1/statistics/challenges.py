@@ -2,13 +2,12 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Challenges, Solves, Teams, Users
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils import config
-from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
+from CTFd.utils.modes import get_model
 from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
     admins_only,
     during_ctf_time_only,
-    require_verified_emails,
-    viewable_without_authentication
+    require_verified_emails
 )
 from CTFd.api.v1.statistics import statistics_namespace
 from sqlalchemy import func
@@ -25,7 +24,10 @@ class ChallengePropertyCounts(Resource):
                 .with_entities(prop, func.count(prop))\
                 .group_by(prop)\
                 .all()
-            return dict(data)
+            return {
+                'success': True,
+                'data': dict(data)
+            }
         else:
             response = {
                 'message': 'That could not be found'
@@ -37,26 +39,19 @@ class ChallengePropertyCounts(Resource):
 class ChallengeSolveStatistics(Resource):
     def get(self):
         chals = Challenges.query \
-            .filter(or_(Challenges.hidden != True, Challenges.hidden == None)) \
+            .filter(or_(Challenges.state != 'hidden', Challenges.state != 'locked')) \
             .order_by(Challenges.value) \
             .all()
 
-        if config.user_mode() == TEAMS_MODE:
-            solves_sub = db.session.query(
-                Solves.challenge_id,
-                db.func.count(Solves.challenge_id).label('solves')
-            ) \
-                .join(Teams, Solves.team_id == Teams.id) \
-                .filter(Teams.banned == False) \
-                .group_by(Solves.challenge_id).subquery()
-        elif config.user_mode() == USERS_MODE:
-            solves_sub = db.session.query(
-                Solves.challenge_id,
-                db.func.count(Solves.challenge_id).label('solves')
-            ) \
-                .join(Users, Solves.user_id == Users.id) \
-                .filter(Users.banned == False) \
-                .group_by(Solves.challenge_id).subquery()
+        Model = get_model()
+
+        solves_sub = db.session.query(
+            Solves.challenge_id,
+            db.func.count(Solves.challenge_id).label('solves')
+        ) \
+            .join(Model, Solves.account_id == Model.id) \
+            .filter(Model.banned == False, Model.hidden == False) \
+            .group_by(Solves.challenge_id).subquery()
 
         solves = db.session.query(
             solves_sub.columns.challenge_id,
@@ -92,26 +87,32 @@ class ChallengeSolveStatistics(Resource):
                     }
                     response.append(challenge)
         db.session.close()
-        return response
+        return {
+            'success': True,
+            'data': response
+        }
 
 
 @statistics_namespace.route('/challenges/solves/percentages')
 class ChallengeSolvePercentages(Resource):
+    @admins_only
     def get(self):
-        chals = Challenges.query\
-            .add_columns('id', 'name', 'hidden', 'max_attempts')\
+        challenges = Challenges.query\
+            .add_columns('id', 'name', 'state', 'max_attempts')\
             .order_by(Challenges.value).all()
 
-        teams_with_points = db.session.query(Solves.team_id) \
-            .join(Teams) \
-            .filter(Teams.banned == False) \
-            .group_by(Solves.team_id) \
+        Model = get_model()
+
+        teams_with_points = db.session.query(Solves.account_id) \
+            .join(Model) \
+            .filter(Model.banned == False, Model.hidden == False) \
+            .group_by(Solves.account_id) \
             .count()
 
         percentage_data = []
-        for x in chals:
-            solve_count = Solves.query.join(Teams, Solves.team_id == Teams.id) \
-                .filter(Solves.challenge_id == x[1], Teams.banned == False) \
+        for challenge in challenges:
+            solve_count = Solves.query.join(Model, Solves.account_id == Model.id) \
+                .filter(Solves.challenge_id == challenge.id, Model.banned == False, Model.hidden == False) \
                 .count()
 
             if teams_with_points > 0:
@@ -120,11 +121,13 @@ class ChallengeSolvePercentages(Resource):
                 percentage = 0.0
 
             percentage_data.append({
-                'id': x.id,
-                'name': x.name,
+                'id': challenge.id,
+                'name': challenge.name,
                 'percentage': percentage,
             })
 
-        percentage_data = sorted(percentage_data, key=lambda x: x['percentage'], reverse=True)
-        json_data = percentage_data
-        return json_data
+        response = sorted(percentage_data, key=lambda x: x['percentage'], reverse=True)
+        return {
+            'success': True,
+            'data': response
+        }

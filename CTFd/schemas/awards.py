@@ -8,7 +8,38 @@ from CTFd.models import ma, Awards
 class AwardSchema(ma.ModelSchema):
     class Meta:
         model = Awards
-        dump_only = ('id', )
+        include_fk = True
+        dump_only = ('id', 'date')
+
+    views = {
+        'admin': [
+            'category',
+            'user_id',
+            'name',
+            'description',
+            'value',
+            'team_id',
+            'user',
+            'team',
+            'date',
+            'requirements',
+            'id',
+            'icon'
+        ],
+        'user': [
+            'category',
+            'user_id',
+            'name',
+            'description',
+            'value',
+            'team_id',
+            'user',
+            'team',
+            'date',
+            'id',
+            'icon'
+        ]
+    }
 
     def __init__(self, view=None, *args, **kwargs):
         if view:

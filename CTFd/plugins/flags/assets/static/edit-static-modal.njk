@@ -1,33 +1,19 @@
-<div class="modal-dialog">
-	<div class="modal-content">
-		<div class="modal-header text-center">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-12">
-						<h3 class="text-center">Static Key</h3>
-					</div>
-				</div>
-			</div>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-		<div class="modal-body">
-			<form method="POST">
-				<input type="text" id="key-data" class="form-control" name="content" value="{{ content }}"
-					   placeholder="Enter static key data">
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="checkbox" id="data" name="data" value="case_insensitive"
-						   {% if data %}checked{% endif %}>
-					<label class="form-check-label" for="data">Case Insensitive</label>
-				</div>
-				<input type="hidden" id="key-type" name="type" value="static">
-				<input type="hidden" id="key-id" name="id" value="{{ id }}">
-				<hr>
-				<div class="form-group">
-					<button id="submit-keys" class="btn btn-success float-right">Update</button>
-				</div>
-			</form>
-		</div>
-	</div>
+<label>
+	Static<br>
+	<small>Enter static flag data</small>
+</label>
+<div class="form-group">
+	<input type="text" class="form-control" name="content" value="{{ content }}">
+</div>
+<div class="form-group">
+	<select name="data">
+		<option value="">Case Sensitive</option>
+		<option value="case_insensitive" {% if data %}selected{% endif %}>Case Insensitive</option>
+	</select>
+</div>
+<input type="hidden" name="type" value="static">
+<input type="hidden" name="id" value="{{ id }}">
+<hr>
+<div class="form-group">
+	<button class="btn btn-success float-right">Update</button>
 </div>

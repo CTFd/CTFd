@@ -14,32 +14,47 @@ files_namespace = Namespace('files', description="Endpoint to retrieve Files")
 class FilesList(Resource):
     @admins_only
     def get(self):
-        files = Files.query.all()
+        file_type = request.args.get('type')
+        files = Files.query.filter_by(type=file_type).all()
         schema = FileSchema(many=True)
-        result = schema.dump(files)
-        return result.data
+        response = schema.dump(files)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def post(self):
-        req = request.get_json()
-        files = request.files.getlist('files[]')
+        files = request.files.getlist('file')
+        # challenge_id
+        # page_id
 
+        objs = []
         for f in files:
-            uploads.upload_file(file=f, chalid=req.get('challenge'))
+            # uploads.upload_file(file=f, chalid=req.get('challenge'))
+            obj = uploads.upload_file(file=f, **request.form.to_dict())
+            objs.append(obj)
 
-        db.session.commit()
-        db.session.close()
-        schema = FileSchema()
-        config = schema.load(req, session=db.session)
+        schema = FileSchema(many=True)
+        response = schema.dump(objs)
 
-        if config.errors:
-            return config.errors
+        if response.errors:
+            return {
+                       'success': False,
+                       'errors': response.errors
+                   }, 400
 
-        db.session.add(config.data)
-        db.session.commit()
-        db.session.close()
-
-        return schema.dump(config)
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @files_namespace.route('/<file_id>')
@@ -47,22 +62,20 @@ class FilesDetail(Resource):
     @admins_only
     def get(self, file_id):
         f = Files.query.filter_by(id=file_id).first_or_404()
-        return FileSchema().dump(f)
+        schema = FileSchema()
+        response = schema.dump(f)
 
-    # @admins_only
-    # def patch(self, config_key):
-    #     config = Configs.query.filter_by(key=config_key).first_or_404()
-    #     data = request.get_json()
-    #     response = ConfigSchema(instance=config, partial=True).load(data)
-    #
-    #     if response.errors:
-    #         return response.errors
-    #
-    #     db.session.commit()
-    #     response = ConfigSchema().dump(response.data)
-    #     db.session.close()
-    #     return response
-    #
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
+
     @admins_only
     def delete(self, file_id):
         f = Files.query.filter_by(id=file_id).first_or_404()
@@ -71,7 +84,6 @@ class FilesDetail(Resource):
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True,
         }
-        return response

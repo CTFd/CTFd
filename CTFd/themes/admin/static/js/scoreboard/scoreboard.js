@@ -1,4 +1,4 @@
-function toggle_team(elem) {
+function toggle_account(elem) {
     var btn = $(elem);
     var teamId = btn.attr('team-id');
     var state = btn.attr('state');
@@ -13,7 +13,7 @@ function toggle_team(elem) {
         'hidden': hidden
     };
 
-    fetch(script_root + '/api/v1/teams/' + teamId, {
+    fetch(script_root + '/api/v1/'+ user_mode +'/' + teamId, {
         method: 'PATCH',
         headers: {
             'Accept': 'application/json',
@@ -22,15 +22,17 @@ function toggle_team(elem) {
         body: JSON.stringify(params)
     }).then(function (response) {
         return response.json();
-    }).then(function (data) {
-        if (hidden) {
-            btn.attr('state', 'hidden');
-            btn.addClass('btn-danger').removeClass('btn-success');
-            btn.text('Hidden');
-        } else {
-            btn.attr('state', 'visible');
-            btn.addClass('btn-success').removeClass('btn-danger');
-            btn.text('Visible');
+    }).then(function (response) {
+        if (response.success) {
+            if (hidden) {
+                btn.attr('state', 'hidden');
+                btn.addClass('btn-danger').removeClass('btn-success');
+                btn.text('Hidden');
+            } else {
+                btn.attr('state', 'visible');
+                btn.addClass('btn-success').removeClass('btn-danger');
+                btn.text('Visible');
+            }
         }
     });
 }

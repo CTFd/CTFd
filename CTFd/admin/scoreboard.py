@@ -7,6 +7,6 @@ from CTFd.scoreboard import get_standings
 
 @admin.route('/admin/scoreboard')
 @admins_only
-def admin_scoreboard_view():
+def scoreboard_listing():
     standings = get_standings(admin=True)
     return render_template('admin/scoreboard.html', standings=standings)

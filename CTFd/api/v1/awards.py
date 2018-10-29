@@ -7,7 +7,6 @@ from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
-    viewable_without_authentication,
     admins_only
 )
 from sqlalchemy.sql import or_
@@ -17,23 +16,29 @@ awards_namespace = Namespace('awards', description="Endpoint to retrieve Awards"
 
 @awards_namespace.route('')
 class AwardList(Resource):
-    @admins_only
-    def get(self):
-        pass
 
     @admins_only
     def post(self):
         req = request.get_json()
         schema = AwardSchema()
 
-        award = schema.load(req, session=db.session)
-        if award.errors:
-            return award.errors
-        db.session.add(award.data)
+        response = schema.load(req, session=db.session)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        db.session.add(response.data)
         db.session.commit()
+
+        response = schema.dump(response.data)
         db.session.close()
 
-        return schema.dump(award)
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @awards_namespace.route('/<award_id>')
@@ -42,7 +47,17 @@ class Award(Resource):
     @admins_only
     def get(self, award_id):
         award = Awards.query.filter_by(id=award_id).first_or_404()
-        return AwardSchema().dump(award)
+        response = AwardSchema().dump(award)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
 
     @admins_only
     def delete(self, award_id):
@@ -51,7 +66,6 @@ class Award(Resource):
         db.session.commit()
         db.session.close()
 
-        response = {
+        return {
             'success': True,
         }
-        return response

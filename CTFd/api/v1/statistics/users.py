@@ -11,11 +11,14 @@ class UserStatistics(Resource):
     def get(self):
         registered = Users.query.count()
         confirmed = Users.query.filter_by(verified=True).count()
-        response = {
+        data = {
             'registered': registered,
             'confirmed': confirmed
         }
-        return response
+        return {
+            'success': True,
+            'data': data
+        }
 
 
 @statistics_namespace.route('/users/<column>')
@@ -28,9 +31,12 @@ class UserPropertyCounts(Resource):
                 .with_entities(prop, func.count(prop)) \
                 .group_by(prop) \
                 .all()
-            return dict(data)
+            return {
+                'success': True,
+                'data': dict(data)
+            }
         else:
-            response = {
+            return {
+                'success': False,
                 'message': 'That could not be found'
             }, 404
-            return response

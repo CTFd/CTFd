@@ -3,30 +3,18 @@ import os
 
 from distutils.version import StrictVersion
 from flask import Flask
+from werkzeug.contrib.fixers import ProxyFix
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
-from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp
+from CTFd.utils import migrate, migrate_upgrade, migrate_stamp
+from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
-# from CTFd import utils
-
-from CTFd.views import views
-from CTFd.teams import teams
-from CTFd.users import users
-from CTFd.challenges import challenges
-from CTFd.scoreboard import scoreboard
-from CTFd.auth import auth
-from CTFd.admin import admin
-from CTFd.api import api
-from CTFd.events import events
-from CTFd.errors import page_not_found, forbidden, general_error, gateway_error
-
 from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals
 from CTFd.utils.events import socketio
-
 from CTFd.plugins import init_plugins
 
 # Hack to support Unicode in Python 2 properly
@@ -42,6 +30,7 @@ class CTFdFlask(Flask):
         """Overriden Jinja constructor setting a custom jinja_environment"""
         self.jinja_environment = SandboxedBaseEnvironment
         self.jinja_environment.cache = None
+        self.session_interface = CachingSessionInterface(key_prefix='session')
         Flask.__init__(self, *args, **kwargs)
 
     def create_jinja_environment(self):
@@ -158,6 +147,8 @@ def create_app(config='CTFd.config.Config'):
         app.db = db
         app.VERSION = __version__
 
+        from CTFd.cache import cache
+
         cache.init_app(app)
         app.cache = cache
 
@@ -166,6 +157,9 @@ def create_app(config='CTFd.config.Config'):
             app,
             message_queue=app.config.get('CACHE_REDIS_URL')
         )
+
+        if app.config.get('REVERSE_PROXY'):
+            app.wsgi_app = ProxyFix(app.wsgi_app)
 
         update_check(force=True)
 
@@ -187,6 +181,18 @@ def create_app(config='CTFd.config.Config'):
         init_request_processors(app)
         init_template_filters(app)
         init_template_globals(app)
+
+        # Importing here allows tests to use sensible names (e.g. api instead of api_bp)
+        from CTFd.views import views
+        from CTFd.teams import teams
+        from CTFd.users import users
+        from CTFd.challenges import challenges
+        from CTFd.scoreboard import scoreboard
+        from CTFd.auth import auth
+        from CTFd.admin import admin
+        from CTFd.api import api
+        from CTFd.events import events
+        from CTFd.errors import page_not_found, forbidden, general_error, gateway_error
 
         app.register_blueprint(views)
         app.register_blueprint(teams)

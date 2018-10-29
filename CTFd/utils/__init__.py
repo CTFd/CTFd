@@ -1,11 +1,8 @@
-import datetime
-import json
-import logging
 import mistune
 import six
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort, jsonify
-from flask_caching import Cache
 from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
+from CTFd.cache import cache
 from CTFd.models import (
     db,
     Challenges,
@@ -23,13 +20,14 @@ except ImportError:
     import pathlib2 as pathlib
 
 if six.PY2:
+    string_types = (str, unicode)
     text_type = unicode
     binary_type = str
 else:
+    string_types = (str,)
     text_type = str
     binary_type = bytes
 
-cache = Cache()
 migrate = Migrate()
 markdown = mistune.Markdown()
 
@@ -42,7 +40,6 @@ def get_app_config(key):
 
 @cache.memoize()
 def get_config(key):
-    # TODO: Perhaps this should be serialized to JSON.
     config = Configs.query.filter_by(key=key).first()
     if config and config.value:
         value = config.value
@@ -55,9 +52,6 @@ def get_config(key):
                 return False
             else:
                 return value
-    else:
-        set_config(key, None)
-        return None
 
 
 def set_config(key, value):

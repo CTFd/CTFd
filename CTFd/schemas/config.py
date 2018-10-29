@@ -8,6 +8,7 @@ from CTFd.models import ma, Configs
 class ConfigSchema(ma.ModelSchema):
     class Meta:
         model = Configs
+        include_fk = True
         dump_only = ('id',)
 
     views = {
