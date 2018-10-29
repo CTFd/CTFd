@@ -6,6 +6,8 @@ from CTFd.utils.email import mailgun, smtp
 from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 
 
+EMAIL_REGEX = r"(^[^@\s]+@[^@\s]+\.[^@\s]+$)"
+
 def sendmail(addr, text):
     if mailserver():
         return smtp.sendmail(addr, text)
@@ -39,3 +41,5 @@ def verify_email_address(addr):
     sendmail(addr, text)
 
 
+def check_email_format(email):
+    return bool(re.match(EMAIL_REGEX, email))
