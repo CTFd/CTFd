@@ -42,4 +42,4 @@ def verify_email_address(addr):
 
 
 def check_email_format(email):
-    return bool(re.match(check_email_format_regex, email))
+    return bool(re.match(EMAIL_REGEX, email))
