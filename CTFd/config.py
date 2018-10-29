@@ -100,11 +100,11 @@ class Config(object):
         # Remove the following proxies if you do not trust the local network
         # For example if you are running a CTF on your laptop and the teams are
         # all on the same network
-        '^::1$',
-        '^fc00:',
-        '^10\.',
-        '^172\.(1[6-9]|2[0-9]|3[0-1])\.',
-        '^192\.168\.'
+        r'^::1$',
+        r'^fc00:',
+        r'^10\.',
+        r'^172\.(1[6-9]|2[0-9]|3[0-1])\.',
+        r'^192\.168\.'
     ]
 
     '''

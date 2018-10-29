@@ -18,7 +18,7 @@ def test_check_email_format():
     assert check_email_format('user@') is False
     assert check_email_format('@ctfd.io') is False
     assert check_email_format('user.io@ctfd') is False
-    assert check_email_format('user\@ctfd') is False
+    assert check_email_format('user\\@ctfd') is False
 
     for invalid_email in ['user.@ctfd.io', '.user@ctfd.io', 'user@ctfd..io']:
         try:

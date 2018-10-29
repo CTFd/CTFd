@@ -62,7 +62,7 @@ class CachingSessionInterface(SessionInterface):
             try:
                 data = self.serializer.loads(val)
                 return self.session_class(data, sid=sid)
-            except:
+            except Exception as e:
                 return self.session_class(sid=sid, permanent=self.permanent)
         return self.session_class(sid=sid, permanent=self.permanent)
 

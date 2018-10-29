@@ -221,7 +221,7 @@ def login():
             if user and bcrypt_sha256.verify(request.form['password'], user.password):
                 try:
                     session.regenerate()  # NO SESSION FIXATION FOR YOU
-                except:
+                except Exception as e:
                     pass  # TODO: Some session objects don't implement regenerate :(
 
                 login_user(user)

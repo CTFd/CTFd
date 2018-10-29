@@ -174,7 +174,7 @@ class SubmissionsList(Resource):
                         tries_str = 'tries'
                         if attempts_left == 1:
                             tries_str = 'try'
-                        if message[-1] not in '!().;?[]\{\}':  # Add a punctuation mark if there isn't one
+                        if message[-1] not in '!().;?[]{}':  # Add a punctuation mark if there isn't one
                             message = message + '.'
                         return {
                             'status': 0,
