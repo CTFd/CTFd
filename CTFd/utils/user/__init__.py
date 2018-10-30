@@ -69,11 +69,16 @@ def get_ip(req=None):
     return remote_addr
 
 
-def get_wrong_submissions_per_minute(teamid):  # keys per minute
-    # TODO: This is probably broken
+def get_wrong_submissions_per_minute(account_id):
+    """
+    Get incorrect submissions per minute.
+
+    :param account_id:
+    :return:
+    """
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
     fails = db.session.query(Fails).filter(
-        Fails.team_id == teamid,
+        Fails.account_id == account_id,
         Fails.date >= one_min_ago
     ).all()
     return len(fails)

@@ -75,9 +75,6 @@ class CTFdStandardChallenge(BaseChallenge):
         db.session.add(challenge)
         db.session.commit()
 
-        print challenge
-        print challenge.id
-
         return challenge
 
     @staticmethod

@@ -115,7 +115,7 @@ class SubmissionsList(Resource):
                 # Submitting too fast
                 return {
                     'status': 3,
-                    'message': "You're submitting Flags too fast. Slow down."
+                    'message': "You're submitting flags too fast. Slow down."
                 }, 403
 
             solves = Solves.query.filter_by(
