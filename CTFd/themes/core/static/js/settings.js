@@ -31,12 +31,12 @@ $(function () {
                 response.json().then(function (object) {
                     if (!object.success){
                         Object.keys(object.errors).map(function(error){
-                            let i = form.find('input[name={0}]'.format(error));
-                            let input = $(i);
+                            var i = form.find('input[name={0}]'.format(error));
+                            var input = $(i);
                             input.addClass('input-filled-invalid');
                             input.removeClass('input-filled-valid');
-                            let error_msg = object.errors[error];
-                            let alert = error_template.format(error_msg);
+                            var error_msg = object.errors[error];
+                            var alert = error_template.format(error_msg);
                             console.log(error_template);
                             $('#results').append(
                                 alert
