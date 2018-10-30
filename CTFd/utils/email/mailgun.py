@@ -3,7 +3,6 @@ import requests
 
 
 def sendmail(addr, text):
-    # TODO: Get values from config.py or config panel
     ctf_name = get_config('ctf_name')
     mailfrom_addr = get_config('mailfrom_addr') or get_app_config('MAILFROM_ADDR')
     mailgun_base_url = get_config('mailgun_base_url') or get_app_config('MAILGUN_BASE_URL')

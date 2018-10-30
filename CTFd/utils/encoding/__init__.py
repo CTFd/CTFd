@@ -2,8 +2,6 @@ import six
 import codecs
 import base64
 
-# TODO: Add more encodings. Potentially break into an encode and decode packages
-
 
 def hexencode(s):
     return codecs.encode(s, 'hex')

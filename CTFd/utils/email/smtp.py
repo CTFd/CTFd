@@ -26,16 +26,23 @@ def sendmail(addr, text):
         'host': get_config('mail_server'),
         'port': int(get_config('mail_port'))
     }
-    if get_config('mail_username'):
-        data['username'] = get_config('mail_username')
-    if get_config('mail_password'):
-        data['password'] = get_config('mail_password')
-    if get_config('mail_tls'):
-        data['TLS'] = get_config('mail_tls')
-    if get_config('mail_ssl'):
-        data['SSL'] = get_config('mail_ssl')
-    if get_config('mail_useauth'):
-        data['auth'] = get_config('mail_useauth')
+    username = get_config('mail_username') or get_app_config('MAIL_USERNAME')
+    password = get_config('mail_password') or get_app_config('MAIL_PASSWORD')
+    TLS = get_config('mail_tls') or get_app_config('MAIL_TLS')
+    SSL = get_config('mail_ssl') or get_app_config('MAIL_SSL')
+    if username:
+        auth = True
+
+    if username:
+        data['username'] = username
+    if password:
+        data['password'] = password
+    if TLS:
+        data['TLS'] = TLS
+    if SSL:
+        data['SSL'] = SSL
+    if auth:
+        data['auth'] = auth
 
     try:
         smtp = get_smtp(**data)

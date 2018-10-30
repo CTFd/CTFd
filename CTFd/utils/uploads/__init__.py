@@ -1,13 +1,8 @@
 from CTFd.models import db, Files, ChallengeFiles, PageFiles
 from CTFd.utils import get_app_config
 from CTFd.utils.uploads.uploaders import FilesystemUploader, S3Uploader
-from flask import current_app as app
-from werkzeug.utils import secure_filename
-import hashlib
-import os
 import shutil
 
-# TODO: Restructure this to use UploadSets
 
 UPLOADERS = {
     'filesystem': FilesystemUploader,
