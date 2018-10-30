@@ -18,7 +18,6 @@ hints_namespace = Namespace('hints', description="Endpoint to retrieve Hints")
 class HintList(Resource):
     @admins_only
     def get(self):
-        # TODO sort by challenge ID
         hints = Hints.query.all()
         response = HintSchema(many=True).dump(hints)
 

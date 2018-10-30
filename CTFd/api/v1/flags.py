@@ -18,7 +18,6 @@ flags_namespace = Namespace('flags', description="Endpoint to retrieve Flags")
 class FlagList(Resource):
     @admins_only
     def get(self):
-        # TODO: Sort by challenge ID
         flags = Flags.query.all()
         schema = FlagSchema(many=True)
         response = schema.dump(flags)
@@ -90,7 +89,6 @@ class FlagTypes(Resource):
 class Flag(Resource):
     @admins_only
     def get(self, flag_id):
-        # TODO: Perhaps flag plugins should be similar to challenges and have CRUD methods
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
         schema = FlagSchema()
         response = schema.dump(flag)

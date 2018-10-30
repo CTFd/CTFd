@@ -707,18 +707,6 @@ class Unlocks(db.Model):
         return '<Unlock %r>' % self.teamid
 
 
-class ChallengesUnlocks(Unlocks):
-    __mapper_args__ = {
-        'polymorphic_identity': 'challenges'
-    }
-
-
-class AwardUnlocks(Unlocks):
-    __mapper_args__ = {
-        'polymorphic_identity': 'awards'
-    }
-
-
 class HintUnlocks(Unlocks):
     __mapper_args__ = {
         'polymorphic_identity': 'hints'

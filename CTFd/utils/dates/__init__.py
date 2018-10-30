@@ -63,4 +63,5 @@ def unix_time_millis(dt):
 
 def unix_time_to_utc(t):
     # TODO: We should probably deprecate this function somehow
+    # TODO: We need to deal with .isoformat everywhere.
     return datetime.datetime.utcfromtimestamp(t)

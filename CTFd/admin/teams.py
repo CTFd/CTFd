@@ -92,12 +92,12 @@ def teams_detail(team_id):
     )
 
 
-@admin.route('/admin/solves/<int:teamid>/<int:chalid>/solve', methods=['POST'])
-@admins_only
-def create_solve(teamid, chalid):
-    # TODO: Move to API. Not sure where.
-    solve = Solves(teamid=teamid, chalid=chalid, ip='127.0.0.1', flag='MARKED_AS_SOLVED_BY_ADMIN')
-    db.session.add(solve)
-    db.session.commit()
-    db.session.close()
-    return '1'
+# @admin.route('/admin/solves/<int:teamid>/<int:chalid>/solve', methods=['POST'])
+# @admins_only
+# def create_solve(teamid, chalid):
+#     # TODO: Move to API. Not sure where.
+#     solve = Solves(teamid=teamid, chalid=chalid, ip='127.0.0.1', flag='MARKED_AS_SOLVED_BY_ADMIN')
+#     db.session.add(solve)
+#     db.session.commit()
+#     db.session.close()
+#     return '1'

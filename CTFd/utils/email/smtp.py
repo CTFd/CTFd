@@ -19,7 +19,6 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=
 
 
 def sendmail(addr, text):
-    # TODO: Get values from config.py or config panel
     ctf_name = get_config('ctf_name')
     mailfrom_addr = get_config('mailfrom_addr') or get_app_config('MAILFROM_ADDR')
     data = {

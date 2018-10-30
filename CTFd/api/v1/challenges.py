@@ -17,7 +17,11 @@ from CTFd.utils.decorators import (
     require_verified_emails,
     admins_only
 )
-from CTFd.utils.decorators.visibility import check_challenge_visibility
+from CTFd.utils.decorators.visibility import (
+    check_challenge_visibility,
+    check_score_visibility
+)
+from CTFd.utils.config.visibility import scores_visible, accounts_visible
 from CTFd.utils.user import get_current_user
 from CTFd.utils.modes import get_model
 from CTFd.schemas.tags import TagSchema
@@ -149,17 +153,18 @@ class Challenge(Resource):
 
         Model = get_model()
 
-        # TODO: Hide solves if config says so
-
-        solves = Solves.query\
-            .join(Model, Solves.account_id == Model.id)\
-            .filter(Solves.challenge_id == chal.id, Model.banned == False, Model.hidden == False)\
-            .count()
+        if scores_visible() is True and accounts_visible() is True:
+            solves = Solves.query\
+                .join(Model, Solves.account_id == Model.id)\
+                .filter(Solves.challenge_id == chal.id, Model.banned == False, Model.hidden == False)\
+                .count()
+            response['solves'] = solves
+        else:
+            response['solves'] = None
 
         response['files'] = files
         response['tags'] = tags
         response['hints'] = hints
-        response['solves'] = solves
 
         db.session.close()
         return {
@@ -193,11 +198,11 @@ class Challenge(Resource):
 @challenges_namespace.param('id', 'A Challenge ID')
 class ChallengeSolves(Resource):
     @check_challenge_visibility
+    @check_score_visibility
     @during_ctf_time_only
     @require_verified_emails
     def get(self, challenge_id):
         response = []
-        # TODO: Hide scores and other configs
         Model = get_model()
 
         solves = Solves.query.join(Model, Solves.account_id == Model.id)\
