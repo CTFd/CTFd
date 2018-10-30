@@ -62,4 +62,5 @@ def set_config(key, value):
         config = Configs(key=key, value=value)
         db.session.add(config)
     db.session.commit()
+    cache.delete_memoized(get_config, key)
     return config
