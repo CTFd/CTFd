@@ -38,18 +38,22 @@ class ChallengeList(Resource):
     @during_ctf_time_only
     @require_verified_emails
     def get(self):
+        # This can return None (unauth) if visibility is set to public
         user = get_current_user()
 
         challenges = Challenges.query.filter(
             and_(Challenges.state != 'hidden', Challenges.state != 'locked')
         ).order_by(Challenges.value).all()
 
-        solve_ids = Solves.query\
-            .with_entities(Solves.challenge_id)\
-            .filter_by(account_id=user.account_id)\
-            .order_by(Solves.challenge_id.asc())\
-            .all()
-        solve_ids = set([value for value, in solve_ids])
+        if user:
+            solve_ids = Solves.query\
+                .with_entities(Solves.challenge_id)\
+                .filter_by(account_id=user.account_id)\
+                .order_by(Solves.challenge_id.asc())\
+                .all()
+            solve_ids = set([value for value, in solve_ids])
+        else:
+            solve_ids = set()
 
         response = []
         tag_schema = TagSchema(view='user', many=True)
