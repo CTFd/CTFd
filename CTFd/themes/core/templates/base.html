@@ -58,14 +58,7 @@
 							</li>
 						{% else %}
 							<li class="nav-item">
-								{% if request.script_root %}
-									{% set route = request.script_root + '/' + page.route %}
-								{% elif page.route.startswith('/') %}
-									{% set route = page.route %}
-								{% else %}
-									{% set route = '/' + page.route %}
-								{% endif %}
-								<a class="nav-link" href="{{ route }}">{{ page.title }}</a>
+								<a class="nav-link" href="{{ url_for('views.static_html', route=page.route) }}">{{ page.title }}</a>
 							</li>
 						{% endif %}
 					{% endfor %}
