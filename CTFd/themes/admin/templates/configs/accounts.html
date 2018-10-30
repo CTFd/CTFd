@@ -24,8 +24,8 @@
 				</small>
 			</label>
 			<select class="form-control" name="verify_emails">
-				<option value="true">Enabled</option>
-				<option value="false">Disabled</option>
+				<option value="true" {% if verify_emails == True %}selected{% endif %}>Enabled</option>
+				<option value="false" {% if verify_emails == False %}selected{% endif %}>Disabled</option>
 			</select>
 		</div>
 
@@ -37,8 +37,8 @@
 				</small>
 			</label>
 			<select class="form-control" name="name_changes">
-				<option value="true">Enabled</option>
-				<option value="false">Disabled</option>
+				<option value="true" {% if name_changes== True %}selected{% endif %}>Enabled</option>
+				<option value="false" {% if name_changes == False %}selected{% endif %}>Disabled</option>
 			</select>
 		</div>
 
