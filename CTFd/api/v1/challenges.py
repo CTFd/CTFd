@@ -1,4 +1,4 @@
-from flask import session, request
+from flask import session, request, abort
 from flask_restplus import Namespace, Resource
 from CTFd.models import (
     db,
@@ -22,7 +22,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility
 )
 from CTFd.utils.config.visibility import scores_visible, accounts_visible
-from CTFd.utils.user import get_current_user
+from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.modes import get_model
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
@@ -207,6 +207,12 @@ class ChallengeSolves(Resource):
     @require_verified_emails
     def get(self, challenge_id):
         response = []
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+
+        # TODO: Need a generic challenge visibility call.
+        if challenge.state == 'hidden' and is_admin() is False:
+            abort(404)
+
         Model = get_model()
 
         solves = Solves.query.join(Model, Solves.account_id == Model.id)\
