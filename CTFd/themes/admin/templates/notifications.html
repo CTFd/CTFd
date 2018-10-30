@@ -55,7 +55,7 @@
 							<td>{{ notification.id }}</td>
 							<td>{{ notification.title }}</td>
 							<td>{{ notification.content | safe }}</td>
-							<td>{{ notification.date.isoformat() }}</td>
+							<td>{{ isoformat(notification.date) }}</td>
 						</tr>
 					{% endfor %}
 					</tbody>

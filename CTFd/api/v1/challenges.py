@@ -11,7 +11,7 @@ from CTFd.models import (
     ChallengeFiles as ChallengeFilesModel,
 )
 from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
-from CTFd.utils.dates import ctf_ended
+from CTFd.utils.dates import ctf_ended, isoformat
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
@@ -223,7 +223,7 @@ class ChallengeSolves(Resource):
             response.append({
                 'account_id': solve.account_id,
                 'name': solve.account.name,
-                'date': solve.date.isoformat()
+                'date': isoformat(solve.date)
             })
 
         return {
