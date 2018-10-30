@@ -3,13 +3,31 @@ $.ajaxSetup({ cache: false });
 window.challenge = new Object();
 
 function load_chal_template(challenge){
-    $.getScript(script_root + challenge.scripts.modal, function () {
+    $.getScript(script_root + challenge.scripts.view, function () {
         console.log('loaded renderer');
         $.get(script_root + challenge.templates.create, function (template_data) {
             var template = nunjucks.compile(template_data);
             $("#create-chal-entry-div").html(template.render({'nonce': nonce, 'script_root': script_root}));
             $.getScript(script_root + challenge.scripts.create, function () {
                 console.log('loaded');
+                $("#create-chal-entry-div form").submit(function (e) {
+                    e.preventDefault();
+                    var params = $("#create-chal-entry-div form").serializeJSON();
+                    fetch(script_root + '/api/v1/challenges', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(params)
+                    }).then(function (response) {
+                        return response.json();
+                    }).then(function (response) {
+                        if (response.success) {
+                            window.location = script_root + '/admin/challenges/' + response.data.id;
+                        }
+                    });
+                });
             });
         });
     });

@@ -18,16 +18,19 @@ class BaseChallenge(object):
 class CTFdStandardChallenge(BaseChallenge):
     id = "standard"  # Unique identifier used to register challenges
     name = "standard"  # Name of a challenge type
-    templates = {  # Nunjucks templates used for each aspect of challenge editing & viewing
-        'create': '/plugins/challenges/assets/standard-challenge-create.njk',
-        'update': '/plugins/challenges/assets/standard-challenge-update.njk',
-        'modal': '/plugins/challenges/assets/standard-challenge-modal.njk',
+    templates = {  # Templates used for each aspect of challenge editing & viewing
+        'create': '/plugins/challenges/assets/create.j2',
+        'update': '/plugins/challenges/assets/update.j2',
+        'view': '/plugins/challenges/assets/view.j2',
     }
     scripts = {  # Scripts that are loaded when a template is loaded
-        'create': '/plugins/challenges/assets/standard-challenge-create.js',
-        'update': '/plugins/challenges/assets/standard-challenge-update.js',
-        'modal': '/plugins/challenges/assets/standard-challenge-modal.js',
+        'create': '/plugins/challenges/assets/create.js',
+        'update': '/plugins/challenges/assets/update.js',
+        'view': '/plugins/challenges/assets/view.js',
     }
+    # Route at which files are accessible. This must be registered using register_plugin_assets_directory()
+    route = '/plugins/challenges/assets/'
+    # Blueprint used to access the static_folder directory.
     blueprint = Blueprint('standard', __name__, template_folder='templates', static_folder='assets')
 
     @staticmethod
@@ -38,44 +41,44 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request:
         :return:
         """
-        # Create challenge
-        chal = Challenges(
-            name=request.form['name'],
-            description=request.form['description'],
-            value=request.form['value'],
-            category=request.form['category'],
-            type=request.form['chaltype']
-        )
+        data = request.form or request.get_json()
+        # for attr, value in data.iteritems():
+        #     setattr(challenge, attr, value)
 
-        if 'hidden' in request.form:
-            chal.state = 'hidden'
-        else:
-            chal.state = None
+        challenge = Challenges(**data)
 
-        max_attempts = request.form.get('max_attempts')
-        if max_attempts and max_attempts.isdigit():
-            chal.max_attempts = int(max_attempts)
+        # if 'hidden' in request.form:
+        #     chal.state = 'hidden'
+        # else:
+        #     chal.state = None
+        #
+        # max_attempts = request.form.get('max_attempts')
+        # if max_attempts and max_attempts.isdigit():
+        #     chal.max_attempts = int(max_attempts)
+        #
+        # db.session.add(chal)
+        # db.session.commit()
 
-        db.session.add(chal)
+        # flag = Flags(
+        #     challenge_id=chal.id,
+        #     content=request.form['content'],
+        #     type=request.form['key_type[0]'],
+        #     data=request.form.get('data')
+        # )
+        # db.session.add(flag)
+        #
+        # db.session.commit()
+        #
+        # files = request.files.getlist('files[]')
+        # for f in files:
+        #     upload_file(file=f, chalid=chal.id)
+        db.session.add(challenge)
         db.session.commit()
 
-        flag = Flags(
-            challenge_id=chal.id,
-            content=request.form['content'],
-            type=request.form['key_type[0]'],
-            data=request.form.get('data')
-        )
-        db.session.add(flag)
+        print challenge
+        print challenge.id
 
-        db.session.commit()
-
-        files = request.files.getlist('files[]')
-        for f in files:
-            upload_file(file=f, chalid=chal.id)
-
-        db.session.commit()
-
-        return chal
+        return challenge
 
     @staticmethod
     def read(challenge):
@@ -101,7 +104,7 @@ class CTFdStandardChallenge(BaseChallenge):
                 'scripts': CTFdStandardChallenge.scripts,
             }
         }
-        return challenge, data
+        return data
 
     @staticmethod
     def update(challenge, request):
@@ -116,12 +119,7 @@ class CTFdStandardChallenge(BaseChallenge):
         data = request.form or request.get_json()
         for attr, value in data.iteritems():
             setattr(challenge, attr, value)
-        # challenge.name = data['name']
-        # challenge.description = data['description']
-        # challenge.value = int(data['value'])
-        # challenge.max_attempts = int(data.get('max_attempts')) if data.get('max_attempts') else None
-        # challenge.category = data['category']
-        # challenge.state = data.get('state')
+
         db.session.commit()
         return challenge
 

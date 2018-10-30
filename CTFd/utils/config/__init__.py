@@ -75,7 +75,7 @@ def get_mail_provider():
         return 'smtp'
     if app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_BASE_URL'):
         return 'mailgun'
-    if get_config('mg_api_key') and get_config('mg_base_url'):
+    if get_config('mailgun_api_key') and get_config('mailgun_base_url'):
         return 'mailgun'
 
 
@@ -83,7 +83,7 @@ def get_mail_provider():
 def mailgun():
     if app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_BASE_URL'):
         return True
-    if get_config('mg_api_key') and get_config('mg_base_url'):
+    if get_config('mailgun_api_key') and get_config('mailgun_base_url'):
         return True
     return False
 

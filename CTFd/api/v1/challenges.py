@@ -79,8 +79,8 @@ class ChallengeList(Resource):
                 'value': challenge.value,
                 'category': challenge.category,
                 'tags': tag_schema.dump(challenge.tags).data,
-                'template': challenge_type.templates['modal'],
-                'script': challenge_type.scripts['modal'],
+                'template': challenge_type.templates['view'],
+                'script': challenge_type.scripts['view'],
             })
 
         db.session.close()
@@ -91,7 +91,8 @@ class ChallengeList(Resource):
 
     @admins_only
     def post(self):
-        challenge_type = request.form['type']
+        data = request.form or request.get_json()
+        challenge_type = data['type']
         challenge_class = get_chal_class(challenge_type)
         challenge = challenge_class.create(request)
         response = challenge_class.read(challenge)
@@ -144,7 +145,7 @@ class Challenge(Resource):
             else:
                 hints.append({'id': hint.id, 'cost': hint.cost})
 
-        challenge, response = chal_class.read(challenge=chal)
+        response = chal_class.read(challenge=chal)
 
         Model = get_model()
 
@@ -171,7 +172,7 @@ class Challenge(Resource):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         challenge_class = get_chal_class(challenge.type)
         challenge = challenge_class.update(challenge, request)
-        challenge, response = challenge_class.read(challenge)
+        response = challenge_class.read(challenge)
         return {
             'success': True,
             'data': response

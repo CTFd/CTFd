@@ -101,8 +101,8 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
         app.config['MAILGUN_BASE_URL'] = 'https://api.mailgun.net/v3/file.faked.com'
 
         # db values should take precedence over file values
-        set_config('mg_api_key', 'key-1234567890-db-config')
-        set_config('mg_base_url', 'https://api.mailgun.net/v3/db.faked.com')
+        set_config('mailgun_api_key', 'key-1234567890-db-config')
+        set_config('mailgun_base_url', 'https://api.mailgun.net/v3/db.faked.com')
 
         from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
         to_addr = 'user@user.com'

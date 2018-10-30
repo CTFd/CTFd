@@ -25,15 +25,17 @@ def challenges_detail(challenge_id):
     challenge_class = get_chal_class(challenge.type)
 
     static_path = os.path.basename(challenge_class.blueprint.static_url_path)
-    update = render_template_string(
+    update_j2 = render_template_string(
         challenge_class.blueprint.open_resource(
-            static_path + '/update.html'
+            os.path.join(static_path, 'update.j2')
         ).read(),
         challenge=challenge
     )
+    update_script = os.path.join(challenge_class.route, 'update.js')
     return render_template(
         'admin/challenge.html',
-        update=update,
+        update_template=update_j2,
+        update_script=update_script,
         challenge=challenge,
         challenges=challenges,
         solves=solves,

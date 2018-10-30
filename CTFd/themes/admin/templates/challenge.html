@@ -82,7 +82,7 @@
 
 			</div>
 			<div id="challenge-update-container" class="col-md-6">
-				{{ update | safe }}
+				{{ update_template | safe }}
 			</div>
 		</div>
 	</div>
@@ -103,4 +103,5 @@
 	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/tags.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/files.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/requirements.js') }}"></script>
+	<script src="{{ request.script_root }}{{ update_script }}"></script>
 {% endblock %}
