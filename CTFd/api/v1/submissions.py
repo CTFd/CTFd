@@ -59,7 +59,7 @@ class SubmissionsList(Resource):
         else:
             request_data = request.get_json()
 
-        challenge_id = request_data.get('challenge_id') or request_data.get('challenge_id')
+        challenge_id = request_data.get('challenge_id')
 
         if ctf_paused():
             return {
@@ -116,7 +116,7 @@ class SubmissionsList(Resource):
                 return {
                     'status': 3,
                     'message': "You're submitting flags too fast. Slow down."
-                }, 403
+                }, 429
 
             solves = Solves.query.filter_by(
                 account_id=user.account_id,
@@ -192,7 +192,9 @@ class SubmissionsList(Resource):
                     'submissions',
                     "[{date}] {name} submitted {submission} with kpm {kpm} [ALREADY SOLVED]",
                     submission=request_data['submission'].encode('utf-8'),
-                    kpm=current_user.get_wrong_submissions_per_minute(session['id'])
+                    kpm=current_user.get_wrong_submissions_per_minute(
+                        user.account_id
+                    )
                 )
                 return {
                     'status': 2,

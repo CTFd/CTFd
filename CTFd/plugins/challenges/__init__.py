@@ -169,7 +169,8 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return:
         """
-        submission = request.form['submission'].strip()
+        data = request.form or request.get_json()
+        submission = data['submission'].strip()
         solve = Solves(
             user_id=user.id,
             team_id=team.id if team else None,
@@ -191,7 +192,8 @@ class CTFdStandardChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return:
         """
-        submission = request.form['submission'].strip()
+        data = request.form or request.get_json()
+        submission = data['submission'].strip()
         wrong = Fails(
             user_id=user.id,
             team_id=team.id if team else None,
