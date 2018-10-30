@@ -147,7 +147,7 @@
 							<td class="text-center">{{ solve.challenge.category }}</td>
 							<td class="text-center">{{ solve.challenge.value }}</td>
 							<td class="text-center solve-time">
-								<script>document.write(moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+								<script>document.write(moment("{{ solve.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
 							<td class="text-center">
 								<span class="delete-submission" submission-id="{{ solve.id }}"
@@ -187,7 +187,7 @@
 								<pre>{{ fail.provided }}</pre>
 							</td>
 							<td class="text-center solve-time">
-								<script>document.write(moment({{ fail.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+								<script>document.write(moment("{{ fail.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
 							<td class="text-center">
 								<a class="delete-submission" submission-id="{{ fail.id }}"
@@ -226,7 +226,7 @@
 								<td class="text-center chal" id="{{ award.id }}">{{ award.name }}</td>
 								<td class=""><pre>{{ award.description }}</pre></td>
 								<td class="text-center solve-time">
-									<script>document.write(moment({{ award.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+									<script>document.write(moment("{{ award.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
 								</td>
 								<td class="text-center">{{ award.value }}</td>
 								<td class="text-center">{{ award.category }}</td>
@@ -297,7 +297,7 @@
 					<tr>
 						<td class="text-center">{{ addr[0] }}</td>
 						<td class="text-center solve-time">
-							<script>document.write(moment({{ addr[1]|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+							<script>document.write(moment("{{ addr[1]|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
 						</td>
 					</tr>
 				{% endfor %}

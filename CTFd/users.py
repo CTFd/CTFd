@@ -5,6 +5,7 @@ from CTFd.utils import get_config
 from CTFd.utils.decorators import authed_only
 from CTFd.utils import config
 from CTFd.utils.dates import unix_time_to_utc
+from CTFd.utils.user import get_current_user
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 
 users = Blueprint('users', __name__)
@@ -36,24 +37,13 @@ def listing():
 @users.route('/user')
 @authed_only
 def private():
-    user_id = session['id']
+    user = get_current_user()
 
-    freeze = get_config('freeze')
-    user = Users.query.filter_by(id=user_id).first_or_404()
-    solves = Solves.query.filter_by(user_id=user_id)
-    awards = Awards.query.filter_by(user_id=user_id)
+    solves = user.get_solves()
+    awards = user.get_awards()
 
     place = user.place
     score = user.score
-
-    if freeze:
-        freeze = unix_time_to_utc(freeze)
-        if user_id != session.get('id'):
-            solves = solves.filter(Solves.date < freeze)
-            awards = awards.filter(Awards.date < freeze)
-
-    solves = solves.all()
-    awards = awards.all()
 
     return render_template(
         'users/user.html',

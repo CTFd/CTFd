@@ -47,9 +47,10 @@ function scoregraph () {
             var times = [];
             for(var j = 0; j < places[teams[i]]['solves'].length; j++){
                 team_score.push(places[teams[i]]['solves'][j].value);
-                var date = moment(places[teams[i]]['solves'][j].time * 1000);
+                var date = moment(places[teams[i]]['solves'][j].date);
                 times.push(date.toDate());
             }
+            console.log(times);
             team_score = cumulativesum(team_score);
             var trace = {
                 x: times,

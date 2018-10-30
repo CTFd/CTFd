@@ -2,7 +2,7 @@ from flask import current_app as app, request, session, redirect, url_for, abort
 from CTFd.models import db, Tracking
 
 from CTFd.utils import markdown, get_config
-from CTFd.utils.dates import unix_time_millis, unix_time
+from CTFd.utils.dates import unix_time_millis, unix_time, isoformat
 
 from CTFd.utils import config
 from CTFd.utils.config import can_send_mail, ctf_logo, ctf_name, ctf_theme, hide_scores
@@ -32,6 +32,7 @@ def init_template_filters(app):
     app.jinja_env.filters['markdown'] = markdown
     app.jinja_env.filters['unix_time'] = unix_time
     app.jinja_env.filters['unix_time_millis'] = unix_time_millis
+    app.jinja_env.filters['isoformat'] = isoformat
 
 
 def init_template_globals(app):

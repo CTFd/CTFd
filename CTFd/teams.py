@@ -96,22 +96,12 @@ def private():
 
     team_id = user.team_id
 
-    freeze = get_config('freeze')
     team = Teams.query.filter_by(id=team_id).first_or_404()
-    solves = Solves.query.filter_by(team_id=team_id)
-    awards = Awards.query.filter_by(team_id=team_id)
+    solves = team.get_solves()
+    awards = team.get_awards()
 
     place = team.place
     score = team.score
-
-    if freeze:
-        freeze = unix_time_to_utc(freeze)
-        if team_id != session.get('id'):
-            solves = solves.filter(Solves.date < freeze)
-            awards = awards.filter(Awards.date < freeze)
-
-    solves = solves.all()
-    awards = awards.all()
 
     return render_template(
         'teams/team.html',
@@ -129,22 +119,12 @@ def private():
 @check_score_visibility
 def public(team_id):
     errors = []
-    freeze = get_config('freeze')
     team = Teams.query.filter_by(id=team_id).first_or_404()
-    solves = Solves.query.filter_by(team_id=team_id)
-    awards = Awards.query.filter_by(team_id=team_id)
+    solves = team.get_solves()
+    awards = team.get_awards()
 
     place = team.place
     score = team.score
-
-    if freeze:
-        freeze = unix_time_to_utc(freeze)
-        if team_id != session.get('id'):
-            solves = solves.filter(Solves.date < freeze)
-            awards = awards.filter(Awards.date < freeze)
-
-    solves = solves.all()
-    awards = awards.all()
 
     if config.hide_scores() and team_id != session.get('id'):
         errors.append('Scores are currently hidden')

@@ -68,7 +68,7 @@ class ScoreboardDetail(Resource):
                         'challenge_id': solve.challenge_id,
                         'account_id': solve.account_id,
                         'value': solve.challenge.value,
-                        'time': unix_time(solve.date)
+                        'date': solve.date.isoformat()
                     })
             for award in awards:
                 if award.account_id == team:
@@ -76,9 +76,9 @@ class ScoreboardDetail(Resource):
                         'challenge_id': None,
                         'account_id': award.account_id,
                         'value': award.value,
-                        'time': unix_time(award.date)
+                        'date': award.date.isoformat()
                     })
-            response[i + 1]['solves'] = sorted(response[i + 1]['solves'], key=lambda k: k['time'])
+            response[i + 1]['solves'] = sorted(response[i + 1]['solves'], key=lambda k: k['date'])
 
         return {
             'success': True,
