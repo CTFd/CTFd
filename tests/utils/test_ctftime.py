@@ -9,8 +9,10 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
     """Test that the ctftime function prevents users from accessing challenges before the ctf"""
     app = create_ctfd()
     with app.app_context():
-        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
-        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('start', '1507089600')
+        # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
@@ -29,7 +31,8 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
             r = client.get('/api/v1/challenges/{}'.format(chal_id), data=data)
             data = r.get_data(as_text=True)
             assert r.status_code == 403
-        solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
+        solve_count = app.db.session.query(
+            app.db.func.count(Solves.id)).first()[0]
         assert solve_count == 0
     destroy_ctfd(app)
 
@@ -38,8 +41,10 @@ def test_ctftime_allows_accessing_challenges_during_ctf():
     """Test that the ctftime function allows accessing challenges during the ctf"""
     app = create_ctfd()
     with app.app_context():
-        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
-        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('start', '1507089600')
+        # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
@@ -58,7 +63,8 @@ def test_ctftime_allows_accessing_challenges_during_ctf():
                 }
             r = client.post('/api/v1/submissions', data=data)
             assert r.status_code == 200
-        solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
+        solve_count = app.db.session.query(
+            app.db.func.count(Solves.id)).first()[0]
         assert solve_count == 1
     destroy_ctfd(app)
 
@@ -67,8 +73,10 @@ def test_ctftime_prevents_accessing_challenges_after_ctf():
     """Test that the ctftime function prevents accessing challenges after the ctf"""
     app = create_ctfd()
     with app.app_context():
-        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
-        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('start', '1507089600')
+        # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
@@ -87,7 +95,8 @@ def test_ctftime_prevents_accessing_challenges_after_ctf():
                 }
             r = client.post('/api/v1/submissions'.format(chal_id), data=data)
             assert r.status_code == 403
-        solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
+        solve_count = app.db.session.query(
+            app.db.func.count(Solves.id)).first()[0]
         assert solve_count == 0
     destroy_ctfd(app)
 
@@ -101,8 +110,10 @@ def test_ctf_started():
     with app.app_context():
         assert ctf_started() is True
 
-        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
-        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('start', '1507089600')
+        # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')
 
         with freeze_time("2017-10-3"):
             ctf_started()
@@ -124,8 +135,10 @@ def test_ctf_ended():
     with app.app_context():
         assert ctf_ended() is False
 
-        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
-        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('start', '1507089600')
+        # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')
 
         with freeze_time("2017-10-3"):
             assert ctf_ended() is False

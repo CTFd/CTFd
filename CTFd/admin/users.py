@@ -19,11 +19,15 @@ def users_listing():
     page_start = results_per_page * (page - 1)
     page_end = results_per_page * (page - 1) + results_per_page
 
-    users = Users.query.order_by(Users.id.asc()).slice(page_start, page_end).all()
+    users = Users.query.order_by(
+        Users.id.asc()).slice(
+        page_start,
+        page_end).all()
     count = db.session.query(db.func.count(Users.id)).first()[0]
     pages = int(count / results_per_page) + (count % results_per_page > 0)
 
-    return render_template('admin/users/users.html', users=users, pages=pages, curr_page=page)
+    return render_template('admin/users/users.html',
+                           users=users, pages=pages, curr_page=page)
 
 
 @admin.route('/admin/users/new')

@@ -35,6 +35,8 @@ def listing():
             errors.append('{} has not started yet'.format(config.ctf_name()))
         if ctf_ended():
             errors.append('{} has ended'.format(config.ctf_name()))
-        return render_template('challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
+        return render_template(
+            'challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
 
-    return render_template('challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
+    return render_template('challenges.html', infos=infos,
+                           errors=errors, start=int(start), end=int(end))

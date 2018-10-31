@@ -1,3 +1,11 @@
+from CTFd.admin import notifications
+from CTFd.admin import submissions
+from CTFd.admin import users
+from CTFd.admin import teams
+from CTFd.admin import statistics
+from CTFd.admin import scoreboard
+from CTFd.admin import pages
+from CTFd.admin import challenges
 from flask import (
     current_app as app,
     render_template,
@@ -34,16 +42,6 @@ import csv
 admin = Blueprint('admin', __name__)
 
 
-from CTFd.admin import challenges
-from CTFd.admin import pages
-from CTFd.admin import scoreboard
-from CTFd.admin import statistics
-from CTFd.admin import teams
-from CTFd.admin import users
-from CTFd.admin import submissions
-from CTFd.admin import notifications
-
-
 @admin.route('/admin', methods=['GET'])
 def view():
     if is_admin():
@@ -61,7 +59,12 @@ def plugin(plugin):
                                if os.path.isfile(os.path.join(plugins_path, name, 'config.html'))]
 
         if plugin in config_html_plugins:
-            config_html = open(os.path.join(app.root_path, 'plugins', plugin, 'config.html')).read()
+            config_html = open(
+                os.path.join(
+                    app.root_path,
+                    'plugins',
+                    plugin,
+                    'config.html')).read()
             return render_template_string(config_html)
         abort(404)
     elif request.method == 'POST':
@@ -114,7 +117,8 @@ def export_ctf():
 def export_csv():
     table = request.args.get('table')
 
-    # TODO: It might make sense to limit dumpable tables. Config could potentially leak sensitive information.
+    # TODO: It might make sense to limit dumpable tables. Config could
+    # potentially leak sensitive information.
     model = get_class_by_tablename(table)
     if model is None:
         abort(404)
@@ -128,14 +132,16 @@ def export_csv():
     responses = model.query.all()
 
     for curr in responses:
-        writer.writerow([getattr(curr, column.name) for column in model.__mapper__.columns])
+        writer.writerow([getattr(curr, column.name)
+                         for column in model.__mapper__.columns])
 
     output.seek(0)
     return send_file(
         output,
         as_attachment=True,
         cache_timeout=-1,
-        attachment_filename="{name}-{table}.csv".format(name=ctf_config.ctf_name(), table=table)
+        attachment_filename="{name}-{table}.csv".format(
+            name=ctf_config.ctf_name(), table=table)
     )
 
 

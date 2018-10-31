@@ -25,6 +25,7 @@ function unlock(params){
 }
 
 function loadhint(hintid) {
+    // TODO: This function needs to be standardized into CTFd.js
     var md = window.markdownit({
         html: true,
     });

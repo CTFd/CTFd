@@ -111,7 +111,9 @@ def test_register_admin_plugin_menu_bar():
     """
     app = create_ctfd()
     with app.app_context():
-        register_admin_plugin_menu_bar(title='test_admin_plugin_name', route='/test_plugin')
+        register_admin_plugin_menu_bar(
+            title='test_admin_plugin_name',
+            route='/test_plugin')
 
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin/statistics')
@@ -132,7 +134,9 @@ def test_register_user_page_menu_bar():
     """
     app = create_ctfd()
     with app.app_context():
-        register_user_page_menu_bar(title='test_user_menu_link', route='/test_user_href')
+        register_user_page_menu_bar(
+            title='test_user_menu_link',
+            route='/test_user_href')
 
         client = login_as_user(app)
         r = client.get('/')
@@ -162,8 +166,10 @@ def test_bypass_csrf_protection():
         def bypass_csrf_protection_test_route():
             return "Success", 200
 
-        # Hijack an existing route to avoid any kind of hacks to create a test route
-        app.view_functions['auth.login'] = bypass_csrf_protection(bypass_csrf_protection_test_route)
+        # Hijack an existing route to avoid any kind of hacks to create a test
+        # route
+        app.view_functions['auth.login'] = bypass_csrf_protection(
+            bypass_csrf_protection_test_route)
 
         with app.test_client() as client:
             r = client.post('/login')

@@ -42,7 +42,9 @@ def test_update_check_notifies_user():
     app = create_ctfd()
     with app.app_context():
         app.config['UPDATE_CHECK'] = True
-        set_config('version_latest', 'https://github.com/CTFd/CTFd/releases/tag/9.9.9')
+        set_config(
+            'version_latest',
+            'https://github.com/CTFd/CTFd/releases/tag/9.9.9')
         client = login_as_user(app, name="admin", password="password")
 
         r = client.get('/admin/config')
