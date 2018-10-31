@@ -1,9 +1,15 @@
+from CTFd.utils import string_types
+
 import six
 import codecs
 import base64
 
 
 def hexencode(s):
+    if six.PY3 and isinstance(s, string_types):
+        s = s.encode('utf-8')
+    else:
+        s = str(s)
     return codecs.encode(s, 'hex')
 
 
@@ -12,7 +18,7 @@ def hexdecode(s):
 
 
 def base64encode(s):
-    if six.PY3 and isinstance(s, six.string_types):
+    if six.PY3 and isinstance(s, string_types):
         s = s.encode('utf-8')
     else:
         # Python 2 support because the base64 module doesnt like unicode
@@ -28,7 +34,7 @@ def base64encode(s):
 
 
 def base64decode(s):
-    if six.PY3 and isinstance(s, six.string_types):
+    if six.PY3 and isinstance(s, string_types):
         s = s.encode('utf-8')
     else:
         # Python 2 support because the base64 module doesnt like unicode
