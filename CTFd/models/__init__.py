@@ -151,6 +151,18 @@ class Hints(db.Model):
         'polymorphic_on': type
     }
 
+    @property
+    def name(self):
+        return "Hint {id}".format(id=self.id)
+
+    @property
+    def category(self):
+        return self.__tablename__
+
+    @property
+    def description(self):
+        return "Hint for {name}".format(name=self.challenge.name)
+
     def __init__(self, *args, **kwargs):
         super(Hints, self).__init__(**kwargs)
 
@@ -698,7 +710,7 @@ class Unlocks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
-    item_id = db.Column(db.Integer)
+    target = db.Column(db.Integer)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     type = db.Column(db.String(32))
 
@@ -706,10 +718,13 @@ class Unlocks(db.Model):
         'polymorphic_on': type,
     }
 
-    def __init__(self, type, team_id, item_id):
-        self.type = type
-        self.team_id = team_id
-        self.item_id = item_id
+    @hybrid_property
+    def account_id(self):
+        user_mode = get_config('user_mode')
+        if user_mode == 'teams':
+            return self.team_id
+        elif user_mode == 'users':
+            return self.user_id
 
     def __repr__(self):
         return '<Unlock %r>' % self.teamid

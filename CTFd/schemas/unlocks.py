@@ -2,36 +2,29 @@ from sqlalchemy.sql.expression import union_all
 from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError
 from marshmallow_sqlalchemy import field_for
-from CTFd.models import ma, Hints
+from CTFd.models import ma, Unlocks
 
 
-class HintSchema(ma.ModelSchema):
+class UnlockSchema(ma.ModelSchema):
     class Meta:
-        model = Hints
+        model = Unlocks
         include_fk = True
-        dump_only = ('id', 'type')
+        dump_only = ('id', 'date')
 
     views = {
-        'locked': [
-            'id',
-            'type',
-            'challenge',
-            'cost'
-        ],
-        'unlocked': [
-            'id',
-            'type',
-            'challenge',
-            'content',
-            'cost'
-        ],
         'admin': [
-            'id',
+            'user_id',
+            'target',
+            'team_id',
+            'date',
             'type',
-            'challenge',
-            'content',
-            'cost',
-            'requirements'
+            'id'
+        ],
+        'user': [
+            'target',
+            'date',
+            'type',
+            'id'
         ]
     }
 
@@ -42,4 +35,4 @@ class HintSchema(ma.ModelSchema):
             elif type(view) == list:
                 kwargs['only'] = view
 
-        super(HintSchema, self).__init__(*args, **kwargs)
+        super(UnlockSchema, self).__init__(*args, **kwargs)

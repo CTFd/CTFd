@@ -1,13 +1,15 @@
 from flask import session, request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Hints
+from CTFd.models import db, Hints, HintUnlocks
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_ended
+from CTFd.utils.user import get_current_user
 from CTFd.schemas.hints import HintSchema
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
-    admins_only
+    admins_only,
+    authed_only
 )
 from sqlalchemy.sql import or_
 
@@ -57,10 +59,21 @@ class HintList(Resource):
 
 @hints_namespace.route('/<hint_id>')
 class Hint(Resource):
+    @authed_only
     def get(self, hint_id):
+        user = get_current_user()
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
-        view = HintSchema.views.get(session.get('type'))
-        # TODO: Ensure that the requesting user can actually access the hint
+
+        unlocked = HintUnlocks.query.filter_by(
+            account_id=user.account_id,
+            target=hint.id
+        ).first()
+
+        if unlocked:
+            view = 'unlocked'
+        else:
+            view = 'locked'
+
         response = HintSchema(view=view).dump(hint)
 
         if response.errors:

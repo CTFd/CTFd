@@ -4,6 +4,7 @@ from CTFd.models import (
     db,
     Challenges,
     Unlocks,
+    HintUnlocks,
     Tags,
     Hints,
     Flags,
@@ -24,7 +25,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility
 )
 from CTFd.utils.config.visibility import scores_visible, accounts_visible
-from CTFd.utils.user import get_current_user, is_admin
+from CTFd.utils.user import get_current_user, is_admin, authed
 from CTFd.utils.modes import get_model
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
@@ -155,12 +156,16 @@ class Challenge(Resource):
 
         tags = [tag['value'] for tag in TagSchema("user", many=True).dump(chal.tags).data]
         files = [f.location for f in chal.files]
-        unlocked_hints = set([u.item_id for u in Unlocks.query.filter_by(type='hints', team_id=team_id)])
+
+        unlocked_hints = set()
         hints = []
+        if authed():
+            user = get_current_user()
+            unlocked_hints = set([u.target for u in HintUnlocks.query.filter_by(type='hints', account_id=user.account_id)])
 
         for hint in Hints.query.filter_by(challenge_id=chal.id).all():
             if hint.id in unlocked_hints or ctf_ended():
-                hints.append({'id': hint.id, 'cost': hint.cost, 'hint': hint.hint})
+                hints.append({'id': hint.id, 'cost': hint.cost, 'content': hint.content})
             else:
                 hints.append({'id': hint.id, 'cost': hint.cost})
 
@@ -216,6 +221,7 @@ class ChallengeAttempt(Resource):
     # @ authed_only TODO: It's probably better to put authed_only here but I'm not sure the effects.
     def post(self):
         # TODO: This doesn't really conform to the JSON API
+        # TODO: The error numbers here make no sense.
         if request.content_type != 'application/json':
             request_data = request.form
         else:

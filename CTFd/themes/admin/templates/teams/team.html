@@ -113,9 +113,6 @@
 
 		<a class="nav-item nav-link" id="nav-awards-tab" data-toggle="tab" href="#nav-awards" role="tab"
 		   aria-controls="nav-awards" aria-selected="false">Awards</a>
-
-		<a class="nav-item nav-link" id="nav-missing-tab" data-toggle="tab" href="#nav-missing" role="tab"
-		   aria-controls="nav-missing" aria-selected="false">Missing</a>
 	</nav>
 
 	<div class="tab-content" id="nav-tabContent">
@@ -235,44 +232,6 @@
 						{% endfor %}
 						</tbody>
 					</table>
-
-					<button type="button" data-toggle="modal" data-target="#create-award-modal"
-							class="btn btn-primary float-right d-block">Create Award
-					</button>
-
-				</div>
-			</div>
-		</div>
-
-		<div class="tab-pane fade" id="nav-missing" role="tabpanel" aria-labelledby="nav-missing-tab">
-			<div class="row">
-				<div class="col-md-12">
-					<table class="table table-striped">
-					<h3 class="text-center py-3 d-block">Missing</h3>
-					<thead>
-					<tr>
-						<td class="text-center"><b>Challenge</b></td>
-						<td class="text-center"><b>Category</b></td>
-						<td class="text-center"><b>Value</b></td>
-						<td class="text-center"><b>Mark Solved</b></td>
-					</tr>
-					</thead>
-					<tbody>
-					{% for challenge in missing %}
-						<tr class="chal-solve">
-							<td class="text-center chal" id="{{ challenge.id }}">{{ challenge.name }}</td>
-							<td class="text-center">{{ challenge.category }}</td>
-							<td class="text-center">{{ challenge.value }}</td>
-							<td class="text-center">
-								<span class="mark-correct" data-toggle="tooltip"
-									  data-placement="top" title="Mark {{ challenge.name }} correct for {{ team.name }}">
-									<i class="fas fa-check"></i>
-								</span>
-							</td>
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
 				</div>
 			</div>
 		</div>
