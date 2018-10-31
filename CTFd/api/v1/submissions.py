@@ -59,6 +59,30 @@ class SubmissionsList(Resource):
         else:
             request_data = request.get_json()
 
+        if current_user.is_admin():
+            preview = request.args.get('preview', False)
+            if preview is False:
+                # This is required to be able to create instances of child classes without explicit schemas
+                Model = Submissions.get_child(type=request_data.get('type'))
+                schema = SubmissionSchema(instance=Model())
+                response = schema.load(request_data)
+                if response.errors:
+                    return {
+                        'success': False,
+                        'errors': response.errors
+                    }, 400
+
+                db.session.add(response.data)
+                db.session.commit()
+
+                response = schema.dump(response.data)
+                db.session.close()
+
+                return {
+                    'success': True,
+                    'data': response.data
+                }
+
         challenge_id = request_data.get('challenge_id')
 
         if ctf_paused():

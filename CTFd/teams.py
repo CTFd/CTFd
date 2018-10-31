@@ -142,9 +142,3 @@ def public(team_id):
             place=place,
             score_frozen=config.is_scoreboard_frozen()
         )
-    # TODO: Move this to /api/team/<id>.json
-    # elif request.method == 'POST':
-    #     json = {'solves': []}
-    #     for x in solves:
-    #         json['solves'].append({'id': x.id, 'chal': x.chalid, 'team': x.team_id})
-    #     return jsonify(json)

@@ -652,6 +652,14 @@ class Submissions(db.Model):
         elif user_mode == 'users':
             return self.user
 
+    @staticmethod
+    def get_child(type):
+        child_classes = {
+            x.polymorphic_identity: x.class_
+            for x in Submissions.__mapper__.self_and_descendants
+        }
+        return child_classes[type]
+
     def __repr__(self):
         return '<Submission {}, {}, {}, {}>'.format(self.team_id, self.challenge_id, self.ip, self.provided)
 
