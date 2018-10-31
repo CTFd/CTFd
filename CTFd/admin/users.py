@@ -1,7 +1,8 @@
-from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
+from flask import render_template, request
+from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only, ratelimit
-from CTFd.models import db, Users, Solves, Fails, Challenges, Tracking, Awards
-from passlib.hash import bcrypt_sha256
+from CTFd.utils.modes import USERS_MODE, TEAMS_MODE
+from CTFd.models import db, Users, Challenges, Tracking
 from sqlalchemy.sql import not_
 
 from CTFd import utils
@@ -41,7 +42,12 @@ def users_detail(user_id):
     solves = user.get_solves(admin=True)
 
     # Get challenges that the user is missing
-    solve_ids = [s.challenge_id for s in solves]
+    if get_config('user_mode') == TEAMS_MODE:
+        all_solves = user.team.get_solves(admin=True)
+    else:
+        all_solves = user.get_solves(admin=True)
+
+    solve_ids = [s.challenge_id for s in all_solves]
     missing = Challenges.query.filter(not_(Challenges.id.in_(solve_ids))).all()
 
     # Get IP addresses that the User has used
