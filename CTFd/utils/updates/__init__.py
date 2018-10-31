@@ -33,9 +33,7 @@ def update_check(force=False):
         try:
             name = get_config('ctf_name') or ''
             params = {
-                'ctf_id': sha256(
-                     name
-                ),
+                'ctf_id': sha256(name),
                 'current': app.VERSION,
                 'python_version_raw': sys.hexversion,
                 'python_version': python_version(),
