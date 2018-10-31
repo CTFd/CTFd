@@ -12,8 +12,7 @@ from CTFd.utils.decorators import (
 )
 from sqlalchemy.sql import or_
 
-unlocks_namespace = Namespace(
-    'unlocks', description="Endpoint to retrieve Unlocks")
+unlocks_namespace = Namespace('unlocks', description="Endpoint to retrieve Unlocks")
 
 
 @unlocks_namespace.route('')

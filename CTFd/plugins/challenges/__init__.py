@@ -28,15 +28,10 @@ class CTFdStandardChallenge(BaseChallenge):
         'update': '/plugins/challenges/assets/update.js',
         'view': '/plugins/challenges/assets/view.js',
     }
-    # Route at which files are accessible. This must be registered using
-    # register_plugin_assets_directory()
+    # Route at which files are accessible. This must be registered using register_plugin_assets_directory()
     route = '/plugins/challenges/assets/'
     # Blueprint used to access the static_folder directory.
-    blueprint = Blueprint(
-        'standard',
-        __name__,
-        template_folder='templates',
-        static_folder='assets')
+    blueprint = Blueprint('standard', __name__, template_folder='templates', static_folder='assets')
 
     @staticmethod
     def create(request):
@@ -234,5 +229,4 @@ CHALLENGE_CLASSES = {
 
 
 def load(app):
-    register_plugin_assets_directory(
-        app, base_path='/plugins/challenges/assets/')
+    register_plugin_assets_directory(app, base_path='/plugins/challenges/assets/')

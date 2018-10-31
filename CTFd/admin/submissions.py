@@ -18,8 +18,7 @@ def submissions_listing(submission_type):
     page_start = results_per_page * (curr_page - 1)
     page_end = results_per_page * (curr_page - 1) + results_per_page
     sub_count = Submissions.query.filter_by(**filters).count()
-    page_count = int(sub_count / results_per_page) + \
-        (sub_count % results_per_page > 0)
+    page_count = int(sub_count / results_per_page) + (sub_count % results_per_page > 0)
 
     Model = get_model()
 

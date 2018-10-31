@@ -37,8 +37,7 @@ def test_sendmail_with_smtp(mock_smtp):
         set_config('mail_username', 'username')
         set_config('mail_password', 'password')
 
-        from_addr = get_config(
-            'mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+        from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
         to_addr = 'user@user.com'
         msg = 'this is a test'
 
@@ -50,8 +49,7 @@ def test_sendmail_with_smtp(mock_smtp):
         email_msg['From'] = from_addr
         email_msg['To'] = to_addr
 
-        mock_smtp.return_value.sendmail.assert_called_once_with(
-            from_addr, [to_addr], email_msg.as_string())
+        mock_smtp.return_value.sendmail.assert_called_once_with(from_addr, [to_addr], email_msg.as_string())
     destroy_ctfd(app)
 
 
@@ -63,8 +61,7 @@ def test_sendmail_with_mailgun_from_config_file(fake_post_request):
         app.config['MAILGUN_API_KEY'] = 'key-1234567890-file-config'
         app.config['MAILGUN_BASE_URL'] = 'https://api.mailgun.net/v3/file.faked.com'
 
-        from_addr = get_config(
-            'mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+        from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
         to_addr = 'user@user.com'
         msg = 'this is a test'
 
@@ -105,12 +102,9 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
 
         # db values should take precedence over file values
         set_config('mailgun_api_key', 'key-1234567890-db-config')
-        set_config(
-            'mailgun_base_url',
-            'https://api.mailgun.net/v3/db.faked.com')
+        set_config('mailgun_base_url', 'https://api.mailgun.net/v3/db.faked.com')
 
-        from_addr = get_config(
-            'mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+        from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
         to_addr = 'user@user.com'
         msg = 'this is a test'
 
@@ -153,8 +147,7 @@ def test_verify_email(mock_smtp):
         set_config('mail_password', 'password')
         set_config('verify_emails', True)
 
-        from_addr = get_config(
-            'mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+        from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
         to_addr = 'user@user.com'
 
         verify_email_address(to_addr)
@@ -173,6 +166,5 @@ def test_verify_email(mock_smtp):
 
         # Need to freeze time to predict the value of the itsdangerous token.
         # For now just assert that sendmail was called.
-        mock_smtp.return_value.sendmail.assert_called_with(
-            from_addr, [to_addr], email_msg.as_string())
+        mock_smtp.return_value.sendmail.assert_called_with(from_addr, [to_addr], email_msg.as_string())
     destroy_ctfd(app)

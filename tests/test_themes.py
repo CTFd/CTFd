@@ -10,8 +10,7 @@ def test_themes_run_in_sandbox():
     app = create_ctfd()
     with app.app_context():
         try:
-            app.jinja_env.from_string(
-                "{{ ().__class__.__bases__[0].__subclasses__()[40]('./test_utils.py').read() }}").render()
+            app.jinja_env.from_string("{{ ().__class__.__bases__[0].__subclasses__()[40]('./test_utils.py').read() }}").render()
         except SecurityError:
             pass
         except Exception as e:
@@ -24,8 +23,7 @@ def test_themes_cant_access_configpy_attributes():
     app = create_ctfd()
     with app.app_context():
         assert app.config['SECRET_KEY'] == 'AAAAAAAAAAAAAAAAAAAA'
-        assert app.jinja_env.from_string(
-            "{{ get_config('SECRET_KEY') }}").render() != app.config['SECRET_KEY']
+        assert app.jinja_env.from_string("{{ get_config('SECRET_KEY') }}").render() != app.config['SECRET_KEY']
     destroy_ctfd(app)
 
 

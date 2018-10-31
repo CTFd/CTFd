@@ -41,8 +41,7 @@ from CTFd.utils.dates import ctf_started, ctf_ended, ctf_paused, ctftime
 from CTFd.utils.logging import log
 from CTFd.schemas.submissions import SubmissionSchema
 
-challenges_namespace = Namespace('challenges',
-                                 description="Endpoint to retrieve Challenges")
+challenges_namespace = Namespace('challenges', description="Endpoint to retrieve Challenges")
 
 
 @challenges_namespace.route('')
@@ -155,23 +154,18 @@ class Challenge(Resource):
         chal = Challenges.query.filter_by(id=challenge_id).first_or_404()
         chal_class = get_chal_class(chal.type)
 
-        tags = [
-            tag['value'] for tag in TagSchema(
-                "user", many=True).dump(
-                chal.tags).data]
+        tags = [tag['value'] for tag in TagSchema("user", many=True).dump(chal.tags).data]
         files = [f.location for f in chal.files]
 
         unlocked_hints = set()
         hints = []
         if authed():
             user = get_current_user()
-            unlocked_hints = set([u.target for u in HintUnlocks.query.filter_by(
-                type='hints', account_id=user.account_id)])
+            unlocked_hints = set([u.target for u in HintUnlocks.query.filter_by(type='hints', account_id=user.account_id)])
 
         for hint in Hints.query.filter_by(challenge_id=chal.id).all():
             if hint.id in unlocked_hints or ctf_ended():
-                hints.append({'id': hint.id, 'cost': hint.cost,
-                              'content': hint.content})
+                hints.append({'id': hint.id, 'cost': hint.cost, 'content': hint.content})
             else:
                 hints.append({'id': hint.id, 'cost': hint.cost})
 
@@ -236,16 +230,15 @@ class ChallengeAttempt(Resource):
         if current_user.is_admin():
             preview = request.args.get('preview', False)
             if preview is False:
-                # This is required to be able to create instances of child
-                # classes without explicit schemas
+                # This is required to be able to create instances of child classes without explicit schemas
                 Model = Submissions.get_child(type=request_data.get('type'))
                 schema = SubmissionSchema(instance=Model())
                 response = schema.load(request_data)
                 if response.errors:
                     return {
-                        'success': False,
-                        'errors': response.errors
-                    }, 400
+                               'success': False,
+                               'errors': response.errors
+                           }, 400
 
                 db.session.add(response.data)
                 db.session.commit()
@@ -262,9 +255,9 @@ class ChallengeAttempt(Resource):
 
         if ctf_paused():
             return {
-                'status': 3,
-                'message': '{} is paused'.format(config.ctf_name())
-            }, 403
+                       'status': 3,
+                       'message': '{} is paused'.format(config.ctf_name())
+                   }, 403
 
         if (current_user.authed() and (ctf_started() and ctftime())) or current_user.is_admin():
             user = get_current_user()
@@ -275,8 +268,7 @@ class ChallengeAttempt(Resource):
                 challenge_id=challenge_id
             ).count()
 
-            challenge = Challenges.query.filter_by(
-                id=challenge_id).first_or_404()
+            challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
 
             if challenge.state == 'hidden':
                 abort(403)
@@ -298,8 +290,7 @@ class ChallengeAttempt(Resource):
             chal_class = get_chal_class(challenge.type)
 
             # Anti-bruteforce / submitting Flags too quickly
-            if current_user.get_wrong_submissions_per_minute(
-                    session['id']) > 10:
+            if current_user.get_wrong_submissions_per_minute(session['id']) > 10:
                 if ctftime():
                     chal_class.fail(
                         user=user,
@@ -311,14 +302,13 @@ class ChallengeAttempt(Resource):
                     'submissions',
                     "[{date}] {name} submitted {submission} with kpm {kpm} [TOO FAST]",
                     submission=request_data['submission'].encode('utf-8'),
-                    kpm=current_user.get_wrong_submissions_per_minute(
-                        session['id'])
+                    kpm=current_user.get_wrong_submissions_per_minute(session['id'])
                 )
                 # Submitting too fast
                 return {
-                    'status': 3,
-                    'message': "You're submitting flags too fast. Slow down."
-                }, 429
+                           'status': 3,
+                           'message': "You're submitting flags too fast. Slow down."
+                       }, 429
 
             solves = Solves.query.filter_by(
                 account_id=user.account_id,
@@ -331,9 +321,9 @@ class ChallengeAttempt(Resource):
                 max_tries = challenge.max_attempts
                 if max_tries and fails >= max_tries > 0:
                     return {
-                        'status': 0,
-                        'message': "You have 0 tries remaining"
-                    }, 403
+                               'status': 0,
+                               'message': "You have 0 tries remaining"
+                           }, 403
 
                 status, message = chal_class.attempt(challenge, request)
                 if status:  # The challenge plugin says the input is right
@@ -349,8 +339,7 @@ class ChallengeAttempt(Resource):
                         'submissions',
                         "[{date}] {name} submitted {submission} with kpm {kpm} [CORRECT]",
                         submission=request_data['submission'].encode('utf-8'),
-                        kpm=current_user.get_wrong_submissions_per_minute(
-                            session['id'])
+                        kpm=current_user.get_wrong_submissions_per_minute(session['id'])
                     )
                     return {
                         'status': 1,
@@ -369,19 +358,15 @@ class ChallengeAttempt(Resource):
                         'submissions',
                         "[{date}] {name} submitted {submission} with kpm {kpm} [WRONG]",
                         submission=request_data['submission'].encode('utf-8'),
-                        kpm=current_user.get_wrong_submissions_per_minute(
-                            session['id'])
+                        kpm=current_user.get_wrong_submissions_per_minute(session['id'])
                     )
 
                     if max_tries:
-                        # Off by one since fails has changed since it was
-                        # gotten
-                        attempts_left = max_tries - fails - 1
+                        attempts_left = max_tries - fails - 1  # Off by one since fails has changed since it was gotten
                         tries_str = 'tries'
                         if attempts_left == 1:
                             tries_str = 'try'
-                        # Add a punctuation mark if there isn't one
-                        if message[-1] not in '!().;?[]{}':
+                        if message[-1] not in '!().;?[]{}':  # Add a punctuation mark if there isn't one
                             message = message + '.'
                         return {
                             'status': 0,
@@ -409,9 +394,9 @@ class ChallengeAttempt(Resource):
                 }
         else:
             return {
-                'status': -1,
-                'message': "You must be logged in to solve a challenge"
-            }, 302
+                       'status': -1,
+                       'message': "You must be logged in to solve a challenge"
+                   }, 302
 
 
 @challenges_namespace.route('/<challenge_id>/solves')
@@ -455,8 +440,7 @@ class ChallengeFiles(Resource):
     def get(self, challenge_id):
         response = []
 
-        challenge_files = ChallengeFilesModel.query.filter_by(
-            challenge_id=challenge_id).all()
+        challenge_files = ChallengeFilesModel.query.filter_by(challenge_id=challenge_id).all()
 
         for f in challenge_files:
             response.append({

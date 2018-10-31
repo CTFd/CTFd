@@ -15,8 +15,7 @@ else:
     binary_type = bytes
 
 
-def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io",
-                password="password", user_mode="users", setup=True):
+def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True):
     app = create_app('CTFd.config.TestingConfig')
 
     if setup:
@@ -24,8 +23,7 @@ def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io",
     return app
 
 
-def setup_ctfd(app, ctf_name="CTFd", name="admin",
-               email="admin@ctfd.io", password="password", user_mode="users"):
+def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users"):
     with app.app_context():
         with app.test_client() as client:
             r = client.get('/setup')  # Populate session with nonce
@@ -88,16 +86,8 @@ def get_scores(user):
     return scores['standings']
 
 
-def gen_challenge(db, name='chal_name', description='chal_description', value=100,
-                  category='chal_category', type='standard', state='visible', **kwargs):
-    chal = Challenges(
-        name=name,
-        description=description,
-        value=value,
-        category=category,
-        type=type,
-        state=state,
-        **kwargs)
+def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard', state='visible', **kwargs):
+    chal = Challenges(name=name, description=description, value=value, category=category, type=type, state=state, **kwargs)
     db.session.add(chal)
     db.session.commit()
     return chal
@@ -125,13 +115,8 @@ def gen_file(db, challenge_id, location):
     return f
 
 
-def gen_flag(db, challenge_id, content='flag',
-             type='static', data=None, **kwargs):
-    flag = Flags(
-        challenge_id=challenge_id,
-        content=content,
-        type=type,
-        **kwargs)
+def gen_flag(db, challenge_id, content='flag', type='static', data=None, **kwargs):
+    flag = Flags(challenge_id=challenge_id, content=content, type=type, **kwargs)
     if data:
         flag.data = data
     db.session.add(flag)
@@ -139,56 +124,37 @@ def gen_flag(db, challenge_id, content='flag',
     return flag
 
 
-def gen_user(db, name='user_name', email='user@ctfd.io',
-             password='password', **kwargs):
+def gen_user(db, name='user_name', email='user@ctfd.io', password='password', **kwargs):
     user = Users(name=name, email=email, password=password, **kwargs)
     db.session.add(user)
     db.session.commit()
     return user
 
 
-def gen_team(db, name='team_name', email='team@ctfd.io',
-             password='password', **kwargs):
+def gen_team(db, name='team_name', email='team@ctfd.io', password='password', **kwargs):
     team = Teams(name=name, email=email, password=password, **kwargs)
     db.session.add(team)
     db.session.commit()
     return team
 
 
-def gen_hint(db, challenge_id, hint="This is a hint",
-             cost=0, type=0, **kwargs):
-    hint = Hints(
-        challenge_id=challenge_id,
-        hint=hint,
-        cost=cost,
-        type=type,
-        **kwargs)
+def gen_hint(db, challenge_id, hint="This is a hint", cost=0, type=0, **kwargs):
+    hint = Hints(challenge_id=challenge_id, hint=hint, cost=cost, type=type, **kwargs)
     db.session.add(hint)
     db.session.commit()
     return hint
 
 
-def gen_solve(db, team_id, challenge_id, ip='127.0.0.1',
-              flag='rightkey', **kwargs):
-    solve = Solves(
-        team_id=team_id,
-        challenge_id=challenge_id,
-        ip=ip,
-        flag=flag,
-        **kwargs)
+def gen_solve(db, team_id, challenge_id, ip='127.0.0.1', flag='rightkey', **kwargs):
+    solve = Solves(team_id=team_id, challenge_id=challenge_id, ip=ip, flag=flag, **kwargs)
     solve.date = datetime.datetime.utcnow()
     db.session.add(solve)
     db.session.commit()
     return solve
 
 
-def gen_wrongkey(db, team_id, challenge_id, ip='127.0.0.1',
-                 content='wrongkey', **kwargs):
-    wrongkey = Fails(
-        team_id=team_id,
-        challenge_id=challenge_id,
-        ip=ip,
-        content=content)
+def gen_wrongkey(db, team_id, challenge_id, ip='127.0.0.1', content='wrongkey', **kwargs):
+    wrongkey = Fails(team_id=team_id, challenge_id=challenge_id, ip=ip, content=content)
     wrongkey.date = datetime.datetime.utcnow()
     db.session.add(wrongkey)
     db.session.commit()
@@ -203,15 +169,8 @@ def gen_tracking(db, ip, team, **kwargs):
     return tracking
 
 
-def gen_page(db, title, route, html, draft=False,
-             auth_required=False, **kwargs):
-    page = Pages(
-        title=title,
-        route=route,
-        html=html,
-        draft=draft,
-        auth_required=auth_required,
-        **kwargs)
+def gen_page(db, title, route, html, draft=False, auth_required=False, **kwargs):
+    page = Pages(title=title, route=route, html=html, draft=draft, auth_required=auth_required, **kwargs)
     db.session.add(page)
     db.session.commit()
     return page

@@ -19,48 +19,29 @@ def teams_listing():
         errors = []
         if field == 'id':
             if q.isnumeric():
-                teams = Teams.query.filter(
-                    Teams.id == q).order_by(
-                    Teams.id.asc()).all()
+                teams = Teams.query.filter(Teams.id == q).order_by(Teams.id.asc()).all()
             else:
                 teams = []
                 errors.append('Your ID search term is not numeric')
         elif field == 'name':
-            teams = Teams.query.filter(
-                Teams.name.like(
-                    '%{}%'.format(q))).order_by(
-                Teams.id.asc()).all()
+            teams = Teams.query.filter(Teams.name.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
         elif field == 'email':
-            teams = Teams.query.filter(
-                Teams.email.like(
-                    '%{}%'.format(q))).order_by(
-                Teams.id.asc()).all()
+            teams = Teams.query.filter(Teams.email.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
         elif field == 'affiliation':
-            teams = Teams.query.filter(
-                Teams.affiliation.like(
-                    '%{}%'.format(q))).order_by(
-                Teams.id.asc()).all()
+            teams = Teams.query.filter(Teams.affiliation.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
         elif field == 'country':
-            teams = Teams.query.filter(
-                Teams.country.like(
-                    '%{}%'.format(q))).order_by(
-                Teams.id.asc()).all()
-        return render_template('admin/teams/teams.html', teams=teams,
-                               pages=None, curr_page=None, q=q, field=field)
+            teams = Teams.query.filter(Teams.country.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
+        return render_template('admin/teams/teams.html', teams=teams, pages=None, curr_page=None, q=q, field=field)
 
     page = abs(int(page))
     results_per_page = 50
     page_start = results_per_page * (page - 1)
     page_end = results_per_page * (page - 1) + results_per_page
 
-    teams = Teams.query.order_by(
-        Teams.id.asc()).slice(
-        page_start,
-        page_end).all()
+    teams = Teams.query.order_by(Teams.id.asc()).slice(page_start, page_end).all()
     count = db.session.query(db.func.count(Teams.id)).first()[0]
     pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template('admin/teams/teams.html',
-                           teams=teams, pages=pages, curr_page=page)
+    return render_template('admin/teams/teams.html', teams=teams, pages=pages, curr_page=page)
 
 
 @admin.route('/admin/teams/new', methods=['GET'])

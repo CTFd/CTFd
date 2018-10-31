@@ -73,8 +73,7 @@ def get_mail_provider():
         return 'smtp'
     if get_config('mail_server') and get_config('mail_port'):
         return 'smtp'
-    if app.config.get('MAILGUN_API_KEY') and app.config.get(
-            'MAILGUN_BASE_URL'):
+    if app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_BASE_URL'):
         return 'mailgun'
     if get_config('mailgun_api_key') and get_config('mailgun_base_url'):
         return 'mailgun'
@@ -82,8 +81,7 @@ def get_mail_provider():
 
 @cache.memoize()
 def mailgun():
-    if app.config.get('MAILGUN_API_KEY') and app.config.get(
-            'MAILGUN_BASE_URL'):
+    if app.config.get('MAILGUN_API_KEY') and app.config.get('MAILGUN_BASE_URL'):
         return True
     if get_config('mailgun_api_key') and get_config('mailgun_base_url'):
         return True
@@ -102,5 +100,4 @@ def mailserver():
 @cache.memoize()
 def get_themes():
     dir = os.path.join(app.root_path, 'themes')
-    return [name for name in os.listdir(dir) if os.path.isdir(
-        os.path.join(dir, name)) and name != 'admin']
+    return [name for name in os.listdir(dir) if os.path.isdir(os.path.join(dir, name)) and name != 'admin']
