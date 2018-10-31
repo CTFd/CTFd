@@ -12,7 +12,7 @@
 			<div class="card-body">
 				<blockquote class="blockquote mb-0">
 					<p>{{ notification.content | safe }}</p>
-					<small class="text-muted">{{ notification.date.isoformat() }}</small>
+					<small class="text-muted">{{ notification.date | isoformat }}</small>
 				</blockquote>
 			</div>
 		</div>

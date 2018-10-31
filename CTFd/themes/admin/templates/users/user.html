@@ -262,16 +262,17 @@
 					</tr>
 					</thead>
 					<tbody>
-					{% for chal in missing %}
+					{% for challenge in missing %}
 						<tr class="chal-solve">
-							<td class="text-center chal" id="{{ chal.id }}">{{ chal.name }}</td>
-							<td class="text-center">{{ chal.category }}</td>
-							<td class="text-center">{{ chal.value }}</td>
+							<td class="text-center chal" id="{{ challenge.id }}">{{ challenge.name }}</td>
+							<td class="text-center">{{ challenge.category }}</td>
+							<td class="text-center">{{ challenge.value }}</td>
 							<td class="text-center">
-								<span class="mark-correct" data-toggle="tooltip"
-									  data-placement="top" title="Mark {{ chal.name }} correct for {{ user.name }}">
+								<a class="correct-submission" data-toggle="tooltip" challenge-id="{{ challenge.id }}"
+									  challenge-name="{{ challenge.name }}"
+									  data-placement="top" title="Mark {{ challenge.name }} correct for {{ user.name }}">
 									<i class="fas fa-check"></i>
-								</span>
+								</a>
 							</td>
 						</tr>
 					{% endfor %}
@@ -314,6 +315,7 @@
 <script>
 var USER_ID = {{ user.id }};
 var USER_NAME = {{ user.name | tojson }};
+var TEAM_ID = {{ user.team_id | tojson }};
 </script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/vendor/plotly.min.js') }}"></script>

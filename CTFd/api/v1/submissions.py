@@ -49,186 +49,28 @@ class SubmissionsList(Resource):
             'data': response.data
         }
 
-    @during_ctf_time_only
-    @require_verified_emails
-    # @ authed_only TODO: It's probably better to put authed_only here but I'm not sure the effects.
+    @admins_only
     def post(self):
-        # TODO: This doesn't really conform to the JSON API
-        if request.content_type != 'application/json':
-            request_data = request.form
-        else:
-            request_data = request.get_json()
-
-        if current_user.is_admin():
-            preview = request.args.get('preview', False)
-            if preview is False:
-                # This is required to be able to create instances of child classes without explicit schemas
-                Model = Submissions.get_child(type=request_data.get('type'))
-                schema = SubmissionSchema(instance=Model())
-                response = schema.load(request_data)
-                if response.errors:
-                    return {
-                        'success': False,
-                        'errors': response.errors
-                    }, 400
-
-                db.session.add(response.data)
-                db.session.commit()
-
-                response = schema.dump(response.data)
-                db.session.close()
-
-                return {
-                    'success': True,
-                    'data': response.data
-                }
-
-        challenge_id = request_data.get('challenge_id')
-
-        if ctf_paused():
+        req = request.get_json()
+        Model = Submissions.get_child(type=req.get('type'))
+        schema = SubmissionSchema(instance=Model())
+        response = schema.load(req)
+        if response.errors:
             return {
-                'status': 3,
-                'message': '{} is paused'.format(config.ctf_name())
-            }, 403
+                'success': False,
+                'errors': response.errors
+            }, 400
 
-        if (current_user.authed() and (ctf_started() and ctftime())) or current_user.is_admin():
-            user = get_current_user()
-            team = get_current_team()
+        db.session.add(response.data)
+        db.session.commit()
 
-            fails = Fails.query.filter_by(
-                account_id=user.account_id,
-                challenge_id=challenge_id
-            ).count()
+        response = schema.dump(response.data)
+        db.session.close()
 
-            challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
-
-            if challenge.state == 'hidden':
-                abort(403)
-
-            requirements = challenge.requirements
-            if requirements:
-                solve_ids = Solves.query \
-                    .with_entities(Solves.challenge_id) \
-                    .filter_by(account_id=user.account_id) \
-                    .order_by(Solves.challenge_id.asc()) \
-                    .all()
-
-                prereqs = set(requirements.get('prerequisites', []))
-                if solve_ids >= prereqs:
-                    pass
-                else:
-                    abort(403)
-
-            chal_class = get_chal_class(challenge.type)
-
-            # Anti-bruteforce / submitting Flags too quickly
-            if current_user.get_wrong_submissions_per_minute(session['id']) > 10:
-                if ctftime():
-                    chal_class.fail(
-                        user=user,
-                        team=team,
-                        challenge=challenge,
-                        request=request
-                    )
-                log(
-                    'submissions',
-                    "[{date}] {name} submitted {submission} with kpm {kpm} [TOO FAST]",
-                    submission=request_data['submission'].encode('utf-8'),
-                    kpm=current_user.get_wrong_submissions_per_minute(session['id'])
-                )
-                # Submitting too fast
-                return {
-                    'status': 3,
-                    'message': "You're submitting flags too fast. Slow down."
-                }, 429
-
-            solves = Solves.query.filter_by(
-                account_id=user.account_id,
-                challenge_id=challenge_id
-            ).first()
-
-            # Challenge not solved yet
-            if not solves:
-                # Hit max attempts
-                max_tries = challenge.max_attempts
-                if max_tries and fails >= max_tries > 0:
-                    return {
-                        'status': 0,
-                        'message': "You have 0 tries remaining"
-                    }, 403
-
-                status, message = chal_class.attempt(challenge, request)
-                if status:  # The challenge plugin says the input is right
-                    if ctftime() or current_user.is_admin():
-                        chal_class.solve(
-                            user=user,
-                            team=team,
-                            challenge=challenge,
-                            request=request
-                        )
-
-                    log(
-                        'submissions',
-                        "[{date}] {name} submitted {submission} with kpm {kpm} [CORRECT]",
-                        submission=request_data['submission'].encode('utf-8'),
-                        kpm=current_user.get_wrong_submissions_per_minute(session['id'])
-                    )
-                    return {
-                        'status': 1,
-                        'message': message
-                    }
-                else:  # The challenge plugin says the input is wrong
-                    if ctftime() or current_user.is_admin():
-                        chal_class.fail(
-                            user=user,
-                            team=team,
-                            challenge=challenge,
-                            request=request
-                        )
-
-                    log(
-                        'submissions',
-                        "[{date}] {name} submitted {submission} with kpm {kpm} [WRONG]",
-                        submission=request_data['submission'].encode('utf-8'),
-                        kpm=current_user.get_wrong_submissions_per_minute(session['id'])
-                    )
-
-                    if max_tries:
-                        attempts_left = max_tries - fails - 1  # Off by one since fails has changed since it was gotten
-                        tries_str = 'tries'
-                        if attempts_left == 1:
-                            tries_str = 'try'
-                        if message[-1] not in '!().;?[]{}':  # Add a punctuation mark if there isn't one
-                            message = message + '.'
-                        return {
-                            'status': 0,
-                            'message': '{} You have {} {} remaining.'.format(message, attempts_left, tries_str)
-                        }
-                    else:
-                        return {
-                            'status': 0,
-                            'message': message
-                        }
-
-            # Challenge already solved
-            else:
-                log(
-                    'submissions',
-                    "[{date}] {name} submitted {submission} with kpm {kpm} [ALREADY SOLVED]",
-                    submission=request_data['submission'].encode('utf-8'),
-                    kpm=current_user.get_wrong_submissions_per_minute(
-                        user.account_id
-                    )
-                )
-                return {
-                    'status': 2,
-                    'message': 'You already solved this'
-                }
-        else:
-            return {
-                'status': -1,
-                'message': "You must be logged in to solve a challenge"
-            }, 302
+        return {
+            'success': True,
+            'data': response.data
+        }
 
 
 @submissions_namespace.route('/<submission_id>')

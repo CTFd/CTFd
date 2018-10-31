@@ -113,4 +113,45 @@ $(document).ready(function () {
             }
         });
     });
+
+    $('.correct-submission').click(function(e) {
+        var challenge_id = $(this).attr('challenge-id');
+        var challenge_name = $(this).attr('challenge-name');
+
+        var body = "<span>Are you sure you want to mark <strong>{0}</strong> solved for from <strong>{1}</strong>?".format(
+            htmlentities(challenge_name),
+            htmlentities(USER_NAME)
+        );
+
+        var params = {
+            provided: "MARKED AS SOLVED BY ADMIN",
+            user_id: USER_ID,
+            team_id: TEAM_ID,
+            challenge_id: challenge_id,
+            type: "correct"
+        };
+
+        ezq({
+            title: "Mark Correct",
+            body: body,
+            success: function () {
+                fetch(script_root + '/api/v1/submissions', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(params)
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (response) {
+                    if (response.success) {
+                        // TODO: Refresh missing and solves instead of reloading
+                        window.location.reload()
+                    }
+                });
+            }
+        })
+    });
+
 });
