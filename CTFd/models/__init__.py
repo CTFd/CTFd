@@ -140,7 +140,7 @@ class Challenges(db.Model):
 class Hints(db.Model):
     __tablename__ = 'hints'
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(80))
+    type = db.Column(db.String(80), default='standard')
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     content = db.Column(db.Text)
     cost = db.Column(db.Integer, default=0)
