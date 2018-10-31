@@ -262,7 +262,7 @@ class Users(db.Model):
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
     # TODO: We need uniqueness between usernames and oauth_id
-    oauth_id = db.Column(db.Integer)
+    oauth_id = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(128), unique=True)
     password = db.Column(db.String(128))
     email = db.Column(db.String(128), unique=True)
@@ -457,7 +457,7 @@ class Teams(db.Model):
     __tablename__ = 'teams'
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
-    oauth_id = db.Column(db.Integer)
+    oauth_id = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(128), unique=True)
     email = db.Column(db.String(128), unique=True)
     password = db.Column(db.String(128))
