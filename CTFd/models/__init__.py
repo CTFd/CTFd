@@ -706,7 +706,6 @@ class Fails(Submissions):
 
 class Unlocks(db.Model):
     __tablename__ = 'unlocks'
-    # TODO: This requires implementation
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))

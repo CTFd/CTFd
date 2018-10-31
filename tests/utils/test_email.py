@@ -155,8 +155,7 @@ def test_verify_email(mock_smtp):
         # This is currently not actually validated
         msg = ("Please click the following link to confirm"
                " your email address for CTFd:"
-               " http://localhost/confirm/InVzZXJAdXNlci5jb20iLlR4RDB2Zy5PRHFvWHNnZVhVajA4OS1zcWJhY3R"
-               "5OVlUOHFxQzRhUEpoSkxDcmVsOHVTdHVVRHlqY3ZZOE1wU2tqeEFGTWJTWm9Fb0w4WjljRVk2LVd5RHZjOXNfZw")
+               " http://localhost/confirm/InVzZXJAdXNlci5jb20iLlR4RDB2Zy5uWWtyVWZoLWREaDlidEtzZ2dyVUlxNzJJXzg")
 
         ctf_name = get_config('ctf_name')
         email_msg = MIMEText(msg)
