@@ -88,7 +88,7 @@ def admin_export_ctf():
         backup = export_ctf()
     ctf_name = utils.ctf_name()
     day = datetime.datetime.now().strftime("%Y-%m-%d")
-    full_name = "{}.{}.zip".format(ctf_name, day)
+    full_name = u"{}.{}.zip".format(ctf_name, day)
     return send_file(backup, as_attachment=True, attachment_filename=full_name)
 
 
