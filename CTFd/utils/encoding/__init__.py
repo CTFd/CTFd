@@ -8,8 +8,6 @@ import base64
 def hexencode(s):
     if six.PY3 and isinstance(s, string_types):
         s = s.encode('utf-8')
-    else:
-        s = str(s)
     return codecs.encode(s, 'hex')
 
 
