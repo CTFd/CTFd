@@ -56,7 +56,7 @@ def test_ctftime_allows_accessing_challenges_during_ctf():
                     "challenge_id": chal_id,
                     "nonce": sess.get('nonce')
                 }
-            r = client.post('/api/v1/submissions', data=data)
+            r = client.post('/api/v1/challenges/attempt', data=data)
             assert r.status_code == 200
         solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
         assert solve_count == 1
@@ -85,7 +85,7 @@ def test_ctftime_prevents_accessing_challenges_after_ctf():
                     "challenge_id": chal_id,
                     "nonce": sess.get('nonce')
                 }
-            r = client.post('/api/v1/submissions'.format(chal_id), data=data)
+            r = client.post('/api/v1/challenges/attempt', data=data)
             assert r.status_code == 403
         solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
         assert solve_count == 0
