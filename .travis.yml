@@ -2,6 +2,13 @@ language: python
 services:
     - mysql
     - postgresql
+addons:
+  apt:
+    sources:
+    - mysql-5.7-trusty
+    packages:
+    - mysql-server
+    - mysql-client
 env:
     - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
     - TESTING_DATABASE_URL='sqlite://'
