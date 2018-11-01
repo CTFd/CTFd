@@ -6,6 +6,7 @@ from sqlalchemy.sql.expression import union_all
 from sqlalchemy.types import JSON, NullType
 from sqlalchemy.orm import validates, column_property
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.sql import or_, and_, any_
 from CTFd.utils.crypto import hash_password
 from CTFd.cache import cache
 import datetime
@@ -360,7 +361,6 @@ class Users(db.Model):
         score = db.func.sum(Challenges.value).label('score')
         user = db.session.query(
             Solves.user_id,
-            Solves.challenge_id,
             score
         ) \
             .join(Users, Solves.user_id == Users.id) \
