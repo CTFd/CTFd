@@ -262,7 +262,7 @@ class ChallengeAttempt(Resource):
 
         if ctf_paused():
             return {
-                'status': 3,
+                'status': "paused",
                 'message': '{} is paused'.format(config.ctf_name())
             }, 403
 
@@ -316,7 +316,7 @@ class ChallengeAttempt(Resource):
                 )
                 # Submitting too fast
                 return {
-                    'status': 3,
+                    'status': "ratelimited",
                     'message': "You're submitting flags too fast. Slow down."
                 }, 429
 
@@ -331,7 +331,7 @@ class ChallengeAttempt(Resource):
                 max_tries = challenge.max_attempts
                 if max_tries and fails >= max_tries > 0:
                     return {
-                        'status': 0,
+                        'status': "incorrect",
                         'message': "You have 0 tries remaining"
                     }, 403
 
@@ -353,7 +353,7 @@ class ChallengeAttempt(Resource):
                             session['id'])
                     )
                     return {
-                        'status': 1,
+                        'status': "correct",
                         'message': message
                     }
                 else:  # The challenge plugin says the input is wrong
@@ -384,12 +384,12 @@ class ChallengeAttempt(Resource):
                         if message[-1] not in '!().;?[]{}':
                             message = message + '.'
                         return {
-                            'status': 0,
+                            'status': "incorrect",
                             'message': '{} You have {} {} remaining.'.format(message, attempts_left, tries_str)
                         }
                     else:
                         return {
-                            'status': 0,
+                            'status': "incorrect",
                             'message': message
                         }
 
@@ -404,7 +404,7 @@ class ChallengeAttempt(Resource):
                     )
                 )
                 return {
-                    'status': 2,
+                    'status': "already_solved",
                     'message': 'You already solved this'
                 }
         else:

@@ -121,7 +121,7 @@ function renderSubmissionResponse(data, cb) {
         window.location = script_root + "/login?next=" + script_root + window.location.pathname + window.location.hash
         return
     }
-    else if (result.status == 0) { // Incorrect key
+    else if (result.status === "incorrect") { // Incorrect key
         result_notification.addClass('alert alert-danger alert-dismissable text-center');
         result_notification.slideDown();
 
@@ -131,7 +131,7 @@ function renderSubmissionResponse(data, cb) {
             answer_input.removeClass("wrong");
         }, 3000);
     }
-    else if (result.status == 1) { // Challenge Solved
+    else if (result.status === "correct") { // Challenge Solved
         result_notification.addClass('alert alert-success alert-dismissable text-center');
         result_notification.slideDown();
 
@@ -141,13 +141,13 @@ function renderSubmissionResponse(data, cb) {
         answer_input.removeClass("wrong");
         answer_input.addClass("correct");
     }
-    else if (result.status == 2) { // Challenge already solved
+    else if (result.status === "already_solved") { // Challenge already solved
         result_notification.addClass('alert alert-info alert-dismissable text-center');
         result_notification.slideDown();
 
         answer_input.addClass("correct");
     }
-    else if (result.status == 3) { // Keys per minute too high
+    else if (result.status === "ratelimited") { // Keys per minute too high
         result_notification.addClass('alert alert-warning alert-dismissable text-center');
         result_notification.slideDown();
 
@@ -170,8 +170,8 @@ function renderSubmissionResponse(data, cb) {
 }
 
 function marksolves(cb) {
-    $.get(script_root + '/api/v1/' + user_mode + '/me/solves', function (data) {
-        var solves = $.parseJSON(JSON.stringify(data));
+    $.get(script_root + '/api/v1/' + user_mode + '/me/solves', function (response) {
+        var solves = response.data;
         for (var i = solves.length - 1; i >= 0; i--) {
             var id = solves[i].challenge_id;
             var btn = $('button[value="' + id + '"]');
@@ -185,8 +185,8 @@ function marksolves(cb) {
 }
 
 function load_user_solves(cb) {
-    $.get(script_root + '/api/v1/'+ user_mode +'/me/solves', function (data) {
-        var solves = $.parseJSON(JSON.stringify(data));
+    $.get(script_root + '/api/v1/'+ user_mode +'/me/solves', function (response) {
+        var solves = response.data;
 
         for (var i = solves.length - 1; i >= 0; i--) {
             var chal_id = solves[i].challenge_id;
@@ -225,7 +225,8 @@ function updatesolves(cb) {
 }
 
 function getsolves(id) {
-    $.get(script_root + '/api/v1/challenges/' + id + '/solves', function (data) {
+    $.get(script_root + '/api/v1/challenges/' + id + '/solves', function (response) {
+        var data = response.data;
         $('.chal-solves').text(
             (parseInt(data.length) + " Solves")
         );
