@@ -113,9 +113,6 @@
 
 		<a class="nav-item nav-link" id="nav-awards-tab" data-toggle="tab" href="#nav-awards" role="tab"
 		   aria-controls="nav-awards" aria-selected="false">Awards</a>
-
-		<a class="nav-item nav-link" id="nav-missing-tab" data-toggle="tab" href="#nav-missing" role="tab"
-		   aria-controls="nav-missing" aria-selected="false">Missing</a>
 	</nav>
 
 	<div class="tab-content" id="nav-tabContent">
@@ -142,7 +139,7 @@
 							<td class="text-center">{{ solve.challenge.category }}</td>
 							<td class="text-center">{{ solve.challenge.value }}</td>
 							<td class="text-center solve-time">
-								<script>document.write(moment({{ solve.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+								<script>document.write(moment("{{ solve.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
 							<td class="text-center">
 								<span class="delete-submission" submission-id="{{ solve.id }}"
@@ -179,7 +176,7 @@
 							<td class="text-center chal" id="{{ fail.challenge_id }}">{{ fail.challenge.name }}</td>
 							<td class="flag" id="{{ fail.id }}"><pre>{{ fail.provided }}</pre></td>
 							<td class="text-center solve-time">
-								<script>document.write(moment({{ fail.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+								<script>document.write(moment("{{ fail.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
 							</td>
 							<td class="text-center">
 								<span class="delete-submission" submission-id="{{ fail.id }}"
@@ -219,7 +216,7 @@
 								<td class="text-center chal" id="{{ award.id }}">{{ award.name }}</td>
 								<td class=""><pre>{{ award.description }}</pre></td>
 								<td class="text-center solve-time">
-									<script>document.write(moment({{ award.date|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+									<script>document.write(moment("{{ award.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
 								</td>
 								<td class="text-center">{{ award.value }}</td>
 								<td class="text-center">{{ award.category }}</td>
@@ -235,44 +232,6 @@
 						{% endfor %}
 						</tbody>
 					</table>
-
-					<button type="button" data-toggle="modal" data-target="#create-award-modal"
-							class="btn btn-primary float-right d-block">Create Award
-					</button>
-
-				</div>
-			</div>
-		</div>
-
-		<div class="tab-pane fade" id="nav-missing" role="tabpanel" aria-labelledby="nav-missing-tab">
-			<div class="row">
-				<div class="col-md-12">
-					<table class="table table-striped">
-					<h3 class="text-center py-3 d-block">Missing</h3>
-					<thead>
-					<tr>
-						<td class="text-center"><b>Challenge</b></td>
-						<td class="text-center"><b>Category</b></td>
-						<td class="text-center"><b>Value</b></td>
-						<td class="text-center"><b>Mark Solved</b></td>
-					</tr>
-					</thead>
-					<tbody>
-					{% for challenge in missing %}
-						<tr class="chal-solve">
-							<td class="text-center chal" id="{{ challenge.id }}">{{ challenge.name }}</td>
-							<td class="text-center">{{ challenge.category }}</td>
-							<td class="text-center">{{ challenge.value }}</td>
-							<td class="text-center">
-								<span class="mark-correct" data-toggle="tooltip"
-									  data-placement="top" title="Mark {{ challenge.name }} correct for {{ team.name }}">
-									<i class="fas fa-check"></i>
-								</span>
-							</td>
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
 				</div>
 			</div>
 		</div>
@@ -293,7 +252,7 @@
 					<tr>
 						<td class="text-center">{{ addr[0] }}</td>
 						<td class="text-center solve-time">
-							<script>document.write(moment({{ addr[1]|unix_time_millis }}).local().format('MMMM Do, h:mm:ss A'))</script>
+							<script>document.write(moment("{{ addr[1]|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
 						</td>
 					</tr>
 				{% endfor %}

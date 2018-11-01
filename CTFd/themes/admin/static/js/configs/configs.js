@@ -80,13 +80,26 @@ function convert_date_to_moment(month, day, year, hour, minute, timezone) {
 function update_configs(obj){
     var target = '/api/v1/configs';
     var method = 'PATCH';
+
+    var params = {};
+
+    Object.keys(obj).forEach(function (x) {
+        if (obj[x] === "true") {
+            params[x] = true;
+        } else if (obj[x] === "false") {
+            params[x] = false;
+        } else {
+            params[x] = obj[x];
+        }
+    });
+
     fetch(script_root + target, {
         method: method,
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(obj)
+        body: JSON.stringify(params)
     }).then(function(response) {
         return response.json()
     }).then(function(data) {

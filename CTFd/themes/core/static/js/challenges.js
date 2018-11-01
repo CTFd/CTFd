@@ -294,7 +294,6 @@ function loadchals(cb) {
 
             $("#" + catid + "-row").find(".category-challenges > .challenges-row").append(chalwrap);
         }
-        ;
 
         // marksolves();
 
@@ -309,32 +308,7 @@ function loadchals(cb) {
     });
 }
 
-function loadhint(hintid) {
-    var md = window.markdownit({
-        html: true,
-    });
-    ezq({
-        title: "Unlock Hint?",
-        body: "Are you sure you want to open this hint?",
-        success: function () {
-            $.post(script_root + "/hints/" + hintid, {'nonce': $('#nonce').val()}, function (response) {
-                if (response.errors) {
-                    ezal({
-                        title: "Error!",
-                        body: response.errors,
-                        button: "Okay"
-                    });
-                } else {
-                    ezal({
-                        title: "Hint",
-                        body: md.render(response.data.hint),
-                        button: "Got it!"
-                    });
-                }
-            });
-        }
-    });
-}
+
 
 $('#submit-key').click(function (e) {
     submitkey($('#chal-id').val(), $('#answer-input').val(), $('#nonce').val())

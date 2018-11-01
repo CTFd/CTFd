@@ -42,36 +42,9 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         data = request.form or request.get_json()
-        # for attr, value in data.iteritems():
-        #     setattr(challenge, attr, value)
 
         challenge = Challenges(**data)
 
-        # if 'hidden' in request.form:
-        #     chal.state = 'hidden'
-        # else:
-        #     chal.state = None
-        #
-        # max_attempts = request.form.get('max_attempts')
-        # if max_attempts and max_attempts.isdigit():
-        #     chal.max_attempts = int(max_attempts)
-        #
-        # db.session.add(chal)
-        # db.session.commit()
-
-        # flag = Flags(
-        #     challenge_id=chal.id,
-        #     content=request.form['content'],
-        #     type=request.form['key_type[0]'],
-        #     data=request.form.get('data')
-        # )
-        # db.session.add(flag)
-        #
-        # db.session.commit()
-        #
-        # files = request.files.getlist('files[]')
-        # for f in files:
-        #     upload_file(file=f, chalid=chal.id)
         db.session.add(challenge)
         db.session.commit()
 
@@ -114,7 +87,7 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         data = request.form or request.get_json()
-        for attr, value in data.iteritems():
+        for attr, value in data.items():
             setattr(challenge, attr, value)
 
         db.session.commit()

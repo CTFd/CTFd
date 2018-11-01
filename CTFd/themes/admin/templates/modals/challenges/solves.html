@@ -10,7 +10,7 @@
 			{% for solve in solves %}
 				<tr>
 					<td>{{ solve.account.name }}</td>
-					<td>{{ solve.date.isoformat() }}</td>
+					<td>{{ solve.date | isoformat }}</td>
 				</tr>
 			{% endfor %}
 		{% endif %}

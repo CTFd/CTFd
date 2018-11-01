@@ -22,7 +22,7 @@ window.challenge.submit = function (cb, preview) {
     var challenge_id = parseInt($('#chal-id').val());
     var submission = $('#answer-input').val();
 
-    var url = "/api/v1/submissions";
+    var url = "/api/v1/challenges/attempt";
     // if (preview) {
     //     url = "/admin/chal/";
     // }
@@ -32,7 +32,7 @@ window.challenge.submit = function (cb, preview) {
         'submission': submission
     };
 
-    fetch(script_root + '/api/v1/submissions', {
+    fetch(script_root + url, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',

@@ -140,7 +140,7 @@ class Challenges(db.Model):
 class Hints(db.Model):
     __tablename__ = 'hints'
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(80))
+    type = db.Column(db.String(80), default='standard')
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     content = db.Column(db.Text)
     cost = db.Column(db.Integer, default=0)
@@ -150,6 +150,18 @@ class Hints(db.Model):
         'polymorphic_identity': 'standard',
         'polymorphic_on': type
     }
+
+    @property
+    def name(self):
+        return "Hint {id}".format(id=self.id)
+
+    @property
+    def category(self):
+        return self.__tablename__
+
+    @property
+    def description(self):
+        return "Hint for {name}".format(name=self.challenge.name)
 
     def __init__(self, *args, **kwargs):
         super(Hints, self).__init__(**kwargs)
@@ -262,7 +274,7 @@ class Users(db.Model):
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
     # TODO: We need uniqueness between usernames and oauth_id
-    oauth_id = db.Column(db.Integer)
+    oauth_id = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(128), unique=True)
     password = db.Column(db.String(128))
     email = db.Column(db.String(128), unique=True)
@@ -457,7 +469,7 @@ class Teams(db.Model):
     __tablename__ = 'teams'
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
-    oauth_id = db.Column(db.Integer)
+    oauth_id = db.Column(db.Integer, unique=True)
     name = db.Column(db.String(128), unique=True)
     email = db.Column(db.String(128), unique=True)
     password = db.Column(db.String(128))
@@ -652,6 +664,14 @@ class Submissions(db.Model):
         elif user_mode == 'users':
             return self.user
 
+    @staticmethod
+    def get_child(type):
+        child_classes = {
+            x.polymorphic_identity: x.class_
+            for x in Submissions.__mapper__.self_and_descendants
+        }
+        return child_classes[type]
+
     def __repr__(self):
         return '<Submission {}, {}, {}, {}>'.format(self.team_id, self.challenge_id, self.ip, self.provided)
 
@@ -686,11 +706,10 @@ class Fails(Submissions):
 
 class Unlocks(db.Model):
     __tablename__ = 'unlocks'
-    # TODO: This requires implementation
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
-    item_id = db.Column(db.Integer)
+    target = db.Column(db.Integer)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     type = db.Column(db.String(32))
 
@@ -698,10 +717,13 @@ class Unlocks(db.Model):
         'polymorphic_on': type,
     }
 
-    def __init__(self, type, team_id, item_id):
-        self.type = type
-        self.team_id = team_id
-        self.item_id = item_id
+    @hybrid_property
+    def account_id(self):
+        user_mode = get_config('user_mode')
+        if user_mode == 'teams':
+            return self.team_id
+        elif user_mode == 'users':
+            return self.user_id
 
     def __repr__(self):
         return '<Unlock %r>' % self.teamid

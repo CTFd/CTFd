@@ -57,6 +57,7 @@
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/multi-modal.js') }}"></script>
 	{% if admin or not errors %}
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/challenges.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/hints.js') }}"></script>
 	{% endif %}
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/style.js') }}"></script>
 {% endblock %}

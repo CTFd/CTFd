@@ -46,7 +46,7 @@
 						</td>
 						<td class="text-center solve-time">
 							<span>
-								<script>document.write( moment({{ sub.date|unix_time_millis }}).local().fromNow())</script>
+								<script>document.write( moment("{{ sub.date | isoformat }}").fromNow())</script>
 							</span>
 						</td>
 						<td class="text-center">

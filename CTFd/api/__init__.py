@@ -15,6 +15,7 @@ from CTFd.api.v1.files import files_namespace
 from CTFd.api.v1.config import configs_namespace
 from CTFd.api.v1.notifications import notifications_namespace
 from CTFd.api.v1.pages import pages_namespace
+from CTFd.api.v1.unlocks import unlocks_namespace
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 CTFd_API_v1 = Api(api, version='v1')
@@ -33,3 +34,4 @@ CTFd_API_v1.add_namespace(files_namespace, '/files')
 CTFd_API_v1.add_namespace(notifications_namespace, '/notifications')
 CTFd_API_v1.add_namespace(configs_namespace, '/configs')
 CTFd_API_v1.add_namespace(pages_namespace, '/pages')
+CTFd_API_v1.add_namespace(unlocks_namespace, '/unlocks')

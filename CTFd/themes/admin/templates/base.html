@@ -46,7 +46,9 @@
 						</div>
 					</li>
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.users_listing') }}">Users</a></li>
+					{% if get_config('user_mode') == 'teams' %}
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.teams_listing') }}">Teams</a></li>
+					{% endif %}
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.scoreboard_listing') }}">Scoreboard</a></li>
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.challenges_listing') }}">Challenges</a></li>
 					<li class="nav-item dropdown">

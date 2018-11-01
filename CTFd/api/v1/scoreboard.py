@@ -3,7 +3,7 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import Solves, Awards
 from CTFd.utils.scores import get_standings
 from CTFd.utils import get_config
-from CTFd.utils.dates import unix_time_to_utc, unix_time
+from CTFd.utils.dates import unix_time_to_utc, unix_time, isoformat
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 
 scoreboard_namespace = Namespace('scoreboard', description="Endpoint to retrieve scores")
@@ -68,7 +68,7 @@ class ScoreboardDetail(Resource):
                         'challenge_id': solve.challenge_id,
                         'account_id': solve.account_id,
                         'value': solve.challenge.value,
-                        'time': unix_time(solve.date)
+                        'date': isoformat(solve.date)
                     })
             for award in awards:
                 if award.account_id == team:
@@ -76,9 +76,9 @@ class ScoreboardDetail(Resource):
                         'challenge_id': None,
                         'account_id': award.account_id,
                         'value': award.value,
-                        'time': unix_time(award.date)
+                        'date': isoformat(award.date)
                     })
-            response[i + 1]['solves'] = sorted(response[i + 1]['solves'], key=lambda k: k['time'])
+            response[i + 1]['solves'] = sorted(response[i + 1]['solves'], key=lambda k: k['date'])
 
         return {
             'success': True,
