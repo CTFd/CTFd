@@ -257,7 +257,8 @@ class DynamicChallenge(Challenges):
 
 
 def load(app):
-    upgrade()
+    # upgrade()
+    app.db.create_all()
     CHALLENGE_CLASSES['dynamic'] = DynamicValueChallenge
     register_plugin_assets_directory(
         app, base_path='/plugins/dynamic_challenges/assets/')
