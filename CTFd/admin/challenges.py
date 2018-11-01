@@ -28,7 +28,8 @@ def challenges_detail(challenge_id):
     update_j2 = render_template_string(
         challenge_class.blueprint.open_resource(
             os.path.join(static_path, 'update.j2')
-        ).read(),
+        ).read().decode('utf-8'),
+        # Python 3
         challenge=challenge
     )
     update_script = os.path.join(challenge_class.route, 'update.js')

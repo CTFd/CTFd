@@ -25,8 +25,10 @@
 		<select class="form-control" name="prerequisite">
 			<option value=""> -- </option>
 			{% for challenge_id in challenges %}
-				{% if challenge_id != challenge.id and (requirements and challenge_id not in requirements['prerequisites']) %}
-				<option value="{{ challenge_id }}">{{ challenges[challenge_id] }}</option>
+				{% if (challenge.requirements and challenge_id not in challenge.requirements['prerequisites']) %}
+					{% if challenge_id != challenge.id %}
+						<option value="{{ challenge_id }}">{{ challenges[challenge_id] }}</option>
+					{% endif %}
 				{% endif %}
 			{% endfor %}
 		</select>
@@ -37,5 +39,5 @@
 </form>
 
 <script>
-	var CHALLENGE_REQUIREMENTS = {{ challenge.requirements | tojson }} || {'prequisites': []};
+	var CHALLENGE_REQUIREMENTS = {{ challenge.requirements | tojson }} || {prerequisites: []};
 </script>
