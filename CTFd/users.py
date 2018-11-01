@@ -14,7 +14,6 @@ users = Blueprint('users', __name__)
 @users.route('/users')
 @check_account_visibility
 def listing():
-    # TODO: Implement this logic to either mimic the teams page or to only be visible when the ctf is in user only mode
     page = request.args.get('page', 1)
     page = abs(int(page))
     results_per_page = 50
