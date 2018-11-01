@@ -29,6 +29,13 @@ class CachedSession(CallbackDict, SessionMixin):
             self.permanent = permanent
         self.modified = False
 
+    def regenerate(self):
+        cache.delete(self.sid)
+
+        # Empty current sid and mark modified so the interface will give it a new one.
+        self.sid = None
+        self.modified = True
+
 
 class CachingSessionInterface(SessionInterface):
     """
@@ -82,6 +89,9 @@ class CachingSessionInterface(SessionInterface):
             secure = self.get_cookie_secure(app)
             expires = self.get_expiration_time(app, session)
             val = self.serializer.dumps(dict(session))
+
+            if session.sid is None:
+                session.sid = self._generate_sid()
 
             cache.set(key=self.key_prefix + session.sid, value=val, timeout=total_seconds(app.permanent_session_lifetime))
             session_id = session.sid

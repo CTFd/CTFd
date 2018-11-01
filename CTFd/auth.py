@@ -219,11 +219,7 @@ def login():
 
         if user:
             if user and bcrypt_sha256.verify(request.form['password'], user.password):
-                try:
-                    # TODO: There is session fixation at the moment. Need to find a way to regenerate the session id.
-                    session.regenerate()
-                except Exception as e:
-                    pass  # TODO: Some session objects don't implement regenerate :(
+                session.regenerate()
 
                 login_user(user)
                 log('logins', "[{date}] {ip} - {name} logged in")
