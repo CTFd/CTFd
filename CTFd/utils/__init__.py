@@ -1,7 +1,6 @@
 import mistune
 import six
 from flask import current_app as app, request, redirect, url_for, session, render_template, abort, jsonify
-from flask_migrate import Migrate, upgrade as migrate_upgrade, stamp as migrate_stamp
 from CTFd.cache import cache
 from CTFd.models import (
     db,
@@ -28,7 +27,6 @@ else:
     text_type = str
     binary_type = bytes
 
-migrate = Migrate()
 markdown = mistune.Markdown()
 
 

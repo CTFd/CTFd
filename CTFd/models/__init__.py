@@ -6,6 +6,7 @@ from sqlalchemy.sql.expression import union_all
 from sqlalchemy.types import JSON, NullType
 from sqlalchemy.orm import validates, column_property
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.sql import or_, and_, any_
 from CTFd.utils.crypto import hash_password
 from CTFd.cache import cache
 import datetime
@@ -63,7 +64,7 @@ class SQLiteJson(TypeDecorator):
         return value
 
 
-JSONLite = types.JSON().with_variant(SQLiteJson, 'sqlite')
+JSON = types.JSON().with_variant(SQLiteJson, 'sqlite')
 
 
 class Notifications(db.Model):
@@ -112,7 +113,7 @@ class Challenges(db.Model):
     category = db.Column(db.String(80))
     type = db.Column(db.String(80))
     state = db.Column(db.String(80), nullable=False, default='visible')
-    requirements = db.Column(JSONLite)
+    requirements = db.Column(JSON)
 
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
@@ -144,7 +145,7 @@ class Hints(db.Model):
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     content = db.Column(db.Text)
     cost = db.Column(db.Integer, default=0)
-    requirements = db.Column(JSONLite)
+    requirements = db.Column(JSON)
 
     __mapper_args__ = {
         'polymorphic_identity': 'standard',
@@ -360,7 +361,6 @@ class Users(db.Model):
         score = db.func.sum(Challenges.value).label('score')
         user = db.session.query(
             Solves.user_id,
-            Solves.challenge_id,
             score
         ) \
             .join(Users, Solves.user_id == Users.id) \

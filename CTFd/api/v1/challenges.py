@@ -227,7 +227,6 @@ class ChallengeAttempt(Resource):
     # @ authed_only TODO: It's probably better to put authed_only here but I'm not sure the effects.
     def post(self):
         # TODO: This doesn't really conform to the JSON API
-        # TODO: The error numbers here make no sense.
         if request.content_type != 'application/json':
             request_data = request.form
         else:
@@ -235,35 +234,17 @@ class ChallengeAttempt(Resource):
 
         if current_user.is_admin():
             preview = request.args.get('preview', False)
-            if preview is False:
-                # This is required to be able to create instances of child
-                # classes without explicit schemas
-                Model = Submissions.get_child(type=request_data.get('type'))
-                schema = SubmissionSchema(instance=Model())
-                response = schema.load(request_data)
-                if response.errors:
-                    return {
-                        'success': False,
-                        'errors': response.errors
-                    }, 400
-
-                db.session.add(response.data)
-                db.session.commit()
-
-                response = schema.dump(response.data)
-                db.session.close()
-
-                return {
-                    'success': True,
-                    'data': response.data
-                }
+            # TODO: implement challenge preview functionality in admin panel
 
         challenge_id = request_data.get('challenge_id')
 
         if ctf_paused():
             return {
-                'status': "paused",
-                'message': '{} is paused'.format(config.ctf_name())
+                'success': True,
+                'data': {
+                    'status': "paused",
+                    'message': '{} is paused'.format(config.ctf_name())
+                }
             }, 403
 
         if (current_user.authed() and (ctf_started() and ctftime())) or current_user.is_admin():
@@ -316,8 +297,11 @@ class ChallengeAttempt(Resource):
                 )
                 # Submitting too fast
                 return {
-                    'status': "ratelimited",
-                    'message': "You're submitting flags too fast. Slow down."
+                    'success': True,
+                    'data': {
+                        'status': "ratelimited",
+                        'message': "You're submitting flags too fast. Slow down."
+                    }
                 }, 429
 
             solves = Solves.query.filter_by(
@@ -331,8 +315,11 @@ class ChallengeAttempt(Resource):
                 max_tries = challenge.max_attempts
                 if max_tries and fails >= max_tries > 0:
                     return {
-                        'status': "incorrect",
-                        'message': "You have 0 tries remaining"
+                        'success': True,
+                        'data': {
+                            'status': "incorrect",
+                            'message': "You have 0 tries remaining"
+                        }
                     }, 403
 
                 status, message = chal_class.attempt(challenge, request)
@@ -353,8 +340,11 @@ class ChallengeAttempt(Resource):
                             session['id'])
                     )
                     return {
-                        'status': "correct",
-                        'message': message
+                        'success': True,
+                        'data': {
+                            'status': "correct",
+                            'message': message
+                        }
                     }
                 else:  # The challenge plugin says the input is wrong
                     if ctftime() or current_user.is_admin():
@@ -384,13 +374,19 @@ class ChallengeAttempt(Resource):
                         if message[-1] not in '!().;?[]{}':
                             message = message + '.'
                         return {
-                            'status': "incorrect",
-                            'message': '{} You have {} {} remaining.'.format(message, attempts_left, tries_str)
+                            'success': True,
+                            'data': {
+                                'status': "incorrect",
+                                'message': '{} You have {} {} remaining.'.format(message, attempts_left, tries_str)
+                            }
                         }
                     else:
                         return {
-                            'status': "incorrect",
-                            'message': message
+                            'success': True,
+                            'data': {
+                                'status': "incorrect",
+                                'message': message
+                            }
                         }
 
             # Challenge already solved
@@ -404,13 +400,19 @@ class ChallengeAttempt(Resource):
                     )
                 )
                 return {
-                    'status': "already_solved",
-                    'message': 'You already solved this'
+                    'success': True,
+                    'data': {
+                        'status': "already_solved",
+                        'message': 'You already solved this'
+                    }
                 }
         else:
             return {
-                'status': -1,
-                'message': "You must be logged in to solve a challenge"
+                'success': True,
+                'data': {
+                    'status': "authentication_required",
+                    'message': "You must be logged in to solve a challenge"
+                }
             }, 302
 
 

@@ -97,18 +97,19 @@ class UserSchema(ma.ModelSchema):
     def validate_password_confirmation(self, data):
         password = data.get('password')
         confirm = data.get('confirm')
+        target_user = get_current_user()
 
-        if is_admin():
+        if is_admin() and target_user.id != data.get('id'):
+            data['password'] = hash_password(data['password'])
             return data
         else:
-            target_user = get_current_user()
-
             if password and (confirm is None):
                 raise ValidationError('Please confirm your current password', field_names=['confirm'])
 
-            if target_user.id == session['id']:
+            if password and confirm:
                 test = verify_password(plaintext=confirm, ciphertext=target_user.password)
                 if test is True:
+                    data['password'] = hash_password(data['password'])
                     return data
                 else:
                     raise ValidationError('Your previous password is incorrect', field_names=['confirm'])

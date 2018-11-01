@@ -108,8 +108,8 @@ $("#answer-input").keyup(function (event) {
 });
 
 
-function renderSubmissionResponse(data, cb) {
-    var result = $.parseJSON(JSON.stringify(data));
+function renderSubmissionResponse(response, cb) {
+    var result = response.data;
 
     var result_message = $('#result-message');
     var result_notification = $('#result-notification');
@@ -117,8 +117,8 @@ function renderSubmissionResponse(data, cb) {
     result_notification.removeClass();
     result_message.text(result.message);
 
-    if (result.status == -1) {
-        window.location = script_root + "/login?next=" + script_root + window.location.pathname + window.location.hash
+    if (result.status === "authentication_required") {
+        window.location = script_root + "/login?next=" + script_root + window.location.pathname + window.location.hash;
         return
     }
     else if (result.status === "incorrect") { // Incorrect key

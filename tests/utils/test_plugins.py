@@ -21,7 +21,6 @@ def test_admin_override_template():
     app = create_ctfd()
     with app.app_context():
         override_template('admin/users/user.html', 'ADMIN TEAM OVERRIDE')
-
         client = login_as_user(app, name="admin", password="password")
         r = client.get('/admin/users/1')
         assert r.status_code == 200

@@ -10,7 +10,8 @@ from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
-from CTFd.utils import migrate, migrate_upgrade, migrate_stamp
+from CTFd import utils
+from CTFd.utils.migrations import migrations, migrate, upgrade, stamp
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals
@@ -85,7 +86,7 @@ def confirm_upgrade():
 
 
 def run_upgrade():
-    migrate_upgrade()
+    upgrade()
     utils.set_config('ctf_version', __version__)
 
 
@@ -121,24 +122,16 @@ def create_app(config='CTFd.config.Config'):
         db.init_app(app)
 
         # Register Flask-Migrate
-        migrate.init_app(app, db)
+        migrations.init_app(app, db)
 
         # Alembic sqlite support is lacking so we should just create_all anyway
         if url.drivername.startswith('sqlite'):
             db.create_all()
+            stamp()
         else:
-            if len(db.engine.table_names()) == 0:
-                # This creates tables instead of db.create_all()
-                # Allows migrations to happen properly
-                migrate_upgrade()
-            elif 'alembic_version' not in db.engine.table_names():
-                # There is no alembic_version because CTFd is from before it had migrations
-                # Stamp it to the base migration
-                if confirm_upgrade():
-                    migrate_stamp(revision='cb3cfcc47e2f')
-                    run_upgrade()
-                else:
-                    exit()
+            # This creates tables instead of db.create_all()
+            # Allows migrations to happen properly
+            upgrade()
 
         from CTFd.models import ma
 
@@ -161,8 +154,6 @@ def create_app(config='CTFd.config.Config'):
         if app.config.get('REVERSE_PROXY'):
             app.wsgi_app = ProxyFix(app.wsgi_app)
 
-        update_check(force=True)
-
         version = utils.get_config('ctf_version')
 
         # Upgrading from an older version of CTFd
@@ -177,6 +168,8 @@ def create_app(config='CTFd.config.Config'):
 
         if not utils.get_config('ctf_theme'):
             utils.set_config('ctf_theme', 'core')
+
+        update_check(force=True)
 
         init_request_processors(app)
         init_template_filters(app)

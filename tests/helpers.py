@@ -138,8 +138,8 @@ def gen_team(db, name='team_name', email='team@ctfd.io', password='password', **
     return team
 
 
-def gen_hint(db, challenge_id, hint="This is a hint", cost=0, type=0, **kwargs):
-    hint = Hints(challenge_id=challenge_id, hint=hint, cost=cost, type=type, **kwargs)
+def gen_hint(db, challenge_id, content="This is a hint", cost=0, type="standard", **kwargs):
+    hint = Hints(challenge_id=challenge_id, content=content, cost=cost, type=type, **kwargs)
     db.session.add(hint)
     db.session.commit()
     return hint

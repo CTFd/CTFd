@@ -4,6 +4,7 @@ from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.flags import get_flag_class
 from CTFd.models import db, Solves, Fails, Flags, Challenges, Files, Tags, Teams, Hints
 from CTFd import utils
+from CTFd.utils.migrations import upgrade
 import math
 
 
@@ -256,6 +257,7 @@ class DynamicChallenge(Challenges):
 
 
 def load(app):
+    # upgrade()
     app.db.create_all()
     CHALLENGE_CLASSES['dynamic'] = DynamicValueChallenge
     register_plugin_assets_directory(
