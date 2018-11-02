@@ -195,6 +195,49 @@ def test_contact_for_password_reset():
 
 
 @patch('smtplib.SMTP')
+def test_user_can_confirm_email(mock_smtp):
+    """Test that a user is capable of confirming their email address"""
+    app = create_ctfd()
+    with app.app_context():
+        # Set CTFd to only allow confirmed users and send emails
+        set_config('verify_emails', True)
+        set_config('mail_server', 'localhost')
+        set_config('mail_port', 25)
+        set_config('mail_username', 'username')
+        set_config('mail_password', 'password')
+
+        register_user(app, name="user1", email="user@user.com")
+
+        # Teams are not verified by default
+        user = Users.query.filter_by(email='user@user.com').first()
+        assert user.verified is False
+
+        client = login_as_user(app, name="user1", password="password")
+
+        # smtp.sendmail was called
+        mock_smtp.return_value.sendmail.assert_called()
+
+        with client.session_transaction() as sess:
+            with freeze_time("2012-01-14 03:21:34"):
+                data = {
+                    "nonce": sess.get('nonce')
+                }
+                r = client.get('/challenges')
+                assert r.location == "http://localhost/confirm"  # We got redirected to /confirm
+
+                # Use precalculated confirmation secret
+                r = client.get(
+                    'http://localhost/confirm/InVzZXJAdXNlci5jb20iLlc5dXhpdy5wUjVPTWhCOXB0bUQzNGpKZ3dOVm81SWl2UVE'
+                )
+                assert r.location == 'http://localhost/challenges'
+
+                # The team is now verified
+                user = Users.query.filter_by(email='user@user.com').first()
+                assert user.verified is True
+    destroy_ctfd(app)
+
+
+@patch('smtplib.SMTP')
 @freeze_time("2012-01-14 03:21:34")
 def test_user_can_reset_password(mock_smtp):
     """Test that a user is capable of resetting their password"""

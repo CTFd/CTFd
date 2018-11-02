@@ -39,7 +39,7 @@ def confirm(data=None):
             return render_template('confirm.html', errors=['Your confirmation token is invalid'])
         team = Users.query.filter_by(email=user_email).first_or_404()
         team.verified = True
-        log('registrations', format="[{date}] {ip} -  successful password reset for {username}")
+        log('registrations', format="[{date}] {ip} -  successful password reset for {name}")
         db.session.commit()
         db.session.close()
         if current_user.authed():
@@ -59,7 +59,7 @@ def confirm(data=None):
                 return redirect(url_for('views.profile'))
             else:
                 email.verify_email_address(team.email)
-                log('registrations', format="[{date}] {ip} - {username} initiated a confirmation email resend")
+                log('registrations', format="[{date}] {ip} - {name} initiated a confirmation email resend")
             return render_template('confirm.html', team=team, infos=['Your confirmation email has been resent!'])
         elif request.method == "GET":
             # User has been directed to the confirm page

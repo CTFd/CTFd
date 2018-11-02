@@ -39,7 +39,6 @@ from CTFd.utils.user import get_current_user
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_started, ctf_ended, ctf_paused, ctftime
 from CTFd.utils.logging import log
-from CTFd.schemas.submissions import SubmissionSchema
 
 challenges_namespace = Namespace('challenges',
                                  description="Endpoint to retrieve Challenges")
