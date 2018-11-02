@@ -46,32 +46,32 @@ def test_user_score_is_correct():
 
         # create challenge
         chal = gen_challenge(app.db, value=100)
-        flag = gen_flag(app.db, chal=chal.id, flag='flag')
+        flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
         chal_id = chal.id
 
         # create a solve for the challenge for user1. (the id is 2 because of the admin)
-        gen_solve(app.db, 2, chal_id)
-        user1 = Teams.query.filter_by(id=2).first()
+        gen_solve(app.db, user_id=2, challenge_id=chal_id)
+        user1 = Users.query.filter_by(id=2).first()
 
         # assert that user1's score is 100
-        assert user1.score() == 100
-        assert user1.place() == '1st'
+        assert user1.score == 100
+        assert user1.place == '1st'
 
         # create user2
         register_user(app, name="user2", email="user2@ctfd.io")
 
         # user2 solves the challenge
-        gen_solve(app.db, 3, chal_id)
+        gen_solve(app.db, 3, challenge_id=chal_id)
 
         # assert that user2's score is 100 but is in 2nd place
-        user2 = Teams.query.filter_by(id=3).first()
-        assert user2.score() == 100
-        assert user2.place() == '2nd'
+        user2 = Users.query.filter_by(id=3).first()
+        assert user2.score == 100
+        assert user2.place == '2nd'
 
         # create an award for user2
-        gen_award(app.db, 3, value=5)
+        gen_award(app.db, user_id=3, value=5)
 
         # assert that user2's score is now 105 and is in 1st place
-        assert user2.score() == 105
-        assert user2.place() == '1st'
+        assert user2.score == 105
+        assert user2.place == '1st'
     destroy_ctfd(app)

@@ -145,16 +145,16 @@ def gen_hint(db, challenge_id, content="This is a hint", cost=0, type="standard"
     return hint
 
 
-def gen_solve(db, team_id, challenge_id, ip='127.0.0.1', flag='rightkey', **kwargs):
-    solve = Solves(team_id=team_id, challenge_id=challenge_id, ip=ip, flag=flag, **kwargs)
+def gen_solve(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', provided='rightkey', **kwargs):
+    solve = Solves(user_id=user_id, team_id=team_id, challenge_id=challenge_id, ip=ip, provided=provided, **kwargs)
     solve.date = datetime.datetime.utcnow()
     db.session.add(solve)
     db.session.commit()
     return solve
 
 
-def gen_wrongkey(db, team_id, challenge_id, ip='127.0.0.1', content='wrongkey', **kwargs):
-    wrongkey = Fails(team_id=team_id, challenge_id=challenge_id, ip=ip, content=content)
+def gen_wrongkey(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', content='wrongkey', **kwargs):
+    wrongkey = Fails(user_id=user_id, team_id=team_id, challenge_id=challenge_id, ip=ip, content=content)
     wrongkey.date = datetime.datetime.utcnow()
     db.session.add(wrongkey)
     db.session.commit()
