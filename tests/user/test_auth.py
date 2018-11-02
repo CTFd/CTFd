@@ -5,6 +5,7 @@ from CTFd.models import Users
 from CTFd.utils import set_config, get_config
 from freezegun import freeze_time
 from tests.helpers import *
+from mock import patch
 
 
 def test_register_user():
@@ -190,4 +191,69 @@ def test_contact_for_password_reset():
             r = client.get(forgot_link)
 
             assert "Contact a CTF organizer" in r.get_data(as_text=True)
+    destroy_ctfd(app)
+
+
+@patch('smtplib.SMTP')
+@freeze_time("2012-01-14 03:21:34")
+def test_user_can_reset_password(mock_smtp):
+    """Test that a user is capable of resetting their password"""
+    from email.mime.text import MIMEText
+    app = create_ctfd()
+    with app.app_context():
+        # Set CTFd to send emails
+        set_config('mail_server', 'localhost')
+        set_config('mail_port', 25)
+        set_config('mail_username', 'username')
+        set_config('mail_password', 'password')
+
+        # Create a user
+        register_user(app, name="user1", email="user@user.com")
+
+        with app.test_client() as client:
+            r = client.get('/reset_password')
+
+            # Build reset password data
+            with client.session_transaction() as sess:
+                data = {
+                    'nonce': sess.get('nonce'),
+                    'email': 'user@user.com'
+                }
+
+            # Issue the password reset request
+            r = client.post('/reset_password', data=data)
+
+            from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+            to_addr = 'user@user.com'
+
+            # Build the email
+            msg = ("""Did you initiate a password reset? Click the following link to reset """
+                   """your password:\n\nhttp://localhost/reset_password/InVzZXIxIi5UeEQwdmc"""
+                   """uTWFqaWRzYzB6ZE1zdmp1ZWRPUHM4YXc1TXow\n\n""")
+            email_msg = MIMEText(msg)
+            email_msg['Subject'] = "Message from CTFd"
+            email_msg['From'] = from_addr
+            email_msg['To'] = to_addr
+
+            # Make sure that the reset password email is sent
+            mock_smtp.return_value.sendmail.assert_called_with(from_addr, [to_addr], email_msg.as_string())
+
+            # Get user's original password
+            user = Users.query.filter_by(email="user@user.com").first()
+            user_password_saved = user.password
+
+            # Build the POST data
+            with client.session_transaction() as sess:
+                data = {
+                    'nonce': sess.get('nonce'),
+                    'password': 'passwordtwo'
+                }
+
+            # Do the password reset
+            r = client.get('/reset_password/InVzZXIxIi5UeEQwdmcuTWFqaWRzYzB6ZE1zdmp1ZWRPUHM4YXc1TXow')
+            r = client.post('/reset_password/InVzZXIxIi5UeEQwdmcuTWFqaWRzYzB6ZE1zdmp1ZWRPUHM4YXc1TXow', data=data)
+
+            # Make sure that the user's password changed
+            user = Users.query.filter_by(email="user@user.com").first()
+            assert user.password != user_password_saved
     destroy_ctfd(app)

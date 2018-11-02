@@ -89,13 +89,13 @@ def reset_password(data=None):
             team = Users.query.filter_by(name=name).first_or_404()
             team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
             db.session.commit()
-            log('logins', format="[{date}] {ip} -  successful password reset for {username}")
+            log('logins', format="[{date}] {ip} -  successful password reset for {name}")
             db.session.close()
             return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
-        email = request.form['email'].strip()
-        team = Users.query.filter_by(email=email).first()
+        email_address = request.form['email'].strip()
+        team = Users.query.filter_by(email=email_address).first()
 
         errors = []
 
@@ -111,7 +111,7 @@ def reset_password(data=None):
                 errors=['If that account exists you will receive an email, please check your inbox']
             )
 
-        email.forgot_password(email, team.name)
+        email.forgot_password(email_address, team.name)
 
         return render_template(
             'reset_password.html',
