@@ -87,6 +87,19 @@ def test_user_login_with_email():
     destroy_ctfd(app)
 
 
+def test_user_get_logout():
+    """Can a registered user load /logout"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        client.get('/logout', follow_redirects=True)
+        r = client.get('/challenges')
+        assert r.location == "http://localhost/login?next=%2Fchallenges"
+        assert r.status_code == 302
+    destroy_ctfd(app)
+
+
 def test_user_isnt_admin():
     """A registered user cannot access admin pages"""
     app = create_ctfd()

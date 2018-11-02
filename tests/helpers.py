@@ -169,8 +169,8 @@ def gen_tracking(db, ip, team, **kwargs):
     return tracking
 
 
-def gen_page(db, title, route, html, draft=False, auth_required=False, **kwargs):
-    page = Pages(title=title, route=route, html=html, draft=draft, auth_required=auth_required, **kwargs)
+def gen_page(db, title, route, content, draft=False, auth_required=False, **kwargs):
+    page = Pages(title=title, route=route, content=content, draft=draft, auth_required=auth_required, **kwargs)
     db.session.add(page)
     db.session.commit()
     return page
