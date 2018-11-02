@@ -37,9 +37,7 @@ def test_api_hint_404():
                  '/api/v1/submissions',
                  '/api/v1/pages/{}']
 
-    with app.app_context(), freeze_time("2017-10-5"):
-        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
-        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+    with app.app_context():
         register_user(app)
         client = login_as_user(app)
         for endpoint in endpoints:

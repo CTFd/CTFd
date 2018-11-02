@@ -187,12 +187,12 @@ def register():
 
                 if config.can_send_mail() and get_config('verify_emails'):  # Confirming users is enabled and we can send email.
                     log('registrations', format="[{date}] {ip} - {name} registered (UNCONFIRMED) with {email}")
-                    email_address.verify_email_address(user.email)
+                    email.verify_email_address(user.email)
                     db.session.close()
                     return redirect(url_for('auth.confirm'))
                 else:  # Don't care about confirming users
                     if config.can_send_mail():  # We want to notify the user that they have registered.
-                        email_address.sendmail(
+                        email.sendmail(
                             request.form['email'],
                             "You've successfully registered for {}".format(get_config('ctf_name'))
                         )
