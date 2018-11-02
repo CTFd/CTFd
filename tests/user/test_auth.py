@@ -7,21 +7,95 @@ from freezegun import freeze_time
 from tests.helpers import *
 
 
-def test_register():
+def test_register_user():
+    """Can a user be registered"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
-        assert Users.query.count() == 2
+        user_count = Users.query.count()
+        assert user_count == 2  # There's the admin user and the created user
     destroy_ctfd(app)
 
 
-def test_login():
+def test_register_unicode_user():
+    """Can a user with a unicode name be registered"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="你好")
+        user_count = Users.query.count()
+        assert user_count == 2  # There's the admin user and the created user
+    destroy_ctfd(app)
+
+
+def test_register_duplicate_username():
+    """A user shouldn't be able to use an already registered team name"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(app, name="user1", email="user2@ctfd.io", password="password")
+        user_count = Users.query.count()
+        assert user_count == 2  # There's the admin user and the first created user
+    destroy_ctfd(app)
+
+
+def test_register_duplicate_email():
+    """A user shouldn't be able to use an already registered email address"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(app, name="user2", email="user1@ctfd.io", password="password")
+        user_count = Users.query.count()
+        assert user_count == 2  # There's the admin user and the first created user
+    destroy_ctfd(app)
+
+
+def test_user_bad_login():
+    """A user should not be able to login with an incorrect password"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app, name="user", password="wrong_password")
+        with client.session_transaction() as sess:
+            assert sess.get('id') is None
+        r = client.get('/profile')
+        assert r.location.startswith("http://localhost/login")  # We got redirected to login
+    destroy_ctfd(app)
+
+
+def test_user_login():
+    """Can a registered user can login"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
-        with client.session_transaction() as sess:
-            assert sess['id'] == 2
+        r = client.get('/profile')
+        assert r.location != "http://localhost/login"  # We didn't get redirected to login
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_login_with_email():
+    """Can a registered user can login with an email address instead of a team name"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app, name="user@ctfd.io", password="password")
+        r = client.get('/profile')
+        assert r.location != "http://localhost/login"  # We didn't get redirected to login
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_user_isnt_admin():
+    """A registered user cannot access admin pages"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        for page in ['pages', 'users', 'teams', 'scoreboard', 'challenges', 'statistics', 'config']:
+            r = client.get('/admin/{}'.format(page))
+            assert r.location.startswith("http://localhost/login?next=")
+            assert r.status_code == 302
     destroy_ctfd(app)
 
 
