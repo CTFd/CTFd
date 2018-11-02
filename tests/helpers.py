@@ -79,11 +79,9 @@ def login_as_user(app, name="user", password="password"):
 
 
 def get_scores(user):
-    scores = user.get('/scores')
-    print(scores.get_data(as_text=True))
-    scores = json.loads(scores.get_data(as_text=True))
-    print(scores)
-    return scores['standings']
+    r = user.get('/api/v1/scoreboard')
+    scores = r.get_json()
+    return scores['data']
 
 
 def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard', state='visible', **kwargs):
