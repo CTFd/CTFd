@@ -93,8 +93,8 @@ def gen_challenge(db, name='chal_name', description='chal_description', value=10
     return chal
 
 
-def gen_award(db, team_id, name="award_name", value=100):
-    award = Awards(team_id=team_id, name=name, value=value)
+def gen_award(db, user_id, team_id=None, name="award_name", value=100):
+    award = Awards(user_id=user_id, team_id=team_id, name=name, value=value)
     award.date = datetime.datetime.utcnow()
     db.session.add(award)
     db.session.commit()
