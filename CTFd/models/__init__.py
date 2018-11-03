@@ -124,13 +124,6 @@ class Challenges(db.Model):
         'polymorphic_on': type
     }
 
-    # def __init__(self, name, description, value, category, type='standard'):
-    #     self.name = name
-    #     self.description = description
-    #     self.value = value
-    #     self.category = category
-    #     self.type = type
-
     def __init__(self, *args, **kwargs):
         super(Challenges, self).__init__(**kwargs)
 
@@ -457,10 +450,6 @@ class Users(db.Model):
 
 
 class Admins(Users):
-    # TODO: This isn't really being used, perhaps it should just be removed?
-    __tablename__ = 'admins'
-    id = db.Column(None, db.ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
-
     __mapper_args__ = {
         'polymorphic_identity': 'admin'
     }

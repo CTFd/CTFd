@@ -159,3 +159,12 @@ def config():
         themes=themes,
         **configs
     )
+
+
+@admin.route('/admin/reset', methods=['GET', 'POST'])
+@admins_only
+def reset():
+    if request.method == 'POST':
+        # Truncate Users, Teams, Submissions, Solves, Notifications, Awards, Unlocks, Tracking
+        pass
+    return render_template('admin/reset.html')
