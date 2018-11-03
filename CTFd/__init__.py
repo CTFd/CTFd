@@ -11,7 +11,7 @@ from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
 from CTFd import utils
-from CTFd.utils.migrations import migrations, migrate, upgrade, stamp
+from CTFd.utils.migrations import migrations, migrate, upgrade, stamp, create_database
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals
@@ -100,19 +100,7 @@ def create_app(config='CTFd.config.Config'):
 
         from CTFd.models import db, Teams, Solves, Challenges, Fails, Flags, Tags, Files, Tracking
 
-        url = make_url(app.config['SQLALCHEMY_DATABASE_URI'])
-        if url.drivername == 'postgres':
-            url.drivername = 'postgresql'
-
-        if url.drivername.startswith('mysql'):
-            url.query['charset'] = 'utf8mb4'
-
-        # Creates database if the database database does not exist
-        if not database_exists(url):
-            if url.drivername.startswith('mysql'):
-                create_database(url, encoding='utf8mb4')
-            else:
-                create_database(url)
+        url = create_database()
 
         # This allows any changes to the SQLALCHEMY_DATABASE_URI to get pushed back in
         # This is mostly so we can force MySQL's charset

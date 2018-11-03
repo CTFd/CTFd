@@ -1,5 +1,5 @@
 from CTFd.utils import get_app_config, get_config, set_config
-from CTFd.utils.migrations import get_current_revision
+from CTFd.utils.migrations import get_current_revision, create_database, drop_database, upgrade, stamp
 from CTFd.models import db, get_class_by_tablename
 from datafreeze.format import SERIALIZERS
 from flask import current_app as app
@@ -50,6 +50,8 @@ SERIALIZERS['ctfd'] = CTFdSerializer  # Load the custom serializer
 
 
 def export_ctf():
+    # TODO: For some unknown reason dataset is only able to see alembic_version during tests.
+    # Even using a real sqlite database. This makes this test impossible to pass in sqlite.
     db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
 
     # Backup database
@@ -93,9 +95,15 @@ def export_ctf():
     return backup
 
 
-def import_ctf(backup):
+def import_ctf(backup, erase=True):
     if not zipfile.is_zipfile(backup):
         raise zipfile.BadZipfile
+
+    if erase:
+        drop_database()
+        create_database()
+        upgrade()
+        stamp()
 
     side_db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
     sqlite = get_app_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite')
@@ -120,10 +128,6 @@ def import_ctf(backup):
             if data:
                 table = side_db[table_name]
 
-                if sqlite:
-                    db.session.execute('DELETE FROM ' + table_name)
-                else:
-                    db.session.execute('TRUNCATE TABLE '+table_name)
                 db.session.commit()
                 saved = json.loads(data)
                 for entry in saved['results']:

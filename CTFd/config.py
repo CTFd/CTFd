@@ -203,8 +203,7 @@ class TestingConfig(Config):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'TESTING_DATABASE_URL') or 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TESTING_DATABASE_URL') or 'sqlite:///testing.db'
     SERVER_NAME = 'localhost'
     UPDATE_CHECK = False
     REDIS_URL = None
