@@ -32,7 +32,7 @@ class ScoreboardList(Resource):
                 'account_id': x.account_id,
                 'oauth_id': x.oauth_id,
                 'name': x.name,
-                'score': x.score
+                'score': int(x.score)
             }
 
             if mode == TEAMS_MODE:
@@ -42,7 +42,7 @@ class ScoreboardList(Resource):
                         'id': member.id,
                         'oauth_id': member.oauth_id,
                         'name': member.name,
-                        'score': member.score
+                        'score': int(member.score)
                     })
 
                 entry['members'] = members
