@@ -115,11 +115,15 @@ def test_top_10():
                     'date': '2017-10-03T03:21:34Z',
                     'challenge_id': 1,
                     'account_id': 2,
+                    'user_id': 2,
+                    'team_id': None,
                     'value': 100
                 }, {
                     'date': '2017-10-04T03:25:45Z',
                     'challenge_id': 2,
                     'account_id': 2,
+                    'user_id': 2,
+                    'team_id': None,
                     'value': 100
                 }],
                 'name': 'user1'
@@ -129,6 +133,8 @@ def test_top_10():
                     'date': '2017-10-03T03:21:34Z',
                     'challenge_id': 1,
                     'account_id': 3,
+                    'user_id': 3,
+                    'team_id': None,
                     'value': 100
                 }],
                 'name': 'user2'

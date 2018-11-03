@@ -208,7 +208,7 @@ def test_get_admin_submissions_incorrect():
     destroy_ctfd(app)
 
 
-def test_get_admin_submissions_incorrect():
+def test_get_admin_config():
     app = create_ctfd()
     with app.app_context():
         register_user(app)

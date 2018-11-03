@@ -25,7 +25,9 @@ class TeamList(Resource):
     @check_account_visibility
     def get(self):
         teams = Teams.query.filter_by(banned=False)
-        view = list(TeamSchema.views.get(session.get('type')))
+        view = TeamSchema.views.get(
+            session.get('type', 'user')
+        )
         view.remove('members')
         response = TeamSchema(view=view, many=True).dump(teams)
 
