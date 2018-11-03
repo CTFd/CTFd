@@ -102,8 +102,8 @@ def import_ctf(backup, erase=True):
     if erase:
         drop_database()
         create_database()
-        upgrade()
-        stamp()
+        # We explicitly do not want to upgrade or stamp here.
+        # The import will have this information.
 
     side_db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
     sqlite = get_app_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite')
@@ -121,14 +121,54 @@ def import_ctf(backup, erase=True):
             if info.file_size > max_content_length:
                 raise zipfile.LargeZipFile
 
+    first = [
+        'db/users.json',
+        'db/admins.json',
+        'db/teams.json',
+        'db/challenges.json',
+        'db/dynamic_challenge.json',
+
+        'db/flags.json',
+        'db/hints.json',
+        'db/unlocks.json',
+        'db/awards.json',
+        'db/tags.json',
+
+        'db/submissions.json',
+        'db/solves.json',
+
+        'db/files.json',
+
+        'db/notifications.json',
+        'db/pages.json',
+
+        'db/tracking.json',
+        'db/config.json',
+    ]
+
+    for item in first:
+        if item in members:
+            members.remove(item)
+
+    members = first + members
+
+    alembic_version = json.loads(backup.open('db/alembic_version.json').read())["results"][0]["version_num"]
+    upgrade(revision=alembic_version)
+    members.remove('db/alembic_version.json')
+
     for member in members:
         if member.startswith('db/'):
             table_name = member[3:-5]
-            data = backup.open(member).read()
+
+            try:
+                # Try to open a file but skip if it doesn't exist.
+                data = backup.open(member).read()
+            except KeyError:
+                continue
+
             if data:
                 table = side_db[table_name]
 
-                db.session.commit()
                 saved = json.loads(data)
                 for entry in saved['results']:
                     # This is a hack to get SQLite to properly accept datetime values from dataset
@@ -145,6 +185,7 @@ def import_ctf(backup, erase=True):
                                     entry[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')
                                     continue
                     table.insert(entry)
+                    db.session.commit()
 
     # Extracting files
     files = [f for f in backup.namelist() if f.startswith('uploads/')]
