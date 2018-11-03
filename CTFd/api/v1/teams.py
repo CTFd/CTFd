@@ -16,6 +16,7 @@ from CTFd.utils.decorators import (
     authed_only,
     admins_only,
 )
+import copy
 
 teams_namespace = Namespace('teams', description="Endpoint to retrieve Teams")
 
@@ -25,9 +26,9 @@ class TeamList(Resource):
     @check_account_visibility
     def get(self):
         teams = Teams.query.filter_by(banned=False)
-        view = TeamSchema.views.get(
+        view = copy.deepcopy(TeamSchema.views.get(
             session.get('type', 'user')
-        )
+        ))
         view.remove('members')
         response = TeamSchema(view=view, many=True).dump(teams)
 
