@@ -43,6 +43,8 @@ class ConfigList(Resource):
 
         db.session.add(response.data)
         db.session.commit()
+
+        response = schema.dump(response.data)
         db.session.close()
 
         clear_config()
