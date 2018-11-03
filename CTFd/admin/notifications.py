@@ -6,7 +6,7 @@ from CTFd.models import db, Notifications
 from CTFd.admin import admin
 
 
-@admin.route('/admin/notifications', methods=['GET'])
+@admin.route('/admin/notifications')
 @admins_only
 def notifications():
     notifs = Notifications.query.order_by(Notifications.id.desc()).all()

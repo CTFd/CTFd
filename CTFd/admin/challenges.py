@@ -8,14 +8,14 @@ from CTFd.utils import config, validators, uploads
 import os
 
 
-@admin.route('/admin/challenges', methods=['POST', 'GET'])
+@admin.route('/admin/challenges')
 @admins_only
 def challenges_listing():
     challenges = Challenges.query.all()
     return render_template('admin/challenges.html', challenges=challenges)
 
 
-@admin.route('/admin/challenges/<int:challenge_id>', methods=['GET'])
+@admin.route('/admin/challenges/<int:challenge_id>')
 @admins_only
 def challenges_detail(challenge_id):
     challenges = dict(Challenges.query.with_entities(Challenges.id, Challenges.name).all())
@@ -44,7 +44,7 @@ def challenges_detail(challenge_id):
     )
 
 
-@admin.route('/admin/challenges/new', methods=['GET', 'POST'])
+@admin.route('/admin/challenges/new')
 @admins_only
 def challenges_new():
     return render_template('admin/challenges/new.html')

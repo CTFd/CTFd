@@ -44,7 +44,7 @@ def teams_listing():
     return render_template('admin/teams/teams.html', teams=teams, pages=pages, curr_page=page)
 
 
-@admin.route('/admin/teams/new', methods=['GET'])
+@admin.route('/admin/teams/new')
 @admins_only
 def teams_new():
     return render_template('admin/teams/new.html')
