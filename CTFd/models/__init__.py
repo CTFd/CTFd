@@ -450,6 +450,7 @@ class Users(db.Model):
 
 
 class Admins(Users):
+    __tablename__ = 'admins'
     __mapper_args__ = {
         'polymorphic_identity': 'admin'
     }
