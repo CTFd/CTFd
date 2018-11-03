@@ -91,7 +91,10 @@ def admins_only(f):
         if is_admin():
             return f(*args, **kwargs)
         else:
-            return redirect(url_for('auth.login', next=request.path))
+            if request.content_type == 'application/json':
+                abort(403)
+            else:
+                return redirect(url_for('auth.login', next=request.path))
 
     return admins_only_wrapper
 
