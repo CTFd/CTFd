@@ -1,25 +1,13 @@
 from flask import session, jsonify, request, abort
 from flask_restplus import Namespace, Resource, reqparse
 
-from CTFd.models import db, Challenges, Unlocks, Fails, Solves, Teams, Flags, Submissions
-from CTFd.utils import config
-from CTFd.utils import user as current_user
-from CTFd.utils.user import get_current_team
-from CTFd.utils.user import get_current_user
-from CTFd.plugins.challenges import get_chal_class
-from CTFd.utils.dates import ctf_started, ctf_ended, ctf_paused, ctftime
-from CTFd.utils.logging import log
+from CTFd.cache import cache, clear_standings
+from CTFd.utils.scores import get_standings
+from CTFd.models import db, Submissions
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import (
-    authed_only,
     admins_only,
-    during_ctf_time_only,
-    require_verified_emails
 )
-from sqlalchemy.sql import or_
-
-import logging
-import time
 
 submissions_namespace = Namespace('submissions', description="Endpoint to retrieve Submission")
 
@@ -66,6 +54,9 @@ class SubmissionsList(Resource):
 
         response = schema.dump(response.data)
         db.session.close()
+
+        # Delete standings cache
+        clear_standings()
 
         return {
             'success': True,

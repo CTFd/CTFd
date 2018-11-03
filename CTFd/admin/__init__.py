@@ -21,7 +21,7 @@ from CTFd.utils import (
     get_app_config,
     set_config
 )
-from CTFd.cache import cache
+from CTFd.cache import cache, clear_config
 from CTFd.utils.exports import export_ctf, import_ctf
 from CTFd.models import db, Configs, get_class_by_tablename
 
@@ -143,8 +143,7 @@ def export_csv():
 @admins_only
 def config():
     # Clear the config cache so that we don't get stale values
-    cache.delete_memoized(get_config)
-    cache.delete_memoized(get_app_config)
+    clear_config()
 
     database_tables = sorted(db.metadata.tables.keys())
 

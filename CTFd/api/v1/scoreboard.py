@@ -1,8 +1,9 @@
 from flask_restplus import Namespace, Resource
 
-from CTFd.models import Solves, Awards
+from CTFd.models import Solves, Awards, Teams
 from CTFd.utils.scores import get_standings
 from CTFd.utils import get_config
+from CTFd.utils.modes import TEAMS_MODE
 from CTFd.utils.dates import unix_time_to_utc, unix_time, isoformat
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 
@@ -16,16 +17,38 @@ class ScoreboardList(Resource):
     def get(self):
         standings = get_standings()
         response = []
+        mode = get_config('user_mode')
 
-        # TODO: Change this response
+        if mode == TEAMS_MODE:
+            team_ids = []
+            for team in standings:
+                team_ids.append(team.account_id)
+            teams = Teams.query.filter(Teams.id.in_(team_ids)).all()
+            teams = [next(t for t in teams if t.id == id) for id in team_ids]
+
         for i, x in enumerate(standings):
+            entry = {
+                'pos': i + 1,
+                'account_id': x.account_id,
+                'oauth_id': x.oauth_id,
+                'name': x.name,
+                'score': x.score
+            }
+
+            if mode == TEAMS_MODE:
+                members = []
+                for member in teams[i].members:
+                    members.append({
+                        'id': member.id,
+                        'oauth_id': member.oauth_id,
+                        'name': member.name,
+                        'score': member.score
+                    })
+
+                entry['members'] = members
+
             response.append(
-                {
-                    'pos': i + 1,
-                    'id': x.account_id,
-                    'team': x.name,
-                    'score': int(x.score)
-                }
+                entry
             )
         return {
             'success': True,

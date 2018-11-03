@@ -6,6 +6,7 @@ from CTFd.utils.decorators import (
     admins_only
 )
 from CTFd.utils import get_config, set_config
+from CTFd.cache import clear_config, clear_standings
 
 configs_namespace = Namespace('configs', description="Endpoint to retrieve Configs")
 
@@ -44,6 +45,9 @@ class ConfigList(Resource):
         db.session.commit()
         db.session.close()
 
+        clear_config()
+        clear_standings()
+
         return {
             'success': True,
             'data': response.data
@@ -55,6 +59,9 @@ class ConfigList(Resource):
 
         for key, value in req.iteritems():
             set_config(key=key, value=value)
+
+        clear_config()
+        clear_standings()
 
         return {
             'success': True
@@ -92,6 +99,9 @@ class Config(Resource):
         response = schema.dump(response.data)
         db.session.close()
 
+        clear_config()
+        clear_standings()
+
         return {
             'success': True,
             'data': response.data
@@ -104,6 +114,9 @@ class Config(Resource):
         db.session.delete(config)
         db.session.commit()
         db.session.close()
+
+        clear_config()
+        clear_standings()
 
         return {
             'success': True,
