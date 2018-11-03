@@ -1,5 +1,6 @@
 from CTFd.utils import get_app_config, get_config, set_config
-from CTFd.models import db, Pages, Teams, Challenges
+from CTFd.utils.migrations import get_current_revision
+from CTFd.models import db, get_class_by_tablename
 from datafreeze.format import SERIALIZERS
 from flask import current_app as app
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
@@ -48,42 +49,13 @@ class CTFdSerializer(JSONSerializer):
 # SERIALIZERS['ctfd'] = CTFdSerializer  # Load the custom serializer
 
 
-def export_ctf(segments=None):
+def export_ctf():
     db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
-    if segments is None:
-        segments = ['challenges', 'teams', 'both', 'metadata']
-
-    groups = {
-        'challenges': [
-            'challenges',
-            'files',
-            'tags',
-            'keys',
-            'hints',
-        ],
-        'teams': [
-            'teams',
-            'tracking',
-            'awards',
-        ],
-        'both': [
-            'solves',
-            'wrong_keys',
-            'unlocks',
-        ],
-        'metadata': [
-            'alembic_version',
-            'config',
-            'pages',
-        ]
-    }
 
     # Backup database
     backup = six.BytesIO()
 
     backup_zip = zipfile.ZipFile(backup, 'w')
-
-    # TODO: Sqlite has very little alembic support. We should fake out an alembic version.
 
     tables = db.tables
     for table in tables:
@@ -93,24 +65,21 @@ def export_ctf(segments=None):
         result_file.seek(0)
         backup_zip.writestr('db/{}.json'.format(table), result_file.read())
 
-    # TODO: Reimplement partial exports
-
-    # for segment in segments:
-    #     group = groups[segment]
-    #     for item in group:
-    #         result = db[item].all()
-    #         result_file = six.BytesIO()
-    #         datafreeze.freeze(result, format='ctfd', fileobj=result_file)
-    #         result_file.seek(0)
-    #         backup_zip.writestr('db/{}.json'.format(item), result_file.read())
-    #
     # # Guarantee that alembic_version is saved into the export
-    # if 'metadata' not in segments:
-    #     result = db['alembic_version'].all()
-    #     result_file = six.BytesIO()
-    #     datafreeze.freeze(result, format='ctfd', fileobj=result_file)
-    #     result_file.seek(0)
-    #     backup_zip.writestr('db/alembic_version.json', result_file.read())
+    if 'alembic_version' not in tables:
+        result = {
+            "count": 1,
+            "results": [
+                {
+                    "version_num": get_current_revision()
+                }
+            ],
+            "meta": {}
+        }
+        result_file = six.BytesIO()
+        json.dump(result, result_file)
+        result_file.seek(0)
+        backup_zip.writestr('db/alembic_version.json', result_file.read())
 
     # Backup uploads
     upload_folder = os.path.join(os.path.normpath(app.root_path), app.config.get('UPLOAD_FOLDER'))
@@ -124,13 +93,12 @@ def export_ctf(segments=None):
     return backup
 
 
-def import_ctf(backup, segments=None, erase=False):
-    side_db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
-    if segments is None:
-        segments = ['challenges', 'teams', 'both', 'metadata']
-
+def import_ctf(backup):
     if not zipfile.is_zipfile(backup):
         raise zipfile.BadZipfile
+
+    side_db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
+    sqlite = get_app_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite')
 
     backup = zipfile.ZipFile(backup)
 
@@ -145,84 +113,23 @@ def import_ctf(backup, segments=None, erase=False):
             if info.file_size > max_content_length:
                 raise zipfile.LargeZipFile
 
-    groups = {
-        'challenges': [
-            'challenges',
-            'files',
-            'tags',
-            'keys',
-            'hints',
-        ],
-        'teams': [
-            'teams',
-            'tracking',
-            'awards',
-        ],
-        'both': [
-            'solves',
-            'wrong_keys',
-            'unlocks',
-        ],
-        'metadata': [
-            'alembic_version',
-            'config',
-            'pages',
-        ]
-    }
-
-    # Need special handling of metadata
-    if 'metadata' in segments:
-        meta = groups['metadata']
-        segments.remove('metadata')
-        meta.remove('alembic_version')
-
-        for item in meta:
-            table = side_db[item]
-            path = "db/{}.json".format(item)
-            data = backup.open(path).read()
-
-            # Some JSON files will be empty
+    for member in members:
+        if member.startswith('db/'):
+            table_name = member[3:-5]
+            data = backup.open(member).read()
             if data:
-                if item == 'config':
-                    saved = json.loads(data)
-                    for entry in saved['results']:
-                        key = entry['key']
-                        value = entry['value']
-                        set_config(key, value)
+                table = side_db[table_name]
 
-                elif item == 'pages':
-                    saved = json.loads(data)
-                    for entry in saved['results']:
-                        # Support migration c12d2a1b0926_add_draft_and_title_to_pages
-                        route = entry['route']
-                        title = entry.get('title', route.title())
-                        html = entry['html']
-                        draft = entry.get('draft', False)
-                        auth_required = entry.get('auth_required', False)
-                        page = Pages.query.filter_by(route=route).first()
-                        if page:
-                            page.content = html
-                        else:
-                            page = Pages(title, route, html, draft=draft, auth_required=auth_required)
-                            db.session.add(page)
-                        db.session.commit()
-
-    teams_base = db.session.query(db.func.max(Teams.id)).scalar() or 0
-    chals_base = db.session.query(db.func.max(Challenges.id)).scalar() or 0
-
-    for segment in segments:
-        group = groups[segment]
-        for item in group:
-            table = side_db[item]
-            path = "db/{}.json".format(item)
-            data = backup.open(path).read()
-            if data:
+                if sqlite:
+                    db.session.execute('DELETE FROM ' + table_name)
+                else:
+                    db.session.execute('TRUNCATE TABLE '+table_name)
+                db.session.commit()
                 saved = json.loads(data)
                 for entry in saved['results']:
-                    entry_id = entry.pop('id', None)
-                    # This is a hack to get SQlite to properly accept datetime values from dataset
+                    # This is a hack to get SQLite to properly accept datetime values from dataset
                     # See Issue #246
-                    if get_app_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
+                    if sqlite:
                         for k, v in entry.items():
                             if isinstance(v, six.string_types):
                                 match = re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v)
@@ -233,27 +140,7 @@ def import_ctf(backup, segments=None, erase=False):
                                 if match:
                                     entry[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')
                                     continue
-                    for k, v in entry.items():
-                        if k == 'chal' or k == 'chalid':
-                            if entry[k]:
-                                entry[k] += chals_base
-                        if k == 'team' or k == 'teamid':
-                            if entry[k]:
-                                entry[k] += teams_base
-
-                    if item == 'teams':
-                        table.insert_ignore(entry, ['email'])
-                    elif item == 'keys':
-                        # Support migration 2539d8b5082e_rename_key_type_to_type
-                        key_type = entry.get('key_type', None)
-                        if key_type is not None:
-                            entry['type'] = key_type
-                            del entry['key_type']
-                        table.insert(entry)
-                    else:
-                        table.insert(entry)
-            else:
-                continue
+                    table.insert(entry)
 
     # Extracting files
     files = [f for f in backup.namelist() if f.startswith('uploads/')]
