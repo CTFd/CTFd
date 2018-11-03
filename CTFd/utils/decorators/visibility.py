@@ -15,7 +15,10 @@ def check_score_visibility(f):
             if authed():
                 return f(*args, **kwargs)
             else:
-                return redirect(url_for('auth.login', next=request.path))
+                if request.content_type == 'application/json':
+                    abort(403)
+                else:
+                    return redirect(url_for('auth.login', next=request.path))
 
         elif v == 'admins':
             if is_admin():
@@ -36,7 +39,10 @@ def check_challenge_visibility(f):
             if authed():
                 return f(*args, **kwargs)
             else:
-                return redirect(url_for('auth.login', next=request.path))
+                if request.content_type == 'application/json':
+                    abort(403)
+                else:
+                    return redirect(url_for('auth.login', next=request.path))
     return _check_challenge_visibility
 
 
@@ -46,11 +52,16 @@ def check_account_visibility(f):
         v = get_config('account_visibility')
         if v == 'public':
             return f(*args, **kwargs)
+
         elif v == 'private':
             if authed():
                 return f(*args, **kwargs)
             else:
-                return redirect(url_for('auth.login', next=request.path))
+                if request.content_type == 'application/json':
+                    abort(403)
+                else:
+                    return redirect(url_for('auth.login', next=request.path))
+
         elif v == 'admins':
             if is_admin():
                 return f(*args, **kwargs)

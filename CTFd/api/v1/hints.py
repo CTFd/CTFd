@@ -59,20 +59,21 @@ class HintList(Resource):
 
 @hints_namespace.route('/<hint_id>')
 class Hint(Resource):
+    @during_ctf_time_only
     @authed_only
     def get(self, hint_id):
         user = get_current_user()
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
 
-        unlocked = HintUnlocks.query.filter_by(
-            account_id=user.account_id,
-            target=hint.id
-        ).first()
-
-        if unlocked:
-            view = 'unlocked'
-        else:
+        view = 'unlocked'
+        if hint.cost:
             view = 'locked'
+            unlocked = HintUnlocks.query.filter_by(
+                account_id=user.account_id,
+                target=hint.id
+            ).first()
+            if unlocked:
+                view = 'unlocked'
 
         response = HintSchema(view=view).dump(hint)
 

@@ -260,7 +260,7 @@ class ChallengeAttempt(Resource):
                 id=challenge_id).first_or_404()
 
             if challenge.state == 'hidden':
-                abort(403)
+                abort(404)
 
             requirements = challenge.requirements
             if requirements:

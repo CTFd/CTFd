@@ -168,7 +168,7 @@ def test_scoring_logic():
 
         # user1 is now on top
         scores = get_scores(admin)
-        assert scores[0]['team'] == 'user1'
+        assert scores[0]['name'] == 'user1'
 
         # user2 solves chal1 and chal2
         with freeze_time("2017-10-4 03:30:34"):
@@ -188,7 +188,7 @@ def test_scoring_logic():
 
         # user2 is now on top
         scores = get_scores(admin)
-        assert scores[0]['team'] == 'user2'
+        assert scores[0]['name'] == 'user2'
 
         # user1 solves chal2
         with freeze_time("2017-10-5 03:50:34"):
@@ -201,7 +201,7 @@ def test_scoring_logic():
 
         # user2 should still be on top because they solved chal2 first
         scores = get_scores(admin)
-        assert scores[0]['team'] == 'user2'
+        assert scores[0]['name'] == 'user2'
     destroy_ctfd(app)
 
 
@@ -240,7 +240,7 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user1 is now on top
         scores = get_scores(admin)
-        assert scores[0]['team'] == 'user1'
+        assert scores[0]['name'] == 'user1'
 
         # user2 solves chal1 and chal2
         with freeze_time("2017-10-4 03:30:34"):
@@ -260,7 +260,7 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user2 is now on top
         scores = get_scores(admin)
-        assert scores[0]['team'] == 'user2'
+        assert scores[0]['name'] == 'user2'
 
         # user1 solves chal2
         with freeze_time("2017-10-5 03:50:34"):
@@ -273,7 +273,7 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user2 should still be on top because they solved chal2 first
         scores = get_scores(admin)
-        assert scores[0]['team'] == 'user2'
+        assert scores[0]['name'] == 'user2'
 
         # user2 solves a 0 point challenge
         with freeze_time("2017-10-5 03:55:34"):
@@ -286,5 +286,5 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user2 should still be on top because 0 point challenges should not tie break
         scores = get_scores(admin)
-        assert scores[0]['team'] == 'user2'
+        assert scores[0]['name'] == 'user2'
     destroy_ctfd(app)

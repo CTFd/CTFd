@@ -3,19 +3,20 @@
 from tests.helpers import *
 
 
-def test_user_get_solves_per_chal():
-    """Can a registered user load /chals/solves"""
-    app = create_ctfd()
-    with app.app_context():
-        register_user(app)
-        client = login_as_user(app)
-        r = client.get('/api/v1/statistics/challenges/solves')
-        assert r.status_code == 200
-    destroy_ctfd(app)
+# def test_user_get_solves_per_chal():
+#     """Can a registered user load /api/v1/statistics/challenges/solves"""
+#     # TODO: Should this be admin gated?
+#     app = create_ctfd()
+#     with app.app_context():
+#         register_user(app)
+#         client = login_as_user(app)
+#         r = client.get('/api/v1/statistics/challenges/solves')
+#         assert r.status_code == 200
+#     destroy_ctfd(app)
 
 
 def test_user_get_private_solves():
-    """Can a registered user load /solves"""
+    """Can a registered user load /api/v1/users/me/solves"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -48,7 +49,7 @@ def test_user_get_another_public_solves():
 
 
 def test_user_get_private_fails():
-    """Can a registered user load /fails"""
+    """Can a registered user load /api/v1/users/me/fails"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
@@ -59,12 +60,12 @@ def test_user_get_private_fails():
 
 
 def test_user_get_public_fails():
-    """Can a registered user load /fails/2"""
+    """Can a registered user load /api/v1/users/2/fails"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
-        r = client.get('/api/v1/users/2/solves')
+        r = client.get('/api/v1/users/2/fails')
         assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -75,7 +76,7 @@ def test_user_get_another_public_fails():
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
-        r = client.get('/api/v1/users/1/solves')
+        r = client.get('/api/v1/users/1/fails')
         assert r.status_code == 200
     destroy_ctfd(app)
 

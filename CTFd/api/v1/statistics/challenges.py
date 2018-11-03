@@ -37,6 +37,7 @@ class ChallengePropertyCounts(Resource):
 
 @statistics_namespace.route('/challenges/solves')
 class ChallengeSolveStatistics(Resource):
+    @admins_only
     def get(self):
         chals = Challenges.query \
             .filter(or_(Challenges.state != 'hidden', Challenges.state != 'locked')) \
