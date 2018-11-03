@@ -62,9 +62,6 @@ def test_import_ctf():
 
             app.db.session.commit()
 
-            print(Teams.query.count())
-            print(Challenges.query.count())
-
             assert Users.query.count() == 11
             assert Challenges.query.count() == 10
             assert Flags.query.count() == 10
