@@ -457,6 +457,7 @@ class Users(db.Model):
 
 
 class Admins(Users):
+    # TODO: This isn't really being used, perhaps it should just be removed?
     __tablename__ = 'admins'
     id = db.Column(None, db.ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
 

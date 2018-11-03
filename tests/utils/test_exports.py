@@ -60,8 +60,6 @@ def test_import_ctf():
         with app.app_context():
             import_ctf('export.zip')
 
-            app.db.session.commit()
-
             assert Users.query.count() == 11
             assert Challenges.query.count() == 10
             assert Flags.query.count() == 10
