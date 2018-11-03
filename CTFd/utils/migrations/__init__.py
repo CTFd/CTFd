@@ -32,6 +32,8 @@ def create_database():
 
 def drop_database():
     url = make_url(app.config['SQLALCHEMY_DATABASE_URI'])
+    if url.drivername == 'postgres':
+        url.drivername = 'postgresql'
     drop_database_util(url)
 
 

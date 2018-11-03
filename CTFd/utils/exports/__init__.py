@@ -107,6 +107,7 @@ def import_ctf(backup, erase=True):
 
     side_db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
     sqlite = get_app_config('SQLALCHEMY_DATABASE_URI').startswith('sqlite')
+    postgres = get_app_config('SQLALCHEMY_DATABASE_URI').startswith('postgres')
 
     backup = zipfile.ZipFile(backup)
 
@@ -122,9 +123,9 @@ def import_ctf(backup, erase=True):
                 raise zipfile.LargeZipFile
 
     first = [
+        'db/teams.json',
         'db/users.json',
         'db/admins.json',
-        'db/teams.json',
         'db/challenges.json',
         'db/dynamic_challenge.json',
 
@@ -186,6 +187,15 @@ def import_ctf(backup, erase=True):
                                     continue
                     table.insert(entry)
                     db.session.commit()
+                if postgres:
+                    # TODO: This should be sanitized even though exports are basically SQL dumps
+                    # Databases are so hard
+                    # https://stackoverflow.com/a/37972960
+                    side_db.engine.execute(
+                        "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM {table_name}".format(
+                            table_name=table_name
+                        )
+                    )
 
     # Extracting files
     files = [f for f in backup.namelist() if f.startswith('uploads/')]
