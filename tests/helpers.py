@@ -140,6 +140,18 @@ def gen_hint(db, challenge_id, content="This is a hint", cost=0, type="standard"
     return hint
 
 
+def gen_unlock(db, user_id, team_id, target, type):
+    unlock = Unlocks(
+        user_id=user_id,
+        team_id=team_id,
+        target=target,
+        type=type
+    )
+    db.session.add(unlock)
+    db.session.commit()
+    return unlock
+
+
 def gen_solve(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', provided='rightkey', **kwargs):
     solve = Solves(user_id=user_id, team_id=team_id, challenge_id=challenge_id, ip=ip, provided=provided, **kwargs)
     solve.date = datetime.datetime.utcnow()
@@ -148,12 +160,12 @@ def gen_solve(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', prov
     return solve
 
 
-def gen_wrongkey(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', content='wrongkey', **kwargs):
-    wrongkey = Fails(user_id=user_id, team_id=team_id, challenge_id=challenge_id, ip=ip, content=content)
-    wrongkey.date = datetime.datetime.utcnow()
-    db.session.add(wrongkey)
+def gen_fail(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', content='wrongkey', **kwargs):
+    fail = Fails(user_id=user_id, team_id=team_id, challenge_id=challenge_id, ip=ip, content=content)
+    fail.date = datetime.datetime.utcnow()
+    db.session.add(fail)
     db.session.commit()
-    return wrongkey
+    return fail
 
 
 def gen_tracking(db, ip, team, **kwargs):
@@ -169,3 +181,9 @@ def gen_page(db, title, route, content, draft=False, auth_required=False, **kwar
     db.session.add(page)
     db.session.commit()
     return page
+
+
+def gen_notification(db, title, content):
+    notif = Notifications(title=title, content=content)
+    db.session.add(notif)
+    db.session.commit()
