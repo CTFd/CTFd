@@ -91,6 +91,8 @@ class ScoreboardDetail(Resource):
                     response[i + 1]['solves'].append({
                         'challenge_id': solve.challenge_id,
                         'account_id': solve.account_id,
+                        'team_id': solve.team_id,
+                        'user_id': solve.user_id,
                         'value': solve.challenge.value,
                         'date': isoformat(solve.date)
                     })
@@ -99,6 +101,8 @@ class ScoreboardDetail(Resource):
                     response[i + 1]['solves'].append({
                         'challenge_id': None,
                         'account_id': award.account_id,
+                        'team_id': award.team_id,
+                        'user_id': award.user_id,
                         'value': award.value,
                         'date': isoformat(award.date)
                     })
