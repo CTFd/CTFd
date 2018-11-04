@@ -224,9 +224,18 @@ class UserFails(Resource):
                 'errors': response.errors
             }, 400
 
+        if is_admin():
+            data = response.data
+        else:
+            data = []
+        count = len(response.data)
+
         return {
             'success': True,
-            'data': response.data
+            'data': data,
+            'meta': {
+                'count': count
+            }
         }
 
 

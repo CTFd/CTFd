@@ -138,6 +138,10 @@
 {% endblock %}
 
 {% block scripts %}
+	<script>
+        var team_id = {{ team.id }};
+        var team_name = {{ team.name | tojson }};
+	</script>
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/plotly.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/utils.js') }}"></script>
 	{% if solves %}
