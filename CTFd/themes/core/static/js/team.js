@@ -1,6 +1,5 @@
 
 function scoregraph() {
-    // TODO: This graph isn't taking awards into account
     var times = [];
     var scores = [];
     $.get(script_root + '/api/v1/teams/' + team_id + '/solves', function (solve_data) {
@@ -102,6 +101,7 @@ function keys_percentage_graph() {
 
 function category_breakdown_graph() {
     // TODO: This graph isn't taking awards into account
+    // This should be based off of value instead of count.
     $.get(script_root + '/api/v1/teams/' + team_id + '/solves', function (response) {
         var solves = response.data;
 
