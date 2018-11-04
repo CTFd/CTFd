@@ -168,9 +168,8 @@ def gen_fail(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', conte
     return fail
 
 
-def gen_tracking(db, ip, team, **kwargs):
-    # TODO: This might not make sense for user mode teams
-    tracking = Tracking(ip=ip, user_id=team, **kwargs)
+def gen_tracking(db, ip, user_id, **kwargs):
+    tracking = Tracking(ip=ip, user_id=user_id, **kwargs)
     db.session.add(tracking)
     db.session.commit()
     return tracking
