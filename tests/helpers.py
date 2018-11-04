@@ -61,6 +61,19 @@ def register_user(app, name="user", email="user@ctfd.io", password="password"):
             client.post('/register', data=data)
 
 
+def register_team(app, name="team", password="password"):
+    with app.app_context():
+        with app.test_client() as client:
+            r = client.get('/team')
+            with client.session_transaction() as sess:
+                data = {
+                    "name": name,
+                    "password": password,
+                    "nonce": sess.get('nonce')
+                }
+            client.post('/teams/new', data=data)
+
+
 def login_as_user(app, name="user", password="password"):
     with app.app_context():
         with app.test_client() as client:
