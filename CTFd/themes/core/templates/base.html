@@ -24,6 +24,8 @@
 			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
 		{% endif %}
 	{% endfor %}
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/promise-polyfill.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/fetch.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/CTFd.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/moment.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/nunjucks.min.js') }}"></script>
