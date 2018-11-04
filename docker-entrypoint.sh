@@ -34,7 +34,7 @@ fi
 
 # Start CTFd
 echo "Starting CTFd"
-gunicorn 'CTFd:create_app()' \
+exec gunicorn 'CTFd:create_app()' \
     --bind '0.0.0.0:8000' \
     --workers $WORKERS \
     --worker-class 'gevent' \
