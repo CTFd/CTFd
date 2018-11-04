@@ -3,7 +3,8 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Users, Solves, Awards, Fails, Tracking, Unlocks
 from CTFd.utils.decorators import (
     authed_only,
-    admins_only
+    admins_only,
+    authed
 )
 from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
@@ -186,6 +187,8 @@ class UserPrivate(Resource):
 class UserSolves(Resource):
     def get(self, user_id):
         if user_id == 'me':
+            if not authed():
+                abort(403)
             user = get_current_user()
         else:
             if accounts_visible() is False or scores_visible() is False:
@@ -233,6 +236,8 @@ class UserSolves(Resource):
 class UserFails(Resource):
     def get(self, user_id):
         if user_id == 'me':
+            if not authed():
+                abort(403)
             user = get_current_user()
         else:
             if accounts_visible() is False or scores_visible() is False:
@@ -262,6 +267,8 @@ class UserFails(Resource):
 class UserAwards(Resource):
     def get(self, user_id):
         if user_id == 'me':
+            if not authed():
+                abort(403)
             user = get_current_user()
         else:
             if accounts_visible() is False or scores_visible() is False:
