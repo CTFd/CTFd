@@ -38,13 +38,14 @@ def test_admin_access():
             '/admin/teams',
             '/admin/users',
             '/admin',
-            # '/admin/submissions/<submission_type>',
+            '/admin/submissions/correct',
+            '/admin/submissions/incorrect',
             '/admin/submissions',
-            # '/admin/challenges/<int:challenge_id>',
+            '/admin/challenges/1',
             # '/admin/plugins/<plugin>',
             # '/admin/pages/<int:page_id>',
-            # '/admin/teams/<int:team_id>',
-            # '/admin/users/<int:user_id>',
+            '/admin/teams/1',
+            '/admin/users/1',
         ]
         register_user(app)
         client = login_as_user(app)
