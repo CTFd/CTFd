@@ -198,21 +198,6 @@ class UserSolves(Resource):
             'data': response.data
         }
 
-    @admins_only
-    def post(self, user_id):
-        # TODO: This should probably be replaced by /v1/solves
-        user = Users.query.filter_by(id=user_id).first_or_404()
-        req = request.get_json()
-        response = SubmissionSchema('admin').load(req)
-
-        if response.errors:
-            return {
-                'success': False,
-                'errors': response.errors
-            }, 400
-
-        db.session.add(response.data)
-
 
 @users_namespace.route('/<user_id>/fails')
 @users_namespace.param('user_id', "User ID or 'me'")

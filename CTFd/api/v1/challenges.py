@@ -406,7 +406,6 @@ class ChallengeAttempt(Resource):
             }
 
 
-
 @challenges_namespace.route('/<challenge_id>/solves')
 @challenges_namespace.param('id', 'A Challenge ID')
 class ChallengeSolves(Resource):
