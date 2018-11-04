@@ -1,62 +1,65 @@
-function cumulativesum(arr) {
-    var result = arr.concat();
-    for (var i = 0; i < arr.length; i++) {
-        result[i] = arr.slice(0, i + 1).reduce(function (p, i) {
-            return p + i;
-        });
-    }
-    return result
-}
-
 function scoregraph() {
     var times = [];
     var scores = [];
-    $.get(script_root + '/api/v1/users/' + USER_ID + '/solves', function (response) {
-        var solves = response.data;
+    $.get(script_root + '/api/v1/users/' + USER_ID + '/solves', function (solve_data) {
+        $.get(script_root + '/api/v1/users/' + USER_ID + '/awards', function (award_data) {
+            var solves = solve_data.data;
+            var awards = award_data.data;
 
-        for (var i = 0; i < solves.length; i++) {
-            var date = moment(solves[i].date);
-            times.push(date.toDate());
-            scores.push(solves[i].challenge.value);
-        }
+            var total = solves.concat(awards);
 
-        scores = cumulativesum(scores);
+            total.sort(function (a, b) {
+                return new Date(a.date) - new Date(b.date);
+            });
 
-        var data = [
-            {
-                x: times,
-                y: scores,
-                type: 'scatter',
-                marker: {
-                    color: colorhash(USER_NAME + USER_ID),
-                },
-                line: {
-                    color: colorhash(USER_NAME + USER_ID),
+            for (var i = 0; i < total.length; i++) {
+                var date = moment(total[i].date);
+                times.push(date.toDate());
+                try {
+                    scores.push(total[i].challenge.value);
+                } catch (e) {
+                    scores.push(total[i].value);
                 }
             }
-        ];
 
-        var layout = {
-            title: 'Score over Time',
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            hovermode: 'closest',
-            xaxis: {
-                showgrid: false,
-                showspikes: true,
-            },
-            yaxis: {
-                showgrid: false,
-                showspikes: true,
-            },
-            legend: {
-                "orientation": "h"
-            }
-        };
+            scores = cumulativesum(scores);
 
-        $('#score-graph').empty();
-        document.getElementById('score-graph').fn = 'CTFd_score_user_' + USER_ID + '_' + (new Date).toISOString().slice(0, 19);
-        Plotly.newPlot('score-graph', data, layout);
+            var data = [
+                {
+                    x: times,
+                    y: scores,
+                    type: 'scatter',
+                    marker: {
+                        color: colorhash(USER_NAME + USER_ID),
+                    },
+                    line: {
+                        color: colorhash(USER_NAME + USER_ID),
+                    }
+                }
+            ];
+
+            var layout = {
+                title: 'Score over Time',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                hovermode: 'closest',
+                xaxis: {
+                    showgrid: false,
+                    showspikes: true,
+                },
+                yaxis: {
+                    showgrid: false,
+                    showspikes: true,
+                },
+                legend: {
+                    "orientation": "h"
+                }
+            };
+
+            $('#score-graph').empty();
+            document.getElementById('score-graph').fn = 'CTFd_score_user_' + USER_ID + '_' + (new Date).toISOString().slice(0, 19);
+            Plotly.newPlot('score-graph', data, layout);
+        });
     });
 }
 

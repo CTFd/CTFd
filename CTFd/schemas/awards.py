@@ -22,7 +22,6 @@ class AwardSchema(ma.ModelSchema):
             'user',
             'team',
             'date',
-            # TODO: This requirements call is causing issues.
             'requirements',
             'id',
             'icon'
