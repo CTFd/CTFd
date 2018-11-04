@@ -66,8 +66,3 @@ def test_get_admin_as_user():
         assert r.status_code == 302
         assert r.location.startswith('http://localhost/login')
     destroy_ctfd(app)
-
-
-
-
-
