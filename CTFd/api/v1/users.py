@@ -1,6 +1,6 @@
 from flask import request, abort
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Users, Solves, Awards, Fails, Tracking, Unlocks
+from CTFd.models import db, Users, Solves, Awards, Fails, Tracking, Unlocks, Submissions, Notifications
 from CTFd.utils.decorators import (
     authed_only,
     admins_only,
@@ -114,10 +114,10 @@ class UserPublic(Resource):
 
     @admins_only
     def delete(self, user_id):
-        # TODO: There's probably other leftover data here
-        Unlocks.query.filter_by(user_id=user_id).delete()
+        Notifications.query.filter_by(user_id=user_id).delete()
         Awards.query.filter_by(user_id=user_id).delete()
-        Fails.query.filter_by(user_id=user_id).delete()
+        Unlocks.query.filter_by(user_id=user_id).delete()
+        Submissions.query.filter_by(user_id=user_id).delete()
         Solves.query.filter_by(user_id=user_id).delete()
         Tracking.query.filter_by(user_id=user_id).delete()
         Users.query.filter_by(id=user_id).delete()
@@ -162,23 +162,6 @@ class UserPrivate(Resource):
         return {
             'success': True,
             'data': response
-        }
-
-    # TODO: Does it even make sense to delete yourself?
-    @admins_only
-    def delete(self):
-        user_id = get_current_user().id
-        Unlocks.query.filter_by(user_id=user_id).delete()
-        Awards.query.filter_by(user_id=user_id).delete()
-        Fails.query.filter_by(user_id=user_id).delete()
-        Solves.query.filter_by(user_id=user_id).delete()
-        Tracking.query.filter_by(user_id=user_id).delete()
-        Users.query.filter_by(user_id=user_id).delete()
-        db.session.commit()
-        db.session.close()
-
-        return {
-            'success': True
         }
 
 

@@ -41,7 +41,12 @@ window.challenge.submit = function (cb, preview) {
         body: JSON.stringify(params)
     }).then(function (response) {
         if (response.status === 429) {
+            // User was ratelimited but process response
             return response.json();
+        }
+        if (response.status === 403) {
+            // User is not logged in.
+            window.location = script_root + "/login?next=" + script_root + window.location.pathname + window.location.hash;
         }
         return response.json();
     }).then(function (response) {
