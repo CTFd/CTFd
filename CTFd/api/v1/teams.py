@@ -3,6 +3,7 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Teams, Solves, Awards, Fails
 from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.submissions import SubmissionSchema
+from CTFd.schemas.awards import AwardSchema
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 from CTFd.utils.config.visibility import (
     accounts_visible,
@@ -237,9 +238,18 @@ class TeamFails(Resource):
                 'errors': response.errors
             }, 400
 
+        if is_admin():
+            data = response.data
+        else:
+            data = []
+        count = len(response.data)
+
         return {
             'success': True,
-            'data': response.data
+            'data': data,
+            'meta': {
+                'count': count
+            }
         }
 
 
@@ -261,7 +271,7 @@ class TeamAwards(Resource):
             admin=is_admin()
         )
 
-        schema = SubmissionSchema(many=True)
+        schema = AwardSchema(many=True)
         response = schema.dump(awards)
 
         if response.errors:

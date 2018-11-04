@@ -15,6 +15,20 @@ $(document).ready(function () {
         }).then(function (response) {
             if (response.success) {
                 window.location.reload();
+            } else {
+                $('#user-info-form > #results').empty();
+                Object.keys(response.errors).forEach(function (key, index) {
+                    $('#user-info-form > #results').append(
+                        ezbadge({
+                            type: 'error',
+                            body: response.errors[key]
+                        })
+                    );
+                    var i = $('#user-info-form').find('input[name={0}]'.format(key));
+                    var input = $(i);
+                    input.addClass('input-filled-invalid');
+                    input.removeClass('input-filled-valid');
+                });
             }
         });
     })

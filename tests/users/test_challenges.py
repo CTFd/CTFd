@@ -378,9 +378,8 @@ def test_that_view_challenges_unregistered_works():
             "challenge_id": chal_id
         }
         r = client.post('/api/v1/challenges/attempt'.format(chal_id), json=data)
-        assert r.status_code == 302
-        resp = r.get_json()['data']
-        assert resp['status'] == "authentication_required"
+        assert r.status_code == 403
+        resp = r.get_json().get('data') is None
     destroy_ctfd(app)
 
 

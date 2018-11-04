@@ -3,18 +3,6 @@
 from tests.helpers import *
 
 
-# def test_user_get_solves_per_chal():
-#     """Can a registered user load /api/v1/statistics/challenges/solves"""
-#     # TODO: Should this be admin gated?
-#     app = create_ctfd()
-#     with app.app_context():
-#         register_user(app)
-#         client = login_as_user(app)
-#         r = client.get('/api/v1/statistics/challenges/solves')
-#         assert r.status_code == 200
-#     destroy_ctfd(app)
-
-
 def test_user_get_private_solves():
     """Can a registered user load /api/v1/users/me/solves"""
     app = create_ctfd()

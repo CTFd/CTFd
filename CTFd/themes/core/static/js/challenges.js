@@ -199,31 +199,6 @@ function load_user_solves(cb) {
     });
 }
 
-// TODO: I think this function can be deprecated
-// function updatesolves(cb) {
-//     $.get(script_root + '/api/v1/statistics/challenges/solves', function (data) {
-//         var solves = $.parseJSON(JSON.stringify(data));
-//         var chalids = Object.keys(solves);
-//
-//         for (var i = 0; i < chalids.length; i++) {
-//             for (var z = 0; z < challenges.length; z++) {
-//                 var obj = challenges[z];
-//                 var solve_cnt = solves[chalids[i]]['solves'];
-//                 if (obj.id == chalids[i]) {
-//                     if (solve_cnt) {
-//                         obj.solves = solve_cnt;
-//                     } else {
-//                         obj.solves = 0;
-//                     }
-//                 }
-//             }
-//         }
-//         if (cb) {
-//             cb();
-//         }
-//     });
-// }
-
 function getsolves(id) {
     $.get(script_root + '/api/v1/challenges/' + id + '/solves', function (response) {
         var data = response.data;
@@ -337,7 +312,6 @@ var load_location_hash = function () {
 function update(cb) {
     load_user_solves(function () { // Load the user's solved challenge ids
         loadchals(function () { //  Load the full list of challenges
-            // updatesolves(cb); // Load the counts of all challenge solves and then load the location hash specified challenge
         });
     });
 }

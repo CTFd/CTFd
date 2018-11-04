@@ -57,7 +57,6 @@ def test_import_ctf():
 
     app = create_ctfd()
     # TODO: These databases should work but they don't...
-    # TODO: Sanitize
     if not app.config.get('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
         with app.app_context():
             import_ctf('export.zip')

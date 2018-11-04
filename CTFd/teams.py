@@ -2,9 +2,10 @@ from flask import current_app as app, render_template, request, redirect, abort,
     Response, send_file
 from CTFd.models import db, Users, Teams, Solves, Awards, Files, Pages, Tracking
 from CTFd.utils.decorators import authed_only
-from CTFd.utils import get_config, set_config
+from CTFd.utils.decorators.modes import require_team_mode
+from CTFd.utils.modes import USERS_MODE
+from CTFd.utils import config, get_config, set_config
 from CTFd.utils.user import get_current_user, authed, get_ip
-from CTFd.utils import config
 from CTFd.utils.dates import unix_time_to_utc
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
@@ -14,7 +15,10 @@ teams = Blueprint('teams', __name__)
 
 @teams.route('/teams')
 @check_account_visibility
+@require_team_mode
 def listing():
+    if get_config('user_mode') == USERS_MODE:
+        return redirect(url_for('users.listing'))
     page = request.args.get('page', 1)
     page = abs(int(page))
     results_per_page = 50
@@ -35,6 +39,7 @@ def listing():
 
 @teams.route('/teams/join', methods=['GET', 'POST'])
 @authed_only
+@require_team_mode
 def join():
     if request.method == 'GET':
         return render_template('teams/join_team.html')
@@ -55,6 +60,7 @@ def join():
 
 @teams.route('/teams/new', methods=['GET', 'POST'])
 @authed_only
+@require_team_mode
 def new():
     if request.method == 'GET':
         return render_template("teams/new_team.html")
@@ -87,6 +93,7 @@ def new():
 
 @teams.route('/team', methods=['GET'])
 @authed_only
+@require_team_mode
 def private():
     user = get_current_user()
     if not user.team_id:
@@ -117,6 +124,7 @@ def private():
 @teams.route('/teams/<int:team_id>', methods=['GET', 'POST'])
 @check_account_visibility
 @check_score_visibility
+@require_team_mode
 def public(team_id):
     errors = []
     team = Teams.query.filter_by(id=team_id).first_or_404()

@@ -188,34 +188,18 @@ $(function () {
         load_date_values('freeze');
     });
 
-    // TODO: This code is likely not working
     $('#export-button').click(function (e) {
         e.preventDefault();
-        var segments = [];
-        $.each($('.export-config:checked'), function (key, value) {
-            segments.push($(value).val());
-        });
-        segments = segments.join(',');
         var href = script_root + '/admin/export';
-        $('#export-button').attr('href', href + '?segments=' + segments);
         window.location.href = $('#export-button').attr('href');
     });
 
-    // TODO: This code is likely not working
     $('#import-button').click(function (e) {
         e.preventDefault();
-        var segments = [];
-        $.each($('.import-config:checked'), function (key, value) {
-            segments.push($(value).val());
-        });
-        segments = segments.join(',');
-        console.log(segments);
-
         var import_file = document.getElementById('import-file').files[0];
         var nonce = $('#nonce').val();
 
         var form_data = new FormData();
-        form_data.append('segments', segments);
         form_data.append('backup', import_file);
         form_data.append('nonce', nonce);
 

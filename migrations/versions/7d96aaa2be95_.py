@@ -191,6 +191,7 @@ def upgrade():
     sa.Column('value', sa.Integer(), nullable=True),
     sa.Column('category', sa.String(length=80), nullable=True),
     sa.Column('icon', sa.Text(), nullable=True),
+    sa.Column('requirements', JSON, nullable=True),
     sa.ForeignKeyConstraint(['team_id'], ['teams.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')

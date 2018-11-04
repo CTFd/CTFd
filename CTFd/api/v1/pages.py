@@ -43,6 +43,8 @@ class PageList(Resource):
 
         db.session.add(response.data)
         db.session.commit()
+
+        response = schema.dump(response.data)
         db.session.close()
 
         return {
@@ -85,6 +87,8 @@ class PageDetail(Resource):
             }, 400
 
         db.session.commit()
+
+        response = schema.dump(response.data)
         db.session.close()
 
         return {

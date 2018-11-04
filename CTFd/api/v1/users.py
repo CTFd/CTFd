@@ -1,6 +1,6 @@
 from flask import request, abort
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Users, Solves, Awards, Fails, Tracking, Unlocks
+from CTFd.models import db, Users, Solves, Awards, Fails, Tracking, Unlocks, Submissions, Notifications
 from CTFd.utils.decorators import (
     authed_only,
     admins_only,
@@ -114,10 +114,10 @@ class UserPublic(Resource):
 
     @admins_only
     def delete(self, user_id):
-        # TODO: There's probably other leftover data here
-        Unlocks.query.filter_by(user_id=user_id).delete()
+        Notifications.query.filter_by(user_id=user_id).delete()
         Awards.query.filter_by(user_id=user_id).delete()
-        Fails.query.filter_by(user_id=user_id).delete()
+        Unlocks.query.filter_by(user_id=user_id).delete()
+        Submissions.query.filter_by(user_id=user_id).delete()
         Solves.query.filter_by(user_id=user_id).delete()
         Tracking.query.filter_by(user_id=user_id).delete()
         Users.query.filter_by(id=user_id).delete()
@@ -164,23 +164,6 @@ class UserPrivate(Resource):
             'data': response
         }
 
-    # TODO: Does it even make sense to delete yourself?
-    @admins_only
-    def delete(self):
-        user_id = get_current_user().id
-        Unlocks.query.filter_by(user_id=user_id).delete()
-        Awards.query.filter_by(user_id=user_id).delete()
-        Fails.query.filter_by(user_id=user_id).delete()
-        Solves.query.filter_by(user_id=user_id).delete()
-        Tracking.query.filter_by(user_id=user_id).delete()
-        Users.query.filter_by(user_id=user_id).delete()
-        db.session.commit()
-        db.session.close()
-
-        return {
-            'success': True
-        }
-
 
 @users_namespace.route('/<user_id>/solves')
 @users_namespace.param('user_id', "User ID or 'me'")
@@ -215,21 +198,6 @@ class UserSolves(Resource):
             'data': response.data
         }
 
-    @admins_only
-    def post(self, user_id):
-        # TODO: This should probably be replaced by /v1/solves
-        user = Users.query.filter_by(id=user_id).first_or_404()
-        req = request.get_json()
-        response = SubmissionSchema('admin').load(req)
-
-        if response.errors:
-            return {
-                'success': False,
-                'errors': response.errors
-            }, 400
-
-        db.session.add(response.data)
-
 
 @users_namespace.route('/<user_id>/fails')
 @users_namespace.param('user_id', "User ID or 'me'")
@@ -256,9 +224,18 @@ class UserFails(Resource):
                 'errors': response.errors
             }, 400
 
+        if is_admin():
+            data = response.data
+        else:
+            data = []
+        count = len(response.data)
+
         return {
             'success': True,
-            'data': response.data
+            'data': data,
+            'meta': {
+                'count': count
+            }
         }
 
 

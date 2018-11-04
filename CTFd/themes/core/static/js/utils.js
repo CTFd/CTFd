@@ -85,6 +85,16 @@ function htmlentities(string) {
     return $('<div/>').text(string).html();
 }
 
+function cumulativesum(arr) {
+    var result = arr.concat();
+    for (var i = 0; i < arr.length; i++) {
+        result[i] = arr.slice(0, i + 1).reduce(function (p, i) {
+            return p + i;
+        });
+    }
+    return result
+}
+
 // http://stepansuvorov.com/blog/2014/04/jquery-put-and-delete/
 jQuery.each(["patch", "put", "delete"], function(i, method) {
     jQuery[method] = function(url, data, callback, type) {
