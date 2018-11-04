@@ -226,7 +226,6 @@ class ChallengeAttempt(Resource):
     @require_verified_emails
     # @ authed_only TODO: It's probably better to put authed_only here but I'm not sure the effects.
     def post(self):
-        # TODO: This doesn't really conform to the JSON API
         if request.content_type != 'application/json':
             request_data = request.form
         else:

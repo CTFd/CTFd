@@ -16,6 +16,20 @@ $(document).ready(function () {
             if (response.success) {
                 var team_id = response.data.id;
                 window.location = script_root + '/admin/teams/' + team_id;
+            } else {
+                $('#team-info-form > #results').empty();
+                Object.keys(response.errors).forEach(function (key, index) {
+                    $('#team-info-form > #results').append(
+                        ezbadge({
+                            type: 'error',
+                            body: response.errors[key]
+                        })
+                    );
+                    var i = $('#team-info-form').find('input[name={0}]'.format(key));
+                    var input = $(i);
+                    input.addClass('input-filled-invalid');
+                    input.removeClass('input-filled-valid');
+                });
             }
         })
     });

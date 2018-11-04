@@ -38,10 +38,13 @@
 	</div>
 	<div class="form-group">
 		<div class="form-check form-check-inline">
-			{#							TODO: Properly align this with what the user type actually is#}
 			<select class="form-control form-inline" id="type-select" name="type">
-				<option value="user">User</option>
-				<option value="admin">Admin</option>
+				<option value="user"{% if user is defined and user.type == 'user' %} selected{% endif %}>
+					User
+				</option>
+				<option value="admin"{% if user is defined and user.type == 'admin' %} selected{% endif %}>
+					Admin
+				</option>
 			</select>
 		</div>
 		<div class="form-check form-check-inline">

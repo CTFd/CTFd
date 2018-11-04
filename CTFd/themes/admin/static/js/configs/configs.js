@@ -191,13 +191,7 @@ $(function () {
     // TODO: This code is likely not working
     $('#export-button').click(function (e) {
         e.preventDefault();
-        var segments = [];
-        $.each($('.export-config:checked'), function (key, value) {
-            segments.push($(value).val());
-        });
-        segments = segments.join(',');
         var href = script_root + '/admin/export';
-        $('#export-button').attr('href', href + '?segments=' + segments);
         window.location.href = $('#export-button').attr('href');
     });
 

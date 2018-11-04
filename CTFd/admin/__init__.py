@@ -22,7 +22,10 @@ from CTFd.utils import (
     set_config
 )
 from CTFd.cache import cache, clear_config
-from CTFd.utils.exports import export_ctf, import_ctf
+from CTFd.utils.exports import (
+    export_ctf as export_ctf_util,
+    import_ctf as import_ctf_util
+)
 from CTFd.models import db, Configs, get_class_by_tablename
 
 import datetime
@@ -81,10 +84,7 @@ def import_ctf():
     segments = request.form.get('segments')
     errors = []
     try:
-        if segments:
-            import_ctf(backup, segments=segments.split(','))
-        else:
-            import_ctf(backup)
+        import_ctf_util(backup)
     except Exception as e:
         print(e)
         errors.append(repr(e))
@@ -98,14 +98,10 @@ def import_ctf():
 @admin.route('/admin/export', methods=['GET', 'POST'])
 @admins_only
 def export_ctf():
-    segments = request.args.get('segments')
-    if segments:
-        backup = export_ctf(segments.split(','))
-    else:
-        backup = export_ctf()
+    backup = export_ctf_util()
     ctf_name = ctf_config.ctf_name()
     day = datetime.datetime.now().strftime("%Y-%m-%d")
-    full_name = "{}.{}.zip".format(ctf_name, day)
+    full_name = u"{}.{}.zip".format(ctf_name, day)
     return send_file(backup, as_attachment=True, attachment_filename=full_name)
 
 
