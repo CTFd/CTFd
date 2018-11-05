@@ -56,7 +56,10 @@ def require_verified_emails(f):
         if get_config('verify_emails'):
             if current_user.authed():
                 if current_user.is_admin() is False and current_user.is_verified() is False:  # User is not confirmed
-                    return redirect(url_for('auth.confirm'))
+                    if request.content_type == 'application/json':
+                        abort(403)
+                    else:
+                        return redirect(url_for('auth.confirm'))
         return f(*args, **kwargs)
 
     return _require_verified_emails
