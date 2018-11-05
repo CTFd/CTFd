@@ -91,7 +91,8 @@ class Tag(Resource):
             }, 400
 
         db.session.commit()
-        # response = schema.dump(tag.data)
+
+        response = schema.dump(tag.data)
         db.session.close()
 
         return {
