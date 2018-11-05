@@ -246,7 +246,7 @@ def login():
         return render_template('login.html')
 
 
-@auth.route('/oauth', methods=['GET', 'POST'])
+@auth.route('/oauth')
 def oauth_login():
     endpoint = get_app_config('OAUTH_AUTHORIZATION_ENDPOINT') or get_config('oauth_authorization_endpoint')
 
@@ -259,6 +259,7 @@ def oauth_login():
 
 
 @auth.route('/redirect', methods=['GET'])
+@ratelimit(method="GET", limit=10, interval=60)
 def oauth_redirect():
     oauth_code = request.args.get('code')
     if oauth_code:
@@ -292,6 +293,15 @@ def oauth_redirect():
             team_id = api_data['team']['id']
             team_name = api_data['team']['name']
 
+            team = Teams.query.filter_by(oauth_id=team_id).first()
+            if team is None:
+                team = Teams(
+                    name=team_name,
+                    oauth_id=team_id
+                )
+                db.session.add(team)
+                db.session.commit()
+
             user = Users.query.filter_by(email=user_email).first()
             if user is None:
                 user = Users(
@@ -302,21 +312,20 @@ def oauth_redirect():
                 db.session.add(user)
                 db.session.commit()
 
-            team = Teams.query.filter_by(oauth_id=team_id).first()
-            if team is None:
-                team = Teams(
-                    name=team_name
-                )
-                db.session.add(team)
-                db.session.commit()
-
             team.members.append(user)
+            db.session.commit()
 
             login_user(user)
 
             return redirect(url_for('challenges.listing'))
+        else:
+            # TODO Use logging functions here
+            print('OAuth token retrieval failure')
+            abort(500)
     else:
+        # TODO: Use logging functions
         # TODO: Change this to redirect back to login with an error
+        print('OAuth code failure')
         abort(500)
 
 

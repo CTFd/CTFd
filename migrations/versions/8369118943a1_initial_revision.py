@@ -1,8 +1,8 @@
-"""empty message
+"""Initial Revision
 
-Revision ID: 7d96aaa2be95
+Revision ID: 8369118943a1
 Revises: 
-Create Date: 2018-11-01 00:58:09.514053
+Create Date: 2018-11-05 01:06:24.495010
 
 """
 from alembic import op
@@ -16,7 +16,7 @@ import json
 
 
 # revision identifiers, used by Alembic.
-revision = '7d96aaa2be95'
+revision = '8369118943a1'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -106,7 +106,7 @@ def upgrade():
     sa.Column('created', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('name'),
+    sa.UniqueConstraint('id', 'oauth_id'),
     sa.UniqueConstraint('oauth_id')
     )
     op.create_table('dynamic_challenge',
@@ -173,13 +173,8 @@ def upgrade():
     sa.ForeignKeyConstraint(['team_id'], ['teams.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('name'),
+    sa.UniqueConstraint('id', 'oauth_id'),
     sa.UniqueConstraint('oauth_id')
-    )
-    op.create_table('admins',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['id'], ['users.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('awards',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -265,7 +260,6 @@ def downgrade():
     op.drop_table('submissions')
     op.drop_table('notifications')
     op.drop_table('awards')
-    op.drop_table('admins')
     op.drop_table('users')
     op.drop_table('tags')
     op.drop_table('hints')

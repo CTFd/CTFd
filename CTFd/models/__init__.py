@@ -266,11 +266,15 @@ class Flags(db.Model):
 
 class Users(db.Model):
     __tablename__ = 'users'
+    __table_args__ = (
+        db.UniqueConstraint('id', 'oauth_id'),
+        {}
+    )
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
-    # TODO: We need uniqueness between usernames and oauth_id
     oauth_id = db.Column(db.Integer, unique=True)
-    name = db.Column(db.String(128), unique=True)
+    # User names are not constrained to be unique to allow for official/unofficial teams.
+    name = db.Column(db.String(128))
     password = db.Column(db.String(128))
     email = db.Column(db.String(128), unique=True)
     type = db.Column(db.String(80))
@@ -297,7 +301,8 @@ class Users(db.Model):
 
     def __init__(self, **kwargs):
         super(Users, self).__init__(**kwargs)
-        self.password = hash_password(str(kwargs['password']))
+        if kwargs.get('password'):
+            self.password = hash_password(str(kwargs['password']))
 
     @hybrid_property
     def account_id(self):
@@ -459,10 +464,15 @@ class Admins(Users):
 
 class Teams(db.Model):
     __tablename__ = 'teams'
+    __table_args__ = (
+        db.UniqueConstraint('id', 'oauth_id'),
+        {}
+    )
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
     oauth_id = db.Column(db.Integer, unique=True)
-    name = db.Column(db.String(128), unique=True)
+    # Team names are not constrained to be unique to allow for official/unofficial teams.
+    name = db.Column(db.String(128))
     email = db.Column(db.String(128), unique=True)
     password = db.Column(db.String(128))
     secret = db.Column(db.String(128))
@@ -481,7 +491,8 @@ class Teams(db.Model):
 
     def __init__(self, **kwargs):
         super(Teams, self).__init__(**kwargs)
-        self.password = hash_password(str(kwargs['password']))
+        if kwargs.get('password'):
+            self.password = hash_password(str(kwargs['password']))
 
     @property
     def solves(self):
