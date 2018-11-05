@@ -74,7 +74,6 @@ def hints_view(hintid):
 
 
 @challenges.route('/challenges', methods=['GET'])
-@during_ctf_time_only
 @require_verified_emails
 @viewable_without_authentication()
 def challenges_view():
