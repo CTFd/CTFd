@@ -246,7 +246,7 @@ def login():
         return render_template('login.html')
 
 
-@auth.route('/oauth', methods=['GET', 'POST'])
+@auth.route('/oauth')
 def oauth_login():
     endpoint = get_app_config('OAUTH_AUTHORIZATION_ENDPOINT') or get_config('oauth_authorization_endpoint')
 
@@ -259,6 +259,7 @@ def oauth_login():
 
 
 @auth.route('/redirect', methods=['GET'])
+@ratelimit(method="GET", limit=10, interval=60)
 def oauth_redirect():
     oauth_code = request.args.get('code')
     if oauth_code:
