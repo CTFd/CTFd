@@ -92,7 +92,7 @@ class Tag(Resource):
 
         db.session.commit()
 
-        response = schema.dump(tag.data)
+        response = schema.dump(response.data)
         db.session.close()
 
         return {
