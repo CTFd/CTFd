@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from tests.helpers import *
-from cStringIO import StringIO
-
+from io import BytesIO
 
 def test_api_files_get_non_admin():
     """Can a user get /api/v1/files if not admin"""
@@ -44,7 +43,7 @@ def test_api_files_post_admin():
                 nonce = sess.get('nonce')
             r = client.post('/api/v1/files',
                             content_type='multipart/form-data',
-                            data=dict(file=(StringIO("test file content"), 'test.txt'),
+                            data=dict(file=(BytesIO(b'test file content'), 'test.txt'),
                                       nonce=nonce))
             assert r.status_code == 200
     destroy_ctfd(app)
