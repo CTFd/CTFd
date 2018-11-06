@@ -307,7 +307,8 @@ def oauth_redirect():
                 user = Users(
                     name=user_name,
                     email=user_email,
-                    oauth_id=user_id
+                    oauth_id=user_id,
+                    verified=True
                 )
                 db.session.add(user)
                 db.session.commit()
@@ -319,13 +320,10 @@ def oauth_redirect():
 
             return redirect(url_for('challenges.listing'))
         else:
-            # TODO Use logging functions here
-            print('OAuth token retrieval failure')
+            log('logins', "[{date}] {ip} - OAuth token retrieval failure")
             abort(500)
     else:
-        # TODO: Use logging functions
-        # TODO: Change this to redirect back to login with an error
-        print('OAuth code failure')
+        log('logins', "[{date}] {ip} - Received redirect without OAuth code")
         abort(500)
 
 
