@@ -161,7 +161,7 @@ class UserPrivate(Resource):
 
         return {
             'success': True,
-            'data': response
+            'data': response.data
         }
 
 

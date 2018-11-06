@@ -59,18 +59,19 @@ class UserSchema(ma.ModelSchema):
 
     @pre_load
     def validate_name(self, data):
-        existing_user = Users.query.filter_by(name=data['name']).first()
-        if is_admin():
-            user_id = data.get('id')
-            if user_id:
-                if existing_user.id != user_id:
-                    raise ValidationError('User name has already been taken', field_names=['name'])
-            else:
-                if existing_user:
-                    raise ValidationError('User name has already been taken', field_names=['name'])
+        name = data.get('name')
+        if name is None:
+            return
+
+        existing_user = Users.query.filter_by(name=name).first()
+        user_id = data.get('id')
+
+        if user_id and is_admin():
+            if existing_user.id != user_id:
+                raise ValidationError('User name has already been taken', field_names=['name'])
         else:
             current_user = get_current_user()
-            if data['name'] == current_user.name:
+            if name == current_user.name:
                 return data
             else:
                 if existing_user:
@@ -81,15 +82,13 @@ class UserSchema(ma.ModelSchema):
         email = data.get('email')
         if email is None:
             return
+
         existing_user = Users.query.filter_by(email=email).first()
-        if is_admin():
-            user_id = data.get('id')
-            if user_id:
-                if existing_user.id != user_id:
-                    raise ValidationError('Email address has already been used', field_names=['email'])
-            else:
-                if existing_user:
-                    raise ValidationError('Email address has already been used', field_names=['email'])
+        user_id = data.get('id')
+
+        if user_id and is_admin():
+            if existing_user.id != user_id:
+                raise ValidationError('Email address has already been used', field_names=['email'])
         else:
             current_user = get_current_user()
             if email == current_user.email:
@@ -103,10 +102,12 @@ class UserSchema(ma.ModelSchema):
         password = data.get('password')
         confirm = data.get('confirm')
         target_user = get_current_user()
+        user_id = data.get('id')
 
-        if is_admin() and target_user.id != data.get('id'):
-            data['password'] = hash_password(data['password'])
-            return data
+        if is_admin():
+            if password:
+                data['password'] = hash_password(data['password'])
+                return data
         else:
             if password and (confirm is None):
                 raise ValidationError('Please confirm your current password', field_names=['confirm'])

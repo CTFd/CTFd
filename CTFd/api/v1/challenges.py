@@ -153,7 +153,10 @@ class Challenge(Resource):
     def get(self, challenge_id):
         team_id = session.get('id')
 
-        chal = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        chal = Challenges.query.filter(
+            Challenges.id == challenge_id, and_(Challenges.state != 'hidden', Challenges.state != 'locked')
+        ).first_or_404()
+
         chal_class = get_chal_class(chal.type)
 
         tags = [

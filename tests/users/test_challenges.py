@@ -383,6 +383,34 @@ def test_that_view_challenges_unregistered_works():
     destroy_ctfd(app)
 
 
+def test_hidden_challenge_is_unreachable():
+    """Test that hidden challenges return 404 and do not insert a solve or wrong key"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db, state='hidden')
+        flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+
+        assert Challenges.query.count() == 1
+
+        r = client.get('/api/v1/challenges', json='')
+        data = r.get_json().get('data')
+        assert data == []
+
+        r = client.get('/api/v1/challenges/1', json='')
+        assert r.status_code == 404
+        data = r.get_json().get('data')
+        assert data is None
+
+        solves = Solves.query.count()
+        assert solves == 0
+
+        wrong_keys = Fails.query.count()
+        assert wrong_keys == 0
+    destroy_ctfd(app)
+
+
 def test_hidden_challenge_is_unsolveable():
     """Test that hidden challenges return 404 and do not insert a solve or wrong key"""
     app = create_ctfd()

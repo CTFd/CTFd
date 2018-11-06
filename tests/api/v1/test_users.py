@@ -76,6 +76,7 @@ def test_api_users_post_admin():
                 "email": "user@user.com",
                 "password": "pass"
             })
+            print r.get_json()
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -229,7 +230,7 @@ def test_api_user_patch_me_logged_in():
                                                        "confirm": "password",
                                                        "country": "US"})
             assert r.status_code == 200
-            assert r.get_json()['data'][0]['country'] == 'US'
+            assert r.get_json()['data']['country'] == 'US'
     destroy_ctfd(app)
 
 
