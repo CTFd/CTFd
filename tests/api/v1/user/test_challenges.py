@@ -268,7 +268,6 @@ def test_api_challenges_solves_score_visibility():
         gen_challenge(app.db)
         with app.test_client() as client:
             r = client.get('/api/v1/challenges/1/solves')
-            print("STATUS", r.status_code)
             assert r.status_code == 200
         set_config('challenge_visibility', 'private')
         set_config('score_visibility', 'private')
@@ -292,6 +291,5 @@ def test_api_challenge_solves_404():
         register_user(app)
         client = login_as_user(app)
         r = client.get('/api/v1/challenges/1/solves')
-        print("STATUS", r.status_code)
         assert r.status_code == 404
     destroy_ctfd(app)
