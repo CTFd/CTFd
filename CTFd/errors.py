@@ -13,7 +13,7 @@ def forbidden(error):
 
 # 500
 def general_error(error):
-    return render_template('errors/500.html', error=error.description), 500
+    return render_template('errors/500.html'), 500
 
 
 # 502
