@@ -76,7 +76,6 @@ def test_api_users_post_admin():
                 "email": "user@user.com",
                 "password": "pass"
             })
-            print r.get_json()
             assert r.status_code == 200
     destroy_ctfd(app)
 
