@@ -264,6 +264,9 @@ class ChallengeAttempt(Resource):
         if challenge.state == 'hidden':
             abort(404)
 
+        if challenge.state == 'locked':
+            abort(403)
+
         requirements = challenge.requirements
         if requirements:
             solve_ids = Solves.query \
