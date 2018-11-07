@@ -1,5 +1,7 @@
 #!/bin/sh
 
+WORKERS=${WORKERS:-1}
+
 # Check that a .ctfd_secret_key file or SECRET_KEY envvar is set
 if [ ! -f .ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
     if [ $WORKERS -gt 1 ]; then
@@ -27,10 +29,6 @@ fi
 
 # Initialize database
 python manage.py db upgrade
-
-if [ -z "$WORKERS" ]; then
-    WORKERS=1
-fi
 
 # Start CTFd
 echo "Starting CTFd"
