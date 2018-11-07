@@ -67,7 +67,7 @@ class UserSchema(ma.ModelSchema):
         user_id = data.get('id')
 
         if user_id and is_admin():
-            if existing_user.id != user_id:
+            if existing_user and existing_user.id != user_id:
                 raise ValidationError('User name has already been taken', field_names=['name'])
         else:
             current_user = get_current_user()
@@ -87,7 +87,7 @@ class UserSchema(ma.ModelSchema):
         user_id = data.get('id')
 
         if user_id and is_admin():
-            if existing_user.id != user_id:
+            if existing_user and existing_user.id != user_id:
                 raise ValidationError('Email address has already been used', field_names=['email'])
         else:
             current_user = get_current_user()
@@ -105,9 +105,10 @@ class UserSchema(ma.ModelSchema):
         user_id = data.get('id')
 
         if is_admin():
-            if password:
-                data['password'] = hash_password(data['password'])
-                return data
+            if user_id:
+                if password:
+                    data['password'] = hash_password(data['password'])
+                    return data
         else:
             if password and (confirm is None):
                 raise ValidationError('Please confirm your current password', field_names=['confirm'])
