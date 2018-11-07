@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eo pipefail
 
 WORKERS=${WORKERS:-1}
 
