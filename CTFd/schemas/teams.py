@@ -46,7 +46,11 @@ class TeamSchema(ma.ModelSchema):
 
     @pre_load
     def validate_name(self, data):
-        existing_team = Teams.query.filter_by(name=data['name']).first()
+        name = data.get('name')
+        if name is None:
+            return
+
+        existing_team = Teams.query.filter_by(name=name).first()
         # Admins should be able to patch anyone but they cannot cause a collision.
         if is_admin():
             team_id = int(data.get('id', 0))
@@ -71,6 +75,7 @@ class TeamSchema(ma.ModelSchema):
         email = data.get('email')
         if email is None:
             return
+
         obj = Teams.query.filter_by(email=email).first()
         if obj:
             if is_admin():
