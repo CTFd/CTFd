@@ -235,11 +235,22 @@ class ChallengeAttempt(Resource):
         else:
             request_data = request.get_json()
 
+        challenge_id = request_data.get('challenge_id')
+
         if current_user.is_admin():
             preview = request.args.get('preview', False)
-            # TODO: implement challenge preview functionality in admin panel
+            if preview:
+                challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+                chal_class = get_chal_class(challenge.type)
+                status, message = chal_class.attempt(challenge, request)
 
-        challenge_id = request_data.get('challenge_id')
+                return {
+                    'success': True,
+                    'data': {
+                        'status': "correct" if status else "incorrect",
+                        'message': message
+                    }
+                }
 
         if ctf_paused():
             return {
