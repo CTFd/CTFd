@@ -116,8 +116,13 @@ def gen_tag(db, challenge_id, value='tag_tag', **kwargs):
     return tag
 
 
-def gen_file(db, challenge_id, location):
-    f = Files(challenge_id=challenge_id, location=location)
+def gen_file(db, location, challenge_id=None, page_id=None):
+    if challenge_id:
+        f = ChallengeFiles(challenge_id=challenge_id, location=location)
+    elif page_id:
+        f = PageFiles(page_id=page_id, location=location)
+    else:
+        f = Files(location=location)
     db.session.add(f)
     db.session.commit()
     return f
