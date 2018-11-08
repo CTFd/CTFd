@@ -435,7 +435,7 @@ class ChallengeSolves(Resource):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
 
         # TODO: Need a generic challenge visibility call.
-        # However, it should be stated that a solve on a hidden or gated challenge is not considered private.
+        # However, it should be stated that a solve on a gated challenge is not considered private.
         if challenge.state == 'hidden' and is_admin() is False:
             abort(404)
 

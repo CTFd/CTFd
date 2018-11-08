@@ -12,7 +12,7 @@ import os
 @admins_only
 def challenges_listing():
     challenges = Challenges.query.all()
-    return render_template('admin/challenges.html', challenges=challenges)
+    return render_template('admin/challenges/challenges.html', challenges=challenges)
 
 
 @admin.route('/admin/challenges/<int:challenge_id>')
@@ -27,14 +27,14 @@ def challenges_detail(challenge_id):
     static_path = os.path.basename(challenge_class.blueprint.static_url_path)
     update_j2 = render_template_string(
         challenge_class.blueprint.open_resource(
-            os.path.join(static_path, 'update.j2')
+            os.path.join(static_path, 'update.html')
         ).read().decode('utf-8'),
         # Python 3
         challenge=challenge
     )
     update_script = os.path.join(challenge_class.route, 'update.js')
     return render_template(
-        'admin/challenge.html',
+        'admin/challenges/challenge.html',
         update_template=update_j2,
         update_script=update_script,
         challenge=challenge,
