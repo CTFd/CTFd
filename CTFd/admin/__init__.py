@@ -174,6 +174,7 @@ def config():
 def reset():
     if request.method == 'POST':
         # Truncate Users, Teams, Submissions, Solves, Notifications, Awards, Unlocks, Tracking
+        Tracking.query.delete()
         Users.query.delete()
         Teams.query.delete()
         Submissions.query.delete()
