@@ -43,11 +43,7 @@ def hide_scores():
 
 @cache.memoize()
 def is_setup():
-    setup = Configs.query.filter_by(key='setup').first()
-    if setup:
-        return setup.value
-    else:
-        return False
+    return get_config('setup')
 
 
 @cache.memoize()

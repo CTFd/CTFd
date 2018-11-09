@@ -12,6 +12,8 @@ from flask import (
 
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.user import is_admin
+from CTFd.utils.security.auth import logout_user
+from CTFd.utils.config import is_setup
 from CTFd.utils import (
     config as ctf_config,
     validators,
@@ -19,15 +21,25 @@ from CTFd.utils import (
     user as current_user,
     get_config,
     get_app_config,
-    set_config
+    set_config,
 )
 from CTFd.cache import cache, clear_config
 from CTFd.utils.exports import (
     export_ctf as export_ctf_util,
     import_ctf as import_ctf_util
 )
-from CTFd.models import db, Configs, get_class_by_tablename
-
+from CTFd.models import (
+    db,
+    get_class_by_tablename,
+    Users,
+    Teams,
+    Configs,
+    Submissions,
+    Solves,
+    Awards,
+    Unlocks,
+    Tracking
+)
 import datetime
 import os
 import six
@@ -162,5 +174,17 @@ def config():
 def reset():
     if request.method == 'POST':
         # Truncate Users, Teams, Submissions, Solves, Notifications, Awards, Unlocks, Tracking
-        pass
+        Users.query.delete()
+        Teams.query.delete()
+        Submissions.query.delete()
+        Solves.query.delete()
+        Awards.query.delete()
+        Unlocks.query.delete()
+        set_config('setup', False)
+        db.session.commit()
+        cache.clear()
+        logout_user()
+        db.session.close()
+        return redirect(url_for('views.setup'))
+
     return render_template('admin/reset.html')

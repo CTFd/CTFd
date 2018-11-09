@@ -14,6 +14,7 @@ from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
 from CTFd.utils.dates import ctf_started, ctftime
 from CTFd.utils.decorators import authed_only
+from sqlalchemy.exc import IntegrityError
 import os
 
 
@@ -97,9 +98,17 @@ def setup():
 
             setup = set_config('setup', True)
 
-            db.session.add(page)
-            db.session.add(admin)
-            db.session.commit()
+            try:
+                db.session.add(admin)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+
+            try:
+                db.session.add(page)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
             login_user(admin)
 

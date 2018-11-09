@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Reset</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				<form method="POST" id="reset-ctf-form">
+					<div class="alert alert-danger" role="alert">
+						<p>
+							Resetting your CTF will delete all user and team data. Think carefully before resetting because
+							no automated backups are made and all non-challenge data is lost.
+						</p>
+
+						<span>
+							<strong>
+								Create backups of all data you need by <a href="{{ url_for('admin.config', _anchor='backup') }}">creating a CTFd Export</a>
+								or by copying the database and CTFd source code folder.
+							</strong>
+						</span>
+					</div>
+
+					<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+
+					<button class="btn btn-warning btn-lg btn-block">
+						Reset CTF
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<script>
+		$('#reset-ctf-form').submit(function(e){
+			e.preventDefault();
+			ezq({
+				title: "Reset CTF?",
+				body: "Are you sure you want to reset your CTFd instance?",
+				success: function () {
+					$('#reset-ctf-form').off('submit').submit();
+				}
+			});
+		});
+	</script>
+{% endblock %}
