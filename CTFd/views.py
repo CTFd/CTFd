@@ -193,7 +193,10 @@ def files(path):
             if not ctftime():
                 abort(403)
     uploader = get_uploader()
-    return uploader.download(f.location)
+    try:
+        return uploader.download(f.location)
+    except IOError:
+        abort(404)
 
 
 @views.route('/themes/<theme>/static/<path:path>')
