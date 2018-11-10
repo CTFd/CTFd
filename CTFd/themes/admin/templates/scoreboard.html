@@ -22,7 +22,22 @@
 				{% for standing in standings %}
 					<tr>
 						<td>{{ loop.index }}</td>
-						<td><a href="{{ generate_account_url(standing.account_id, admin=True) }}">{{ standing.name }}</a></td>
+						<td>
+							<a href="{{ generate_account_url(standing.account_id, admin=True) }}">
+								{{ standing.name }}
+								{% if standing.oauth_id %}
+									{% if get_config('user_mode') == 'teams' %}
+										<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
+											<span class="badge badge-primary">Official</span>
+										</a>
+									{% elif get_config('user_mode') == 'users' %}
+										<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
+											<span class="badge badge-primary">Official</span>
+										</a>
+									{% endif %}
+								{% endif %}
+							</a>
+						</td>
 						<td>{{ standing.score }}</td>
 						<td>
 						{% if standing.hidden %}

@@ -34,7 +34,8 @@ function scoregraph() {
                     },
                     line: {
                         color: colorhash(USER_NAME + USER_ID),
-                    }
+                    },
+                    fill: 'tozeroy'
                 }
             ];
 

@@ -23,6 +23,11 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1 id="team-id" class="text-center">{{ team.name }}</h1>
+		{% if team.oauth_id %}
+			<a href="https://majorleaguecyber.org/t/{{ team.name }}">
+				<h3><span class="badge badge-primary">Official</span></h3>
+			</a>
+		{% endif %}
 		<h2 id="team-email" class="text-center">{{ members | length }} members</h2>
 		<h2 id="team-place" class="text-center">
 			{% if place %}

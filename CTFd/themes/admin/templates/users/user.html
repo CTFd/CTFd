@@ -56,6 +56,11 @@
 	<div class="container">
 		<h1 id="team-id" class="text-center">{{ user.name }}</h1>
 		<h2 id="team-email" class="text-center">{{ user.email }}</h2>
+		{% if user.oauth_id %}
+			<a href="https://majorleaguecyber.org/u/{{ user.name }}">
+				<h3><span class="badge badge-primary">Official</span></h3>
+			</a>
+		{% endif %}
 		<h2 id="team-place" class="text-center">
 			{% if place %}
 				{{ place }}

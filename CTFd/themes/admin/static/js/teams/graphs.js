@@ -34,7 +34,8 @@ $(document).ready(function () {
                         },
                         line: {
                             color: colorhash(TEAM_NAME + TEAM_ID),
-                        }
+                        },
+                        fill: 'tozeroy'
                     }
                 ];
 
