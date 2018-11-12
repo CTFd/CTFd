@@ -50,7 +50,6 @@ function scoregraph () {
                 var date = moment(places[teams[i]]['solves'][j].date);
                 times.push(date.toDate());
             }
-            console.log(times);
             team_score = cumulativesum(team_score);
             var trace = {
                 x: times,
@@ -92,7 +91,6 @@ function scoregraph () {
                 "orientation": "h"
             }
         };
-        console.log(traces);
 
         $('#score-graph').empty(); // Remove spinners
         document.getElementById('score-graph').fn = 'CTFd_scoreboard_' + (new Date).toISOString().slice(0,19);
