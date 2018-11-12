@@ -6,6 +6,7 @@ from CTFd.utils.decorators import (
     admins_only,
     authed
 )
+from CTFd.cache import cache, clear_standings
 from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 
@@ -57,6 +58,8 @@ class UserList(Resource):
         db.session.add(response.data)
         db.session.commit()
 
+        clear_standings()
+
         response = schema.dump(response.data)
 
         return {
@@ -107,6 +110,8 @@ class UserPublic(Resource):
 
         db.session.close()
 
+        clear_standings()
+
         return {
             'success': True,
             'data': response
@@ -123,6 +128,8 @@ class UserPublic(Resource):
         Users.query.filter_by(id=user_id).delete()
         db.session.commit()
         db.session.close()
+
+        clear_standings();
 
         return {
             'success': True
@@ -158,6 +165,8 @@ class UserPrivate(Resource):
 
         response = schema.dump(response.data)
         db.session.close()
+
+        clear_standings();
 
         return {
             'success': True,

@@ -4,6 +4,7 @@ from CTFd.models import db, Teams, Solves, Awards, Fails
 from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
+from CTFd.cache import cache, clear_standings
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 from CTFd.utils.config.visibility import (
     accounts_visible,
@@ -64,6 +65,8 @@ class TeamList(Resource):
         response = schema.dump(response.data)
         db.session.close()
 
+        clear_standings()
+
         return {
             'success': True,
             'data': response.data
@@ -111,6 +114,8 @@ class TeamPublic(Resource):
         db.session.commit()
         db.session.close()
 
+        clear_standings()
+
         return {
             'success': True,
             'data': response.data
@@ -126,6 +131,8 @@ class TeamPublic(Resource):
         db.session.delete(team)
         db.session.commit()
         db.session.close()
+
+        clear_standings()
 
         return {
             'success': True,
