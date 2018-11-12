@@ -5,7 +5,7 @@ from CTFd.utils import markdown, get_config
 from CTFd.utils.dates import unix_time_millis, unix_time, isoformat
 
 from CTFd.utils import config
-from CTFd.utils.config import can_send_mail, ctf_logo, ctf_name, ctf_theme, hide_scores
+from CTFd.utils.config import can_send_mail, ctf_logo, ctf_name, ctf_theme
 from CTFd.utils.config.pages import get_pages
 
 from CTFd.utils.plugins import get_registered_stylesheets, get_registered_scripts, get_configurable_plugins
@@ -46,7 +46,6 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
     app.jinja_env.globals.update(get_registered_stylesheets=get_registered_stylesheets)
     app.jinja_env.globals.update(get_config=get_config)
-    app.jinja_env.globals.update(hide_scores=hide_scores)
     app.jinja_env.globals.update(generate_account_url=generate_account_url)
     app.jinja_env.globals.update(get_countries=get_countries)
     app.jinja_env.globals.update(lookup_country_code=lookup_country_code)

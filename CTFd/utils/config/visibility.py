@@ -16,6 +16,8 @@ def scores_visible():
         return True
     elif v == 'private':
         return authed()
+    elif v == 'hidden':
+        return False
     elif v == 'admins':
         return is_admin()
 

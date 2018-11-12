@@ -21,7 +21,7 @@
 			<label>
 				Score Visibility<br>
 				<small class="form-text text-muted">
-					Control whether solves/score are shown to the public, to logged in users, or only to admins
+					Control whether solves/score are shown to the public, to logged in users, hidden to all non-admins, or only shown to admins
 				</small>
 			</label>
 			<select class="form-control" name="score_visibility">
@@ -30,6 +30,9 @@
 				</option>
 				<option value="private" {% if score_visibility == 'private' %}selected{% endif %}>
 					Private
+				</option>
+				<option value="hidden" {% if score_visibility == 'hidden' %}selected{% endif %}>
+					Hidden
 				</option>
 				<option value="admins" {% if score_visibility == 'admins' %}selected{% endif %}>
 					Admins Only

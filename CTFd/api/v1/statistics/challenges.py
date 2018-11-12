@@ -62,31 +62,25 @@ class ChallengeSolveStatistics(Resource):
             .join(Challenges, solves_sub.columns.challenge_id == Challenges.id).all()
 
         response = []
-        if config.hide_scores():
-            # for chal, count, name in solves:
-            #     response[chal] = -1
-            # for c in chals:
-            #     if c.id not in response:
-            #         response[c.id] = -1
-            return response
-        else:
-            has_solves = []
-            for challenge_id, count, name in solves:
+        has_solves = []
+
+        for challenge_id, count, name in solves:
+            challenge = {
+                'id': challenge_id,
+                'name': name,
+                'solves': count,
+            }
+            response.append(challenge)
+            has_solves.append(challenge_id)
+        for c in chals:
+            if c.id not in has_solves:
                 challenge = {
-                    'id': challenge_id,
-                    'name': name,
-                    'solves': count,
+                    'id': c.id,
+                    'name': c.name,
+                    'solves': 0,
                 }
                 response.append(challenge)
-                has_solves.append(challenge_id)
-            for c in chals:
-                if c.id not in has_solves:
-                    challenge = {
-                        'id': c.id,
-                        'name': c.name,
-                        'solves': 0,
-                    }
-                    response.append(challenge)
+
         db.session.close()
         return {
             'success': True,

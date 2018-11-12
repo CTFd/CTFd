@@ -25,17 +25,17 @@
 					{% for user in users %}
 						<tr>
 							<td>
-								{% if hide_scores() %}
-									<span>{{ user.name | truncate(50) }}</span>
-								{% else %}
+								{% if scores_visible() %}
 									<a href="{{ url_for('users.public', user_id=user.id) }}">
 										{{ user.name | truncate(50) }}
 									</a>
-									{% if user.oauth_id %}
+								{% else %}
+									<span>{{ user.name | truncate(50) }}</span>
+								{% endif %}
+								{% if user.oauth_id %}
 									<a href="https://majorleaguecyber.org/u/{{ user.name }}">
 										<span class="badge badge-primary">Official</span>
 									</a>
-									{% endif %}
 								{% endif %}
 							</td>
 							<td class="text-center" style="width: 10px;">

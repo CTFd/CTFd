@@ -12,12 +12,6 @@ scoreboard = Blueprint('scoreboard', __name__)
 @scoreboard.route('/scoreboard')
 @check_score_visibility
 def listing():
-    if config.hide_scores():
-        return render_template(
-            'scoreboard.html',
-            errors=['Scores are currently hidden']
-        )
-
     standings = get_standings()
     return render_template(
         'scoreboard.html',

@@ -25,10 +25,10 @@
 				{% for team in teams %}
 					<tr>
 						<td>
-						{% if hide_scores() %}
-							<span>{{ team.name | truncate(50) }}</span>
-						{% else %}
+						{% if scores_visible() %}
 							<a href="{{ url_for('teams.public', team_id=team.id) }}">{{ team.name | truncate(50) }}</a>
+						{% else %}
+							<span>{{ team.name | truncate(50) }}</span>
 						{% endif %}
 						{% if team.oauth_id %}
 							<a href="https://majorleaguecyber.org/t/{{ team.name }}">

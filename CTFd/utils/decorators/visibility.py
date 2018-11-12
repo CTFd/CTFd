@@ -1,6 +1,6 @@
+from flask import request, abort, redirect, url_for, render_template
 from CTFd.utils import config, get_config
 from CTFd.utils.user import is_admin, authed
-from flask import request, abort, redirect, url_for
 import functools
 
 
@@ -19,6 +19,9 @@ def check_score_visibility(f):
                     abort(403)
                 else:
                     return redirect(url_for('auth.login', next=request.path))
+
+        elif v == 'hidden':
+            return render_template('errors/403.html', error='Scores are currently hidden'), 403
 
         elif v == 'admins':
             if is_admin():

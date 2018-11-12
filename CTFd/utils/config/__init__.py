@@ -34,13 +34,6 @@ def user_mode():
     return get_config('user_mode')
 
 
-# TODO: Not sure if this needs to be removed or if it should stay.
-# It might be best to just lean on the freeze logic.
-@cache.memoize()
-def hide_scores():
-    return get_config('hide_scores')
-
-
 @cache.memoize()
 def is_setup():
     return get_config('setup')

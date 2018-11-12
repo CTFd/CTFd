@@ -134,9 +134,6 @@ def public(team_id):
     place = team.place
     score = team.score
 
-    if config.hide_scores() and team_id != session.get('id'):
-        errors.append('Scores are currently hidden')
-
     if errors:
         return render_template('teams/team.html', team=team, errors=errors)
 
