@@ -10,7 +10,11 @@
 			{% for solve in solves %}
 				<tr>
 					<td>{{ solve.account.name }}</td>
-					<td>{{ solve.date | isoformat }}</td>
+					<td>
+						<script>
+							document.write(moment("{{ solve.date | isoformat }}").local().format('MMMM Do, h:mm:ss A'))
+						</script>
+					</td>
 				</tr>
 			{% endfor %}
 		{% endif %}

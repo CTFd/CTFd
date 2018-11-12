@@ -131,6 +131,7 @@ $(document).ready(function () {
     $('.correct-submission').click(function(e) {
         var challenge_id = $(this).attr('challenge-id');
         var challenge_name = $(this).attr('challenge-name');
+        var row = $(this).parent().parent();
 
         var body = "<span>Are you sure you want to mark <strong>{0}</strong> solved for from <strong>{1}</strong>?".format(
             htmlentities(challenge_name),
@@ -161,11 +162,11 @@ $(document).ready(function () {
                 }).then(function (response) {
                     if (response.success) {
                         // TODO: Refresh missing and solves instead of reloading
-                        window.location.reload()
+                        row.remove();
+                        window.location.reload();
                     }
                 });
             }
         })
     });
-
 });

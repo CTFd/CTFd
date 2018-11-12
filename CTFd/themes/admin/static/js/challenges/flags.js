@@ -16,6 +16,7 @@ $(document).ready(function () {
             }
             $("#flag-edit-modal").modal();
         });
+
         $('#flag-edit-modal form').submit(function(e){
             e.preventDefault();
             var params = $(this).serializeJSON(true);
@@ -54,6 +55,7 @@ $(document).ready(function () {
     $('.edit-flag').click(function (e) {
         e.preventDefault();
         var flag_id = $(this).attr('flag-id');
+        var row = $(this).parent().parent();
 
         $.get(script_root + '/api/v1/flags/' + flag_id, function (response) {
             var data = response.data;
@@ -77,11 +79,12 @@ $(document).ready(function () {
                     }).then(function (response) {
                         return response.json();
                     }).then(function (response) {
-                        // TODO: Refresh flags on submit.
-                        window.location.reload();
+                        if (response.success) {
+                            $(row).find('.flag-content').text(response.data.content);
+                            $('#edit-flags').modal('toggle');
+                        }
                     });
                 });
-
                 $('#edit-flags').modal();
             });
         });
