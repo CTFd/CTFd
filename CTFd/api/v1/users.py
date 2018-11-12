@@ -129,7 +129,7 @@ class UserPublic(Resource):
         db.session.commit()
         db.session.close()
 
-        clear_standings();
+        clear_standings()
 
         return {
             'success': True
@@ -166,7 +166,7 @@ class UserPrivate(Resource):
         response = schema.dump(response.data)
         db.session.close()
 
-        clear_standings();
+        clear_standings()
 
         return {
             'success': True,
