@@ -147,6 +147,10 @@ function renderSubmissionResponse(response, cb) {
 
         answer_input.addClass("correct");
     }
+    else if (result.status === "paused") { // CTF is paused
+        result_notification.addClass('alert alert-warning alert-dismissable text-center');
+        result_notification.slideDown();
+    }
     else if (result.status === "ratelimited") { // Keys per minute too high
         result_notification.addClass('alert alert-warning alert-dismissable text-center');
         result_notification.slideDown();

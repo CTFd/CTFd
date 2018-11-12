@@ -45,8 +45,8 @@ window.challenge.submit = function (cb, preview) {
             return response.json();
         }
         if (response.status === 403) {
-            // User is not logged in.
-            window.location = script_root + "/login?next=" + script_root + window.location.pathname + window.location.hash;
+            // User is not logged in or CTF is paused.
+            return response.json();
         }
         return response.json();
     }).then(function (response) {
