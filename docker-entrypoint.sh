@@ -28,6 +28,15 @@ if [ -n "$DATABASE_URL" ]
     sleep 1;
 fi
 
+# Log to stdout/stderr by default
+if [ -n "$LOG_FOLDER" ]; then
+    ACCESS_LOG=${LOG_FOLDER}/access.log
+    ERROR_LOG=${LOG_FOLDER}/error.log
+else
+    ACCESS_LOG=-
+    ERROR_LOG=-
+fi
+
 # Initialize database
 python manage.py db upgrade
 
@@ -37,5 +46,5 @@ exec gunicorn 'CTFd:create_app()' \
     --bind '0.0.0.0:8000' \
     --workers $WORKERS \
     --worker-class 'gevent' \
-    --access-logfile "${LOG_FOLDER:-/opt/CTFd/CTFd/logs}/access.log" \
-    --error-logfile "${LOG_FOLDER:-/opt/CTFd/CTFd/logs}/error.log"
+    --access-logfile "$ACCESS_LOG" \
+    --error-logfile "$ERROR_LOG"
