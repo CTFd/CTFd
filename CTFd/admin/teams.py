@@ -29,8 +29,6 @@ def teams_listing():
             teams = Teams.query.filter(Teams.email.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
         elif field == 'affiliation':
             teams = Teams.query.filter(Teams.affiliation.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
-        elif field == 'country':
-            teams = Teams.query.filter(Teams.country.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
         return render_template('admin/teams/teams.html', teams=teams, pages=None, curr_page=None, q=q, field=field)
 
     page = abs(int(page))
