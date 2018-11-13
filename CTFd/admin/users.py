@@ -13,6 +13,26 @@ from CTFd.admin import admin
 @admins_only
 def users_listing():
     page = request.args.get('page', 1)
+    q = request.args.get('q')
+    if q:
+        field = request.args.get('field')
+        users = []
+        errors = []
+        if field == 'id':
+            if q.isnumeric():
+                users = Users.query.filter(Users.id == q).order_by(Users.id.asc()).all()
+            else:
+                users = []
+                errors.append('Your ID search term is not numeric')
+        elif field == 'name':
+            users = Users.query.filter(Users.name.like('%{}%'.format(q))).order_by(Users.id.asc()).all()
+        elif field == 'email':
+            users = Users.query.filter(Users.email.like('%{}%'.format(q))).order_by(Users.id.asc()).all()
+        elif field == 'affiliation':
+            users = Users.query.filter(Users.affiliation.like('%{}%'.format(q))).order_by(Users.id.asc()).all()
+        elif field == 'country':
+            users = Users.query.filter(Users.country.like('%{}%'.format(q))).order_by(Users.id.asc()).all()
+        return render_template('admin/users/users.html', users=users, pages=None, curr_page=None, q=q, field=field)
 
     page = abs(int(page))
     results_per_page = 50
