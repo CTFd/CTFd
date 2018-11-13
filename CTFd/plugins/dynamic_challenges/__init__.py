@@ -5,6 +5,7 @@ from CTFd.plugins.flags import get_flag_class
 from CTFd.models import db, Solves, Fails, Flags, Challenges, Files, Tags, Teams, Hints
 from CTFd import utils
 from CTFd.utils.migrations import upgrade
+from flask import Blueprint
 import math
 
 
@@ -12,15 +13,19 @@ class DynamicValueChallenge(BaseChallenge):
     id = "dynamic"  # Unique identifier used to register challenges
     name = "dynamic"  # Name of a challenge type
     templates = {  # Handlebars templates used for each aspect of challenge editing & viewing
-        'create': '/plugins/dynamic_challenges/assets/dynamic-challenge-create.njk',
-        'update': '/plugins/dynamic_challenges/assets/dynamic-challenge-update.njk',
-        'modal': '/plugins/dynamic_challenges/assets/dynamic-challenge-modal.njk',
+        'create': '/plugins/dynamic_challenges/assets/create.html',
+        'update': '/plugins/dynamic_challenges/assets/update.html',
+        'view': '/plugins/dynamic_challenges/assets/view.html',
     }
     scripts = {  # Scripts that are loaded when a template is loaded
-        'create': '/plugins/dynamic_challenges/assets/dynamic-challenge-create.js',
-        'update': '/plugins/dynamic_challenges/assets/dynamic-challenge-update.js',
-        'modal': '/plugins/dynamic_challenges/assets/dynamic-challenge-modal.js',
+        'create': '/plugins/dynamic_challenges/assets/create.js',
+        'update': '/plugins/dynamic_challenges/assets/update.js',
+        'view': '/plugins/dynamic_challenges/assets/view.js',
     }
+    # Route at which files are accessible. This must be registered using register_plugin_assets_directory()
+    route = '/plugins/dynamic_challenges/assets/'
+    # Blueprint used to access the static_folder directory.
+    blueprint = Blueprint('dynamic_challenges', __name__, template_folder='templates', static_folder='assets')
 
     @staticmethod
     def create(request):
@@ -30,42 +35,14 @@ class DynamicValueChallenge(BaseChallenge):
         :param request:
         :return:
         """
-        files = request.files.getlist('files[]')
+        data = request.form or request.get_json()
+        challenge = DynamicChallenge(**data)
 
-        # Create challenge
-        chal = DynamicChallenge(
-            name=request.form['name'],
-            description=request.form['description'],
-            value=request.form['value'],
-            category=request.form['category'],
-            type=request.form['chaltype'],
-            minimum=request.form['minimum'],
-            decay=request.form['decay']
-        )
-
-        if 'hidden' in request.form:
-            chal.state = 'hidden'
-        else:
-            chal.state = None
-
-        max_attempts = request.form.get('max_attempts')
-        if max_attempts and max_attempts.isdigit():
-            chal.max_attempts = int(max_attempts)
-
-        db.session.add(chal)
+        db.session.add(challenge)
         db.session.commit()
 
-        flag = Flags(chal.id, request.form['key'], request.form['key_type[0]'])
-        if request.form.get('keydata'):
-            flag.data = request.form.get('keydata')
-        db.session.add(flag)
+        return challenge
 
-        db.session.commit()
-
-        for f in files:
-            utils.upload_file(file=f, challenge_id=chal.id)
-
-        db.session.commit()
 
     @staticmethod
     def read(challenge):
@@ -85,7 +62,7 @@ class DynamicValueChallenge(BaseChallenge):
             'minimum': challenge.minimum,
             'description': challenge.description,
             'category': challenge.category,
-            'hidden': challenge.hidden,
+            'state': challenge.state,
             'max_attempts': challenge.max_attempts,
             'type': challenge.type,
             'type_data': {
@@ -95,7 +72,7 @@ class DynamicValueChallenge(BaseChallenge):
                 'scripts': DynamicValueChallenge.scripts,
             }
         }
-        return challenge, data
+        return data
 
     @staticmethod
     def update(challenge, request):
@@ -107,31 +84,12 @@ class DynamicValueChallenge(BaseChallenge):
         :param request:
         :return:
         """
-        challenge = DynamicChallenge.query.filter_by(id=challenge.id).first()
-
-        challenge.name = request.form['name']
-        challenge.description = request.form['description']
-        challenge.value = int(
-            request.form.get(
-                'value',
-                0)) if request.form.get(
-            'value',
-            0) else 0
-        challenge.max_attempts = int(
-            request.form.get(
-                'max_attempts',
-                0)) if request.form.get(
-            'max_attempts',
-            0) else 0
-        challenge.category = request.form['category']
-        challenge.hidden = 'hidden' in request.form
-
-        challenge.initial = request.form['initial']
-        challenge.minimum = request.form['minimum']
-        challenge.decay = request.form['decay']
+        data = request.form or request.get_json()
+        for attr, value in data.items():
+            setattr(challenge, attr, value)
 
         db.session.commit()
-        db.session.close()
+        return challenge
 
     @staticmethod
     def delete(challenge):
@@ -165,15 +123,16 @@ class DynamicValueChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return: (boolean, string)
         """
-        provided_key = request.form['key'].strip()
-        chal_Flags = Flags.query.filter_by(chal=chal.id).all()
-        for chal_key in chal_Flags:
-            if get_key_class(chal_key.type).compare(chal_key, provided_key):
+        data = request.form or request.get_json()
+        submission = data['submission'].strip()
+        chal_keys = Flags.query.filter_by(challenge_id=chal.id).all()
+        for chal_key in chal_keys:
+            if get_flag_class(chal_key.type).compare(chal_key, submission):
                 return True, 'Correct'
         return False, 'Incorrect'
 
     @staticmethod
-    def solve(team, chal, request):
+    def solve(user, team, challenge, request):
         """
         This method is used to insert Solves into the database in order to mark a challenge as solved.
 
@@ -182,7 +141,9 @@ class DynamicValueChallenge(BaseChallenge):
         :param request: The request the user submitted
         :return:
         """
-        chal = DynamicChallenge.query.filter_by(id=chal.id).first()
+        chal = DynamicChallenge.query.filter_by(id=challenge.id).first()
+        data = request.form or request.get_json()
+        submission = data['submission'].strip()
 
         solve_count = Solves.query\
             .join(Teams, Solves.team_id == Teams.id)\
@@ -204,34 +165,36 @@ class DynamicValueChallenge(BaseChallenge):
 
         chal.value = value
 
-        provided_key = request.form['key'].strip()
         solve = Solves(
-            team_id=team.id,
-            challenge_id=chal.id,
-            ip=utils.get_ip(
-                req=request),
-            flag=provided_key)
+            user_id=user.id,
+            team_id=team.id if team else None,
+            challenge_id=challenge.id,
+            ip=get_ip(req=request),
+            provided=submission
+        )
         db.session.add(solve)
-
         db.session.commit()
         db.session.close()
 
     @staticmethod
-    def fail(team, chal, request):
+    def fail(user, team, challenge, request):
         """
         This method is used to insert Fails into the database in order to mark an answer incorrect.
 
         :param team: The Team object from the database
-        :param chal: The Challenge object from the database
+        :param challenge: The Challenge object from the database
         :param request: The request the user submitted
         :return:
         """
-        provided_key = request.form['key'].strip()
+        data = request.form or request.get_json()
+        submission = data['submission'].strip()
         wrong = Fails(
-            team_id=team.id,
-            challenge_id=chal.id,
-            ip=utils.get_ip(request),
-            flag=provided_key)
+            user_id=user.id,
+            team_id=team.id if team else None,
+            challenge_id=challenge.id,
+            ip=get_ip(request),
+            provided=submission
+        )
         db.session.add(wrong)
         db.session.commit()
         db.session.close()
@@ -244,21 +207,22 @@ class DynamicChallenge(Challenges):
     minimum = db.Column(db.Integer)
     decay = db.Column(db.Integer)
 
-    def __init__(self, name, description, value, category,
-                 type='dynamic', minimum=1, decay=50):
-        self.name = name
-        self.description = description
-        self.value = value
-        self.initial = value
-        self.category = category
-        self.type = type
-        self.minimum = minimum
-        self.decay = decay
+    # def __init__(self, name, description, value, category, type='dynamic', minimum=1, decay=50):
+    #     self.name = name
+    #     self.description = description
+    #     self.value = value
+    #     self.initial = value
+    #     self.category = category
+    #     self.type = type
+    #     self.minimum = minimum
+    #     self.decay = decay
+
+    def __init__(self, *args, **kwargs):
+        super(DynamicChallenge, self).__init__(**kwargs)
 
 
 def load(app):
     # upgrade()
     app.db.create_all()
     CHALLENGE_CLASSES['dynamic'] = DynamicValueChallenge
-    register_plugin_assets_directory(
-        app, base_path='/plugins/dynamic_challenges/assets/')
+    register_plugin_assets_directory(app, base_path='/plugins/dynamic_challenges/assets/')
