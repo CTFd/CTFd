@@ -54,25 +54,47 @@
 
 <div class="jumbotron">
 	<div class="container">
-		<h1 id="team-id" class="text-center">{{ user.name }}</h1>
+		<h1 id="team-id" class="text-center p-0 m-0">{{ user.name }}</h1>
+		<div class="mb-2">
+			{% if user.type == 'admin' %}
+				<span class="badge badge-primary">admin</span>
+			{% endif %}
+			{% if user.verified %}
+				<span class="badge badge-success">verified</span>
+			{% endif %}
+			{% if user.hidden %}
+				<span class="badge badge-danger">hidden</span>
+			{% endif %}
+			{% if user.banned %}
+				<span class="badge badge-danger">banned</span>
+			{% endif %}
+		</div>
+
 		<h2 id="team-email" class="text-center">{{ user.email }}</h2>
 		{% if user.oauth_id %}
 			<a href="https://majorleaguecyber.org/u/{{ user.name }}">
 				<h3><span class="badge badge-primary">Official</span></h3>
 			</a>
 		{% endif %}
-		<h2 id="team-place" class="text-center">
+
+		{% if user.team_id %}
+			<h2 id="team-acc" class="text-center">
+				<a href="{{ url_for('admin.teams_detail', team_id=user.team_id) }}">{{ user.team.name }}</a>
+			</h2>
+		{% endif %}
+
+		<h3 id="team-place" class="text-center">
 			{% if place %}
 				{{ place }}
 				<small>place</small>
 			{% endif %}
-		</h2>
-		<h2 id="team-score" class="text-center">
+		</h3>
+		<h3 id="team-score" class="text-center">
 			{% if score %}
 				{{ score }}
 				<small>points</small>
 			{% endif %}
-		</h2>
+		</h3>
 		<div class="pt-3">
 			<a class="edit-user">
 				<i class="btn-fa fas fa-user-edit fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Edit User"></i>

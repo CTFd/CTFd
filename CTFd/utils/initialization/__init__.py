@@ -1,4 +1,4 @@
-from flask import current_app as app, request, session, redirect, url_for, abort
+from flask import current_app as app, request, session, redirect, url_for, abort, render_template
 from CTFd.models import db, Tracking
 
 from CTFd.utils import markdown, get_config
@@ -11,7 +11,7 @@ from CTFd.utils.config.pages import get_pages
 from CTFd.utils.plugins import get_registered_stylesheets, get_registered_scripts, get_configurable_plugins
 
 from CTFd.utils.countries import get_countries, lookup_country_code
-from CTFd.utils.user import authed, get_ip
+from CTFd.utils.user import authed, get_ip, get_current_user, get_current_team
 from CTFd.utils.modes import generate_account_url
 from CTFd.utils.config import is_setup
 from CTFd.utils.security.csrf import generate_nonce
@@ -86,6 +86,15 @@ def init_request_processors(app):
                 print(e.message)
                 db.session.rollback()
                 session.clear()
+
+            user = get_current_user()
+            team = get_current_team()
+
+            if user and user.banned:
+                return render_template('errors/403.html', error='You have been banned from this CTF'), 403
+
+            if team and team.banned:
+                return render_template('errors/403.html', error='Your team has been banned from this CTF'), 403
 
             db.session.close()
 

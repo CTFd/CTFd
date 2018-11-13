@@ -23,12 +23,24 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1 id="team-id" class="text-center">{{ team.name }}</h1>
+		<div class="mb-2">
+			{% if team.verified %}
+				<span class="badge badge-success">verified</span>
+			{% endif %}
+			{% if team.hidden %}
+				<span class="badge badge-danger">hidden</span>
+			{% endif %}
+			{% if team.banned %}
+				<span class="badge badge-danger">banned</span>
+			{% endif %}
+		</div>
+
 		{% if team.oauth_id %}
 			<a href="https://majorleaguecyber.org/t/{{ team.name }}">
 				<h3><span class="badge badge-primary">Official</span></h3>
 			</a>
 		{% endif %}
-		<h2 id="team-email" class="text-center">{{ members | length }} members</h2>
+		<h2 class="text-center">{{ members | length }} members</h2>
 		<h2 id="team-place" class="text-center">
 			{% if place %}
 				{{ place }}
