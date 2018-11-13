@@ -313,3 +313,19 @@ def test_user_can_reset_password(mock_smtp):
             user = Users.query.filter_by(email="user@user.com").first()
             assert user.password != user_password_saved
     destroy_ctfd(app)
+
+
+def test_banned_user():
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        user = Users.query.filter_by(id=2).first()
+        user.banned = True
+        db.session.commit()
+
+        routes = ['/', '/challenges', '/api/v1/challenges']
+        for route in routes:
+            r = client.get(route)
+            assert r.status_code == 403
+    destroy_ctfd(app)

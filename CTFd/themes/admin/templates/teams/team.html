@@ -40,19 +40,20 @@
 				<h3><span class="badge badge-primary">Official</span></h3>
 			</a>
 		{% endif %}
+
 		<h2 class="text-center">{{ members | length }} members</h2>
-		<h2 id="team-place" class="text-center">
+		<h3 id="team-place" class="text-center">
 			{% if place %}
 				{{ place }}
 				<small>place</small>
 			{% endif %}
-		</h2>
-		<h2 id="team-score" class="text-center">
+		</h3>
+		<h3 id="team-score" class="text-center">
 			{% if score %}
 				{{ score }}
 				<small>points</small>
 			{% endif %}
-		</h2>
+		</h3>
 		<div class="pt-3">
 			<a class="edit-team">
 				<i class="btn-fa fas fa-user-edit fa-2x px-2" data-toggle="tooltip" data-placement="top"
