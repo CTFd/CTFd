@@ -43,7 +43,6 @@ class DynamicValueChallenge(BaseChallenge):
 
         return challenge
 
-
     @staticmethod
     def read(challenge):
         """
