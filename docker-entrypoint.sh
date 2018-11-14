@@ -32,6 +32,11 @@ if [ -z "$WORKERS" ]; then
     WORKERS=1
 fi
 
+# Set application root
+if [ -z "$APPLICATION_ROOT" ]; then
+    APPLICATION_ROOT='/'
+fi
+
 # Start CTFd
 echo "Starting CTFd"
 gunicorn 'CTFd:create_app()' \
