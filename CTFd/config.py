@@ -146,6 +146,13 @@ class Config(object):
     '''
     UPDATE_CHECK = True
 
+    '''
+    APPLICATION_ROOT inform the application what path it is mounted under by the application / web server.
+
+    Set it to whatever you like if you need to host CTFd under a subfolder
+    '''
+    APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT', '/')
+
 
 class TestingConfig(Config):
     SECRET_KEY = 'AAAAAAAAAAAAAAAAAAAA'
