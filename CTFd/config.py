@@ -197,6 +197,14 @@ class Config(object):
     OAUTH_CLIENT_ID = None
     OAUTH_CLIENT_SECRET = None
 
+    '''
+    APPLICATION_ROOT informs the application what path it is mounted under by
+    the application / web server.
+
+    Set it to whatever you like if you need to host CTFd under a subfolder
+    '''
+    APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT', '/')
+
 
 class TestingConfig(Config):
     SECRET_KEY = 'AAAAAAAAAAAAAAAAAAAA'
