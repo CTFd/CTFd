@@ -1,6 +1,7 @@
 from distutils.version import StrictVersion
 from flask import current_app as app
 from CTFd.utils import get_config, set_config, get_app_config
+from CTFd.utils.config import is_setup
 from CTFd.models import db, Challenges, Users, Teams
 from CTFd.utils.security.passwords import sha256
 from platform import python_version
@@ -21,6 +22,10 @@ def update_check(force=False):
     """
     # If UPDATE_CHECK is disabled don't check for updates at all.
     if app.config.get('UPDATE_CHECK') is False:
+        return
+
+    # Don't do an update check if not setup
+    if is_setup() is False:
         return
 
     # Get when we should check for updates next.
@@ -62,12 +67,10 @@ def update_check(force=False):
                     set_config('version_latest', html_url)
                 elif StrictVersion(latest) <= StrictVersion(app.VERSION):
                     set_config('version_latest', None)
+                next_update_check_time = check['resource'].get('next', int(time.time() + 43200))
+                set_config('next_update_check', next_update_check_time)
             except KeyError:
                 set_config('version_latest', None)
-        finally:
-            # 12 hours later
-            # TODO: This should be set by the server response
-            next_update_check_time = int(time.time() + 43200)
-            set_config('next_update_check', next_update_check_time)
+
     else:
         set_config('version_latest', None)

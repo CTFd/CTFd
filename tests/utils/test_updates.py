@@ -21,18 +21,20 @@ def test_update_check_identifies_update(fake_get_request):
         fake_response = Mock()
         fake_get_request.return_value = fake_response
         fake_response.json = lambda: {
-            u'resource': {
-                u'html_url': u'https://github.com/CTFd/CTFd/releases/tag/9.9.9',
-                u'download_url': u'https://api.github.com/repos/CTFd/CTFd/zipball/9.9.9',
-                u'published_at': u'Wed, 25 Oct 2017 19:39:42 -0000',
-                u'tag': u'9.9.9',
-                u'prerelease': False,
-                u'id': 6,
-                u'latest': True
+            "resource": {
+                "download_url": "https://api.github.com/repos/CTFd/CTFd/zipball/9.9.9",
+                "html_url": "https://github.com/CTFd/CTFd/releases/tag/9.9.9",
+                "id": 12,
+                "latest": True,
+                "next": 1542212248,
+                "prerelease": False,
+                "published_at": "Wed, 25 Oct 2017 19:39:42 -0000",
+                "tag": "9.9.9"
             }
         }
         update_check()
         assert get_config('version_latest') == 'https://github.com/CTFd/CTFd/releases/tag/9.9.9'
+        assert get_config('next_update_check') == 1542212248
     destroy_ctfd(app)
 
 
