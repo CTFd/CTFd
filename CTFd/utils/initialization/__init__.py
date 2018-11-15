@@ -90,11 +90,12 @@ def init_request_processors(app):
             user = get_current_user()
             team = get_current_team()
 
-            if user and user.banned:
-                return render_template('errors/403.html', error='You have been banned from this CTF'), 403
+            if request.path.startswith('/themes') is False:
+                if user and user.banned:
+                    return render_template('errors/403.html', error='You have been banned from this CTF'), 403
 
-            if team and team.banned:
-                return render_template('errors/403.html', error='Your team has been banned from this CTF'), 403
+                if team and team.banned:
+                    return render_template('errors/403.html', error='Your team has been banned from this CTF'), 403
 
             db.session.close()
 

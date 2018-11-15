@@ -1,13 +1,16 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/challenge-board.css') }}">
 {% endblock %}
 
 {% block content %}
 	{% include "admin/modals/hints/edit.html" %}
 	{% include "admin/modals/flags/create.html" %}
 	{% include "admin/modals/flags/edit.html" %}
-{#	TODO: Implement challenge preview here #}
+
+	<div class="modal fade" id="challenge-window" role="dialog">
+	</div>
 
 	<div class="jumbotron">
 		<div class="container">
@@ -20,7 +23,17 @@
 					{{ challenge.state }}
 				</span>
 			</h5>
-			<h2 class="text-center">{{ challenge.value }}</h2>
+			<h3 class="text-center">{{ challenge.value }} points</h3>
+			<div class="pt-3">
+				<a class="preview-challenge">
+					<i class="btn-fa fas fa-file-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					   title="Preview Challenge"></i>
+				</a>
+				<a class="delete-challenge">
+					<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					   title="Delete Challenge"></i>
+				</a>
+			</div>
 		</div>
 	</div>
 

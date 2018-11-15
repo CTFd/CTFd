@@ -3,7 +3,7 @@ from CTFd.plugins.flags import get_flag_class
 from CTFd.models import db, Solves, Fails, Flags, Challenges, ChallengeFiles, Tags, Hints
 from CTFd import utils
 from CTFd.utils.user import get_ip
-from CTFd.utils.uploads import upload_file
+from CTFd.utils.uploads import upload_file, delete_file
 from flask import Blueprint
 import six
 
@@ -106,7 +106,7 @@ class CTFdStandardChallenge(BaseChallenge):
         Flags.query.filter_by(challenge_id=challenge.id).delete()
         files = ChallengeFiles.query.filter_by(challenge_id=challenge.id).all()
         for f in files:
-            utils.delete_file(f.id)
+            delete_file(f.id)
         ChallengeFiles.query.filter_by(challenge_id=challenge.id).delete()
         Tags.query.filter_by(challenge_id=challenge.id).delete()
         Hints.query.filter_by(challenge_id=challenge.id).delete()

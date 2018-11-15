@@ -1,3 +1,5 @@
+window.challenge.data = undefined;
+
 window.challenge.renderer = new markdownit({
     html: true,
 });
@@ -15,20 +17,40 @@ window.challenge.postRender = function () {
 
 };
 
-window.challenge.submit = function (cb, preview) {
-    var chal_id = $('#chal-id').val();
-    var answer = $('#answer-input').val();
-    var nonce = $('#nonce').val();
 
-    var url = "/chal/";
+window.challenge.submit = function (cb, preview) {
+    var challenge_id = parseInt($('#chal-id').val());
+    var submission = $('#answer-input').val();
+    var url = "/api/v1/challenges/attempt";
+
     if (preview) {
-        url = "/admin/chal/";
+        url += "?preview=true";
     }
 
-    $.post(script_root + url + chal_id, {
-        key: answer,
-        nonce: nonce
-    }, function (data) {
-        cb(data);
+    var params = {
+        'challenge_id': challenge_id,
+        'submission': submission
+    };
+
+    fetch(script_root + url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+    }).then(function (response) {
+        if (response.status === 429) {
+            // User was ratelimited but process response
+            return response.json();
+        }
+        if (response.status === 403) {
+            // User is not logged in or CTF is paused.
+            return response.json();
+        }
+        return response.json();
+    }).then(function (response) {
+        cb(response);
     });
 };

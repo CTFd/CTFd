@@ -21,11 +21,11 @@ window.challenge.postRender = function () {
 window.challenge.submit = function (cb, preview) {
     var challenge_id = parseInt($('#chal-id').val());
     var submission = $('#answer-input').val();
-
     var url = "/api/v1/challenges/attempt";
-    // if (preview) {
-    //     url = "/admin/chal/";
-    // }
+
+    if (preview) {
+        url += "?preview=true";
+    }
 
     var params = {
         'challenge_id': challenge_id,
