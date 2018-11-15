@@ -1,6 +1,7 @@
 from CTFd.utils import get_app_config, get_config, set_config
 from CTFd.utils.migrations import get_current_revision, create_database, drop_database, upgrade, stamp
 from CTFd.models import db, get_class_by_tablename
+from CTFd.cache import cache
 from datafreeze.format import SERIALIZERS
 from flask import current_app as app
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
@@ -217,3 +218,5 @@ def import_ctf(backup, erase=True):
         target = open(full_path, "wb")
         with source, target:
             shutil.copyfileobj(source, target)
+
+    cache.clear()

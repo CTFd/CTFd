@@ -89,7 +89,7 @@ def plugin(plugin):
         return '1'
 
 
-@admin.route('/admin/import', methods=['GET', 'POST'])
+@admin.route('/admin/import', methods=['POST'])
 @admins_only
 def import_ctf():
     backup = request.files['backup']
@@ -104,7 +104,7 @@ def import_ctf():
     if errors:
         return errors[0], 500
     else:
-        return redirect(url_for('admin.admin_config'))
+        return redirect(url_for('admin.config'))
 
 
 @admin.route('/admin/export', methods=['GET', 'POST'])

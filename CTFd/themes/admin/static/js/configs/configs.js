@@ -200,11 +200,10 @@ $(function () {
     $('#import-button').click(function (e) {
         e.preventDefault();
         var import_file = document.getElementById('import-file').files[0];
-        var nonce = $('#nonce').val();
 
         var form_data = new FormData();
         form_data.append('backup', import_file);
-        form_data.append('nonce', nonce);
+        form_data.append('nonce', csrf_nonce);
 
         $.ajax({
             url: script_root + '/admin/import',
