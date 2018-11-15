@@ -91,7 +91,7 @@ def new():
         return redirect(url_for('challenges.listing'))
 
 
-@teams.route('/team', methods=['GET'])
+@teams.route('/team')
 @authed_only
 @require_team_mode
 def private():
@@ -121,7 +121,7 @@ def private():
     )
 
 
-@teams.route('/teams/<int:team_id>', methods=['GET', 'POST'])
+@teams.route('/teams/<int:team_id>')
 @check_account_visibility
 @check_score_visibility
 @require_team_mode
@@ -137,13 +137,12 @@ def public(team_id):
     if errors:
         return render_template('teams/team.html', team=team, errors=errors)
 
-    if request.method == 'GET':
-        return render_template(
-            'teams/team.html',
-            solves=solves,
-            awards=awards,
-            team=team,
-            score=score,
-            place=place,
-            score_frozen=config.is_scoreboard_frozen()
-        )
+    return render_template(
+        'teams/team.html',
+        solves=solves,
+        awards=awards,
+        team=team,
+        score=score,
+        place=place,
+        score_frozen=config.is_scoreboard_frozen()
+    )
