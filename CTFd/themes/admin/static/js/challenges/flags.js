@@ -23,6 +23,7 @@ $(document).ready(function () {
             params['challenge'] = CHALLENGE_ID;
             fetch(script_root + '/api/v1/flags', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -71,6 +72,7 @@ $(document).ready(function () {
 
                     fetch(script_root + '/api/v1/flags/' + flag_id, {
                         method: 'PATCH',
+                        credentials: 'same-origin',
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'

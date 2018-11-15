@@ -15,6 +15,7 @@ function load_chal_template(challenge){
                     var params = $("#create-chal-entry-div form").serializeJSON();
                     fetch(script_root + '/api/v1/challenges', {
                         method: 'POST',
+                        credentials: 'same-origin',
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'

@@ -34,6 +34,7 @@ window.challenge.submit = function (cb, preview) {
 
     fetch(script_root + url, {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'

@@ -4,7 +4,13 @@ var CTFd = (function () {
 
     var challenges = {
         all: function(){
-            return fetch(urlRoot + '/api/v1/challenges')
+            return fetch(urlRoot + '/api/v1/challenges', {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
                 .then(function (response) {
                     return response.json();
                 }).then(function (data) {
@@ -12,12 +18,24 @@ var CTFd = (function () {
                 });
         },
         get: function(challengeId){
-            return fetch(urlRoot + '/api/v1/challenges/' + challengeId)
+            return fetch(urlRoot + '/api/v1/challenges/' + challengeId, {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
                 .then(function (response) {
                     return response.json();
                 }).then(function (data) {
                     data.solves = function () {
-                        return fetch(urlRoot + '/api/v1/challenges/' + this.id + '/solves')
+                        return fetch(urlRoot + '/api/v1/challenges/' + this.id + '/solves', {
+                            credentials: 'same-origin',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                        })
                             .then(function (response) {
                                 return response.json();
                             }).then(function (data) {
@@ -28,7 +46,13 @@ var CTFd = (function () {
                 });
         },
         types: function(){
-            return fetch(urlRoot + '/api/v1/challenges/types')
+            return fetch(urlRoot + '/api/v1/challenges/types', {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
                 .then(function (response) {
                     return response.json();
                 }).then(function (data) {
@@ -36,7 +60,13 @@ var CTFd = (function () {
                 });
         },
         solves: function () {
-            return fetch(urlRoot + '/api/v1/statistics/challenges/solves')
+            return fetch(urlRoot + '/api/v1/statistics/challenges/solves', {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
                 .then(function (response) {
                     return response.json();
                 }).then(function (data) {
@@ -46,7 +76,13 @@ var CTFd = (function () {
     };
 
     var scoreboard = function() {
-        return fetch(urlRoot + '/api/v1/scoreboard')
+        return fetch(urlRoot + '/api/v1/scoreboard', {
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        })
             .then(function (response) {
                 return response.json();
             }).then(function (data) {
@@ -56,7 +92,13 @@ var CTFd = (function () {
 
     var teams = {
         all: function () {
-            return fetch(urlRoot + '/api/v1/teams')
+            return fetch(urlRoot + '/api/v1/teams', {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
                 .then(function (response) {
                     return response.json();
                 }).then(function (data) {
@@ -64,7 +106,13 @@ var CTFd = (function () {
                 });
         },
         get: function (teamId) {
-            return fetch(urlRoot + '/api/v1/teams/' + teamId)
+            return fetch(urlRoot + '/api/v1/teams/' + teamId, {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
                 .then(function (response) {
                     return response.json();
                 }).then(function (data) {
@@ -84,7 +132,13 @@ var CTFd = (function () {
 
     var users = {
         all: function () {
-            return fetch(urlRoot + '/api/v1/users')
+            return fetch(urlRoot + '/api/v1/users', {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
                 .then(function (response) {
                     return response.json();
                 }).then(function (data) {
@@ -92,7 +146,13 @@ var CTFd = (function () {
                 });
         },
         get: function (userId) {
-            return fetch(urlRoot + '/api/v1/users/' + userId)
+            return fetch(urlRoot + '/api/v1/users/' + userId, {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
                 .then(function (response) {
                     return response.json();
                 }).then(function (data) {

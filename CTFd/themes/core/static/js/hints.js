@@ -1,6 +1,7 @@
 function hint(id) {
     return fetch(script_root + '/api/v1/hints/' + id, {
         method: 'GET',
+        credentials: 'same-origin',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -14,6 +15,7 @@ function hint(id) {
 function unlock(params){
     return fetch(script_root + '/api/v1/unlocks', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'

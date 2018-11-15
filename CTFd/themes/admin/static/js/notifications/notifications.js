@@ -6,6 +6,7 @@ $(document).ready(function () {
 
         fetch(script_root + '/api/v1/notifications', {
             method: 'POST',
+            credentials: 'same-origin',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

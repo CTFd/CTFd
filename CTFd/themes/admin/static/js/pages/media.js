@@ -50,7 +50,9 @@ function get_filetype_icon_class(filename){
 
 function get_page_files(){
     return fetch(
-        script_root + '/api/v1/files?type=page'
+        script_root + '/api/v1/files?type=page', {
+            credentials: 'same-origin',
+        }
     ).then(function (response) {
         return response.json();
     });

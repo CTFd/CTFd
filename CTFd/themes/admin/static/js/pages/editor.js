@@ -91,6 +91,7 @@ function submit_form() {
 
     fetch(script_root + target, {
         method: method,
+        credentials: 'same-origin',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'

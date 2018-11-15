@@ -15,6 +15,7 @@ function toggle_account(elem) {
 
     fetch(script_root + '/api/v1/'+ user_mode +'/' + teamId, {
         method: 'PATCH',
+        credentials: 'same-origin',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'

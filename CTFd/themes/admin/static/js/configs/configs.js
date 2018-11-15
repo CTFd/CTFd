@@ -95,6 +95,7 @@ function update_configs(obj){
 
     fetch(script_root + target, {
         method: method,
+        credentials: 'same-origin',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -116,6 +117,7 @@ function upload_logo(form) {
             };
             fetch(script_root + '/api/v1/configs/ctf_logo', {
                 method: 'PATCH',
+                credentials: 'same-origin',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -148,6 +150,7 @@ function remove_logo() {
             };
             fetch(script_root + '/api/v1/configs/ctf_logo', {
                 method: 'PATCH',
+                credentials: 'same-origin',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'

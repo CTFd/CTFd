@@ -21,6 +21,7 @@ $(function () {
 
         fetch(script_root + '/api/v1/users/me', {
             method: 'PATCH',
+            credentials: 'same-origin',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
