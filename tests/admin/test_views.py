@@ -31,7 +31,6 @@ def test_admin_access():
             '/admin/challenges',
             '/admin/scoreboard',
             '/admin/statistics',
-            '/admin/import',
             '/admin/export',
             '/admin/config',
             '/admin/pages',
