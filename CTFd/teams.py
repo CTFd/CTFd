@@ -17,8 +17,6 @@ teams = Blueprint('teams', __name__)
 @check_account_visibility
 @require_team_mode
 def listing():
-    if get_config('user_mode') == USERS_MODE:
-        return redirect(url_for('users.listing'))
     page = request.args.get('page', 1)
     page = abs(int(page))
     results_per_page = 50
