@@ -86,8 +86,31 @@ class DynamicValueChallenge(BaseChallenge):
         :return:
         """
         data = request.form or request.get_json()
+        data['initial'] = float(data.get('initial', 0))
+        data['minimum'] = float(data.get('minimum', 0))
+        data['decay'] = float(data.get('decay', 0))
         for attr, value in data.items():
             setattr(challenge, attr, value)
+
+        solve_count = Solves.query \
+            .join(Teams, Solves.team_id == Teams.id) \
+            .filter(Solves.challenge_id == challenge.id, Teams.banned == False) \
+            .count()
+
+        # It is important that this calculation takes into account floats.
+        # Hence this file uses from __future__ import division
+        value = (
+            (
+                    (challenge.minimum - challenge.initial) / (challenge.decay ** 2)
+            ) * (solve_count ** 2)
+        ) + challenge.initial
+
+        value = math.ceil(value)
+
+        if value < challenge.minimum:
+            value = challenge.minimum
+
+        challenge.value = value
 
         db.session.commit()
         return challenge
@@ -208,18 +231,9 @@ class DynamicChallenge(Challenges):
     minimum = db.Column(db.Integer)
     decay = db.Column(db.Integer)
 
-    # def __init__(self, name, description, value, category, type='dynamic', minimum=1, decay=50):
-    #     self.name = name
-    #     self.description = description
-    #     self.value = value
-    #     self.initial = value
-    #     self.category = category
-    #     self.type = type
-    #     self.minimum = minimum
-    #     self.decay = decay
-
     def __init__(self, *args, **kwargs):
         super(DynamicChallenge, self).__init__(**kwargs)
+        self.initial = kwargs['value']
 
 
 def load(app):

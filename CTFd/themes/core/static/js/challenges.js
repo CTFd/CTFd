@@ -317,6 +317,9 @@ var load_location_hash = function () {
 function update(cb) {
     load_user_solves(function () { // Load the user's solved challenge ids
         loadchals(function () { //  Load the full list of challenges
+            if (cb) {
+                cb();
+            }
         });
     });
 }
