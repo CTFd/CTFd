@@ -151,11 +151,12 @@ class Challenge(Resource):
     @during_ctf_time_only
     @require_verified_emails
     def get(self, challenge_id):
-        team_id = session.get('id')
-
-        chal = Challenges.query.filter(
-            Challenges.id == challenge_id, and_(Challenges.state != 'hidden', Challenges.state != 'locked')
-        ).first_or_404()
+        if is_admin():
+            chal = Challenges.query.filter(Challenges.id == challenge_id).first_or_404()
+        else:
+            chal = Challenges.query.filter(
+                Challenges.id == challenge_id, and_(Challenges.state != 'hidden', Challenges.state != 'locked')
+            ).first_or_404()
 
         chal_class = get_chal_class(chal.type)
 
