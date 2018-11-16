@@ -68,7 +68,8 @@ function updateChalWindow(obj) {
                     $('#submit-key').addClass("disabled-button");
                     $('#submit-key').prop('disabled', true);
                     window.challenge.submit(function (data) {
-                        renderSubmissionResponse(data)
+                        renderSubmissionResponse(data);
+                        loadchals();
                     });
                 });
 

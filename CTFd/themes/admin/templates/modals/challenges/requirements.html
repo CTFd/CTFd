@@ -25,10 +25,12 @@
 		<select class="form-control" name="prerequisite">
 			<option value=""> -- </option>
 			{% for challenge_id in challenges %}
-				{% if (challenge.requirements and challenge_id not in challenge.requirements['prerequisites']) %}
-					{% if challenge_id != challenge.id %}
+				{% if challenge.requirements %}
+					{% if challenge_id not in challenge.requirements['prerequisites'] %}
 						<option value="{{ challenge_id }}">{{ challenges[challenge_id] }}</option>
 					{% endif %}
+				{% elif challenge_id != challenge.id %}
+					<option value="{{ challenge_id }}">{{ challenges[challenge_id] }}</option>
 				{% endif %}
 			{% endfor %}
 		</select>

@@ -45,7 +45,7 @@
     height: 51px;
 }
 
-.form-control {
+#challenge-window .form-control {
     position: relative;
     display: block;
     padding: 0.8em;
