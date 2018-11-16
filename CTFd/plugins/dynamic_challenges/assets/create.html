@@ -8,7 +8,7 @@
 	</div>
 
 	<div class="form-group">
-		<label for="name">Name
+		<label for="name">Name<br>
 			<small class="form-text text-muted">
 				The name of your challenge
 			</small>
@@ -16,7 +16,7 @@
 		<input type="text" class="form-control" name="name" placeholder="Enter challenge name">
 	</div>
 	<div class="form-group">
-		<label for="category">Category
+		<label for="category">Category<br>
 			<small class="form-text text-muted">
 				The category of your challenge
 			</small>
@@ -37,7 +37,7 @@
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="new-desc-write">
 			<div class="form-group">
-				<label for="message-text" class="control-label">Message:
+				<label for="message-text" class="control-label">Message
 					<small class="form-text text-muted">
 						Use this to give a brief introduction to your challenge. The description supports HTML and
 						Markdown.
@@ -51,7 +51,7 @@
 	</div>
 
 	<div class="form-group">
-		<label for="value">Initial Value
+		<label for="value">Initial Value<br>
 			<small class="form-text text-muted">
 				This is how many points the challenge is worth initially.
 			</small>
@@ -61,7 +61,7 @@
 	</div>
 
 	<div class="form-group">
-		<label for="value">Decay Limit
+		<label for="value">Decay Limit<br>
 			<small class="form-text text-muted">
 				The amount of solves before the challenge reaches its minimum value
 			</small>
@@ -70,7 +70,7 @@
 	</div>
 
 	<div class="form-group">
-		<label for="value">Minimum Value
+		<label for="value">Minimum Value<br>
 			<small class="form-text text-muted">
 				This is the lowest that the challenge can be worth
 			</small>
@@ -78,58 +78,6 @@
 		<input type="number" class="form-control" name="minimum" placeholder="Enter minimum value" required>
 
 	</div>
-
-{#	<div class="form-group">#}
-{#		<label>Flag#}
-{#			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right"#}
-{#			   title="This is the flag or solution for your challenge. You can choose whether your flag is a static string or a regular expression."></i>#}
-{#		</label>#}
-{#		<input type="text" class="form-control" name="key" placeholder="Enter flag">#}
-{#	</div>#}
-{##}
-{#	<div class="form-group">#}
-{#		<select class="custom-select" name="key_type[0]">#}
-{#			<option value="static">Static</option>#}
-{#			<option value="regex">Regex</option>#}
-{#		</select>#}
-{#	</div>#}
-
-{#	<div class="form-check">#}
-{#		<div class="checkbox">#}
-{#			<label class="form-check-label">#}
-{#				<input class="form-check-input" name="hidden" type="checkbox">#}
-{#				Hide challenge on creation#}
-{#			</label>#}
-{#		</div>#}
-{#	</div>#}
-
-{#	<div class="form-check">#}
-{#		<div class="checkbox">#}
-{#			<label class="form-check-label">#}
-{#				<input class="form-check-input" type="checkbox" id="solve-attempts-checkbox">#}
-{#				Limit amount of solve attempts#}
-{#			</label>#}
-{#		</div>#}
-{#	</div>#}
-
-{#	<div class="form-group">#}
-{#		<div id="solve-attempts-input" style="display: none;">#}
-{#			<label for="max_attempts">Maximum Attempts#}
-{#				<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right"#}
-{#				   title="How many attempts should a user have for this challenge? For unlimited attempts, use the value 0"></i>#}
-{#			</label>#}
-{#			<input class="form-control" id='max_attempts' name='max_attempts' type='number' placeholder="0">#}
-{#		</div>#}
-{#	</div>#}
-
-{#	<div class="form-group">#}
-{#		<label>Upload Challenge Files#}
-{#			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right"#}
-{#			   title="Challenges files are provided to users for download alongside your challenge description"></i>#}
-{#		</label>#}
-{#		<input class="form-control-file" type="file" name="files[]" multiple="multiple">#}
-{#		<sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>#}
-{#	</div>#}
 
 	<input type="hidden" name="state" value="hidden">
 	<input type="hidden" value="dynamic" name="type" id="chaltype">
