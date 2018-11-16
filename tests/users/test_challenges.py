@@ -391,6 +391,7 @@ def test_hidden_challenge_is_unreachable():
         client = login_as_user(app)
         chal = gen_challenge(app.db, state='hidden')
         flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+        chal_id = chal.id
 
         assert Challenges.query.count() == 1
 
@@ -402,6 +403,18 @@ def test_hidden_challenge_is_unreachable():
         assert r.status_code == 404
         data = r.get_json().get('data')
         assert data is None
+
+        data = {
+            "submission": 'flag',
+            "challenge_id": chal_id
+        }
+
+        r = client.post('/api/v1/challenges/attempt', json=data)
+        assert r.status_code == 404
+
+        r = client.post('/api/v1/challenges/attempt?preview=true', json=data)
+        assert r.status_code == 404
+        assert r.get_json().get('data') is None
 
         solves = Solves.query.count()
         assert solves == 0
