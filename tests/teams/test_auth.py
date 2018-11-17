@@ -72,3 +72,4 @@ def test_team_login():
         with login_as_user(app) as client:
             r = client.get('/team')
             assert r.status_code == 200
+    destroy_ctfd(app)
