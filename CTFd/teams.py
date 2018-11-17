@@ -72,6 +72,8 @@ def new():
         existing_team = Teams.query.filter_by(name=teamname).first()
         if existing_team:
             errors.append('That team name is already taken')
+        if not teamname:
+            errors.append('That team name is invalid')
 
         if errors:
             return render_template("teams/new_team.html", errors=errors)
