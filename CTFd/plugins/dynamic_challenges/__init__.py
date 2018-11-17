@@ -99,11 +99,7 @@ class DynamicValueChallenge(BaseChallenge):
 
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division
-        value = (
-            (
-                    (challenge.minimum - challenge.initial) / (challenge.decay ** 2)
-            ) * (solve_count ** 2)
-        ) + challenge.initial
+        value = (((challenge.minimum - challenge.initial) / (challenge.decay ** 2)) * (solve_count ** 2)) + challenge.initial
 
         value = math.ceil(value)
 
