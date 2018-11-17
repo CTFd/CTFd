@@ -189,9 +189,13 @@ def files(path):
     """
     f = Files.query.filter_by(location=path).first_or_404()
     if f.type == 'challenge':
-        if current_user.is_admin() is False:
-            if not ctftime():
-                abort(403)
+        if current_user.authed():
+            if current_user.is_admin() is False:
+                if not ctftime():
+                    abort(403)
+        else:
+            abort(403)
+
     uploader = get_uploader()
     try:
         return uploader.download(f.location)
