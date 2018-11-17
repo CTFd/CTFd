@@ -247,7 +247,7 @@ class Flags(db.Model):
     __tablename__ = 'flags'
     id = db.Column(db.Integer, primary_key=True)
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
-    type = db.Column(db.String(80), default='static')
+    type = db.Column(db.String(80))
     content = db.Column(db.Text)
     data = db.Column(db.Text)
 
