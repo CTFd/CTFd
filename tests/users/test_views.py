@@ -167,7 +167,7 @@ def test_user_can_access_files():
         try:
             os.makedirs(directory)
             with open(location, 'wb') as obj:
-                obj.write('testing file load')
+                obj.write('testing file load'.encode())
             f = gen_file(app.db, location=model_path, challenge_id=chal_id)
             url = url_for('views.files', path=model_path)
 
