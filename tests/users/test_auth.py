@@ -3,6 +3,7 @@
 
 from CTFd.models import Users
 from CTFd.utils import set_config, get_config
+from CTFd.utils.security.signing import serialize
 from freezegun import freeze_time
 from tests.helpers import *
 from mock import patch
@@ -124,7 +125,7 @@ def test_expired_confirmation_links():
         client = login_as_user(app, name="user", password="password")
 
         # user@user.com "2012-01-14 03:21:34"
-        confirm_link = 'http://localhost/confirm/InVzZXJAdXNlci5jb20iLkFmS0dQZy5kLUJnVkgwaUhadzFHaXVENHczWTJCVVJwdWc'
+        confirm_link = 'http://localhost/confirm/InVzZXJAdXNlci5jb20i.TxD0vg.cAGwAy8cK1T0saEEbrDEBVF2plI'
         r = client.get(confirm_link)
 
         assert "Your confirmation link has expired" in r.get_data(as_text=True)
@@ -166,7 +167,7 @@ def test_expired_reset_password_link():
 
         with app.test_client() as client:
             # user@user.com "2012-01-14 03:21:34"
-            forgot_link = 'http://localhost/reset_password/InVzZXIxIi5BZktHUGcuTVhkTmZtOWU2U2xwSXZ1MlFwTjdwa3F5V3hR'
+            forgot_link = 'http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.cAGwAy8cK1T0saEEbrDEBVF2plI'
             r = client.get(forgot_link)
 
             assert "Your link has expired" in r.get_data(as_text=True)
@@ -186,7 +187,7 @@ def test_invalid_reset_password_link():
 
         with app.test_client() as client:
             # user@user.com "2012-01-14 03:21:34"
-            forgot_link = 'http://localhost/reset_password/5678ytfghjiu876tyfg<>hvbnmkoi9u87y6trdfcgvhbnm,lp09iujmk'
+            forgot_link = 'http://localhost/reset_password/5678ytfghjiu876tyfg<INVALID DATA>hvbnmkoi9u87y6trdf'
             r = client.get(forgot_link)
 
             assert "Your reset token is invalid" in r.get_data(as_text=True)
@@ -208,6 +209,7 @@ def test_contact_for_password_reset():
 
 
 @patch('smtplib.SMTP')
+@freeze_time("2012-01-14 03:21:34")
 def test_user_can_confirm_email(mock_smtp):
     """Test that a user is capable of confirming their email address"""
     app = create_ctfd()
@@ -231,22 +233,20 @@ def test_user_can_confirm_email(mock_smtp):
         mock_smtp.return_value.sendmail.assert_called()
 
         with client.session_transaction() as sess:
-            with freeze_time("2012-01-14 03:21:34"):
-                data = {
-                    "nonce": sess.get('nonce')
-                }
-                r = client.get('/challenges')
-                assert r.location == "http://localhost/confirm"  # We got redirected to /confirm
+            data = {
+                "nonce": sess.get('nonce')
+            }
+            r = client.get('/challenges')
+            assert r.location == "http://localhost/confirm"  # We got redirected to /confirm
 
-                # Use precalculated confirmation secret
-                r = client.get(
-                    'http://localhost/confirm/InVzZXJAdXNlci5jb20iLlc5dXhpdy5wUjVPTWhCOXB0bUQzNGpKZ3dOVm81SWl2UVE'
-                )
-                assert r.location == 'http://localhost/challenges'
+            r = client.get(
+                'http://localhost/confirm/' + serialize('user@user.com')
+            )
+            assert r.location == 'http://localhost/challenges'
 
-                # The team is now verified
-                user = Users.query.filter_by(email='user@user.com').first()
-                assert user.verified is True
+            # The team is now verified
+            user = Users.query.filter_by(email='user@user.com').first()
+            assert user.verified is True
     destroy_ctfd(app)
 
 
@@ -284,8 +284,7 @@ def test_user_can_reset_password(mock_smtp):
 
             # Build the email
             msg = ("""Did you initiate a password reset? Click the following link to reset """
-                   """your password:\n\nhttp://localhost/reset_password/InVzZXIxIi5UeEQwdmc"""
-                   """uTWFqaWRzYzB6ZE1zdmp1ZWRPUHM4YXc1TXow\n\n""")
+                   """your password:\n\nhttp://localhost/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M\n\n""")
             email_msg = MIMEText(msg)
             email_msg['Subject'] = "Message from CTFd"
             email_msg['From'] = from_addr
@@ -306,8 +305,8 @@ def test_user_can_reset_password(mock_smtp):
                 }
 
             # Do the password reset
-            r = client.get('/reset_password/InVzZXIxIi5UeEQwdmcuTWFqaWRzYzB6ZE1zdmp1ZWRPUHM4YXc1TXow')
-            r = client.post('/reset_password/InVzZXIxIi5UeEQwdmcuTWFqaWRzYzB6ZE1zdmp1ZWRPUHM4YXc1TXow', data=data)
+            r = client.get('/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M')
+            r = client.post('/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M', data=data)
 
             # Make sure that the user's password changed
             user = Users.query.filter_by(email="user@user.com").first()

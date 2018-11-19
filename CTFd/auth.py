@@ -1,11 +1,9 @@
 from flask import current_app as app, render_template, request, redirect, url_for, session, Blueprint, abort
-from itsdangerous import TimedSerializer, BadTimeSignature, Signer, BadSignature
 from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Users, Teams
 
 from CTFd.utils import get_config, get_app_config
-from CTFd.utils.encoding import base64encode, base64decode
 from CTFd.utils.decorators import ratelimit
 from CTFd.utils import user as current_user
 from CTFd.utils import config, validators
@@ -14,6 +12,7 @@ from CTFd.utils.security.auth import login_user, logout_user
 from CTFd.utils.logging import log
 from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
+from CTFd.utils.security.signing import serialize, unserialize, SignatureExpired, BadSignature, BadTimeSignature
 
 import base64
 import requests
@@ -32,12 +31,12 @@ def confirm(data=None):
     # User is confirming email account
     if data and request.method == "GET":
         try:
-            s = TimedSerializer(app.config['SECRET_KEY'])
-            user_email = s.loads(base64decode(data), max_age=1800)
-        except BadTimeSignature:
+            user_email = unserialize(data, max_age=1800)
+        except (BadTimeSignature, SignatureExpired):
             return render_template('confirm.html', errors=['Your confirmation link has expired'])
         except (BadSignature, TypeError, base64.binascii.Error):
             return render_template('confirm.html', errors=['Your confirmation token is invalid'])
+
         team = Users.query.filter_by(email=user_email).first_or_404()
         team.verified = True
         log('registrations', format="[{date}] {ip} -  successful password reset for {name}")
@@ -77,9 +76,8 @@ def confirm(data=None):
 def reset_password(data=None):
     if data is not None:
         try:
-            s = TimedSerializer(app.config['SECRET_KEY'])
-            name = s.loads(base64decode(data), max_age=1800)
-        except BadTimeSignature:
+            name = unserialize(data, max_age=1800)
+        except (BadTimeSignature, SignatureExpired):
             return render_template('reset_password.html', errors=['Your link has expired'])
         except (BadSignature, TypeError, base64.binascii.Error):
             return render_template('reset_password.html', errors=['Your reset token is invalid'])
