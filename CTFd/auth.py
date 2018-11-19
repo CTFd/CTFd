@@ -13,6 +13,7 @@ from CTFd.utils import email
 from CTFd.utils.security.auth import login_user, logout_user
 from CTFd.utils.logging import log
 from CTFd.utils.decorators.visibility import check_registration_visibility
+from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
 
 import base64
 import requests
@@ -248,12 +249,20 @@ def login():
 
 @auth.route('/oauth')
 def oauth_login():
-    endpoint = get_app_config('OAUTH_AUTHORIZATION_ENDPOINT') or get_config('oauth_authorization_endpoint')
+    endpoint = get_app_config('OAUTH_AUTHORIZATION_ENDPOINT') \
+        or get_config('oauth_authorization_endpoint') \
+        or 'https://auth.majorleaguecyber.org/oauth/authorize'
+
+    if get_config('user_mode') == 'teams':
+        scope = 'profile team'
+    else:
+        scope = 'profile'
 
     client_id = get_app_config('OAUTH_CLIENT_ID') or get_config('oauth_client_id')
-    redirect_url = "{endpoint}?response_type=code&client_id={client_id}".format(
+    redirect_url = "{endpoint}?response_type=code&client_id={client_id}&scope={scope}".format(
         endpoint=endpoint,
-        client_id=client_id
+        client_id=client_id,
+        scope=scope
     )
     return redirect(redirect_url)
 
@@ -263,7 +272,10 @@ def oauth_login():
 def oauth_redirect():
     oauth_code = request.args.get('code')
     if oauth_code:
-        url = get_app_config('OAUTH_TOKEN_ENDPOINT') or get_config('oauth_token_endpoint')
+        url = get_app_config('OAUTH_TOKEN_ENDPOINT') \
+            or get_config('oauth_token_endpoint') \
+            or 'https://auth.majorleaguecyber.org/oauth/token'
+
         client_id = get_app_config('OAUTH_CLIENT_ID') or get_config('oauth_client_id')
         client_secret = get_app_config('OAUTH_CLIENT_SECRET') or get_config('oauth_client_secret')
         headers = {
@@ -279,7 +291,10 @@ def oauth_redirect():
 
         if token_request.status_code == requests.codes.ok:
             token = token_request.json()['access_token']
-            user_url = get_app_config('OAUTH_API_ENDPOINT') or get_config('oauth_api_endpoint')
+            user_url = get_app_config('OAUTH_API_ENDPOINT') \
+                or get_config('oauth_api_endpoint') \
+                or 'http://api.majorleaguecyber.org/user'
+
             headers = {
                 'Authorization': 'Bearer ' + str(token),
                 'Content-type': 'application/json'
@@ -289,18 +304,6 @@ def oauth_redirect():
             user_id = api_data['id']
             user_name = api_data['name']
             user_email = api_data['email']
-
-            team_id = api_data['team']['id']
-            team_name = api_data['team']['name']
-
-            team = Teams.query.filter_by(oauth_id=team_id).first()
-            if team is None:
-                team = Teams(
-                    name=team_name,
-                    oauth_id=team_id
-                )
-                db.session.add(team)
-                db.session.commit()
 
             user = Users.query.filter_by(email=user_email).first()
             if user is None:
@@ -313,8 +316,21 @@ def oauth_redirect():
                 db.session.add(user)
                 db.session.commit()
 
-            team.members.append(user)
-            db.session.commit()
+            if get_config('user_mode') == TEAMS_MODE:
+                team_id = api_data['team']['id']
+                team_name = api_data['team']['name']
+
+                team = Teams.query.filter_by(oauth_id=team_id).first()
+                if team is None:
+                    team = Teams(
+                        name=team_name,
+                        oauth_id=team_id
+                    )
+                    db.session.add(team)
+                    db.session.commit()
+
+                team.members.append(user)
+                db.session.commit()
 
             login_user(user)
 
