@@ -13,11 +13,14 @@
 			</a>
 		{% endif %}
 		<h2 id="team-place" class="text-center">
-			{# This intentionally hides the team's place because this can be their internal profile. #}
+			{# This intentionally hides the team's place when scores are hidden because this can be their internal profile
+			and we don't want to leak their place in the CTF. #}
 			{# Public page hiding is done at the route level #}
 			{% if scores_visible() %}
-				{{ place }}
-				<small>place</small>
+				{% if place %}
+					{{ place }}
+					<small>place</small>
+				{% endif %}
 			{% endif %}
 		</h2>
 		<h2 id="team-score" class="text-center">
@@ -58,7 +61,11 @@
 				<tbody>
 				{% for member in team.members %}
 					<tr>
-						<td><a href="{{ url_for('users.public', user_id=member.id) }}">{{ member.name }}</td>
+						<td>
+							<a href="{{ url_for('users.public', user_id=member.id) }}">
+								{{ member.name }}
+							</a>
+						</td>
 						<td>{{ member.score }}</td>
 					</tr>
 				{% endfor %}
@@ -66,8 +73,6 @@
 			</table>
 		</div>
 	</div>
-
-
 
 	{% if solves %}
 	<div id="keys-pie-graph" class="w-50 mr-0 pr-0 float-left d-none d-md-block d-lg-block">
@@ -144,8 +149,14 @@
 
 {% block scripts %}
 	<script>
-        var team_id = {{ team.id }};
-        var team_name = {{ team.name | tojson }};
+		var team_id = {{ team.id }};
+		var team_name = {{ team.name | tojson }};
+		{% if user %}
+		var team_self = {{ (user.team_id == team.id) | tojson }};
+		{% else %}
+		var team_self = false;
+		{% endif %}
+		var team_account_id = team_self ? "me" : team_id;
 	</script>
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/plotly.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/utils.js') }}"></script>

@@ -2,8 +2,8 @@
 function scoregraph() {
     var times = [];
     var scores = [];
-    $.get(script_root + '/api/v1/users/' + user_id + '/solves', function (solve_data) {
-        $.get(script_root + '/api/v1/users/' + user_id + '/awards', function (award_data) {
+    $.get(script_root + '/api/v1/users/' + user_account_id + '/solves', function (solve_data) {
+        $.get(script_root + '/api/v1/users/' + user_account_id + '/awards', function (award_data) {
             var solves = solve_data.data;
             var awards = award_data.data;
 
@@ -67,7 +67,7 @@ function scoregraph() {
 
 function keys_percentage_graph() {
     // Solves and Fails pie chart
-    var base_url = script_root + '/api/v1/users/' + user_id;
+    var base_url = script_root + '/api/v1/users/' + user_account_id;
     $.get(base_url + '/fails', function (fails) {
         $.get(base_url + '/solves', function(solves) {
             var solves_count = solves.data.length;
@@ -105,7 +105,7 @@ function keys_percentage_graph() {
 function category_breakdown_graph() {
     // TODO: This graph isn't taking awards into account
     // This should be based off of value instead of count.
-    $.get(script_root + '/api/v1/users/' + user_id + '/solves', function (response) {
+    $.get(script_root + '/api/v1/users/' + user_account_id + '/solves', function (response) {
         var solves = response.data;
 
         var categories = [];

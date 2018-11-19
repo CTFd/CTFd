@@ -126,6 +126,8 @@
 	var user_id = {{ user.id }};
 	var user_name = {{ user.name | tojson }};
 	var team_id = {{ user.team_id }};
+	var user_self = {{ (user.id == id) | tojson }};
+	var user_account_id = user_self ? "me" : user_id;
 	</script>
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/plotly.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/utils.js') }}"></script>

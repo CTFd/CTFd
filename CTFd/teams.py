@@ -114,6 +114,7 @@ def private():
         'teams/team.html',
         solves=solves,
         awards=awards,
+        user=user,
         team=team,
         score=score,
         place=place,
