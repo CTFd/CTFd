@@ -259,10 +259,11 @@ def oauth_login():
         scope = 'profile'
 
     client_id = get_app_config('OAUTH_CLIENT_ID') or get_config('oauth_client_id')
-    redirect_url = "{endpoint}?response_type=code&client_id={client_id}&scope={scope}".format(
+    redirect_url = "{endpoint}?response_type=code&client_id={client_id}&scope={scope}&state={state}".format(
         endpoint=endpoint,
         client_id=client_id,
-        scope=scope
+        scope=scope,
+        state=session['nonce']
     )
     return redirect(redirect_url)
 
@@ -271,6 +272,11 @@ def oauth_login():
 @ratelimit(method="GET", limit=10, interval=60)
 def oauth_redirect():
     oauth_code = request.args.get('code')
+    state = request.args.get('state')
+    if session['nonce'] != state:
+        log('logins', "[{date}] {ip} - OAuth State validation mismatch")
+        abort(500)
+
     if oauth_code:
         url = get_app_config('OAUTH_TOKEN_ENDPOINT') \
             or get_config('oauth_token_endpoint') \
