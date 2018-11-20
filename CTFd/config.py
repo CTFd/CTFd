@@ -185,20 +185,25 @@ class Config(object):
     UPDATE_CHECK:
         Specifies whether or not CTFd will check whether or not there is a new version of CTFd
 
+    APPLICATION_ROOT:
+        Specifies what path CTFd is mounted under. It can be used to run CTFd in a subdirectory.
+        Example: /ctfd
     '''
     REVERSE_PROXY = False
     TEMPLATES_AUTO_RELOAD = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPDATE_CHECK = True
+    APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT') or '/'
 
+
+    '''
+    === OAUTH ===
+
+    MajorLeagueCyber Integration
+        Register an event at https://majorleaguecyber.org/ and use the Client ID and Client Secret here
+    '''
     OAUTH_CLIENT_ID = None
     OAUTH_CLIENT_SECRET = None
-
-    '''
-    APPLICATION_ROOT specifies what path CTFd is mounted under. It can be used to run CTFd in a subdirectory.
-    Example: /ctfd
-    '''
-    APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT') or '/'
 
 
 class TestingConfig(Config):
