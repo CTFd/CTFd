@@ -37,11 +37,6 @@ else
     ERROR_LOG=-
 fi
 
-# Set application root
-if [ -z "$APPLICATION_ROOT" ]; then
-    APPLICATION_ROOT='/'
-fi
-
 # Initialize database
 python manage.py db upgrade
 

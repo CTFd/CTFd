@@ -198,12 +198,10 @@ class Config(object):
     OAUTH_CLIENT_SECRET = None
 
     '''
-    APPLICATION_ROOT informs the application what path it is mounted under by
-    the application / web server.
-
-    Set it to whatever you like if you need to host CTFd under a subfolder
+    APPLICATION_ROOT specifies what path CTFd is mounted under. It can be used to run CTFd in a subdirectory.
+    Example: /ctfd
     '''
-    APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT', '/')
+    APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT') or '/'
 
 
 class TestingConfig(Config):
