@@ -26,28 +26,54 @@
 				<input type="hidden" name="nonce" value="{{ nonce }}">
 				{# This nonce is implemented specially in the route itself #}
 				<div class="form-group">
-					<label for="ctf_name-input">
-						CTF Name
+					<label>
+						CTF Name<br>
+						<small class="form-text text-muted">
+							Name for the CTF
+						</small>
 					</label>
-					<input class="form-control" type="text" name="ctf_name" id="ctf_name-input"/>
+					<input class="form-control" type="text" name="ctf_name"/>
 				</div>
 				<div class="form-group">
-					<label for="username-input">
-						Admin Username
+					<label>
+						Admin Username<br>
+						<small class="form-text text-muted">
+							Your username for the administration account
+						</small>
 					</label>
-					<input class="form-control" type="text" name="name" id="username-input"/>
+					<input class="form-control" type="text" name="name"/>
 				</div>
 				<div class="form-group">
-					<label for="email-input">
-						Admin Email
+					<label>
+						Admin Email<br>
+						<small class="form-text text-muted">
+							Your email address for the administration account
+						</small>
 					</label>
-					<input class="form-control" type="email" name="email" id="email-input"/>
+					<input class="form-control" type="email" name="email"/>
 				</div>
 				<div class="form-group">
-					<label for="password-input">
-						Admin Password
+					<label>
+						Admin Password<br>
+						<small class="form-text text-muted">
+							Your password for the administration account
+						</small>
 					</label>
-					<input class="form-control" type="password" name="password" id="password-input"/>
+					<input class="form-control" type="password" name="password"/>
+				</div>
+				<div class="form-group">
+					<label>
+						CTF User Mode
+						<small class="form-text text-muted">
+							User Mode for the CTF. <br>
+							Dictates whether users join teams to play (Team Mode) or
+							play as themselves (User Mode)
+						</small>
+					</label>
+					<select class="form-control" name="user_mode">
+						<option value="teams">Team Mode</option>
+						<option value="users">User Mode</option>
+					</select>
 				</div>
 				<br/>
 				<div class="submit-row text-center">
@@ -61,5 +87,5 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/style.js"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/style.js') }}"></script>
 {% endblock %}

@@ -19,10 +19,16 @@
 				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
 				</div>
 			{% endfor %}
+
+			<a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('auth.oauth_login') }}">Login with Major
+				League Cyber</a>
+
+			<hr>
+
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
 				<div class="form-group">
 					<label for="name-input">
-						Team Name or Email
+						User Name or Email
 					</label>
 					<input class="form-control" type="text" name="name" id="name-input" />
 				</div>
@@ -34,7 +40,7 @@
 				</div>
 				<div class="row pt-3">
 					<div class="col-md-6">
-						<a class="float-left align-text-to-button" href="{{ request.script_root }}/reset_password">
+						<a class="float-left align-text-to-button" href="{{ url_for('auth.reset_password') }}">
 							Forgot your password?
 						</a>
 					</div>

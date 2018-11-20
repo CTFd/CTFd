@@ -5,21 +5,24 @@
 	<title>Admin Panel</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" href="{{ request.script_root }}/themes/core/static/img/favicon.ico" type="image/x-icon">
-	<link rel="icon" href="{{ request.script_root }}/themes/core/static/img/favicon.ico" type="image/x-icon">
-	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/vendor/bootstrap.min.css">
-	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/vendor/font-awesome/fontawesome-fonts.css" type='text/css'>
-	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/vendor/font-awesome/fontawesome-all.css" type='text/css'>
-	<link rel="stylesheet" href='{{ request.script_root }}/themes/admin/static/css/vendor/font.css'>
-	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/jumbotron.css">
-	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/sticky-footer.css">
-	<link rel="stylesheet" href="{{ request.script_root }}/themes/admin/static/css/base.css">
-	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment.min.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/moment-timezone-with-data.min.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/nunjucks.min.js"></script>
+	<link rel="shortcut icon" href="{{ url_for('views.themes', theme='core', path='img/favicon.ico') }}" type="image/x-icon">
+	<link rel="icon" href="{{ url_for('views.themes', theme='core', path='img/favicon.ico') }}" type="image/x-icon">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/vendor/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/vendor/font-awesome/fontawesome-fonts.css') }}" type='text/css'>
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/vendor/font-awesome/fontawesome-all.css') }}" type='text/css'>
+	<link rel="stylesheet" href='{{ url_for('views.themes', theme='admin', path='css/vendor/font.css') }}'>
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/jumbotron.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/sticky-footer.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/base.css') }}">
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/promise-polyfill.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/fetch.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment-timezone-with-data.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/nunjucks.min.js') }}"></script>
 	<script type="text/javascript">
-			var script_root = "{{ request.script_root }}";
-			var csrf_nonce = "{{ nonce }}";
+		var script_root = "{{ request.script_root }}";
+		var csrf_nonce = "{{ nonce }}";
+		var user_mode = "{{ get_config('user_mode') }}";
 	</script>
 	{% block stylesheets %} {% endblock %}
 </head>
@@ -27,33 +30,39 @@
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
 		<div class="container">
-			<a href="{{ request.script_root }}/" class="navbar-brand">CTFd</a>
+			<a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">CTFd</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
 					aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse" id="base-navbars">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}/admin/statistics">Statistics</a></li>
-					<li class="nav-item dropdown">
-							<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Pages</a>
-							<div class="dropdown-menu">
-									<a class="dropdown-item" href="{{ request.script_root }}/admin/pages">All Pages</a>
-									<a class="dropdown-item" href="{{ request.script_root }}/admin/pages?operation=create">New Page</a>
-							</div>
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.statistics') }}">Statistics</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.notifications') }}">Notifications</a>
 					</li>
-					<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}/admin/teams">Teams</a></li>
-					<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}/admin/scoreboard">Scoreboard</a></li>
-					<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}/admin/chals">Challenges</a></li>
+					<li class="nav-item dropdown">
+						<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Pages</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="{{ url_for('admin.pages_listing') }}">All Pages</a>
+							<a class="dropdown-item" href="{{ url_for('admin.pages_new') }}">New Page</a>
+						</div>
+					</li>
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.users_listing') }}">Users</a></li>
+					{% if get_config('user_mode') == 'teams' %}
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.teams_listing') }}">Teams</a></li>
+					{% endif %}
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.scoreboard_listing') }}">Scoreboard</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.challenges_listing') }}">Challenges</a></li>
 					<li class="nav-item dropdown">
 						<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
 						   aria-haspopup="true" aria-expanded="true">Submissions</a>
 						<div class="dropdown-menu">
-							<a class="dropdown-item" href="{{ request.script_root }}/admin/correct_keys/1">Correct Submissions</a>
-							<a class="dropdown-item" href="{{ request.script_root }}/admin/wrong_keys/1">Wrong Submissions</a>
+							<a class="dropdown-item" href="{{ url_for('admin.submissions_listing') }}">All Submissions</a>
+							<a class="dropdown-item" href="{{ url_for('admin.submissions_listing', submission_type='correct') }}">Correct Submissions</a>
+							<a class="dropdown-item" href="{{ url_for('admin.submissions_listing', submission_type='incorrect') }}">Wrong Submissions</a>
 						</div>
 					</li>
-					<li class="nav-item"><a class="nav-link" href="{{ request.script_root }}/admin/config">Config</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.config') }}">Config</a></li>
 
 					{% set plugin_menu = get_admin_plugin_menu_bar() %}
 					{% set plugins = get_configurable_plugins() %}
@@ -105,21 +114,26 @@
 		{% endblock %}
 	</main>
 
-	<footer class="footer">
+	<footer class="footer pt-2">
 		<div class="container text-center">
 			<a href="https://ctfd.io">
-				<small class="text-muted">Powered by CTFd</small>
+				<small class="text-muted">
+					Powered by CTFd
+				</small>
 			</a>
+			<span>
+				<small class="text-muted"><br> Version {{ get_config('ctf_version') }}</small>
+			</span>
 		</div>
 	</footer>
 
-	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/jquery.min.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/markdown-it.min.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/vendor/bootstrap.bundle.min.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/main.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/utils.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/ezq.js"></script>
-	<script src="{{ request.script_root }}/themes/admin/static/js/style.js"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/jquery.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/markdown-it.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/bootstrap.bundle.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/main.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/utils.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/ezq.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/style.js') }}"></script>
 	{% block scripts %} {% endblock %}
 </body>
 

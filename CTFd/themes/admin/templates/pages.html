@@ -7,7 +7,7 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1>Pages
-			<a class="no-decoration" href="{{ request.script_root }}/admin/pages?operation=create">
+			<a class="no-decoration" href="{{ url_for('admin.pages_new') }}">
 				<span class="create-page" role="button" data-toggle="tooltip" title="Create Page">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</span>
@@ -36,7 +36,7 @@
 							{{ page.title }}
 						</td>
 						<td class="page-route" page-id="{{ page.id }}" page-route="{{ page.route }}">
-							<a href="{{ request.script_root }}/admin/pages?id={{ page.id }}">
+							<a href="{{ url_for('admin.pages_detail', page_id=page.id) }}">
 								{{ page.route }}
 							</a>
 						</td>
@@ -56,7 +56,7 @@
 						<td class="text-center">
 							<span class="edit-page" data-toggle="tooltip" data-placement="top"
 								  title="Edit {{ page.route }}">
-								<a class="no-decoration" href="{{ request.script_root }}/admin/pages?id={{ page.id }}"><i class="btn-fa fas fa-edit"></i></a>
+								<a class="no-decoration" href="{{ url_for('admin.pages_detail', page_id=page.id) }}"><i class="btn-fa fas fa-edit"></i></a>
 							</span>
 							<span class="delete-page" page-id="{{ page.id }}" page-route="{{ page.route }}"
 								  page-title="{{ page.title }}" data-toggle="tooltip" data-placement="top"
@@ -74,35 +74,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ request.script_root }}/themes/admin/static/js/vendor/codemirror.min.js"></script>
-<script>
-var nonce = "{{ nonce }}";
-
-$(document).ready(function () {
-    $('.delete-page').click(function () {
-        var elem = $(this);
-        var name = elem.attr("page-route");
-        var page_id = elem.attr("page-id");
-        ezq({
-            title: 'Delete ' + name,
-            body: "Are you sure you want to delete {0}?".format(
-                "<strong>" + htmlentities(name) + "</strong>"
-            ),
-            success: function () {
-                var page_delete_route = '{{ request.script_root }}/admin/pages/delete';
-                $.post(page_delete_route, {
-                    route: name,
-                    id: page_id,
-                    nonce: nonce,
-                }, function (data) {
-                    var data = $.parseJSON(JSON.stringify(data));
-                    if (data == "1") {
-                        location.reload();
-                    }
-                });
-            }
-        });
-    });
-});
-</script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/codemirror.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/pages/pages.js') }}"></script>
 {% endblock %}

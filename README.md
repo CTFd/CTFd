@@ -11,37 +11,45 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
 
 ## Features
  * Create your own challenges, categories, hints, and flags from the Admin Interface
+     * Dynamic Scoring Challenges
+    * Unlockable challenge support
+    * Challenge plugin architecture to create your own custom challenges
     * Static & Regex based flags
     * Users can unlock hints for free or with points
-    * File uploads to the server or [Amazon S3](https://github.com/CTFd/CTFd-S3-plugin)
+    * File uploads to the server or an Amazon S3-compatible backend
     * Limit challenge attempts & hide challenges
-    * Automatic submission throttling
+    * Automatic bruteforce protection
+* Individual and Team based competitions
+    * Have users play on their own or form teams to play together
  * Scoreboard with automatic tie resolution
     * Hide Scores from the public
     * Freeze Scores at a specific time
-    * [Dynamic Scoring](https://github.com/CTFd/DynamicValueChallenge)
  * Scoregraphs comparing the top 10 teams and team progress graphs
  * Markdown content management system
  * SMTP + Mailgun email support
     * Email confirmation support
     * Forgot password support
  * Automatic competition starting and ending
- * Team management & hiding
+ * Team management, hiding, and banning
  * Customize everything using the [plugin](https://github.com/CTFd/CTFd/wiki/Plugins) and [theme](https://github.com/CTFd/CTFd/tree/master/CTFd/themes) interfaces
  * Importing and Exporting of CTF data for archival
  * And a lot more...
 
 ## Install
- 1. Run `./prepare.sh` to install dependencies using apt.
- 2. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
- 3. Use `flask run` in a terminal to drop into debug mode.
+  1. Install dependencies: `pip install -r requirements.txt`
+       1. You can also use the `prepare.sh` script to install system dependencies using apt.
+  2. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
+  3. Use `flask run` in a terminal to drop into debug mode.
 
-Or you can use Docker with the following command:
+You can use the auto-generated Docker images with the following command:
 
 `docker run -p 8000:8000 -it ctfd/ctfd`
 
- * [Here](https://github.com/CTFd/CTFd/wiki/Basic-Deployment) are some deployment options
- * You can check out the [Getting Started](https://github.com/CTFd/CTFd/wiki/Getting-Started) guide for a breakdown of some of the features you need to get started.
+Or you can use Docker Compose with the following command from the source repository:
+
+`docker-compose up`
+
+Check out the [wiki](https://github.com/CTFd/CTFd/wiki) for [deployment options](https://github.com/CTFd/CTFd/wiki/Basic-Deployment) and the [Getting Started](https://github.com/CTFd/CTFd/wiki/Getting-Started) guide
 
 ## Live Demo
 https://demo.ctfd.io/
@@ -54,8 +62,17 @@ If you prefer commercial support or have a special project, send us an email: [s
 ## Managed Hosting
 Looking to use CTFd but don't want to deal with managing infrastructure? Check out [the CTFd website](https://ctfd.io/) for managed CTFd deployments.
 
-## HackerFire
-Looking for CTF challenges to work on? [HackerFire](https://hackerfire.com/) is a learning focused CTF built using CTFd. It features a wide variety of challenges and is updated with new content frequently. It also contains custom knowledge resources to teach newcomers about the techniques used to solve a challenge.
+## MajorLeagueCyber
+CTFd is heavily integrated with [MajorLeagueCyber](https://majorleaguecyber.org/). MajorLeagueCyber (MLC) is a CTF stats tracker that provides event scheduling, team tracking, and single sign on for events. 
+
+By registering your CTF event with MajorLeagueCyber users can automatically login, track their individual and team scores, submit writeups, and get notifications of important events. 
+
+To integrate with MajorLeagueCyber, simply register an account, create an event, and install the client ID and client secret in the relevant portion in CTFd/config.py:
+
+```python
+OAUTH_CLIENT_ID = None
+OAUTH_CLIENT_SECRET = None
+```
 
 ## Credits
  * Logo by [Laura Barbera](http://www.laurabb.com/)

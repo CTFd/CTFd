@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Create Challenge</h1>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-md-6 offset-md-3">
+					<div id="create-chals-select-div" style="display: none;">
+						<label for="create-chals-select" class="control-label">Choose Challenge Type</label>
+						<select class="form-control" id="create-chals-select">
+						</select>
+					</div>
+					<br>
+					<div id="create-chal-entry-div">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ url_for('views.themes', theme='admin', path='js/utils.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/codemirror.min.js') }}"></script>
+	<script>
+	var nonce = "{{ nonce }}";
+	</script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/new.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/style.js') }}"></script>
+{% endblock %}

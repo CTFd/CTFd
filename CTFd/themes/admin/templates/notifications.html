@@ -1,0 +1,72 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Notifications</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<form method="POST" id="notifications_form">
+					<div class="form-group">
+						<label>
+							Title
+							<small class="form-text text-muted">
+								Notification title
+							</small>
+						</label>
+						<input class="form-control" type="text" name="title">
+					</div>
+					<div class="form-group">
+						<label>
+							Content
+							<small class="form-text text-muted">
+								Notification contents can be made up of HTML
+							</small>
+						</label>
+						<textarea class="form-control" type="text" name="content" rows="3"></textarea>
+					</div>
+					<div class="float-right">
+						<button type="submit" class="btn btn-success text-center">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<hr>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<td width="10px"><b>ID</b></td>
+							<td><b>Title</b></td>
+							<td><b>Content</b></td>
+							<td><b>Date</b></td>
+						</tr>
+					</thead>
+					<tbody>
+					{% for notification in notifications %}
+						<tr>
+							<td>{{ notification.id }}</td>
+							<td>{{ notification.title }}</td>
+							<td>{{ notification.content | safe }}</td>
+							<td>{{ notification.date | isoformat }}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/socket.io.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='core', path='js/events.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/notifications/notifications.js') }}"></script>
+{% endblock %}

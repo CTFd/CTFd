@@ -5,13 +5,13 @@ import os
 from collections import namedtuple
 from flask.helpers import safe_join
 from flask import current_app as app, send_file, send_from_directory, abort
-from CTFd.utils import (
-    admins_only as admins_only_wrapper,
+from CTFd.utils.decorators import admins_only as admins_only_wrapper
+from CTFd.utils.plugins import (
     override_template as utils_override_template,
-    register_plugin_script as utils_register_plugin_script,
-    register_plugin_stylesheet as utils_register_plugin_stylesheet,
-    pages as db_pages
+    register_script as utils_register_plugin_script,
+    register_stylesheet as utils_register_plugin_stylesheet,
 )
+from CTFd.utils.config.pages import get_pages
 
 
 Menu = namedtuple('Menu', ['title', 'route'])
@@ -122,7 +122,7 @@ def get_user_page_menu_bar():
 
     :return: Returns a list of Menu namedtuples. They have name, and route attributes.
     """
-    return db_pages() + USER_PAGE_MENU_BAR
+    return get_pages() + USER_PAGE_MENU_BAR
 
 
 def bypass_csrf_protection(f):
@@ -146,7 +146,7 @@ def init_plugins(app):
     :param app: A CTFd application
     :return:
     """
-    modules = glob.glob(os.path.dirname(__file__) + "/*")
+    modules = sorted(glob.glob(os.path.dirname(__file__) + "/*"))
     blacklist = {'__pycache__'}
     for module in modules:
         module_name = os.path.basename(module)

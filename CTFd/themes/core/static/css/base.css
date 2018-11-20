@@ -70,6 +70,13 @@ table > thead > tr > td {
     transition: background-color 0.3s, border-color 0.3s;
 }
 
+.input-filled-invalid {
+    background-color: transparent;
+    border-color: #d46767;
+    box-shadow: 0 0 0 0.2rem #d46767;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
 .btn-outlined.btn-theme {
     background: none;
     color: #545454;
@@ -128,4 +135,18 @@ table > thead > tr > td {
 
 .cursor-help {
     cursor: help;
+}
+
+select.form-control {
+    height: auto !important;
+}
+
+.card {
+    border-radius: 0 !important;
+}
+
+.modal-content {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
 }

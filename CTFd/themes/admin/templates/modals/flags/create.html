@@ -1,0 +1,35 @@
+<div id="flag-edit-modal" class="modal fade" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<input type="hidden" class="chal-id" name="chal-id">
+			<div class="modal-header text-center">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<h3>Create Flag</h3>
+						</div>
+					</div>
+				</div>
+
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="create-keys-select-div">
+					<label for="create-keys-select" class="control-label">Choose Flag Type</label>
+					<select class="form-control" id="flags-create-select">
+					</select>
+				</div>
+				<br>
+				<form>
+					<div id="create-keys-entry-div">
+					</div>
+					<div style="display:none;" id="create-keys-button-div" class="text-center">
+						<button id="create-keys-submit" class="btn btn-success">Create Flag</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

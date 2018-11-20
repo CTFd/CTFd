@@ -1,0 +1,87 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron">
+	<div class="container">
+		<h1>{% if type %}{{ type|title }} {% endif %}Submissions</h1>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<table id="teamsboard" class=" table table-striped">
+				<thead>
+					<tr>
+						<td class="text-center"><b>ID</b></td>
+						<td><b>Team</b></td>
+						<td><b>Challenge</b></td>
+						<td><b>Type</b></td>
+						<td><b>Submission</b></td>
+						<td class="text-center"><b>Date</b></td>
+						<td class="text-center"><b>Delete</b></td>
+					</tr>
+				</thead>
+				<tbody>
+					{% for sub in submissions %}
+					<tr>
+						<td class="text-center" id="{{ sub.id }}">
+							{{ sub.id }}
+						</td>
+						<td class="team" id="{{ sub.team_id }}">
+							<a href="{{ generate_account_url(sub.account_id, admin=True) }}">{{ sub.team_name }}</a>
+						</td>
+						<td class="chal" id="{{ sub.challenge_id }}">
+							{{ sub.challenge_name }}
+						</td>
+						<td>
+							{{ sub.type }}
+						</td>
+						<td class="flag" id="{{ sub.id }}">
+							<pre class="mb-0">{{ sub.provided }}</pre>
+						</td>
+						<td class="text-center solve-time">
+							<span>
+								<script>document.write( moment("{{ sub.date | isoformat }}").fromNow())</script>
+							</span>
+						</td>
+						<td class="text-center">
+							<span class="delete-correct-submission" data-toggle="tooltip"
+								  data-placement="top" title="Delete submission #{{ sub.id }}">
+								<i class="fas fa-times"></i>
+							</span>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% if page_count > 1 %}
+			<div class="text-center">Page
+				<br>
+				{% if curr_page != 1 %}
+					<a href="?page={{ curr_page - 1 }}">&lt;&lt;&lt;</a>
+				{% endif %}
+				{% for page in range(1, page_count + 1) %}
+					{% if curr_page != page %}
+						<a href="?page={{ page }}">{{ page }}</a>
+					{% else %}
+						<b>{{ page }}</b>
+					{% endif %}
+				{% endfor %}
+				{% if curr_page != page_count %}
+					<a href="?page={{ curr_page + 1 }}">&gt;&gt;&gt;</a>
+				{% endif %}
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('views.themes', theme='admin', path='js/submissions/submissions.js') }}"></script>
+{% endblock %}

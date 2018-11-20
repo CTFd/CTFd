@@ -1,4 +1,7 @@
 #!/bin/sh
+set -eo pipefail
+
+WORKERS=${WORKERS:-1}
 
 # Check that a .ctfd_secret_key file or SECRET_KEY envvar is set
 if [ ! -f .ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
@@ -25,18 +28,23 @@ if [ -n "$DATABASE_URL" ]
     sleep 1;
 fi
 
+# Log to stdout/stderr by default
+if [ -n "$LOG_FOLDER" ]; then
+    ACCESS_LOG=${LOG_FOLDER}/access.log
+    ERROR_LOG=${LOG_FOLDER}/error.log
+else
+    ACCESS_LOG=-
+    ERROR_LOG=-
+fi
+
 # Initialize database
 python manage.py db upgrade
 
-if [ -z "$WORKERS" ]; then
-    WORKERS=1
-fi
-
 # Start CTFd
 echo "Starting CTFd"
-gunicorn 'CTFd:create_app()' \
+exec gunicorn 'CTFd:create_app()' \
     --bind '0.0.0.0:8000' \
     --workers $WORKERS \
     --worker-class 'gevent' \
-    --access-logfile "${LOG_FOLDER:-/opt/CTFd/CTFd/logs}/access.log" \
-    --error-logfile "${LOG_FOLDER:-/opt/CTFd/CTFd/logs}/error.log"
+    --access-logfile "$ACCESS_LOG" \
+    --error-logfile "$ERROR_LOG"

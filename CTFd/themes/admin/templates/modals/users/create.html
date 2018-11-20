@@ -1,0 +1,68 @@
+<form id="user-info-form">
+	<input type="hidden" name="id">
+	<div class="form-group">
+		<label for="name">User Name</label>
+		<input type="text" class="form-control" name="name" id="name"
+			   {% if user is defined and user.name %}value="{{ user.name }}"{% endif %} required>
+	</div>
+	<div class="form-group">
+		<label for="email">Email</label>
+		<input type="email" class="form-control" name="email" id="email"
+			   {% if user is defined and user.email %}value="{{ user.email }}"{% endif %} required>
+	</div>
+	<div class="form-group">
+		<label for="password">Password</label>
+		<input type="password" class="form-control" name="password" id="password"/>
+	</div>
+	<div class="form-group">
+		<label for="website">Website</label>
+		<input type="text" class="form-control" name="website" id="website"
+			   {% if user is defined and user.website %}value="{{ user.website }}"{% endif %}>
+	</div>
+	<div class="form-group">
+		<label for="affiliation">Affiliation</label>
+		<input type="text" class="form-control" name="affiliation" id="affiliation"
+			   {% if user is defined and user.affiliation %}value="{{ user.affiliation }}"{% endif %}>
+	</div>
+	<div class="form-group">
+		<label for="affiliation">Country</label>
+		<select class="form-control" id="country-input" name="country">
+			<option></option>
+			{% set countries = get_countries() %}
+			{% for country_code in countries.keys() %}
+				<option value="{{ country_code }}" {% if user is defined and user.country == country_code %}selected{% endif %}>
+					{{ countries[country_code] }}
+				</option>
+			{% endfor %}
+		</select>
+	</div>
+	<div class="form-group">
+		<div class="form-check form-check-inline">
+			<select class="form-control form-inline" id="type-select" name="type">
+				<option value="user"{% if user is defined and user.type == 'user' %} selected{% endif %}>
+					User
+				</option>
+				<option value="admin"{% if user is defined and user.type == 'admin' %} selected{% endif %}>
+					Admin
+				</option>
+			</select>
+		</div>
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="checkbox" name="verified" id="verified-checkbox">
+			<label class="form-check-label" for="verified-checkbox">Verified</label>
+		</div>
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="checkbox" name="hidden" id="hidden-checkbox">
+			<label class="form-check-label" for="hidden-checkbox">Hidden</label>
+		</div>
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="checkbox" name="banned" id="banned-checkbox">
+			<label class="form-check-label" for="banned-checkbox">Banned</label>
+		</div>
+	</div>
+	<div id="results">
+	</div>
+	<button id="update-user" type="submit" class="btn btn-primary btn-outlined float-right modal-action">
+		Submit
+	</button>
+</form>

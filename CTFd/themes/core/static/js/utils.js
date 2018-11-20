@@ -16,6 +16,34 @@ $.fn.serializeObject = function()
     return o;
 };
 
+$.fn.serializeJSON = function (omit_nulls) {
+    var params = {};
+    var form = $(this);
+    var values = form.serializeArray();
+
+    values = values.concat(
+        form.find('input[type=checkbox]:checked').map(
+            function () {
+                return {"name": this.name, "value": true}
+            }).get()
+    );
+    values = values.concat(
+        form.find('input[type=checkbox]:not(:checked)').map(
+            function () {
+                return {"name": this.name, "value": false}
+            }).get()
+    );
+    values.map(function (x) {
+        if (omit_nulls) {
+            if (x.value !== null && x.value !== "") {
+                params[x.name] = x.value;
+            }
+        } else {
+            params[x.name] = x.value;
+        }
+    });
+    return params;
+};
 
 //http://stackoverflow.com/a/2648463 - wizardry!
 String.prototype.format = String.prototype.f = function() {
@@ -55,6 +83,16 @@ function colorhash(str) {
 
 function htmlentities(string) {
     return $('<div/>').text(string).html();
+}
+
+function cumulativesum(arr) {
+    var result = arr.concat();
+    for (var i = 0; i < arr.length; i++) {
+        result[i] = arr.slice(0, i + 1).reduce(function (p, i) {
+            return p + i;
+        });
+    }
+    return result
 }
 
 // http://stepansuvorov.com/blog/2014/04/jquery-put-and-delete/

@@ -1,0 +1,149 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Users
+			<span class="create-team" role="button" data-toggle="tooltip" title="Create User">
+				<a href="{{ url_for('admin.users_new') }}" style="color: inherit;">
+					<i class="btn-fa fas fa-plus-circle"></i>
+				</a>
+			</span>
+		</h1>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			{% if q and field %}
+			<h4 class="text-center">Searching for users with {{field}} matching {{q}}</h4>
+			{% endif %}
+
+			<form method="GET" class="form-inline">
+					<div class="form-group col-md-2">
+						<label for="sel1" class="sr-only" >Search Field</label>
+						<select name="field" class="form-control w-100" id="sel1">
+							<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
+							<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
+							<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
+							<option value="affiliation" {% if field == 'affiliation' %}selected{% endif %}>Affiliation</option>
+					  </select>
+					</div>
+					<div class="form-group col-md-8">
+						<label for="team-name-search" class="sr-only">Parameter</label>
+						<input type="text" class="form-control w-100" id="team-name-search" name="q" placeholder="Search for matching team names" {% if q %}value="{{q}}"{% endif %}>
+					</div>
+					<div class="form-group col-md-2">
+						<label for="team-name-search" class="sr-only">Search</label>
+						<button type="submit" class="btn btn-primary w-100"><i class="fas fa-search" aria-hidden="true"></i></button>
+					</div>
+			</form>
+
+			<br>
+
+			<table id="teamsboard" class="table table-striped">
+				<thead>
+					<tr>
+						<td width="10px" class="text-center"><b>ID</b>
+						</td>
+						<td class="text-center"><b>User</b>
+						</td>
+						<td class="d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
+						</td>
+						<td class=""><b>Website</b>
+						</td>
+						<td class=""><b>Country</b>
+						</td>
+						<td class="text-center"><b>Admin</b>
+						</td>
+						<td class="text-center"><b>Verified</b>
+						</td>
+						<td class="text-center"><b>Hidden</b>
+						</td>
+						<td class="text-center"><b>Banned</b>
+						</td>
+					</tr>
+				</thead>
+				<tbody>
+					{% for user in users %}
+					<tr name="{{ user.id }}">
+						<td class="team-id" value="{{ user.id }}">{{ user.id }}</td>
+						<td class="team-name" value="{{ user.name }}">
+							<a href="{{ url_for('admin.users_detail', user_id=user.id) }}">
+								{{ user.name | truncate(32) }}
+							</a>
+							{% if user.oauth_id %}
+								<a href="https://majorleaguecyber.org/u/{{ user.name }}">
+									<span class="badge badge-primary">Official</span>
+								</a>
+							{% endif %}
+							{% if user.affiliation %}
+								<span class="d-block text-muted"><small>{{ user.affiliation | truncate(20) }}</small></span>
+							{% endif %}
+						</td>
+						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ user.email }}">
+							{% if user.email %}
+								<a href="mailto:{{ user.email }}" target="_blank">{{ user.email | truncate(32) }}</a>
+							{% endif %}
+						</td>
+						<td class="team-website text-center">
+							{% if user.website %}
+								<a href="{{ user.website }}" target="_blank">
+									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+									   title="{{ user.website }}" aria-hidden="true"></i>
+								</a>
+							{% endif %}
+						</td>
+						<td class="team-country" value="{{ user.country if user.country is not none }}">
+							<span>{% if user.country %}{{ lookup_country_code(user.country) }}{% endif %}</span>
+						</td>
+						<td class="team-admin d-md-table-cell d-lg-table-cell text-center" value="{{ user.type }}">
+							{% if user.type == 'admin' %}
+								<span class="badge badge-primary">admin</span>
+							{% endif %}
+						</td>
+						<td class="team-verified d-md-table-cell d-lg-table-cell text-center" value="{{ user.verified }}">
+							{% if user.verified %}
+								<span class="badge badge-success">verified</span>
+							{% endif %}
+						</td>
+						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ user.hidden }}">
+							{% if user.hidden %}
+								<span class="badge badge-danger">hidden</span>
+							{% endif %}
+						</td>
+						<td class="team-banned d-md-table-cell d-lg-table-cell text-center" value="{{ user.banned }}">
+							{% if user.banned %}
+								<span class="badge badge-danger">banned</span>
+							{% endif %}
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% if pages > 1 %}
+			<div class="text-center">Page
+				<br>
+				{% if curr_page != 1 %}<a href="{{ url_for('admin.users_listing', page=curr_page - 1) }}">&lt;&lt;&lt;</a>{% endif %}
+				{% for page in range(1, pages + 1) %}
+					{% if curr_page != page %}
+						<a href="{{ url_for('admin.users_listing', page=page) }}">{{ page }}</a>
+					{% else %}
+						<b>{{ page }}</b>
+					{% endif %}
+				{% endfor %}
+				{% if curr_page != pages %}<a href="{{ url_for('admin.users_listing', page=curr_page + 1) }}">&gt;&gt;&gt;</a>{% endif %}
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('views.themes', theme='admin', path='js/users/users.js') }}"></script>
+{% endblock %}

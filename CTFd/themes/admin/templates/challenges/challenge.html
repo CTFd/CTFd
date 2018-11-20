@@ -1,0 +1,127 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/challenge-board.css') }}">
+{% endblock %}
+
+{% block content %}
+	{% include "admin/modals/hints/edit.html" %}
+	{% include "admin/modals/flags/create.html" %}
+	{% include "admin/modals/flags/edit.html" %}
+
+	<div class="modal fade" id="challenge-window" role="dialog">
+	</div>
+
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="text-center">{{ challenge.name }}</h1>
+			<h2 class="text-center">{{ challenge.category }}</h2>
+			<h2 class="text-center">{{ challenge.type }}</h2>
+			{% set badge_state = 'badge-danger' if challenge.state == 'hidden' else 'badge-success' %}
+			<h5>
+				<span class="badge {{ badge_state }}">
+					{{ challenge.state }}
+				</span>
+			</h5>
+			<h3 class="text-center">{{ challenge.value }} points</h3>
+			<div class="pt-3">
+				<a class="preview-challenge">
+					<i class="btn-fa fas fa-file-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					   title="Preview Challenge"></i>
+				</a>
+				<a class="delete-challenge">
+					<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					   title="Delete Challenge"></i>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<nav class="nav nav-tabs nav-fill" id="challenge-properties" role="tablist">
+					<a class="nav-item nav-link active" data-toggle="tab" href="#solves" role="tab" >Solves</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#flags" role="tab">Flags</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#files" role="tab">Files</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#tags" role="tab">Tags</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#hints" role="tab">Hints</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#requirements" role="tab">Requirements</a>
+				</nav>
+
+				<div class="tab-content" id="nav-tabContent">
+					<div class="tab-pane fade show active" id="solves" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Solves</h3>
+								{% include "admin/modals/challenges/solves.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="flags" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Flags</h3>
+								{% include "admin/modals/challenges/flags.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="files" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Files</h3>
+								{% include "admin/modals/challenges/files.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="tags" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Tags</h3>
+								{% include "admin/modals/challenges/tags.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="hints" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Hints</h3>
+								{% include "admin/modals/challenges/hints.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="requirements" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Requirements</h3>
+								{% include "admin/modals/challenges/requirements.html" %}
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div id="challenge-update-container" class="col-md-6">
+				{{ update_template | safe }}
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block scripts %}
+	<script>
+        var CHALLENGE_ID = {{ challenge.id }};
+        var CHALLENGE_NAME = {{ challenge.name | tojson }};
+	</script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/plotly.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/multi-modal.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/challenge.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/hints.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/flags.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/tags.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/files.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/requirements.js') }}"></script>
+	<script src="{{ request.script_root }}{{ update_script }}"></script>
+{% endblock %}

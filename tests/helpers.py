@@ -1,6 +1,6 @@
 from CTFd import create_app
 from CTFd.models import *
-from CTFd.utils import cache
+from CTFd.cache import cache
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.engine.url import make_url
 import datetime
@@ -15,18 +15,17 @@ else:
     binary_type = bytes
 
 
-def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", setup=True):
+def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True):
     app = create_app('CTFd.config.TestingConfig')
 
     if setup:
-        app = setup_ctfd(app, ctf_name, name, email, password)
+        app = setup_ctfd(app, ctf_name, name, email, password, user_mode)
     return app
 
 
-def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password"):
+def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users"):
     with app.app_context():
         with app.test_client() as client:
-            data = {}
             r = client.get('/setup')  # Populate session with nonce
             with client.session_transaction() as sess:
                 data = {
@@ -34,6 +33,7 @@ def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", passwo
                     "name": name,
                     "email": email,
                     "password": password,
+                    "user_mode": user_mode,
                     "nonce": sess.get('nonce')
                 }
             client.post('/setup', data=data)
@@ -42,12 +42,9 @@ def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", passwo
 
 def destroy_ctfd(app):
     with app.app_context():
-        app.db.session.commit()
-        app.db.session.close_all()
         gc.collect()  # Garbage collect (necessary in the case of dataset freezes to clean database connections)
-        app.db.drop_all()
         cache.clear()
-    drop_database(app.config['SQLALCHEMY_DATABASE_URI'])
+        drop_database(app.config['SQLALCHEMY_DATABASE_URI'])
 
 
 def register_user(app, name="user", email="user@ctfd.io", password="password"):
@@ -62,6 +59,19 @@ def register_user(app, name="user", email="user@ctfd.io", password="password"):
                     "nonce": sess.get('nonce')
                 }
             client.post('/register', data=data)
+
+
+def register_team(app, name="team", password="password"):
+    with app.app_context():
+        with app.test_client() as client:
+            r = client.get('/team')
+            with client.session_transaction() as sess:
+                data = {
+                    "name": name,
+                    "password": password,
+                    "nonce": sess.get('nonce')
+                }
+            client.post('/teams/new', data=data)
 
 
 def login_as_user(app, name="user", password="password"):
@@ -79,92 +89,118 @@ def login_as_user(app, name="user", password="password"):
 
 
 def get_scores(user):
-    scores = user.get('/scores')
-    print(scores.get_data(as_text=True))
-    scores = json.loads(scores.get_data(as_text=True))
-    print(scores)
-    return scores['standings']
+    r = user.get('/api/v1/scoreboard')
+    scores = r.get_json()
+    return scores['data']
 
 
-def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard', hidden=False):
-    chal = Challenges(name, description, value, category)
-    if hidden:
-        chal.hidden = hidden
+def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard', state='visible', **kwargs):
+    chal = Challenges(name=name, description=description, value=value, category=category, type=type, state=state, **kwargs)
     db.session.add(chal)
     db.session.commit()
     return chal
 
 
-def gen_award(db, teamid, name="award_name", value=100):
-    award = Awards(teamid, name, value)
+def gen_award(db, user_id, team_id=None, name="award_name", value=100):
+    award = Awards(user_id=user_id, team_id=team_id, name=name, value=value)
     award.date = datetime.datetime.utcnow()
     db.session.add(award)
     db.session.commit()
     return award
 
 
-def gen_tag(db, chal, tag='tag_tag'):
-    tag = Tags(chal, tag)
+def gen_tag(db, challenge_id, value='tag_tag', **kwargs):
+    tag = Tags(challenge_id=challenge_id, value=value, **kwargs)
     db.session.add(tag)
     db.session.commit()
     return tag
 
 
-def gen_file(db, chal, location):
-    f = Files(chal, location)
+def gen_file(db, location, challenge_id=None, page_id=None):
+    if challenge_id:
+        f = ChallengeFiles(challenge_id=challenge_id, location=location)
+    elif page_id:
+        f = PageFiles(page_id=page_id, location=location)
+    else:
+        f = Files(location=location)
     db.session.add(f)
     db.session.commit()
     return f
 
 
-def gen_flag(db, chal, flag='flag', key_type='static', data=None):
-    key = Keys(chal, flag, key_type)
+def gen_flag(db, challenge_id, content='flag', type='static', data=None, **kwargs):
+    flag = Flags(challenge_id=challenge_id, content=content, type=type, **kwargs)
     if data:
-        key.data = data
-    db.session.add(key)
+        flag.data = data
+    db.session.add(flag)
     db.session.commit()
-    return key
+    return flag
 
 
-def gen_team(db, name='name', email='user@ctfd.io', password='password'):
-    team = Teams(name, email, password)
+def gen_user(db, name='user_name', email='user@ctfd.io', password='password', **kwargs):
+    user = Users(name=name, email=email, password=password, **kwargs)
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+
+def gen_team(db, name='team_name', email='team@ctfd.io', password='password', **kwargs):
+    team = Teams(name=name, email=email, password=password, **kwargs)
     db.session.add(team)
     db.session.commit()
     return team
 
 
-def gen_hint(db, chal, hint="This is a hint", cost=0, type=0):
-    hint = Hints(chal, hint, cost, type)
+def gen_hint(db, challenge_id, content="This is a hint", cost=0, type="standard", **kwargs):
+    hint = Hints(challenge_id=challenge_id, content=content, cost=cost, type=type, **kwargs)
     db.session.add(hint)
     db.session.commit()
     return hint
 
 
-def gen_solve(db, teamid, chalid, ip='127.0.0.1', flag='rightkey'):
-    solve = Solves(teamid, chalid, ip, flag)
+def gen_unlock(db, user_id, team_id, target, type):
+    unlock = Unlocks(
+        user_id=user_id,
+        team_id=team_id,
+        target=target,
+        type=type
+    )
+    db.session.add(unlock)
+    db.session.commit()
+    return unlock
+
+
+def gen_solve(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', provided='rightkey', **kwargs):
+    solve = Solves(user_id=user_id, team_id=team_id, challenge_id=challenge_id, ip=ip, provided=provided, **kwargs)
     solve.date = datetime.datetime.utcnow()
     db.session.add(solve)
     db.session.commit()
     return solve
 
 
-def gen_wrongkey(db, teamid, chalid, ip='127.0.0.1', flag='wrongkey'):
-    wrongkey = WrongKeys(teamid, chalid, ip, flag)
-    wrongkey.date = datetime.datetime.utcnow()
-    db.session.add(wrongkey)
+def gen_fail(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', content='wrongkey', **kwargs):
+    fail = Fails(user_id=user_id, team_id=team_id, challenge_id=challenge_id, ip=ip, content=content)
+    fail.date = datetime.datetime.utcnow()
+    db.session.add(fail)
     db.session.commit()
-    return wrongkey
+    return fail
 
 
-def gen_tracking(db, ip, team):
-    tracking = Tracking(ip, team)
+def gen_tracking(db, ip, user_id, **kwargs):
+    tracking = Tracking(ip=ip, user_id=user_id, **kwargs)
     db.session.add(tracking)
     db.session.commit()
     return tracking
 
 
-def gen_page(db, title, route, html, draft=False, auth_required=False):
-    page = Pages(title, route, html, draft, auth_required)
+def gen_page(db, title, route, content, draft=False, auth_required=False, **kwargs):
+    page = Pages(title=title, route=route, content=content, draft=draft, auth_required=auth_required, **kwargs)
     db.session.add(page)
     db.session.commit()
     return page
+
+
+def gen_notification(db, title, content):
+    notif = Notifications(title=title, content=content)
+    db.session.add(notif)
+    db.session.commit()

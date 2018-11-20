@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/challenge-board.css') }}">
+{% endblock %}
+
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Challenges
+			<a class="no-decoration" href="{{ url_for('admin.challenges_new') }}">
+				<span role="button" data-toggle="tooltip" title="Create Challenge">
+					<i class="btn-fa fas fa-plus-circle"></i>
+				</span>
+			</a>
+		</h1>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div>
+				<table id="challenges" class="table table-striped">
+					<thead>
+					<tr>
+						<td><b>ID</b></td>
+						<td><b>Name</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Category</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Value</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Type</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>State</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for challenge in challenges %}
+						<tr>
+							<td>{{ challenge.id }}</td>
+							<td><a href="{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}">{{ challenge.name }}</a></td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.category }}</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.value }}</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.type }}</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell text-center">
+								{% set badge_state = 'badge-danger' if challenge.state == 'hidden' else 'badge-success' %}
+								<span class="badge {{ badge_state }}">{{ challenge.state }}</span>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

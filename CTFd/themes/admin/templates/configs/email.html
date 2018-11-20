@@ -1,0 +1,94 @@
+<div role="tabpanel" class="tab-pane config-section" id="email">
+	<form method="POST" autocomplete="off" class="w-100">
+		<ul class="nav nav-tabs mb-3" role="tablist">
+			<li class="nav-item active">
+				<a class="nav-link active" href="#mailserver" role="tab" data-toggle="tab">Mail
+					Server</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#mailgun" role="tab" data-toggle="tab">Mailgun</a>
+			</li>
+		</ul>
+
+		<div class="form-group">
+			<label>Mail From Address:</label>
+			<input class="form-control" id='mailfrom_addr' name='mailfrom_addr' type='text'
+				   placeholder="Email address used to send email"
+				   {% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
+		</div>
+
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="mailserver">
+
+				<div class="form-group">
+					<label>Mail Server Address:</label>
+					<input class="form-control" id='mail_server' name='mail_server' type='text'
+						   placeholder="Mail Server Address"
+						   {% if mail_server is defined and mail_server != None %}value="{{ mail_server }}"{% endif %}>
+				</div>
+
+				<div class="form-group">
+					<label>Mail Server Port:</label>
+					<input class="form-control" id='mail_port' name='mail_port' type='text'
+						   placeholder="Mail Server Port"
+						   {% if mail_port is defined and mail_port != None %}value="{{ mail_port }}"{% endif %}>
+				</div>
+				<div class="form-check">
+					<label>
+						<input id="mail_useauth" name="mail_useauth" type="checkbox"
+							   {% if mail_useauth %}checked{% endif %}>
+						Use Mail Server Username and Password
+					</label>
+				</div>
+				<div id="mail_username_password">
+					<div class="form-group">
+						<label>Username:</label>
+						{% if mail_username is defined and mail_username != None %}
+							<label for="mail_u"><sup>A mail server username is currently set</sup></label>
+						{% endif %}
+						<input class="form-control" id='mail_u' name='mail_u' autocomplete='off' type='text'
+							   placeholder="Username">
+					</div>
+					<div class="form-group">
+						<label for="mail_p">Password:</label>
+						{% if mail_password is defined and mail_password != None %}
+							<label for="mail_p"><sup>An mail server password is currently set</sup></label>
+						{% endif %}
+						<input class="form-control" id='mail_p' name='mail_p' autocomplete='off' type='password'
+							   placeholder="Password">
+					</div>
+					<sup>Uncheck setting and update to remove username and password</sup>
+					<br>
+					<br>
+				</div>
+				<div class="form-check">
+					<label>
+						<input id="mail_ssl" name="mail_ssl" type="checkbox" {% if mail_ssl %}checked{% endif %}>
+						SSL
+					</label>
+				</div>
+				<div class="form-check">
+					<label>
+						<input id="mail_tls" name="mail_tls" type="checkbox" {% if mail_tls %}checked{% endif %}>
+						TLS
+					</label>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="mailgun">
+				<div class="form-group">
+					<label>Mailgun API Base URL:</label>
+					<input class="form-control" id='mailgun_base_url' name='mailgun_base_url' type='text'
+						   placeholder="Mailgun API Base URL"
+						   {% if mailgun_base_url is defined and mailgun_base_url != None %}value="{{ mailgun_base_url }}"{% endif %}>
+				</div>
+				<div class="form-group">
+					<label>Mailgun API Key:</label>
+					<input class="form-control" id='mailgun_api_key' name='mailgun_api_key' type='text'
+						   placeholder="Mailgun API Key"
+						   {% if mailgun_api_key is defined and mailgun_api_key != None %}value="{{ mailgun_api_key }}"{% endif %}>
+				</div>
+			</div>
+		</div>
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+</div>

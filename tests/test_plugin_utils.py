@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from tests.helpers import *
-from CTFd.models import ip2long, long2ip
 from CTFd.plugins import (
     register_plugin_assets_directory,
     register_plugin_asset,
@@ -67,13 +66,13 @@ def test_admin_override_template():
     """Does override_template work properly for the admin panel when used from a plugin"""
     app = create_ctfd()
     with app.app_context():
-        override_template('admin/team.html', 'ADMIN TEAM OVERRIDE')
+        override_template('admin/users/user.html', 'ADMIN USER OVERRIDE')
 
         client = login_as_user(app, name="admin", password="password")
-        r = client.get('/admin/team/1')
+        r = client.get('/admin/users/1')
         assert r.status_code == 200
         output = r.get_data(as_text=True)
-        assert 'ADMIN TEAM OVERRIDE' in output
+        assert 'ADMIN USER OVERRIDE' in output
     destroy_ctfd(app)
 
 

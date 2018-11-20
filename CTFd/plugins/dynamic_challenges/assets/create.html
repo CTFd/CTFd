@@ -1,0 +1,88 @@
+<form method="POST" action="{{ script_root }}/admin/chal/new" enctype="multipart/form-data">
+	<div class="form-group">
+		<div class="alert alert-secondary" role="alert">
+			Dynamic value challenges decrease in value as they receive solves. The more solves a dynamic challenge has,
+			the
+			lower its value is to everyone who has solved it.
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="name">Name<br>
+			<small class="form-text text-muted">
+				The name of your challenge
+			</small>
+		</label>
+		<input type="text" class="form-control" name="name" placeholder="Enter challenge name">
+	</div>
+	<div class="form-group">
+		<label for="category">Category<br>
+			<small class="form-text text-muted">
+				The category of your challenge
+			</small>
+		</label>
+		<input type="text" class="form-control" name="category" placeholder="Enter challenge category">
+	</div>
+
+	<ul class="nav nav-tabs" role="tablist" id="new-desc-edit">
+		<li class="nav-item">
+			<a class="nav-link active" href="#new-desc-write" aria-controls="home" role="tab"
+			   data-toggle="tab">Write</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#new-desc-preview" aria-controls="home" role="tab" data-toggle="tab">Preview</a>
+		</li>
+	</ul>
+
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="new-desc-write">
+			<div class="form-group">
+				<label for="message-text" class="control-label">Message
+					<small class="form-text text-muted">
+						Use this to give a brief introduction to your challenge. The description supports HTML and
+						Markdown.
+					</small>
+				</label>
+				<textarea id="new-desc-editor" class="form-control" name="description" rows="10"></textarea>
+			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane content" id="new-desc-preview" style="height:234px; overflow-y: scroll;">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="value">Initial Value<br>
+			<small class="form-text text-muted">
+				This is how many points the challenge is worth initially.
+			</small>
+		</label>
+		<input type="number" class="form-control" name="value" placeholder="Enter value" required>
+
+	</div>
+
+	<div class="form-group">
+		<label for="value">Decay Limit<br>
+			<small class="form-text text-muted">
+				The amount of solves before the challenge reaches its minimum value
+			</small>
+		</label>
+		<input type="number" class="form-control" name="decay" placeholder="Enter decay limit" required>
+	</div>
+
+	<div class="form-group">
+		<label for="value">Minimum Value<br>
+			<small class="form-text text-muted">
+				This is the lowest that the challenge can be worth
+			</small>
+		</label>
+		<input type="number" class="form-control" name="minimum" placeholder="Enter minimum value" required>
+
+	</div>
+
+	<input type="hidden" name="state" value="hidden">
+	<input type="hidden" value="dynamic" name="type" id="chaltype">
+
+	<div class="form-group">
+		<button class="btn btn-primary float-right create-challenge-submit" type="submit">Create</button>
+	</div>
+</form>

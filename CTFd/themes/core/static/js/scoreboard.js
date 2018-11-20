@@ -1,17 +1,17 @@
 function updatescores () {
-  $.get(script_root + '/scores', function( data ) {
-    var teams = $.parseJSON(JSON.stringify(data));
-    var table = $('#scoreboard tbody');
-    table.empty();
-    for (var i = 0; i < teams['standings'].length; i++) {
-        var row="<tr>\n" +
-            "<th scope=\"row\" class=\"text-center\">{0}</th>".format(i + 1) +
-            "<td><a href=\"{0}/team/{1}\">{2}</a></td>".format(script_root, teams['standings'][i].id, htmlentities(teams['standings'][i].team)) +
-            "<td>{0}</td>".format(teams['standings'][i].score) +
-            "</tr>";
-        table.append(row);
-    }
-  });
+    $.get(script_root + '/api/v1/scoreboard', function (response) {
+        var teams = response.data;
+        var table = $('#scoreboard tbody');
+        table.empty();
+        for (var i = 0; i < teams.length; i++) {
+            var row = "<tr>\n" +
+                "<th scope=\"row\" class=\"text-center\">{0}</th>".format(i + 1) +
+                "<td><a href=\"{0}/team/{1}\">{2}</a></td>".format(script_root, teams['standings'][i].id, htmlentities(teams['standings'][i].team)) +
+                "<td>{0}</td>".format(teams['standings'][i].score) +
+                "</tr>";
+            table.append(row);
+        }
+    });
 }
 
 function cumulativesum (arr) {
@@ -29,9 +29,9 @@ function UTCtoDate(utc){
 }
 
 function scoregraph () {
-    $.get(script_root + '/top/10', function( data ) {
-        var places = $.parseJSON(JSON.stringify(data));
-        places = places['places'];
+    $.get(script_root + '/api/v1/scoreboard/top/10', function( response ) {
+        var places = response.data;
+
         if (Object.keys(places).length === 0 ){
             // Replace spinner
             $('#score-graph').html(
@@ -47,7 +47,7 @@ function scoregraph () {
             var times = [];
             for(var j = 0; j < places[teams[i]]['solves'].length; j++){
                 team_score.push(places[teams[i]]['solves'][j].value);
-                var date = moment(places[teams[i]]['solves'][j].time * 1000);
+                var date = moment(places[teams[i]]['solves'][j].date);
                 times.push(date.toDate());
             }
             team_score = cumulativesum(team_score);
@@ -91,9 +91,9 @@ function scoregraph () {
                 "orientation": "h"
             }
         };
-        console.log(traces);
 
         $('#score-graph').empty(); // Remove spinners
+        document.getElementById('score-graph').fn = 'CTFd_scoreboard_' + (new Date).toISOString().slice(0,19);
         Plotly.newPlot('score-graph', traces, layout, {
             // displayModeBar: false,
             displaylogo: false

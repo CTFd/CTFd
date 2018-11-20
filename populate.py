@@ -4,13 +4,20 @@
 import datetime
 import hashlib
 import random
+import sys
 
 from CTFd import create_app
-from CTFd.models import Teams, Solves, Challenges, WrongKeys, Keys, Files, Awards
+from CTFd.models import *
+
+try:
+    mode = sys.argv[1]
+except IndexError:
+    mode = 'teams'
 
 app = create_app()
 
 USER_AMOUNT = 50
+TEAM_AMOUNT = 10 if mode == 'teams' else 0
 CHAL_AMOUNT = 20
 AWARDS_AMOUNT = 5
 
@@ -88,7 +95,7 @@ hipsters = [
     'Ethnic', 'narwhal', 'pickled', 'Odd', 'Future', 'cliche', 'VHS', 'whatever',
     'Etsy', 'American', 'Apparel', 'kitsch', 'wolf', 'mlkshk', 'fashion', 'axe',
     'ethnic', 'banh', 'mi', 'cornhole', 'scenester', 'Echo', 'Park', 'Dreamcatcher',
-    'tofu', 'fap', 'selvage', 'authentic', 'cliche', 'High', 'Life', 'brunch',
+    'tofu', 'selvage', 'authentic', 'cliche', 'High', 'Life', 'brunch',
     'pork', 'belly', 'viral', 'XOXO', 'drinking', 'vinegar', 'bitters', 'Wayfarers',
     'gastropub', 'dreamcatcher', 'chillwave', 'Shoreditch', 'kale', 'chips', 'swag', 'street',
     'art', 'put', 'a', 'bird', 'on', 'it', 'Vice', 'synth',
@@ -97,7 +104,7 @@ hipsters = [
     'normcore', 'bicycle', 'rights', 'Austin', 'drinking', 'vinegar', 'hella', 'readymade',
     'farm-to-table', 'Wes', 'Anderson', 'put', 'a', 'bird', 'on', 'it',
     'freegan', 'Synth', 'lo-fi', 'food', 'truck', 'chambray', 'Shoreditch', 'cliche',
-    'kogiSynth', 'lo-fi', 'fap', 'single-origin', 'coffee', 'brunch', 'butcher', 'Pickled',
+    'kogiSynth', 'lo-fi', 'single-origin', 'coffee', 'brunch', 'butcher', 'Pickled',
     'Etsy', 'locavore', 'forage', 'pug', 'stumptown', 'occupy', 'PBR&B', 'actually',
     'shabby', 'chic', 'church-key', 'disrupt', 'lomo', 'hoodie', 'Tumblr', 'biodiesel',
     'Pinterest', 'butcher', 'Hella', 'Carles', 'pour-over', 'YOLO', 'VHS', 'literally',
@@ -187,6 +194,10 @@ def gen_name():
     return random.choice(names)
 
 
+def gen_team_name():
+    return random.choice(hipsters).capitalize() + str(random.randint(1,1000))
+
+
 def gen_email():
     return random.choice(emails)
 
@@ -220,9 +231,20 @@ if __name__ == '__main__':
         print("GENERATING CHALLENGES")
         for x in range(CHAL_AMOUNT):
             word = gen_word()
-            db.session.add(Challenges(word, gen_sentence(), gen_value(), gen_category()))
+            chal = Challenges(
+                name=word,
+                description=gen_sentence(),
+                value=gen_value(),
+                category=gen_category()
+            )
+            db.session.add(chal)
             db.session.commit()
-            db.session.add(Keys(x + 1, word, 'static'))
+            f = Flags(
+                challenge_id=x + 1,
+                content=word,
+                type='static'
+            )
+            db.session.add(f)
             db.session.commit()
 
         # Generating Files
@@ -232,9 +254,31 @@ if __name__ == '__main__':
             chal = random.randint(1, CHAL_AMOUNT)
             filename = gen_file()
             md5hash = hashlib.md5(filename.encode('utf-8')).hexdigest()
-            db.session.add(Files(chal, md5hash + '/' + filename))
+            chal_file = ChallengeFiles(
+                challenge_id=chal,
+                location=md5hash + '/' + filename
+            )
+            db.session.add(chal_file)
 
         db.session.commit()
+
+        # Generating Teams
+        print("GENERATING TEAMS")
+        used = []
+        count = 0
+        while count < TEAM_AMOUNT:
+            name = gen_team_name()
+            if name not in used:
+                used.append(name)
+                team = Teams(
+                    name=name,
+                    password="password"
+                )
+                db.session.add(team)
+                count += 1
+
+        db.session.commit()
+
 
         # Generating Users
         print("GENERATING USERS")
@@ -244,29 +288,76 @@ if __name__ == '__main__':
             name = gen_name()
             if name not in used:
                 used.append(name)
-                team = Teams(name, name.lower() + gen_email(), 'password')
-                team.verified = True
-                db.session.add(team)
-                count += 1
+                try:
+                    user = Users(
+                        name=name,
+                        email=name + gen_email(),
+                        password='password'
+                    )
+                    user.verified = True
+                    if mode == 'teams':
+                        user.team_id = random.randint(1, TEAM_AMOUNT)
+                    db.session.add(user)
+                    count += 1
+                except:
+                    pass
 
         db.session.commit()
 
         # Generating Solves
         print("GENERATING SOLVES")
-        for x in range(USER_AMOUNT):
-            used = []
-            base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
-            for y in range(random.randint(1, CHAL_AMOUNT)):
-                chalid = random.randint(1, CHAL_AMOUNT)
-                if chalid not in used:
-                    used.append(chalid)
-                    solve = Solves(x + 1, chalid, '127.0.0.1', gen_word())
+        if mode == 'users':
+            for x in range(USER_AMOUNT):
+                used = []
+                base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
+                for y in range(random.randint(1, CHAL_AMOUNT)):
+                    chalid = random.randint(1, CHAL_AMOUNT)
+                    if chalid not in used:
+                        used.append(chalid)
+                        user = Users.query.filter_by(id=x+1).first()
+                        solve = Solves(
+                            user_id=user.id,
+                            team_id=user.team_id,
+                            challenge_id=chalid,
+                            ip='127.0.0.1',
+                            provided=gen_word()
+                        )
 
-                    new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
-                    solve.date = new_base
-                    base_time = new_base
+                        new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
+                        solve.date = new_base
+                        base_time = new_base
 
-                    db.session.add(solve)
+                        db.session.add(solve)
+                        db.session.commit()
+        elif mode == 'teams':
+            for x in range(1, TEAM_AMOUNT):
+                used_teams = []
+                used_users = []
+                base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
+                team = Teams.query.filter_by(id=x).first()
+                members_ids = [member.id for member in team.members]
+                for y in range(random.randint(1, CHAL_AMOUNT)):
+                    chalid = random.randint(1, CHAL_AMOUNT)
+                    user_id = random.choice(members_ids)
+                    if (chalid, team.id) not in used_teams:
+                        if (chalid, user_id) not in used_users:
+                            solve = Solves(
+                                user_id=user_id,
+                                team_id=team.id,
+                                challenge_id=chalid,
+                                ip='127.0.0.1',
+                                provided=gen_word()
+                            )
+                            new_base = random_date(
+                                base_time,
+                                base_time + datetime.timedelta(minutes=random.randint(30, 60))
+                            )
+                            solve.date = new_base
+                            base_time = new_base
+                            db.session.add(solve)
+                            db.session.commit()
+                            used_teams.append((chalid, team.id))
+                            used_users.append((chalid, user_id))
 
         db.session.commit()
 
@@ -275,7 +366,13 @@ if __name__ == '__main__':
         for x in range(USER_AMOUNT):
             base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
             for _ in range(random.randint(0, AWARDS_AMOUNT)):
-                award = Awards(x + 1, gen_word(), random.randint(-10, 10))
+                user = Users.query.filter_by(id=x + 1).first()
+                award = Awards(
+                    user_id=user.id,
+                    team_id=user.team_id,
+                    name=gen_word(),
+                    value=random.randint(-10, 10)
+                )
                 new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                 award.date = new_base
                 base_time = new_base
@@ -284,8 +381,8 @@ if __name__ == '__main__':
 
         db.session.commit()
 
-        # Generating Wrong Keys
-        print("GENERATING WRONG KEYS")
+        # Generating Wrong Flags
+        print("GENERATING WRONG FLAGS")
         for x in range(USER_AMOUNT):
             used = []
             base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-10000)
@@ -293,13 +390,21 @@ if __name__ == '__main__':
                 chalid = random.randint(1, CHAL_AMOUNT)
                 if chalid not in used:
                     used.append(chalid)
-                    wrong = WrongKeys(x + 1, chalid, '127.0.0.1', gen_word())
+                    user = Users.query.filter_by(id=x+1).first()
+                    wrong = Fails(
+                        user_id=user.id,
+                        team_id=user.team_id,
+                        challenge_id=chalid,
+                        ip='127.0.0.1',
+                        provided=gen_word()
+                    )
 
                     new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                     wrong.date = new_base
                     base_time = new_base
 
                     db.session.add(wrong)
+                    db.session.commit()
 
         db.session.commit()
         db.session.close()

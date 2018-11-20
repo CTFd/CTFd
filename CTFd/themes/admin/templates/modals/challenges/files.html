@@ -1,0 +1,33 @@
+<table id="filesboard" class="table table-striped">
+	<thead>
+		<tr>
+			<td class="text-center"><b>File</b></td>
+			<td class="text-center"><b>Settings</b></td>
+		</tr>
+	</thead>
+	<tbody>
+	{% for file in challenge.files %}
+		<tr>
+			<td class="text-center">
+				<a href="{{ url_for('views.files', path=file.location) }}">{{ file.location.split('/').pop() }}</a>
+			</td>
+
+			<td class="text-center">
+				<i role="button" file-id="{{ file.id }}" class="btn-fa fas fa-times delete-file"></i>
+			</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+
+<div class="col-md-12 mt-3">
+	<form id="file-add-form" method="POST">
+		<div class="form-group">
+			<input class="form-control-file" type="file" name="file" multiple="multiple">
+			<sub>Attach multiple files using Control+Click or Cmd+Click</sub>
+		</div>
+		<div class="form-group">
+			<button class="btn btn-success float-right" id="submit-files">Upload</button>
+		</div>
+	</form>
+</div>

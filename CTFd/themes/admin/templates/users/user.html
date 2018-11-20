@@ -1,0 +1,355 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div id="user-info-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Edit User</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				{% include "admin/modals/users/create.html" %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="user-award-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Award User</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				{% include "admin/modals/awards/create.html" %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="user-email-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Email User</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				{% include "admin/modals/mail/send.html" %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="jumbotron">
+	<div class="container">
+		<h1 id="team-id" class="text-center p-0 m-0">{{ user.name }}</h1>
+		<div class="mb-2">
+			{% if user.type == 'admin' %}
+				<span class="badge badge-primary">admin</span>
+			{% endif %}
+			{% if user.verified %}
+				<span class="badge badge-success">verified</span>
+			{% endif %}
+			{% if user.hidden %}
+				<span class="badge badge-danger">hidden</span>
+			{% endif %}
+			{% if user.banned %}
+				<span class="badge badge-danger">banned</span>
+			{% endif %}
+		</div>
+
+		<h2 id="team-email" class="text-center">{{ user.email }}</h2>
+		{% if user.oauth_id %}
+			<a href="https://majorleaguecyber.org/u/{{ user.name }}">
+				<h3><span class="badge badge-primary">Official</span></h3>
+			</a>
+		{% endif %}
+
+		{% if user.team_id %}
+			<h2 id="team-acc" class="text-center">
+				<a href="{{ url_for('admin.teams_detail', team_id=user.team_id) }}">{{ user.team.name }}</a>
+			</h2>
+		{% endif %}
+
+		<h3 id="team-place" class="text-center">
+			{% if place %}
+				{{ place }}
+				<small>place</small>
+			{% endif %}
+		</h3>
+		<h3 id="team-score" class="text-center">
+			{% if score %}
+				{{ score }}
+				<small>points</small>
+			{% endif %}
+		</h3>
+		<div class="pt-3">
+			<a class="edit-user">
+				<i class="btn-fa fas fa-user-edit fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Edit User"></i>
+			</a>
+			<a class="award-user">
+				<i class="btn-fa fas fa-trophy fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Award User"></i>
+			</a>
+			<a class="email-user">
+				<i class="btn-fa fas fa-envelope fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Email User"></i>
+			</a>
+			<a class="delete-user">
+				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Delete User"></i>
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		{% if solves %}
+			<div id="keys-pie-graph" class="col-md-6">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
+			<div id="categories-pie-graph" class="col-md-6">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
+			<div id="score-graph" class="col-md-12">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
+		{% else %}
+			<h3 class="spinner-error text-center w-100">No solves yet</h3>
+		{% endif %}
+	</div>
+
+
+	<nav class="nav nav-tabs nav-fill pt-5" id="myTab" role="tablist">
+		<a class="nav-item nav-link active" id="nav-solves-tab" data-toggle="tab" href="#nav-solves" role="tab"
+		   aria-controls="nav-solves" aria-selected="true">Solves</a>
+
+		<a class="nav-item nav-link" id="nav-wrong-tab" data-toggle="tab" href="#nav-wrong" role="tab"
+		   aria-controls="nav-wrong" aria-selected="false">Fails</a>
+
+		<a class="nav-item nav-link" id="nav-awards-tab" data-toggle="tab" href="#nav-awards" role="tab"
+		   aria-controls="nav-awards" aria-selected="false">Awards</a>
+
+		<a class="nav-item nav-link" id="nav-missing-tab" data-toggle="tab" href="#nav-missing" role="tab"
+		   aria-controls="nav-missing" aria-selected="false">Missing</a>
+	</nav>
+
+	<div class="tab-content" id="nav-tabContent">
+		<div class="tab-pane fade show active" id="nav-solves" role="tabpanel" aria-labelledby="nav-solves-tab">
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped">
+					<h3 class="text-center py-3 d-block">Solves</h3>
+					<thead>
+					<tr>
+						<td class="text-center"><b>Challenge</b></td>
+						<td class="text-center"><b>Submitted</b></td>
+						<td class="text-center"><b>Category</b></td>
+						<td class="text-center"><b>Value</b></td>
+						<td class="text-center"><b>Time</b></td>
+						<td class="text-center"><b>Delete</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for solve in solves %}
+						<tr class="chal-solve">
+							<td class="text-center chal" id="{{ solve.challenge_id }}">{{ solve.challenge.name }}</td>
+							<td class="flag" id="{{ solve.id }}"><pre>{{ solve.provided }}</pre></td>
+							<td class="text-center">{{ solve.challenge.category }}</td>
+							<td class="text-center">{{ solve.challenge.value }}</td>
+							<td class="text-center solve-time">
+								<script>document.write(moment("{{ solve.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+							</td>
+							<td class="text-center">
+								<span class="delete-submission" submission-id="{{ solve.id }}"
+									  submission-type="{{ solve.type }}" submission-challenge="{{ solve.challenge.name }}" data-toggle="tooltip"
+									  data-placement="top" title="Delete solve #{{ solve.id }}">
+									<i class="btn-fa fas fa-times"></i>
+								</span>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="nav-wrong" role="tabpanel" aria-labelledby="nav-wrong-tab">
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped">
+					<h3 class="text-center py-3 d-block">Fails</h3>
+					<thead>
+					<tr>
+						<td class="text-center"><b>Challenge</b></td>
+						<td class="text-center"><b>Submitted</b></td>
+						<td class="text-center"><b>Time</b></td>
+						<td class="text-center"><b>Delete</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for fail in fails %}
+						<tr class="chal-wrong">
+							<td class="text-center chal" id="{{ fail.challenge_id }}">
+								{{ fail.challenge.name }}
+							</td>
+							<td class="flag" id="{{ fail.id }}">
+								<pre>{{ fail.provided }}</pre>
+							</td>
+							<td class="text-center solve-time">
+								<script>document.write(moment("{{ fail.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+							</td>
+							<td class="text-center">
+								<a class="delete-submission" submission-id="{{ fail.id }}"
+								   submission-type="{{ fail.type }}" submission-challenge="{{ fail.challenge.name }}" data-toggle="tooltip"
+									  data-placement="top" title="Delete fail #{{ fail.id }}">
+									<i class="fas fa-times"></i>
+								</a>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="nav-awards" role="tabpanel" aria-labelledby="nav-awards-tab">
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped">
+						<h3 class="text-center py-3 d-block">Awards</h3>
+						<thead>
+						<tr>
+							<td class="text-center"><b>Name</b></td>
+							<td class="text-center"><b>Description</b></td>
+							<td class="text-center"><b>Date</b></td>
+							<td class="text-center"><b>Value</b></td>
+							<td class="text-center"><b>Category</b></td>
+							<td class="text-center"><b>Icon</b></td>
+							<td class="text-center"><b>Delete</b></td>
+						</tr>
+						</thead>
+						<tbody id="awards-body">
+						{% for award in awards %}
+							<tr class="award-row">
+								<td class="text-center chal" id="{{ award.id }}">{{ award.name }}</td>
+								<td class=""><pre>{{ award.description }}</pre></td>
+								<td class="text-center solve-time">
+									<script>document.write(moment("{{ award.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+								</td>
+								<td class="text-center">{{ award.value }}</td>
+								<td class="text-center">{{ award.category }}</td>
+								<td class="text-center">{{ award.icon }}</td>
+
+								<td class="text-center">
+									<span class="delete-award" data-toggle="tooltip"
+										  data-placement="top" award-id="{{ award.id }}" award-name="{{ award.name }}"
+										  title="Delete award #{{ award.id }}">
+										<i class="fas fa-times"></i>
+									</span>
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="nav-missing" role="tabpanel" aria-labelledby="nav-missing-tab">
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped">
+					<h3 class="text-center py-3 d-block">Missing</h3>
+					<thead>
+						<tr>
+							<td class="text-center"><b>Challenge</b></td>
+							<td class="text-center"><b>Category</b></td>
+							<td class="text-center"><b>Value</b></td>
+							<td class="text-center"><b>Mark Solved</b></td>
+						</tr>
+					</thead>
+					<tbody>
+					{% for challenge in missing %}
+						<tr class="chal-solve">
+							<td class="text-center chal" id="{{ challenge.id }}">{{ challenge.name }}</td>
+							<td class="text-center">{{ challenge.category }}</td>
+							<td class="text-center">{{ challenge.value }}</td>
+							<td class="text-center">
+								<a class="correct-submission" data-toggle="tooltip" challenge-id="{{ challenge.id }}"
+									  challenge-name="{{ challenge.name }}"
+									  data-placement="top" title="Mark {{ challenge.name }} correct for {{ user.name }}">
+									<i class="fas fa-check"></i>
+								</a>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row pt-5">
+		<div class="col-md-12">
+			<table class="table table-striped">
+				<h3 class="text-center">IP Addresses</h3>
+				<thead>
+				<tr>
+					<td class="text-center"><b>IP Address</b></td>
+					<td class="text-center"><b>Last Seen</b></td>
+				</tr>
+				</thead>
+				<tbody>
+				{% for addr in addrs %}
+					<tr>
+						<td class="text-center">{{ addr[0] }}</td>
+						<td class="text-center solve-time">
+							<script>document.write(moment("{{ addr[1]|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+var USER_ID = {{ user.id }};
+var USER_NAME = {{ user.name | tojson }};
+var TEAM_ID = {{ user.team_id | tojson }};
+</script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/plotly.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/users/user.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/users/info.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/users/actions.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/users/graphs.js') }}"></script>
+<script>
+
+</script>
+{% endblock %}

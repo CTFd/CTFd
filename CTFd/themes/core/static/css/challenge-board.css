@@ -4,6 +4,11 @@
     font-size: 14px;
 }
 
+.chal-desc img {
+    max-width: 100%;
+    height: auto;
+}
+
 .modal-content {
     border-radius: 0px;
     max-width: 1000px;

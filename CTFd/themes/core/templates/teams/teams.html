@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Teams</h1>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<td><b>Team</b></td>
+						<td><b>Website</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Affiliation</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Country</b></td>
+					</tr>
+				</thead>
+				<tbody>
+				{% for team in teams %}
+					<tr>
+						<td>
+						{% if scores_visible() %}
+							<a href="{{ url_for('teams.public', team_id=team.id) }}">{{ team.name | truncate(50) }}</a>
+						{% else %}
+							<span>{{ team.name | truncate(50) }}</span>
+						{% endif %}
+						{% if team.oauth_id %}
+							<a href="https://majorleaguecyber.org/t/{{ team.name }}">
+								<span class="badge badge-primary">Official</span>
+							</a>
+						{% endif %}
+						</td>
+						<td class="text-center" style="width: 10px;">
+							{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
+								<a href="{{ team.website }}" target="_blank">
+									<i class="fas fa-external-link-alt" data-toggle="tooltip" data-placement="top" title="{{ team.website }}"></i>
+								</a>
+							{% endif %}
+						</td>
+						<td class="d-none d-md-table-cell d-lg-table-cell">
+							{% if team.affiliation %}
+								{% if team.affiliation | length > 50 %}
+								<span data-toggle="tooltip" data-placement="top" title="{{ team.affiliation }}">
+									{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
+								</span>
+								{% else %}
+								<span>
+									{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
+								</span>
+								{% endif %}
+							{% endif %}
+						</td>
+						<td class="d-none d-md-table-cell d-lg-table-cell">
+							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% if pages > 1 %}
+	<div class="row">
+		<div class="col-md-12">
+			<div class="text-center">Page
+				<br>
+				{% if curr_page != 1 %}
+					<a href="{{ url_for('teams.listing', page=curr_page-1) }}">
+						&lt;&lt;&lt;
+					</a>
+				{% endif %}
+				{% for page in range(1, pages + 1) %}
+					{% if curr_page != page %}
+						<a href="{{ url_for('teams.listing', page=page) }}">{{ page }}</a>
+					{% else %}
+						<b>{{page}}</b>
+					{% endif %}
+				{% endfor %}
+				{% if curr_page != pages %}
+					<a href="{{ url_for('teams.listing', page=curr_page + 1) }}">
+						&gt;&gt;&gt;
+					</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

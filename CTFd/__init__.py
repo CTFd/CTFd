@@ -3,27 +3,35 @@ import os
 
 from distutils.version import StrictVersion
 from flask import Flask
+from werkzeug.contrib.fixers import ProxyFix
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
-from CTFd.utils import cache, migrate, migrate_upgrade, migrate_stamp, update_check
 from CTFd import utils
+from CTFd.utils.migrations import migrations, migrate, upgrade, stamp, create_database
+from CTFd.utils.sessions import CachingSessionInterface
+from CTFd.utils.updates import update_check
+from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals
+from CTFd.utils.events import socketio
+from CTFd.plugins import init_plugins
 
 # Hack to support Unicode in Python 2 properly
 if sys.version_info[0] < 3:
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
-__version__ = '1.2.0'
+__version__ = '2.0.0'
 
 
 class CTFdFlask(Flask):
     def __init__(self, *args, **kwargs):
         """Overriden Jinja constructor setting a custom jinja_environment"""
         self.jinja_environment = SandboxedBaseEnvironment
+        self.jinja_environment.cache = None
+        self.session_interface = CachingSessionInterface(key_prefix='session')
         Flask.__init__(self, *args, **kwargs)
 
     def create_jinja_environment(self):
@@ -78,7 +86,7 @@ def confirm_upgrade():
 
 
 def run_upgrade():
-    migrate_upgrade()
+    upgrade()
     utils.set_config('ctf_version', __version__)
 
 
@@ -90,21 +98,9 @@ def create_app(config='CTFd.config.Config'):
         theme_loader = ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True)
         app.jinja_loader = theme_loader
 
-        from CTFd.models import db, Teams, Solves, Challenges, WrongKeys, Keys, Tags, Files, Tracking
+        from CTFd.models import db, Teams, Solves, Challenges, Fails, Flags, Tags, Files, Tracking
 
-        url = make_url(app.config['SQLALCHEMY_DATABASE_URI'])
-        if url.drivername == 'postgres':
-            url.drivername = 'postgresql'
-
-        if url.drivername.startswith('mysql'):
-            url.query['charset'] = 'utf8mb4'
-
-        # Creates database if the database database does not exist
-        if not database_exists(url):
-            if url.drivername.startswith('mysql'):
-                create_database(url, encoding='utf8mb4')
-            else:
-                create_database(url)
+        url = create_database()
 
         # This allows any changes to the SQLALCHEMY_DATABASE_URI to get pushed back in
         # This is mostly so we can force MySQL's charset
@@ -114,32 +110,37 @@ def create_app(config='CTFd.config.Config'):
         db.init_app(app)
 
         # Register Flask-Migrate
-        migrate.init_app(app, db)
+        migrations.init_app(app, db)
 
         # Alembic sqlite support is lacking so we should just create_all anyway
         if url.drivername.startswith('sqlite'):
             db.create_all()
+            stamp()
         else:
-            if len(db.engine.table_names()) == 0:
-                # This creates tables instead of db.create_all()
-                # Allows migrations to happen properly
-                migrate_upgrade()
-            elif 'alembic_version' not in db.engine.table_names():
-                # There is no alembic_version because CTFd is from before it had migrations
-                # Stamp it to the base migration
-                if confirm_upgrade():
-                    migrate_stamp(revision='cb3cfcc47e2f')
-                    run_upgrade()
-                else:
-                    exit()
+            # This creates tables instead of db.create_all()
+            # Allows migrations to happen properly
+            upgrade()
+
+        from CTFd.models import ma
+
+        ma.init_app(app)
 
         app.db = db
         app.VERSION = __version__
 
+        from CTFd.cache import cache
+
         cache.init_app(app)
         app.cache = cache
 
-        update_check(force=True)
+        # If you have multiple workers you must have a shared cache
+        socketio.init_app(
+            app,
+            message_queue=app.config.get('CACHE_REDIS_URL')
+        )
+
+        if app.config.get('REVERSE_PROXY'):
+            app.wsgi_app = ProxyFix(app.wsgi_app)
 
         version = utils.get_config('ctf_version')
 
@@ -156,31 +157,39 @@ def create_app(config='CTFd.config.Config'):
         if not utils.get_config('ctf_theme'):
             utils.set_config('ctf_theme', 'core')
 
+        update_check(force=True)
+
+        init_request_processors(app)
+        init_template_filters(app)
+        init_template_globals(app)
+
+        # Importing here allows tests to use sensible names (e.g. api instead of api_bp)
         from CTFd.views import views
+        from CTFd.teams import teams
+        from CTFd.users import users
         from CTFd.challenges import challenges
         from CTFd.scoreboard import scoreboard
         from CTFd.auth import auth
-        from CTFd.admin import admin, admin_statistics, admin_challenges, admin_pages, admin_scoreboard, admin_keys, admin_teams
-        from CTFd.utils import init_utils, init_errors, init_logs
-
-        init_utils(app)
-        init_errors(app)
-        init_logs(app)
+        from CTFd.admin import admin
+        from CTFd.api import api
+        from CTFd.events import events
+        from CTFd.errors import page_not_found, forbidden, general_error, gateway_error
 
         app.register_blueprint(views)
+        app.register_blueprint(teams)
+        app.register_blueprint(users)
         app.register_blueprint(challenges)
         app.register_blueprint(scoreboard)
         app.register_blueprint(auth)
+        app.register_blueprint(api)
+        app.register_blueprint(events)
 
         app.register_blueprint(admin)
-        app.register_blueprint(admin_statistics)
-        app.register_blueprint(admin_challenges)
-        app.register_blueprint(admin_teams)
-        app.register_blueprint(admin_scoreboard)
-        app.register_blueprint(admin_keys)
-        app.register_blueprint(admin_pages)
 
-        from CTFd.plugins import init_plugins
+        app.register_error_handler(404, page_not_found)
+        app.register_error_handler(403, forbidden)
+        app.register_error_handler(500, general_error)
+        app.register_error_handler(502, gateway_error)
 
         init_plugins(app)
 

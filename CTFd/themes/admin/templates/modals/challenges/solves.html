@@ -1,0 +1,22 @@
+<table class="table table-striped text-center">
+	<thead>
+		<tr>
+			<td><b>Name</b></td>
+			<td><b>Date</b></td>
+		</tr>
+	</thead>
+	<tbody id="challenge-solves-body">
+		{% if solves is defined %}
+			{% for solve in solves %}
+				<tr>
+					<td>{{ solve.account.name }}</td>
+					<td>
+						<script>
+							document.write(moment("{{ solve.date | isoformat }}").local().format('MMMM Do, h:mm:ss A'))
+						</script>
+					</td>
+				</tr>
+			{% endfor %}
+		{% endif %}
+	</tbody>
+</table>

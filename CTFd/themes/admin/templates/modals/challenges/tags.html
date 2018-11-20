@@ -1,0 +1,18 @@
+<div class="col-md-12">
+	<div id="challenge-tags" class="my-3">
+		{% for tag in challenge.tags %}
+		<span class='badge badge-primary mx-1 challenge-tag'>
+			<span>{{ tag.value }}</span>
+			<a tag-id="{{ tag.id }}" class='btn-fa delete-tag' onclick="delete_tag(this)"> &#215;</a>
+		</span>
+		{% endfor %}
+	</div>
+
+	<div class="form-group">
+		<label>Tag
+			<br>
+			<small>Type tag and press Enter</small>
+		</label>
+		<input id="tags-add-input" maxlength="80" type="text" class="form-control">
+	</div>
+</div>

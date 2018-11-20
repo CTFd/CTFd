@@ -1,0 +1,62 @@
+<div role="tabpanel" class="tab-pane config-section" id="accounts">
+	<form method="POST" autocomplete="off" class="w-100">
+
+		<div class="form-group">
+			<label>
+				Account Email Whitelist
+				<small class="form-text text-muted">
+					Comma-seperated email domains which users can register under.
+				</small>
+			</label>
+			<input class="form-control" id='domain-whitelist' name='domain_whitelist' type='text'
+				   placeholder=""
+				   {% if domain_whitelist is defined and domain_whitelist != None %}value="{{ domain_whitelist }}"{% endif %}>
+			<small class="form-text text-muted">
+				e.g. ctfd.io,gmail.com,yahoo.com
+			</small>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Verify Emails<br>
+				<small class="form-text text-muted">
+					Control whether users must confirm their email addresses before playing
+				</small>
+			</label>
+			<select class="form-control" name="verify_emails">
+				<option value="true" {% if verify_emails == True %}selected{% endif %}>Enabled</option>
+				<option value="false" {% if verify_emails == False %}selected{% endif %}>Disabled</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Team Name Changes<br>
+				<small class="form-text text-muted">
+					Control whether users can change their names
+				</small>
+			</label>
+			<select class="form-control" name="name_changes">
+				<option value="true" {% if name_changes== True %}selected{% endif %}>Enabled</option>
+				<option value="false" {% if name_changes == False %}selected{% endif %}>Disabled</option>
+			</select>
+		</div>
+
+{#		<div class="form-check">#}
+{#			<label>#}
+{#				<input id="verify_emails" name="verify_emails" type="checkbox" {% if verify_emails %}checked{% endif %}>#}
+{#				Only allow users with verified emails#}
+{#			</label>#}
+{#		</div>#}
+
+{#		<div class="form-check">#}
+{#			<label>#}
+{#				<input id="prevent_name_change" name="prevent_name_change" type="checkbox"#}
+{#					   {% if prevent_name_change %}checked{% endif %}>#}
+{#				Prevent team name changes#}
+{#			</label>#}
+{#		</div>#}
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+</div>

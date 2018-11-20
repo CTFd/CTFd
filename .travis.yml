@@ -2,19 +2,30 @@ language: python
 services:
     - mysql
     - postgresql
+addons:
+  apt:
+    sources:
+    - mysql-5.7-trusty
+    packages:
+    - mysql-server
+    - mysql-client
 env:
-    - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
+    - TESTING_DATABASE_URL='mysql+pymysql://root:password@localhost/ctfd'
     - TESTING_DATABASE_URL='sqlite://'
     - TESTING_DATABASE_URL='postgres://postgres@localhost/ctfd'
 python:
     - 2.7
     - 3.6
+before_install:
+    - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('password') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
+    - sudo mysql_upgrade -u root -ppassword
+    - sudo service mysql restart
 install:
     - pip install -r development.txt
 before_script:
     - psql -c 'create database ctfd;' -U postgres
 script:
-    - pep8 --ignore E501,E712 CTFd/ tests/
+    - pycodestyle --ignore E501,E712,E402 CTFd/ tests/
     - nosetests -v -d --with-randomly
 after_success:
     - codecov

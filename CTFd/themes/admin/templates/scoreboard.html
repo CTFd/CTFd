@@ -19,22 +19,35 @@
 					</tr>
 				</thead>
 				<tbody>
-				{% for team in teams %}
+				{% for standing in standings %}
 					<tr>
 						<td>{{ loop.index }}</td>
-						<td><a href="{{ request.script_root }}/admin/team/{{ team.teamid }}">{{ team.name }}</a></td>
-						<td>{{ team.score }}</td>
 						<td>
-						{% if not team.banned %}
-						<form method="POST" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/ban">
-							<button class="btn-sm btn-success cursor-pointer" type="submit">Visible</button>
-							<input type="hidden" value="{{ nonce }}" name="nonce">
-						</form>
-						{%else %}
-						<form method="POST" action="{{ request.script_root }}/admin/team/{{ team.teamid }}/unban">
-							<button class="btn-sm btn-danger cursor-pointer" type="submit">Hidden</button>
-							<input type="hidden" value="{{ nonce }}" name="nonce">
-						</form>
+							<a href="{{ generate_account_url(standing.account_id, admin=True) }}">
+								{{ standing.name }}
+								{% if standing.oauth_id %}
+									{% if get_config('user_mode') == 'teams' %}
+										<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
+											<span class="badge badge-primary">Official</span>
+										</a>
+									{% elif get_config('user_mode') == 'users' %}
+										<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
+											<span class="badge badge-primary">Official</span>
+										</a>
+									{% endif %}
+								{% endif %}
+							</a>
+						</td>
+						<td>{{ standing.score }}</td>
+						<td>
+						{% if standing.hidden %}
+							<button class="btn-sm btn-danger cursor-pointer" type="submit"
+									onclick="toggle_account(this)" team-id="{{ standing.account_id }}" state="hidden">Hidden
+							</button>
+						{% else %}
+							<button class="btn-sm btn-success cursor-pointer" type="submit"
+									onclick="toggle_account(this)" team-id="{{ standing.account_id }}" state="visible">Visible
+							</button>
 						{% endif %}
 						</td>
 					</tr>
@@ -47,4 +60,5 @@
 {% endblock %}
 
 {% block scripts %}
+	<script src="{{ url_for('views.themes', theme='admin', path='js/scoreboard/scoreboard.js') }}"></script>
 {% endblock %}

@@ -21,6 +21,21 @@ var progress = '<div class="progress">' +
     '  </div>' +
     '</div>';
 
+
+var error_template = "<div class=\"alert alert-danger alert-dismissable\" role=\"alert\">\n" +
+    "  <span class=\"sr-only\">Error:</span>\n" +
+    "  \{0\}\n" +
+    "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n" +
+    "</div>";
+
+
+var success_template = "<div class=\"alert alert-success alert-dismissable submit-row\" role=\"alert\">\n" +
+    "  <strong>Success!</strong>\n" +
+    "  \{0\}\n" +
+    "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\n" +
+    "</div>";
+
+
 function ezal(args){
     var res = modal.format(args.title, args.body);
     var obj = $(res);
@@ -70,4 +85,19 @@ function ezpg(args){
     $('main').append(obj);
 
     return obj.modal('show');
+}
+
+function ezbadge(args) {
+    var type = args.type;
+    var body = args.body;
+    var tpl = undefined;
+    if (type === 'success') {
+        tpl = success_template;
+    } else if (type === 'error') {
+        tpl = error_template;
+    }
+
+    tpl = tpl.format(body);
+    var obj = $(tpl);
+    return obj;
 }

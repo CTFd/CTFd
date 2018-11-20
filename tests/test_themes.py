@@ -31,13 +31,13 @@ def test_themes_escape_html():
     """Themes should escape XSS properly"""
     app = create_ctfd()
     with app.app_context():
-        team = gen_team(app.db, name="<script>alert(1)</script>")
-        team.affiliation = "<script>alert(1)</script>"
-        team.website = "<script>alert(1)</script>"
-        team.country = "<script>alert(1)</script>"
+        user = gen_user(app.db, name="<script>alert(1)</script>")
+        user.affiliation = "<script>alert(1)</script>"
+        user.website = "<script>alert(1)</script>"
+        user.country = "<script>alert(1)</script>"
 
         with app.test_client() as client:
-            r = client.get('/teams')
+            r = client.get('/users')
             assert r.status_code == 200
             assert "<script>alert(1)</script>" not in r.get_data(as_text=True)
     destroy_ctfd(app)

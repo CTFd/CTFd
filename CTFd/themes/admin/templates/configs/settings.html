@@ -1,0 +1,94 @@
+<div role="tabpanel" class="tab-pane config-section" id="settings">
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			<label>
+				Challenge Visibility<br>
+				<small class="form-text text-muted">
+					Control whether users must be logged in to see challenges
+				</small>
+			</label>
+			<select class="form-control" name="challenge_visibility">
+				<option value="public" {% if challenge_visibility == 'public' %}selected{% endif %}>
+					Public
+				</option>
+				<option value="private" {% if challenge_visibility == 'private' %}selected{% endif %}>
+					Private
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Score Visibility<br>
+				<small class="form-text text-muted">
+					Control whether solves/score are shown to the public, to logged in users, hidden to all non-admins, or only shown to admins
+				</small>
+			</label>
+			<select class="form-control" name="score_visibility">
+				<option value="public" {% if score_visibility == 'public' %}selected{% endif %}>
+					Public
+				</option>
+				<option value="private" {% if score_visibility == 'private' %}selected{% endif %}>
+					Private
+				</option>
+				<option value="hidden" {% if score_visibility == 'hidden' %}selected{% endif %}>
+					Hidden
+				</option>
+				<option value="admins" {% if score_visibility == 'admins' %}selected{% endif %}>
+					Admins Only
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Account Visibility<br>
+				<small class="form-text text-muted">
+					Control whether accounts (users &amp; teams) are shown to everyone or only to admins
+				</small>
+			</label>
+			<select class="form-control" name="account_visibility">
+				<option value="public" {% if account_visibility == 'public' %}selected{% endif %}>
+					Public
+				</option>
+				<option value="private" {% if account_visibility == 'private' %}selected{% endif %}>
+					Private
+				</option>
+				<option value="admins" {% if account_visibility == 'admins' %}selected{% endif %}>
+					Admins Only
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Registration Visibility<br>
+				<small class="form-text text-muted">
+					Control whether registration is enabled for everyone or disabled
+				</small>
+			</label>
+			<select class="form-control" name="registration_visibility">
+				<option value="public" {% if registration_visibility == 'public' %}selected{% endif %}>
+					Public
+				</option>
+				<option value="private" {% if registration_visibility == 'private' %}selected{% endif %}>
+					Private
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<div class="form-check">
+				<label>
+					<input id="paused" name="paused" type="checkbox" {% if paused %}checked{% endif %}>
+					Pause CTF<br>
+					<small>
+						Prevent users from submitting answers until unpaused. Challenges can still be viewed.
+					</small>
+				</label>
+			</div>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+</div>
