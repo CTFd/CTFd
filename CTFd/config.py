@@ -194,6 +194,12 @@ class Config(object):
     OAUTH_CLIENT_ID = None
     OAUTH_CLIENT_SECRET = None
 
+    '''
+    APPLICATION_ROOT specifies what path CTFd is mounted under. It can be used to run CTFd in a subdirectory.
+    Example: /ctfd
+    '''
+    APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT') or '/'
+
 
 class TestingConfig(Config):
     SECRET_KEY = 'AAAAAAAAAAAAAAAAAAAA'
