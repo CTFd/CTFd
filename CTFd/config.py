@@ -195,7 +195,6 @@ class Config(object):
     UPDATE_CHECK = True
     APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT') or '/'
 
-
     '''
     === OAUTH ===
 
