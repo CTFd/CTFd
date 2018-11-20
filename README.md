@@ -49,8 +49,7 @@ Or you can use Docker Compose with the following command from the source reposit
 
 `docker-compose up`
 
- * [Here](https://github.com/CTFd/CTFd/wiki/Basic-Deployment) are some deployment options
- * You can check out the [Getting Started](https://github.com/CTFd/CTFd/wiki/Getting-Started) guide for a breakdown of some of the features you need to get started.
+Check out the [wiki](https://github.com/CTFd/CTFd/wiki) for [deployment options](https://github.com/CTFd/CTFd/wiki/Basic-Deployment) and the [Getting Started](https://github.com/CTFd/CTFd/wiki/Getting-Started) guide
 
 ## Live Demo
 https://demo.ctfd.io/
