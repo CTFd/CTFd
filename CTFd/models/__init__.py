@@ -729,7 +729,7 @@ class Unlocks(db.Model):
             return self.user_id
 
     def __repr__(self):
-        return '<Unlock %r>' % self.teamid
+        return '<Unlock %r>' % self.id
 
 
 class HintUnlocks(Unlocks):
@@ -756,7 +756,7 @@ class Tracking(db.Model):
         super(Tracking, self).__init__(**kwargs)
 
     def __repr__(self):
-        return '<Tracking %r>' % self.team
+        return '<Tracking %r>' % self.ip
 
 
 class Configs(db.Model):

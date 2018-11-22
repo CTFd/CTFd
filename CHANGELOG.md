@@ -1,3 +1,72 @@
+2.0.0 / 2018-11-22
+==================
+
+2.0.0 is a significant change. 
+If you are upgrading from a prior version be sure to make backups before upgrading.
+
+In addition, 2.0.0 is a backwards-incompatible release. Many plugins will be broken in CTFd 2.0.0, and if you're having 
+trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io/) for help and discussion.
+
+**General**
+
+* Seperation of Teams into Users and Teams.
+* Integration with MajorLeagueCyber. (https://majorleaguecyber.org)
+* Data is now provided to the front-end via the REST API. (#551)
+    * Javascript uses `fetch()` to consume the REST API.
+* Dynamic Challenges built in. 
+* S3 Uploader built in. (#661)
+* Real time notifications. (#600)
+* Email address domain whitelisting. (#603)
+* Database exporting to CSV. (#656)
+* Imports/Exports rewritten to act as backups.
+    * Importing no longer stacks values.
+    * Exports are no longer partial.
+* Reset CTF from config panel (Remove all users, solves, fails. i.e. only keep Challenge data.) (#639)
+* Countries are pre-determined and selectable instead of being user-entered.
+    * Countries stored based on country code.
+    * Based on https://github.com/umpirsky/country-list/blob/master/data/en_US/country.csv.
+* Sessions are no longer stored using secure cookies. (#658)
+    * Sessions are now stored server side in a cache (`filesystem` or `redis`) allowing for session revocation.
+* Challenges can now have requirements which must be met before the challenge can be seen/solved.
+* Workshop mode, score hiding, registration hiding, challenge hiding have been changed to visibility settings.
+* Users and Teams can now be banned preventing access to the CTF.
+* Dockerfile improvements.
+    * WORKERS count in `docker-entrypoint.sh` defaults to 1. (#716)
+    * `docker-entrypoint.sh` exits on any error. (#717)
+* Increased test coverage.
+* Migrations have been reset. 
+    * If upgrading from 1.2.0:
+        1. Make all necessary backups. Backup the database, uploads folder, and source code directory.
+        2. Upgrade the source code directory.
+        3. Set the `DATABASE_URL` in `CTFd/config.py`.
+        3. Run the upgrade script from the CTFd folder i.e. `python migrations/1_2_0_upgrade_2_0_0.py`.
+        4. Setup the rest of CTFd and run normally.
+
+**Themes**
+
+* Data is now provided to the front-end via the REST API.
+    * Javascript uses `fetch()` to consume the REST API.
+* The admin theme is no longer considered seperated from the core theme and should always be together.
+* Themes now use `url_for()` to generate URLs instead of hardcoding.
+* socket.io is used to connect to CTFd to receive notifications.
+* `ctf_name()` renamed to `get_ctf_name()` in themes.
+* `ctf_logo()` renamed to `get_ctf_logo()` in themes.
+* `ctf_theme()` renamed to `get_ctf_theme()` in themes.
+* Update Font-Awesome to 5.4.1.
+* Update moment.js to 2.22.2. (#704)
+
+**Plugins**
+
+* Plugins are loaded in `sorted()` order
+* Rename challenge type plugins to use .html and have simplified names. (create, update, view)
+* Many functions moved around because utils.py has been broken up and refactored. (#475)
+* Marshmallow (https://marshmallow.readthedocs.io) is now used by the REST API to validate and serialize/deserialize data.
+    * Marshmallow schemas and views are used to restrict SQLAlchemy columns to user types. 
+* The REST API features swagger support but this requires more utilization internally.
+* Email registration regex relaxed. (#693)
+* Many functions have moved and now have dedicated utils packages for their category.
+
+
 1.2.0 / 2018-05-04
 ==================
 
