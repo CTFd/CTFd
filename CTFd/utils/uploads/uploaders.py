@@ -77,7 +77,7 @@ class S3Uploader(BaseUploader):
         )
         return client
 
-    def _clean_filename(c):
+    def _clean_filename(self, c):
         if c in string.ascii_letters + string.digits + '-' + '_' + '.':
             return True
 
