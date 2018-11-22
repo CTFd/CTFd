@@ -165,10 +165,10 @@ class Config(object):
         UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or \
             os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
     elif UPLOAD_PROVIDER == 's3':
-        AWS_ACCESS_KEY_ID = None
-        AWS_SECRET_ACCESS_KEY = None
-        AWS_S3_BUCKET = None
-        AWS_S3_ENDPOINT_URL = None
+        AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID') or ''
+        AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY') or ''
+        AWS_S3_BUCKET = os.environ.get('AWS_S3_BUCKET') or ''
+        AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL') or ''
 
     '''
     === OPTIONAL ===
