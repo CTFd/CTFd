@@ -373,7 +373,9 @@ if __name__ == '__main__':
     tables = old_conn.tables
     for table in tables:
         old_data[table] = old_conn[table].all()
-    old_data.pop('alembic_version')
+
+    if 'alembic_version' in old_data:
+        old_data.pop('alembic_version')
 
     print('Current Tables:')
     for table in old_data.keys():
@@ -399,7 +401,7 @@ if __name__ == '__main__':
     for team in old_data['teams']:
         admin = team.pop('admin')
         team['type'] = 'admin' if admin else 'user'
-        type['hidden'] = team.pop('banned')
+        team['hidden'] = team.pop('banned')
         new_conn['users'].insert(dict(team))
     del old_data['teams']
 
