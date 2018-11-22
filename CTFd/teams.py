@@ -9,6 +9,7 @@ from CTFd.utils.user import get_current_user, authed, get_ip
 from CTFd.utils.dates import unix_time_to_utc
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
+from CTFd.utils.helpers import get_errors, get_infos
 
 teams = Blueprint('teams', __name__)
 
@@ -65,7 +66,7 @@ def new():
     elif request.method == 'POST':
         teamname = request.form.get('name')
         passphrase = request.form.get('password', '').strip()
-        errors = []
+        errors = get_errors()
 
         user = get_current_user()
 
@@ -127,7 +128,7 @@ def private():
 @check_score_visibility
 @require_team_mode
 def public(team_id):
-    errors = []
+    errors = get_errors()
     team = Teams.query.filter_by(id=team_id).first_or_404()
     solves = team.get_solves()
     awards = team.get_awards()

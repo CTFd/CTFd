@@ -105,7 +105,7 @@ def reset_password(data=None):
         email_address = request.form['email'].strip()
         team = Users.query.filter_by(email=email_address).first()
 
-        errors = []
+        errors = get_errors()
 
         if config.can_send_mail() is False:
             return render_template(

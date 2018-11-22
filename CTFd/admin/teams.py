@@ -1,11 +1,10 @@
 from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
 from CTFd.utils.decorators import admins_only, ratelimit
 from CTFd.models import db, Teams, Solves, Awards, Unlocks, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Configs
-from passlib.hash import bcrypt_sha256
-from sqlalchemy.sql import not_
-
-from CTFd import utils
 from CTFd.admin import admin
+from CTFd.utils.helpers import get_errors, get_infos
+
+from sqlalchemy.sql import not_
 
 
 @admin.route('/admin/teams')
@@ -16,7 +15,7 @@ def teams_listing():
     if q:
         field = request.args.get('field')
         teams = []
-        errors = []
+        errors = get_errors()
         if field == 'id':
             if q.isnumeric():
                 teams = Teams.query.filter(Teams.id == q).order_by(Teams.id.asc()).all()

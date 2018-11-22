@@ -3,10 +3,10 @@ from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only, ratelimit
 from CTFd.utils.modes import USERS_MODE, TEAMS_MODE
 from CTFd.models import db, Users, Challenges, Tracking
-from sqlalchemy.sql import not_
-
-from CTFd import utils
 from CTFd.admin import admin
+from CTFd.utils.helpers import get_errors, get_infos
+
+from sqlalchemy.sql import not_
 
 
 @admin.route('/admin/users')
@@ -17,7 +17,7 @@ def users_listing():
     if q:
         field = request.args.get('field')
         users = []
-        errors = []
+        errors = get_errors()
         if field == 'id':
             if q.isnumeric():
                 users = Users.query.filter(Users.id == q).order_by(Users.id.asc()).all()
