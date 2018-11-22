@@ -1,0 +1,30 @@
+<div role="tabpanel" class="tab-pane config-section" id="mlc">
+	<form method="POST" autocomplete="off" class="w-100">
+
+		<div class="form-group">
+			<label>
+				Client ID
+				<small class="form-text text-muted">
+					OAuth Client ID for <a href="https://majorleaguecyber.org/">MajorLeagueCyber</a> integration.
+				</small>
+			</label>
+			<input class="form-control" id='oauth_client_id' name='oauth_client_id' type='text'
+				   placeholder=""
+				   {% if oauth_client_id is defined and oauth_client_id != None %}value="{{ oauth_client_id }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Client Secret
+				<small class="form-text text-muted">
+					OAuth Client Secret for <a href="https://majorleaguecyber.org/">MajorLeagueCyber</a> integration.
+				</small>
+			</label>
+			<input class="form-control" id='oauth_client_secret' name='oauth_client_secret' type='text'
+				   placeholder=""
+				   {% if oauth_client_secret is defined and oauth_client_secret != None %}value="{{ oauth_client_secret }}"{% endif %}>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+</div>

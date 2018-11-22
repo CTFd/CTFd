@@ -69,7 +69,7 @@ def test_user_can_unlock_hint():
 
                 r = client.get('/api/v1/hints/{}'.format(hint_id))
                 resp = r.get_json()
-                assert resp['data'].get('content')
+                assert resp['data'].get('content') == "This is a hint"
 
                 user = Users.query.filter_by(name="user1").first()
                 assert user.score == 5

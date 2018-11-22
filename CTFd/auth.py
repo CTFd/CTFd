@@ -1,4 +1,12 @@
-from flask import current_app as app, render_template, request, redirect, url_for, session, Blueprint, abort
+from flask import (
+    current_app as app,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    Blueprint,
+)
 from passlib.hash import bcrypt_sha256
 
 from CTFd.models import db, Users, Teams
@@ -13,6 +21,7 @@ from CTFd.utils.logging import log
 from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
 from CTFd.utils.security.signing import serialize, unserialize, SignatureExpired, BadSignature, BadTimeSignature
+from CTFd.utils.helpers import info_for, error_for, get_errors, get_infos
 
 import base64
 import requests
@@ -96,7 +105,7 @@ def reset_password(data=None):
         email_address = request.form['email'].strip()
         team = Users.query.filter_by(email=email_address).first()
 
-        errors = []
+        errors = get_errors()
 
         if config.can_send_mail() is False:
             return render_template(
@@ -123,8 +132,8 @@ def reset_password(data=None):
 @check_registration_visibility
 @ratelimit(method="POST", limit=10, interval=5)
 def register():
+    errors = get_errors()
     if request.method == 'POST':
-        errors = []
         name = request.form['name']
         email_address = request.form['email']
         password = request.form['password']
@@ -200,14 +209,14 @@ def register():
         db.session.close()
         return redirect(url_for('challenges.listing'))
     else:
-        return render_template('register.html')
+        return render_template('register.html', errors=errors)
 
 
 @auth.route('/login', methods=['POST', 'GET'])
 @ratelimit(method="POST", limit=10, interval=5)
 def login():
+    errors = get_errors()
     if request.method == 'POST':
-        errors = []
         name = request.form['name']
 
         # Check if the user submitted an email address or a team name
@@ -242,7 +251,7 @@ def login():
             return render_template('login.html', errors=errors)
     else:
         db.session.close()
-        return render_template('login.html')
+        return render_template('login.html', errors=errors)
 
 
 @auth.route('/oauth')
@@ -257,6 +266,15 @@ def oauth_login():
         scope = 'profile'
 
     client_id = get_app_config('OAUTH_CLIENT_ID') or get_config('oauth_client_id')
+
+    if client_id is None:
+        error_for(
+            endpoint='auth.login',
+            message='OAuth Settings not configured. '
+                    'Ask your CTF administrator to configure MajorLeagueCyber integration.'
+        )
+        return redirect(url_for('auth.login'))
+
     redirect_url = "{endpoint}?response_type=code&client_id={client_id}&scope={scope}&state={state}".format(
         endpoint=endpoint,
         client_id=client_id,
@@ -273,7 +291,8 @@ def oauth_redirect():
     state = request.args.get('state')
     if session['nonce'] != state:
         log('logins', "[{date}] {ip} - OAuth State validation mismatch")
-        abort(500)
+        error_for(endpoint='auth.login', message='OAuth State validation mismatch.')
+        return redirect(url_for('auth.login'))
 
     if oauth_code:
         url = get_app_config('OAUTH_TOKEN_ENDPOINT') \
@@ -341,10 +360,18 @@ def oauth_redirect():
             return redirect(url_for('challenges.listing'))
         else:
             log('logins', "[{date}] {ip} - OAuth token retrieval failure")
-            abort(500)
+            error_for(
+                endpoint='auth.login',
+                message='OAuth token retrieval failure.'
+            )
+            return redirect(url_for('auth.login'))
     else:
         log('logins', "[{date}] {ip} - Received redirect without OAuth code")
-        abort(500)
+        error_for(
+            endpoint='auth.login',
+            message='Received redirect without OAuth code.'
+        )
+        return redirect(url_for('auth.login'))
 
 
 @auth.route('/logout')

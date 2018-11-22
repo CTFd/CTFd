@@ -1,9 +1,8 @@
-from flask import render_template, request, redirect, jsonify, url_for, session, Blueprint, abort
-from CTFd.models import db, Challenges, Files, Solves, Fails, Flags, Tags, Teams, Awards, Hints, Unlocks
-from CTFd.plugins.challenges import get_chal_class
+from flask import (
+    render_template,
+    Blueprint,
+)
 from CTFd.utils.decorators import (
-    authed_only,
-    admins_only,
     during_ctf_time_only,
     require_verified_emails,
     ratelimit,
@@ -12,6 +11,7 @@ from CTFd.utils.decorators import (
 from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils import config, text_type, user as current_user, get_config
 from CTFd.utils.dates import ctftime, ctf_started, ctf_paused, ctf_ended, unix_time, unix_time_to_utc
+from CTFd.utils.helpers import get_errors, get_infos
 
 challenges = Blueprint('challenges', __name__)
 
@@ -22,8 +22,8 @@ challenges = Blueprint('challenges', __name__)
 @check_challenge_visibility
 @require_team
 def listing():
-    infos = []
-    errors = []
+    infos = get_infos()
+    errors = get_errors()
     start = get_config('start') or 0
     end = get_config('end') or 0
 

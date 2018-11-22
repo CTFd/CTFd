@@ -24,6 +24,7 @@ from CTFd.utils import (
     set_config,
 )
 from CTFd.cache import cache, clear_config
+from CTFd.utils.helpers import get_errors
 from CTFd.utils.exports import (
     export_ctf as export_ctf_util,
     import_ctf as import_ctf_util
@@ -94,7 +95,7 @@ def plugin(plugin):
 def import_ctf():
     backup = request.files['backup']
     segments = request.form.get('segments')
-    errors = []
+    errors = get_errors()
     try:
         import_ctf_util(backup)
     except Exception as e:
