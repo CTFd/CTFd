@@ -16,7 +16,7 @@ def error_for(endpoint, message):
 
 
 def get_infos():
-    return get_flashed_messages(category_filter=request.endpoint+'.infos')
+    return get_flashed_messages(category_filter=request.endpoint + '.infos')
 
 
 def get_errors():
