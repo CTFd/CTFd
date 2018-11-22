@@ -401,7 +401,8 @@ if __name__ == '__main__':
     for team in old_data['teams']:
         admin = team.pop('admin')
         team['type'] = 'admin' if admin else 'user'
-        team['hidden'] = team.pop('banned')
+        team['hidden'] = bool(team.pop('banned'))
+        team['verified'] = bool(team.pop('verified'))
         new_conn['users'].insert(dict(team))
     del old_data['teams']
 
