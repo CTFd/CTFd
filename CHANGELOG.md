@@ -1,4 +1,4 @@
-2.0.0 / 2018-11-18
+2.0.0 / 2018-11-22
 ==================
 
 2.0.0 is a significant change. 
@@ -12,7 +12,7 @@ trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io
 * Seperation of Teams into Users and Teams.
 * Integration with MajorLeagueCyber. (https://majorleaguecyber.org)
 * Data is now provided to the front-end via the REST API. (#551)
-    * Javascript uses fetch() to consume the REST API.
+    * Javascript uses `fetch()` to consume the REST API.
 * Dynamic Challenges built in. 
 * S3 Uploader built in. (#661)
 * Real time notifications. (#600)
@@ -26,9 +26,10 @@ trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io
     * Countries stored based on country code.
     * Based on https://github.com/umpirsky/country-list/blob/master/data/en_US/country.csv.
 * Sessions are no longer stored using secure cookies. (#658)
-    * Sessions are now stored server side in a cache (`filesystem` or `redis`).
+    * Sessions are now stored server side in a cache (`filesystem` or `redis`) allowing for session revocation.
 * Challenges can now have requirements which must be met before the challenge can be seen/solved.
-* Workshop mode, score hiding, registration hiding, challenge hiding have been changed to visibility settings. 
+* Workshop mode, score hiding, registration hiding, challenge hiding have been changed to visibility settings.
+* Users and Teams can now be banned preventing access to the CTF.
 * Dockerfile improvements.
     * WORKERS count in `docker-entrypoint.sh` defaults to 1. (#716)
     * `docker-entrypoint.sh` exits on any error. (#717)
@@ -44,14 +45,14 @@ trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io
 **Themes**
 
 * Data is now provided to the front-end via the REST API.
-    * Javascript uses fetch() to consume the REST API.
+    * Javascript uses `fetch()` to consume the REST API.
 * The admin theme is no longer considered seperated from the core theme and should always be together.
 * Themes now use `url_for()` to generate URLs instead of hardcoding.
 * socket.io is used to connect to CTFd to receive notifications.
 * `ctf_name()` renamed to `get_ctf_name()` in themes.
 * `ctf_logo()` renamed to `get_ctf_logo()` in themes.
 * `ctf_theme()` renamed to `get_ctf_theme()` in themes.
-* Update font-awesome to 5.4.1.
+* Update Font-Awesome to 5.4.1.
 * Update moment.js to 2.22.2. (#704)
 
 **Plugins**
