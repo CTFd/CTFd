@@ -402,6 +402,7 @@ if __name__ == '__main__':
         admin = team.pop('admin')
         team['type'] = 'admin' if admin else 'user'
         team['hidden'] = bool(team.pop('banned'))
+        team['banned'] = False
         team['verified'] = bool(team.pop('verified'))
         new_conn['users'].insert(dict(team))
     del old_data['teams']
