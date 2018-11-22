@@ -18,7 +18,6 @@ from sqlalchemy_utils import (
 from six.moves import input
 import dataset
 
-
 if __name__ == '__main__':
     print("/*\\ Migrating your database to 2.0.0 can potentially lose data./*\\")
     print("""/*\\ Please be sure to back up all data by:
