@@ -122,14 +122,15 @@ class S3Uploader(BaseUploader):
 
     def sync(self):
         local_folder = current_app.config.get('UPLOAD_FOLDER')
-        bucket_list = self.s3.list_objects(Bucket='bucket')['Contents']
+        bucket_list = self.s3.list_objects(Bucket=self.bucket)['Contents']
 
         for s3_key in bucket_list:
             s3_object = s3_key['Key']
 
-            if s3_object.endswith("/") is False:
-                self.s3.download_file('bucket', s3_object, s3_object)
-            else:
-                local_path = os.path.join(local_folder, s3_object)
-                if not os.path.exists(local_path):
-                    os.makedirs(local_path)
+            local_path = os.path.join(local_folder, s3_object)
+            directory = os.path.dirname(local_path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+            self.s3.download_file(self.bucket, s3_object, local_path)
+
