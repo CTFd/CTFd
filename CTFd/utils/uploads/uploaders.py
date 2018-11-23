@@ -133,4 +133,3 @@ class S3Uploader(BaseUploader):
                 os.makedirs(directory)
 
             self.s3.download_file(self.bucket, s3_object, local_path)
-
