@@ -158,9 +158,8 @@ class Config(object):
 
     '''
     UPLOAD_PROVIDER = os.getenv('UPLOAD_PROVIDER') or 'filesystem'
-    if UPLOAD_PROVIDER == 'filesystem':
-        UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
-    elif UPLOAD_PROVIDER == 's3':
+    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+    if UPLOAD_PROVIDER == 's3':
         AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
         AWS_S3_BUCKET = os.getenv('AWS_S3_BUCKET')

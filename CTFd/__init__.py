@@ -6,8 +6,6 @@ from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
-from sqlalchemy.engine.url import make_url
-from sqlalchemy_utils import database_exists, create_database
 from six.moves import input
 
 from CTFd import utils
