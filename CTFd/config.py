@@ -2,7 +2,7 @@ import os
 
 ''' GENERATE SECRET KEY '''
 
-if not os.environ.get('SECRET_KEY'):
+if not os.getenv('SECRET_KEY'):
     # Attempt to read the secret from the secret file
     # This will fail if the secret has not been written
     try:
@@ -62,19 +62,17 @@ class Config(object):
         e.g. redis://user:password@localhost:6379
         http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     '''
-    SECRET_KEY = os.environ.get('SECRET_KEY') or key
-    DATABASE_URL = os.environ.get(
-        'DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(os.path.abspath(__file__)))
-    REDIS_URL = os.environ.get('REDIS_URL')
+    SECRET_KEY = os.getenv('SECRET_KEY') or key
+    DATABASE_URL = os.getenv('DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(os.path.abspath(__file__)))
+    REDIS_URL = os.getenv('REDIS_URL')
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
-    CACHE_REDIS_URL = os.environ.get('CACHE_REDIS_URL') or REDIS_URL
+    CACHE_REDIS_URL = REDIS_URL
     if CACHE_REDIS_URL:
         CACHE_TYPE = 'redis'
     else:
         CACHE_TYPE = 'filesystem'
-        CACHE_DIR = os.path.join(os.path.dirname(
-            __file__), os.pardir, '.data', 'filesystem_cache')
+        CACHE_DIR = os.path.join(os.path.dirname(__file__), os.pardir, '.data', 'filesystem_cache')
 
     '''
     === SECURITY ===
@@ -93,8 +91,8 @@ class Config(object):
         CTFd only uses IP addresses for cursory tracking purposes. It is ill-advised to do anything complicated based
         solely on IP addresses unless you know what you are doing.
     '''
-    SESSION_COOKIE_HTTPONLY = True
-    PERMANENT_SESSION_LIFETIME = 604800  # 7 days in seconds
+    SESSION_COOKIE_HTTPONLY = (not os.getenv("SESSION_COOKIE_HTTPONLY"))  # Defaults True
+    PERMANENT_SESSION_LIFETIME = int(os.getenv("PERMANENT_SESSION_LIFETIME") or 604800)  # 7 days in seconds
     TRUSTED_PROXIES = [
         r'^127\.0\.0\.1$',
         # Remove the following proxies if you do not trust the local network
@@ -119,15 +117,15 @@ class Config(object):
     MAIL_PORT:
         The mail port that emails are sent from if not overriden in the configuration panel.
     '''
-    MAILFROM_ADDR = "noreply@ctfd.io"
-    MAIL_SERVER = None
-    MAIL_PORT = None
-    MAIL_USERNAME = None
-    MAIL_PASSWORD = None
-    MAIL_TLS = False
-    MAIL_SSL = False
-    MAILGUN_API_KEY = None
-    MAILGUN_BASE_URL = None
+    MAILFROM_ADDR = os.getenv("MAILFROM_ADDR") or "noreply@ctfd.io"
+    MAIL_SERVER = os.getenv("MAIL_SERVER") or None
+    MAIL_PORT = os.getenv("MAIL_PORT")
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+    MAIL_TLS = os.getenv("MAIL_TLS") or False
+    MAIL_SSL = os.getenv("MAIL_SSL") or False
+    MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
+    MAILGUN_BASE_URL = os.getenv("MAILGUN_BASE_URL")
 
     '''
     === LOGS ===
@@ -135,8 +133,7 @@ class Config(object):
         The location where logs are written. These are the logs for CTFd key submissions, registrations, and logins.
         The default location is the CTFd/logs folder.
     '''
-    LOG_FOLDER = os.environ.get('LOG_FOLDER') or os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'logs')
+    LOG_FOLDER = os.getenv('LOG_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
 
     '''
     === UPLOADS ===
@@ -160,15 +157,14 @@ class Config(object):
         A URL pointing to a custom S3 implementation.
 
     '''
-    UPLOAD_PROVIDER = os.environ.get('UPLOAD_PROVIDER') or 'filesystem'
+    UPLOAD_PROVIDER = os.getenv('UPLOAD_PROVIDER') or 'filesystem'
     if UPLOAD_PROVIDER == 'filesystem':
-        UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or \
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+        UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
     elif UPLOAD_PROVIDER == 's3':
-        AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID') or ''
-        AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY') or ''
-        AWS_S3_BUCKET = os.environ.get('AWS_S3_BUCKET') or ''
-        AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL') or ''
+        AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+        AWS_S3_BUCKET = os.getenv('AWS_S3_BUCKET')
+        AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
 
     '''
     === OPTIONAL ===
@@ -189,11 +185,11 @@ class Config(object):
         Specifies what path CTFd is mounted under. It can be used to run CTFd in a subdirectory.
         Example: /ctfd
     '''
-    REVERSE_PROXY = False
-    TEMPLATES_AUTO_RELOAD = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    UPDATE_CHECK = True
-    APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT') or '/'
+    REVERSE_PROXY = os.getenv("REVERSE_PROXY") or False
+    TEMPLATES_AUTO_RELOAD = (not os.getenv("TEMPLATES_AUTO_RELOAD"))  # Defaults True
+    SQLALCHEMY_TRACK_MODIFICATIONS = (not os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS"))  # Defaults True
+    UPDATE_CHECK = (not os.getenv("UPDATE_CHECK"))  # Defaults True
+    APPLICATION_ROOT = os.getenv('APPLICATION_ROOT') or '/'
 
     '''
     === OAUTH ===
@@ -201,8 +197,8 @@ class Config(object):
     MajorLeagueCyber Integration
         Register an event at https://majorleaguecyber.org/ and use the Client ID and Client Secret here
     '''
-    OAUTH_CLIENT_ID = None
-    OAUTH_CLIENT_SECRET = None
+    OAUTH_CLIENT_ID = os.getenv("OAUTH_CLIENT_ID")
+    OAUTH_CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET")
 
 
 class TestingConfig(Config):
@@ -210,7 +206,7 @@ class TestingConfig(Config):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TESTING_DATABASE_URL') or 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = os.getenv('TESTING_DATABASE_URL') or 'sqlite://'
     SERVER_NAME = 'localhost'
     UPDATE_CHECK = False
     REDIS_URL = None

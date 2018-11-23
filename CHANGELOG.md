@@ -63,6 +63,7 @@ trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io
 * Marshmallow (https://marshmallow.readthedocs.io) is now used by the REST API to validate and serialize/deserialize data.
     * Marshmallow schemas and views are used to restrict SQLAlchemy columns to user types. 
 * The REST API features swagger support but this requires more utilization internally.
+* Errors can now be provided between routes and decoraters through message flashing. (CTFd.utils.helpers; get_errors, get_infos, info_for, error_for)
 * Email registration regex relaxed. (#693)
 * Many functions have moved and now have dedicated utils packages for their category.
 
