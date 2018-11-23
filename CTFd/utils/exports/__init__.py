@@ -1,6 +1,7 @@
-from CTFd.utils import get_app_config, get_config, set_config
+from CTFd.utils import get_app_config
 from CTFd.utils.migrations import get_current_revision, create_database, drop_database, upgrade, stamp
-from CTFd.models import db, get_class_by_tablename
+from CTFd.utils.uploads import get_uploader
+from CTFd.models import db
 from CTFd.cache import cache
 from datafreeze.format import SERIALIZERS
 from flask import current_app as app
@@ -12,7 +13,6 @@ import json
 import os
 import re
 import six
-import shutil
 import zipfile
 
 
@@ -85,6 +85,9 @@ def export_ctf():
         backup_zip.writestr('db/alembic_version.json', result_file.read())
 
     # Backup uploads
+    uploader = get_uploader()
+    uploader.sync()
+
     upload_folder = os.path.join(os.path.normpath(app.root_path), app.config.get('UPLOAD_FOLDER'))
     for root, dirs, files in os.walk(upload_folder):
         for file in files:
@@ -199,7 +202,7 @@ def import_ctf(backup, erase=True):
 
     # Extracting files
     files = [f for f in backup.namelist() if f.startswith('uploads/')]
-    upload_folder = app.config.get('UPLOAD_FOLDER')
+    uploader = get_uploader()
     for f in files:
         filename = f.split(os.sep, 1)
 
@@ -207,16 +210,7 @@ def import_ctf(backup, erase=True):
             continue
 
         filename = filename[1]  # Get the second entry in the list (the actual filename)
-        full_path = os.path.join(upload_folder, filename)
-        dirname = os.path.dirname(full_path)
-
-        # Create any parent directories for the file
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-
         source = backup.open(f)
-        target = open(full_path, "wb")
-        with source, target:
-            shutil.copyfileobj(source, target)
+        uploader.store(fileobj=source, filename=filename)
 
     cache.clear()
