@@ -2,7 +2,7 @@ import os
 
 ''' GENERATE SECRET KEY '''
 
-if not os.environ.get('SECRET_KEY'):
+if not os.getenv('SECRET_KEY'):
     # Attempt to read the secret from the secret file
     # This will fail if the secret has not been written
     try:
@@ -63,8 +63,8 @@ class Config(object):
         http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     '''
     SECRET_KEY = os.getenv('SECRET_KEY') or key
-    DATABASE_URL = os.environ.get('DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(os.path.abspath(__file__)))
-    REDIS_URL = os.environ.get('REDIS_URL')
+    DATABASE_URL = os.getenv('DATABASE_URL') or 'sqlite:///{}/ctfd.db'.format(os.path.dirname(os.path.abspath(__file__)))
+    REDIS_URL = os.getenv('REDIS_URL')
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     CACHE_REDIS_URL = REDIS_URL
@@ -133,7 +133,7 @@ class Config(object):
         The location where logs are written. These are the logs for CTFd key submissions, registrations, and logins.
         The default location is the CTFd/logs folder.
     '''
-    LOG_FOLDER = os.environ.get('LOG_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+    LOG_FOLDER = os.getenv('LOG_FOLDER') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
 
     '''
     === UPLOADS ===
@@ -206,7 +206,7 @@ class TestingConfig(Config):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TESTING_DATABASE_URL') or 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = os.getenv('TESTING_DATABASE_URL') or 'sqlite://'
     SERVER_NAME = 'localhost'
     UPDATE_CHECK = False
     REDIS_URL = None
