@@ -11,7 +11,7 @@
 				{% if solves == None %}
 				{% else %}
 					<li class="nav-item">
-						<a class="nav-link chal-solves" href="#solves">
+						<a class="nav-link challenge-solves" href="#solves">
 							{{ solves }} {% if solves > 1 %}Solves{% else %}Solves{% endif %}
 						</a>
 					</li>
@@ -20,15 +20,15 @@
 			<div role="tabpanel">
 				<div class="tab-content">
 					<div role="tabpanel" class="tab-pane fade show active" id="challenge">
-						<h2 class='chal-name text-center pt-3'>{{ name }}</h2>
-						<h3 class="chal-value text-center">{{ value }}</h3>
-						<div class="chal-tags text-center">
+						<h2 class='challenge-name text-center pt-3'>{{ name }}</h2>
+						<h3 class="challenge-value text-center">{{ value }}</h3>
+						<div class="challenge-tags text-center">
 							{% for tag in tags %}
-								<span class='badge badge-info chal-tag'>{{ tag }}</span>
+								<span class='badge badge-info challenge-tag'>{{ tag }}</span>
 							{% endfor %}
 						</div>
-						<span class="chal-desc">{{ description | safe }}</span>
-						<div class="chal-hints hint-row row">
+						<span class="challenge-desc">{{ description | safe }}</span>
+						<div class="challenge-hints hint-row row">
 							{% for hint in hints %}
 								<div class='col-md-12 hint-button-wrapper text-center mb-3'>
 									<a class="btn btn-info btn-hint btn-block" href="javascript:;"
@@ -52,7 +52,7 @@
 								</div>
 							{% endfor %}
 						</div>
-						<div class="row chal-files text-center pb-3">
+						<div class="row challenge-files text-center pb-3">
 							{% for file in files %}
 								<div class='col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block'>
 									<a class='btn btn-info btn-file mb-1 d-inline-block px-2 w-100 text-truncate'
@@ -68,9 +68,8 @@
 
 						<div class="row submit-row">
 							<div class="col-md-9 form-group">
-								<input class="form-control" type="text" name="answer" id="answer-input"
-									   placeholder="Flag"/>
-								<input id="chal-id" type="hidden" value="{{ id }}">
+								<input class="form-control" type="text" name="answer" id="submission-input" placeholder="Flag"/>
+								<input id="challenge-id" type="hidden" value="{{ id }}">
 							</div>
 							<div class="col-md-3 form-group key-submit">
 								<button type="submit" id="submit-key" tabindex="5"
@@ -99,7 +98,7 @@
 										</td>
 									</tr>
 									</thead>
-									<tbody id="chal-solves-names">
+									<tbody id="challenge-solves-names">
 									</tbody>
 								</table>
 							</div>
