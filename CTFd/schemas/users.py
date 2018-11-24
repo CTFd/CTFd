@@ -105,10 +105,9 @@ class UserSchema(ma.ModelSchema):
         user_id = data.get('id')
 
         if is_admin():
-            if user_id:
-                if password:
-                    data['password'] = hash_password(data['password'])
-                    return data
+            if password:
+                data['password'] = hash_password(data['password'])
+                return data
         else:
             if password and (confirm is None):
                 raise ValidationError('Please confirm your current password', field_names=['confirm'])
