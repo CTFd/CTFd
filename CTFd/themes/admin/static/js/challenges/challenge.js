@@ -3,7 +3,7 @@ function renderSubmissionResponse(response, cb) {
 
     var result_message = $('#result-message');
     var result_notification = $('#result-notification');
-    var answer_input = $("#answer-input");
+    var answer_input = $("#submission-input");
     result_notification.removeClass();
     result_message.text(result.message);
 
@@ -25,7 +25,7 @@ function renderSubmissionResponse(response, cb) {
         result_notification.addClass('alert alert-success alert-dismissable text-center');
         result_notification.slideDown();
 
-        $('.chal-solves').text((parseInt($('.chal-solves').text().split(" ")[0]) + 1 + " Solves"));
+        $('.challenge-solves').text((parseInt($('.challenge-solves').text().split(" ")[0]) + 1 + " Solves"));
 
         answer_input.val("");
         answer_input.removeClass("wrong");
@@ -81,8 +81,8 @@ $(document).ready(function () {
 
                     $('#challenge-window').append(template.render(challenge_data));
 
-                    $('.chal-solves').click(function (e) {
-                        getsolves($('#chal-id').val())
+                    $('.challenge-solves').click(function (e) {
+                        getsolves($('#challenge-id').val())
                     });
                     $('.nav-tabs a').click(function (e) {
                         e.preventDefault();
@@ -91,8 +91,8 @@ $(document).ready(function () {
 
                     // Handle modal toggling
                     $('#challenge-window').on('hide.bs.modal', function (event) {
-                        $("#answer-input").removeClass("wrong");
-                        $("#answer-input").removeClass("correct");
+                        $("#submission-input").removeClass("wrong");
+                        $("#submission-input").removeClass("correct");
                         $("#incorrect-key").slideUp();
                         $("#correct-key").slideUp();
                         $("#already-solved").slideUp();
@@ -109,7 +109,7 @@ $(document).ready(function () {
                         // Preview passed as true
                     });
 
-                    $("#answer-input").keyup(function (event) {
+                    $("#submission-input").keyup(function (event) {
                         if (event.keyCode == 13) {
                             $("#submit-key").click();
                         }

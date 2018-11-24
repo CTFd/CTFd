@@ -3918,3 +3918,18 @@ readers do not read off random characters that represent icons */
   overflow: visible;
   position: static;
   width: auto; }
+
+.fab {
+  font-family: 'Font Awesome 5 Brands', 'Font Awesome 5 Brands Offline';
+}
+
+.far {
+  font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Free Offline';
+  font-weight: 400;
+}
+
+.fa,
+.fas {
+  font-family: 'Font Awesome 5 Free', 'Font Awesome 5 Free Offline';
+  font-weight: 900;
+}

@@ -35,7 +35,7 @@ function updateChalWindow(obj) {
 
         $.getScript(script_root + obj.script, function () {
             $.get(script_root + obj.template, function (template_data) {
-                $('#chal-window').empty();
+                $('#challenge-window').empty();
                 var template = nunjucks.compile(template_data);
                 window.challenge.data = challenge_data;
                 window.challenge.preRender();
@@ -43,10 +43,10 @@ function updateChalWindow(obj) {
                 challenge_data['description'] = window.challenge.render(challenge_data['description']);
                 challenge_data['script_root'] = script_root;
 
-                $('#chal-window').append(template.render(challenge_data));
+                $('#challenge-window').append(template.render(challenge_data));
 
-                $('.chal-solves').click(function (e) {
-                    getsolves($('#chal-id').val())
+                $('.challenge-solves').click(function (e) {
+                    getsolves($('#challenge-id').val())
                 });
                 $('.nav-tabs a').click(function (e) {
                     e.preventDefault();
@@ -54,9 +54,9 @@ function updateChalWindow(obj) {
                 });
 
                 // Handle modal toggling
-                $('#chal-window').on('hide.bs.modal', function (event) {
-                    $("#answer-input").removeClass("wrong");
-                    $("#answer-input").removeClass("correct");
+                $('#challenge-window').on('hide.bs.modal', function (event) {
+                    $("#submission-input").removeClass("wrong");
+                    $("#submission-input").removeClass("correct");
                     $("#incorrect-key").slideUp();
                     $("#correct-key").slideUp();
                     $("#already-solved").slideUp();
@@ -73,7 +73,7 @@ function updateChalWindow(obj) {
                     });
                 });
 
-                $("#answer-input").keyup(function (event) {
+                $("#submission-input").keyup(function (event) {
                     if (event.keyCode == 13) {
                         $("#submit-key").click();
                     }
@@ -96,13 +96,13 @@ function updateChalWindow(obj) {
                 window.challenge.postRender();
 
                 window.location.replace(window.location.href.split('#')[0] + '#' + obj.name);
-                $('#chal-window').modal();
+                $('#challenge-window').modal();
             });
         });
     });
 }
 
-$("#answer-input").keyup(function (event) {
+$("#submission-input").keyup(function (event) {
     if (event.keyCode == 13) {
         $("#submit-key").click();
     }
@@ -114,7 +114,7 @@ function renderSubmissionResponse(response, cb) {
 
     var result_message = $('#result-message');
     var result_notification = $('#result-notification');
-    var answer_input = $("#answer-input");
+    var answer_input = $("#submission-input");
     result_notification.removeClass();
     result_message.text(result.message);
 
@@ -136,7 +136,7 @@ function renderSubmissionResponse(response, cb) {
         result_notification.addClass('alert alert-success alert-dismissable text-center');
         result_notification.slideDown();
 
-        $('.chal-solves').text((parseInt($('.chal-solves').text().split(" ")[0]) + 1 + " Solves"));
+        $('.challenge-solves').text((parseInt($('.challenge-solves').text().split(" ")[0]) + 1 + " Solves"));
 
         answer_input.val("");
         answer_input.removeClass("wrong");
@@ -207,10 +207,10 @@ function load_user_solves(cb) {
 function getsolves(id) {
     $.get(script_root + '/api/v1/challenges/' + id + '/solves', function (response) {
         var data = response.data;
-        $('.chal-solves').text(
+        $('.challenge-solves').text(
             (parseInt(data.length) + " Solves")
         );
-        var box = $('#chal-solves-names');
+        var box = $('#challenge-solves-names');
         box.empty();
         for (var i = 0; i < data.length; i++) {
             var id = data[i].account_id;
@@ -292,16 +292,16 @@ function loadchals(cb) {
 
 
 $('#submit-key').click(function (e) {
-    submitkey($('#chal-id').val(), $('#answer-input').val(), $('#nonce').val())
+    submitkey($('#challenge-id').val(), $('#submission-input').val(), $('#nonce').val())
 });
 
-$('.chal-solves').click(function (e) {
-    getsolves($('#chal-id').val())
+$('.challenge-solves').click(function (e) {
+    getsolves($('#challenge-id').val())
 });
 
-$('#chal-window').on('hide.bs.modal', function (event) {
-    $("#answer-input").removeClass("wrong");
-    $("#answer-input").removeClass("correct");
+$('#challenge-window').on('hide.bs.modal', function (event) {
+    $("#submission-input").removeClass("wrong");
+    $("#submission-input").removeClass("correct");
     $("#incorrect-key").slideUp();
     $("#correct-key").slideUp();
     $("#already-solved").slideUp();
@@ -335,7 +335,7 @@ $('.nav-tabs a').click(function (e) {
     $(this).tab('show')
 });
 
-$('#chal-window').on('hidden.bs.modal', function () {
+$('#challenge-window').on('hidden.bs.modal', function () {
     $('.nav-tabs a:first').tab('show');
     history.replaceState('', document.title, window.location.pathname);
 });
