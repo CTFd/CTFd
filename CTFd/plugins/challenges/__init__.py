@@ -114,21 +114,21 @@ class CTFdStandardChallenge(BaseChallenge):
         db.session.commit()
 
     @staticmethod
-    def attempt(chal, request):
+    def attempt(challenge, request):
         """
         This method is used to check whether a given input is right or wrong. It does not make any changes and should
         return a boolean for correctness and a string to be shown to the user. It is also in charge of parsing the
         user's input from the request itself.
 
-        :param chal: The Challenge object from the database
+        :param challenge: The Challenge object from the database
         :param request: The request the user submitted
         :return: (boolean, string)
         """
         data = request.form or request.get_json()
         submission = data['submission'].strip()
-        chal_keys = Flags.query.filter_by(challenge_id=chal.id).all()
-        for chal_key in chal_keys:
-            if get_flag_class(chal_key.type).compare(chal_key, submission):
+        flags = Flags.query.filter_by(challenge_id=challenge.id).all()
+        for flag in flags:
+            if get_flag_class(flag.type).compare(flag, submission):
                 return True, 'Correct'
         return False, 'Incorrect'
 

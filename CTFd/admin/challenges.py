@@ -1,10 +1,8 @@
-from flask import current_app as app, render_template, request, redirect, jsonify, render_template_string
+from flask import current_app as app, render_template, render_template_string, url_for
 from CTFd.utils.decorators import admins_only
-from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Configs, Hints, Unlocks
-from CTFd.plugins.flags import get_flag_class, FLAG_CLASSES
-from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
+from CTFd.models import Solves, Challenges, Flags
+from CTFd.plugins.challenges import get_chal_class
 from CTFd.admin import admin
-from CTFd.utils import config, validators, uploads
 import os
 
 
@@ -24,15 +22,13 @@ def challenges_detail(challenge_id):
     flags = Flags.query.filter_by(challenge_id=challenge.id).all()
     challenge_class = get_chal_class(challenge.type)
 
-    static_path = os.path.basename(challenge_class.blueprint.static_url_path)
-    update_j2 = render_template_string(
-        challenge_class.blueprint.open_resource(
-            os.path.join(static_path, 'update.html')
-        ).read().decode('utf-8'),
-        # Python 3
-        challenge=challenge
-    )
-    update_script = os.path.join(challenge_class.route, 'update.js')
+    with open(os.path.join(app.root_path, challenge_class.templates['update'].lstrip('/'))) as update:
+        update_j2 = render_template_string(
+            update.read().decode('utf-8'),
+            challenge=challenge
+        )
+
+    update_script = url_for('views.static_html', route=challenge_class.scripts['update'].lstrip('/'))
     return render_template(
         'admin/challenges/challenge.html',
         update_template=update_j2,

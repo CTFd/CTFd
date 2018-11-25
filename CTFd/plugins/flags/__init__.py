@@ -17,8 +17,8 @@ class BaseFlag(object):
 class CTFdStaticFlag(BaseFlag):
     name = "static"
     templates = {  # Nunjucks templates used for key editing & viewing
-        'create': '/plugins/flags/assets/static/create-static-modal.njk',
-        'update': '/plugins/flags/assets/static/edit-static-modal.njk',
+        'create': '/plugins/flags/assets/static/create.html',
+        'update': '/plugins/flags/assets/static/edit.html',
     }
 
     @staticmethod
@@ -42,8 +42,8 @@ class CTFdStaticFlag(BaseFlag):
 class CTFdRegexFlag(BaseFlag):
     name = "regex"
     templates = {  # Nunjucks templates used for key editing & viewing
-        'create': '/plugins/flags/assets/regex/create-regex-modal.njk',
-        'update': '/plugins/flags/assets/regex/edit-regex-modal.njk',
+        'create': '/plugins/flags/assets/regex/create.html',
+        'update': '/plugins/flags/assets/regex/edit.html',
     }
 
     @staticmethod
