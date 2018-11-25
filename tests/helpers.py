@@ -1,4 +1,5 @@
 from CTFd import create_app
+from CTFd.config import TestingConfig
 from CTFd.models import *
 from CTFd.cache import cache
 from sqlalchemy_utils import database_exists, create_database, drop_database
@@ -15,8 +16,11 @@ else:
     binary_type = bytes
 
 
-def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True):
-    app = create_app('CTFd.config.TestingConfig')
+def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True, enable_plugins=False):
+    if enable_plugins:
+        TestingConfig.SAFE_MODE = False
+
+    app = create_app(TestingConfig)
 
     if setup:
         app = setup_ctfd(app, ctf_name, name, email, password, user_mode)
