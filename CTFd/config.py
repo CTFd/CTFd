@@ -210,3 +210,4 @@ class TestingConfig(Config):
     UPDATE_CHECK = False
     REDIS_URL = None
     CACHE_TYPE = 'simple'
+    SAFE_MODE = True

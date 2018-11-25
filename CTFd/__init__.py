@@ -189,6 +189,7 @@ def create_app(config='CTFd.config.Config'):
         app.register_error_handler(500, general_error)
         app.register_error_handler(502, gateway_error)
 
-        init_plugins(app)
+        if app.config.get('SAFE_MODE', False):
+            init_plugins(app)
 
         return app
