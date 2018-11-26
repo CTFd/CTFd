@@ -1,11 +1,27 @@
-2.0.0 / 2018-11-22
+2.0.0 / 2018-11-26
 ==================
 
-2.0.0 is a significant change. 
-If you are upgrading from a prior version be sure to make backups before upgrading.
+2.0.0 is a *significant*, backwards-incompaitble release. 
 
-In addition, 2.0.0 is a backwards-incompatible release. Many plugins will be broken in CTFd 2.0.0, and if you're having 
-trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io/) for help and discussion.
+Many unofficial plugins will not be supported in CTFd 2.0.0. If you're having trouble updating your plugins 
+please join [the CTFd Slack](https://slack.ctfd.io/) for help and discussion.
+
+If you are upgrading from a prior version be sure to make backups and have a reversion plan before upgrading.  
+
+
+
+* If upgrading from 1.2.0 please make use of the `migrations/1_2_0_upgrade_2_0_0.py` script as follows:
+    1. Make all necessary backups. Backup the database, uploads folder, and source code directory.
+    2. Upgrade the source code directory (i.e. git pull) but do not run any updated code yet. 
+    3. Set the `DATABASE_URL` in `CTFd/config.py` to point to your existing CTFd database.
+    3. Run the upgrade script from the CTFd root folder i.e. `python migrations/1_2_0_upgrade_2_0_0.py`.
+        * This migration script will attempt to migrate data inside the database to 2.0.0. But cannot account for every situation. 
+        * Examples of situations where you may need to manually migrate data:
+            * Tables/columns created by plugins
+            * Tables/columns created by forks
+            * Using databases which are not officially supported (e.g. sqlite, postgres)
+    4. Setup the rest of CTFd (i.e. config.py) and run normally.
+* If upgrading from a version before 1.2.0, please upgrade to 1.2.0 and then continue with the steps above. 
 
 **General**
 
@@ -34,13 +50,8 @@ trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io
     * WORKERS count in `docker-entrypoint.sh` defaults to 1. (#716)
     * `docker-entrypoint.sh` exits on any error. (#717)
 * Increased test coverage.
+* Create `SAFE_MODE` configuration to disable loading of plugins.
 * Migrations have been reset. 
-    * If upgrading from 1.2.0:
-        1. Make all necessary backups. Backup the database, uploads folder, and source code directory.
-        2. Upgrade the source code directory.
-        3. Set the `DATABASE_URL` in `CTFd/config.py`.
-        3. Run the upgrade script from the CTFd folder i.e. `python migrations/1_2_0_upgrade_2_0_0.py`.
-        4. Setup the rest of CTFd and run normally.
 
 **Themes**
 
