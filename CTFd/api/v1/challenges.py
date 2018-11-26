@@ -160,6 +160,40 @@ class Challenge(Resource):
 
         chal_class = get_chal_class(chal.type)
 
+        requirements = chal.requirements
+        if requirements:
+            if current_user.authed():
+                user = get_current_user()
+                solve_ids = Solves.query \
+                    .with_entities(Solves.challenge_id) \
+                    .filter_by(account_id=user.account_id) \
+                    .order_by(Solves.challenge_id.asc()) \
+                    .all()
+                solve_ids = set([value for value, in solve_ids])
+
+                prereqs = set(requirements.get('prerequisites', []))
+                anonymize = requirements.get('anonymize')
+                if solve_ids >= prereqs:
+                    pass
+                else:
+                    if anonymize:
+                        return {
+                            'success': True,
+                            'data': {
+                                'id': chal.id,
+                                'type': 'hidden',
+                                'name': '???',
+                                'value': 0,
+                                'category': '???',
+                                'tags': [],
+                                'template': '',
+                                'script': ''
+                            }
+                        }
+                    abort(403)
+            else:
+                abort(403)
+
         tags = [
             tag['value'] for tag in TagSchema(
                 "user", many=True).dump(
@@ -286,6 +320,7 @@ class ChallengeAttempt(Resource):
                 .filter_by(account_id=user.account_id) \
                 .order_by(Solves.challenge_id.asc()) \
                 .all()
+            solve_ids = set([solve_id for solve_id, in solve_ids])
 
             prereqs = set(requirements.get('prerequisites', []))
             if solve_ids >= prereqs:
