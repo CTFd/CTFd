@@ -69,7 +69,9 @@ function updateChalWindow(obj) {
                     $('#submit-key').prop('disabled', true);
                     window.challenge.submit(function (data) {
                         renderSubmissionResponse(data);
-                        loadchals();
+                        loadchals(function () {
+                            marksolves();
+                        });
                     });
                 });
 
@@ -161,8 +163,6 @@ function renderSubmissionResponse(response, cb) {
             answer_input.removeClass("too-fast");
         }, 3000);
     }
-    marksolves();
-    // updatesolves();
     setTimeout(function () {
         $('.alert').slideUp();
         $('#submit-key').removeClass("disabled-button");

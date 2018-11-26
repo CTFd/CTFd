@@ -297,52 +297,6 @@ def test_challenge_kpm_limit():
     destroy_ctfd(app)
 
 
-# def test_submitting_flags_with_large_ips():
-#     """Test that users with high octect IP addresses can submit flags"""
-#     app = create_ctfd()
-#     with app.app_context():
-#         register_user(app)
-#         client = login_as_user(app)
-#
-#         # SQLite doesn't support BigInteger well so we can't test it properly
-#         ip_addresses = ['172.18.0.1', '255.255.255.255', '2001:0db8:85a3:0000:0000:8a2e:0370:7334']
-#         for ip_address in ip_addresses:
-#             # Monkeypatch get_ip
-#             def get_ip_fake(req=None):
-#                 return ip_address
-#             utils.get_ip = get_ip_fake
-#
-#             # Generate challenge and flag
-#             chal = gen_challenge(app.db)
-#             chal_id = chal.id
-#             flag = gen_flag(app.db, chal=chal.id, flag=u'correct_key')
-#
-#             # Submit wrong_key
-#             with client.session_transaction() as sess:
-#                 data = {
-#                     "key": 'wrong_key',
-#                     "nonce": sess.get('nonce')
-#                 }
-#             r = client.post('/api/v1/challenges/attempt'.format(chal_id), json=data)
-#             assert r.status_code == 200
-#             resp = json.loads(r.data.decode('utf8'))
-#             assert resp.get('status') == 0 and resp.get('message') == "Incorrect"
-#             assert Fails.query.filter_by(ip=ip_address).first()
-#
-#             # Submit correct key
-#             with client.session_transaction() as sess:
-#                 data = {
-#                     "key": 'correct_key',
-#                     "nonce": sess.get('nonce')
-#                 }
-#             r = client.post('/api/v1/challenges/attempt'.format(chal_id), json=data)
-#             assert r.status_code == 200
-#             resp = json.loads(r.data.decode('utf8'))
-#             assert resp.get('status') == 1 and resp.get('message') == "Correct"
-#             assert Solves.query.filter_by(ip=ip_address).first()
-#     destroy_ctfd(app)
-
-
 def test_that_view_challenges_unregistered_works():
     '''Test that view_challenges_unregistered works'''
     app = create_ctfd()
@@ -449,6 +403,71 @@ def test_hidden_challenge_is_unsolveable():
     destroy_ctfd(app)
 
 
+def test_challenge_with_requirements_is_unsolveable():
+    """Test that a challenge with a requirement is unsolveable without first solving the requirement"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal1 = gen_challenge(app.db)
+        flag1 = gen_flag(app.db, challenge_id=chal1.id, content='flag')
+
+        requirements = {
+            'prerequisites': [1]
+        }
+        chal2 = gen_challenge(app.db, requirements=requirements)
+        app.db.session.commit()
+
+        flag2 = gen_flag(app.db, challenge_id=chal2.id, content='flag')
+
+        r = client.get('/api/v1/challenges')
+        challenges = r.get_json()['data']
+        assert len(challenges) == 1
+        assert challenges[0]['id'] == 1
+
+        r = client.get('/api/v1/challenges/2')
+        assert r.status_code == 403
+        assert r.get_json().get('data') is None
+
+        # Attempt to solve hidden Challenge 2
+        data = {
+            "submission": 'flag',
+            "challenge_id": 2
+        }
+        r = client.post('/api/v1/challenges/attempt', json=data)
+        assert r.status_code == 403
+        assert r.get_json().get('data') is None
+
+        # Solve Challenge 1
+        data = {
+            "submission": 'flag',
+            "challenge_id": 1
+        }
+        r = client.post('/api/v1/challenges/attempt', json=data)
+        resp = r.get_json()['data']
+        assert resp['status'] == 'correct'
+
+        # Challenge 2 should now be visible
+        r = client.get('/api/v1/challenges')
+        challenges = r.get_json()['data']
+        assert len(challenges) == 2
+
+        r = client.get('/api/v1/challenges/2')
+        assert r.status_code == 200
+        assert r.get_json().get('data')['id'] == 2
+
+        # Attempt to solve the now-visible Challenge 2
+        data = {
+            "submission": 'flag',
+            "challenge_id": 2
+        }
+        r = client.post('/api/v1/challenges/attempt', json=data)
+        assert r.status_code == 200
+        assert resp['status'] == 'correct'
+
+    destroy_ctfd(app)
+
+
 def test_challenges_cannot_be_solved_while_paused():
     """Test that challenges cannot be solved when the CTF is paused"""
     app = create_ctfd()
@@ -488,55 +507,3 @@ def test_challenges_cannot_be_solved_while_paused():
         wrong_keys = Fails.query.count()
         assert wrong_keys == 0
     destroy_ctfd(app)
-
-
-# def test_challenge_solves_can_be_seen():
-#     """Test that the /solves endpoint works properly for users"""
-#     app = create_ctfd()
-#     with app.app_context():
-#         register_user(app)
-#
-#         with app.test_client() as client:
-#             r = client.get('/solves')
-#             assert r.location.startswith("http://localhost/login?next=")
-#             assert r.status_code == 302
-#
-#         client = login_as_user(app)
-#
-#         r = client.get('/solves')
-#         data = r.get_data(as_text=True)
-#         data = json.loads(data)
-#
-#         assert len(data['solves']) == 0
-#
-#         chal = gen_challenge(app.db)
-#         chal_id = chal.id
-#         flag = gen_flag(app.db, chal=chal_id, flag='flag')
-#         with client.session_transaction() as sess:
-#             data = {
-#                 "key": 'flag',
-#                 "nonce": sess.get('nonce')
-#             }
-#         r = client.post('/api/v1/challenges/attempt'.format(chal_id), json=data)
-#
-#         data = r.get_data(as_text=True)
-#         data = json.loads(data)
-#
-#         r = client.get('/solves')
-#         data = r.get_data(as_text=True)
-#         data = json.loads(data)
-#
-#         assert len(data['solves']) > 0
-#
-#         team = Teams.query.filter_by(id=2).first()
-#         team.banned = True
-#         db.session.commit()
-#
-#         r = client.get('/solves')
-#         data = r.get_data(as_text=True)
-#         data = json.loads(data)
-#
-#         team = Teams.query.filter_by(id=2).first()
-#         assert team.banned
-#         assert len(data['solves']) > 0
-#     destroy_ctfd(app)
