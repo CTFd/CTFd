@@ -8,8 +8,6 @@ please join [the CTFd Slack](https://slack.ctfd.io/) for help and discussion.
 
 If you are upgrading from a prior version be sure to make backups and have a reversion plan before upgrading.  
 
-
-
 * If upgrading from 1.2.0 please make use of the `migrations/1_2_0_upgrade_2_0_0.py` script as follows:
     1. Make all necessary backups. Backup the database, uploads folder, and source code directory.
     2. Upgrade the source code directory (i.e. `git pull`) but do not run any updated code yet. 
