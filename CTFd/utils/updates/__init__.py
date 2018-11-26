@@ -36,7 +36,7 @@ def update_check(force=False):
 
     if update:
         try:
-            name = get_config('ctf_name') or ''
+            name = str(get_config('ctf_name')) or ''
             params = {
                 'ctf_id': sha256(name),
                 'current': app.VERSION,
