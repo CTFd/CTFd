@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
     submissions = []
     for solve in old_data['solves']:
-        solve.pop('id') # ID of a solve doesn't really matter
+        solve.pop('id')  # ID of a solve doesn't really matter
         solve['challenge_id'] = solve.pop('chalid')
         solve['user_id'] = solve.pop('teamid')
         solve['provided'] = solve.pop('flag')
@@ -138,7 +138,7 @@ if __name__ == '__main__':
         submissions.append(solve)
 
     for wrong_key in old_data['wrong_keys']:
-        wrong_key.pop('id') # ID of a fail doesn't really matter.
+        wrong_key.pop('id')  # ID of a fail doesn't really matter.
         wrong_key['challenge_id'] = wrong_key.pop('chalid')
         wrong_key['user_id'] = wrong_key.pop('teamid')
         wrong_key['provided'] = wrong_key.pop('flag')
@@ -168,11 +168,6 @@ if __name__ == '__main__':
     print('MIGRATING Config')
     banned = [
         'ctf_version',
-        'workshop_mode',
-        'hide_scores',
-        'prevent_registration',
-        'view_challenges_unregistered',
-        'view_scoreboard_if_authed'
     ]
     workshop_mode = None
     hide_scores = None
@@ -251,7 +246,7 @@ if __name__ == '__main__':
         for row in data:
             new_conn[table].insert(dict(row))
             ran = True
-        else: # We finished inserting
+        else:  # We finished inserting
             if ran:
                 manual.append(table)
 
@@ -267,6 +262,7 @@ if __name__ == '__main__':
     for table in manual:
         print('\t', 'ALTER TABLE `{table}` ADD PRIMARY KEY(id)'.format(table=table))
 
-    print('The following tables were not created because they were empty and must be manually recreated (e.g. app.db.create_all()')
+    print(
+        'The following tables were not created because they were empty and must be manually recreated (e.g. app.db.create_all()')
     for table in not_created:
         print('\t', table)
