@@ -7,6 +7,7 @@ from CTFd import utils
 from CTFd.utils.migrations import upgrade
 from CTFd.utils.user import get_ip
 from CTFd.utils.uploads import upload_file, delete_file
+from CTFd.utils.modes import get_model
 from flask import Blueprint
 import math
 
@@ -92,9 +93,11 @@ class DynamicValueChallenge(BaseChallenge):
         for attr, value in data.items():
             setattr(challenge, attr, value)
 
+        Model = get_model()
+
         solve_count = Solves.query \
-            .join(Teams, Solves.team_id == Teams.id) \
-            .filter(Solves.challenge_id == challenge.id, Teams.banned == False) \
+            .join(Model, Solves.account_id == Model.id) \
+            .filter(Solves.challenge_id == challenge.id, Model.hidden == False, Model.banned == False) \
             .count()
 
         # It is important that this calculation takes into account floats.
@@ -165,9 +168,11 @@ class DynamicValueChallenge(BaseChallenge):
         data = request.form or request.get_json()
         submission = data['submission'].strip()
 
-        solve_count = Solves.query\
-            .join(Teams, Solves.team_id == Teams.id)\
-            .filter(Solves.challenge_id == chal.id, Teams.banned == False)\
+        Model = get_model()
+
+        solve_count = Solves.query \
+            .join(Model, Solves.account_id == Model.id) \
+            .filter(Solves.challenge_id == challenge.id, Model.hidden == False, Model.banned == False) \
             .count()
 
         # It is important that this calculation takes into account floats.
