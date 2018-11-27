@@ -4,6 +4,7 @@ from CTFd.models import *
 from CTFd.cache import cache
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.engine.url import make_url
+from collections import namedtuple
 import datetime
 import six
 import gc
@@ -14,6 +15,9 @@ if six.PY2:
 else:
     text_type = str
     binary_type = bytes
+
+
+FakeRequest = namedtuple('FakeRequest', ['form'])
 
 
 def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True, enable_plugins=False):
