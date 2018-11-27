@@ -2,7 +2,7 @@ from __future__ import division  # Use floating point for math calculations
 from CTFd.plugins.challenges import BaseChallenge, CHALLENGE_CLASSES
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.flags import get_flag_class
-from CTFd.models import db, Solves, Fails, Flags, Challenges, Files, Tags, Teams, Hints
+from CTFd.models import db, Solves, Fails, Flags, Challenges, ChallengeFiles, Tags, Teams, Hints
 from CTFd import utils
 from CTFd.utils.migrations import upgrade
 from CTFd.utils.user import get_ip
@@ -122,10 +122,10 @@ class DynamicValueChallenge(BaseChallenge):
         Fails.query.filter_by(challenge_id=challenge.id).delete()
         Solves.query.filter_by(challenge_id=challenge.id).delete()
         Flags.query.filter_by(challenge_id=challenge.id).delete()
-        files = Files.query.filter_by(challenge_id=challenge.id).all()
+        files = ChallengeFiles.query.filter_by(challenge_id=challenge.id).all()
         for f in files:
             delete_file(f.id)
-        Files.query.filter_by(challenge_id=challenge.id).delete()
+        ChallengeFiles.query.filter_by(challenge_id=challenge.id).delete()
         Tags.query.filter_by(challenge_id=challenge.id).delete()
         Hints.query.filter_by(challenge_id=challenge.id).delete()
         DynamicChallenge.query.filter_by(id=challenge.id).delete()

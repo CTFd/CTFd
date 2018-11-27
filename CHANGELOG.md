@@ -1,21 +1,40 @@
-2.0.0 / 2018-11-22
+2.0.0 / 2018-11-26
 ==================
 
-2.0.0 is a significant change. 
-If you are upgrading from a prior version be sure to make backups before upgrading.
+2.0.0 is a *significant*, backwards-incompaitble release. 
 
-In addition, 2.0.0 is a backwards-incompatible release. Many plugins will be broken in CTFd 2.0.0, and if you're having 
-trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io/) for help and discussion.
+Many unofficial plugins will not be supported in CTFd 2.0.0. If you're having trouble updating your plugins 
+please join [the CTFd Slack](https://slack.ctfd.io/) for help and discussion.
+
+If you are upgrading from a prior version be sure to make backups and have a reversion plan before upgrading.  
+
+* If upgrading from 1.2.0 please make use of the `migrations/1_2_0_upgrade_2_0_0.py` script as follows:
+    1. Make all necessary backups. Backup the database, uploads folder, and source code directory.
+    2. Upgrade the source code directory (i.e. `git pull`) but do not run any updated code yet. 
+    3. Set the `DATABASE_URL` in `CTFd/config.py` to point to your existing CTFd database.
+    3. Run the upgrade script from the CTFd root folder i.e. `python migrations/1_2_0_upgrade_2_0_0.py`.
+        * This migration script will attempt to migrate data inside the database to 2.0.0 but it cannot account for every situation. 
+        * Examples of situations where you may need to manually migrate data:
+            * Tables/columns created by plugins
+            * Tables/columns created by forks
+            * Using databases which are not officially supported (e.g. sqlite, postgres)
+    4. Setup the rest of CTFd (i.e. config.py), migrate/update any plugins, and run normally.
+* If upgrading from a version before 1.2.0, please upgrade to 1.2.0 and then continue with the steps above. 
 
 **General**
 
 * Seperation of Teams into Users and Teams.
-* Integration with MajorLeagueCyber. (https://majorleaguecyber.org)
+    * Use User Mode if you want users to register as themselves and play on their own.
+    * Use Team Mode if you want users to create and join teams to play together.
+* Integration with MajorLeagueCyber (MLC). (https://majorleaguecyber.org)
+    * Organizers can register their event with MLC and will receive OAuth Client ID & Client Secret.
+    * Organizers can set those OAuth credentials in CTFd to allow users and teams to automatically register in a CTF. 
 * Data is now provided to the front-end via the REST API. (#551)
     * Javascript uses `fetch()` to consume the REST API.
-* Dynamic Challenges built in. 
-* S3 Uploader built in. (#661)
-* Real time notifications. (#600)
+* Dynamic Challenges are built in. 
+* S3 backed uploading/downloading built in. (#661)
+* Real time notifications/announcements. (#600)
+    * Uses long-polling instead of websockets to simplify deployment.
 * Email address domain whitelisting. (#603)
 * Database exporting to CSV. (#656)
 * Imports/Exports rewritten to act as backups.
@@ -27,6 +46,7 @@ trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io
     * Based on https://github.com/umpirsky/country-list/blob/master/data/en_US/country.csv.
 * Sessions are no longer stored using secure cookies. (#658)
     * Sessions are now stored server side in a cache (`filesystem` or `redis`) allowing for session revocation.
+    * In order to delete the cache during local development you can delete `CTfd/.data/filesystem_cache`.
 * Challenges can now have requirements which must be met before the challenge can be seen/solved.
 * Workshop mode, score hiding, registration hiding, challenge hiding have been changed to visibility settings.
 * Users and Teams can now be banned preventing access to the CTF.
@@ -34,13 +54,8 @@ trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io
     * WORKERS count in `docker-entrypoint.sh` defaults to 1. (#716)
     * `docker-entrypoint.sh` exits on any error. (#717)
 * Increased test coverage.
+* Create `SAFE_MODE` configuration to disable loading of plugins.
 * Migrations have been reset. 
-    * If upgrading from 1.2.0:
-        1. Make all necessary backups. Backup the database, uploads folder, and source code directory.
-        2. Upgrade the source code directory.
-        3. Set the `DATABASE_URL` in `CTFd/config.py`.
-        3. Run the upgrade script from the CTFd folder i.e. `python migrations/1_2_0_upgrade_2_0_0.py`.
-        4. Setup the rest of CTFd and run normally.
 
 **Themes**
 
@@ -48,24 +63,27 @@ trouble updating your plugins please join [the CTFd Slack](https://slack.ctfd.io
     * Javascript uses `fetch()` to consume the REST API.
 * The admin theme is no longer considered seperated from the core theme and should always be together.
 * Themes now use `url_for()` to generate URLs instead of hardcoding.
-* socket.io is used to connect to CTFd to receive notifications.
+* socket.io (via long-polling) is used to connect to CTFd to receive notifications.
 * `ctf_name()` renamed to `get_ctf_name()` in themes.
 * `ctf_logo()` renamed to `get_ctf_logo()` in themes.
 * `ctf_theme()` renamed to `get_ctf_theme()` in themes.
 * Update Font-Awesome to 5.4.1.
 * Update moment.js to 2.22.2. (#704)
+* Workshop mode, score hiding, registration hiding, challenge hiding have been changed to visibility functions.
+    * `accounts_visible()`, `challenges_visible()`, `registration_visible()`, `scores_visible()`
 
 **Plugins**
 
 * Plugins are loaded in `sorted()` order
-* Rename challenge type plugins to use .html and have simplified names. (create, update, view)
-* Many functions moved around because utils.py has been broken up and refactored. (#475)
-* Marshmallow (https://marshmallow.readthedocs.io) is now used by the REST API to validate and serialize/deserialize data.
-    * Marshmallow schemas and views are used to restrict SQLAlchemy columns to user types. 
+* Rename challenge type plugins to use `.html` and have simplified names. (create, update, view)
+* Many functions have moved around because utils.py has been broken up and refactored. (#475)
+* Marshmallow (https://marshmallow.readthedocs.io) is now used by the REST API to validate and serialize/deserialize API data.
+    * Marshmallow schemas and views are used to restrict SQLAlchemy columns to user roles. 
 * The REST API features swagger support but this requires more utilization internally.
 * Errors can now be provided between routes and decoraters through message flashing. (CTFd.utils.helpers; get_errors, get_infos, info_for, error_for)
 * Email registration regex relaxed. (#693)
 * Many functions have moved and now have dedicated utils packages for their category.
+* Create `SAFE_MODE` configuration to disable loading of plugins.
 
 
 1.2.0 / 2018-05-04

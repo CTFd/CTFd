@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
     submissions = []
     for solve in old_data['solves']:
-        solve.pop('id') # ID of a solve doesn't really matter
+        solve.pop('id')  # ID of a solve doesn't really matter
         solve['challenge_id'] = solve.pop('chalid')
         solve['user_id'] = solve.pop('teamid')
         solve['provided'] = solve.pop('flag')
@@ -138,7 +138,7 @@ if __name__ == '__main__':
         submissions.append(solve)
 
     for wrong_key in old_data['wrong_keys']:
-        wrong_key.pop('id') # ID of a fail doesn't really matter.
+        wrong_key.pop('id')  # ID of a fail doesn't really matter.
         wrong_key['challenge_id'] = wrong_key.pop('chalid')
         wrong_key['user_id'] = wrong_key.pop('teamid')
         wrong_key['provided'] = wrong_key.pop('flag')
@@ -168,15 +168,69 @@ if __name__ == '__main__':
     print('MIGRATING Config')
     banned = [
         'ctf_version',
-        'setup'
     ]
+    workshop_mode = None
+    hide_scores = None
+    prevent_registration = None
+    view_challenges_unregistered = None
+    view_scoreboard_if_authed = None
+
+    challenge_visibility = 'private'
+    registration_visibility = 'public'
+    score_visibility = 'public'
+    account_visibility = 'public'
     for config in old_data['config']:
         config.pop('id')
+
+        if config['key'] == 'workshop_mode':
+            workshop_mode = config['value']
+        elif config['key'] == 'hide_scores':
+            hide_scores = config['value']
+        elif config['key'] == 'prevent_registration':
+            prevent_registration = config['value']
+        elif config['key'] == 'view_challenges_unregistered':
+            view_challenges_unregistered = config['value']
+        elif config['key'] == 'view_scoreboard_if_authed':
+            view_scoreboard_if_authed = config['value']
+
         if config['key'] not in banned:
             new_conn['config'].insert(dict(config))
+
+    if workshop_mode:
+        score_visibility = 'admins'
+        account_visibility = 'admins'
+
+    if hide_scores:
+        score_visibility = 'hidden'
+
+    if prevent_registration:
+        registration_visibility = 'private'
+
+    if view_challenges_unregistered:
+        challenge_visibility = 'public'
+
+    if view_scoreboard_if_authed:
+        score_visibility = 'private'
+
     new_conn['config'].insert({
         'key': 'user_mode',
         'value': 'users'
+    })
+    new_conn['config'].insert({
+        'key': 'challenge_visibility',
+        'value': challenge_visibility
+    })
+    new_conn['config'].insert({
+        'key': 'registration_visibility',
+        'value': registration_visibility
+    })
+    new_conn['config'].insert({
+        'key': 'score_visibility',
+        'value': score_visibility
+    })
+    new_conn['config'].insert({
+        'key': 'account_visibility',
+        'value': account_visibility
     })
     del old_data['config']
 
@@ -192,7 +246,7 @@ if __name__ == '__main__':
         for row in data:
             new_conn[table].insert(dict(row))
             ran = True
-        else: # We finished inserting
+        else:  # We finished inserting
             if ran:
                 manual.append(table)
 
@@ -208,6 +262,7 @@ if __name__ == '__main__':
     for table in manual:
         print('\t', 'ALTER TABLE `{table}` ADD PRIMARY KEY(id)'.format(table=table))
 
-    print('The following tables were not created because they were empty and must be manually recreated (e.g. app.db.create_all()')
+    print(
+        'The following tables were not created because they were empty and must be manually recreated (e.g. app.db.create_all()')
     for table in not_created:
         print('\t', table)

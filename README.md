@@ -11,11 +11,12 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
 
 ## Features
  * Create your own challenges, categories, hints, and flags from the Admin Interface
-     * Dynamic Scoring Challenges
+    * Dynamic Scoring Challenges
     * Unlockable challenge support
     * Challenge plugin architecture to create your own custom challenges
     * Static & Regex based flags
-    * Users can unlock hints for free or with points
+        * Custom flag plugins
+    * Unlockable hints
     * File uploads to the server or an Amazon S3-compatible backend
     * Limit challenge attempts & hide challenges
     * Automatic bruteforce protection
@@ -57,7 +58,7 @@ https://demo.ctfd.io/
 ## Support
 To get basic support, you can join the [CTFd Slack Community](https://slack.ctfd.io/): [![CTFd Slack](https://slack.ctfd.io/badge.svg)](https://slack.ctfd.io/)
 
-If you prefer commercial support or have a special project, send us an email: [support@ctfd.io](mailto:support@ctfd.io).
+If you prefer commercial support or have a special project, feel free to [contact us](https://ctfd.io/contact/).
 
 ## Managed Hosting
 Looking to use CTFd but don't want to deal with managing infrastructure? Check out [the CTFd website](https://ctfd.io/) for managed CTFd deployments.
@@ -67,7 +68,7 @@ CTFd is heavily integrated with [MajorLeagueCyber](https://majorleaguecyber.org/
 
 By registering your CTF event with MajorLeagueCyber users can automatically login, track their individual and team scores, submit writeups, and get notifications of important events. 
 
-To integrate with MajorLeagueCyber, simply register an account, create an event, and install the client ID and client secret in the relevant portion in CTFd/config.py:
+To integrate with MajorLeagueCyber, simply register an account, create an event, and install the client ID and client secret in the relevant portion in `CTFd/config.py` or in the admin panel:
 
 ```python
 OAUTH_CLIENT_ID = None
