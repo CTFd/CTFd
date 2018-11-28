@@ -125,7 +125,7 @@
 	<script>
 	var user_id = {{ user.id }};
 	var user_name = {{ user.name | tojson }};
-	var team_id = {{ user.team_id }};
+	var team_id = {{ user.team_id | tojson }};
 	var user_self = {{ (user.id == id) | tojson }};
 	var user_account_id = user_self ? "me" : user_id;
 	</script>
