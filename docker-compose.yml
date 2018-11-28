@@ -8,7 +8,6 @@ services:
       - "8000:8000"
     environment:
       - UPLOAD_FOLDER=/var/uploads
-      - LOG_FOLDER=/var/log/CTFd
       - DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfd
       - REDIS_URL=redis://cache:6379
       - WORKERS=4
@@ -23,7 +22,7 @@ services:
         internal:
 
   db:
-    image: mariadb:10.2
+    image: mariadb:10.4
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=ctfd
