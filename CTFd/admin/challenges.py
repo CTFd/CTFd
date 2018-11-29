@@ -23,8 +23,11 @@ def challenges_detail(challenge_id):
     challenge_class = get_chal_class(challenge.type)
 
     with open(os.path.join(app.root_path, challenge_class.templates['update'].lstrip('/'))) as update:
+        read = update.read()
+        if type(read) != str:
+            read = read.decode('utf-8')
         update_j2 = render_template_string(
-            update.read().decode('utf-8'),
+            read,
             challenge=challenge
         )
 
