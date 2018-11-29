@@ -116,7 +116,7 @@ if __name__ == '__main__':
     print('MIGRATING Unlocks')
     for unlock in old_data['unlocks']:
         unlock['user_id'] = unlock.pop('teamid')  # This is intentional as previous CTFds are effectively in user mode
-        unlock['target'] = unlock.pop('item_id')
+        unlock['target'] = unlock.pop('itemid')
         unlock['type'] = unlock.pop('model')
         new_conn['unlocks'].insert(dict(unlock))
     del old_data['unlocks']
