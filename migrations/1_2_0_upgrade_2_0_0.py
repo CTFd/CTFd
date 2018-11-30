@@ -18,6 +18,17 @@ from sqlalchemy_utils import (
 from six.moves import input
 import dataset
 
+def cast_bool(value):
+    if value and value.isdigit():
+        return int(value)
+    elif value and isinstance(value, six.string_types):
+        if value.lower() == 'true':
+            return True
+        elif value.lower() == 'false':
+            return False
+        else:
+            return value
+
 if __name__ == '__main__':
     print("/*\\ Migrating your database to 2.0.0 can potentially lose data./*\\")
     print("""/*\\ Please be sure to back up all data by:
@@ -116,7 +127,7 @@ if __name__ == '__main__':
     print('MIGRATING Unlocks')
     for unlock in old_data['unlocks']:
         unlock['user_id'] = unlock.pop('teamid')  # This is intentional as previous CTFds are effectively in user mode
-        unlock['target'] = unlock.pop('item_id')
+        unlock['target'] = unlock.pop('itemid')
         unlock['type'] = unlock.pop('model')
         new_conn['unlocks'].insert(dict(unlock))
     del old_data['unlocks']
@@ -183,15 +194,15 @@ if __name__ == '__main__':
         config.pop('id')
 
         if config['key'] == 'workshop_mode':
-            workshop_mode = config['value']
+            workshop_mode = cast_bool(config['value'])
         elif config['key'] == 'hide_scores':
-            hide_scores = config['value']
+            hide_scores = cast_bool(config['value'])
         elif config['key'] == 'prevent_registration':
-            prevent_registration = config['value']
+            prevent_registration = cast_bool(config['value'])
         elif config['key'] == 'view_challenges_unregistered':
-            view_challenges_unregistered = config['value']
+            view_challenges_unregistered = cast_bool(config['value'])
         elif config['key'] == 'view_scoreboard_if_authed':
-            view_scoreboard_if_authed = config['value']
+            view_scoreboard_if_authed = cast_bool(config['value'])
 
         if config['key'] not in banned:
             new_conn['config'].insert(dict(config))
