@@ -27,7 +27,7 @@ def test_export_ctf():
             backup = export_ctf()
 
             with open('export.zip', 'wb') as f:
-                f.write(backup.getvalue())
+                f.write(backup.read())
             os.remove('export.zip')
     destroy_ctfd(app)
 
