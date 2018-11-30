@@ -14,6 +14,7 @@ import os
 import re
 import six
 import zipfile
+import tempfile
 
 
 class CTFdSerializer(JSONSerializer):
@@ -56,7 +57,7 @@ def export_ctf():
     db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
 
     # Backup database
-    backup = six.BytesIO()
+    backup = tempfile.SpooledTemporaryFile()
 
     backup_zip = zipfile.ZipFile(backup, 'w')
 
