@@ -21,6 +21,32 @@ def test_get_admin_challenges_new():
     destroy_ctfd(app)
 
 
+def test_create_new_challenge():
+    """Test that an admin can create a challenge properly"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app, name="admin", password="password")
+
+        challenge_data = {
+            "name": "name",
+            "category": "category",
+            "description": "description",
+            "value": 100,
+            "state": "hidden",
+            "type": "standard"
+        }
+
+        r = client.post('/api/v1/challenges', json=challenge_data)
+        assert r.get_json().get('data')['id'] == 1
+        r = client.get('/admin/challenges/1')
+        assert r.status_code == 200
+        r = client.get('/api/v1/challenges/1')
+        assert r.get_json().get('data')['id'] == 1
+
+    destroy_ctfd(app)
+
+
 def test_hidden_challenge_is_reachable():
     """Test that hidden challenges are visible for admins"""
     app = create_ctfd()
