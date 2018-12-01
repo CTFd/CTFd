@@ -1,4 +1,4 @@
-2.0.0 / 2018-11-28
+2.0.0 / 2018-11-30
 ==================
 
 2.0.0 is a *significant*, backwards-incompaitble release. 
