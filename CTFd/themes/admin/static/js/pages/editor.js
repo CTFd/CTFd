@@ -107,8 +107,7 @@ function submit_form() {
                 button: 'Okay'
             });
         } else {
-            console.log(data);
-            window.location = script_root + '/admin/pages/' + data.id;
+            window.location = script_root + '/admin/pages/' + response.data.id;
         }
     });
 }
