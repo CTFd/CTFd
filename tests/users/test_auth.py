@@ -51,6 +51,25 @@ def test_register_duplicate_email():
     destroy_ctfd(app)
 
 
+def test_register_whitelisted_email():
+    """A user shouldn't be able to register with an email that isn't on the whitelist"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config('domain_whitelist', 'whitelisted.com, whitelisted.org, whitelisted.net')
+        register_user(app, name="not_whitelisted", email='user@nope.com')
+        assert Users.query.count() == 1
+
+        register_user(app, name="user1", email='user@whitelisted.com')
+        assert Users.query.count() == 2
+
+        register_user(app, name="user2", email='user@whitelisted.org')
+        assert Users.query.count() == 3
+
+        register_user(app, name="user3", email='user@whitelisted.net')
+        assert Users.query.count() == 4
+    destroy_ctfd(app)
+
+
 def test_user_bad_login():
     """A user should not be able to login with an incorrect password"""
     app = create_ctfd()
