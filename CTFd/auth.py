@@ -153,7 +153,7 @@ def register():
         if not valid_email:
             errors.append("Please enter a valid email address")
         if domain_whitelist:
-            domain_whitelist = domain_whitelist.split(',')
+            domain_whitelist = [d.strip() for d in domain_whitelist.split(',')]
             if domain not in domain_whitelist:
                 errors.append(
                     "Only email addresses under {domains} may register".format(

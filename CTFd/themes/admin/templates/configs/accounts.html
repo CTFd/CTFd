@@ -25,7 +25,7 @@
 			</label>
 			<select class="form-control" name="verify_emails">
 				<option value="true" {% if verify_emails == True %}selected{% endif %}>Enabled</option>
-				<option value="false" {% if verify_emails == False %}selected{% endif %}>Disabled</option>
+				<option value="false" {% if verify_emails == False or verify_emails == None %}selected{% endif %}>Disabled</option>
 			</select>
 		</div>
 
@@ -37,25 +37,10 @@
 				</small>
 			</label>
 			<select class="form-control" name="name_changes">
-				<option value="true" {% if name_changes== True %}selected{% endif %}>Enabled</option>
+				<option value="true" {% if name_changes == True or name_changes == None %}selected{% endif %}>Enabled</option>
 				<option value="false" {% if name_changes == False %}selected{% endif %}>Disabled</option>
 			</select>
 		</div>
-
-{#		<div class="form-check">#}
-{#			<label>#}
-{#				<input id="verify_emails" name="verify_emails" type="checkbox" {% if verify_emails %}checked{% endif %}>#}
-{#				Only allow users with verified emails#}
-{#			</label>#}
-{#		</div>#}
-
-{#		<div class="form-check">#}
-{#			<label>#}
-{#				<input id="prevent_name_change" name="prevent_name_change" type="checkbox"#}
-{#					   {% if prevent_name_change %}checked{% endif %}>#}
-{#				Prevent team name changes#}
-{#			</label>#}
-{#		</div>#}
 
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
 	</form>

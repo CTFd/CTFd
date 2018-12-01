@@ -1,12 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from passlib.hash import bcrypt_sha256
 from sqlalchemy import TypeDecorator, String, func, types, CheckConstraint, and_
 from sqlalchemy.sql.expression import union_all
 from sqlalchemy.types import JSON, NullType
 from sqlalchemy.orm import validates, column_property
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-from sqlalchemy.sql import or_, and_, any_
 from CTFd.utils.crypto import hash_password
 from CTFd.cache import cache
 import datetime
@@ -301,8 +299,10 @@ class Users(db.Model):
 
     def __init__(self, **kwargs):
         super(Users, self).__init__(**kwargs)
-        if kwargs.get('password'):
-            self.password = hash_password(str(kwargs['password']))
+
+    @validates('password')
+    def validate_password(self, key, plaintext):
+        return hash_password(str(plaintext))
 
     @hybrid_property
     def account_id(self):
@@ -491,8 +491,10 @@ class Teams(db.Model):
 
     def __init__(self, **kwargs):
         super(Teams, self).__init__(**kwargs)
-        if kwargs.get('password'):
-            self.password = hash_password(str(kwargs['password']))
+
+    @validates('password')
+    def validate_password(self, key, plaintext):
+        return hash_password(str(plaintext))
 
     @property
     def solves(self):
