@@ -4,8 +4,10 @@ from marshmallow import validate, ValidationError, pre_load
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Teams
 from CTFd.utils.validators import validate_country_code
+from CTFd.utils.user import is_admin, get_current_team
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.user import is_admin, get_current_team
+from CTFd.utils.crypto import verify_password, hash_password
 
 
 class TeamSchema(ma.ModelSchema):
@@ -89,6 +91,25 @@ class TeamSchema(ma.ModelSchema):
             else:
                 if obj.id != get_current_team().id:
                     raise ValidationError('Email address has already been used', field_names=['email'])
+
+    @pre_load
+    def validate_password_confirmation(self, data):
+        password = data.get('password')
+        confirm = data.get('confirm')
+        target_team = get_current_team()
+
+        if is_admin():
+            pass
+        else:
+            if password and (confirm is None):
+                raise ValidationError('Please confirm your current password', field_names=['confirm'])
+
+            if password and confirm:
+                test = verify_password(plaintext=confirm, ciphertext=target_team.password)
+                if test is True:
+                    return data
+                else:
+                    raise ValidationError('Your previous password is incorrect', field_names=['confirm'])
 
     views = {
         'user': [

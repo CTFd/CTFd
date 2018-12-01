@@ -152,7 +152,6 @@ def settings():
 
 
 @views.route('/static/user.css')
-@cache.cached(timeout=300)
 def custom_css():
     """
     Custom CSS Handler route

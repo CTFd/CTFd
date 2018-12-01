@@ -41,3 +41,24 @@ def test_themes_escape_html():
             assert r.status_code == 200
             assert "<script>alert(1)</script>" not in r.get_data(as_text=True)
     destroy_ctfd(app)
+
+
+def test_custom_css():
+    """Config should be able to properly set CSS"""
+    app = create_ctfd()
+    with app.app_context():
+
+        with login_as_user(app, "admin") as admin:
+            css_value = """.test{}"""
+            css_value2 = """.test2{}"""
+            r = admin.patch('/api/v1/configs', json={"css": css_value})
+            assert r.status_code == 200
+            assert get_config('css') == css_value
+
+            r = admin.get('/static/user.css')
+            assert r.get_data(as_text=True) == css_value
+
+            r = admin.patch('/api/v1/configs', json={"css": css_value2})
+            r = admin.get('/static/user.css')
+            assert r.get_data(as_text=True) == css_value2
+    destroy_ctfd(app)

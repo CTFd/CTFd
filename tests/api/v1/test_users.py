@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from CTFd.utils import set_config
+from CTFd.utils.crypto import verify_password
 from tests.helpers import *
 
 
@@ -71,11 +72,22 @@ def test_api_users_post_admin():
     app = create_ctfd()
     with app.app_context():
         with login_as_user(app, 'admin') as client:
+            # Create user
             r = client.post('/api/v1/users', json={
                 "name": "user",
                 "email": "user@user.com",
-                "password": "pass"
+                "password": "password"
             })
+            assert r.status_code == 200
+
+            # Make sure password was hashed properly
+            user = Users.query.filter_by(email='user@user.com').first()
+            assert user
+            assert verify_password('password', user.password)
+
+            # Make sure user can login with the creds
+            client = login_as_user(app)
+            r = client.get('/profile')
             assert r.status_code == 200
     destroy_ctfd(app)
 

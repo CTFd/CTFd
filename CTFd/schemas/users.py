@@ -105,9 +105,7 @@ class UserSchema(ma.ModelSchema):
         user_id = data.get('id')
 
         if is_admin():
-            if password:
-                data['password'] = hash_password(data['password'])
-                return data
+            pass
         else:
             if password and (confirm is None):
                 raise ValidationError('Please confirm your current password', field_names=['confirm'])
@@ -115,7 +113,6 @@ class UserSchema(ma.ModelSchema):
             if password and confirm:
                 test = verify_password(plaintext=confirm, ciphertext=target_user.password)
                 if test is True:
-                    data['password'] = hash_password(data['password'])
                     return data
                 else:
                     raise ValidationError('Your previous password is incorrect', field_names=['confirm'])
