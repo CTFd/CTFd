@@ -9,6 +9,7 @@ var editor = CodeMirror.fromTextArea(
 
 function show_files(data) {
     var list = $('#media-library-list');
+    list.empty();
 
     for (var i = 0; i < data.length; i++) {
         var f = data[i];
@@ -121,7 +122,7 @@ function preview_page() {
 
 function upload_media() {
     upload_files($('#media-library-upload'), function (data) {
-        console.log(data);
+        refresh_files();
     });
 }
 
