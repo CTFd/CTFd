@@ -190,18 +190,22 @@ function marksolves(cb) {
 }
 
 function load_user_solves(cb) {
-    $.get(script_root + '/api/v1/'+ user_mode +'/me/solves', function (response) {
-        var solves = response.data;
+    if (authed) {
+        $.get(script_root + '/api/v1/' + user_mode + '/me/solves', function (response) {
+            var solves = response.data;
 
-        for (var i = solves.length - 1; i >= 0; i--) {
-            var chal_id = solves[i].challenge_id;
-            user_solves.push(chal_id);
+            for (var i = solves.length - 1; i >= 0; i--) {
+                var chal_id = solves[i].challenge_id;
+                user_solves.push(chal_id);
 
-        }
-        if (cb) {
-            cb();
-        }
-    });
+            }
+            if (cb) {
+                cb();
+            }
+        });
+    } else {
+        cb();
+    }
 }
 
 function getsolves(id) {
@@ -275,8 +279,6 @@ function loadchals(cb) {
 
             $("#" + catid + "-row").find(".category-challenges > .challenges-row").append(chalwrap);
         }
-
-        // marksolves();
 
         $('.challenge-button').click(function (e) {
             loadchal(this.value);
