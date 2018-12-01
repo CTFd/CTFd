@@ -86,7 +86,7 @@ def plugin(plugin):
                 continue
             set_config(k, v)
         with app.app_context():
-            cache.clear()
+            clear_config()
         return '1'
 
 
