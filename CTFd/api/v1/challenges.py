@@ -173,7 +173,7 @@ class Challenge(Resource):
 
                 prereqs = set(requirements.get('prerequisites', []))
                 anonymize = requirements.get('anonymize')
-                if solve_ids >= prereqs:
+                if solve_ids >= prereqs or is_admin():
                     pass
                 else:
                     if anonymize:
