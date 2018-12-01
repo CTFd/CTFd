@@ -2,7 +2,7 @@ from flask import session, request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Pages
 from CTFd.schemas.pages import PageSchema
-from CTFd.utils.events import socketio
+from CTFd.cache import clear_pages
 
 from CTFd.utils.decorators import (
     admins_only
@@ -46,6 +46,8 @@ class PageList(Resource):
 
         response = schema.dump(response.data)
         db.session.close()
+
+        clear_pages()
 
         return {
             'success': True,
@@ -91,6 +93,8 @@ class PageDetail(Resource):
         response = schema.dump(response.data)
         db.session.close()
 
+        clear_pages()
+
         return {
             'success': True,
             'data': response.data
@@ -102,6 +106,8 @@ class PageDetail(Resource):
         db.session.delete(page)
         db.session.commit()
         db.session.close()
+
+        clear_pages()
 
         return {
             'success': True

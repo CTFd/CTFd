@@ -73,6 +73,7 @@ class Config(object):
     else:
         CACHE_TYPE = 'filesystem'
         CACHE_DIR = os.path.join(os.path.dirname(__file__), os.pardir, '.data', 'filesystem_cache')
+        CACHE_THRESHOLD = 0  # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
 
     '''
     === SECURITY ===
@@ -210,4 +211,5 @@ class TestingConfig(Config):
     UPDATE_CHECK = False
     REDIS_URL = None
     CACHE_TYPE = 'simple'
+    CACHE_THRESHOLD = 500
     SAFE_MODE = True

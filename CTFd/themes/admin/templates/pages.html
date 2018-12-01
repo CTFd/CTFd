@@ -24,7 +24,8 @@
 				<tr>
 					<td><b>Title</b></td>
 					<td><b>Route</b></td>
-					<td><b>Authentication</b></td>
+					<td class="text-center"><b>Authentication</b></td>
+					<td class="text-center"><b>Hidden</b></td>
 					<td class="text-center"><b>Published</b></td>
 					<td class="text-center" width="10px"><b>Settings</b></td>
 				</tr>
@@ -40,9 +41,15 @@
 								{{ page.route }}
 							</a>
 						</td>
-						<td class="page-authentication">
+						<td class="text-center">
 							{% if page.auth_required %}
 							Required
+							{% else %}
+							{% endif %}
+						</td>
+						<td class="text-center">
+							{% if page.hidden %}
+								Hidden
 							{% else %}
 							{% endif %}
 						</td>

@@ -9,6 +9,7 @@ var editor = CodeMirror.fromTextArea(
 
 function show_files(data) {
     var list = $('#media-library-list');
+    list.empty();
 
     for (var i = 0; i < data.length; i++) {
         var f = data[i];
@@ -107,8 +108,7 @@ function submit_form() {
                 button: 'Okay'
             });
         } else {
-            console.log(data);
-            window.location = script_root + '/admin/pages/' + data.id;
+            window.location = script_root + '/admin/pages/' + response.data.id;
         }
     });
 }
@@ -122,7 +122,7 @@ function preview_page() {
 
 function upload_media() {
     upload_files($('#media-library-upload'), function (data) {
-        console.log(data);
+        refresh_files();
     });
 }
 
@@ -144,12 +144,6 @@ $(document).ready(function () {
             entry = '[{0}]({1})'.format(fname, link);
         }
         insert_at_cursor(editor, entry);
-    });
-
-
-    $('#publish-page').click(function (e) {
-        e.preventDefault();
-        submit_form();
     });
 
     $('#save-page').click(function (e) {

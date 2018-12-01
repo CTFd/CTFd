@@ -42,14 +42,23 @@ def test_api_pages_post_admin():
         with login_as_user(app, name="admin") as client:
             with client.session_transaction() as sess:
                 nonce = sess.get('nonce')
-            r = client.post('/api/v1/pages', json={
-                "title": "Title",
-                "route": "/route",
-                "content": "content",
-                "id": "",
-                "nonce": nonce,
-                "auth_required": False})
+            r = client.post(
+                '/api/v1/pages',
+                json={
+                    "title": "testing_page_title",
+                    "route": "/route",
+                    "content": "testing_page_content",
+                    "nonce": nonce,
+                    "auth_required": False
+                }
+            )
+            r = client.get('/')
             assert r.status_code == 200
+            assert "testing_page_title" in r.get_data(as_text=True)
+
+            r = client.get('/route')
+            assert r.status_code == 200
+            assert "testing_page_content" in r.get_data(as_text=True)
     destroy_ctfd(app)
 
 
