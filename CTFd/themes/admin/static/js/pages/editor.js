@@ -146,12 +146,6 @@ $(document).ready(function () {
         insert_at_cursor(editor, entry);
     });
 
-
-    $('#publish-page').click(function (e) {
-        e.preventDefault();
-        submit_form();
-    });
-
     $('#save-page').click(function (e) {
         e.preventDefault();
         submit_form();

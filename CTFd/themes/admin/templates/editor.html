@@ -93,8 +93,10 @@
 			<form id="page-edit" method="POST">
 				<div class="form-group">
 					<div class="col-md-12">
-						<h3>Title</h3>
-						<p class="text-muted">This is the title shown on the navigation bar</p>
+						<label>
+							Title<br>
+							<small class="text-muted">This is the title shown on the navigation bar</small>
+						</label>
 						<input class="form-control radius" id="route" type="text" name="title"
 							   value="{% if page is defined %}{{ page.title }}{% endif %}" placeholder="Title">
 					</div>
@@ -102,20 +104,15 @@
 
 				<div class="form-group">
 					<div class="col-md-12">
-						<h3>Route</h3>
-						<p class="text-muted">This is the URL route that your page will be at (e.g. /page). You can
-							also enter links to link to that page.</p>
+						<label>
+							Route<br>
+							<small class="text-muted">
+								This is the URL route that your page will be at (e.g. /page). You can
+								also enter links to link to that page.
+							</small>
+						</label>
 						<input class="form-control radius" id="route" type="text" name="route"
 							   value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
-
-						<div class="form-check">
-							<label class="form-check-label float-right">
-								<input class="form-check-input" type="checkbox" name="auth_required"
-									   {% if page is defined and page.auth_required %}checked{% endif %}>
-								Users must be logged in to see this page
-							</label>
-						</div>
-
 					</div>
 				</div>
 
@@ -123,7 +120,7 @@
 					<div class="col-md-12">
 
 						<h3>Content</h3>
-						<p class="text-muted">This is the HTML content of your page</p>
+						<small class="text-muted">This is the HTML content of your page</small>
 
 						<ul class="nav nav-tabs" role="tablist" id="content-edit">
 							<li class="nav-item" role="presentation" class="active">
@@ -148,6 +145,45 @@
 											</button>
 										</div>
 									</div>
+
+									<span class="nav-link d-none d-md-block d-lg-block">|</span>
+
+									<div class="form-group pr-3">
+										Draft:
+										{% set draft = page is defined and page.draft == True %}
+										<select name="draft">
+											<option value="true" {% if draft == True %}selected{% endif %}>
+												True
+											</option>
+											<option value="false" {% if draft == False %}selected{% endif %}>
+												False
+											</option>
+										</select>
+									</div>
+
+									<div class="form-group pr-3">
+										Hidden:
+										{% set hidden = page is defined and page.hidden == True %}
+										<select name="hidden">
+											<option value="true" {% if hidden == True %}selected{% endif %}>True
+											</option>
+											<option value="false" {% if hidden == False %}selected{% endif %}>False
+											</option>
+										</select>
+									</div>
+
+									<div class="form-group pr-3">
+										Authentication Required:
+										{% set auth_required = page is defined and page.auth_required == True %}
+										<select name="auth_required">
+											<option value="true" {% if auth_required == True %}selected{% endif %}>
+												True
+											</option>
+											<option value="false" {% if auth_required == False %}selected{% endif %}>
+												False
+											</option>
+										</select>
+									</div>
 								</div>
 
 								<br>
@@ -167,9 +203,6 @@
 
 				<div class="form-group float-right">
 					<input name='nonce' type='hidden' value="{{ nonce }}">
-					<button class="btn btn-success" id="publish-page">
-						Publish
-					</button>
 					<button class="btn btn-primary" id="save-page">
 						{% if page is defined %}
 							Update
