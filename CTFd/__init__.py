@@ -134,6 +134,7 @@ def create_app(config='CTFd.config.Config'):
         # If you have multiple workers you must have a shared cache
         socketio.init_app(
             app,
+            async_mode=app.config.get('SOCKETIO_ASYNC_MODE'),
             message_queue=app.config.get('CACHE_REDIS_URL')
         )
 
