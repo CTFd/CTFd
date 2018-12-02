@@ -507,3 +507,78 @@ def test_challenges_cannot_be_solved_while_paused():
         wrong_keys = Fails.query.count()
         assert wrong_keys == 0
     destroy_ctfd(app)
+
+
+def test_challenges_under_view_after_ctf():
+    app = create_ctfd()
+    with app.app_context(), freeze_time("2017-10-7"):
+        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+
+        register_user(app)
+        client = login_as_user(app)
+
+        gen_challenge(app.db)
+        gen_flag(app.db, challenge_id=1, content='flag')
+
+        r = client.get('/challenges')
+        assert r.status_code == 403
+
+        r = client.get('/api/v1/challenges')
+        assert r.status_code == 403
+        assert r.get_json().get('data') is None
+
+        r = client.get('/api/v1/challenges/1')
+        assert r.status_code == 403
+        assert r.get_json().get('data') is None
+
+        data = {
+            "submission": 'flag',
+            "challenge_id": 1
+        }
+        r = client.post('/api/v1/challenges/attempt', json=data)
+        assert r.status_code == 403
+        assert r.get_json().get('data') is None
+        assert Solves.query.count() == 0
+
+        data = {
+            "submission": 'notflag',
+            "challenge_id": 1
+        }
+        r = client.post('/api/v1/challenges/attempt', json=data)
+        assert r.status_code == 403
+        assert r.get_json().get('data') is None
+        assert Fails.query.count() == 0
+
+        set_config('view_after_ctf', True)
+
+        r = client.get('/challenges')
+        assert r.status_code == 200
+
+        r = client.get('/api/v1/challenges')
+        assert r.status_code == 200
+        assert r.get_json()['data'][0]['id'] == 1
+
+        r = client.get('/api/v1/challenges/1')
+        assert r.status_code == 200
+        assert r.get_json()['data']['id'] == 1
+
+        data = {
+            "submission": 'flag',
+            "challenge_id": 1
+        }
+        r = client.post('/api/v1/challenges/attempt', json=data)
+        assert r.status_code == 200
+        assert r.get_json()['data']['status'] == "correct"
+        assert Solves.query.count() == 0
+
+        data = {
+            "submission": 'notflag',
+            "challenge_id": 1
+        }
+        r = client.post('/api/v1/challenges/attempt', json=data)
+        assert r.status_code == 200
+        assert r.get_json()['data']['status'] == "incorrect"
+        assert Fails.query.count() == 0
+
+    destroy_ctfd(app)
