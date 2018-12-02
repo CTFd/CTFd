@@ -53,6 +53,10 @@ def ctf_ended():
     return False
 
 
+def view_after_ctf():
+    return get_config('view_after_ctf')
+
+
 def unix_time(dt):
     return int((dt - datetime.datetime(1970, 1, 1)).total_seconds())
 
