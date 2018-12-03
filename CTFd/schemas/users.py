@@ -152,7 +152,8 @@ class UserSchema(ma.ModelSchema):
             'id',
             'oauth_id',
             'password',
-            'type'
+            'type',
+            'verified'
         ]
     }
 
