@@ -168,10 +168,13 @@ def test_api_user_patch_admin():
                 "name": "user",
                 "email": "user@ctfd.io",
                 "password": "password",
-                "country": "US"
+                "country": "US",
+                "verified": True
             })
             assert r.status_code == 200
-            assert r.get_json()['data'][0]['country'] == 'US'
+            user_data = r.get_json()['data'][0]
+            assert user_data['country'] == 'US'
+            assert user_data['verified'] is True
     destroy_ctfd(app)
 
 
