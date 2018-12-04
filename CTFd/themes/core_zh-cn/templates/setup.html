@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1>初始安装配置</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="col-md-6 offset-md-3">
+			<h2 class="text-center">CTF 设置</h2>
+			{% for error in errors %}
+				<div class="submit-row">
+					<div class="alert alert-danger alert-dismissable" role="alert">
+						<span class="sr-only">Error:</span>
+						{{ error }}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+								aria-hidden="true">×</span></button>
+					</div>
+				</div>
+			{% endfor %}
+			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+				<input type="hidden" name="nonce" value="{{ nonce }}">
+				{# This nonce is implemented specially in the route itself #}
+				<div class="form-group">
+					<label>
+						CTF 名称<br>
+						<small class="form-text text-muted">
+							请输入 CTF 名称
+						</small>
+					</label>
+					<input class="form-control" type="text" name="ctf_name"/>
+				</div>
+				<div class="form-group">
+					<label>
+						管理员帐号<br>
+						<small class="form-text text-muted">
+							请输入管理员帐号
+						</small>
+					</label>
+					<input class="form-control" type="text" name="name"/>
+				</div>
+				<div class="form-group">
+					<label>
+						管理员邮箱l<br>
+						<small class="form-text text-muted">
+							请输入管理员邮箱
+						</small>
+					</label>
+					<input class="form-control" type="email" name="email"/>
+				</div>
+				<div class="form-group">
+					<label>
+						管理员密码<br>
+						<small class="form-text text-muted">
+							请输入管理员密码
+						</small>
+					</label>
+					<input class="form-control" type="password" name="password"/>
+				</div>
+				<div class="form-group">
+					<label>
+						CTF 用户模式
+						<small class="form-text text-muted">
+							请选择CTF的用户模式. <br>
+							允许多个用户加入一支队伍 (团队模式) 或者
+							每个选手单独竞赛 (个人模式)
+						</small>
+					</label>
+					<select class="form-control" name="user_mode">
+						<option value="teams">团队模式</option>
+						<option value="users">个人模式</option>
+					</select>
+				</div>
+				<br/>
+				<div class="submit-row text-center">
+					<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined">确认
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/style.js') }}"></script>
+{% endblock %}
