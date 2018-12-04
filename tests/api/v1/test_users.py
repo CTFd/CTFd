@@ -92,6 +92,32 @@ def test_api_users_post_admin():
     destroy_ctfd(app)
 
 
+def test_api_users_post_admin_with_attributes():
+    """Can a user post /api/v1/users with user settings"""
+    app = create_ctfd()
+    with app.app_context():
+        with login_as_user(app, 'admin') as client:
+            # Create user
+            r = client.post('/api/v1/users', json={
+                "name": "user",
+                "email": "user@user.com",
+                "password": "password",
+                "banned": True,
+                "hidden": True,
+                "verified": True
+            })
+            assert r.status_code == 200
+
+            # Make sure password was hashed properly
+            user = Users.query.filter_by(email='user@user.com').first()
+            assert user
+            assert verify_password('password', user.password)
+            assert user.banned
+            assert user.hidden
+            assert user.verified
+    destroy_ctfd(app)
+
+
 def test_api_team_get_public():
     """Can a user get /api/v1/team/<user_id> if users are public"""
     app = create_ctfd()
@@ -168,10 +194,13 @@ def test_api_user_patch_admin():
                 "name": "user",
                 "email": "user@ctfd.io",
                 "password": "password",
-                "country": "US"
+                "country": "US",
+                "verified": True
             })
             assert r.status_code == 200
-            assert r.get_json()['data'][0]['country'] == 'US'
+            user_data = r.get_json()['data'][0]
+            assert user_data['country'] == 'US'
+            assert user_data['verified'] is True
     destroy_ctfd(app)
 
 
