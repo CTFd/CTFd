@@ -121,6 +121,7 @@ class Config(object):
     MAILFROM_ADDR = os.getenv("MAILFROM_ADDR") or "noreply@ctfd.io"
     MAIL_SERVER = os.getenv("MAIL_SERVER") or None
     MAIL_PORT = os.getenv("MAIL_PORT")
+    MAIL_USEAUTH = os.getenv("MAIL_USEAUTH")
     MAIL_USERNAME = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
     MAIL_TLS = os.getenv("MAIL_TLS") or False
