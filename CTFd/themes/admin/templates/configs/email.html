@@ -44,17 +44,17 @@
 					<div class="form-group">
 						<label>Username:</label>
 						{% if mail_username is defined and mail_username != None %}
-							<label for="mail_u"><sup>A mail server username is currently set</sup></label>
+							<label for="mail_username"><sup>A mail server username is currently set</sup></label>
 						{% endif %}
-						<input class="form-control" id='mail_u' name='mail_u' autocomplete='off' type='text'
+						<input class="form-control" id='mail_username' name='mail_username' autocomplete='off' type='text'
 							   placeholder="Username">
 					</div>
 					<div class="form-group">
-						<label for="mail_p">Password:</label>
+						<label for="mail_password">Password:</label>
 						{% if mail_password is defined and mail_password != None %}
 							<label for="mail_p"><sup>An mail server password is currently set</sup></label>
 						{% endif %}
-						<input class="form-control" id='mail_p' name='mail_p' autocomplete='off' type='password'
+						<input class="form-control" id='mail_password' name='mail_password' autocomplete='off' type='password'
 							   placeholder="Password">
 					</div>
 					<sup>Uncheck setting and update to remove username and password</sup>

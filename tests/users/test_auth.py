@@ -179,6 +179,7 @@ def test_expired_reset_password_link():
     with app.app_context():
         set_config('mail_server', 'localhost')
         set_config('mail_port', 25)
+        set_config('mail_useauth', True)
         set_config('mail_username', 'username')
         set_config('mail_password', 'password')
 
@@ -199,6 +200,7 @@ def test_invalid_reset_password_link():
     with app.app_context():
         set_config('mail_server', 'localhost')
         set_config('mail_port', 25)
+        set_config('mail_useauth', True)
         set_config('mail_username', 'username')
         set_config('mail_password', 'password')
 
@@ -237,6 +239,7 @@ def test_user_can_confirm_email(mock_smtp):
         set_config('verify_emails', True)
         set_config('mail_server', 'localhost')
         set_config('mail_port', 25)
+        set_config('mail_useauth', True)
         set_config('mail_username', 'username')
         set_config('mail_password', 'password')
 
@@ -279,6 +282,7 @@ def test_user_can_reset_password(mock_smtp):
         # Set CTFd to send emails
         set_config('mail_server', 'localhost')
         set_config('mail_port', 25)
+        set_config('mail_useauth', True)
         set_config('mail_username', 'username')
         set_config('mail_password', 'password')
 

@@ -29,8 +29,7 @@ def sendmail(addr, text):
     password = get_config('mail_password') or get_app_config('MAIL_PASSWORD')
     TLS = get_config('mail_tls') or get_app_config('MAIL_TLS')
     SSL = get_config('mail_ssl') or get_app_config('MAIL_SSL')
-    if username:
-        auth = True
+    auth = get_config('mail_useauth') or get_app_config('MAIL_USEAUTH')
 
     if username:
         data['username'] = username
