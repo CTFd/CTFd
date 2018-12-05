@@ -83,6 +83,18 @@ function update_configs(obj){
 
     var params = {};
 
+    if (obj.mail_useauth === false) {
+        obj.mail_username = null;
+        obj.mail_password = null;
+    } else {
+        if (obj.mail_username === "") {
+            delete obj.mail_username;
+        }
+        if (obj.mail_password === "") {
+            delete obj.mail_password;
+        }
+    }
+
     Object.keys(obj).forEach(function (x) {
         if (obj[x] === "true") {
             params[x] = true;

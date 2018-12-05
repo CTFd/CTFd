@@ -34,6 +34,7 @@ def test_sendmail_with_smtp(mock_smtp):
     with app.app_context():
         set_config('mail_server', 'localhost')
         set_config('mail_port', 25)
+        set_config('mail_useauth', True)
         set_config('mail_username', 'username')
         set_config('mail_password', 'password')
 
@@ -143,6 +144,7 @@ def test_verify_email(mock_smtp):
     with app.app_context():
         set_config('mail_server', 'localhost')
         set_config('mail_port', 25)
+        set_config('mail_useauth', True)
         set_config('mail_username', 'username')
         set_config('mail_password', 'password')
         set_config('verify_emails', True)
