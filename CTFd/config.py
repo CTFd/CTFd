@@ -117,6 +117,27 @@ class Config(object):
 
     MAIL_PORT:
         The mail port that emails are sent from if not overriden in the configuration panel.
+
+    MAIL_USEAUTH
+        Whether or not to use username and password to authenticate to the SMTP server
+
+    MAIL_USERNAME
+        The username used to authenticate to the SMTP server if MAIL_USEAUTH is defined
+
+    MAIL_PASSWORD
+        The password used to authenticate to the SMTP server if MAIL_USEAUTH is defined
+
+    MAIL_TLS
+        Whether to connect to the SMTP server over TLS
+
+    MAIL_SSL
+        Whether to connect to the SMTP server over SSL
+
+    MAILGUN_API_KEY
+        Mailgun API key to send email over Mailgun
+
+    MAILGUN_BASE_URL
+        Mailgun base url to send email over Mailgun
     '''
     MAILFROM_ADDR = os.getenv("MAILFROM_ADDR") or "noreply@ctfd.io"
     MAIL_SERVER = os.getenv("MAIL_SERVER") or None
