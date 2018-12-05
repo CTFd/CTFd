@@ -87,11 +87,14 @@ class DynamicValueChallenge(BaseChallenge):
         :return:
         """
         data = request.form or request.get_json()
-        data['initial'] = float(data.get('initial', 0))
-        data['minimum'] = float(data.get('minimum', 0))
-        data['decay'] = float(data.get('decay', 0))
         for attr, value in data.items():
-            setattr(challenge, attr, value)
+                setattr(challenge, attr, value)
+        if challenge.requirements is not None:
+                db.session.commit()
+                return challenge
+        challenge.initial = float(data.get('initial', 0))
+        challenge.minimum = float(data.get('minimum', 0))
+        challenge.decay = float(data.get('decay', 0))
 
         Model = get_model()
 
