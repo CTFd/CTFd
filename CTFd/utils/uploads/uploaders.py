@@ -97,6 +97,7 @@ class S3Uploader(BaseUploader):
 
     def upload(self, file_obj, filename):
         filename = filter(self._clean_filename, secure_filename(filename).replace(' ', '_'))
+        filename = ''.join(filename)
         if len(filename) <= 0:
             return False
 
@@ -122,7 +123,8 @@ class S3Uploader(BaseUploader):
 
     def sync(self):
         local_folder = current_app.config.get('UPLOAD_FOLDER')
-        bucket_list = self.s3.list_objects(Bucket=self.bucket)['Contents']
+        # If the bucket is empty then Contents will not be in the response
+        bucket_list = self.s3.list_objects(Bucket=self.bucket).get('Contents', [])
 
         for s3_key in bucket_list:
             s3_object = s3_key['Key']
