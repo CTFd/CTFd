@@ -83,9 +83,9 @@ def test_can_update_dynamic_challenge():
         assert challenge.state == "visible"
 
     destroy_ctfd(app)
-    
+
 def test_can_add_requirement_dynamic_challenge():
-    """Test that dynamic challenges can be deleted"""
+    """Test that requirements can be added to dynamic challenges"""
     app = create_ctfd(enable_plugins=True)
     with app.app_context():
         challenge_data = {
@@ -119,7 +119,7 @@ def test_can_add_requirement_dynamic_challenge():
         }
 
         req = FakeRequest(form=challenge_data)
-        challenge = DynamicValueChallenge.create(challenge, req)
+        challenge = DynamicValueChallenge.create(req)
 
         assert challenge.name == 'second_name'
         assert challenge.description == "new_description"
