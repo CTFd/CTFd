@@ -2,6 +2,7 @@ import boto3
 from moto import mock_s3
 from tests.helpers import *
 from CTFd.utils.uploads import S3Uploader, FilesystemUploader, rmdir
+from CTFd.utils import binary_type
 from six import BytesIO
 import os
 
@@ -23,7 +24,7 @@ def test_s3_uploader():
         assert uploader.s3
         assert uploader.bucket == 'bucket'
 
-        fake_file = BytesIO('fakedfile')
+        fake_file = BytesIO('fakedfile'.encode())
         path = uploader.upload(fake_file, 'fake_file.txt')
 
         assert 'fake_file.txt' in uploader.download(path).location
@@ -45,7 +46,7 @@ def test_s3_sync():
         uploader = S3Uploader()
         uploader.sync()
 
-        fake_file = BytesIO('fakedfile')
+        fake_file = BytesIO('fakedfile'.encode())
         path = uploader.upload(fake_file, 'fake_file.txt')
         full_path = os.path.join(app.config['UPLOAD_FOLDER'], path)
 
