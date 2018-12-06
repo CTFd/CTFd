@@ -84,6 +84,7 @@ def test_can_update_dynamic_challenge():
 
     destroy_ctfd(app)
 
+
 def test_can_add_requirement_dynamic_challenge():
     """Test that requirements can be added to dynamic challenges"""
     app = create_ctfd(enable_plugins=True)
