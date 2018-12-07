@@ -176,12 +176,12 @@ def reset():
     if request.method == 'POST':
         # Truncate Users, Teams, Submissions, Solves, Notifications, Awards, Unlocks, Tracking
         Tracking.query.delete()
-        Users.query.delete()
-        Teams.query.delete()
-        Submissions.query.delete()
         Solves.query.delete()
+        Submissions.query.delete()
         Awards.query.delete()
         Unlocks.query.delete()
+        Users.query.delete()
+        Teams.query.delete()
         set_config('setup', False)
         db.session.commit()
         cache.clear()
