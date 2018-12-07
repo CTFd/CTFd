@@ -28,7 +28,6 @@ class CTFdFlask(Flask):
     def __init__(self, *args, **kwargs):
         """Overriden Jinja constructor setting a custom jinja_environment"""
         self.jinja_environment = SandboxedBaseEnvironment
-        self.jinja_environment.cache = None
         self.session_interface = CachingSessionInterface(key_prefix='session')
         Flask.__init__(self, *args, **kwargs)
 
@@ -42,7 +41,9 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
     def __init__(self, app, **options):
         if 'loader' not in options:
             options['loader'] = app.create_global_jinja_loader()
-        SandboxedEnvironment.__init__(self, **options)
+        # Disable cache entirely so that themes can be switched (#662)
+        # If the cache is enabled, switching themes will cause odd rendering errors
+        SandboxedEnvironment.__init__(self, cache_size=0, **options)
         self.app = app
 
 
