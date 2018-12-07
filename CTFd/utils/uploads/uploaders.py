@@ -128,10 +128,11 @@ class S3Uploader(BaseUploader):
 
         for s3_key in bucket_list:
             s3_object = s3_key['Key']
+            # We don't want to download any directories
+            if s3_object.endswith('/') is False:
+                local_path = os.path.join(local_folder, s3_object)
+                directory = os.path.dirname(local_path)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
 
-            local_path = os.path.join(local_folder, s3_object)
-            directory = os.path.dirname(local_path)
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-
-            self.s3.download_file(self.bucket, s3_object, local_path)
+                self.s3.download_file(self.bucket, s3_object, local_path)
