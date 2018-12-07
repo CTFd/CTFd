@@ -1,6 +1,55 @@
+function hint(id) {
+    return fetch(script_root + '/api/v1/hints/' + id + '?preview=true', {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    }).then(function (response) {
+        return response.json();
+    });
+}
+
+function loadhint(hintid) {
+    var md = window.markdownit({
+        html: true,
+    });
+
+    hint(hintid).then(function (response) {
+        if (response.data.content) {
+            ezal({
+                title: "Hint",
+                body: md.render(response.data.content),
+                button: "Got it!"
+            });
+        } else {
+            ezal({
+                title: "Error",
+                body: "Error loading hint!",
+                button: "OK"
+            });
+        }
+    });
+}
+
 $(document).ready(function () {
     $('#hint-add-button').click(function (e) {
         $('#hint-edit-modal form').find("input, textarea").val("");
+
+        // Markdown Preview
+        $('#new-hint-edit').on('shown.bs.tab', function (event) {
+            console.log(event.target.hash);
+            if (event.target.hash == '#hint-preview') {
+                console.log(event.target.hash);
+                var renderer = window.markdownit({
+                    html: true,
+                });
+                var editor_value = $('#hint-write textarea').val();
+                $(event.target.hash).html(renderer.render(editor_value));
+            }
+        });
+
         $('#hint-edit-modal').modal();
     });
 
@@ -26,7 +75,7 @@ $(document).ready(function () {
         e.preventDefault();
         var hint_id = $(this).attr('hint-id');
 
-        fetch(script_root + '/api/v1/hints/' + hint_id, {
+        fetch(script_root + '/api/v1/hints/' + hint_id + '?preview=true', {
             method: 'GET',
             credentials: 'same-origin',
             headers: {
@@ -40,6 +89,19 @@ $(document).ready(function () {
                 $('#hint-edit-form input[name=content],textarea[name=content]').val(response.data.content);
                 $('#hint-edit-form input[name=cost]').val(response.data.cost);
                 $('#hint-edit-form input[name=id]').val(response.data.id);
+
+                // Markdown Preview
+                $('#new-hint-edit').on('shown.bs.tab', function (event) {
+                    console.log(event.target.hash);
+                    if (event.target.hash == '#hint-preview') {
+                        console.log(event.target.hash);
+                        var renderer = new markdownit({
+                            html: true,
+                        });
+                        var editor_value = $('#hint-write textarea').val();
+                        $(event.target.hash).html(renderer.render(editor_value));
+                    }
+                });
 
                 $('#hint-edit-modal').modal();
             }
