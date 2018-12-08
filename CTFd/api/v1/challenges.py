@@ -72,10 +72,10 @@ class ChallengeList(Resource):
         response = []
         tag_schema = TagSchema(view='user', many=True)
         for challenge in challenges:
-            requirements = challenge.requirements
-            if requirements:
-                prereqs = set(requirements.get('prerequisites', []))
-                anonymize = requirements.get('anonymize')
+            if challenge.requirements:
+                requirements = challenge.requirements.get('prerequisites', [])
+                anonymize = challenge.requirements.get('anonymize')
+                prereqs = set(requirements)
                 if solve_ids >= prereqs:
                     pass
                 else:
@@ -160,8 +160,9 @@ class Challenge(Resource):
 
         chal_class = get_chal_class(chal.type)
 
-        requirements = chal.requirements
-        if requirements:
+        if chal.requirements:
+            requirements = chal.requirements.get('prerequisites', [])
+            anonymize = chal.requirements.get('anonymize')
             if current_user.authed():
                 user = get_current_user()
                 solve_ids = Solves.query \
@@ -170,9 +171,7 @@ class Challenge(Resource):
                     .order_by(Solves.challenge_id.asc()) \
                     .all()
                 solve_ids = set([value for value, in solve_ids])
-
-                prereqs = set(requirements.get('prerequisites', []))
-                anonymize = requirements.get('anonymize')
+                prereqs = set(requirements)
                 if solve_ids >= prereqs or is_admin():
                     pass
                 else:
@@ -313,16 +312,15 @@ class ChallengeAttempt(Resource):
         if challenge.state == 'locked':
             abort(403)
 
-        requirements = challenge.requirements
-        if requirements:
+        if challenge.requirements:
+            requirements = challenge.requirements.get('prerequisites', [])
             solve_ids = Solves.query \
                 .with_entities(Solves.challenge_id) \
                 .filter_by(account_id=user.account_id) \
                 .order_by(Solves.challenge_id.asc()) \
                 .all()
             solve_ids = set([solve_id for solve_id, in solve_ids])
-
-            prereqs = set(requirements.get('prerequisites', []))
+            prereqs = set(requirements)
             if solve_ids >= prereqs:
                 pass
             else:

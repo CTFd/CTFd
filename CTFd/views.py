@@ -9,6 +9,7 @@ from CTFd.utils.user import authed, get_current_user
 from CTFd.utils import config
 from CTFd.utils.uploads import get_uploader
 from CTFd.utils.config.pages import get_page
+from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
@@ -188,7 +189,7 @@ def files(path):
     """
     f = Files.query.filter_by(location=path).first_or_404()
     if f.type == 'challenge':
-        if current_user.authed():
+        if challenges_visible():
             if current_user.is_admin() is False:
                 if not ctftime():
                     abort(403)
