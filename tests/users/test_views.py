@@ -171,14 +171,23 @@ def test_user_can_access_files():
             f = gen_file(app.db, location=model_path, challenge_id=chal_id)
             url = url_for('views.files', path=model_path)
 
-            # Unauthed user should return 403
+            # Unauthed user should be able to see challenges if challenges are public
+            set_config('challenge_visibility', 'public')
+            with app.test_client() as client:
+                r = client.get(url)
+
+                assert r.status_code == 200
+                assert r.get_data(as_text=True) == 'testing file load'
+
+            # Unauthed user should be able to see challenges if challenges are private
+            set_config('challenge_visibility', 'private')
             with app.test_client() as client:
                 r = client.get(url)
 
                 assert r.status_code == 403
                 assert r.get_data(as_text=True) != 'testing file load'
 
-            # Authed user should be able to see the files
+            # Authed user should be able to see files if challenges are private
             register_user(app)
             client = login_as_user(app)
             r = client.get(url)
@@ -187,18 +196,26 @@ def test_user_can_access_files():
 
             with freeze_time("2017-10-7"):
                 set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+                for v in ('public', 'private'):
+                    set_config('challenge_visibility', v)
 
-                # Authed users shouldn't be able to see files if the CTF hasn't started
-                client = login_as_user(app)
-                r = client.get(url)
-                assert r.status_code == 403
-                assert r.get_data(as_text=True) != 'testing file load'
+                    # Unauthed users shouldn't be able to see files if the CTF hasn't started
+                    client = app.test_client()
+                    r = client.get(url)
+                    assert r.status_code == 403
+                    assert r.get_data(as_text=True) != 'testing file load'
 
-                # Admins should be able to see files if the CTF hasn't started
-                admin = login_as_user(app, "admin")
-                r = admin.get(url)
-                assert r.status_code == 200
-                assert r.get_data(as_text=True) == 'testing file load'
+                    # Authed users shouldn't be able to see files if the CTF hasn't started
+                    client = login_as_user(app)
+                    r = client.get(url)
+                    assert r.status_code == 403
+                    assert r.get_data(as_text=True) != 'testing file load'
+
+                    # Admins should be able to see files if the CTF hasn't started
+                    admin = login_as_user(app, "admin")
+                    r = admin.get(url)
+                    assert r.status_code == 200
+                    assert r.get_data(as_text=True) == 'testing file load'
         finally:
             rmdir(directory)
     destroy_ctfd(app)

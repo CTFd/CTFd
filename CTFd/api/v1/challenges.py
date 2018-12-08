@@ -27,7 +27,7 @@ from CTFd.utils.decorators.visibility import (
 )
 from CTFd.cache import cache, clear_standings
 from CTFd.utils.scores import get_standings
-from CTFd.utils.config.visibility import scores_visible, accounts_visible
+from CTFd.utils.config.visibility import scores_visible, accounts_visible, challenges_visible
 from CTFd.utils.user import get_current_user, is_admin, authed
 from CTFd.utils.modes import get_model
 from CTFd.schemas.tags import TagSchema
@@ -72,10 +72,10 @@ class ChallengeList(Resource):
         response = []
         tag_schema = TagSchema(view='user', many=True)
         for challenge in challenges:
-            requirements = challenge.requirements
-            if requirements:
-                prereqs = set(requirements.get('prerequisites', []))
-                anonymize = requirements.get('anonymize')
+            if challenge.requirements:
+                requirements = challenge.requirements.get('prerequisites', [])
+                anonymize = challenge.requirements.get('anonymize')
+                prereqs = set(requirements)
                 if solve_ids >= prereqs:
                     pass
                 else:
@@ -160,19 +160,22 @@ class Challenge(Resource):
 
         chal_class = get_chal_class(chal.type)
 
-        requirements = chal.requirements
-        if requirements:
-            if current_user.authed():
+        if chal.requirements:
+            requirements = chal.requirements.get('prerequisites', [])
+            anonymize = chal.requirements.get('anonymize')
+            if challenges_visible():
                 user = get_current_user()
-                solve_ids = Solves.query \
-                    .with_entities(Solves.challenge_id) \
-                    .filter_by(account_id=user.account_id) \
-                    .order_by(Solves.challenge_id.asc()) \
-                    .all()
+                if user:
+                    solve_ids = Solves.query \
+                        .with_entities(Solves.challenge_id) \
+                        .filter_by(account_id=user.account_id) \
+                        .order_by(Solves.challenge_id.asc()) \
+                        .all()
+                else:
+                    # We need to handle the case where a user is viewing challenges anonymously
+                    solve_ids = []
                 solve_ids = set([value for value, in solve_ids])
-
-                prereqs = set(requirements.get('prerequisites', []))
-                anonymize = requirements.get('anonymize')
+                prereqs = set(requirements)
                 if solve_ids >= prereqs or is_admin():
                     pass
                 else:
@@ -313,16 +316,15 @@ class ChallengeAttempt(Resource):
         if challenge.state == 'locked':
             abort(403)
 
-        requirements = challenge.requirements
-        if requirements:
+        if challenge.requirements:
+            requirements = challenge.requirements.get('prerequisites', [])
             solve_ids = Solves.query \
                 .with_entities(Solves.challenge_id) \
                 .filter_by(account_id=user.account_id) \
                 .order_by(Solves.challenge_id.asc()) \
                 .all()
             solve_ids = set([solve_id for solve_id, in solve_ids])
-
-            prereqs = set(requirements.get('prerequisites', []))
+            prereqs = set(requirements)
             if solve_ids >= prereqs:
                 pass
             else:
