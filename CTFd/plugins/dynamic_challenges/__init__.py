@@ -87,10 +87,11 @@ class DynamicValueChallenge(BaseChallenge):
         :return:
         """
         data = request.form or request.get_json()
-        data['initial'] = float(data.get('initial', 0))
-        data['minimum'] = float(data.get('minimum', 0))
-        data['decay'] = float(data.get('decay', 0))
+
         for attr, value in data.items():
+            # We need to set these to floats so that the next operations don't operate on strings
+            if attr in ('initial', 'minimum', 'decay'):
+                value = float(value)
             setattr(challenge, attr, value)
 
         Model = get_model()
@@ -228,9 +229,9 @@ class DynamicValueChallenge(BaseChallenge):
 class DynamicChallenge(Challenges):
     __mapper_args__ = {'polymorphic_identity': 'dynamic'}
     id = db.Column(None, db.ForeignKey('challenges.id'), primary_key=True)
-    initial = db.Column(db.Integer)
-    minimum = db.Column(db.Integer)
-    decay = db.Column(db.Integer)
+    initial = db.Column(db.Integer, default=0)
+    minimum = db.Column(db.Integer, default=0)
+    decay = db.Column(db.Integer, default=0)
 
     def __init__(self, *args, **kwargs):
         super(DynamicChallenge, self).__init__(**kwargs)
