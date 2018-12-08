@@ -27,7 +27,7 @@ from CTFd.utils.decorators.visibility import (
 )
 from CTFd.cache import cache, clear_standings
 from CTFd.utils.scores import get_standings
-from CTFd.utils.config.visibility import scores_visible, accounts_visible
+from CTFd.utils.config.visibility import scores_visible, accounts_visible, challenges_visible
 from CTFd.utils.user import get_current_user, is_admin, authed
 from CTFd.utils.modes import get_model
 from CTFd.schemas.tags import TagSchema
@@ -163,13 +163,17 @@ class Challenge(Resource):
         if chal.requirements:
             requirements = chal.requirements.get('prerequisites', [])
             anonymize = chal.requirements.get('anonymize')
-            if current_user.authed():
+            if challenges_visible():
                 user = get_current_user()
-                solve_ids = Solves.query \
-                    .with_entities(Solves.challenge_id) \
-                    .filter_by(account_id=user.account_id) \
-                    .order_by(Solves.challenge_id.asc()) \
-                    .all()
+                if user:
+                    solve_ids = Solves.query \
+                        .with_entities(Solves.challenge_id) \
+                        .filter_by(account_id=user.account_id) \
+                        .order_by(Solves.challenge_id.asc()) \
+                        .all()
+                else:
+                    # We need to handle the case where a user is viewing challenges anonymously
+                    solve_ids = []
                 solve_ids = set([value for value, in solve_ids])
                 prereqs = set(requirements)
                 if solve_ids >= prereqs or is_admin():
