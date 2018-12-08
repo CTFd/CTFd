@@ -186,15 +186,15 @@ def gen_solve(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', prov
     return solve
 
 
-def gen_fail(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', content='wrongkey', **kwargs):
-    fail = Fails(user_id=user_id, team_id=team_id, challenge_id=challenge_id, ip=ip, content=content)
+def gen_fail(db, user_id, team_id=None, challenge_id=None, ip='127.0.0.1', provided='wrongkey', **kwargs):
+    fail = Fails(user_id=user_id, team_id=team_id, challenge_id=challenge_id, ip=ip, provided=provided, **kwargs)
     fail.date = datetime.datetime.utcnow()
     db.session.add(fail)
     db.session.commit()
     return fail
 
 
-def gen_tracking(db, ip, user_id, **kwargs):
+def gen_tracking(db, user_id=None, ip='127.0.0.1', **kwargs):
     tracking = Tracking(ip=ip, user_id=user_id, **kwargs)
     db.session.add(tracking)
     db.session.commit()

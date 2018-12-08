@@ -1,5 +1,6 @@
 from CTFd.models import Users, Challenges
 from tests.helpers import *
+import random
 
 
 def test_get_admin_config():
@@ -16,14 +17,19 @@ def test_reset():
     app = create_ctfd()
     with app.app_context():
         base_user = 'user'
-        for x in range(10):
-            user = base_user + str(x)
-            user_email = user + "@ctfd.io"
-            gen_user(app.db, name=user, email=user_email)
 
         for x in range(10):
             chal = gen_challenge(app.db, name='chal_name{}'.format(x))
             gen_flag(app.db, challenge_id=chal.id, content='flag')
+
+        for x in range(10):
+            user = base_user + str(x)
+            user_email = user + "@ctfd.io"
+            user_obj = gen_user(app.db, name=user, email=user_email)
+            gen_award(app.db, user_id=user_obj.id)
+            gen_solve(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
+            gen_fail(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
+            gen_tracking(app.db, user_id=user_obj.id)
 
         assert Users.query.count() == 11  # 11 because of the first admin user
         assert Challenges.query.count() == 10
@@ -39,4 +45,7 @@ def test_reset():
 
         assert Users.query.count() == 0
         assert Challenges.query.count() == 10
+        assert Solves.query.count() == 0
+        assert Fails.query.count() == 0
+        assert Tracking.query.count() == 0
     destroy_ctfd(app)

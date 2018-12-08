@@ -3,7 +3,7 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Hints, HintUnlocks
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_ended
-from CTFd.utils.user import get_current_user
+from CTFd.utils.user import get_current_user, is_admin
 from CTFd.schemas.hints import HintSchema
 from CTFd.utils.decorators import (
     during_ctf_time_only,
@@ -74,6 +74,10 @@ class Hint(Resource):
             ).first()
             if unlocked:
                 view = 'unlocked'
+
+        if is_admin():
+            if request.args.get('preview', False):
+                view = 'admin'
 
         response = HintSchema(view=view).dump(hint)
 

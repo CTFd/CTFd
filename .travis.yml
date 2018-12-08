@@ -21,6 +21,9 @@ before_install:
     - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('password') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
     - sudo mysql_upgrade -u root -ppassword
     - sudo service mysql restart
+    - sudo rm -f /etc/boto.cfg
+    - export AWS_SECRET_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
+    - export AWS_ACCESS_KEY_ID=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 install:
     - pip install -r development.txt
 before_script:
