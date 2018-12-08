@@ -89,6 +89,9 @@ class DynamicValueChallenge(BaseChallenge):
         data = request.form or request.get_json()
 
         for attr, value in data.items():
+            # We need to set these to floats so that the next operations don't operate on strings
+            if attr in ('initial', 'minimum', 'decay'):
+                value = float(value)
             setattr(challenge, attr, value)
 
         Model = get_model()
