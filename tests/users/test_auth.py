@@ -249,7 +249,8 @@ def test_user_can_confirm_email(mock_smtp):
 
         client = login_as_user(app, name="user1", password="password")
 
-        client.get('http://localhost/confirm')
+        r = client.get('http://localhost/confirm')
+        assert "Need to resend the confirmation email?" in r.get_data(as_text=True)
 
         # smtp.sendmail was called
         mock_smtp.return_value.sendmail.assert_called()
