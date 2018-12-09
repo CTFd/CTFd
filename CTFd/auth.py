@@ -46,8 +46,8 @@ def confirm(data=None):
         except (BadSignature, TypeError, base64.binascii.Error):
             return render_template('confirm.html', errors=['Your confirmation token is invalid'])
 
-        team = Users.query.filter_by(email=user_email).first_or_404()
-        team.verified = True
+        user = Users.query.filter_by(email=user_email).first_or_404()
+        user.verified = True
         log('registrations', format="[{date}] {ip} -  successful password reset for {name}")
         db.session.commit()
         db.session.close()
@@ -59,24 +59,19 @@ def confirm(data=None):
     if not current_user.authed():
         return redirect(url_for('auth.login'))
 
-    team = Users.query.filter_by(id=session['id']).first_or_404()
+    user = Users.query.filter_by(id=session['id']).first_or_404()
+    if user.verified:
+        return redirect(url_for('views.settings'))
 
     if data is None:
         if request.method == "POST":
             # User wants to resend their confirmation email
-            if team.verified:
-                return redirect(url_for('views.profile'))
-            else:
-                email.verify_email_address(team.email)
-                log('registrations', format="[{date}] {ip} - {name} initiated a confirmation email resend")
-            return render_template('confirm.html', team=team, infos=['Your confirmation email has been resent!'])
+            email.verify_email_address(user.email)
+            log('registrations', format="[{date}] {ip} - {name} initiated a confirmation email resend")
+            return render_template('confirm.html', user=user, infos=['Your confirmation email has been resent!'])
         elif request.method == "GET":
             # User has been directed to the confirm page
-            team = Users.query.filter_by(id=session['id']).first_or_404()
-            if team.verified:
-                # If user is already verified, redirect to their profile
-                return redirect(url_for('views.profile'))
-            return render_template('confirm.html', team=team)
+            return render_template('confirm.html', user=user)
 
 
 @auth.route('/reset_password', methods=['POST', 'GET'])

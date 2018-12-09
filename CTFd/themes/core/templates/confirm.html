@@ -28,9 +28,9 @@
 								aria-hidden="true">×</span></button>
 					</div>
 				{% endfor %}
-				{% if team %}
+				{% if user %}
 				<h3 class="text-center">
-					We've sent a confirmation email to {{ team.email }}
+					We've sent a confirmation email to {{ user.email }}
 				</h3>
 
 				<br>
@@ -40,7 +40,9 @@
 				</h4>
 				{% endif %}
 
-				{% if username %}
+				<hr>
+
+				{% if name %}
 				<form method="POST" action="{{ url_for('auth.confirm') }}">
 					<h4 class="text-center">
 						Need to resend the confirmation email?
