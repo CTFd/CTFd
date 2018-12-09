@@ -21,7 +21,7 @@ if sys.version_info[0] < 3:
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 
 class CTFdFlask(Flask):

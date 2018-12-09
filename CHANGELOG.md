@@ -1,4 +1,41 @@
-2.0.0 / 2018-12-2
+2.0.1 / 2018-12-09
+==================
+
+2.0.1 is a patch release to fix regressions and bugs in 2.0.0. 
+
+If you are upgrading from a version prior to 2.0.0 please read the 2.0.0 change notes for instructions on updating to
+2.0.0 before updating to 2.0.1. 
+
+**General**
+* Fix setting auth for `get_smtp()`. 
+    * Add `MAIL_USEAUTH` to `config.py`.
+* Add more mail documentation to `config.py`.
+* Disable jinja cache properly by setting `cache_size` to 0 (#662)
+    Regression from 1.2.0.
+* Fix downloading files as an anonymous user. 
+* Fix viewing challenges anonymously if they have empty requirements. Closes #789
+    * Allow anonymous users to see see challenges with empty requirements or anonymized challenges
+* Clean up admin mail settings to use new label/small structure
+* Fix email confirmations and improve test.
+* Fix password resets from double hashing passwords
+
+**Themes**
+* Change `confirm.html` to use the variable user instead of team
+
+**API**
+* Grant admin write access to verified field in UserSchema.
+* Fix setting `mail_username`, `mail_password`
+* Prevent overriding smtp attributes on config update
+* Fix hint loading for admins by adding `/api/v1/hints/<id>?preview=true` for use by admins
+* Fixing a bug where prerequisites could not be set for dynamic challenges due to a division by zero error where defaults were being set unnecessarily.
+
+**Exports**
+* Fix syncing down an empty S3 bucket
+* Fix `S3Uploader` in Python 3 and fix test
+* Fix S3 sync function to only pull down files instead of trying to pull directories
+
+
+2.0.0 / 2018-12-02
 ==================
 
 2.0.0 is a *significant*, backwards-incompaitble release. 
