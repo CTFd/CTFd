@@ -7,8 +7,6 @@ from flask import (
     session,
     Blueprint,
 )
-from passlib.hash import bcrypt_sha256
-
 from CTFd.models import db, Users, Teams
 
 from CTFd.utils import get_config, get_app_config
@@ -17,6 +15,7 @@ from CTFd.utils import user as current_user
 from CTFd.utils import config, validators
 from CTFd.utils import email
 from CTFd.utils.security.auth import login_user, logout_user
+from CTFd.utils.security.passwords import hash_password, check_password
 from CTFd.utils.logging import log
 from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
@@ -89,10 +88,10 @@ def reset_password(data=None):
         if request.method == "GET":
             return render_template('reset_password.html', mode='set')
         if request.method == "POST":
-            team = Users.query.filter_by(name=name).first_or_404()
-            team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
+            user = Users.query.filter_by(name=name).first_or_404()
+            user.password = request.form['password'].strip()
             db.session.commit()
-            log('logins', format="[{date}] {ip} -  successful password reset for {name}")
+            log('logins', format="[{date}] {ip} -  successful password reset for {name}", name=name)
             db.session.close()
             return redirect(url_for('auth.login'))
 
@@ -221,7 +220,7 @@ def login():
             user = Users.query.filter_by(name=name).first()
 
         if user:
-            if user and bcrypt_sha256.verify(request.form['password'], user.password):
+            if user and check_password(request.form['password'], user.password):
                 session.regenerate()
 
                 login_user(user)
