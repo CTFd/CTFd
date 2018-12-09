@@ -4,6 +4,7 @@
 from CTFd.models import Users
 from CTFd.utils import set_config, get_config
 from CTFd.utils.security.signing import serialize
+from CTFd.utils.security.passwords import hash_password, check_password
 from freezegun import freeze_time
 from tests.helpers import *
 from mock import patch
@@ -133,11 +134,10 @@ def test_user_isnt_admin():
     destroy_ctfd(app)
 
 
-@freeze_time("2019-02-24 03:21:34")
 def test_expired_confirmation_links():
     """Test that expired confirmation links are reported to the user"""
     app = create_ctfd()
-    with app.app_context():
+    with app.app_context(), freeze_time("2019-02-24 03:21:34"):
         set_config('verify_emails', True)
 
         register_user(app, email="user@user.com")
@@ -172,7 +172,6 @@ def test_invalid_confirmation_links():
     destroy_ctfd(app)
 
 
-@freeze_time("2019-02-24 03:21:34")
 def test_expired_reset_password_link():
     """Test that expired reset password links are reported to the user"""
     app = create_ctfd()
@@ -185,7 +184,7 @@ def test_expired_reset_password_link():
 
         register_user(app, name="user1", email="user@user.com")
 
-        with app.test_client() as client:
+        with app.test_client() as client, freeze_time("2019-02-24 03:21:34"):
             # user@user.com "2012-01-14 03:21:34"
             forgot_link = 'http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.cAGwAy8cK1T0saEEbrDEBVF2plI'
             r = client.get(forgot_link)
@@ -230,11 +229,10 @@ def test_contact_for_password_reset():
 
 
 @patch('smtplib.SMTP')
-@freeze_time("2012-01-14 03:21:34")
 def test_user_can_confirm_email(mock_smtp):
     """Test that a user is capable of confirming their email address"""
     app = create_ctfd()
-    with app.app_context():
+    with app.app_context(), freeze_time("2012-01-14 03:21:34"):
         # Set CTFd to only allow confirmed users and send emails
         set_config('verify_emails', True)
         set_config('mail_server', 'localhost')
@@ -251,6 +249,9 @@ def test_user_can_confirm_email(mock_smtp):
 
         client = login_as_user(app, name="user1", password="password")
 
+        r = client.get('http://localhost/confirm')
+        assert "Need to resend the confirmation email?" in r.get_data(as_text=True)
+
         # smtp.sendmail was called
         mock_smtp.return_value.sendmail.assert_called()
 
@@ -258,6 +259,9 @@ def test_user_can_confirm_email(mock_smtp):
             data = {
                 "nonce": sess.get('nonce')
             }
+            r = client.post('http://localhost/confirm', data=data)
+            assert "confirmation email has been resent" in r.get_data(as_text=True)
+
             r = client.get('/challenges')
             assert r.location == "http://localhost/confirm"  # We got redirected to /confirm
 
@@ -269,16 +273,18 @@ def test_user_can_confirm_email(mock_smtp):
             # The team is now verified
             user = Users.query.filter_by(email='user@user.com').first()
             assert user.verified is True
+
+            r = client.get('http://localhost/confirm')
+            assert r.location == "http://localhost/settings"
     destroy_ctfd(app)
 
 
 @patch('smtplib.SMTP')
-@freeze_time("2012-01-14 03:21:34")
 def test_user_can_reset_password(mock_smtp):
     """Test that a user is capable of resetting their password"""
     from email.mime.text import MIMEText
     app = create_ctfd()
-    with app.app_context():
+    with app.app_context(), freeze_time("2012-01-14 03:21:34"):
         # Set CTFd to send emails
         set_config('mail_server', 'localhost')
         set_config('mail_port', 25)
@@ -333,7 +339,7 @@ def test_user_can_reset_password(mock_smtp):
 
             # Make sure that the user's password changed
             user = Users.query.filter_by(email="user@user.com").first()
-            assert user.password != user_password_saved
+            assert check_password('passwordtwo', user.password)
     destroy_ctfd(app)
 
 

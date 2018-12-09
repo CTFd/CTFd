@@ -7,8 +7,6 @@ from flask import (
     session,
     Blueprint,
 )
-from passlib.hash import bcrypt_sha256
-
 from CTFd.models import db, Users, Teams
 
 from CTFd.utils import get_config, get_app_config
@@ -17,6 +15,7 @@ from CTFd.utils import user as current_user
 from CTFd.utils import config, validators
 from CTFd.utils import email
 from CTFd.utils.security.auth import login_user, logout_user
+from CTFd.utils.security.passwords import hash_password, check_password
 from CTFd.utils.logging import log
 from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
@@ -46,8 +45,8 @@ def confirm(data=None):
         except (BadSignature, TypeError, base64.binascii.Error):
             return render_template('confirm.html', errors=['Your confirmation token is invalid'])
 
-        team = Users.query.filter_by(email=user_email).first_or_404()
-        team.verified = True
+        user = Users.query.filter_by(email=user_email).first_or_404()
+        user.verified = True
         log('registrations', format="[{date}] {ip} -  successful password reset for {name}")
         db.session.commit()
         db.session.close()
@@ -59,24 +58,19 @@ def confirm(data=None):
     if not current_user.authed():
         return redirect(url_for('auth.login'))
 
-    team = Users.query.filter_by(id=session['id']).first_or_404()
+    user = Users.query.filter_by(id=session['id']).first_or_404()
+    if user.verified:
+        return redirect(url_for('views.settings'))
 
     if data is None:
         if request.method == "POST":
             # User wants to resend their confirmation email
-            if team.verified:
-                return redirect(url_for('views.profile'))
-            else:
-                email.verify_email_address(team.email)
-                log('registrations', format="[{date}] {ip} - {name} initiated a confirmation email resend")
-            return render_template('confirm.html', team=team, infos=['Your confirmation email has been resent!'])
+            email.verify_email_address(user.email)
+            log('registrations', format="[{date}] {ip} - {name} initiated a confirmation email resend")
+            return render_template('confirm.html', user=user, infos=['Your confirmation email has been resent!'])
         elif request.method == "GET":
             # User has been directed to the confirm page
-            team = Users.query.filter_by(id=session['id']).first_or_404()
-            if team.verified:
-                # If user is already verified, redirect to their profile
-                return redirect(url_for('views.profile'))
-            return render_template('confirm.html', team=team)
+            return render_template('confirm.html', user=user)
 
 
 @auth.route('/reset_password', methods=['POST', 'GET'])
@@ -94,10 +88,10 @@ def reset_password(data=None):
         if request.method == "GET":
             return render_template('reset_password.html', mode='set')
         if request.method == "POST":
-            team = Users.query.filter_by(name=name).first_or_404()
-            team.password = bcrypt_sha256.encrypt(request.form['password'].strip())
+            user = Users.query.filter_by(name=name).first_or_404()
+            user.password = request.form['password'].strip()
             db.session.commit()
-            log('logins', format="[{date}] {ip} -  successful password reset for {name}")
+            log('logins', format="[{date}] {ip} -  successful password reset for {name}", name=name)
             db.session.close()
             return redirect(url_for('auth.login'))
 
@@ -226,7 +220,7 @@ def login():
             user = Users.query.filter_by(name=name).first()
 
         if user:
-            if user and bcrypt_sha256.verify(request.form['password'], user.password):
+            if user and check_password(request.form['password'], user.password):
                 session.regenerate()
 
                 login_user(user)
