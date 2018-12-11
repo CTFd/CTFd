@@ -266,8 +266,15 @@ class Challenge(Resource):
 class ChallengeAttempt(Resource):
     @during_ctf_time_only
     @require_verified_emails
-    @authed_only
     def post(self):
+        if authed() is False:
+            return {
+                'success': True,
+                'data': {
+                    'status': "authentication_required",
+                }
+            }, 403
+
         if request.content_type != 'application/json':
             request_data = request.form
         else:

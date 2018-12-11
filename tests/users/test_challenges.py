@@ -317,13 +317,6 @@ def test_that_view_challenges_unregistered_works():
         r = client.get('/api/v1/challenges')
         assert r.get_json()['data']
 
-        # r = client.get('/chals/solves')
-        # data = r.get_data(as_text=True)
-        # assert json.loads(data) == json.loads('''{
-        #       "1": 0
-        #     }
-        #     ''')
-
         r = client.get('/api/v1/challenges/1/solves')
         assert r.get_json().get('data') is not None
 
@@ -333,7 +326,8 @@ def test_that_view_challenges_unregistered_works():
         }
         r = client.post('/api/v1/challenges/attempt'.format(chal_id), json=data)
         assert r.status_code == 403
-        resp = r.get_json().get('data') is None
+        assert r.get_json().get('data').get('status') == "authentication_required"
+        assert r.get_json().get('data').get('message') is None
     destroy_ctfd(app)
 
 
