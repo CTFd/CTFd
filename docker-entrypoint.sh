@@ -3,6 +3,12 @@ set -eo pipefail
 
 WORKERS=${WORKERS:-1}
 
+function database_ready() {
+    python -c "import os, sys
+from sqlalchemy_utils.functions import database_exists
+database_exists(os.getenv('DATABASE_URL')) or sys.exit(1)" > /dev/null 2>&1
+}
+
 # Check that a .ctfd_secret_key file or SECRET_KEY envvar is set
 if [ ! -f .ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
     if [ $WORKERS -gt 1 ]; then
@@ -18,7 +24,7 @@ if [ -n "$DATABASE_URL" ]
     then
     database=`echo $DATABASE_URL | awk -F[@//] '{print $4}'`
     echo "Waiting for $database to be ready"
-    while ! mysqladmin ping -h $database --silent; do
+    while ! database_ready(); do
         # Show some progress
         echo -n '.';
         sleep 1;
