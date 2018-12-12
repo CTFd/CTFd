@@ -6,7 +6,10 @@ WORKERS=${WORKERS:-1}
 function database_ready() {
     python -c "import os, sys
 from sqlalchemy_utils.functions import database_exists
-database_exists(os.getenv('DATABASE_URL')) or sys.exit(1)" > /dev/null 2>&1
+try:
+    database_exists(os.getenv('DATABASE_URL')) or sys.exit(1)
+except Exception as e:
+    print(str(e)) and sys.exit(1)"
 }
 
 # Check that a .ctfd_secret_key file or SECRET_KEY envvar is set
@@ -24,7 +27,7 @@ if [ -n "$DATABASE_URL" ]
     then
     database=`echo $DATABASE_URL | awk -F[@//] '{print $4}'`
     echo "Waiting for $database to be ready"
-    while ! database_ready(); do
+    while ! mysqladmin ping -h $database --silent; do
         # Show some progress
         echo -n '.';
         sleep 1;
