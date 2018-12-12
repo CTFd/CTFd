@@ -27,7 +27,7 @@ if [ -n "$DATABASE_URL" ]
     then
     database=`echo $DATABASE_URL | awk -F[@//] '{print $4}'`
     echo "Waiting for $database to be ready"
-    while ! mysqladmin ping -h $database --silent; do
+    while ! database_ready; do
         # Show some progress
         echo -n '.';
         sleep 1;
