@@ -208,7 +208,7 @@ def gen_page(db, title, route, content, draft=False, auth_required=False, **kwar
     return page
 
 
-def gen_notification(db, title, content):
+def gen_notification(db, title='title', content='content'):
     notif = Notifications(title=title, content=content)
     db.session.add(notif)
     db.session.commit()

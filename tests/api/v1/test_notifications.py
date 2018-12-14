@@ -35,3 +35,32 @@ def test_api_notifications_post_admin():
                 "content": "content"})
             assert r.status_code == 200
     destroy_ctfd(app)
+
+
+def test_api_delete_notifications_by_admin():
+    """Test that an admin can delete notifications"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        gen_notification(app.db)
+        assert Notifications.query.count() == 1
+        with login_as_user(app, name="admin") as client:
+            r = client.delete('/api/v1/notifications/1', json="")
+            assert r.status_code == 200
+            assert r.get_json()['success'] is True
+        assert Notifications.query.count() == 0
+    destroy_ctfd(app)
+
+
+def test_api_delete_notifications_by_user():
+    """Test that a non-admin cannot delete notifications"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        gen_notification(app.db)
+        assert Notifications.query.count() == 1
+        with login_as_user(app) as client:
+            r = client.delete('/api/v1/notifications/1', json="")
+            assert r.status_code == 403
+        assert Notifications.query.count() == 1
+    destroy_ctfd(app)

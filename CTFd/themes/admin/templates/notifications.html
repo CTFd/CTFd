@@ -40,26 +40,20 @@
 		<div class="row">
 			<div class="col-md-12">
 				<hr>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<td width="10px"><b>ID</b></td>
-							<td><b>Title</b></td>
-							<td><b>Content</b></td>
-							<td><b>Date</b></td>
-						</tr>
-					</thead>
-					<tbody>
-					{% for notification in notifications %}
-						<tr>
-							<td>{{ notification.id }}</td>
-							<td>{{ notification.title }}</td>
-							<td>{{ notification.content | safe }}</td>
-							<td>{{ notification.date | isoformat }}</td>
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
+				{% for notification in notifications %}
+					<div class="card bg-light mb-4">
+						<button type="button" notif-id="{{ notification.id }}" class="delete-notification close position-absolute p-3" style="right:0;" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<div class="card-body">
+							<h3 class="card-title">{{ notification.title }}</h3>
+							<blockquote class="blockquote mb-0">
+								<p>{{ notification.content | safe }}</p>
+								<small class="text-muted">{{ notification.date | isoformat }}</small>
+							</blockquote>
+						</div>
+					</div>
+				{% endfor %}
 			</div>
 		</div>
 	</div>
