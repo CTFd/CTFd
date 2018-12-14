@@ -62,3 +62,40 @@ def test_custom_css():
             r = admin.get('/static/user.css')
             assert r.get_data(as_text=True) == css_value2
     destroy_ctfd(app)
+
+
+def test_that_ctfd_can_be_deployed_in_subdir():
+    """Test that CTFd can be deployed in a subdirectory"""
+    app = create_ctfd(setup=False, application_root='/ctf')
+    true_app = app.wsgi_app.mounts['/ctf']
+    # app.session_interface = true_app.session_interface
+    with app.app_context():
+        with app.test_client() as client, true_app.test_client() as true_client:
+            r = client.get('/setup')
+            assert r.status_code == 302
+            assert r.location == 'http://localhost/ctf/setup'
+
+            r = true_client.get('/setup')
+            with true_client.session_transaction() as sess:
+                data = {
+                    "ctf_name": 'name',
+                    "name": 'admin',
+                    "email": 'admin@ctfd.io',
+                    "password": 'password',
+                    "user_mode": 'users',
+                    "nonce": sess.get('nonce')
+                }
+            r = true_client.post('/setup', data=data)
+            assert r.status_code == 302
+            assert r.location == 'http://localhost/ctf/'
+
+            r = client.get('/challenges')
+            assert r.status_code == 302
+            assert r.location == 'http://localhost/ctf/challenges'
+
+            r = client.get('/ctf/challenges')
+            assert r.status_code == 302
+            assert r.location == 'http://localhost/ctf/login?next=%2Fctf%2Fchallenges'
+            r = client.get('/ctf/scoreboard')
+            assert r.status_code == 200
+    destroy_ctfd(true_app)

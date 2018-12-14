@@ -1,4 +1,4 @@
-from flask import current_app as app, request, session, redirect, url_for, abort, render_template
+from flask import Flask, current_app as app, request, session, redirect, url_for, abort, render_template
 from CTFd.models import db, Tracking
 
 from CTFd.utils import markdown, get_config
@@ -64,7 +64,7 @@ def init_request_processors(app):
 
     @app.before_request
     def needs_setup():
-        if request.path == '/setup' or request.path.startswith('/themes'):
+        if request.script_path == url_for('views.setup') or request.path.startswith('/themes'):
             return
         if not is_setup():
             return redirect(url_for('views.setup'))

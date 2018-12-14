@@ -2,8 +2,10 @@ import sys
 import os
 
 from distutils.version import StrictVersion
-from flask import Flask
+from flask import Flask, Request, redirect, request
+from werkzeug.utils import cached_property
 from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.wsgi import DispatcherMiddleware
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from six.moves import input
@@ -24,11 +26,18 @@ if sys.version_info[0] < 3:
 __version__ = '2.0.1'
 
 
+class CTFdRequest(Request):
+    @cached_property
+    def script_path(self):
+        return self.script_root + self.path
+
+
 class CTFdFlask(Flask):
     def __init__(self, *args, **kwargs):
         """Overriden Jinja constructor setting a custom jinja_environment"""
         self.jinja_environment = SandboxedBaseEnvironment
         self.session_interface = CachingSessionInterface(key_prefix='session')
+        self.request_class = CTFdRequest
         Flask.__init__(self, *args, **kwargs)
 
     def create_jinja_environment(self):
@@ -192,5 +201,19 @@ def create_app(config='CTFd.config.Config'):
         app.register_error_handler(502, gateway_error)
 
         init_plugins(app)
+
+        application_root = app.config.get('APPLICATION_ROOT')
+        if application_root != '/':
+            dispatcher = Flask('dispatcher')
+
+            @dispatcher.route('/', defaults={'path': ''})
+            @dispatcher.route('/<path:path>')
+            def dispatcher_redirect(path):
+                return redirect(application_root + request.script_root + request.path)
+
+            dispatcher.wsgi_app = DispatcherMiddleware(dispatcher.wsgi_app, {
+                application_root: app,
+            })
+            return dispatcher
 
         return app

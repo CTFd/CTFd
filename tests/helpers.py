@@ -20,9 +20,11 @@ else:
 FakeRequest = namedtuple('FakeRequest', ['form'])
 
 
-def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True, enable_plugins=False):
+def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True, enable_plugins=False, application_root=None):
     if enable_plugins:
         TestingConfig.SAFE_MODE = False
+    if application_root:
+        TestingConfig.APPLICATION_ROOT = application_root
 
     app = create_app(TestingConfig)
 
