@@ -66,9 +66,9 @@ def test_custom_css():
 
 def test_that_ctfd_can_be_deployed_in_subdir():
     """Test that CTFd can be deployed in a subdirectory"""
+    # This test is quite complicated. I do not suggest modifying it haphazardly.
     app = create_ctfd(setup=False, application_root='/ctf')
     true_app = app.wsgi_app.mounts['/ctf']
-    # app.session_interface = true_app.session_interface
     with app.app_context():
         with app.test_client() as client, true_app.test_client() as true_client:
             r = client.get('/setup')
