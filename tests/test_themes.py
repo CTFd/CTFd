@@ -3,6 +3,8 @@
 
 from tests.helpers import *
 from jinja2.sandbox import SecurityError
+from werkzeug.test import Client
+from werkzeug.wrappers import BaseResponse
 
 
 def test_themes_run_in_sandbox():
@@ -67,6 +69,9 @@ def test_custom_css():
 def test_that_ctfd_can_be_deployed_in_subdir():
     """Test that CTFd can be deployed in a subdirectory"""
     # This test is quite complicated. I do not suggest modifying it haphazardly.
+    # Flask is automatically inserting the APPLICATION_ROOT into the
+    # test urls which means when we hit /setup we hit /ctf/setup.
+    # You can use the raw Werkzeug client to bypass this as we do below.
     app = create_ctfd(setup=False, application_root='/ctf')
     with app.app_context():
         with app.test_client() as client:
@@ -74,7 +79,7 @@ def test_that_ctfd_can_be_deployed_in_subdir():
             assert r.status_code == 302
             assert r.location == 'http://localhost/ctf/setup'
 
-            r = client.get('/ctf/setup')
+            r = client.get('/setup')
             with client.session_transaction() as sess:
                 data = {
                     "ctf_name": 'name',
@@ -84,15 +89,21 @@ def test_that_ctfd_can_be_deployed_in_subdir():
                     "user_mode": 'users',
                     "nonce": sess.get('nonce')
                 }
-            r = client.post('/ctf/setup', data=data)
+            r = client.post('/setup', data=data)
             assert r.status_code == 302
-            # For some reason the redirect here points to /ctf/ctf/ when it really shouldn't.
+            assert r.location == 'http://localhost/ctf/'
 
-            r = client.get('/ctf/challenges')
+            c = Client(app)
+            app_iter, status, headers = c.get('/')
+            headers = dict(headers)
+            assert status == '302 FOUND'
+            assert headers['Location'] == 'http://localhost/ctf/'
+
+            r = client.get('/challenges')
             assert r.status_code == 200
             assert "Challenges" in r.get_data(as_text=True)
 
-            r = client.get('/ctf/scoreboard')
+            r = client.get('/scoreboard')
             assert r.status_code == 200
             assert "Scoreboard" in r.get_data(as_text=True)
     destroy_ctfd(app)
