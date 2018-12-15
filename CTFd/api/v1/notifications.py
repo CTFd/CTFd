@@ -62,9 +62,9 @@ class Notification(Resource):
         response = schema.dump(notif)
         if response.errors:
             return {
-                       'success': False,
-                       'errors': response.errors
-                   }, 400
+                'success': False,
+                'errors': response.errors
+            }, 400
 
         return {
             'success': True,
