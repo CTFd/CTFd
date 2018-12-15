@@ -34,8 +34,8 @@ def test_register_duplicate_username():
     """A user shouldn't be able to use an already registered team name"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        register_user(app, name="user1", email="user2@ctfd.io", password="password")
+        register_user(app, name="user1", email="user1@ctfd.io", password="password", raise_for_error=False)
+        register_user(app, name="user1", email="user2@ctfd.io", password="password", raise_for_error=False)
         user_count = Users.query.count()
         assert user_count == 2  # There's the admin user and the first created user
     destroy_ctfd(app)
@@ -45,8 +45,8 @@ def test_register_duplicate_email():
     """A user shouldn't be able to use an already registered email address"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        register_user(app, name="user2", email="user1@ctfd.io", password="password")
+        register_user(app, name="user1", email="user1@ctfd.io", password="password", raise_for_error=False)
+        register_user(app, name="user2", email="user1@ctfd.io", password="password", raise_for_error=False)
         user_count = Users.query.count()
         assert user_count == 2  # There's the admin user and the first created user
     destroy_ctfd(app)
@@ -57,7 +57,7 @@ def test_register_whitelisted_email():
     app = create_ctfd()
     with app.app_context():
         set_config('domain_whitelist', 'whitelisted.com, whitelisted.org, whitelisted.net')
-        register_user(app, name="not_whitelisted", email='user@nope.com')
+        register_user(app, name="not_whitelisted", email='user@nope.com', raise_for_error=False)
         assert Users.query.count() == 1
 
         register_user(app, name="user1", email='user@whitelisted.com')
@@ -76,7 +76,7 @@ def test_user_bad_login():
     app = create_ctfd()
     with app.app_context():
         register_user(app)
-        client = login_as_user(app, name="user", password="wrong_password")
+        client = login_as_user(app, name="user", password="wrong_password", raise_for_error=False)
         with client.session_transaction() as sess:
             assert sess.get('id') is None
         r = client.get('/profile')

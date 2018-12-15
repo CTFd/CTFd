@@ -59,7 +59,7 @@ def destroy_ctfd(app):
         drop_database(app.config['SQLALCHEMY_DATABASE_URI'])
 
 
-def register_user(app, name="user", email="user@ctfd.io", password="password"):
+def register_user(app, name="user", email="user@ctfd.io", password="password", raise_for_error=True):
     with app.app_context():
         with app.test_client() as client:
             r = client.get('/register')
@@ -71,6 +71,13 @@ def register_user(app, name="user", email="user@ctfd.io", password="password"):
                     "nonce": sess.get('nonce')
                 }
             client.post('/register', data=data)
+            if raise_for_error:
+                with client.session_transaction() as sess:
+                    assert sess['id']
+                    assert sess['name'] == name
+                    assert sess['type']
+                    assert sess['email']
+                    assert sess['nonce']
 
 
 def register_team(app, name="team", password="password"):
@@ -86,7 +93,7 @@ def register_team(app, name="team", password="password"):
             client.post('/teams/new', data=data)
 
 
-def login_as_user(app, name="user", password="password"):
+def login_as_user(app, name="user", password="password", raise_for_error=True):
     with app.app_context():
         with app.test_client() as client:
             r = client.get('/login')
@@ -97,6 +104,13 @@ def login_as_user(app, name="user", password="password"):
                     "nonce": sess.get('nonce')
                 }
             client.post('/login', data=data)
+            if raise_for_error:
+                with client.session_transaction() as sess:
+                    assert sess['id']
+                    assert sess['name']
+                    assert sess['type']
+                    assert sess['email']
+                    assert sess['nonce']
             return client
 
 
@@ -212,7 +226,7 @@ def gen_page(db, title, route, content, draft=False, auth_required=False, **kwar
     return page
 
 
-def gen_notification(db, title, content):
+def gen_notification(db, title='title', content='content'):
     notif = Notifications(title=title, content=content)
     db.session.add(notif)
     db.session.commit()

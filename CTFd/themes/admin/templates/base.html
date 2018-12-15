@@ -25,6 +25,15 @@
 		var user_mode = "{{ get_config('user_mode') }}";
 	</script>
 	{% block stylesheets %} {% endblock %}
+	{% for stylesheet in get_registered_admin_stylesheets() %}
+		{% if stylesheet.startswith('http') %}
+			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+		{% elif request.script_root %}
+			<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/{{ stylesheet }}">
+		{% else %}
+			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+		{% endif %}
+	{% endfor %}
 </head>
 
 <body>
@@ -135,6 +144,16 @@
 	<script src="{{ url_for('views.themes', theme='admin', path='js/ezq.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/style.js') }}"></script>
 	{% block scripts %} {% endblock %}
+
+	{% for script in get_registered_admin_scripts() %}
+		{% if script.startswith('http') %}
+			<script src="{{ script }}"></script>
+		{% elif request.script_root %}
+			<script src="{{ request.script_root }}/{{ script }}"></script>
+		{% else %}
+			<script src="{{ script }}"></script>
+		{% endif %}
+	{% endfor %}
 </body>
 
 </html>
