@@ -55,7 +55,6 @@ class NotificantionList(Resource):
 @notifications_namespace.route('/<notification_id>')
 @notifications_namespace.param('notification_id', 'A Notification ID')
 class Notification(Resource):
-    @admins_only
     def get(self, notification_id):
         notif = Notifications.query.filter_by(id=notification_id).first_or_404()
         schema = NotificationSchema()

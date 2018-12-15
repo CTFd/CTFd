@@ -84,6 +84,7 @@ def test_top_10():
     with app.app_context():
         register_user(app, name="user1", email="user1@ctfd.io")
         register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app)
 
         chal1 = gen_challenge(app.db)
         flag1 = gen_flag(app.db, challenge_id=chal1.id, content='flag')

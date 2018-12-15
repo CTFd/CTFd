@@ -112,7 +112,6 @@ def test_api_hint_admin_access():
         r = client.delete('/api/v1/hints/1')
         assert r.status_code == 302
         r_admin = admin.patch('/api/v1/hints/1', json={"cost": 2})
-        print(r_admin.get_json)
         assert r_admin.status_code == 200
         r_admin = admin.delete('/api/v1/hints/1')
         assert r_admin.status_code == 200

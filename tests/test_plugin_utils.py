@@ -134,8 +134,8 @@ def test_register_user_page_menu_bar():
     with app.app_context():
         register_user_page_menu_bar(title='test_user_menu_link', route='/test_user_href')
 
-        client = login_as_user(app)
-        r = client.get('/')
+        with app.test_client() as client:
+            r = client.get('/')
 
         output = r.get_data(as_text=True)
         assert '/test_user_href' in output
