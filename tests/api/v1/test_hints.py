@@ -9,6 +9,7 @@ def test_api_hint_get_non_admin():
     """Can the users get /api/v1/hints if not admin"""
     app = create_ctfd()
     with app.app_context():
+        register_user(app)
         with login_as_user(app) as client:
             r = client.get('/api/v1/hints', json="")
             assert r.status_code == 403
@@ -30,6 +31,7 @@ def test_api_hint_post_non_admin():
     """Can the users post /api/v1/hints if not admin"""
     app = create_ctfd()
     with app.app_context():
+        register_user(app)
         with login_as_user(app) as client:
             r = client.post('/api/v1/hints', json="")
             assert r.status_code == 403

@@ -50,3 +50,33 @@ class NotificantionList(Resource):
             'success': True,
             'data': response.data
         }
+
+
+@notifications_namespace.route('/<notification_id>')
+@notifications_namespace.param('notification_id', 'A Notification ID')
+class Notification(Resource):
+    def get(self, notification_id):
+        notif = Notifications.query.filter_by(id=notification_id).first_or_404()
+        schema = NotificationSchema()
+        response = schema.dump(notif)
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        return {
+            'success': True,
+            'data': response.data
+        }
+
+    @admins_only
+    def delete(self, notification_id):
+        notif = Notifications.query.filter_by(id=notification_id).first_or_404()
+        db.session.delete(notif)
+        db.session.commit()
+        db.session.close()
+
+        return {
+            'success': True,
+        }
