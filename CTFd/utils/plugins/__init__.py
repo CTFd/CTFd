@@ -4,24 +4,36 @@ import os
 import json
 
 
-SCRIPTS = []
-STYLESHEETS = []
-
-
 def register_script(url):
-    SCRIPTS.append(url)
+    app.plugin_scripts.append(url)
 
 
 def register_stylesheet(url):
-    STYLESHEETS.append(url)
+    app.plugin_stylesheets.append(url)
+
+
+def register_admin_script(url):
+    app.admin_plugin_scripts.append(url)
+
+
+def register_admin_stylesheet(url):
+    app.admin_plugin_stylesheets.append(url)
 
 
 def get_registered_scripts():
-    return SCRIPTS
+    return app.plugin_scripts
 
 
 def get_registered_stylesheets():
-    return STYLESHEETS
+    return app.plugin_stylesheets
+
+
+def get_registered_admin_scripts():
+    return app.admin_plugin_scripts
+
+
+def get_registered_admin_stylesheets():
+    return app.admin_plugin_stylesheets
 
 
 def override_template(template, html):
