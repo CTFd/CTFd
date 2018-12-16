@@ -18,7 +18,7 @@ def check_score_visibility(f):
                 if request.content_type == 'application/json':
                     abort(403)
                 else:
-                    return redirect(url_for('auth.login', next=request.path))
+                    return redirect(url_for('auth.login', next=request.full_path))
 
         elif v == 'hidden':
             return render_template('errors/403.html', error='Scores are currently hidden'), 403
@@ -45,7 +45,7 @@ def check_challenge_visibility(f):
                 if request.content_type == 'application/json':
                     abort(403)
                 else:
-                    return redirect(url_for('auth.login', next=request.path))
+                    return redirect(url_for('auth.login', next=request.full_path))
     return _check_challenge_visibility
 
 
@@ -63,7 +63,7 @@ def check_account_visibility(f):
                 if request.content_type == 'application/json':
                     abort(403)
                 else:
-                    return redirect(url_for('auth.login', next=request.path))
+                    return redirect(url_for('auth.login', next=request.full_path))
 
         elif v == 'admins':
             if is_admin():

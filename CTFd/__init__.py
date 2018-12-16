@@ -2,7 +2,8 @@ import sys
 import os
 
 from distutils.version import StrictVersion
-from flask import Flask
+from flask import Flask, Request
+from werkzeug.utils import cached_property
 from werkzeug.contrib.fixers import ProxyFix
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
@@ -24,11 +25,25 @@ if sys.version_info[0] < 3:
 __version__ = '2.0.1'
 
 
+class CTFdRequest(Request):
+    @cached_property
+    def path(self):
+        """
+        Hijack the original Flask request path because it does not account for subdirectory deployments in an intuitive
+        manner. We append script_root so that the path always points to the full path as seen in the browser.
+        e.g. /subdirectory/path/route vs /path/route
+
+        :return: string
+        """
+        return self.script_root + super(CTFdRequest, self).path
+
+
 class CTFdFlask(Flask):
     def __init__(self, *args, **kwargs):
         """Overriden Jinja constructor setting a custom jinja_environment"""
         self.jinja_environment = SandboxedBaseEnvironment
         self.session_interface = CachingSessionInterface(key_prefix='session')
+        self.request_class = CTFdRequest
         Flask.__init__(self, *args, **kwargs)
 
     def create_jinja_environment(self):

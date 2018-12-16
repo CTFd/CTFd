@@ -39,7 +39,7 @@ def require_authentication_if_config(config_key):
         def __require_authentication_if_config(*args, **kwargs):
             value = get_config(config_key)
             if value and current_user.authed():
-                return redirect(url_for('auth.login', next=request.path))
+                return redirect(url_for('auth.login', next=request.full_path))
             else:
                 return f(*args, **kwargs)
         return __require_authentication_if_config
@@ -82,7 +82,7 @@ def authed_only(f):
             if request.content_type == 'application/json':
                 abort(403)
             else:
-                return redirect(url_for('auth.login', next=request.path))
+                return redirect(url_for('auth.login', next=request.full_path))
 
     return authed_only_wrapper
 
@@ -102,7 +102,7 @@ def admins_only(f):
             if request.content_type == 'application/json':
                 abort(403)
             else:
-                return redirect(url_for('auth.login', next=request.path))
+                return redirect(url_for('auth.login', next=request.full_path))
 
     return admins_only_wrapper
 
@@ -113,7 +113,7 @@ def require_team(f):
         if get_config('user_mode') == TEAMS_MODE:
             team = get_current_team()
             if team is None:
-                return redirect(url_for('teams.private', next=request.path))
+                return redirect(url_for('teams.private', next=request.full_path))
         return f(*args, **kwargs)
 
     return require_team_wrapper

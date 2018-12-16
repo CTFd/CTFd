@@ -1,4 +1,5 @@
-from flask import current_app as app, request, session, redirect, url_for, abort, render_template
+from flask import Flask, current_app as app, request, session, redirect, url_for, abort, render_template
+from werkzeug.wsgi import DispatcherMiddleware
 from CTFd.models import db, Tracking
 
 from CTFd.utils import markdown, get_config
@@ -72,7 +73,7 @@ def init_request_processors(app):
 
     @app.before_request
     def needs_setup():
-        if request.path == '/setup' or request.path.startswith('/themes'):
+        if request.path == url_for('views.setup') or request.path.startswith('/themes'):
             return
         if not is_setup():
             return redirect(url_for('views.setup'))
@@ -122,3 +123,14 @@ def init_request_processors(app):
             if request.content_type != 'application/json':
                 if session['nonce'] != request.form.get('nonce'):
                     abort(403)
+
+    application_root = app.config.get('APPLICATION_ROOT')
+    if application_root != '/':
+        @app.before_request
+        def force_subdirectory_redirect():
+            if request.path.startswith(application_root) is False:
+                return redirect(application_root + request.script_root + request.full_path)
+
+        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+            application_root: app,
+        })

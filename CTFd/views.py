@@ -174,7 +174,7 @@ def static_html(route):
         abort(404)
     else:
         if page.auth_required and authed() is False:
-            return redirect(url_for('auth.login', next=request.path))
+            return redirect(url_for('auth.login', next=request.full_path))
 
         return render_template('page.html', content=markdown(page.content))
 
