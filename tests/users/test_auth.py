@@ -116,7 +116,7 @@ def test_user_get_logout():
         client = login_as_user(app)
         client.get('/logout', follow_redirects=True)
         r = client.get('/challenges')
-        assert r.location == "http://localhost/login?next=%2Fchallenges"
+        assert r.location == "http://localhost/login?next=%2Fchallenges%3F"
         assert r.status_code == 302
     destroy_ctfd(app)
 

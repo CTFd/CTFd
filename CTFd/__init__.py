@@ -27,8 +27,15 @@ __version__ = '2.0.1'
 
 class CTFdRequest(Request):
     @cached_property
-    def script_path(self):
-        return self.script_root + self.path
+    def path(self):
+        """
+        Hijack the original Flask request path because it does not account for subdirectory deployments in an intuitive
+        manner. We append script_root so that the path always points to the full path as seen in the browser.
+        e.g. /subdirectory/path/route vs /path/route
+
+        :return: string
+        """
+        return self.script_root + super(CTFdRequest, self).path
 
 
 class CTFdFlask(Flask):

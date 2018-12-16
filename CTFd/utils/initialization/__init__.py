@@ -73,7 +73,7 @@ def init_request_processors(app):
 
     @app.before_request
     def needs_setup():
-        if request.script_path == url_for('views.setup') or request.path.startswith('/themes'):
+        if request.path == url_for('views.setup') or request.path.startswith('/themes'):
             return
         if not is_setup():
             return redirect(url_for('views.setup'))
@@ -128,7 +128,7 @@ def init_request_processors(app):
     if application_root != '/':
         @app.before_request
         def force_subdirectory_redirect():
-            if request.script_path.startswith(application_root) is False:
+            if request.path.startswith(application_root) is False:
                 return redirect(application_root + request.script_root + request.full_path)
 
         app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
