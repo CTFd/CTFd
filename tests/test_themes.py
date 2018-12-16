@@ -5,6 +5,7 @@ from tests.helpers import *
 from jinja2.sandbox import SecurityError
 from werkzeug.test import Client
 from werkzeug.wrappers import BaseResponse
+from flask import request
 
 
 def test_themes_run_in_sandbox():
@@ -106,4 +107,30 @@ def test_that_ctfd_can_be_deployed_in_subdir():
             r = client.get('/scoreboard')
             assert r.status_code == 200
             assert "Scoreboard" in r.get_data(as_text=True)
+    destroy_ctfd(app)
+
+
+def test_that_request_path_hijacking_works_properly():
+    """Test that the CTFdRequest subclass correctly mimics the Flask Request when it should"""
+    app = create_ctfd(setup=False, application_root='/ctf')
+    assert app.request_class.__name__ == 'CTFdRequest'
+    with app.app_context():
+        # Despite loading /challenges request.path should actually be /ctf/challenges because we are
+        # preprending script_root and the test context already accounts for the application_root
+        with app.test_request_context('/challenges'):
+            assert request.path == '/ctf/challenges'
+    destroy_ctfd(app)
+
+    app = create_ctfd()
+    assert app.request_class.__name__ == 'CTFdRequest'
+    with app.app_context():
+        # Under normal circumstances we should be an exact clone of BaseRequest
+        with app.test_request_context('/challenges'):
+            assert request.path == '/challenges'
+
+        from flask import Flask
+        test_app = Flask('test')
+        assert test_app.request_class.__name__ == 'Request'
+        with test_app.test_request_context('/challenges'):
+            assert request.path == '/challenges'
     destroy_ctfd(app)
