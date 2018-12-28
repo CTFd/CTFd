@@ -29,11 +29,11 @@ from CTFd.cache import cache, clear_standings
 from CTFd.utils.scores import get_standings
 from CTFd.utils.config.visibility import scores_visible, accounts_visible, challenges_visible
 from CTFd.utils.user import get_current_user, is_admin, authed
-from CTFd.utils.modes import get_model,USERS_MODE,TEAMS_MODE
+from CTFd.utils.modes import get_model, USERS_MODE, TEAMS_MODE
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.flags import FlagSchema
-from CTFd.utils import config,get_config
+from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils.user import get_current_team
 from CTFd.utils.user import get_current_user
@@ -477,7 +477,7 @@ class ChallengeSolves(Resource):
     @require_verified_emails
     def get(self, challenge_id):
         response = []
-        user_mode = ''
+        account_type = ''
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
 
         # TODO: Need a generic challenge visibility call.
@@ -492,16 +492,16 @@ class ChallengeSolves(Resource):
             .order_by(Solves.date.asc())
 
         if get_config('user_mode') == TEAMS_MODE:
-            user_mode = 'teams'
+            account_type = 'teams'
         elif get_config('user_mode') == USERS_MODE:
-            user_mode = 'users'
+            account_type = 'users'
 
         for solve in solves:
             response.append({
                 'account_id': solve.account_id,
                 'name': solve.account.name,
                 'date': isoformat(solve.date),
-                'user_mode': user_mode
+                'account_type': account_type
             })
 
         return {

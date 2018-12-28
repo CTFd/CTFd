@@ -220,8 +220,8 @@ function getsolves(id) {
             var id = data[i].account_id;
             var name = data[i].name;
             var date = moment(data[i].date).local().fromNow();
-            var user_mode = data[i].user_mode
-            box.append('<tr><td><a href="{0}/{1}">{2}</td><td>{3}</td></tr>'.format(user_mode, id, htmlentities(name), date));
+            var account_type = data[i].account_type
+            box.append('<tr><td><a href="{0}/{1}">{2}</td><td>{3}</td></tr>'.format(account_type, id, htmlentities(name), date));
         }
     });
 }
