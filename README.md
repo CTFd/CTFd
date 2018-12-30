@@ -37,10 +37,15 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
  * And a lot more...
 
 ## Install
-  1. Install dependencies: `pip install -r requirements.txt`
+  1.(Optional) Create a python virtual enviornment:
+       1. `pip install virtualenv` 
+       2. `virtualenv env`
+       3. `source env/bin/activate`
+  2. Install dependencies: `pip install -r requirements.txt`
        1. You can also use the `prepare.sh` script to install system dependencies using apt.
-  2. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
-  3. Use `flask run` in a terminal to drop into debug mode.
+  3. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
+  4. Use `flask run` in a terminal to drop into debug mode.
+  5. If you did Optional step 1, deactivate the virtual enviornment: `deactivate`
 
 You can use the auto-generated Docker images with the following command:
 
