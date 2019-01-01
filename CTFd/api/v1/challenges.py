@@ -1,4 +1,4 @@
-from flask import session, request, abort
+from flask import session, request, abort, url_for
 from flask_restplus import Namespace, Resource
 from CTFd.models import (
     db,
@@ -477,7 +477,6 @@ class ChallengeSolves(Resource):
     @require_verified_emails
     def get(self, challenge_id):
         response = []
-        account_type = ''
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
 
         # TODO: Need a generic challenge visibility call.
@@ -491,17 +490,20 @@ class ChallengeSolves(Resource):
             .filter(Solves.challenge_id == challenge_id, Model.banned == False, Model.hidden == False)\
             .order_by(Solves.date.asc())
 
+        endpoint = None
         if get_config('user_mode') == TEAMS_MODE:
-            account_type = 'teams'
+            endpoint = 'teams.public'
+            arg = 'team_id'
         elif get_config('user_mode') == USERS_MODE:
-            account_type = 'users'
+            endpoint = 'users.public'
+            arg = 'user_id'
 
         for solve in solves:
             response.append({
                 'account_id': solve.account_id,
                 'name': solve.account.name,
                 'date': isoformat(solve.date),
-                'account_type': account_type
+                'account_url': url_for(endpoint, **{arg: solve.account_id})
             })
 
         return {
