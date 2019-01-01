@@ -431,6 +431,40 @@ def test_api_challenge_get_solves_404():
     destroy_ctfd(app)
 
 
+def test_api_challenge_solves_returns_correct_data():
+    """Test that /api/v1/<challenge_id>/solves returns expected data"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        gen_solve(app.db, user_id=2, challenge_id=chal.id)
+        r = client.get('/api/v1/challenges/1/solves')
+        resp = r.get_json()['data']
+        solve = resp[0]
+        assert r.status_code == 200
+        assert solve.get('account_id') == 2
+        assert solve.get('name') == 'user'
+        assert solve.get('date') is not None
+        assert solve.get('account_url') == '/users/2'
+    destroy_ctfd(app)
+    app = create_ctfd(application_root='/ctf')
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        gen_solve(app.db, user_id=2, challenge_id=chal.id)
+        r = client.get('/api/v1/challenges/1/solves')
+        resp = r.get_json()['data']
+        solve = resp[0]
+        assert r.status_code == 200
+        assert solve.get('account_id') == 2
+        assert solve.get('name') == 'user'
+        assert solve.get('date') is not None
+        assert solve.get('account_url') == '/ctf/users/2'
+    destroy_ctfd(app)
+
+
 def test_api_challenge_get_files_non_admin():
     """Can a user get /api/v1/challenges/<challenge_id>/files if not admin"""
     app = create_ctfd()
