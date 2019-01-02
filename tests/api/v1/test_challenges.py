@@ -448,6 +448,27 @@ def test_api_challenge_solves_returns_correct_data():
         assert solve.get('date') is not None
         assert solve.get('account_url') == '/users/2'
     destroy_ctfd(app)
+
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        team = gen_team(app.db)
+        user = Users.query.filter_by(id=2).first()
+        user.team_id = team.id
+        app.db.session.commit()
+        chal = gen_challenge(app.db)
+        gen_solve(app.db, user_id=2, team_id=1, challenge_id=chal.id)
+        r = client.get('/api/v1/challenges/1/solves')
+        resp = r.get_json()['data']
+        solve = resp[0]
+        assert r.status_code == 200
+        assert solve.get('account_id') == 1
+        assert solve.get('name') == 'team_name'
+        assert solve.get('date') is not None
+        assert solve.get('account_url') == '/teams/1'
+    destroy_ctfd(app)
+
     app = create_ctfd(application_root='/ctf')
     with app.app_context():
         register_user(app)
