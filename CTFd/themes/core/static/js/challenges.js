@@ -220,7 +220,8 @@ function getsolves(id) {
             var id = data[i].account_id;
             var name = data[i].name;
             var date = moment(data[i].date).local().fromNow();
-            box.append('<tr><td><a href="teams/{0}">{1}</td><td>{2}</td></tr>'.format(id, htmlentities(name), date));
+            var account_url = data[i].account_url
+            box.append('<tr><td><a href="{0}">{2}</td><td>{3}</td></tr>'.format(account_url, id, htmlentities(name), date));
         }
     });
 }

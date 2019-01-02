@@ -1,4 +1,4 @@
-from flask import session, request, abort
+from flask import session, request, abort, url_for
 from flask_restplus import Namespace, Resource
 from CTFd.models import (
     db,
@@ -29,11 +29,11 @@ from CTFd.cache import cache, clear_standings
 from CTFd.utils.scores import get_standings
 from CTFd.utils.config.visibility import scores_visible, accounts_visible, challenges_visible
 from CTFd.utils.user import get_current_user, is_admin, authed
-from CTFd.utils.modes import get_model
+from CTFd.utils.modes import get_model, USERS_MODE, TEAMS_MODE
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.flags import FlagSchema
-from CTFd.utils import config
+from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils.user import get_current_team
 from CTFd.utils.user import get_current_user
@@ -490,11 +490,20 @@ class ChallengeSolves(Resource):
             .filter(Solves.challenge_id == challenge_id, Model.banned == False, Model.hidden == False)\
             .order_by(Solves.date.asc())
 
+        endpoint = None
+        if get_config('user_mode') == TEAMS_MODE:
+            endpoint = 'teams.public'
+            arg = 'team_id'
+        elif get_config('user_mode') == USERS_MODE:
+            endpoint = 'users.public'
+            arg = 'user_id'
+
         for solve in solves:
             response.append({
                 'account_id': solve.account_id,
                 'name': solve.account.name,
-                'date': isoformat(solve.date)
+                'date': isoformat(solve.date),
+                'account_url': url_for(endpoint, **{arg: solve.account_id})
             })
 
         return {
