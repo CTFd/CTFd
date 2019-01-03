@@ -10,7 +10,7 @@ from sqlalchemy.sql import not_
 @admin.route('/admin/teams')
 @admins_only
 def teams_listing():
-    page = request.args.get('page', 1)
+    page = abs(request.args.get('page', 1, type=int))
     q = request.args.get('q')
     if q:
         field = request.args.get('field')

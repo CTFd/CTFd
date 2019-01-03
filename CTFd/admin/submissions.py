@@ -13,7 +13,7 @@ def submissions_listing(submission_type):
     if submission_type:
         filters['type'] = submission_type
 
-    curr_page = abs(int(request.args.get('page', 1)))
+    curr_page = abs(int(request.args.get('page', 1, type=int)))
     results_per_page = 50
     page_start = results_per_page * (curr_page - 1)
     page_end = results_per_page * (curr_page - 1) + results_per_page
