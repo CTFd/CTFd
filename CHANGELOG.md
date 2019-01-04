@@ -1,3 +1,30 @@
+2.0.2 / 2019-01-03
+==================
+
+**General**
+* Fix regression where public challenges could not be attempted by unauthed users.
+* Admin Config Panel UI no longer allows changing of user mode.
+* Show notification titles and allow for deleting notifications
+    * Update notification UI in admin panel to be similar to the public-facing UI
+* Fix subdirectory deployments in a generic manner by modifying `request.path` to combine both `request.script_root` and `request.path`.
+    * Also create a request preprocessor to redirect users into the true CTFd app when deploying on a subdirectory.
+    * Redirect to `request.full_path` instead of just `request.path`.
+* Fix `TestingConfig.SAFE_MODE` not being reset between tests.
+* Disable `value` input in dynamic challenge update field since we calculate it on the user's behalf. 
+* Fix displaying incorrect account link in the solves tab of a challenge modal.
+* Pin `normality` version because of an upstream issue in `dataset`.
+* Fix `500`'s when users submit non-integer values to `?page=1`
+    
+**API**
+* Add `/api/v1/notifications/<id>` to allow accessing notifactions by ID. 
+    * This is currently public but will become permission based later in the future
+* Add `account_url` field to the response of `/api/v1/<challenge_id>/solves` so the client knows where an account is located.
+
+**Plugins**
+* Add new plugin utilities to register javascript and css files for the admin panel.
+    * Also fixed issue where those scripts and files were shared between generated applications
+
+
 2.0.1 / 2018-12-09
 ==================
 
