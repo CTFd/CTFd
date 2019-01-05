@@ -310,7 +310,7 @@ def oauth_redirect():
             token = token_request.json()['access_token']
             user_url = get_app_config('OAUTH_API_ENDPOINT') \
                 or get_config('oauth_api_endpoint') \
-                or 'http://api.majorleaguecyber.org/user'
+                or 'https://api.majorleaguecyber.org/user'
 
             headers = {
                 'Authorization': 'Bearer ' + str(token),
