@@ -93,6 +93,7 @@ class Config(object):
         solely on IP addresses unless you know what you are doing.
     '''
     SESSION_COOKIE_HTTPONLY = (not os.getenv("SESSION_COOKIE_HTTPONLY"))  # Defaults True
+    SESSION_COOKIE_SAMESITE = os.getenv("SESSION_COOKIE_SAMESITE") or 'Lax'
     PERMANENT_SESSION_LIFETIME = int(os.getenv("PERMANENT_SESSION_LIFETIME") or 604800)  # 7 days in seconds
     TRUSTED_PROXIES = [
         r'^127\.0\.0\.1$',
