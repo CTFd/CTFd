@@ -88,6 +88,7 @@ class CachingSessionInterface(SessionInterface):
             httponly = self.get_cookie_httponly(app)
             secure = self.get_cookie_secure(app)
             expires = self.get_expiration_time(app, session)
+            samesite = self.get_cookie_samesite(app)
             val = self.serializer.dumps(dict(session))
 
             if session.sid is None:
@@ -102,5 +103,6 @@ class CachingSessionInterface(SessionInterface):
                 httponly=httponly,
                 domain=domain,
                 path=path,
-                secure=secure
+                secure=secure,
+                samesite=samesite
             )
