@@ -14,6 +14,7 @@
 	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/jumbotron.css') }}">
 	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/sticky-footer.css') }}">
 	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/base.css') }}">
+	<script src="{{ url_for('views.themes', theme='core', path='js/CTFd.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/promise-polyfill.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/fetch.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
@@ -23,6 +24,8 @@
 		var script_root = "{{ request.script_root }}";
 		var csrf_nonce = "{{ nonce }}";
 		var user_mode = "{{ get_config('user_mode') }}";
+		CTFd.options.urlRoot = script_root;
+		CTFd.options.csrfNonce = csrf_nonce;
 	</script>
 	{% block stylesheets %} {% endblock %}
 	{% for stylesheet in get_registered_admin_stylesheets() %}

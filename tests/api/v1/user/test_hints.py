@@ -107,12 +107,12 @@ def test_api_hint_admin_access():
         admin = login_as_user(app, "admin")
         register_user(app)
         client = login_as_user(app)
-        r = client.patch('/api/v1/hints/1')
-        assert r.status_code == 302
-        r = client.delete('/api/v1/hints/1')
-        assert r.status_code == 302
+        r = client.patch('/api/v1/hints/1', json="")
+        assert r.status_code == 403
+        r = client.delete('/api/v1/hints/1', json="")
+        assert r.status_code == 403
         r_admin = admin.patch('/api/v1/hints/1', json={"cost": 2})
         assert r_admin.status_code == 200
-        r_admin = admin.delete('/api/v1/hints/1')
+        r_admin = admin.delete('/api/v1/hints/1', json="")
         assert r_admin.status_code == 200
     destroy_ctfd(app)

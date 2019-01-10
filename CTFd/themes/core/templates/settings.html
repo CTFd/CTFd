@@ -93,6 +93,6 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/style.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/settings.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/settings.js') }}"></script>
 {% endblock %}

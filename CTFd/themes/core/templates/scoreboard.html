@@ -75,7 +75,7 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/plotly.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/utils.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/scoreboard.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/scoreboard.js') }}"></script>
 {% endblock %}

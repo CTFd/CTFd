@@ -71,6 +71,11 @@ def init_request_processors(app):
             return dict(session)
         return dict()
 
+    @app.url_defaults
+    def inject_theme(endpoint, values):
+        if 'theme' not in values and app.url_map.is_endpoint_expecting(endpoint, 'theme'):
+            values['theme'] = ctf_theme()
+
     @app.before_request
     def needs_setup():
         if request.path == url_for('views.setup') or request.path.startswith('/themes'):
@@ -119,7 +124,10 @@ def init_request_processors(app):
             return
         if not session.get('nonce'):
             session['nonce'] = generate_nonce()
-        if request.method == "POST":
+        if request.method not in ('GET', 'HEAD', 'OPTIONS', 'TRACE'):
+            # if request.content_type == 'application/json':
+            #     if session['nonce'] != request.headers.get('CSRF-Token'):
+            #         abort(403)
             if request.content_type != 'application/json':
                 if session['nonce'] != request.form.get('nonce'):
                     abort(403)
