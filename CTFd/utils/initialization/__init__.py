@@ -71,6 +71,11 @@ def init_request_processors(app):
             return dict(session)
         return dict()
 
+    @app.url_defaults
+    def inject_theme(endpoint, values):
+        if 'theme' not in values and app.url_map.is_endpoint_expecting(endpoint, 'theme'):
+            values['theme'] = ctf_theme()
+
     @app.before_request
     def needs_setup():
         if request.path == url_for('views.setup') or request.path.startswith('/themes'):
