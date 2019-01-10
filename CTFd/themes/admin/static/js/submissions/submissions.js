@@ -17,8 +17,11 @@ $(document).ready(function () {
                 "<strong>" + htmlentities(chal_name) + "</strong>"
             ),
             success: function () {
-                var route = script_root + '/api/v1/submissions/' + key_id;
-                $.delete(route, function (response) {
+                CTFd.fetch('/api/v1/submissions/' + key_id, {
+                    method: 'DELETE',
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (response) {
                     if (response.success) {
                         td_row.remove();
                     }

@@ -90,7 +90,7 @@ function submit_form() {
         method = 'PATCH';
     }
 
-    fetch(script_root + target, {
+    CTFd.fetch(target, {
         method: method,
         credentials: 'same-origin',
         headers: {

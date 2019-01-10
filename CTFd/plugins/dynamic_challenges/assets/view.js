@@ -32,7 +32,7 @@ window.challenge.submit = function (cb, preview) {
         'submission': submission
     };
 
-    fetch(script_root + url, {
+    CTFd.fetch(url, {
         method: 'POST',
         credentials: 'same-origin',
         headers: {

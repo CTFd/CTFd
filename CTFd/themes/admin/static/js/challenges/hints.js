@@ -1,5 +1,5 @@
 function hint(id) {
-    return fetch(script_root + '/api/v1/hints/' + id + '?preview=true', {
+    return CTFd.fetch('/api/v1/hints/' + id + '?preview=true', {
         method: 'GET',
         credentials: 'same-origin',
         headers: {
@@ -61,9 +61,12 @@ $(document).ready(function () {
             title: "Delete Hint",
             body: "Are you sure you want to delete this hint?",
             success: function () {
-                var route = script_root + '/api/v1/hints/' + hint_id;
-                $.delete(route, {}, function (data) {
-                    if (data.success) {
+                CTFd.fetch('/api/v1/hints/' + hint_id, {
+                    method: 'DELETE',
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (response) {
+                    if (response.success) {
                         row.remove();
                     }
                 });
@@ -75,7 +78,7 @@ $(document).ready(function () {
         e.preventDefault();
         var hint_id = $(this).attr('hint-id');
 
-        fetch(script_root + '/api/v1/hints/' + hint_id + '?preview=true', {
+        CTFd.fetch('/api/v1/hints/' + hint_id + '?preview=true', {
             method: 'GET',
             credentials: 'same-origin',
             headers: {
@@ -119,7 +122,7 @@ $(document).ready(function () {
             method = 'PATCH';
             url = '/api/v1/hints/' + params.id;
         }
-        fetch(script_root + url, {
+        CTFd.fetch(url, {
             method: method,
             credentials: 'same-origin',
             headers: {

@@ -27,14 +27,16 @@ $(document).ready(function () {
             title: "Delete Files",
             body: "Are you sure you want to delete this file?",
             success: function () {
-                $.delete(script_root + '/api/v1/files/' + file_id, {}, function (data) {
-                    if (data.success) {
-                       row.remove();
+                CTFd.fetch('/api/v1/files/' + file_id, {
+                    method: 'DELETE',
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (response) {
+                    if (response.success) {
+                        row.remove();
                     }
                 });
             }
         });
-
-
     });
 });

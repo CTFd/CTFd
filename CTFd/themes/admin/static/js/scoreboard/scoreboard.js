@@ -13,7 +13,7 @@ function toggle_account(elem) {
         'hidden': hidden
     };
 
-    fetch(script_root + '/api/v1/'+ user_mode +'/' + teamId, {
+    CTFd.fetch('/api/v1/'+ user_mode +'/' + teamId, {
         method: 'PATCH',
         credentials: 'same-origin',
         headers: {

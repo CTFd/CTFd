@@ -1,3 +1,5 @@
+from flask.testing import FlaskClient
+from werkzeug.datastructures import Headers
 from CTFd import create_app
 from CTFd.config import TestingConfig
 from CTFd.models import *
@@ -20,6 +22,19 @@ else:
 FakeRequest = namedtuple('FakeRequest', ['form'])
 
 
+class CTFdTestClient(FlaskClient):
+    def open(self, *args, **kwargs):
+        if kwargs.get('json') is not None:
+            with self.session_transaction() as sess:
+                api_key_headers = Headers({
+                    'CSRF-Token': sess.get('nonce')
+                })
+                headers = kwargs.pop('headers', Headers())
+                headers.extend(api_key_headers)
+                kwargs['headers'] = headers
+        return super(CTFdTestClient, self).open(*args, **kwargs)
+
+
 def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True, enable_plugins=False, application_root='/'):
     if enable_plugins:
         TestingConfig.SAFE_MODE = False
@@ -29,6 +44,7 @@ def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="
     TestingConfig.APPLICATION_ROOT = application_root
 
     app = create_app(TestingConfig)
+    app.test_client_class = CTFdTestClient
 
     if setup:
         app = setup_ctfd(app, ctf_name, name, email, password, user_mode)

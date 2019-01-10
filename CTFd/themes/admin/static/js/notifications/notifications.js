@@ -4,7 +4,7 @@ $(document).ready(function () {
         var form = $('#notifications_form');
         var params = form.serializeJSON();
 
-        fetch(script_root + '/api/v1/notifications', {
+        CTFd.fetch('/api/v1/notifications', {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
@@ -32,8 +32,11 @@ $(document).ready(function () {
             title: 'Delete Notification',
             body: "Are you sure you want to delete this notification?",
             success: function () {
-                var delete_route = script_root + '/api/v1/notifications/' + notif_id;
-                $.delete(delete_route, {}, function (response) {
+                CTFd.fetch('/api/v1/notifications/' + notif_id, {
+                    method: 'DELETE',
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (response) {
                     if (response.success) {
                         elem.parent().remove();
                     }

@@ -1,10 +1,16 @@
 function delete_tag(elem){
     var elem = $(elem);
     var tag_id = elem.attr('tag-id');
-    $.delete(script_root + '/api/v1/tags/' + tag_id, function(){
-        $(elem).parent().remove()
-    });
 
+    CTFd.fetch('/api/v1/tags/' + tag_id, {
+        method: 'DELETE',
+    }).then(function (response) {
+        return response.json();
+    }).then(function (response) {
+        if (response.success) {
+            $(elem).parent().remove()
+        }
+    });
 }
 
 $(document).ready(function () {
@@ -16,7 +22,7 @@ $(document).ready(function () {
                 challenge: CHALLENGE_ID
             };
 
-            fetch(script_root + '/api/v1/tags', {
+            CTFd.fetch('/api/v1/tags', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {

@@ -8,9 +8,12 @@ $(document).ready(function () {
             title: "Delete Team",
             body: "Are you sure you want to delete {0}".format("<strong>" + htmlentities(TEAM_NAME) + "</strong>"),
             success: function () {
-                var route = script_root + '/api/v1/teams/' + TEAM_ID;
-                $.delete(route, {}, function (data) {
-                    if (data.success) {
+                CTFd.fetch('/api/v1/teams/' + TEAM_ID, {
+                    method: 'DELETE',
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (response) {
+                    if (response.success) {
                         window.location = script_root + '/admin/teams';
                     }
                 });
@@ -36,7 +39,7 @@ $(document).ready(function () {
             title: "Delete Submission",
             body: body,
             success: function () {
-                fetch(script_root + '/api/v1/submissions/' + submission_id, {
+                CTFd.fetch('/api/v1/submissions/' + submission_id, {
                     method: 'DELETE',
                     credentials: 'same-origin',
                     headers: {
@@ -70,7 +73,7 @@ $(document).ready(function () {
             title: "Delete Award",
             body: body,
             success: function () {
-                fetch(script_root + '/api/v1/awards/' + award_id, {
+                CTFd.fetch('/api/v1/awards/' + award_id, {
                     method: 'DELETE',
                     credentials: 'same-origin',
                     headers: {

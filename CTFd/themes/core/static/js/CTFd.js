@@ -23,6 +23,10 @@ var CTFd = (function () {
         }
         url = this.options.urlRoot + url;
 
+
+        if (options.headers === undefined) {
+            options.headers = {};
+        }
         options.credentials = 'same-origin';
         options.headers['Accept'] = 'application/json';
         options.headers['Content-Type'] = 'application/json';

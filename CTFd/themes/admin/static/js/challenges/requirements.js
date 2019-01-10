@@ -10,7 +10,7 @@ $(document).ready(function () {
             'requirements': CHALLENGE_REQUIREMENTS
         };
 
-        fetch(script_root + '/api/v1/challenges/' + CHALLENGE_ID, {
+        CTFd.fetch('/api/v1/challenges/' + CHALLENGE_ID, {
             method: 'PATCH',
             credentials: 'same-origin',
             headers: {
@@ -38,7 +38,7 @@ $(document).ready(function () {
             'requirements': CHALLENGE_REQUIREMENTS
         };
 
-        fetch(script_root + '/api/v1/challenges/' + CHALLENGE_ID, {
+        CTFd.fetch('/api/v1/challenges/' + CHALLENGE_ID, {
             method: 'PATCH',
             credentials: 'same-origin',
             headers: {

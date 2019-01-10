@@ -9,8 +9,11 @@ $(document).ready(function () {
                 "<strong>" + htmlentities(name) + "</strong>"
             ),
             success: function () {
-                var page_delete_route = '{{ request.script_root }}/admin/pages/delete';
-                $.delete(script_root + '/api/v1/pages/' + page_id, {}, function (response) {
+                CTFd.fetch('/api/v1/pages/' + page_id, {
+                    method: 'DELETE',
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (response) {
                     if (response.success) {
                         elem.parent().parent().remove();
                     }
