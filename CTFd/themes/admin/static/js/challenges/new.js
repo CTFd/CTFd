@@ -13,7 +13,7 @@ function load_chal_template(challenge){
                 $("#create-chal-entry-div form").submit(function (e) {
                     e.preventDefault();
                     var params = $("#create-chal-entry-div form").serializeJSON();
-                    fetch(script_root + '/api/v1/challenges', {
+                    CTFd.fetch('/api/v1/challenges', {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: {

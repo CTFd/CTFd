@@ -21,7 +21,7 @@ $(document).ready(function () {
             e.preventDefault();
             var params = $(this).serializeJSON(true);
             params['challenge'] = CHALLENGE_ID;
-            fetch(script_root + '/api/v1/flags', {
+            CTFd.fetch('/api/v1/flags', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {
@@ -70,7 +70,7 @@ $(document).ready(function () {
                     e.preventDefault();
                     var params = $('#edit-flags form').serializeJSON();
 
-                    fetch(script_root + '/api/v1/flags/' + flag_id, {
+                    CTFd.fetch('/api/v1/flags/' + flag_id, {
                         method: 'PATCH',
                         credentials: 'same-origin',
                         headers: {
@@ -101,9 +101,12 @@ $(document).ready(function () {
             title: "Delete Flag",
             body: "Are you sure you want to delete this flag?",
             success: function () {
-                var route = script_root + '/api/v1/flags/' + flag_id;
-                $.delete(route, {}, function (data) {
-                    if (data.success) {
+                CTFd.fetch('/api/v1/flags/' + flag_id, {
+                    method: 'DELETE',
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (response) {
+                    if (response.success) {
                         row.remove();
                     }
                 });

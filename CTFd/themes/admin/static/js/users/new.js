@@ -3,7 +3,7 @@ $(document).ready(function () {
         e.preventDefault();
         var params = $('#user-info-form').serializeJSON(true);
 
-        fetch(script_root + '/api/v1/users', {
+        CTFd.fetch('/api/v1/users', {
             method: 'POST',
             credentials: 'same-origin',
             headers: {

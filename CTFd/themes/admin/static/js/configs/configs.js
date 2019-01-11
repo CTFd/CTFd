@@ -105,7 +105,7 @@ function update_configs(obj){
         }
     });
 
-    fetch(script_root + target, {
+    CTFd.fetch(target, {
         method: method,
         credentials: 'same-origin',
         headers: {
@@ -127,7 +127,7 @@ function upload_logo(form) {
             var params = {
                 'value': upload.location
             };
-            fetch(script_root + '/api/v1/configs/ctf_logo', {
+            CTFd.fetch('/api/v1/configs/ctf_logo', {
                 method: 'PATCH',
                 credentials: 'same-origin',
                 headers: {
@@ -160,7 +160,7 @@ function remove_logo() {
             var params = {
                 'value': null
             };
-            fetch(script_root + '/api/v1/configs/ctf_logo', {
+            CTFd.fetch('/api/v1/configs/ctf_logo', {
                 method: 'PATCH',
                 credentials: 'same-origin',
                 headers: {

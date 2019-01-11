@@ -143,9 +143,12 @@ $(document).ready(function () {
             title: "Delete Challenge",
             body: "Are you sure you want to delete {0}".format("<strong>" + htmlentities(CHALLENGE_NAME) + "</strong>"),
             success: function () {
-                var route = script_root + '/api/v1/challenges/' + CHALLENGE_ID;
-                $.delete(route, {}, function (data) {
-                    if (data.success) {
+                CTFd.fetch('/api/v1/challenges/' + CHALLENGE_ID, {
+                    method: 'DELETE',
+                }).then(function (response) {
+                    return response.json();
+                }).then(function (response) {
+                    if (response.success) {
                         window.location = script_root + '/admin/challenges';
                     }
                 });
@@ -159,7 +162,7 @@ $(document).ready(function () {
         console.log(params);
 
 
-        fetch(script_root + '/api/v1/challenges/' + CHALLENGE_ID, {
+        CTFd.fetch('/api/v1/challenges/' + CHALLENGE_ID, {
             method: 'PATCH',
             credentials: 'same-origin',
             headers: {

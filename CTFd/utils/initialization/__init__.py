@@ -124,7 +124,10 @@ def init_request_processors(app):
             return
         if not session.get('nonce'):
             session['nonce'] = generate_nonce()
-        if request.method == "POST":
+        if request.method not in ('GET', 'HEAD', 'OPTIONS', 'TRACE'):
+            if request.content_type == 'application/json':
+                if session['nonce'] != request.headers.get('CSRF-Token'):
+                    abort(403)
             if request.content_type != 'application/json':
                 if session['nonce'] != request.form.get('nonce'):
                     abort(403)

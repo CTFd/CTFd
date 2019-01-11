@@ -19,7 +19,7 @@ $(function () {
         $('#results').empty();
         var params = $('#user-settings-form').serializeJSON(true);
 
-        fetch(script_root + '/api/v1/users/me', {
+        CTFd.fetch('/api/v1/users/me', {
             method: 'PATCH',
             credentials: 'same-origin',
             headers: {

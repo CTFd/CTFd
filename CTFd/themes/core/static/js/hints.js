@@ -1,5 +1,5 @@
 function hint(id) {
-    return fetch(script_root + '/api/v1/hints/' + id, {
+    return CTFd.fetch('/api/v1/hints/' + id, {
         method: 'GET',
         credentials: 'same-origin',
         headers: {
@@ -13,7 +13,7 @@ function hint(id) {
 
 
 function unlock(params){
-    return fetch(script_root + '/api/v1/unlocks', {
+    return CTFd.fetch('/api/v1/unlocks', {
         method: 'POST',
         credentials: 'same-origin',
         headers: {

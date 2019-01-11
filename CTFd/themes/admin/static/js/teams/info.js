@@ -3,7 +3,7 @@ $(document).ready(function () {
         e.preventDefault();
         var params = $('#team-info-form').serializeJSON(true);
 
-        fetch(script_root + '/api/v1/teams/' + TEAM_ID, {
+        CTFd.fetch('/api/v1/teams/' + TEAM_ID, {
             method: 'PATCH',
             credentials: 'same-origin',
             headers: {
