@@ -1,3 +1,21 @@
+2.0.3 / 2019-01-12
+==================
+
+**Security Release**
+
+This release resolves a security issue that allowed malicious users to hijack admin browser sessions in certain browsers under certain configurations.   
+
+**Security**
+ * Require `CSRF-Token` header on all API requests.
+ * Require CSRF protection on all HTTP methods except `GET`, `HEAD`, `OPTIONS`, and `TRACE`.
+ * Default session cookie to `SameSite=Lax`
+ * Request user information from MajorLeagueCyber over HTTPS
+
+**Themes**
+ * Reduce required amount of parameters required for static theme files. 
+    * i.e. `url_for('views.themes')` no longer requires the themes parameter. It now defaults to the currently in-use theme.
+
+
 2.0.2 / 2019-01-03
 ==================
 
