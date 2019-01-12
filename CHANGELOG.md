@@ -4,6 +4,10 @@
 **Security Release**
 
 This release resolves a security issue that allowed malicious users to hijack admin browser sessions in certain browsers under certain configurations.
+
+The implemented fix is to require the new `CSRF-Token` header on state-changing requests with a Content-Type of application/json.
+The same nonce used for standard POST requests is re-used for the `CSRF-Token` header.
+
 Because of the necessary changes to the API, the previously used call to `fetch()` in themes should now be replaced with `CTFd.fetch()`.
 
 **Security**
@@ -13,8 +17,8 @@ Because of the necessary changes to the API, the previously used call to `fetch(
 * Send initial user information request to MajorLeagueCyber over HTTPS
 
 **Themes**
-* Remove explicit usage of script_root in public JS. 
-   * Instead use the `CTFd.fetch()` function (defined in `CTFd.js`) and properly register the url root and CSRF nonce in `base.html` as shown below:
+* Remove explicit usage of `script_root` in public JS.
+   * In custom themes, use the `CTFd.fetch()` function (defined in `CTFd.js`) and properly register the url root and CSRF nonce in `base.html` as shown below:
     ```javascript
     var script_root = "{{ request.script_root }}";
     var csrf_nonce = "{{ nonce }}";
