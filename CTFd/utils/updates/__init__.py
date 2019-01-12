@@ -71,6 +71,3 @@ def update_check(force=False):
                 set_config('next_update_check', next_update_check_time)
             except KeyError:
                 set_config('version_latest', None)
-
-    else:
-        set_config('version_latest', None)
