@@ -3,17 +3,26 @@
 
 **Security Release**
 
-This release resolves a security issue that allowed malicious users to hijack admin browser sessions in certain browsers under certain configurations.   
+This release resolves a security issue that allowed malicious users to hijack admin browser sessions in certain browsers under certain configurations.
+Because of the necessary changes to the API, the previously used call to `fetch()` in themes should now be replaced with `CTFd.fetch()`.
 
 **Security**
- * Require `CSRF-Token` header on all API requests.
- * Require CSRF protection on all HTTP methods except `GET`, `HEAD`, `OPTIONS`, and `TRACE`.
- * Default session cookie to `SameSite=Lax`
- * Request user information from MajorLeagueCyber over HTTPS
+* Require `CSRF-Token` header on all API requests.
+* Require CSRF protection on all HTTP methods except `GET`, `HEAD`, `OPTIONS`, and `TRACE`.
+* Default session cookie to `SameSite=Lax`
+* Send initial user information request to MajorLeagueCyber over HTTPS
 
 **Themes**
- * Reduce required amount of parameters required for static theme files. 
-    * i.e. `url_for('views.themes')` no longer requires the themes parameter. It now defaults to the currently in-use theme.
+* Remove explicit usage of script_root in public JS. 
+   * Instead use the `CTFd.fetch()` function (defined in `CTFd.js`) and properly register the url root and CSRF nonce in `base.html` as shown below:
+    ```javascript
+    var script_root = "{{ request.script_root }}";
+    var csrf_nonce = "{{ nonce }}";
+    CTFd.options.urlRoot = script_root;
+    CTFd.options.csrfNonce = csrf_nonce;
+    ```
+* Reduce required amount of parameters required for static theme files. 
+   * i.e. `url_for('views.themes')` no longer requires the themes parameter. It now defaults to the currently in-use theme.
 
 
 2.0.2 / 2019-01-03
