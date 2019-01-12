@@ -16,6 +16,9 @@ Because of the necessary changes to the API, the previously used call to `fetch(
 * Default session cookie to `SameSite=Lax`
 * Send initial user information request to MajorLeagueCyber over HTTPS
 
+**General**
+* Fix `update_check()` logic so that we don't accidentally remove the update notification.
+
 **Themes**
 * Remove explicit usage of `script_root` in public JS.
    * In custom themes, use the `CTFd.fetch()` function (defined in `CTFd.js`) and properly register the url root and CSRF nonce in `base.html` as shown below:
@@ -25,7 +28,7 @@ Because of the necessary changes to the API, the previously used call to `fetch(
     CTFd.options.urlRoot = script_root;
     CTFd.options.csrfNonce = csrf_nonce;
     ```
-* Reduce required amount of parameters required for static theme files. 
+* Reduce required amount of parameters required for static theme files.
    * i.e. `url_for('views.themes')` no longer requires the themes parameter. It now defaults to the currently in-use theme.
 
 
@@ -41,13 +44,13 @@ Because of the necessary changes to the API, the previously used call to `fetch(
     * Also create a request preprocessor to redirect users into the true CTFd app when deploying on a subdirectory.
     * Redirect to `request.full_path` instead of just `request.path`.
 * Fix `TestingConfig.SAFE_MODE` not being reset between tests.
-* Disable `value` input in dynamic challenge update field since we calculate it on the user's behalf. 
+* Disable `value` input in dynamic challenge update field since we calculate it on the user's behalf.
 * Fix displaying incorrect account link in the solves tab of a challenge modal.
 * Pin `normality` version because of an upstream issue in `dataset`.
 * Fix `500`'s when users submit non-integer values to `?page=1`
-    
+
 **API**
-* Add `/api/v1/notifications/<id>` to allow accessing notifactions by ID. 
+* Add `/api/v1/notifications/<id>` to allow accessing notifactions by ID.
     * This is currently public but will become permission based later in the future
 * Add `account_url` field to the response of `/api/v1/<challenge_id>/solves` so the client knows where an account is located.
 
@@ -59,18 +62,18 @@ Because of the necessary changes to the API, the previously used call to `fetch(
 2.0.1 / 2018-12-09
 ==================
 
-2.0.1 is a patch release to fix regressions and bugs in 2.0.0. 
+2.0.1 is a patch release to fix regressions and bugs in 2.0.0.
 
 If you are upgrading from a version prior to 2.0.0 please read the 2.0.0 change notes for instructions on updating to
-2.0.0 before updating to 2.0.1. 
+2.0.0 before updating to 2.0.1.
 
 **General**
-* Fix setting auth for `get_smtp()`. 
+* Fix setting auth for `get_smtp()`.
     * Add `MAIL_USEAUTH` to `config.py`.
 * Add more mail documentation to `config.py`.
 * Disable jinja cache properly by setting `cache_size` to 0 (#662)
     Regression from 1.2.0.
-* Fix downloading files as an anonymous user. 
+* Fix downloading files as an anonymous user.
 * Fix viewing challenges anonymously if they have empty requirements. Closes #789
     * Allow anonymous users to see see challenges with empty requirements or anonymized challenges
 * Clean up admin mail settings to use new label/small structure
@@ -96,25 +99,25 @@ If you are upgrading from a version prior to 2.0.0 please read the 2.0.0 change 
 2.0.0 / 2018-12-02
 ==================
 
-2.0.0 is a *significant*, backwards-incompaitble release. 
+2.0.0 is a *significant*, backwards-incompaitble release.
 
-Many unofficial plugins will not be supported in CTFd 2.0.0. If you're having trouble updating your plugins 
+Many unofficial plugins will not be supported in CTFd 2.0.0. If you're having trouble updating your plugins
 please join [the CTFd Slack](https://slack.ctfd.io/) for help and discussion.
 
-If you are upgrading from a prior version be sure to make backups and have a reversion plan before upgrading.  
+If you are upgrading from a prior version be sure to make backups and have a reversion plan before upgrading.
 
 * If upgrading from 1.2.0 please make use of the `migrations/1_2_0_upgrade_2_0_0.py` script as follows:
     1. Make all necessary backups. Backup the database, uploads folder, and source code directory.
-    2. Upgrade the source code directory (i.e. `git pull`) but do not run any updated code yet. 
+    2. Upgrade the source code directory (i.e. `git pull`) but do not run any updated code yet.
     3. Set the `DATABASE_URL` in `CTFd/config.py` to point to your existing CTFd database.
     3. Run the upgrade script from the CTFd root folder i.e. `python migrations/1_2_0_upgrade_2_0_0.py`.
-        * This migration script will attempt to migrate data inside the database to 2.0.0 but it cannot account for every situation. 
+        * This migration script will attempt to migrate data inside the database to 2.0.0 but it cannot account for every situation.
         * Examples of situations where you may need to manually migrate data:
             * Tables/columns created by plugins
             * Tables/columns created by forks
             * Using databases which are not officially supported (e.g. sqlite, postgres)
     4. Setup the rest of CTFd (i.e. config.py), migrate/update any plugins, and run normally.
-* If upgrading from a version before 1.2.0, please upgrade to 1.2.0 and then continue with the steps above. 
+* If upgrading from a version before 1.2.0, please upgrade to 1.2.0 and then continue with the steps above.
 
 **General**
 
@@ -123,10 +126,10 @@ If you are upgrading from a prior version be sure to make backups and have a rev
     * Use Team Mode if you want users to create and join teams to play together.
 * Integration with MajorLeagueCyber (MLC). (https://majorleaguecyber.org)
     * Organizers can register their event with MLC and will receive OAuth Client ID & Client Secret.
-    * Organizers can set those OAuth credentials in CTFd to allow users and teams to automatically register in a CTF. 
+    * Organizers can set those OAuth credentials in CTFd to allow users and teams to automatically register in a CTF.
 * Data is now provided to the front-end via the REST API. (#551)
     * Javascript uses `fetch()` to consume the REST API.
-* Dynamic Challenges are built in. 
+* Dynamic Challenges are built in.
 * S3 backed uploading/downloading built in. (#661)
 * Real time notifications/announcements. (#600)
     * Uses long-polling instead of websockets to simplify deployment.
@@ -150,7 +153,7 @@ If you are upgrading from a prior version be sure to make backups and have a rev
     * `docker-entrypoint.sh` exits on any error. (#717)
 * Increased test coverage.
 * Create `SAFE_MODE` configuration to disable loading of plugins.
-* Migrations have been reset. 
+* Migrations have been reset.
 
 **Themes**
 
@@ -173,7 +176,7 @@ If you are upgrading from a prior version be sure to make backups and have a rev
 * Rename challenge type plugins to use `.html` and have simplified names. (create, update, view)
 * Many functions have moved around because utils.py has been broken up and refactored. (#475)
 * Marshmallow (https://marshmallow.readthedocs.io) is now used by the REST API to validate and serialize/deserialize API data.
-    * Marshmallow schemas and views are used to restrict SQLAlchemy columns to user roles. 
+    * Marshmallow schemas and views are used to restrict SQLAlchemy columns to user roles.
 * The REST API features swagger support but this requires more utilization internally.
 * Errors can now be provided between routes and decoraters through message flashing. (CTFd.utils.helpers; get_errors, get_infos, info_for, error_for)
 * Email registration regex relaxed. (#693)
