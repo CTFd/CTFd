@@ -156,7 +156,6 @@ $(document).ready(function () {
     $('#challenge-update-container > form').submit(function(e){
         e.preventDefault();
         var params = $(e.target).serializeJSON(true);
-        console.log(params);
 
 
         fetch(script_root + '/api/v1/challenges/' + CHALLENGE_ID, {
