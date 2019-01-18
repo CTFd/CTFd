@@ -363,7 +363,7 @@ def test_api_user_change_email_under_whitelist():
             )
             assert r.status_code == 400
             resp = r.get_json()
-            assert "Only email addresses under" in resp['errors']['email']
+            assert resp['errors']['email']
             assert resp['success'] is False
 
             r = client.patch(
