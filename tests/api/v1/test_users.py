@@ -264,13 +264,62 @@ def test_api_user_patch_me_logged_in():
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
-            r = client.patch('/api/v1/users/me', json={"name": "user",
-                                                       "email": "user@ctfd.io",
-                                                       "password": "password",
-                                                       "confirm": "password",
-                                                       "country": "US"})
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "name": "user",
+                    "email": "user@ctfd.io",
+                    "password": "password",
+                    "confirm": "password",
+                    "country": "US"
+                }
+            )
             assert r.status_code == 200
             assert r.get_json()['data']['country'] == 'US'
+    destroy_ctfd(app)
+
+
+def test_api_user_change_name():
+    """Can a user change their name via the API"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "name": "user2",
+                }
+            )
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp['data']['name'] == 'user2'
+            assert resp['success'] is True
+
+            set_config('name_changes', False)
+
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "name": "new_name",
+                }
+            )
+            assert r.status_code == 400
+            resp = r.get_json()
+            assert 'name' in resp['errors']
+            assert resp['success'] is False
+
+            set_config('name_changes', True)
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "name": "new_name",
+                }
+            )
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp['data']['name'] == 'new_name'
+            assert resp['success'] is True
     destroy_ctfd(app)
 
 
