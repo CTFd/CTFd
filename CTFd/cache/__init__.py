@@ -4,8 +4,8 @@ cache = Cache()
 
 
 def clear_config():
-    from CTFd.utils import get_config, get_app_config
-    cache.delete_memoized(get_config)
+    from CTFd.utils import _get_config, get_app_config
+    cache.delete_memoized(_get_config)
     cache.delete_memoized(get_app_config)
 
 

@@ -4,6 +4,7 @@ from marshmallow import validate, ValidationError, pre_load
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Teams
 from CTFd.utils.validators import validate_country_code
+from CTFd.utils import get_config
 from CTFd.utils.user import is_admin, get_current_team
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.user import is_admin, get_current_team
@@ -69,6 +70,10 @@ class TeamSchema(ma.ModelSchema):
             if data['name'] == current_team.name:
                 return data
             else:
+                name_changes = get_config('name_changes', default=True)
+                if bool(name_changes) is False:
+                    raise ValidationError('Name changes are disabled', field_names=['name'])
+
                 if existing_team:
                     raise ValidationError('Team name has already been taken', field_names=['name'])
 
