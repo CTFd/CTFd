@@ -348,6 +348,37 @@ def test_api_user_change_verify_email():
     destroy_ctfd(app)
 
 
+def test_api_user_change_email_under_whitelist():
+    """Test that users can only change emails to ones in the whitelist"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        set_config('domain_whitelist', 'whitelisted.com, whitelisted.org, whitelisted.net')
+        with login_as_user(app) as client:
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "email": "new_email@email.com",
+                }
+            )
+            assert r.status_code == 400
+            resp = r.get_json()
+            assert "Only email addresses under" in resp['errors']['email']
+            assert resp['success'] is False
+
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "email": "new_email@whitelisted.com",
+                }
+            )
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp['data']['email'] == "new_email@whitelisted.com"
+            assert resp['success'] is True
+    destroy_ctfd(app)
+
+
 def test_api_user_get_me_solves_not_logged_in():
     """Can a user get /api/v1/users/me/solves if not logged in"""
     app = create_ctfd()

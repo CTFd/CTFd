@@ -140,18 +140,13 @@ def register():
         valid_email = validators.validate_email(request.form['email'])
         team_name_email_check = validators.validate_email(name)
 
-        local_id, _, domain = email_address.partition('@')
-
-        domain_whitelist = get_config('domain_whitelist')
-
         if not valid_email:
             errors.append("Please enter a valid email address")
-        if domain_whitelist:
-            domain_whitelist = [d.strip() for d in domain_whitelist.split(',')]
-            if domain not in domain_whitelist:
+        if email.check_email_is_whitelisted(email_address) is False:
                 errors.append(
                     "Only email addresses under {domains} may register".format(
-                        domains=', '.join(domain_whitelist))
+                        domains=get_config('domain_whitelist')
+                    )
                 )
         if names:
             errors.append('That team name is already taken')

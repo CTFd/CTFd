@@ -10,6 +10,7 @@ from CTFd.utils.validators import unique_email, validate_country_code
 from CTFd.utils.user import is_admin, get_current_user
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.crypto import verify_password, hash_password
+from CTFd.utils.email import check_email_is_whitelisted
 
 
 class UserSchema(ma.ModelSchema):
@@ -100,6 +101,13 @@ class UserSchema(ma.ModelSchema):
             else:
                 if existing_user:
                     raise ValidationError('Email address has already been used', field_names=['email'])
+                if check_email_is_whitelisted(email) is False:
+                    raise ValidationError(
+                        "Only email addresses under {domains} may register".format(
+                            domains=get_config('domain_whitelist')
+                        ),
+                        field_names=['email']
+                    )
                 if get_config('verify_emails'):
                     current_user.verified = False
 
