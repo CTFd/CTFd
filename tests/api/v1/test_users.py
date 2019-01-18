@@ -264,13 +264,118 @@ def test_api_user_patch_me_logged_in():
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
-            r = client.patch('/api/v1/users/me', json={"name": "user",
-                                                       "email": "user@ctfd.io",
-                                                       "password": "password",
-                                                       "confirm": "password",
-                                                       "country": "US"})
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "name": "user",
+                    "email": "user@ctfd.io",
+                    "password": "password",
+                    "confirm": "password",
+                    "country": "US"
+                }
+            )
             assert r.status_code == 200
             assert r.get_json()['data']['country'] == 'US'
+    destroy_ctfd(app)
+
+
+def test_api_user_change_name():
+    """Can a user change their name via the API"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "name": "user2",
+                }
+            )
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp['data']['name'] == 'user2'
+            assert resp['success'] is True
+
+            set_config('name_changes', False)
+
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "name": "new_name",
+                }
+            )
+            assert r.status_code == 400
+            resp = r.get_json()
+            assert 'name' in resp['errors']
+            assert resp['success'] is False
+
+            set_config('name_changes', True)
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "name": "new_name",
+                }
+            )
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp['data']['name'] == 'new_name'
+            assert resp['success'] is True
+    destroy_ctfd(app)
+
+
+def test_api_user_change_verify_email():
+    """Test that users are marked unconfirmed if they change their email and verify_emails is turned on"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config('verify_emails', True)
+        register_user(app)
+        user = Users.query.filter_by(id=2).first()
+        user.verified = True
+        app.db.session.commit()
+        with login_as_user(app) as client:
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "email": "new_email@email.com",
+                }
+            )
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp['data']['email'] == "new_email@email.com"
+            assert resp['success'] is True
+            user = Users.query.filter_by(id=2).first()
+            assert user.verified is False
+    destroy_ctfd(app)
+
+
+def test_api_user_change_email_under_whitelist():
+    """Test that users can only change emails to ones in the whitelist"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        set_config('domain_whitelist', 'whitelisted.com, whitelisted.org, whitelisted.net')
+        with login_as_user(app) as client:
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "email": "new_email@email.com",
+                }
+            )
+            assert r.status_code == 400
+            resp = r.get_json()
+            assert resp['errors']['email']
+            assert resp['success'] is False
+
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "email": "new_email@whitelisted.com",
+                }
+            )
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp['data']['email'] == "new_email@whitelisted.com"
+            assert resp['success'] is True
     destroy_ctfd(app)
 
 

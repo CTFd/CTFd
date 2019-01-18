@@ -30,14 +30,13 @@ else:
 markdown = mistune.Markdown()
 
 
-@cache.memoize()
-def get_app_config(key):
-    value = app.config.get(key)
+def get_app_config(key, default=None):
+    value = app.config.get(key, default)
     return value
 
 
 @cache.memoize()
-def get_config(key):
+def _get_config(key):
     config = Configs.query.filter_by(key=key).first()
     if config and config.value:
         value = config.value
@@ -52,6 +51,14 @@ def get_config(key):
                 return value
 
 
+def get_config(key, default=None):
+    value = _get_config(key)
+    if value is None:
+        return default
+    else:
+        return value
+
+
 def set_config(key, value):
     config = Configs.query.filter_by(key=key).first()
     if config:
@@ -60,5 +67,5 @@ def set_config(key, value):
         config = Configs(key=key, value=value)
         db.session.add(config)
     db.session.commit()
-    cache.delete_memoized(get_config, key)
+    cache.delete_memoized(_get_config, key)
     return config

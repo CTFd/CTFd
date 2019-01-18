@@ -41,3 +41,13 @@ def verify_email_address(addr):
 
 def check_email_format(email):
     return bool(re.match(EMAIL_REGEX, email))
+
+
+def check_email_is_whitelisted(email_address):
+    local_id, _, domain = email_address.partition('@')
+    domain_whitelist = get_config('domain_whitelist')
+    if domain_whitelist:
+        domain_whitelist = [d.strip() for d in domain_whitelist.split(',')]
+        if domain not in domain_whitelist:
+            return False
+    return True
