@@ -323,6 +323,31 @@ def test_api_user_change_name():
     destroy_ctfd(app)
 
 
+def test_api_user_change_verify_email():
+    """Test that users are marked unconfirmed if they change their email and verify_emails is turned on"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config('verify_emails', True)
+        register_user(app)
+        user = Users.query.filter_by(id=2).first()
+        user.verified = True
+        app.db.session.commit()
+        with login_as_user(app) as client:
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "email": "new_email@email.com",
+                }
+            )
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp['data']['email'] == "new_email@email.com"
+            assert resp['success'] is True
+            user = Users.query.filter_by(id=2).first()
+            assert user.verified is False
+    destroy_ctfd(app)
+
+
 def test_api_user_get_me_solves_not_logged_in():
     """Can a user get /api/v1/users/me/solves if not logged in"""
     app = create_ctfd()
