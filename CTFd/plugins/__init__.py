@@ -3,7 +3,7 @@ import importlib
 import os
 
 from collections import namedtuple
-from flask import current_app as app, send_file, send_from_directory, abort
+from flask import current_app as app, send_file, send_from_directory
 from CTFd.utils.decorators import admins_only as admins_only_wrapper
 from CTFd.utils.plugins import (
     override_template as utils_override_template,

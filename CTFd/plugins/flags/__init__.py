@@ -1,8 +1,6 @@
 from CTFd.plugins import register_plugin_assets_directory
 
 import re
-import string
-import hmac
 
 
 class BaseFlag(object):
