@@ -13,7 +13,7 @@ from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
-from CTFd.utils.dates import ctf_started, ctftime
+from CTFd.utils.dates import ctftime
 from CTFd.utils.decorators import authed_only
 from sqlalchemy.exc import IntegrityError
 import os

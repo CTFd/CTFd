@@ -1,8 +1,7 @@
-from flask import session, jsonify, request, abort
-from flask_restplus import Namespace, Resource, reqparse
+from flask import request
+from flask_restplus import Namespace, Resource
 
-from CTFd.cache import cache, clear_standings
-from CTFd.utils.scores import get_standings
+from CTFd.cache import clear_standings
 from CTFd.models import db, Submissions
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import (

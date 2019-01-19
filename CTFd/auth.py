@@ -15,13 +15,13 @@ from CTFd.utils import user as current_user
 from CTFd.utils import config, validators
 from CTFd.utils import email
 from CTFd.utils.security.auth import login_user, logout_user
-from CTFd.utils.security.passwords import hash_password, check_password
+from CTFd.utils.security.passwords import check_password
 from CTFd.utils.logging import log
 from CTFd.utils.decorators.visibility import check_registration_visibility
-from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
-from CTFd.utils.security.signing import serialize, unserialize, SignatureExpired, BadSignature, BadTimeSignature
-from CTFd.utils.helpers import info_for, error_for, get_errors, get_infos
 from CTFd.utils.config.visibility import registration_visible
+from CTFd.utils.modes import TEAMS_MODE
+from CTFd.utils.security.signing import unserialize, SignatureExpired, BadSignature, BadTimeSignature
+from CTFd.utils.helpers import error_for, get_errors
 
 import base64
 import requests

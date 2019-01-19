@@ -1,6 +1,5 @@
-from flask_restplus import Namespace, Resource
-from CTFd.models import db, Teams
-from CTFd.plugins.challenges import get_chal_class
+from flask_restplus import Resource
+from CTFd.models import Teams
 from CTFd.utils.decorators import (
     admins_only,
 )
