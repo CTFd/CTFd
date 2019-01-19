@@ -101,3 +101,4 @@ def test_oauth_login_upgrade():
         assert user.oauth_id
         assert user.verified
         assert user.team_id
+    destroy_ctfd(app)
