@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from tests.helpers import *
-from mock import Mock, patch
 from CTFd.utils import set_config
-import requests
 
 
 def test_oauth_not_configured():
@@ -21,6 +19,7 @@ def test_oauth_not_configured():
 
 
 def test_oauth_configured_flow():
+    """Test that MLC integration works properly but does not allow registration (account creation) if disabled"""
     app = create_ctfd(user_mode="teams")
     app.config.update({
         'OAUTH_CLIENT_ID': 'ctfd_testing_client_id',
@@ -71,6 +70,7 @@ def test_oauth_configured_flow():
 
 
 def test_oauth_login_upgrade():
+    """Test that users who use MLC after having registered will be associated with their MLC account"""
     app = create_ctfd(user_mode="teams")
     app.config.update({
         'OAUTH_CLIENT_ID': 'ctfd_testing_client_id',
