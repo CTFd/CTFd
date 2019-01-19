@@ -8,7 +8,6 @@ from platform import python_version
 import requests
 import time
 import sys
-import os
 
 
 def update_check(force=False):

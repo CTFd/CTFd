@@ -1,4 +1,4 @@
-from flask import Flask, current_app as app, request, session, redirect, url_for, abort, render_template
+from flask import request, session, redirect, url_for, abort, render_template
 from werkzeug.wsgi import DispatcherMiddleware
 from CTFd.models import db, Tracking
 

@@ -4,7 +4,6 @@ from werkzeug.datastructures import CallbackDict
 from CTFd.cache import cache
 from CTFd.utils import text_type
 from uuid import uuid4
-from itsdangerous import Signer, BadSignature, want_bytes
 import six
 
 

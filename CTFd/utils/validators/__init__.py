@@ -1,8 +1,7 @@
-from flask import session
-from CTFd.utils.user import is_admin, get_current_team, get_current_user
-from CTFd.models import Teams, Users
+from CTFd.utils.user import is_admin, get_current_user
+from CTFd.models import Users
 from CTFd.utils.countries import lookup_country_code
-from six.moves.urllib.parse import urlparse, urljoin, quote, unquote
+from six.moves.urllib.parse import urlparse, urljoin
 from flask import request
 from marshmallow import ValidationError
 import re
