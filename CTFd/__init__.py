@@ -13,7 +13,7 @@ from CTFd import utils
 from CTFd.utils.migrations import migrations, migrate, upgrade, stamp, create_database
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
-from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals
+from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals, init_logs
 from CTFd.utils.events import socketio
 from CTFd.plugins import init_plugins
 
@@ -206,6 +206,7 @@ def create_app(config='CTFd.config.Config'):
         app.register_error_handler(500, general_error)
         app.register_error_handler(502, gateway_error)
 
+        init_logs(app)
         init_plugins(app)
 
         return app
