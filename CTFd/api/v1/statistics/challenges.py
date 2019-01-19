@@ -1,13 +1,8 @@
-from flask_restplus import Namespace, Resource
-from CTFd.models import db, Challenges, Solves, Teams, Users
-from CTFd.plugins.challenges import get_chal_class
-from CTFd.utils import config
+from flask_restplus import Resource
+from CTFd.models import db, Challenges, Solves
 from CTFd.utils.modes import get_model
-from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
     admins_only,
-    during_ctf_time_only,
-    require_verified_emails
 )
 from CTFd.api.v1.statistics import statistics_namespace
 from sqlalchemy import func

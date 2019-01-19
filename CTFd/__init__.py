@@ -10,7 +10,7 @@ from jinja2.sandbox import SandboxedEnvironment
 from six.moves import input
 
 from CTFd import utils
-from CTFd.utils.migrations import migrations, migrate, upgrade, stamp, create_database
+from CTFd.utils.migrations import migrations, upgrade, stamp, create_database
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals
@@ -113,6 +113,10 @@ def create_app(config='CTFd.config.Config'):
         app.jinja_loader = theme_loader
 
         from CTFd.models import db, Teams, Solves, Challenges, Fails, Flags, Tags, Files, Tracking
+
+        # TODO: Solve this cleanly.
+        # This is just a trick to make flake8 understand that the imports aren't unused
+        _ = Teams, Solves, Challenges, Fails, Flags, Tags, Files, Tracking
 
         url = create_database()
 
