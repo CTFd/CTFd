@@ -13,14 +13,9 @@ from flask import (
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.user import is_admin
 from CTFd.utils.security.auth import logout_user
-from CTFd.utils.config import is_setup
 from CTFd.utils import (
     config as ctf_config,
-    validators,
-    uploads,
-    user as current_user,
     get_config,
-    get_app_config,
     set_config,
 )
 from CTFd.cache import cache, clear_config
@@ -58,6 +53,17 @@ from CTFd.admin import teams
 from CTFd.admin import users
 from CTFd.admin import submissions
 from CTFd.admin import notifications
+
+# TODO: Solve this cleanly.
+# This is just a trick to make flake8 understand that the imports aren't unused
+_ = (challenges,
+     pages,
+     scoreboard,
+     statistics,
+     teams,
+     users,
+     submissions,
+     notifications)
 
 
 @admin.route('/admin', methods=['GET'])
