@@ -1,5 +1,5 @@
 from flask import request, abort, redirect, url_for, render_template
-from CTFd.utils import config, get_config
+from CTFd.utils import get_config
 from CTFd.utils.user import is_admin, authed
 import functools
 

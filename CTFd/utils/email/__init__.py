@@ -1,6 +1,6 @@
-from flask import current_app as app, url_for
-from CTFd.utils import get_config, get_app_config
-from CTFd.utils.config import get_mail_provider, mailserver
+from flask import url_for
+from CTFd.utils import get_config
+from CTFd.utils.config import get_mail_provider
 from CTFd.utils.email import mailgun, smtp
 from CTFd.utils.security.signing import serialize
 import re

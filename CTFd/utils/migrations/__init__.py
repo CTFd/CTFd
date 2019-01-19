@@ -1,5 +1,5 @@
 from flask import current_app as app
-from flask_migrate import Migrate, migrate, upgrade, stamp, current
+from flask_migrate import Migrate
 from alembic.migration import MigrationContext
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import make_url
@@ -8,7 +8,6 @@ from sqlalchemy_utils import (
     create_database as create_database_util,
     drop_database as drop_database_util
 )
-from six import StringIO
 
 migrations = Migrate()
 

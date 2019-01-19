@@ -1,22 +1,11 @@
 import mistune
 import six
-from flask import current_app as app, request, redirect, url_for, session, render_template, abort, jsonify
+from flask import current_app as app
 from CTFd.cache import cache
 from CTFd.models import (
     db,
-    Challenges,
-    Fails,
-    Pages,
-    Configs,
-    Tracking,
-    Teams,
-    Files
+    Configs
 )
-
-try:
-    import pathlib
-except ImportError:
-    import pathlib2 as pathlib
 
 if six.PY2:
     string_types = (str, unicode)

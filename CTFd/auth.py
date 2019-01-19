@@ -7,6 +7,8 @@ from flask import (
     session,
     Blueprint,
 )
+from itsdangerous.exc import BadTimeSignature, SignatureExpired, BadSignature
+
 from CTFd.models import db, Users, Teams
 
 from CTFd.utils import get_config, get_app_config
@@ -19,7 +21,7 @@ from CTFd.utils.security.passwords import check_password
 from CTFd.utils.logging import log
 from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.modes import TEAMS_MODE
-from CTFd.utils.security.signing import unserialize, SignatureExpired, BadSignature, BadTimeSignature
+from CTFd.utils.security.signing import unserialize
 from CTFd.utils.helpers import error_for, get_errors
 
 import base64

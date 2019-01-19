@@ -3,6 +3,7 @@ import os
 
 from distutils.version import StrictVersion
 from flask import Flask, Request
+from flask_migrate import upgrade, stamp
 from werkzeug.utils import cached_property
 from werkzeug.contrib.fixers import ProxyFix
 from jinja2 import FileSystemLoader
@@ -10,7 +11,7 @@ from jinja2.sandbox import SandboxedEnvironment
 from six.moves import input
 
 from CTFd import utils
-from CTFd.utils.migrations import migrations, upgrade, stamp, create_database
+from CTFd.utils.migrations import migrations, create_database
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals
