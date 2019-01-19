@@ -21,6 +21,7 @@ from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
 from CTFd.utils.security.signing import serialize, unserialize, SignatureExpired, BadSignature, BadTimeSignature
 from CTFd.utils.helpers import info_for, error_for, get_errors, get_infos
+from CTFd.utils.config.visibility import registration_visible
 
 import base64
 import requests
@@ -319,14 +320,23 @@ def oauth_redirect():
 
             user = Users.query.filter_by(email=user_email).first()
             if user is None:
-                user = Users(
-                    name=user_name,
-                    email=user_email,
-                    oauth_id=user_id,
-                    verified=True
-                )
-                db.session.add(user)
-                db.session.commit()
+                # Check if we are allowing registration before creating users
+                if registration_visible():
+                    user = Users(
+                        name=user_name,
+                        email=user_email,
+                        oauth_id=user_id,
+                        verified=True
+                    )
+                    db.session.add(user)
+                    db.session.commit()
+                else:
+                    log('logins', "[{date}] {ip} - Public registration via MLC blocked")
+                    error_for(
+                        endpoint='auth.login',
+                        message='Public registration is disabled. Please try again later.'
+                    )
+                    return redirect(url_for('auth.login'))
 
             if get_config('user_mode') == TEAMS_MODE:
                 team_id = api_data['team']['id']
@@ -342,6 +352,11 @@ def oauth_redirect():
                     db.session.commit()
 
                 team.members.append(user)
+                db.session.commit()
+
+            if user.oauth_id is None:
+                user.oauth_id = user_id
+                user.verified = True
                 db.session.commit()
 
             login_user(user)
