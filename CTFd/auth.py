@@ -319,8 +319,9 @@ def oauth_redirect():
             user_email = api_data['email']
 
             user = Users.query.filter_by(email=user_email).first()
-            if registration_visible():
-                if user is None:
+            if user is None:
+                # Check if we are allowing registration before creating users
+                if registration_visible():
                     user = Users(
                         name=user_name,
                         email=user_email,
@@ -329,29 +330,34 @@ def oauth_redirect():
                     )
                     db.session.add(user)
                     db.session.commit()
+                else:
+                    log('logins', "[{date}] {ip} - Public registration via MLC blocked")
+                    error_for(
+                        endpoint='auth.login',
+                        message='Public registration is disabled. Please try again later.'
+                    )
+                    return redirect(url_for('auth.login'))
 
-                if get_config('user_mode') == TEAMS_MODE:
-                    team_id = api_data['team']['id']
-                    team_name = api_data['team']['name']
+            if get_config('user_mode') == TEAMS_MODE:
+                team_id = api_data['team']['id']
+                team_name = api_data['team']['name']
 
-                    team = Teams.query.filter_by(oauth_id=team_id).first()
-                    if team is None:
-                        team = Teams(
-                            name=team_name,
-                            oauth_id=team_id
-                        )
-                        db.session.add(team)
-                        db.session.commit()
-
-                    team.members.append(user)
+                team = Teams.query.filter_by(oauth_id=team_id).first()
+                if team is None:
+                    team = Teams(
+                        name=team_name,
+                        oauth_id=team_id
+                    )
+                    db.session.add(team)
                     db.session.commit()
-            else:
-                log('logins', "[{date}] {ip} - Public registration via MLC blocked")
-                error_for(
-                    endpoint='auth.login',
-                    message='Public registration is disabled. Please try again later.'
-                )
-                return redirect(url_for('auth.login'))
+
+                team.members.append(user)
+                db.session.commit()
+
+            if user.oauth_id is None:
+                user.oauth_id = user_id
+                user.verified = True
+                db.session.commit()
 
             login_user(user)
 

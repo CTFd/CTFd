@@ -20,9 +20,7 @@ def test_oauth_not_configured():
     destroy_ctfd(app)
 
 
-@patch.object(requests, 'get')
-@patch.object(requests, 'post')
-def test_oauth_configured_flow(fake_post_request, fake_get_request):
+def test_oauth_configured_flow():
     app = create_ctfd(user_mode="teams")
     app.config.update({
         'OAUTH_CLIENT_ID': 'ctfd_testing_client_id',
@@ -35,64 +33,71 @@ def test_oauth_configured_flow(fake_post_request, fake_get_request):
         set_config('registration_visibility', 'private')
         assert Users.query.count() == 1
         assert Teams.query.count() == 0
-        with app.test_client() as client:
-            client.get('/login')
-            with client.session_transaction() as sess:
-                nonce = sess['nonce']
 
-                redirect_url = "{endpoint}?response_type=code&client_id={client_id}&scope={scope}&state={state}".format(
-                    endpoint=app.config['OAUTH_AUTHORIZATION_ENDPOINT'],
-                    client_id=app.config['OAUTH_CLIENT_ID'],
-                    scope='profile%20team',
-                    state=nonce
-                )
+        client = login_with_mlc(app, raise_for_error=False)
 
-            r = client.get('/oauth', follow_redirects=False)
-            assert r.location == redirect_url
+        assert Users.query.count() == 1
 
-            fake_post_response = Mock()
-            fake_post_request.return_value = fake_post_response
-            fake_post_response.status_code = 200
-            fake_post_response.json = lambda: {
-                'access_token': 'fake_mlc_access_token'
-            }
+        # Users shouldn't be able to register because registration is disabled
+        resp = client.get('http://localhost/login').get_data(as_text=True)
+        assert 'Public registration is disabled' in resp
 
-            fake_get_response = Mock()
-            fake_get_request.return_value = fake_get_response
-            fake_post_response.status_code = 200
-            fake_get_response.json = lambda: {
-                'id': 1337,
-                'name': 'user',
-                'email': 'user@ctfd.io',
-                'team': {
-                    'id': 1234,
-                    'name': 'TestTeamTen'
-                }
-            }
+        set_config('registration_visibility', 'public')
+        client = login_with_mlc(app)
 
-            r = client.get('/redirect?code={code}&state={state}'.format(
-                code='mlc_test_code',
-                state=nonce
-            ))
+        # Users should be able to register now
+        assert Users.query.count() == 2
+        user = Users.query.filter_by(email='user@ctfd.io').first()
+        assert user.oauth_id == 1337
+        assert user.team_id == 1
 
-            assert Users.query.count() == 1
-            assert r.location == 'http://localhost/login'
+        # Teams should be created
+        assert Teams.query.count() == 1
+        team = Teams.query.filter_by(id=1).first()
+        assert team.oauth_id == 1234
 
-            resp = client.get(r.location).get_data(as_text=True)
-            assert 'Public registration is disabled' in resp
+        client.get('/logout')
 
-            set_config('registration_visibility', 'public')
-
-            r = client.get('/redirect?code={code}&state={state}'.format(
-                code='mlc_test_code',
-                state=nonce
-            ))
-
-            assert Users.query.count() == 2
-            user = Users.query.filter_by(email='user@ctfd.io').first()
-            assert user.oauth_id == 1337
-            assert user.team_id == 1
-            assert Teams.query.count() == 1
-            team = Teams.query.filter_by(id=1).first()
-            assert team.oauth_id == 1234
+        # Users should still be able to login if registration is disabled
+        set_config('registration_visibility', 'private')
+        client = login_with_mlc(app)
+        with client.session_transaction() as sess:
+            assert sess['id']
+            assert sess['name']
+            assert sess['type']
+            assert sess['email']
+            assert sess['nonce']
     destroy_ctfd(app)
+
+
+def test_oauth_login_upgrade():
+    app = create_ctfd(user_mode="teams")
+    app.config.update({
+        'OAUTH_CLIENT_ID': 'ctfd_testing_client_id',
+        'OAUTH_CLIENT_SECRET': 'ctfd_testing_client_secret',
+        'OAUTH_AUTHORIZATION_ENDPOINT': 'http://auth.localhost/oauth/authorize',
+        'OAUTH_TOKEN_ENDPOINT': 'http://auth.localhost/oauth/token',
+        'OAUTH_API_ENDPOINT': 'http://api.localhost/user',
+    })
+    with app.app_context():
+        register_user(app)
+        assert Users.query.count() == 2
+        set_config('registration_visibility', 'private')
+
+        # Users should still be able to login
+        client = login_as_user(app)
+        client.get('/logout')
+
+        user = Users.query.filter_by(id=2).first()
+        assert user.oauth_id is None
+        assert user.team_id is None
+
+        login_with_mlc(app)
+
+        assert Users.query.count() == 2
+
+        # Logging in with MLC should insert an OAuth ID and team ID
+        user = Users.query.filter_by(id=2).first()
+        assert user.oauth_id
+        assert user.verified
+        assert user.team_id
