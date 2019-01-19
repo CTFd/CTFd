@@ -23,7 +23,7 @@ def test_oauth_not_configured():
 @patch.object(requests, 'get')
 @patch.object(requests, 'post')
 def test_oauth_configured_flow(fake_post_request, fake_get_request):
-    app = create_ctfd()
+    app = create_ctfd(user_mode="teams")
     app.config.update({
         'OAUTH_CLIENT_ID': 'ctfd_testing_client_id',
         'OAUTH_CLIENT_SECRET': 'ctfd_testing_client_secret',
@@ -34,6 +34,7 @@ def test_oauth_configured_flow(fake_post_request, fake_get_request):
     with app.app_context():
         set_config('registration_visibility', 'private')
         assert Users.query.count() == 1
+        assert Teams.query.count() == 0
         with app.test_client() as client:
             client.get('/login')
             with client.session_transaction() as sess:
@@ -42,7 +43,7 @@ def test_oauth_configured_flow(fake_post_request, fake_get_request):
                 redirect_url = "{endpoint}?response_type=code&client_id={client_id}&scope={scope}&state={state}".format(
                     endpoint=app.config['OAUTH_AUTHORIZATION_ENDPOINT'],
                     client_id=app.config['OAUTH_CLIENT_ID'],
-                    scope='profile',
+                    scope='profile%20team',
                     state=nonce
                 )
 
@@ -90,4 +91,8 @@ def test_oauth_configured_flow(fake_post_request, fake_get_request):
             assert Users.query.count() == 2
             user = Users.query.filter_by(email='user@ctfd.io').first()
             assert user.oauth_id == 1337
+            assert user.team_id == 1
+            assert Teams.query.count() == 1
+            team = Teams.query.filter_by(id=1).first()
+            assert team.oauth_id == 1234
     destroy_ctfd(app)
