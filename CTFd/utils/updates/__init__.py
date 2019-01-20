@@ -54,7 +54,7 @@ def update_check(force=False):
                 json=params,
                 timeout=0.1
             ).json()
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException:
             pass
         except ValueError:
             pass
