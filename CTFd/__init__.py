@@ -20,7 +20,7 @@ from CTFd.plugins import init_plugins
 
 # Hack to support Unicode in Python 2 properly
 if sys.version_info[0] < 3:
-    reload(sys)
+    reload(sys)  # noqa: F821
     sys.setdefaultencoding("utf-8")
 
 __version__ = '2.0.3'
@@ -113,11 +113,7 @@ def create_app(config='CTFd.config.Config'):
         theme_loader = ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True)
         app.jinja_loader = theme_loader
 
-        from CTFd.models import db, Teams, Solves, Challenges, Fails, Flags, Tags, Files, Tracking
-
-        # TODO: Solve this cleanly.
-        # This is just a trick to make flake8 understand that the imports aren't unused
-        _ = Teams, Solves, Challenges, Fails, Flags, Tags, Files, Tracking
+        from CTFd.models import db, Teams, Solves, Challenges, Fails, Flags, Tags, Files, Tracking  # noqa: F401
 
         url = create_database()
 

@@ -221,7 +221,7 @@ class Challenge(Resource):
             solves = Solves.query\
                 .join(Model, Solves.account_id == Model.id)\
                 .filter(Solves.challenge_id == chal.id, Model.banned == False, Model.hidden == False)\
-                .count()
+                .count()  # noqa: E712
             response['solves'] = solves
         else:
             response['solves'] = None
@@ -484,7 +484,7 @@ class ChallengeSolves(Resource):
 
         solves = Solves.query.join(Model, Solves.account_id == Model.id)\
             .filter(Solves.challenge_id == challenge_id, Model.banned == False, Model.hidden == False)\
-            .order_by(Solves.date.asc())
+            .order_by(Solves.date.asc())  # noqa: E712
 
         endpoint = None
         if get_config('user_mode') == TEAMS_MODE:

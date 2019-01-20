@@ -97,7 +97,7 @@ def setup():
             set_config('mail_password', None)
             set_config('mail_useauth', None)
 
-            setup = set_config('setup', True)
+            set_config('setup', True)
 
             try:
                 db.session.add(admin)

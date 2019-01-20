@@ -45,25 +45,14 @@ import csv
 admin = Blueprint('admin', __name__)
 
 
-from CTFd.admin import challenges
-from CTFd.admin import pages
-from CTFd.admin import scoreboard
-from CTFd.admin import statistics
-from CTFd.admin import teams
-from CTFd.admin import users
-from CTFd.admin import submissions
-from CTFd.admin import notifications
-
-# TODO: Solve this cleanly.
-# This is just a trick to make flake8 understand that the imports aren't unused
-_ = (challenges,
-     pages,
-     scoreboard,
-     statistics,
-     teams,
-     users,
-     submissions,
-     notifications)
+from CTFd.admin import challenges  # noqa: F401
+from CTFd.admin import pages  # noqa: F401
+from CTFd.admin import scoreboard  # noqa: F401
+from CTFd.admin import statistics  # noqa: F401
+from CTFd.admin import teams  # noqa: F401
+from CTFd.admin import users  # noqa: F401
+from CTFd.admin import submissions  # noqa: F401
+from CTFd.admin import notifications  # noqa: F401
 
 
 @admin.route('/admin', methods=['GET'])
@@ -100,7 +89,6 @@ def plugin(plugin):
 @admins_only
 def import_ctf():
     backup = request.files['backup']
-    segments = request.form.get('segments')
     errors = get_errors()
     try:
         import_ctf_util(backup)

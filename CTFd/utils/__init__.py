@@ -8,8 +8,8 @@ from CTFd.models import (
 )
 
 if six.PY2:
-    string_types = (str, unicode)
-    text_type = unicode
+    string_types = (str, unicode)  # noqa: F821
+    text_type = unicode  # noqa: F821
     binary_type = str
 else:
     string_types = (str,)

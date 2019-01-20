@@ -111,7 +111,6 @@ class UserSchema(ma.ModelSchema):
         password = data.get('password')
         confirm = data.get('confirm')
         target_user = get_current_user()
-        user_id = data.get('id')
 
         if is_admin():
             pass

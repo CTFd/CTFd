@@ -439,7 +439,7 @@ class Users(db.Model):
             ) \
                 .join(sumscores, Users.id == sumscores.columns.user_id) \
                 .filter(Users.banned == False) \
-                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)   # noqa: E712
 
         standings = standings_query.all()
 
@@ -528,7 +528,7 @@ class Teams(db.Model):
         freeze = get_config('freeze')
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
-            fails = solves.filter(Solves.date < dt)
+            solves.filter(Solves.date < dt)
 
         return solves.all()
 
@@ -620,7 +620,7 @@ class Teams(db.Model):
             ) \
                 .join(sumscores, Teams.id == sumscores.columns.team_id) \
                 .filter(Teams.banned == False) \
-                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)  # noqa: E712
 
         standings = standings_query.all()
 
