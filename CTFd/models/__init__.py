@@ -439,7 +439,7 @@ class Users(db.Model):
             ) \
                 .join(sumscores, Users.id == sumscores.columns.user_id) \
                 .filter(Users.banned == False) \
-                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)   # noqa: E712
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
         standings = standings_query.all()
 
@@ -620,7 +620,7 @@ class Teams(db.Model):
             ) \
                 .join(sumscores, Teams.id == sumscores.columns.team_id) \
                 .filter(Teams.banned == False) \
-                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)  # noqa: E712
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
         standings = standings_query.all()
 

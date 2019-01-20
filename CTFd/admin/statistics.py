@@ -19,7 +19,7 @@ def statistics():
         Model,
         Fails.account_id == Model.id
     ).filter(
-        Model.banned == False,  # noqa: E712
+        Model.banned == False,
         Model.hidden == False
     ).count()
 
@@ -27,7 +27,7 @@ def statistics():
         Model,
         Solves.account_id == Model.id
     ).filter(
-        Model.banned == False,  # noqa: E712
+        Model.banned == False,
         Model.hidden == False
     ).count()
 
@@ -42,7 +42,7 @@ def statistics():
         Model,
         Solves.account_id == Model.id
     ).filter(
-        Model.banned == False,  # noqa: E712
+        Model.banned == False,
         Model.hidden == False
     ).group_by(
         Solves.challenge_id

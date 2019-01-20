@@ -97,7 +97,7 @@ class DynamicValueChallenge(BaseChallenge):
         solve_count = Solves.query \
             .join(Model, Solves.account_id == Model.id) \
             .filter(Solves.challenge_id == challenge.id, Model.hidden == False, Model.banned == False) \
-            .count()  # noqa: E712
+            .count()
 
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division
@@ -172,7 +172,7 @@ class DynamicValueChallenge(BaseChallenge):
         solve_count = Solves.query \
             .join(Model, Solves.account_id == Model.id) \
             .filter(Solves.challenge_id == challenge.id, Model.hidden == False, Model.banned == False) \
-            .count()  # noqa: E712
+            .count()
 
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division

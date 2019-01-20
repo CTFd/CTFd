@@ -47,7 +47,7 @@ class ChallengeSolveStatistics(Resource):
         ) \
             .join(Model, Solves.account_id == Model.id) \
             .filter(Model.banned == False, Model.hidden == False) \
-            .group_by(Solves.challenge_id).subquery()  # noqa: E712
+            .group_by(Solves.challenge_id).subquery()
 
         solves = db.session.query(
             solves_sub.columns.challenge_id,
@@ -97,13 +97,13 @@ class ChallengeSolvePercentages(Resource):
             .join(Model) \
             .filter(Model.banned == False, Model.hidden == False) \
             .group_by(Solves.account_id) \
-            .count()  # noqa: E712
+            .count()
 
         percentage_data = []
         for challenge in challenges:
             solve_count = Solves.query.join(Model, Solves.account_id == Model.id) \
                 .filter(Solves.challenge_id == challenge.id, Model.banned == False, Model.hidden == False) \
-                .count()  # noqa: E712
+                .count()
 
             if teams_with_points > 0:
                 percentage = (float(solve_count) / float(teams_with_points))

@@ -89,7 +89,7 @@ def get_standings(count=None, admin=False):
         ) \
             .join(sumscores, Model.id == sumscores.columns.account_id) \
             .filter(Model.banned == False, Model.hidden == False) \
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.id)  # noqa: E712
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
     """
     Only select a certain amount of users if asked.
