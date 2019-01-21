@@ -1,5 +1,15 @@
-from CTFd.models import Users, Challenges
-from tests.helpers import *
+from CTFd.models import Users, Challenges, Fails, Solves, Tracking
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_challenge,
+                           gen_award,
+                           gen_flag,
+                           gen_user,
+                           gen_solve,
+                           gen_fail,
+                           gen_tracking)
 import random
 
 
@@ -41,7 +51,7 @@ def test_reset():
             data = {
                 "nonce": sess.get('nonce')
             }
-            r = client.post('/admin/reset', data=data)
+            client.post('/admin/reset', data=data)
 
         assert Users.query.count() == 0
         assert Challenges.query.count() == 10

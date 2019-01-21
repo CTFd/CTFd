@@ -1,4 +1,10 @@
-from tests.helpers import *
+from CTFd.models import Challenges
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_challenge,
+                           gen_flag)
 
 
 def test_get_admin_challenges():
@@ -54,7 +60,7 @@ def test_hidden_challenge_is_reachable():
         register_user(app)
         client = login_as_user(app, name="admin", password="password")
         chal = gen_challenge(app.db, state='hidden')
-        flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+        gen_flag(app.db, challenge_id=chal.id, content='flag')
         chal_id = chal.id
 
         assert Challenges.query.count() == 1

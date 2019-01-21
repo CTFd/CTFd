@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.utils import set_config
-from tests.helpers import *
-from freezegun import freeze_time
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user)
 
 
 def test_api_hint_404():

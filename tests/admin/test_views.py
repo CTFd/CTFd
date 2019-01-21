@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users
-from CTFd.admin import admin
-from CTFd.utils import set_config, get_config
-from freezegun import freeze_time
-from tests.helpers import *
-from mock import patch
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user)
 from flask import Flask
 
 

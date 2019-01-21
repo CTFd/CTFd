@@ -1,4 +1,4 @@
-from tests.helpers import *
+from tests.helpers import create_ctfd, destroy_ctfd
 from CTFd.utils import get_config, set_config
 from CTFd.utils.email import sendmail, verify_email_address, check_email_format
 from freezegun import freeze_time

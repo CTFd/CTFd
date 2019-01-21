@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import *
-from io import BytesIO
+from CTFd.models import Challenges, ChallengeFiles, Files
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           login_as_user,
+                           gen_challenge,
+                           gen_file)
 import os
+from io import BytesIO
 
 
 def test_api_files_get_non_admin():
