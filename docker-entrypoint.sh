@@ -18,9 +18,11 @@ fi
 # Check that the database is available
 if [ -n "$DATABASE_URL" ]
     then
-    database=`echo $DATABASE_URL | awk -F[@//] '{print $4}'`
-    echo "Waiting for $database to be ready"
-    while ! mysqladmin ping -h $database --silent; do
+    url=`echo $DATABASE_URL | awk -F[@//] '{print $4}'`
+    database=`echo $url | awk -F[:] '{print $1}'`
+    port=`echo $url | awk -F[:] '{print $2}'`
+    echo "Waiting for $database:$port to be ready"
+    while ! mysqladmin ping -h "$database" -P "$port" --silent; do
         # Show some progress
         echo -n '.';
         sleep 1;
