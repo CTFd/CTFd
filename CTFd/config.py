@@ -209,8 +209,8 @@ class Config(object):
         Example: /ctfd
 
     SOCKETIO_ASYNC_MODE:
-        Specifies what async mode SocketIO should use. The simplest but least performant option is 'threading'.
-        Switching to a different async mode is not recommended without the appropriate load balancing mechanisms
+        Specifies what async mode SocketIO should use.
+        Specifying your own async mode is not recommended without the appropriate load balancing mechanisms
         in place and proper understanding of how websockets are supported by Flask.
         https://flask-socketio.readthedocs.io/en/latest/#deployment
     '''
@@ -219,7 +219,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = (not os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS"))  # Defaults True
     UPDATE_CHECK = (not os.getenv("UPDATE_CHECK"))  # Defaults True
     APPLICATION_ROOT = os.getenv('APPLICATION_ROOT') or '/'
-    SOCKETIO_ASYNC_MODE = os.getenv('SOCKETIO_ASYNC_MODE') or 'threading'
+    SOCKETIO_ASYNC_MODE = os.getenv('SOCKETIO_ASYNC_MODE')
 
     '''
     === OAUTH ===
