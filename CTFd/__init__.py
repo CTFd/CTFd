@@ -3,6 +3,7 @@ import os
 
 from distutils.version import StrictVersion
 from flask import Flask, Request
+from flask_migrate import upgrade, stamp
 from werkzeug.utils import cached_property
 from werkzeug.contrib.fixers import ProxyFix
 from jinja2 import FileSystemLoader
@@ -10,7 +11,7 @@ from jinja2.sandbox import SandboxedEnvironment
 from six.moves import input
 
 from CTFd import utils
-from CTFd.utils.migrations import migrations, migrate, upgrade, stamp, create_database
+from CTFd.utils.migrations import migrations, create_database
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals, init_logs
@@ -19,7 +20,7 @@ from CTFd.plugins import init_plugins
 
 # Hack to support Unicode in Python 2 properly
 if sys.version_info[0] < 3:
-    reload(sys)
+    reload(sys)  # noqa: F821
     sys.setdefaultencoding("utf-8")
 
 __version__ = '2.0.3'
@@ -112,7 +113,7 @@ def create_app(config='CTFd.config.Config'):
         theme_loader = ThemeLoader(os.path.join(app.root_path, 'themes'), followlinks=True)
         app.jinja_loader = theme_loader
 
-        from CTFd.models import db, Teams, Solves, Challenges, Fails, Flags, Tags, Files, Tracking
+        from CTFd.models import db, Teams, Solves, Challenges, Fails, Flags, Tags, Files, Tracking  # noqa: F401
 
         url = create_database()
 

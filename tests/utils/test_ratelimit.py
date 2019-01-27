@@ -1,4 +1,4 @@
-from tests.helpers import *
+from tests.helpers import create_ctfd, destroy_ctfd, register_user
 
 
 def test_ratelimit_on_auth():

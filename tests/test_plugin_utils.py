@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import *
+from tests.helpers import (
+    create_ctfd,
+    setup_ctfd,
+    destroy_ctfd,
+    login_as_user
+)
 from CTFd.plugins import (
     register_plugin_assets_directory,
     register_plugin_asset,
     register_plugin_script,
-    register_plugin_stylesheet,
     register_admin_plugin_script,
     register_admin_plugin_stylesheet,
     override_template,
@@ -16,10 +20,6 @@ from CTFd.plugins import (
     get_user_page_menu_bar,
     bypass_csrf_protection
 )
-from freezegun import freeze_time
-from mock import patch
-import json
-import six
 
 
 def test_register_plugin_asset():

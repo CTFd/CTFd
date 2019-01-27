@@ -1,11 +1,11 @@
 from flask import session, request, abort
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Teams, Solves, Awards, Fails
+from CTFd.models import db, Teams
 from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
-from CTFd.cache import cache, clear_standings
-from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
+from CTFd.cache import clear_standings
+from CTFd.utils.decorators.visibility import check_account_visibility
 from CTFd.utils.config.visibility import (
     accounts_visible,
     scores_visible

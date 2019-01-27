@@ -1,4 +1,7 @@
-from tests.helpers import *
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user)
 
 
 def test_get_admin_users():

@@ -1,10 +1,8 @@
-from flask import request, render_template, session, Blueprint
+from flask import request, render_template, Blueprint
 
-from CTFd.models import Users, Solves, Awards
-from CTFd.utils import get_config
+from CTFd.models import Users
 from CTFd.utils.decorators import authed_only
 from CTFd.utils import config
-from CTFd.utils.dates import unix_time_to_utc
 from CTFd.utils.user import get_current_user
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 

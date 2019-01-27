@@ -1,7 +1,6 @@
-from flask import render_template, Blueprint, redirect, url_for, request
+from flask import render_template, Blueprint
 
 from CTFd.utils import config
-from CTFd.utils import get_config
 from CTFd.utils.decorators.visibility import check_score_visibility
 
 from CTFd.utils.scores import get_standings

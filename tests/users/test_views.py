@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import url_for
-from tests.helpers import *
-from freezegun import freeze_time
-from CTFd.utils import set_config
 import os
+
+from flask import url_for
+from tests.helpers import create_ctfd, destroy_ctfd, register_user, \
+    login_as_user, gen_challenge, gen_file, gen_page
+from CTFd.models import Users
+from CTFd.utils import set_config
+from freezegun import freeze_time
 
 
 def test_index():
@@ -104,7 +107,7 @@ def test_pages_routing_and_rendering():
         html = '''##The quick brown fox jumped over the lazy dog'''
         route = 'test'
         title = 'Test'
-        page = gen_page(app.db, title, route, html)
+        gen_page(app.db, title, route, html)
 
         with app.test_client() as client:
             r = client.get('/test')
@@ -130,8 +133,8 @@ def test_user_set_profile():
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
-        r = client.get('/profile')
-        with client.session_transaction() as sess:
+        client.get('/profile')
+        with client.session_transaction():
             data = {
                 'name': 'user',
                 'email': 'user@ctfd.io',
@@ -168,7 +171,7 @@ def test_user_can_access_files():
             os.makedirs(directory)
             with open(location, 'wb') as obj:
                 obj.write('testing file load'.encode())
-            f = gen_file(app.db, location=model_path, challenge_id=chal_id)
+            gen_file(app.db, location=model_path, challenge_id=chal_id)
             url = url_for('views.files', path=model_path)
 
             # Unauthed user should be able to see challenges if challenges are public

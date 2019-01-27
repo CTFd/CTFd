@@ -1,5 +1,4 @@
-from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.models import db, Teams, Solves, Awards, Challenges
+from flask import render_template
 from CTFd.utils.decorators import admins_only
 from CTFd.admin import admin
 from CTFd.scoreboard import get_standings

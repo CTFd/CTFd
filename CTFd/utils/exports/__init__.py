@@ -1,10 +1,11 @@
 from CTFd.utils import get_app_config
-from CTFd.utils.migrations import get_current_revision, create_database, drop_database, upgrade, stamp
+from CTFd.utils.migrations import get_current_revision, create_database, drop_database
 from CTFd.utils.uploads import get_uploader
 from CTFd.models import db
 from CTFd.cache import cache
 from datafreeze.format import SERIALIZERS
 from flask import current_app as app
+from flask_migrate import upgrade
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
 import dataset
 import datafreeze

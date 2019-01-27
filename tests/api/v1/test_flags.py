@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import *
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           login_as_user,
+                           gen_challenge,
+                           gen_flag)
 
 
 def test_api_flags_get_non_admin():

@@ -2,7 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from CTFd.models import Hints
-from tests.helpers import *
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_challenge,
+                           gen_hint)
 
 
 def test_api_hint_get_non_admin():

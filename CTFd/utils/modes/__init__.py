@@ -1,4 +1,4 @@
-from CTFd.utils import get_config, set_config
+from CTFd.utils import get_config
 from CTFd.models import Users, Teams
 from flask import url_for
 

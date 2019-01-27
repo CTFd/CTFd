@@ -1,15 +1,10 @@
-from flask import session, request
+from flask import request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Awards
 from CTFd.schemas.awards import AwardSchema
-from CTFd.plugins.challenges import get_chal_class
-from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
-    during_ctf_time_only,
-    require_verified_emails,
     admins_only
 )
-from sqlalchemy.sql import or_
 
 awards_namespace = Namespace('awards', description="Endpoint to retrieve Awards")
 

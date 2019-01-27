@@ -1,4 +1,4 @@
-from tests.helpers import *
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
 from CTFd.utils import get_config, set_config
 from CTFd.utils.updates import update_check
 from mock import patch, Mock

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import *
+from CTFd.utils import get_config
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
 
 
 def test_api_configs_get_non_admin():

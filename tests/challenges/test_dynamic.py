@@ -2,7 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from CTFd.plugins.dynamic_challenges import DynamicChallenge, DynamicValueChallenge
-from tests.helpers import *
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_flag,
+                           gen_user,
+                           FakeRequest)
 
 
 def test_can_create_dynamic_challenge():
@@ -193,7 +199,7 @@ def test_dynamic_challenge_loses_value_properly():
         r = client.post('/api/v1/challenges', json=challenge_data)
         assert r.get_json().get('data')['id'] == 1
 
-        flag = gen_flag(app.db, challenge_id=1, content='flag')
+        gen_flag(app.db, challenge_id=1, content='flag')
 
         for i, team_id in enumerate(range(2, 26)):
             name = "user{}".format(team_id)

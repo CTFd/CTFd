@@ -4,7 +4,7 @@ from CTFd.models import Solves, Awards, Teams
 from CTFd.utils.scores import get_standings
 from CTFd.utils import get_config
 from CTFd.utils.modes import TEAMS_MODE
-from CTFd.utils.dates import unix_time_to_utc, unix_time, isoformat
+from CTFd.utils.dates import unix_time_to_utc, isoformat
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 
 scoreboard_namespace = Namespace('scoreboard', description="Endpoint to retrieve scores")

@@ -3,32 +3,28 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import (
     db,
     Challenges,
-    Unlocks,
     HintUnlocks,
     Tags,
     Hints,
     Flags,
     Solves,
-    Submissions,
     Fails,
     ChallengeFiles as ChallengeFilesModel,
 )
-from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
-from CTFd.utils.dates import ctf_ended, isoformat
+from CTFd.plugins.challenges import CHALLENGE_CLASSES
+from CTFd.utils.dates import isoformat
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
-    admins_only,
-    authed_only
+    admins_only
 )
 from CTFd.utils.decorators.visibility import (
     check_challenge_visibility,
     check_score_visibility
 )
-from CTFd.cache import cache, clear_standings
-from CTFd.utils.scores import get_standings
+from CTFd.cache import clear_standings
 from CTFd.utils.config.visibility import scores_visible, accounts_visible, challenges_visible
-from CTFd.utils.user import get_current_user, is_admin, authed
+from CTFd.utils.user import is_admin, authed
 from CTFd.utils.modes import get_model, USERS_MODE, TEAMS_MODE
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
@@ -38,9 +34,9 @@ from CTFd.utils import user as current_user
 from CTFd.utils.user import get_current_team
 from CTFd.utils.user import get_current_user
 from CTFd.plugins.challenges import get_chal_class
-from CTFd.utils.dates import ctf_started, ctf_ended, ctf_paused, ctftime
+from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime
 from CTFd.utils.logging import log
-from sqlalchemy.sql import or_, and_, any_
+from sqlalchemy.sql import and_
 
 challenges_namespace = Namespace('challenges',
                                  description="Endpoint to retrieve Challenges")

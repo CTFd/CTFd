@@ -1,10 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from sqlalchemy import TypeDecorator, String, func, types, CheckConstraint, and_
+from sqlalchemy import TypeDecorator, String, func, types
 from sqlalchemy.sql.expression import union_all
-from sqlalchemy.types import JSON, NullType
+from sqlalchemy.types import NullType
 from sqlalchemy.orm import validates, column_property
-from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.ext.hybrid import hybrid_property
 from CTFd.utils.crypto import hash_password
 from CTFd.cache import cache
 import datetime
@@ -528,7 +528,7 @@ class Teams(db.Model):
         freeze = get_config('freeze')
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
-            fails = solves.filter(Solves.date < dt)
+            solves.filter(Solves.date < dt)
 
         return solves.all()
 

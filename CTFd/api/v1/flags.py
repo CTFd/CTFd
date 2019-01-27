@@ -1,15 +1,11 @@
-from flask import session, request
+from flask import request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Flags
 from CTFd.schemas.flags import FlagSchema
 from CTFd.plugins.flags import get_flag_class, FLAG_CLASSES
-from CTFd.utils.dates import ctf_ended
 from CTFd.utils.decorators import (
-    during_ctf_time_only,
-    require_verified_emails,
     admins_only
 )
-from sqlalchemy.sql import or_
 
 flags_namespace = Namespace('flags', description="Endpoint to retrieve Flags")
 

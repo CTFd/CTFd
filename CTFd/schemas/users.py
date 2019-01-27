@@ -1,15 +1,10 @@
-from flask import session
-from sqlalchemy.sql.expression import union_all
-from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError, pre_load
-from marshmallow.decorators import validates_schema
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Users
 from CTFd.utils import get_config
-from CTFd.utils.validators import unique_email, validate_country_code
+from CTFd.utils.validators import validate_country_code
 from CTFd.utils.user import is_admin, get_current_user
-from CTFd.utils.countries import lookup_country_code
-from CTFd.utils.crypto import verify_password, hash_password
+from CTFd.utils.crypto import verify_password
 from CTFd.utils.email import check_email_is_whitelisted
 
 
@@ -116,7 +111,6 @@ class UserSchema(ma.ModelSchema):
         password = data.get('password')
         confirm = data.get('confirm')
         target_user = get_current_user()
-        user_id = data.get('id')
 
         if is_admin():
             pass

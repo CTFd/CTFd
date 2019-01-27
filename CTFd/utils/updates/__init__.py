@@ -8,7 +8,6 @@ from platform import python_version
 import requests
 import time
 import sys
-import os
 
 
 def update_check(force=False):
@@ -55,9 +54,9 @@ def update_check(force=False):
                 json=params,
                 timeout=0.1
             ).json()
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException:
             pass
-        except ValueError as e:
+        except ValueError:
             pass
         else:
             try:
