@@ -1,14 +1,10 @@
-var socket = io.connect(
-    window.location.protocol + '//' + document.domain + ':' + location.port,
-    {
-        path: script_root + '/socket.io'
-    }
-);
+var source = new EventSource(script_root + "/events");
 
-socket.on('notification', function (data) {
+source.addEventListener('notification', function (event) {
+    var data = JSON.parse(event.data);
     ezal({
         title: data.title,
         body: data.content,
         button: "Got it!"
     });
-});
+}, false);
