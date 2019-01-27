@@ -113,6 +113,8 @@ def init_events(app):
         app.events_manager = RedisEventManager()
     elif app.config.get('CACHE_TYPE') == 'filesystem':
         app.events_manager = EventManager()
+    else:
+        app.events_manager = EventManager()
 
 
 def init_request_processors(app):
