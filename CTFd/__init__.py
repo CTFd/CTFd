@@ -14,8 +14,13 @@ from CTFd import utils
 from CTFd.utils.migrations import migrations, create_database
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
-from CTFd.utils.initialization import init_request_processors, init_template_filters, init_template_globals, init_logs
-from CTFd.utils.events import socketio
+from CTFd.utils.initialization import (
+    init_request_processors,
+    init_template_filters,
+    init_template_globals,
+    init_logs,
+    init_events,
+)
 from CTFd.plugins import init_plugins
 
 # Hack to support Unicode in Python 2 properly
@@ -148,13 +153,6 @@ def create_app(config='CTFd.config.Config'):
         cache.init_app(app)
         app.cache = cache
 
-        # If you have multiple workers you must have a shared cache
-        socketio.init_app(
-            app,
-            async_mode=app.config.get('SOCKETIO_ASYNC_MODE'),
-            message_queue=app.config.get('CACHE_REDIS_URL')
-        )
-
         if app.config.get('REVERSE_PROXY'):
             app.wsgi_app = ProxyFix(app.wsgi_app)
 
@@ -208,6 +206,7 @@ def create_app(config='CTFd.config.Config'):
         app.register_error_handler(502, gateway_error)
 
         init_logs(app)
+        init_events(app)
         init_plugins(app)
 
         return app
