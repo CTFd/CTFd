@@ -1,13 +1,8 @@
 from tests.helpers import create_ctfd, destroy_ctfd
-from CTFd.utils import get_config, set_config
 from CTFd.utils.events import ServerSentEvent, EventManager
-from freezegun import freeze_time
-from mock import patch, Mock
+from mock import patch
 from six.moves.queue import Queue
 from collections import defaultdict
-from email.mime.text import MIMEText
-import requests
-import json
 
 
 def test_event_manager_installed():
