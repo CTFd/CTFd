@@ -1,6 +1,5 @@
 from tests.helpers import create_ctfd, destroy_ctfd
 from CTFd.utils.events import ServerSentEvent, EventManager
-from CTFd.utils import text_type
 from mock import patch
 from six.moves.queue import Queue
 from collections import defaultdict
