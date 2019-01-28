@@ -3,6 +3,7 @@ cache: pip
 services:
     - mysql
     - postgresql
+    - redis-server
 addons:
   apt:
     sources:

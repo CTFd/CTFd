@@ -51,15 +51,23 @@ class CTFdTestClient(FlaskClient):
         return super(CTFdTestClient, self).open(*args, **kwargs)
 
 
-def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True, enable_plugins=False, application_root='/'):
+def create_ctfd(ctf_name="CTFd",
+                name="admin",
+                email="admin@ctfd.io",
+                password="password",
+                user_mode="users",
+                setup=True,
+                enable_plugins=False,
+                application_root='/',
+                config=TestingConfig):
     if enable_plugins:
-        TestingConfig.SAFE_MODE = False
+        config.SAFE_MODE = False
     else:
-        TestingConfig.SAFE_MODE = True
+        config.SAFE_MODE = True
 
-    TestingConfig.APPLICATION_ROOT = application_root
+    config.APPLICATION_ROOT = application_root
 
-    app = create_app(TestingConfig)
+    app = create_app(config)
     app.test_client_class = CTFdTestClient
 
     if setup:
