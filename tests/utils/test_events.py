@@ -155,8 +155,7 @@ def test_redis_event_manager_publish():
             }
 
             event_manager = RedisEventManager()
-            count = event_manager.publish(data=saved_data, type='notification', channel='ctf')
-            assert count == 1
+            event_manager.publish(data=saved_data, type='notification', channel='ctf')
         destroy_ctfd(app)
     except ConnectionError:
         print("Failed to connect to redis. Skipping test.")
