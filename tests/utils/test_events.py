@@ -1,5 +1,6 @@
 from tests.helpers import create_ctfd, destroy_ctfd
 from CTFd.utils.events import ServerSentEvent, EventManager
+from CTFd.utils import text_type
 from mock import patch
 from six.moves.queue import Queue
 from collections import defaultdict
@@ -30,14 +31,11 @@ def test_event_manager_subscription():
             'data': saved_data
         }
 
-        saved_event_string = 'event:notification\n'\
-                             'data:{"content": "asdf", "team_id": null, "user_id": null, "user": null, "title": "asdf", "date": "2019-01-28T01:20:46.017649+00:00", "team": null, "id": 10}\n\n'
-
         fake_queue.return_value = saved_event
         event_manager = EventManager()
         for message in event_manager.subscribe():
             assert message.to_dict() == saved_event
-            assert str(message) == saved_event_string
+            assert message.__str__().startswith('event:notification\ndata:')
             assert len(event_manager.clients) == 1
             break
 
