@@ -118,6 +118,102 @@ def test_api_users_post_admin_with_attributes():
     destroy_ctfd(app)
 
 
+def test_api_users_post_admin_duplicate_information():
+    """Can an admin create a user with duplicate information"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        with login_as_user(app, 'admin') as client:
+            # Duplicate email
+            r = client.post('/api/v1/users', json={
+                "name": "user2",
+                "email": "user@ctfd.io",
+                "password": "password"
+            })
+            resp = r.get_json()
+            assert r.status_code == 400
+            assert resp['errors']['email']
+            assert resp['success'] is False
+            assert Users.query.count() == 2
+
+            # Duplicate user
+            r = client.post('/api/v1/users', json={
+                "name": "user",
+                "email": "user2@ctfd.io",
+                "password": "password"
+            })
+            resp = r.get_json()
+            assert r.status_code == 400
+            assert resp['errors']['name']
+            assert resp['success'] is False
+            assert Users.query.count() == 2
+    destroy_ctfd(app)
+
+
+def test_api_users_patch_admin_duplicate_information():
+    """Can an admin modify a user with duplicate information"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        with login_as_user(app, 'admin') as client:
+            # Duplicate name
+            r = client.patch('/api/v1/users/1', json={
+                "name": "user2",
+                "email": "user@ctfd.io",
+                "password": "password"
+            })
+            resp = r.get_json()
+            assert r.status_code == 400
+            assert resp['errors']['name']
+            assert resp['success'] is False
+
+            # Duplicate email
+            r = client.patch('/api/v1/users/1', json={
+                "name": "user",
+                "email": "user2@ctfd.io",
+                "password": "password"
+            })
+            resp = r.get_json()
+            assert r.status_code == 400
+            assert resp['errors']['email']
+            assert resp['success'] is False
+            assert Users.query.count() == 3
+    destroy_ctfd(app)
+
+
+def test_api_users_patch_duplicate_information():
+    """Can a user modify their information to another user's"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        with login_as_user(app, 'user1') as client:
+            # Duplicate email
+            r = client.patch('/api/v1/users/me', json={
+                "name": "user2",
+                "email": "user@ctfd.io",
+                "password": "password"
+            })
+            resp = r.get_json()
+            assert r.status_code == 400
+            assert resp['errors']['name']
+            assert resp['success'] is False
+
+            # Duplicate user
+            r = client.patch('/api/v1/users/me', json={
+                "name": "user",
+                "email": "user2@ctfd.io",
+                "password": "password"
+            })
+            resp = r.get_json()
+            assert r.status_code == 400
+            assert resp['errors']['email']
+            assert resp['success'] is False
+            assert Users.query.count() == 3
+    destroy_ctfd(app)
+
+
 def test_api_team_get_public():
     """Can a user get /api/v1/team/<user_id> if users are public"""
     app = create_ctfd()

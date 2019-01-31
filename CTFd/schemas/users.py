@@ -66,11 +66,14 @@ class UserSchema(ma.ModelSchema):
             return
 
         existing_user = Users.query.filter_by(name=name).first()
-        user_id = data.get('id')
-
-        if user_id and is_admin():
-            if existing_user and existing_user.id != user_id:
-                raise ValidationError('User name has already been taken', field_names=['name'])
+        if is_admin():
+            user_id = data.get('id')
+            if user_id:
+                if existing_user and existing_user.id != user_id:
+                    raise ValidationError('User name has already been taken', field_names=['name'])
+            else:
+                if existing_user:
+                    raise ValidationError('User name has already been taken', field_names=['name'])
         else:
             current_user = get_current_user()
             if name == current_user.name:
@@ -89,11 +92,15 @@ class UserSchema(ma.ModelSchema):
             return
 
         existing_user = Users.query.filter_by(email=email).first()
-        user_id = data.get('id')
 
-        if user_id and is_admin():
-            if existing_user and existing_user.id != user_id:
-                raise ValidationError('Email address has already been used', field_names=['email'])
+        if is_admin():
+            user_id = data.get('id')
+            if user_id:
+                if existing_user and existing_user.id != user_id:
+                    raise ValidationError('Email address has already been used', field_names=['email'])
+            else:
+                if existing_user:
+                    raise ValidationError('Email address has already been used', field_names=['email'])
         else:
             current_user = get_current_user()
             if email == current_user.email:
