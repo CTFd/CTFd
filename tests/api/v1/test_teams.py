@@ -109,6 +109,50 @@ def test_api_teams_post_admin():
     destroy_ctfd(app)
 
 
+def test_api_teams_post_admin_duplicate():
+    """Test that admins can only create teams with unique information"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        gen_team(app.db, name='team1')
+        with login_as_user(app, 'admin') as client:
+            # Duplicate name
+            r = client.post(
+                '/api/v1/teams',
+                json={
+                    "website": "https://ctfd.io",
+                    "name": "team1",
+                    "country": "TW",
+                    "email": "team1@ctfd.io",
+                    "affiliation": "team",
+                    "password": "password"
+                }
+            )
+            resp = r.get_json()
+            assert r.status_code == 400
+            assert resp['errors']['name']
+            assert resp['success'] is False
+            assert Teams.query.count() == 1
+
+            # Duplicate email
+            r = client.post(
+                '/api/v1/teams',
+                json={
+                    "website": "https://ctfd.io",
+                    "name": "new_team",
+                    "country": "TW",
+                    "email": "team@ctfd.io",
+                    "affiliation": "team",
+                    "password": "password"
+                }
+            )
+            resp = r.get_json()
+            assert r.status_code == 400
+            assert resp['errors']['email']
+            assert resp['success'] is False
+            assert Teams.query.count() == 1
+    destroy_ctfd(app)
+
+
 def test_api_team_get_public():
     """Can a user get /api/v1/team/<team_id> if teams are public"""
     app = create_ctfd(user_mode="teams")
@@ -184,6 +228,7 @@ def test_api_team_patch_admin():
         with login_as_user(app, 'admin') as client:
             r = client.patch('/api/v1/teams/1', json={
                 "name": "team_name",
+                "email": "team@ctfd.io",
                 "password": "password",
                 "affiliation": "changed"
             })
@@ -191,7 +236,6 @@ def test_api_team_patch_admin():
             assert r.status_code == 200
             assert r.get_json()['data']['affiliation'] == 'changed'
             assert verify_password('password', team.password)
-
     destroy_ctfd(app)
 
 
