@@ -73,7 +73,7 @@ class TeamList(Resource):
         }
 
 
-@teams_namespace.route('/<team_id>')
+@teams_namespace.route('/<int:team_id>')
 @teams_namespace.param('team_id', "Team ID")
 class TeamPublic(Resource):
     @check_account_visibility

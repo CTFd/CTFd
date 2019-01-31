@@ -98,7 +98,7 @@ def register_user(app, name="user", email="user@ctfd.io", password="password", r
                     assert sess['nonce']
 
 
-def register_team(app, name="team", password="password"):
+def register_team(app, name="team", password="password", raise_for_error=True):
     with app.app_context():
         with app.test_client() as client:
             r = client.get('/team')
@@ -108,7 +108,10 @@ def register_team(app, name="team", password="password"):
                     "password": password,
                     "nonce": sess.get('nonce')
                 }
-            client.post('/teams/new', data=data)
+            r = client.post('/teams/new', data=data)
+            if raise_for_error:
+                assert r.status_code == 302
+            return client
 
 
 def login_as_user(app, name="user", password="password", raise_for_error=True):
