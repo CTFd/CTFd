@@ -503,6 +503,55 @@ def test_challenges_cannot_be_solved_while_paused():
     destroy_ctfd(app)
 
 
+def test_challenge_board_under_view_after_ctf():
+    """Test that the challenge board does not show an error under view_after_ctf"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config('view_after_ctf', True)
+        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+
+        register_user(app)
+        client = login_as_user(app)
+
+        gen_challenge(app.db)
+        gen_flag(app.db, challenge_id=1, content='flag')
+
+        gen_challenge(app.db)
+        gen_flag(app.db, challenge_id=2, content='flag')
+
+        # CTF is ongoing. Normal operation.
+        with freeze_time("2017-10-5"):
+            r = client.get('/challenges')
+            assert r.status_code == 200
+            assert "has ended" not in r.get_data(as_text=True)
+
+            data = {
+                "submission": 'flag',
+                "challenge_id": 1
+            }
+            r = client.post('/api/v1/challenges/attempt', json=data)
+            assert r.status_code == 200
+            assert r.get_json()['data']['status'] == "correct"
+            assert Solves.query.count() == 1
+
+        # CTF is now over. There should be a message and challenges should show submission status but not store solves
+        with freeze_time("2017-10-7"):
+            r = client.get('/challenges')
+            assert r.status_code == 200
+            assert "has ended" in r.get_data(as_text=True)
+
+            data = {
+                "submission": 'flag',
+                "challenge_id": 2
+            }
+            r = client.post('/api/v1/challenges/attempt', json=data)
+            assert r.status_code == 200
+            assert r.get_json()['data']['status'] == "correct"
+            assert Solves.query.count() == 1
+    destroy_ctfd(app)
+
+
 def test_challenges_under_view_after_ctf():
     app = create_ctfd()
     with app.app_context(), freeze_time("2017-10-7"):

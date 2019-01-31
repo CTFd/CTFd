@@ -10,7 +10,7 @@ from CTFd.utils.decorators import (
 )
 from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils import config, text_type, user as current_user, get_config
-from CTFd.utils.dates import ctf_paused, view_after_ctf
+from CTFd.utils.dates import ctf_paused, view_after_ctf, ctf_ended
 from CTFd.utils.helpers import get_errors, get_infos
 
 challenges = Blueprint('challenges', __name__)
@@ -30,7 +30,8 @@ def listing():
     if ctf_paused():
         infos.append('{} is paused'.format(config.ctf_name()))
 
-    if view_after_ctf():
+    # CTF has ended but we want to allow view_after_ctf. Show error but let JS load challenges.
+    if ctf_ended() and view_after_ctf():
         infos.append('{} has ended'.format(config.ctf_name()))
 
     return render_template('challenges.html', infos=infos, errors=errors, start=int(start), end=int(end))
