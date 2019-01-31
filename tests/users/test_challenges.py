@@ -524,7 +524,7 @@ def test_challenge_board_under_view_after_ctf():
         with freeze_time("2017-10-5"):
             r = client.get('/challenges')
             assert r.status_code == 200
-            assert "has ended" not in r.get_data()
+            assert "has ended" not in r.get_data(as_text=True)
 
             data = {
                 "submission": 'flag',
@@ -539,7 +539,7 @@ def test_challenge_board_under_view_after_ctf():
         with freeze_time("2017-10-7"):
             r = client.get('/challenges')
             assert r.status_code == 200
-            assert "has ended" in r.get_data()
+            assert "has ended" in r.get_data(as_text=True)
 
             data = {
                 "submission": 'flag',
