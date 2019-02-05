@@ -57,7 +57,7 @@ def export_ctf():
     db = dataset.connect(get_app_config('SQLALCHEMY_DATABASE_URI'))
 
     # Backup database
-    backup = tempfile.SpooledTemporaryFile()
+    backup = tempfile.NamedTemporaryFile()
 
     backup_zip = zipfile.ZipFile(backup, 'w')
 
