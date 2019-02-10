@@ -1,7 +1,7 @@
 """Initial Revision
 
 Revision ID: 8369118943a1
-Revises: 
+Revises:
 Create Date: 2018-11-05 01:06:24.495010
 
 """
@@ -33,7 +33,7 @@ def upgrade():
     sa.Column('category', sa.String(length=80), nullable=True),
     sa.Column('type', sa.String(length=80), nullable=True),
     sa.Column('state', sa.String(length=80), nullable=False),
-    sa.Column('requirements', db.JSON, nullable=True),
+    sa.Column('requirements', sa.JSON(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('config',
@@ -105,7 +105,7 @@ def upgrade():
     sa.Column('challenge_id', sa.Integer(), nullable=True),
     sa.Column('content', sa.Text(), nullable=True),
     sa.Column('cost', sa.Integer(), nullable=True),
-    sa.Column('requirements', db.JSON, nullable=True),
+    sa.Column('requirements', sa.JSON(), nullable=True),
     sa.ForeignKeyConstraint(['challenge_id'], ['challenges.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -149,7 +149,7 @@ def upgrade():
     sa.Column('value', sa.Integer(), nullable=True),
     sa.Column('category', sa.String(length=80), nullable=True),
     sa.Column('icon', sa.Text(), nullable=True),
-    sa.Column('requirements', db.JSON, nullable=True),
+    sa.Column('requirements', sa.JSON(), nullable=True),
     sa.ForeignKeyConstraint(['team_id'], ['teams.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
