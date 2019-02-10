@@ -1,14 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from sqlalchemy import TypeDecorator, String, func, types
 from sqlalchemy.sql.expression import union_all
-from sqlalchemy.types import NullType
 from sqlalchemy.orm import validates, column_property
 from sqlalchemy.ext.hybrid import hybrid_property
 from CTFd.utils.crypto import hash_password
 from CTFd.cache import cache
 import datetime
-import json
 import six
 
 db = SQLAlchemy()
@@ -26,43 +23,6 @@ def get_class_by_tablename(tablename):
         if hasattr(c, '__tablename__') and c.__tablename__ == tablename:
             return c
     return None
-
-
-class SQLiteJson(TypeDecorator):
-    impl = String
-
-    class Comparator(String.Comparator):
-        def __getitem__(self, index):
-            if isinstance(index, tuple):
-                index = "$%s" % (
-                    "".join([
-                        "[%s]" % elem if isinstance(elem, int)
-                        else '."%s"' % elem for elem in index
-                    ])
-                )
-            elif isinstance(index, int):
-                index = "$[%s]" % index
-            else:
-                index = '$."%s"' % index
-
-            # json_extract does not appear to return JSON sub-elements
-            # which is weird.
-            return func.json_extract(self.expr, index, type_=NullType)
-
-    comparator_factory = Comparator
-
-    def process_bind_param(self, value, dialect):
-        if value is not None:
-            value = json.dumps(value)
-        return value
-
-    def process_result_value(self, value, dialect):
-        if value is not None:
-            value = json.loads(value)
-        return value
-
-
-JSON = types.JSON().with_variant(SQLiteJson, 'sqlite')
 
 
 class Notifications(db.Model):
@@ -111,7 +71,7 @@ class Challenges(db.Model):
     category = db.Column(db.String(80))
     type = db.Column(db.String(80))
     state = db.Column(db.String(80), nullable=False, default='visible')
-    requirements = db.Column(JSON)
+    requirements = db.Column(db.JSON)
 
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
@@ -136,7 +96,7 @@ class Hints(db.Model):
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     content = db.Column(db.Text)
     cost = db.Column(db.Integer, default=0)
-    requirements = db.Column(JSON)
+    requirements = db.Column(db.JSON)
 
     __mapper_args__ = {
         'polymorphic_identity': 'standard',
@@ -173,7 +133,7 @@ class Awards(db.Model):
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     icon = db.Column(db.Text)
-    requirements = db.Column(JSON)
+    requirements = db.Column(db.JSON)
 
     user = db.relationship('Users', foreign_keys="Awards.user_id", lazy='select')
     team = db.relationship('Teams', foreign_keys="Awards.team_id", lazy='select')
