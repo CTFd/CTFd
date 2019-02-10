@@ -50,8 +50,6 @@ def test_hidden_user_visibility():
             response = r.get_data(as_text=True)
             assert user_name in response
 
-            gen_award(app.db, 2, team_id=1)
-
             r = client.get('/api/v1/scoreboard')
             response = r.get_data(as_text=True)
             assert user_name in response

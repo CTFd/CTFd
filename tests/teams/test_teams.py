@@ -68,8 +68,6 @@ def test_hidden_teams_visibility():
             response = r.get_data(as_text=True)
             assert team.name in response
 
-            gen_award(app.db, 2, team_id=1)
-
             r = client.get('/api/v1/scoreboard')
             response = r.get_data(as_text=True)
             assert team.name in response
