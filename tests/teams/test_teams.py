@@ -22,6 +22,58 @@ def test_teams_get():
     destroy_ctfd(app)
 
 
+def test_hidden_teams_visibility():
+    """Hidden teams should not show up on /teams or /api/v1/teams or /api/v1/scoreboard"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        with login_as_user(app) as client:
+            user = Users.query.filter_by(id=2).first()
+            team = gen_team(app.db, name='visible_team', hidden=True)
+            team.members.append(user)
+            user.team_id = team.id
+            app.db.session.commit()
+
+            r = client.get('/teams')
+            response = r.get_data(as_text=True)
+            assert team.name not in response
+
+            r = client.get('/api/v1/teams')
+            response = r.get_json()
+            assert team.name not in response
+
+            gen_award(app.db, user.id, team_id=team.id)
+
+            r = client.get('/scoreboard')
+            response = r.get_data(as_text=True)
+            assert team.name not in response
+
+            r = client.get('/api/v1/scoreboard')
+            response = r.get_json()
+            assert team.name not in response
+
+            # Team should re-appear after disabling hiding
+            # Use an API call to cause a cache clear
+            with login_as_user(app, name='admin') as admin:
+                r = admin.patch('/api/v1/teams/1', json={
+                    "hidden": False,
+                })
+                assert r.status_code == 200
+
+            r = client.get('/teams')
+            response = r.get_data(as_text=True)
+            assert team.name in response
+
+            r = client.get('/api/v1/teams')
+            response = r.get_data(as_text=True)
+            assert team.name in response
+
+            r = client.get('/api/v1/scoreboard')
+            response = r.get_data(as_text=True)
+            assert team.name in response
+    destroy_ctfd(app)
+
+
 def test_teams_get_user_mode():
     """Can a user get /teams if user mode"""
     app = create_ctfd(user_mode="users")

@@ -28,7 +28,7 @@ teams_namespace = Namespace('teams', description="Endpoint to retrieve Teams")
 class TeamList(Resource):
     @check_account_visibility
     def get(self):
-        teams = Teams.query.filter_by(banned=False)
+        teams = Teams.query.filter_by(hidden=False, banned=False)
         view = copy.deepcopy(TeamSchema.views.get(
             session.get('type', 'user')
         ))
