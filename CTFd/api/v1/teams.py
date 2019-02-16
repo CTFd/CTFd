@@ -28,7 +28,7 @@ teams_namespace = Namespace('teams', description="Endpoint to retrieve Teams")
 class TeamList(Resource):
     @check_account_visibility
     def get(self):
-        teams = Teams.query.filter_by(banned=False)
+        teams = Teams.query.filter_by(hidden=False, banned=False)
         view = copy.deepcopy(TeamSchema.views.get(
             session.get('type', 'user')
         ))
@@ -73,7 +73,7 @@ class TeamList(Resource):
         }
 
 
-@teams_namespace.route('/<team_id>')
+@teams_namespace.route('/<int:team_id>')
 @teams_namespace.param('team_id', "Team ID")
 class TeamPublic(Resource):
     @check_account_visibility

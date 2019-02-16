@@ -1,3 +1,31 @@
+2.0.4 / 2019-01-30
+==================
+
+**General**
+* Block user & team name changes if name changes are disabled (Closes #835)
+* Set accounts to unconfirmed if email is changed while `verify_emails` is enabled
+* Only allow users to change their email to emails with domains in the whitelist.
+* Add `email.check_email_is_whitelisted()` to verify that a user's email is whitelisted.
+* Create a `get_config` wrapper around the internal `_get_config` to let us set a default config value (Closes #659)
+* Remove `utils.get_app_config()` from memoization and also give it a `default` parameter
+* Move `utils.logging.init_logs()` into `utils.initialization` and properly call `init_logs()` to save logs to the logs folder
+* Block the creation of users/teams from MLC if registration_visibility is private
+* Fix showing incorrect 'CTF has ended' error if `view_after_ctf` is set.
+* Fix creating users from the admin panel while name changes are disabled.
+
+**API**
+* `/api/v1/teams/<team_id>` now coerced to an int (i.e. `/api/v1/teams/<int:team_id>`)
+
+**Deployment**
+* Re-add the `LOG_FOLDER` envvar to docker-compose so we don't try to write to the read-only host
+* Stop gunicorn from logging to `LOG_FOLDER` in docker without explicit opt-in
+* Add `ACCESS_LOG` and `ERROR_LOG` envvars to docker to specify where gunicorn will log to
+* Allow `DATABASE_URL` to contain custom MySQL ports for `docker-entrypoint.sh`
+* Drop `WORKERS` count to 1 to avoid dealing with Flask-SocketIO sticky sessions'
+* Install `gevent-websocket` and use it by default until we have a better solution
+* NOTE: In future releases, websockets functionality will likely be removed. (#852)
+
+
 2.0.3 / 2019-01-12
 ==================
 
