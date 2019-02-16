@@ -9,7 +9,7 @@ from CTFd.utils.decorators import (
 )
 from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils import config, get_config
-from CTFd.utils.dates import ctf_paused, view_after_ctf
+from CTFd.utils.dates import ctf_ended, ctf_paused, view_after_ctf
 from CTFd.utils.helpers import get_errors, get_infos
 
 challenges = Blueprint('challenges', __name__)
