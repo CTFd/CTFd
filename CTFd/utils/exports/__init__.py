@@ -14,7 +14,6 @@ import json
 import os
 import re
 import six
-import sqlalchemy
 import zipfile
 import tempfile
 
