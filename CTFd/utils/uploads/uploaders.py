@@ -4,7 +4,6 @@ from flask import current_app, send_file, redirect
 from flask.helpers import safe_join
 from werkzeug.utils import secure_filename
 from shutil import copyfileobj
-import hashlib
 import os
 import boto3
 import string
