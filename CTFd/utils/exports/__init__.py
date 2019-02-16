@@ -194,15 +194,17 @@ def import_ctf(backup, erase=True):
                     table.insert(entry)
                     db.session.commit()
                 if postgres:
-                    # TODO: This should be sanitized even though exports are basically SQL dumps
-                    # Databases are so hard
+                    # This command is to set the next primary key ID for the re-inserted tables in Postgres. However,
+                    # this command is very difficult to translate into SQLAlchemy code. Because Postgres is not
+                    # officially supported, no major work will go into this functionality.
                     # https://stackoverflow.com/a/37972960
-                    side_db.engine.execute(
-                        sqlalchemy.text(
-                            "SELECT setval(pg_get_serial_sequence(:table_name, 'id'), coalesce(max(id)+1,1), false) FROM :table_name"
-                        ),
-                        table_name=table_name
-                    )
+                    if '"' not in table_name and '\'' not in table_name:
+                        query = "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM \"{table_name}\"".format(  # nosec
+                            table_name=table_name
+                        )
+                        side_db.engine.execute(query)
+                    else:
+                        raise Exception('Table name {table_name} contains quotes'.format(table_name=table_name))
 
     # Extracting files
     files = [f for f in backup.namelist() if f.startswith('uploads/')]
