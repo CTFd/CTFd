@@ -14,6 +14,7 @@ import json
 import os
 import re
 import six
+import sqlalchemy
 import zipfile
 import tempfile
 
@@ -197,9 +198,10 @@ def import_ctf(backup, erase=True):
                     # Databases are so hard
                     # https://stackoverflow.com/a/37972960
                     side_db.engine.execute(
-                        "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM {table_name}".format(
-                            table_name=table_name
-                        )
+                        sqlalchemy.text(
+                            "SELECT setval(pg_get_serial_sequence(:table_name, 'id'), coalesce(max(id)+1,1), false) FROM :table_name"
+                        ),
+                        table_name=table_name
                     )
 
     # Extracting files
