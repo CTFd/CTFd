@@ -215,3 +215,6 @@ def import_ctf(backup, erase=True):
         uploader.store(fileobj=source, filename=filename)
 
     cache.clear()
+
+    # Create tables created by plugins
+    db.create_all()
