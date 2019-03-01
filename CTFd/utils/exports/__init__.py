@@ -217,4 +217,5 @@ def import_ctf(backup, erase=True):
     cache.clear()
 
     # Create tables created by plugins
+    db.session.remove()
     db.create_all()
