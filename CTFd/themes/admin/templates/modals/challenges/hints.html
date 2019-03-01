@@ -11,7 +11,7 @@
 	{% for hint in challenge.hints %}
 		<tr>
 			<td class="text-center">{{ hint.type }}</td>
-			<td class=""><pre>{{ hint.content }}</pre></td>
+			<td class="text-break"><pre>{{ hint.content }}</pre></td>
 			<td class="text-center">{{ hint.cost }}</td>
 			<td class="text-center">
 				<i role='button' class='btn-fa fas fa-edit edit-hint' hint-id="{{ hint.id }}"></i>

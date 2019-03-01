@@ -182,3 +182,10 @@ pre {
     -moz-border-radius: 0 !important;
     border-radius: 0 !important;
 }
+
+.text-break {
+    /* TODO: This is .text-break cloned from Bootstrap 4.3 with a fix for browsers not supporting break-word. Remove later. */
+    word-break: break-all !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+}
