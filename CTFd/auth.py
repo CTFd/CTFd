@@ -17,7 +17,7 @@ from CTFd.utils import user as current_user
 from CTFd.utils import config, validators
 from CTFd.utils import email
 from CTFd.utils.security.auth import login_user, logout_user
-from CTFd.utils.security.passwords import check_password
+from CTFd.utils.crypto import verify_password
 from CTFd.utils.logging import log
 from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.config.visibility import registration_visible
@@ -218,7 +218,7 @@ def login():
             user = Users.query.filter_by(name=name).first()
 
         if user:
-            if user and check_password(request.form['password'], user.password):
+            if user and verify_password(request.form['password'], user.password):
                 session.regenerate()
 
                 login_user(user)

@@ -4,7 +4,7 @@
 from CTFd.models import db, Users
 from CTFd.utils import set_config, get_config
 from CTFd.utils.security.signing import serialize
-from CTFd.utils.security.passwords import check_password
+from CTFd.utils.crypto import verify_password
 from freezegun import freeze_time
 from tests.helpers import (create_ctfd,
                            destroy_ctfd,
@@ -341,7 +341,7 @@ def test_user_can_reset_password(mock_smtp):
 
             # Make sure that the user's password changed
             user = Users.query.filter_by(email="user@user.com").first()
-            assert check_password('passwordtwo', user.password)
+            assert verify_password('passwordtwo', user.password)
     destroy_ctfd(app)
 
 
