@@ -8,6 +8,7 @@ from CTFd.utils.decorators import (
     ratelimit
 )
 from CTFd.cache import cache, clear_standings
+from CTFd.utils.config import get_mail_provider
 from CTFd.utils.email import sendmail
 from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
@@ -291,10 +292,20 @@ class UserEmails(Resource):
     @ratelimit(method="POST", limit=10, interval=60)
     def post(self, user_id):
         req = request.get_json()
-        text = req.get('text')
+        text = req.get('text', '').strip()
         user = Users.query.filter_by(id=user_id).first_or_404()
 
-        if text is None:
+        if get_mail_provider() is None:
+            return {
+                'success': False,
+                'errors': {
+                    "": [
+                       "Email settings not configured"
+                    ]
+                }
+            }, 400
+
+        if not text:
             return {
                 'success': False,
                 'errors': {
