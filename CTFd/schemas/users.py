@@ -39,10 +39,13 @@ class UserSchema(ma.ModelSchema):
     website = field_for(
         Users,
         'website',
-        validate=validate.URL(
-            error='Websites must be a proper URL starting with http or https',
-            schemes={'http', 'https'}
-        )
+        validate=[
+            # This is a dirty hack to let website accept empty strings so you can remove your website
+            lambda website: validate.URL(
+                error='Websites must be a proper URL starting with http or https',
+                schemes={'http', 'https'}
+            )(website) if website else True
+        ]
     )
     country = field_for(
         Users,
@@ -54,9 +57,6 @@ class UserSchema(ma.ModelSchema):
     password = field_for(
         Users,
         'password',
-        validate=[
-            validate.Length(min=1, error='Passwords must not be empty'),
-        ]
     )
 
     @pre_load
@@ -123,12 +123,11 @@ class UserSchema(ma.ModelSchema):
         password = data.get('password')
         confirm = data.get('confirm')
         target_user = get_current_user()
-        user_id = data.get('id')
 
         if is_admin():
             pass
         else:
-            if password and (confirm is None):
+            if password and (bool(confirm) is False):
                 raise ValidationError('Please confirm your current password', field_names=['confirm'])
 
             if password and confirm:
@@ -137,6 +136,9 @@ class UserSchema(ma.ModelSchema):
                     return data
                 else:
                     raise ValidationError('Your previous password is incorrect', field_names=['confirm'])
+            else:
+                data.pop('password', None)
+                data.pop('confirm', None)
 
     views = {
         'user': [
