@@ -1,4 +1,4 @@
-from flask import request, abort
+from flask import session, request, abort
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Users, Solves, Awards, Fails, Tracking, Unlocks, Submissions, Notifications
 from CTFd.utils.decorators import (
@@ -75,7 +75,9 @@ class UserPublic(Resource):
     def get(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
 
-        response = UserSchema('self').dump(user)
+        response = UserSchema(
+            view=session.get('type', 'user')
+        ).dump(user)
 
         if response.errors:
             return {
