@@ -528,7 +528,7 @@ class Teams(db.Model):
         freeze = get_config('freeze')
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
-            fails = solves.filter(Solves.date < dt)
+            solves = solves.filter(Solves.date < dt)
 
         return solves.all()
 
