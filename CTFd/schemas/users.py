@@ -137,8 +137,8 @@ class UserSchema(ma.ModelSchema):
                 else:
                     raise ValidationError('Your previous password is incorrect', field_names=['confirm'])
             else:
-                del data['password']
-                del data['confirm']
+                data.pop('password', None)
+                data.pop('confirm', None)
 
     views = {
         'user': [
