@@ -522,7 +522,7 @@ class Teams(db.Model):
         solves = Solves.query.filter(
             Solves.user_id.in_(member_ids)
         ).order_by(
-            Fails.date.asc()
+            Solves.date.asc()
         )
 
         freeze = get_config('freeze')
