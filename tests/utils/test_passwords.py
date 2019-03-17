@@ -1,12 +1,12 @@
-from CTFd.utils.security.passwords import sha256, hash_password, check_password
+from CTFd.utils.crypto import sha256, hash_password, verify_password
 
 
 def test_hash_password():
     assert hash_password('asdf').startswith('$bcrypt-sha256')
 
 
-def test_check_password():
-    assert check_password('asdf', '$bcrypt-sha256$2b,12$I0CNXRkGD2Bi/lbC4vZ7Y.$1WoilsadKpOjXa/be9x3dyu7p.mslZ6') == True
+def test_verify_password():
+    assert verify_password('asdf', '$bcrypt-sha256$2b,12$I0CNXRkGD2Bi/lbC4vZ7Y.$1WoilsadKpOjXa/be9x3dyu7p.mslZ6')
 
 
 def test_sha256():

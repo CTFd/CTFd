@@ -1,17 +1,16 @@
-from CTFd.utils import string_types
-from passlib.hash import bcrypt_sha256
-import hashlib
+from CTFd.utils.crypto import hash_password as hp, verify_password as vp, sha256 as sha
 
 
 def hash_password(p):
-    return bcrypt_sha256.encrypt(p)
+    print("This function will be deprecated in a future release. Please update to CTFd.utils.crypto.hash_password")
+    return hp(p)
 
 
 def check_password(p, hash):
-    return bcrypt_sha256.verify(p, hash)
+    print("This function will be deprecated in a future release. Please update to CTFd.utils.crypto.verify_password")
+    return vp(p, hash)
 
 
 def sha256(p):
-    if isinstance(p, string_types):
-        p = p.encode('utf-8')
-    return hashlib.sha256(p).hexdigest()
+    print("This function will be deprecated in a future release. Please update to CTFd.utils.crypto.sha256")
+    return sha(p)
