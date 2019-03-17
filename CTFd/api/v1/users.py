@@ -75,7 +75,7 @@ class UserPublic(Resource):
     def get(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
 
-        response = UserSchema('self').dump(user)
+        response = UserSchema('user').dump(user)
 
         if response.errors:
             return {
