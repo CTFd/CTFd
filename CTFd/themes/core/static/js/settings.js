@@ -17,7 +17,7 @@ $(function () {
     form.submit(function(e){
         e.preventDefault();
         $('#results').empty();
-        var params = $('#user-settings-form').serializeJSON(true);
+        var params = $('#user-settings-form').serializeJSON();
 
         CTFd.fetch('/api/v1/users/me', {
             method: 'PATCH',
