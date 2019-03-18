@@ -569,3 +569,60 @@ def test_api_user_get_awards():
             r = client.get('/api/v1/users/2/awards')
             assert r.status_code == 200
     destroy_ctfd(app)
+
+
+def test_api_user_send_email():
+    """Can an admin post /api/v1/users/<user_id>/email"""
+    app = create_ctfd()
+    with app.app_context():
+
+        register_user(app)
+
+        with login_as_user(app) as client:
+            r = client.post('/api/v1/users/2/email', json={
+                'text': 'email should get rejected'
+            })
+            assert r.status_code == 403
+
+        with login_as_user(app, "admin") as admin:
+            r = admin.post('/api/v1/users/2/email', json={
+                'text': 'email should be accepted'
+            })
+            assert r.get_json() == {
+                'success': False,
+                'errors': {
+                    "": [
+                        "Email settings not configured"
+                    ]
+                }
+            }
+            assert r.status_code == 400
+
+        set_config('verify_emails', True)
+        set_config('mail_server', 'localhost')
+        set_config('mail_port', 25)
+        set_config('mail_useauth', True)
+        set_config('mail_username', 'username')
+        set_config('mail_password', 'password')
+
+        with login_as_user(app, "admin") as admin:
+            r = admin.post('/api/v1/users/2/email', json={
+                'text': ''
+            })
+            assert r.get_json() == {
+                'success': False,
+                'errors': {
+                    "text": [
+                        "Email text cannot be empty"
+                    ]
+                }
+            }
+            assert r.status_code == 400
+
+        with login_as_user(app, "admin") as admin:
+            r = admin.post('/api/v1/users/2/email', json={
+                'text': 'email should be accepted'
+            })
+            assert r.status_code == 200
+
+    destroy_ctfd(app)

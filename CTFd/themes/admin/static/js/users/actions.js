@@ -64,6 +64,46 @@ $(document).ready(function () {
         });
     });
 
+    $('#user-mail-form').submit(function(e){
+        e.preventDefault();
+        var params = $('#user-mail-form').serializeJSON(true);
+        CTFd.fetch('/api/v1/users/'+USER_ID+'/email', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(params)
+        }).then(function (response) {
+            return response.json();
+        }).then(function (response) {
+            if (response.success) {
+                $('#user-mail-form > #results').append(
+                    ezbadge({
+                        type: 'success',
+                        body: 'E-Mail sent successfully!'
+                    })
+                );
+                $('#user-mail-form').find("input[type=text], textarea").val("")
+            } else {
+                $('#user-mail-form > #results').empty();
+                Object.keys(response.errors).forEach(function (key, index) {
+                    $('#user-mail-form > #results').append(
+                        ezbadge({
+                            type: 'error',
+                            body: response.errors[key]
+                        })
+                    );
+                    var i = $('#user-mail-form').find('input[name={0}], textarea[name={0}]'.format(key));
+                    var input = $(i);
+                    input.addClass('input-filled-invalid');
+                    input.removeClass('input-filled-valid');
+                });
+            }
+        });
+    });
+
     $('.delete-submission').click(function(e){
         e.preventDefault();
         var submission_id = $(this).attr('submission-id');
