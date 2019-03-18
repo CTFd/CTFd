@@ -300,7 +300,7 @@ class UserEmails(Resource):
                 'success': False,
                 'errors': {
                     "": [
-                       "Email settings not configured"
+                        "Email settings not configured"
                     ]
                 }
             }, 400
