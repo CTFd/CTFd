@@ -70,9 +70,26 @@ def test_event_manager_publish():
 def test_event_endpoint_is_event_stream():
     """Test that the /events endpoint is text/event-stream"""
     app = create_ctfd()
-    with app.app_context(), app.test_client() as client:
-        r = client.get('/events')
-        assert "text/event-stream" in r.headers['Content-Type']
+    with patch.object(Queue, 'get') as fake_queue:
+        saved_data = {
+            'user_id': None,
+            'title': 'asdf',
+            'content': 'asdf',
+            'team_id': None,
+            'user': None,
+            'team': None,
+            'date': '2019-01-28T01:20:46.017649+00:00',
+            'id': 10
+        }
+        saved_event = {
+            'type': 'notification',
+            'data': saved_data
+        }
+
+        fake_queue.return_value = saved_event
+        with app.app_context(), app.test_client() as client:
+            r = client.get('/events')
+            assert "text/event-stream" in r.headers['Content-Type']
     destroy_ctfd(app)
 
 
