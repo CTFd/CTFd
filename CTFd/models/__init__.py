@@ -433,12 +433,19 @@ class Users(db.Model):
             ) \
                 .join(sumscores, Users.id == sumscores.columns.user_id) \
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
-        else:
+        elif self.hidden:
             standings_query = db.session.query(
                 Users.id.label('user_id'),
             ) \
                 .join(sumscores, Users.id == sumscores.columns.user_id) \
                 .filter(Users.banned == False) \
+                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+        else:
+            standings_query = db.session.query(
+                Users.id.label('user_id'),
+            ) \
+                .join(sumscores, Users.id == sumscores.columns.user_id) \
+                .filter(Users.banned == False, Users.hidden == False) \
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
         standings = standings_query.all()
