@@ -170,26 +170,29 @@ class DynamicValueChallenge(BaseChallenge):
         submission = data['submission'].strip()
 
         Model = get_model()
-
-        solve_count = Solves.query \
-            .join(Model, Solves.account_id == Model.id) \
-            .filter(Solves.challenge_id == challenge.id, Model.hidden == False, Model.banned == False) \
-            .count()
+        
+        if (team and team.hidden) or (not team and user.hidden):
+            pass
+        else:
+            solve_count = Solves.query \
+                .join(Model, Solves.account_id == Model.id) \
+                .filter(Solves.challenge_id == challenge.id, Model.hidden == False, Model.banned == False) \
+                .count()
 
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division
-        value = (
-            (
-                (chal.minimum - chal.initial) / (chal.decay**2)
-            ) * (solve_count**2)
-        ) + chal.initial
+            value = (
+                (
+                    (chal.minimum - chal.initial) / (chal.decay**2)
+                ) * (solve_count**2)
+            ) + chal.initial
 
-        value = math.ceil(value)
+            value = math.ceil(value)
 
-        if value < chal.minimum:
-            value = chal.minimum
+            if value < chal.minimum:
+                value = chal.minimum
 
-        chal.value = value
+            chal.value = value
 
         solve = Solves(
             user_id=user.id,
