@@ -226,3 +226,67 @@ def test_dynamic_challenge_loses_value_properly():
                     assert chal.initial >= chal.value
                     assert chal.value > chal.minimum
     destroy_ctfd(app)
+
+
+def test_dynamic_challenge_value_isnt_affected_by_hidden_users():
+    app = create_ctfd(enable_plugins=True)
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app, name="admin", password="password")
+
+        challenge_data = {
+            "name": "name",
+            "category": "category",
+            "description": "description",
+            "value": 100,
+            "decay": 20,
+            "minimum": 1,
+            "state": "visible",
+            "type": "dynamic"
+        }
+
+        r = client.post('/api/v1/challenges', json=challenge_data)
+        assert r.get_json().get('data')['id'] == 1
+
+        gen_flag(app.db, challenge_id=1, content='flag')
+
+        # Make a solve as a regular user. This should not affect the value.
+        data = {
+            "submission": 'flag',
+            "challenge_id": 1
+        }
+
+        r = client.post('/api/v1/challenges/attempt', json=data)
+        resp = r.get_json()['data']
+        assert resp['status'] == 'correct'
+
+        # Make solves as hidden users. Also should not affect value
+        for i, team_id in enumerate(range(2, 26)):
+            name = "user{}".format(team_id)
+            email = "user{}@ctfd.io".format(team_id)
+            # We need to bypass rate-limiting so gen_user instead of register_user
+            user = gen_user(app.db, name=name, email=email)
+            user.hidden = True
+            app.db.session.commit()
+
+            with app.test_client() as client:
+                # We need to bypass rate-limiting so creating a fake user instead of logging in
+                with client.session_transaction() as sess:
+                    sess['id'] = team_id
+                    sess['name'] = name
+                    sess['type'] = 'user'
+                    sess['email'] = email
+                    sess['nonce'] = 'fake-nonce'
+
+                data = {
+                    "submission": 'flag',
+                    "challenge_id": 1
+                }
+
+                r = client.post('/api/v1/challenges/attempt', json=data)
+                resp = r.get_json()['data']
+                assert resp['status'] == 'correct'
+
+                chal = DynamicChallenge.query.filter_by(id=1).first()
+                assert chal.value == chal.initial
+    destroy_ctfd(app)
