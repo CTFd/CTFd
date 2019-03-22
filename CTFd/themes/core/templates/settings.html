@@ -72,7 +72,7 @@
 						Country
 					</label>
 					<select class="form-control" id="country-input" name="country">
-						<option></option>
+						<option value=""></option>
 						{% set countries = get_countries() %}
 						{% for country_code in countries.keys() %}
 							<option value="{{ country_code }}" {% if country == country_code %}selected{% endif %}>{{ countries[country_code] }}</option>

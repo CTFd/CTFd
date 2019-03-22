@@ -7,6 +7,7 @@ from datafreeze.format import SERIALIZERS
 from flask import current_app as app
 from flask_migrate import upgrade
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
+from sqlalchemy.exc import OperationalError
 import dataset
 import datafreeze
 import datetime
@@ -160,6 +161,16 @@ def import_ctf(backup, erase=True):
 
     alembic_version = json.loads(backup.open('db/alembic_version.json').read())["results"][0]["version_num"]
     upgrade(revision=alembic_version)
+
+    # Create tables created by plugins
+    try:
+        app.db.create_all()
+    except OperationalError as e:
+        if not postgres:
+            raise e
+        else:
+            print("Allowing error during app.db.create_all() due to Postgres")
+
     members.remove('db/alembic_version.json')
 
     for member in members:

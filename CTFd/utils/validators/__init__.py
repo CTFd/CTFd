@@ -31,5 +31,7 @@ def unique_email(email, model=Users):
 
 
 def validate_country_code(country_code):
+    if country_code.strip() == "":
+        return
     if lookup_country_code(country_code) is None:
         raise ValidationError('Invalid Country')

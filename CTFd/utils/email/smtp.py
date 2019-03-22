@@ -22,8 +22,8 @@ def sendmail(addr, text):
     ctf_name = get_config('ctf_name')
     mailfrom_addr = get_config('mailfrom_addr') or get_app_config('MAILFROM_ADDR')
     data = {
-        'host': get_config('mail_server'),
-        'port': int(get_config('mail_port'))
+        'host': get_config('mail_server') or get_app_config('MAIL_SERVER'),
+        'port': int(get_config('mail_port') or get_app_config('MAIL_PORT'))
     }
     username = get_config('mail_username') or get_app_config('MAIL_USERNAME')
     password = get_config('mail_password') or get_app_config('MAIL_PASSWORD')

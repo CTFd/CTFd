@@ -1,12 +1,15 @@
-from flask import request, abort
+from flask import session, request, abort
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Users, Solves, Awards, Tracking, Unlocks, Submissions, Notifications
 from CTFd.utils.decorators import (
     authed_only,
     admins_only,
-    authed
+    authed,
+    ratelimit
 )
-from CTFd.cache import clear_standings
+from CTFd.cache import cache, clear_standings
+from CTFd.utils.config import get_mail_provider
+from CTFd.utils.email import sendmail
 from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.decorators.visibility import check_account_visibility
 
@@ -73,7 +76,9 @@ class UserPublic(Resource):
     def get(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
 
-        response = UserSchema('self').dump(user)
+        response = UserSchema(
+            view=session.get('type', 'user')
+        ).dump(user)
 
         if response.errors:
             return {
@@ -275,4 +280,45 @@ class UserAwards(Resource):
         return {
             'success': True,
             'data': response.data
+        }
+
+
+@users_namespace.route('/<int:user_id>/email')
+@users_namespace.param('user_id', "User ID")
+class UserEmails(Resource):
+    @admins_only
+    @ratelimit(method="POST", limit=10, interval=60)
+    def post(self, user_id):
+        req = request.get_json()
+        text = req.get('text', '').strip()
+        user = Users.query.filter_by(id=user_id).first_or_404()
+
+        if get_mail_provider() is None:
+            return {
+                'success': False,
+                'errors': {
+                    "": [
+                        "Email settings not configured"
+                    ]
+                }
+            }, 400
+
+        if not text:
+            return {
+                'success': False,
+                'errors': {
+                    "text": [
+                        "Email text cannot be empty"
+                    ]
+                }
+            }, 400
+
+        result, response = sendmail(
+            addr=user.email,
+            text=text
+        )
+
+        return {
+            'success': result,
+            'data': {}
         }
