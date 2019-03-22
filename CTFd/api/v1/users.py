@@ -7,7 +7,7 @@ from CTFd.utils.decorators import (
     authed,
     ratelimit
 )
-from CTFd.cache import cache, clear_standings
+from CTFd.cache import clear_standings
 from CTFd.utils.config import get_mail_provider
 from CTFd.utils.email import sendmail
 from CTFd.utils.user import get_current_user, is_admin

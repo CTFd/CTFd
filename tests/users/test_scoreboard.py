@@ -308,7 +308,6 @@ def test_hidden_users_should_not_influence_scores():
         app.db.session.commit()
 
         client1 = login_as_user(app, name="user1", password="password")
-        client2 = login_as_user(app, name="user2", password="password")
 
         # User 1 solves 1st challenge
         chal1 = gen_challenge(app.db)

@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import Users
 from CTFd.utils.crypto import verify_password
-from tests.helpers import *
+from tests.helpers import (
+    create_ctfd,
+    register_user,
+    login_as_user,
+    destroy_ctfd
+)
 
 
 def test_user_set_profile():

@@ -6,7 +6,6 @@ import os
 from flask import url_for
 from tests.helpers import create_ctfd, destroy_ctfd, register_user, \
     login_as_user, gen_challenge, gen_file, gen_page
-from CTFd.models import Users
 from CTFd.utils import set_config
 from freezegun import freeze_time
 
