@@ -438,7 +438,7 @@ class Users(db.Model):
                 Users.id.label('user_id'),
             ) \
                 .join(sumscores, Users.id == sumscores.columns.user_id) \
-                .filter(Users.banned == False) \
+                .filter(Users.banned == False, Users.hidden == False) \
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
 
         standings = standings_query.all()
