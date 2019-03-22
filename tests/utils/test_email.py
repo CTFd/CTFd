@@ -28,8 +28,35 @@ def test_check_email_format():
 
 
 @patch('smtplib.SMTP')
-def test_sendmail_with_smtp(mock_smtp):
-    """Does sendmail work properly with simple SMTP mail servers"""
+def test_sendmail_with_smtp_from_config_file(mock_smtp):
+    """Does sendmail work properly with simple SMTP mail servers using file configuration"""
+    app = create_ctfd()
+    with app.app_context():
+        app.config['MAIL_SERVER'] = 'localhost'
+        app.config['MAIL_PORT'] = '25'
+        app.config['MAIL_USEAUTH'] = 'True'
+        app.config['MAIL_USERNAME'] = 'username'
+        app.config['MAIL_PASSWORD'] = 'password'
+
+        from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
+        to_addr = 'user@user.com'
+        msg = 'this is a test'
+
+        sendmail(to_addr, msg)
+
+        ctf_name = get_config('ctf_name')
+        email_msg = MIMEText(msg)
+        email_msg['Subject'] = "Message from {0}".format(ctf_name)
+        email_msg['From'] = from_addr
+        email_msg['To'] = to_addr
+
+        mock_smtp.return_value.sendmail.assert_called_once_with(from_addr, [to_addr], email_msg.as_string())
+    destroy_ctfd(app)
+
+
+@patch('smtplib.SMTP')
+def test_sendmail_with_smtp_from_db_config(mock_smtp):
+    """Does sendmail work properly with simple SMTP mail servers using database configuration"""
     app = create_ctfd()
     with app.app_context():
         set_config('mail_server', 'localhost')

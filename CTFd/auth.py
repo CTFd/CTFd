@@ -48,7 +48,7 @@ def confirm(data=None):
 
         user = Users.query.filter_by(email=user_email).first_or_404()
         user.verified = True
-        log('registrations', format="[{date}] {ip} -  successful password reset for {name}")
+        log('registrations', format="[{date}] {ip} - successful confirmation for {name}", name=user.name)
         db.session.commit()
         db.session.close()
         if current_user.authed():
