@@ -5,34 +5,24 @@ from freezegun import freeze_time
 from tests.helpers import *
 
 
-def test_user_get_scoreboard():
-    """Can a registered user load /scoreboard"""
+def test_user_get_scoreboard_components():
     app = create_ctfd()
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
+
+        # test_user_get_scoreboard
+        """Can a registered user load scoreboard components"""
         r = client.get('/scoreboard')
         assert r.status_code == 200
-    destroy_ctfd(app)
 
-
-def test_user_get_scores():
-    """Can a registered user load /api/v1/scoreboard"""
-    app = create_ctfd()
-    with app.app_context():
-        register_user(app)
-        client = login_as_user(app)
+        # test_user_get_scores
+        """Can a registered user load /api/v1/scoreboard"""
         r = client.get('/api/v1/scoreboard')
         assert r.status_code == 200
-    destroy_ctfd(app)
 
-
-def test_user_get_topteams():
-    """Can a registered user load /api/v1/scoreboard/top/10"""
-    app = create_ctfd()
-    with app.app_context():
-        register_user(app)
-        client = login_as_user(app)
+        # test_user_get_topteams
+        """Can a registered user load /api/v1/scoreboard/top/10"""
         r = client.get('/api/v1/scoreboard/top/10')
         assert r.status_code == 200
     destroy_ctfd(app)
@@ -294,4 +284,43 @@ def test_scoring_logic_with_zero_point_challenges():
         # user2 should still be on top because 0 point challenges should not tie break
         scores = get_scores(admin)
         assert scores[0]['name'] == 'user2'
+    destroy_ctfd(app)
+
+
+def test_hidden_users_should_not_influence_scores():
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        register_user(app, name="user3", email="user3@ctfd.io", password="password")
+
+        user = Users.query.filter_by(name="user3").first()
+        user.hidden = True
+        app.db.session.commit()
+
+        client1 = login_as_user(app, name="user1", password="password")
+        client2 = login_as_user(app, name="user2", password="password")
+
+        # User 1 solves 1st challenge
+        chal1 = gen_challenge(app.db)
+        gen_solve(app.db, user_id=2, challenge_id=chal1.id)
+
+        # User 2 solves 2nd challenge
+        chal2 = gen_challenge(app.db)
+        gen_solve(app.db, user_id=3, challenge_id=chal2.id)
+
+        # User 3 solves both
+        gen_solve(app.db, user_id=4, challenge_id=chal1.id)
+        gen_solve(app.db, user_id=4, challenge_id=chal2.id)
+
+        scores = get_scores(client1)
+
+        for entry in scores:
+            assert entry['name'] != 'user3'
+
+        user1 = Users.query.filter_by(name="user1").first()
+        assert user1.place == '1st'
+
+        user2 = Users.query.filter_by(name="user2").first()
+        assert user2.place == '2nd'
     destroy_ctfd(app)
