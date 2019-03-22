@@ -629,3 +629,32 @@ def test_challenges_under_view_after_ctf():
         assert Fails.query.count() == 0
 
     destroy_ctfd(app)
+
+
+def test_challenges_admin_only_as_user():
+    app = create_ctfd()
+    with app.app_context():
+        set_config('challenge_visibility', 'admins')
+
+        register_user(app)
+        admin = login_as_user(app, name="admin")
+
+        gen_challenge(app.db)
+        gen_flag(app.db, challenge_id=1, content='flag')
+
+        r = admin.get('/challenges')
+        assert r.status_code == 200
+
+        r = admin.get('/api/v1/challenges', json='')
+        assert r.status_code == 200
+
+        r = admin.get('/api/v1/challenges/1', json='')
+        assert r.status_code == 200
+
+        data = {
+            "submission": 'flag',
+            "challenge_id": 1
+        }
+        r = admin.post('/api/v1/challenges/attempt', json=data)
+        assert r.status_code == 200
+    destroy_ctfd(app)

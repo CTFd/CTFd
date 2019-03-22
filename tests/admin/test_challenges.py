@@ -1,10 +1,13 @@
 from CTFd.models import Challenges
-from tests.helpers import (create_ctfd,
-                           destroy_ctfd,
-                           register_user,
-                           login_as_user,
-                           gen_challenge,
-                           gen_flag)
+from CTFd.utils import set_config
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    register_user,
+    login_as_user,
+    gen_challenge,
+    gen_flag
+)
 
 
 def test_get_admin_challenges():
@@ -86,4 +89,33 @@ def test_hidden_challenge_is_reachable():
         assert r.status_code == 200
         resp = r.get_json()['data']
         assert resp.get('status') == "correct"
+    destroy_ctfd(app)
+
+
+def test_challenges_admin_only_as_user():
+    app = create_ctfd()
+    with app.app_context():
+        set_config('challenge_visibility', 'admins')
+
+        register_user(app)
+        client = login_as_user(app)
+
+        gen_challenge(app.db)
+        gen_flag(app.db, challenge_id=1, content='flag')
+
+        r = client.get('/challenges')
+        assert r.status_code == 403
+
+        r = client.get('/api/v1/challenges', json='')
+        assert r.status_code == 403
+
+        r = client.get('/api/v1/challenges/1', json='')
+        assert r.status_code == 403
+
+        data = {
+            "submission": 'flag',
+            "challenge_id": 1
+        }
+        r = client.post('/api/v1/challenges/attempt', json=data)
+        assert r.status_code == 403
     destroy_ctfd(app)
