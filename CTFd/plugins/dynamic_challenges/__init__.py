@@ -171,7 +171,7 @@ class DynamicValueChallenge(BaseChallenge):
 
         Model = get_model()
         
-        if (team and team.hidden) or (not team and user.hidden):
+        if (user.hidden) or (team and team.hidden):
             pass
         else:
             solve_count = Solves.query \
