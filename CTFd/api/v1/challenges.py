@@ -260,6 +260,7 @@ class Challenge(Resource):
 
 @challenges_namespace.route('/attempt')
 class ChallengeAttempt(Resource):
+    @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
     def post(self):
