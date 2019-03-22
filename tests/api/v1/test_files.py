@@ -17,7 +17,7 @@ def test_api_files_get_non_admin():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        f = gen_file(app.db, location='0bf1a55a5cd327c07af15df260979668/bird.swf', challenge_id=chal.id)
+        gen_file(app.db, location='0bf1a55a5cd327c07af15df260979668/bird.swf', challenge_id=chal.id)
 
         with app.test_client() as client:
             # test_api_files_get_non_admin
