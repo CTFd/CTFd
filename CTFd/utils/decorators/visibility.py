@@ -46,6 +46,15 @@ def check_challenge_visibility(f):
                     abort(403)
                 else:
                     return redirect(url_for('auth.login', next=request.full_path))
+
+        elif v == 'admins':
+            if is_admin():
+                return f(*args, **kwargs)
+            else:
+                if authed():
+                    abort(403)
+                else:
+                    return redirect(url_for('auth.login', next=request.full_path))
     return _check_challenge_visibility
 
 
