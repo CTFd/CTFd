@@ -4,7 +4,7 @@ lint:
 
 test:
 	pytest --disable-warnings
-	bandit -r CTFd
+	bandit -r CTFd -x CTFd/uploads
 
 serve:
 	python serve.py
