@@ -171,10 +171,22 @@ class DynamicValueChallenge(BaseChallenge):
 
         Model = get_model()
 
+        solve = Solves(
+            user_id=user.id,
+            team_id=team.id if team else None,
+            challenge_id=challenge.id,
+            ip=get_ip(req=request),
+            provided=submission
+        )
+        db.session.add(solve)
+
         solve_count = Solves.query \
             .join(Model, Solves.account_id == Model.id) \
             .filter(Solves.challenge_id == challenge.id, Model.hidden == False, Model.banned == False) \
             .count()
+
+        # We subtract -1 to allow the first solver to get max point value
+        solve_count -= 1
 
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division
@@ -191,14 +203,6 @@ class DynamicValueChallenge(BaseChallenge):
 
         chal.value = value
 
-        solve = Solves(
-            user_id=user.id,
-            team_id=team.id if team else None,
-            challenge_id=challenge.id,
-            ip=get_ip(req=request),
-            provided=submission
-        )
-        db.session.add(solve)
         db.session.commit()
         db.session.close()
 
