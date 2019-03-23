@@ -22,7 +22,7 @@ if sys.version_info[0] < 3:
     reload(sys)
     sys.setdefaultencoding("utf-8")
 
-__version__ = '2.0.4'
+__version__ = '2.0.5'
 
 
 class CTFdRequest(Request):

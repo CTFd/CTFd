@@ -1,3 +1,25 @@
+2.0.5 / 2019-03-23
+==================
+
+**Security**
+* Fixes an issue where user email addresses could be disclosed to non-admins
+
+**General**
+* Dockerfile now installs `linux-headers` package from apk
+* Hidden teams are no longer visible publicly
+* Fixes an issue where long content made it it difficult/impossible to edit flags and hints
+* Fix for users not being able to edit portions of their own profile
+* Fix for solves not being frozen for teams.
+* Reimplement direct user email sending from the admin panel
+* Fixes an issue where confirmation logs would report None instead of the user if the browser was unauthenticated
+* Fixes an issue where SMTP server configuration (MAIL_SERVER, MAIL_PORT) were not being read from `config.py`
+* Fixes for a user's place on their profile showing a different place than the scoreboard
+* Fixes for an issue where dynamic challenge values would appear to change after being solved by a hidden user
+
+**Exports**
+* Exports are now saved on disk with `tempfile.NamedTemporaryFile()` instead of memory during creation
+* After importing an export, CTFd will now recreate all tables it expects to be available. This resolves an issue where tables created by plugins would be missing after an import.
+
 2.0.4 / 2019-01-30
 ==================
 
