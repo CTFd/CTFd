@@ -1,6 +1,6 @@
 from collections import defaultdict
 from CTFd.cache import cache
-from six.moves.queue import Queue
+from six.moves.queue import Queue, Empty
 import json
 import six
 
@@ -33,6 +33,22 @@ class ServerSentEvent(object):
         return d
 
 
+class SimpleEventSubscriber(object):
+    def __init__(self, clients, queue, channel):
+        self._clients = clients
+        self._queue = queue
+        self._channel = channel
+
+    def get(self):
+        try:
+            return self._queue[self._channel].get(block=False)
+        except Empty:
+            return None
+
+    def unsubscribe(self):
+        self._clients.remove(self._queue)
+
+
 class EventManager(object):
     def __init__(self):
         self.clients = []
@@ -47,12 +63,27 @@ class EventManager(object):
     def subscribe(self, channel='ctf'):
         q = defaultdict(Queue)
         self.clients.append(q)
-        try:
-            while True:
-                message = q[channel].get()
-                yield ServerSentEvent(**message)
-        except GeneratorExit:
-            self.clients.remove(q)
+        return SimpleEventSubscriber(
+            clients=self.clients,
+            queue=q,
+            channel=channel
+        )
+
+
+class RedisEventSubscriber(object):
+    def __init__(self, pubsub):
+        self._pubsub = pubsub
+
+    def get(self):
+        message = self._pubsub.get_message()
+        if message and message['type'] == 'message':
+            event = json.loads(message['data'])
+            return event
+        else:
+            return None
+
+    def unsubscribe(self):
+        self._pubsub.unsubscribe()
 
 
 class RedisEventManager(EventManager):
@@ -68,7 +99,6 @@ class RedisEventManager(EventManager):
     def subscribe(self, channel='ctf'):
         pubsub = self.client.pubsub()
         pubsub.subscribe(channel)
-        for message in pubsub.listen():
-            if message['type'] == 'message':
-                event = json.loads(message['data'])
-                yield ServerSentEvent(**event)
+        return RedisEventSubscriber(
+            pubsub=pubsub
+        )

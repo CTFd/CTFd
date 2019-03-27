@@ -36,11 +36,12 @@ def test_event_manager_subscription():
 
         fake_queue.return_value = saved_event
         event_manager = EventManager()
-        for message in event_manager.subscribe():
-            assert message.to_dict() == saved_event
-            assert message.__str__().startswith('event:notification\ndata:')
-            assert len(event_manager.clients) == 1
-            break
+        sub = event_manager.subscribe()
+        message = sub.get()
+        assert isinstance(message, dict)
+        assert message == saved_event
+        assert ServerSentEvent(**message).__str__().startswith('event:notification\ndata:')
+        assert len(event_manager.clients) == 1
 
 
 def test_event_manager_publish():
@@ -137,14 +138,14 @@ def test_redis_event_manager_subscription():
                 'channel': 'ctf',
                 'data': json.dumps(saved_data)
             }
-            with patch.object(redis.client.PubSub, 'listen') as fake_pubsub_listen:
-                fake_pubsub_listen.return_value = [saved_event]
+            with patch.object(redis.client.PubSub, 'get_message') as fake_pubsub_get_message:
+                fake_pubsub_get_message.return_value = saved_event
                 event_manager = RedisEventManager()
-                for message in event_manager.subscribe():
-                    assert isinstance(message, ServerSentEvent)
-                    assert message.to_dict() == saved_data
-                    assert message.__str__().startswith('event:notification\ndata:')
-                    break
+                sub = event_manager.subscribe()
+                message = sub.get()
+                assert isinstance(message, dict)
+                assert message == saved_data
+                assert ServerSentEvent(**message).__str__().startswith('event:notification\ndata:')
         destroy_ctfd(app)
     except ConnectionError:
         print("Failed to connect to redis. Skipping test.")
