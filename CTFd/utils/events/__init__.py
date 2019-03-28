@@ -3,6 +3,8 @@ from CTFd.cache import cache
 from six.moves.queue import Queue
 import json
 import six
+from gevent import monkey, Timeout
+monkey.patch_all()
 
 
 @six.python_2_unicode_compatible
@@ -47,12 +49,15 @@ class EventManager(object):
     def subscribe(self, channel='ctf'):
         q = defaultdict(Queue)
         self.clients.append(q)
-        try:
-            while True:
-                message = q[channel].get()
-                yield ServerSentEvent(**message)
-        except GeneratorExit:
-            self.clients.remove(q)
+        while True:
+            try:
+                with Timeout(10):
+                    message = q[channel].get()
+                    yield ServerSentEvent(**message)
+            except Timeout:
+                yield ServerSentEvent(data='', type='ping')
+            except Exception:
+                raise
 
 
 class RedisEventManager(EventManager):
@@ -66,9 +71,18 @@ class RedisEventManager(EventManager):
         return self.client.publish(message=message, channel=channel)
 
     def subscribe(self, channel='ctf'):
-        pubsub = self.client.pubsub()
-        pubsub.subscribe(channel)
-        for message in pubsub.listen():
-            if message['type'] == 'message':
-                event = json.loads(message['data'])
-                yield ServerSentEvent(**event)
+        while True:
+            pubsub = self.client.pubsub()
+            pubsub.subscribe(channel)
+            try:
+                with Timeout(10) as timeout:
+                    for message in pubsub.listen():
+                        if message['type'] == 'message':
+                            event = json.loads(message['data'])
+                            yield ServerSentEvent(**event)
+                            timeout.cancel()
+                            timeout.start()
+            except Timeout:
+                yield ServerSentEvent(data='', type='ping')
+            except Exception:
+                raise
