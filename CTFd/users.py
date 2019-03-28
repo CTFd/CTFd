@@ -58,5 +58,5 @@ def private():
 @check_account_visibility
 @check_score_visibility
 def public(user_id):
-    user = Users.query.filter_by(id=user_id).first_or_404()
+    user = Users.query.filter_by(id=user_id, banned=False, hidden=False).first_or_404()
     return render_template('users/user.html', user=user)

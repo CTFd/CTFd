@@ -32,7 +32,7 @@ users_namespace = Namespace('users', description="Endpoint to retrieve Users")
 class UserList(Resource):
     @check_account_visibility
     def get(self):
-        users = Users.query.filter_by(banned=False)
+        users = Users.query.filter_by(banned=False, hidden=False)
         response = UserSchema(view='user', many=True).dump(users)
 
         if response.errors:
@@ -76,7 +76,7 @@ class UserList(Resource):
 class UserPublic(Resource):
     @check_account_visibility
     def get(self, user_id):
-        user = Users.query.filter_by(id=user_id).first_or_404()
+        user = Users.query.filter_by(id=user_id, hidden=False, banned=False).first_or_404()
 
         response = UserSchema(
             view=session.get('type', 'user')
@@ -190,7 +190,7 @@ class UserSolves(Resource):
         else:
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
-            user = Users.query.filter_by(id=user_id).first_or_404()
+            user = Users.query.filter_by(id=user_id, banned=False, hidden=False).first_or_404()
 
         solves = user.get_solves(
             admin=is_admin()
@@ -224,7 +224,7 @@ class UserFails(Resource):
         else:
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
-            user = Users.query.filter_by(id=user_id).first_or_404()
+            user = Users.query.filter_by(id=user_id, banned=False, hidden=False).first_or_404()
 
         fails = user.get_fails(
             admin=is_admin()
@@ -264,7 +264,7 @@ class UserAwards(Resource):
         else:
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
-            user = Users.query.filter_by(id=user_id).first_or_404()
+            user = Users.query.filter_by(id=user_id, banned=False, hidden=False).first_or_404()
 
         awards = user.get_awards(
             admin=is_admin()
