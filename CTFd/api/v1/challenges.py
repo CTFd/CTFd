@@ -36,6 +36,7 @@ from CTFd.utils.user import get_current_user
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime
 from CTFd.utils.logging import log
+from CTFd.utils.security.signing import serialize
 from sqlalchemy.sql import and_
 
 challenges_namespace = Namespace('challenges',
@@ -196,20 +197,39 @@ class Challenge(Resource):
         tags = [
             tag['value'] for tag in TagSchema(
                 "user", many=True).dump(
-                chal.tags).data]
-        files = [f.location for f in chal.files]
+                chal.tags).data
+        ]
 
         unlocked_hints = set()
         hints = []
         if authed():
             user = get_current_user()
-            unlocked_hints = set([u.target for u in HintUnlocks.query.filter_by(
-                type='hints', account_id=user.account_id)])
+            team = get_current_team()
+            unlocked_hints = set([
+                u.target for u in HintUnlocks.query.filter_by(type='hints', account_id=user.account_id)
+            ])
+            files = []
+            for f in chal.files:
+                token = {
+                    'user_id': user.id,
+                    'team_id': team.id if team else None,
+                    'file_id': f.id,
+                }
+                files.append(
+                    url_for('views.files', path=f.location, token=serialize(token))
+                )
+        else:
+            files = [
+                url_for('views.files', path=f.location) for f in chal.files
+            ]
 
         for hint in Hints.query.filter_by(challenge_id=chal.id).all():
             if hint.id in unlocked_hints or ctf_ended():
-                hints.append({'id': hint.id, 'cost': hint.cost,
-                              'content': hint.content})
+                hints.append({
+                    'id': hint.id,
+                    'cost': hint.cost,
+                    'content': hint.content
+                })
             else:
                 hints.append({'id': hint.id, 'cost': hint.cost})
 
