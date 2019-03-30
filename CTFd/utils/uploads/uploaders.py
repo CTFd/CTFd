@@ -57,7 +57,7 @@ class FilesystemUploader(BaseUploader):
         return self.store(file_obj, file_path)
 
     def download(self, filename):
-        return send_file(safe_join(self.base_path, filename))
+        return send_file(safe_join(self.base_path, filename), as_attachment=True)
 
     def delete(self, filename):
         if os.path.exists(os.path.join(self.base_path, filename)):
