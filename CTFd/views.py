@@ -208,11 +208,13 @@ def files(path):
                 user = Users.query.filter_by(id=user_id).first()
                 team = Teams.query.filter_by(id=team_id).first()
 
-                # Check that the user exists, isn't banned, and is an admin if visibility is admins only
+                # Check user is admin if challenge_visibility is admins only
+                if get_config('challenge_visibility') == 'admins' and user.type != 'admin':
+                    abort(403)
+
+                # Check that the user exists and isn't banned
                 if user:
                     if user.banned:
-                        abort(403)
-                    if get_config('challenge_visibility') == 'admins' and user.type != 'admin':
                         abort(403)
                 else:
                     abort(403)
