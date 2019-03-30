@@ -207,12 +207,28 @@ def files(path):
                 file_id = data.get('file_id')
                 user = Users.query.filter_by(id=user_id).first()
                 team = Teams.query.filter_by(id=team_id).first()
-                if user and user.banned:
+
+                # Check that the user exists, isn't banned, and is an admin if visibility is admins only
+                if user:
+                    if user.banned:
+                        abort(403)
+                    if get_config('challenge_visibility') == 'admins' and user.type != 'admin':
+                        abort(403)
+                else:
                     abort(403)
-                if team and team.banned:
-                    abort(403)
+
+                # Check that the team isn't banned
+                if team:
+                    if team.banned:
+                        abort(403)
+                else:
+                    pass
+
+                # Check that the token properly refers to the file
                 if file_id != f.id:
                     abort(403)
+
+            # The token isn't expired or broken
             except (BadTimeSignature, SignatureExpired, BadSignature):
                 abort(403)
 
