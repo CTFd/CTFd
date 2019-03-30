@@ -8,3 +8,6 @@ test:
 
 serve:
 	python serve.py
+
+shell:
+	python manage.py shell
