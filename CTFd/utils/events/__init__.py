@@ -3,8 +3,7 @@ from CTFd.cache import cache
 from six.moves.queue import Queue
 import json
 import six
-from gevent import monkey, Timeout
-monkey.patch_all()
+from gevent import Timeout
 
 
 @six.python_2_unicode_compatible
