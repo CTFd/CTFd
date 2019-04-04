@@ -201,6 +201,12 @@ def import_ctf(backup, erase=True):
                                 if match:
                                     entry[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')
                                     continue
+                    # From v2.0.0 to v2.1.0 requirements could have been a string or JSON because of a SQLAlchemy issue
+                    # This is a hack to ensure we can still accept older exports. See #867
+                    if member in ('db/challenges.json', 'db/hints.json', 'db/awards.json'):
+                        requirements = entry.get('requirements')
+                        if requirements and isinstance(requirements, six.string_types):
+                            entry['requirements'] = json.loads(requirements)
                     table.insert(entry)
                     db.session.commit()
                 if postgres:
