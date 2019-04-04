@@ -1,4 +1,4 @@
-from tests.helpers import create_ctfd, destroy_ctfd
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 from CTFd.utils.events import ServerSentEvent, EventManager, RedisEventManager
 from CTFd.config import TestingConfig
 from mock import patch
@@ -87,9 +87,11 @@ def test_event_endpoint_is_event_stream():
         }
 
         fake_queue.return_value = saved_event
-        with app.app_context(), app.test_client() as client:
-            r = client.get('/events')
-            assert "text/event-stream" in r.headers['Content-Type']
+        with app.app_context():
+            register_user(app)
+            with login_as_user(app) as client:
+                r = client.get('/events')
+                assert "text/event-stream" in r.headers['Content-Type']
     destroy_ctfd(app)
 
 
