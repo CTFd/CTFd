@@ -128,7 +128,7 @@ def private():
 @require_team_mode
 def public(team_id):
     errors = get_errors()
-    team = Teams.query.filter_by(id=team_id).first_or_404()
+    team = Teams.query.filter_by(id=team_id, banned=False, hidden=False).first_or_404()
     solves = team.get_solves()
     awards = team.get_awards()
 
