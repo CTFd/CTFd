@@ -100,6 +100,6 @@ WindowController.prototype.broadcast = function (type, data) {
     try {
         localStorage.setItem('broadcast', JSON.stringify(event));
     } catch (error) {
+        console.log(error);
     }
-
 };
