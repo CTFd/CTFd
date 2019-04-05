@@ -5,6 +5,10 @@ $(document).ready(function () {
         formData.append('nonce', csrf_nonce);
         formData.append('challenge', CHALLENGE_ID);
         formData.append('type', 'challenge');
+        var pg = ezpg({
+            width: 0,
+            title: "Upload Progress",
+        });
         $.ajax({
             url: script_root + '/api/v1/files',
             data: formData,
@@ -14,16 +18,13 @@ $(document).ready(function () {
             processData: false,
             xhr: function () {
                 var xhr = $.ajaxSettings.xhr();
-                xhr.onprogress = function e() {
-                    // For downloads
-                    if (e.lengthComputable) {
-                        console.log(e.loaded / e.total);
-                    }
-                };
                 xhr.upload.onprogress = function (e) {
-                    // For uploads
                     if (e.lengthComputable) {
-                        console.log(e.loaded / e.total);
+                        var width = (e.loaded / e.total) * 100;
+                        pg = ezpg({
+                            target: pg,
+                            width: width
+                        });
                     }
                 };
                 return xhr;
@@ -31,6 +32,18 @@ $(document).ready(function () {
             success: function (data) {
                 // TODO: Refresh files on submit
                 e.target.reset();
+
+                // Refresh modal
+                pg = ezpg({
+                    target: pg,
+                    width: 100,
+                });
+                setTimeout(
+                    function () {
+                        pg.modal('hide');
+                    }, 500
+                );
+
                 window.location.reload();
             }
         });
