@@ -34,7 +34,6 @@ wc.notification = function(data) {
 };
 
 wc.masterDidChange = function () {
-    console.log(this.isMaster);
     if (this.isMaster) {
         connect();
     } else {

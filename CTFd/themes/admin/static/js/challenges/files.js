@@ -12,6 +12,22 @@ $(document).ready(function () {
             cache: false,
             contentType: false,
             processData: false,
+            xhr: function () {
+                var xhr = $.ajaxSettings.xhr();
+                xhr.onprogress = function e() {
+                    // For downloads
+                    if (e.lengthComputable) {
+                        console.log(e.loaded / e.total);
+                    }
+                };
+                xhr.upload.onprogress = function (e) {
+                    // For uploads
+                    if (e.lengthComputable) {
+                        console.log(e.loaded / e.total);
+                    }
+                };
+                return xhr;
+            },
             success: function (data) {
                 // TODO: Refresh files on submit
                 e.target.reset();
