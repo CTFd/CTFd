@@ -41,12 +41,6 @@ class CTFdStandardChallenge(BaseChallenge):
         """
         data = request.form or request.get_json()
 
-        for k, v in data.items():
-            try:
-                data[k] = v.strip()
-            except AttributeError:
-                pass
-
         challenge = Challenges(**data)
 
         db.session.add(challenge)
