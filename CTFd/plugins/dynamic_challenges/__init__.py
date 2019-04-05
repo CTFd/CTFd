@@ -37,6 +37,13 @@ class DynamicValueChallenge(BaseChallenge):
         :return:
         """
         data = request.form or request.get_json()
+
+        for k, v in data.items():
+            try:
+                data[k] = v.strip()
+            except AttributeError:
+                pass
+
         challenge = DynamicChallenge(**data)
 
         db.session.add(challenge)
