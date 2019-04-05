@@ -447,13 +447,13 @@ def test_api_accessing_hidden_banned_users():
         register_user(app, name="visible_user", email="visible_user@ctfd.io")
 
         user = Users.query.filter_by(id=2).first()
-        team = gen_team(app.db, name='hidden_team', hidden=True)
+        team = gen_team(app.db, name='hidden_team', email="hidden_team@ctfd.io", hidden=True)
         team.members.append(user)
         user.team_id = team.id
         app.db.session.commit()
 
         user = Users.query.filter_by(id=3).first()
-        team = gen_team(app.db, name='banned_team', hidden=True)
+        team = gen_team(app.db, name='banned_team', email="banned_team@ctfd.io", banned=True)
         team.members.append(user)
         user.team_id = team.id
         app.db.session.commit()
