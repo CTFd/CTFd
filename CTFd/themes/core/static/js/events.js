@@ -1,5 +1,9 @@
 var wc = new WindowController();
 
+var sound = new Howl({
+    src: [script_root + "/themes/core/static/sounds/notification.mp3"]
+});
+
 function connect() {
     window.ctfEventSource = new EventSource(script_root + "/events");
 
@@ -22,6 +26,7 @@ function render(data) {
         body: data.content,
         button: "Got it!"
     });
+    sound.play();
 }
 
 wc.notification = function(data) {
