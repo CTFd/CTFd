@@ -78,7 +78,7 @@ class UserPublic(Resource):
     def get(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
 
-        if user.banned or user.hidden and is_admin() is False:
+        if (user.banned or user.hidden) and is_admin() is False:
             abort(404)
 
         response = UserSchema(
@@ -195,7 +195,7 @@ class UserSolves(Resource):
                 abort(404)
             user = Users.query.filter_by(id=user_id).first_or_404()
 
-            if user.banned or user.hidden and is_admin() is False:
+            if (user.banned or user.hidden) and is_admin() is False:
                 abort(404)
 
         solves = user.get_solves(
@@ -232,7 +232,7 @@ class UserFails(Resource):
                 abort(404)
             user = Users.query.filter_by(id=user_id).first_or_404()
 
-            if user.banned or user.hidden and is_admin() is False:
+            if (user.banned or user.hidden) and is_admin() is False:
                 abort(404)
 
         fails = user.get_fails(
@@ -275,7 +275,7 @@ class UserAwards(Resource):
                 abort(404)
             user = Users.query.filter_by(id=user_id).first_or_404()
 
-            if user.banned or user.hidden and is_admin() is False:
+            if (user.banned or user.hidden) and is_admin() is False:
                 abort(404)
 
         awards = user.get_awards(
