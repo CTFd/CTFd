@@ -4,6 +4,35 @@
 from tests.helpers import *
 
 
+def test_accessing_hidden_users():
+    """Hidden users should not give any data from /users or /api/v1/users"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="visible_user", email="visible_user@ctfd.io")  # ID 2
+        register_user(app, name="hidden_user", email="hidden_user@ctfd.io")  # ID 3
+        register_user(app, name="banned_user", email="banned_user@ctfd.io")  # ID 4
+        user = Users.query.filter_by(name="hidden_user").first()
+        user.hidden = True
+        app.db.session.commit()
+        user = Users.query.filter_by(name="banned_user").first()
+        user.banned = True
+        app.db.session.commit()
+
+        with login_as_user(app, name="visible_user") as client:
+            assert client.get('/users/3').status_code == 404
+            assert client.get('/api/v1/users/3').status_code == 404
+            assert client.get('/api/v1/users/3/solves').status_code == 404
+            assert client.get('/api/v1/users/3/fails').status_code == 404
+            assert client.get('/api/v1/users/3/awards').status_code == 404
+
+            assert client.get('/users/4').status_code == 404
+            assert client.get('/api/v1/users/4').status_code == 404
+            assert client.get('/api/v1/users/4/solves').status_code == 404
+            assert client.get('/api/v1/users/4/fails').status_code == 404
+            assert client.get('/api/v1/users/4/awards').status_code == 404
+    destroy_ctfd(app)
+
+
 def test_hidden_user_visibility():
     """Hidden users should not show up on /users or /api/v1/users or /api/v1/scoreboard"""
     app = create_ctfd()

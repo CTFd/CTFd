@@ -80,6 +80,9 @@ class TeamPublic(Resource):
     def get(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
 
+        if (team.banned or team.hidden) and is_admin() is False:
+            abort(404)
+
         view = TeamSchema.views.get(session.get('type', 'user'))
         schema = TeamSchema(view=view)
         response = schema.dump(team)
@@ -196,6 +199,9 @@ class TeamSolves(Resource):
                 abort(404)
             team = Teams.query.filter_by(id=team_id).first_or_404()
 
+            if (team.banned or team.hidden) and is_admin() is False:
+                abort(404)
+
         solves = team.get_solves(
             admin=is_admin()
         )
@@ -229,6 +235,9 @@ class TeamFails(Resource):
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
             team = Teams.query.filter_by(id=team_id).first_or_404()
+
+            if (team.banned or team.hidden) and is_admin() is False:
+                abort(404)
 
         fails = team.get_fails(
             admin=is_admin()
@@ -273,6 +282,9 @@ class TeamAwards(Resource):
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
             team = Teams.query.filter_by(id=team_id).first_or_404()
+
+            if (team.banned or team.hidden) and is_admin() is False:
+                abort(404)
 
         awards = team.get_awards(
             admin=is_admin()

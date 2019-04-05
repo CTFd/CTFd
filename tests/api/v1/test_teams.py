@@ -436,3 +436,47 @@ def test_api_team_get_awards():
             print(r.get_json())
             assert r.status_code == 200
     destroy_ctfd(app)
+
+
+def test_api_accessing_hidden_banned_users():
+    """Hidden/Banned users should not be visible to normal users, only to admins"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="visible_user", email="visible_user@ctfd.io")
+
+        user = Users.query.filter_by(id=2).first()
+        team = gen_team(app.db, name='hidden_team', email="hidden_team@ctfd.io", hidden=True)
+        team.members.append(user)
+        user.team_id = team.id
+        app.db.session.commit()
+
+        user = Users.query.filter_by(id=3).first()
+        team = gen_team(app.db, name='banned_team', email="banned_team@ctfd.io", banned=True)
+        team.members.append(user)
+        user.team_id = team.id
+        app.db.session.commit()
+
+        with login_as_user(app, name="visible_user") as client:
+            assert client.get('/api/v1/teams/1').status_code == 404
+            assert client.get('/api/v1/teams/1/solves').status_code == 404
+            assert client.get('/api/v1/teams/1/fails').status_code == 404
+            assert client.get('/api/v1/teams/1/awards').status_code == 404
+
+            assert client.get('/api/v1/teams/2').status_code == 404
+            assert client.get('/api/v1/teams/2/solves').status_code == 404
+            assert client.get('/api/v1/teams/2/fails').status_code == 404
+            assert client.get('/api/v1/teams/2/awards').status_code == 404
+
+        with login_as_user(app, name="admin") as client:
+            assert client.get('/api/v1/teams/1').status_code == 200
+            assert client.get('/api/v1/teams/1/solves').status_code == 200
+            assert client.get('/api/v1/teams/1/fails').status_code == 200
+            assert client.get('/api/v1/teams/1/awards').status_code == 200
+
+            assert client.get('/api/v1/teams/2').status_code == 200
+            assert client.get('/api/v1/teams/2/solves').status_code == 200
+            assert client.get('/api/v1/teams/2/fails').status_code == 200
+            assert client.get('/api/v1/teams/2/awards').status_code == 200
+    destroy_ctfd(app)
