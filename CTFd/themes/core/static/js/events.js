@@ -1,7 +1,10 @@
 var wc = new WindowController();
 
 var sound = new Howl({
-    src: [script_root + "/themes/core/static/sounds/notification.mp3"]
+    src: [
+        script_root + "/themes/core/static/sounds/notification.webm",
+        script_root + "/themes/core/static/sounds/notification.mp3",
+    ]
 });
 
 function connect() {
