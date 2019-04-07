@@ -288,8 +288,7 @@
 	var TEAM_ID = {{ team.id }};
 	var TEAM_NAME = {{ team.name | tojson }};
 </script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/plotly.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='core', path='js/vendor/plotly.min.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/teams/info.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/teams/graphs.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/teams/actions.js') }}"></script>
