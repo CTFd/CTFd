@@ -1,8 +1,6 @@
 from flask import render_template
 from CTFd.utils.decorators import admins_only
-from CTFd.utils.updates import update_check
-from CTFd.utils.modes import get_model
-from CTFd.models import db, Notifications
+from CTFd.models import Notifications
 from CTFd.admin import admin
 
 

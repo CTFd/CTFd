@@ -1,4 +1,4 @@
-from flask import session, request
+from flask import request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Pages
 from CTFd.schemas.pages import PageSchema

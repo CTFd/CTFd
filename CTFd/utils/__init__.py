@@ -1,22 +1,7 @@
 import mistune
 import six
-from flask import current_app as app, request, redirect, url_for, session, render_template, abort, jsonify
+from flask import current_app as app
 from CTFd.cache import cache
-from CTFd.models import (
-    db,
-    Challenges,
-    Fails,
-    Pages,
-    Configs,
-    Tracking,
-    Teams,
-    Files
-)
-
-try:
-    import pathlib
-except ImportError:
-    import pathlib2 as pathlib
 
 binary_type = six.binary_type
 string_types = six.string_types
@@ -63,3 +48,9 @@ def set_config(key, value):
     db.session.commit()
     cache.delete_memoized(_get_config, key)
     return config
+
+
+from CTFd.models import (  # noqa: E402
+    db,
+    Configs
+)

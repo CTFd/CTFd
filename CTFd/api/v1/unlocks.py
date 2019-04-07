@@ -1,6 +1,6 @@
-from flask import session, request
+from flask import request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, get_class_by_tablename, Unlocks, Awards
+from CTFd.models import db, get_class_by_tablename, Unlocks
 from CTFd.utils.user import get_current_user
 from CTFd.schemas.unlocks import UnlockSchema
 from CTFd.schemas.awards import AwardSchema
@@ -10,7 +10,6 @@ from CTFd.utils.decorators import (
     admins_only,
     authed_only
 )
-from sqlalchemy.sql import or_
 
 unlocks_namespace = Namespace('unlocks', description="Endpoint to retrieve Unlocks")
 

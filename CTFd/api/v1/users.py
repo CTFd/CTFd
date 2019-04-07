@@ -1,22 +1,20 @@
 from flask import session, request, abort
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Users, Solves, Awards, Fails, Tracking, Unlocks, Submissions, Notifications
+from CTFd.models import db, Users, Solves, Awards, Tracking, Unlocks, Submissions, Notifications
 from CTFd.utils.decorators import (
     authed_only,
     admins_only,
     authed,
     ratelimit
 )
-from CTFd.cache import cache, clear_standings
+from CTFd.cache import clear_standings
 from CTFd.utils.config import get_mail_provider
 from CTFd.utils.email import sendmail
 from CTFd.utils.user import get_current_user, is_admin
-from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
+from CTFd.utils.decorators.visibility import check_account_visibility
 
 from CTFd.utils.config.visibility import (
     accounts_visible,
-    challenges_visible,
-    registration_visible,
     scores_visible
 )
 

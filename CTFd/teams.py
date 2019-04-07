@@ -1,15 +1,12 @@
-from flask import current_app as app, render_template, request, redirect, abort, jsonify, url_for, session, Blueprint, \
-    Response, send_file
-from CTFd.models import db, Users, Teams, Solves, Awards, Files, Pages, Tracking
+from flask import render_template, request, redirect, url_for, Blueprint
+from CTFd.models import db, Teams
 from CTFd.utils.decorators import authed_only
 from CTFd.utils.decorators.modes import require_team_mode
-from CTFd.utils.modes import USERS_MODE
-from CTFd.utils import config, get_config, set_config
-from CTFd.utils.user import get_current_user, authed, get_ip
-from CTFd.utils.dates import unix_time_to_utc
+from CTFd.utils import config
+from CTFd.utils.user import get_current_user
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
-from CTFd.utils.helpers import get_errors, get_infos
+from CTFd.utils.helpers import get_errors
 
 teams = Blueprint('teams', __name__)
 

@@ -5,12 +5,11 @@ from flask import (
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
-    ratelimit,
     require_team
 )
 from CTFd.utils.decorators.visibility import check_challenge_visibility
-from CTFd.utils import config, text_type, user as current_user, get_config
-from CTFd.utils.dates import ctf_paused, view_after_ctf, ctf_ended
+from CTFd.utils import config, get_config
+from CTFd.utils.dates import ctf_ended, ctf_paused, view_after_ctf
 from CTFd.utils.helpers import get_errors, get_infos
 
 challenges = Blueprint('challenges', __name__)

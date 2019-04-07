@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Teams, Solves, Fails, Challenges
-from CTFd.utils import get_config, set_config
-from tests.helpers import *
+from CTFd.models import Solves, Fails, Challenges
+from CTFd.utils import set_config, text_type
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_challenge,
+                           gen_flag,
+                           gen_hint)
 from freezegun import freeze_time
-from mock import patch
-import json
 
 
 def test_user_get_challenges():
@@ -100,7 +104,7 @@ def test_viewing_challenge():
 #             received = json.loads(output)
 #             assert saved == received
 #         set_config('hide_scores', True)
-#         with client.session_transaction() as sess:
+#         with client.session_transaction():
 #             r = client.get('/chals/solves')
 #             output = r.get_data(as_text=True)
 #             saved = json.loads('''{
@@ -124,7 +128,7 @@ def test_submitting_correct_flag():
         register_user(app)
         client = login_as_user(app)
         chal = gen_challenge(app.db)
-        flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+        gen_flag(app.db, challenge_id=chal.id, content='flag')
         data = {
             "submission": 'flag',
             "challenge_id": chal.id,
@@ -144,7 +148,7 @@ def test_submitting_correct_static_case_insensitive_flag():
         register_user(app)
         client = login_as_user(app)
         chal = gen_challenge(app.db)
-        flag = gen_flag(app.db, challenge_id=chal.id, content='flag', data="case_insensitive")
+        gen_flag(app.db, challenge_id=chal.id, content='flag', data="case_insensitive")
         data = {
             "submission": 'FLAG',
             "challenge_id": chal.id,
@@ -164,7 +168,7 @@ def test_submitting_correct_regex_case_insensitive_flag():
         register_user(app)
         client = login_as_user(app)
         chal = gen_challenge(app.db)
-        flag = gen_flag(app.db, challenge_id=chal.id, type='regex', content='flag', data="case_insensitive")
+        gen_flag(app.db, challenge_id=chal.id, type='regex', content='flag', data="case_insensitive")
         data = {
             "submission": 'FLAG',
             "challenge_id": chal.id,
@@ -184,7 +188,7 @@ def test_submitting_incorrect_flag():
         register_user(app)
         client = login_as_user(app)
         chal = gen_challenge(app.db)
-        flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+        gen_flag(app.db, challenge_id=chal.id, content='flag')
         data = {
             "submission": 'notflag',
             "challenge_id": chal.id,
@@ -204,8 +208,8 @@ def test_submitting_unicode_flag():
         register_user(app)
         client = login_as_user(app)
         chal = gen_challenge(app.db)
-        flag = gen_flag(app.db, challenge_id=chal.id, content=u'你好')
-        with client.session_transaction() as sess:
+        gen_flag(app.db, challenge_id=chal.id, content=u'你好')
+        with client.session_transaction():
             data = {
                 "submission": '你好',
                 "challenge_id": chal.id,
@@ -230,7 +234,7 @@ def test_challenges_with_max_attempts():
         chal.max_attempts = 3
         app.db.session.commit()
 
-        flag = gen_flag(app.db, challenge_id=chal.id, content=u'flag')
+        gen_flag(app.db, challenge_id=chal.id, content=u'flag')
         for x in range(3):
             data = {
                 "submission": 'notflag',
@@ -266,9 +270,9 @@ def test_challenge_kpm_limit():
         chal = gen_challenge(app.db)
         chal_id = chal.id
 
-        flag = gen_flag(app.db, challenge_id=chal.id, content=u'flag')
+        gen_flag(app.db, challenge_id=chal.id, content=u'flag')
         for x in range(11):
-            with client.session_transaction() as sess:
+            with client.session_transaction():
                 data = {
                     "submission": 'notflag',
                     "challenge_id": chal_id,
@@ -303,7 +307,7 @@ def test_that_view_challenges_unregistered_works():
     with app.app_context():
         chal = gen_challenge(app.db, name=text_type('🐺'))
         chal_id = chal.id
-        hint = gen_hint(app.db, chal_id)
+        gen_hint(app.db, chal_id)
 
         client = app.test_client()
         r = client.get('/api/v1/challenges', json='')
@@ -338,7 +342,7 @@ def test_hidden_challenge_is_unreachable():
         register_user(app)
         client = login_as_user(app)
         chal = gen_challenge(app.db, state='hidden')
-        flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+        gen_flag(app.db, challenge_id=chal.id, content='flag')
         chal_id = chal.id
 
         assert Challenges.query.count() == 1
@@ -379,7 +383,7 @@ def test_hidden_challenge_is_unsolveable():
         register_user(app)
         client = login_as_user(app)
         chal = gen_challenge(app.db, state='hidden')
-        flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+        gen_flag(app.db, challenge_id=chal.id, content='flag')
 
         data = {
             "submission": 'flag',
@@ -404,7 +408,7 @@ def test_challenge_with_requirements_is_unsolveable():
         register_user(app)
         client = login_as_user(app)
         chal1 = gen_challenge(app.db)
-        flag1 = gen_flag(app.db, challenge_id=chal1.id, content='flag')
+        gen_flag(app.db, challenge_id=chal1.id, content='flag')
 
         requirements = {
             'prerequisites': [1]
@@ -412,7 +416,7 @@ def test_challenge_with_requirements_is_unsolveable():
         chal2 = gen_challenge(app.db, requirements=requirements)
         app.db.session.commit()
 
-        flag2 = gen_flag(app.db, challenge_id=chal2.id, content='flag')
+        gen_flag(app.db, challenge_id=chal2.id, content='flag')
 
         r = client.get('/api/v1/challenges')
         challenges = r.get_json()['data']
@@ -479,7 +483,7 @@ def test_challenges_cannot_be_solved_while_paused():
         assert 'paused' in data
 
         chal = gen_challenge(app.db)
-        flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+        gen_flag(app.db, challenge_id=chal.id, content='flag')
 
         data = {
             "submission": 'flag',
@@ -624,4 +628,33 @@ def test_challenges_under_view_after_ctf():
         assert r.get_json()['data']['status'] == "incorrect"
         assert Fails.query.count() == 0
 
+    destroy_ctfd(app)
+
+
+def test_challenges_admin_only_as_user():
+    app = create_ctfd()
+    with app.app_context():
+        set_config('challenge_visibility', 'admins')
+
+        register_user(app)
+        admin = login_as_user(app, name="admin")
+
+        gen_challenge(app.db)
+        gen_flag(app.db, challenge_id=1, content='flag')
+
+        r = admin.get('/challenges')
+        assert r.status_code == 200
+
+        r = admin.get('/api/v1/challenges', json='')
+        assert r.status_code == 200
+
+        r = admin.get('/api/v1/challenges/1', json='')
+        assert r.status_code == 200
+
+        data = {
+            "submission": 'flag',
+            "challenge_id": 1
+        }
+        r = admin.post('/api/v1/challenges/attempt', json=data)
+        assert r.status_code == 200
     destroy_ctfd(app)

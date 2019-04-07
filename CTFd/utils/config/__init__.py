@@ -1,8 +1,5 @@
 from flask import current_app as app
-from CTFd.models import Configs, Users, Teams
-from CTFd.cache import cache
 from CTFd.utils import get_config
-from CTFd.utils.user import authed
 import time
 import os
 

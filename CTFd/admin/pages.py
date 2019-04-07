@@ -1,9 +1,8 @@
-from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
+from flask import render_template, request
 from CTFd.utils.decorators import admins_only
-from CTFd.models import db, Teams, Solves, Awards, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Configs
+from CTFd.models import Pages
 from CTFd.schemas.pages import PageSchema
-from CTFd.utils import config, validators, markdown, uploads
-from CTFd.cache import cache
+from CTFd.utils import markdown
 from CTFd.admin import admin
 
 

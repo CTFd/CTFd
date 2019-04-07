@@ -14,8 +14,9 @@
 	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/jumbotron.css') }}">
 	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/sticky-footer.css') }}">
 	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/base.css') }}">
-	<script src="{{ url_for('views.themes', theme='core', path='js/CTFd.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/promise-polyfill.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/eventsource.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='core', path='js/CTFd.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/fetch.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment-timezone-with-data.min.js') }}"></script>
@@ -142,10 +143,14 @@
 	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/jquery.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/markdown-it.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/bootstrap.bundle.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/multi-modal.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/howler.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/window-controller.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/main.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/utils.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/ezq.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/style.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='core', path='js/events.js') }}"></script>
 	{% block scripts %} {% endblock %}
 
 	{% for script in get_registered_admin_scripts() %}

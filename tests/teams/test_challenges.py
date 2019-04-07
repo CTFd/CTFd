@@ -2,7 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from CTFd.utils.scores import get_standings
-from tests.helpers import *
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           login_as_user,
+                           gen_challenge,
+                           gen_flag,
+                           gen_user,
+                           gen_team)
 
 
 def test_challenge_team_submit():

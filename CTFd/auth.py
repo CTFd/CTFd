@@ -7,6 +7,8 @@ from flask import (
     session,
     Blueprint,
 )
+from itsdangerous.exc import BadTimeSignature, SignatureExpired, BadSignature
+
 from CTFd.models import db, Users, Teams
 
 from CTFd.utils import get_config, get_app_config
@@ -15,13 +17,13 @@ from CTFd.utils import user as current_user
 from CTFd.utils import config, validators
 from CTFd.utils import email
 from CTFd.utils.security.auth import login_user, logout_user
-from CTFd.utils.security.passwords import hash_password, check_password
+from CTFd.utils.crypto import verify_password
 from CTFd.utils.logging import log
 from CTFd.utils.decorators.visibility import check_registration_visibility
-from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
-from CTFd.utils.security.signing import serialize, unserialize, SignatureExpired, BadSignature, BadTimeSignature
-from CTFd.utils.helpers import info_for, error_for, get_errors, get_infos
 from CTFd.utils.config.visibility import registration_visible
+from CTFd.utils.modes import TEAMS_MODE
+from CTFd.utils.security.signing import unserialize
+from CTFd.utils.helpers import error_for, get_errors
 
 import base64
 import requests
@@ -100,7 +102,7 @@ def reset_password(data=None):
         email_address = request.form['email'].strip()
         team = Users.query.filter_by(email=email_address).first()
 
-        errors = get_errors()
+        get_errors()
 
         if config.can_send_mail() is False:
             return render_template(
@@ -216,7 +218,7 @@ def login():
             user = Users.query.filter_by(name=name).first()
 
         if user:
-            if user and check_password(request.form['password'], user.password):
+            if user and verify_password(request.form['password'], user.password):
                 session.regenerate()
 
                 login_user(user)

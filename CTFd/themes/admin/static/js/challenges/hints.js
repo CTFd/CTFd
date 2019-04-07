@@ -14,6 +14,7 @@ function hint(id) {
 function loadhint(hintid) {
     var md = window.markdownit({
         html: true,
+        linkify: true,
     });
 
     hint(hintid).then(function (response) {
@@ -44,6 +45,7 @@ $(document).ready(function () {
                 console.log(event.target.hash);
                 var renderer = window.markdownit({
                     html: true,
+                    linkify: true,
                 });
                 var editor_value = $('#hint-write textarea').val();
                 $(event.target.hash).html(renderer.render(editor_value));
@@ -100,6 +102,7 @@ $(document).ready(function () {
                         console.log(event.target.hash);
                         var renderer = new markdownit({
                             html: true,
+                            linkify: true,
                         });
                         var editor_value = $('#hint-write textarea').val();
                         $(event.target.hash).html(renderer.render(editor_value));

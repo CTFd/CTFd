@@ -1,4 +1,4 @@
-from flask import Flask, current_app as app, request, session, redirect, url_for, abort, render_template
+from flask import request, session, redirect, url_for, abort, render_template
 from werkzeug.wsgi import DispatcherMiddleware
 from CTFd.models import db, Tracking
 
@@ -8,7 +8,7 @@ from CTFd.utils.dates import unix_time_millis, unix_time, isoformat
 from CTFd.utils import config
 from CTFd.utils.config import can_send_mail, ctf_logo, ctf_name, ctf_theme
 from CTFd.utils.config.pages import get_pages
-
+from CTFd.utils.events import EventManager, RedisEventManager
 from CTFd.utils.plugins import (
     get_registered_stylesheets,
     get_registered_scripts,
@@ -106,6 +106,15 @@ def init_logs(app):
     logger_submissions.propagate = 0
     logger_logins.propagate = 0
     logger_registrations.propagate = 0
+
+
+def init_events(app):
+    if app.config.get('CACHE_TYPE') == 'redis':
+        app.events_manager = RedisEventManager()
+    elif app.config.get('CACHE_TYPE') == 'filesystem':
+        app.events_manager = EventManager()
+    else:
+        app.events_manager = EventManager()
 
 
 def init_request_processors(app):

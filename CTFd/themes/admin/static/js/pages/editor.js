@@ -31,9 +31,11 @@ function show_files(data) {
 
         link.click(function (e) {
             var media_div = $(this).parent();
-            var icon = $(this).find('.svg-inline--fa')[0];
+            var icon = $(this).find('i')[0];
             var f_loc = media_div.attr('data-location');
             var fname = media_div.attr('data-filename');
+            var f_id = media_div.attr('data-id');
+            $('#media-delete').attr('data-id', f_id);
             $('#media-link').val(f_loc);
             $('#media-filename').html(
                 $('<a>').attr('href', f_loc).attr('target', '_blank').text(fname)
@@ -146,6 +148,37 @@ $(document).ready(function () {
         insert_at_cursor(editor, entry);
     });
 
+    $('#media-download').click(function (e) {
+        var link = $('#media-link').val();
+        window.open(link, "_blank");
+    });
+
+    $('#media-delete').click(function (e) {
+        var file_id = $(this).attr('data-id');
+        ezq({
+            title: "Delete File?",
+            body: "Are you sure you want to delete this file?",
+            success: function () {
+                CTFd.fetch('/api/v1/files/' + file_id, {
+                    method: 'DELETE',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                }).then(function (response) {
+                    if (response.status === 200) {
+                        response.json().then(function (object) {
+                            if (object.success) {
+                                refresh_files();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+
     $('#save-page').click(function (e) {
         e.preventDefault();
         submit_form();
@@ -154,7 +187,7 @@ $(document).ready(function () {
     $('#media-button').click(function () {
         $('#media-library-list').empty();
         refresh_files(function(){
-            $('#media-modal').modal();
+            $('#media-modal').modal('show');
         });
         // get_page_files().then(function (data) {
         //     var files = data;

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from flask.testing import FlaskClient
-from tests.helpers import *
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
 
 
 def test_api_csrf_failure():
-    """Can a user post /api/v1/awards if not admin"""
+    """Test that API requests require the CSRF-Token header"""
     app = create_ctfd()
     app.test_client_class = FlaskClient
     with app.app_context():

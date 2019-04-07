@@ -1,10 +1,10 @@
-from flask import request, redirect, url_for, session, abort, jsonify
-from CTFd.utils import config, get_config, get_app_config
+from flask import request, redirect, url_for, abort, jsonify
+from CTFd.utils import config, get_config
 from CTFd.cache import cache
-from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, ctftime, view_after_ctf
+from CTFd.utils.dates import ctf_ended, ctf_started, ctftime, view_after_ctf
 from CTFd.utils import user as current_user
-from CTFd.utils.user import get_current_user, get_current_team, is_admin, authed
-from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
+from CTFd.utils.user import get_current_team, is_admin, authed
+from CTFd.utils.modes import TEAMS_MODE
 import functools
 
 

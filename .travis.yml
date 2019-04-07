@@ -3,6 +3,7 @@ cache: pip
 services:
     - mysql
     - postgresql
+    - redis-server
 addons:
   apt:
     sources:
@@ -30,6 +31,8 @@ before_script:
     - psql -c 'create database ctfd;' -U postgres
 script:
     - pycodestyle --ignore E501,E712,E402 CTFd/ tests/
-    - nosetests -v -d --with-randomly
+    - flake8 --ignore E501,E712 CTFd/ tests/
+    - pytest --disable-warnings
+    - bandit -r CTFd
 after_success:
     - codecov

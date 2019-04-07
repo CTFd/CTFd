@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import *
+from tests.helpers import create_ctfd, destroy_ctfd
 
 
 def test_ctfd_setup_redirect():

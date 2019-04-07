@@ -1,8 +1,7 @@
-from flask import session, request
+from flask import current_app, request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Notifications
 from CTFd.schemas.notifications import NotificationSchema
-from CTFd.utils.events import socketio
 
 from CTFd.utils.decorators import (
     admins_only
@@ -44,7 +43,9 @@ class NotificantionList(Resource):
         db.session.commit()
 
         response = schema.dump(result.data)
-        socketio.emit('notification', response.data, broadcast=True)
+        current_app.events_manager.publish(
+            data=response.data, type='notification'
+        )
 
         return {
             'success': True,

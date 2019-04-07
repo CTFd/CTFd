@@ -1,14 +1,10 @@
-from sqlalchemy.sql.expression import union_all
-from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError, pre_load
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Teams
 from CTFd.utils.validators import validate_country_code
 from CTFd.utils import get_config
 from CTFd.utils.user import is_admin, get_current_team
-from CTFd.utils.countries import lookup_country_code
-from CTFd.utils.user import is_admin, get_current_team
-from CTFd.utils.crypto import verify_password, hash_password
+from CTFd.utils.crypto import verify_password
 
 
 class TeamSchema(ma.ModelSchema):

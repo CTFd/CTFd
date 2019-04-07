@@ -8,6 +8,8 @@ def challenges_visible():
         return True
     elif v == 'private':
         return authed()
+    elif v == 'admins':
+        return is_admin()
 
 
 def scores_visible():

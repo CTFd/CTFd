@@ -13,14 +13,9 @@ from flask import (
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.user import is_admin
 from CTFd.utils.security.auth import logout_user
-from CTFd.utils.config import is_setup
 from CTFd.utils import (
     config as ctf_config,
-    validators,
-    uploads,
-    user as current_user,
     get_config,
-    get_app_config,
     set_config,
 )
 from CTFd.cache import cache, clear_config
@@ -50,14 +45,14 @@ import csv
 admin = Blueprint('admin', __name__)
 
 
-from CTFd.admin import challenges
-from CTFd.admin import pages
-from CTFd.admin import scoreboard
-from CTFd.admin import statistics
-from CTFd.admin import teams
-from CTFd.admin import users
-from CTFd.admin import submissions
-from CTFd.admin import notifications
+from CTFd.admin import challenges  # noqa: F401
+from CTFd.admin import pages  # noqa: F401
+from CTFd.admin import scoreboard  # noqa: F401
+from CTFd.admin import statistics  # noqa: F401
+from CTFd.admin import teams  # noqa: F401
+from CTFd.admin import users  # noqa: F401
+from CTFd.admin import submissions  # noqa: F401
+from CTFd.admin import notifications  # noqa: F401
 
 
 @admin.route('/admin', methods=['GET'])
@@ -94,7 +89,6 @@ def plugin(plugin):
 @admins_only
 def import_ctf():
     backup = request.files['backup']
-    segments = request.form.get('segments')
     errors = get_errors()
     try:
         import_ctf_util(backup)

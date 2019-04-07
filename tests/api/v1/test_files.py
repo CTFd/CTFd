@@ -1,17 +1,43 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import *
-from io import BytesIO
+from CTFd.models import Challenges, ChallengeFiles, Files
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    login_as_user,
+    gen_challenge,
+    gen_file
+)
 import os
+from io import BytesIO
 
 
 def test_api_files_get_non_admin():
-    """Can a user get /api/v1/files if not admin"""
     app = create_ctfd()
     with app.app_context():
+        chal = gen_challenge(app.db)
+        gen_file(app.db, location='0bf1a55a5cd327c07af15df260979668/bird.swf', challenge_id=chal.id)
+
         with app.test_client() as client:
+            # test_api_files_get_non_admin
+            """Can a user get /api/v1/files if not admin"""
             r = client.get('/api/v1/files', json="")
+            assert r.status_code == 403
+
+            # test_api_files_post_non_admin
+            """Can a user post /api/v1/files if not admin"""
+            r = client.post('/api/v1/files')
+            assert r.status_code == 403
+
+            # test_api_file_get_non_admin
+            """Can a user get /api/v1/files/<file_id> if not admin"""
+            r = client.get('/api/v1/files/1', json="")
+            assert r.status_code == 403
+
+            # test_api_file_delete_non_admin
+            """Can a user delete /api/v1/files/<file_id> if not admin"""
+            r = client.delete('/api/v1/files/1', json="")
             assert r.status_code == 403
     destroy_ctfd(app)
 
@@ -23,16 +49,6 @@ def test_api_files_get_admin():
         with login_as_user(app, 'admin') as client:
             r = client.get('/api/v1/files', json="")
             assert r.status_code == 200
-    destroy_ctfd(app)
-
-
-def test_api_files_post_non_admin():
-    """Can a user post /api/v1/files if not admin"""
-    app = create_ctfd()
-    with app.app_context():
-        with app.test_client() as client:
-            r = client.post('/api/v1/files')
-            assert r.status_code == 403
     destroy_ctfd(app)
 
 
@@ -55,18 +71,6 @@ def test_api_files_post_admin():
     destroy_ctfd(app)
 
 
-def test_api_file_get_non_admin():
-    """Can a user get /api/v1/files/<file_id> if not admin"""
-    app = create_ctfd()
-    with app.app_context():
-        gen_file(app.db, '0bf1a55a5cd327c07af15df260979668/bird.swf')
-        assert Files.query.count() == 1
-        with app.test_client() as client:
-            r = client.get('/api/v1/files/1', json="")
-            assert r.status_code == 403
-    destroy_ctfd(app)
-
-
 def test_api_file_get_admin():
     """Can a user get /api/v1/files/<file_id> if admin"""
     app = create_ctfd()
@@ -79,18 +83,6 @@ def test_api_file_get_admin():
         with login_as_user(app, 'admin') as client:
             r = client.get('/api/v1/files/1', json="")
             assert r.status_code == 200
-    destroy_ctfd(app)
-
-
-def test_api_file_delete_non_admin():
-    """Can a user delete /api/v1/files/<file_id> if not admin"""
-    app = create_ctfd()
-    with app.app_context():
-        gen_file(app.db, '0bf1a55a5cd327c07af15df260979668/bird.swf')
-        assert Files.query.count() == 1
-        with app.test_client() as client:
-            r = client.delete('/api/v1/files/1', json="")
-            assert r.status_code == 403
     destroy_ctfd(app)
 
 

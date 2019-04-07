@@ -1,8 +1,8 @@
-from flask import current_app as app, render_template, request, redirect, jsonify, url_for, Blueprint
-from CTFd.utils.decorators import admins_only, ratelimit
-from CTFd.models import db, Teams, Solves, Awards, Unlocks, Challenges, Fails, Flags, Tags, Files, Tracking, Pages, Configs
+from flask import render_template, request
+from CTFd.utils.decorators import admins_only
+from CTFd.models import db, Teams, Challenges, Tracking
 from CTFd.admin import admin
-from CTFd.utils.helpers import get_errors, get_infos
+from CTFd.utils.helpers import get_errors
 
 from sqlalchemy.sql import not_
 

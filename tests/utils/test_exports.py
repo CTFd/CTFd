@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
-from tests.helpers import *
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_challenge,
+                           gen_flag,
+                           gen_user,
+                           gen_hint)
+from CTFd.models import Challenges, Flags, Users
+from CTFd.utils import text_type
 from CTFd.utils.exports import import_ctf, export_ctf
+import json
 import os
 
 
@@ -12,17 +22,17 @@ def test_export_ctf():
             register_user(app)
             chal = gen_challenge(app.db, name=text_type('🐺'))
             chal_id = chal.id
-            hint = gen_hint(app.db, chal_id)
+            gen_hint(app.db, chal_id)
 
             client = login_as_user(app)
-            with client.session_transaction() as sess:
+            with client.session_transaction():
                 data = {
                     "target": 1,
                     "type": "hints"
                 }
             r = client.post('/api/v1/unlocks', json=data)
             output = r.get_data(as_text=True)
-            output = json.loads(output)
+            json.loads(output)
             app.db.session.commit()
             backup = export_ctf()
 
