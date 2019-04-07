@@ -18,9 +18,11 @@ from CTFd.utils.events import socketio
 from CTFd.plugins import init_plugins
 
 # Hack to support Unicode in Python 2 properly
-if sys.version_info[0] < 3:
+try:
     reload(sys)
     sys.setdefaultencoding("utf-8")
+except NameError:
+    pass
 
 __version__ = '2.0.5'
 
