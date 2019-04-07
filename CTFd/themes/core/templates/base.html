@@ -35,8 +35,12 @@
 		var script_root = "{{ request.script_root }}";
 		var csrf_nonce = "{{ nonce }}";
 		var user_mode = "{{ get_config('user_mode') }}";
+		var ctf_start = {{ get_config("start") | tojson }};
+		var ctf_end = {{ get_config("end") | tojson }};
 		CTFd.options.urlRoot = script_root;
 		CTFd.options.csrfNonce = csrf_nonce;
+		CTFd.options.start = ctf_start;
+		CTFd.options.end = ctf_end;
 	</script>
 </head>
 <body>
