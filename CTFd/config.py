@@ -201,6 +201,9 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS:
         Automatically disabled to suppress warnings and save memory. You should only enable this if you need it.
 
+    SWAGGER_UI:
+        Enable the Swagger UI endpoint at /api/v1/
+
     UPDATE_CHECK:
         Specifies whether or not CTFd will check whether or not there is a new version of CTFd
 
@@ -210,7 +213,8 @@ class Config(object):
     '''
     REVERSE_PROXY = os.getenv("REVERSE_PROXY") or False
     TEMPLATES_AUTO_RELOAD = (not os.getenv("TEMPLATES_AUTO_RELOAD"))  # Defaults True
-    SQLALCHEMY_TRACK_MODIFICATIONS = (not os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS"))  # Defaults True
+    SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS") is not None  # Defaults False
+    SWAGGER_UI = os.getenv("SWAGGER_UI") is not None  # Defaults False
     UPDATE_CHECK = (not os.getenv("UPDATE_CHECK"))  # Defaults True
     APPLICATION_ROOT = os.getenv('APPLICATION_ROOT') or '/'
 
