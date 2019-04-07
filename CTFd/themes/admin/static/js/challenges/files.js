@@ -44,7 +44,11 @@ $(document).ready(function () {
                     }, 500
                 );
 
-                window.location.reload();
+                setTimeout(
+                    function () {
+                        window.location.reload();
+                    }, 700
+                );
             }
         });
     });
