@@ -15,13 +15,14 @@ from CTFd import config, create_app
 from sqlalchemy_utils import (
     drop_database,
 )
+from six import string_types
 from six.moves import input
 import dataset
 
 def cast_bool(value):
     if value and value.isdigit():
         return int(value)
-    elif value and isinstance(value, six.string_types):
+    elif value and isinstance(value, string_types):
         if value.lower() == 'true':
             return True
         elif value.lower() == 'false':
