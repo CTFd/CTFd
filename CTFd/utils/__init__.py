@@ -18,15 +18,9 @@ try:
 except ImportError:
     import pathlib2 as pathlib
 
-if six.PY2:
-    string_types = (str, unicode)
-    text_type = unicode
-    binary_type = str
-else:
-    string_types = (str,)
-    text_type = str
-    binary_type = bytes
-
+binary_type = six.binary_type
+string_types = six.string_types
+text_type = six.text_type
 markdown = mistune.Markdown()
 
 
