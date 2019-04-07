@@ -2,7 +2,7 @@
 
 {% block stylesheets %}
 	<link rel="stylesheet" type="text/css" href="
-			{{ url_for('views.themes', theme='admin', path='css/vendor/codemirror.min.css') }}">
+			{{ url_for('views.themes', theme='core', path='css/vendor/codemirror.min.css') }}">
 	<style>
 	.CodeMirror-gutters {
 		min-height: 100% !important;;
@@ -241,8 +241,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='admin', path='js/utils.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/codemirror.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='core', path='js/utils.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='core', path='js/vendor/codemirror.min.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/files/files.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/pages/media.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/pages/editor.js') }}"></script>
