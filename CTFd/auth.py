@@ -146,11 +146,11 @@ def register():
         if not valid_email:
             errors.append("Please enter a valid email address")
         if email.check_email_is_whitelisted(email_address) is False:
-                errors.append(
-                    "Only email addresses under {domains} may register".format(
-                        domains=get_config('domain_whitelist')
-                    )
+            errors.append(
+                "Only email addresses under {domains} may register".format(
+                    domains=get_config('domain_whitelist')
                 )
+            )
         if names:
             errors.append('That team name is already taken')
         if team_name_email_check is True:

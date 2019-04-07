@@ -3,8 +3,7 @@ pytest==4.2.1
 pytest-randomly==1.2.3
 coverage==4.5.2
 mock==2.0.0
-pycodestyle==2.4.0
-flake8==3.6.0
+flake8==3.7.7
 freezegun==0.3.11
 psycopg2==2.7.5
 psycopg2-binary==2.7.5
