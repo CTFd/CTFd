@@ -114,8 +114,6 @@
         var CHALLENGE_ID = {{ challenge.id }};
         var CHALLENGE_NAME = {{ challenge.name | tojson }};
 	</script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/markdown-it.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/moment.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/plotly.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/challenge.js') }}"></script>
 	<script src="{{ url_for('views.themes', theme='core', path='js/hints.js') }}"></script>
