@@ -1,6 +1,5 @@
 lint:
-	pycodestyle --ignore E501,E712,E402 CTFd/ tests/
-	flake8 --ignore E501,E712,E402 CTFd/ tests/
+	flake8 --ignore=E402,E501,E712 CTFd/ tests/
 
 test:
 	pytest --disable-warnings
