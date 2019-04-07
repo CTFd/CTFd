@@ -127,6 +127,7 @@ class Awards(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    type = db.Column(db.String(80), default='standard')
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -137,6 +138,11 @@ class Awards(db.Model):
 
     user = db.relationship('Users', foreign_keys="Awards.user_id", lazy='select')
     team = db.relationship('Teams', foreign_keys="Awards.team_id", lazy='select')
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'standard',
+        'polymorphic_on': type
+    }
 
     @hybrid_property
     def account_id(self):
