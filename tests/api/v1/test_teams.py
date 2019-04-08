@@ -480,3 +480,37 @@ def test_api_accessing_hidden_banned_users():
             assert client.get('/api/v1/teams/2/fails').status_code == 200
             assert client.get('/api/v1/teams/2/awards').status_code == 200
     destroy_ctfd(app)
+
+
+def test_api_user_without_team_challenge_interaction():
+    """Can a user interact with challenges without having joined a team?"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        gen_challenge(app.db)
+        gen_flag(app.db, 1)
+
+        with login_as_user(app) as client:
+            assert client.get('/api/v1/challenges').status_code == 403
+            assert client.get('/api/v1/challenges/1').status_code == 403
+            assert client.post('/api/v1/challenges/attempt', json={
+                "challenge_id": 1,
+                "submission": "wrong_flag"
+            }).status_code == 403
+
+        # Create a user with a team
+        user = gen_user(app.db, email='user_name@ctfd.io')
+        team = gen_team(app.db)
+        team.members.append(user)
+        user.team_id = team.id
+        app.db.session.commit()
+
+        # Test if user with team can interact with challenges
+        with login_as_user(app, name="user_name") as client:
+            assert client.get('/api/v1/challenges').status_code == 200
+            assert client.get('/api/v1/challenges/1').status_code == 200
+            assert client.post('/api/v1/challenges/attempt', json={
+                "challenge_id": 1,
+                "submission": "flag"
+            }).status_code == 200
+    destroy_ctfd(app)
