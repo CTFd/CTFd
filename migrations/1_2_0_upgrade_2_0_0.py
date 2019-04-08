@@ -15,19 +15,15 @@ from CTFd import config, create_app
 from sqlalchemy_utils import (
     drop_database,
 )
+from six import string_types
 from six.moves import input
 import dataset
 
 def cast_bool(value):
     if value and value.isdigit():
         return int(value)
-    elif value and isinstance(value, six.string_types):
-        if value.lower() == 'true':
-            return True
-        elif value.lower() == 'false':
-            return False
-        else:
-            return value
+    elif value and isinstance(value, string_types):
+        return {'true': True, 'false', False}.get(value.lower(), value)
 
 if __name__ == '__main__':
     print("/*\\ Migrating your database to 2.0.0 can potentially lose data./*\\")
@@ -55,7 +51,7 @@ if __name__ == '__main__':
         old_data.pop('alembic_version')
 
     print('Current Tables:')
-    for table in old_data.keys():
+    for table in old_data:
         print('\t', table)
 
     old_conn.executable.close()
@@ -248,7 +244,7 @@ if __name__ == '__main__':
     manual = []
     not_created = []
     print('MIGRATING extra tables')
-    for table in old_data.keys():
+    for table in old_data:
         print('MIGRATING', table)
         new_conn.create_table(table, primary_id=False)
         data = old_data[table]
