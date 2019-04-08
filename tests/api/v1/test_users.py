@@ -683,6 +683,12 @@ def test_api_user_get_schema():
     with app.app_context():
         register_user(app, name="user1", email="user1@ctfd.io")  # ID 2
         register_user(app, name="user2", email="user2@ctfd.io")  # ID 3
+
+        with app.test_client() as client:
+            r = client.get('/api/v1/users/3')
+            data = r.get_json()['data']
+            assert sorted(data.keys()) == sorted(UserSchema.views['user'] + ['score', 'place'])
+
         with login_as_user(app, name="user1") as client:
             r = client.get('/api/v1/users/3')
             data = r.get_json()['data']
