@@ -6,6 +6,7 @@
 
 **General**
 * Users/Teams set to hidden or banned are no longer visible by other users
+    * This affects the API and the main user interface. This does not affect admins.
 * Users without Teams can no longer view challenges when the CTF is in Team Mode
 
 2.0.5 / 2019-03-23
