@@ -9,6 +9,7 @@ from CTFd.utils.user import is_admin, get_current_team
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.user import is_admin, get_current_team
 from CTFd.utils.crypto import verify_password, hash_password
+from CTFd.utils import string_types
 
 
 class TeamSchema(ma.ModelSchema):
@@ -162,9 +163,9 @@ class TeamSchema(ma.ModelSchema):
 
     def __init__(self, view=None, *args, **kwargs):
         if view:
-            if type(view) == str:
+            if isinstance(view, string_types):
                 kwargs['only'] = self.views[view]
-            elif type(view) == list:
+            elif isinstance(view, list):
                 kwargs['only'] = view
 
         super(TeamSchema, self).__init__(*args, **kwargs)
