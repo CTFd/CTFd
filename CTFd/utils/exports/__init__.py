@@ -235,4 +235,5 @@ def import_ctf(backup, erase=True):
         source = backup.open(f)
         uploader.store(fileobj=source, filename=filename)
 
+    upgrade(revision='head')
     cache.clear()
