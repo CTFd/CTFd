@@ -81,7 +81,7 @@ function ezpg(args){
     if (args.target){
         var obj = $(args.target);
         var pbar = obj.find('.progress-bar');
-        pbar.style('width', args.width + '%');
+        pbar.css('width', args.width + '%');
         return obj;
     }
     var bar = progress.format(args.width);
