@@ -1,3 +1,13 @@
+2.0.6 / 2019-04-08
+==================
+
+**Security**
+* Fixes an issue where user email addresses could be disclosed to non-admins
+
+**General**
+* Users/Teams set to hidden or banned are no longer visible by other users
+* Users without Teams can no longer view challenges when the CTF is in Team Mode
+
 2.0.5 / 2019-03-23
 ==================
 
