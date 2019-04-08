@@ -44,7 +44,7 @@ class Config(object):
 
         http://flask.pocoo.org/docs/latest/quickstart/#sessions
 
-    SQLALCHEMY_DATABASE_URI:
+    DATABASE_URL:
         The URI that specifies the username, password, hostname, port, and database of the server
         used to hold the CTFd database.
 
