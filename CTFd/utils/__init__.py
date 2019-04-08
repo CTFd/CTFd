@@ -22,7 +22,8 @@ def _get_config(key):
         if value and value.isdigit():
             return int(value)
         elif value and isinstance(value, six.string_types):
-            return {'true': True, 'false', False}.get(value.lower(), value)
+            truth_dict = {'true': True, 'false': False}
+            return truth_dict.get(value.lower(), value)
 
 
 def get_config(key, default=None):
