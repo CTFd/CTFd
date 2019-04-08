@@ -3,6 +3,7 @@
 
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
+from CTFd.schemas.users import UserSchema
 from tests.helpers import *
 
 
@@ -673,4 +674,23 @@ def test_api_user_send_email():
             })
             assert r.status_code == 200
 
+    destroy_ctfd(app)
+
+
+def test_api_user_get_schema():
+    """Can a user get /api/v1/users/<user_id> doesn't return unnecessary data"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io")  # ID 2
+        register_user(app, name="user2", email="user2@ctfd.io")  # ID 3
+
+        with app.test_client() as client:
+            r = client.get('/api/v1/users/3')
+            data = r.get_json()['data']
+            assert sorted(data.keys()) == sorted(UserSchema.views['user'] + ['score', 'place'])
+
+        with login_as_user(app, name="user1") as client:
+            r = client.get('/api/v1/users/3')
+            data = r.get_json()['data']
+            assert sorted(data.keys()) == sorted(UserSchema.views['user'] + ['score', 'place'])
     destroy_ctfd(app)

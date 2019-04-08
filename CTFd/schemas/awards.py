@@ -3,6 +3,7 @@ from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError
 from marshmallow_sqlalchemy import field_for
 from CTFd.models import ma, Awards
+from CTFd.utils import string_types
 
 
 class AwardSchema(ma.ModelSchema):
@@ -43,9 +44,9 @@ class AwardSchema(ma.ModelSchema):
 
     def __init__(self, view=None, *args, **kwargs):
         if view:
-            if type(view) == str:
+            if isinstance(view, string_types):
                 kwargs['only'] = self.views[view]
-            elif type(view) == list:
+            elif isinstance(view, list):
                 kwargs['only'] = view
 
         super(AwardSchema, self).__init__(*args, **kwargs)
