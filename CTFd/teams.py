@@ -133,7 +133,7 @@ def public(team_id):
     score = team.score
 
     if errors:
-        return render_template('teams/team.html', team=team, errors=errors)
+        return render_template('teams/public.html', team=team, errors=errors)
 
     return render_template(
         'teams/public.html',
