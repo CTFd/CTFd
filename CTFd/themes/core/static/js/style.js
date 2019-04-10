@@ -17,4 +17,6 @@ $(function () {
             $(this).addClass("input-filled-valid");
         }
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
 });

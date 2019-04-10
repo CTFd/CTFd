@@ -108,7 +108,7 @@ def private():
     score = team.score
 
     return render_template(
-        'teams/team.html',
+        'teams/private.html',
         solves=solves,
         awards=awards,
         user=user,
@@ -136,7 +136,7 @@ def public(team_id):
         return render_template('teams/team.html', team=team, errors=errors)
 
     return render_template(
-        'teams/team.html',
+        'teams/public.html',
         solves=solves,
         awards=awards,
         team=team,
