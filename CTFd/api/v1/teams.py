@@ -183,18 +183,11 @@ class TeamPrivate(Resource):
 
 
 @teams_namespace.route('/<team_id>/members')
-@teams_namespace.param('team_id', "Team ID or 'me'")
-class TeamSolves(Resource):
-
+@teams_namespace.param('team_id', "Team ID")
+class TeamMembers(Resource):
+    @admins_only
     def get(self, team_id):
-        if team_id == 'me':
-            if not authed():
-                abort(403)
-            team = get_current_team()
-        else:
-            if accounts_visible() is False:
-                abort(404)
-            team = Teams.query.filter_by(id=team_id).first_or_404()
+        team = Teams.query.filter_by(id=team_id).first_or_404()
 
         view = 'admin' if is_admin() else 'user'
         schema = TeamSchema(view=view)
@@ -213,15 +206,9 @@ class TeamSolves(Resource):
             'data': members
         }
 
+    @admins_only
     def post(self, team_id):
-        if team_id == 'me':
-            if not authed():
-                abort(403)
-            team = get_current_team()
-        else:
-            if is_admin() is False:
-                abort(403)
-            team = Teams.query.filter_by(id=team_id).first_or_404()
+        team = Teams.query.filter_by(id=team_id).first_or_404()
 
         data = request.get_json()
         user_id = data['id']
@@ -256,15 +243,9 @@ class TeamSolves(Resource):
             'data': members
         }
 
+    @admins_only
     def delete(self, team_id):
-        if team_id == 'me':
-            if not authed():
-                abort(403)
-            team = get_current_team()
-        else:
-            if is_admin() is False:
-                abort(403)
-            team = Teams.query.filter_by(id=team_id).first_or_404()
+        team = Teams.query.filter_by(id=team_id).first_or_404()
 
         data = request.get_json()
         user_id = data['id']

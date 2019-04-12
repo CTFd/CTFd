@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, Blueprint
+from flask import render_template, request, redirect, url_for, Blueprint, session
 from CTFd.models import db, Teams
 from CTFd.utils.decorators import authed_only
 from CTFd.utils.decorators.modes import require_team_mode
@@ -47,6 +47,11 @@ def join():
         if team and verify_password(passphrase, team.password):
             user.team_id = team.id
             db.session.commit()
+
+            if len(team.members) == 1:
+                team.captain_id = user.id
+                db.session.commit()
+
             return redirect(url_for('challenges.listing'))
         else:
             errors = ['That information is incorrect']
@@ -77,7 +82,8 @@ def new():
 
         team = Teams(
             name=teamname,
-            password=passphrase
+            password=passphrase,
+            captain_id=user.id
         )
 
         db.session.add(team)

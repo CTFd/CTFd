@@ -19,7 +19,7 @@
 						<div class="form-group">
 							<label for="name">Team Name</label>
 							<input type="text" class="form-control" name="name" id="name"
-								   {% if team is defined and team.name %}value="{{ team.name }}"{% endif %} required>
+								   {% if team is defined and team.name %}value="{{ team.name }}"{% endif %} required />
 						</div>
 						<div class="form-group">
 							<label for="password">Current Password</label>
@@ -32,12 +32,12 @@
 						<div class="form-group">
 							<label for="website">Website</label>
 							<input type="url" class="form-control" name="website" id="website"
-								   {% if team is defined and team.website %}value="{{ team.website }}"{% endif %}>
+								   {% if team is defined and team.website %}value="{{ team.website }}"{% endif %} />
 						</div>
 						<div class="form-group">
 							<label for="affiliation">Affiliation</label>
 							<input type="text" class="form-control" name="affiliation" id="affiliation"
-								   {% if team is defined and team.affiliation %}value="{{ team.affiliation }}"{% endif %}>
+								   {% if team is defined and team.affiliation %}value="{{ team.affiliation }}"{% endif %} />
 						</div>
 						<div class="form-group">
 							<label for="affiliation">Country</label>
@@ -57,6 +57,43 @@
 						</div>
 						<button id="update-team" type="submit"
 								class="btn btn-primary btn-outlined float-right modal-action">
+							Submit
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="team-captain-modal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-action text-center w-100">Choose Captain</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body clearfix">
+					<form id="team-captain-form" method="POST">
+						<input type="hidden" name="id">
+						<div class="form-group">
+							<label for="captain">Team Captain</label>
+							<select class="form-control" id="captain" name="captain_id">
+								{% if team is defined %}
+									<option value="{{ team.captain.id }}">{{ team.captain.name }}</option>
+									{% for member in team.members %}
+										{% if member.id != team.captain.id %}
+											<option value="{{ member.id }}">{{ member.name }}</option>
+										{% endif %}
+									{% endfor %}
+								{% endif %}
+							</select>
+						</div>
+						<div id="results">
+
+						</div>
+						<button type="submit" class="btn btn-primary btn-outlined float-right modal-action">
 							Submit
 						</button>
 					</form>
@@ -95,8 +132,28 @@
 			</h2>
 			<div class="pt-3">
 				<a class="edit-team">
-					<i class="btn-fa fas fa-cogs fa-2x px-2" data-toggle="tooltip" data-placement="top"
-					   title="Edit Team"></i>
+					{% if team.captain_id == user.id %}
+						<i class="btn-fa fas fa-cogs fa-2x px-2"
+						   data-toggle="tooltip"
+						   data-placement="top"
+						   title="Edit Team"></i>
+
+						<a class="edit-captain">
+							<i class="btn-fa fas fa-user-tag fa-2x px-2" data-toggle="tooltip" data-placement="top"
+							   title="Choose Captain"></i>
+						</a>
+					{% else %}
+						<i class="btn-fa fas fa-cogs fa-2x px-2 fa-disabled"
+						   data-toggle="tooltip"
+						   data-placement="top"
+						   title="Only team captains can edit team information"></i>
+						<a class="edit-captain">
+							<i class="btn-fa fas fa-user-tag fa-2x px-2 fa-disabled"
+							   data-toggle="tooltip"
+							   data-placement="top"
+							   title="Only team captains can choose a new captain"></i>
+						</a>
+					{% endif %}
 				</a>
 				{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
 					<a href="{{ team.website }}" target="_blank" style="color: inherit;">
@@ -141,6 +198,9 @@
 									<a href="{{ url_for('users.public', user_id=member.id) }}">
 										{{ member.name }}
 									</a>
+									{% if team.captain_id == member.id %}
+										<span class="badge badge-primary ml-2">Captain</span>
+									{% endif %}
 								</td>
 								<td>{{ member.score }}</td>
 							</tr>
@@ -230,11 +290,8 @@
 	<script>
         var team_id = {{ team.id }};
         var team_name = {{ team.name | tojson }};
-        {% if user %}
-            var team_self = {{ (user.team_id == team.id) | tojson }};
-        {% else %}
-            var team_self = false;
-        {% endif %}
+		var team_self = {{ (user.team_id == team.id) | tojson }};
+		var team_captain = {{ (user.id == team.captain_id) | tojson }};
         var team_account_id = team_self ? "me" : team_id;
 	</script>
 	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
@@ -243,9 +300,15 @@
 		<script src="{{ url_for('views.themes', path='js/team.js') }}"></script>
 	{% endif %}
 	<script>
-        $('.edit-team').click(function(){
-            $('#team-edit-modal').modal();
-        });
+        if (team_captain) {
+            $('.edit-team').click(function () {
+                $('#team-edit-modal').modal();
+            });
+
+            $('.edit-captain').click(function () {
+                $('#team-captain-modal').modal();
+            });
+        }
 
         var form = $('#team-info-form');
         form.submit(function (e) {
@@ -288,6 +351,41 @@
                     });
                 }
             });
-        })
+        });
+
+        $('#team-captain-form').submit(function (e) {
+            e.preventDefault();
+            var params = $('#team-captain-form').serializeJSON(true);
+
+            CTFd.fetch('/api/v1/teams/me', {
+                method: 'PATCH',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            }).then(function (response) {
+                return response.json();
+            }).then(function (response) {
+                if (response.success) {
+                    window.location.reload();
+                } else {
+                    $('#team-captain-form > #results').empty();
+                    Object.keys(response.errors).forEach(function (key, index) {
+                        $('#team-captain-form > #results').append(
+                            ezbadge({
+                                type: 'error',
+                                body: response.errors[key]
+                            })
+                        );
+                        var i = $('#team-captain-form').find('select[name={0}]'.format(key));
+                        var input = $(i);
+                        input.addClass('input-filled-invalid');
+                        input.removeClass('input-filled-valid');
+                    });
+                }
+            })
+        });
 	</script>
 {% endblock %}

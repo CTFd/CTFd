@@ -348,7 +348,8 @@ def oauth_redirect():
                 if team is None:
                     team = Teams(
                         name=team_name,
-                        oauth_id=team_id
+                        oauth_id=team_id,
+                        captain_id=user.id
                     )
                     db.session.add(team)
                     db.session.commit()
