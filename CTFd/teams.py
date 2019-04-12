@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, Blueprint, session
+from flask import render_template, request, redirect, url_for, Blueprint
 from CTFd.models import db, Teams
 from CTFd.utils.decorators import authed_only
 from CTFd.utils.decorators.modes import require_team_mode

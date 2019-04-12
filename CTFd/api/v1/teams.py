@@ -270,9 +270,9 @@ class TeamMembers(Resource):
 
         if response.errors:
             return {
-                       'success': False,
-                       'errors': response.errors
-                   }, 400
+                'success': False,
+                'errors': response.errors
+            }, 400
 
         members = response.data.get('members')
 

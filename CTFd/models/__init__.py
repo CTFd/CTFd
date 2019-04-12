@@ -454,8 +454,8 @@ class Teams(db.Model):
     banned = db.Column(db.Boolean, default=False)
 
     # Relationship for Users
-    captain = db.relationship("Users", foreign_keys='Teams.captain_id')
     captain_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    captain = db.relationship("Users", foreign_keys=[captain_id])
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
