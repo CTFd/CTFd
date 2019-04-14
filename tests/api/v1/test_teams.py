@@ -315,7 +315,7 @@ def test_api_team_patch_me_logged_in_user():
         user1.team_id = team.id
         user2.team_id = team.id
         app.db.session.commit()
-        with login_as_user(app, name="user_name") as client:
+        with login_as_user(app, name="user2") as client:
             r = client.patch('/api/v1/teams/me', json={
                 "name": "team_name",
                 "affiliation": "changed"
