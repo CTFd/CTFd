@@ -161,6 +161,16 @@ class TeamPrivate(Resource):
     @authed_only
     def patch(self):
         team = get_current_team()
+        if team.captain_id != session['id']:
+            return {
+                'success': False,
+                'errors': {
+                    '': [
+                        'Only team captains can edit team information'
+                    ]
+                }
+            }, 400
+
         data = request.get_json()
 
         response = TeamSchema(view='self', instance=team, partial=True).load(data)
