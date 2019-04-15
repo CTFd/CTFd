@@ -7,9 +7,7 @@ from tests.helpers import (
     destroy_ctfd,
     register_user,
     login_as_user,
-    get_scores,
     gen_challenge,
-    gen_award,
     gen_flag,
     gen_solve
 )
