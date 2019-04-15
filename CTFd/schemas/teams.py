@@ -103,16 +103,21 @@ class TeamSchema(ma.ModelSchema):
     def validate_password_confirmation(self, data):
         password = data.get('password')
         confirm = data.get('confirm')
-        target_team = get_current_team()
 
         if is_admin():
             pass
         else:
+            current_team = get_current_team()
+            current_user = get_current_user()
+
+            if current_team.captain_id != current_user.id:
+                raise ValidationError('Only the captain can change the team password', field_names=['captain_id'])
+
             if password and (bool(confirm) is False):
                 raise ValidationError('Please confirm your current password', field_names=['confirm'])
 
             if password and confirm:
-                test = verify_password(plaintext=confirm, ciphertext=target_team.password)
+                test = verify_password(plaintext=confirm, ciphertext=current_team.password)
                 if test is True:
                     return data
                 else:
