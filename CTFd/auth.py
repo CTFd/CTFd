@@ -152,9 +152,9 @@ def register():
                 )
             )
         if names:
-            errors.append('That team name is already taken')
+            errors.append('That user name is already taken')
         if team_name_email_check is True:
-            errors.append('Your team name cannot be an email address')
+            errors.append('Your user name cannot be an email address')
         if emails:
             errors.append('That email has already been used')
         if pass_short:
@@ -162,7 +162,7 @@ def register():
         if pass_long:
             errors.append('Pick a shorter password')
         if name_len:
-            errors.append('Pick a longer team name')
+            errors.append('Pick a longer user name')
 
         if len(errors) > 0:
             return render_template(
@@ -348,7 +348,8 @@ def oauth_redirect():
                 if team is None:
                     team = Teams(
                         name=team_name,
-                        oauth_id=team_id
+                        oauth_id=team_id,
+                        captain_id=user.id
                     )
                     db.session.add(team)
                     db.session.commit()

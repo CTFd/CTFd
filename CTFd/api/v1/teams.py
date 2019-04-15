@@ -1,6 +1,6 @@
 from flask import session, request, abort
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Teams
+from CTFd.models import db, Users, Teams
 from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
@@ -161,6 +161,16 @@ class TeamPrivate(Resource):
     @authed_only
     def patch(self):
         team = get_current_team()
+        if team.captain_id != session['id']:
+            return {
+                'success': False,
+                'errors': {
+                    '': [
+                        'Only team captains can edit team information'
+                    ]
+                }
+            }, 400
+
         data = request.get_json()
 
         response = TeamSchema(view='self', instance=team, partial=True).load(data)
@@ -179,6 +189,106 @@ class TeamPrivate(Resource):
         return {
             'success': True,
             'data': response.data
+        }
+
+
+@teams_namespace.route('/<team_id>/members')
+@teams_namespace.param('team_id', "Team ID")
+class TeamMembers(Resource):
+    @admins_only
+    def get(self, team_id):
+        team = Teams.query.filter_by(id=team_id).first_or_404()
+
+        view = 'admin' if is_admin() else 'user'
+        schema = TeamSchema(view=view)
+        response = schema.dump(team)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        members = response.data.get('members')
+
+        return {
+            'success': True,
+            'data': members
+        }
+
+    @admins_only
+    def post(self, team_id):
+        team = Teams.query.filter_by(id=team_id).first_or_404()
+
+        data = request.get_json()
+        user_id = data['id']
+        user = Users.query.filter_by(id=user_id).first_or_404()
+        if user.team_id is None:
+            team.members.append(user)
+            db.session.commit()
+        else:
+            return {
+                'success': False,
+                'errors': {
+                    'id': [
+                        'User has already joined a team'
+                    ]
+                }
+            }, 400
+
+        view = 'admin' if is_admin() else 'user'
+        schema = TeamSchema(view=view)
+        response = schema.dump(team)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        members = response.data.get('members')
+
+        return {
+            'success': True,
+            'data': members
+        }
+
+    @admins_only
+    def delete(self, team_id):
+        team = Teams.query.filter_by(id=team_id).first_or_404()
+
+        data = request.get_json()
+        user_id = data['id']
+        user = Users.query.filter_by(id=user_id).first_or_404()
+
+        if user.team_id == team.id:
+            team.members.remove(user)
+            db.session.commit()
+        else:
+            return {
+                'success': False,
+                'errors': {
+                    'id': [
+                        'User is not part of this team'
+                    ]
+                }
+            }, 400
+
+        view = 'admin' if is_admin() else 'user'
+        schema = TeamSchema(view=view)
+        response = schema.dump(team)
+
+        if response.errors:
+            return {
+                'success': False,
+                'errors': response.errors
+            }, 400
+
+        members = response.data.get('members')
+
+        return {
+            'success': True,
+            'data': members
         }
 
 

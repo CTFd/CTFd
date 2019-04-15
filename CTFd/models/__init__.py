@@ -443,7 +443,7 @@ class Teams(db.Model):
     password = db.Column(db.String(128))
     secret = db.Column(db.String(128))
 
-    members = db.relationship("Users", backref="team")
+    members = db.relationship("Users", backref="team", foreign_keys='Users.team_id')
 
     # Supplementary attributes
     website = db.Column(db.String(128))
@@ -452,6 +452,10 @@ class Teams(db.Model):
     bracket = db.Column(db.String(32))
     hidden = db.Column(db.Boolean, default=False)
     banned = db.Column(db.Boolean, default=False)
+
+    # Relationship for Users
+    captain_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    captain = db.relationship("Users", foreign_keys=[captain_id])
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 

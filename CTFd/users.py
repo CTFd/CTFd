@@ -42,7 +42,7 @@ def private():
     score = user.score
 
     return render_template(
-        'users/user.html',
+        'users/private.html',
         solves=solves,
         awards=awards,
         user=user,
@@ -57,4 +57,4 @@ def private():
 @check_score_visibility
 def public(user_id):
     user = Users.query.filter_by(id=user_id).first_or_404()
-    return render_template('users/user.html', user=user)
+    return render_template('users/public.html', user=user)

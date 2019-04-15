@@ -47,6 +47,11 @@ def join():
         if team and verify_password(passphrase, team.password):
             user.team_id = team.id
             db.session.commit()
+
+            if len(team.members) == 1:
+                team.captain_id = user.id
+                db.session.commit()
+
             return redirect(url_for('challenges.listing'))
         else:
             errors = ['That information is incorrect']
@@ -77,7 +82,8 @@ def new():
 
         team = Teams(
             name=teamname,
-            password=passphrase
+            password=passphrase,
+            captain_id=user.id
         )
 
         db.session.add(team)
@@ -108,7 +114,7 @@ def private():
     score = team.score
 
     return render_template(
-        'teams/team.html',
+        'teams/private.html',
         solves=solves,
         awards=awards,
         user=user,
@@ -133,10 +139,10 @@ def public(team_id):
     score = team.score
 
     if errors:
-        return render_template('teams/team.html', team=team, errors=errors)
+        return render_template('teams/public.html', team=team, errors=errors)
 
     return render_template(
-        'teams/team.html',
+        'teams/public.html',
         solves=solves,
         awards=awards,
         team=team,

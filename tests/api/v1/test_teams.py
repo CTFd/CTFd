@@ -303,17 +303,42 @@ def test_api_team_patch_me_not_logged_in():
     destroy_ctfd(app)
 
 
-def test_api_team_patch_me_logged_in():
-    """Can a user patch /api/v1/teams/me if logged in"""
+def test_api_team_patch_me_logged_in_user():
+    """Can a user patch /api/v1/teams/me if logged in as a regular user"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")
+        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
+        team = gen_team(app.db)
+        team.members.append(user1)
+        team.members.append(user2)
+        user1.team_id = team.id
+        user2.team_id = team.id
+        app.db.session.commit()
+        with login_as_user(app, name="user2") as client:
+            r = client.patch('/api/v1/teams/me', json={
+                "name": "team_name",
+                "affiliation": "changed"
+            })
+            assert r.status_code == 400
+    destroy_ctfd(app)
+
+
+def test_api_team_patch_me_logged_in_captain():
+    """Can a user patch /api/v1/teams/me if logged in as the captain"""
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
         team = gen_team(app.db)
         team.members.append(user)
+        team.captain_id = 2
         user.team_id = team.id
         app.db.session.commit()
         with login_as_user(app, name="user_name") as client:
-            r = client.patch('/api/v1/teams/me', json={"name": "team_name", "affiliation": "changed"})
+            r = client.patch('/api/v1/teams/me', json={
+                "name": "team_name",
+                "affiliation": "changed"
+            })
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -441,4 +466,44 @@ def test_api_team_get_awards():
             r = client.get('/api/v1/teams/1/awards')
             print(r.get_json())
             assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_team_patch_password():
+    """Can a user change their team password /api/v1/teams/me if logged in as the captain"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")  # ID 2
+        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")  # ID 3
+        team = gen_team(app.db)
+        team.members.append(user1)
+        team.members.append(user2)
+        team.captain_id = 2
+        user1.team_id = team.id
+        user2.team_id = team.id
+        app.db.session.commit()
+        with login_as_user(app, name="user2") as client:
+            r = client.patch('/api/v1/teams/me', json={
+                "confirm": "password",
+                "password": "new_password"
+            })
+            assert r.status_code == 400
+
+            assert r.get_json() == {
+                'errors': {'': ['Only team captains can edit team information']},
+                'success': False
+            }
+
+            team = Teams.query.filter_by(id=1).first()
+            assert verify_password(plaintext='new_password', ciphertext=team.password) is False
+
+        with login_as_user(app, name="user1") as client:
+            r = client.patch('/api/v1/teams/me', json={
+                "confirm": "password",
+                "password": "new_password"
+            })
+            assert r.status_code == 200
+
+            team = Teams.query.filter_by(id=1).first()
+            assert verify_password(plaintext='new_password', ciphertext=team.password)
     destroy_ctfd(app)

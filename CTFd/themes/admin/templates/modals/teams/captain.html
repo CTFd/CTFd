@@ -1,0 +1,22 @@
+<form id="team-captain-form" method="POST">
+	<input type="hidden" name="id">
+	<div class="form-group">
+		<label for="captain">Team Captain</label>
+		<select class="form-control" id="captain" name="captain_id">
+			{% if team is defined %}
+				<option value="{{ team.captain.id }}">{{ team.captain.name }}</option>
+				{% for member in team.members %}
+					{% if member.id != team.captain.id %}
+						<option value="{{ member.id }}">{{ member.name }}</option>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+		</select>
+	</div>
+	<div id="results">
+
+	</div>
+	<button type="submit" class="btn btn-primary btn-outlined float-right modal-action">
+		Submit
+	</button>
+</form>
