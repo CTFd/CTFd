@@ -90,6 +90,9 @@ class Submission(Resource):
         db.session.commit()
         db.session.close()
 
+        # Delete standings cache
+        clear_standings()
+
         return {
             'success': True
         }
