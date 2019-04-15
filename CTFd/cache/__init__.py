@@ -1,6 +1,21 @@
+from flask import request
 from flask_caching import Cache
 
 cache = Cache()
+
+
+def make_cache_key(path=None, key_prefix='view/%s'):
+    """
+    This function mostly emulates Flask-Caching's `make_cache_key` function so we can delete cached api responses.
+    Over time this function may be replaced with a cleaner custom cache implementation.
+    :param path:
+    :param key_prefix:
+    :return:
+    """
+    if path is None:
+        path = request.endpoint
+    cache_key = key_prefix % path
+    return cache_key
 
 
 def clear_config():
@@ -11,7 +26,16 @@ def clear_config():
 
 def clear_standings():
     from CTFd.utils.scores import get_standings
+    from CTFd.api.v1.scoreboard import ScoreboardDetail, ScoreboardList
+    from CTFd.api import api
     cache.delete_memoized(get_standings)
+    cache.delete(
+        make_cache_key(path=api.name + '.' + ScoreboardList.endpoint)
+    )
+    cache.delete(
+        make_cache_key(path=api.name + '.' + ScoreboardDetail.endpoint)
+    )
+    cache.delete_memoized(ScoreboardList.get)
 
 
 def clear_pages():
