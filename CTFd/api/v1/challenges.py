@@ -209,6 +209,11 @@ class Challenge(Resource):
         if authed():
             user = get_current_user()
             team = get_current_team()
+
+            # TODO: Convert this into a re-useable decorator
+            if config.is_teams_mode() and team is None:
+                abort(403)
+
             unlocked_hints = set([
                 u.target for u in HintUnlocks.query.filter_by(type='hints', account_id=user.account_id)
             ])
@@ -226,10 +231,6 @@ class Challenge(Resource):
             files = [
                 url_for('views.files', path=f.location) for f in chal.files
             ]
-
-            # TODO: Convert this into a re-useable decorator
-            if config.is_teams_mode() and get_current_team() is None:
-                abort(403)
 
         for hint in Hints.query.filter_by(challenge_id=chal.id).all():
             if hint.id in unlocked_hints or ctf_ended():
