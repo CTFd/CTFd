@@ -1,5 +1,5 @@
 -r requirements.txt
-pytest==4.2.1
+pytest==4.4.0
 pytest-randomly==1.2.3
 coverage==4.5.2
 mock==2.0.0
@@ -11,3 +11,4 @@ codecov==2.0.15
 moto==1.3.7
 bandit==1.5.1
 flask_profiler==1.8.1
+pytest-xdist==1.28.0

@@ -22,10 +22,12 @@ from CTFd.cache import cache
 from sqlalchemy_utils import drop_database
 from collections import namedtuple
 from mock import Mock, patch
+from sqlalchemy.engine.url import make_url
 import datetime
 import six
 import gc
 import requests
+import uuid
 
 if six.PY2:
     text_type = unicode  # noqa: F821
@@ -66,6 +68,10 @@ def create_ctfd(ctf_name="CTFd",
         config.SAFE_MODE = True
 
     config.APPLICATION_ROOT = application_root
+    url = make_url(config.SQLALCHEMY_DATABASE_URI)
+    if url.database:
+        url.database = str(uuid.uuid4())
+    config.SQLALCHEMY_DATABASE_URI = str(url)
 
     app = create_app(config)
     app.test_client_class = CTFdTestClient
