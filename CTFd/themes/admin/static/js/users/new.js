@@ -2,8 +2,13 @@ $(document).ready(function () {
     $('#user-info-form').submit(function (e) {
         e.preventDefault();
         var params = $('#user-info-form').serializeJSON(true);
+        var url = '/api/v1/users';
+        if (params.notify) {
+            url += '?notify=true'
+        }
+        delete params.notify;
 
-        CTFd.fetch('/api/v1/users', {
+        CTFd.fetch(url, {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
