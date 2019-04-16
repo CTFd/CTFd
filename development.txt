@@ -1,5 +1,5 @@
 -r requirements.txt
-pytest==4.2.1
+pytest==4.4.0
 pytest-randomly==1.2.3
 coverage==4.5.2
 mock==2.0.0

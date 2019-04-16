@@ -7,6 +7,7 @@ from flask import url_for
 from tests.helpers import create_ctfd, destroy_ctfd, register_user, \
     login_as_user, gen_challenge, gen_file, gen_page
 from CTFd.utils import set_config
+from CTFd.utils.encoding import hexencode
 from freezegun import freeze_time
 
 
@@ -203,7 +204,9 @@ def test_user_can_access_files_with_auth_token():
         chal_id = chal.id
         path = app.config.get('UPLOAD_FOLDER')
 
-        location = os.path.join(path, 'test_file_path', 'test.txt')
+        md5hash = hexencode(os.urandom(16)).decode('utf-8')
+
+        location = os.path.join(path, md5hash, 'test.txt')
         directory = os.path.dirname(location)
         model_path = os.path.join('test_file_path', 'test.txt')
 

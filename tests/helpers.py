@@ -72,7 +72,6 @@ def create_ctfd(ctf_name="CTFd",
     if url.database:
         url.database = str(uuid.uuid4())
     config.SQLALCHEMY_DATABASE_URI = str(url)
-    print config.SQLALCHEMY_DATABASE_URI
 
     app = create_app(config)
     app.test_client_class = CTFdTestClient
