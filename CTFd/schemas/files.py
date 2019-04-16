@@ -1,4 +1,5 @@
 from CTFd.models import ma, Files
+from CTFd.utils import string_types
 
 
 class FileSchema(ma.ModelSchema):
@@ -9,9 +10,9 @@ class FileSchema(ma.ModelSchema):
 
     def __init__(self, view=None, *args, **kwargs):
         if view:
-            if type(view) == str:
+            if isinstance(view, string_types):
                 kwargs['only'] = self.views[view]
-            elif type(view) == list:
+            elif isinstance(view, list):
                 kwargs['only'] = view
 
         super(FileSchema, self).__init__(*args, **kwargs)

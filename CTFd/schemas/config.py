@@ -1,4 +1,5 @@
 from CTFd.models import ma, Configs
+from CTFd.utils import string_types
 
 
 class ConfigSchema(ma.ModelSchema):
@@ -17,9 +18,9 @@ class ConfigSchema(ma.ModelSchema):
 
     def __init__(self, view=None, *args, **kwargs):
         if view:
-            if type(view) == str:
+            if isinstance(view, string_types):
                 kwargs['only'] = self.views[view]
-            elif type(view) == list:
+            elif isinstance(view, list):
                 kwargs['only'] = view
 
         super(ConfigSchema, self).__init__(*args, **kwargs)

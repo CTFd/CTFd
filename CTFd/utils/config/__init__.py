@@ -1,5 +1,6 @@
 from flask import current_app as app
 from CTFd.utils import get_config
+from CTFd.utils.modes import USERS_MODE, TEAMS_MODE
 import time
 import os
 
@@ -11,6 +12,14 @@ def ctf_name():
 
 def user_mode():
     return get_config('user_mode')
+
+
+def is_users_mode():
+    return user_mode() == USERS_MODE
+
+
+def is_teams_mode():
+    return user_mode() == TEAMS_MODE
 
 
 def ctf_logo():

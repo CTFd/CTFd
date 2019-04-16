@@ -63,6 +63,10 @@ class ChallengeList(Resource):
                 .order_by(Solves.challenge_id.asc())\
                 .all()
             solve_ids = set([value for value, in solve_ids])
+
+            # TODO: Convert this into a re-useable decorator
+            if config.is_teams_mode() and get_current_team() is None:
+                abort(403)
         else:
             solve_ids = set()
 
@@ -223,6 +227,10 @@ class Challenge(Resource):
                 url_for('views.files', path=f.location) for f in chal.files
             ]
 
+            # TODO: Convert this into a re-useable decorator
+            if config.is_teams_mode() and get_current_team() is None:
+                abort(403)
+
         for hint in Hints.query.filter_by(challenge_id=chal.id).all():
             if hint.id in unlocked_hints or ctf_ended():
                 hints.append({
@@ -325,6 +333,10 @@ class ChallengeAttempt(Resource):
 
         user = get_current_user()
         team = get_current_team()
+
+        # TODO: Convert this into a re-useable decorator
+        if config.is_teams_mode() and team is None:
+            abort(403)
 
         fails = Fails.query.filter_by(
             account_id=user.account_id,
