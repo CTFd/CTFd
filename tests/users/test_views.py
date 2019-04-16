@@ -208,7 +208,7 @@ def test_user_can_access_files_with_auth_token():
 
         location = os.path.join(path, md5hash, 'test.txt')
         directory = os.path.dirname(location)
-        model_path = os.path.join('test_file_path', 'test.txt')
+        model_path = os.path.join(md5hash, 'test.txt')
 
         try:
             os.makedirs(directory)
