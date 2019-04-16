@@ -9,7 +9,7 @@ from CTFd.utils.decorators import (
 )
 from CTFd.cache import clear_standings
 from CTFd.utils.config import get_mail_provider
-from CTFd.utils.email import sendmail
+from CTFd.utils.email import sendmail, user_created_notification
 from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.decorators.visibility import check_account_visibility
 
@@ -44,6 +44,7 @@ class UserList(Resource):
             'data': response.data
         }
 
+    @users_namespace.doc(params={'notify': 'Whether to send the created user an email with their credentials'})
     @admins_only
     def post(self):
         req = request.get_json()
@@ -58,6 +59,17 @@ class UserList(Resource):
 
         db.session.add(response.data)
         db.session.commit()
+
+        if request.args.get('notify'):
+            name = response.data.name
+            email = response.data.email
+            password = req.get('password')
+
+            user_created_notification(
+                addr=email,
+                name=name,
+                password=password
+            )
 
         clear_standings()
 

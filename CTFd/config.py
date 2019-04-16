@@ -214,7 +214,7 @@ class Config(object):
     REVERSE_PROXY = os.getenv("REVERSE_PROXY") or False
     TEMPLATES_AUTO_RELOAD = (not os.getenv("TEMPLATES_AUTO_RELOAD"))  # Defaults True
     SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS") is not None  # Defaults False
-    SWAGGER_UI = os.getenv("SWAGGER_UI") is not None  # Defaults False
+    SWAGGER_UI = '/' if os.getenv("SWAGGER_UI") is not None else False  # Defaults False
     UPDATE_CHECK = (not os.getenv("UPDATE_CHECK"))  # Defaults True
     APPLICATION_ROOT = os.getenv('APPLICATION_ROOT') or '/'
 
