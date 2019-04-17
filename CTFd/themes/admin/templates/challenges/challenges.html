@@ -34,7 +34,7 @@
 					</thead>
 					<tbody>
 					{% for challenge in challenges %}
-						<tr>
+						<tr data-href="{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}">
 							<td>{{ challenge.id }}</td>
 							<td><a href="{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}">{{ challenge.name }}</a></td>
 							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.category }}</td>
@@ -55,4 +55,5 @@
 {% endblock %}
 
 {% block scripts %}
+	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/challenges.js') }}"></script>
 {% endblock %}
