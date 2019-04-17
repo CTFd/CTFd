@@ -2,7 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from CTFd.utils import set_config
-from tests.helpers import *
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_challenge,
+                           gen_user)
 from freezegun import freeze_time
 
 

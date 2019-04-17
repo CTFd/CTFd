@@ -1,6 +1,6 @@
 from flask import request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Files, ChallengeFiles, PageFiles
+from CTFd.models import db, Files
 from CTFd.schemas.files import FileSchema
 from CTFd.utils import uploads
 from CTFd.utils.decorators import (

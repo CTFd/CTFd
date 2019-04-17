@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import *
+from CTFd.models import Users
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    register_user,
+    login_as_user,
+    gen_award
+)
 
 
 def test_accessing_hidden_users():

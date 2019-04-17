@@ -4,7 +4,6 @@ from werkzeug.datastructures import CallbackDict
 from CTFd.cache import cache
 from CTFd.utils import text_type
 from uuid import uuid4
-from itsdangerous import Signer, BadSignature, want_bytes
 import six
 
 
@@ -69,7 +68,7 @@ class CachingSessionInterface(SessionInterface):
             try:
                 data = self.serializer.loads(val)
                 return self.session_class(data, sid=sid)
-            except Exception as e:
+            except Exception:
                 return self.session_class(sid=sid, permanent=self.permanent)
         return self.session_class(sid=sid, permanent=self.permanent)
 

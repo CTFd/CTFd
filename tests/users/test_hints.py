@@ -1,8 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.utils import get_config, set_config
-from tests.helpers import *
+from CTFd.models import db, Unlocks, Users
+from CTFd.utils import set_config, text_type
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_challenge,
+                           gen_award,
+                           gen_flag,
+                           gen_hint)
 from freezegun import freeze_time
 
 
@@ -10,20 +18,20 @@ def test_user_cannot_unlock_hint():
     """Test that a user can't unlock a hint if they don't have enough points"""
     app = create_ctfd()
     with app.app_context():
-        with app.test_client() as client:
+        with app.test_client():
             register_user(app, name="user1", email="user1@ctfd.io")
 
             chal = gen_challenge(app.db, value=100)
             chal_id = chal.id
 
-            flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+            gen_flag(app.db, challenge_id=chal.id, content='flag')
 
             hint = gen_hint(db, chal_id, cost=10)
             hint_id = hint.id
 
             client = login_as_user(app, name="user1", password="password")
 
-            with client.session_transaction() as sess:
+            with client.session_transaction():
                 r = client.get('/api/v1/hints/{}'.format(hint_id))
                 resp = r.get_json()
                 assert resp['data'].get('content') is None
@@ -35,25 +43,25 @@ def test_user_can_unlock_hint():
     """Test that a user can unlock a hint if they have enough points"""
     app = create_ctfd()
     with app.app_context():
-        with app.test_client() as client:
+        with app.test_client():
             register_user(app, name="user1", email="user1@ctfd.io")
 
             chal = gen_challenge(app.db, value=100)
             chal_id = chal.id
 
-            flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+            gen_flag(app.db, challenge_id=chal.id, content='flag')
 
             hint = gen_hint(app.db, chal_id, cost=10)
             hint_id = hint.id
 
-            award = gen_award(app.db, user_id=2, value=15)
+            gen_award(app.db, user_id=2, value=15)
 
             client = login_as_user(app, name="user1", password="password")
 
             user = Users.query.filter_by(name="user1").first()
             assert user.score == 15
 
-            with client.session_transaction() as sess:
+            with client.session_transaction():
                 r = client.get('/api/v1/hints/{}'.format(hint_id))
                 resp = r.get_json()
                 assert resp['data'].get('content') is None
@@ -83,7 +91,7 @@ def test_unlocking_hints_with_no_cost():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        hint = gen_hint(app.db, chal_id)
+        gen_hint(app.db, chal_id)
         client = login_as_user(app)
         r = client.get('/api/v1/hints/1')
         resp = r.get_json()['data']
@@ -98,14 +106,14 @@ def test_unlocking_hints_with_cost_during_ctf_with_points():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        hint = gen_hint(app.db, chal_id, cost=10)
+        gen_hint(app.db, chal_id, cost=10)
         gen_award(app.db, user_id=2)
 
         client = login_as_user(app)
         r = client.get('/api/v1/hints/1')
         assert r.get_json()['data'].get('content') is None
 
-        r = client.post('/api/v1/unlocks', json={
+        client.post('/api/v1/unlocks', json={
             'target': 1,
             'type': 'hints'
         })
@@ -125,7 +133,7 @@ def test_unlocking_hints_with_cost_during_ctf_without_points():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        hint = gen_hint(app.db, chal_id, cost=10)
+        gen_hint(app.db, chal_id, cost=10)
 
         client = login_as_user(app)
 
@@ -153,7 +161,7 @@ def test_unlocking_hints_with_cost_before_ctf():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        hint = gen_hint(app.db, chal_id)
+        gen_hint(app.db, chal_id)
         gen_award(app.db, user_id=2)
 
         set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
@@ -191,7 +199,7 @@ def test_unlocking_hints_with_cost_during_ended_ctf():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        hint = gen_hint(app.db, chal_id, cost=10)
+        gen_hint(app.db, chal_id, cost=10)
         gen_award(app.db, user_id=2)
 
         set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
@@ -229,15 +237,15 @@ def test_unlocking_hints_with_cost_during_frozen_ctf():
             register_user(app)
             chal = gen_challenge(app.db)
             chal_id = chal.id
-            hint = gen_hint(app.db, chal_id, cost=10)
+            gen_hint(app.db, chal_id, cost=10)
             gen_award(app.db, user_id=2)
 
         with freeze_time("2017-10-8"):
             client = login_as_user(app)
 
-            r = client.get('/api/v1/hints/1')
+            client.get('/api/v1/hints/1')
 
-            r = client.post('/api/v1/unlocks', json={
+            client.post('/api/v1/unlocks', json={
                 'target': 1,
                 'type': 'hints'
             })
@@ -259,7 +267,7 @@ def test_unlocking_hint_for_unicode_challenge():
         register_user(app)
         chal = gen_challenge(app.db, name=text_type('🐺'))
         chal_id = chal.id
-        hint = gen_hint(app.db, chal_id)
+        gen_hint(app.db, chal_id)
 
         client = login_as_user(app)
 

@@ -1,14 +1,10 @@
-from sqlalchemy.sql.expression import union_all
-from marshmallow import fields, post_load
 from marshmallow import validate, ValidationError, pre_load
 from marshmallow_sqlalchemy import field_for
-from CTFd.models import ma, Teams
+from CTFd.models import ma, Teams, Users
 from CTFd.utils.validators import validate_country_code
 from CTFd.utils import get_config
-from CTFd.utils.user import is_admin, get_current_team
-from CTFd.utils.countries import lookup_country_code
-from CTFd.utils.user import is_admin, get_current_team
-from CTFd.utils.crypto import verify_password, hash_password
+from CTFd.utils.user import is_admin, get_current_team, get_current_user
+from CTFd.utils.crypto import verify_password
 from CTFd.utils import string_types
 
 
@@ -35,10 +31,13 @@ class TeamSchema(ma.ModelSchema):
     website = field_for(
         Teams,
         'website',
-        validate=validate.URL(
-            error='Websites must be a proper URL starting with http or https',
-            schemes={'http', 'https'}
-        )
+        validate=[
+            # This is a dirty hack to let website accept empty strings so you can remove your website
+            lambda website: validate.URL(
+                error='Websites must be a proper URL starting with http or https',
+                schemes={'http', 'https'}
+            )(website) if website else True
+        ]
     )
     country = field_for(
         Teams,
@@ -105,20 +104,50 @@ class TeamSchema(ma.ModelSchema):
     def validate_password_confirmation(self, data):
         password = data.get('password')
         confirm = data.get('confirm')
-        target_team = get_current_team()
 
         if is_admin():
             pass
         else:
-            if password and (confirm is None):
+            current_team = get_current_team()
+            current_user = get_current_user()
+
+            if current_team.captain_id != current_user.id:
+                raise ValidationError('Only the captain can change the team password', field_names=['captain_id'])
+
+            if password and (bool(confirm) is False):
                 raise ValidationError('Please confirm your current password', field_names=['confirm'])
 
             if password and confirm:
-                test = verify_password(plaintext=confirm, ciphertext=target_team.password)
+                test = verify_password(plaintext=confirm, ciphertext=current_team.password)
                 if test is True:
                     return data
                 else:
                     raise ValidationError('Your previous password is incorrect', field_names=['confirm'])
+            else:
+                data.pop('password', None)
+                data.pop('confirm', None)
+
+    @pre_load
+    def validate_captain_id(self, data):
+        captain_id = data.get('captain_id')
+        if captain_id is None:
+            return
+
+        if is_admin():
+            team_id = data.get('id')
+            target_team = Teams.query.filter_by(id=team_id).first()
+            captain = Users.query.filter_by(id=captain_id).first()
+            if captain in target_team.members:
+                return
+            else:
+                raise ValidationError('Invalid Captain ID', field_names=['captain_id'])
+        else:
+            current_team = get_current_team()
+            current_user = get_current_user()
+            if current_team.captain_id == current_user.id:
+                return
+            else:
+                raise ValidationError('Only the captain can change team captain', field_names=['captain_id'])
 
     views = {
         'user': [
@@ -130,6 +159,7 @@ class TeamSchema(ma.ModelSchema):
             'members',
             'id',
             'oauth_id',
+            'captain_id',
         ],
         'self': [
             'website',
@@ -141,7 +171,8 @@ class TeamSchema(ma.ModelSchema):
             'members',
             'id',
             'oauth_id',
-            'password'
+            'password',
+            'captain_id',
         ],
         'admin': [
             'website',
@@ -157,7 +188,8 @@ class TeamSchema(ma.ModelSchema):
             'hidden',
             'id',
             'oauth_id',
-            'password'
+            'password',
+            'captain_id',
         ]
     }
 

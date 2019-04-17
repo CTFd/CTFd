@@ -29,6 +29,7 @@ function unlock(params){
 function loadhint(hintid) {
     var md = window.markdownit({
         html: true,
+        linkify: true,
     });
 
     hint(hintid).then(function (response) {

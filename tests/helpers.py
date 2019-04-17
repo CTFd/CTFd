@@ -2,19 +2,35 @@ from flask.testing import FlaskClient
 from werkzeug.datastructures import Headers
 from CTFd import create_app
 from CTFd.config import TestingConfig
-from CTFd.models import *
+from CTFd.models import (Awards,
+                         Challenges,
+                         ChallengeFiles,
+                         Fails,
+                         Files,
+                         Flags,
+                         Hints,
+                         Notifications,
+                         Pages,
+                         PageFiles,
+                         Solves,
+                         Tags,
+                         Teams,
+                         Tracking,
+                         Unlocks,
+                         Users)
 from CTFd.cache import cache
-from sqlalchemy_utils import database_exists, create_database, drop_database
-from sqlalchemy.engine.url import make_url
+from sqlalchemy_utils import drop_database
 from collections import namedtuple
 from mock import Mock, patch
+from sqlalchemy.engine.url import make_url
 import datetime
 import six
 import gc
 import requests
+import uuid
 
 if six.PY2:
-    text_type = unicode
+    text_type = unicode  # noqa: F821
     binary_type = str
 else:
     text_type = str
@@ -37,15 +53,27 @@ class CTFdTestClient(FlaskClient):
         return super(CTFdTestClient, self).open(*args, **kwargs)
 
 
-def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users", setup=True, enable_plugins=False, application_root='/'):
+def create_ctfd(ctf_name="CTFd",
+                name="admin",
+                email="admin@ctfd.io",
+                password="password",
+                user_mode="users",
+                setup=True,
+                enable_plugins=False,
+                application_root='/',
+                config=TestingConfig):
     if enable_plugins:
-        TestingConfig.SAFE_MODE = False
+        config.SAFE_MODE = False
     else:
-        TestingConfig.SAFE_MODE = True
+        config.SAFE_MODE = True
 
-    TestingConfig.APPLICATION_ROOT = application_root
+    config.APPLICATION_ROOT = application_root
+    url = make_url(config.SQLALCHEMY_DATABASE_URI)
+    if url.database:
+        url.database = str(uuid.uuid4())
+    config.SQLALCHEMY_DATABASE_URI = str(url)
 
-    app = create_app(TestingConfig)
+    app = create_app(config)
     app.test_client_class = CTFdTestClient
 
     if setup:
@@ -56,7 +84,7 @@ def create_ctfd(ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="
 def setup_ctfd(app, ctf_name="CTFd", name="admin", email="admin@ctfd.io", password="password", user_mode="users"):
     with app.app_context():
         with app.test_client() as client:
-            r = client.get('/setup')  # Populate session with nonce
+            client.get('/setup')  # Populate session with nonce
             with client.session_transaction() as sess:
                 data = {
                     "ctf_name": ctf_name,
@@ -80,7 +108,7 @@ def destroy_ctfd(app):
 def register_user(app, name="user", email="user@ctfd.io", password="password", raise_for_error=True):
     with app.app_context():
         with app.test_client() as client:
-            r = client.get('/register')
+            client.get('/register')
             with client.session_transaction() as sess:
                 data = {
                     "name": name,
@@ -101,7 +129,7 @@ def register_user(app, name="user", email="user@ctfd.io", password="password", r
 def register_team(app, name="team", password="password", raise_for_error=True):
     with app.app_context():
         with app.test_client() as client:
-            r = client.get('/team')
+            client.get('/team')
             with client.session_transaction() as sess:
                 data = {
                     "name": name,
@@ -117,7 +145,7 @@ def register_team(app, name="team", password="password", raise_for_error=True):
 def login_as_user(app, name="user", password="password", raise_for_error=True):
     with app.app_context():
         with app.test_client() as client:
-            r = client.get('/login')
+            client.get('/login')
             with client.session_transaction() as sess:
                 data = {
                     "name": name,

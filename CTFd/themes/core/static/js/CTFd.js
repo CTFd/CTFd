@@ -3,6 +3,8 @@ var CTFd = (function () {
     var options = {
         urlRoot: '',
         csrfNonce: '',
+        start: null,
+        end: null,
     };
 
     var challenges = {};

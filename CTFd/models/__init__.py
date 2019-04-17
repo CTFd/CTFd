@@ -1,14 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from sqlalchemy import TypeDecorator, String, func, types, CheckConstraint, and_
 from sqlalchemy.sql.expression import union_all
-from sqlalchemy.types import JSON, NullType
 from sqlalchemy.orm import validates, column_property
-from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.ext.hybrid import hybrid_property
 from CTFd.utils.crypto import hash_password
 from CTFd.cache import cache
 import datetime
-import json
 import six
 
 db = SQLAlchemy()
@@ -26,43 +23,6 @@ def get_class_by_tablename(tablename):
         if hasattr(c, '__tablename__') and c.__tablename__ == tablename:
             return c
     return None
-
-
-class SQLiteJson(TypeDecorator):
-    impl = String
-
-    class Comparator(String.Comparator):
-        def __getitem__(self, index):
-            if isinstance(index, tuple):
-                index = "$%s" % (
-                    "".join([
-                        "[%s]" % elem if isinstance(elem, int)
-                        else '."%s"' % elem for elem in index
-                    ])
-                )
-            elif isinstance(index, int):
-                index = "$[%s]" % index
-            else:
-                index = '$."%s"' % index
-
-            # json_extract does not appear to return JSON sub-elements
-            # which is weird.
-            return func.json_extract(self.expr, index, type_=NullType)
-
-    comparator_factory = Comparator
-
-    def process_bind_param(self, value, dialect):
-        if value is not None:
-            value = json.dumps(value)
-        return value
-
-    def process_result_value(self, value, dialect):
-        if value is not None:
-            value = json.loads(value)
-        return value
-
-
-JSON = types.JSON().with_variant(SQLiteJson, 'sqlite')
 
 
 class Notifications(db.Model):
@@ -111,7 +71,7 @@ class Challenges(db.Model):
     category = db.Column(db.String(80))
     type = db.Column(db.String(80))
     state = db.Column(db.String(80), nullable=False, default='visible')
-    requirements = db.Column(JSON)
+    requirements = db.Column(db.JSON)
 
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
@@ -136,7 +96,7 @@ class Hints(db.Model):
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     content = db.Column(db.Text)
     cost = db.Column(db.Integer, default=0)
-    requirements = db.Column(JSON)
+    requirements = db.Column(db.JSON)
 
     __mapper_args__ = {
         'polymorphic_identity': 'standard',
@@ -167,16 +127,22 @@ class Awards(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    type = db.Column(db.String(80), default='standard')
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     icon = db.Column(db.Text)
-    requirements = db.Column(JSON)
+    requirements = db.Column(db.JSON)
 
     user = db.relationship('Users', foreign_keys="Awards.user_id", lazy='select')
     team = db.relationship('Teams', foreign_keys="Awards.team_id", lazy='select')
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'standard',
+        'polymorphic_on': type
+    }
 
     @hybrid_property
     def account_id(self):
@@ -477,7 +443,7 @@ class Teams(db.Model):
     password = db.Column(db.String(128))
     secret = db.Column(db.String(128))
 
-    members = db.relationship("Users", backref="team")
+    members = db.relationship("Users", backref="team", foreign_keys='Users.team_id')
 
     # Supplementary attributes
     website = db.Column(db.String(128))
@@ -486,6 +452,10 @@ class Teams(db.Model):
     bracket = db.Column(db.String(32))
     hidden = db.Column(db.Boolean, default=False)
     banned = db.Column(db.Boolean, default=False)
+
+    # Relationship for Users
+    captain_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    captain = db.relationship("Users", foreign_keys=[captain_id])
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 

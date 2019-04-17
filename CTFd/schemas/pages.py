@@ -1,7 +1,4 @@
-from sqlalchemy.sql.expression import union_all
-from marshmallow import fields, post_load
-from marshmallow import validate, ValidationError, pre_load
-from marshmallow_sqlalchemy import field_for
+from marshmallow import pre_load
 from CTFd.models import ma, Pages
 from CTFd.utils import string_types
 

@@ -3,6 +3,10 @@ $(document).ready(function () {
         $('#team-info-modal').modal('toggle');
     });
 
+    $('.edit-captain').click(function (e) {
+        $('#team-captain-modal').modal('toggle');
+    });
+
     $('.delete-team').click(function (e) {
         ezq({
             title: "Delete Team",

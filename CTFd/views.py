@@ -1,7 +1,7 @@
 from flask import current_app as app, render_template, request, redirect, abort, url_for, session, Blueprint, Response, send_file
 from flask.helpers import safe_join
 
-from CTFd.models import db, Admins, Files, Pages, Notifications
+from CTFd.models import db, Users, Admins, Teams, Files, Pages, Notifications
 from CTFd.utils import markdown
 from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
@@ -13,8 +13,9 @@ from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
-from CTFd.utils.dates import ctf_started, ctftime
+from CTFd.utils.dates import ctftime
 from CTFd.utils.decorators import authed_only
+from CTFd.utils.security.signing import unserialize, BadTimeSignature, SignatureExpired, BadSignature
 from sqlalchemy.exc import IntegrityError
 import os
 
@@ -97,7 +98,7 @@ def setup():
             set_config('mail_password', None)
             set_config('mail_useauth', None)
 
-            setup = set_config('setup', True)
+            set_config('setup', True)
 
             try:
                 db.session.add(admin)
@@ -194,7 +195,44 @@ def files(path):
                 if not ctftime():
                     abort(403)
         else:
-            abort(403)
+            if not ctftime():
+                abort(403)
+
+            # Allow downloads if a valid token is provided
+            token = request.args.get('token', '')
+            try:
+                data = unserialize(token, max_age=3600)
+                user_id = data.get('user_id')
+                team_id = data.get('team_id')
+                file_id = data.get('file_id')
+                user = Users.query.filter_by(id=user_id).first()
+                team = Teams.query.filter_by(id=team_id).first()
+
+                # Check user is admin if challenge_visibility is admins only
+                if get_config('challenge_visibility') == 'admins' and user.type != 'admin':
+                    abort(403)
+
+                # Check that the user exists and isn't banned
+                if user:
+                    if user.banned:
+                        abort(403)
+                else:
+                    abort(403)
+
+                # Check that the team isn't banned
+                if team:
+                    if team.banned:
+                        abort(403)
+                else:
+                    pass
+
+                # Check that the token properly refers to the file
+                if file_id != f.id:
+                    abort(403)
+
+            # The token isn't expired or broken
+            except (BadTimeSignature, SignatureExpired, BadSignature):
+                abort(403)
 
     uploader = get_uploader()
     try:

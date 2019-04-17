@@ -1,9 +1,8 @@
-from flask_restplus import Namespace, Resource
-from CTFd.models import db, Submissions
+from flask_restplus import Resource
+from CTFd.models import Submissions
 from CTFd.utils.decorators import (
     admins_only,
 )
-from CTFd.plugins.challenges import get_chal_class
 from CTFd.api.v1.statistics import statistics_namespace
 from sqlalchemy import func
 

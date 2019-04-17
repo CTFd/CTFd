@@ -1,8 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import Users
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           get_scores,
+                           gen_challenge,
+                           gen_award,
+                           gen_flag,
+                           gen_solve)
 from freezegun import freeze_time
-from tests.helpers import *
 
 
 def test_user_get_scoreboard_components():
@@ -37,7 +46,7 @@ def test_user_score_is_correct():
 
         # create challenge
         chal = gen_challenge(app.db, value=100)
-        flag = gen_flag(app.db, challenge_id=chal.id, content='flag')
+        gen_flag(app.db, challenge_id=chal.id, content='flag')
         chal_id = chal.id
 
         # create a solve for the challenge for user1. (the id is 2 because of the admin)
@@ -77,11 +86,11 @@ def test_top_10():
         register_user(app)
 
         chal1 = gen_challenge(app.db)
-        flag1 = gen_flag(app.db, challenge_id=chal1.id, content='flag')
+        gen_flag(app.db, challenge_id=chal1.id, content='flag')
         chal1_id = chal1.id
 
         chal2 = gen_challenge(app.db)
-        flag2 = gen_flag(app.db, challenge_id=chal2.id, content='flag')
+        gen_flag(app.db, challenge_id=chal2.id, content='flag')
         chal2_id = chal2.id
 
         # Generates solve for user1
@@ -147,21 +156,21 @@ def test_scoring_logic():
         client2 = login_as_user(app, name="user2", password="password")
 
         chal1 = gen_challenge(app.db)
-        flag1 = gen_flag(app.db, challenge_id=chal1.id, content='flag')
+        gen_flag(app.db, challenge_id=chal1.id, content='flag')
         chal1_id = chal1.id
 
         chal2 = gen_challenge(app.db)
-        flag2 = gen_flag(app.db, challenge_id=chal2.id, content='flag')
+        gen_flag(app.db, challenge_id=chal2.id, content='flag')
         chal2_id = chal2.id
 
         # user1 solves chal1
         with freeze_time("2017-10-3 03:21:34"):
-            with client1.session_transaction() as sess:
+            with client1.session_transaction():
                 data = {
                     "submission": 'flag',
                     "challenge_id": chal1_id
                 }
-                r = client1.post('/api/v1/challenges/attempt', json=data)
+                client1.post('/api/v1/challenges/attempt', json=data)
 
         # user1 is now on top
         scores = get_scores(admin)
@@ -169,19 +178,19 @@ def test_scoring_logic():
 
         # user2 solves chal1 and chal2
         with freeze_time("2017-10-4 03:30:34"):
-            with client2.session_transaction() as sess:
+            with client2.session_transaction():
                 # solve chal1
                 data = {
                     "submission": 'flag',
                     "challenge_id": chal1_id
                 }
-                r = client2.post('/api/v1/challenges/attempt', json=data)
+                client2.post('/api/v1/challenges/attempt', json=data)
                 # solve chal2
                 data = {
                     "submission": 'flag',
                     "challenge_id": chal2_id
                 }
-                r = client2.post('/api/v1/challenges/attempt', json=data)
+                client2.post('/api/v1/challenges/attempt', json=data)
 
         # user2 is now on top
         scores = get_scores(admin)
@@ -189,12 +198,12 @@ def test_scoring_logic():
 
         # user1 solves chal2
         with freeze_time("2017-10-5 03:50:34"):
-            with client1.session_transaction() as sess:
+            with client1.session_transaction():
                 data = {
                     "submission": 'flag',
                     "challenge_id": chal2_id
                 }
-                r = client1.post('/api/v1/challenges/attempt', json=data)
+                client1.post('/api/v1/challenges/attempt', json=data)
 
         # user2 should still be on top because they solved chal2 first
         scores = get_scores(admin)
@@ -214,26 +223,26 @@ def test_scoring_logic_with_zero_point_challenges():
         client2 = login_as_user(app, name="user2", password="password")
 
         chal1 = gen_challenge(app.db)
-        flag1 = gen_flag(app.db, challenge_id=chal1.id, content='flag')
+        gen_flag(app.db, challenge_id=chal1.id, content='flag')
         chal1_id = chal1.id
 
         chal2 = gen_challenge(app.db)
-        flag2 = gen_flag(app.db, challenge_id=chal2.id, content='flag')
+        gen_flag(app.db, challenge_id=chal2.id, content='flag')
         chal2_id = chal2.id
 
         # A 0 point challenge shouldn't influence the scoreboard (see #577)
         chal0 = gen_challenge(app.db, value=0)
-        flag0 = gen_flag(app.db, challenge_id=chal0.id, content='flag')
+        gen_flag(app.db, challenge_id=chal0.id, content='flag')
         chal0_id = chal0.id
 
         # user1 solves chal1
         with freeze_time("2017-10-3 03:21:34"):
-            with client1.session_transaction() as sess:
+            with client1.session_transaction():
                 data = {
                     "submission": 'flag',
                     "challenge_id": chal1_id
                 }
-                r = client1.post('/api/v1/challenges/attempt', json=data)
+                client1.post('/api/v1/challenges/attempt', json=data)
 
         # user1 is now on top
         scores = get_scores(admin)
@@ -241,19 +250,19 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user2 solves chal1 and chal2
         with freeze_time("2017-10-4 03:30:34"):
-            with client2.session_transaction() as sess:
+            with client2.session_transaction():
                 # solve chal1
                 data = {
                     "submission": 'flag',
                     "challenge_id": chal1_id
                 }
-                r = client2.post('/api/v1/challenges/attempt'.format(chal1_id), json=data)
+                client2.post('/api/v1/challenges/attempt'.format(chal1_id), json=data)
                 # solve chal2
                 data = {
                     "submission": 'flag',
                     "challenge_id": chal2_id
                 }
-                r = client2.post('/api/v1/challenges/attempt'.format(chal2_id), json=data)
+                client2.post('/api/v1/challenges/attempt'.format(chal2_id), json=data)
 
         # user2 is now on top
         scores = get_scores(admin)
@@ -261,12 +270,12 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user1 solves chal2
         with freeze_time("2017-10-5 03:50:34"):
-            with client1.session_transaction() as sess:
+            with client1.session_transaction():
                 data = {
                     "submission": 'flag',
                     "challenge_id": chal2_id
                 }
-                r = client1.post('/api/v1/challenges/attempt'.format(chal2_id), json=data)
+                client1.post('/api/v1/challenges/attempt'.format(chal2_id), json=data)
 
         # user2 should still be on top because they solved chal2 first
         scores = get_scores(admin)
@@ -274,12 +283,12 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user2 solves a 0 point challenge
         with freeze_time("2017-10-5 03:55:34"):
-            with client2.session_transaction() as sess:
+            with client2.session_transaction():
                 data = {
                     "submission": 'flag',
                     "challenge_id": chal0_id
                 }
-                r = client2.post('/api/v1/challenges/attempt'.format(chal0_id), json=data)
+                client2.post('/api/v1/challenges/attempt'.format(chal0_id), json=data)
 
         # user2 should still be on top because 0 point challenges should not tie break
         scores = get_scores(admin)
@@ -299,7 +308,6 @@ def test_hidden_users_should_not_influence_scores():
         app.db.session.commit()
 
         client1 = login_as_user(app, name="user1", password="password")
-        client2 = login_as_user(app, name="user2", password="password")
 
         # User 1 solves 1st challenge
         chal1 = gen_challenge(app.db)

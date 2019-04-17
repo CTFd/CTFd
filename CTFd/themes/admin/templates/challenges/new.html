@@ -32,8 +32,7 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme='admin', path='js/utils.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/codemirror.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/codemirror.min.js') }}"></script>
 	<script>
 	var nonce = "{{ nonce }}";
 	</script>

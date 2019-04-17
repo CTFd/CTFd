@@ -1,10 +1,8 @@
-from flask import request, render_template, session, Blueprint
+from flask import request, render_template, Blueprint
 
-from CTFd.models import Users, Solves, Awards
-from CTFd.utils import get_config
+from CTFd.models import Users
 from CTFd.utils.decorators import authed_only
 from CTFd.utils import config
-from CTFd.utils.dates import unix_time_to_utc
 from CTFd.utils.user import get_current_user
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
 
@@ -44,7 +42,7 @@ def private():
     score = user.score
 
     return render_template(
-        'users/user.html',
+        'users/private.html',
         solves=solves,
         awards=awards,
         user=user,
@@ -59,4 +57,4 @@ def private():
 @check_score_visibility
 def public(user_id):
     user = Users.query.filter_by(id=user_id, banned=False, hidden=False).first_or_404()
-    return render_template('users/user.html', user=user)
+    return render_template('users/public.html', user=user)

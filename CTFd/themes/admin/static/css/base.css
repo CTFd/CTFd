@@ -189,3 +189,8 @@ pre {
     word-break: break-word !important;
     overflow-wrap: break-word !important;
 }
+
+.fa-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

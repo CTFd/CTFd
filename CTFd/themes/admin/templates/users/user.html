@@ -14,7 +14,7 @@
 				</button>
 			</div>
 			<div class="modal-body clearfix">
-				{% include "admin/modals/users/create.html" %}
+				{% include "admin/modals/users/edit.html" %}
 			</div>
 		</div>
 	</div>
@@ -343,8 +343,7 @@ var USER_ID = {{ user.id }};
 var USER_NAME = {{ user.name | tojson }};
 var TEAM_ID = {{ user.team_id | tojson }};
 </script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/plotly.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='core', path='js/vendor/plotly.min.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/users/user.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/users/info.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/users/actions.js') }}"></script>

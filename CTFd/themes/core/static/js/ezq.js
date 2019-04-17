@@ -78,13 +78,20 @@ function ezq(args){
 }
 
 function ezpg(args){
+    if (args.target){
+        var obj = $(args.target);
+        var pbar = obj.find('.progress-bar');
+        pbar.css('width', args.width + '%');
+        return obj;
+    }
     var bar = progress.format(args.width);
     var res = modal.format(args.title, bar);
 
     var obj = $(res);
     $('main').append(obj);
+    obj.modal('show');
 
-    return obj.modal('show');
+    return obj;
 }
 
 function ezbadge(args) {

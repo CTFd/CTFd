@@ -217,6 +217,11 @@ $(function () {
         form_data.append('backup', import_file);
         form_data.append('nonce', csrf_nonce);
 
+        var pg = ezpg({
+            width: 0,
+            title: "Upload Progress",
+        });
+
         $.ajax({
             url: script_root + '/admin/import',
             type: 'POST',
@@ -229,8 +234,36 @@ $(function () {
                     alert(resp.responseText);
                 }
             },
+            xhr: function () {
+                var xhr = $.ajaxSettings.xhr();
+                xhr.upload.onprogress = function (e) {
+                    if (e.lengthComputable) {
+                        var width = (e.loaded / e.total) * 100;
+                        pg = ezpg({
+                            target: pg,
+                            width: width
+                        });
+                    }
+                };
+                return xhr;
+            },
             success: function (data) {
-                window.location.reload()
+                // Refresh modal
+                pg = ezpg({
+                    target: pg,
+                    width: 100,
+                });
+                setTimeout(
+                    function () {
+                        pg.modal('hide');
+                    }, 500
+                );
+
+                setTimeout(
+                    function () {
+                        window.location.reload();
+                    }, 700
+                );
             }
         });
     });

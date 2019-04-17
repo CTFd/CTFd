@@ -1,4 +1,4 @@
-from tests.helpers import *
+from tests.helpers import create_ctfd, destroy_ctfd
 
 
 def test_sessions_set_httponly():

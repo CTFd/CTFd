@@ -1,17 +1,13 @@
-from flask import session, request
+from flask import request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Hints, HintUnlocks
-from CTFd.plugins.challenges import get_chal_class
-from CTFd.utils.dates import ctf_ended
 from CTFd.utils.user import get_current_user, is_admin
 from CTFd.schemas.hints import HintSchema
 from CTFd.utils.decorators import (
     during_ctf_time_only,
-    require_verified_emails,
     admins_only,
     authed_only
 )
-from sqlalchemy.sql import or_
 
 hints_namespace = Namespace('hints', description="Endpoint to retrieve Hints")
 

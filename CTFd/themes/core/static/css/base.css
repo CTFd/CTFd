@@ -150,3 +150,8 @@ select.form-control {
     -moz-border-radius: 0 !important;
     border-radius: 0 !important;
 }
+
+.fa-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

@@ -1,8 +1,8 @@
 #!/bin/sh
 set -eo pipefail
 
-WORKERS=${WORKERS:-1}
-WORKER_CLASS=${WORKER_CLASS:-geventwebsocket.gunicorn.workers.GeventWebSocketWorker}
+WORKERS=${WORKERS:-4}
+WORKER_CLASS=${WORKER_CLASS:-gevent}
 ACCESS_LOG=${ACCESS_LOG:--}
 ERROR_LOG=${ERROR_LOG:--}
 

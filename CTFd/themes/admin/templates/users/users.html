@@ -70,7 +70,7 @@
 				</thead>
 				<tbody>
 					{% for user in users %}
-					<tr name="{{ user.id }}">
+					<tr name="{{ user.id }}" data-href="{{ url_for('admin.users_detail', user_id=user.id) }}">
 						<td class="team-id" value="{{ user.id }}">{{ user.id }}</td>
 						<td class="team-name" value="{{ user.name }}">
 							<a href="{{ url_for('admin.users_detail', user_id=user.id) }}">

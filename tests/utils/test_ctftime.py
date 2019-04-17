@@ -1,7 +1,12 @@
-from tests.helpers import *
-from CTFd.utils import get_config, set_config
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_challenge,
+                           gen_flag)
+from CTFd.models import Solves
+from CTFd.utils import set_config
 from CTFd.utils.dates import ctf_started, ctf_ended
-from CTFd.cache import cache
 from freezegun import freeze_time
 
 
@@ -14,7 +19,7 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        flag = gen_flag(app.db, challenge_id=chal.id, content=u'flag')
+        gen_flag(app.db, challenge_id=chal.id, content=u'flag')
 
         with freeze_time("2017-10-3"):  # CTF has not started yet.
             client = login_as_user(app)
@@ -43,7 +48,7 @@ def test_ctftime_allows_accessing_challenges_during_ctf():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        flag = gen_flag(app.db, challenge_id=chal.id, content=u'flag')
+        gen_flag(app.db, challenge_id=chal.id, content=u'flag')
 
         with freeze_time("2017-10-5"):
             client = login_as_user(app)
@@ -72,7 +77,7 @@ def test_ctftime_prevents_accessing_challenges_after_ctf():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        flag = gen_flag(app.db, challenge_id=chal.id, content=u'flag')
+        gen_flag(app.db, challenge_id=chal.id, content=u'flag')
 
         with freeze_time("2017-10-7"):
             client = login_as_user(app)

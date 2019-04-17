@@ -1,4 +1,4 @@
-from CTFd.utils import get_config, set_config
+from CTFd.utils import get_config
 from CTFd.models import Users, Teams
 from flask import url_for
 
@@ -24,3 +24,16 @@ def get_model():
         return Users
     elif get_config('user_mode') == TEAMS_MODE:
         return Teams
+
+
+def get_mode_as_word(plural=False, capitalize=False):
+    if get_config('user_mode') == USERS_MODE:
+        word = 'user'
+    else:
+        word = 'team'
+
+    if plural:
+        word += 's'
+    if capitalize:
+        word = word.title()
+    return word

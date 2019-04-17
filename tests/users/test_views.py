@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import url_for
-from tests.helpers import *
-from freezegun import freeze_time
-from CTFd.utils import set_config
 import os
+
+from flask import url_for
+from tests.helpers import create_ctfd, destroy_ctfd, register_user, \
+    login_as_user, gen_challenge, gen_file, gen_page
+from CTFd.utils import set_config
+from CTFd.utils.encoding import hexencode
+from freezegun import freeze_time
 
 
 def test_index():
@@ -104,7 +107,7 @@ def test_pages_routing_and_rendering():
         html = '''##The quick brown fox jumped over the lazy dog'''
         route = 'test'
         title = 'Test'
-        page = gen_page(app.db, title, route, html)
+        gen_page(app.db, title, route, html)
 
         with app.test_client() as client:
             r = client.get('/test')
@@ -140,7 +143,7 @@ def test_user_can_access_files():
             os.makedirs(directory)
             with open(location, 'wb') as obj:
                 obj.write('testing file load'.encode())
-            f = gen_file(app.db, location=model_path, challenge_id=chal_id)
+            gen_file(app.db, location=model_path, challenge_id=chal_id)
             url = url_for('views.files', path=model_path)
 
             # Unauthed user should be able to see challenges if challenges are public
@@ -151,7 +154,7 @@ def test_user_can_access_files():
                 assert r.status_code == 200
                 assert r.get_data(as_text=True) == 'testing file load'
 
-            # Unauthed user should be able to see challenges if challenges are private
+            # Unauthed user should not be able to see challenges if challenges are private
             set_config('challenge_visibility', 'private')
             with app.test_client() as client:
                 r = client.get(url)
@@ -188,6 +191,65 @@ def test_user_can_access_files():
                     r = admin.get(url)
                     assert r.status_code == 200
                     assert r.get_data(as_text=True) == 'testing file load'
+        finally:
+            rmdir(directory)
+    destroy_ctfd(app)
+
+
+def test_user_can_access_files_with_auth_token():
+    app = create_ctfd()
+    with app.app_context():
+        from CTFd.utils.uploads import rmdir
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+        path = app.config.get('UPLOAD_FOLDER')
+
+        md5hash = hexencode(os.urandom(16)).decode('utf-8')
+
+        location = os.path.join(path, md5hash, 'test.txt')
+        directory = os.path.dirname(location)
+        model_path = os.path.join(md5hash, 'test.txt')
+
+        try:
+            os.makedirs(directory)
+            with open(location, 'wb') as obj:
+                obj.write('testing file load'.encode())
+            gen_file(app.db, location=model_path, challenge_id=chal_id)
+            url = url_for('views.files', path=model_path)
+
+            register_user(app)
+            with login_as_user(app) as client:
+                req = client.get('/api/v1/challenges/1')
+                data = req.get_json()
+                file_url = data['data']['files'][0]
+
+            with app.test_client() as client:
+                r = client.get(url)
+                assert r.status_code == 403
+                assert r.get_data(as_text=True) != 'testing file load'
+
+                r = client.get(url_for('views.files', path=model_path, token="random_token_that_shouldnt_work"))
+                assert r.status_code == 403
+                assert r.get_data(as_text=True) != 'testing file load'
+
+                r = client.get(file_url)
+                assert r.status_code == 200
+                assert r.get_data(as_text=True) == 'testing file load'
+
+                # Unauthed users shouldn't be able to see files if the CTF is admins only
+                set_config('challenge_visibility', 'admins')
+                r = client.get(file_url)
+                assert r.status_code == 403
+                assert r.get_data(as_text=True) != 'testing file load'
+                set_config('challenge_visibility', 'private')
+
+                with freeze_time("2017-10-7"):
+                    set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+
+                    # Unauthed users shouldn't be able to see files if the CTF hasn't started
+                    r = client.get(file_url)
+                    assert r.status_code == 403
+                    assert r.get_data(as_text=True) != 'testing file load'
         finally:
             rmdir(directory)
     destroy_ctfd(app)

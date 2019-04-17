@@ -1,16 +1,16 @@
-from CTFd.models import Users, Challenges
-from tests.helpers import *
+from CTFd.models import Users, Challenges, Fails, Solves, Tracking
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_challenge,
+                           gen_award,
+                           gen_flag,
+                           gen_user,
+                           gen_solve,
+                           gen_fail,
+                           gen_tracking)
 import random
-
-
-def test_get_admin_config():
-    app = create_ctfd()
-    with app.app_context():
-        register_user(app)
-        client = login_as_user(app, name="admin", password="password")
-        r = client.get('/admin/config')
-        assert r.status_code == 200
-    destroy_ctfd(app)
 
 
 def test_reset():
@@ -41,7 +41,7 @@ def test_reset():
             data = {
                 "nonce": sess.get('nonce')
             }
-            r = client.post('/admin/reset', data=data)
+            client.post('/admin/reset', data=data)
 
         assert Users.query.count() == 0
         assert Challenges.query.count() == 10

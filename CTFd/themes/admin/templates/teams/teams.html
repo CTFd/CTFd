@@ -64,7 +64,7 @@
 				</thead>
 				<tbody>
 					{% for team in teams %}
-					<tr name="{{ team.id }}">
+					<tr name="{{ team.id }}" data-href="{{ url_for('admin.teams_detail', team_id=team.id) }}">
 						<td class="team-id" value="{{ team.id }}">{{ team.id }}</td>
 						<td class="team-name" value="{{ team.name }}">
 							<a href="{{ url_for('admin.teams_detail', team_id=team.id) }}">

@@ -1,5 +1,5 @@
 from flask import request, abort, redirect, url_for, render_template
-from CTFd.utils import config, get_config
+from CTFd.utils import get_config
 from CTFd.utils.user import is_admin, authed
 import functools
 
@@ -43,6 +43,15 @@ def check_challenge_visibility(f):
                 return f(*args, **kwargs)
             else:
                 if request.content_type == 'application/json':
+                    abort(403)
+                else:
+                    return redirect(url_for('auth.login', next=request.full_path))
+
+        elif v == 'admins':
+            if is_admin():
+                return f(*args, **kwargs)
+            else:
+                if authed():
                     abort(403)
                 else:
                     return redirect(url_for('auth.login', next=request.full_path))

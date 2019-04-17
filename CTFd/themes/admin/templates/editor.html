@@ -2,7 +2,7 @@
 
 {% block stylesheets %}
 	<link rel="stylesheet" type="text/css" href="
-			{{ url_for('views.themes', theme='admin', path='css/vendor/codemirror.min.css') }}">
+			{{ url_for('views.themes', theme='core', path='css/vendor/codemirror.min.css') }}">
 	<style>
 	.CodeMirror-gutters {
 		min-height: 100% !important;;
@@ -30,9 +30,9 @@
 				<div class="modal-header">
 					<div class="container">
 						<div class="row mh-100">
-							<div class="col-md-8" id="media-library-list">
+							<div class="col-md-6" id="media-library-list">
 							</div>
-							<div class="col-md-4">
+							<div class="col-md-6" id="media-library-details">
 								<h4 class="text-center">Media Details</h4>
 								<div id="media-item">
 									<div class="text-center" id="media-icon">
@@ -46,7 +46,29 @@
 									</div>
 
 									<div class="form-group text-center">
-										<button class="btn btn-success w-100" id="media-insert">Insert</button>
+										<div class="row">
+											<div class="col-md-6">
+												<button class="btn btn-success w-100" id="media-insert"
+														data-toggle="tooltip" data-placement="top"
+														title="Insert link into editor">
+													Insert
+												</button>
+											</div>
+											<div class="col-md-3">
+												<button class="btn btn-primary w-100" id="media-download"
+														data-toggle="tooltip" data-placement="top"
+														title="Download file">
+													<i class="fas fa-download"></i>
+												</button>
+											</div>
+											<div class="col-md-3">
+												<button class="btn btn-danger w-100" id="media-delete"
+														data-toggle="tooltip" data-placement="top"
+														title="Delete file">
+													<i class="far fa-trash-alt"></i>
+												</button>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -219,8 +241,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='admin', path='js/utils.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/codemirror.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='core', path='js/vendor/codemirror.min.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/files/files.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/pages/media.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/pages/editor.js') }}"></script>

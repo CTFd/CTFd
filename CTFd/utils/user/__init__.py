@@ -1,5 +1,5 @@
 from flask import current_app as app, session, request
-from CTFd.models import Users, Teams
+from CTFd.models import Users
 from CTFd.utils import get_config
 from CTFd.models import db, Fails
 import datetime

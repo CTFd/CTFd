@@ -1,15 +1,12 @@
-from flask import current_app as app, render_template, request, redirect, abort, jsonify, url_for, session, Blueprint, \
-    Response, send_file
-from CTFd.models import db, Users, Teams, Solves, Awards, Files, Pages, Tracking
+from flask import render_template, request, redirect, url_for, Blueprint
+from CTFd.models import db, Teams
 from CTFd.utils.decorators import authed_only
 from CTFd.utils.decorators.modes import require_team_mode
-from CTFd.utils.modes import USERS_MODE
-from CTFd.utils import config, get_config, set_config
-from CTFd.utils.user import get_current_user, authed, get_ip
-from CTFd.utils.dates import unix_time_to_utc
+from CTFd.utils import config
+from CTFd.utils.user import get_current_user
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
-from CTFd.utils.helpers import get_errors, get_infos
+from CTFd.utils.helpers import get_errors
 
 teams = Blueprint('teams', __name__)
 
@@ -50,6 +47,11 @@ def join():
         if team and verify_password(passphrase, team.password):
             user.team_id = team.id
             db.session.commit()
+
+            if len(team.members) == 1:
+                team.captain_id = user.id
+                db.session.commit()
+
             return redirect(url_for('challenges.listing'))
         else:
             errors = ['That information is incorrect']
@@ -80,7 +82,8 @@ def new():
 
         team = Teams(
             name=teamname,
-            password=passphrase
+            password=passphrase,
+            captain_id=user.id
         )
 
         db.session.add(team)
@@ -111,7 +114,7 @@ def private():
     score = team.score
 
     return render_template(
-        'teams/team.html',
+        'teams/private.html',
         solves=solves,
         awards=awards,
         user=user,
@@ -136,10 +139,10 @@ def public(team_id):
     score = team.score
 
     if errors:
-        return render_template('teams/team.html', team=team, errors=errors)
+        return render_template('teams/public.html', team=team, errors=errors)
 
     return render_template(
-        'teams/team.html',
+        'teams/public.html',
         solves=solves,
         awards=awards,
         team=team,

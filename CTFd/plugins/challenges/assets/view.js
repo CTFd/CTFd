@@ -2,6 +2,7 @@ window.challenge.data = undefined;
 
 window.challenge.renderer = new markdownit({
     html: true,
+    linkify: true,
 });
 
 window.challenge.preRender = function () {

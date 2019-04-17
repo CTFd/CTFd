@@ -1,6 +1,6 @@
-from flask import current_app as app, url_for
-from CTFd.utils import get_config, get_app_config
-from CTFd.utils.config import get_mail_provider, mailserver
+from flask import url_for
+from CTFd.utils import get_config
+from CTFd.utils.config import get_mail_provider
 from CTFd.utils.email import mailgun, smtp
 from CTFd.utils.security.signing import serialize
 import re
@@ -26,7 +26,7 @@ def forgot_password(email, team_name):
 
 """.format(url_for('auth.reset_password', _external=True), token)
 
-    sendmail(email, text)
+    return sendmail(email, text)
 
 
 def verify_email_address(addr):
@@ -36,7 +36,17 @@ def verify_email_address(addr):
         url=url_for('auth.confirm', _external=True),
         token=token
     )
-    sendmail(addr, text)
+    return sendmail(addr, text)
+
+
+def user_created_notification(addr, name, password):
+    text = """An account has been created for you for {ctf_name} at {url}. \n\nUsername: {name}\nPassword: {password}""".format(
+        ctf_name=get_config('ctf_name'),
+        url=url_for('views.static_html', _external=True),
+        name=name,
+        password=password,
+    )
+    return sendmail(addr, text)
 
 
 def check_email_format(email):

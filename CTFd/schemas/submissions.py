@@ -1,6 +1,4 @@
-from sqlalchemy.sql.expression import union_all
-from marshmallow import fields, post_load, validate, ValidationError
-from marshmallow_sqlalchemy import field_for
+from marshmallow import fields
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.models import ma, Submissions
 from CTFd.utils import string_types

@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users
+from CTFd.models import db, Users
 from CTFd.utils import set_config, get_config
 from CTFd.utils.security.signing import serialize
-from CTFd.utils.security.passwords import hash_password, check_password
+from CTFd.utils.crypto import verify_password
 from freezegun import freeze_time
-from tests.helpers import *
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user)
 from mock import patch
 
 
@@ -296,7 +299,7 @@ def test_user_can_reset_password(mock_smtp):
         register_user(app, name="user1", email="user@user.com")
 
         with app.test_client() as client:
-            r = client.get('/reset_password')
+            client.get('/reset_password')
 
             # Build reset password data
             with client.session_transaction() as sess:
@@ -306,7 +309,7 @@ def test_user_can_reset_password(mock_smtp):
                 }
 
             # Issue the password reset request
-            r = client.post('/reset_password', data=data)
+            client.post('/reset_password', data=data)
 
             from_addr = get_config('mailfrom_addr') or app.config.get('MAILFROM_ADDR')
             to_addr = 'user@user.com'
@@ -324,7 +327,6 @@ def test_user_can_reset_password(mock_smtp):
 
             # Get user's original password
             user = Users.query.filter_by(email="user@user.com").first()
-            user_password_saved = user.password
 
             # Build the POST data
             with client.session_transaction() as sess:
@@ -334,12 +336,12 @@ def test_user_can_reset_password(mock_smtp):
                 }
 
             # Do the password reset
-            r = client.get('/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M')
-            r = client.post('/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M', data=data)
+            client.get('/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M')
+            client.post('/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M', data=data)
 
             # Make sure that the user's password changed
             user = Users.query.filter_by(email="user@user.com").first()
-            assert check_password('passwordtwo', user.password)
+            assert verify_password('passwordtwo', user.password)
     destroy_ctfd(app)
 
 

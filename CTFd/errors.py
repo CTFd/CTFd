@@ -1,4 +1,4 @@
-from flask import current_app as app, render_template
+from flask import render_template
 
 
 # 404

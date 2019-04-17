@@ -1,10 +1,11 @@
 from CTFd.utils import get_app_config
-from CTFd.utils.migrations import get_current_revision, create_database, drop_database, upgrade, stamp
+from CTFd.utils.migrations import get_current_revision, create_database, drop_database
 from CTFd.utils.uploads import get_uploader
 from CTFd.models import db
 from CTFd.cache import cache
 from datafreeze.format import SERIALIZERS
 from flask import current_app as app
+from flask_migrate import upgrade
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
 from sqlalchemy.exc import OperationalError
 import dataset
@@ -200,17 +201,26 @@ def import_ctf(backup, erase=True):
                                 if match:
                                     entry[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%S')
                                     continue
+                    # From v2.0.0 to v2.1.0 requirements could have been a string or JSON because of a SQLAlchemy issue
+                    # This is a hack to ensure we can still accept older exports. See #867
+                    if member in ('db/challenges.json', 'db/hints.json', 'db/awards.json'):
+                        requirements = entry.get('requirements')
+                        if requirements and isinstance(requirements, six.string_types):
+                            entry['requirements'] = json.loads(requirements)
                     table.insert(entry)
                     db.session.commit()
                 if postgres:
-                    # TODO: This should be sanitized even though exports are basically SQL dumps
-                    # Databases are so hard
+                    # This command is to set the next primary key ID for the re-inserted tables in Postgres. However,
+                    # this command is very difficult to translate into SQLAlchemy code. Because Postgres is not
+                    # officially supported, no major work will go into this functionality.
                     # https://stackoverflow.com/a/37972960
-                    side_db.engine.execute(
-                        "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM {table_name}".format(
+                    if '"' not in table_name and '\'' not in table_name:
+                        query = "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM \"{table_name}\"".format(  # nosec
                             table_name=table_name
                         )
-                    )
+                        side_db.engine.execute(query)
+                    else:
+                        raise Exception('Table name {table_name} contains quotes'.format(table_name=table_name))
 
     # Extracting files
     files = [f for f in backup.namelist() if f.startswith('uploads/')]
@@ -225,4 +235,5 @@ def import_ctf(backup, erase=True):
         source = backup.open(f)
         uploader.store(fileobj=source, filename=filename)
 
+    upgrade(revision='head')
     cache.clear()

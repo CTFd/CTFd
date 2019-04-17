@@ -3,7 +3,7 @@ import importlib
 import os
 
 from collections import namedtuple
-from flask import current_app as app, send_file, send_from_directory, abort
+from flask import current_app as app, send_file, send_from_directory
 from CTFd.utils.decorators import admins_only as admins_only_wrapper
 from CTFd.utils.plugins import (
     override_template as utils_override_template,
@@ -31,9 +31,6 @@ def register_plugin_assets_directory(app, base_path, admins_only=False):
 
     def assets_handler(path):
         return send_from_directory(base_path, path)
-
-    if admins_only:
-        asset_handler = admins_only_wrapper(assets_handler)
 
     rule = '/' + base_path + '/<path:path>'
     app.add_url_rule(rule=rule, endpoint=base_path, view_func=assets_handler)

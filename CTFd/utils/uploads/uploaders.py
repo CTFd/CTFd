@@ -1,9 +1,9 @@
-from CTFd.utils import string_types, get_app_config
+from CTFd.utils import get_app_config
+from CTFd.utils.encoding import hexencode
 from flask import current_app, send_file, redirect
 from flask.helpers import safe_join
 from werkzeug.utils import secure_filename
 from shutil import copyfileobj
-import hashlib
 import os
 import boto3
 import string
@@ -51,13 +51,13 @@ class FilesystemUploader(BaseUploader):
             raise Exception('Empty filenames cannot be used')
 
         filename = secure_filename(filename)
-        md5hash = hashlib.md5(os.urandom(64)).hexdigest()
+        md5hash = hexencode(os.urandom(16)).decode('utf-8')
         file_path = os.path.join(md5hash, filename)
 
         return self.store(file_obj, file_path)
 
     def download(self, filename):
-        return send_file(safe_join(self.base_path, filename))
+        return send_file(safe_join(self.base_path, filename), as_attachment=True)
 
     def delete(self, filename):
         if os.path.exists(os.path.join(self.base_path, filename)):
@@ -101,7 +101,7 @@ class S3Uploader(BaseUploader):
         if len(filename) <= 0:
             return False
 
-        md5hash = hashlib.md5(os.urandom(64)).hexdigest()
+        md5hash = hexencode(os.urandom(16)).decode('utf-8')
 
         dst = md5hash + '/' + filename
         self.s3.upload_fileobj(file_obj, self.bucket, dst)

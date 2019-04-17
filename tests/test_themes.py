@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import *
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           login_as_user,
+                           gen_user)
+from CTFd.utils import get_config
 from jinja2.sandbox import SecurityError
 from werkzeug.test import Client
-from werkzeug.wrappers import BaseResponse
 from flask import request
 
 

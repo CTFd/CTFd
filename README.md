@@ -3,6 +3,7 @@
 
 [![Build Status](https://travis-ci.org/CTFd/CTFd.svg?branch=master)](https://travis-ci.org/CTFd/CTFd)
 [![CTFd Slack](https://slack.ctfd.io/badge.svg)](https://slack.ctfd.io/)
+[![Documentation Status](https://readthedocs.org/projects/ctfd/badge/?version=latest)](https://docs.ctfd.io/en/latest/?badge=latest)
 
 ## What is CTFd?
 CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.
@@ -78,3 +79,4 @@ OAUTH_CLIENT_SECRET = None
 ## Credits
  * Logo by [Laura Barbera](http://www.laurabb.com/)
  * Theme by [Christopher Thompson](https://github.com/breadchris)
+ * Notification Sound by [Terrence Martin](https://soundcloud.com/tj-martin-composer)

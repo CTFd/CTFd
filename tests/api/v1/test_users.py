@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import Users
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
 from CTFd.schemas.users import UserSchema
-from tests.helpers import *
+from tests.helpers import (create_ctfd,
+                           destroy_ctfd,
+                           register_user,
+                           login_as_user,
+                           gen_user)
 
 
 def test_api_users_get_public():

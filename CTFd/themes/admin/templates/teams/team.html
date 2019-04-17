@@ -20,6 +20,22 @@
 	</div>
 </div>
 
+<div id="team-captain-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Choose Captain</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				{% include "admin/modals/teams/captain.html" %}
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="jumbotron">
 	<div class="container">
 		<h1 id="team-id" class="text-center">{{ team.name }}</h1>
@@ -56,8 +72,12 @@
 		</h3>
 		<div class="pt-3">
 			<a class="edit-team">
-				<i class="btn-fa fas fa-user-edit fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				<i class="btn-fa fas fa-pencil-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 				   title="Edit Team"></i>
+			</a>
+			<a class="edit-captain">
+				<i class="btn-fa fas fa-user-tag fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				   title="Choose Captain"></i>
 			</a>
 			<a class="delete-team">
 				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
@@ -98,14 +118,21 @@
 				<h3 class="text-center">Team Members</h3>
 				<thead>
 				<tr>
+					<td class="text-center"></td>
 					<td class="text-center"><b>User Name</b></td>
 					<td class="text-center"><b>E-Mail</b></td>
+					<td class="text-center"></td>
 				</tr>
 				</thead>
 				<tbody>
 				{% for member in members %}
 					<tr>
 						<td class="text-center">
+							{% if team.captain_id == member.id %}
+								<span class="badge badge-primary">Captain</span>
+							{% endif %}
+						</td>
+						<td class="text-left">
 							<a href="{{ url_for('admin.users_detail', user_id=member.id) }}">
 								{{ member.name }}
 							</a>
@@ -114,6 +141,11 @@
 							<a href="mailto:{{ member.email }}">
 								{{ member.email }}
 							</a>
+						</td>
+						<td class="text-center">
+							<span>
+								<i class="fas fa-times"></i>
+							</span>
 						</td>
 					</tr>
 				{% endfor %}
@@ -288,8 +320,7 @@
 	var TEAM_ID = {{ team.id }};
 	var TEAM_NAME = {{ team.name | tojson }};
 </script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/plotly.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='core', path='js/vendor/plotly.min.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/teams/info.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/teams/graphs.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/teams/actions.js') }}"></script>

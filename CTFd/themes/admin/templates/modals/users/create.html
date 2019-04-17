@@ -60,6 +60,16 @@
 			<label class="form-check-label" for="banned-checkbox">Banned</label>
 		</div>
 	</div>
+
+	{% if can_send_mail() %}
+	<div class="form-group">
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="checkbox" name="notify" id="notify-checkbox" checked>
+			<label class="form-check-label" for="notify-checkbox">Email account credentials to user</label>
+		</div>
+	</div>
+	{% endif %}
+
 	<div id="results">
 	</div>
 	<button id="update-user" type="submit" class="btn btn-primary btn-outlined float-right modal-action">

@@ -32,7 +32,7 @@
 				</thead>
 				<tbody>
 				{% for page in pages %}
-					<tr>
+					<tr data-href="{{ url_for('admin.pages_detail', page_id=page.id) }}">
 						<td class="page-title">
 							{{ page.title }}
 						</td>
@@ -81,6 +81,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/codemirror.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='core', path='js/vendor/codemirror.min.js') }}"></script>
 <script src="{{ url_for('views.themes', theme='admin', path='js/pages/pages.js') }}"></script>
 {% endblock %}

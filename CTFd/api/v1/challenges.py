@@ -3,32 +3,28 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import (
     db,
     Challenges,
-    Unlocks,
     HintUnlocks,
     Tags,
     Hints,
     Flags,
     Solves,
-    Submissions,
     Fails,
     ChallengeFiles as ChallengeFilesModel,
 )
-from CTFd.plugins.challenges import get_chal_class, CHALLENGE_CLASSES
-from CTFd.utils.dates import ctf_ended, isoformat
+from CTFd.plugins.challenges import CHALLENGE_CLASSES
+from CTFd.utils.dates import isoformat
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
-    admins_only,
-    authed_only
+    admins_only
 )
 from CTFd.utils.decorators.visibility import (
     check_challenge_visibility,
     check_score_visibility
 )
-from CTFd.cache import cache, clear_standings
-from CTFd.utils.scores import get_standings
+from CTFd.cache import clear_standings
 from CTFd.utils.config.visibility import scores_visible, accounts_visible, challenges_visible
-from CTFd.utils.user import get_current_user, is_admin, authed
+from CTFd.utils.user import is_admin, authed
 from CTFd.utils.modes import get_model, USERS_MODE, TEAMS_MODE
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
@@ -38,9 +34,10 @@ from CTFd.utils import user as current_user
 from CTFd.utils.user import get_current_team
 from CTFd.utils.user import get_current_user
 from CTFd.plugins.challenges import get_chal_class
-from CTFd.utils.dates import ctf_started, ctf_ended, ctf_paused, ctftime
+from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime
 from CTFd.utils.logging import log
-from sqlalchemy.sql import or_, and_, any_
+from CTFd.utils.security.signing import serialize
+from sqlalchemy.sql import and_
 
 challenges_namespace = Namespace('challenges',
                                  description="Endpoint to retrieve Challenges")
@@ -204,24 +201,44 @@ class Challenge(Resource):
         tags = [
             tag['value'] for tag in TagSchema(
                 "user", many=True).dump(
-                chal.tags).data]
-        files = [f.location for f in chal.files]
+                chal.tags).data
+        ]
 
         unlocked_hints = set()
         hints = []
         if authed():
             user = get_current_user()
-            unlocked_hints = set([u.target for u in HintUnlocks.query.filter_by(
-                type='hints', account_id=user.account_id)])
+            team = get_current_team()
 
             # TODO: Convert this into a re-useable decorator
-            if config.is_teams_mode() and get_current_team() is None:
+            if config.is_teams_mode() and team is None:
                 abort(403)
+
+            unlocked_hints = set([
+                u.target for u in HintUnlocks.query.filter_by(type='hints', account_id=user.account_id)
+            ])
+            files = []
+            for f in chal.files:
+                token = {
+                    'user_id': user.id,
+                    'team_id': team.id if team else None,
+                    'file_id': f.id,
+                }
+                files.append(
+                    url_for('views.files', path=f.location, token=serialize(token))
+                )
+        else:
+            files = [
+                url_for('views.files', path=f.location) for f in chal.files
+            ]
 
         for hint in Hints.query.filter_by(challenge_id=chal.id).all():
             if hint.id in unlocked_hints or ctf_ended():
-                hints.append({'id': hint.id, 'cost': hint.cost,
-                              'content': hint.content})
+                hints.append({
+                    'id': hint.id,
+                    'cost': hint.cost,
+                    'content': hint.content
+                })
             else:
                 hints.append({'id': hint.id, 'cost': hint.cost})
 
@@ -272,6 +289,7 @@ class Challenge(Resource):
 
 @challenges_namespace.route('/attempt')
 class ChallengeAttempt(Resource):
+    @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
     def post(self):
