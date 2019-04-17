@@ -20,7 +20,7 @@
 				</thead>
 				<tbody>
 				{% for standing in standings %}
-					<tr>
+					<tr data-href="{{ generate_account_url(standing.account_id, admin=True) }}">
 						<td>{{ loop.index }}</td>
 						<td>
 							<a href="{{ generate_account_url(standing.account_id, admin=True) }}">

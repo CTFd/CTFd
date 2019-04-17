@@ -25,5 +25,16 @@ $(function () {
         }
     });
 
+    $("tr").click(function () {
+        var sel = getSelection().toString();
+        if (!sel) {
+            var href = $(this).attr('data-href');
+            if (href) {
+                window.location = href;
+            }
+        }
+        return false;
+    });
+
     $('[data-toggle="tooltip"]').tooltip()
 });
