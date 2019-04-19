@@ -54,6 +54,7 @@ class TeamSchema(ma.ModelSchema):
             return
 
         existing_team = Teams.query.filter_by(name=name).first()
+        current_team = get_current_team()
         # Admins should be able to patch anyone but they cannot cause a collision.
         if is_admin():
             team_id = int(data.get('id', 0))
@@ -63,9 +64,12 @@ class TeamSchema(ma.ModelSchema):
             else:
                 # If there's no Team ID it means that the admin is creating a team with no ID.
                 if existing_team:
-                    raise ValidationError('Team name has already been taken', field_names=['name'])
+                    if current_team:
+                        if current_team.id != existing_team.id:
+                            raise ValidationError('Team name has already been taken', field_names=['name'])
+                    else:
+                        raise ValidationError('Team name has already been taken', field_names=['name'])
         else:
-            current_team = get_current_team()
             # We need to allow teams to edit themselves and allow the "conflict"
             if data['name'] == current_team.name:
                 return data
@@ -135,7 +139,10 @@ class TeamSchema(ma.ModelSchema):
 
         if is_admin():
             team_id = data.get('id')
-            target_team = Teams.query.filter_by(id=team_id).first()
+            if team_id:
+                target_team = Teams.query.filter_by(id=team_id).first()
+            else:
+                target_team = get_current_team()
             captain = Users.query.filter_by(id=captain_id).first()
             if captain in target_team.members:
                 return

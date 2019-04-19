@@ -62,6 +62,7 @@ class UserSchema(ma.ModelSchema):
             return
 
         existing_user = Users.query.filter_by(name=name).first()
+        current_user = get_current_user()
         if is_admin():
             user_id = data.get('id')
             if user_id:
@@ -69,9 +70,12 @@ class UserSchema(ma.ModelSchema):
                     raise ValidationError('User name has already been taken', field_names=['name'])
             else:
                 if existing_user:
-                    raise ValidationError('User name has already been taken', field_names=['name'])
+                    if current_user:
+                        if current_user.id != existing_user.id:
+                            raise ValidationError('User name has already been taken', field_names=['name'])
+                    else:
+                        raise ValidationError('User name has already been taken', field_names=['name'])
         else:
-            current_user = get_current_user()
             if name == current_user.name:
                 return data
             else:
@@ -88,7 +92,7 @@ class UserSchema(ma.ModelSchema):
             return
 
         existing_user = Users.query.filter_by(email=email).first()
-
+        current_user = get_current_user()
         if is_admin():
             user_id = data.get('id')
             if user_id:
@@ -96,9 +100,12 @@ class UserSchema(ma.ModelSchema):
                     raise ValidationError('Email address has already been used', field_names=['email'])
             else:
                 if existing_user:
-                    raise ValidationError('Email address has already been used', field_names=['email'])
+                    if current_user:
+                        if current_user.id != existing_user.id:
+                            raise ValidationError('Email address has already been used', field_names=['email'])
+                    else:
+                        raise ValidationError('Email address has already been used', field_names=['email'])
         else:
-            current_user = get_current_user()
             if email == current_user.email:
                 return data
             else:

@@ -36,5 +36,9 @@ $(function () {
         return false;
     });
 
+    $("tr a, button").click(function (e) {
+        e.stopPropagation();
+    });
+
     $('[data-toggle="tooltip"]').tooltip()
 });

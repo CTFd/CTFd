@@ -345,6 +345,35 @@ def test_api_team_patch_me_logged_in_captain():
     destroy_ctfd(app)
 
 
+def test_api_team_patch_me_logged_in_admin_captain():
+    """Can an admin patch /api/v1/teams/me if logged in as a team captain"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        admin = Users.query.filter_by(id=1).first()
+        user = gen_user(app.db)
+        team = gen_team(app.db)
+        team.members.append(user)
+        team.members.append(admin)
+
+        user.team_id = team.id
+        admin.team_id = team.id
+
+        # We want the admin to be the captain
+        team.captain_id = 1
+
+        app.db.session.commit()
+        with login_as_user(app, name="admin") as client:
+            r = client.patch('/api/v1/teams/me', json={
+                "name": "team_name",
+                "affiliation": "changed"
+            })
+            assert r.status_code == 200
+
+        team = Teams.query.filter_by(id=1).first()
+        assert team.name == "team_name"
+    destroy_ctfd(app)
+
+
 def test_api_team_get_me_solves_not_logged_in():
     """Can a user get /api/v1/teams/me/solves if not logged in"""
     app = create_ctfd(user_mode="teams")
