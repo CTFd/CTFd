@@ -381,6 +381,30 @@ def test_api_user_patch_me_logged_in():
     destroy_ctfd(app)
 
 
+def test_api_admin_user_patch_me_logged_in():
+    """Can an admin patch /api/v1/users/me"""
+    app = create_ctfd()
+    with app.app_context():
+        with login_as_user(app, name='admin') as client:
+            r = client.patch(
+                '/api/v1/users/me',
+                json={
+                    "name": "user",
+                    "email": "user@ctfd.io",
+                    "password": "password",
+                    "confirm": "password",
+                    "country": "US"
+                }
+            )
+            assert r.status_code == 200
+            assert r.get_json()['data']['country'] == 'US'
+
+            user = Users.query.filter_by(id=1).first()
+            assert user.name == 'user'
+            assert user.email == 'user@ctfd.io'
+    destroy_ctfd(app)
+
+
 def test_api_user_change_name():
     """Can a user change their name via the API"""
     app = create_ctfd()
