@@ -36,9 +36,9 @@ def test_export_ctf():
             app.db.session.commit()
             backup = export_ctf()
 
-            with open('export.zip', 'wb') as f:
+            with open('export.test_export_ctf.zip', 'wb') as f:
                 f.write(backup.read())
-            os.remove('export.zip')
+            os.remove('export.test_export_ctf.zip')
     destroy_ctfd(app)
 
 
@@ -61,7 +61,7 @@ def test_import_ctf():
 
             backup = export_ctf()
 
-            with open('export.zip', 'wb') as f:
+            with open('export.test_import_ctf.zip', 'wb') as f:
                 f.write(backup.read())
     destroy_ctfd(app)
 
@@ -69,7 +69,7 @@ def test_import_ctf():
     # TODO: These databases should work but they don't...
     if not app.config.get('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
         with app.app_context():
-            import_ctf('export.zip')
+            import_ctf('export.test_import_ctf.zip')
 
             if not app.config.get('SQLALCHEMY_DATABASE_URI').startswith('postgres'):
                 # TODO: Dig deeper into why Postgres fails here
