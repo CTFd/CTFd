@@ -139,7 +139,10 @@ class TeamSchema(ma.ModelSchema):
 
         if is_admin():
             team_id = data.get('id')
-            target_team = Teams.query.filter_by(id=team_id).first()
+            if team_id:
+                target_team = Teams.query.filter_by(id=team_id).first()
+            else:
+                target_team = get_current_team()
             captain = Users.query.filter_by(id=captain_id).first()
             if captain in target_team.members:
                 return
