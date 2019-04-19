@@ -5,7 +5,7 @@ from distutils.version import StrictVersion
 from flask import Flask, Request
 from flask_migrate import upgrade, stamp
 from werkzeug.utils import cached_property
-from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.middleware.proxy_fix import ProxyFix
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from six.moves import input
@@ -153,8 +153,25 @@ def create_app(config='CTFd.config.Config'):
         cache.init_app(app)
         app.cache = cache
 
-        if app.config.get('REVERSE_PROXY'):
-            app.wsgi_app = ProxyFix(app.wsgi_app)
+        reverse_proxy = app.config.get('REVERSE_PROXY')
+        if reverse_proxy:
+            if ',' in reverse_proxy:
+                proxyfix_args = [int(i) for i in reverse_proxy.split(',')]
+                app.wsgi_app = ProxyFix(
+                    app.wsgi_app,
+                    None,
+                    *proxyfix_args
+                )
+            else:
+                app.wsgi_app = ProxyFix(
+                    app.wsgi_app,
+                    num_proxies=None,
+                    x_for=1,
+                    x_proto=1,
+                    x_host=1,
+                    x_port=1,
+                    x_prefix=1
+                )
 
         version = utils.get_config('ctf_version')
 

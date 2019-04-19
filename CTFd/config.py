@@ -194,6 +194,12 @@ class Config(object):
 
     REVERSE_PROXY:
         Specifies whether CTFd is behind a reverse proxy or not. Set to True if using a reverse proxy like nginx.
+        You can also specify a comma seperated set of numbers specifying the reverse proxy configuration settings.
+
+        See https://werkzeug.palletsprojects.com/en/0.15.x/middleware/proxy_fix/#werkzeug.middleware.proxy_fix.ProxyFix.
+        For example to configure `x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1` specify `1,1,1,1,1`.
+
+        Alternatively if you specify `true` CTFd will default to the above behavior with all proxy settings set to 1.
 
     TEMPLATES_AUTO_RELOAD:
         Specifies whether Flask should check for modifications to templates and reload them automatically.
