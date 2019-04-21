@@ -60,6 +60,8 @@ target/
 .idea/
 CTFd/static/uploads
 CTFd/uploads
+docker-compose.yml
+Dockerfile
 .data/
 .ctfd_secret_key
 .*.swp
