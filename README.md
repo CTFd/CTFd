@@ -43,11 +43,15 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
   2. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
   3. Use `flask run` in a terminal to drop into debug mode.
 
-You can use the auto-generated Docker images with the following command:
+You can use the auto-generated Docker images with the following command:  
+Prepare docker environment:   
+```./docker-prepare.sh```   
+
+Run the docker image: 
 
 `docker run -p 8000:8000 -it ctfd/ctfd`
 
-Or you can use Docker Compose with the following command from the source repository:
+Or you can use Docker Compose with the following command:
 
 `docker-compose up`
 
