@@ -86,11 +86,11 @@ def init_logs(app):
         'registrations': os.path.join(log_dir, 'registrations.log')
     }
 
-    for log in logs.values():
-        if not os.path.exists(log):
-            open(log, 'a').close()
-
     try:
+        for log in logs.values():
+            if not os.path.exists(log):
+                open(log, 'a').close()
+
         submission_log = logging.handlers.RotatingFileHandler(logs['submissions'], maxBytes=10000)
         login_log = logging.handlers.RotatingFileHandler(logs['logins'], maxBytes=10000)
         registration_log = logging.handlers.RotatingFileHandler(logs['registrations'], maxBytes=10000)
