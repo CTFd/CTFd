@@ -35,6 +35,7 @@ from sqlalchemy.exc import InvalidRequestError, IntegrityError
 import datetime
 import logging
 import os
+import sys
 
 
 def init_template_filters(app):
@@ -85,22 +86,37 @@ def init_logs(app):
         'registrations': os.path.join(log_dir, 'registrations.log')
     }
 
-    for log in logs.values():
-        if not os.path.exists(log):
-            open(log, 'a').close()
+    try:
+        for log in logs.values():
+            if not os.path.exists(log):
+                open(log, 'a').close()
 
-    submission_log = logging.handlers.RotatingFileHandler(logs['submissions'], maxBytes=10000)
-    login_log = logging.handlers.RotatingFileHandler(logs['logins'], maxBytes=10000)
-    registration_log = logging.handlers.RotatingFileHandler(logs['registrations'], maxBytes=10000)
+        submission_log = logging.handlers.RotatingFileHandler(logs['submissions'], maxBytes=10000)
+        login_log = logging.handlers.RotatingFileHandler(logs['logins'], maxBytes=10000)
+        registration_log = logging.handlers.RotatingFileHandler(logs['registrations'], maxBytes=10000)
+
+        logger_submissions.addHandler(
+            submission_log
+        )
+        logger_logins.addHandler(
+            login_log
+        )
+        logger_registrations.addHandler(
+            registration_log
+        )
+    except IOError:
+        pass
+
+    stdout = logging.StreamHandler(stream=sys.stdout)
 
     logger_submissions.addHandler(
-        submission_log
+        stdout
     )
     logger_logins.addHandler(
-        login_log
+        stdout
     )
     logger_registrations.addHandler(
-        registration_log
+        stdout
     )
 
     logger_submissions.propagate = 0
