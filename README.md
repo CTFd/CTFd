@@ -48,8 +48,8 @@ You can use the auto-generated Docker images with the following command:
 `docker run -p 8000:8000 -it ctfd/ctfd`
 
 Or you can use Docker Compose with the following command from the source repository:
-  1. Specify a random `SECRET_KEY` environment variable value in `docker-compose.yml`
-  2. Run `docker-compose up`
+
+`docker-compose up`
 
 Check out the [wiki](https://github.com/CTFd/CTFd/wiki) for [deployment options](https://github.com/CTFd/CTFd/wiki/Basic-Deployment) and the [Getting Started](https://github.com/CTFd/CTFd/wiki/Getting-Started) guide
 

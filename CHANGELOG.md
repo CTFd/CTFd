@@ -87,7 +87,6 @@
 * Update Dockerfile to create and chown/chmod the folders used by `docker-compose` to store files/logs (`/var/log/CTFd`, `/var/uploads`)
     * This allows the container to write to the folder despite it being a volume mounted from the host
 * Default worker changed back to `gevent`
-* Worker count set to 4 and document updated to reflect that you must set a `SECRET_KEY`
 * Removed Flask-SocketIO dependency
     * Removed the `SOCKETIO_ASYNC_MODE` config
 * `gevent` is now required to allow the Server Sent Events client polling code to work
