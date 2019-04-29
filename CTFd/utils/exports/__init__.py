@@ -1,13 +1,14 @@
-from CTFd.utils import get_app_config
+from CTFd.utils import get_app_config, set_config
 from CTFd.utils.migrations import get_current_revision, create_database, drop_database
 from CTFd.utils.uploads import get_uploader
 from CTFd.models import db
 from CTFd.cache import cache
 from datafreeze.format import SERIALIZERS
 from flask import current_app as app
-from flask_migrate import upgrade
+from flask_migrate import upgrade, stamp
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
 from sqlalchemy.exc import OperationalError
+from alembic.util import CommandError
 import dataset
 import datafreeze
 import datetime
@@ -235,5 +236,15 @@ def import_ctf(backup, erase=True):
         source = backup.open(f)
         uploader.store(fileobj=source, filename=filename)
 
-    upgrade(revision='head')
+    # Alembic sqlite support is lacking so we should just create_all anyway
+    try:
+        upgrade(revision='head')
+    except (CommandError, RuntimeError, SystemExit):
+        app.db.create_all()
+        stamp()
+
+    # Invalidate all cached data
     cache.clear()
+
+    # Set default theme in case the current instance or the import does not provide it
+    set_config('ctf_theme', 'core')
