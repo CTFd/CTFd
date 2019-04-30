@@ -64,9 +64,12 @@ def test_import_ctf():
                 user_email = user + "@ctfd.io"
                 gen_user(app.db, name=user, email=user_email)
 
-            for x in range(10):
+            for x in range(9):
                 chal = gen_challenge(app.db, name='chal_name{}'.format(x))
                 gen_flag(app.db, challenge_id=chal.id, content='flag')
+
+            chal = gen_challenge(app.db, name='chal_name10', requirements={"prerequisites": [1]})
+            gen_flag(app.db, challenge_id=chal.id, content='flag')
 
             app.db.session.commit()
 
@@ -87,4 +90,7 @@ def test_import_ctf():
                 assert Users.query.count() == 11
                 assert Challenges.query.count() == 10
                 assert Flags.query.count() == 10
+
+                chal = Challenges.query.filter_by(name='chal_name10').first()
+                assert chal.requirements == {"prerequisites": [1]}
     destroy_ctfd(app)
