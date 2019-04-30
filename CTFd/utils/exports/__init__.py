@@ -42,7 +42,8 @@ class CTFdSerializer(JSONSerializer):
                 data = r.get('requirements')
                 if data:
                     try:
-                        result['results'][i]['requirements'] = json.loads(data)
+                        if isinstance(data, six.string_types):
+                            result['results'][i]['requirements'] = json.loads(data)
                     except ValueError:
                         pass
 
