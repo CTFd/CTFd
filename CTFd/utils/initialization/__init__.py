@@ -154,7 +154,9 @@ def init_request_processors(app):
 
     @app.before_request
     def tracker():
-        # TODO: This function shouldn't cause a DB hit for lookups if possible
+        if request.endpoint in ('views.themes', 'views.custom_css'):
+            return
+
         if authed():
             track = Tracking.query.filter_by(ip=get_ip(), user_id=session['id']).first()
             if not track:
