@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
-from tests.helpers import (create_ctfd,
-                           destroy_ctfd,
-                           register_user,
-                           login_as_user,
-                           gen_challenge,
-                           gen_flag,
-                           gen_user,
-                           gen_hint)
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    register_user,
+    login_as_user,
+    gen_challenge,
+    gen_flag,
+    gen_user,
+    gen_hint
+)
 from CTFd.models import Challenges, Flags, Users
 from CTFd.utils import text_type
 from CTFd.utils.exports import import_ctf, export_ctf
 import json
 import os
+import zipfile
 
 
 def test_export_ctf():
@@ -20,8 +23,11 @@ def test_export_ctf():
     if not app.config.get('SQLALCHEMY_DATABASE_URI').startswith('sqlite'):
         with app.app_context():
             register_user(app)
-            chal = gen_challenge(app.db, name=text_type('🐺'))
-            chal_id = chal.id
+            chal1 = gen_challenge(app.db, name=text_type('🐺'))
+            gen_challenge(app.db, name=text_type('🐺'), requirements={
+                "prerequisites": [1]
+            })
+            chal_id = chal1.id
             gen_hint(app.db, chal_id)
 
             client = login_as_user(app)
@@ -38,6 +44,11 @@ def test_export_ctf():
 
             with open('export.test_export_ctf.zip', 'wb') as f:
                 f.write(backup.read())
+
+            export = zipfile.ZipFile('export.test_export_ctf.zip', 'r')
+            data = json.loads(export.read('db/challenges.json'))
+            assert data['results'][1]['requirements'] == {"prerequisites": [1]}
+
             os.remove('export.test_export_ctf.zip')
     destroy_ctfd(app)
 
@@ -53,9 +64,12 @@ def test_import_ctf():
                 user_email = user + "@ctfd.io"
                 gen_user(app.db, name=user, email=user_email)
 
-            for x in range(10):
+            for x in range(9):
                 chal = gen_challenge(app.db, name='chal_name{}'.format(x))
                 gen_flag(app.db, challenge_id=chal.id, content='flag')
+
+            chal = gen_challenge(app.db, name='chal_name10', requirements={"prerequisites": [1]})
+            gen_flag(app.db, challenge_id=chal.id, content='flag')
 
             app.db.session.commit()
 
@@ -76,4 +90,7 @@ def test_import_ctf():
                 assert Users.query.count() == 11
                 assert Challenges.query.count() == 10
                 assert Flags.query.count() == 10
+
+                chal = Challenges.query.filter_by(name='chal_name10').first()
+                assert chal.requirements == {"prerequisites": [1]}
     destroy_ctfd(app)

@@ -7,7 +7,7 @@ from datafreeze.format import SERIALIZERS
 from flask import current_app as app
 from flask_migrate import upgrade, stamp
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, ProgrammingError
 from alembic.util import CommandError
 import dataset
 import datafreeze
@@ -35,9 +35,23 @@ class CTFdSerializer(JSONSerializer):
             else:
                 fh = self.fileobj
 
-            data = json.dumps(result,
-                              cls=JSONEncoder,
-                              indent=self.export.get_int('indent'))
+            # Certain databases (MariaDB) store JSON as LONGTEXT.
+            # Before emitting a file we should standardize to valid JSON (i.e. a dict)
+            # See Issue #973
+            for i, r in enumerate(result['results']):
+                data = r.get('requirements')
+                if data:
+                    try:
+                        if isinstance(data, six.string_types):
+                            result['results'][i]['requirements'] = json.loads(data)
+                    except ValueError:
+                        pass
+
+            data = json.dumps(
+                result,
+                cls=JSONEncoder,
+                indent=self.export.get_int('indent')
+            )
 
             callback = self.export.get('callback')
             if callback:
@@ -208,7 +222,18 @@ def import_ctf(backup, erase=True):
                         requirements = entry.get('requirements')
                         if requirements and isinstance(requirements, six.string_types):
                             entry['requirements'] = json.loads(requirements)
-                    table.insert(entry)
+
+                    try:
+                        table.insert(entry)
+                    except ProgrammingError:
+                        # MariaDB does not like JSON objects and prefers strings because it internally
+                        # represents JSON with LONGTEXT.
+                        # See Issue #973
+                        requirements = entry.get('requirements')
+                        if requirements and isinstance(requirements, dict):
+                            entry['requirements'] = json.dumps(requirements)
+                        table.insert(entry)
+
                     db.session.commit()
                 if postgres:
                     # This command is to set the next primary key ID for the re-inserted tables in Postgres. However,
