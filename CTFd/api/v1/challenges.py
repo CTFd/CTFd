@@ -1,4 +1,4 @@
-from flask import session, request, abort, url_for
+from flask import request, abort, url_for
 from flask_restplus import Namespace, Resource
 from CTFd.models import (
     db,
