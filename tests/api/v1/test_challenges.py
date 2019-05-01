@@ -321,9 +321,9 @@ def test_api_challenge_attempt_post_private():
         challenge_id = gen_challenge(app.db).id
         gen_flag(app.db, challenge_id)
         register_user(app)
-        team = gen_team(app.db)
+        team_id = gen_team(app.db).id
         user = Users.query.filter_by(id=2).first()
-        user.team_id = team.id
+        user.team_id = team_id
         app.db.session.commit()
         with login_as_user(app) as client:
             r = client.post('/api/v1/challenges/attempt', json={"challenge_id": challenge_id, "submission": "wrong_flag"})
@@ -339,7 +339,7 @@ def test_api_challenge_attempt_post_private():
         gen_flag(app.db, challenge_id)
         with login_as_user(app) as client:
             for i in range(10):
-                gen_fail(app.db, user_id=2, team_id=team.id, challenge_id=challenge_id)
+                gen_fail(app.db, user_id=2, team_id=team_id, challenge_id=challenge_id)
             r = client.post('/api/v1/challenges/attempt', json={"challenge_id": challenge_id, "submission": "flag"})
             assert r.status_code == 429
             assert r.get_json()['data']['status'] == 'ratelimited'

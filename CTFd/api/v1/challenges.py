@@ -370,7 +370,8 @@ class ChallengeAttempt(Resource):
         chal_class = get_chal_class(challenge.type)
 
         # Anti-bruteforce / submitting Flags too quickly
-        if current_user.get_wrong_submissions_per_minute(session['id']) > 10:
+        kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
+        if kpm > 10:
             if ctftime():
                 chal_class.fail(
                     user=user,
@@ -382,7 +383,7 @@ class ChallengeAttempt(Resource):
                 'submissions',
                 "[{date}] {name} submitted {submission} with kpm {kpm} [TOO FAST]",
                 submission=request_data['submission'].encode('utf-8'),
-                kpm=current_user.get_wrong_submissions_per_minute(session['id'])
+                kpm=kpm
             )
             # Submitting too fast
             return {
@@ -426,8 +427,7 @@ class ChallengeAttempt(Resource):
                     'submissions',
                     "[{date}] {name} submitted {submission} with kpm {kpm} [CORRECT]",
                     submission=request_data['submission'].encode('utf-8'),
-                    kpm=current_user.get_wrong_submissions_per_minute(
-                        session['id'])
+                    kpm=kpm
                 )
                 return {
                     'success': True,
@@ -450,8 +450,7 @@ class ChallengeAttempt(Resource):
                     'submissions',
                     "[{date}] {name} submitted {submission} with kpm {kpm} [WRONG]",
                     submission=request_data['submission'].encode('utf-8'),
-                    kpm=current_user.get_wrong_submissions_per_minute(
-                        session['id'])
+                    kpm=kpm
                 )
 
                 if max_tries:
@@ -485,9 +484,7 @@ class ChallengeAttempt(Resource):
                 'submissions',
                 "[{date}] {name} submitted {submission} with kpm {kpm} [ALREADY SOLVED]",
                 submission=request_data['submission'].encode('utf-8'),
-                kpm=current_user.get_wrong_submissions_per_minute(
-                    user.account_id
-                )
+                kpm=kpm
             )
             return {
                 'success': True,
