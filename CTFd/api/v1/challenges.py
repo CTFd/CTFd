@@ -65,8 +65,11 @@ class ChallengeList(Resource):
             solve_ids = set([value for value, in solve_ids])
 
             # TODO: Convert this into a re-useable decorator
-            if config.is_teams_mode() and get_current_team() is None:
-                abort(403)
+            if is_admin():
+                pass
+            else:
+                if config.is_teams_mode() and get_current_team() is None:
+                    abort(403)
         else:
             solve_ids = set()
 
@@ -211,8 +214,11 @@ class Challenge(Resource):
             team = get_current_team()
 
             # TODO: Convert this into a re-useable decorator
-            if config.is_teams_mode() and team is None:
-                abort(403)
+            if is_admin():
+                pass
+            else:
+                if config.is_teams_mode() and team is None:
+                    abort(403)
 
             unlocked_hints = set([
                 u.target for u in HintUnlocks.query.filter_by(type='hints', account_id=user.account_id)

@@ -99,6 +99,22 @@ def test_api_challenges_post_non_admin():
     destroy_ctfd(app)
 
 
+def test_api_challenges_get_admin():
+    """Can a user GET /api/v1/challenges if admin without team"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        gen_challenge(app.db)
+        # Admin does not have a team but should still be able to see challenges
+        user = Users.query.filter_by(id=1).first()
+        assert user.team_id is None
+        with login_as_user(app, 'admin') as admin:
+            r = admin.get('/api/v1/challenges', json="")
+            assert r.status_code == 200
+            r = admin.get('/api/v1/challenges/1', json="")
+            assert r.status_code == 200
+    destroy_ctfd(app)
+
+
 def test_api_challenges_post_admin():
     """Can a user post /api/v1/challenges if admin"""
     app = create_ctfd()
