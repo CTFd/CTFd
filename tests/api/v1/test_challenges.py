@@ -11,7 +11,8 @@ from tests.helpers import (create_ctfd,
                            gen_flag,
                            gen_user,
                            gen_team,
-                           gen_solve)
+                           gen_solve,
+                           gen_fail)
 from freezegun import freeze_time
 
 
@@ -308,19 +309,56 @@ def test_api_challenge_attempt_post_private():
     """Can an private user post /api/v1/challenges/attempt"""
     app = create_ctfd()
     with app.app_context():
-        gen_challenge(app.db)
-        gen_flag(app.db, 1)
+        challenge_id = gen_challenge(app.db).id
+        gen_flag(app.db, challenge_id)
         register_user(app)
         with login_as_user(app) as client:
-            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": 1, "submission": "wrong_flag"})
+            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": challenge_id, "submission": "wrong_flag"})
             assert r.status_code == 200
             assert r.get_json()['data']['status'] == 'incorrect'
-            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": 1, "submission": "flag"})
+            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": challenge_id, "submission": "flag"})
             assert r.status_code == 200
             assert r.get_json()['data']['status'] == 'correct'
-            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": 1, "submission": "flag"})
+            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": challenge_id, "submission": "flag"})
             assert r.status_code == 200
             assert r.get_json()['data']['status'] == 'already_solved'
+        challenge_id = gen_challenge(app.db).id
+        gen_flag(app.db, challenge_id)
+        with login_as_user(app) as client:
+            for i in range(10):
+                gen_fail(app.db, user_id=2, challenge_id=challenge_id)
+            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": challenge_id, "submission": "flag"})
+            assert r.status_code == 429
+            assert r.get_json()['data']['status'] == 'ratelimited'
+    destroy_ctfd(app)
+
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        challenge_id = gen_challenge(app.db).id
+        gen_flag(app.db, challenge_id)
+        register_user(app)
+        team_id = gen_team(app.db).id
+        user = Users.query.filter_by(id=2).first()
+        user.team_id = team_id
+        app.db.session.commit()
+        with login_as_user(app) as client:
+            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": challenge_id, "submission": "wrong_flag"})
+            assert r.status_code == 200
+            assert r.get_json()['data']['status'] == 'incorrect'
+            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": challenge_id, "submission": "flag"})
+            assert r.status_code == 200
+            assert r.get_json()['data']['status'] == 'correct'
+            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": challenge_id, "submission": "flag"})
+            assert r.status_code == 200
+            assert r.get_json()['data']['status'] == 'already_solved'
+        challenge_id = gen_challenge(app.db).id
+        gen_flag(app.db, challenge_id)
+        with login_as_user(app) as client:
+            for i in range(10):
+                gen_fail(app.db, user_id=2, team_id=team_id, challenge_id=challenge_id)
+            r = client.post('/api/v1/challenges/attempt', json={"challenge_id": challenge_id, "submission": "flag"})
+            assert r.status_code == 429
+            assert r.get_json()['data']['status'] == 'ratelimited'
     destroy_ctfd(app)
 
 
