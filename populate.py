@@ -304,6 +304,16 @@ if __name__ == '__main__':
 
         db.session.commit()
 
+        if mode == 'teams':
+            # Assign Team Captains
+            print("GENERATING TEAM CAPTAINS")
+            teams = Teams.query.all()
+            for team in teams:
+                captain = Users.query.filter_by(team_id=team.id).order_by(Users.id).limit(1).first()
+                if captain:
+                    team.captain_id = captain.id
+            db.session.commit()
+
         # Generating Solves
         print("GENERATING SOLVES")
         if mode == 'users':
