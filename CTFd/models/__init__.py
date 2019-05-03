@@ -210,7 +210,7 @@ class PageFiles(Files):
 class Flags(db.Model):
     __tablename__ = 'flags'
     id = db.Column(db.Integer, primary_key=True)
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'), ondelete='CASCADE')
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
     type = db.Column(db.String(80))
     content = db.Column(db.Text)
     data = db.Column(db.Text)
