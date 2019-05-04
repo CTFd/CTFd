@@ -5,11 +5,14 @@ from CTFd.models import Users
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
 from CTFd.schemas.users import UserSchema
-from tests.helpers import (create_ctfd,
-                           destroy_ctfd,
-                           register_user,
-                           login_as_user,
-                           gen_user)
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    register_user,
+    login_as_user,
+    gen_user,
+    simulate_user_activity
+)
 
 
 def test_api_users_get_public():
@@ -322,10 +325,13 @@ def test_api_user_delete_admin():
     app = create_ctfd()
     with app.app_context():
         register_user(app)
+        user = Users.query.filter_by(id=2).first()
+        simulate_user_activity(app.db, user=user)
         with login_as_user(app, 'admin') as client:
             r = client.delete('/api/v1/users/2', json="")
             assert r.status_code == 200
             assert r.get_json().get('data') is None
+        assert Users.query.filter_by(id=2).first() is None
     destroy_ctfd(app)
 
 

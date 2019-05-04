@@ -76,6 +76,7 @@ class Challenges(db.Model):
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
     hints = db.relationship("Hints", backref="challenge")
+    flags = db.relationship("Flags", backref="challenge")
 
     __mapper_args__ = {
         'polymorphic_identity': 'standard',
@@ -93,7 +94,7 @@ class Hints(db.Model):
     __tablename__ = 'hints'
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(80), default='standard')
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
     content = db.Column(db.Text)
     cost = db.Column(db.Integer, default=0)
     requirements = db.Column(db.JSON)
@@ -125,8 +126,8 @@ class Hints(db.Model):
 class Awards(db.Model):
     __tablename__ = 'awards'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.id', ondelete='CASCADE'))
     type = db.Column(db.String(80), default='standard')
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
@@ -162,7 +163,7 @@ class Awards(db.Model):
 class Tags(db.Model):
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
     value = db.Column(db.String(80))
 
     def __init__(self, *args, **kwargs):
@@ -191,7 +192,7 @@ class ChallengeFiles(Files):
     __mapper_args__ = {
         'polymorphic_identity': 'challenge'
     }
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
 
     def __init__(self, *args, **kwargs):
         super(ChallengeFiles, self).__init__(**kwargs)
@@ -210,12 +211,10 @@ class PageFiles(Files):
 class Flags(db.Model):
     __tablename__ = 'flags'
     id = db.Column(db.Integer, primary_key=True)
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
     type = db.Column(db.String(80))
     content = db.Column(db.Text)
     data = db.Column(db.Text)
-
-    challenge = db.relationship('Challenges', foreign_keys="Flags.challenge_id", lazy='select')
 
     __mapper_args__ = {
         'polymorphic_on': type
@@ -454,7 +453,7 @@ class Teams(db.Model):
     banned = db.Column(db.Boolean, default=False)
 
     # Relationship for Users
-    captain_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    captain_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'))
     captain = db.relationship("Users", foreign_keys=[captain_id])
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -682,8 +681,8 @@ class Fails(Submissions):
 class Unlocks(db.Model):
     __tablename__ = 'unlocks'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.id', ondelete='CASCADE'))
     target = db.Column(db.Integer)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     type = db.Column(db.String(32))
@@ -715,7 +714,7 @@ class Tracking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(32))
     ip = db.Column(db.String(46))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     user = db.relationship('Users', foreign_keys="Tracking.user_id", lazy='select')

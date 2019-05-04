@@ -4,14 +4,17 @@
 from CTFd.models import Teams, Users
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
-from tests.helpers import (create_ctfd,
-                           destroy_ctfd,
-                           register_user,
-                           login_as_user,
-                           gen_user,
-                           gen_team,
-                           gen_challenge,
-                           gen_flag)
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    register_user,
+    login_as_user,
+    gen_user,
+    gen_team,
+    gen_challenge,
+    gen_flag,
+    simulate_user_activity
+)
 
 
 def test_api_teams_get_public():
@@ -262,11 +265,21 @@ def test_api_team_delete_admin():
     """Can a user patch /api/v1/teams/<team_id> if admin"""
     app = create_ctfd(user_mode="teams")
     with app.app_context():
-        gen_team(app.db)
+        team = gen_team(app.db)
+
+        assert len(team.members) == 4
+
+        members = team.members
+        for user in members:
+            simulate_user_activity(app.db, user=user)
+
         with login_as_user(app, 'admin') as client:
             r = client.delete('/api/v1/teams/1', json="")
             assert r.status_code == 200
             assert r.get_json().get('data') is None
+
+        for user in Users.query.all():
+            assert user.team_id is None
     destroy_ctfd(app)
 
 

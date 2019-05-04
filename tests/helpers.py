@@ -28,6 +28,8 @@ import six
 import gc
 import requests
 import uuid
+import random
+import string
 
 if six.PY2:
     text_type = unicode  # noqa: F821
@@ -222,6 +224,10 @@ def get_scores(user):
     return scores['data']
 
 
+def random_string(n=5):
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(n))
+
+
 def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard', state='visible', **kwargs):
     chal = Challenges(name=name, description=description, value=value, category=category, type=type, state=state, **kwargs)
     db.session.add(chal)
@@ -272,8 +278,14 @@ def gen_user(db, name='user_name', email='user@ctfd.io', password='password', **
     return user
 
 
-def gen_team(db, name='team_name', email='team@ctfd.io', password='password', **kwargs):
+def gen_team(db, name='team_name', email='team@ctfd.io', password='password', member_count=4, **kwargs):
     team = Teams(name=name, email=email, password=password, **kwargs)
+    for i in range(member_count):
+        name = 'user-{}-{}'.format(random_string(), str(i))
+        user = gen_user(db, name=name, email=name + '@ctfd.io', team_id=team.id)
+        if i == 0:
+            team.captain_id = user.id
+        team.members.append(user)
     db.session.add(team)
     db.session.commit()
     return team
@@ -286,7 +298,7 @@ def gen_hint(db, challenge_id, content="This is a hint", cost=0, type="standard"
     return hint
 
 
-def gen_unlock(db, user_id, team_id, target, type):
+def gen_unlock(db, user_id, team_id=None, target=None, type='hints'):
     unlock = Unlocks(
         user_id=user_id,
         team_id=team_id,
@@ -332,3 +344,17 @@ def gen_notification(db, title='title', content='content'):
     notif = Notifications(title=title, content=content)
     db.session.add(notif)
     db.session.commit()
+
+
+def simulate_user_activity(db, user):
+    gen_tracking(db, user_id=user.id)
+    gen_award(db, user_id=user.id)
+    challenge = gen_challenge(db)
+    flag = gen_flag(db, challenge_id=challenge.id)
+    hint = gen_hint(db, challenge_id=challenge.id)
+
+    for _ in range(5):
+        gen_fail(db, user_id=user.id, challenge_id=challenge.id)
+
+    gen_unlock(db, user_id=user.id, target=hint.id, type='hints')
+    gen_solve(db, user_id=user.id, challenge_id=challenge.id, provided=flag.content)
