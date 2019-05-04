@@ -27,7 +27,8 @@ def test_api_team_get_members():
             assert r.status_code == 200
 
             resp = r.get_json()
-            assert resp['data'] == [2, 3, 4, 5]
+            # The following data is sorted b/c in Postgres data isn't necessarily returned ordered.
+            assert sorted(resp['data']) == sorted([2, 3, 4, 5])
     destroy_ctfd(app)
 
 
@@ -53,7 +54,8 @@ def test_api_team_remove_members():
             assert r.status_code == 200
 
             resp = r.get_json()
-            assert resp['data'] == [3, 4, 5]
+            # The following data is sorted b/c in Postgres data isn't necessarily returned ordered.
+            assert sorted(resp['data']) == sorted([3, 4, 5])
 
             r = client.delete('/api/v1/teams/1/members', json={
                 'id': 2
