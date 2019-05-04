@@ -13,7 +13,8 @@
     * `Hints` should be deleted when their Challenge is deleted
     * `Tags` should be deleted when their Challenge is deleted
     * `Flags` should be deleted when their Challenge is deleted
-    * `ChallengeFiles` should be deleted when their Challenge is deleted (not deleted from the filesystem or S3)
+    * `ChallengeFiles` should be deleted when their Challenge is deleted
+        * Deletion of the file itself is not handled by the model/database
     * `Awards` should be deleted when their user or team is deleted
     * `Unlocks` should be deleted when their user or team is deleted
     * `Tracking` should be deleted when their user or team is deleted
