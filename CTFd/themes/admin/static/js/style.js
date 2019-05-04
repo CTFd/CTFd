@@ -37,7 +37,10 @@ $(function () {
     });
 
     $("tr a, button").click(function (e) {
-        e.stopPropagation();
+        // TODO: This is a hack to allow modal close buttons to work
+        if (!$(this).attr('data-dismiss')) {
+            e.stopPropagation();
+        }
     });
 
     $('[data-toggle="tooltip"]').tooltip()
