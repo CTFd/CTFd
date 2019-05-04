@@ -286,7 +286,7 @@ def gen_hint(db, challenge_id, content="This is a hint", cost=0, type="standard"
     return hint
 
 
-def gen_unlock(db, user_id, team_id, target, type):
+def gen_unlock(db, user_id, team_id=None, target=None, type='hints'):
     unlock = Unlocks(
         user_id=user_id,
         team_id=team_id,
@@ -332,3 +332,16 @@ def gen_notification(db, title='title', content='content'):
     notif = Notifications(title=title, content=content)
     db.session.add(notif)
     db.session.commit()
+
+
+def simulate_user_activity(db, user):
+    gen_tracking(db, user_id=user.id)
+    challenge = gen_challenge(db)
+    flag = gen_flag(db, challenge_id=challenge.id)
+    hint = gen_hint(db, challenge_id=challenge.id)
+
+    for _ in range(5):
+        gen_fail(db, user_id=user.id, challenge_id=challenge.id)
+
+    gen_unlock(db, user_id=user.id, target=hint.id, type='hints')
+    gen_solve(db, user_id=user.id, challenge_id=challenge.id, provided=flag.content)
