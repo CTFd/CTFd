@@ -3,6 +3,7 @@ version: '2'
 services:
   ctfd:
     build: .
+    user: root
     restart: always
     ports:
       - "8000:8000"
