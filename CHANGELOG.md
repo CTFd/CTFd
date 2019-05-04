@@ -1,3 +1,37 @@
+2.1.1 / 2019-05-04
+==================
+
+**General**
+* Allow admins to hit `/api/v1/challenges` and `/api/v1/challenges/[id]` without having a team to fix challenge previews
+* Fix rate-limiting of flag submission when using team mode
+* Fixes some modal close buttons not working in the admin panel
+* Fixes `populate.py` to assign captains to teams.
+
+**Models**
+* Added `Challenges.flags` relationship and moved the `Flags.challenge` relationship to a backref on Challenges
+* Added `ondelete='CASCADE'` to most ForeignKeys in models allowing for deletions to remove associated data
+    * `Hints` should be deleted when their Challenge is deleted
+    * `Tags` should be deleted when their Challenge is deleted
+    * `Flags` should be deleted when their Challenge is deleted
+    * `ChallengeFiles` should be deleted when their Challenge is deleted
+        * Deletion of the file itself is not handled by the model/database
+    * `Awards` should be deleted when their user or team is deleted
+    * `Unlocks` should be deleted when their user or team is deleted
+    * `Tracking` should be deleted when their user or team is deleted
+    * `Teams.captain_id` should be set to NULL when the captain user is deleted
+
+**Exports**
+* Force `db.create_all()` to happen for imports on `sqlite` or on failure to create missing tables
+* Force `ctf_theme` to be set to `core` in imports in case a theme is missing from the import or the instance
+* Fix imports/exports to emit and accept JSON properly under MariaDB
+    * MariaDB does not properly understand JSON so it must accept strings instead of dicts
+    * MariaDB outputs strings instead of JSON for its JSON type so the export serializer will attempt to cast output JSON strings to JSON objects
+
+**Deployment**
+* Run as root when using docker-compose
+    * This is necessary to be able to write to the volumes mounted from the host
+
+
 2.1.0 / 2019-04-24
 ==================
 
@@ -283,13 +317,13 @@ If you are upgrading from a prior version be sure to make backups and have a rev
     1. Make all necessary backups. Backup the database, uploads folder, and source code directory.
     2. Upgrade the source code directory (i.e. `git pull`) but do not run any updated code yet.
     3. Set the `DATABASE_URL` in `CTFd/config.py` to point to your existing CTFd database.
-    3. Run the upgrade script from the CTFd root folder i.e. `python migrations/1_2_0_upgrade_2_0_0.py`.
+    4. Run the upgrade script from the CTFd root folder i.e. `python migrations/1_2_0_upgrade_2_0_0.py`.
         * This migration script will attempt to migrate data inside the database to 2.0.0 but it cannot account for every situation.
         * Examples of situations where you may need to manually migrate data:
             * Tables/columns created by plugins
             * Tables/columns created by forks
             * Using databases which are not officially supported (e.g. sqlite, postgres)
-    4. Setup the rest of CTFd (i.e. config.py), migrate/update any plugins, and run normally.
+    5. Setup the rest of CTFd (i.e. config.py), migrate/update any plugins, and run normally.
 * If upgrading from a version before 1.2.0, please upgrade to 1.2.0 and then continue with the steps above.
 
 **General**
