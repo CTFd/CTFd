@@ -78,7 +78,7 @@ def test_reset_team_mode():
             gen_tracking(app.db, user_id=user_obj.id)
 
         assert Teams.query.count() == 10
-        assert Users.query.count() == 11  # 11 because of the first admin user
+        assert Users.query.count() == 51  # 10 random users, 40 users (10 teams * 4), 1 admin user
         assert Challenges.query.count() == 10
 
         register_user(app)

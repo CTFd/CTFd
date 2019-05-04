@@ -11,9 +11,6 @@ from tests.helpers import (
     register_user,
     login_as_user,
     gen_user,
-    gen_award,
-    gen_hint,
-    gen_unlock,
     simulate_user_activity
 )
 
