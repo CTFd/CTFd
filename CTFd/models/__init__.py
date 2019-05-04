@@ -76,6 +76,7 @@ class Challenges(db.Model):
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
     hints = db.relationship("Hints", backref="challenge")
+    flags = db.relationship("Flags", backref="challenge")
 
     __mapper_args__ = {
         'polymorphic_identity': 'standard',
@@ -214,8 +215,6 @@ class Flags(db.Model):
     type = db.Column(db.String(80))
     content = db.Column(db.Text)
     data = db.Column(db.Text)
-
-    challenge = db.relationship('Challenges', foreign_keys="Flags.challenge_id", lazy='select')
 
     __mapper_args__ = {
         'polymorphic_on': type

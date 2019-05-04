@@ -1,18 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users
+from CTFd.models import Users, Challenges, Tags, Hints, Flags
 from CTFd.utils import set_config
-from tests.helpers import (create_ctfd,
-                           destroy_ctfd,
-                           register_user,
-                           login_as_user,
-                           gen_challenge,
-                           gen_flag,
-                           gen_user,
-                           gen_team,
-                           gen_solve,
-                           gen_fail)
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    register_user,
+    login_as_user,
+    gen_challenge,
+    gen_flag,
+    gen_tag,
+    gen_hint,
+    gen_user,
+    gen_team,
+    gen_solve,
+    gen_fail
+)
 from freezegun import freeze_time
 
 
@@ -283,7 +287,7 @@ def test_api_challenge_delete_non_admin():
 
 
 def test_api_challenge_delete_admin():
-    """Can a user patch /api/v1/challenges/<challenge_id> if admin"""
+    """Can a user delete /api/v1/challenges/<challenge_id> if admin"""
     app = create_ctfd()
     with app.app_context():
         gen_challenge(app.db)
@@ -291,6 +295,32 @@ def test_api_challenge_delete_admin():
             r = client.delete('/api/v1/challenges/1', json="")
             assert r.status_code == 200
             assert r.get_json().get('data') is None
+    destroy_ctfd(app)
+
+
+def test_api_challenge_with_properties_delete_admin():
+    """Can a user delete /api/v1/challenges/<challenge_id> if the challenge has other properties"""
+    app = create_ctfd()
+    with app.app_context():
+        challenge = gen_challenge(app.db)
+        gen_hint(app.db, challenge_id=challenge.id)
+        gen_tag(app.db, challenge_id=challenge.id)
+        gen_flag(app.db, challenge_id=challenge.id)
+
+        challenge = Challenges.query.filter_by(id=1).first()
+        assert len(challenge.hints) == 1
+        assert len(challenge.tags) == 1
+        assert len(challenge.flags) == 1
+
+        with login_as_user(app, 'admin') as client:
+            r = client.delete('/api/v1/challenges/1', json="")
+            assert r.status_code == 200
+            assert r.get_json().get('data') is None
+
+        assert Tags.query.count() == 0
+        assert Hints.query.count() == 0
+        assert Flags.query.count() == 0
+
     destroy_ctfd(app)
 
 
