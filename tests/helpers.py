@@ -348,6 +348,7 @@ def gen_notification(db, title='title', content='content'):
 
 def simulate_user_activity(db, user):
     gen_tracking(db, user_id=user.id)
+    gen_award(db, user_id=user.id)
     challenge = gen_challenge(db)
     flag = gen_flag(db, challenge_id=challenge.id)
     hint = gen_hint(db, challenge_id=challenge.id)
