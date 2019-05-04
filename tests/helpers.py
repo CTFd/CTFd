@@ -225,7 +225,7 @@ def get_scores(user):
 
 
 def random_string(n=5):
-    return ''.join(random.choice(string.letters + string.digits) for _ in range(n))
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(n))
 
 
 def gen_challenge(db, name='chal_name', description='chal_description', value=100, category='chal_category', type='standard', state='visible', **kwargs):
