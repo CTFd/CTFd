@@ -1,0 +1,55 @@
+<div role="tabpanel" class="tab-pane config-section" id="backup">
+	<ul class="nav nav-tabs mb-3" role="tablist">
+		<li class="nav-item">
+			<a class="nav-link active" href="#export-ctf" aria-controls="export-ctf" role="tab"
+			   data-toggle="tab">导出（Export）</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#import-ctf" aria-controls="import-ctf" role="tab" data-toggle="tab">导入（Import）</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link " href="#save-csv" aria-controls="save-csv" role="tab" data-toggle="tab">下载CSV（Download CSV）</a>
+		</li>
+	</ul>
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="export-ctf">
+			<div class="form-group">
+				<p>导出是CTF在当前状态下的存档。它们可以重新导入到其他CTFd实例中，也可以由脚本和第三方用于计算统计信息。（Exports are an archive of your CTF in its current state. They can be re-imported into other CTFd
+					instances or used by scripts and third parties to calculate statistics.）</p>
+				<p>要下载导出，请单击下面的按钮。（To download an export click the button below.）</p>
+			</div>
+			<div class="form-group">
+				<a href="{{ url_for('admin.export_ctf') }}" id="export-button" class="btn btn-warning">导出（Export）</a>
+			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane" id="import-ctf">
+			<div class="form-group">
+				<p>您可以通过下面的上传导入保存的CTFd导出。这将完全擦除您现有的CTFd实例，并且所有数据都将被导入的数据替换。您应该只导入您信任的数据！（You can import saved CTFd exports by uploading them below. This will completely wipe your existing
+					CTFd instance and all your data will be replaced by the imported data.
+					You should only import data that you trust!）</p>
+
+				<div class="alert alert-warning" role="alert">
+					导入CTF将完全抹去您现有的数据（IMPORTING A CTF WILL COMPLETELY WIPE YOUR EXISTING DATA）
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="container-files">导入文件（Import File）</label>
+				<input class="form-control-file" type="file" name="backup" id="import-file" accept=".zip">
+			</div>
+			<input id="import-button" type="submit" class="btn btn-warning" value="Import">
+		</div>
+		<div role="tabpanel" class="tab-pane" id="save-csv">
+			<form method="GET" action="{{ url_for('admin.export_csv') }}">
+				<div class="form-group">
+					<label for="container-files">数据库表项（Database Table）</label>
+					<select class="form-control" name="table">
+						{% for table in database_tables %}
+							<option value="{{ table }}">{{ table }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<input type="submit" class="btn btn-warning" value="Download CSV">
+			</form>
+		</div>
+	</div>
+</div>

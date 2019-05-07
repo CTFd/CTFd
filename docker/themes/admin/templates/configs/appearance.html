@@ -1,0 +1,95 @@
+<div role="tabpanel" class="tab-pane config-section active" id="appearance">
+	<form id="logo-upload" class="form-upload" method="POST" enctype="multipart/form-data">
+		<div class="form-group">
+			<label for="ctf_logo">
+				徽标（Logo）
+				<small class="form-text text-muted">
+					徽标用于网站而不是CTF名称。（Logo to use for the website instead of a CTF name.）
+				</small>
+			</label>
+
+			{% if ctf_logo %}
+				<div class="d-block py-3">
+					<img id="ctf_logo_preview" class="img-responsive ctf_logo"
+						 src="{{ url_for('views.files', path=ctf_logo) }}"
+						 height="25">
+					<button type="button" class="btn-sm btn-danger" onclick="remove_logo()">
+						删除徽标（Remove Logo）
+					</button>
+				</div>
+			{% endif %}
+
+			<div class="row">
+				<div class="col-md-9">
+					<input class="form-control-file" id="ctf_logo_file" name='file' type='file'
+						   placeholder="CTF Logo">
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<div class="d-inline-block float-right">
+							<button type="submit" class="btn-sm btn-primary float-right">上传（Upload）</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<hr>
+
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			<label for="ctf_name">
+				比赛名称（Competition Name）
+				<small class="form-text text-muted">显示比赛名称而不是徽标（Competition name displayed instead of a logo）</small>
+			</label>
+			<input class="form-control" id='ctf_name' name='ctf_name' type='text' placeholder="CTF Name"
+				   {% if ctf_name is defined and ctf_name != None %}value="{{ ctf_name }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label for="user_mode">
+				用户模式（User Mode）
+				<small class="form-text text-muted">用户模式允许用户自己注册或选择组建团队（User mode allows users to register as themselves
+					or choose to form teams）
+				</small>
+			</label>
+			<select class="form-control" id="user_mode" name="user_mode">
+				<option value="teams" {% if user_mode == 'teams' %}selected{% endif %}>
+					团队（Teams）
+				</option>
+				<option value="users" {% if user_mode == 'users' %}selected{% endif %}>
+					用户（Users）
+				</option>
+			</select>
+
+		</div>
+
+		<div class="form-group">
+			<label for="ctf_theme">
+				主题（Theme）
+				<small class="form-text text-muted">
+					切换主题改变CTFd的样式（Switch themes to change CTFd's aesthetics）
+				</small>
+			</label>
+			<select class="form-control" id="ctf_theme" name="ctf_theme">
+				<option>{{ ctf_theme }}</option>
+				{% for theme in themes %}
+					<option>{{ theme }}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				样式表编辑器（Stylesheet editor）
+				<small class="form-text text-muted">
+					如果使用的主题支持自定义CSS，则CSS将应用于所有面向公众的页面。（CSS is applied to all public facing pages if the theme used supports custom CSS.）
+				</small>
+			</label>
+			<textarea class="form-control" id="css-editor" name="css" rows="7">{{ css }}</textarea>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">更新（Update）</button>
+	</form>
+</div>

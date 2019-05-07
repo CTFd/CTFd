@@ -1,0 +1,27 @@
+<table id="flagsboard" class="table table-striped">
+	<thead>
+	<tr>
+		<td class="text-center"><b>类型（Type）</b></td>
+		<td class="text-center"><b>Flag（Flag）</b></td>
+		<td class="text-center"><b>设置（Settings）</b></td>
+	</tr>
+	</thead>
+	<tbody>
+	{% for flag in flags %}
+		<tr name="{{ flag.id }}">
+			<td class="text-center">{{ flag.type }}</td>
+			<td>
+				<pre class="flag-content">{{ flag.content }}</pre>
+			</td>
+			<td class="text-center">
+				<i role="button" class="btn-fa fas fa-edit edit-flag" flag-id="{{ flag.id }}" flag-type="{{ flag.type }}"></i>
+				<i role="button" class="btn-fa fas fa-times delete-flag" flag-id="{{ flag.id }}"></i>
+			</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+
+<div class="col-md-12">
+	<button id="flag-add-button" class="btn btn-success d-inline-block float-right">创建Flag（Create Flag）</button>
+</div>

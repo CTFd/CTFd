@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1>安装（Setup）</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="col-md-6 offset-md-3">
+			<h2 class="text-center">CTF设置（CTF Settings）</h2>
+			{% for error in errors %}
+				<div class="submit-row">
+					<div class="alert alert-danger alert-dismissable" role="alert">
+						<span class="sr-only">Error:</span>
+						{{ error }}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+								aria-hidden="true">×</span></button>
+					</div>
+				</div>
+			{% endfor %}
+			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+				<input type="hidden" name="nonce" value="{{ nonce }}">
+				{# This nonce is implemented specially in the route itself #}
+				<div class="form-group">
+					<label>
+						CTF名称（CTF Name）<br>
+						<small class="form-text text-muted">
+							CTF平台的名称（Name for the CTF）
+						</small>
+					</label>
+					<input class="form-control" type="text" name="ctf_name"/>
+				</div>
+				<div class="form-group">
+					<label>
+						管理员用户名（Admin Username）<br>
+						<small class="form-text text-muted">
+							您的管理帐户用户名（Your username for the administration account）
+						</small>
+					</label>
+					<input class="form-control" type="text" name="name"/>
+				</div>
+				<div class="form-group">
+					<label>
+						管理员邮箱（Admin Email）<br>
+						<small class="form-text text-muted">
+							您的管理帐户的电子邮件地址（Your email address for the administration account）
+						</small>
+					</label>
+					<input class="form-control" type="email" name="email"/>
+				</div>
+				<div class="form-group">
+					<label>
+						管理员账户密码（Admin Password）<br>
+						<small class="form-text text-muted">
+							您的管理帐户密码（Your password for the administration account）
+						</small>
+					</label>
+					<input class="form-control" type="password" name="password"/>
+				</div>
+				<div class="form-group">
+					<label>
+						CTF用户模式（CTF User Mode）
+						<small class="form-text text-muted">
+							CTF的用户模式。（User Mode for the CTF.） <br>
+							选择用户模式为加入团队（团队模式）或独立用户（用户模式）
+							（Dictates whether users join teams to play (Team Mode) or
+							play as themselves (User Mode)）
+						</small>
+					</label>
+					<select class="form-control" name="user_mode">
+						<option value="teams">团队模式（Team Mode）</option>
+						<option value="users">用户模式（User Mode）</option>
+					</select>
+				</div>
+				<br/>
+				<div class="submit-row text-center">
+					<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined">提交（Submit）
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/style.js') }}"></script>
+{% endblock %}

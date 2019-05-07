@@ -1,0 +1,47 @@
+<div role="tabpanel" class="tab-pane config-section" id="accounts">
+	<form method="POST" autocomplete="off" class="w-100">
+
+		<div class="form-group">
+			<label>
+				帐户电子邮件白名单（Account Email Whitelist）
+				<small class="form-text text-muted">
+					名单内账户可以注册。（Comma-seperated email domains which users can register under.）
+				</small>
+			</label>
+			<input class="form-control" id='domain-whitelist' name='domain_whitelist' type='text'
+				   placeholder=""
+				   {% if domain_whitelist is defined and domain_whitelist != None %}value="{{ domain_whitelist }}"{% endif %}>
+			<small class="form-text text-muted">
+				例如： ctfd.io,gmail.com,yahoo.com
+			</small>
+		</div>
+
+		<div class="form-group">
+			<label>
+				验证电子邮件（Verify Emails）<br>
+				<small class="form-text text-muted">
+					用户使用必需验证其邮箱（Control whether users must confirm their email addresses before playing）
+				</small>
+			</label>
+			<select class="form-control" name="verify_emails">
+				<option value="true" {% if verify_emails == True %}selected{% endif %}>需要（Enabled）</option>
+				<option value="false" {% if verify_emails == False or verify_emails == None %}selected{% endif %}>不需要（Disabled）</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				团队名称更改（Team Name Changes）<br>
+				<small class="form-text text-muted">
+					控制用户是否可以更改其名称（Control whether users can change their names）
+				</small>
+			</label>
+			<select class="form-control" name="name_changes">
+				<option value="true" {% if name_changes == True or name_changes == None %}selected{% endif %}>可以（Enabled）</option>
+				<option value="false" {% if name_changes == False %}selected{% endif %}>不可以（Disabled）</option>
+			</select>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">更新（Update）</button>
+	</form>
+</div>

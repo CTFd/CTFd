@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1>创建团队（Create Team）</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				{% for error in errors %}
+					<div class="alert alert-danger alert-dismissable" role="alert">
+						<span class="sr-only">Error:</span>
+						{{ error }}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+								aria-hidden="true">×</span></button>
+					</div>
+				{% endfor %}
+				<form method="POST">
+					<div class="form-group">
+						<label>团队名称（Team Name:）</label>
+						<input class="form-control" type="text" name="name">
+					</div>
+					<div class="form-group">
+						<label>团队密码（Team Password:）</label>
+						<input class="form-control" type="password" name="password">
+					</div>
+					<input type="hidden" name="nonce" value="{{ nonce }}">
+					<div class="row pt-3">
+						<div class="col-md-12">
+							<p>创建团队后，与团队成员共享团队名称和密码，以便他们能够加入您的团队。
+							（After creating your team, share the team name and password with your teammates so they can join your team.）</p>
+							<button type="submit" id="submit" class="btn btn-success float-right">
+								创建（Create）
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

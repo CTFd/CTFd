@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>管理页面（Admin Panel）</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="{{ url_for('views.themes', theme='core', path='img/favicon.ico') }}" type="image/x-icon">
+	<link rel="icon" href="{{ url_for('views.themes', theme='core', path='img/favicon.ico') }}" type="image/x-icon">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/vendor/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/vendor/font-awesome/fontawesome-fonts.css') }}" type='text/css'>
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/vendor/font-awesome/fontawesome-all.min.css') }}" type='text/css'>
+	<link rel="stylesheet" href='{{ url_for('views.themes', theme='admin', path='css/vendor/font.css') }}'>
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/jumbotron.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/sticky-footer.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/base.css') }}">
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/promise-polyfill.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/fetch.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/moment-timezone-with-data.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/nunjucks.min.js') }}"></script>
+	<script type="text/javascript">
+		var script_root = "{{ request.script_root }}";
+		var csrf_nonce = "{{ nonce }}";
+		var user_mode = "{{ get_config('user_mode') }}";
+	</script>
+	{% block stylesheets %} {% endblock %}
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+		<div class="container">
+			<a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">CTFd</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
+					aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="base-navbars">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.statistics') }}">统计（Statistics）</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.notifications') }}">通知（Notifications）</a>
+					</li>
+					<li class="nav-item dropdown">
+						<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">页面（Pages）</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="{{ url_for('admin.pages_listing') }}">所有页面（All Pages）</a>
+							<a class="dropdown-item" href="{{ url_for('admin.pages_new') }}">新建页面（New Page）</a>
+						</div>
+					</li>
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.users_listing') }}">用户（Users）</a></li>
+					{% if get_config('user_mode') == 'teams' %}
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.teams_listing') }}">团队（Teams）</a></li>
+					{% endif %}
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.scoreboard_listing') }}">记分板（Scoreboard）</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.challenges_listing') }}">挑战（Challenges）</a></li>
+					<li class="nav-item dropdown">
+						<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+						   aria-haspopup="true" aria-expanded="true">提交（Submissions）</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="{{ url_for('admin.submissions_listing') }}">所有提交(All Submissions)</a>
+							<a class="dropdown-item" href="{{ url_for('admin.submissions_listing', submission_type='correct') }}">正确记录（Correct Submissions）</a>
+							<a class="dropdown-item" href="{{ url_for('admin.submissions_listing', submission_type='incorrect') }}">错误记录（Wrong Submissions）</a>
+						</div>
+					</li>
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.config') }}">配置（Config）</a></li>
+
+					{% set plugin_menu = get_admin_plugin_menu_bar() %}
+					{% set plugins = get_configurable_plugins() %}
+					{% if plugin_menu or plugins %}
+						<li class="nav-item">
+							<a class="nav-link d-none d-md-block d-lg-block">|</a>
+						</li>
+
+						{% for menu in plugin_menu %}
+							{% if request.script_root %}
+								{% set route = '/' + request.script_root + '/' + menu.route %}
+							{% else %}
+								{% set route = menu.route %}
+							{% endif %}
+							<li class="nav-item"><a class="nav-link" href="{{ route }}">{{ menu.title }}</a></li>
+						{% endfor %}
+
+						{% if plugins %}
+						<li class="nav-item dropdown">
+							<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">插件（Plugins） <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+									{% for plugin in plugins %}
+											<a class="dropdown-item" href="{{ request.script_root }}{{ plugin.route }}">{{ plugin.name }}</a>
+									{% endfor %}
+							</ul>
+						</li>
+						{% endif %}
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	{% if get_config('version_latest') %}
+	<div class="container-fluid bg-warning text-center py-3">
+		<div class="row">
+			<div class="col-md-12">
+				<a class="btn btn-warning" href="{{ get_config('version_latest') }}">
+					A new CTFd version is available!
+				</a>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+
+	<main role="main">
+		{% block content %}
+		{% endblock %}
+	</main>
+
+	<footer class="footer pt-2">
+		<div class="container text-center">
+			<a href="https://www.yad0.com">
+				<small class="text-muted">CTFd汉化支持  深度极客</small>
+			</a>&nbsp; &nbsp; 
+			<a href="https://ctfd.io">
+				<small class="text-muted">
+					Powered by CTFd
+				</small>
+			</a>
+			<span>
+				<small class="text-muted"><br> Version {{ get_config('ctf_version') }}</small>
+			</span>
+		</div>
+	</footer>
+
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/jquery.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/markdown-it.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/bootstrap.bundle.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/main.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/utils.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/ezq.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme='admin', path='js/style.js') }}"></script>
+	{% block scripts %} {% endblock %}
+</body>
+
+</html>

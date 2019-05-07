@@ -1,0 +1,22 @@
+<table id="keysboard" class="table table-striped">
+	<thead>
+		<tr>
+			<td class="text-center"><b>Type</b></td>
+			<td class="text-center"><b>Key</b></td>
+			<td class="text-center"><b>Settings</b></td>
+		</tr>
+	</thead>
+	<tbody>
+	{% for flag in flags %}
+		<tr name="{{flag.id}}">
+			<td class="key-type text-center">{{flag.type}}</td>
+			<td class="key-value"><pre>{{flag.content}}</pre></td>
+			<td class="text-center"><span>
+				<i role="button" class="btn-fa fas fa-edit" onclick="javascript:load_edit_key_modal({{flag.id}}, '{{flag.type}}')"></i>
+				<i role="button" class="btn-fa fas fa-times" onclick="javascript:deletekey({{flag.id}})"></i>
+			</span>
+			</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>

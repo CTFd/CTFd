@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{ get_ctf_name() }}</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='img/favicon.ico') }}"
+		  type="image/x-icon">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/vendor/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/vendor/font-awesome/fontawesome-fonts.css') }}" type='text/css'>
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/vendor/font-awesome/fontawesome-all.min.css') }}" type='text/css'>
+	<link href='{{ url_for('views.themes', theme=get_ctf_theme(), path='css/vendor/font.css') }}' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/jumbotron.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/sticky-footer.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme=get_ctf_theme(), path='css/base.css') }}">
+	{% block stylesheets %}{% endblock %}
+	{% for stylesheet in get_registered_stylesheets() %}
+		{% if stylesheet.startswith('http') %}
+			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+		{% elif request.script_root %}
+			<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/{{ stylesheet }}">
+		{% else %}
+			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+		{% endif %}
+	{% endfor %}
+	<link rel="stylesheet" type="text/css" href="{{ url_for('views.custom_css') }}">
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/promise-polyfill.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/fetch.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/CTFd.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/moment.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/nunjucks.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/socket.io.min.js') }}"></script>
+	<script type="text/javascript">
+		var script_root = "{{ request.script_root }}";
+		var csrf_nonce = "{{ nonce }}";
+		var user_mode = "{{ get_config('user_mode') }}";
+		CTFd.urlRoot = script_root;
+	</script>
+</head>
+<body>
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+		<div class="container">
+			<a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">
+				{% if get_ctf_logo() %}
+				<img class="img-responsive ctf_logo" src="{{ url_for('views.files', path=get_ctf_logo()) }}" height="25" alt="{{ get_ctf_name() }}">
+				{% else %}
+				{{ get_ctf_name() }}
+				{% endif %}
+			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
+					aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="base-navbars">
+				<ul class="navbar-nav mr-auto">
+					{% for page in get_user_page_menu_bar() %}
+						{% if page.route.startswith('http://') or page.route.startswith('https://') %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ page.route }}">{{ page.title }}</a>
+							</li>
+						{% else %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ url_for('views.static_html', route=page.route) }}">{{ page.title }}</a>
+							</li>
+						{% endif %}
+					{% endfor %}
+
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('views.notifications') }}">通知（Notifications）</a>
+					</li>
+					{% if get_config('account_visibility') != 'admins' %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('users.listing') }}">用户（Users）</a>
+						</li>
+						{% if get_config('user_mode') == 'teams' %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('teams.listing') }}">团队（Teams）</a>
+						</li>
+						{% endif %}
+					{% endif %}
+					{% if get_config('score_visibility') != 'admins' %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('scoreboard.listing') }}">积分板（Scoreboard）</a>
+						</li>
+					{% endif %}
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('challenges.listing') }}">挑战（Challenges）</a>
+					</li>
+				</ul>
+
+				<hr class="d-sm-flex d-md-flex d-lg-none">
+
+				<ul class="navbar-nav ml-md-auto d-block d-sm-flex d-md-flex">
+					{% if name is defined %}
+						{% if type == 'admin' %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ url_for('admin.view') }}">管理员（Admin）</a>
+							</li>
+						{% endif %}
+						{% if config.user_mode() == "teams" %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('teams.private') }}">团队（Team）</a>
+						</li>
+						{% endif %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('users.private') }}">修改信息（Profile）</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('views.settings') }}">设置（Settings）</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('auth.logout') }}">退出（Logout）</a>
+						</li>
+					{% else %}
+						{% if registration_visible() %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ url_for('auth.register') }}">注册（Register）</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link d-none d-md-block d-lg-block">|</a>
+							</li>
+						{% endif %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('auth.login') }}">登录（Login）</a>
+						</li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<main role="main">
+		{% block content %}
+		{% endblock %}
+	</main>
+
+	<footer class="footer">
+		<div class="container text-center">
+			<a href="https://www.yad0.com">
+				<small class="text-muted">CTFd汉化支持  深度极客</small>
+			</a>&nbsp; &nbsp; 
+			<a href="https://ctfd.io">
+				<small class="text-muted">Powered by CTFd</small>
+			</a>
+			
+		</div>
+	</footer>
+
+
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/jquery.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/markdown-it.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/vendor/bootstrap.bundle.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/style.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/utils.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/ezq.js') }}"></script>
+	<script src="{{ url_for('views.themes', theme=get_ctf_theme(), path='js/events.js') }}"></script>
+	{% block scripts %}
+	{% endblock %}
+
+	{% for script in get_registered_scripts() %}
+	{% if script.startswith('http') %}
+	<script src="{{ script }}"></script>
+	{% elif request.script_root %}
+	<script src="{{ request.script_root }}/{{ script }}"></script>
+	{% else %}
+	<script src="{{ script }}"></script>
+	{% endif %}
+	{% endfor %}
+</body>
+</html>

@@ -1,0 +1,86 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Pages
+			<a class="no-decoration" href="{{ url_for('admin.pages_new') }}">
+				<span class="create-page" role="button" data-toggle="tooltip" title="Create Page">
+					<i class="btn-fa fas fa-plus-circle"></i>
+				</span>
+			</a>
+		</h1>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<table id="pages" class="table table-striped">
+				<thead>
+				<tr>
+					<td><b>标题（Title）</b></td>
+					<td><b>路径（Route）</b></td>
+					<td class="text-center"><b>认证（Authentication）</b></td>
+					<td class="text-center"><b>隐藏（Hidden）</b></td>
+					<td class="text-center"><b>公开（Published）</b></td>
+					<td class="text-center" width="10px"><b>设置（Settings）</b></td>
+				</tr>
+				</thead>
+				<tbody>
+				{% for page in pages %}
+					<tr>
+						<td class="page-title">
+							{{ page.title }}
+						</td>
+						<td class="page-route" page-id="{{ page.id }}" page-route="{{ page.route }}">
+							<a href="{{ url_for('admin.pages_detail', page_id=page.id) }}">
+								{{ page.route }}
+							</a>
+						</td>
+						<td class="text-center">
+							{% if page.auth_required %}
+							Required
+							{% else %}
+							{% endif %}
+						</td>
+						<td class="text-center">
+							{% if page.hidden %}
+								Hidden
+							{% else %}
+							{% endif %}
+						</td>
+						<td class="text-center">
+							{% if page.draft %}
+								Draft
+							{% else %}
+								Published
+							{% endif %}
+						</td>
+						<td class="text-center">
+							<span class="edit-page" data-toggle="tooltip" data-placement="top"
+								  title="Edit {{ page.route }}">
+								<a class="no-decoration" href="{{ url_for('admin.pages_detail', page_id=page.id) }}"><i class="btn-fa fas fa-edit"></i></a>
+							</span>
+							<span class="delete-page" page-id="{{ page.id }}" page-route="{{ page.route }}"
+								  page-title="{{ page.title }}" data-toggle="tooltip" data-placement="top"
+								  title="Delete {{ page.route }}">
+								<i class="btn-fa fas fa-times"></i>
+							</span>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('views.themes', theme='admin', path='js/vendor/codemirror.min.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='admin', path='js/pages/pages.js') }}"></script>
+{% endblock %}

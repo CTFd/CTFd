@@ -1,0 +1,101 @@
+<div role="tabpanel" class="tab-pane config-section" id="settings">
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			<label>
+				挑战可见性（Challenge Visibility）<br>
+				<small class="form-text text-muted">
+					用户是否必须登录才能看到挑战（Control whether users must be logged in to see challenges）
+				</small>
+			</label>
+			<select class="form-control" name="challenge_visibility">
+				<option value="public" {% if challenge_visibility == 'public' %}selected{% endif %}>
+					公共（Public）
+				</option>
+				<option value="private" {% if challenge_visibility == 'private' %}selected{% endif %}>
+					私有（Private）
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				分数可见性（Score Visibility）<br>
+				<small class="form-text text-muted">
+					是否向公众，向登录用户显示解决方案/分数，向所有非管理员隐藏，或仅向管理员显示（Control whether solves/score are shown to the public, to logged in users, hidden to all non-admins, or only shown to admins）
+				</small>
+			</label>
+			<select class="form-control" name="score_visibility">
+				<option value="public" {% if score_visibility == 'public' %}selected{% endif %}>
+					公共（Public）
+				</option>
+				<option value="private" {% if score_visibility == 'private' %}selected{% endif %}>
+					私有（Private）
+				</option>
+				<option value="hidden" {% if score_visibility == 'hidden' %}selected{% endif %}>
+					隐藏（Hidden）
+				</option>
+				<option value="admins" {% if score_visibility == 'admins' %}selected{% endif %}>
+					仅管理员（Admins Only）
+				</option>
+			</select>
+			<small class="form-text text-muted">
+				此设置通常应与“分数可见性”相同，以避免冲突。
+				（This setting should generally be the same as Account Visibility to avoid conflicts.）
+			</small>
+		</div>
+
+		<div class="form-group">
+			<label>
+				帐户可见性（Account Visibility）<br>
+				<small class="form-text text-muted">
+					控制帐户（用户和团队）是向所有人显示还是仅向管理员显示（Control whether accounts (users &amp; teams) are shown to everyone or only to admins）
+				</small>
+			</label>
+			<select class="form-control" name="account_visibility">
+				<option value="public" {% if account_visibility == 'public' %}selected{% endif %}>
+					公共（Public）
+				</option>
+				<option value="private" {% if account_visibility == 'private' %}selected{% endif %}>
+					私有（Private）
+				</option>
+				<option value="admins" {% if account_visibility == 'admins' %}selected{% endif %}>
+					仅管理员（Admins Only）
+				</option>
+			</select>
+			<small class="form-text text-muted">
+				此设置通常应与“分数可见性”相同，以避免冲突。（This setting should generally be the same as Score Visibility to avoid conflicts.）
+			</small>
+		</div>
+
+		<div class="form-group">
+			<label>
+				注册可见性（Registration Visibility）<br>
+				<small class="form-text text-muted">
+					控制是为所有人启用注册还是禁用注册（Control whether registration is enabled for everyone or disabled）
+				</small>
+			</label>
+			<select class="form-control" name="registration_visibility">
+				<option value="public" {% if registration_visibility == 'public' %}selected{% endif %}>
+					公共（Public）
+				</option>
+				<option value="private" {% if registration_visibility == 'private' %}selected{% endif %}>
+					私有（Private）
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<div class="form-check">
+				<label>
+					<input id="paused" name="paused" type="checkbox" {% if paused %}checked{% endif %}>
+					暂停CTF （Pause CTF）<br>
+					<small>
+						阻止用户提交答案，直到取消暂停。仍然可以看到挑战。（Prevent users from submitting answers until unpaused. Challenges can still be viewed.）
+					</small>
+				</label>
+			</div>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">更新（Update）</button>
+	</form>
+</div>
