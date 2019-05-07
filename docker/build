@@ -1,3 +1,3 @@
 
-docker build --pull=true --no-cache=true -f ctfd/Dockerfile -t registry.gz.cvte.cn/ops/ctfd:cvte .
+docker build --pull=true --no-cache=true -f docker/Dockerfile -t registry.gz.cvte.cn/ops/ctfd:cvte .
 docker push registry.gz.cvte.cn/ops/ctfd:cvte
