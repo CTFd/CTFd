@@ -200,6 +200,7 @@ class UserSolves(Resource):
             if not authed():
                 abort(403)
             user = get_current_user()
+            solves = user.get_solves(admin=True)
         else:
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
@@ -207,12 +208,7 @@ class UserSolves(Resource):
 
             if (user.banned or user.hidden) and is_admin() is False:
                 abort(404)
-
-        solves = user.get_solves(
-            admin=is_admin()
-        )
-        for solve in solves:
-            setattr(solve, 'value', 100)
+            solves = user.get_solves(admin=is_admin())
 
         view = 'user' if not is_admin() else 'admin'
         response = SubmissionSchema(view=view, many=True).dump(solves)
@@ -237,6 +233,7 @@ class UserFails(Resource):
             if not authed():
                 abort(403)
             user = get_current_user()
+            fails = user.get_fails(admin=True)
         else:
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
@@ -244,10 +241,7 @@ class UserFails(Resource):
 
             if (user.banned or user.hidden) and is_admin() is False:
                 abort(404)
-
-        fails = user.get_fails(
-            admin=is_admin()
-        )
+            fails = user.get_fails(admin=is_admin())
 
         view = 'user' if not is_admin() else 'admin'
         response = SubmissionSchema(view=view, many=True).dump(fails)
@@ -280,6 +274,7 @@ class UserAwards(Resource):
             if not authed():
                 abort(403)
             user = get_current_user()
+            awards = user.get_awards(admin=True)
         else:
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
@@ -287,10 +282,7 @@ class UserAwards(Resource):
 
             if (user.banned or user.hidden) and is_admin() is False:
                 abort(404)
-
-        awards = user.get_awards(
-            admin=is_admin()
-        )
+            awards = user.get_awards(admin=is_admin())
 
         view = 'user' if not is_admin() else 'admin'
         response = AwardSchema(view=view, many=True).dump(awards)

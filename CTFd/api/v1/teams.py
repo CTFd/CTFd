@@ -304,6 +304,7 @@ class TeamSolves(Resource):
             if not authed():
                 abort(403)
             team = get_current_team()
+            solves = team.get_solves(admin=True)
         else:
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
@@ -311,10 +312,7 @@ class TeamSolves(Resource):
 
             if (team.banned or team.hidden) and is_admin() is False:
                 abort(404)
-
-        solves = team.get_solves(
-            admin=is_admin()
-        )
+            solves = team.get_solves(admin=is_admin())
 
         view = 'admin' if is_admin() else 'user'
         schema = SubmissionSchema(view=view, many=True)
@@ -341,6 +339,7 @@ class TeamFails(Resource):
             if not authed():
                 abort(403)
             team = get_current_team()
+            fails = team.get_fails(admin=True)
         else:
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
@@ -348,10 +347,7 @@ class TeamFails(Resource):
 
             if (team.banned or team.hidden) and is_admin() is False:
                 abort(404)
-
-        fails = team.get_fails(
-            admin=is_admin()
-        )
+            fails = team.get_fails(admin=is_admin())
 
         view = 'admin' if is_admin() else 'user'
 
@@ -388,6 +384,7 @@ class TeamAwards(Resource):
             if not authed():
                 abort(403)
             team = get_current_team()
+            awards = team.get_awards(admin=True)
         else:
             if accounts_visible() is False or scores_visible() is False:
                 abort(404)
@@ -395,10 +392,7 @@ class TeamAwards(Resource):
 
             if (team.banned or team.hidden) and is_admin() is False:
                 abort(404)
-
-        awards = team.get_awards(
-            admin=is_admin()
-        )
+            awards = team.get_awards(admin=is_admin())
 
         schema = AwardSchema(many=True)
         response = schema.dump(awards)
