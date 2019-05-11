@@ -310,7 +310,7 @@ class Users(db.Model):
         freeze = get_config('freeze')
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
-            fails = fails.filter(Solves.date < dt)
+            fails = fails.filter(Fails.date < dt)
         return fails.all()
 
     def get_awards(self, admin=False):
@@ -318,7 +318,7 @@ class Users(db.Model):
         freeze = get_config('freeze')
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
-            awards = awards.filter(Solves.date < dt)
+            awards = awards.filter(Awards.date < dt)
         return awards.all()
 
     def get_score(self, admin=False):
@@ -513,7 +513,7 @@ class Teams(db.Model):
         freeze = get_config('freeze')
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
-            fails = fails.filter(Solves.date < dt)
+            fails = fails.filter(Fails.date < dt)
 
         return fails.all()
 
@@ -529,7 +529,7 @@ class Teams(db.Model):
         freeze = get_config('freeze')
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
-            awards = awards.filter(Solves.date < dt)
+            awards = awards.filter(Awards.date < dt)
 
         return awards.all()
 
