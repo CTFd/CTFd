@@ -11,6 +11,8 @@ addons:
     packages:
     - mysql-server
     - mysql-client
+    - python3
+    - python3-pip
 env:
     - TESTING_DATABASE_URL='mysql+pymysql://root:password@localhost/ctfd'
     - TESTING_DATABASE_URL='sqlite://'
