@@ -38,6 +38,7 @@ from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime
 from CTFd.utils.logging import log
 from CTFd.utils.security.signing import serialize
 from sqlalchemy.sql import and_
+import datetime
 
 challenges_namespace = Namespace('challenges',
                                  description="Endpoint to retrieve Challenges")
@@ -522,6 +523,13 @@ class ChallengeSolves(Resource):
         solves = Solves.query.join(Model, Solves.account_id == Model.id)\
             .filter(Solves.challenge_id == challenge_id, Model.banned == False, Model.hidden == False)\
             .order_by(Solves.date.asc())
+
+        freeze = get_config('freeze')
+        if freeze:
+            preview = request.args.get('preview')
+            if (is_admin() is False) or (is_admin() is True and preview):
+                dt = datetime.datetime.utcfromtimestamp(freeze)
+                solves = solves.filter(Solves.date < dt)
 
         endpoint = None
         if get_config('user_mode') == TEAMS_MODE:
