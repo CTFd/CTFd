@@ -19,7 +19,7 @@ before_install:
     - export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
     - export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
     - pyenv global 3.6.7
-    - pip3 install black>=19.3b0
+    - pip3 install --user black>=19.3b0
     - pyenv global system
 install:
     - pip install -r development.txt
