@@ -7,12 +7,12 @@ services:
     - mysql
     - postgresql
     - redis-server
-# addons:
-#   apt:
-#     sources:
-#     - deadsnakes
-#     packages:
-#     - python3.6
+addons:
+  apt:
+    sources:
+    - deadsnakes
+    packages:
+    - python3.6
 #     - python3.6-dev
 #     - python3-pip
 env:
