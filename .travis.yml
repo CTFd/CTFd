@@ -26,7 +26,7 @@ before_install:
 install:
     - pip install -r development.txt
     - pip3 install black>=19.3b0
-    - yarn install -g
+    - yarn global add prettier
 before_script:
     - psql -c 'create database ctfd;' -U postgres
 script:
