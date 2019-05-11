@@ -648,7 +648,6 @@ def test_api_user_get_fails_after_freze_time():
             # User 2 should have 2 fail when seen by themselves
             client = login_as_user(app, name="user1")
             r = client.get('/api/v1/users/me/fails')
-            print r.get_json()
             assert r.get_json()['meta']['count'] == 2
 
             # User 2 should have 1 fail when seen by another user
