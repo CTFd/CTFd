@@ -32,9 +32,9 @@ def test_base64encode():
         assert base64encode(unicode("abc123")) == "YWJjMTIz"  # noqa: F821
         assert (
             base64encode(
-                unicode(
+                unicode(  # noqa: F821
                     '"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'
-                )  # noqa: F821
+                )
             )
             == "InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ"
         )
@@ -57,9 +57,9 @@ def test_base64decode():
         assert base64decode(unicode("YWJjMTIz")) == "abc123"  # noqa: F821
         assert (
             base64decode(
-                unicode(
+                unicode(  # noqa: F821
                     "InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ"
-                )  # noqa: F821
+                )
             )
             == '"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'
         )
