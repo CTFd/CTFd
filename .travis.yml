@@ -7,11 +7,6 @@ services:
     - mysql
     - postgresql
     - redis-server
-addons:
-  apt:
-    packages:
-    - python3
-    - python3-pip
 env:
     - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
     - TESTING_DATABASE_URL='sqlite://'
