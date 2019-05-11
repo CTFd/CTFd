@@ -7,6 +7,11 @@ services:
     - mysql
     - postgresql
     - redis-server
+addons:
+  apt:
+    packages:
+    - python3
+    - python3-pip
 env:
     - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
     - TESTING_DATABASE_URL='sqlite://'
@@ -18,8 +23,6 @@ before_install:
     - sudo rm -f /etc/boto.cfg
     - export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
     - export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-    # - pyenv global 3.6.7
-    # - pyenv global system
 install:
     - pip install -r development.txt
     - pip3 install --user black>=19.3b0
