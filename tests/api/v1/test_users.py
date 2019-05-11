@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users
+from CTFd.models import Users, Solves, Awards, Fails
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
 from CTFd.schemas.users import UserSchema
@@ -10,9 +10,14 @@ from tests.helpers import (
     destroy_ctfd,
     register_user,
     login_as_user,
+    simulate_user_activity,
+    gen_challenge,
     gen_user,
-    simulate_user_activity
+    gen_solve,
+    gen_award,
+    gen_fail,
 )
+from freezegun import freeze_time
 
 
 def test_api_users_get_public():
@@ -543,6 +548,49 @@ def test_api_user_get_solves():
     destroy_ctfd(app)
 
 
+def test_api_user_get_solves_after_freze_time():
+    """Can a user get /api/v1/users/<user_id>/solves after freeze time"""
+    app = create_ctfd(user_mode="users")
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io")
+        register_user(app, name="user2", email="user2@ctfd.io")
+
+        # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('freeze', '1507262400')
+        with freeze_time("2017-10-4"):
+            chal = gen_challenge(app.db)
+            chal_id = chal.id
+            gen_solve(app.db, user_id=2, challenge_id=chal_id)
+            chal2 = gen_challenge(app.db)
+            chal2_id = chal2.id
+
+        with freeze_time("2017-10-8"):
+            chal2 = gen_solve(app.db, user_id=2, challenge_id=chal2_id)
+
+            # There should now be two solves assigned to the same user.
+            assert Solves.query.count() == 2
+
+            # User 2 should have 2 solves when seen by themselves
+            client = login_as_user(app, name="user1")
+            r = client.get('/api/v1/users/me/solves')
+            data = r.get_json()['data']
+            assert len(data) == 2
+
+            # User 2 should have 1 solve when seen by another user
+            client = login_as_user(app, name="user2")
+            r = client.get('/api/v1/users/2/solves')
+            data = r.get_json()['data']
+            assert len(data) == 1
+
+            # Admins should see all solves for the user
+            admin = login_as_user(app, name="admin")
+
+            r = admin.get('/api/v1/users/2/solves')
+            data = r.get_json()['data']
+            assert len(data) == 2
+    destroy_ctfd(app)
+
+
 def test_api_user_get_me_fails_not_logged_in():
     """Can a user get /api/v1/users/me/fails if not logged in"""
     app = create_ctfd()
@@ -575,6 +623,46 @@ def test_api_user_get_fails():
     destroy_ctfd(app)
 
 
+def test_api_user_get_fails_after_freze_time():
+    """Can a user get /api/v1/users/<user_id>/fails after freeze time"""
+    app = create_ctfd(user_mode="users")
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io")
+        register_user(app, name="user2", email="user2@ctfd.io")
+
+        # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('freeze', '1507262400')
+        with freeze_time("2017-10-4"):
+            chal = gen_challenge(app.db)
+            chal_id = chal.id
+            chal2 = gen_challenge(app.db)
+            chal2_id = chal2.id
+            gen_fail(app.db, user_id=2, challenge_id=chal_id)
+
+        with freeze_time("2017-10-8"):
+            chal2 = gen_fail(app.db, user_id=2, challenge_id=chal2_id)
+
+            # There should now be two fails assigned to the same user.
+            assert Fails.query.count() == 2
+
+            # User 2 should have 2 fail when seen by themselves
+            client = login_as_user(app, name="user1")
+            r = client.get('/api/v1/users/me/fails')
+            assert r.get_json()['meta']['count'] == 2
+
+            # User 2 should have 1 fail when seen by another user
+            client = login_as_user(app, name="user2")
+            r = client.get('/api/v1/users/2/fails')
+            assert r.get_json()['meta']['count'] == 1
+
+            # Admins should see all fails for the user
+            admin = login_as_user(app, name="admin")
+
+            r = admin.get('/api/v1/users/2/fails')
+            assert r.get_json()['meta']['count'] == 2
+    destroy_ctfd(app)
+
+
 def test_api_user_get_me_awards_not_logged_in():
     """Can a user get /api/v1/users/me/awards if not logged in"""
     app = create_ctfd()
@@ -604,6 +692,45 @@ def test_api_user_get_awards():
         with login_as_user(app) as client:
             r = client.get('/api/v1/users/2/awards')
             assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_user_get_awards_after_freze_time():
+    """Can a user get /api/v1/users/<user_id>/awards after freeze time"""
+    app = create_ctfd(user_mode="users")
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io")
+        register_user(app, name="user2", email="user2@ctfd.io")
+
+        # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('freeze', '1507262400')
+        with freeze_time("2017-10-4"):
+            gen_award(app.db, user_id=2)
+
+        with freeze_time("2017-10-8"):
+            gen_award(app.db, user_id=2)
+
+            # There should now be two awards assigned to the same user.
+            assert Awards.query.count() == 2
+
+            # User 2 should have 2 awards when seen by themselves
+            client = login_as_user(app, name="user1")
+            r = client.get('/api/v1/users/me/awards')
+            data = r.get_json()['data']
+            assert len(data) == 2
+
+            # User 2 should have 1 award when seen by another user
+            client = login_as_user(app, name="user2")
+            r = client.get('/api/v1/users/2/awards')
+            data = r.get_json()['data']
+            assert len(data) == 1
+
+            # Admins should see all awards for the user
+            admin = login_as_user(app, name="admin")
+
+            r = admin.get('/api/v1/users/2/awards')
+            data = r.get_json()['data']
+            assert len(data) == 2
     destroy_ctfd(app)
 
 

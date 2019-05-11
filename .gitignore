@@ -58,6 +58,7 @@ target/
 *.db
 *.log
 .idea/
+.vscode/
 CTFd/static/uploads
 CTFd/uploads
 .data/

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Teams, Users
+from CTFd.models import Teams, Users, Solves, Fails, Awards
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
 from tests.helpers import (
@@ -13,8 +13,12 @@ from tests.helpers import (
     gen_team,
     gen_challenge,
     gen_flag,
+    gen_solve,
+    gen_award,
+    gen_fail,
     simulate_user_activity
 )
+from freezegun import freeze_time
 
 
 def test_api_teams_get_public():
@@ -42,7 +46,6 @@ def test_api_teams_get_private():
         with login_as_user(app) as client:
             set_config('account_visibility', 'public')
             r = client.get('/api/v1/teams')
-            print(r.__dict__)
             assert r.status_code == 200
             set_config('account_visibility', 'private')
             r = client.get('/api/v1/teams')
@@ -191,7 +194,6 @@ def test_api_team_get_private():
             set_config('account_visibility', 'public')
             gen_team(app.db)
             r = client.get('/api/v1/teams/1')
-            print(r.__dict__)
             assert r.status_code == 200
             set_config('account_visibility', 'private')
             r = client.get('/api/v1/teams/1')
@@ -408,7 +410,6 @@ def test_api_team_get_me_solves_logged_in():
         app.db.session.commit()
         with login_as_user(app, name="user_name") as client:
             r = client.get('/api/v1/teams/me/solves')
-            print(r.get_json())
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -424,8 +425,47 @@ def test_api_team_get_solves():
         app.db.session.commit()
         with login_as_user(app, name="user_name") as client:
             r = client.get('/api/v1/teams/1/solves')
-            print(r.get_json())
             assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_team_get_solves_after_freze_time():
+    """Can a user get /api/v1/teams/<team_id>/solves after freeze time"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        team = gen_team(app.db, name='team1', email='team1@ctfd.io', member_count=1)
+
+        team_member = team.members[0]
+        tm_name = team_member.name
+
+        set_config('freeze', '1507262400')
+        with freeze_time("2017-10-4"):
+            chal = gen_challenge(app.db)
+            chal_id = chal.id
+            gen_solve(app.db, user_id=3, team_id=1, challenge_id=chal_id)
+            chal2 = gen_challenge(app.db)
+            chal2_id = chal2.id
+
+        with freeze_time("2017-10-8"):
+            gen_solve(app.db, user_id=3, team_id=1, challenge_id=chal2_id)
+
+            assert Solves.query.count() == 2
+
+            with login_as_user(app) as client:
+                r = client.get('/api/v1/teams/1/solves')
+                data = r.get_json()['data']
+                assert len(data) == 1
+
+            with login_as_user(app, name=tm_name) as client:
+                r = client.get('/api/v1/teams/me/solves')
+                data = r.get_json()['data']
+                assert len(data) == 2
+
+            with login_as_user(app, name="admin") as client:
+                r = client.get('/api/v1/teams/1/solves')
+                data = r.get_json()['data']
+                assert len(data) == 2
     destroy_ctfd(app)
 
 
@@ -450,7 +490,6 @@ def test_api_team_get_me_fails_logged_in():
         app.db.session.commit()
         with login_as_user(app, name="user_name") as client:
             r = client.get('/api/v1/teams/me/fails')
-            print(r.get_json())
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -466,8 +505,44 @@ def test_api_team_get_fails():
         app.db.session.commit()
         with login_as_user(app, name="user_name") as client:
             r = client.get('/api/v1/teams/1/fails')
-            print(r.get_json())
             assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_team_get_fails_after_freze_time():
+    """Can a user get /api/v1/teams/<team_id>/fails after freeze time"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        team = gen_team(app.db, name='team1', email='team1@ctfd.io', member_count=1)
+
+        team_member = team.members[0]
+        tm_name = team_member.name
+
+        set_config('freeze', '1507262400')
+        with freeze_time("2017-10-4"):
+            chal = gen_challenge(app.db)
+            chal_id = chal.id
+            chal2 = gen_challenge(app.db)
+            chal2_id = chal2.id
+            gen_fail(app.db, user_id=3, team_id=1, challenge_id=chal_id)
+
+        with freeze_time("2017-10-8"):
+            gen_fail(app.db, user_id=3, team_id=1, challenge_id=chal2_id)
+
+            assert Fails.query.count() == 2
+
+            with login_as_user(app) as client:
+                r = client.get('/api/v1/teams/1/fails')
+                assert r.get_json()['meta']['count'] == 1
+
+            with login_as_user(app, name=tm_name) as client:
+                r = client.get('/api/v1/teams/me/fails')
+                assert r.get_json()['meta']['count'] == 2
+
+            with login_as_user(app, name="admin") as client:
+                r = client.get('/api/v1/teams/1/fails')
+                assert r.get_json()['meta']['count'] == 2
     destroy_ctfd(app)
 
 
@@ -492,7 +567,6 @@ def test_api_team_get_me_awards_logged_in():
         app.db.session.commit()
         with login_as_user(app, name="user_name") as client:
             r = client.get('/api/v1/teams/me/awards')
-            print(r.get_json())
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -508,8 +582,43 @@ def test_api_team_get_awards():
         app.db.session.commit()
         with login_as_user(app, name="user_name") as client:
             r = client.get('/api/v1/teams/1/awards')
-            print(r.get_json())
             assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_team_get_awards_after_freze_time():
+    """Can a user get /api/v1/teams/<team_id>/awards after freeze time"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        team = gen_team(app.db, name='team1', email='team1@ctfd.io', member_count=1)
+
+        team_member = team.members[0]
+        tm_name = team_member.name
+
+        set_config('freeze', '1507262400')
+        with freeze_time("2017-10-4"):
+            gen_award(app.db, user_id=3)
+
+        with freeze_time("2017-10-8"):
+            gen_award(app.db, user_id=3)
+
+            assert Awards.query.count() == 2
+
+            with login_as_user(app) as client:
+                r = client.get('/api/v1/teams/1/awards')
+                data = r.get_json()['data']
+                assert len(data) == 1
+
+            with login_as_user(app, name=tm_name) as client:
+                r = client.get('/api/v1/teams/me/awards')
+                data = r.get_json()['data']
+                assert len(data) == 2
+
+            with login_as_user(app, name="admin") as client:
+                r = client.get('/api/v1/teams/1/awards')
+                data = r.get_json()['data']
+                assert len(data) == 2
     destroy_ctfd(app)
 
 
