@@ -122,7 +122,7 @@ def create_app(config="CTFd.config.Config"):
         )
         app.jinja_loader = theme_loader
 
-        from CTFd.models import (
+        from CTFd.models import (  # noqa: F401
             db,
             Teams,
             Solves,
@@ -132,7 +132,7 @@ def create_app(config="CTFd.config.Config"):
             Tags,
             Files,
             Tracking,
-        )  # noqa: F401
+        )
 
         url = create_database()
 
