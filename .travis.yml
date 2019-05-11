@@ -9,8 +9,10 @@ services:
     - redis-server
 addons:
   apt:
+    sources:
+    - deadsnakes
     packages:
-    - python3
+    - python3.6
     - python3-pip
 env:
     - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
