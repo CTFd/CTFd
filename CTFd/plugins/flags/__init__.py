@@ -15,8 +15,8 @@ class BaseFlag(object):
 class CTFdStaticFlag(BaseFlag):
     name = "static"
     templates = {  # Nunjucks templates used for key editing & viewing
-        'create': '/plugins/flags/assets/static/create.html',
-        'update': '/plugins/flags/assets/static/edit.html',
+        "create": "/plugins/flags/assets/static/create.html",
+        "update": "/plugins/flags/assets/static/edit.html",
     }
 
     @staticmethod
@@ -40,8 +40,8 @@ class CTFdStaticFlag(BaseFlag):
 class CTFdRegexFlag(BaseFlag):
     name = "regex"
     templates = {  # Nunjucks templates used for key editing & viewing
-        'create': '/plugins/flags/assets/regex/create.html',
-        'update': '/plugins/flags/assets/regex/edit.html',
+        "create": "/plugins/flags/assets/regex/create.html",
+        "update": "/plugins/flags/assets/regex/edit.html",
     }
 
     @staticmethod
@@ -57,10 +57,7 @@ class CTFdRegexFlag(BaseFlag):
         return res and res.group() == provided
 
 
-FLAG_CLASSES = {
-    'static': CTFdStaticFlag,
-    'regex': CTFdRegexFlag
-}
+FLAG_CLASSES = {"static": CTFdStaticFlag, "regex": CTFdRegexFlag}
 
 
 def get_flag_class(class_id):
@@ -71,4 +68,4 @@ def get_flag_class(class_id):
 
 
 def load(app):
-    register_plugin_assets_directory(app, base_path='/plugins/flags/assets/')
+    register_plugin_assets_directory(app, base_path="/plugins/flags/assets/")

@@ -14,7 +14,7 @@ from CTFd.utils.plugins import (
     get_registered_scripts,
     get_configurable_plugins,
     get_registered_admin_scripts,
-    get_registered_admin_stylesheets
+    get_registered_admin_stylesheets,
 )
 
 from CTFd.utils.countries import get_countries, lookup_country_code
@@ -27,7 +27,7 @@ from CTFd.utils.config.visibility import (
     accounts_visible,
     challenges_visible,
     registration_visible,
-    scores_visible
+    scores_visible,
 )
 
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
@@ -39,10 +39,10 @@ import sys
 
 
 def init_template_filters(app):
-    app.jinja_env.filters['markdown'] = markdown
-    app.jinja_env.filters['unix_time'] = unix_time
-    app.jinja_env.filters['unix_time_millis'] = unix_time_millis
-    app.jinja_env.filters['isoformat'] = isoformat
+    app.jinja_env.filters["markdown"] = markdown
+    app.jinja_env.filters["unix_time"] = unix_time
+    app.jinja_env.filters["unix_time_millis"] = unix_time_millis
+    app.jinja_env.filters["isoformat"] = isoformat
 
 
 def init_template_globals(app):
@@ -55,8 +55,12 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
     app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
     app.jinja_env.globals.update(get_registered_stylesheets=get_registered_stylesheets)
-    app.jinja_env.globals.update(get_registered_admin_scripts=get_registered_admin_scripts)
-    app.jinja_env.globals.update(get_registered_admin_stylesheets=get_registered_admin_stylesheets)
+    app.jinja_env.globals.update(
+        get_registered_admin_scripts=get_registered_admin_scripts
+    )
+    app.jinja_env.globals.update(
+        get_registered_admin_stylesheets=get_registered_admin_stylesheets
+    )
     app.jinja_env.globals.update(get_config=get_config)
     app.jinja_env.globals.update(generate_account_url=generate_account_url)
     app.jinja_env.globals.update(get_countries=get_countries)
@@ -68,56 +72,48 @@ def init_template_globals(app):
 
 
 def init_logs(app):
-    logger_submissions = logging.getLogger('submissions')
-    logger_logins = logging.getLogger('logins')
-    logger_registrations = logging.getLogger('registrations')
+    logger_submissions = logging.getLogger("submissions")
+    logger_logins = logging.getLogger("logins")
+    logger_registrations = logging.getLogger("registrations")
 
     logger_submissions.setLevel(logging.INFO)
     logger_logins.setLevel(logging.INFO)
     logger_registrations.setLevel(logging.INFO)
 
-    log_dir = app.config['LOG_FOLDER']
+    log_dir = app.config["LOG_FOLDER"]
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
     logs = {
-        'submissions': os.path.join(log_dir, 'submissions.log'),
-        'logins': os.path.join(log_dir, 'logins.log'),
-        'registrations': os.path.join(log_dir, 'registrations.log')
+        "submissions": os.path.join(log_dir, "submissions.log"),
+        "logins": os.path.join(log_dir, "logins.log"),
+        "registrations": os.path.join(log_dir, "registrations.log"),
     }
 
     try:
         for log in logs.values():
             if not os.path.exists(log):
-                open(log, 'a').close()
+                open(log, "a").close()
 
-        submission_log = logging.handlers.RotatingFileHandler(logs['submissions'], maxBytes=10000)
-        login_log = logging.handlers.RotatingFileHandler(logs['logins'], maxBytes=10000)
-        registration_log = logging.handlers.RotatingFileHandler(logs['registrations'], maxBytes=10000)
+        submission_log = logging.handlers.RotatingFileHandler(
+            logs["submissions"], maxBytes=10000
+        )
+        login_log = logging.handlers.RotatingFileHandler(logs["logins"], maxBytes=10000)
+        registration_log = logging.handlers.RotatingFileHandler(
+            logs["registrations"], maxBytes=10000
+        )
 
-        logger_submissions.addHandler(
-            submission_log
-        )
-        logger_logins.addHandler(
-            login_log
-        )
-        logger_registrations.addHandler(
-            registration_log
-        )
+        logger_submissions.addHandler(submission_log)
+        logger_logins.addHandler(login_log)
+        logger_registrations.addHandler(registration_log)
     except IOError:
         pass
 
     stdout = logging.StreamHandler(stream=sys.stdout)
 
-    logger_submissions.addHandler(
-        stdout
-    )
-    logger_logins.addHandler(
-        stdout
-    )
-    logger_registrations.addHandler(
-        stdout
-    )
+    logger_submissions.addHandler(stdout)
+    logger_logins.addHandler(stdout)
+    logger_registrations.addHandler(stdout)
 
     logger_submissions.propagate = 0
     logger_logins.propagate = 0
@@ -125,9 +121,9 @@ def init_logs(app):
 
 
 def init_events(app):
-    if app.config.get('CACHE_TYPE') == 'redis':
+    if app.config.get("CACHE_TYPE") == "redis":
         app.events_manager = RedisEventManager()
-    elif app.config.get('CACHE_TYPE') == 'filesystem':
+    elif app.config.get("CACHE_TYPE") == "filesystem":
         app.events_manager = EventManager()
     else:
         app.events_manager = EventManager()
@@ -142,25 +138,27 @@ def init_request_processors(app):
 
     @app.url_defaults
     def inject_theme(endpoint, values):
-        if 'theme' not in values and app.url_map.is_endpoint_expecting(endpoint, 'theme'):
-            values['theme'] = ctf_theme()
+        if "theme" not in values and app.url_map.is_endpoint_expecting(
+            endpoint, "theme"
+        ):
+            values["theme"] = ctf_theme()
 
     @app.before_request
     def needs_setup():
-        if request.path == url_for('views.setup') or request.path.startswith('/themes'):
+        if request.path == url_for("views.setup") or request.path.startswith("/themes"):
             return
         if not is_setup():
-            return redirect(url_for('views.setup'))
+            return redirect(url_for("views.setup"))
 
     @app.before_request
     def tracker():
-        if request.endpoint in ('views.themes', 'views.custom_css'):
+        if request.endpoint in ("views.themes", "views.custom_css"):
             return
 
         if authed():
-            track = Tracking.query.filter_by(ip=get_ip(), user_id=session['id']).first()
+            track = Tracking.query.filter_by(ip=get_ip(), user_id=session["id"]).first()
             if not track:
-                visit = Tracking(ip=get_ip(), user_id=session['id'])
+                visit = Tracking(ip=get_ip(), user_id=session["id"])
                 db.session.add(visit)
             else:
                 track.date = datetime.datetime.utcnow()
@@ -176,12 +174,24 @@ def init_request_processors(app):
                 user = get_current_user()
                 team = get_current_team()
 
-                if request.path.startswith('/themes') is False:
+                if request.path.startswith("/themes") is False:
                     if user and user.banned:
-                        return render_template('errors/403.html', error='You have been banned from this CTF'), 403
+                        return (
+                            render_template(
+                                "errors/403.html",
+                                error="You have been banned from this CTF",
+                            ),
+                            403,
+                        )
 
                     if team and team.banned:
-                        return render_template('errors/403.html', error='Your team has been banned from this CTF'), 403
+                        return (
+                            render_template(
+                                "errors/403.html",
+                                error="Your team has been banned from this CTF",
+                            ),
+                            403,
+                        )
 
             db.session.close()
 
@@ -191,25 +201,26 @@ def init_request_processors(app):
             func = app.view_functions[request.endpoint]
         except KeyError:
             abort(404)
-        if hasattr(func, '_bypass_csrf'):
+        if hasattr(func, "_bypass_csrf"):
             return
-        if not session.get('nonce'):
-            session['nonce'] = generate_nonce()
-        if request.method not in ('GET', 'HEAD', 'OPTIONS', 'TRACE'):
-            if request.content_type == 'application/json':
-                if session['nonce'] != request.headers.get('CSRF-Token'):
+        if not session.get("nonce"):
+            session["nonce"] = generate_nonce()
+        if request.method not in ("GET", "HEAD", "OPTIONS", "TRACE"):
+            if request.content_type == "application/json":
+                if session["nonce"] != request.headers.get("CSRF-Token"):
                     abort(403)
-            if request.content_type != 'application/json':
-                if session['nonce'] != request.form.get('nonce'):
+            if request.content_type != "application/json":
+                if session["nonce"] != request.form.get("nonce"):
                     abort(403)
 
-    application_root = app.config.get('APPLICATION_ROOT')
-    if application_root != '/':
+    application_root = app.config.get("APPLICATION_ROOT")
+    if application_root != "/":
+
         @app.before_request
         def force_subdirectory_redirect():
             if request.path.startswith(application_root) is False:
-                return redirect(application_root + request.script_root + request.full_path)
+                return redirect(
+                    application_root + request.script_root + request.full_path
+                )
 
-        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
-            application_root: app,
-        })
+        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {application_root: app})

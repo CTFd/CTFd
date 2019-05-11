@@ -4,41 +4,33 @@ from CTFd.utils.uploads.uploaders import FilesystemUploader, S3Uploader
 import shutil
 
 
-UPLOADERS = {
-    'filesystem': FilesystemUploader,
-    's3': S3Uploader
-}
+UPLOADERS = {"filesystem": FilesystemUploader, "s3": S3Uploader}
 
 
 def get_uploader():
-    return UPLOADERS.get(
-        get_app_config('UPLOAD_PROVIDER') or 'filesystem'
-    )()
+    return UPLOADERS.get(get_app_config("UPLOAD_PROVIDER") or "filesystem")()
 
 
 def upload_file(*args, **kwargs):
-    file_obj = kwargs.get('file')
-    challenge_id = kwargs.get('challenge_id') or kwargs.get('challenge')
-    page_id = kwargs.get('page_id') or kwargs.get('page')
-    file_type = kwargs.get('type', 'standard')
+    file_obj = kwargs.get("file")
+    challenge_id = kwargs.get("challenge_id") or kwargs.get("challenge")
+    page_id = kwargs.get("page_id") or kwargs.get("page")
+    file_type = kwargs.get("type", "standard")
 
-    model_args = {
-        'type': file_type,
-        'location': None,
-    }
+    model_args = {"type": file_type, "location": None}
 
     model = Files
-    if file_type == 'challenge':
+    if file_type == "challenge":
         model = ChallengeFiles
-        model_args['challenge_id'] = challenge_id
-    if file_type == 'page':
+        model_args["challenge_id"] = challenge_id
+    if file_type == "page":
         model = PageFiles
-        model_args['page_id'] = page_id
+        model_args["page_id"] = page_id
 
     uploader = get_uploader()
     location = uploader.upload(file_obj=file_obj, filename=file_obj.filename)
 
-    model_args['location'] = location
+    model_args["location"] = location
 
     file_row = model(**model_args)
     db.session.add(file_row)

@@ -20,29 +20,29 @@ def get_class_by_tablename(tablename):
     :return: Class reference or None.
     """
     for c in db.Model._decl_class_registry.values():
-        if hasattr(c, '__tablename__') and c.__tablename__ == tablename:
+        if hasattr(c, "__tablename__") and c.__tablename__ == tablename:
             return c
     return None
 
 
 class Notifications(db.Model):
-    __tablename__ = 'notifications'
+    __tablename__ = "notifications"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
     content = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
-    user = db.relationship('Users', foreign_keys="Notifications.user_id", lazy='select')
-    team = db.relationship('Teams', foreign_keys="Notifications.team_id", lazy='select')
+    user = db.relationship("Users", foreign_keys="Notifications.user_id", lazy="select")
+    team = db.relationship("Teams", foreign_keys="Notifications.team_id", lazy="select")
 
     def __init__(self, *args, **kwargs):
         super(Notifications, self).__init__(**kwargs)
 
 
 class Pages(db.Model):
-    __tablename__ = 'pages'
+    __tablename__ = "pages"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80))
     route = db.Column(db.String(128), unique=True)
@@ -62,7 +62,7 @@ class Pages(db.Model):
 
 
 class Challenges(db.Model):
-    __tablename__ = 'challenges'
+    __tablename__ = "challenges"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
@@ -70,7 +70,7 @@ class Challenges(db.Model):
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
     type = db.Column(db.String(80))
-    state = db.Column(db.String(80), nullable=False, default='visible')
+    state = db.Column(db.String(80), nullable=False, default="visible")
     requirements = db.Column(db.JSON)
 
     files = db.relationship("ChallengeFiles", backref="challenge")
@@ -78,31 +78,27 @@ class Challenges(db.Model):
     hints = db.relationship("Hints", backref="challenge")
     flags = db.relationship("Flags", backref="challenge")
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'standard',
-        'polymorphic_on': type
-    }
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
 
     def __init__(self, *args, **kwargs):
         super(Challenges, self).__init__(**kwargs)
 
     def __repr__(self):
-        return '<Challenge %r>' % self.name
+        return "<Challenge %r>" % self.name
 
 
 class Hints(db.Model):
-    __tablename__ = 'hints'
+    __tablename__ = "hints"
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(80), default='standard')
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
+    type = db.Column(db.String(80), default="standard")
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
+    )
     content = db.Column(db.Text)
     cost = db.Column(db.Integer, default=0)
     requirements = db.Column(db.JSON)
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'standard',
-        'polymorphic_on': type
-    }
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
 
     @property
     def name(self):
@@ -120,15 +116,15 @@ class Hints(db.Model):
         super(Hints, self).__init__(**kwargs)
 
     def __repr__(self):
-        return '<Hint %r>' % self.content
+        return "<Hint %r>" % self.content
 
 
 class Awards(db.Model):
-    __tablename__ = 'awards'
+    __tablename__ = "awards"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id', ondelete='CASCADE'))
-    type = db.Column(db.String(80), default='standard')
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+    type = db.Column(db.String(80), default="standard")
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -137,33 +133,32 @@ class Awards(db.Model):
     icon = db.Column(db.Text)
     requirements = db.Column(db.JSON)
 
-    user = db.relationship('Users', foreign_keys="Awards.user_id", lazy='select')
-    team = db.relationship('Teams', foreign_keys="Awards.team_id", lazy='select')
+    user = db.relationship("Users", foreign_keys="Awards.user_id", lazy="select")
+    team = db.relationship("Teams", foreign_keys="Awards.team_id", lazy="select")
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'standard',
-        'polymorphic_on': type
-    }
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
 
     @hybrid_property
     def account_id(self):
-        user_mode = get_config('user_mode')
-        if user_mode == 'teams':
+        user_mode = get_config("user_mode")
+        if user_mode == "teams":
             return self.team_id
-        elif user_mode == 'users':
+        elif user_mode == "users":
             return self.user_id
 
     def __init__(self, *args, **kwargs):
         super(Awards, self).__init__(**kwargs)
 
     def __repr__(self):
-        return '<Award %r>' % self.name
+        return "<Award %r>" % self.name
 
 
 class Tags(db.Model):
-    __tablename__ = 'tags'
+    __tablename__ = "tags"
     id = db.Column(db.Integer, primary_key=True)
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
+    )
     value = db.Column(db.String(80))
 
     def __init__(self, *args, **kwargs):
@@ -171,54 +166,51 @@ class Tags(db.Model):
 
 
 class Files(db.Model):
-    __tablename__ = 'files'
+    __tablename__ = "files"
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(80), default='standard')
+    type = db.Column(db.String(80), default="standard")
     location = db.Column(db.Text)
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'standard',
-        'polymorphic_on': type
-    }
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
 
     def __init__(self, *args, **kwargs):
         super(Files, self).__init__(**kwargs)
 
     def __repr__(self):
-        return "<File type={type} location={location}>".format(type=self.type, location=self.location)
+        return "<File type={type} location={location}>".format(
+            type=self.type, location=self.location
+        )
 
 
 class ChallengeFiles(Files):
-    __mapper_args__ = {
-        'polymorphic_identity': 'challenge'
-    }
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
+    __mapper_args__ = {"polymorphic_identity": "challenge"}
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
+    )
 
     def __init__(self, *args, **kwargs):
         super(ChallengeFiles, self).__init__(**kwargs)
 
 
 class PageFiles(Files):
-    __mapper_args__ = {
-        'polymorphic_identity': 'page'
-    }
-    page_id = db.Column(db.Integer, db.ForeignKey('pages.id'))
+    __mapper_args__ = {"polymorphic_identity": "page"}
+    page_id = db.Column(db.Integer, db.ForeignKey("pages.id"))
 
     def __init__(self, *args, **kwargs):
         super(PageFiles, self).__init__(**kwargs)
 
 
 class Flags(db.Model):
-    __tablename__ = 'flags'
+    __tablename__ = "flags"
     id = db.Column(db.Integer, primary_key=True)
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
+    )
     type = db.Column(db.String(80))
     content = db.Column(db.Text)
     data = db.Column(db.Text)
 
-    __mapper_args__ = {
-        'polymorphic_on': type
-    }
+    __mapper_args__ = {"polymorphic_on": type}
 
     def __init__(self, *args, **kwargs):
         super(Flags, self).__init__(**kwargs)
@@ -228,11 +220,8 @@ class Flags(db.Model):
 
 
 class Users(db.Model):
-    __tablename__ = 'users'
-    __table_args__ = (
-        db.UniqueConstraint('id', 'oauth_id'),
-        {}
-    )
+    __tablename__ = "users"
+    __table_args__ = (db.UniqueConstraint("id", "oauth_id"), {})
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
     oauth_id = db.Column(db.Integer, unique=True)
@@ -253,28 +242,25 @@ class Users(db.Model):
     verified = db.Column(db.Boolean, default=False)
 
     # Relationship for Teams
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'user',
-        'polymorphic_on': type
-    }
+    __mapper_args__ = {"polymorphic_identity": "user", "polymorphic_on": type}
 
     def __init__(self, **kwargs):
         super(Users, self).__init__(**kwargs)
 
-    @validates('password')
+    @validates("password")
     def validate_password(self, key, plaintext):
         return hash_password(str(plaintext))
 
     @hybrid_property
     def account_id(self):
-        user_mode = get_config('user_mode')
-        if user_mode == 'teams':
+        user_mode = get_config("user_mode")
+        if user_mode == "teams":
             return self.team_id
-        elif user_mode == 'users':
+        elif user_mode == "users":
             return self.id
 
     @property
@@ -299,7 +285,7 @@ class Users(db.Model):
 
     def get_solves(self, admin=False):
         solves = Solves.query.filter_by(user_id=self.id)
-        freeze = get_config('freeze')
+        freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
             solves = solves.filter(Solves.date < dt)
@@ -307,7 +293,7 @@ class Users(db.Model):
 
     def get_fails(self, admin=False):
         fails = Fails.query.filter_by(user_id=self.id)
-        freeze = get_config('freeze')
+        freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
             fails = fails.filter(Fails.date < dt)
@@ -315,27 +301,26 @@ class Users(db.Model):
 
     def get_awards(self, admin=False):
         awards = Awards.query.filter_by(user_id=self.id)
-        freeze = get_config('freeze')
+        freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
             awards = awards.filter(Awards.date < dt)
         return awards.all()
 
     def get_score(self, admin=False):
-        score = db.func.sum(Challenges.value).label('score')
-        user = db.session.query(
-            Solves.user_id,
-            score
-        ) \
-            .join(Users, Solves.user_id == Users.id) \
-            .join(Challenges, Solves.challenge_id == Challenges.id) \
+        score = db.func.sum(Challenges.value).label("score")
+        user = (
+            db.session.query(Solves.user_id, score)
+            .join(Users, Solves.user_id == Users.id)
+            .join(Challenges, Solves.challenge_id == Challenges.id)
             .filter(Users.id == self.id)
+        )
 
-        award_score = db.func.sum(Awards.value).label('award_score')
+        award_score = db.func.sum(Awards.value).label("award_score")
         award = db.session.query(award_score).filter_by(user_id=self.id)
 
         if not admin:
-            freeze = Configs.query.filter_by(key='freeze').first()
+            freeze = Configs.query.filter_by(key="freeze").first()
             if freeze and freeze.value:
                 freeze = int(freeze.value)
                 freeze = datetime.datetime.utcfromtimestamp(freeze)
@@ -361,50 +346,63 @@ class Users(db.Model):
         to no imports within the CTFd application as importing from the
         application itself will result in a circular import.
         """
-        scores = db.session.query(
-            Solves.user_id.label('user_id'),
-            db.func.sum(Challenges.value).label('score'),
-            db.func.max(Solves.id).label('id'),
-            db.func.max(Solves.date).label('date')
-        ).join(Challenges).filter(Challenges.value != 0).group_by(Solves.user_id)
+        scores = (
+            db.session.query(
+                Solves.user_id.label("user_id"),
+                db.func.sum(Challenges.value).label("score"),
+                db.func.max(Solves.id).label("id"),
+                db.func.max(Solves.date).label("date"),
+            )
+            .join(Challenges)
+            .filter(Challenges.value != 0)
+            .group_by(Solves.user_id)
+        )
 
-        awards = db.session.query(
-            Awards.user_id.label('user_id'),
-            db.func.sum(Awards.value).label('score'),
-            db.func.max(Awards.id).label('id'),
-            db.func.max(Awards.date).label('date')
-        ).filter(Awards.value != 0).group_by(Awards.user_id)
+        awards = (
+            db.session.query(
+                Awards.user_id.label("user_id"),
+                db.func.sum(Awards.value).label("score"),
+                db.func.max(Awards.id).label("id"),
+                db.func.max(Awards.date).label("date"),
+            )
+            .filter(Awards.value != 0)
+            .group_by(Awards.user_id)
+        )
 
         if not admin:
-            freeze = Configs.query.filter_by(key='freeze').first()
+            freeze = Configs.query.filter_by(key="freeze").first()
             if freeze and freeze.value:
                 freeze = int(freeze.value)
                 freeze = datetime.datetime.utcfromtimestamp(freeze)
                 scores = scores.filter(Solves.date < freeze)
                 awards = awards.filter(Awards.date < freeze)
 
-        results = union_all(scores, awards).alias('results')
+        results = union_all(scores, awards).alias("results")
 
-        sumscores = db.session.query(
-            results.columns.user_id,
-            db.func.sum(results.columns.score).label('score'),
-            db.func.max(results.columns.id).label('id'),
-            db.func.max(results.columns.date).label('date')
-        ).group_by(results.columns.user_id).subquery()
+        sumscores = (
+            db.session.query(
+                results.columns.user_id,
+                db.func.sum(results.columns.score).label("score"),
+                db.func.max(results.columns.id).label("id"),
+                db.func.max(results.columns.date).label("date"),
+            )
+            .group_by(results.columns.user_id)
+            .subquery()
+        )
 
         if admin:
-            standings_query = db.session.query(
-                Users.id.label('user_id'),
-            ) \
-                .join(sumscores, Users.id == sumscores.columns.user_id) \
+            standings_query = (
+                db.session.query(Users.id.label("user_id"))
+                .join(sumscores, Users.id == sumscores.columns.user_id)
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+            )
         else:
-            standings_query = db.session.query(
-                Users.id.label('user_id'),
-            ) \
-                .join(sumscores, Users.id == sumscores.columns.user_id) \
-                .filter(Users.banned == False, Users.hidden == False) \
+            standings_query = (
+                db.session.query(Users.id.label("user_id"))
+                .join(sumscores, Users.id == sumscores.columns.user_id)
+                .filter(Users.banned == False, Users.hidden == False)
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+            )
 
         standings = standings_query.all()
 
@@ -415,24 +413,19 @@ class Users(db.Model):
                 return i
             else:
                 k = i % 10
-                return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
+                return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k :: 4])
         except ValueError:
             return 0
 
 
 class Admins(Users):
-    __tablename__ = 'admins'
-    __mapper_args__ = {
-        'polymorphic_identity': 'admin'
-    }
+    __tablename__ = "admins"
+    __mapper_args__ = {"polymorphic_identity": "admin"}
 
 
 class Teams(db.Model):
-    __tablename__ = 'teams'
-    __table_args__ = (
-        db.UniqueConstraint('id', 'oauth_id'),
-        {}
-    )
+    __tablename__ = "teams"
+    __table_args__ = (db.UniqueConstraint("id", "oauth_id"), {})
     # Core attributes
     id = db.Column(db.Integer, primary_key=True)
     oauth_id = db.Column(db.Integer, unique=True)
@@ -442,7 +435,7 @@ class Teams(db.Model):
     password = db.Column(db.String(128))
     secret = db.Column(db.String(128))
 
-    members = db.relationship("Users", backref="team", foreign_keys='Users.team_id')
+    members = db.relationship("Users", backref="team", foreign_keys="Users.team_id")
 
     # Supplementary attributes
     website = db.Column(db.String(128))
@@ -453,7 +446,7 @@ class Teams(db.Model):
     banned = db.Column(db.Boolean, default=False)
 
     # Relationship for Users
-    captain_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'))
+    captain_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     captain = db.relationship("Users", foreign_keys=[captain_id])
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -461,7 +454,7 @@ class Teams(db.Model):
     def __init__(self, **kwargs):
         super(Teams, self).__init__(**kwargs)
 
-    @validates('password')
+    @validates("password")
     def validate_password(self, key, plaintext):
         return hash_password(str(plaintext))
 
@@ -488,13 +481,11 @@ class Teams(db.Model):
     def get_solves(self, admin=False):
         member_ids = [member.id for member in self.members]
 
-        solves = Solves.query.filter(
-            Solves.user_id.in_(member_ids)
-        ).order_by(
+        solves = Solves.query.filter(Solves.user_id.in_(member_ids)).order_by(
             Solves.date.asc()
         )
 
-        freeze = get_config('freeze')
+        freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
             solves = solves.filter(Solves.date < dt)
@@ -504,13 +495,11 @@ class Teams(db.Model):
     def get_fails(self, admin=False):
         member_ids = [member.id for member in self.members]
 
-        fails = Fails.query.filter(
-            Fails.user_id.in_(member_ids)
-        ).order_by(
+        fails = Fails.query.filter(Fails.user_id.in_(member_ids)).order_by(
             Fails.date.asc()
         )
 
-        freeze = get_config('freeze')
+        freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
             fails = fails.filter(Fails.date < dt)
@@ -520,13 +509,11 @@ class Teams(db.Model):
     def get_awards(self, admin=False):
         member_ids = [member.id for member in self.members]
 
-        awards = Awards.query.filter(
-            Awards.user_id.in_(member_ids)
-        ).order_by(
+        awards = Awards.query.filter(Awards.user_id.in_(member_ids)).order_by(
             Awards.date.asc()
         )
 
-        freeze = get_config('freeze')
+        freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
             awards = awards.filter(Awards.date < dt)
@@ -546,50 +533,63 @@ class Teams(db.Model):
         to no imports within the CTFd application as importing from the
         application itself will result in a circular import.
         """
-        scores = db.session.query(
-            Solves.team_id.label('team_id'),
-            db.func.sum(Challenges.value).label('score'),
-            db.func.max(Solves.id).label('id'),
-            db.func.max(Solves.date).label('date')
-        ).join(Challenges).filter(Challenges.value != 0).group_by(Solves.team_id)
+        scores = (
+            db.session.query(
+                Solves.team_id.label("team_id"),
+                db.func.sum(Challenges.value).label("score"),
+                db.func.max(Solves.id).label("id"),
+                db.func.max(Solves.date).label("date"),
+            )
+            .join(Challenges)
+            .filter(Challenges.value != 0)
+            .group_by(Solves.team_id)
+        )
 
-        awards = db.session.query(
-            Awards.team_id.label('team_id'),
-            db.func.sum(Awards.value).label('score'),
-            db.func.max(Awards.id).label('id'),
-            db.func.max(Awards.date).label('date')
-        ).filter(Awards.value != 0).group_by(Awards.team_id)
+        awards = (
+            db.session.query(
+                Awards.team_id.label("team_id"),
+                db.func.sum(Awards.value).label("score"),
+                db.func.max(Awards.id).label("id"),
+                db.func.max(Awards.date).label("date"),
+            )
+            .filter(Awards.value != 0)
+            .group_by(Awards.team_id)
+        )
 
         if not admin:
-            freeze = Configs.query.filter_by(key='freeze').first()
+            freeze = Configs.query.filter_by(key="freeze").first()
             if freeze and freeze.value:
                 freeze = int(freeze.value)
                 freeze = datetime.datetime.utcfromtimestamp(freeze)
                 scores = scores.filter(Solves.date < freeze)
                 awards = awards.filter(Awards.date < freeze)
 
-        results = union_all(scores, awards).alias('results')
+        results = union_all(scores, awards).alias("results")
 
-        sumscores = db.session.query(
-            results.columns.team_id,
-            db.func.sum(results.columns.score).label('score'),
-            db.func.max(results.columns.id).label('id'),
-            db.func.max(results.columns.date).label('date')
-        ).group_by(results.columns.team_id).subquery()
+        sumscores = (
+            db.session.query(
+                results.columns.team_id,
+                db.func.sum(results.columns.score).label("score"),
+                db.func.max(results.columns.id).label("id"),
+                db.func.max(results.columns.date).label("date"),
+            )
+            .group_by(results.columns.team_id)
+            .subquery()
+        )
 
         if admin:
-            standings_query = db.session.query(
-                Teams.id.label('team_id'),
-            ) \
-                .join(sumscores, Teams.id == sumscores.columns.team_id) \
+            standings_query = (
+                db.session.query(Teams.id.label("team_id"))
+                .join(sumscores, Teams.id == sumscores.columns.team_id)
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+            )
         else:
-            standings_query = db.session.query(
-                Teams.id.label('team_id'),
-            ) \
-                .join(sumscores, Teams.id == sumscores.columns.team_id) \
-                .filter(Teams.banned == False) \
+            standings_query = (
+                db.session.query(Teams.id.label("team_id"))
+                .join(sumscores, Teams.id == sumscores.columns.team_id)
+                .filter(Teams.banned == False)
                 .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+            )
 
         standings = standings_query.all()
 
@@ -597,45 +597,47 @@ class Teams(db.Model):
         try:
             i = standings.index((self.id,)) + 1
             k = i % 10
-            return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4])
+            return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k :: 4])
         except ValueError:
             return 0
 
 
 class Submissions(db.Model):
-    __tablename__ = 'submissions'
+    __tablename__ = "submissions"
     id = db.Column(db.Integer, primary_key=True)
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id', ondelete='CASCADE'))
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
+    )
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
     ip = db.Column(db.String(46))
     provided = db.Column(db.Text)
     type = db.Column(db.String(32))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     # Relationships
-    user = db.relationship('Users', foreign_keys="Submissions.user_id", lazy='select')
-    team = db.relationship('Teams', foreign_keys="Submissions.team_id", lazy='select')
-    challenge = db.relationship('Challenges', foreign_keys="Submissions.challenge_id", lazy='select')
+    user = db.relationship("Users", foreign_keys="Submissions.user_id", lazy="select")
+    team = db.relationship("Teams", foreign_keys="Submissions.team_id", lazy="select")
+    challenge = db.relationship(
+        "Challenges", foreign_keys="Submissions.challenge_id", lazy="select"
+    )
 
-    __mapper_args__ = {
-        'polymorphic_on': type,
-    }
+    __mapper_args__ = {"polymorphic_on": type}
 
     @hybrid_property
     def account_id(self):
-        user_mode = get_config('user_mode')
-        if user_mode == 'teams':
+        user_mode = get_config("user_mode")
+        if user_mode == "teams":
             return self.team_id
-        elif user_mode == 'users':
+        elif user_mode == "users":
             return self.user_id
 
     @hybrid_property
     def account(self):
-        user_mode = get_config('user_mode')
-        if user_mode == 'teams':
+        user_mode = get_config("user_mode")
+        if user_mode == "teams":
             return self.team
-        elif user_mode == 'users':
+        elif user_mode == "users":
             return self.user
 
     @staticmethod
@@ -647,91 +649,95 @@ class Submissions(db.Model):
         return child_classes[type]
 
     def __repr__(self):
-        return '<Submission {}, {}, {}, {}>'.format(self.team_id, self.challenge_id, self.ip, self.provided)
+        return "<Submission {}, {}, {}, {}>".format(
+            self.team_id, self.challenge_id, self.ip, self.provided
+        )
 
 
 class Solves(Submissions):
-    __tablename__ = 'solves'
+    __tablename__ = "solves"
     __table_args__ = (
-        db.UniqueConstraint('challenge_id', 'user_id'),
-        db.UniqueConstraint('challenge_id', 'team_id'),
-        {}
+        db.UniqueConstraint("challenge_id", "user_id"),
+        db.UniqueConstraint("challenge_id", "team_id"),
+        {},
     )
-    id = db.Column(None, db.ForeignKey('submissions.id', ondelete='CASCADE'), primary_key=True)
-    challenge_id = column_property(db.Column(db.Integer, db.ForeignKey('challenges.id', ondelete='CASCADE')),
-                                   Submissions.challenge_id)
-    user_id = column_property(db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE')), Submissions.user_id)
-    team_id = column_property(db.Column(db.Integer, db.ForeignKey('teams.id', ondelete='CASCADE')), Submissions.team_id)
+    id = db.Column(
+        None, db.ForeignKey("submissions.id", ondelete="CASCADE"), primary_key=True
+    )
+    challenge_id = column_property(
+        db.Column(db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")),
+        Submissions.challenge_id,
+    )
+    user_id = column_property(
+        db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE")),
+        Submissions.user_id,
+    )
+    team_id = column_property(
+        db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE")),
+        Submissions.team_id,
+    )
 
-    user = db.relationship('Users', foreign_keys="Solves.user_id", lazy='select')
-    team = db.relationship('Teams', foreign_keys="Solves.team_id", lazy='select')
-    challenge = db.relationship('Challenges', foreign_keys="Solves.challenge_id", lazy='select')
+    user = db.relationship("Users", foreign_keys="Solves.user_id", lazy="select")
+    team = db.relationship("Teams", foreign_keys="Solves.team_id", lazy="select")
+    challenge = db.relationship(
+        "Challenges", foreign_keys="Solves.challenge_id", lazy="select"
+    )
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'correct'
-    }
+    __mapper_args__ = {"polymorphic_identity": "correct"}
 
 
 class Fails(Submissions):
-    __mapper_args__ = {
-        'polymorphic_identity': 'incorrect'
-    }
+    __mapper_args__ = {"polymorphic_identity": "incorrect"}
 
 
 class Unlocks(db.Model):
-    __tablename__ = 'unlocks'
+    __tablename__ = "unlocks"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id', ondelete='CASCADE'))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
     target = db.Column(db.Integer)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     type = db.Column(db.String(32))
 
-    __mapper_args__ = {
-        'polymorphic_on': type,
-    }
+    __mapper_args__ = {"polymorphic_on": type}
 
     @hybrid_property
     def account_id(self):
-        user_mode = get_config('user_mode')
-        if user_mode == 'teams':
+        user_mode = get_config("user_mode")
+        if user_mode == "teams":
             return self.team_id
-        elif user_mode == 'users':
+        elif user_mode == "users":
             return self.user_id
 
     def __repr__(self):
-        return '<Unlock %r>' % self.id
+        return "<Unlock %r>" % self.id
 
 
 class HintUnlocks(Unlocks):
-    __mapper_args__ = {
-        'polymorphic_identity': 'hints'
-    }
+    __mapper_args__ = {"polymorphic_identity": "hints"}
 
 
 class Tracking(db.Model):
-    __tablename__ = 'tracking'
+    __tablename__ = "tracking"
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(32))
     ip = db.Column(db.String(46))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    user = db.relationship('Users', foreign_keys="Tracking.user_id", lazy='select')
+    user = db.relationship("Users", foreign_keys="Tracking.user_id", lazy="select")
 
-    __mapper_args__ = {
-        'polymorphic_on': type,
-    }
+    __mapper_args__ = {"polymorphic_on": type}
 
     def __init__(self, *args, **kwargs):
         super(Tracking, self).__init__(**kwargs)
 
     def __repr__(self):
-        return '<Tracking %r>' % self.ip
+        return "<Tracking %r>" % self.ip
 
 
 class Configs(db.Model):
-    __tablename__ = 'config'
+    __tablename__ = "config"
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.Text)
     value = db.Column(db.Text)
@@ -751,9 +757,9 @@ def get_config(key):
         if value and value.isdigit():
             return int(value)
         elif value and isinstance(value, six.string_types):
-            if value.lower() == 'true':
+            if value.lower() == "true":
                 return True
-            elif value.lower() == 'false':
+            elif value.lower() == "false":
                 return False
             else:
                 return value

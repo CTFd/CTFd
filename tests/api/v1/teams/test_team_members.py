@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
-    login_as_user,
-    gen_user,
-    gen_team
-)
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, gen_user, gen_team
 
 
 def test_api_team_get_members():
@@ -19,16 +13,16 @@ def test_api_team_get_members():
 
         gen_user(app.db, name="user_name")
         with login_as_user(app, name="user_name") as client:
-            r = client.get('/api/v1/teams/1/members', json="")
+            r = client.get("/api/v1/teams/1/members", json="")
             assert r.status_code == 403
 
         with login_as_user(app, name="admin") as client:
-            r = client.get('/api/v1/teams/1/members', json="")
+            r = client.get("/api/v1/teams/1/members", json="")
             assert r.status_code == 200
 
             resp = r.get_json()
             # The following data is sorted b/c in Postgres data isn't necessarily returned ordered.
-            assert sorted(resp['data']) == sorted([2, 3, 4, 5])
+            assert sorted(resp["data"]) == sorted([2, 3, 4, 5])
     destroy_ctfd(app)
 
 
@@ -40,29 +34,23 @@ def test_api_team_remove_members():
         assert len(team.members) == 4
         app.db.session.commit()
 
-        gen_user(app.db, name='user1')
+        gen_user(app.db, name="user1")
         with login_as_user(app, name="user1") as client:
-            r = client.delete('/api/v1/teams/1/members', json={
-                'id': 2
-            })
+            r = client.delete("/api/v1/teams/1/members", json={"id": 2})
             assert r.status_code == 403
 
         with login_as_user(app, name="admin") as client:
-            r = client.delete('/api/v1/teams/1/members', json={
-                'id': 2
-            })
+            r = client.delete("/api/v1/teams/1/members", json={"id": 2})
             assert r.status_code == 200
 
             resp = r.get_json()
             # The following data is sorted b/c in Postgres data isn't necessarily returned ordered.
-            assert sorted(resp['data']) == sorted([3, 4, 5])
+            assert sorted(resp["data"]) == sorted([3, 4, 5])
 
-            r = client.delete('/api/v1/teams/1/members', json={
-                'id': 2
-            })
+            r = client.delete("/api/v1/teams/1/members", json={"id": 2})
 
             resp = r.get_json()
-            assert 'User is not part of this team' in resp['errors']['id']
+            assert "User is not part of this team" in resp["errors"]["id"]
             assert r.status_code == 400
     destroy_ctfd(app)
 
@@ -83,26 +71,20 @@ def test_api_admin_can_change_captain():
 
         # I am not the captain
         with login_as_user(app, name="user2") as client:
-            r = client.patch('/api/v1/teams/1', json={
-                'captain_id': 3
-            })
+            r = client.patch("/api/v1/teams/1", json={"captain_id": 3})
             assert r.status_code == 403
 
         # Look at me, I'm the captain now
         with login_as_user(app, name="user1") as client:
-            r = client.patch('/api/v1/teams/1', json={
-                'captain_id': 3
-            })
+            r = client.patch("/api/v1/teams/1", json={"captain_id": 3})
             # We should still receive a 403 because admins are the only people who can change captains for specific teams
             assert r.status_code == 403
 
         # Escalate to admin
         with login_as_user(app, name="admin") as client:
-            r = client.patch('/api/v1/teams/1', json={
-                'captain_id': 3
-            })
+            r = client.patch("/api/v1/teams/1", json={"captain_id": 3})
             resp = r.get_json()
-            assert resp['data']['captain_id'] == 3
+            assert resp["data"]["captain_id"] == 3
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -123,17 +105,13 @@ def test_api_users_can_change_captain_on_self_team():
 
         # I am not the captain
         with login_as_user(app, name="user2") as client:
-            r = client.patch('/api/v1/teams/me', json={
-                'captain_id': 3
-            })
+            r = client.patch("/api/v1/teams/me", json={"captain_id": 3})
             assert r.status_code == 400
 
         # Look at me, I'm the captain now
         with login_as_user(app, name="user1") as client:
-            r = client.patch('/api/v1/teams/me', json={
-                'captain_id': 3
-            })
+            r = client.patch("/api/v1/teams/me", json={"captain_id": 3})
             resp = r.get_json()
-            assert resp['data']['captain_id'] == 3
+            assert resp["data"]["captain_id"] == 3
             assert r.status_code == 200
     destroy_ctfd(app)

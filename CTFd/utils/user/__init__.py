@@ -8,7 +8,7 @@ import re
 
 def get_current_user():
     if authed():
-        user = Users.query.filter_by(id=session['id']).first()
+        user = Users.query.filter_by(id=session["id"]).first()
         return user
     else:
         return None
@@ -23,18 +23,18 @@ def get_current_team():
 
 
 def authed():
-    return bool(session.get('id', False))
+    return bool(session.get("id", False))
 
 
 def is_admin():
     if authed():
-        return session['type'] == 'admin'
+        return session["type"] == "admin"
     else:
         return False
 
 
 def is_verified():
-    if get_config('verify_emails'):
+    if get_config("verify_emails"):
         user = get_current_user()
         if user:
             return user.verified
@@ -57,7 +57,7 @@ def get_ip(req=None):
     """
     if req is None:
         req = request
-    trusted_proxies = app.config['TRUSTED_PROXIES']
+    trusted_proxies = app.config["TRUSTED_PROXIES"]
     combined = "(" + ")|(".join(trusted_proxies) + ")"
     route = req.access_route + [req.remote_addr]
     for addr in reversed(route):
@@ -77,8 +77,9 @@ def get_wrong_submissions_per_minute(account_id):
     :return:
     """
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
-    fails = db.session.query(Fails).filter(
-        Fails.account_id == account_id,
-        Fails.date >= one_min_ago
-    ).all()
+    fails = (
+        db.session.query(Fails)
+        .filter(Fails.account_id == account_id, Fails.date >= one_min_ago)
+        .all()
+    )
     return len(fails)

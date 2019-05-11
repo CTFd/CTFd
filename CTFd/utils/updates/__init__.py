@@ -20,7 +20,7 @@ def update_check(force=False):
     :return:
     """
     # If UPDATE_CHECK is disabled don't check for updates at all.
-    if app.config.get('UPDATE_CHECK') is False:
+    if app.config.get("UPDATE_CHECK") is False:
         return
 
     # Don't do an update check if not setup
@@ -28,31 +28,29 @@ def update_check(force=False):
         return
 
     # Get when we should check for updates next.
-    next_update_check = get_config('next_update_check') or 0
+    next_update_check = get_config("next_update_check") or 0
 
     # If we have passed our saved time or we are forcing we should check.
     update = (next_update_check < time.time()) or force
 
     if update:
         try:
-            name = str(get_config('ctf_name')) or ''
+            name = str(get_config("ctf_name")) or ""
             params = {
-                'ctf_id': sha256(name),
-                'current': app.VERSION,
-                'python_version_raw': sys.hexversion,
-                'python_version': python_version(),
-                'db_driver': db.session.bind.dialect.name,
-                'challenge_count': Challenges.query.count(),
-                'user_mode': get_config('user_mode'),
-                'user_count': Users.query.count(),
-                'team_count': Teams.query.count(),
-                'theme': get_config('ctf_theme'),
-                'upload_provider': get_app_config('UPLOAD_PROVIDER')
+                "ctf_id": sha256(name),
+                "current": app.VERSION,
+                "python_version_raw": sys.hexversion,
+                "python_version": python_version(),
+                "db_driver": db.session.bind.dialect.name,
+                "challenge_count": Challenges.query.count(),
+                "user_mode": get_config("user_mode"),
+                "user_count": Users.query.count(),
+                "team_count": Teams.query.count(),
+                "theme": get_config("ctf_theme"),
+                "upload_provider": get_app_config("UPLOAD_PROVIDER"),
             }
             check = requests.post(
-                'https://versioning.ctfd.io/',
-                json=params,
-                timeout=0.1
+                "https://versioning.ctfd.io/", json=params, timeout=0.1
             ).json()
         except requests.exceptions.RequestException:
             pass
@@ -60,13 +58,15 @@ def update_check(force=False):
             pass
         else:
             try:
-                latest = check['resource']['tag']
-                html_url = check['resource']['html_url']
+                latest = check["resource"]["tag"]
+                html_url = check["resource"]["html_url"]
                 if StrictVersion(latest) > StrictVersion(app.VERSION):
-                    set_config('version_latest', html_url)
+                    set_config("version_latest", html_url)
                 elif StrictVersion(latest) <= StrictVersion(app.VERSION):
-                    set_config('version_latest', None)
-                next_update_check_time = check['resource'].get('next', int(time.time() + 43200))
-                set_config('next_update_check', next_update_check_time)
+                    set_config("version_latest", None)
+                next_update_check_time = check["resource"].get(
+                    "next", int(time.time() + 43200)
+                )
+                set_config("next_update_check", next_update_check_time)
             except KeyError:
-                set_config('version_latest', None)
+                set_config("version_latest", None)

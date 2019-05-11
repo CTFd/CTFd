@@ -5,17 +5,20 @@ from CTFd.utils.decorators.modes import require_team_mode
 from CTFd.utils import config
 from CTFd.utils.user import get_current_user
 from CTFd.utils.crypto import verify_password
-from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
+from CTFd.utils.decorators.visibility import (
+    check_account_visibility,
+    check_score_visibility,
+)
 from CTFd.utils.helpers import get_errors
 
-teams = Blueprint('teams', __name__)
+teams = Blueprint("teams", __name__)
 
 
-@teams.route('/teams')
+@teams.route("/teams")
 @check_account_visibility
 @require_team_mode
 def listing():
-    page = abs(request.args.get('page', 1, type=int))
+    page = abs(request.args.get("page", 1, type=int))
     results_per_page = 50
     page_start = results_per_page * (page - 1)
     page_end = results_per_page * (page - 1) + results_per_page
@@ -26,21 +29,25 @@ def listing():
     #     teams = Teams.query.filter_by(verified=True, banned=False).slice(page_start, page_end).all()
     # else:
     count = Teams.query.filter_by(hidden=False, banned=False).count()
-    teams = Teams.query.filter_by(hidden=False, banned=False).slice(page_start, page_end).all()
+    teams = (
+        Teams.query.filter_by(hidden=False, banned=False)
+        .slice(page_start, page_end)
+        .all()
+    )
 
     pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template('teams/teams.html', teams=teams, pages=pages, curr_page=page)
+    return render_template("teams/teams.html", teams=teams, pages=pages, curr_page=page)
 
 
-@teams.route('/teams/join', methods=['GET', 'POST'])
+@teams.route("/teams/join", methods=["GET", "POST"])
 @authed_only
 @require_team_mode
 def join():
-    if request.method == 'GET':
-        return render_template('teams/join_team.html')
-    if request.method == 'POST':
-        teamname = request.form.get('name')
-        passphrase = request.form.get('password', '').strip()
+    if request.method == "GET":
+        return render_template("teams/join_team.html")
+    if request.method == "POST":
+        teamname = request.form.get("name")
+        passphrase = request.form.get("password", "").strip()
 
         team = Teams.query.filter_by(name=teamname).first()
         user = get_current_user()
@@ -52,57 +59,51 @@ def join():
                 team.captain_id = user.id
                 db.session.commit()
 
-            return redirect(url_for('challenges.listing'))
+            return redirect(url_for("challenges.listing"))
         else:
-            errors = ['That information is incorrect']
-            return render_template('teams/join_team.html', errors=errors)
+            errors = ["That information is incorrect"]
+            return render_template("teams/join_team.html", errors=errors)
 
 
-@teams.route('/teams/new', methods=['GET', 'POST'])
+@teams.route("/teams/new", methods=["GET", "POST"])
 @authed_only
 @require_team_mode
 def new():
-    if request.method == 'GET':
+    if request.method == "GET":
         return render_template("teams/new_team.html")
-    elif request.method == 'POST':
-        teamname = request.form.get('name')
-        passphrase = request.form.get('password', '').strip()
+    elif request.method == "POST":
+        teamname = request.form.get("name")
+        passphrase = request.form.get("password", "").strip()
         errors = get_errors()
 
         user = get_current_user()
 
         existing_team = Teams.query.filter_by(name=teamname).first()
         if existing_team:
-            errors.append('That team name is already taken')
+            errors.append("That team name is already taken")
         if not teamname:
-            errors.append('That team name is invalid')
+            errors.append("That team name is invalid")
 
         if errors:
             return render_template("teams/new_team.html", errors=errors)
 
-        team = Teams(
-            name=teamname,
-            password=passphrase,
-            captain_id=user.id
-        )
+        team = Teams(name=teamname, password=passphrase, captain_id=user.id)
 
         db.session.add(team)
         db.session.commit()
 
         user.team_id = team.id
         db.session.commit()
-        return redirect(url_for('challenges.listing'))
+        return redirect(url_for("challenges.listing"))
 
 
-@teams.route('/team')
+@teams.route("/team")
 @authed_only
 @require_team_mode
 def private():
     user = get_current_user()
     if not user.team_id:
-        return render_template(
-            'teams/team_enrollment.html',
-        )
+        return render_template("teams/team_enrollment.html")
 
     team_id = user.team_id
 
@@ -114,18 +115,18 @@ def private():
     score = team.score
 
     return render_template(
-        'teams/private.html',
+        "teams/private.html",
         solves=solves,
         awards=awards,
         user=user,
         team=team,
         score=score,
         place=place,
-        score_frozen=config.is_scoreboard_frozen()
+        score_frozen=config.is_scoreboard_frozen(),
     )
 
 
-@teams.route('/teams/<int:team_id>')
+@teams.route("/teams/<int:team_id>")
 @check_account_visibility
 @check_score_visibility
 @require_team_mode
@@ -139,14 +140,14 @@ def public(team_id):
     score = team.score
 
     if errors:
-        return render_template('teams/public.html', team=team, errors=errors)
+        return render_template("teams/public.html", team=team, errors=errors)
 
     return render_template(
-        'teams/public.html',
+        "teams/public.html",
         solves=solves,
         awards=awards,
         team=team,
         score=score,
         place=place,
-        score_frozen=config.is_scoreboard_frozen()
+        score_frozen=config.is_scoreboard_frozen(),
     )

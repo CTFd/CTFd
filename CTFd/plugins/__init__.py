@@ -10,12 +10,12 @@ from CTFd.utils.plugins import (
     register_script as utils_register_plugin_script,
     register_stylesheet as utils_register_plugin_stylesheet,
     register_admin_script as utils_register_admin_plugin_script,
-    register_admin_stylesheet as utils_register_admin_plugin_stylesheet
+    register_admin_stylesheet as utils_register_admin_plugin_stylesheet,
 )
 from CTFd.utils.config.pages import get_pages
 
 
-Menu = namedtuple('Menu', ['title', 'route'])
+Menu = namedtuple("Menu", ["title", "route"])
 
 
 def register_plugin_assets_directory(app, base_path, admins_only=False):
@@ -27,12 +27,12 @@ def register_plugin_assets_directory(app, base_path, admins_only=False):
     :param boolean admins_only: Whether or not the assets served out of the directory should be accessible to the public
     :return:
     """
-    base_path = base_path.strip('/')
+    base_path = base_path.strip("/")
 
     def assets_handler(path):
         return send_from_directory(base_path, path)
 
-    rule = '/' + base_path + '/<path:path>'
+    rule = "/" + base_path + "/<path:path>"
     app.add_url_rule(rule=rule, endpoint=base_path, view_func=assets_handler)
 
 
@@ -45,14 +45,14 @@ def register_plugin_asset(app, asset_path, admins_only=False):
     :param boolean admins_only: Whether or not this file should be accessible to the public
     :return:
     """
-    asset_path = asset_path.strip('/')
+    asset_path = asset_path.strip("/")
 
     def asset_handler():
         return send_file(asset_path)
 
     if admins_only:
         asset_handler = admins_only_wrapper(asset_handler)
-    rule = '/' + asset_path
+    rule = "/" + asset_path
     app.add_url_rule(rule=rule, endpoint=asset_path, view_func=asset_handler)
 
 
@@ -170,14 +170,14 @@ def init_plugins(app):
     app.admin_plugin_menu_bar = []
     app.plugin_menu_bar = []
 
-    if app.config.get('SAFE_MODE', False) is False:
+    if app.config.get("SAFE_MODE", False) is False:
         modules = sorted(glob.glob(os.path.dirname(__file__) + "/*"))
-        blacklist = {'__pycache__'}
+        blacklist = {"__pycache__"}
         for module in modules:
             module_name = os.path.basename(module)
             if os.path.isdir(module) and module_name not in blacklist:
-                module = '.' + module_name
-                module = importlib.import_module(module, package='CTFd.plugins')
+                module = "." + module_name
+                module = importlib.import_module(module, package="CTFd.plugins")
                 module.load(app)
                 print(" * Loaded module, %s" % module)
 

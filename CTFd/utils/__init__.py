@@ -28,9 +28,9 @@ def _get_config(key):
         if value and value.isdigit():
             return int(value)
         elif value and isinstance(value, six.string_types):
-            if value.lower() == 'true':
+            if value.lower() == "true":
                 return True
-            elif value.lower() == 'false':
+            elif value.lower() == "false":
                 return False
             else:
                 return value
@@ -56,7 +56,4 @@ def set_config(key, value):
     return config
 
 
-from CTFd.models import (  # noqa: E402
-    db,
-    Configs
-)
+from CTFd.models import db, Configs  # noqa: E402

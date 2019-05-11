@@ -2,16 +2,14 @@ from flask import request
 from flask_restplus import Namespace, Resource
 from CTFd.models import db, Configs
 from CTFd.schemas.config import ConfigSchema
-from CTFd.utils.decorators import (
-    admins_only
-)
+from CTFd.utils.decorators import admins_only
 from CTFd.utils import get_config, set_config
 from CTFd.cache import clear_config, clear_standings
 
-configs_namespace = Namespace('configs', description="Endpoint to retrieve Configs")
+configs_namespace = Namespace("configs", description="Endpoint to retrieve Configs")
 
 
-@configs_namespace.route('')
+@configs_namespace.route("")
 class ConfigList(Resource):
     @admins_only
     def get(self):
@@ -19,15 +17,9 @@ class ConfigList(Resource):
         schema = ConfigSchema(many=True)
         response = schema.dump(configs)
         if response.errors:
-            return {
-                'success': False,
-                'errors': response.errors,
-            }, 400
+            return {"success": False, "errors": response.errors}, 400
 
-        return {
-            'success': True,
-            'data': response.data
-        }
+        return {"success": True, "data": response.data}
 
     @admins_only
     def post(self):
@@ -36,10 +28,7 @@ class ConfigList(Resource):
         response = schema.load(req)
 
         if response.errors:
-            return {
-                'success': False,
-                'errors': response.errors
-            }, 400
+            return {"success": False, "errors": response.errors}, 400
 
         db.session.add(response.data)
         db.session.commit()
@@ -50,10 +39,7 @@ class ConfigList(Resource):
         clear_config()
         clear_standings()
 
-        return {
-            'success': True,
-            'data': response.data
-        }
+        return {"success": True, "data": response.data}
 
     @admins_only
     def patch(self):
@@ -65,20 +51,15 @@ class ConfigList(Resource):
         clear_config()
         clear_standings()
 
-        return {
-            'success': True
-        }
+        return {"success": True}
 
 
-@configs_namespace.route('/<config_key>')
+@configs_namespace.route("/<config_key>")
 class Config(Resource):
     @admins_only
     def get(self, config_key):
 
-        return {
-            'success': True,
-            'data': get_config(config_key)
-        }
+        return {"success": True, "data": get_config(config_key)}
 
     @admins_only
     def patch(self, config_key):
@@ -89,7 +70,7 @@ class Config(Resource):
             response = schema.load(data)
         else:
             schema = ConfigSchema()
-            data['key'] = config_key
+            data["key"] = config_key
             response = schema.load(data)
             db.session.add(response.data)
 
@@ -104,10 +85,7 @@ class Config(Resource):
         clear_config()
         clear_standings()
 
-        return {
-            'success': True,
-            'data': response.data
-        }
+        return {"success": True, "data": response.data}
 
     @admins_only
     def delete(self, config_key):
@@ -120,6 +98,4 @@ class Config(Resource):
         clear_config()
         clear_standings()
 
-        return {
-            'success': True,
-        }
+        return {"success": True}

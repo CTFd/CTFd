@@ -24,10 +24,10 @@ def during_ctf_time_only(f):
                 if view_after_ctf():
                     return f(*args, **kwargs)
                 else:
-                    error = '{} has ended'.format(config.ctf_name())
+                    error = "{} has ended".format(config.ctf_name())
                     abort(403, description=error)
             if ctf_started() is False:
-                error = '{} has not started yet'.format(config.ctf_name())
+                error = "{} has not started yet".format(config.ctf_name())
                 abort(403, description=error)
 
     return during_ctf_time_only_wrapper
@@ -39,10 +39,12 @@ def require_authentication_if_config(config_key):
         def __require_authentication_if_config(*args, **kwargs):
             value = get_config(config_key)
             if value and current_user.authed():
-                return redirect(url_for('auth.login', next=request.full_path))
+                return redirect(url_for("auth.login", next=request.full_path))
             else:
                 return f(*args, **kwargs)
+
         return __require_authentication_if_config
+
     return _require_authentication_if_config
 
 
@@ -55,13 +57,16 @@ def require_verified_emails(f):
 
     @functools.wraps(f)
     def _require_verified_emails(*args, **kwargs):
-        if get_config('verify_emails'):
+        if get_config("verify_emails"):
             if current_user.authed():
-                if current_user.is_admin() is False and current_user.is_verified() is False:  # User is not confirmed
-                    if request.content_type == 'application/json':
+                if (
+                    current_user.is_admin() is False
+                    and current_user.is_verified() is False
+                ):  # User is not confirmed
+                    if request.content_type == "application/json":
                         abort(403)
                     else:
-                        return redirect(url_for('auth.confirm'))
+                        return redirect(url_for("auth.confirm"))
         return f(*args, **kwargs)
 
     return _require_verified_emails
@@ -79,10 +84,10 @@ def authed_only(f):
         if authed():
             return f(*args, **kwargs)
         else:
-            if request.content_type == 'application/json':
+            if request.content_type == "application/json":
                 abort(403)
             else:
-                return redirect(url_for('auth.login', next=request.full_path))
+                return redirect(url_for("auth.login", next=request.full_path))
 
     return authed_only_wrapper
 
@@ -99,10 +104,10 @@ def admins_only(f):
         if is_admin():
             return f(*args, **kwargs)
         else:
-            if request.content_type == 'application/json':
+            if request.content_type == "application/json":
                 abort(403)
             else:
-                return redirect(url_for('auth.login', next=request.full_path))
+                return redirect(url_for("auth.login", next=request.full_path))
 
     return admins_only_wrapper
 
@@ -110,10 +115,10 @@ def admins_only(f):
 def require_team(f):
     @functools.wraps(f)
     def require_team_wrapper(*args, **kwargs):
-        if get_config('user_mode') == TEAMS_MODE:
+        if get_config("user_mode") == TEAMS_MODE:
             team = get_current_team()
             if team is None:
-                return redirect(url_for('teams.private', next=request.full_path))
+                return redirect(url_for("teams.private", next=request.full_path))
         return f(*args, **kwargs)
 
     return require_team_wrapper
@@ -128,11 +133,16 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
             current = cache.get(key)
 
             if request.method == method:
-                if current and int(current) > limit - 1:  # -1 in order to align expected limit with the real value
-                    resp = jsonify({
-                        'code': 429,
-                        "message": "Too many requests. Limit is %s requests in %s seconds" % (limit, interval)
-                    })
+                if (
+                    current and int(current) > limit - 1
+                ):  # -1 in order to align expected limit with the real value
+                    resp = jsonify(
+                        {
+                            "code": 429,
+                            "message": "Too many requests. Limit is %s requests in %s seconds"
+                            % (limit, interval),
+                        }
+                    )
                     resp.status_code = 429
                     return resp
                 else:
