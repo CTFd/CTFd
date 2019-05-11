@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users, Challenges, Tags, Hints, Flags
+from CTFd.models import Users, Challenges, Tags, Hints, Flags, Solves
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
@@ -439,6 +439,54 @@ def test_api_challenge_get_solves_ctftime_public():
             set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
             r = client.get('/api/v1/challenges/1/solves', json="")
             assert r.status_code == 403
+    destroy_ctfd(app)
+
+
+def test_api_challenge_get_solves_ctf_frozen():
+    """Test users can only see challenge solves that happened before freeze time"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="user1", email="user1@ctfd.io")
+        register_user(app, name="user2", email="user2@ctfd.io")
+
+        # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config('freeze', '1507262400')
+        with freeze_time("2017-10-4"):
+            chal = gen_challenge(app.db)
+            chal_id = chal.id
+            gen_solve(app.db, user_id=2, challenge_id=chal_id)
+            chal2 = gen_challenge(app.db)
+            chal2_id = chal2.id
+
+        with freeze_time("2017-10-8"):
+            chal2 = gen_solve(app.db, user_id=2, challenge_id=chal2_id)
+
+            # There should now be two solves assigned to the same user.
+            assert Solves.query.count() == 2
+
+            client = login_as_user(app, name="user2")
+
+            # Challenge 1 should have one solve
+            r = client.get('/api/v1/challenges/1/solves')
+            data = r.get_json()['data']
+            assert len(data) == 1
+
+            # Challenge 2 should have a solve shouldn't be shown to the user
+            r = client.get('/api/v1/challenges/2/solves')
+            data = r.get_json()['data']
+            assert len(data) == 0
+
+            # Admins should see data as an admin with no modifications
+            admin = login_as_user(app, name="admin")
+            r = admin.get('/api/v1/challenges/2/solves')
+            data = r.get_json()['data']
+            assert len(data) == 1
+
+            # But should see as a user if the preview param is passed
+            r = admin.get('/api/v1/challenges/2/solves?preview=true')
+            data = r.get_json()['data']
+            assert len(data) == 0
+
     destroy_ctfd(app)
 
 
