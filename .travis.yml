@@ -27,7 +27,7 @@ before_install:
     - export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 install:
     - pip install -r development.txt
-    - pip3 install --user black>=19.3b0
+    - pip3 install black>=19.3b0
     - yarn global add prettier
 before_script:
     - psql -c 'create database ctfd;' -U postgres
