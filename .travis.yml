@@ -23,9 +23,12 @@ before_install:
     - sudo rm -f /etc/boto.cfg
     - export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
     - export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    - pyenv install 3.6
+    - pyenv global 3.6
+    - pip3 install black>=19.3b0
+    - pyenv global 2.7
 install:
     - pip install -r development.txt
-    - pip3 install black>=19.3b0
     - yarn global add prettier
 before_script:
     - psql -c 'create database ctfd;' -U postgres
