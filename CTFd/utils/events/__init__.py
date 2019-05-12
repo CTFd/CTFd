@@ -38,14 +38,14 @@ class EventManager(object):
     def __init__(self):
         self.clients = []
 
-    def publish(self, data, type=None, channel='ctf'):
+    def publish(self, data, type=None, channel="ctf"):
         event = ServerSentEvent(data, type=type)
         message = event.to_dict()
         for client in self.clients:
             client[channel].put(message)
         return len(self.clients)
 
-    def subscribe(self, channel='ctf'):
+    def subscribe(self, channel="ctf"):
         q = defaultdict(Queue)
         self.clients.append(q)
         while True:
@@ -54,7 +54,7 @@ class EventManager(object):
                     message = q[channel].get()
                     yield ServerSentEvent(**message)
             except Timeout:
-                yield ServerSentEvent(data='', type='ping')
+                yield ServerSentEvent(data="", type="ping")
             except Exception:
                 raise
 
@@ -64,24 +64,24 @@ class RedisEventManager(EventManager):
         super(EventManager, self).__init__()
         self.client = cache.cache._client
 
-    def publish(self, data, type=None, channel='ctf'):
+    def publish(self, data, type=None, channel="ctf"):
         event = ServerSentEvent(data, type=type)
         message = json.dumps(event.to_dict())
         return self.client.publish(message=message, channel=channel)
 
-    def subscribe(self, channel='ctf'):
+    def subscribe(self, channel="ctf"):
         while True:
             pubsub = self.client.pubsub()
             pubsub.subscribe(channel)
             try:
                 with Timeout(10) as timeout:
                     for message in pubsub.listen():
-                        if message['type'] == 'message':
-                            event = json.loads(message['data'])
+                        if message["type"] == "message":
+                            event = json.loads(message["data"])
                             yield ServerSentEvent(**event)
                             timeout.cancel()
                             timeout.start()
             except Timeout:
-                yield ServerSentEvent(data='', type='ping')
+                yield ServerSentEvent(data="", type="ping")
             except Exception:
                 raise

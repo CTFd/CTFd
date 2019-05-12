@@ -1,5 +1,8 @@
 language: python
-cache: pip
+dist: xenial
+cache:
+    - pip
+    - yarn
 services:
     - mysql
     - postgresql
@@ -7,26 +10,25 @@ services:
 addons:
   apt:
     sources:
-    - mysql-5.7-trusty
+    - deadsnakes
     packages:
-    - mysql-server
-    - mysql-client
+    - python3.6
+    - python3-pip
 env:
-    - TESTING_DATABASE_URL='mysql+pymysql://root:password@localhost/ctfd'
+    - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
     - TESTING_DATABASE_URL='sqlite://'
     - TESTING_DATABASE_URL='postgres://postgres@localhost/ctfd'
 python:
     - 2.7
     - 3.6
 before_install:
-    - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('password') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
-    - sudo mysql_upgrade -u root -ppassword
-    - sudo service mysql restart
     - sudo rm -f /etc/boto.cfg
     - export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
     - export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    - python3.6 -m pip install black>=19.3b0
 install:
     - pip install -r development.txt
+    - yarn global add prettier@1.17.0
 before_script:
     - psql -c 'create database ctfd;' -U postgres
 script:

@@ -2,8 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from CTFd.models import db, Users
-from tests.helpers import (create_ctfd, destroy_ctfd, register_user,
-                           login_as_user, gen_user, gen_team)
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    register_user,
+    login_as_user,
+    gen_user,
+    gen_team,
+)
 
 
 def test_banned_team():
@@ -17,7 +23,7 @@ def test_banned_team():
 
         client = login_as_user(app)
 
-        routes = ['/', '/challenges', '/api/v1/challenges']
+        routes = ["/", "/challenges", "/api/v1/challenges"]
         for route in routes:
             r = client.get(route)
             assert r.status_code == 403
@@ -30,7 +36,7 @@ def test_teams_join_get():
     with app.app_context():
         register_user(app)
         with login_as_user(app) as client:
-            r = client.get('/teams/join')
+            r = client.get("/teams/join")
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -42,19 +48,19 @@ def test_teams_join_post():
         gen_user(app.db, name="user")
         gen_team(app.db, name="team")
         with login_as_user(app) as client:
-            r = client.get('/teams/join')
+            r = client.get("/teams/join")
             assert r.status_code == 200
             with client.session_transaction() as sess:
                 data = {
                     "name": "team",
                     "password": "password",
-                    "nonce": sess.get('nonce')
+                    "nonce": sess.get("nonce"),
                 }
-            r = client.post('/teams/join', data=data)
+            r = client.post("/teams/join", data=data)
             assert r.status_code == 302
             incorrect_data = data
-            incorrect_data['password'] = ""
-            r = client.post('/teams/join', data=incorrect_data)
+            incorrect_data["password"] = ""
+            r = client.post("/teams/join", data=incorrect_data)
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -69,6 +75,6 @@ def test_team_login():
         team.members.append(user)
         app.db.session.commit()
         with login_as_user(app) as client:
-            r = client.get('/team')
+            r = client.get("/team")
             assert r.status_code == 200
     destroy_ctfd(app)

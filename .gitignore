@@ -70,3 +70,6 @@ CTFd/uploads
 
 # CTFd Exports
 *.zip
+
+# JS
+node_modules/

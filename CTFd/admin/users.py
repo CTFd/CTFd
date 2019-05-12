@@ -9,28 +9,47 @@ from CTFd.utils.helpers import get_errors
 from sqlalchemy.sql import not_
 
 
-@admin.route('/admin/users')
+@admin.route("/admin/users")
 @admins_only
 def users_listing():
-    page = abs(request.args.get('page', 1, type=int))
-    q = request.args.get('q')
+    page = abs(request.args.get("page", 1, type=int))
+    q = request.args.get("q")
     if q:
-        field = request.args.get('field')
+        field = request.args.get("field")
         users = []
         errors = get_errors()
-        if field == 'id':
+        if field == "id":
             if q.isnumeric():
                 users = Users.query.filter(Users.id == q).order_by(Users.id.asc()).all()
             else:
                 users = []
-                errors.append('Your ID search term is not numeric')
-        elif field == 'name':
-            users = Users.query.filter(Users.name.like('%{}%'.format(q))).order_by(Users.id.asc()).all()
-        elif field == 'email':
-            users = Users.query.filter(Users.email.like('%{}%'.format(q))).order_by(Users.id.asc()).all()
-        elif field == 'affiliation':
-            users = Users.query.filter(Users.affiliation.like('%{}%'.format(q))).order_by(Users.id.asc()).all()
-        return render_template('admin/users/users.html', users=users, pages=None, curr_page=None, q=q, field=field)
+                errors.append("Your ID search term is not numeric")
+        elif field == "name":
+            users = (
+                Users.query.filter(Users.name.like("%{}%".format(q)))
+                .order_by(Users.id.asc())
+                .all()
+            )
+        elif field == "email":
+            users = (
+                Users.query.filter(Users.email.like("%{}%".format(q)))
+                .order_by(Users.id.asc())
+                .all()
+            )
+        elif field == "affiliation":
+            users = (
+                Users.query.filter(Users.affiliation.like("%{}%".format(q)))
+                .order_by(Users.id.asc())
+                .all()
+            )
+        return render_template(
+            "admin/users/users.html",
+            users=users,
+            pages=None,
+            curr_page=None,
+            q=q,
+            field=field,
+        )
 
     page = abs(int(page))
     results_per_page = 50
@@ -41,16 +60,18 @@ def users_listing():
     count = db.session.query(db.func.count(Users.id)).first()[0]
     pages = int(count / results_per_page) + (count % results_per_page > 0)
 
-    return render_template('admin/users/users.html', users=users, pages=pages, curr_page=page)
+    return render_template(
+        "admin/users/users.html", users=users, pages=pages, curr_page=page
+    )
 
 
-@admin.route('/admin/users/new')
+@admin.route("/admin/users/new")
 @admins_only
 def users_new():
-    return render_template('admin/users/new.html')
+    return render_template("admin/users/new.html")
 
 
-@admin.route('/admin/users/<int:user_id>')
+@admin.route("/admin/users/<int:user_id>")
 @admins_only
 def users_detail(user_id):
     # Get user object
@@ -60,7 +81,7 @@ def users_detail(user_id):
     solves = user.get_solves(admin=True)
 
     # Get challenges that the user is missing
-    if get_config('user_mode') == TEAMS_MODE:
+    if get_config("user_mode") == TEAMS_MODE:
         if user.team:
             all_solves = user.team.get_solves(admin=True)
         else:
@@ -72,11 +93,14 @@ def users_detail(user_id):
     missing = Challenges.query.filter(not_(Challenges.id.in_(solve_ids))).all()
 
     # Get IP addresses that the User has used
-    last_seen = db.func.max(Tracking.date).label('last_seen')
-    addrs = db.session.query(Tracking.ip, last_seen) \
-        .filter_by(user_id=user_id) \
-        .group_by(Tracking.ip) \
-        .order_by(last_seen.desc()).all()
+    last_seen = db.func.max(Tracking.date).label("last_seen")
+    addrs = (
+        db.session.query(Tracking.ip, last_seen)
+        .filter_by(user_id=user_id)
+        .group_by(Tracking.ip)
+        .order_by(last_seen.desc())
+        .all()
+    )
 
     # Get Fails
     fails = user.get_fails(admin=True)
@@ -89,7 +113,7 @@ def users_detail(user_id):
     place = user.get_place(admin=True)
 
     return render_template(
-        'admin/users/user.html',
+        "admin/users/user.html",
         solves=solves,
         user=user,
         addrs=addrs,
@@ -97,5 +121,5 @@ def users_detail(user_id):
         missing=missing,
         place=place,
         fails=fails,
-        awards=awards
+        awards=awards,
     )

@@ -1,48 +1,46 @@
-var CTFd = (function () {
+var CTFd = (function() {
+  var options = {
+    urlRoot: "",
+    csrfNonce: "",
+    start: null,
+    end: null
+  };
 
-    var options = {
-        urlRoot: '',
-        csrfNonce: '',
-        start: null,
-        end: null,
-    };
+  var challenges = {};
 
-    var challenges = {};
+  var scoreboard = function() {};
 
-    var scoreboard = function() {};
+  var teams = {};
 
-    var teams = {};
+  var users = {};
 
-    var users = {};
+  var fetch = function(url, options) {
+    if (options === undefined) {
+      options = {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {}
+      };
+    }
+    url = this.options.urlRoot + url;
 
-    var fetch = function(url, options) {
-        if (options === undefined) {
-            options = {
-                method: "GET",
-                credentials: "same-origin",
-                headers: {},
-            };
-        }
-        url = this.options.urlRoot + url;
+    if (options.headers === undefined) {
+      options.headers = {};
+    }
+    options.credentials = "same-origin";
+    options.headers["Accept"] = "application/json";
+    options.headers["Content-Type"] = "application/json";
+    options.headers["CSRF-Token"] = this.options.csrfNonce;
 
+    return window.fetch(url, options);
+  };
 
-        if (options.headers === undefined) {
-            options.headers = {};
-        }
-        options.credentials = 'same-origin';
-        options.headers['Accept'] = 'application/json';
-        options.headers['Content-Type'] = 'application/json';
-        options.headers['CSRF-Token'] = this.options.csrfNonce;
-
-        return window.fetch(url, options);
-    };
-
-    return {
-        challenges: challenges,
-        scoreboard: scoreboard,
-        teams: teams,
-        users: users,
-        fetch: fetch,
-        options: options
-    };
+  return {
+    challenges: challenges,
+    scoreboard: scoreboard,
+    teams: teams,
+    users: users,
+    fetch: fetch,
+    options: options
+  };
 })();
