@@ -154,7 +154,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'CTFd', u'CTFd Documentation',
-     author, 'CTFd', 'One line description of project.',
+     author, 'CTFd', 'A Capture The Flag framework focusing on ease of use and customizability.',
      'Miscellaneous'),
 ]
 
