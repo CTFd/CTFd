@@ -98,7 +98,7 @@ def test_team_join_ratelimited():
             for _ in range(10):
                 r = client.post("/teams/join", data=data)
 
-            data['password'] = "password"
+            data["password"] = "password"
             for _ in range(10):
                 r = client.post("/teams/join", data=data)
                 assert r.status_code == 429
