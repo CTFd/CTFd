@@ -78,3 +78,29 @@ def test_team_login():
             r = client.get("/team")
             assert r.status_code == 200
     destroy_ctfd(app)
+
+
+def test_team_join_ratelimited():
+    """Test that team joins are ratelimited"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        gen_user(app.db, name="user")
+        gen_team(app.db, name="team")
+        with login_as_user(app) as client:
+            r = client.get("/teams/join")
+            assert r.status_code == 200
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "team",
+                    "password": "wrong_password",
+                    "nonce": sess.get("nonce"),
+                }
+            for _ in range(10):
+                r = client.post("/teams/join", data=data)
+
+            data["password"] = "password"
+            for _ in range(10):
+                r = client.post("/teams/join", data=data)
+                assert r.status_code == 429
+                assert Users.query.filter_by(id=2).first().team_id is None
+    destroy_ctfd(app)

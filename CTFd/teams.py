@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, Blueprint
 from CTFd.models import db, Teams
-from CTFd.utils.decorators import authed_only
+from CTFd.utils.decorators import authed_only, ratelimit
 from CTFd.utils.decorators.modes import require_team_mode
 from CTFd.utils import config
 from CTFd.utils.user import get_current_user
@@ -42,6 +42,7 @@ def listing():
 @teams.route("/teams/join", methods=["GET", "POST"])
 @authed_only
 @require_team_mode
+@ratelimit(method="POST", limit=10, interval=5)
 def join():
     if request.method == "GET":
         return render_template("teams/join_team.html")
