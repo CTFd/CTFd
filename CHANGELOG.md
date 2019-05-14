@@ -1,3 +1,21 @@
+2.1.2 / 2019-05-13
+==================
+
+**General**
+* Fix freeze time regressions in 2.x
+    * Make `/api/v1/[users,teams]/[me]/[solves,fails,awards]` endpoints load as admin so users can see their solves after freeze
+    * Make `/api/v1/challenges/[id]/solves` only show solves before freeze time
+        * Add the `?preview=true` GET parameter for admins to preview challenges solves as a user
+* Team join attempts are now ratelimited
+
+**Tests**
+* More linting and autoformatting rules
+    * Format Javascript and CSS files with `prettier`: `prettier --write 'CTFd/themes/**/*'`
+    * Format Python with `black`: `black CTFd` and `black tests`
+    * `make lint` and thus Travis now include the above commands as lint checks
+* Travis now uses xenial instead of trusty.
+
+
 2.1.1 / 2019-05-04
 ==================
 
