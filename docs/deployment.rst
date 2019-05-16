@@ -69,6 +69,21 @@ Vagrant
 
 CTFd provides a basic Vagrantfile for use with Vagrant. To run using Vagrant run the following commands:
 
+::
+
+  vagrant up
+
+Visit http://localhost:8000 where CTFd will be running.
+
+To access the internal gunicorn session inside Vagrant run:
+
+::
+
+  vagrant ssh
+  tmux attach ctfd
+
+.. Note:: CTFd's Vagrantfile is not commonly used and is only community supported
+
 Debug Server
 ------------
 
