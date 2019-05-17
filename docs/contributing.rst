@@ -61,4 +61,4 @@ If you need to wipe CTFd completely, the simplest way is often to just
 
 * delete the database (CTFd/ctfd.db by default)
 * remove the contents of the `CTFd/uploads` folder
-* empty the cache. By default it will be stored in the .data folder if redis is not configured
+* empty the cache. By default it will be stored in the ``.data`` folder if redis is not configured
