@@ -211,7 +211,13 @@ def init_request_processors(app):
                     abort(403)
             if request.content_type != "application/json":
                 if session["nonce"] != request.form.get("nonce"):
-                    abort(403)
+                    return (
+                        render_template(
+                            "errors/403.html",
+                            error="Invalid csrf nonce provided for this request",
+                        ),
+                        403,
+                    )
 
     application_root = app.config.get("APPLICATION_ROOT")
     if application_root != "/":
