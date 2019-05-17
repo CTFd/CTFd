@@ -26,12 +26,14 @@ CTFd provides automatically generated `Docker images`_ and one of the simplest m
       - REDIS_URL=redis://cache:6379
       - WORKERS=4
 
-.. Tip:: You can also run `python -c "import os; f=open('.ctfd_secret_key', 'a+'); f.write(os.urandom(64)); f.close()"` within the CTFd repo to generate a .ctfd_secret_key file.
+.. Tip::
+    You can also run `python -c "import os; f=open('.ctfd_secret_key', 'a+'); f.write(os.urandom(64)); f.close()"` within the CTFd repo to generate a .ctfd_secret_key file.
 
 5. Run `docker-compose up`
 6. You should now be able to access CTFd at http://localhost:8000
 
-.. Note:: The default Docker Compose configuration files do not provide a reverse proxy server or configure SSL/TLS. This is left as an exercise to the reader by design.
+.. Note::
+    The default Docker Compose configuration files do not provide a reverse proxy server or configure SSL/TLS. This is left as an exercise to the reader by design.
 
 Standard WSGI Deployment
 ------------------------
@@ -71,7 +73,7 @@ CTFd provides a basic Vagrantfile for use with Vagrant. To run using Vagrant run
 
 ::
 
-  vagrant up
+    vagrant up
 
 Visit http://localhost:8000 where CTFd will be running.
 
@@ -79,10 +81,12 @@ To access the internal gunicorn session inside Vagrant run:
 
 ::
 
-  vagrant ssh
-  tmux attach ctfd
+    vagrant ssh
+    tmux attach ctfd
 
-.. Note:: CTFd's Vagrantfile is not commonly used and is only community supported
+.. Note::
+
+    CTFd's Vagrantfile is not commonly used and is only community supported
 
 Debug Server
 ------------

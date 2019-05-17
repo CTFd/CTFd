@@ -11,8 +11,6 @@ CTFd features a plugin interface allowing for the modification of CTFd behavior 
 
 The CTFd developers will do their best to not introduce breaking changes but keep in mind that the plugin interface is still under development and could change.
 
-If you have any questions/comments we're always open to discussion on the [CTFd Slack](https://slack.ctfd.io/).
-
 Architecture
 ------------
 
@@ -26,17 +24,18 @@ CTFd plugins are implemented as Python modules with some CTFd specific files.
            ├── README.md          # README file
            ├── __init__.py        # Main code file loaded by CTFd
            ├── requirements.txt   # Any requirements that need to be installed
-           └── config.html        # Plugin configuration view shown to admins
+           └── config.json        # Plugin configuration file
 
-Effectively CTFd will look at every folder in the `CTFd/plugins` folder for the `load()` function.
+Effectively CTFd will look at every folder in the ``CTFd/plugins`` folder for the ``load()`` function.
 
-If the `load()` function is found, CTFd will call that function with itself (as a Flask app) as a parameter (i.e. `load(app)`). This is done after CTFd has added all of its internal routes but before CTFd has fully instantiated itself. This allows plugins to modify many aspects of CTFd without having to modify CTFd itself.
+If the ``load()`` function is found, CTFd will call that function with itself (as a Flask app) as a parameter (i.e. ``load(app)``). This is done after CTFd has added all of its internal routes but before CTFd has fully instantiated itself. This allows plugins to modify many aspects of CTFd without having to modify CTFd itself.
 
-## config.json
+config.json
+~~~~~~~~~~~
 
-`config.json` exists to give plugin developers a way to define attributes about their plugin. It's primary usage within CTFd is to give users a way to access a Configuration or Settings page for the plugin.
+``config.json`` exists to give plugin developers a way to define attributes about their plugin. It's primary usage within CTFd is to give users a way to access a Configuration or Settings page for the plugin.
 
-This is an example `config.json` file:
+This is an example ``config.json`` file:
 
 .. code-block:: json
 
@@ -60,16 +59,19 @@ This is ultimately rendered to the user with the following template snippet:
     </li>
     {% endif %}
 
-In the past CTFd used a static file known as `config.html` which existed to give plugin developers a page that is loaded by the CTFd admin panel. This has been superceded in favor of `config.json` but is still supported for backwards compatability.
+config.html
+~~~~~~~~~~~
 
-The `config.html` file for a plugin is available by CTFd admins at `/admin/plugins/<plugin-folder-name>`. Thus if `config.html` is stored in `CTFd-S3-plugin`, it would be available at `/admin/plugins/CTFd-S3-plugin`.
+In the past CTFd used a static file known as ``config.html`` which existed to give plugin developers a page that is loaded by the CTFd admin panel. This has been superceded in favor of `config.json` but is still supported for backwards compatability.
 
-`config.html` is loaded as a Jinja template so it has access to all of the same functions and abilities that CTFd exposes to Jinja. Jinja templates are technically also capable of running arbitrary Python code but this is ancillary.
+The ``config.html`` file for a plugin is available by CTFd admins at ``/admin/plugins/<plugin-folder-name>``. Thus if ``config.html`` is stored in ``CTFd-S3-plugin``, it would be available at ``/admin/plugins/CTFd-S3-plugin``.
+
+``config.html`` is loaded as a Jinja template so it has access to all of the same functions and abilities that CTFd exposes to Jinja. Jinja templates are technically also capable of running arbitrary Python code but this is ancillary.
 
 Adding New Routes
 -----------------
 
-Adding new routes in CTFd is effectively just an exercise in writing new Flask routes. Since the plugin itself is passed the entire app, the plugin can leverage the `app.route` decorator to add new routes.
+Adding new routes in CTFd is effectively just an exercise in writing new Flask routes. Since the plugin itself is passed the entire app, the plugin can leverage the ``app.route`` decorator to add new routes.
 
 A simple example is as follows:
 
@@ -90,7 +92,7 @@ A simple example is as follows:
 Modifying Existing Routes
 -------------------------
 
-It is slightly more complicated to override existing routes in CTFd/Flask because it is not strictly supported by Flask. The approach currently used is to modify the `app.view_functions` dictionary which contains the mapping of routes to the functions used to handle them.
+It is slightly more complicated to override existing routes in CTFd/Flask because it is not strictly supported by Flask. The approach currently used is to modify the ``app.view_functions`` dictionary which contains the mapping of routes to the functions used to handle them.
 
 
 .. code-block:: python
@@ -109,7 +111,7 @@ It is slightly more complicated to override existing routes in CTFd/Flask becaus
         # The format used by the view_functions dictionary is blueprint.view_function_name
         app.view_functions['challenges.challenges_view'] = view_challenges
 
-If for some reason you wish to add a new method to an existing route you can modify the `url_map` as follows:
+If for some reason you wish to add a new method to an existing route you can modify the ``url_map`` as follows:
 
 .. code-block:: python
 
@@ -150,7 +152,7 @@ Replacing Templates
 
 In some situations it might make sense for your plugin to replace the logic for a single page template instead of creating an entire theme.
 
-The `utils.override_template()` function allows a plugin to replace the content of a single template within CTFd such that CTFd will use the new content instead of the content in the original file.
+The ``utils.override_template()`` function allows a plugin to replace the content of a single template within CTFd such that CTFd will use the new content instead of the content in the original file.
 
 .. code-block:: python
 
@@ -162,13 +164,13 @@ The `utils.override_template()` function allows a plugin to replace the content 
         template_path = os.path.join(dir_path, 'new-scoreboard.html')
         override_template('scoreboard.html', open(template_path).read())
 
-With this code CTFd will use `new-scoreboard.html` instead of the `scoreboard.html` file it normally would have used.
+With this code CTFd will use ``new-scoreboard.html`` instead of the ``scoreboard.html`` file it normally would have used.
 
 
 Registering Assets
 ------------------
 
-Very often you will want to provide users with static assets (e.g. JS, CSS). Instead of registering handlers for them on your own, you can use the CTFd built in plugin utilities, `register_plugin_assets_directory` and `register_plugin_asset`.
+Very often you will want to provide users with static assets (e.g. JS, CSS). Instead of registering handlers for them on your own, you can use the CTFd built in plugin utilities, ``register_plugin_assets_directory`` and ``register_plugin_asset``.
 
 For example to register an entire assets directory as available to the user:
 
@@ -203,30 +205,32 @@ For example, instead of an input to submit a single flag value, you might requir
 
 The approach used by CTFd here is to give each "type" of challenge an ID and a name.
 
-> You can see how CTFd implements its [default standard challenge here](https://github.com/CTFd/CTFd/blob/master/CTFd/plugins/challenges/__init__.py). You can also see how CTFd implements [dynamic scoring using this feature](https://github.com/CTFd/DynamicValueChallenge).
+.. Tip::
+    You can see how CTFd implements its `default standard challenge here <https://github.com/CTFd/CTFd/blob/master/CTFd/plugins/challenges/__init__.py>`_. You can also see how CTFd implements `dynamic scoring using this feature <https://github.com/CTFd/CTFd/tree/master/CTFd/plugins/dynamic_challenges>`_.
 
-Each challenge is implemented as a child class of the `BaseChallenge` and implements static methods named `create`, `read`, `update`, `delete`, `attempt`, `solve`, and `fail`.
+Each challenge is implemented as a child class of the ``BaseChallenge`` and implements static methods named ``create``, ``read``, ``update``, ``delete``, ``attempt``, ``solve``, and ``fail``.
 
-When a user attempts to solve a challenge, CTFd will look up the challenge type and then call the `solve` method as shown in the following snippet of code:
+When a user attempts to solve a challenge, CTFd will look up the challenge type and then call the ``solve`` method as shown in the following snippet of code:
 
 .. code-block:: python
 
     chal_class = get_chal_class(chal.type)
     status, message = chal_class.attempt(chal, request)
+
     if status:  # The challenge plugin says the input is right
-        if utils.ctftime() or utils.is_admin():
+        if ctftime() or is_admin():
             chal_class.solve(team=team, chal=chal, request=request)
-        logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
         return jsonify({'status': 1, 'message': message})
+
     else:  # The challenge plugin says the input is wrong
-        if utils.ctftime() or utils.is_admin():
+        if ctftime() or is_admin():
             chal_class.fail(team=team, chal=chal, request=request)
 
 This structure allows each Challenge Type to dictate how they are attempted, solved, and marked incorrect.
 
-The Challenge Type also dictates the database table that it uses to store data. By default this uses the `type` column as a `polymorphic_identity` to implement [table inheritance](http://docs.sqlalchemy.org/en/latest/orm/inheritance.html#joined-table-inheritance). Effectively each child table will use the Challenges table as a parent. The child table can add whatever columns it wishes but still leverage the existing columns from the parent.
+The Challenge Type also dictates the database table that it uses to store data. By default this uses the ``type`` column as a ``polymorphic_identity`` to implement `table inheritance <http://docs.sqlalchemy.org/en/latest/orm/inheritance.html#joined-table-inheritance>`_. Effectively each child table will use the Challenges table as a parent. The child table can add whatever columns it wishes but still leverage the existing columns from the parent.
 
-We can see in the following code that the polymorphic_identity is specified to be `dynamic` as well as the `type` parameter. We can also see the call to create_all() which will create the table in our database.
+We can see in the following code that the polymorphic_identity is specified to be ``dynamic`` as well as the ``type`` parameter. We can also see the call to ``create_all()`` which will create the table in our database.
 
 .. code-block:: python
 
@@ -270,29 +274,27 @@ Every challenge type must be added to the global dictionary that specifies all c
             raise KeyError
         return cls
 
-The [Standard Challenge type](https://github.com/CTFd/CTFd/tree/master/CTFd/plugins/challenges) provided within CTFd can be used as a base from which to build additional Challenge Type plugins.
+The `Standard Challenge type <https://github.com/CTFd/CTFd/tree/master/CTFd/plugins/challenges>`_ provided within CTFd can be used as a base from which to build additional Challenge Type plugins.
 
-Once new challenges are registered, CTFd will provide a dropdown allowing you to choose from all the challenges you wish to create.
-
-![Custom Challenge Dropdown](images/plugins/custom_challenge_dropdown.png)
+Once new challenges are registered, CTFd will provide a dropdown allowing you to choose from all the challenge types you can create.
 
 Each Challenge Type contains templates and scripts dictionaries which contain the routes for HTML and JS files needed for the operation of the modals used to create and update the challenges.
 
-*These routes are not automatically defined by CTFd.*
+**These routes are not automatically defined by CTFd.**
 
-Each challenge type plugin specifies the location of their own templates and scripts. An example is the built in [standard challenge type plugin](https://github.com/CTFd/CTFd/blob/master/CTFd/plugins/challenges/__init__.py). It specifies the URLs that the assets are located at for the user's browser to load:
+Each challenge type plugin specifies the location of their own templates and scripts. An example is the built in `standard challenge type plugin <https://github.com/CTFd/CTFd/blob/master/CTFd/plugins/challenges/__init__.py>`_. It specifies the URLs that the assets are located at for the user's browser to load:
 
 .. code-block:: python
 
-    templates = {  # Nunjucks templates used for each aspect of challenge editing & viewing
-        'create': '/plugins/challenges/assets/standard-challenge-create.njk',
-        'update': '/plugins/challenges/assets/standard-challenge-update.njk',
-        'modal': '/plugins/challenges/assets/standard-challenge-modal.njk',
+    templates = {  # Templates used for each aspect of challenge editing & viewing
+        'create': '/plugins/challenges/assets/create.html',
+        'update': '/plugins/challenges/assets/update.html',
+        'view': '/plugins/challenges/assets/view.html',
     }
     scripts = {  # Scripts that are loaded when a template is loaded
-        'create': '/plugins/challenges/assets/standard-challenge-create.js',
-        'update': '/plugins/challenges/assets/standard-challenge-update.js',
-        'modal': '/plugins/challenges/assets/standard-challenge-modal.js',
+        'create': '/plugins/challenges/assets/create.js',
+        'update': '/plugins/challenges/assets/update.js',
+        'view': '/plugins/challenges/assets/view.js',
     }
 
 These files are registered with Flask with the following code:
@@ -305,17 +307,7 @@ These files are registered with Flask with the following code:
         register_plugin_assets_directory(app, base_path='/plugins/challenges/assets/')
 
 
-The aforementioned code handles the Python logic around new challenges but in order to fully integrate with CTFd you will need to create new Nunjucks templates to give admins/teams the ability to modify/update/solve your challenge. The [templates used by the Standard Challenge Type](https://github.com/CTFd/CTFd/tree/master/CTFd/plugins/challenges/assets) should serve as examples.
-
-Each Nunjucks template (.njk) is accompanied by Javascript file (.js) which is loaded by the user's browser whenever the Nunjucks template is loaded. This allows you to customize the user's viewing experience.
-
-Specifically within the `<challenge_name>-challenge-update.js` you will need to specify an `openchal()` function which loads all the necessary data from CTFd itself to populate as shown below:
-
-.. code-block:: javascript
-
-    function openchal(id){
-        loadchal(id);
-    }
+The aforementioned code handles the Python logic around new challenges but in order to fully integrate with CTFd you will need to create new Nunjucks templates to give admins/teams the ability to modify/update/solve your challenge. The `templates used by the Standard Challenge Type <https://github.com/CTFd/CTFd/tree/master/CTFd/plugins/challenges/assets>`_ should serve as examples.
 
 Flag Types
 ----------
@@ -326,71 +318,85 @@ The approach is very similar to Challenges with a base Flag/Key class and a glob
 
 .. code-block:: python
 
-    class BaseKey(object):
-        id = None
+    class BaseFlag(object):
         name = None
+        templates = {}
 
         @staticmethod
         def compare(self, saved, provided):
             return True
 
-    KEY_CLASSES = {
-        0: CTFdStaticKey,
-        1: CTFdRegexKey
-    }
 
-    class CTFdStaticKey(BaseKey):
-        id = 0
+    class CTFdStaticFlag(BaseFlag):
         name = "static"
+        templates = {  # Nunjucks templates used for key editing & viewing
+            "create": "/plugins/flags/assets/static/create.html",
+            "update": "/plugins/flags/assets/static/edit.html",
+        }
 
         @staticmethod
-        def compare(saved, provided):
+        def compare(chal_key_obj, provided):
+            saved = chal_key_obj.content
+            data = chal_key_obj.data
+
             if len(saved) != len(provided):
                 return False
             result = 0
-            for x, y in zip(saved, provided):
-                result |= ord(x) ^ ord(y)
+
+            if data == "case_insensitive":
+                for x, y in zip(saved.lower(), provided.lower()):
+                    result |= ord(x) ^ ord(y)
+            else:
+                for x, y in zip(saved, provided):
+                    result |= ord(x) ^ ord(y)
             return result == 0
 
 
-    class CTFdRegexKey(BaseKey):
-        id = 1
+    class CTFdRegexFlag(BaseFlag):
         name = "regex"
+        templates = {  # Nunjucks templates used for key editing & viewing
+            "create": "/plugins/flags/assets/regex/create.html",
+            "update": "/plugins/flags/assets/regex/edit.html",
+        }
 
         @staticmethod
-        def compare(saved, provided):
-            res = re.match(saved, provided, re.IGNORECASE)
+        def compare(chal_key_obj, provided):
+            saved = chal_key_obj.content
+            data = chal_key_obj.data
+
+            if data == "case_insensitive":
+                res = re.match(saved, provided, re.IGNORECASE)
+            else:
+                res = re.match(saved, provided)
+
             return res and res.group() == provided
 
-    def get_key_class(class_id):
-        cls = KEY_CLASSES.get(class_id)
+
+    FLAG_CLASSES = {"static": CTFdStaticFlag, "regex": CTFdRegexFlag}
+
+
+    def get_flag_class(class_id):
+        cls = FLAG_CLASSES.get(class_id)
         if cls is None:
             raise KeyError
         return cls
 
 When a challenge solution is submitted, the challenge plugin itself is responsible for:
 
-1. Loading the appropriate Key class using the `get_key_class` function.
-2. Properly calling the static `compare()` method defined by each Key class.
+1. Loading the appropriate Key class using the ``get_flag_class()`` function.
+2. Properly calling the static ``compare()`` method defined by each Flag class.
 3. Returning the correctness boolean and the message displayed to the user.
 
-This is properly implemented by the following code [copied from the default standard challenge](https://github.com/CTFd/CTFd/blob/master/CTFd/plugins/challenges/__init__.py#L136):
+This is properly implemented by the following code `copied from the default standard challenge <https://github.com/CTFd/CTFd/blob/master/CTFd/plugins/challenges/__init__.py#L136>`_:
 
-.. code-block:: javascript
+.. code-block:: python
 
     @staticmethod
-    def attempt(chal, request):
-        """
-        This method is used to check whether a given input is right or wrong. It does not make any changes and should
-        return a boolean for correctness and a string to be shown to the user. It is also in charge of parsing the
-        user's input from the request itself.
-        :param chal: The Challenge object from the database
-        :param request: The request the user submitted
-        :return: (boolean, string)
-        """
-        provided_key = request.form['key'].strip()
-        chal_keys = Keys.query.filter_by(chal=chal.id).all()
-        for chal_key in chal_keys:
-            if get_key_class(chal_key.key_type).compare(chal_key.flag, provided_key):
+    def attempt(challenge, request):
+        data = request.form or request.get_json()
+        submission = data['submission'].strip()
+        flags = Flags.query.filter_by(challenge_id=challenge.id).all()
+        for flag in flags:
+            if get_flag_class(flag.type).compare(flag, submission):
                 return True, 'Correct'
         return False, 'Incorrect'
