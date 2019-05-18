@@ -28,8 +28,10 @@ e.g. mysql+pymysql://root:<YOUR_PASSWORD_HERE>@localhost/ctfd
 
 REDIS_URL
 ~~~~~~~~~
-is the URL to connect to a Redis server.
+The URI to connect to a Redis server.
+
 e.g. redis://user:password@localhost:6379
+
 http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
 
 
@@ -73,7 +75,6 @@ MAILGUN_BASE_URL
 ~~~~~~~~~~~~~~~~
 Mailgun base url to send email over Mailgun
 
-
 LOG_FOLDER
 ~~~~~~~~~~
 The location where logs are written. These are the logs for CTFd key submissions, registrations, and logins.
@@ -107,12 +108,12 @@ A URL pointing to a custom S3 implementation.
 REVERSE_PROXY
 ~~~~~~~~~~~~~
 Specifies whether CTFd is behind a reverse proxy or not. Set to True if using a reverse proxy like nginx.
-You can also specify a comma seperated set of numbers specifying the reverse proxy configuration settings.
 
-See https://werkzeug.palletsprojects.com/en/0.15.x/middleware/proxy_fix/#werkzeug.middleware.proxy_fix.ProxyFix.
-For example to configure `x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1` specify `1,1,1,1,1`.
+See `Flask documentation <https://werkzeug.palletsprojects.com/en/0.15.x/middleware/proxy_fix/#werkzeug.middleware.proxy_fix.ProxyFix.>`_ for full details.
 
-Alternatively if you specify `true` CTFd will default to the above behavior with all proxy settings set to 1.
+You can also specify a comma seperated set of numbers specifying the reverse proxy configuration settings. For example to configure `x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1` specify `1,1,1,1,1`.
+
+Alternatively if you specify `True` CTFd will default to the above behavior with all proxy settings set to 1.
 
 TEMPLATES_AUTO_RELOAD
 ~~~~~~~~~~~~~~~~~~~~~

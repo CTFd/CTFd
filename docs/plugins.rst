@@ -11,6 +11,12 @@ CTFd features a plugin interface allowing for the modification of CTFd behavior 
 
 The CTFd developers will do their best to not introduce breaking changes but keep in mind that the plugin interface is still under development and could change.
 
+.. Tip::
+   Official CTFd plugins are available at https://ctfd.io/store. `Contact us <https://ctfd.io/contact/>`_ regarding custom plugins and special projects.
+
+.. Tip::
+   Community themes are available at https://github.com/CTFd/plugins.
+
 Architecture
 ------------
 

@@ -12,6 +12,8 @@ CTFd comes with most of the features needed by an event organizer to run a compe
 
 CTFd is used by many different clubs, universities, and companies to host their own Capture The Flags.
 
+While available as open source, CTFd developers also provide a managed hosting service available at https://ctfd.io/.
+
 CTFd is written in Python and makes use of the Flask web framework.
 
 
