@@ -79,10 +79,6 @@ A simple example is as follows:
 
     from flask import render_template
 
-    from CTFd.models import db
-    from CTFd.utils import admins_only, is_admin
-
-    from CTFd import utils
 
     def load(app):
         @app.route('/faq', methods=['GET'])
@@ -126,9 +122,7 @@ Sometimes CTFd doesn't have enough database tables or columns to let you do what
 
 .. code-block:: python
 
-    from flask import render_template, request
     from CTFd.models import db
-    from CTFd import utils
 
 
     class Avatars(db.Model):

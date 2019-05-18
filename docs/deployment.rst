@@ -15,8 +15,8 @@ CTFd provides automatically generated `Docker images`_ and one of the simplest m
 
 1. Install `Docker`_
 2. Install `Docker Compose`_
-3. Clone the CTFd repository with `git clone https://github.com/CTFd/CTFd.git`
-4. Modify the `docker-compose.yml` file from the repository to specify a `SECRET_KEY` environment for the CTFd service. ::
+3. Clone the CTFd repository with ``git clone https://github.com/CTFd/CTFd.git``
+4. Modify the ``docker-compose.yml`` file from the repository to specify a ``SECRET_KEY`` environment for the CTFd service. ::
 
     environment:
       - SECRET_KEY=<SPECIFY_RANDOM_VALUE>
@@ -27,9 +27,9 @@ CTFd provides automatically generated `Docker images`_ and one of the simplest m
       - WORKERS=4
 
 .. Tip::
-    You can also run `python -c "import os; f=open('.ctfd_secret_key', 'a+'); f.write(os.urandom(64)); f.close()"` within the CTFd repo to generate a .ctfd_secret_key file.
+    You can also run ``python -c "import os; f=open('.ctfd_secret_key', 'a+'); f.write(os.urandom(64)); f.close()"`` within the CTFd repo to generate a .ctfd_secret_key file.
 
-5. Run `docker-compose up`
+5. Run ``docker-compose up``
 6. You should now be able to access CTFd at http://localhost:8000
 
 .. Note::
@@ -65,7 +65,7 @@ Caching Server
 
 CTFd makes heavy use of caching servers to store configuration values, user sessions, and page content. It is important to deploy CTFd with a caching server. The preferred caching server option is Redis.
 
-By default if no cache server is configured,  CTFd will attempt to use the filesystem as a cache and store values in the `.data` folder. This type of caching is not very performant thus it is highly recommend you configured a Redis server.
+By default if no cache server is configured,  CTFd will attempt to use the filesystem as a cache and store values in the ``.data`` folder. This type of caching is not very performant thus it is highly recommended that you configure a Redis server.
 
 Vagrant
 -------
@@ -78,7 +78,7 @@ CTFd provides a basic Vagrantfile for use with Vagrant. To run using Vagrant run
 
 Visit http://localhost:8000 where CTFd will be running.
 
-To access the internal gunicorn session inside Vagrant run:
+To access the internal gunicorn terminal session inside Vagrant run:
 
 ::
 
@@ -98,7 +98,7 @@ The absolute simplest way to deploy CTFd merely involves running `python serve.p
    CTFd makes every effort to be an easy to setup application.
    However, deploying CTFd for large amounts of users can be difficult.
 
-   Fully managed and maintained CTFd deployments are available at https://ctfd.io. If you're interested in a specialized CTFd deployment with custom features please `contact us`_.
+   Fully managed and maintained CTFd deployments are available at https://ctfd.io. If you're interested in a specialized CTFd deployment with custom features please `contact us <https://ctfd.io/contact/>`_.
 
 
 .. _Flask documentation: http://flask.pocoo.org/docs/latest/deploying/
