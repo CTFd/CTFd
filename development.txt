@@ -13,3 +13,4 @@ bandit==1.5.1
 flask_profiler==1.8.1
 pytest-xdist==1.28.0
 pytest-cov==2.6.1
+sphinx_rtd_theme==0.4.3
