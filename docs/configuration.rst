@@ -5,7 +5,7 @@ CTFd provides a number of configuration options which are used to configure serv
 
 Server Level Configuration
 --------------------------
-Server level configuration can be modified from the `config.py` file in CTFd.
+Server level configuration can be modified from the ``config.py`` file in CTFd.
 
 SECRET_KEY
 ~~~~~~~~~~
@@ -24,13 +24,13 @@ DATABASE_URL
 The URI that specifies the username, password, hostname, port, and database of the server
 used to hold the CTFd database.
 
-e.g. mysql+pymysql://root:<YOUR_PASSWORD_HERE>@localhost/ctfd
+e.g. ``mysql+pymysql://root:<YOUR_PASSWORD_HERE>@localhost/ctfd``
 
 REDIS_URL
 ~~~~~~~~~
 The URI to connect to a Redis server.
 
-e.g. redis://user:password@localhost:6379
+e.g. ``redis://user:password@localhost:6379``
 
 http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
 
@@ -107,13 +107,12 @@ A URL pointing to a custom S3 implementation.
 
 REVERSE_PROXY
 ~~~~~~~~~~~~~
-Specifies whether CTFd is behind a reverse proxy or not. Set to True if using a reverse proxy like nginx.
+Specifies whether CTFd is behind a reverse proxy or not. Set to ``True`` if using a reverse proxy like nginx.
 
 See `Flask documentation <https://werkzeug.palletsprojects.com/en/0.15.x/middleware/proxy_fix/#werkzeug.middleware.proxy_fix.ProxyFix.>`_ for full details.
 
-You can also specify a comma seperated set of numbers specifying the reverse proxy configuration settings. For example to configure `x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1` specify `1,1,1,1,1`.
-
-Alternatively if you specify `True` CTFd will default to the above behavior with all proxy settings set to 1.
+.. Tip::
+    You can also specify a comma seperated set of numbers specifying the reverse proxy configuration settings. For example to configure `x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1` specify `1,1,1,1,1`. By setting the value to ``True``, CTFd will default to the above behavior with all proxy settings set to 1.
 
 TEMPLATES_AUTO_RELOAD
 ~~~~~~~~~~~~~~~~~~~~~
@@ -125,7 +124,7 @@ Automatically disabled to suppress warnings and save memory. You should only ena
 
 SWAGGER_UI
 ~~~~~~~~~~
-Enable the Swagger UI endpoint at /api/v1/
+Enable the Swagger UI endpoint at ``/api/v1/``
 
 UPDATE_CHECK
 ~~~~~~~~~~~~
