@@ -7,28 +7,47 @@ from CTFd.utils.helpers import get_errors
 from sqlalchemy.sql import not_
 
 
-@admin.route('/admin/teams')
+@admin.route("/admin/teams")
 @admins_only
 def teams_listing():
-    page = abs(request.args.get('page', 1, type=int))
-    q = request.args.get('q')
+    page = abs(request.args.get("page", 1, type=int))
+    q = request.args.get("q")
     if q:
-        field = request.args.get('field')
+        field = request.args.get("field")
         teams = []
         errors = get_errors()
-        if field == 'id':
+        if field == "id":
             if q.isnumeric():
                 teams = Teams.query.filter(Teams.id == q).order_by(Teams.id.asc()).all()
             else:
                 teams = []
-                errors.append('Your ID search term is not numeric')
-        elif field == 'name':
-            teams = Teams.query.filter(Teams.name.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
-        elif field == 'email':
-            teams = Teams.query.filter(Teams.email.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
-        elif field == 'affiliation':
-            teams = Teams.query.filter(Teams.affiliation.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
-        return render_template('admin/teams/teams.html', teams=teams, pages=None, curr_page=None, q=q, field=field)
+                errors.append("Your ID search term is not numeric")
+        elif field == "name":
+            teams = (
+                Teams.query.filter(Teams.name.like("%{}%".format(q)))
+                .order_by(Teams.id.asc())
+                .all()
+            )
+        elif field == "email":
+            teams = (
+                Teams.query.filter(Teams.email.like("%{}%".format(q)))
+                .order_by(Teams.id.asc())
+                .all()
+            )
+        elif field == "affiliation":
+            teams = (
+                Teams.query.filter(Teams.affiliation.like("%{}%".format(q)))
+                .order_by(Teams.id.asc())
+                .all()
+            )
+        return render_template(
+            "admin/teams/teams.html",
+            teams=teams,
+            pages=None,
+            curr_page=None,
+            q=q,
+            field=field,
+        )
 
     page = abs(int(page))
     results_per_page = 50
@@ -38,16 +57,18 @@ def teams_listing():
     teams = Teams.query.order_by(Teams.id.asc()).slice(page_start, page_end).all()
     count = db.session.query(db.func.count(Teams.id)).first()[0]
     pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template('admin/teams/teams.html', teams=teams, pages=pages, curr_page=page)
+    return render_template(
+        "admin/teams/teams.html", teams=teams, pages=pages, curr_page=page
+    )
 
 
-@admin.route('/admin/teams/new')
+@admin.route("/admin/teams/new")
 @admins_only
 def teams_new():
-    return render_template('admin/teams/new.html')
+    return render_template("admin/teams/new.html")
 
 
-@admin.route('/admin/teams/<int:team_id>')
+@admin.route("/admin/teams/<int:team_id>")
 @admins_only
 def teams_detail(team_id):
     team = Teams.query.filter_by(id=team_id).first_or_404()
@@ -69,14 +90,17 @@ def teams_detail(team_id):
     missing = Challenges.query.filter(not_(Challenges.id.in_(solve_ids))).all()
 
     # Get addresses for all members
-    last_seen = db.func.max(Tracking.date).label('last_seen')
-    addrs = db.session.query(Tracking.ip, last_seen) \
-                      .filter(Tracking.user_id.in_(member_ids)) \
-                      .group_by(Tracking.ip) \
-                      .order_by(last_seen.desc()).all()
+    last_seen = db.func.max(Tracking.date).label("last_seen")
+    addrs = (
+        db.session.query(Tracking.ip, last_seen)
+        .filter(Tracking.user_id.in_(member_ids))
+        .group_by(Tracking.ip)
+        .order_by(last_seen.desc())
+        .all()
+    )
 
     return render_template(
-        'admin/teams/team.html',
+        "admin/teams/team.html",
         team=team,
         members=members,
         score=score,

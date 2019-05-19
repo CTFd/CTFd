@@ -9,11 +9,11 @@ def test_ctfd_setup_redirect():
     app = create_ctfd(setup=False)
     with app.app_context():
         with app.test_client() as client:
-            r = client.get('/users')
+            r = client.get("/users")
             assert r.status_code == 302
             assert r.location == "http://localhost/setup"
 
             # Files in /themes load properly
-            r = client.get('/themes/core/static/css/style.css')
+            r = client.get("/themes/core/static/css/style.css")
             assert r.status_code == 200
     destroy_ctfd(app)

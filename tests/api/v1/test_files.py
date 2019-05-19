@@ -7,7 +7,7 @@ from tests.helpers import (
     destroy_ctfd,
     login_as_user,
     gen_challenge,
-    gen_file
+    gen_file,
 )
 import os
 from io import BytesIO
@@ -17,27 +17,31 @@ def test_api_files_get_non_admin():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        gen_file(app.db, location='0bf1a55a5cd327c07af15df260979668/bird.swf', challenge_id=chal.id)
+        gen_file(
+            app.db,
+            location="0bf1a55a5cd327c07af15df260979668/bird.swf",
+            challenge_id=chal.id,
+        )
 
         with app.test_client() as client:
             # test_api_files_get_non_admin
             """Can a user get /api/v1/files if not admin"""
-            r = client.get('/api/v1/files', json="")
+            r = client.get("/api/v1/files", json="")
             assert r.status_code == 403
 
             # test_api_files_post_non_admin
             """Can a user post /api/v1/files if not admin"""
-            r = client.post('/api/v1/files')
+            r = client.post("/api/v1/files")
             assert r.status_code == 403
 
             # test_api_file_get_non_admin
             """Can a user get /api/v1/files/<file_id> if not admin"""
-            r = client.get('/api/v1/files/1', json="")
+            r = client.get("/api/v1/files/1", json="")
             assert r.status_code == 403
 
             # test_api_file_delete_non_admin
             """Can a user delete /api/v1/files/<file_id> if not admin"""
-            r = client.delete('/api/v1/files/1', json="")
+            r = client.delete("/api/v1/files/1", json="")
             assert r.status_code == 403
     destroy_ctfd(app)
 
@@ -46,8 +50,8 @@ def test_api_files_get_admin():
     """Can a user get /api/v1/files if admin"""
     app = create_ctfd()
     with app.app_context():
-        with login_as_user(app, 'admin') as client:
-            r = client.get('/api/v1/files', json="")
+        with login_as_user(app, "admin") as client:
+            r = client.get("/api/v1/files", json="")
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -56,18 +60,19 @@ def test_api_files_post_admin():
     """Can a user post /api/v1/files if admin"""
     app = create_ctfd()
     with app.app_context():
-        with login_as_user(app, name='admin') as client:
+        with login_as_user(app, name="admin") as client:
             with client.session_transaction() as sess:
-                nonce = sess.get('nonce')
-            r = client.post('/api/v1/files',
-                            content_type='multipart/form-data',
-                            data=dict(file=(BytesIO(b'test file content'), 'test.txt'),
-                                      nonce=nonce))
+                nonce = sess.get("nonce")
+            r = client.post(
+                "/api/v1/files",
+                content_type="multipart/form-data",
+                data=dict(
+                    file=(BytesIO(b"test file content"), "test.txt"), nonce=nonce
+                ),
+            )
             assert r.status_code == 200
             f = Files.query.filter_by(id=1).first()
-            os.remove(
-                os.path.join(app.config['UPLOAD_FOLDER'] + '/' + f.location)
-            )
+            os.remove(os.path.join(app.config["UPLOAD_FOLDER"] + "/" + f.location))
     destroy_ctfd(app)
 
 
@@ -76,12 +81,16 @@ def test_api_file_get_admin():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        f = gen_file(app.db, location='0bf1a55a5cd327c07af15df260979668/bird.swf', challenge_id=chal.id)
+        f = gen_file(
+            app.db,
+            location="0bf1a55a5cd327c07af15df260979668/bird.swf",
+            challenge_id=chal.id,
+        )
         assert Files.query.count() == 1
         assert ChallengeFiles.query.count() == 1
         assert f in chal.files
-        with login_as_user(app, 'admin') as client:
-            r = client.get('/api/v1/files/1', json="")
+        with login_as_user(app, "admin") as client:
+            r = client.get("/api/v1/files/1", json="")
             assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -91,12 +100,16 @@ def test_api_file_delete_admin():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        f = gen_file(app.db, location='0bf1a55a5cd327c07af15df260979668/bird.swf', challenge_id=chal.id)
+        f = gen_file(
+            app.db,
+            location="0bf1a55a5cd327c07af15df260979668/bird.swf",
+            challenge_id=chal.id,
+        )
         assert Files.query.count() == 1
         assert ChallengeFiles.query.count() == 1
         assert f in chal.files
-        with login_as_user(app, 'admin') as client:
-            r = client.delete('/api/v1/files/1', json="")
+        with login_as_user(app, "admin") as client:
+            r = client.delete("/api/v1/files/1", json="")
             assert r.status_code == 200
             assert Files.query.count() == 0
             assert ChallengeFiles.query.count() == 0

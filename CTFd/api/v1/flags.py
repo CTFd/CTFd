@@ -3,14 +3,12 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Flags
 from CTFd.schemas.flags import FlagSchema
 from CTFd.plugins.flags import get_flag_class, FLAG_CLASSES
-from CTFd.utils.decorators import (
-    admins_only
-)
+from CTFd.utils.decorators import admins_only
 
-flags_namespace = Namespace('flags', description="Endpoint to retrieve Flags")
+flags_namespace = Namespace("flags", description="Endpoint to retrieve Flags")
 
 
-@flags_namespace.route('')
+@flags_namespace.route("")
 class FlagList(Resource):
     @admins_only
     def get(self):
@@ -18,15 +16,9 @@ class FlagList(Resource):
         schema = FlagSchema(many=True)
         response = schema.dump(flags)
         if response.errors:
-            return {
-                'success': False,
-                'errors': response.errors
-            }, 400
+            return {"success": False, "errors": response.errors}, 400
 
-        return {
-            'success': True,
-            'data': response.data
-        }
+        return {"success": True, "data": response.data}
 
     @admins_only
     def post(self):
@@ -35,10 +27,7 @@ class FlagList(Resource):
         response = schema.load(req, session=db.session)
 
         if response.errors:
-            return {
-                'success': False,
-                'errors': response.errors
-            }, 400
+            return {"success": False, "errors": response.errors}, 400
 
         db.session.add(response.data)
         db.session.commit()
@@ -46,42 +35,30 @@ class FlagList(Resource):
         response = schema.dump(response.data)
         db.session.close()
 
-        return {
-            'success': True,
-            'data': response.data
-        }
+        return {"success": True, "data": response.data}
 
 
-@flags_namespace.route('/types', defaults={'type_name': None})
-@flags_namespace.route('/types/<type_name>')
+@flags_namespace.route("/types", defaults={"type_name": None})
+@flags_namespace.route("/types/<type_name>")
 class FlagTypes(Resource):
     @admins_only
     def get(self, type_name):
         if type_name:
             flag_class = get_flag_class(type_name)
-            response = {
-                'name': flag_class.name,
-                'templates': flag_class.templates
-            }
-            return {
-                'success': True,
-                'data': response
-            }
+            response = {"name": flag_class.name, "templates": flag_class.templates}
+            return {"success": True, "data": response}
         else:
             response = {}
             for class_id in FLAG_CLASSES:
                 flag_class = FLAG_CLASSES.get(class_id)
                 response[class_id] = {
-                    'name': flag_class.name,
-                    'templates': flag_class.templates,
+                    "name": flag_class.name,
+                    "templates": flag_class.templates,
                 }
-            return {
-                'success': True,
-                'data': response
-            }
+            return {"success": True, "data": response}
 
 
-@flags_namespace.route('/<flag_id>')
+@flags_namespace.route("/<flag_id>")
 class Flag(Resource):
     @admins_only
     def get(self, flag_id):
@@ -90,17 +67,11 @@ class Flag(Resource):
         response = schema.dump(flag)
 
         if response.errors:
-            return {
-                'success': False,
-                'errors': response.errors
-            }, 400
+            return {"success": False, "errors": response.errors}, 400
 
-        response.data['templates'] = get_flag_class(flag.type).templates
+        response.data["templates"] = get_flag_class(flag.type).templates
 
-        return {
-            'success': True,
-            'data': response.data
-        }
+        return {"success": True, "data": response.data}
 
     @admins_only
     def delete(self, flag_id):
@@ -110,9 +81,7 @@ class Flag(Resource):
         db.session.commit()
         db.session.close()
 
-        return {
-            'success': True
-        }
+        return {"success": True}
 
     @admins_only
     def patch(self, flag_id):
@@ -123,17 +92,11 @@ class Flag(Resource):
         response = schema.load(req, session=db.session, instance=flag, partial=True)
 
         if response.errors:
-            return {
-                'success': False,
-                'errors': response.errors
-            }, 400
+            return {"success": False, "errors": response.errors}, 400
 
         db.session.commit()
 
         response = schema.dump(response.data)
         db.session.close()
 
-        return {
-            'success': True,
-            'data': response.data
-        }
+        return {"success": True, "data": response.data}

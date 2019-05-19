@@ -1,12 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import (
-    create_ctfd,
-    setup_ctfd,
-    destroy_ctfd,
-    login_as_user
-)
+from tests.helpers import create_ctfd, setup_ctfd, destroy_ctfd, login_as_user
 from CTFd.plugins import (
     register_plugin_assets_directory,
     register_plugin_asset,
@@ -18,18 +13,18 @@ from CTFd.plugins import (
     get_admin_plugin_menu_bar,
     register_user_page_menu_bar,
     get_user_page_menu_bar,
-    bypass_csrf_protection
+    bypass_csrf_protection,
 )
 
 
 def test_register_plugin_asset():
     """Test that plugin asset registration works"""
     app = create_ctfd(setup=False)
-    register_plugin_asset(app, asset_path='/plugins/__init__.py')
+    register_plugin_asset(app, asset_path="/plugins/__init__.py")
     app = setup_ctfd(app)
     with app.app_context():
         with app.test_client() as client:
-            r = client.get('/plugins/__init__.py')
+            r = client.get("/plugins/__init__.py")
             assert len(r.get_data(as_text=True)) > 0
             assert r.status_code == 200
     destroy_ctfd(app)
@@ -38,14 +33,14 @@ def test_register_plugin_asset():
 def test_register_plugin_assets_directory():
     """Test that plugin asset directory registration works"""
     app = create_ctfd(setup=False)
-    register_plugin_assets_directory(app, base_path='/plugins/')
+    register_plugin_assets_directory(app, base_path="/plugins/")
     app = setup_ctfd(app)
     with app.app_context():
         with app.test_client() as client:
-            r = client.get('/plugins/__init__.py')
+            r = client.get("/plugins/__init__.py")
             assert len(r.get_data(as_text=True)) > 0
             assert r.status_code == 200
-            r = client.get('/plugins/challenges/__init__.py')
+            r = client.get("/plugins/challenges/__init__.py")
             assert len(r.get_data(as_text=True)) > 0
             assert r.status_code == 200
     destroy_ctfd(app)
@@ -55,12 +50,12 @@ def test_override_template():
     """Does override_template work properly for regular themes when used from a plugin"""
     app = create_ctfd()
     with app.app_context():
-        override_template('login.html', 'LOGIN OVERRIDE')
+        override_template("login.html", "LOGIN OVERRIDE")
         with app.test_client() as client:
-            r = client.get('/login')
+            r = client.get("/login")
             assert r.status_code == 200
             output = r.get_data(as_text=True)
-            assert 'LOGIN OVERRIDE' in output
+            assert "LOGIN OVERRIDE" in output
     destroy_ctfd(app)
 
 
@@ -68,13 +63,13 @@ def test_admin_override_template():
     """Does override_template work properly for the admin panel when used from a plugin"""
     app = create_ctfd()
     with app.app_context():
-        override_template('admin/users/user.html', 'ADMIN USER OVERRIDE')
+        override_template("admin/users/user.html", "ADMIN USER OVERRIDE")
 
         client = login_as_user(app, name="admin", password="password")
-        r = client.get('/admin/users/1')
+        r = client.get("/admin/users/1")
         assert r.status_code == 200
         output = r.get_data(as_text=True)
-        assert 'ADMIN USER OVERRIDE' in output
+        assert "ADMIN USER OVERRIDE" in output
     destroy_ctfd(app)
 
 
@@ -82,13 +77,13 @@ def test_register_plugin_script():
     """Test that register_plugin_script adds script paths to the core theme when used from a plugin"""
     app = create_ctfd()
     with app.app_context():
-        register_plugin_script('/fake/script/path.js')
-        register_plugin_script('http://ctfd.io/fake/script/path.js')
+        register_plugin_script("/fake/script/path.js")
+        register_plugin_script("http://ctfd.io/fake/script/path.js")
         with app.test_client() as client:
-            r = client.get('/')
+            r = client.get("/")
             output = r.get_data(as_text=True)
-            assert '/fake/script/path.js' in output
-            assert 'http://ctfd.io/fake/script/path.js' in output
+            assert "/fake/script/path.js" in output
+            assert "http://ctfd.io/fake/script/path.js" in output
     destroy_ctfd(app)
 
 
@@ -96,13 +91,13 @@ def test_register_plugin_stylesheet():
     """Test that register_plugin_stylesheet adds stylesheet paths to the core theme when used from a plugin"""
     app = create_ctfd()
     with app.app_context():
-        register_plugin_script('/fake/stylesheet/path.css')
-        register_plugin_script('http://ctfd.io/fake/stylesheet/path.css')
+        register_plugin_script("/fake/stylesheet/path.css")
+        register_plugin_script("http://ctfd.io/fake/stylesheet/path.css")
         with app.test_client() as client:
-            r = client.get('/')
+            r = client.get("/")
             output = r.get_data(as_text=True)
-            assert '/fake/stylesheet/path.css' in output
-            assert 'http://ctfd.io/fake/stylesheet/path.css' in output
+            assert "/fake/stylesheet/path.css" in output
+            assert "http://ctfd.io/fake/stylesheet/path.css" in output
     destroy_ctfd(app)
 
 
@@ -110,13 +105,13 @@ def test_register_admin_plugin_script():
     """Test that register_admin_plugin_script adds script paths to the admin theme when used from a plugin"""
     app = create_ctfd()
     with app.app_context():
-        register_admin_plugin_script('/fake/script/path.js')
-        register_admin_plugin_script('http://ctfd.io/fake/script/path.js')
+        register_admin_plugin_script("/fake/script/path.js")
+        register_admin_plugin_script("http://ctfd.io/fake/script/path.js")
         with login_as_user(app, name="admin") as client:
-            r = client.get('/admin/statistics')
+            r = client.get("/admin/statistics")
             output = r.get_data(as_text=True)
-            assert '/fake/script/path.js' in output
-            assert 'http://ctfd.io/fake/script/path.js' in output
+            assert "/fake/script/path.js" in output
+            assert "http://ctfd.io/fake/script/path.js" in output
     destroy_ctfd(app)
 
 
@@ -124,13 +119,13 @@ def test_register_admin_plugin_stylesheet():
     """Test that register_admin_plugin_stylesheet adds stylesheet paths to the admin theme when used from a plugin"""
     app = create_ctfd()
     with app.app_context():
-        register_admin_plugin_stylesheet('/fake/stylesheet/path.css')
-        register_admin_plugin_stylesheet('http://ctfd.io/fake/stylesheet/path.css')
+        register_admin_plugin_stylesheet("/fake/stylesheet/path.css")
+        register_admin_plugin_stylesheet("http://ctfd.io/fake/stylesheet/path.css")
         with login_as_user(app, name="admin") as client:
-            r = client.get('/admin/statistics')
+            r = client.get("/admin/statistics")
             output = r.get_data(as_text=True)
-            assert '/fake/stylesheet/path.css' in output
-            assert 'http://ctfd.io/fake/stylesheet/path.css' in output
+            assert "/fake/stylesheet/path.css" in output
+            assert "http://ctfd.io/fake/stylesheet/path.css" in output
     destroy_ctfd(app)
 
 
@@ -141,17 +136,19 @@ def test_register_admin_plugin_menu_bar():
     """
     app = create_ctfd()
     with app.app_context():
-        register_admin_plugin_menu_bar(title='test_admin_plugin_name', route='/test_plugin')
+        register_admin_plugin_menu_bar(
+            title="test_admin_plugin_name", route="/test_plugin"
+        )
 
         client = login_as_user(app, name="admin", password="password")
-        r = client.get('/admin/statistics')
+        r = client.get("/admin/statistics")
         output = r.get_data(as_text=True)
-        assert '/test_plugin' in output
-        assert 'test_admin_plugin_name' in output
+        assert "/test_plugin" in output
+        assert "test_admin_plugin_name" in output
 
         menu_item = get_admin_plugin_menu_bar()[0]
-        assert menu_item.title == 'test_admin_plugin_name'
-        assert menu_item.route == '/test_plugin'
+        assert menu_item.title == "test_admin_plugin_name"
+        assert menu_item.route == "/test_plugin"
     destroy_ctfd(app)
 
 
@@ -162,18 +159,20 @@ def test_register_user_page_menu_bar():
     """
     app = create_ctfd()
     with app.app_context():
-        register_user_page_menu_bar(title='test_user_menu_link', route='/test_user_href')
+        register_user_page_menu_bar(
+            title="test_user_menu_link", route="/test_user_href"
+        )
 
         with app.test_client() as client:
-            r = client.get('/')
+            r = client.get("/")
 
         output = r.get_data(as_text=True)
-        assert '/test_user_href' in output
-        assert 'test_user_menu_link' in output
+        assert "/test_user_href" in output
+        assert "test_user_menu_link" in output
 
         menu_item = get_user_page_menu_bar()[0]
-        assert menu_item.title == 'test_user_menu_link'
-        assert menu_item.route == '/test_user_href'
+        assert menu_item.title == "test_user_menu_link"
+        assert menu_item.route == "/test_user_href"
     destroy_ctfd(app)
 
 
@@ -185,7 +184,7 @@ def test_bypass_csrf_protection():
 
     with app.app_context():
         with app.test_client() as client:
-            r = client.post('/login')
+            r = client.post("/login")
             output = r.get_data(as_text=True)
             assert r.status_code == 403
 
@@ -193,10 +192,12 @@ def test_bypass_csrf_protection():
             return "Success", 200
 
         # Hijack an existing route to avoid any kind of hacks to create a test route
-        app.view_functions['auth.login'] = bypass_csrf_protection(bypass_csrf_protection_test_route)
+        app.view_functions["auth.login"] = bypass_csrf_protection(
+            bypass_csrf_protection_test_route
+        )
 
         with app.test_client() as client:
-            r = client.post('/login')
+            r = client.post("/login")
             output = r.get_data(as_text=True)
             assert r.status_code == 200
             assert output == "Success"

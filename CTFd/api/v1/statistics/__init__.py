@@ -1,6 +1,8 @@
 from flask_restplus import Namespace
 
-statistics_namespace = Namespace('statistics', description="Endpoint to retrieve Statistics")
+statistics_namespace = Namespace(
+    "statistics", description="Endpoint to retrieve Statistics"
+)
 
 from CTFd.api.v1.statistics import challenges  # noqa: F401
 from CTFd.api.v1.statistics import teams  # noqa: F401

@@ -2,13 +2,15 @@
 # -*- coding: utf-8 -*-
 
 from CTFd.utils import set_config
-from tests.helpers import (create_ctfd,
-                           destroy_ctfd,
-                           register_user,
-                           login_as_user,
-                           gen_challenge,
-                           gen_award,
-                           gen_hint)
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    register_user,
+    login_as_user,
+    gen_challenge,
+    gen_award,
+    gen_hint,
+)
 from freezegun import freeze_time
 
 
@@ -18,7 +20,7 @@ def test_api_hint_404():
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
-        r = client.get('/api/v1/hints/1')
+        r = client.get("/api/v1/hints/1")
         assert r.status_code == 404
     destroy_ctfd(app)
 
@@ -30,11 +32,11 @@ def test_api_hint_visibility():
         chal = gen_challenge(app.db)
         gen_hint(app.db, chal.id)
         with app.test_client() as non_logged_in_user:
-            r = non_logged_in_user.get('/api/v1/hints/1')
+            r = non_logged_in_user.get("/api/v1/hints/1")
             assert r.status_code == 302
         register_user(app)
         client = login_as_user(app)
-        r = client.get('/api/v1/hints/1')
+        r = client.get("/api/v1/hints/1")
         assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -43,13 +45,17 @@ def test_api_hint_visibility_ctftime():
     """Can the users load /api/v1/hints/<hint_id> if not ctftime"""
     app = create_ctfd()
     with app.app_context(), freeze_time("2017-10-7"):
-        set_config('start', '1507089600')  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
-        set_config('end', '1507262400')  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        set_config(
+            "start", "1507089600"
+        )  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config(
+            "end", "1507262400"
+        )  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
         chal = gen_challenge(app.db)
         gen_hint(app.db, chal.id)
         register_user(app)
         client = login_as_user(app)
-        r = client.get('/api/v1/hints/1')
+        r = client.get("/api/v1/hints/1")
         assert r.status_code == 403
     destroy_ctfd(app)
 
@@ -62,10 +68,9 @@ def test_api_hint_locked():
         gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
         register_user(app)
         client = login_as_user(app)
-        r = client.get('/api/v1/hints/1')
+        r = client.get("/api/v1/hints/1")
         assert r.status_code == 200
-        r = client.post('/api/v1/unlocks',
-                        json={"target": 1, "type": "hints"})
+        r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
         assert r.status_code == 400
     destroy_ctfd(app)
 
@@ -80,12 +85,11 @@ def test_api_hint_unlocked():
         # Give user points with an award
         gen_award(app.db, 2)
         client = login_as_user(app)
-        r = client.get('/api/v1/hints/1')
+        r = client.get("/api/v1/hints/1")
         assert r.status_code == 200
-        r = client.post('/api/v1/unlocks',
-                        json={"target": 1, "type": "hints"})
+        r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
         assert r.status_code == 200
-        r = client.get('/api/v1/hints/1')
+        r = client.get("/api/v1/hints/1")
         assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -96,9 +100,9 @@ def test_api_hints_admin_access():
     with app.app_context():
         register_user(app)
         client = login_as_user(app)
-        r = client.get('/api/v1/hints')
+        r = client.get("/api/v1/hints")
         assert r.status_code == 302
-        r = client.post('/api/v1/hints', json="")
+        r = client.post("/api/v1/hints", json="")
         assert r.status_code == 403
     destroy_ctfd(app)
 
@@ -112,12 +116,12 @@ def test_api_hint_admin_access():
         admin = login_as_user(app, "admin")
         register_user(app)
         client = login_as_user(app)
-        r = client.patch('/api/v1/hints/1', json="")
+        r = client.patch("/api/v1/hints/1", json="")
         assert r.status_code == 403
-        r = client.delete('/api/v1/hints/1', json="")
+        r = client.delete("/api/v1/hints/1", json="")
         assert r.status_code == 403
-        r_admin = admin.patch('/api/v1/hints/1', json={"cost": 2})
+        r_admin = admin.patch("/api/v1/hints/1", json={"cost": 2})
         assert r_admin.status_code == 200
-        r_admin = admin.delete('/api/v1/hints/1', json="")
+        r_admin = admin.delete("/api/v1/hints/1", json="")
         assert r_admin.status_code == 200
     destroy_ctfd(app)

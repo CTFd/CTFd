@@ -32,7 +32,7 @@ class BaseUploader(object):
 class FilesystemUploader(BaseUploader):
     def __init__(self, base_path=None):
         super(BaseUploader, self).__init__()
-        self.base_path = base_path or current_app.config.get('UPLOAD_FOLDER')
+        self.base_path = base_path or current_app.config.get("UPLOAD_FOLDER")
 
     def store(self, fileobj, filename):
         location = os.path.join(self.base_path, filename)
@@ -41,17 +41,17 @@ class FilesystemUploader(BaseUploader):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        with open(location, 'wb') as dst:
+        with open(location, "wb") as dst:
             copyfileobj(fileobj, dst, 16384)
 
         return filename
 
     def upload(self, file_obj, filename):
         if len(filename) == 0:
-            raise Exception('Empty filenames cannot be used')
+            raise Exception("Empty filenames cannot be used")
 
         filename = secure_filename(filename)
-        md5hash = hexencode(os.urandom(16)).decode('utf-8')
+        md5hash = hexencode(os.urandom(16)).decode("utf-8")
         file_path = os.path.join(md5hash, filename)
 
         return self.store(file_obj, file_path)
@@ -73,22 +73,22 @@ class S3Uploader(BaseUploader):
     def __init__(self):
         super(BaseUploader, self).__init__()
         self.s3 = self._get_s3_connection()
-        self.bucket = get_app_config('AWS_S3_BUCKET')
+        self.bucket = get_app_config("AWS_S3_BUCKET")
 
     def _get_s3_connection(self):
-        access_key = get_app_config('AWS_ACCESS_KEY_ID')
-        secret_key = get_app_config('AWS_SECRET_ACCESS_KEY')
-        endpoint = get_app_config('AWS_S3_ENDPOINT_URL')
+        access_key = get_app_config("AWS_ACCESS_KEY_ID")
+        secret_key = get_app_config("AWS_SECRET_ACCESS_KEY")
+        endpoint = get_app_config("AWS_S3_ENDPOINT_URL")
         client = boto3.client(
-            's3',
+            "s3",
             aws_access_key_id=access_key,
             aws_secret_access_key=secret_key,
-            endpoint_url=endpoint
+            endpoint_url=endpoint,
         )
         return client
 
     def _clean_filename(self, c):
-        if c in string.ascii_letters + string.digits + '-' + '_' + '.':
+        if c in string.ascii_letters + string.digits + "-" + "_" + ".":
             return True
 
     def store(self, fileobj, filename):
@@ -96,24 +96,22 @@ class S3Uploader(BaseUploader):
         return filename
 
     def upload(self, file_obj, filename):
-        filename = filter(self._clean_filename, secure_filename(filename).replace(' ', '_'))
-        filename = ''.join(filename)
+        filename = filter(
+            self._clean_filename, secure_filename(filename).replace(" ", "_")
+        )
+        filename = "".join(filename)
         if len(filename) <= 0:
             return False
 
-        md5hash = hexencode(os.urandom(16)).decode('utf-8')
+        md5hash = hexencode(os.urandom(16)).decode("utf-8")
 
-        dst = md5hash + '/' + filename
+        dst = md5hash + "/" + filename
         self.s3.upload_fileobj(file_obj, self.bucket, dst)
         return dst
 
     def download(self, filename):
         url = self.s3.generate_presigned_url(
-            'get_object',
-            Params={
-                'Bucket': self.bucket,
-                'Key': filename
-            }
+            "get_object", Params={"Bucket": self.bucket, "Key": filename}
         )
         return redirect(url)
 
@@ -122,14 +120,14 @@ class S3Uploader(BaseUploader):
         return True
 
     def sync(self):
-        local_folder = current_app.config.get('UPLOAD_FOLDER')
+        local_folder = current_app.config.get("UPLOAD_FOLDER")
         # If the bucket is empty then Contents will not be in the response
-        bucket_list = self.s3.list_objects(Bucket=self.bucket).get('Contents', [])
+        bucket_list = self.s3.list_objects(Bucket=self.bucket).get("Contents", [])
 
         for s3_key in bucket_list:
-            s3_object = s3_key['Key']
+            s3_object = s3_key["Key"]
             # We don't want to download any directories
-            if s3_object.endswith('/') is False:
+            if s3_object.endswith("/") is False:
                 local_path = os.path.join(local_folder, s3_object)
                 directory = os.path.dirname(local_path)
                 if not os.path.exists(directory):

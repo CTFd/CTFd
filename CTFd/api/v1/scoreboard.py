@@ -6,12 +6,17 @@ from CTFd.utils.scores import get_standings
 from CTFd.utils import get_config
 from CTFd.utils.modes import TEAMS_MODE
 from CTFd.utils.dates import unix_time_to_utc, isoformat
-from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
+from CTFd.utils.decorators.visibility import (
+    check_account_visibility,
+    check_score_visibility,
+)
 
-scoreboard_namespace = Namespace('scoreboard', description="Endpoint to retrieve scores")
+scoreboard_namespace = Namespace(
+    "scoreboard", description="Endpoint to retrieve scores"
+)
 
 
-@scoreboard_namespace.route('')
+@scoreboard_namespace.route("")
 class ScoreboardList(Resource):
     @check_account_visibility
     @check_score_visibility
@@ -19,7 +24,7 @@ class ScoreboardList(Resource):
     def get(self):
         standings = get_standings()
         response = []
-        mode = get_config('user_mode')
+        mode = get_config("user_mode")
 
         if mode == TEAMS_MODE:
             team_ids = []
@@ -30,36 +35,33 @@ class ScoreboardList(Resource):
 
         for i, x in enumerate(standings):
             entry = {
-                'pos': i + 1,
-                'account_id': x.account_id,
-                'oauth_id': x.oauth_id,
-                'name': x.name,
-                'score': int(x.score)
+                "pos": i + 1,
+                "account_id": x.account_id,
+                "oauth_id": x.oauth_id,
+                "name": x.name,
+                "score": int(x.score),
             }
 
             if mode == TEAMS_MODE:
                 members = []
                 for member in teams[i].members:
-                    members.append({
-                        'id': member.id,
-                        'oauth_id': member.oauth_id,
-                        'name': member.name,
-                        'score': int(member.score)
-                    })
+                    members.append(
+                        {
+                            "id": member.id,
+                            "oauth_id": member.oauth_id,
+                            "name": member.name,
+                            "score": int(member.score),
+                        }
+                    )
 
-                entry['members'] = members
+                entry["members"] = members
 
-            response.append(
-                entry
-            )
-        return {
-            'success': True,
-            'data': response
-        }
+            response.append(entry)
+        return {"success": True, "data": response}
 
 
-@scoreboard_namespace.route('/top/<count>')
-@scoreboard_namespace.param('count', 'How many top teams to return')
+@scoreboard_namespace.route("/top/<count>")
+@scoreboard_namespace.param("count", "How many top teams to return")
 class ScoreboardDetail(Resource):
     @check_account_visibility
     @check_score_visibility
@@ -74,7 +76,7 @@ class ScoreboardDetail(Resource):
         solves = Solves.query.filter(Solves.account_id.in_(team_ids))
         awards = Awards.query.filter(Awards.account_id.in_(team_ids))
 
-        freeze = get_config('freeze')
+        freeze = get_config("freeze")
 
         if freeze:
             solves = solves.filter(Solves.date < unix_time_to_utc(freeze))
@@ -85,33 +87,36 @@ class ScoreboardDetail(Resource):
 
         for i, team in enumerate(team_ids):
             response[i + 1] = {
-                'id': standings[i].account_id,
-                'name': standings[i].name,
-                'solves': []
+                "id": standings[i].account_id,
+                "name": standings[i].name,
+                "solves": [],
             }
             for solve in solves:
                 if solve.account_id == team:
-                    response[i + 1]['solves'].append({
-                        'challenge_id': solve.challenge_id,
-                        'account_id': solve.account_id,
-                        'team_id': solve.team_id,
-                        'user_id': solve.user_id,
-                        'value': solve.challenge.value,
-                        'date': isoformat(solve.date)
-                    })
+                    response[i + 1]["solves"].append(
+                        {
+                            "challenge_id": solve.challenge_id,
+                            "account_id": solve.account_id,
+                            "team_id": solve.team_id,
+                            "user_id": solve.user_id,
+                            "value": solve.challenge.value,
+                            "date": isoformat(solve.date),
+                        }
+                    )
             for award in awards:
                 if award.account_id == team:
-                    response[i + 1]['solves'].append({
-                        'challenge_id': None,
-                        'account_id': award.account_id,
-                        'team_id': award.team_id,
-                        'user_id': award.user_id,
-                        'value': award.value,
-                        'date': isoformat(award.date)
-                    })
-            response[i + 1]['solves'] = sorted(response[i + 1]['solves'], key=lambda k: k['date'])
+                    response[i + 1]["solves"].append(
+                        {
+                            "challenge_id": None,
+                            "account_id": award.account_id,
+                            "team_id": award.team_id,
+                            "user_id": award.user_id,
+                            "value": award.value,
+                            "date": isoformat(award.date),
+                        }
+                    )
+            response[i + 1]["solves"] = sorted(
+                response[i + 1]["solves"], key=lambda k: k["date"]
+            )
 
-        return {
-            'success': True,
-            'data': response
-        }
+        return {"success": True, "data": response}

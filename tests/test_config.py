@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
-)
+from tests.helpers import create_ctfd, destroy_ctfd
 from CTFd.config import TestingConfig
 
 
 def test_reverse_proxy_config():
     """Test that REVERSE_PROXY configuration behaviors properly"""
+
     class ReverseProxyConfig(TestingConfig):
-        REVERSE_PROXY = '1,2,3,4'
+        REVERSE_PROXY = "1,2,3,4"
 
     app = create_ctfd(config=ReverseProxyConfig)
     with app.app_context():
@@ -23,7 +21,7 @@ def test_reverse_proxy_config():
     destroy_ctfd(app)
 
     class ReverseProxyConfig(TestingConfig):
-        REVERSE_PROXY = 'true'
+        REVERSE_PROXY = "true"
 
     app = create_ctfd(config=ReverseProxyConfig)
     with app.app_context():

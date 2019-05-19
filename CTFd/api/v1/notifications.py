@@ -3,28 +3,22 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Notifications
 from CTFd.schemas.notifications import NotificationSchema
 
-from CTFd.utils.decorators import (
-    admins_only
+from CTFd.utils.decorators import admins_only
+
+notifications_namespace = Namespace(
+    "notifications", description="Endpoint to retrieve Notifications"
 )
 
-notifications_namespace = Namespace('notifications', description="Endpoint to retrieve Notifications")
 
-
-@notifications_namespace.route('')
+@notifications_namespace.route("")
 class NotificantionList(Resource):
     def get(self):
         notifications = Notifications.query.all()
         schema = NotificationSchema(many=True)
         result = schema.dump(notifications)
         if result.errors:
-            return {
-                'success': False,
-                'errors': result.errors
-            }, 400
-        return {
-            'success': True,
-            'data': result.data
-        }
+            return {"success": False, "errors": result.errors}, 400
+        return {"success": True, "data": result.data}
 
     @admins_only
     def post(self):
@@ -34,42 +28,28 @@ class NotificantionList(Resource):
         result = schema.load(req)
 
         if result.errors:
-            return {
-                'success': False,
-                'errors': result.errors
-            }, 400
+            return {"success": False, "errors": result.errors}, 400
 
         db.session.add(result.data)
         db.session.commit()
 
         response = schema.dump(result.data)
-        current_app.events_manager.publish(
-            data=response.data, type='notification'
-        )
+        current_app.events_manager.publish(data=response.data, type="notification")
 
-        return {
-            'success': True,
-            'data': response.data
-        }
+        return {"success": True, "data": response.data}
 
 
-@notifications_namespace.route('/<notification_id>')
-@notifications_namespace.param('notification_id', 'A Notification ID')
+@notifications_namespace.route("/<notification_id>")
+@notifications_namespace.param("notification_id", "A Notification ID")
 class Notification(Resource):
     def get(self, notification_id):
         notif = Notifications.query.filter_by(id=notification_id).first_or_404()
         schema = NotificationSchema()
         response = schema.dump(notif)
         if response.errors:
-            return {
-                'success': False,
-                'errors': response.errors
-            }, 400
+            return {"success": False, "errors": response.errors}, 400
 
-        return {
-            'success': True,
-            'data': response.data
-        }
+        return {"success": True, "data": response.data}
 
     @admins_only
     def delete(self, notification_id):
@@ -78,6 +58,4 @@ class Notification(Resource):
         db.session.commit()
         db.session.close()
 
-        return {
-            'success': True,
-        }
+        return {"success": True}

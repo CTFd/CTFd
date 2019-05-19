@@ -1,0 +1,12 @@
+{
+  "name": "CTFd",
+  "version": "2.1.1",
+  "description": "CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.",
+  "main": "index.js",
+  "repository": "git@github.com:CTFd/CTFd.git",
+  "author": "Kevin Chung <kchung@ctfd.io>",
+  "license": "Apache 2.0",
+  "devDependencies": {
+    "prettier": "1.17.0"
+  }
+}

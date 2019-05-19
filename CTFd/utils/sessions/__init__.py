@@ -62,7 +62,7 @@ class CachingSessionInterface(SessionInterface):
             return self.session_class(sid=sid, permanent=self.permanent)
 
         if not six.PY2 and not isinstance(sid, text_type):
-            sid = sid.decode('utf-8', 'strict')
+            sid = sid.decode("utf-8", "strict")
         val = cache.get(self.key_prefix + sid)
         if val is not None:
             try:
@@ -79,8 +79,9 @@ class CachingSessionInterface(SessionInterface):
         if not session:
             if session.modified:
                 cache.delete(self.key_prefix + session.sid)
-                response.delete_cookie(app.session_cookie_name,
-                                       domain=domain, path=path)
+                response.delete_cookie(
+                    app.session_cookie_name, domain=domain, path=path
+                )
             return
 
         if session.modified:
@@ -93,7 +94,11 @@ class CachingSessionInterface(SessionInterface):
             if session.sid is None:
                 session.sid = self._generate_sid()
 
-            cache.set(key=self.key_prefix + session.sid, value=val, timeout=total_seconds(app.permanent_session_lifetime))
+            cache.set(
+                key=self.key_prefix + session.sid,
+                value=val,
+                timeout=total_seconds(app.permanent_session_lifetime),
+            )
             session_id = session.sid
             response.set_cookie(
                 app.session_cookie_name,
@@ -103,5 +108,5 @@ class CachingSessionInterface(SessionInterface):
                 domain=domain,
                 path=path,
                 secure=secure,
-                samesite=samesite
+                samesite=samesite,
             )
