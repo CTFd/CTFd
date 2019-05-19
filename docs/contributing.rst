@@ -61,6 +61,14 @@ CTFd will support both Python 2 and 3 until Python 2's EOL in 2020.
 Tests are run in parallel with ``pytest-xdist`` and each test is run in its own database.
 
 
+Documentation
+~~~~~~~~~~~~~
+
+CTFd's documentation is written using Sphinx and hosted by `Read the Docs <https://readthedocs.org/>`_.
+
+To build the documentation, you should go into the ``docs`` folder and run `make html`. The content output into the `docs/_build` folder will be the resulting hosted output.
+
+
 Tips & Tricks
 ~~~~~~~~~~~~~
 Typically while developing CTFd, developers use the provided ``serve.py`` script or its ``make serve`` wrapper and access CTFd at ``http://localhost:4000``.
