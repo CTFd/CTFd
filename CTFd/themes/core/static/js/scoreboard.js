@@ -1,17 +1,22 @@
 function updatescores() {
-    $.get(script_root + '/api/v1/scoreboard', function(response) {
-        var teams = response.data;
-        var table = $('#scoreboard tbody');
-        table.empty();
-        for (var i = 0; i < teams.length; i++) {
-            var row = "<tr>\n" +
-                '<th scope="row" class="text-center">{0}</th>'.format(teams[i].pos) +
-                '<td><a href="{0}/team/{1}">{2}</a></td>'.format(script_root,teams[i].id,htmlentities(teams[i].name)) +
-                "<td>{0}</td>".format(teams[i].score) +
-                "</tr>";
-            table.append(row);
-        }
-    });
+  $.get(script_root + "/api/v1/scoreboard", function(response) {
+    var teams = response.data;
+    var table = $("#scoreboard tbody");
+    table.empty();
+    for (var i = 0; i < teams.length; i++) {
+      var row =
+        "<tr>\n" +
+        '<th scope="row" class="text-center">{0}</th>'.format(teams[i].pos) +
+        '<td><a href="{0}/team/{1}">{2}</a></td>'.format(
+          script_root,
+          teams[i].id,
+          htmlentities(teams[i].name)
+        ) +
+        "<td>{0}</td>".format(teams[i].score) +
+        "</tr>";
+      table.append(row);
+    }
+  });
 }
 
 function cumulativesum(arr) {
