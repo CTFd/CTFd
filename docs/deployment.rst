@@ -58,7 +58,7 @@ CTFd makes use of SQLAlchemy and as such supports a number of SQL databases. As 
 By default CTFd will create a SQLite database if no database server has been configured.
 
 .. Note::
-    CTFd makes use of the JSON data type. MySQL implements a proper JSON type while MariaDB does not. Small differences like these could eventually result in CTFd only supporting a few database servers.
+    CTFd makes use of the JSON data type. MySQL >= 5.7.8 implements a proper JSON type while MariaDB does not. Small differences like these could eventually result in CTFd only supporting a few database servers.
 
 Caching Server
 ~~~~~~~~~~~~~~
