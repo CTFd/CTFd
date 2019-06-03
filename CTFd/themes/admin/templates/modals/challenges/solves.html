@@ -9,7 +9,11 @@
 		{% if solves is defined %}
 			{% for solve in solves %}
 				<tr>
-					<td>{{ solve.account.name }}</td>
+					<td>
+						<a href="{{ generate_account_url(solve.account_id) }}">
+							{{ solve.account.name }}
+						</a>
+					</td>
 					<td>
 						<script>
 							document.write(moment("{{ solve.date | isoformat }}").local().format('MMMM Do, h:mm:ss A'))
