@@ -24,7 +24,7 @@ from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
-from CTFd.utils.dates import ctftime
+from CTFd.utils.dates import ctftime, ctf_ended, view_after_ctf
 from CTFd.utils.decorators import authed_only
 from CTFd.utils.security.signing import (
     unserialize,
@@ -202,7 +202,10 @@ def files(path):
         if challenges_visible():
             if current_user.is_admin() is False:
                 if not ctftime():
-                    abort(403)
+                    if ctf_ended() and view_after_ctf():
+                        pass
+                    else:
+                        abort(403)
         else:
             if not ctftime():
                 abort(403)
