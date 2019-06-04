@@ -1,5 +1,6 @@
 from flask import request
 from flask_restplus import Namespace, Resource
+from CTFd.cache import clear_standings
 from CTFd.models import db, get_class_by_tablename, Unlocks
 from CTFd.utils.user import get_current_user
 from CTFd.schemas.unlocks import UnlockSchema
@@ -72,6 +73,7 @@ class UnlockList(Resource):
         award = award_schema.load(award)
         db.session.add(award.data)
         db.session.commit()
+        clear_standings()
 
         response = schema.dump(response.data)
 

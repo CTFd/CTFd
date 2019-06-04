@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from sqlalchemy.sql.expression import union_all
 from sqlalchemy.orm import validates, column_property
 from sqlalchemy.ext.hybrid import hybrid_property
 from CTFd.utils.crypto import hash_password
@@ -346,65 +345,9 @@ class Users(db.Model):
         to no imports within the CTFd application as importing from the
         application itself will result in a circular import.
         """
-        scores = (
-            db.session.query(
-                Solves.user_id.label("user_id"),
-                db.func.sum(Challenges.value).label("score"),
-                db.func.max(Solves.id).label("id"),
-                db.func.max(Solves.date).label("date"),
-            )
-            .join(Challenges)
-            .filter(Challenges.value != 0)
-            .group_by(Solves.user_id)
-        )
+        from CTFd.utils.scores import get_user_standings
 
-        awards = (
-            db.session.query(
-                Awards.user_id.label("user_id"),
-                db.func.sum(Awards.value).label("score"),
-                db.func.max(Awards.id).label("id"),
-                db.func.max(Awards.date).label("date"),
-            )
-            .filter(Awards.value != 0)
-            .group_by(Awards.user_id)
-        )
-
-        if not admin:
-            freeze = Configs.query.filter_by(key="freeze").first()
-            if freeze and freeze.value:
-                freeze = int(freeze.value)
-                freeze = datetime.datetime.utcfromtimestamp(freeze)
-                scores = scores.filter(Solves.date < freeze)
-                awards = awards.filter(Awards.date < freeze)
-
-        results = union_all(scores, awards).alias("results")
-
-        sumscores = (
-            db.session.query(
-                results.columns.user_id,
-                db.func.sum(results.columns.score).label("score"),
-                db.func.max(results.columns.id).label("id"),
-                db.func.max(results.columns.date).label("date"),
-            )
-            .group_by(results.columns.user_id)
-            .subquery()
-        )
-
-        if admin:
-            standings_query = (
-                db.session.query(Users.id.label("user_id"))
-                .join(sumscores, Users.id == sumscores.columns.user_id)
-                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
-            )
-        else:
-            standings_query = (
-                db.session.query(Users.id.label("user_id"))
-                .join(sumscores, Users.id == sumscores.columns.user_id)
-                .filter(Users.banned == False, Users.hidden == False)
-                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
-            )
-
-        standings = standings_query.all()
+        standings = get_user_standings(admin=admin)
 
         # http://codegolf.stackexchange.com/a/4712
         try:
@@ -533,65 +476,9 @@ class Teams(db.Model):
         to no imports within the CTFd application as importing from the
         application itself will result in a circular import.
         """
-        scores = (
-            db.session.query(
-                Solves.team_id.label("team_id"),
-                db.func.sum(Challenges.value).label("score"),
-                db.func.max(Solves.id).label("id"),
-                db.func.max(Solves.date).label("date"),
-            )
-            .join(Challenges)
-            .filter(Challenges.value != 0)
-            .group_by(Solves.team_id)
-        )
+        from CTFd.utils.scores import get_team_standings
 
-        awards = (
-            db.session.query(
-                Awards.team_id.label("team_id"),
-                db.func.sum(Awards.value).label("score"),
-                db.func.max(Awards.id).label("id"),
-                db.func.max(Awards.date).label("date"),
-            )
-            .filter(Awards.value != 0)
-            .group_by(Awards.team_id)
-        )
-
-        if not admin:
-            freeze = Configs.query.filter_by(key="freeze").first()
-            if freeze and freeze.value:
-                freeze = int(freeze.value)
-                freeze = datetime.datetime.utcfromtimestamp(freeze)
-                scores = scores.filter(Solves.date < freeze)
-                awards = awards.filter(Awards.date < freeze)
-
-        results = union_all(scores, awards).alias("results")
-
-        sumscores = (
-            db.session.query(
-                results.columns.team_id,
-                db.func.sum(results.columns.score).label("score"),
-                db.func.max(results.columns.id).label("id"),
-                db.func.max(results.columns.date).label("date"),
-            )
-            .group_by(results.columns.team_id)
-            .subquery()
-        )
-
-        if admin:
-            standings_query = (
-                db.session.query(Teams.id.label("team_id"))
-                .join(sumscores, Teams.id == sumscores.columns.team_id)
-                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
-            )
-        else:
-            standings_query = (
-                db.session.query(Teams.id.label("team_id"))
-                .join(sumscores, Teams.id == sumscores.columns.team_id)
-                .filter(Teams.banned == False)
-                .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
-            )
-
-        standings = standings_query.all()
+        standings = get_team_standings(admin=admin)
 
         # http://codegolf.stackexchange.com/a/4712
         try:
