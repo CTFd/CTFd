@@ -242,7 +242,7 @@ def register():
         db.session.close()
 
         if is_teams_mode():
-            return redirect(url_for("teams.new"))
+            return redirect(url_for("teams.private"))
 
         return redirect(url_for("challenges.listing"))
     else:
