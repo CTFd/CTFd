@@ -79,7 +79,9 @@
 
 		{% if user.team_id %}
 			<h2 id="team-acc" class="text-center">
-				<a href="{{ url_for('admin.teams_detail', team_id=user.team_id) }}">{{ user.team.name }}</a>
+				<a href="{{ url_for('admin.teams_detail', team_id=user.team_id) }}">
+					{{ user.team.name }}
+				</a>
 			</h2>
 		{% endif %}
 
