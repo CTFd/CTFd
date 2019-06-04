@@ -93,13 +93,8 @@ def users_detail(user_id):
     missing = Challenges.query.filter(not_(Challenges.id.in_(solve_ids))).all()
 
     # Get IP addresses that the User has used
-    last_seen = db.func.max(Tracking.date).label("last_seen")
     addrs = (
-        db.session.query(Tracking.ip, last_seen)
-        .filter_by(user_id=user_id)
-        .group_by(Tracking.ip)
-        .order_by(last_seen.desc())
-        .all()
+        Tracking.query.filter_by(user_id=user_id).order_by(Tracking.date.desc()).all()
     )
 
     # Get Fails

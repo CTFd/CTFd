@@ -22,7 +22,11 @@ def challenges_detail(challenge_id):
         Challenges.query.with_entities(Challenges.id, Challenges.name).all()
     )
     challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
-    solves = Solves.query.filter_by(challenge_id=challenge.id).all()
+    solves = (
+        Solves.query.filter_by(challenge_id=challenge.id)
+        .order_by(Solves.date.asc())
+        .all()
+    )
     flags = Flags.query.filter_by(challenge_id=challenge.id).all()
     challenge_class = get_chal_class(challenge.type)
 

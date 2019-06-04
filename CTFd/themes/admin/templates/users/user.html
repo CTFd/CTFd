@@ -79,7 +79,9 @@
 
 		{% if user.team_id %}
 			<h2 id="team-acc" class="text-center">
-				<a href="{{ url_for('admin.teams_detail', team_id=user.team_id) }}">{{ user.team.name }}</a>
+				<a href="{{ url_for('admin.teams_detail', team_id=user.team_id) }}">
+					{{ user.team.name }}
+				</a>
 			</h2>
 		{% endif %}
 
@@ -169,7 +171,11 @@
 					<tbody>
 					{% for solve in solves %}
 						<tr class="chal-solve">
-							<td class="text-center chal" id="{{ solve.challenge_id }}">{{ solve.challenge.name }}</td>
+							<td class="text-center chal" id="{{ solve.challenge_id }}">
+								<a href="{{ url_for("admin.challenges_detail", challenge_id=solve.challenge_id) }}">
+									{{ solve.challenge.name }}
+								</a>
+							</td>
 							<td class="flag" id="{{ solve.id }}"><pre>{{ solve.provided }}</pre></td>
 							<td class="text-center">{{ solve.challenge.category }}</td>
 							<td class="text-center">{{ solve.challenge.value }}</td>
@@ -208,7 +214,9 @@
 					{% for fail in fails %}
 						<tr class="chal-wrong">
 							<td class="text-center chal" id="{{ fail.challenge_id }}">
-								{{ fail.challenge.name }}
+								<a href="{{ url_for("admin.challenges_detail", challenge_id=fail.challenge_id) }}">
+									{{ fail.challenge.name }}
+								</a>
 							</td>
 							<td class="flag" id="{{ fail.id }}">
 								<pre>{{ fail.provided }}</pre>
@@ -290,7 +298,11 @@
 					<tbody>
 					{% for challenge in missing %}
 						<tr class="chal-solve">
-							<td class="text-center chal" id="{{ challenge.id }}">{{ challenge.name }}</td>
+							<td class="text-center chal" id="{{ challenge.id }}">
+								<a href="{{ url_for("admin.challenges_detail", challenge_id=challenge.id) }}">
+									{{ challenge.name }}
+								</a>
+							</td>
 							<td class="text-center">{{ challenge.category }}</td>
 							<td class="text-center">{{ challenge.value }}</td>
 							<td class="text-center">
@@ -322,9 +334,9 @@
 				<tbody>
 				{% for addr in addrs %}
 					<tr>
-						<td class="text-center">{{ addr[0] }}</td>
+						<td class="text-center">{{ addr.ip }}</td>
 						<td class="text-center solve-time">
-							<script>document.write(moment("{{ addr[1]|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+							<script>document.write(moment("{{ addr.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
 						</td>
 					</tr>
 				{% endfor %}
