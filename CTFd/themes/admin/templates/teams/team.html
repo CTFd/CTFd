@@ -174,6 +174,7 @@
 					<thead>
 					<tr>
 						<td class="text-center"><b>Challenge</b></td>
+						<td class="text-center"><b>User</b></td>
 						<td class="text-center"><b>Submitted</b></td>
 						<td class="text-center"><b>Category</b></td>
 						<td class="text-center"><b>Value</b></td>
@@ -184,7 +185,16 @@
 					<tbody>
 					{% for solve in solves %}
 						<tr class="chal-solve">
-							<td class="text-center chal" id="{{ solve.challenge_id }}">{{ solve.challenge.name }}</td>
+							<td class="text-center chal" id="{{ solve.challenge_id }}">
+								<a href="{{ url_for("admin.challenges_detail", challenge_id=solve.challenge_id) }}">
+									{{ solve.challenge.name }}
+								</a>
+							</td>
+							<td class="text-center">
+								<a href="{{ url_for("admin.users_detail", user_id=solve.user_id) }}">
+									{{ solve.user.name }}
+								</a>
+							</td>
 							<td class="flag" id="{{ solve.id }}"><pre>{{ solve.provided }}</pre></td>
 							<td class="text-center">{{ solve.challenge.category }}</td>
 							<td class="text-center">{{ solve.challenge.value }}</td>
@@ -215,6 +225,7 @@
 					<thead>
 					<tr>
 						<td class="text-center"><b>Challenge</b></td>
+						<td class="text-center"><b>User</b></td>
 						<td class="text-center"><b>Submitted</b></td>
 						<td class="text-center"><b>Time</b></td>
 						<td class="text-center"><b>Delete</b></td>
@@ -223,7 +234,16 @@
 					<tbody>
 					{% for fail in fails %}
 						<tr class="chal-wrong">
-							<td class="text-center chal" id="{{ fail.challenge_id }}">{{ fail.challenge.name }}</td>
+							<td class="text-center chal" id="{{ fail.challenge_id }}">
+								<a href="{{ url_for("admin.challenges_detail", challenge_id=fail.challenge_id) }}">
+									{{ fail.challenge.name }}
+								</a>
+							</td>
+							<td class="text-center">
+								<a href="{{ url_for("admin.users_detail", user_id=fail.user_id) }}">
+									{{ fail.user.name }}
+								</a>
+							</td>
 							<td class="flag" id="{{ fail.id }}"><pre>{{ fail.provided }}</pre></td>
 							<td class="text-center solve-time">
 								<script>document.write(moment("{{ fail.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
@@ -252,6 +272,7 @@
 						<thead>
 						<tr>
 							<td class="text-center"><b>Name</b></td>
+							<td class="text-center"><b>User</b></td>
 							<td class="text-center"><b>Description</b></td>
 							<td class="text-center"><b>Date</b></td>
 							<td class="text-center"><b>Value</b></td>
@@ -264,6 +285,11 @@
 						{% for award in awards %}
 							<tr class="award-row">
 								<td class="text-center chal" id="{{ award.id }}">{{ award.name }}</td>
+								<td class="text-center">
+									<a href="{{ url_for("admin.users_detail", user_id=award.user_id) }}">
+										{{ award.user.name }}
+									</a>
+								</td>
 								<td class=""><pre>{{ award.description }}</pre></td>
 								<td class="text-center solve-time">
 									<script>document.write(moment("{{ award.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
@@ -293,6 +319,7 @@
 				<h3 class="text-center">IP Addresses</h3>
 				<thead>
 				<tr>
+					<td class="text-center"><b>User</b></td>
 					<td class="text-center"><b>IP Address</b></td>
 					<td class="text-center"><b>Last Seen</b></td>
 				</tr>
@@ -300,9 +327,14 @@
 				<tbody>
 				{% for addr in addrs %}
 					<tr>
-						<td class="text-center">{{ addr[0] }}</td>
+						<td class="text-center">
+							<a href="{{ url_for("admin.users_detail", user_id=addr.user_id) }}">
+								{{ addr.user.name }}
+							</a>
+						</td>
+						<td class="text-center">{{ addr.ip }}</td>
 						<td class="text-center solve-time">
-							<script>document.write(moment("{{ addr[1]|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+							<script>document.write(moment("{{ addr.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
 						</td>
 					</tr>
 				{% endfor %}
