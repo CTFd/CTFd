@@ -20,6 +20,7 @@ from CTFd.utils.security.auth import login_user, logout_user
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.logging import log
 from CTFd.utils.decorators.visibility import check_registration_visibility
+from CTFd.utils.config import is_teams_mode
 from CTFd.utils.config.visibility import registration_visible
 from CTFd.utils.modes import TEAMS_MODE
 from CTFd.utils.security.signing import unserialize
@@ -239,6 +240,10 @@ def register():
 
         log("registrations", "[{date}] {ip} - {name} registered with {email}")
         db.session.close()
+
+        if is_teams_mode():
+            return redirect(url_for("teams.private"))
+
         return redirect(url_for("challenges.listing"))
     else:
         return render_template("register.html", errors=errors)
