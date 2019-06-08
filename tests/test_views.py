@@ -13,7 +13,9 @@ from tests.helpers import (
     gen_file,
     gen_page,
 )
+from CTFd.cache import clear_pages
 from CTFd.utils import set_config
+from CTFd.utils.config.pages import get_pages
 from CTFd.utils.encoding import hexencode
 from freezegun import freeze_time
 
@@ -86,6 +88,32 @@ def test_page_requiring_auth():
         client = login_as_user(app)
         r = client.get("/this-is-a-route")
         assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_hidden_pages():
+    """Test that hidden pages aren't on the navbar but can be loaded"""
+    app = create_ctfd()
+    with app.app_context():
+        page = gen_page(
+            app.db,
+            title="HiddenPageTitle",
+            route="this-is-a-hidden-route",
+            content="This is some HTML",
+            hidden=True,
+        )
+        clear_pages()
+        assert page not in get_pages()
+
+        with app.test_client() as client:
+            r = client.get("/")
+            assert r.status_code == 200
+            assert "HiddenPageTitle" not in r.get_data(as_text=True)
+
+        with app.test_client() as client:
+            r = client.get("/this-is-a-hidden-route")
+            assert r.status_code == 200
+            assert "This is some HTML" in r.get_data(as_text=True)
     destroy_ctfd(app)
 
 
