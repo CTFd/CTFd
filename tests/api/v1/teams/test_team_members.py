@@ -36,18 +36,18 @@ def test_api_team_remove_members():
 
         gen_user(app.db, name="user1")
         with login_as_user(app, name="user1") as client:
-            r = client.delete("/api/v1/teams/1/members", json={"id": 2})
+            r = client.delete("/api/v1/teams/1/members", json={"user_id": 2})
             assert r.status_code == 403
 
         with login_as_user(app, name="admin") as client:
-            r = client.delete("/api/v1/teams/1/members", json={"id": 2})
+            r = client.delete("/api/v1/teams/1/members", json={"user_id": 2})
             assert r.status_code == 200
 
             resp = r.get_json()
             # The following data is sorted b/c in Postgres data isn't necessarily returned ordered.
             assert sorted(resp["data"]) == sorted([3, 4, 5])
 
-            r = client.delete("/api/v1/teams/1/members", json={"id": 2})
+            r = client.delete("/api/v1/teams/1/members", json={"user_id": 2})
 
             resp = r.get_json()
             assert "User is not part of this team" in resp["errors"]["id"]
