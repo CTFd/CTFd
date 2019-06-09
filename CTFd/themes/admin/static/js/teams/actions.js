@@ -7,6 +7,42 @@ $(document).ready(function() {
     $("#team-captain-modal").modal("toggle");
   });
 
+  $(".delete-member").click(function(e) {
+    e.preventDefault();
+    var member_id = $(this).attr("member-id");
+    var member_name = $(this).attr("member-name");
+
+    var params = {
+      user_id: member_id
+    };
+
+    var row = $(this)
+      .parent()
+      .parent();
+
+    ezq({
+      title: "Remove Member",
+      body: "Are you sure you want to remove {0} from {1}".format(
+        "<strong>" + htmlentities(member_name) + "</strong>",
+        "<strong>" + htmlentities(TEAM_NAME) + "</strong>"
+      ),
+      success: function() {
+        CTFd.fetch("/api/v1/teams/" + TEAM_ID + "/members", {
+          method: "DELETE",
+          body: JSON.stringify(params)
+        })
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(response) {
+            if (response.success) {
+              row.remove();
+            }
+          });
+      }
+    });
+  });
+
   $(".delete-team").click(function(e) {
     ezq({
       title: "Delete Team",
