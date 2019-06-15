@@ -5,7 +5,10 @@ from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
 from CTFd.cache import clear_standings
-from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
+from CTFd.utils.decorators.visibility import (
+    check_account_visibility,
+    check_score_visibility,
+)
 from CTFd.utils.user import get_current_team, is_admin
 from CTFd.utils.decorators import authed_only, admins_only
 import copy

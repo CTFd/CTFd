@@ -15,7 +15,10 @@ from CTFd.cache import clear_standings
 from CTFd.utils.config import get_mail_provider
 from CTFd.utils.email import sendmail, user_created_notification
 from CTFd.utils.user import get_current_user, is_admin
-from CTFd.utils.decorators.visibility import check_account_visibility, check_score_visibility
+from CTFd.utils.decorators.visibility import (
+    check_account_visibility,
+    check_score_visibility,
+)
 
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
