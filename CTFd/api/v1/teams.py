@@ -5,9 +5,11 @@ from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
 from CTFd.cache import clear_standings
-from CTFd.utils.decorators.visibility import check_account_visibility
-from CTFd.utils.config.visibility import accounts_visible, scores_visible
-from CTFd.utils.user import get_current_team, is_admin, authed
+from CTFd.utils.decorators.visibility import (
+    check_account_visibility,
+    check_score_visibility,
+)
+from CTFd.utils.user import get_current_team, is_admin
 from CTFd.utils.decorators import authed_only, admins_only
 import copy
 
@@ -221,23 +223,74 @@ class TeamMembers(Resource):
         return {"success": True, "data": members}
 
 
-@teams_namespace.route("/<team_id>/solves")
-@teams_namespace.param("team_id", "Team ID or 'me'")
-class TeamSolves(Resource):
-    def get(self, team_id):
-        if team_id == "me":
-            if not authed():
-                abort(403)
-            team = get_current_team()
-            solves = team.get_solves(admin=True)
-        else:
-            if accounts_visible() is False or scores_visible() is False:
-                abort(404)
-            team = Teams.query.filter_by(id=team_id).first_or_404()
+@teams_namespace.route("/me/solves")
+class TeamPrivateSolves(Resource):
+    @authed_only
+    def get(self):
+        team = get_current_team()
+        solves = team.get_solves(admin=True)
 
-            if (team.banned or team.hidden) and is_admin() is False:
-                abort(404)
-            solves = team.get_solves(admin=is_admin())
+        view = "admin" if is_admin() else "user"
+        schema = SubmissionSchema(view=view, many=True)
+        response = schema.dump(solves)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+
+
+@teams_namespace.route("/me/fails")
+class TeamPrivateFails(Resource):
+    @authed_only
+    def get(self):
+        team = get_current_team()
+        fails = team.get_fails(admin=True)
+
+        view = "admin" if is_admin() else "user"
+
+        schema = SubmissionSchema(view=view, many=True)
+        response = schema.dump(fails)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        if is_admin():
+            data = response.data
+        else:
+            data = []
+        count = len(response.data)
+
+        return {"success": True, "data": data, "meta": {"count": count}}
+
+
+@teams_namespace.route("/me/awards")
+class TeamPrivateAwards(Resource):
+    @authed_only
+    def get(self):
+        team = get_current_team()
+        awards = team.get_awards(admin=True)
+
+        schema = AwardSchema(many=True)
+        response = schema.dump(awards)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+
+
+@teams_namespace.route("/<team_id>/solves")
+@teams_namespace.param("team_id", "Team ID")
+class TeamPublicSolves(Resource):
+    @check_account_visibility
+    @check_score_visibility
+    def get(self, team_id):
+        team = Teams.query.filter_by(id=team_id).first_or_404()
+
+        if (team.banned or team.hidden) and is_admin() is False:
+            abort(404)
+        solves = team.get_solves(admin=is_admin())
 
         view = "admin" if is_admin() else "user"
         schema = SubmissionSchema(view=view, many=True)
@@ -250,22 +303,16 @@ class TeamSolves(Resource):
 
 
 @teams_namespace.route("/<team_id>/fails")
-@teams_namespace.param("team_id", "Team ID or 'me'")
-class TeamFails(Resource):
+@teams_namespace.param("team_id", "Team ID")
+class TeamPublicFails(Resource):
+    @check_account_visibility
+    @check_score_visibility
     def get(self, team_id):
-        if team_id == "me":
-            if not authed():
-                abort(403)
-            team = get_current_team()
-            fails = team.get_fails(admin=True)
-        else:
-            if accounts_visible() is False or scores_visible() is False:
-                abort(404)
-            team = Teams.query.filter_by(id=team_id).first_or_404()
+        team = Teams.query.filter_by(id=team_id).first_or_404()
 
-            if (team.banned or team.hidden) and is_admin() is False:
-                abort(404)
-            fails = team.get_fails(admin=is_admin())
+        if (team.banned or team.hidden) and is_admin() is False:
+            abort(404)
+        fails = team.get_fails(admin=is_admin())
 
         view = "admin" if is_admin() else "user"
 
@@ -285,22 +332,16 @@ class TeamFails(Resource):
 
 
 @teams_namespace.route("/<team_id>/awards")
-@teams_namespace.param("team_id", "Team ID or 'me'")
-class TeamAwards(Resource):
+@teams_namespace.param("team_id", "Team ID")
+class TeamPublicAwards(Resource):
+    @check_account_visibility
+    @check_score_visibility
     def get(self, team_id):
-        if team_id == "me":
-            if not authed():
-                abort(403)
-            team = get_current_team()
-            awards = team.get_awards(admin=True)
-        else:
-            if accounts_visible() is False or scores_visible() is False:
-                abort(404)
-            team = Teams.query.filter_by(id=team_id).first_or_404()
+        team = Teams.query.filter_by(id=team_id).first_or_404()
 
-            if (team.banned or team.hidden) and is_admin() is False:
-                abort(404)
-            awards = team.get_awards(admin=is_admin())
+        if (team.banned or team.hidden) and is_admin() is False:
+            abort(404)
+        awards = team.get_awards(admin=is_admin())
 
         schema = AwardSchema(many=True)
         response = schema.dump(awards)

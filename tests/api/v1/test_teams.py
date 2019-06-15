@@ -394,7 +394,7 @@ def test_api_team_get_me_solves_not_logged_in():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
-            r = client.get("/api/v1/teams/me/solves")
+            r = client.get("/api/v1/teams/me/solves", json="")
             assert r.status_code == 403
     destroy_ctfd(app)
 
@@ -474,7 +474,7 @@ def test_api_team_get_me_fails_not_logged_in():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
-            r = client.get("/api/v1/teams/me/fails")
+            r = client.get("/api/v1/teams/me/fails", json="")
             assert r.status_code == 403
     destroy_ctfd(app)
 
@@ -551,7 +551,7 @@ def test_api_team_get_me_awards_not_logged_in():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         with app.test_client() as client:
-            r = client.get("/api/v1/teams/me/awards")
+            r = client.get("/api/v1/teams/me/awards", json="")
             assert r.status_code == 403
     destroy_ctfd(app)
 

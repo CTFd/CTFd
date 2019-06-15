@@ -10,14 +10,15 @@ from CTFd.models import (
     Submissions,
     Notifications,
 )
-from CTFd.utils.decorators import authed_only, admins_only, authed, ratelimit
+from CTFd.utils.decorators import authed_only, admins_only, ratelimit
 from CTFd.cache import clear_standings
 from CTFd.utils.config import get_mail_provider
 from CTFd.utils.email import sendmail, user_created_notification
 from CTFd.utils.user import get_current_user, is_admin
-from CTFd.utils.decorators.visibility import check_account_visibility
-
-from CTFd.utils.config.visibility import accounts_visible, scores_visible
+from CTFd.utils.decorators.visibility import (
+    check_account_visibility,
+    check_score_visibility,
+)
 
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
@@ -156,23 +157,72 @@ class UserPrivate(Resource):
         return {"success": True, "data": response.data}
 
 
-@users_namespace.route("/<user_id>/solves")
-@users_namespace.param("user_id", "User ID or 'me'")
-class UserSolves(Resource):
-    def get(self, user_id):
-        if user_id == "me":
-            if not authed():
-                abort(403)
-            user = get_current_user()
-            solves = user.get_solves(admin=True)
-        else:
-            if accounts_visible() is False or scores_visible() is False:
-                abort(404)
-            user = Users.query.filter_by(id=user_id).first_or_404()
+@users_namespace.route("/me/solves")
+class UserPrivateSolves(Resource):
+    @authed_only
+    def get(self):
+        user = get_current_user()
+        solves = user.get_solves(admin=True)
 
-            if (user.banned or user.hidden) and is_admin() is False:
-                abort(404)
-            solves = user.get_solves(admin=is_admin())
+        view = "user" if not is_admin() else "admin"
+        response = SubmissionSchema(view=view, many=True).dump(solves)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+
+
+@users_namespace.route("/me/fails")
+class UserPrivateFails(Resource):
+    @authed_only
+    def get(self):
+        user = get_current_user()
+        fails = user.get_fails(admin=True)
+
+        view = "user" if not is_admin() else "admin"
+        response = SubmissionSchema(view=view, many=True).dump(fails)
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        if is_admin():
+            data = response.data
+        else:
+            data = []
+        count = len(response.data)
+
+        return {"success": True, "data": data, "meta": {"count": count}}
+
+
+@users_namespace.route("/me/awards")
+@users_namespace.param("user_id", "User ID")
+class UserPrivateAwards(Resource):
+    @authed_only
+    def get(self):
+        user = get_current_user()
+        awards = user.get_awards(admin=True)
+
+        view = "user" if not is_admin() else "admin"
+        response = AwardSchema(view=view, many=True).dump(awards)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+
+
+@users_namespace.route("/<user_id>/solves")
+@users_namespace.param("user_id", "User ID")
+class UserPublicSolves(Resource):
+    @check_account_visibility
+    @check_score_visibility
+    def get(self, user_id):
+        user = Users.query.filter_by(id=user_id).first_or_404()
+
+        if (user.banned or user.hidden) and is_admin() is False:
+            abort(404)
+
+        solves = user.get_solves(admin=is_admin())
 
         view = "user" if not is_admin() else "admin"
         response = SubmissionSchema(view=view, many=True).dump(solves)
@@ -184,22 +234,16 @@ class UserSolves(Resource):
 
 
 @users_namespace.route("/<user_id>/fails")
-@users_namespace.param("user_id", "User ID or 'me'")
-class UserFails(Resource):
+@users_namespace.param("user_id", "User ID")
+class UserPublicFails(Resource):
+    @check_account_visibility
+    @check_score_visibility
     def get(self, user_id):
-        if user_id == "me":
-            if not authed():
-                abort(403)
-            user = get_current_user()
-            fails = user.get_fails(admin=True)
-        else:
-            if accounts_visible() is False or scores_visible() is False:
-                abort(404)
-            user = Users.query.filter_by(id=user_id).first_or_404()
+        user = Users.query.filter_by(id=user_id).first_or_404()
 
-            if (user.banned or user.hidden) and is_admin() is False:
-                abort(404)
-            fails = user.get_fails(admin=is_admin())
+        if (user.banned or user.hidden) and is_admin() is False:
+            abort(404)
+        fails = user.get_fails(admin=is_admin())
 
         view = "user" if not is_admin() else "admin"
         response = SubmissionSchema(view=view, many=True).dump(fails)
@@ -217,21 +261,15 @@ class UserFails(Resource):
 
 @users_namespace.route("/<user_id>/awards")
 @users_namespace.param("user_id", "User ID or 'me'")
-class UserAwards(Resource):
+class UserPublicAwards(Resource):
+    @check_account_visibility
+    @check_score_visibility
     def get(self, user_id):
-        if user_id == "me":
-            if not authed():
-                abort(403)
-            user = get_current_user()
-            awards = user.get_awards(admin=True)
-        else:
-            if accounts_visible() is False or scores_visible() is False:
-                abort(404)
-            user = Users.query.filter_by(id=user_id).first_or_404()
+        user = Users.query.filter_by(id=user_id).first_or_404()
 
-            if (user.banned or user.hidden) and is_admin() is False:
-                abort(404)
-            awards = user.get_awards(admin=is_admin())
+        if (user.banned or user.hidden) and is_admin() is False:
+            abort(404)
+        awards = user.get_awards(admin=is_admin())
 
         view = "user" if not is_admin() else "admin"
         response = AwardSchema(view=view, many=True).dump(awards)

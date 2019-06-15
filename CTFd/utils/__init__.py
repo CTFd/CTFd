@@ -34,11 +34,14 @@ def _get_config(key):
                 return False
             else:
                 return value
+    # Flask-Caching is unable to roundtrip a value of None.
+    # Return an exception so that we can still cache and avoid the db hit
+    return KeyError
 
 
 def get_config(key, default=None):
     value = _get_config(key)
-    if value is None:
+    if value is KeyError:
         return default
     else:
         return value

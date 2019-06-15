@@ -20,7 +20,7 @@ from CTFd.models import (
     Unlocks,
     Users,
 )
-from CTFd.cache import cache
+from CTFd.cache import cache, clear_standings
 from sqlalchemy_utils import drop_database
 from collections import namedtuple
 from mock import Mock, patch
@@ -268,6 +268,7 @@ def gen_award(db, user_id, team_id=None, name="award_name", value=100):
     award.date = datetime.datetime.utcnow()
     db.session.add(award)
     db.session.commit()
+    clear_standings()
     return award
 
 
@@ -364,6 +365,7 @@ def gen_solve(
     solve.date = datetime.datetime.utcnow()
     db.session.add(solve)
     db.session.commit()
+    clear_standings()
     return solve
 
 
