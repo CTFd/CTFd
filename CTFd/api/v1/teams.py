@@ -169,7 +169,7 @@ class TeamMembers(Resource):
         team = Teams.query.filter_by(id=team_id).first_or_404()
 
         data = request.get_json()
-        user_id = data["id"]
+        user_id = data["user_id"]
         user = Users.query.filter_by(id=user_id).first_or_404()
         if user.team_id is None:
             team.members.append(user)
@@ -199,7 +199,7 @@ class TeamMembers(Resource):
         team = Teams.query.filter_by(id=team_id).first_or_404()
 
         data = request.get_json()
-        user_id = data["id"]
+        user_id = data["user_id"]
         user = Users.query.filter_by(id=user_id).first_or_404()
 
         if user.team_id == team.id:
