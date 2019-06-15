@@ -1,5 +1,6 @@
 from flask import render_template, Blueprint
 
+from CTFd.cache import cache, make_cache_key
 from CTFd.utils import config
 from CTFd.utils.decorators.visibility import check_score_visibility
 
@@ -10,6 +11,7 @@ scoreboard = Blueprint("scoreboard", __name__)
 
 @scoreboard.route("/scoreboard")
 @check_score_visibility
+@cache.cached(timeout=60, key_prefix=make_cache_key)
 def listing():
     standings = get_standings()
     return render_template(
