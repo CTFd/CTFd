@@ -48,4 +48,5 @@ def test_scoreboard_is_cached():
             clear_standings()
             assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
             assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
+            assert app.cache.get('view/scoreboard.listing') is None
     destroy_ctfd(app)
