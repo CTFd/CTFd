@@ -39,6 +39,10 @@ def test_scoreboard_is_cached():
             client.get("/api/v1/scoreboard/top/10")
             assert app.cache.get("view/api.scoreboard_scoreboard_detail")
 
+            # Check scoreboard page
+            client.get("/scoreboard")
+            assert app.cache.get('view/scoreboard.listing')
+
             # Empty standings and check that the cached data is gone
             clear_standings()
             assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
