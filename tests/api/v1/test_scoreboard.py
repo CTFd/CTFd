@@ -40,6 +40,7 @@ def test_scoreboard_is_cached():
             assert app.cache.get("view/api.scoreboard_scoreboard_detail")
 
             # Check scoreboard page
+            assert app.cache.get('view/scoreboard.listing') is None
             client.get("/scoreboard")
             assert app.cache.get('view/scoreboard.listing')
 
