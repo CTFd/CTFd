@@ -25,6 +25,7 @@ CTFd is written in Python and makes use of the Flask web framework.
    configuration
    themes
    plugins
+   plugin walkthrough
    contributing
 
 Indices and tables
