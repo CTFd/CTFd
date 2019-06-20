@@ -151,7 +151,11 @@ def create_app(config="CTFd.config.Config"):
             db.create_all()
             # stamp call needs the migrations directory passed to it.
             migrations_dir = utils.__file__.split("CTFd")[0] + "CTFd/migrations"
-            stamp(directory=migrations_dir)
+            if os.path.isdir(migrations_dir):
+                stamp(directory=migrations_dir)
+            else:
+                stamp()
+                
         else:
             # This creates tables instead of db.create_all()
             # Allows migrations to happen properly
