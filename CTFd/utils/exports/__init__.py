@@ -143,6 +143,8 @@ def import_ctf(backup, erase=True):
             if info.file_size > max_content_length:
                 raise zipfile.LargeZipFile
 
+    side_db.query('SET FOREIGN_KEY_CHECKS=0;')
+
     first = [
         "db/teams.json",
         "db/users.json",
@@ -279,6 +281,8 @@ def import_ctf(backup, erase=True):
     except (CommandError, RuntimeError, SystemExit):
         app.db.create_all()
         stamp()
+
+    side_db.query('SET FOREIGN_KEY_CHECKS=1;')
 
     # Invalidate all cached data
     cache.clear()
