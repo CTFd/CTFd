@@ -155,7 +155,7 @@ def create_app(config="CTFd.config.Config"):
                 stamp(directory=migrations_dir)
             else:
                 stamp()
-                
+
         else:
             # This creates tables instead of db.create_all()
             # Allows migrations to happen properly
