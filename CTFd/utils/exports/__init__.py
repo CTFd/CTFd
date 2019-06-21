@@ -278,7 +278,9 @@ def import_ctf(backup, erase=True):
         upgrade(revision="head")
     except (CommandError, RuntimeError, SystemExit):
         app.db.create_all()
-        stamp()
+        # Get proper migrations directory regardless of cwd
+        directory = os.path.join(os.path.dirname(app.root_path), 'migrations')
+        stamp(directory=directory)
 
     # Invalidate all cached data
     cache.clear()
