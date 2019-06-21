@@ -1,11 +1,11 @@
 from CTFd.utils import get_app_config, set_config
-from CTFd.utils.migrations import get_current_revision, create_database, drop_database
+from CTFd.utils.migrations import get_current_revision, create_database, drop_database, stamp_latest_revision
 from CTFd.utils.uploads import get_uploader
 from CTFd.models import db
 from CTFd.cache import cache
 from datafreeze.format import SERIALIZERS
 from flask import current_app as app
-from flask_migrate import upgrade, stamp
+from flask_migrate import upgrade
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from alembic.util import CommandError
@@ -278,7 +278,7 @@ def import_ctf(backup, erase=True):
         upgrade(revision="head")
     except (CommandError, RuntimeError, SystemExit):
         app.db.create_all()
-        stamp()
+        stamp_latest_revision()
 
     # Invalidate all cached data
     cache.clear()
