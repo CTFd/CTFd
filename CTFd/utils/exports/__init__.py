@@ -143,10 +143,13 @@ def import_ctf(backup, erase=True):
             if info.file_size > max_content_length:
                 raise zipfile.LargeZipFile
 
-    if postgres:
-        side_db.query("SET session_replication_role=replica;")
-    else:
-        side_db.query("SET FOREIGN_KEY_CHECKS=0;")
+    try:
+        if postgres:
+            side_db.query("SET session_replication_role=replica;")
+        else:
+            side_db.query("SET FOREIGN_KEY_CHECKS=0;")
+    except Exception:
+        print("Failed to disable foreign key checks. Continuing.")
 
     first = [
         "db/teams.json",
@@ -285,10 +288,13 @@ def import_ctf(backup, erase=True):
         app.db.create_all()
         stamp()
 
-    if postgres:
-        side_db.query("SET session_replication_role=DEFAULT;")
-    else:
-        side_db.query("SET FOREIGN_KEY_CHECKS=1;")
+    try:
+        if postgres:
+            side_db.query("SET session_replication_role=DEFAULT;")
+        else:
+            side_db.query("SET FOREIGN_KEY_CHECKS=1;")
+    except Exception:
+        print("Failed to enable foreign key checks. Continuing.")
 
     # Invalidate all cached data
     cache.clear()
