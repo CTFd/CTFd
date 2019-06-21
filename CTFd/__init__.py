@@ -11,7 +11,7 @@ from jinja2.sandbox import SandboxedEnvironment
 from six.moves import input
 
 from CTFd import utils
-from CTFd.utils.migrations import migrations, create_database
+from CTFd.utils.migrations import migrations, create_database, stamp_latest_revision
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.initialization import (
@@ -149,9 +149,7 @@ def create_app(config="CTFd.config.Config"):
         # Alembic sqlite support is lacking so we should just create_all anyway
         if url.drivername.startswith("sqlite"):
             db.create_all()
-            # Get proper migrations directory regardless of cwd
-            directory = os.path.join(os.path.dirname(app.root_path), 'migrations')
-            stamp(directory=directory)
+            stamp_latest_revision()
         else:
             # This creates tables instead of db.create_all()
             # Allows migrations to happen properly

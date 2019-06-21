@@ -1,5 +1,5 @@
 from CTFd.utils import get_app_config, set_config
-from CTFd.utils.migrations import get_current_revision, create_database, drop_database
+from CTFd.utils.migrations import get_current_revision, create_database, drop_database, stamp_latest_revision
 from CTFd.utils.uploads import get_uploader
 from CTFd.models import db
 from CTFd.cache import cache
@@ -278,9 +278,7 @@ def import_ctf(backup, erase=True):
         upgrade(revision="head")
     except (CommandError, RuntimeError, SystemExit):
         app.db.create_all()
-        # Get proper migrations directory regardless of cwd
-        directory = os.path.join(os.path.dirname(app.root_path), 'migrations')
-        stamp(directory=directory)
+        stamp_latest_revision()
 
     # Invalidate all cached data
     cache.clear()
