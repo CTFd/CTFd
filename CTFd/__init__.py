@@ -3,7 +3,7 @@ import os
 
 from distutils.version import StrictVersion
 from flask import Flask, Request
-from flask_migrate import upgrade, stamp
+from flask_migrate import upgrade
 from werkzeug.utils import cached_property
 from werkzeug.middleware.proxy_fix import ProxyFix
 from jinja2 import FileSystemLoader

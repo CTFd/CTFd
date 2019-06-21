@@ -5,7 +5,7 @@ from CTFd.models import db
 from CTFd.cache import cache
 from datafreeze.format import SERIALIZERS
 from flask import current_app as app
-from flask_migrate import upgrade, stamp
+from flask_migrate import upgrade
 from datafreeze.format.fjson import JSONSerializer, JSONEncoder
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from alembic.util import CommandError

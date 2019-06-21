@@ -44,6 +44,7 @@ def get_current_revision():
     current_rev = context.get_current_revision()
     return current_rev
 
+
 def stamp_latest_revision():
     # Get proper migrations directory regardless of cwd
     directory = os.path.join(os.path.dirname(app.root_path), 'migrations')
