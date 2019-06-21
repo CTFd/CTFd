@@ -32,6 +32,7 @@ services:
       - MYSQL_ROOT_PASSWORD=ctfd
       - MYSQL_USER=ctfd
       - MYSQL_PASSWORD=ctfd
+      - MYSQL_DATABASE=ctfd
     volumes:
       - .data/mysql:/var/lib/mysql
     networks:
