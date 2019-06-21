@@ -7,9 +7,10 @@ from tests.helpers import (
     gen_challenge,
     gen_flag,
     gen_user,
+    gen_team,
     gen_hint,
 )
-from CTFd.models import Challenges, Flags, Users
+from CTFd.models import Challenges, Flags, Users, Teams
 from CTFd.utils import text_type
 from CTFd.utils.exports import import_ctf, export_ctf
 import json
@@ -61,6 +62,12 @@ def test_import_ctf():
                 user_email = user + "@ctfd.io"
                 gen_user(app.db, name=user, email=user_email)
 
+            base_team = "team"
+            for x in range(5):
+                team = base_team + str(x)
+                team_email = team + "@ctfd.io"
+                gen_team(app.db, name=team, email=team_email)
+
             for x in range(9):
                 chal = gen_challenge(app.db, name="chal_name{}".format(x))
                 gen_flag(app.db, challenge_id=chal.id, content="flag")
@@ -86,7 +93,8 @@ def test_import_ctf():
 
             if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("postgres"):
                 # TODO: Dig deeper into why Postgres fails here
-                assert Users.query.count() == 11
+                assert Users.query.count() == 31
+                assert Teams.query.count() == 5
                 assert Challenges.query.count() == 10
                 assert Flags.query.count() == 10
 
