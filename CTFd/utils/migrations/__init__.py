@@ -1,5 +1,5 @@
 from flask import current_app as app
-from flask_migrate import Migrate
+from flask_migrate import Migrate, stamp
 from alembic.migration import MigrationContext
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import make_url
@@ -8,6 +8,7 @@ from sqlalchemy_utils import (
     create_database as create_database_util,
     drop_database as drop_database_util,
 )
+import os
 
 migrations = Migrate()
 
@@ -42,3 +43,9 @@ def get_current_revision():
     context = MigrationContext.configure(conn)
     current_rev = context.get_current_revision()
     return current_rev
+
+
+def stamp_latest_revision():
+    # Get proper migrations directory regardless of cwd
+    directory = os.path.join(os.path.dirname(app.root_path), 'migrations')
+    stamp(directory=directory)
