@@ -38,7 +38,7 @@ class ScoreboardList(Resource):
             entry = {
                 "pos": i + 1,
                 "account_id": x.account_id,
-                "account_url": generate_account_url(x.account_id),
+                "account_url": generate_account_url(account_id=x.account_id),
                 "account_type": account_type,
                 "oauth_id": x.oauth_id,
                 "name": x.name,

@@ -29,7 +29,7 @@ from CTFd.utils.config.visibility import (
     challenges_visible,
 )
 from CTFd.utils.user import is_admin, authed
-from CTFd.utils.modes import get_model, generate_account_url, USERS_MODE, TEAMS_MODE
+from CTFd.utils.modes import get_model, generate_account_url
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.flags import FlagSchema
