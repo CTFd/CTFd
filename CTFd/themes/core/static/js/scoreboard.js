@@ -7,9 +7,8 @@ function updatescores() {
       var row =
         "<tr>\n" +
         '<th scope="row" class="text-center">{0}</th>'.format(teams[i].pos) +
-        '<td><a href="{0}/team/{1}">{2}</a></td>'.format(
-          script_root,
-          teams[i].id,
+        '<td><a href="{0}">{1}</a></td>'.format(
+          teams[i].account_url,
           htmlentities(teams[i].name)
         ) +
         "<td>{0}</td>".format(teams[i].score) +

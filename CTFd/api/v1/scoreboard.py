@@ -4,7 +4,7 @@ from CTFd.models import Solves, Awards, Teams
 from CTFd.cache import cache, make_cache_key
 from CTFd.utils.scores import get_standings
 from CTFd.utils import get_config
-from CTFd.utils.modes import TEAMS_MODE
+from CTFd.utils.modes import generate_account_url, get_mode_as_word, TEAMS_MODE
 from CTFd.utils.dates import unix_time_to_utc, isoformat
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
@@ -25,6 +25,7 @@ class ScoreboardList(Resource):
         standings = get_standings()
         response = []
         mode = get_config("user_mode")
+        account_type = get_mode_as_word()
 
         if mode == TEAMS_MODE:
             team_ids = []
@@ -37,6 +38,8 @@ class ScoreboardList(Resource):
             entry = {
                 "pos": i + 1,
                 "account_id": x.account_id,
+                "account_url": generate_account_url(account_id=x.account_id),
+                "account_type": account_type,
                 "oauth_id": x.oauth_id,
                 "name": x.name,
                 "score": int(x.score),
