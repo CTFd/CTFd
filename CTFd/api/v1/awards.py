@@ -1,5 +1,6 @@
 from flask import request
 from flask_restplus import Namespace, Resource
+from CTFd.cache import clear_standings
 from CTFd.models import db, Awards
 from CTFd.schemas.awards import AwardSchema
 from CTFd.utils.decorators import admins_only
@@ -24,6 +25,9 @@ class AwardList(Resource):
         response = schema.dump(response.data)
         db.session.close()
 
+        # Delete standings cache because awards can change scores
+        clear_standings()
+
         return {"success": True, "data": response.data}
 
 
@@ -45,5 +49,8 @@ class Award(Resource):
         db.session.delete(award)
         db.session.commit()
         db.session.close()
+
+        # Delete standings cache because awards can change scores
+        clear_standings()
 
         return {"success": True}
