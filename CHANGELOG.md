@@ -1,3 +1,40 @@
+2.1.3 / 2019-06-22
+==================
+
+**General**
+* Fix issue with downloading files after CTF end when `view_after_ctf` is enabled
+* Sort solves in admin challenge view by date
+* Link to appropriate user and challenge in team, user, and challenge pages
+* Redirect to `/team` instead of `/challenges` after a user registers in team mode
+* Fixes bug where pages marked as `hidden` weren't loading
+* Remove `data-href` from `pages.html` in the Admin Panel to fix the delete button
+* Add UI to handle team member removal in Admin Panel
+* Fixes account links on the scoreboard page created by `update()`. They now correctly point to the user instead of undefined when in user mode.
+* `utils._get_config` will now return `KeyError` instead of `None` to avoid cache misses
+
+**Deployment**
+* Use `/dev/shm` for `--worker-tmp-dir` in gunicorn in Docker
+* Cache `get_place` code for users and teams.
+* Install `Flask-DebugToolbar` in development
+* Cache the `/scoreboard` page to avoid having to rebuild the response so often
+* Make unprivileged `ctfd` user usable for mysql connection in docker-compose by having the db image create the database instead of CTFd
+* Fix bug causing apache2 + mod_wsgi deployments to break
+
+**API**
+* Change `/api/v1/teams/[team_id]/members` from taking `id` to `user_id`.
+    * Endpoint was unused so the API change is considered non-breaking.
+* Add `account_type` and `account_url` field in `/api/v1/scoreboard`
+* Separate `/api/v1/[users,teams]/[me,id]/[solves,fails,awards]` into seperate API endpoints
+* Clear standings cache after award creation/deletion
+
+**Exports**
+* Temporarily disable foreign keys in MySQL, MariaDB, and Postgres during `import_ctf()`
+* Add `cache_timeout` parameter to `send_file`response in `/admin/export` to prevent the browser from caching the export
+
+**Tests**
+* Fix score changing test helpers to clear standings cache when generating a score changing row
+
+
 2.1.2 / 2019-05-13
 ==================
 
