@@ -25,6 +25,7 @@
     * Endpoint was unused so the API change is considered non-breaking.
 * Add `account_type` and `account_url` field in `/api/v1/scoreboard`
 * Separate `/api/v1/[users,teams]/[me,id]/[solves,fails,awards]` into seperate API endpoints
+* Clear standings cache after award creation/deletion
 
 **Exports**
 * Temporarily disable foreign keys in MySQL, MariaDB, and Postgres during `import_ctf()`
