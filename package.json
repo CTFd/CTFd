@@ -20,26 +20,26 @@
   },
   "homepage": "https://github.com/CTFd/CTFd#readme",
   "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.2.3",
-    "babel-loader": "^8.0.5",
-    "bootstrap": "^4.2.1",
-    "codemirror": "^5.42.2",
-    "css-loader": "^2.1.0",
-    "eslint": "^5.12.0",
-    "file-loader": "^3.0.1",
-    "font-awesome": "^4.7.0",
-    "mini-css-extract-plugin": "^0.5.0",
-    "moment": "^2.23.0",
-    "optimize-css-assets-webpack-plugin": "^5.0.1",
-    "typeface-lato": "^0.0.54",
-    "typeface-raleway": "^0.0.54",
-    "uglifyjs-webpack-plugin": "^2.1.1",
-    "webpack": "^4.28.1",
-    "webpack-cli": "^3.2.1",
-    "whatwg-fetch": "^3.0.0"
+    "@babel/core": "~7.2.2",
+    "@babel/preset-env": "~7.2.3",
+    "babel-loader": "~8.0.5",
+    "bootstrap": "~4.2.1",
+    "codemirror": "~5.42.2",
+    "css-loader": "~2.1.0",
+    "eslint": "~5.12.0",
+    "file-loader": "~3.0.1",
+    "font-awesome": "~4.7.0",
+    "mini-css-extract-plugin": "~0.5.0",
+    "moment": "~2.23.0",
+    "optimize-css-assets-webpack-plugin": "~5.0.1",
+    "typeface-lato": "~0.0.54",
+    "typeface-raleway": "~0.0.54",
+    "uglifyjs-webpack-plugin": "~2.1.1",
+    "webpack": "~4.28.1",
+    "webpack-cli": "~3.2.1",
+    "whatwg-fetch": "~3.0.0"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.2.5"
+    "@babel/polyfill": "~7.2.5"
   }
 }
