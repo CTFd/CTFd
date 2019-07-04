@@ -6,6 +6,10 @@
 CTFd
 ====
 
+.. image:: https://raw.githubusercontent.com/CTFd/CTFd/master/CTFd/themes/core/static/img/logo.png
+  :width: 400
+  :alt: CTFd Logo
+
 CTFd is a Capture The Flag framework focusing on ease of use and customizability.
 
 CTFd comes with most of the features needed by an event organizer to run a competition or workshop. In addition, if CTFd's feature set is insufficient, CTFd allows for the usage of plugins and themes to control almost every aspect of how it looks and behaves.
@@ -23,6 +27,7 @@ CTFd is written in Python and makes use of the Flask web framework.
 
    deployment
    configuration
+   scoring
    themes
    plugins
    contributing
