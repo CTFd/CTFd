@@ -22,13 +22,13 @@ Team X will have a Solve ID of 1 for their submission and Team Y will have a Sol
 
 Thus Team X will be considered the tie winner.
 
-Integrations
-------------
+Formats
+-------
 
 MajorLeagueCyber
 ~~~~~~~~~~~~~~~~
 
-MajorLeagueCyber is a cyber security event tracker designed and maintained by the developers of CTFd. It provides polling of the CTFd API and can record and aggregate scores between competitions/events.
+MajorLeagueCyber is a cyber security event tracker designed and maintained by the developers of CTFd. It provides polling of the CTFd API and can record and aggregate scores between competitions/events. It supports parsing and processing of CTFd's built in scoreboard API format.
 
 CTFTime
 ~~~~~~~
