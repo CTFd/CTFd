@@ -31,7 +31,7 @@ To register your event with MLC:
  1. Register an account at https://www.majorleaguecyber.org/ if you don't already have one.
  2. Create a new event.
  3. Edit the event and add the API Scoreboard URL under the Integrations section. For CTFd you should enter ``https://[CTFd Instance URL]/api/v1/scoreboard``
- 4. Access the JSON scoreboard API from MajorLeagueCyber by going to ``https://www.majorleaguecyber.org/events/[EVENT_ID]/[EVENT_NAME]/scoreboard.json?format=legacy``
+ 4. Access the JSON scoreboard API from MajorLeagueCyber by going to ``https://www.majorleaguecyber.org/events/[EVENT_ID]/[EVENT_NAME]/scoreboard.json``
 
 CTFTime
 ~~~~~~~
