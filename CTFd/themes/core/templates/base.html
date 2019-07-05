@@ -4,15 +4,9 @@
 	<title>{{ get_ctf_name() }}</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" href="{{ url_for('views.themes', path='img/favicon.ico') }}"
-		  type="image/x-icon">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/vendor/bootstrap.min.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/vendor/font-awesome/fontawesome-fonts.css') }}" type='text/css'>
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/vendor/font-awesome/fontawesome-all.min.css') }}" type='text/css'>
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/vendor/font.css') }}"  type='text/css'>
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/jumbotron.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/sticky-footer.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/base.css') }}">
+	<link rel="shortcut icon" href="{{ url_for('views.themes', path='img/favicon.ico') }}" type="image/x-icon">
+	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/fonts.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/main.css') }}">
 	{% block stylesheets %}{% endblock %}
 	{% for stylesheet in get_registered_stylesheets() %}
 		{% if stylesheet.startswith('http') %}

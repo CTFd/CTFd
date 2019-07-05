@@ -1,0 +1,83 @@
+@import "~@fortawesome/fontawesome-free/css/all.css";
+@import url('https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i|Raleway:400,400i,700,700i&subset=latin-ext');
+
+/* @font-face {
+	font-family: 'LatoOffline';
+	font-style: normal;
+	font-weight: 400;
+	src:
+		local('Lato Regular'),
+		local('Lato-Regular'),
+		url('fonts/lato-latin-400.woff') format('woff'),
+		url('fonts/lato-latin-400.woff2') format('woff2'),
+}
+@font-face {
+	font-family: 'LatoOffline';
+	font-style: italic;
+	font-weight: 400;
+	src:
+		local('Lato Italic'),
+		local('Lato-Italic'),
+		url('fonts/lato-latin-400i.woff') format('woff'),
+		url('fonts/lato-latin-400i.woff2') format('woff2'),
+}
+@font-face {
+	font-family: 'LatoOffline';
+	font-style: normal;
+	font-weight: 700;
+	src:
+		local('Lato Bold'),
+		local('Lato-Bold'),
+		url('fonts/lato-latin-700.woff') format('woff'),
+		url('fonts/lato-latin-700.woff2') format('woff2'),
+}
+@font-face {
+	font-family: 'LatoOffline';
+	font-style: italic;
+	font-weight: 700;
+	src:
+		local('Lato Bold Italic'),
+		local('Lato-BoldItalic'),
+		url('fonts/lato-latin-700i.woff') format('woff'),
+		url('fonts/lato-latin-700i.woff2') format('woff2'),
+}
+@font-face {
+	font-family: 'RalewayOffline';
+	font-style: normal;
+	font-weight: 400;
+	src:
+		local('Raleway'),
+		local('Raleway-Regular'),
+		url('fonts/raleway-latin-400.woff') format('woff'),
+		url('fonts/raleway-latin-400.woff2') format('woff2'),
+}
+@font-face {
+	font-family: 'RalewayOffline';
+	font-style: italic;
+	font-weight: 400;
+	src:
+		local('Raleway Italic'),
+		local('Raleway-Italic'),
+		url('fonts/raleway-latin-400i.woff') format('woff'),
+		url('fonts/raleway-latin-400i.woff2') format('woff2'),
+}
+@font-face {
+	font-family: 'RalewayOffline';
+	font-style: normal;
+	font-weight: 700;
+	src:
+		local('Raleway Bold'),
+		local('Raleway-Bold'),
+		url('fonts/raleway-latin-700.woff') format('woff'),
+		url('fonts/raleway-latin-700.woff2') format('woff2'),
+}
+@font-face {
+	font-family: 'RalewayOffline';
+	font-style: italic;
+	font-weight: 700;
+	src:
+		local('Raleway Bold Italic'),
+		local('Raleway-BoldItalic'),
+		url('fonts/raleway-latin-700i.woff') format('woff'),
+		url('fonts/raleway-latin-700i.woff2') format('woff2'),
+} */

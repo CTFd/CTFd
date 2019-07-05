@@ -1,5 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
+const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
@@ -8,12 +9,13 @@ const roots = {
   'themes/core': {
     'css/main': 'assets/css/main.css',
     'css/challenge-board': 'assets/css/challenge-board.css',
+    'css/fonts': 'assets/css/fonts.css',
   },
-  'themes/admin': {
-    'css/main': 'assets/css/main.css',
-    'css/challenge-board': 'assets/css/challenge-board.css',
-    'css/editor': 'assets/css/editor.css',
-  }
+  // 'themes/admin': {
+  //   'css/main': 'assets/css/main.css',
+  //   'css/challenge-board': 'assets/css/challenge-board.css',
+  //   'css/editor': 'assets/css/editor.css',
+  // }
 }
 
 let baseConfig = {
@@ -64,6 +66,7 @@ let baseConfig = {
     extensions: ['.js'],
   },
   plugins: [
+    new FixStyleOnlyEntriesPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
