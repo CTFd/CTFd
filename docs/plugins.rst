@@ -15,7 +15,7 @@ The CTFd developers will do their best to not introduce breaking changes but kee
    Official CTFd plugins are available at https://ctfd.io/store. `Contact us <https://ctfd.io/contact/>`_ regarding custom plugins and special projects.
 
 .. Tip::
-   Community themes are available at https://github.com/CTFd/plugins.
+   Community plugins are available at https://github.com/CTFd/plugins.
 
 Architecture
 ------------
