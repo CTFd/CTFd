@@ -106,7 +106,7 @@ def test_api_users_can_change_captain_on_self_team():
         # I am not the captain
         with login_as_user(app, name="user2") as client:
             r = client.patch("/api/v1/teams/me", json={"captain_id": 3})
-            assert r.status_code == 400
+            assert r.status_code == 403
 
         # Look at me, I'm the captain now
         with login_as_user(app, name="user1") as client:
