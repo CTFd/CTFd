@@ -70,6 +70,10 @@
 			{% endif %}
 		</div>
 
+		{% if user.affiliation %}
+			<h3><span class="badge badge-primary">{{ user.affiliation }}</span></h3>
+		{% endif %}
+
 		<h2 id="team-email" class="text-center">{{ user.email }}</h2>
 		{% if user.oauth_id %}
 			<a href="https://majorleaguecyber.org/u/{{ user.name }}">

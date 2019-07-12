@@ -8,6 +8,16 @@
 		<div class="container">
 			<h1 id="user-id" user-id="{{ user.id }}">{{ user.name }}</h1>
 
+			{% if user.team_id %}
+				<h2 id="user-team-id" user-team-id="{{ user.team_id }}">
+					<a href="{{ url_for('teams.private') }}">
+						<span class="badge badge-secondary">
+							{{ user.team.name }}
+						</span>
+					</a>
+				</h2>
+			{% endif %}
+
 			{% if user.oauth_id %}
 				<a href="https://majorleaguecyber.org/u/{{ user.name }}">
 					<h3><span class="badge badge-primary">Official</span></h3>
@@ -18,22 +28,36 @@
 				<h3><span class="badge badge-primary">{{ user.affiliation }}</span></h3>
 			{% endif %}
 
-			<div class="user-info">
-				<h2 id="user-place" class="text-center">
-					{# This intentionally hides the user's place because this can be their internal profile. #}
-					{# Public page hiding is done at the route level #}
-					{% if scores_visible() %}
-						{{ user.place }}
-						<small>place</small>
-					{% endif %}
-				</h2>
-				<h2 id="user-score" class="text-center">
-					{% if score %}
-						{{ user.score }}
-						<small>points</small>
-					{% endif %}
-				</h2>
-			</div>
+			{% if user.team_id %}
+				<div class="user-team-info">
+					<h2 id="user-team-place" class="text-center">
+						{# This intentionally hides the user's place because this can be their internal profile. #}
+						{# Public page hiding is done at the route level #}
+						{% if scores_visible() and user.team.place %}
+							{{ user.team.place }} <small>place</small>
+						{% endif %}
+					</h2>
+					<h2 id="user-team-score" class="text-center">
+						{{ user.team.score }} <small>points</small>
+					</h2>
+				</div>
+			{% else %}
+				<div class="user-info">
+					<h2 id="user-place" class="text-center">
+						{# This intentionally hides the user's place because this can be their internal profile. #}
+						{# Public page hiding is done at the route level #}
+						{% if scores_visible() and user.place %}
+							{{ user.place }} <small>place</small>
+						{% endif %}
+					</h2>
+					<h2 id="user-score" class="text-center">
+						{% if score %}
+							{{ user.score }}
+							<small>points</small>
+						{% endif %}
+					</h2>
+				</div>
+			{% endif %}
 
 			<div class="pt-3">
 				{% if user.website and (user.website.startswith('http://') or user.website.startswith('https://')) %}

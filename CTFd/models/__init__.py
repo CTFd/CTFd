@@ -358,7 +358,7 @@ class Users(db.Model):
                 k = i % 10
                 return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k :: 4])
         except ValueError:
-            return 0
+            return None
 
 
 class Admins(Users):
@@ -486,7 +486,7 @@ class Teams(db.Model):
             k = i % 10
             return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k :: 4])
         except ValueError:
-            return 0
+            return None
 
 
 class Submissions(db.Model):
