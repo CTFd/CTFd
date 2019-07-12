@@ -42,6 +42,20 @@ def users_listing():
                 .order_by(Users.id.asc())
                 .all()
             )
+        elif field == "ip":
+            # Find all the matching user IDs from the tracking table
+            matched_users = (
+                db.session.query(Tracking.user_id, Tracking.ip)
+                .filter(Tracking.ip.like("%{}%".format(q)))
+                .subquery()
+            )
+
+            users = (
+                Users.query.join(matched_users, Users.id == matched_users.c.user_id)
+                .order_by(Users.id.asc())
+                .all()
+            )
+
         return render_template(
             "admin/users/users.html",
             users=users,
