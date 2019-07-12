@@ -184,6 +184,12 @@ extensions = [
     '.jav', '.pl', '.bak', '.gho', '.old', '.ori', '.tmp', '.dmg',
     '.iso', '.toa', '.vcd', '.gam', '.nes', '.rom', '.sav', '.msi',
 ]
+companies = [
+    'Corp',
+    'Inc.',
+    'Squad',
+    'Team',
+]
 
 
 def gen_sentence():
@@ -206,6 +212,10 @@ def gen_category():
     return random.choice(categories)
 
 
+def gen_affiliation():
+    return (random.choice(hipsters) + " " + random.choice(companies)).title()
+
+
 def gen_value():
     return random.choice(range(100, 500, 50))
 
@@ -221,6 +231,10 @@ def gen_file():
 def random_date(start, end):
     return start + datetime.timedelta(
         seconds=random.randint(0, int((end - start).total_seconds())))
+
+
+def random_chance():
+    return random.random() > 0.5
 
 
 if __name__ == '__main__':
@@ -274,6 +288,10 @@ if __name__ == '__main__':
                     name=name,
                     password="password"
                 )
+                if random_chance():
+                    team.affiliation = gen_affiliation()
+                if random_chance():
+                    team.oauth_id = random.randint(1, 1000)
                 db.session.add(team)
                 count += 1
 
@@ -295,6 +313,10 @@ if __name__ == '__main__':
                         password='password'
                     )
                     user.verified = True
+                    if random_chance():
+                        user.affiliation = gen_affiliation()
+                    if random_chance():
+                        user.oauth_id = random.randint(1, 1000)
                     if mode == 'teams':
                         user.team_id = random.randint(1, TEAM_AMOUNT)
                     db.session.add(user)
