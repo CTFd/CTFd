@@ -17,6 +17,7 @@ from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
     admins_only,
+    require_team
 )
 from CTFd.utils.decorators.visibility import (
     check_challenge_visibility,
@@ -160,6 +161,7 @@ class Challenge(Resource):
     @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
+    @require_team
     def get(self, challenge_id):
         if is_admin():
             chal = Challenges.query.filter(Challenges.id == challenge_id).first_or_404()
@@ -302,6 +304,7 @@ class ChallengeAttempt(Resource):
     @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
+    @require_team
     def post(self):
         if authed() is False:
             return {"success": True, "data": {"status": "authentication_required"}}, 403
