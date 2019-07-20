@@ -5,21 +5,28 @@ import datetime
 import hashlib
 import random
 import sys
+import argparse
 
 from CTFd import create_app
-from CTFd.models import *
+from CTFd.models import Users, Teams, Challenges, Flags, Awards, ChallengeFiles, Fails, Solves
 
-try:
-    mode = sys.argv[1]
-except IndexError:
-    mode = 'teams'
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--mode", help="Set user mode", default="teams")
+parser.add_argument("--users", help="Amount of users to generate", default=50, type=int)
+parser.add_argument("--teams", help="Amount of teams to generate", default=10, type=int)
+parser.add_argument("--challenges", help="Amount of challenges to generate", default=20, type=int)
+parser.add_argument("--awards", help="Amount of awards to generate", default=5, type=int)
+
+args = parser.parse_args()
 
 app = create_app()
 
-USER_AMOUNT = 50
-TEAM_AMOUNT = 10 if mode == 'teams' else 0
-CHAL_AMOUNT = 20
-AWARDS_AMOUNT = 5
+mode = args.mode
+USER_AMOUNT = args.users
+TEAM_AMOUNT = args.teams if args.mode == 'teams' else 0
+CHAL_AMOUNT = args.challenges
+AWARDS_AMOUNT = args.awards
 
 categories = [
     'Exploitation',
@@ -201,7 +208,7 @@ def gen_name():
 
 
 def gen_team_name():
-    return random.choice(hipsters).capitalize() + str(random.randint(1,1000))
+    return random.choice(hipsters).capitalize() + str(random.randint(1, 1000))
 
 
 def gen_email():
@@ -302,7 +309,6 @@ if __name__ == '__main__':
 
         db.session.commit()
 
-
         # Generating Users
         print("GENERATING USERS")
         used = []
@@ -331,7 +337,7 @@ if __name__ == '__main__':
                         user.team_id = random.randint(1, TEAM_AMOUNT)
                     db.session.add(user)
                     count += 1
-                except:
+                except Exception:
                     pass
 
         db.session.commit()
@@ -356,7 +362,7 @@ if __name__ == '__main__':
                     chalid = random.randint(1, CHAL_AMOUNT)
                     if chalid not in used:
                         used.append(chalid)
-                        user = Users.query.filter_by(id=x+1).first()
+                        user = Users.query.filter_by(id=x + 1).first()
                         solve = Solves(
                             user_id=user.id,
                             team_id=user.team_id,
@@ -432,7 +438,7 @@ if __name__ == '__main__':
                 chalid = random.randint(1, CHAL_AMOUNT)
                 if chalid not in used:
                     used.append(chalid)
-                    user = Users.query.filter_by(id=x+1).first()
+                    user = Users.query.filter_by(id=x + 1).first()
                     wrong = Fails(
                         user_id=user.id,
                         team_id=user.team_id,
