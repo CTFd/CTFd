@@ -356,7 +356,7 @@ class Users(db.Model):
                 return i
             else:
                 k = i % 10
-                return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k :: 4])
+                return "%d%s" % (i, "tsnrhtdd"[(i // 10 % 10 != 1) * (k < 4) * k :: 4])
         except ValueError:
             return None
 
@@ -484,7 +484,7 @@ class Teams(db.Model):
         try:
             i = standings.index((self.id,)) + 1
             k = i % 10
-            return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k :: 4])
+            return "%d%s" % (i, "tsnrhtdd"[(i // 10 % 10 != 1) * (k < 4) * k :: 4])
         except ValueError:
             return None
 
