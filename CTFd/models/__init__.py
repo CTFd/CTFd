@@ -3,6 +3,7 @@ from flask_marshmallow import Marshmallow
 from sqlalchemy.orm import validates, column_property
 from sqlalchemy.ext.hybrid import hybrid_property
 from CTFd.utils.crypto import hash_password
+from CTFd.utils.humanize.numbers import ordinalize
 from CTFd.cache import cache
 import datetime
 import six
@@ -349,14 +350,11 @@ class Users(db.Model):
 
         standings = get_user_standings(admin=admin)
 
-        # http://codegolf.stackexchange.com/a/4712
         try:
-            i = standings.index((self.id,)) + 1
+            n = standings.index((self.id,)) + 1
             if numeric:
-                return i
-            else:
-                k = i % 10
-                return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k :: 4])
+                return n
+            return ordinalize(n)
         except ValueError:
             return None
 
@@ -469,7 +467,7 @@ class Teams(db.Model):
             score += member.get_score(admin=admin)
         return score
 
-    def get_place(self, admin=False):
+    def get_place(self, admin=False, numeric=False):
         """
         This method is generally a clone of CTFd.scoreboard.get_standings.
         The point being that models.py must be self-reliant and have little
@@ -480,11 +478,11 @@ class Teams(db.Model):
 
         standings = get_team_standings(admin=admin)
 
-        # http://codegolf.stackexchange.com/a/4712
         try:
-            i = standings.index((self.id,)) + 1
-            k = i % 10
-            return "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k :: 4])
+            n = standings.index((self.id,)) + 1
+            if numeric:
+                return n
+            return ordinalize(n)
         except ValueError:
             return None
 
