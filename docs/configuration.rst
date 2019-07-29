@@ -34,6 +34,9 @@ e.g. ``redis://user:password@localhost:6379``
 
 http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
 
+REGISTRATION_AUTH_KEY
+~~~~~~~~~~~~~~~~~~~~~
+An authorization key required to register. Leave empty to disable.
 
 MAILFROM_ADDR
 ~~~~~~~~~~~~~

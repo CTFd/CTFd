@@ -117,7 +117,7 @@ def destroy_ctfd(app):
 
 
 def register_user(
-    app, name="user", email="user@ctfd.io", password="password", raise_for_error=True
+    app, name="user", email="user@ctfd.io", password="password", authkey=None, raise_for_error=True
 ):
     with app.app_context():
         with app.test_client() as client:
@@ -127,6 +127,7 @@ def register_user(
                     "name": name,
                     "email": email,
                     "password": password,
+                    "authkey": authkey,
                     "nonce": sess.get("nonce"),
                 }
             client.post("/register", data=data)

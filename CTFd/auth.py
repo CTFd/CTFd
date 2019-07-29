@@ -196,6 +196,11 @@ def register():
         if name_len:
             errors.append("Pick a longer user name")
 
+        auth_key = get_app_config("REGISTRATION_AUTH_KEY") or get_config("registration_auth_key")
+        if auth_key:
+            if auth_key != request.form["authkey"]:
+                errors.append("Invalid auth key")
+
         if len(errors) > 0:
             return render_template(
                 "register.html",

@@ -43,6 +43,14 @@
 					</label>
 					<input class="form-control" type="password" name="password" id="password-input" {% if password %}value="{{ password }}"{% endif %}/>
 				</div>
+				{% if config.app.config.REGISTRATION_AUTH_KEY or get_config('REGISTRATION_AUTH_KEY') %}
+				<div class="form-group">
+					<label for="authkey-input">
+						Auth Key
+					</label>
+					<input class="form-control" type="text" name="authkey" id="authkey-input" {% if authkey %}value="{{ authkey }}"{% endif %} />
+				</div>
+				{% endif %}
 				<div class="row pt-3">
 					<div class="col-md-12">
 						<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>

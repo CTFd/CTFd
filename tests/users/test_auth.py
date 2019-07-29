@@ -99,6 +99,60 @@ def test_register_whitelisted_email():
     destroy_ctfd(app)
 
 
+def test_register_with_authkey_via_env():
+    """Check that a user register if and only if the correct auth key is supplied (auth key configured via env)"""
+    app = create_ctfd()
+    app.config.update({"REGISTRATION_AUTH_KEY": "secretkey"})
+    with app.app_context():
+        register_user(
+            app,
+            name="user1",
+            email="user1@ctfd.io",
+            password="password",
+            authkey="wrongkey",
+            raise_for_error=False,
+        )
+        user_count = Users.query.count()
+        assert user_count == 1  # no user has been created (admin only)
+        register_user(
+            app,
+            name="user1",
+            email="user1@ctfd.io",
+            password="password",
+            authkey="secretkey",
+        )
+        user_count = Users.query.count()
+        assert user_count == 2  # now the user has been created
+    destroy_ctfd(app)
+
+
+def test_register_with_authkey_via_conf():
+    """Check that a user register if and only if the correct auth key is supplied (auth key configured over the web interface)"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config("registration_auth_key", "secretkey")
+        register_user(
+            app,
+            name="user1",
+            email="user1@ctfd.io",
+            password="password",
+            authkey="wrongkey",
+            raise_for_error=False,
+        )
+        user_count = Users.query.count()
+        assert user_count == 1  # no user has been created (admin only)
+        register_user(
+            app,
+            name="user1",
+            email="user1@ctfd.io",
+            password="password",
+            authkey="secretkey",
+        )
+        user_count = Users.query.count()
+        assert user_count == 2  # now the user has been created
+    destroy_ctfd(app)
+
+
 def test_user_bad_login():
     """A user should not be able to login with an incorrect password"""
     app = create_ctfd()

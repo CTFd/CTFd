@@ -87,6 +87,18 @@
 		</div>
 
 		<div class="form-group">
+			<label>
+				Registration Auth Key<br>
+				<small class="form-text text-muted">
+					An authorization key required to register an account (leave empty to disable)
+				</small>
+			</label>
+			<input class="form-control" id='registration_auth_key' name='registration_auth_key' type='text'
+				   placeholder=""
+				   {% if registration_auth_key is defined and registration_auth_key != None %}value="{{ registration_auth_key }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
 			<div class="form-check">
 				<label>
 					<input id="paused" name="paused" type="checkbox" {% if paused %}checked{% endif %}>

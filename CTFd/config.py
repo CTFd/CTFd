@@ -61,6 +61,9 @@ class Config(object):
     REDIS_URL is the URL to connect to a Redis server.
         e.g. redis://user:password@localhost:6379
         http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
+
+    REGISTRATION_AUTH_KEY:
+        A string required when registering an account. Leave empty to disable.
     """
     SECRET_KEY = os.getenv("SECRET_KEY") or key
     DATABASE_URL = os.getenv("DATABASE_URL") or "sqlite:///{}/ctfd.db".format(
@@ -80,6 +83,8 @@ class Config(object):
         CACHE_THRESHOLD = (
             0
         )  # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
+
+    REGISTRATION_AUTH_KEY = os.getenv("REGISTRATION_AUTH_KEY")
 
     """
     === SECURITY ===
