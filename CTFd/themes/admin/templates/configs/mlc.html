@@ -5,7 +5,7 @@
 			<label>
 				Client ID
 				<small class="form-text text-muted">
-					OAuth Client ID for <a href="https://majorleaguecyber.org/">MajorLeagueCyber</a> integration.
+					OAuth Client ID for <a href="https://majorleaguecyber.org/">MajorLeagueCyber</a>/OAuth2 integration.
 				</small>
 			</label>
 			<input class="form-control" id='oauth_client_id' name='oauth_client_id' type='text'
@@ -17,12 +17,144 @@
 			<label>
 				Client Secret
 				<small class="form-text text-muted">
-					OAuth Client Secret for <a href="https://majorleaguecyber.org/">MajorLeagueCyber</a> integration.
+					OAuth Client Secret for <a href="https://majorleaguecyber.org/">MajorLeagueCyber</a>/OAuth2 integration.
 				</small>
 			</label>
 			<input class="form-control" id='oauth_client_secret' name='oauth_client_secret' type='text'
 				   placeholder=""
 				   {% if oauth_client_secret is defined and oauth_client_secret != None %}value="{{ oauth_client_secret }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 Provider Name
+				<small class="form-text text-muted">
+					Name to display for a custom OAuth2 provider
+				</small>
+			</label>
+			<input class="form-control" id='oauth_provider_name' name='oauth_provider_name' type='text'
+				   placeholder=""
+				   {% if oauth_provider_name is defined and oauth_provider_name != None %}value="{{ oauth_provider_name }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 Authorization Endpoint
+				<small class="form-text text-muted">
+					Users will be redirected to this URI to log in
+				</small>
+			</label>
+			<input class="form-control" id='oauth_authorization_endpoint' name='oauth_authorization_endpoint' type='text'
+				   placeholder=""
+				   {% if oauth_authorization_endpoint is defined and oauth_authorization_endpoint != None %}value="{{ oauth_authorization_endpoint }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 Token Endpoint
+				<small class="form-text text-muted">
+					CTFd will retrieve an access token from this URI after the user signed in
+				</small>
+			</label>
+			<input class="form-control" id='oauth_token_endpoint' name='oauth_token_endpoint' type='text'
+				   placeholder=""
+				   {% if oauth_token_endpoint is defined and oauth_token_endpoint != None %}value="{{ oauth_token_endpoint }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 Scope
+				<small class="form-text text-muted">
+					CTFd will request access to this scope from the OAuth2 provider
+				</small>
+			</label>
+			<input class="form-control" id='oauth_scope' name='oauth_scope' type='text'
+				   placeholder=""
+				   {% if oauth_scope is defined and oauth_scope != None %}value="{{ oauth_scope }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 API Endpoint
+				<small class="form-text text-muted">
+					CTFd will retrieve info about the authorized user from this URI
+				</small>
+			</label>
+			<input class="form-control" id='oauth_api_endpoint' name='oauth_api_endpoint' type='text'
+				   placeholder=""
+				   {% if oauth_api_endpoint is defined and oauth_api_endpoint != None %}value="{{ oauth_api_endpoint }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 Scope
+				<small class="form-text text-muted">
+					CTFd will request access to this scope from the OAuth2 provider
+				</small>
+			</label>
+			<input class="form-control" id='oauth_scope' name='oauth_scope' type='text'
+				   placeholder=""
+				   {% if oauth_scope is defined and oauth_scope != None %}value="{{ oauth_scope }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 API ID Key
+				<small class="form-text text-muted">
+					This is the key in the JSON dict returned from the API endpoint where a unique numerical ID for the authorized user can be found
+				</small>
+			</label>
+			<input class="form-control" id='oauth_api_id_key' name='oauth_api_id_key' type='text'
+				   placeholder=""
+				   {% if oauth_api_id_key is defined and oauth_api_id_key != None %}value="{{ oauth_api_id_key }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 API Name Key
+				<small class="form-text text-muted">
+					This is the key in the JSON dict returned from the API endpoint where the username for the authorized user can be found
+				</small>
+			</label>
+			<input class="form-control" id='oauth_api_name_key' name='oauth_api_name_key' type='text'
+				   placeholder=""
+				   {% if oauth_api_name_key is defined and oauth_api_name_key != None %}value="{{ oauth_api_name_key }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 API E-Mail Key
+				<small class="form-text text-muted">
+					This is the key in the JSON dict returned from the API endpoint where the e-mail address for the authorized user can be found
+				</small>
+			</label>
+			<input class="form-control" id='oauth_api_email_key' name='oauth_api_email_key' type='text'
+				   placeholder=""
+				   {% if oauth_api_email_key is defined and oauth_api_email_key != None %}value="{{ oauth_api_email_key }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 API Team ID Key
+				<small class="form-text text-muted">
+					This is the key in the JSON dict returned from the API endpoint where the numerical team ID for the authorized user can be found (only required in team mode)
+				</small>
+			</label>
+			<input class="form-control" id='oauth_api_team_id_key' name='oauth_api_team_id_key' type='text'
+				   placeholder=""
+				   {% if oauth_api_team_id_key is defined and oauth_api_team_id_key != None %}value="{{ oauth_api_team_id_key }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Custom OAuth2 API Team Name Key
+				<small class="form-text text-muted">
+					This is the key in the JSON dict returned from the API endpoint where the team name for the authorized user can be found (only required in team mode)
+				</small>
+			</label>
+			<input class="form-control" id='oauth_api_team_name_key' name='oauth_api_team_name_key' type='text'
+				   placeholder=""
+				   {% if oauth_api_team_name_key is defined and oauth_api_team_name_key != None %}value="{{ oauth_api_team_name_key }}"{% endif %}>
 		</div>
 
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>

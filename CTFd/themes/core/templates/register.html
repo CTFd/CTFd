@@ -20,7 +20,7 @@
 				</div>
 			{% endfor %}
 
-			<a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('auth.oauth_login') }}">Login with Major League Cyber</a>
+			<a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('auth.oauth_login') }}">Login with {{ config.OAUTH_PROVIDER_NAME or get_config('oauth_provider_name') or "Major League Cyber" }}</a>
 
 			<hr>
 
