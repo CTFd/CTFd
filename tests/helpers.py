@@ -178,6 +178,40 @@ def login_with_mlc(
     team_oauth_id=1234,
     raise_for_error=True,
 ):
+    return login_with_oauth(
+        app,
+        name=name,
+        scope=scope,
+        email=email,
+        oauth_id=oauth_id,
+        team_name=team_name,
+        team_oauth_id=team_oauth_id,
+        raise_for_error=raise_for_error,
+        id_key="id",
+        name_key="name",
+        email_key="email",
+        team_key="team",
+        team_id_key="id",
+        team_name_key="name"
+    )
+
+
+def login_with_oauth(
+    app,
+    name="user",
+    scope=None,
+    email="user@ctfd.io",
+    oauth_id=1337,
+    team_name="TestTeam",
+    team_oauth_id=1234,
+    raise_for_error=True,
+    id_key=None,
+    name_key=None,
+    email_key=None,
+    team_key=None,
+    team_id_key=None,
+    team_name_key=None
+):
     with app.test_client() as client, patch.object(
         requests, "get"
     ) as fake_get_request, patch.object(requests, "post") as fake_post_request:
@@ -188,7 +222,7 @@ def login_with_mlc(
             redirect_url = "{endpoint}?response_type=code&client_id={client_id}&scope={scope}&state={state}".format(
                 endpoint=app.config["OAUTH_AUTHORIZATION_ENDPOINT"],
                 client_id=app.config["OAUTH_CLIENT_ID"],
-                scope=scope,
+                scope=scope or app.config["OAUTH_SCOPE"],
                 state=nonce,
             )
 
@@ -200,15 +234,30 @@ def login_with_mlc(
         fake_post_response.status_code = 200
         fake_post_response.json = lambda: {"access_token": "fake_mlc_access_token"}
 
+        id_key = id_key or app.config["OAUTH_API_ID_KEY"]
+        name_key = name_key or app.config["OAUTH_API_NAME_KEY"]
+        email_key = email_key or app.config["OAUTH_API_EMAIL_KEY"]
+        team_id_key = team_id_key or app.config["OAUTH_API_TEAM_ID_KEY"]
+        team_name_key = team_name_key or app.config["OAUTH_API_TEAM_NAME_KEY"]
+
+        get_response_dict = {
+            id_key: oauth_id,
+            name_key: name,
+            email_key: email,
+        }
+        team_dict = {
+            team_id_key: team_oauth_id,
+            team_name_key: team_name,
+        }
+        if team_key:
+            get_response_dict[team_key] = team_dict
+        else:
+            get_response_dict.update(team_dict)
+
         fake_get_response = Mock()
         fake_get_request.return_value = fake_get_response
         fake_get_response.status_code = 200
-        fake_get_response.json = lambda: {
-            "id": oauth_id,
-            "name": name,
-            "email": email,
-            "team": {"id": team_oauth_id, "name": team_name},
-        }
+        fake_get_response.json = lambda: get_response_dict
 
         client.get(
             "/redirect?code={code}&state={state}".format(

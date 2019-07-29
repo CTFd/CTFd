@@ -7,6 +7,7 @@ from tests.helpers import (
     register_user,
     login_as_user,
     login_with_mlc,
+    login_with_oauth,
 )
 from CTFd.models import Teams, Users
 from CTFd.utils import set_config
@@ -69,6 +70,78 @@ def test_oauth_configured_flow():
         # Users should still be able to login if registration is disabled
         set_config("registration_visibility", "private")
         client = login_with_mlc(app)
+        with client.session_transaction() as sess:
+            assert sess["id"]
+            assert sess["name"]
+            assert sess["type"]
+            assert sess["email"]
+            assert sess["nonce"]
+    destroy_ctfd(app)
+
+
+def test_oauth_configure_flow_custom_provider():
+    """Test that a custom OAuth provider works properly but does not allow registration (account creation) if disabled"""
+    app = create_ctfd(user_mode="teams")
+    app.config.update(
+        {
+            "OAUTH_CLIENT_ID": "ctfd_testing_client_id",
+            "OAUTH_CLIENT_SECRET": "ctfd_testing_client_secret",
+            "OAUTH_AUTHORIZATION_ENDPOINT": "http://auth.localhost/oauth/authorize",
+            "OAUTH_TOKEN_ENDPOINT": "http://auth.localhost/oauth/token",
+            "OAUTH_API_ENDPOINT": "http://api.localhost/user",
+            "OAUTH_SCOPE": "testscope",
+            "OAUTH_API_ID_KEY": "idkey",
+            "OAUTH_API_NAME_KEY": "namekey",
+            "OAUTH_API_EMAIL_KEY": "emailkey",
+            "OAUTH_API_TEAM_ID_KEY": lambda x: x["teamkey"]["teamidkey"],
+            "OAUTH_API_TEAM_NAME_KEY": lambda x: x["teamkey"]["teamnamekey"],
+        }
+    )
+
+    with app.app_context():
+        set_config("registration_visibility", "private")
+        assert Users.query.count() == 1
+        assert Teams.query.count() == 0
+
+        client = login_with_oauth(app, raise_for_error=False, scope="testscope")
+
+        assert Users.query.count() == 1
+
+        # Users shouldn't be able to register because registration is disabled
+        resp = client.get("http://localhost/login").get_data(as_text=True)
+        assert "Public registration is disabled" in resp
+
+        set_config("registration_visibility", "public")
+        client = client = login_with_oauth(
+            app,
+            scope="testscope",
+            team_key="teamkey",
+            team_id_key="teamidkey",
+            team_name_key="teamnamekey",
+        )
+
+        # Users should be able to register now
+        assert Users.query.count() == 2
+        user = Users.query.filter_by(email="user@ctfd.io").first()
+        assert user.oauth_id == 1337
+        assert user.team_id == 1
+
+        # Teams should be created
+        assert Teams.query.count() == 1
+        team = Teams.query.filter_by(id=1).first()
+        assert team.oauth_id == 1234
+
+        client.get("/logout")
+
+        # Users should still be able to login if registration is disabled
+        set_config("registration_visibility", "private")
+        client = client = login_with_oauth(
+            app,
+            scope="testscope",
+            team_key="teamkey",
+            team_id_key="teamidkey",
+            team_name_key="teamnamekey",
+        )
         with client.session_transaction() as sess:
             assert sess["id"]
             assert sess["name"]
