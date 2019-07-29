@@ -137,11 +137,55 @@ Example: /ctfd
 
 OAUTH_CLIENT_ID
 ~~~~~~~~~~~~~~~
-
+The client ID to use with Major League Cyber/the custom OAuth provider
 
 OAUTH_CLIENT_SECRET
 ~~~~~~~~~~~~~~~~~~~
+The client secret to use with Major League Cyber/the custom OAuth provider
 
+OAUTH_PROVIDER_NAME
+~~~~~~~~~~~~~~~~~~~
+The provider name to display to users logging in/registering (only necessary for custom OAuth providers)
+
+OAUTH_AUTHORIZATION_ENDPOINT
+~~~~~~~~~~~~~~~~~~~
+The URI users will be redirected to to login (only necessary for custom OAuth providers)
+
+OAUTH_TOKEN_ENDPOINT
+~~~~~~~~~~~~~~~~~~~
+The URI from which CTFd will retrieve the access token after the user logged in (only necessary for custom OAuth providers)
+
+OAUTH_API_ENDPOINT
+~~~~~~~~~~~~~~~~~~~
+The URI from which CTFd will retrieve the user info after obtaining and access token (only necessary for custom OAuth providers)
+
+OAUTH_SCOPE
+~~~~~~~~~~~~~~~~~~~
+The scope of access CTFd will request in the authorization request (only necessary for custom OAuth providers)
+
+OAUTH_API_KEY
+~~~~~~~~~~~~~~~~~~~
+The scope of access CTFd will request in the authorization request (only necessary for custom OAuth providers)
+
+OAUTH_ID_KEY
+~~~~~~~~~~~~~~~~~~~
+Can be a string which will be used as a key in the JSON object retrieved from the API endpoint or a callable which takes the retrieved JSON object as argument and returns the numerical user ID. (The callable needs to be configured in ``CTFd/config.py``, only strings work when configured through environment variables or the admin interface) (only necessary for custom OAuth providers)
+
+OAUTH_NAME_KEY
+~~~~~~~~~~~~~~~~~~~
+Can be a string which will be used as a key in the JSON object retrieved from the API endpoint or a callable which takes the retrieved JSON object as argument and returns the username. (The callable needs to be configured in ``CTFd/config.py``, only strings work when configured through environment variables or the admin interface) (only necessary for custom OAuth providers)
+
+OAUTH_NAME_KEY
+~~~~~~~~~~~~~~~~~~~
+Can be a string which will be used as a key in the JSON object retrieved from the API endpoint or a callable which takes the retrieved JSON object as argument and returns the user's email. (The callable needs to be configured in ``CTFd/config.py``, only strings work when configured through environment variables or the admin interface) (only necessary for custom OAuth providers)
+
+OAUTH_TEAM_ID_KEY
+~~~~~~~~~~~~~~~~~~~
+Can be a string which will be used as a key in the JSON object retrieved from the API endpoint or a callable which takes the retrieved JSON object as argument and returns the numerical team ID (only used in team mode). (The callable needs to be configured in ``CTFd/config.py``, only strings work when configured through environment variables or the admin interface) (only necessary for custom OAuth providers)
+
+OAUTH_TEAM_NAME_KEY
+~~~~~~~~~~~~~~~~~~~
+Can be a string which will be used as a key in the JSON object retrieved from the API endpoint or a callable which takes the retrieved JSON object as argument and returns the team name (only used in team mode). (The callable needs to be configured in ``CTFd/config.py``, only strings work when configured through environment variables or the admin interface) (only necessary for custom OAuth providers)
 
 Application Level Configuration
 -------------------------------
