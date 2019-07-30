@@ -43,15 +43,9 @@ def users_listing():
                 .all()
             )
         elif field == "ip":
-            # Find all the matching user IDs from the tracking table
-            matched_users = (
-                db.session.query(Tracking.user_id, Tracking.ip)
-                .filter(Tracking.ip.like("%{}%".format(q)))
-                .subquery()
-            )
-
             users = (
-                Users.query.join(matched_users, Users.id == matched_users.c.user_id)
+                Users.query.join(Tracking, Users.id == Tracking.user_id)
+                .filter(Tracking.ip.like("%{}%".format(q)))
                 .order_by(Users.id.asc())
                 .all()
             )
