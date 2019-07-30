@@ -43,7 +43,7 @@ def teams_listing():
         return render_template(
             "admin/teams/teams.html",
             teams=teams,
-            pages=None,
+            pages=0,
             curr_page=None,
             q=q,
             field=field,

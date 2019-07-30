@@ -31,11 +31,12 @@
 							<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
 							<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
 							<option value="affiliation" {% if field == 'affiliation' %}selected{% endif %}>Affiliation</option>
+							<option value="ip" {% if field == 'ip' %}selected{% endif %}>IP Address</option>
 					  </select>
 					</div>
 					<div class="form-group col-md-8">
 						<label for="team-name-search" class="sr-only">Parameter</label>
-						<input type="text" class="form-control w-100" id="team-name-search" name="q" placeholder="Search for matching team names" {% if q %}value="{{q}}"{% endif %}>
+						<input type="text" class="form-control w-100" id="team-name-search" name="q" placeholder="Search for matching user" {% if q %}value="{{q}}"{% endif %}>
 					</div>
 					<div class="form-group col-md-2">
 						<label for="team-name-search" class="sr-only">Search</label>
