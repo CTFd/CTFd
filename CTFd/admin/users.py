@@ -53,7 +53,7 @@ def users_listing():
         return render_template(
             "admin/users/users.html",
             users=users,
-            pages=None,
+            pages=0,
             curr_page=None,
             q=q,
             field=field,
