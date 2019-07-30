@@ -6,7 +6,7 @@ from tests.helpers import (
     destroy_ctfd,
     login_as_user,
     gen_user,
-    gen_tracking
+    gen_tracking,
 )
 
 
