@@ -97,11 +97,12 @@ def test_redis_event_manager_installed():
 
     try:
         app = create_ctfd(config=RedisConfig)
+    except ConnectionError:
+        print("Failed to connect to redis. Skipping test.")
+    else:
         with app.app_context():
             assert isinstance(app.events_manager, RedisEventManager)
         destroy_ctfd(app)
-    except ConnectionError:
-        print("Failed to connect to redis. Skipping test.")
 
 
 def test_redis_event_manager_subscription():
@@ -114,6 +115,9 @@ def test_redis_event_manager_subscription():
 
     try:
         app = create_ctfd(config=RedisConfig)
+    except ConnectionError:
+        print("Failed to connect to redis. Skipping test.")
+    else:
         with app.app_context():
             saved_data = {
                 u"data": {
@@ -144,8 +148,6 @@ def test_redis_event_manager_subscription():
                     assert message.__str__().startswith("event:notification\ndata:")
                     break
         destroy_ctfd(app)
-    except ConnectionError:
-        print("Failed to connect to redis. Skipping test.")
 
 
 def test_redis_event_manager_publish():
@@ -158,6 +160,9 @@ def test_redis_event_manager_publish():
 
     try:
         app = create_ctfd(config=RedisConfig)
+    except ConnectionError:
+        print("Failed to connect to redis. Skipping test.")
+    else:
         with app.app_context():
             saved_data = {
                 "user_id": None,
@@ -173,5 +178,3 @@ def test_redis_event_manager_publish():
             event_manager = RedisEventManager()
             event_manager.publish(data=saved_data, type="notification", channel="ctf")
         destroy_ctfd(app)
-    except ConnectionError:
-        print("Failed to connect to redis. Skipping test.")
