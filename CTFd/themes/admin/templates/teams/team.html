@@ -51,7 +51,7 @@
 			{% endif %}
 		</div>
 
-		{% if team.oauth_id %}
+		{% if team.oauth_id and (config.app.config.OAUTH_AUTHORIZATION_ENDPOINT or get_config("oauth_authorization_endpoint") or "https://auth.majorleaguecyber.org/oauth/authorize") == "https://auth.majorleaguecyber.org/oauth/authorize" %}
 			<a href="https://majorleaguecyber.org/t/{{ team.name }}">
 				<h3><span class="badge badge-primary">Official</span></h3>
 			</a>

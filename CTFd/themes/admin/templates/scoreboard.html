@@ -25,7 +25,7 @@
 						<td>
 							<a href="{{ generate_account_url(standing.account_id, admin=True) }}">
 								{{ standing.name }}
-								{% if standing.oauth_id %}
+								{% if standing.oauth_id and (config.app.config.OAUTH_AUTHORIZATION_ENDPOINT or get_config("oauth_authorization_endpoint") or "https://auth.majorleaguecyber.org/oauth/authorize") == "https://auth.majorleaguecyber.org/oauth/authorize" %}
 									{% if get_config('user_mode') == 'teams' %}
 										<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
 											<span class="badge badge-primary">Official</span>

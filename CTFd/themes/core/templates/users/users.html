@@ -32,7 +32,7 @@
 								{% else %}
 									<span>{{ user.name | truncate(50) }}</span>
 								{% endif %}
-								{% if user.oauth_id %}
+								{% if user.oauth_id and (config.app.config.OAUTH_AUTHORIZATION_ENDPOINT or get_config("oauth_authorization_endpoint") or "https://auth.majorleaguecyber.org/oauth/authorize") == "https://auth.majorleaguecyber.org/oauth/authorize" %}
 									<a href="https://majorleaguecyber.org/u/{{ user.name }}">
 										<span class="badge badge-primary">Official</span>
 									</a>
