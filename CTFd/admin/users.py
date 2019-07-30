@@ -42,10 +42,18 @@ def users_listing():
                 .order_by(Users.id.asc())
                 .all()
             )
+        elif field == "ip":
+            users = (
+                Users.query.join(Tracking, Users.id == Tracking.user_id)
+                .filter(Tracking.ip.like("%{}%".format(q)))
+                .order_by(Users.id.asc())
+                .all()
+            )
+
         return render_template(
             "admin/users/users.html",
             users=users,
-            pages=None,
+            pages=0,
             curr_page=None,
             q=q,
             field=field,
