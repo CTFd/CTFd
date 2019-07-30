@@ -89,10 +89,10 @@ def test_event_endpoint_is_event_stream():
 
 def test_redis_event_manager_installed():
     """Test that RedisEventManager is installed on the Flask app"""
-    # TODO: This test is flaky.
+
     class RedisConfig(TestingConfig):
-        REDIS_URL = "redis://localhost:6379"
-        CACHE_REDIS_URL = "redis://localhost:6379"
+        REDIS_URL = "redis://localhost:6379/1"
+        CACHE_REDIS_URL = "redis://localhost:6379/1"
         CACHE_TYPE = "redis"
 
     try:
@@ -107,10 +107,10 @@ def test_redis_event_manager_installed():
 
 def test_redis_event_manager_subscription():
     """Test that RedisEventManager subscribing works."""
-    # TODO: This test is flaky.
+
     class RedisConfig(TestingConfig):
-        REDIS_URL = "redis://localhost:6379"
-        CACHE_REDIS_URL = "redis://localhost:6379"
+        REDIS_URL = "redis://localhost:6379/2"
+        CACHE_REDIS_URL = "redis://localhost:6379/2"
         CACHE_TYPE = "redis"
 
     try:
@@ -152,10 +152,10 @@ def test_redis_event_manager_subscription():
 
 def test_redis_event_manager_publish():
     """Test that RedisEventManager publishing to clients works."""
-    # TODO: This test is flaky.
+
     class RedisConfig(TestingConfig):
-        REDIS_URL = "redis://localhost:6379"
-        CACHE_REDIS_URL = "redis://localhost:6379"
+        REDIS_URL = "redis://localhost:6379/3"
+        CACHE_REDIS_URL = "redis://localhost:6379/3"
         CACHE_TYPE = "redis"
 
     try:
