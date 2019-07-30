@@ -89,6 +89,7 @@ def test_event_endpoint_is_event_stream():
 
 def test_redis_event_manager_installed():
     """Test that RedisEventManager is installed on the Flask app"""
+
     class RedisConfig(TestingConfig):
         REDIS_URL = "redis://localhost:6379/1"
         CACHE_REDIS_URL = "redis://localhost:6379/1"
@@ -106,6 +107,7 @@ def test_redis_event_manager_installed():
 
 def test_redis_event_manager_subscription():
     """Test that RedisEventManager subscribing works."""
+
     class RedisConfig(TestingConfig):
         REDIS_URL = "redis://localhost:6379/2"
         CACHE_REDIS_URL = "redis://localhost:6379/2"
@@ -150,6 +152,7 @@ def test_redis_event_manager_subscription():
 
 def test_redis_event_manager_publish():
     """Test that RedisEventManager publishing to clients works."""
+
     class RedisConfig(TestingConfig):
         REDIS_URL = "redis://localhost:6379/3"
         CACHE_REDIS_URL = "redis://localhost:6379/3"
