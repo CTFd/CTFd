@@ -167,8 +167,8 @@ def register():
         names = Users.query.add_columns("name", "id").filter_by(name=name).first()
         emails = (
             Users.query.add_columns("email", "id")
-            .filter_by(email=email_address)
-            .first()
+                .filter_by(email=email_address)
+                .first()
         )
         pass_short = len(password) == 0
         pass_long = len(password) > 128
@@ -203,6 +203,7 @@ def register():
                 name=request.form["name"],
                 email=request.form["email"],
                 password=request.form["password"],
+                mlc_disabled=get_config("mlc_disabled"),
             )
         else:
             with app.app_context():
@@ -218,7 +219,7 @@ def register():
                 login_user(user)
 
                 if config.can_send_mail() and get_config(
-                    "verify_emails"
+                        "verify_emails"
                 ):  # Confirming users is enabled and we can send email.
                     log(
                         "registrations",
@@ -229,7 +230,7 @@ def register():
                     return redirect(url_for("auth.confirm"))
                 else:  # Don't care about confirming users
                     if (
-                        config.can_send_mail()
+                            config.can_send_mail()
                     ):  # We want to notify the user that they have registered.
                         email.sendmail(
                             request.form["email"],
@@ -246,7 +247,7 @@ def register():
 
         return redirect(url_for("challenges.listing"))
     else:
-        return render_template("register.html", errors=errors)
+        return render_template("register.html", errors=errors, mlc_disabled=get_config("mlc_disabled"))
 
 
 @auth.route("/login", methods=["POST", "GET"])
@@ -271,7 +272,7 @@ def login():
 
                 db.session.close()
                 if request.args.get("next") and validators.is_safe_url(
-                    request.args.get("next")
+                        request.args.get("next")
                 ):
                     return redirect(request.args.get("next"))
                 return redirect(url_for("challenges.listing"))
@@ -281,24 +282,26 @@ def login():
                 log("logins", "[{date}] {ip} - submitted invalid password for {name}")
                 errors.append("Your username or password is incorrect")
                 db.session.close()
-                return render_template("login.html", errors=errors)
+                return render_template("login.html", errors=errors, mlc_disabled=get_config("mlc_disabled"))
         else:
             # This user just doesn't exist
             log("logins", "[{date}] {ip} - submitted invalid account information")
             errors.append("Your username or password is incorrect")
             db.session.close()
-            return render_template("login.html", errors=errors)
+            return render_template("login.html", errors=errors, mlc_disabled=get_config("mlc_disabled"))
     else:
         db.session.close()
-        return render_template("login.html", errors=errors)
+        return render_template("login.html", errors=errors, mlc_disabled=get_config("mlc_disabled"))
 
 
 @auth.route("/oauth")
 def oauth_login():
+    if get_config("mlc_disabled"):
+        return redirect("/login")
     endpoint = (
-        get_app_config("OAUTH_AUTHORIZATION_ENDPOINT")
-        or get_config("oauth_authorization_endpoint")
-        or "https://auth.majorleaguecyber.org/oauth/authorize"
+            get_app_config("OAUTH_AUTHORIZATION_ENDPOINT")
+            or get_config("oauth_authorization_endpoint")
+            or "https://auth.majorleaguecyber.org/oauth/authorize"
     )
 
     if get_config("user_mode") == "teams":
@@ -312,7 +315,7 @@ def oauth_login():
         error_for(
             endpoint="auth.login",
             message="OAuth Settings not configured. "
-            "Ask your CTF administrator to configure MajorLeagueCyber integration.",
+                    "Ask your CTF administrator to configure MajorLeagueCyber integration.",
         )
         return redirect(url_for("auth.login"))
 
@@ -334,9 +337,9 @@ def oauth_redirect():
 
     if oauth_code:
         url = (
-            get_app_config("OAUTH_TOKEN_ENDPOINT")
-            or get_config("oauth_token_endpoint")
-            or "https://auth.majorleaguecyber.org/oauth/token"
+                get_app_config("OAUTH_TOKEN_ENDPOINT")
+                or get_config("oauth_token_endpoint")
+                or "https://auth.majorleaguecyber.org/oauth/token"
         )
 
         client_id = get_app_config("OAUTH_CLIENT_ID") or get_config("oauth_client_id")
@@ -355,9 +358,9 @@ def oauth_redirect():
         if token_request.status_code == requests.codes.ok:
             token = token_request.json()["access_token"]
             user_url = (
-                get_app_config("OAUTH_API_ENDPOINT")
-                or get_config("oauth_api_endpoint")
-                or "https://api.majorleaguecyber.org/user"
+                    get_app_config("OAUTH_API_ENDPOINT")
+                    or get_config("oauth_api_endpoint")
+                    or "https://api.majorleaguecyber.org/user"
             )
 
             headers = {
