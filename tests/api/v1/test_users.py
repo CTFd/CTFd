@@ -204,21 +204,21 @@ def test_api_users_patch_duplicate_information():
             # Duplicate email
             r = client.patch(
                 "/api/v1/users/me",
-                json={"name": "user2", "email": "user@ctfd.io", "password": "password"},
+                json={"name": "user1", "email": "user2@ctfd.io", "confirm": "password"},
             )
             resp = r.get_json()
             assert r.status_code == 400
-            assert resp["errors"]["name"]
+            assert resp["errors"]["email"]
             assert resp["success"] is False
 
             # Duplicate user
             r = client.patch(
                 "/api/v1/users/me",
-                json={"name": "user", "email": "user2@ctfd.io", "password": "password"},
+                json={"name": "user2", "email": "user1@ctfd.io", "confirm": "password"},
             )
             resp = r.get_json()
             assert r.status_code == 400
-            assert resp["errors"]["email"]
+            assert resp["errors"]["name"]
             assert resp["success"] is False
             assert Users.query.count() == 3
     destroy_ctfd(app)
@@ -454,7 +454,7 @@ def test_api_user_change_verify_email():
         user.verified = True
         app.db.session.commit()
         with login_as_user(app) as client:
-            r = client.patch("/api/v1/users/me", json={"email": "new_email@email.com"})
+            r = client.patch("/api/v1/users/me", json={"email": "new_email@email.com", "confirm": "password"})
             assert r.status_code == 200
             resp = r.get_json()
             assert resp["data"]["email"] == "new_email@email.com"
@@ -473,14 +473,14 @@ def test_api_user_change_email_under_whitelist():
             "domain_whitelist", "whitelisted.com, whitelisted.org, whitelisted.net"
         )
         with login_as_user(app) as client:
-            r = client.patch("/api/v1/users/me", json={"email": "new_email@email.com"})
+            r = client.patch("/api/v1/users/me", json={"email": "new_email@email.com", "confirm": "password"})
             assert r.status_code == 400
             resp = r.get_json()
             assert resp["errors"]["email"]
             assert resp["success"] is False
 
             r = client.patch(
-                "/api/v1/users/me", json={"email": "new_email@whitelisted.com"}
+                "/api/v1/users/me", json={"email": "new_email@whitelisted.com", "confirm": "password"}
             )
             assert r.status_code == 200
             resp = r.get_json()
