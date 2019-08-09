@@ -24,7 +24,7 @@ $(function() {
     }
   });
 
-  $("tr").click(function() {
+  $("tr[data-href]").click(function() {
     var sel = getSelection().toString();
     if (!sel) {
       var href = $(this).attr("data-href");
@@ -35,7 +35,7 @@ $(function() {
     return false;
   });
 
-  $("tr a, button").click(function(e) {
+  $("tr[data-href] a, tr[data-href] button").click(function(e) {
     // TODO: This is a hack to allow modal close buttons to work
     if (!$(this).attr("data-dismiss")) {
       e.stopPropagation();
