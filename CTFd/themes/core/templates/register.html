@@ -56,4 +56,9 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+	jQuery(document).ready(function () {
+		loadProperties('register', language);
+	});
+</script>
 {% endblock %}

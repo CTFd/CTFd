@@ -24,4 +24,9 @@
 {% block scripts %}
 	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
+	<script>
+	jQuery(document).ready(function () {
+		loadProperties('notifications', language);
+	});
+	</script>
 {% endblock %}

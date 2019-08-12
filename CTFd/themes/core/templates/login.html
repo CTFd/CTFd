@@ -59,7 +59,9 @@
 
 {% block scripts %}
 	<script>
-	loadProperties('login', language);
+	jQuery(document).ready(function () {
+		loadProperties('login', language);
+	});
 	</script>
 {% endblock %}
 

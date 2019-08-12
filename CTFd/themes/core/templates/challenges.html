@@ -64,6 +64,8 @@
 	{% endif %}
 	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
 	<script>
-	loadProperties('challenges', language);
+	jQuery(document).ready(function () {
+		loadProperties('challenges', language);
+	});
 	</script>
 {% endblock %}

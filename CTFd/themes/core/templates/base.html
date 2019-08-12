@@ -158,11 +158,12 @@
 	<script src="{{ url_for('views.themes', path='js/ezq.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/events.js') }}"></script>
 	<script>
-		var language = jQuery.i18n.normaliseLanguageCode({});
+		// var language = jQuery.i18n.normaliseLanguageCode({});
+		var language="zh_CN";
 		function loadProperties(page, type) {
 			jQuery.i18n.properties({
 				name: page,
-				path: "{{ url_for('views.themes', path = 'languages/') }}",
+				path: "{{ url_for('views.themes', path = 'languages/') }}" + language,
 				mode: 'map',
 				language: type,
 				cache: true,
@@ -180,8 +181,8 @@
 			});
 		}
 		jQuery(document).ready(function () {
-				loadProperties('base', language);
-			});
+			loadProperties('base', language);
+		});
 	</script>
 	{% block scripts %}
 	{% endblock %}
