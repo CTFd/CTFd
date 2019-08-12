@@ -158,8 +158,7 @@
 	<script src="{{ url_for('views.themes', path='js/ezq.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/events.js') }}"></script>
 	<script>
-		// var language = jQuery.i18n.normaliseLanguageCode({});
-		var language="zh_CN";
+		var language = jQuery.i18n.normaliseLanguageCode({});
 		function loadProperties(page, type) {
 			jQuery.i18n.properties({
 				name: page,
