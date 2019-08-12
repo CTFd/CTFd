@@ -60,5 +60,8 @@
 
 {% block scripts %}
 	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
+	<script>
+	loadProperties('confirm', language);
+	</script>
 {% endblock %}
 

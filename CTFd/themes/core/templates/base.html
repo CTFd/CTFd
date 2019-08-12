@@ -157,18 +157,8 @@
 	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/ezq.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/events.js') }}"></script>
-	{% block scripts %}
-	{% endblock %}
-
-	{% for script in get_registered_scripts() %}
-	{% if script.startswith('http') %}
-	<script src="{{ script }}"></script>
-	{% elif request.script_root %}
-	<script src="{{ request.script_root }}/{{ script }}"></script>
-	{% else %}
-	<script src="{{ script }}"></script>
-	{% endif %}{% endfor %}
 	<script>
+		var language = jQuery.i18n.normaliseLanguageCode({});
 		function loadProperties(page, type) {
 			jQuery.i18n.properties({
 				name: page,
@@ -181,7 +171,7 @@
 				callback: function () {
 					var arr = $("[name]");
 					for (var i = 0; i < arr.length; i++) {
-						var tempID = arr[i].name;
+						var tempID = arr[i].getAttribute('name');
 						try {
 							$('[name=' + tempID + ']').html($.i18n.prop(tempID));
 						} catch (error) {}
@@ -189,7 +179,20 @@
 				}
 			});
 		}
-		loadProperties('base', 'en_US')
+		jQuery(document).ready(function () {
+				loadProperties('base', language);
+			});
 	</script>
+	{% block scripts %}
+	{% endblock %}
+
+	{% for script in get_registered_scripts() %}
+	{% if script.startswith('http') %}
+	<script src="{{ script }}"></script>
+	{% elif request.script_root %}
+	<script src="{{ request.script_root }}/{{ script }}"></script>
+	{% else %}
+	<script src="{{ script }}"></script>
+	{% endif %}{% endfor %}
 </body>
 </html>

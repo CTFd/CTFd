@@ -3,7 +3,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Scoreboard</h1>
+		<h1 name="scoreboard"></h1>
 	</div>
 </div>
 <div class="container">
@@ -19,14 +19,17 @@
 		{% if score_frozen %}
 		<div class="row">
 			<div class="col-md-12">
-				<h1 class="text-center">Scoreboard has been frozen.</h1>
+				<h1 name="scoreboard_frozen" class="text-center"></h1>
 			</div>
 		</div>
 		{% endif %}
 
 		<div id="score-graph" class="row">
 			<div class="col-md-12 text-center">
-				<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+				<i
+				name="spinner" 
+				class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+				<h3 class="spinner-error" name="no_solves" hidden></h3>
 			</div>
 		</div>
 
@@ -78,4 +81,9 @@
 	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/scoreboard.js') }}"></script>
+	<script>
+	jQuery(document).ready(function () {
+  		loadProperties('scoreboard', language);
+	});
+	</script>
 {% endblock %}
