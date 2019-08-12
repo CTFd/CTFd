@@ -71,25 +71,25 @@
 					{% endfor %}
 
 					<li class="nav-item">
-						<a class="nav-link" href="{{ url_for('views.notifications') }}">Notifications</a>
+						<a name="notifications" class="nav-link" href="{{ url_for('views.notifications') }}"></a>
 					</li>
 					{% if get_config('account_visibility') != 'admins' %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('users.listing') }}">Users</a>
+							<a name="users" class="nav-link" href="{{ url_for('users.listing') }}"></a>
 						</li>
 						{% if get_config('user_mode') == 'teams' %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('teams.listing') }}">Teams</a>
+							<a name="teams" class="nav-link" href="{{ url_for('teams.listing') }}"></a>
 						</li>
 						{% endif %}
 					{% endif %}
 					{% if get_config('score_visibility') != 'admins' %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('scoreboard.listing') }}">Scoreboard</a>
+							<a name="scoreboard" class="nav-link" href="{{ url_for('scoreboard.listing') }}"></a>
 						</li>
 					{% endif %}
 					<li class="nav-item">
-						<a class="nav-link" href="{{ url_for('challenges.listing') }}">Challenges</a>
+						<a name="challenges" class="nav-link" href="{{ url_for('challenges.listing') }}"></a>
 					</li>
 				</ul>
 
@@ -99,34 +99,34 @@
 					{% if name is defined %}
 						{% if type == 'admin' %}
 							<li class="nav-item">
-								<a class="nav-link" href="{{ url_for('admin.view') }}">Admin</a>
+								<a name="admin" class="nav-link" href="{{ url_for('admin.view') }}"></a>
 							</li>
 						{% endif %}
 						{% if config.user_mode() == "teams" %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('teams.private') }}">Team</a>
+							<a name="team" class="nav-link" href="{{ url_for('teams.private') }}"></a>
 						</li>
 						{% endif %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('users.private') }}">Profile</a>
+							<a name="profile" class="nav-link" href="{{ url_for('users.private') }}"></a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('views.settings') }}">Settings</a>
+							<a name="settings" class="nav-link" href="{{ url_for('views.settings') }}"></a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+							<a name="logout" class="nav-link" href="{{ url_for('auth.logout') }}"></a>
 						</li>
 					{% else %}
 						{% if registration_visible() %}
 							<li class="nav-item">
-								<a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+								<a name="register" class="nav-link" href="{{ url_for('auth.register') }}"></a>
 							</li>
 							<li class="nav-item">
 								<a class="nav-link d-none d-md-block d-lg-block">|</a>
 							</li>
 						{% endif %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+							<a name="login" class="nav-link" href="{{ url_for('auth.login') }}"></a>
 						</li>
 					{% endif %}
 				</ul>
@@ -148,6 +148,7 @@
 	</footer>
 
 	<script src="{{ url_for('views.themes', path='js/vendor/jquery.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/vendor/jquery.i18n.properties.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/vendor/markdown-it.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/vendor/bootstrap.bundle.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/vendor/howler.min.js') }}"></script>
@@ -166,7 +167,29 @@
 	<script src="{{ request.script_root }}/{{ script }}"></script>
 	{% else %}
 	<script src="{{ script }}"></script>
-	{% endif %}
-	{% endfor %}
+	{% endif %}{% endfor %}
+	<script>
+		function loadProperties(page, type) {
+			jQuery.i18n.properties({
+				name: page,
+				path: "{{ url_for('views.themes', path = 'languages/') }}",
+				mode: 'map',
+				language: type,
+				cache: true,
+				encoding: 'UTF-8',
+				async: true,
+				callback: function () {
+					var arr = $("[name]");
+					for (var i = 0; i < arr.length; i++) {
+						var tempID = arr[i].name;
+						try {
+							$('[name=' + tempID + ']').html($.i18n.prop(tempID));
+						} catch (error) {}
+					}
+				}
+			});
+		}
+		loadProperties('base', 'en_US')
+	</script>
 </body>
 </html>
