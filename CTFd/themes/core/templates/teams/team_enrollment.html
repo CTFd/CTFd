@@ -6,29 +6,29 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Team</h1>
+			<h1 name="team">Team</h1>
 		</div>
 	</div>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 offset-md-3 text-center">
-				<p>Welcome to {{ get_ctf_name() }}!</p>
 				<p>
-					In order to participate you must either join or create a team.
+					<div name="welcome" style="display: inline"></div> {{ get_ctf_name() }}!
 				</p>
+				<p name="urge_team"></p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-6 offset-md-3 text-center">
-				<a class="btn btn-primary w-100" href="{{ url_for('auth.oauth_login') }}">Play with Official Team</a>
+				<a name="team_official" class="btn btn-primary w-100" href="{{ url_for('auth.oauth_login') }}"></a>
 			</div>
 		</div>
 		<div class="row pt-3">
 			<div class="col-md-3 offset-md-3 text-center">
-				<a class="btn btn-light w-100" href="{{ url_for('teams.join') }}">Join Unofficial Team</a>
+				<a name="join_unofficial" class="btn btn-light w-100" href="{{ url_for('teams.join') }}"></a>
 			</div>
 			<div class="col-md-3 text-center">
-				<a class="btn btn-light w-100" href="{{ url_for('teams.new') }}">Create Unofficial Team</a>
+				<a name="create_unofficial" class="btn btn-light w-100" href="{{ url_for('teams.new') }}"></a>
 			</div>
 		</div>
 	</div>
@@ -40,4 +40,9 @@
 	{% if solves %}
 		<script src="{{ url_for('views.themes', path='js/team.js') }}"></script>
 	{% endif %}
+	<script>
+		jQuery(document).ready(function () {
+			loadProperties('teams', language);
+		});
+	</script>
 {% endblock %}

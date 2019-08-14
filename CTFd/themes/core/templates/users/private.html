@@ -34,11 +34,13 @@
 						{# This intentionally hides the user's place because this can be their internal profile. #}
 						{# Public page hiding is done at the route level #}
 						{% if scores_visible() and user.team.place %}
-							{{ user.team.place }} <small>place</small>
+							{{ user.team.place }}
+							<small name="place"></small>
 						{% endif %}
 					</h2>
 					<h2 id="user-team-score" class="text-center">
-						{{ user.team.score }} <small>points</small>
+						{{ user.team.score }}
+						<small name="points"></small>
 					</h2>
 				</div>
 			{% else %}
@@ -47,13 +49,14 @@
 						{# This intentionally hides the user's place because this can be their internal profile. #}
 						{# Public page hiding is done at the route level #}
 						{% if scores_visible() and user.place %}
-							{{ user.place }} <small>place</small>
+							{{ user.place }}
+							<small name="place"></small>
 						{% endif %}
 					</h2>
 					<h2 id="user-score" class="text-center">
 						{% if score %}
 							{{ user.score }}
-							<small>points</small>
+							<small name="points"></small>
 						{% endif %}
 					</h2>
 				</div>
@@ -80,7 +83,7 @@
 
 			{% if score_frozen %}
 				<div class="row">
-					<h1 class="text-center">Scoreboard has been frozen.</h1>
+						<h1 name="scoreboard_frozen" class="text-center"></h1>
 				</div>
 			{% endif %}
 
@@ -112,7 +115,7 @@
 				{% if awards %}
 					<div class="row">
 						<div class="col-md-12">
-							<h3>Awards</h3>
+							<h3 name="awards"></h3>
 						</div>
 						{% for award in awards %}
 							<div class="col-md-3 col-sm-6">
@@ -133,8 +136,8 @@
 						<table class="table table-striped">
 							<thead>
 							<tr>
-								<td><b>Challenge</b></td>
-								<td class="d-none d-md-block d-lg-block"><b>Category</b></td>
+								<td><b name="challenge"></b></td>
+								<td class="d-none d-md-block d-lg-block"><b name="category"></b></td>
 								<td><b>Value</b></td>
 								<td><b>Time</b></td>
 							</tr>
@@ -157,7 +160,7 @@
 					</div>
 				</div>
 			{% else %}
-				<div class="text-center"><h3 class="spinner-error">No solves yet</h3></div>
+			<div class="text-center"><h3 name="no_solves" class="spinner-error"></h3></div>
 			{% endif %}
 		{% endif %}
 	</div>
@@ -174,4 +177,9 @@
 	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/user.js') }}"></script>
+	<script>
+	jQuery(document).ready(function () {
+		loadProperties('users', language);
+	});
+	</script>
 {% endblock %}

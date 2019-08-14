@@ -6,7 +6,7 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Users</h1>
+			<h1 name="users"></h1>
 		</div>
 	</div>
 	<div class="container">
@@ -15,10 +15,10 @@
 				<table class="table table-striped">
 					<thead>
 					<tr>
-						<td><b>User</b></td>
-						<td><b>Website</b></td>
-						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Affiliation</b></td>
-						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Country</b></td>
+						<td><b name="username"></b></td>
+						<td><b name="website"></b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b name="affiliation"></b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b name="country"></b></td>
 					</tr>
 					</thead>
 					<tbody>
@@ -38,7 +38,7 @@
 									</a>
 								{% endif %}
 							</td>
-							<td class="text-center" style="width: 10px;">
+							<td class="text-center" style="width: 60px;">
 								{% if user.website and (user.website.startswith('http://') or user.website.startswith('https://')) %}
 									<a href="{{ user.website }}" target="_blank">
 										<i class="fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
@@ -71,8 +71,8 @@
 		{% if pages > 1 %}
 			<div class="row">
 				<div class="col-md-12">
-					<div class="text-center">Page
-						<br>
+					<div class="text-center">
+						<div name="page"></div>>
 						{% if curr_page != 1 %}
 							<a href="{{ url_for('users.listing', page=curr_page - 1) }}">
 								&lt;&lt;&lt;
@@ -98,4 +98,9 @@
 {% endblock %}
 
 {% block scripts %}
+	<script>
+	jQuery(document).ready(function () {
+		loadProperties('users', language);
+	});
+	</script>
 {% endblock %}

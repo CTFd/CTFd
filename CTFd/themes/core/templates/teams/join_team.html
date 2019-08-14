@@ -6,7 +6,7 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Join Team</h1>
+			<h1 name="join_team"></h1>
 		</div>
 	</div>
 	<div class="container">
@@ -22,18 +22,17 @@
 				{% endfor %}
 				<form method="POST">
 					<div class="form-group">
-						<label>Team Name:</label>
+						<label name="name_label"></label>
 						<input class="form-control" type="text" name="name">
 					</div>
 					<div class="form-group">
-						<label>Team Password:</label>
+						<label name="passwd_label"></label>
 						<input class="form-control" type="password" name="password">
 					</div>
 					<input type="hidden" name="nonce" value="{{ nonce }}">
 					<div class="row pt-3">
 						<div class="col-md-12">
-							<button type="submit" class="btn btn-success float-right">
-								Join
+							<button type="submit" class="btn btn-success float-right" name="join">
 							</button>
 						</div>
 					</div>
@@ -44,4 +43,9 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+	jQuery(document).ready(function () {
+		loadProperties('teams', language);
+	});
+</script>
 {% endblock %}

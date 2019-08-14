@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Teams</h1>
+		<h1 name="teams"></h1>
 	</div>
 </div>
 <div class="container">
@@ -15,10 +15,10 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
-						<td><b>Team</b></td>
-						<td><b>Website</b></td>
-						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Affiliation</b></td>
-						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Country</b></td>
+						<td><b name="team"></b></td>
+						<td><b name="website"></b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b name="affiliation"></b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b name="country"></b></td>
 					</tr>
 				</thead>
 				<tbody>
@@ -68,8 +68,8 @@
 	{% if pages > 1 %}
 	<div class="row">
 		<div class="col-md-12">
-			<div class="text-center">Page
-				<br>
+			<div class="text-center">
+				<div name="page"></div>>
 				{% if curr_page != 1 %}
 					<a href="{{ url_for('teams.listing', page=curr_page-1) }}">
 						&lt;&lt;&lt;
@@ -95,4 +95,9 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+	jQuery(document).ready(function () {
+		loadProperties('teams', language);
+	});
+</script>
 {% endblock %}
