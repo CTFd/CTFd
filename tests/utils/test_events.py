@@ -89,31 +89,35 @@ def test_event_endpoint_is_event_stream():
 
 def test_redis_event_manager_installed():
     """Test that RedisEventManager is installed on the Flask app"""
-    # TODO: This test is flaky.
+
     class RedisConfig(TestingConfig):
-        REDIS_URL = "redis://localhost:6379"
-        CACHE_REDIS_URL = "redis://localhost:6379"
+        REDIS_URL = "redis://localhost:6379/1"
+        CACHE_REDIS_URL = "redis://localhost:6379/1"
         CACHE_TYPE = "redis"
 
     try:
         app = create_ctfd(config=RedisConfig)
+    except ConnectionError:
+        print("Failed to connect to redis. Skipping test.")
+    else:
         with app.app_context():
             assert isinstance(app.events_manager, RedisEventManager)
         destroy_ctfd(app)
-    except ConnectionError:
-        print("Failed to connect to redis. Skipping test.")
 
 
 def test_redis_event_manager_subscription():
     """Test that RedisEventManager subscribing works."""
-    # TODO: This test is flaky.
+
     class RedisConfig(TestingConfig):
-        REDIS_URL = "redis://localhost:6379"
-        CACHE_REDIS_URL = "redis://localhost:6379"
+        REDIS_URL = "redis://localhost:6379/2"
+        CACHE_REDIS_URL = "redis://localhost:6379/2"
         CACHE_TYPE = "redis"
 
     try:
         app = create_ctfd(config=RedisConfig)
+    except ConnectionError:
+        print("Failed to connect to redis. Skipping test.")
+    else:
         with app.app_context():
             saved_data = {
                 u"data": {
@@ -144,20 +148,21 @@ def test_redis_event_manager_subscription():
                     assert message.__str__().startswith("event:notification\ndata:")
                     break
         destroy_ctfd(app)
-    except ConnectionError:
-        print("Failed to connect to redis. Skipping test.")
 
 
 def test_redis_event_manager_publish():
     """Test that RedisEventManager publishing to clients works."""
-    # TODO: This test is flaky.
+
     class RedisConfig(TestingConfig):
-        REDIS_URL = "redis://localhost:6379"
-        CACHE_REDIS_URL = "redis://localhost:6379"
+        REDIS_URL = "redis://localhost:6379/3"
+        CACHE_REDIS_URL = "redis://localhost:6379/3"
         CACHE_TYPE = "redis"
 
     try:
         app = create_ctfd(config=RedisConfig)
+    except ConnectionError:
+        print("Failed to connect to redis. Skipping test.")
+    else:
         with app.app_context():
             saved_data = {
                 "user_id": None,
@@ -173,5 +178,3 @@ def test_redis_event_manager_publish():
             event_manager = RedisEventManager()
             event_manager.publish(data=saved_data, type="notification", channel="ctf")
         destroy_ctfd(app)
-    except ConnectionError:
-        print("Failed to connect to redis. Skipping test.")

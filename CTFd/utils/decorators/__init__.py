@@ -118,7 +118,10 @@ def require_team(f):
         if get_config("user_mode") == TEAMS_MODE:
             team = get_current_team()
             if team is None:
-                return redirect(url_for("teams.private", next=request.full_path))
+                if request.content_type == "application/json":
+                    abort(403)
+                else:
+                    return redirect(url_for("teams.private", next=request.full_path))
         return f(*args, **kwargs)
 
     return require_team_wrapper

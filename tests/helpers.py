@@ -239,6 +239,10 @@ def random_string(n=5):
     )
 
 
+def random_int(start=2147483647, stop=None, step=1):
+    return random.randrange(start, stop, step)
+
+
 def gen_challenge(
     db,
     name="chal_name",

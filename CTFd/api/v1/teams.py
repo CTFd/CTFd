@@ -10,7 +10,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.user import get_current_team, is_admin
-from CTFd.utils.decorators import authed_only, admins_only
+from CTFd.utils.decorators import authed_only, admins_only, require_team
 import copy
 
 teams_namespace = Namespace("teams", description="Endpoint to retrieve Teams")
@@ -110,6 +110,7 @@ class TeamPublic(Resource):
 @teams_namespace.param("team_id", "Current Team")
 class TeamPrivate(Resource):
     @authed_only
+    @require_team
     def get(self):
         team = get_current_team()
         response = TeamSchema(view="self").dump(team)
@@ -120,6 +121,7 @@ class TeamPrivate(Resource):
         return {"success": True, "data": response.data}
 
     @authed_only
+    @require_team
     def patch(self):
         team = get_current_team()
         if team.captain_id != session["id"]:
@@ -128,7 +130,7 @@ class TeamPrivate(Resource):
                     "success": False,
                     "errors": {"": ["Only team captains can edit team information"]},
                 },
-                400,
+                403,
             )
 
         data = request.get_json()
@@ -226,6 +228,7 @@ class TeamMembers(Resource):
 @teams_namespace.route("/me/solves")
 class TeamPrivateSolves(Resource):
     @authed_only
+    @require_team
     def get(self):
         team = get_current_team()
         solves = team.get_solves(admin=True)
@@ -243,6 +246,7 @@ class TeamPrivateSolves(Resource):
 @teams_namespace.route("/me/fails")
 class TeamPrivateFails(Resource):
     @authed_only
+    @require_team
     def get(self):
         team = get_current_team()
         fails = team.get_fails(admin=True)
@@ -267,6 +271,7 @@ class TeamPrivateFails(Resource):
 @teams_namespace.route("/me/awards")
 class TeamPrivateAwards(Resource):
     @authed_only
+    @require_team
     def get(self):
         team = get_current_team()
         awards = team.get_awards(admin=True)

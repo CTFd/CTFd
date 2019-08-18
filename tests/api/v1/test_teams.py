@@ -339,7 +339,7 @@ def test_api_team_patch_me_logged_in_user():
             r = client.patch(
                 "/api/v1/teams/me", json={"name": "team_name", "affiliation": "changed"}
             )
-            assert r.status_code == 400
+            assert r.status_code == 403
     destroy_ctfd(app)
 
 
@@ -640,7 +640,7 @@ def test_api_team_patch_password():
                 "/api/v1/teams/me",
                 json={"confirm": "password", "password": "new_password"},
             )
-            assert r.status_code == 400
+            assert r.status_code == 403
 
             assert r.get_json() == {
                 "errors": {"": ["Only team captains can edit team information"]},

@@ -5,21 +5,28 @@ import datetime
 import hashlib
 import random
 import sys
+import argparse
 
 from CTFd import create_app
-from CTFd.models import *
+from CTFd.models import Users, Teams, Challenges, Flags, Awards, ChallengeFiles, Fails, Solves
 
-try:
-    mode = sys.argv[1]
-except IndexError:
-    mode = 'teams'
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--mode", help="Set user mode", default="teams")
+parser.add_argument("--users", help="Amount of users to generate", default=50, type=int)
+parser.add_argument("--teams", help="Amount of teams to generate", default=10, type=int)
+parser.add_argument("--challenges", help="Amount of challenges to generate", default=20, type=int)
+parser.add_argument("--awards", help="Amount of awards to generate", default=5, type=int)
+
+args = parser.parse_args()
 
 app = create_app()
 
-USER_AMOUNT = 50
-TEAM_AMOUNT = 10 if mode == 'teams' else 0
-CHAL_AMOUNT = 20
-AWARDS_AMOUNT = 5
+mode = args.mode
+USER_AMOUNT = args.users
+TEAM_AMOUNT = args.teams if args.mode == 'teams' else 0
+CHAL_AMOUNT = args.challenges
+AWARDS_AMOUNT = args.awards
 
 categories = [
     'Exploitation',
@@ -184,6 +191,12 @@ extensions = [
     '.jav', '.pl', '.bak', '.gho', '.old', '.ori', '.tmp', '.dmg',
     '.iso', '.toa', '.vcd', '.gam', '.nes', '.rom', '.sav', '.msi',
 ]
+companies = [
+    'Corp',
+    'Inc.',
+    'Squad',
+    'Team',
+]
 
 
 def gen_sentence():
@@ -195,7 +208,7 @@ def gen_name():
 
 
 def gen_team_name():
-    return random.choice(hipsters).capitalize() + str(random.randint(1,1000))
+    return random.choice(hipsters).capitalize() + str(random.randint(1, 1000))
 
 
 def gen_email():
@@ -204,6 +217,10 @@ def gen_email():
 
 def gen_category():
     return random.choice(categories)
+
+
+def gen_affiliation():
+    return (random.choice(hipsters) + " " + random.choice(companies)).title()
 
 
 def gen_value():
@@ -221,6 +238,10 @@ def gen_file():
 def random_date(start, end):
     return start + datetime.timedelta(
         seconds=random.randint(0, int((end - start).total_seconds())))
+
+
+def random_chance():
+    return random.random() > 0.5
 
 
 if __name__ == '__main__':
@@ -265,6 +286,7 @@ if __name__ == '__main__':
         # Generating Teams
         print("GENERATING TEAMS")
         used = []
+        used_oauth_ids = []
         count = 0
         while count < TEAM_AMOUNT:
             name = gen_team_name()
@@ -274,15 +296,23 @@ if __name__ == '__main__':
                     name=name,
                     password="password"
                 )
+                if random_chance():
+                    team.affiliation = gen_affiliation()
+                if random_chance():
+                    oauth_id = random.randint(1, 1000)
+                    while oauth_id in used_oauth_ids:
+                        oauth_id = random.randint(1, 1000)
+                    used_oauth_ids.append(oauth_id)
+                    team.oauth_id = oauth_id
                 db.session.add(team)
                 count += 1
 
         db.session.commit()
 
-
         # Generating Users
         print("GENERATING USERS")
         used = []
+        used_oauth_ids = []
         count = 0
         while count < USER_AMOUNT:
             name = gen_name()
@@ -295,11 +325,19 @@ if __name__ == '__main__':
                         password='password'
                     )
                     user.verified = True
+                    if random_chance():
+                        user.affiliation = gen_affiliation()
+                    if random_chance():
+                        oauth_id = random.randint(1, 1000)
+                        while oauth_id in used_oauth_ids:
+                            oauth_id = random.randint(1, 1000)
+                        used_oauth_ids.append(oauth_id)
+                        user.oauth_id = oauth_id
                     if mode == 'teams':
                         user.team_id = random.randint(1, TEAM_AMOUNT)
                     db.session.add(user)
                     count += 1
-                except:
+                except Exception:
                     pass
 
         db.session.commit()
@@ -324,7 +362,7 @@ if __name__ == '__main__':
                     chalid = random.randint(1, CHAL_AMOUNT)
                     if chalid not in used:
                         used.append(chalid)
-                        user = Users.query.filter_by(id=x+1).first()
+                        user = Users.query.filter_by(id=x + 1).first()
                         solve = Solves(
                             user_id=user.id,
                             team_id=user.team_id,
@@ -400,7 +438,7 @@ if __name__ == '__main__':
                 chalid = random.randint(1, CHAL_AMOUNT)
                 if chalid not in used:
                     used.append(chalid)
-                    user = Users.query.filter_by(id=x+1).first()
+                    user = Users.query.filter_by(id=x + 1).first()
                     wrong = Fails(
                         user_id=user.id,
                         team_id=user.team_id,

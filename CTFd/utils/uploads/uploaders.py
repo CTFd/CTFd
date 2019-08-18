@@ -110,8 +110,17 @@ class S3Uploader(BaseUploader):
         return dst
 
     def download(self, filename):
+        key = filename
+        filename = filename.split('/').pop()
         url = self.s3.generate_presigned_url(
-            "get_object", Params={"Bucket": self.bucket, "Key": filename}
+            "get_object",
+            Params={
+                "Bucket": self.bucket,
+                "Key": key,
+                "ResponseContentDisposition": "attachment; filename={}".format(
+                    filename
+                ),
+            },
         )
         return redirect(url)
 

@@ -57,6 +57,10 @@
 			</a>
 		{% endif %}
 
+		{% if team.affiliation %}
+			<h3><span class="badge badge-primary">{{ team.affiliation }}</span></h3>
+		{% endif %}
+
 		<h2 class="text-center">{{ members | length }} members</h2>
 		<h3 id="team-place" class="text-center">
 			{% if place %}
