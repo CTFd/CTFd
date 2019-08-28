@@ -168,6 +168,7 @@ def get_team_standings(count=None, admin=False):
             db.session.query(Teams.id.label("team_id"))
             .join(sumscores, Teams.id == sumscores.columns.team_id)
             .filter(Teams.banned == False)
+            .filter(Teams.hidden == False)
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
         )
 
