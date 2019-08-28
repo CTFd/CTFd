@@ -27,3 +27,4 @@ pathlib2==2.3.2
 flask-marshmallow==0.9.0
 marshmallow-sqlalchemy==0.15.0
 boto3==1.9.39
+marshmallow==2.20.0
