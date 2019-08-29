@@ -61,3 +61,33 @@ def test_team_standings():
 
         assert first_team.name == "team2"
         assert first_team.score == 100
+
+def test_admin_standings():
+    app = create_ctfd(user_mode="teams")
+
+    with app.app_context():
+        setup_test(app)
+
+        standings = get_standings(admin=True)
+
+        print(standings)
+
+        assert standings[0][2] == "team1"
+        assert standings[0][5] == 100
+
+def test_admin_team_standings():
+    app = create_ctfd(user_mode="teams")
+
+    with app.app_context():
+        setup_test(app)
+
+        team_standings = get_team_standings(admin=True)
+
+        print(team_standings)
+
+        first_team = Teams.query.filter_by(id=team_standings[0][0]).first_or_404()
+
+        print(first_team)
+
+        assert first_team.name == "team1"
+        assert first_team.score == 100
