@@ -11,6 +11,7 @@ from CTFd.models import Teams
 
 from CTFd.utils.scores import get_standings, get_team_standings
 
+
 def setup_test(app):
     user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")
     team1 = gen_team(app.db, name="team1", email="team1@ctfd.io")
@@ -36,6 +37,7 @@ def setup_test(app):
         flag = {"challenge_id": 1, "submission": "flag"}
         client.post("/api/v1/challenges/attempt", json=flag)
 
+
 def test_standings():
     app = create_ctfd(user_mode="teams")
 
@@ -48,6 +50,7 @@ def test_standings():
         assert standings[0][3] == 100
 
     destroy_ctfd(app)
+
 
 def test_team_standings():
     app = create_ctfd(user_mode="teams")
@@ -62,6 +65,7 @@ def test_team_standings():
         assert first_team.name == "team2"
         assert first_team.score == 100
 
+
 def test_admin_standings():
     app = create_ctfd(user_mode="teams")
 
@@ -74,6 +78,7 @@ def test_admin_standings():
 
         assert standings[0][2] == "team1"
         assert standings[0][5] == 100
+
 
 def test_admin_team_standings():
     app = create_ctfd(user_mode="teams")
