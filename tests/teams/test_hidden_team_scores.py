@@ -46,8 +46,8 @@ def test_standings():
 
         standings = get_standings()
 
-        assert standings[0][2] == "team2"
-        assert standings[0][3] == 100
+        assert standings[0].name == "team2"
+        assert standings[0].score == 100
 
     destroy_ctfd(app)
 
@@ -60,7 +60,7 @@ def test_team_standings():
 
         team_standings = get_team_standings()
 
-        first_team = Teams.query.filter_by(id=team_standings[0][0]).first_or_404()
+        first_team = Teams.query.filter_by(id=team_standings[0].team_id).first_or_404()
 
         assert first_team.name == "team2"
         assert first_team.score == 100
@@ -74,10 +74,8 @@ def test_admin_standings():
 
         standings = get_standings(admin=True)
 
-        print(standings)
-
-        assert standings[0][2] == "team1"
-        assert standings[0][5] == 100
+        assert standings[0].name == "team1"
+        assert standings[0].score == 100
 
 
 def test_admin_team_standings():
@@ -88,11 +86,7 @@ def test_admin_team_standings():
 
         team_standings = get_team_standings(admin=True)
 
-        print(team_standings)
-
-        first_team = Teams.query.filter_by(id=team_standings[0][0]).first_or_404()
-
-        print(first_team)
+        first_team = Teams.query.filter_by(id=team_standings[0].team_id).first_or_404()
 
         assert first_team.name == "team1"
         assert first_team.score == 100
