@@ -12,7 +12,7 @@ from CTFd.models import Teams
 from CTFd.utils.scores import get_standings, get_team_standings
 
 
-def setup_test(app):
+def setup_app(app):
     user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")
     team1 = gen_team(app.db, name="team1", email="team1@ctfd.io")
     user1.team_id = team1.id
@@ -42,7 +42,7 @@ def test_standings():
     app = create_ctfd(user_mode="teams")
 
     with app.app_context():
-        setup_test(app)
+        setup_app(app)
 
         standings = get_standings()
 
@@ -56,7 +56,7 @@ def test_team_standings():
     app = create_ctfd(user_mode="teams")
 
     with app.app_context():
-        setup_test(app)
+        setup_app(app)
 
         team_standings = get_team_standings()
 
@@ -70,7 +70,7 @@ def test_admin_standings():
     app = create_ctfd(user_mode="teams")
 
     with app.app_context():
-        setup_test(app)
+        setup_app(app)
 
         standings = get_standings(admin=True)
 
@@ -82,7 +82,7 @@ def test_admin_team_standings():
     app = create_ctfd(user_mode="teams")
 
     with app.app_context():
-        setup_test(app)
+        setup_app(app)
 
         team_standings = get_team_standings(admin=True)
 
