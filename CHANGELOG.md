@@ -20,7 +20,7 @@
 
 **API**
 * The team profile endpoint (`/api/v1/teams/me`) will now return 403 instead of 400 if the requesting user is not the captain
-* The Challenge API will now properly freeze the solve count to freeze time.
+* The Challenge API will now properly freeze the solve count to freeze time
 
 
 2.1.3 / 2019-06-22
