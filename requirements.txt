@@ -24,6 +24,7 @@ gevent==1.4.0
 python-dotenv==0.9.1
 flask-restplus==0.12.1
 pathlib2==2.3.2
-flask-marshmallow==0.9.0
-marshmallow-sqlalchemy==0.15.0
+flask-marshmallow==0.10.1
+marshmallow-sqlalchemy==0.17.0
 boto3==1.9.39
+marshmallow==2.20.2
