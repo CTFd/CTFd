@@ -1,3 +1,28 @@
+2.1.4 / 2019-08-31
+==================
+
+**General**
+* Make user pages show the team's score and place information instead of the user's information if in team mode
+* Allow admins to search users by IP address
+* Require password for email address changes in the user profile
+* The place indicator in `Teams Mode` on the team pages and user pages now correctly excludes hidden teams
+* Fix scoreboard place ordinalization in Python 3
+* Fix for a crash where imports will fail on SQLite due to lack of ALTER command support
+* Fix for an issue where files downloaded via S3 would have the folder name in the filename
+* Make `Users.get_place()` and `Teams.get_place()` for return None instead of 0 if the account has no rank/place
+* Properly redirect users or 403 if the endpoint requires a team but the user isn't in one
+* Show affiliation in user and team pages in the admin panel and public and private user and team pages
+
+**Themes**
+* Remove invalid `id='submit'` on submit buttons in various theme files
+* Set `tabindex` to 0 since we don't really care for forcing tab order
+* Rename `statistics.js` to `graphs.js` in the Admin Panel as it was identified that adblockers can sometimes block the file
+
+**API**
+* The team profile endpoint (`/api/v1/teams/me`) will now return 403 instead of 400 if the requesting user is not the captain
+* The Challenge API will now properly freeze the solve count to freeze time
+
+
 2.1.3 / 2019-06-22
 ==================
 
