@@ -4,7 +4,7 @@ lint:
 	prettier --check 'CTFd/themes/**/*'
 
 test:
-	pytest --cov=CTFd --disable-warnings -n auto
+	pytest --driver Chrome --needle-viewport-size "1920 x 1080" --cov=CTFd --disable-warnings -n auto
 	bandit -r CTFd -x CTFd/uploads
 
 screens:
