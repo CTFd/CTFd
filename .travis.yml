@@ -14,6 +14,7 @@ addons:
     packages:
     - python3.6
     - python3-pip
+    - chromium-browser
     - chromium-chromedriver
 env:
     - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
