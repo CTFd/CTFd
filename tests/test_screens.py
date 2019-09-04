@@ -25,8 +25,6 @@ def test_example_element(needle):
         SERVER_NAME = "localhost:5000"
 
     app = create_ctfd(config=LiveTestingConfig)
-    # with app.app_context():
-    #     client = login_as_user(app, name='admin')
 
     server = Process(target=app.run, kwargs={'debug': True, 'threaded': True, 'host': "127.0.0.1", 'port': 5000})
     server.daemon = True
