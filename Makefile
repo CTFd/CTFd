@@ -7,6 +7,9 @@ test:
 	pytest --cov=CTFd --disable-warnings -n auto
 	bandit -r CTFd -x CTFd/uploads
 
+screens:
+	pytest --driver Chrome --needle-save-baseline --needle-viewport-size "1920 x 1080" tests/test_screens.py
+
 serve:
 	python serve.py
 
