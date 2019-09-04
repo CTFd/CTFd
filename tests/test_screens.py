@@ -1,16 +1,11 @@
-import os
-import sys
 from CTFd.config import TestingConfig
 from tests.helpers import (
     create_ctfd,
-    destroy_ctfd,
-    login_as_user
+    destroy_ctfd
 )
 from multiprocessing import Process
 import time
 import pytest
-import sys
-import requests
 
 
 @pytest.fixture
