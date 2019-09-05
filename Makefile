@@ -12,6 +12,7 @@ lint:
 test:
 	pytest \
 		--driver Chrome \
+		--needle-engine imagemagick \
 		--needle-viewport-size "1920 x 1080" \
 		--needle-cleanup-on-success \
 		--cov=CTFd \
@@ -24,6 +25,7 @@ screens:
 		--driver Chrome \
 		--needle-save-baseline \
 		--needle-viewport-size "1920 x 1080" \
+		--needle-engine imagemagick \
 		tests/test_screens.py
 
 serve:

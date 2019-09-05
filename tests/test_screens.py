@@ -11,6 +11,7 @@ import pytest
 @pytest.fixture
 def chrome_options(chrome_options):
     chrome_options.add_argument('headless')
+    chrome_options.add_argument('no-sandbox')
     return chrome_options
 
 
@@ -40,6 +41,7 @@ def test_example_element(needle):
     submit.click()
 
     needle.driver.get('http://localhost:5000/scoreboard')
+    time.sleep(1)
     needle.assert_screenshot('scoreboard')
 
     server.terminate()

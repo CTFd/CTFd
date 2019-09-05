@@ -15,6 +15,7 @@ addons:
     packages:
     - python3.6
     - python3-pip
+    - imagemagick
     - google-chrome-stable
     - chromium-chromedriver
 env:
