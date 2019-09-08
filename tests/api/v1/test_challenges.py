@@ -536,14 +536,25 @@ def test_api_challenge_get_solves_ctf_frozen():
             chal2_id = chal2.id
 
         with freeze_time("2017-10-8"):
-            chal2 = gen_solve(app.db, user_id=2, challenge_id=chal2_id)
+            # User ID 2 solves Challenge ID 2
+            gen_solve(app.db, user_id=2, challenge_id=chal2_id)
+            # User ID 3 solves Challenge ID 1
+            gen_solve(app.db, user_id=3, challenge_id=chal_id)
+
+            # Challenge 1 has 2 solves
+            # Challenge 2 has 1 solve
 
             # There should now be two solves assigned to the same user.
-            assert Solves.query.count() == 2
+            assert Solves.query.count() == 3
 
             client = login_as_user(app, name="user2")
 
-            # Challenge 1 should have one solve
+            # Challenge 1 should have one solve (after freeze)
+            r = client.get("/api/v1/challenges/1")
+            data = r.get_json()["data"]
+            assert data['solves'] == 1
+
+            # Challenge 1 should have one solve (after freeze)
             r = client.get("/api/v1/challenges/1/solves")
             data = r.get_json()["data"]
             assert len(data) == 1
