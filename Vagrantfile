@@ -1,9 +1,18 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Install tmux and virtualenv to support development
+# Install tmux, virtualenv, and mariadb-server to support development
 $preProvision= <<SCRIPT
-sudo apt-get install tmux virtualenvwrapper mariadb-server -y
+# Prevent attempt to access stdin, causing dpkg-reconfigure error output
+export DEBIAN_FRONTEND=noninteractive
+apt-get install -y tmux virtualenvwrapper
+
+# As per instructions at https://downloads.mariadb.org/mariadb/repositories
+apt-get install -y software-properties-common
+apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8 2>&1
+add-apt-repository -y 'deb [arch=amd64,arm64,i386,ppc64el] http://mirror.lstn.net/mariadb/repo/10.4/ubuntu xenial main'
+apt-get update
+apt-get install -y mariadb-server
 SCRIPT
 
 # Wrap provisioning script with a virutalenv for pip packages
@@ -59,6 +68,6 @@ Vagrant.configure("2") do |config|
                       run: "always"
 
   # Install docker (convenience)
-  config.vm.provision "shell", path: "scripts/install_docker_ubuntu.sh"
+  config.vm.provision "shell", path: "scripts/install_docker.sh", privileged: false
 
 end
