@@ -22,6 +22,7 @@ from CTFd.utils.user import authed, get_ip, get_current_user, get_current_team
 from CTFd.utils.modes import generate_account_url
 from CTFd.utils.config import is_setup
 from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils.security.auth import logout_user
 
 from CTFd.utils.config.visibility import (
     accounts_visible,
@@ -165,10 +166,9 @@ def init_request_processors(app):
 
             try:
                 db.session.commit()
-            except (InvalidRequestError, IntegrityError) as e:
-                print(e.message)
+            except (InvalidRequestError, IntegrityError):
                 db.session.rollback()
-                session.clear()
+                logout_user()
 
             if authed():
                 user = get_current_user()
