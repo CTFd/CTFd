@@ -8,7 +8,9 @@ def test_export_csv_works():
         gen_challenge(app.db)
         client = login_as_user(app, name="admin", password="password")
 
-        csv_data = client.get("/admin/export/csv?table=challenges").get_data(as_text=True)
+        csv_data = client.get("/admin/export/csv?table=challenges").get_data(
+            as_text=True
+        )
         assert len(csv_data) > 0
 
     destroy_ctfd(app)
