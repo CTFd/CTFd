@@ -125,8 +125,8 @@ def export_csv():
     if model is None:
         abort(404)
 
-    output = six.StringIO()
-    writer = csv.writer(output)
+    temp = six.StringIO()
+    writer = csv.writer(temp)
 
     header = [column.name for column in model.__mapper__.columns]
     writer.writerow(header)
@@ -138,7 +138,14 @@ def export_csv():
             [getattr(curr, column.name) for column in model.__mapper__.columns]
         )
 
+    temp.seek(0)
+
+    # In Python 3 send_file requires bytes
+    output = six.BytesIO()
+    output.write(temp.getvalue().encode("utf-8"))
     output.seek(0)
+    temp.close()
+
     return send_file(
         output,
         as_attachment=True,
