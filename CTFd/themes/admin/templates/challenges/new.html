@@ -32,10 +32,8 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/codemirror.min.js') }}"></script>
-	<script>
-	var nonce = "{{ nonce }}";
-	</script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/new.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/style.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script src="{{ url_for('views.themes', theme='admin', path='js/pages/challenge.js') }}"></script>
 {% endblock %}

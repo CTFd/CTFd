@@ -93,6 +93,8 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/settings.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script src="{{ url_for('views.themes', path='js/pages/settings.js') }}"></script>
 {% endblock %}

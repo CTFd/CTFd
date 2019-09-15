@@ -42,7 +42,7 @@
 				<hr>
 				{% for notification in notifications %}
 					<div class="card bg-light mb-4">
-						<button type="button" notif-id="{{ notification.id }}" class="delete-notification close position-absolute p-3" style="right:0;" data-dismiss="alert" aria-label="Close">
+						<button type="button" data-notif-id="{{ notification.id }}" class="delete-notification close position-absolute p-3" style="right:0;" data-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
 						<div class="card-body">
@@ -60,5 +60,8 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme='admin', path='js/notifications/notifications.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script src="{{ url_for('views.themes', theme='admin', path='js/pages/notifications.js') }}"></script>
 {% endblock %}

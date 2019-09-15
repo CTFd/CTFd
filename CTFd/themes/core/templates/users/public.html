@@ -151,7 +151,7 @@
 									<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
 									<td>{{ solve.challenge.value }}</td>
 									<td class="solve-time">
-										<script>document.write(moment("{{ solve.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+										<span data-time="{{ solve.date | isoformat }}"></span>
 									</td>
 								</tr>
 							{% endfor %}
@@ -168,13 +168,17 @@
 
 {% block scripts %}
 	<script>
-        var user_id = {{ user.id }};
-        var user_name = {{ user.name | tojson }};
-        var team_id = {{ user.team_id | tojson }};
-        var user_self = {{ (user.id == id) | tojson }};
-        var user_account_id = user_self ? "me" : user_id;
+		var stats_data = {{ {
+			'type': 'user',
+			'id': user.id,
+			'name': user.name,
+			'account_id': 'me' if user.id == id else user.id,
+		} | tojson }};
 	</script>
-	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/user.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 {% endblock %}

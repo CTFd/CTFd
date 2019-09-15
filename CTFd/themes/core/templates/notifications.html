@@ -13,7 +13,7 @@
 				<h3 class="card-title">{{ notification.title }}</h3>
 				<blockquote class="blockquote mb-0">
 					<p>{{ notification.content | safe }}</p>
-					<small class="text-muted">{{ notification.date | isoformat }}</small>
+					<small class="text-muted"><span data-time="{{ notification.date | isoformat }}"></span></small>
 				</blockquote>
 			</div>
 		</div>
@@ -22,6 +22,4 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
 {% endblock %}

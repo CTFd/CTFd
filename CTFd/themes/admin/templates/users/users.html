@@ -146,5 +146,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='admin', path='js/users/users.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script src="{{ url_for('views.themes', theme='admin', path='js/pages/users.js') }}"></script>
 {% endblock %}

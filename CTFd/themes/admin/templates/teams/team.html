@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="team-info-modal" class="modal fade">
+<div id="team-info-edit-modal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -14,7 +14,7 @@
 				</button>
 			</div>
 			<div class="modal-body clearfix">
-				{% include "admin/modals/teams/create.html" %}
+				{% include "admin/modals/teams/edit.html" %}
 			</div>
 		</div>
 	</div>
@@ -205,7 +205,7 @@
 							<td class="text-center">{{ solve.challenge.category }}</td>
 							<td class="text-center">{{ solve.challenge.value }}</td>
 							<td class="text-center solve-time">
-								<script>document.write(moment("{{ solve.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+								<span data-time="{{ solve.date | isoformat }}"></span>
 							</td>
 							<td class="text-center">
 								<span class="delete-submission" submission-id="{{ solve.id }}"
@@ -252,7 +252,7 @@
 							</td>
 							<td class="flag" id="{{ fail.id }}"><pre>{{ fail.provided }}</pre></td>
 							<td class="text-center solve-time">
-								<script>document.write(moment("{{ fail.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+								<span data-time="{{ fail.date | isoformat }}"></span>
 							</td>
 							<td class="text-center">
 								<span class="delete-submission" submission-id="{{ fail.id }}"
@@ -298,7 +298,7 @@
 								</td>
 								<td class=""><pre>{{ award.description }}</pre></td>
 								<td class="text-center solve-time">
-									<script>document.write(moment("{{ award.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+									<span data-time="{{ award.date | isoformat }}"></span>
 								</td>
 								<td class="text-center">{{ award.value }}</td>
 								<td class="text-center">{{ award.category }}</td>
@@ -340,7 +340,7 @@
 						</td>
 						<td class="text-center">{{ addr.ip }}</td>
 						<td class="text-center solve-time">
-							<script>document.write(moment("{{ addr.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+							<span data-time="{{ addr.date | isoformat }}"></span>
 						</td>
 					</tr>
 				{% endfor %}
@@ -357,9 +357,17 @@
 <script>
 	var TEAM_ID = {{ team.id }};
 	var TEAM_NAME = {{ team.name | tojson }};
+	var stats_data = {{ {
+		'type': 'team',
+		'id': team.id,
+		'name': team.name,
+		'account_id': team.id,
+	} | tojson }};
 </script>
-<script src="{{ url_for('views.themes', theme='core', path='js/vendor/plotly.min.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/teams/info.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/teams/graphs.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/teams/actions.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='core', path='js/plotly.bundle.js') }}"></script>
+<script src="{{ url_for('views.themes', theme='core', path='js/graphs.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script src="{{ url_for('views.themes', theme='admin', path='js/pages/team.js') }}"></script>
 {% endblock %}
