@@ -53,13 +53,10 @@
 {% endblock %}
 
 {% block scripts %}
-	<script>
-		var authed = {{ (id is defined) | tojson }};
-	</script>
 {% endblock %}
 
 {% block entrypoint %}
 	{% if admin or not errors %}
-		<script src="{{ url_for('views.themes', path='js/pages/challenges.js') }}"></script>
+		<script async src="{{ url_for('views.themes', path='js/pages/challenges.js') }}"></script>
 	{% endif %}
 {% endblock %}

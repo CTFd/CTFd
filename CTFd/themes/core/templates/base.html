@@ -135,15 +135,15 @@
 		</div>
 	</footer>
 
-	<script src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/core.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
+	<script async src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"></script>
+	<script async src="{{ url_for('views.themes', path='js/core.js') }}"></script>
+	<script async src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
 
 	{% block scripts %}
 	{% endblock %}
 
 	{% block entrypoint %}
-	<script src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
+	<script async src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
 	{% endblock %}
 
 	{% for script in get_registered_scripts() %}

@@ -22,10 +22,10 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme='core', path='js/plotly.bundle.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/graphs.js') }}"></script>
+	<script async src="{{ url_for('views.themes', theme='core', path='js/plotly.bundle.js') }}"></script>
+	<script async src="{{ url_for('views.themes', theme='core', path='js/graphs.js') }}"></script>
 {% endblock %}
 
 {% block entrypoint %}
-	<script src="{{ url_for('views.themes', theme='admin', path='js/pages/user.js') }}"></script>
+	<script async src="{{ url_for('views.themes', theme='admin', path='js/pages/user.js') }}"></script>
 {% endblock %}

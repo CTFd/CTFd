@@ -292,13 +292,13 @@
 		} | tojson }};
 		var team_captain = {{ (user.id == team.captain_id) | tojson }};
 	</script>
-	<script src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+	<script async src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
 	{% if solves %}
-		<script src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
-		<script src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
+		<script async src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+		<script async src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 	{% endif %}
 {% endblock %}
 
 {% block entrypoint %}
-	<script src="{{ url_for('views.themes', path='js/pages/teams/private.js') }}"></script>
+	<script async src="{{ url_for('views.themes', path='js/pages/teams/private.js') }}"></script>
 {% endblock %}

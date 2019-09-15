@@ -169,12 +169,12 @@
 			'account_id': 'me' if user is defined and user.team_id == team.id else team.id,
 		} | tojson }};
 	</script>
-	<script src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+	<script async src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+	<script async src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
 {% endblock %}
 
 {% block entrypoint %}
 	{% if solves %}
-		<script src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
+		<script async src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 	{% endif %}
 {% endblock %}
