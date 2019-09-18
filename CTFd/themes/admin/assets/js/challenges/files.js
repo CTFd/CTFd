@@ -1,6 +1,6 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
-import { default as helpers } from "core/helpers"
+import { default as helpers } from "core/helpers";
 import { ezQuery, ezAlert, ezProgressBar } from "core/ezq";
 
 export function addFile(event) {
@@ -8,13 +8,13 @@ export function addFile(event) {
   let form = event.target;
   let data = {
     challenge: CHALLENGE_ID,
-    type: "challenge",
-  }
-  helpers.files.upload(form, data, function (response) {
-    setTimeout(function () {
+    type: "challenge"
+  };
+  helpers.files.upload(form, data, function(response) {
+    setTimeout(function() {
       window.location.reload();
     }, 700);
-  })
+  });
 }
 
 export function deleteFile(event) {

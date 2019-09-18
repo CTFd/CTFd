@@ -4,7 +4,7 @@ import "bootstrap/js/dist/tab";
 import Moment from "moment-timezone";
 import moment from "moment-timezone";
 import CTFd from "core/CTFd";
-import { default as helpers } from "core/helpers"
+import { default as helpers } from "core/helpers";
 import $ from "jquery";
 import { ezQuery, ezProgressBar } from "core/ezq";
 
@@ -116,7 +116,7 @@ function updateConfigs(event) {
 function uploadLogo(event) {
   event.preventDefault();
   let form = event.target;
-  helpers.files.upload(form, {}, function (response) {
+  helpers.files.upload(form, {}, function(response) {
     const f = response.data[0];
     const params = {
       value: f.location
@@ -125,10 +125,10 @@ function uploadLogo(event) {
       method: "PATCH",
       body: JSON.stringify(params)
     })
-      .then(function (response) {
+      .then(function(response) {
         return response.json();
       })
-      .then(function (response) {
+      .then(function(response) {
         if (response.success) {
           window.location.reload();
         } else {
@@ -139,7 +139,7 @@ function uploadLogo(event) {
           });
         }
       });
-  })
+  });
 }
 
 function removeLogo() {
@@ -179,14 +179,14 @@ function importConfig(event) {
     processData: false,
     contentType: false,
     statusCode: {
-      500: function (resp) {
+      500: function(resp) {
         console.log(resp.responseText);
         alert(resp.responseText);
       }
     },
-    xhr: function () {
+    xhr: function() {
       let xhr = $.ajaxSettings.xhr();
-      xhr.upload.onprogress = function (e) {
+      xhr.upload.onprogress = function(e) {
         if (e.lengthComputable) {
           let width = (e.loaded / e.total) * 100;
           pg = ezProgressBar({
@@ -197,15 +197,15 @@ function importConfig(event) {
       };
       return xhr;
     },
-    success: function (data) {
+    success: function(data) {
       pg = ezProgressBar({
         target: pg,
         width: 100
       });
-      setTimeout(function () {
+      setTimeout(function() {
         pg.modal("hide");
       }, 500);
-      setTimeout(function () {
+      setTimeout(function() {
         window.location.reload();
       }, 700);
     }

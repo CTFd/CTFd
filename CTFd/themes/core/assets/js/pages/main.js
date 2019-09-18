@@ -9,7 +9,7 @@ CTFd.init(window.init);
 window.CTFd = CTFd;
 
 $(() => {
-    styles();
-    times();
-    events(config.urlRoot);
+  styles();
+  times();
+  events(config.urlRoot);
 });
