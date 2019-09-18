@@ -1,7 +1,24 @@
 from flask import request
 from flask_caching import Cache
+from jinja2 import BytecodeCache
 
 cache = Cache()
+
+
+class RedisJinjaBytecodeCache(BytecodeCache):
+    """
+    Jinja bytecode cache based on Flask-Caching
+    """
+
+    def load_bytecode(self, bucket):
+        key = make_cache_key(path=bucket.key, key_prefix="template/%s")
+        bc = cache.get(key)
+        if bc:
+            bucket.bytecode_from_string(bc)
+
+    def dump_bytecode(self, bucket):
+        key = make_cache_key(path=bucket.key, key_prefix="template/%s")
+        cache.set(key=key, value=bucket.bytecode_to_string(), timeout=300)
 
 
 def make_cache_key(path=None, key_prefix="view/%s"):

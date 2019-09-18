@@ -22,6 +22,7 @@ from CTFd.utils.initialization import (
     init_events,
 )
 from CTFd.plugins import init_plugins
+from CTFd.cache import RedisJinjaBytecodeCache
 
 # Hack to support Unicode in Python 2 properly
 if sys.version_info[0] < 3:
@@ -61,11 +62,13 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
     """SandboxEnvironment that mimics the Flask BaseEnvironment"""
 
     def __init__(self, app, **options):
+        if app.config['CACHE_TYPE'] == 'redis':
+            self.bytecode_cache = RedisJinjaBytecodeCache()
+        else:
+            self.bytecode_cache = None
         if "loader" not in options:
             options["loader"] = app.create_global_jinja_loader()
-        # Disable cache entirely so that themes can be switched (#662)
-        # If the cache is enabled, switching themes will cause odd rendering errors
-        SandboxedEnvironment.__init__(self, cache_size=0, **options)
+        SandboxedEnvironment.__init__(self, cache_size=0, bytecode_cache=self.bytecode_cache, **options)
         self.app = app
 
 
