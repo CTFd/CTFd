@@ -68,7 +68,7 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
             self.bytecode_cache = None
         if "loader" not in options:
             options["loader"] = app.create_global_jinja_loader()
-        SandboxedEnvironment.__init__(self, cache_size=0, bytecode_cache=self.bytecode_cache, **options)
+        SandboxedEnvironment.__init__(self, bytecode_cache=self.bytecode_cache, **options)
         self.app = app
 
 
