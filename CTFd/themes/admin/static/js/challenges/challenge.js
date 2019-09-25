@@ -216,10 +216,9 @@ $(document).ready(function() {
       })
       .then(function(data) {
         if (data.success) {
-          ezal({
+          ezt({
             title: "Success",
-            body: "Your challenge has been updated!",
-            button: "OK"
+            body: "Your challenge has been updated!"
           });
         }
       });
