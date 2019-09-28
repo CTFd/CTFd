@@ -1,0 +1,19 @@
+version: v1.0
+name: Hello Semaphore
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Simple example
+    task:
+      env_vars:
+        - name: APP_ENV
+          value: prod
+      jobs:
+        - name: Download our code
+          commands:
+            - echo "Hello from Semaphore!"
+            - echo $APP_ENV
+            - checkout
+            - ls -alh
