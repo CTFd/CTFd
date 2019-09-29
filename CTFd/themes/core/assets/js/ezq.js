@@ -20,7 +20,27 @@ const modalTpl =
   "  </div>" +
   "</div>";
 
+<<<<<<< HEAD:CTFd/themes/core/assets/js/ezq.js
 const progressTpl =
+=======
+  var toast =
+ ' <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">'+
+  '<div class="toast-header">'+
+   ' <img src="..." class="rounded mr-2" alt="...">'+
+   '<strong class="mr-auto">{0}</strong>'+
+   '<small>11 mins ago</small>'+
+   '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">'+
+   '  <span aria-hidden="true">&times;</span>'+
+   '</button>'+
+   '</div>'+
+   '<div class="toast-body">'+
+   '{1}'+
+   '</div>'+
+   '</div>';
+  
+
+var progress =
+>>>>>>> feature-toast:CTFd/themes/core/static/js/ezq.js
   '<div class="progress">' +
   '  <div class="progress-bar progress-bar-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {0}%">' +
   "  </div>" +
@@ -64,9 +84,27 @@ export function ezAlert(args) {
   return obj;
 }
 
+<<<<<<< HEAD:CTFd/themes/core/assets/js/ezq.js
 export function ezQuery(args) {
   const modal = modalTpl.format(args.title, args.body);
   const obj = $(modal);
+=======
+function ezt(args) {
+  var res = toast.format(args.title, args.body);
+  var obj = $(res);
+  obj.toast('show');
+  return obj;
+}
+
+function ezq(args) {
+  var res = modal.format(args.title, args.body);
+  var obj = $(res);
+  var deny =
+    '<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>';
+  var confirm = $(
+    '<button type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>'
+  );
+>>>>>>> feature-toast:CTFd/themes/core/static/js/ezq.js
 
   const yes = $(yesTpl);
   const no = $(noTpl);
