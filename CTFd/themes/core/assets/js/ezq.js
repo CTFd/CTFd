@@ -20,20 +20,18 @@ const modalTpl =
   "  </div>" +
   "</div>";
 
-
-const toast =
-  '<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">' +
-  '  <div class="toast-header">' +
-  '    <strong class="mr-auto">{0}</strong>' +
-  '    <small>11 mins ago</small>' +
-  '    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">' +
-  '      <span aria-hidden="true">&times;</span>' +
-  '    </button>' +
-  '  </div>' +
-  '  <div class="toast-body">' +
-  '    {1}' +
-  '  </div>' +
-  '</div>';
+  const toast =
+ ' <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay=1000 style="opacity: 1;">'+
+  '<div class="toast-header">'+
+   '<strong class="mr-auto">{0}</strong>'+
+   '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">'+
+   '  <span aria-hidden="true">&times;</span>'+
+   '</button>'+
+   '</div>'+
+   '<div class="toast-body">'+
+   '{1}'+
+   '</div>'+
+   '</div>';
   
 const progressTpl =
   '<div class="progress">' +
@@ -79,11 +77,12 @@ export function ezAlert(args) {
   return obj;
 }
 
-
-
 export function ezToast(args) {
   var res = toast.format(args.title, args.body);
   var obj = $(res);
+
+  $("#toast-box").append(obj);
+
   obj.toast('show');
   return obj;
 }
