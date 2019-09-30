@@ -1,7 +1,7 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
 import MarkdownIt from "markdown-it";
-import { ezQuery, ezAlert, ezProgressBar } from "core/ezq";
+import { ezQuery, ezAlert, ezToast, ezProgressBar } from "core/ezq";
 
 function hint(id) {
   return CTFd.fetch("/api/v1/hints/" + id + "?preview=true", {
@@ -27,10 +27,9 @@ function loadhint(hintid) {
         button: "Got it!"
       });
     } else {
-      ezAlert({
+      ezToast({
         title: "Error",
-        body: "Error loading hint!",
-        button: "OK"
+        body: "Error loading hint!"
       });
     }
   });

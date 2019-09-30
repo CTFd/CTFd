@@ -24,10 +24,9 @@ const loadChal = id => {
   const chal = $.grep(challenges, chal => chal.id == id)[0];
 
   if (chal.type === "hidden") {
-    ezAlert({
+    ezToast({
       title: "Challenge Hidden!",
-      body: "You haven't unlocked this challenge yet!",
-      button: "Got it!"
+      body: "You haven't unlocked this challenge yet!"
     });
     return;
   }
@@ -409,10 +408,9 @@ const displayUnlock = id => {
           return;
         }
 
-        ezAlert({
+        ezToast({
           title: "Error",
-          body: md.render(response.errors.score),
-          button: "Got it!"
+          body: md.render(response.errors.score)
         });
       });
     }

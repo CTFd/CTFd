@@ -4,7 +4,7 @@ import $ from "jquery";
 import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
 import CodeMirror from "codemirror";
-import { ezAlert, ezQuery, ezProgressBar } from "core/ezq";
+import { ezToast, ezQuery, ezProgressBar } from "core/ezq";
 
 function get_filetype_icon_class(filename) {
   var mapping = {
@@ -176,10 +176,9 @@ function submit_form() {
     })
     .then(function(response) {
       if (method === "PATCH" && response.success) {
-        ezAlert({
+        ezToast({
           title: "Saved",
-          body: "Your changes have been saved",
-          button: "Okay"
+          body: "Your changes have been saved"
         });
       } else {
         window.location =

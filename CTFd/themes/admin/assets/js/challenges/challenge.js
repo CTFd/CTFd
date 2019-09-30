@@ -1,5 +1,5 @@
 import $ from "jquery";
-import { ezAlert } from "core/ezq";
+import { ezToast } from "core/ezq";
 import CTFd from "core/CTFd";
 import nunjucks from "nunjucks";
 
@@ -213,10 +213,9 @@ $(() => {
       body: JSON.stringify(params)
     }).then(function(data) {
       if (data.success) {
-        ezAlert({
+        ezToast({
           title: "Success",
-          body: "Your challenge has been updated!",
-          button: "OK"
+          body: "Your challenge has been updated!"
         });
       }
     });
