@@ -382,6 +382,7 @@ class ChallengeAttempt(Resource):
 
         chal_class = get_chal_class(challenge.type)
 
+
         # Anti-bruteforce / submitting Flags too quickly
         kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
         if kpm > 10:
@@ -391,9 +392,9 @@ class ChallengeAttempt(Resource):
                 )
             log(
                 "submissions",
-                "[{date}] {name} submitted {submission} on {challenge} with kpm {kpm} [TOO FAST]",
+                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
                 submission=request_data["submission"].encode("utf-8"),
-                challenge=challenge_id,
+                challenge_id=challenge_id,
                 kpm=kpm,
             )
             # Submitting too fast
@@ -438,9 +439,9 @@ class ChallengeAttempt(Resource):
 
                 log(
                     "submissions",
-                    "[{date}] {name} submitted {submission} on {challenge} with kpm {kpm} [CORRECT]",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
                     submission=request_data["submission"].encode("utf-8"),
-                    challenge=challenge_id,
+                    challenge_id=challenge_id,
                     kpm=kpm,
                 )
                 return {
@@ -456,9 +457,9 @@ class ChallengeAttempt(Resource):
 
                 log(
                     "submissions",
-                    "[{date}] {name} submitted {submission} on {challenge} with kpm {kpm} [WRONG]",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
                     submission=request_data["submission"].encode("utf-8"),
-                    challenge=challenge_id,
+                    challenge_id=challenge_id,
                     kpm=kpm,
                 )
 
@@ -490,9 +491,9 @@ class ChallengeAttempt(Resource):
         else:
             log(
                 "submissions",
-                "[{date}] {name} submitted {submission} on {challenge} with kpm {kpm} [ALREADY SOLVED]",
+                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
                 submission=request_data["submission"].encode("utf-8"),
-                challenge=challenge_id,
+                challenge_id=challenge_id,
                 kpm=kpm,
             )
             return {
