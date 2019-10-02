@@ -1,3 +1,16 @@
+2.1.5 / 2019-10-2
+=================
+
+**General**
+* Fixes `flask run` debug server by not monkey patching in `wsgi.py`
+* Fix CSV exports in Python 3 by converting StringIO to BytesIO
+* Avoid exception on sessions without a valid user and force logout
+* Fix several issues in Vagrant provisioning
+
+**API**
+* Prevent users from nulling out profile values and breaking certain pages
+
+
 2.1.4 / 2019-08-31
 ==================
 
