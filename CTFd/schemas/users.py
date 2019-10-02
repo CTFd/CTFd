@@ -20,6 +20,7 @@ class UserSchema(ma.ModelSchema):
         Users,
         "name",
         required=True,
+        allow_none=False,
         validate=[
             validate.Length(min=1, max=128, error="User names must not be empty")
         ],
@@ -27,6 +28,7 @@ class UserSchema(ma.ModelSchema):
     email = field_for(
         Users,
         "email",
+        allow_none=False,
         validate=[
             validate.Email("Emails must be a properly formatted email address"),
             validate.Length(min=1, max=128, error="Emails must not be empty"),
