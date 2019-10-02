@@ -391,8 +391,9 @@ class ChallengeAttempt(Resource):
                 )
             log(
                 "submissions",
-                "[{date}] {name} submitted {submission} with kpm {kpm} [TOO FAST]",
+                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
                 submission=request_data["submission"].encode("utf-8"),
+                challenge_id=challenge_id,
                 kpm=kpm,
             )
             # Submitting too fast
@@ -437,8 +438,9 @@ class ChallengeAttempt(Resource):
 
                 log(
                     "submissions",
-                    "[{date}] {name} submitted {submission} with kpm {kpm} [CORRECT]",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
                     submission=request_data["submission"].encode("utf-8"),
+                    challenge_id=challenge_id,
                     kpm=kpm,
                 )
                 return {
@@ -454,8 +456,9 @@ class ChallengeAttempt(Resource):
 
                 log(
                     "submissions",
-                    "[{date}] {name} submitted {submission} with kpm {kpm} [WRONG]",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
                     submission=request_data["submission"].encode("utf-8"),
+                    challenge_id=challenge_id,
                     kpm=kpm,
                 )
 
@@ -487,8 +490,9 @@ class ChallengeAttempt(Resource):
         else:
             log(
                 "submissions",
-                "[{date}] {name} submitted {submission} with kpm {kpm} [ALREADY SOLVED]",
+                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
                 submission=request_data["submission"].encode("utf-8"),
+                challenge_id=challenge_id,
                 kpm=kpm,
             )
             return {
