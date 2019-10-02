@@ -382,7 +382,6 @@ class ChallengeAttempt(Resource):
 
         chal_class = get_chal_class(challenge.type)
 
-
         # Anti-bruteforce / submitting Flags too quickly
         kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
         if kpm > 10:
