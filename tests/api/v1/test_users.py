@@ -427,6 +427,13 @@ def test_api_user_change_name():
             assert resp["data"]["name"] == "user2"
             assert resp["success"] is True
 
+            r = client.patch("/api/v1/users/me", json={"name": None})
+            resp = r.get_json()
+            print(resp)
+            assert r.status_code == 400
+            assert resp["errors"]["name"] == ["Field may not be null."]
+            assert resp["success"] is False
+
             set_config("name_changes", False)
 
             r = client.patch("/api/v1/users/me", json={"name": "new_name"})
@@ -441,6 +448,32 @@ def test_api_user_change_name():
             resp = r.get_json()
             assert resp["data"]["name"] == "new_name"
             assert resp["success"] is True
+    destroy_ctfd(app)
+
+
+def test_api_user_change_email():
+    """Test that users can change their email via the API"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        user = Users.query.filter_by(id=2).first()
+        app.db.session.commit()
+        with login_as_user(app) as client:
+            # Test users can't submit null
+            r = client.patch("/api/v1/users/me", json={"email": None, "confirm": "password"})
+            resp = r.get_json()
+            print(resp)
+            assert r.status_code == 400
+            assert resp["errors"]["email"] == ["Field may not be null."]
+
+            # Test users can exercise the API
+            r = client.patch("/api/v1/users/me", json={"email": "new_email@email.com", "confirm": "password"})
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp["data"]["email"] == "new_email@email.com"
+            assert resp["success"] is True
+            user = Users.query.filter_by(id=2).first()
+            assert user.email == "new_email@email.com"
     destroy_ctfd(app)
 
 
