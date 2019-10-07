@@ -27,7 +27,9 @@ def get_errors():
 def url_for(endpoint, **values):
     if endpoint == 'views.themes':
         path = values.get('path', '')
-        if '.dev' not in path and '.min' not in path:
+        static_asset = path.endswith('.js') or path.endswith('.css')
+        direct_access = '.dev' in path or '.min' in path
+        if static_asset and not direct_access:
             env = values.get('env', current_app.env)
             mode = '.dev' if env == 'development' else '.min'
             base, ext = os.path.splitext(path)
