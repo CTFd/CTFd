@@ -1,4 +1,3 @@
-import os
 from flask import (
     request,
     flash,
@@ -6,6 +5,7 @@ from flask import (
     url_for as flask_url_for,
     current_app
 )
+import os
 
 
 def info_for(endpoint, message):
