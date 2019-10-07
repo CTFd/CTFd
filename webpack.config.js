@@ -48,8 +48,11 @@ const roots = {
   },
 }
 
-function getJSConfig(root, type, entries) {
+function getJSConfig(root, type, entries, mode) {
   const out = {}
+  const ext = mode == 'development' ? 'dev' : 'min'
+  const chunk_file = `[name].${ext}.chunk.js`
+
   for (let key in entries) {
     out[key] = path.resolve(__dirname, 'CTFd', root, entries[key])
   }
@@ -59,7 +62,8 @@ function getJSConfig(root, type, entries) {
     output: {
       path: path.resolve(__dirname, 'CTFd', root, 'static', type),
       publicPath: '/' + root + '/static/' + type,
-      chunkFilename: '[name].chunk.js',
+      filename: `[name].${ext}.js`,
+      chunkFilename: chunk_file,
     },
     optimization: {
       splitChunks: {
@@ -67,34 +71,34 @@ function getJSConfig(root, type, entries) {
         cacheGroups: {
           plotly: {
             name: 'plotly',
-            filename: 'plotly.bundle.js',
+            filename: `plotly.bundle.${ext}.js`,
             test: /plotly/,
             priority: 1,
             enforce: true,
           },
           vendor: {
             name: 'vendor',
-            filename: 'vendor.bundle.js',
+            filename: `vendor.bundle.${ext}.js`,
             test: /node_modules/,
             // maxSize: 1024 * 256,
             enforce: true,
           },
           graphs: {
             name: 'graphs',
-            filename: 'graphs.js',
+            filename: `graphs.${ext}.js`,
             test: /graphs/,
             priority: 1,
             reuseExistingChunk: true,
           },
           helpers: {
             name: 'helpers',
-            filename: 'helpers.js',
+            filename: `helpers.${ext}.js`,
             test: /helpers/,
             priority: 1,
             reuseExistingChunk: true,
           },
           default: {
-            filename: 'core.js',
+            filename: `core.${ext}.js`,
             minChunks: 2,
             priority: -1,
             reuseExistingChunk: true,
@@ -138,8 +142,12 @@ function getJSConfig(root, type, entries) {
   }
 }
 
-function getCSSConfig(root, type, entries) {
+function getCSSConfig(root, type, entries, mode) {
   const out = {}
+  const ext = mode == 'development' ? 'dev' : 'min'
+  const ouptut_file = `[name].${ext}.css`
+  const chunk_file = `[id].${ext}.css`
+
   for (let key in entries) {
     out[key] = path.resolve(__dirname, 'CTFd', root, entries[key])
   }
@@ -214,8 +222,8 @@ function getCSSConfig(root, type, entries) {
     plugins: [
       new FixStyleOnlyEntriesPlugin(),
       new MiniCssExtractPlugin({
-        filename: '[name].css',
-        chunkFilename: '[id].css'
+        filename: ouptut_file,
+        chunkFilename: chunk_file
       }),
     ],
   }
@@ -226,9 +234,14 @@ const mapping = {
   'css': getCSSConfig,
 }
 
-module.exports = []
-for (let root in roots) {
-  for (let type in roots[root]) {
-    module.exports.push(mapping[type](root, type, roots[root][type]))
+module.exports = (env, options) => {
+  let output = []
+  let mode = options.mode
+  for (let root in roots) {
+    for (let type in roots[root]) {
+      let entry = mapping[type](root, type, roots[root][type], mode);
+      output.push(entry)
+    }
   }
+  return output
 }
