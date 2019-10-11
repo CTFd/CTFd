@@ -84,7 +84,7 @@ def authed_only(f):
         if authed():
             return f(*args, **kwargs)
         else:
-            if request.content_type == "application/json":
+            if request.content_type == "application/json" or request.accept_mimetypes.best == "text/event-stream":
                 abort(403)
             else:
                 return redirect(url_for("auth.login", next=request.full_path))
