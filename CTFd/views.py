@@ -17,7 +17,8 @@ from CTFd.utils import markdown
 from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import authed, get_current_user
-from CTFd.utils import config
+from CTFd.utils import config, validators
+from CTFd.utils.helpers import get_errors
 from CTFd.utils.uploads import get_uploader
 from CTFd.utils.config.pages import get_page
 from CTFd.utils.config.visibility import challenges_visible
@@ -41,6 +42,7 @@ views = Blueprint("views", __name__)
 
 @views.route("/setup", methods=["GET", "POST"])
 def setup():
+    errors = get_errors()
     if not config.is_setup():
         if not session.get("nonce"):
             session["nonce"] = generate_nonce()
@@ -55,6 +57,43 @@ def setup():
             name = request.form["name"]
             email = request.form["email"]
             password = request.form["password"]
+
+            name_len = len(name) == 0
+            names = Users.query.add_columns("name", "id").filter_by(name=name).first()
+            emails = (
+                Users.query.add_columns("email", "id")
+                .filter_by(email=email)
+                .first()
+            )
+            pass_short = len(password) == 0
+            pass_long = len(password) > 128
+            valid_email = validators.validate_email(request.form["email"])
+            team_name_email_check = validators.validate_email(name)
+
+            if not valid_email:
+                errors.append("Please enter a valid email address")
+            if names:
+                errors.append("That user name is already taken")
+            if team_name_email_check is True:
+                errors.append("Your user name cannot be an email address")
+            if emails:
+                errors.append("That email has already been used")
+            if pass_short:
+                errors.append("Pick a longer password")
+            if pass_long:
+                errors.append("Pick a shorter password")
+            if name_len:
+                errors.append("Pick a longer user name")
+
+            if len(errors) > 0:
+                return render_template(
+                    "setup.html",
+                    errors=errors,
+                    name=name,
+                    email=email,
+                    password=password,
+                )
+
             admin = Admins(
                 name=name, email=email, password=password, type="admin", hidden=True
             )
