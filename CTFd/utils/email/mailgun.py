@@ -2,7 +2,7 @@ from CTFd.utils import get_config, get_app_config
 import requests
 
 
-def sendmail(addr, text):
+def sendmail(addr, text, subject):
     ctf_name = get_config("ctf_name")
     mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
     mailgun_base_url = get_config("mailgun_base_url") or get_app_config(
@@ -16,7 +16,7 @@ def sendmail(addr, text):
             data={
                 "from": "{} Admin <{}>".format(ctf_name, mailfrom_addr),
                 "to": [addr],
-                "subject": "Message from {0}".format(ctf_name),
+                "subject": subject,
                 "text": text,
             },
             timeout=1.0,
