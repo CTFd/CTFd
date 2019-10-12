@@ -1,6 +1,6 @@
 from flask import url_for
 from CTFd.utils import get_config
-from CTFd.utils.formatters import format
+from CTFd.utils.formatters import safe_format
 from CTFd.utils.config import get_mail_provider
 from CTFd.utils.email import mailgun, smtp
 from CTFd.utils.security.signing import serialize
@@ -11,7 +11,7 @@ EMAIL_REGEX = r"(^[^@\s]+@[^@\s]+\.[^@\s]+$)"
 
 
 def sendmail(addr, text, subject="Message from {ctf_name}"):
-    subject = format(subject, ctf_name=get_config("ctf_name"))
+    subject = safe_format(subject, ctf_name=get_config("ctf_name"))
     provider = get_mail_provider()
     if provider == "smtp":
         return smtp.sendmail(addr, text, subject)

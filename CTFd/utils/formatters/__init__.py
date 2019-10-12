@@ -1,7 +1,7 @@
 import re
 
 
-def format(fmt, **kwargs):
+def safe_format(fmt, **kwargs):
     """
     Function that safely formats strings with arbitrary potentially user-supplied format strings
     Looks for interpolation placeholders like {target} or {{ target }}
