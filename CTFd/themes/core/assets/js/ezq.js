@@ -26,10 +26,10 @@ const toastTpl =
   '    <strong class="mr-auto">{0}</strong>' +
   '    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">' +
   '      <span aria-hidden="true">&times;</span>' +
-  '    </button>' +
-  '  </div>' +
+  "    </button>" +
+  "  </div>" +
   '  <div class="toast-body">{1}</div>' +
-  '</div>';
+  "</div>";
 
 const progressTpl =
   '<div class="progress">' +

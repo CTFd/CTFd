@@ -320,7 +320,7 @@ $(() => {
         if (data.success) {
           ezToast({
             title: "Success",
-            body: "Your challenge has been updated!",
+            body: "Your challenge has been updated!"
           });
         }
       });

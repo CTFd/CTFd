@@ -178,7 +178,7 @@ function submit_form() {
       if (method === "PATCH" && response.success) {
         ezToast({
           title: "Saved",
-          body: "Your changes have been saved",
+          body: "Your changes have been saved"
         });
       } else {
         window.location =

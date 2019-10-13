@@ -36,7 +36,7 @@ export default root => {
   function render(data) {
     ezToast({
       title: data.title,
-      body: data.content,
+      body: data.content
     });
     howl.play();
   }
