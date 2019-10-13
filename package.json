@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "node_modules/webpack-cli/bin/cli.js -w --mode=development",
     "build": "node_modules/webpack-cli/bin/cli.js --mode=production",
+    "verify": "node_modules/webpack-cli/bin/cli.js --mode=development; node_modules/webpack-cli/bin/cli.js --mode=production; git diff-index --quiet HEAD",
     "clean": "rm -rf CTFd/themes/core/static/css/* CTFd/themes/core/static/js/* CTFd/themes/admin/static/css/* CTFd/themes/admin/static/js/*"
   },
   "repository": {

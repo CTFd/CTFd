@@ -6,6 +6,7 @@ lint:
 test:
 	pytest --cov=CTFd --disable-warnings -n auto
 	bandit -r CTFd -x CTFd/uploads
+	yarn verify
 
 serve:
 	python serve.py
