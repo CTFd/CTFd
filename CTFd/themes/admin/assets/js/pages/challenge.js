@@ -4,7 +4,7 @@ import $ from "jquery";
 import "bootstrap/js/dist/tab";
 import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
-import { ezQuery, ezAlert } from "core/ezq";
+import { ezQuery, ezAlert, ezToast } from "core/ezq";
 import nunjucks from "nunjucks";
 import MarkdownIt from "markdown-it";
 import { addFile, deleteFile } from "../challenges/files";
@@ -318,10 +318,9 @@ $(() => {
       })
       .then(function(data) {
         if (data.success) {
-          ezAlert({
+          ezToast({
             title: "Success",
             body: "Your challenge has been updated!",
-            button: "OK"
           });
         }
       });
