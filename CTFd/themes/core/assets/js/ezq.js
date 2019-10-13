@@ -79,10 +79,14 @@ export function ezToast(args) {
   var res = toastTpl.format(args.title, args.body);
   var obj = $(res);
 
+  let autohide = args.autohide || false;
+  let delay = args.delay || 10000; // 10 seconds
+
   $("main").append(obj);
 
   obj.toast({
-    autohide: false,
+    autohide: autohide,
+    delay: delay
   });
   obj.toast("show");
   return obj;

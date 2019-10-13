@@ -37,7 +37,6 @@ export default root => {
     ezToast({
       title: data.title,
       body: data.content,
-      button: "Got it!"
     });
     howl.play();
   }
