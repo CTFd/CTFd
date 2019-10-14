@@ -1,7 +1,7 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
-import { ezQuery, ezAlert, ezProgressBar } from "core/ezq";
+import { ezQuery } from "core/ezq";
 
 export function addFile(event) {
   event.preventDefault();

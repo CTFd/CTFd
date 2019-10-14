@@ -1,6 +1,6 @@
 import { Howl } from "howler";
 import { NativeEventSource, EventSourcePolyfill } from "event-source-polyfill";
-import { ezAlert, ezToast } from "./ezq";
+import { ezToast } from "./ezq";
 import { WindowController } from "./utils";
 
 const EventSource = NativeEventSource || EventSourcePolyfill;

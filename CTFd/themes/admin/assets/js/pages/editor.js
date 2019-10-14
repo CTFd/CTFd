@@ -4,7 +4,7 @@ import $ from "jquery";
 import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
 import CodeMirror from "codemirror";
-import { ezAlert, ezQuery, ezProgressBar, ezToast } from "core/ezq";
+import { ezQuery, ezToast } from "core/ezq";
 
 function get_filetype_icon_class(filename) {
   var mapping = {
