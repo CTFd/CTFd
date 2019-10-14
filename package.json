@@ -1,6 +1,6 @@
 {
   "name": "ctfd",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.",
   "main": "index.js",
   "directories": {
@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "node_modules/webpack-cli/bin/cli.js -w --mode=development",
     "build": "node_modules/webpack-cli/bin/cli.js --mode=production",
+    "verify": "node_modules/webpack-cli/bin/cli.js --mode=development; node_modules/webpack-cli/bin/cli.js --mode=production; git diff --quiet --exit-code",
     "clean": "rm -rf CTFd/themes/core/static/css/* CTFd/themes/core/static/js/* CTFd/themes/admin/static/css/* CTFd/themes/admin/static/js/*"
   },
   "repository": {

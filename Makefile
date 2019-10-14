@@ -4,8 +4,9 @@ lint:
 	prettier --check 'CTFd/themes/**/assets/**/*'
 
 test:
-	pytest --cov=CTFd --disable-warnings -n auto
+	pytest --cov=CTFd --ignore=node_modules/ --disable-warnings -n auto
 	bandit -r CTFd -x CTFd/uploads
+	yarn verify
 
 serve:
 	python serve.py
