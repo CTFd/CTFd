@@ -20,6 +20,17 @@ const modalTpl =
   "  </div>" +
   "</div>";
 
+const toastTpl =
+  '<div class="toast m-3" role="alert" style="position: fixed; bottom: 0; right: 0; min-width: 20%;">' +
+  '  <div class="toast-header">' +
+  '    <strong class="mr-auto">{0}</strong>' +
+  '    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">' +
+  '      <span aria-hidden="true">&times;</span>' +
+  "    </button>" +
+  "  </div>" +
+  '  <div class="toast-body">{1}</div>' +
+  "</div>";
+
 const progressTpl =
   '<div class="progress">' +
   '  <div class="progress-bar progress-bar-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {0}%">' +
@@ -61,6 +72,23 @@ export function ezAlert(args) {
     $(this).modal("dispose");
   });
 
+  return obj;
+}
+
+export function ezToast(args) {
+  var res = toastTpl.format(args.title, args.body);
+  var obj = $(res);
+
+  let autohide = args.autohide || false;
+  let delay = args.delay || 10000; // 10 seconds
+
+  $("main").append(obj);
+
+  obj.toast({
+    autohide: autohide,
+    delay: delay
+  });
+  obj.toast("show");
   return obj;
 }
 

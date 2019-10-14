@@ -1,7 +1,7 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
 import nunjucks from "nunjucks";
-import { ezQuery, ezAlert, ezProgressBar } from "core/ezq";
+import { ezQuery } from "core/ezq";
 
 export function deleteFlag(event) {
   event.preventDefault();

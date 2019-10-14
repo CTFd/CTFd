@@ -1,7 +1,7 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
 import MarkdownIt from "markdown-it";
-import { ezQuery, ezAlert, ezProgressBar } from "core/ezq";
+import { ezQuery, ezAlert } from "core/ezq";
 
 function hint(id) {
   return CTFd.fetch("/api/v1/hints/" + id + "?preview=true", {
