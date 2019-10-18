@@ -1,27 +1,29 @@
-FROM python:3.7-alpine
-RUN apk update && \
-    apk add python python-dev linux-headers libffi-dev gcc make musl-dev py-pip mysql-client git openssl-dev
-RUN adduser -D -u 1001 -s /bin/bash ctfd
+FROM alpine
+
+RUN apk update && apk add python3 python3-dev linux-headers libffi-dev gcc \
+    make musl-dev mysql-client git openssl-dev --no-cache
+
+RUN adduser -D -s /bin/bash ctfd ctfd
 
 WORKDIR /opt/CTFd
-RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads
+COPY --chown=ctfd:ctfd migrations migrations/
+COPY --chown=ctfd:ctfd CTFd CTFd/
+COPY --chown=ctfd:ctfd *.py *.json *.sh requirements.txt LICENSE .
 
-COPY requirements.txt .
+RUN mkdir -p /var/log/CTFd /var/uploads
+RUN chown -R ctfd:ctfd /var/log/CTFd /var/uploads
 
-RUN pip install -r requirements.txt
+RUN python3 -m pip install --upgrade pip && \
+    python3 -m pip install -r requirements.txt
 
-COPY . /opt/CTFd
+ENV DATABASE_URL=mysql+pymysql://root:ctfd@db/ctfd \
+    REDIS_URL=redis://cache:6379 \
+    UPLOAD_FOLDER=/var/uploads   \
+    LOG_FOLDER=/var/log/CTFd     \
+    ACCESS_LOG=-                 \
+    ERROR_LOG=-                  \
+    WORKERS=1
 
-RUN for d in CTFd/plugins/*; do \
-      if [ -f "$d/requirements.txt" ]; then \
-        pip install -r $d/requirements.txt; \
-      fi; \
-    done;
-
-RUN chmod +x /opt/CTFd/docker-entrypoint.sh
-RUN chown -R 1001:1001 /opt/CTFd
-RUN chown -R 1001:1001 /var/log/CTFd /var/uploads
-
-USER 1001
+USER ctfd
 EXPOSE 8000
 ENTRYPOINT ["/opt/CTFd/docker-entrypoint.sh"]
