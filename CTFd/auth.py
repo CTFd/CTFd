@@ -203,6 +203,7 @@ def register():
                 name=request.form["name"],
                 email=request.form["email"],
                 password=request.form["password"],
+                mlc_disabled=get_config("mlc_disabled"),
             )
         else:
             with app.app_context():
@@ -246,7 +247,8 @@ def register():
 
         return redirect(url_for("challenges.listing"))
     else:
-        return render_template("register.html", errors=errors)
+        return render_template("register.html", errors=errors, \
+            mlc_disabled=get_config("mlc_disabled"))
 
 
 @auth.route("/login", methods=["POST", "GET"])
@@ -281,20 +283,24 @@ def login():
                 log("logins", "[{date}] {ip} - submitted invalid password for {name}")
                 errors.append("Your username or password is incorrect")
                 db.session.close()
-                return render_template("login.html", errors=errors)
+                return render_template("login.html", errors=errors, \
+                    mlc_disabled=get_config('mlc_disabled'))
         else:
             # This user just doesn't exist
             log("logins", "[{date}] {ip} - submitted invalid account information")
             errors.append("Your username or password is incorrect")
             db.session.close()
-            return render_template("login.html", errors=errors)
+            return render_template("login.html", errors=errors, mlc_disabled=get_config('mlc_disabled'))
     else:
         db.session.close()
-        return render_template("login.html", errors=errors)
+        return render_template("login.html", errors=errors, mlc_disabled=get_config('mlc_disabled'))
 
 
 @auth.route("/oauth")
 def oauth_login():
+    if get_config("mlc_disabled"):
+        return redirect("/login")
+
     endpoint = (
         get_app_config("OAUTH_AUTHORIZATION_ENDPOINT")
         or get_config("oauth_authorization_endpoint")

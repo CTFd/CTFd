@@ -146,6 +146,9 @@ def setup():
             set_config("mail_password", None)
             set_config("mail_useauth", None)
 
+            # MajorLeagueCyber
+            set_config("mlc_disabled", False)
+
             set_config("setup", True)
 
             try:

@@ -25,6 +25,16 @@
 				   {% if oauth_client_secret is defined and oauth_client_secret != None %}value="{{ oauth_client_secret }}"{% endif %}>
 		</div>
 
+		<div class="form-group">
+			<label>
+				<input id="mlc_disabled" name="mlc_disabled" type="checkbox" {% if mlc_disabled %}checked{% endif %}>
+				Disable MajorLeagueCyber<br>
+				<small class="form-text text-muted">
+					Hide <a href="https://www.majorleaguecyber.org/">MajorLeagueCyber</a> sign-in and registration forms.
+				</small>
+			</label>
+		</div>
+
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
 	</form>
 </div>
