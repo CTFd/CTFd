@@ -3,6 +3,10 @@ lint:
 	black --check --exclude=CTFd/uploads CTFd/**/*.py tests/**/*.py
 	prettier --check 'CTFd/themes/**/assets/**/*'
 
+format:
+	black --exclude=CTFd/uploads CTFd/**/*.py tests/**/*.py
+	prettier --write 'CTFd/themes/**/assets/**/*'
+
 test:
 	pytest --cov=CTFd --ignore=node_modules/ --disable-warnings -n auto
 	bandit -r CTFd -x CTFd/uploads
