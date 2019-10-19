@@ -228,6 +228,9 @@ class Config(object):
     APPLICATION_ROOT:
         Specifies what path CTFd is mounted under. It can be used to run CTFd in a subdirectory.
         Example: /ctfd
+
+    SERVER_SENT_EVENTS:
+        Specifies whether or not to enable to server-sent events based Notifications system.
     """
     REVERSE_PROXY = os.getenv("REVERSE_PROXY") or False
     TEMPLATES_AUTO_RELOAD = not os.getenv("TEMPLATES_AUTO_RELOAD")  # Defaults True
@@ -237,6 +240,7 @@ class Config(object):
     SWAGGER_UI = "/" if os.getenv("SWAGGER_UI") is not None else False  # Defaults False
     UPDATE_CHECK = not os.getenv("UPDATE_CHECK")  # Defaults True
     APPLICATION_ROOT = os.getenv("APPLICATION_ROOT") or "/"
+    SERVER_SENT_EVENTS = not os.getenv("SERVER_SENT_EVENTS")  # Defaults True
 
     """
     === OAUTH ===
