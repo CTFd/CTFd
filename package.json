@@ -8,8 +8,8 @@
   },
   "scripts": {
     "dev": "node_modules/webpack-cli/bin/cli.js -w --mode=development",
-    "build": "node_modules/webpack-cli/bin/cli.js --mode=production",
-    "verify": "node_modules/webpack-cli/bin/cli.js --mode=development; node_modules/webpack-cli/bin/cli.js --mode=production; git diff --quiet --exit-code",
+    "build": "node_modules/webpack-cli/bin/cli.js --mode=development; node_modules/webpack-cli/bin/cli.js --mode=production",
+    "verify": "node_modules/webpack-cli/bin/cli.js --mode=development --display=errors-only; node_modules/webpack-cli/bin/cli.js --mode=production --display=errors-only; git diff --quiet --exit-code",
     "clean": "rm -rf CTFd/themes/core/static/css/* CTFd/themes/core/static/js/* CTFd/themes/admin/static/css/* CTFd/themes/admin/static/js/*"
   },
   "repository": {
