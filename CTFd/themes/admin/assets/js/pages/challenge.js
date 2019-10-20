@@ -24,6 +24,10 @@ import {
 } from "../challenges/flags";
 
 const md = MarkdownIt({ html: true, linkify: true });
+md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+  tokens[idx].attrPush(['target', '_blank']);
+  return self.renderToken(tokens, idx, options);
+};
 
 const displayHint = data => {
   ezAlert({

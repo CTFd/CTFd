@@ -5,6 +5,11 @@ CTFd._internal.challenge.renderer = new CTFd.lib.MarkdownIt({
     linkify: true,
 })
 
+CTFd._internal.challenge.renderer.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+    tokens[idx].attrPush(['target', '_blank']);
+    return self.renderToken(tokens, idx, options);
+};
+
 CTFd._internal.challenge.preRender = function () { }
 
 CTFd._internal.challenge.render = function (markdown) {

@@ -15,9 +15,14 @@ function hint(id) {
 }
 
 function loadhint(hintid) {
-  const md = MarkdownIt({
-    html: true
+  const md = new MarkdownIt({
+    html: true,
+    linkify: true,
   });
+  md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+    tokens[idx].attrPush(['target', '_blank']);
+    return self.renderToken(tokens, idx, options);
+  };
 
   hint(hintid).then(function(response) {
     if (response.data.content) {
@@ -45,9 +50,14 @@ export function showHintModal(event) {
   // Markdown Preview
   $("#new-hint-edit").on("shown.bs.tab", function(event) {
     if (event.target.hash == "#hint-preview") {
-      const renderer = MarkdownIt({
-        html: true
+      const renderer = new MarkdownIt({
+        html: true,
+        linkify: true,
       });
+      renderer.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+        tokens[idx].attrPush(['target', '_blank']);
+        return self.renderToken(tokens, idx, options);
+      };
       const editor_value = $("#hint-write textarea").val();
       $(event.target.hash).html(renderer.render(editor_value));
     }
@@ -83,8 +93,13 @@ export function showEditHintModal(event) {
         $("#new-hint-edit").on("shown.bs.tab", function(event) {
           if (event.target.hash == "#hint-preview") {
             const renderer = new MarkdownIt({
-              html: true
+              html: true,
+              linkify: true,
             });
+            renderer.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+              tokens[idx].attrPush(['target', '_blank']);
+              return self.renderToken(tokens, idx, options);
+            };
             const editor_value = $("#hint-write textarea").val();
             $(event.target.hash).html(renderer.render(editor_value));
           }
