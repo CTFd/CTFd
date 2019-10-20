@@ -112,9 +112,19 @@ def test_user_bad_login():
         r = client.get("/profile")
         assert r.location.startswith(
             "http://localhost/login"
-        )  # We got redirected to login
-    destroy_ctfd(app)
+        )  # We got redirected to login+
 
+        client = login_as_user(
+            app, name="nonexist_user", password="password", raise_for_error=False
+        )
+        with client.session_transaction() as sess:
+            assert sess.get("id") is None
+        r = client.get("/profile")
+        assert r.location.startswith(
+            "http://localhost/login"
+        )  # We got redirected to login
+
+    destroy_ctfd(app)
 
 def test_user_login():
     """Can a registered user can login"""
