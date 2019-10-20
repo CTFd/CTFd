@@ -126,6 +126,7 @@ def test_user_bad_login():
 
     destroy_ctfd(app)
 
+
 def test_user_login():
     """Can a registered user can login"""
     app = create_ctfd()
