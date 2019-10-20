@@ -239,6 +239,21 @@ $(() => {
   $("#export-button").click(exportConfig);
   $("#import-button").click(importConfig);
   $(".nav-pills a").click(showTab);
+  $("#config-color-update").click(function() {
+    const hex_code = $("#config-color-picker").val();
+    const user_css = $("#css-editor").val();
+    let new_css;
+    if (user_css.lenth) {
+      let css_vars = `theme-color: ${hex_code};`;
+      new_css = user_css.replace(/theme-color: (.*);/, css_vars);
+    } else {
+      new_css =
+        `:root {--theme-color: ${hex_code};}\n` +
+        `.navbar{background-color: var(--theme-color) !important;}\n` +
+        `.jumbotron{background-color: var(--theme-color) !important;}\n`;
+    }
+    $("#css-editor").val(new_css);
+  });
 
   $(".start-date").change(function() {
     loadDateValues("start");
