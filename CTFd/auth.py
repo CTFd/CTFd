@@ -247,8 +247,8 @@ def register():
 
         return redirect(url_for("challenges.listing"))
     else:
-        return render_template("register.html", errors=errors, \
-            mlc_disabled=get_config("mlc_disabled"))
+        return render_template("register.html", errors=errors,
+                               mlc_disabled=get_config("mlc_disabled"))
 
 
 @auth.route("/login", methods=["POST", "GET"])
@@ -283,8 +283,8 @@ def login():
                 log("logins", "[{date}] {ip} - submitted invalid password for {name}")
                 errors.append("Your username or password is incorrect")
                 db.session.close()
-                return render_template("login.html", errors=errors, \
-                    mlc_disabled=get_config('mlc_disabled'))
+                return render_template("login.html", errors=errors,
+                                       mlc_disabled=get_config('mlc_disabled'))
         else:
             # This user just doesn't exist
             log("logins", "[{date}] {ip} - submitted invalid account information")
