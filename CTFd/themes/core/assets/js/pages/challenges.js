@@ -1,7 +1,6 @@
 import "./main";
 import "bootstrap/js/dist/tab";
 import nunjucks from "nunjucks";
-import MarkdownIt from "markdown-it";
 import { ezQuery, ezAlert } from "../ezq";
 import { htmlEntities } from "../utils";
 import Moment from "moment";
@@ -14,11 +13,7 @@ const api_func = {
   users: x => CTFd.api.get_user_solves({ userId: x })
 };
 
-const md = MarkdownIt({ html: true, linkify: true });
-md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-  tokens[idx].attrPush(['target', '_blank']);
-  return self.renderToken(tokens, idx, options);
-};
+const md = CTFd.lib.markdown();
 
 CTFd._internal.challenge = {};
 let challenges = [];

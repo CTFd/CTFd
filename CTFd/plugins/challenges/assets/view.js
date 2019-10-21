@@ -1,14 +1,7 @@
 CTFd._internal.challenge.data = undefined
 
-CTFd._internal.challenge.renderer = new CTFd.lib.MarkdownIt({
-    html: true,
-    linkify: true,
-})
+CTFd._internal.challenge.renderer = CTFd.lib.markdown();
 
-CTFd._internal.challenge.renderer.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-    tokens[idx].attrPush(['target', '_blank']);
-    return self.renderToken(tokens, idx, options);
-};
 
 CTFd._internal.challenge.preRender = function () { }
 
