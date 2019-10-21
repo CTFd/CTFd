@@ -60,7 +60,7 @@
 								{% endif %}
 							</td>
 							<td class="d-none d-md-table-cell d-lg-table-cell">
-								<div>{% if user.country %}<span class="flag flag-{{user.country.lower()}}">
+								<div>{% if user.country %}<span class="flag flag-{{user.country.lower()}}"
 								alt="{{ lookup_country_code(user.country) }}"
 								style="vertical-align: top;" />
 								<span>&nbsp;&nbsp;{{ lookup_country_code(user.country) }}</span>{% endif %}</div>
