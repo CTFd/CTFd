@@ -1,9 +1,7 @@
 CTFd._internal.challenge.data = undefined
 
-CTFd._internal.challenge.renderer = new CTFd.lib.MarkdownIt({
-    html: true,
-    linkify: true,
-})
+CTFd._internal.challenge.renderer = CTFd.lib.markdown();
+
 
 CTFd._internal.challenge.preRender = function () { }
 

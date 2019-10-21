@@ -6,7 +6,6 @@ import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
 import { ezQuery, ezAlert, ezToast } from "core/ezq";
 import nunjucks from "nunjucks";
-import MarkdownIt from "markdown-it";
 import { addFile, deleteFile } from "../challenges/files";
 import { addTag, deleteTag } from "../challenges/tags";
 import { addRequirement, deleteRequirement } from "../challenges/requirements";
@@ -23,7 +22,7 @@ import {
   flagTypeSelect
 } from "../challenges/flags";
 
-const md = MarkdownIt({ html: true, linkify: true });
+const md = CTFd.lib.markdown();
 
 const displayHint = data => {
   ezAlert({

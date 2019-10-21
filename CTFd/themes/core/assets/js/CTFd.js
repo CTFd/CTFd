@@ -10,7 +10,7 @@ const user = {};
 const _internal = {};
 const lib = {
   $,
-  MarkdownIt
+  markdown
 };
 
 let initialized = false;
@@ -31,6 +31,16 @@ const plugin = {
     f(CTFd);
   }
 };
+function markdown(config) {
+  // Merge passed config with original. Default to original.
+  const md_config = { ...{ html: true, linkify: true }, ...config };
+  const md = MarkdownIt(md_config);
+  md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
+    tokens[idx].attrPush(["target", "_blank"]);
+    return self.renderToken(tokens, idx, options);
+  };
+  return md;
+}
 
 const CTFd = {
   init,

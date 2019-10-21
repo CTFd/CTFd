@@ -1,6 +1,5 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
-import MarkdownIt from "markdown-it";
 import { ezQuery, ezAlert } from "core/ezq";
 
 function hint(id) {
@@ -15,9 +14,7 @@ function hint(id) {
 }
 
 function loadhint(hintid) {
-  const md = MarkdownIt({
-    html: true
-  });
+  const md = CTFd.lib.markdown();
 
   hint(hintid).then(function(response) {
     if (response.data.content) {
@@ -45,9 +42,7 @@ export function showHintModal(event) {
   // Markdown Preview
   $("#new-hint-edit").on("shown.bs.tab", function(event) {
     if (event.target.hash == "#hint-preview") {
-      const renderer = MarkdownIt({
-        html: true
-      });
+      const renderer = CTFd.lib.markdown();
       const editor_value = $("#hint-write textarea").val();
       $(event.target.hash).html(renderer.render(editor_value));
     }
@@ -82,9 +77,7 @@ export function showEditHintModal(event) {
         // Markdown Preview
         $("#new-hint-edit").on("shown.bs.tab", function(event) {
           if (event.target.hash == "#hint-preview") {
-            const renderer = new MarkdownIt({
-              html: true
-            });
+            const renderer = CTFd.lib.markdown();
             const editor_value = $("#hint-write textarea").val();
             $(event.target.hash).html(renderer.render(editor_value));
           }
