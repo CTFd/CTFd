@@ -303,24 +303,50 @@ $(() => {
     e.preventDefault();
     var params = $(e.target).serializeJSON(true);
 
-    CTFd.fetch("/api/v1/challenges/" + CHALLENGE_ID, {
-      method: "PATCH",
+    CTFd.fetch("/api/v1/challenges/" + CHALLENGE_ID + "/flags", {
+      method: "GET",
       credentials: "same-origin",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
-      },
-      body: JSON.stringify(params)
+      }
     })
       .then(function(response) {
         return response.json();
       })
-      .then(function(data) {
-        if (data.success) {
-          ezToast({
-            title: "Success",
-            body: "Your challenge has been updated!"
+      .then(function(response) {
+        let update_challenge = function() {
+          CTFd.fetch("/api/v1/challenges/" + CHALLENGE_ID, {
+            method: "PATCH",
+            credentials: "same-origin",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(params)
+          })
+            .then(function(response) {
+              return response.json();
+            })
+            .then(function(data) {
+              if (data.success) {
+                ezToast({
+                  title: "Success",
+                  body: "Your challenge has been updated!"
+                });
+              }
+            });
+        };
+        // Check if the challenge doesn't have any flags before marking visible
+        if (response.data.length === 0 && params.state === "visible") {
+          ezQuery({
+            title: "Missing Flags",
+            body:
+              "This challenge does not have any flags meaning it is unsolveable. Are you sure you'd like to update this challenge?",
+            success: update_challenge
           });
+        } else {
+          update_challenge();
         }
       });
   });
