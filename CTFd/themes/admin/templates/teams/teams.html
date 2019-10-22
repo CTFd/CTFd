@@ -92,7 +92,7 @@
 								</a>
 							{% endif %}
 						</td>
-						<td class="team-country text-center" value="{{ team.country if team.country is not none }}">
+						<td class="team-country d-none d-md-table-cell d-lg-table-cell" value="{{ team.country if team.country is not none }}">
 							<span>{% if team.country %}<span> <img class="flag flag-{{team.country.lower()}}">
 								&nbsp;&nbsp;{{ lookup_country_code(team.country) }}</span>{% endif %}</span>
 						</td>
