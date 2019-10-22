@@ -99,6 +99,16 @@ def test_register_whitelisted_email():
     destroy_ctfd(app)
 
 
+def test_oauth_mlc_disabled():
+    app = create_ctfd()
+    with app.app_context():
+        set_config("mlc_disabled", True)
+        with app.test_client() as client:
+            r = client.get("/oauth")
+            assert r.location == "http://localhost/login"
+    destroy_ctfd(app)
+
+
 def test_user_bad_login():
     """A user should not be able to login with an incorrect password"""
     app = create_ctfd()
