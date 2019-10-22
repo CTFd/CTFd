@@ -99,8 +99,9 @@
 								</a>
 							{% endif %}
 						</td>
-						<td class="team-country" value="{{ user.country if user.country is not none }}">
-							<span>{% if user.country %}{{ lookup_country_code(user.country) }}{% endif %}</span>
+						<td class="d-none d-md-table-cell d-lg-table-cell">
+							<div>{% if user.country %}<span> <img class="flag flag-{{user.country.lower()}}">
+								&nbsp;&nbsp;{{ lookup_country_code(user.country) }}</span>{% endif %}</div>
 						</td>
 						<td class="team-admin d-md-table-cell d-lg-table-cell text-center" value="{{ user.type }}">
 							{% if user.type == 'admin' %}
