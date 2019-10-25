@@ -7,6 +7,9 @@
 		</div>
 	</div>
 	<div class="container">
+		{% if not notifications %}
+		<h2 class="text-center">There are no notifications yet</h2>
+		{% endif %}
 		{% for notification in notifications %}
 		<div class="card bg-light mb-4">
 			<div class="card-body">
