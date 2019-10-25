@@ -6,6 +6,7 @@ import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
 import { ezQuery, ezAlert, ezToast } from "core/ezq";
 import nunjucks from "nunjucks";
+import { default as helpers } from "core/helpers";
 import { addFile, deleteFile } from "../challenges/files";
 import { addTag, deleteTag } from "../challenges/tags";
 import { addRequirement, deleteRequirement } from "../challenges/requirements";
@@ -160,14 +161,71 @@ function loadChalTemplate(challenge) {
             })
             .then(function(response) {
               if (response.success) {
-                window.location =
-                  CTFd.config.urlRoot + "/admin/challenges/" + response.data.id;
+                $("#challenge-create-options #challenge_id").val(response.data.id);
+                $("#challenge-create-options").modal();
               }
             });
         });
       });
     });
   });
+}
+
+function handleChallengeOptions(event) {
+  event.preventDefault();
+  var params = $(event.target).serializeJSON(true);
+  let flag_params = {
+    challenge_id: params.challenge_id,
+    content: params.flag,
+    type: params.flag_type,
+    data: params.flag_data ? params.flag_data : '',
+  };
+  // Set flags
+  CTFd.fetch("/api/v1/flags", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(flag_params)
+  })
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (response) {
+      // Upload file
+      let form = event.target;
+      let data = {
+        challenge: params.challenge_id,
+        type: "challenge"
+      };
+      helpers.files.upload(form, data, function (response) {
+        // Set challenge visible
+        CTFd.fetch("/api/v1/challenges/" + params.challenge_id, {
+          method: "PATCH",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            state: params.state
+          })
+        })
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (data) {
+            if (data.success) {
+              setTimeout(function () {
+                window.location =
+                  CTFd.config.urlRoot + "/admin/challenges/" + params.challenge_id;
+              }, 700);
+            }
+          });
+      });
+    });
 }
 
 function createChallenge(event) {
@@ -354,6 +412,8 @@ $(() => {
         }
       });
   });
+
+  $("#challenge-create-options form").submit(handleChallengeOptions);
 
   $(".nav-tabs a").click(function(e) {
     $(this).tab("show");
