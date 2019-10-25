@@ -174,6 +174,10 @@ function createChallenge(event) {
   const challenge = $(this)
     .find("option:selected")
     .data("meta");
+  if (challenge === undefined) {
+    $("#create-chal-entry-div").empty();
+    return;
+  }
   loadChalTemplate(challenge);
 }
 
@@ -396,6 +400,8 @@ $(() => {
         $("#create-chals-select").append(option);
       }
       $("#create-chals-select-div").show();
+      $("#create-chals-select").val("standard")
+      loadChalTemplate(data["standard"]);
     } else if (chal_type_amt == 1) {
       const key = Object.keys(data)[0];
       $("#create-chals-select").empty();
