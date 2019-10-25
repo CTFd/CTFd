@@ -161,7 +161,9 @@ function loadChalTemplate(challenge) {
             })
             .then(function(response) {
               if (response.success) {
-                $("#challenge-create-options #challenge_id").val(response.data.id);
+                $("#challenge-create-options #challenge_id").val(
+                  response.data.id
+                );
                 $("#challenge-create-options").modal();
               }
             });
@@ -178,7 +180,7 @@ function handleChallengeOptions(event) {
     challenge_id: params.challenge_id,
     content: params.flag,
     type: params.flag_type,
-    data: params.flag_data ? params.flag_data : '',
+    data: params.flag_data ? params.flag_data : ""
   };
   // Set flags
   CTFd.fetch("/api/v1/flags", {
@@ -190,17 +192,17 @@ function handleChallengeOptions(event) {
     },
     body: JSON.stringify(flag_params)
   })
-    .then(function (response) {
+    .then(function(response) {
       return response.json();
     })
-    .then(function (response) {
+    .then(function(response) {
       // Upload file
       let form = event.target;
       let data = {
         challenge: params.challenge_id,
         type: "challenge"
       };
-      helpers.files.upload(form, data, function (response) {
+      helpers.files.upload(form, data, function(response) {
         // Set challenge visible
         CTFd.fetch("/api/v1/challenges/" + params.challenge_id, {
           method: "PATCH",
@@ -213,14 +215,16 @@ function handleChallengeOptions(event) {
             state: params.state
           })
         })
-          .then(function (response) {
+          .then(function(response) {
             return response.json();
           })
-          .then(function (data) {
+          .then(function(data) {
             if (data.success) {
-              setTimeout(function () {
+              setTimeout(function() {
                 window.location =
-                  CTFd.config.urlRoot + "/admin/challenges/" + params.challenge_id;
+                  CTFd.config.urlRoot +
+                  "/admin/challenges/" +
+                  params.challenge_id;
               }, 700);
             }
           });
@@ -460,7 +464,7 @@ $(() => {
         $("#create-chals-select").append(option);
       }
       $("#create-chals-select-div").show();
-      $("#create-chals-select").val("standard")
+      $("#create-chals-select").val("standard");
       loadChalTemplate(data["standard"]);
     } else if (chal_type_amt == 1) {
       const key = Object.keys(data)[0];
