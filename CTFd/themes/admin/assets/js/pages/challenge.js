@@ -6,6 +6,7 @@ import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
 import { ezQuery, ezAlert, ezToast } from "core/ezq";
 import nunjucks from "nunjucks";
+import { default as helpers } from "core/helpers";
 import { addFile, deleteFile } from "../challenges/files";
 import { addTag, deleteTag } from "../challenges/tags";
 import { addRequirement, deleteRequirement } from "../challenges/requirements";
@@ -160,8 +161,10 @@ function loadChalTemplate(challenge) {
             })
             .then(function(response) {
               if (response.success) {
-                window.location =
-                  CTFd.config.urlRoot + "/admin/challenges/" + response.data.id;
+                $("#challenge-create-options #challenge_id").val(
+                  response.data.id
+                );
+                $("#challenge-create-options").modal();
               }
             });
         });
@@ -170,10 +173,80 @@ function loadChalTemplate(challenge) {
   });
 }
 
+function handleChallengeOptions(event) {
+  event.preventDefault();
+  var params = $(event.target).serializeJSON(true);
+  let flag_params = {
+    challenge_id: params.challenge_id,
+    content: params.flag,
+    type: params.flag_type,
+    data: params.flag_data ? params.flag_data : ""
+  };
+  // Define a save_challenge function
+  let save_challenge = function() {
+    CTFd.fetch("/api/v1/challenges/" + params.challenge_id, {
+      method: "PATCH",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        state: params.state
+      })
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        if (data.success) {
+          setTimeout(function() {
+            window.location =
+              CTFd.config.urlRoot + "/admin/challenges/" + params.challenge_id;
+          }, 700);
+        }
+      });
+  };
+  // Set flags
+  CTFd.fetch("/api/v1/flags", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(flag_params)
+  })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(response) {
+      // Upload file
+      let form = event.target;
+      let data = {
+        challenge: params.challenge_id,
+        type: "challenge"
+      };
+      let filepath = $(form.elements["file"]).val();
+      if (filepath) {
+        helpers.files.upload(form, data, function(response) {
+          // Set challenge visible
+          save_challenge();
+        });
+      } else {
+        save_challenge();
+      }
+    });
+}
+
 function createChallenge(event) {
   const challenge = $(this)
     .find("option:selected")
     .data("meta");
+  if (challenge === undefined) {
+    $("#create-chal-entry-div").empty();
+    return;
+  }
   loadChalTemplate(challenge);
 }
 
@@ -351,6 +424,8 @@ $(() => {
       });
   });
 
+  $("#challenge-create-options form").submit(handleChallengeOptions);
+
   $(".nav-tabs a").click(function(e) {
     $(this).tab("show");
     window.location.hash = this.hash;
@@ -396,6 +471,8 @@ $(() => {
         $("#create-chals-select").append(option);
       }
       $("#create-chals-select-div").show();
+      $("#create-chals-select").val("standard");
+      loadChalTemplate(data["standard"]);
     } else if (chal_type_amt == 1) {
       const key = Object.keys(data)[0];
       $("#create-chals-select").empty();

@@ -19,7 +19,7 @@ from CTFd.utils.plugins import (
 
 from CTFd.utils.countries import get_countries, lookup_country_code
 from CTFd.utils.user import authed, get_ip, get_current_user, get_current_team
-from CTFd.utils.modes import generate_account_url
+from CTFd.utils.modes import generate_account_url, get_mode_as_word
 from CTFd.utils.config import is_setup
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils.security.auth import logout_user
@@ -71,6 +71,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(registration_visible=registration_visible)
     app.jinja_env.globals.update(scores_visible=scores_visible)
     app.jinja_env.globals.update(url_for=custom_url_for)
+    app.jinja_env.globals.update(get_mode_as_word=get_mode_as_word)
 
 
 def init_logs(app):
