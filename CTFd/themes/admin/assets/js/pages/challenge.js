@@ -182,6 +182,31 @@ function handleChallengeOptions(event) {
     type: params.flag_type,
     data: params.flag_data ? params.flag_data : ""
   };
+  // Define a save_challenge function
+  let save_challenge = function() {
+    CTFd.fetch("/api/v1/challenges/" + params.challenge_id, {
+      method: "PATCH",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        state: params.state
+      })
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        if (data.success) {
+          setTimeout(function() {
+            window.location =
+              CTFd.config.urlRoot + "/admin/challenges/" + params.challenge_id;
+          }, 700);
+        }
+      });
+  };
   // Set flags
   CTFd.fetch("/api/v1/flags", {
     method: "POST",
@@ -202,33 +227,15 @@ function handleChallengeOptions(event) {
         challenge: params.challenge_id,
         type: "challenge"
       };
-      helpers.files.upload(form, data, function(response) {
-        // Set challenge visible
-        CTFd.fetch("/api/v1/challenges/" + params.challenge_id, {
-          method: "PATCH",
-          credentials: "same-origin",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            state: params.state
-          })
-        })
-          .then(function(response) {
-            return response.json();
-          })
-          .then(function(data) {
-            if (data.success) {
-              setTimeout(function() {
-                window.location =
-                  CTFd.config.urlRoot +
-                  "/admin/challenges/" +
-                  params.challenge_id;
-              }, 700);
-            }
-          });
-      });
+      let filepath = $(form.elements["file"]).val();
+      if (filepath) {
+        helpers.files.upload(form, data, function(response) {
+          // Set challenge visible
+          save_challenge();
+        });
+      } else {
+        save_challenge();
+      }
     });
 }
 
