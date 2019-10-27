@@ -23,7 +23,6 @@ from CTFd.utils.modes import generate_account_url, get_mode_as_word
 from CTFd.utils.config import is_setup
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils.security.auth import logout_user
-from CTFd.utils.helpers import url_for as custom_url_for
 from CTFd.utils.config.visibility import (
     accounts_visible,
     challenges_visible,
@@ -70,7 +69,6 @@ def init_template_globals(app):
     app.jinja_env.globals.update(challenges_visible=challenges_visible)
     app.jinja_env.globals.update(registration_visible=registration_visible)
     app.jinja_env.globals.update(scores_visible=scores_visible)
-    app.jinja_env.globals.update(url_for=custom_url_for)
     app.jinja_env.globals.update(get_mode_as_word=get_mode_as_word)
 
 
