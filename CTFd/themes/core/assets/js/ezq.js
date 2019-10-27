@@ -21,7 +21,7 @@ const modalTpl =
   "</div>";
 
 const toastTpl =
-  '<div class="toast m-3" role="alert" style="position: fixed; bottom: 0; right: 0; min-width: 20%;">' +
+  '<div class="toast m-3" role="alert">' +
   '  <div class="toast-header">' +
   '    <strong class="mr-auto">{0}</strong>' +
   '    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">' +
@@ -76,13 +76,27 @@ export function ezAlert(args) {
 }
 
 export function ezToast(args) {
+  const container_available = $("#ezq--notifications-toast-container").length;
+  if (!container_available) {
+    $("body").append(
+      $("<div/>")
+        .attr({ id: "ezq--notifications-toast-container" })
+        .css({
+          position: "fixed",
+          bottom: "0",
+          right: "0",
+          "min-width": "20%"
+        })
+    );
+  }
+
   var res = toastTpl.format(args.title, args.body);
   var obj = $(res);
 
   let autohide = args.autohide || false;
   let delay = args.delay || 10000; // 10 seconds
 
-  $("main").append(obj);
+  $("#ezq--notifications-toast-container").prepend(obj);
 
   obj.toast({
     autohide: autohide,
