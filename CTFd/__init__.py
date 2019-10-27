@@ -21,7 +21,9 @@ from CTFd.utils.initialization import (
     init_logs,
     init_events,
 )
+from CTFd.utils.crypto import sha256
 from CTFd.plugins import init_plugins
+import datetime
 
 # Hack to support Unicode in Python 2 properly
 if sys.version_info[0] < 3:
@@ -50,6 +52,12 @@ class CTFdFlask(Flask):
         self.jinja_environment = SandboxedBaseEnvironment
         self.session_interface = CachingSessionInterface(key_prefix="session")
         self.request_class = CTFdRequest
+
+        # Store server start time
+        self.start_time = datetime.datetime.utcnow()
+
+        # Create generally unique run identifier
+        self.run_id = sha256(str(self.start_time))[0:8]
         Flask.__init__(self, *args, **kwargs)
 
     def create_jinja_environment(self):
