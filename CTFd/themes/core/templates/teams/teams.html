@@ -56,8 +56,13 @@
 								{% endif %}
 							{% endif %}
 						</td>
-						<td class="d-none d-md-table-cell d-lg-table-cell">
-							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center">
+							<span>
+								{% if team.country %}
+									<i class="flag-{{ team.country.lower() }}"></i>
+									{{ lookup_country_code(team.country) }}
+								{% endif %}
+							</span>
 						</td>
 					</tr>
 				{% endfor %}

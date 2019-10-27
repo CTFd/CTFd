@@ -25,7 +25,18 @@
 			{% endif %}
 
 			{% if user.affiliation %}
-				<h3><span class="badge badge-primary">{{ user.affiliation }}</span></h3>
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">{{ user.affiliation }}</span>
+				</h3>
+			{% endif %}
+
+			{% if user.country %}
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">
+						<i class="flag-{{ user.country.lower() }}"></i>
+						{{ lookup_country_code(user.country) }}
+					</span>
+				</h3>
 			{% endif %}
 
 			{% if user.team_id %}
