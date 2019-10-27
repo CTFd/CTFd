@@ -1,6 +1,6 @@
 import { Howl } from "howler";
 import { NativeEventSource, EventSourcePolyfill } from "event-source-polyfill";
-import { ezToast } from "./ezq";
+import { ezToast, ezAlert } from "./ezq";
 import { WindowController } from "./utils";
 
 const EventSource = NativeEventSource || EventSourcePolyfill;
@@ -34,11 +34,29 @@ export default root => {
   }
 
   function render(data) {
-    ezToast({
-      title: data.title,
-      body: data.content
-    });
-    howl.play();
+    switch (data.type) {
+      case "toast":
+        ezToast({
+          title: data.title,
+          body: data.content
+        });
+        break;
+      case "alert":
+        ezAlert({
+          title: data.title,
+          body: data.content,
+          button: "Got it!"
+        });
+        break;
+      case "background":
+        break;
+      default:
+        break;
+    }
+
+    if (data.sound) {
+      howl.play();
+    }
   }
 
   wc.notification = function(data) {
