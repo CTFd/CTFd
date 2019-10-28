@@ -56,7 +56,7 @@
 /******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
 /******/ 	// Promise = chunk loading, 0 = chunk loaded
 /******/ 	var installedChunks = {
-/******/ 		"pages/settings": 0
+/******/ 		"pages/notifications": 0
 /******/ 	};
 /******/
 /******/ 	var deferredModules = [];
@@ -147,22 +147,22 @@
 /******/
 /******/
 /******/ 	// add entry module to deferred list
-/******/ 	deferredModules.push(["./CTFd/themes/core/assets/js/pages/settings.js","helpers","vendor","default~pages/challenges~pages/main~pages/notifications~pages/scoreboard~pages/settings~pages/stats~~d7294f40"]);
+/******/ 	deferredModules.push(["./CTFd/themes/core/assets/js/pages/notifications.js","helpers","vendor","default~pages/challenges~pages/main~pages/notifications~pages/scoreboard~pages/settings~pages/stats~~d7294f40"]);
 /******/ 	// run deferred modules when ready
 /******/ 	return checkDeferredModules();
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./CTFd/themes/core/assets/js/pages/settings.js":
-/*!******************************************************!*\
-  !*** ./CTFd/themes/core/assets/js/pages/settings.js ***!
-  \******************************************************/
+/***/ "./CTFd/themes/core/assets/js/pages/notifications.js":
+/*!***********************************************************!*\
+  !*** ./CTFd/themes/core/assets/js/pages/notifications.js ***!
+  \***********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;
-eval("\n\n__webpack_require__(/*! ./main */ \"./CTFd/themes/core/assets/js/pages/main.js\");\n\n__webpack_require__(/*! ../utils */ \"./CTFd/themes/core/assets/js/utils.js\");\n\nvar _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\"));\n\nvar _CTFd = _interopRequireDefault(__webpack_require__(/*! ../CTFd */ \"./CTFd/themes/core/assets/js/CTFd.js\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nvar error_template = '<div class=\"alert alert-danger alert-dismissable\" role=\"alert\">\\n' + '  <span class=\"sr-only\">Error:</span>\\n' + \"  {0}\\n\" + '  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\\n' + \"</div>\";\nvar success_template = '<div class=\"alert alert-success alert-dismissable submit-row\" role=\"alert\">\\n' + \"  <strong>Success!</strong>\\n\" + \"   Your profile has been updated\\n\" + '  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button>\\n' + \"</div>\";\n\nfunction submit(event) {\n  event.preventDefault();\n  (0, _jquery.default)(\"#results\").empty();\n  var $form = (0, _jquery.default)(this);\n  var params = $form.serializeJSON(true);\n\n  _CTFd.default.api.patch_user_private({}, params).then(function (response) {\n    if (response.success) {\n      (0, _jquery.default)(\"#results\").html(success_template);\n    } else if (\"errors\" in response) {\n      Object.keys(response.errors).map(function (error) {\n        var i = $form.find(\"input[name={0}]\".format(error));\n        var input = (0, _jquery.default)(i);\n        input.addClass(\"input-filled-invalid\");\n        input.removeClass(\"input-filled-valid\");\n        var error_msg = response.errors[error];\n        (0, _jquery.default)(\"#results\").append(error_template.format(error_msg));\n      });\n    }\n  });\n}\n\n(0, _jquery.default)(function () {\n  (0, _jquery.default)(\"#user-settings-form\").submit(submit);\n});\n\n//# sourceURL=webpack:///./CTFd/themes/core/assets/js/pages/settings.js?");
+eval("\n\n__webpack_require__(/*! ./main */ \"./CTFd/themes/core/assets/js/pages/main.js\");\n\nvar _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\"));\n\nvar _CTFd = _interopRequireDefault(__webpack_require__(/*! ../CTFd */ \"./CTFd/themes/core/assets/js/CTFd.js\"));\n\nvar _utils = __webpack_require__(/*! ../utils */ \"./CTFd/themes/core/assets/js/utils.js\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n(0, _jquery.default)(function () {\n  (0, _utils.clear_notification_counter)();\n});\n\n//# sourceURL=webpack:///./CTFd/themes/core/assets/js/pages/notifications.js?");
 
 /***/ })
 

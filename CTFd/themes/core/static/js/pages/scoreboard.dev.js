@@ -147,7 +147,7 @@
 /******/
 /******/
 /******/ 	// add entry module to deferred list
-/******/ 	deferredModules.push(["./CTFd/themes/core/assets/js/pages/scoreboard.js","helpers","plotly","vendor","default~pages/challenges~pages/main~pages/scoreboard~pages/settings~pages/stats~pages/teams/private"]);
+/******/ 	deferredModules.push(["./CTFd/themes/core/assets/js/pages/scoreboard.js","helpers","plotly","vendor","default~pages/challenges~pages/main~pages/notifications~pages/scoreboard~pages/settings~pages/stats~~d7294f40"]);
 /******/ 	// run deferred modules when ready
 /******/ 	return checkDeferredModules();
 /******/ })

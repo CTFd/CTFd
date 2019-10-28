@@ -191,3 +191,44 @@ export function cumulativeSum(arr) {
   }
   return result;
 }
+
+const storage = window.localStorage;
+const counter_key = 'unread_notifications';
+
+export function init_notification_counter(){
+  let count = storage.getItem(counter_key);
+  if (count === null) {
+    storage.setItem(counter_key, 0);
+  } else {
+    if (count > 0) {
+      $('.badge-notification').text(count);
+    }
+  }
+}
+
+export function set_notification_counter(count) {
+  storage.setItem(counter_key, count);
+}
+
+export function inc_notification_counter() {
+  let count = storage.getItem(counter_key) || 0;
+  storage.setItem(counter_key, ++count);
+  $('.badge-notification').text(count);
+}
+
+export function dec_notification_counter() {
+  let count = storage.getItem(counter_key) || 0;
+  if (count > 0) {
+    storage.setItem(counter_key, --count);
+    $('.badge-notification').text(count);
+  }
+  // Always clear if count is 0
+  if (count == 0) {
+    clear_notification_counter();
+  }
+}
+
+export function clear_notification_counter() {
+  storage.setItem(counter_key, 0);
+  $('.badge-notification').empty();
+}

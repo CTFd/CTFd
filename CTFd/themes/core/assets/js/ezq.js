@@ -61,7 +61,13 @@ const yesTpl =
 export function ezAlert(args) {
   const modal = modalTpl.format(args.title, args.body);
   const obj = $(modal);
-  const button = buttonTpl.format(args.button);
+  const button = $(buttonTpl.format(args.button));
+
+  if (args.success) {
+    $(button).click(function () {
+      args.success();
+    });
+  }
 
   obj.find(".modal-footer").append(button);
   $("main").append(obj);

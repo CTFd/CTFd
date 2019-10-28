@@ -1,7 +1,7 @@
 import { Howl } from "howler";
 import { NativeEventSource, EventSourcePolyfill } from "event-source-polyfill";
 import { ezToast, ezAlert } from "./ezq";
-import { WindowController } from "./utils";
+import { WindowController, init_notification_counter, inc_notification_counter, dec_notification_counter } from "./utils";
 
 const EventSource = NativeEventSource || EventSourcePolyfill;
 
@@ -14,6 +14,8 @@ export default root => {
       root + "/themes/core/static/sounds/notification.mp3"
     ]
   });
+
+  init_notification_counter();
 
   function connect() {
     source.addEventListener(
@@ -36,21 +38,28 @@ export default root => {
   function render(data) {
     switch (data.type) {
       case "toast":
+        inc_notification_counter();
         ezToast({
           title: data.title,
           body: data.content
         });
         break;
       case "alert":
+        inc_notification_counter();
         ezAlert({
           title: data.title,
           body: data.content,
-          button: "Got it!"
+          button: "Got it!",
+          success: function() {
+            dec_notification_counter();
+          }
         });
         break;
       case "background":
+        inc_notification_counter();
         break;
       default:
+        inc_notification_counter();
         break;
     }
 
