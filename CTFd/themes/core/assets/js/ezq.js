@@ -99,6 +99,20 @@ export function ezToast(args) {
   var res = toastTpl.format(args.title, args.body);
   var obj = $(res);
 
+  if (args.onclose) {
+    $(obj).find("button[data-dismiss=modal]").click(function(){
+      args.onclose();
+    });
+  }
+
+  if (args.onclick) {
+    let body = $(obj).find(".toast-body");
+    body.addClass("cursor-pointer");
+    body.click(function () {
+      args.onclick();
+    });
+  }
+
   let autohide = args.autohide || false;
   let delay = args.delay || 10000; // 10 seconds
 

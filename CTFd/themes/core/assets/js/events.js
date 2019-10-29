@@ -39,9 +39,24 @@ export default root => {
     switch (data.type) {
       case "toast":
         inc_notification_counter();
+        // Trim toast body to length
+        let length = 50;
+        let trimmed_content = data.content.length > length ?
+          data.content.substring(0, length - 3) + "..." :
+          data.content;
         ezToast({
           title: data.title,
-          body: data.content
+          body: trimmed_content,
+          onclick: function(){
+            ezAlert({
+              title: data.title,
+              body: data.content,
+              button: "Got it!",
+              success: function () {
+                dec_notification_counter();
+              }
+            });
+          }
         });
         break;
       case "alert":
