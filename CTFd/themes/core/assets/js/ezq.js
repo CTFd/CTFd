@@ -101,7 +101,7 @@ export function ezToast(args) {
 
   if (args.onclose) {
     $(obj)
-      .find("button[data-dismiss=modal]")
+      .find("button[data-dismiss=toast]")
       .click(function() {
         args.onclose();
       });

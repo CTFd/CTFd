@@ -62,6 +62,9 @@ export default root => {
                 dec_notification_counter();
               }
             });
+          },
+          onclose: function() {
+            dec_notification_counter();
           }
         });
         break;
