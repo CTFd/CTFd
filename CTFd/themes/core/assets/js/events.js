@@ -1,7 +1,12 @@
 import { Howl } from "howler";
 import { NativeEventSource, EventSourcePolyfill } from "event-source-polyfill";
 import { ezToast, ezAlert } from "./ezq";
-import { WindowController, init_notification_counter, inc_notification_counter, dec_notification_counter } from "./utils";
+import {
+  WindowController,
+  init_notification_counter,
+  inc_notification_counter,
+  dec_notification_counter
+} from "./utils";
 
 const EventSource = NativeEventSource || EventSourcePolyfill;
 
@@ -41,18 +46,19 @@ export default root => {
         inc_notification_counter();
         // Trim toast body to length
         let length = 50;
-        let trimmed_content = data.content.length > length ?
-          data.content.substring(0, length - 3) + "..." :
-          data.content;
+        let trimmed_content =
+          data.content.length > length
+            ? data.content.substring(0, length - 3) + "..."
+            : data.content;
         ezToast({
           title: data.title,
           body: trimmed_content,
-          onclick: function(){
+          onclick: function() {
             ezAlert({
               title: data.title,
               body: data.content,
               button: "Got it!",
-              success: function () {
+              success: function() {
                 dec_notification_counter();
               }
             });

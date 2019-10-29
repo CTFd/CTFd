@@ -64,7 +64,7 @@ export function ezAlert(args) {
   const button = $(buttonTpl.format(args.button));
 
   if (args.success) {
-    $(button).click(function () {
+    $(button).click(function() {
       args.success();
     });
   }
@@ -100,15 +100,17 @@ export function ezToast(args) {
   var obj = $(res);
 
   if (args.onclose) {
-    $(obj).find("button[data-dismiss=modal]").click(function(){
-      args.onclose();
-    });
+    $(obj)
+      .find("button[data-dismiss=modal]")
+      .click(function() {
+        args.onclose();
+      });
   }
 
   if (args.onclick) {
     let body = $(obj).find(".toast-body");
     body.addClass("cursor-pointer");
-    body.click(function () {
+    body.click(function() {
       args.onclick();
     });
   }
