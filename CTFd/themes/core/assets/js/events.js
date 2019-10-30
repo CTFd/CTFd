@@ -50,6 +50,7 @@ export default root => {
           data.content.length > length
             ? data.content.substring(0, length - 3) + "..."
             : data.content;
+        let clicked = false;
         ezToast({
           title: data.title,
           body: trimmed_content,
@@ -59,12 +60,15 @@ export default root => {
               body: data.content,
               button: "Got it!",
               success: function() {
+                clicked = true;
                 dec_notification_counter();
               }
             });
           },
           onclose: function() {
-            dec_notification_counter();
+            if (!clicked) {
+              dec_notification_counter();
+            }
           }
         });
         break;
