@@ -2,18 +2,27 @@ import "./main";
 import "core/utils";
 import $ from "jquery";
 import CTFd from "core/CTFd";
-import { ezQuery } from "core/ezq";
+import { ezQuery, ezAlert } from "core/ezq";
 
 function submit(event) {
   event.preventDefault();
   const $form = $(this);
   const params = $form.serializeJSON();
 
+  // Disable button after click
+  $form.find("button[type=submit]").attr("disabled", true);
+
   CTFd.api.post_notification_list({}, params).then(response => {
-    if (response.success) {
-      setTimeout(function() {
-        window.location.reload();
-      }, 3000);
+    // Admin should also see the notification sent out
+    setTimeout(function() {
+      $form.find("button[type=submit]").attr("disabled", false);
+    }, 1000);
+    if (!response.success) {
+      ezAlert({
+        title: "Error",
+        body: "Could not send notification. Please try again.",
+        button: "OK"
+      });
     }
   });
 }

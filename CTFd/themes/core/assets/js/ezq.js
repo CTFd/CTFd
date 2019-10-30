@@ -21,7 +21,7 @@ const modalTpl =
   "</div>";
 
 const toastTpl =
-  '<div class="toast m-3" role="alert" style="position: fixed; bottom: 0; right: 0; min-width: 20%;">' +
+  '<div class="toast m-3" role="alert">' +
   '  <div class="toast-header">' +
   '    <strong class="mr-auto">{0}</strong>' +
   '    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">' +
@@ -61,7 +61,13 @@ const yesTpl =
 export function ezAlert(args) {
   const modal = modalTpl.format(args.title, args.body);
   const obj = $(modal);
-  const button = buttonTpl.format(args.button);
+  const button = $(buttonTpl.format(args.button));
+
+  if (args.success) {
+    $(button).click(function() {
+      args.success();
+    });
+  }
 
   obj.find(".modal-footer").append(button);
   $("main").append(obj);
@@ -76,13 +82,43 @@ export function ezAlert(args) {
 }
 
 export function ezToast(args) {
+  const container_available = $("#ezq--notifications-toast-container").length;
+  if (!container_available) {
+    $("body").append(
+      $("<div/>")
+        .attr({ id: "ezq--notifications-toast-container" })
+        .css({
+          position: "fixed",
+          bottom: "0",
+          right: "0",
+          "min-width": "20%"
+        })
+    );
+  }
+
   var res = toastTpl.format(args.title, args.body);
   var obj = $(res);
+
+  if (args.onclose) {
+    $(obj)
+      .find("button[data-dismiss=toast]")
+      .click(function() {
+        args.onclose();
+      });
+  }
+
+  if (args.onclick) {
+    let body = $(obj).find(".toast-body");
+    body.addClass("cursor-pointer");
+    body.click(function() {
+      args.onclick();
+    });
+  }
 
   let autohide = args.autohide || false;
   let delay = args.delay || 10000; // 10 seconds
 
-  $("main").append(obj);
+  $("#ezq--notifications-toast-container").prepend(obj);
 
   obj.toast({
     autohide: autohide,

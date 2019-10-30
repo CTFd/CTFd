@@ -21,6 +21,7 @@ const roots = {
       'pages/scoreboard': 'assets/js/pages/scoreboard.js',
       'pages/settings': 'assets/js/pages/settings.js',
       'pages/stats': 'assets/js/pages/stats.js',
+      'pages/notifications': 'assets/js/pages/notifications.js',
       'pages/teams/private': 'assets/js/pages/teams/private.js',
     }
   },

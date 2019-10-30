@@ -28,6 +28,44 @@
 						</label>
 						<textarea class="form-control" type="text" name="content" rows="3"></textarea>
 					</div>
+					<div class="form-row">
+						<div class="col">
+							<div class="form-group">
+								<label>
+									Type
+									<small class="form-text text-muted">
+										What type of notification users receive
+									</small>
+								</label>
+							</div>
+							<div class="form-check form-check-inline pr-1">
+								<input class="form-check-input" type="radio" name="type" value="toast" id="type-radio-toast" checked>
+								<label class="form-check-label" for="type-radio-toast">Toast</label>
+							</div>
+							<div class="form-check form-check-inline pr-1">
+								<input class="form-check-input" type="radio" name="type" value="alert" id="type-radio-alert">
+								<label class="form-check-label" for="type-radio-alert">Alert</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="type" value="background" id="type-radio-bg">
+								<label class="form-check-label" for="type-radio-bg">Background</label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="form-group">
+								<label>
+									Sound
+									<small class="form-text text-muted">
+										Play sound for users
+									</small>
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="sound" value="true" id="sound-enable" checked>
+								<label class="form-check-label" for="sound-enable">Play Sound</label>
+							</div>
+						</div>
+					</div>
 					<div class="float-right">
 						<button type="submit" class="btn btn-success text-center">Submit</button>
 					</div>

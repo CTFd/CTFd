@@ -24,5 +24,6 @@
 	</div>
 {% endblock %}
 
-{% block scripts %}
+{% block entrypoint %}
+	<script async src="{{ url_for('views.themes', path='js/pages/notifications.js') }}"></script>
 {% endblock %}
