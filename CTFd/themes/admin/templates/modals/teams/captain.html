@@ -2,7 +2,7 @@
 	<input type="hidden" name="id">
 	<div class="form-group">
 		<label for="captain">Team Captain</label>
-		<select class="form-control" id="captain" name="captain_id">
+		<select class="form-control custom-select" id="captain" name="captain_id">
 			{% if team is defined %}
 				<option value="{{ team.captain.id }}">{{ team.captain.name }}</option>
 				{% for member in team.members %}

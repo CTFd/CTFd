@@ -26,7 +26,7 @@
 			<form method="GET" class="form-inline">
 					<div class="form-group col-md-2">
 						<label for="sel1" class="sr-only" >Search Field</label>
-						<select name="field" class="form-control w-100" id="sel1">
+						<select class="form-control custom-select w-100" id="sel1" name="field">
 							<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
 							<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
 							<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>

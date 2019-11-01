@@ -7,7 +7,7 @@
 					Control whether users must be logged in to see challenges
 				</small>
 			</label>
-			<select class="form-control" name="challenge_visibility">
+			<select class="form-control custom-select" name="challenge_visibility">
 				<option value="public" {% if challenge_visibility == 'public' %}selected{% endif %}>
 					Public
 				</option>
@@ -27,7 +27,7 @@
 					Control whether solves/score are shown to the public, to logged in users, hidden to all non-admins, or only shown to admins
 				</small>
 			</label>
-			<select class="form-control" name="score_visibility">
+			<select class="form-control custom-select" name="score_visibility">
 				<option value="public" {% if score_visibility == 'public' %}selected{% endif %}>
 					Public
 				</option>
@@ -53,7 +53,7 @@
 					Control whether accounts (users &amp; teams) are shown to everyone or only to admins
 				</small>
 			</label>
-			<select class="form-control" name="account_visibility">
+			<select class="form-control custom-select" name="account_visibility">
 				<option value="public" {% if account_visibility == 'public' %}selected{% endif %}>
 					Public
 				</option>
@@ -76,7 +76,7 @@
 					Control whether registration is enabled for everyone or disabled
 				</small>
 			</label>
-			<select class="form-control" name="registration_visibility">
+			<select class="form-control custom-select" name="registration_visibility">
 				<option value="public" {% if registration_visibility == 'public' %}selected{% endif %}>
 					Public
 				</option>

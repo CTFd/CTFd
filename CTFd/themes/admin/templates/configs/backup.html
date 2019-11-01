@@ -42,7 +42,7 @@
 			<form method="GET" action="{{ url_for('admin.export_csv') }}">
 				<div class="form-group">
 					<label for="container-files">Database Table</label>
-					<select class="form-control" name="table">
+					<select class="form-control custom-select" name="table">
 						{% for table in database_tables %}
 							<option value="{{ table }}">{{ table }}</option>
 						{% endfor %}

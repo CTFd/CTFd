@@ -21,7 +21,10 @@ function submit(event) {
   event.preventDefault();
   $("#results").empty();
   const $form = $(this);
-  const params = $form.serializeJSON(true);
+  let params = $form.serializeJSON(true);
+
+  // Special case country to allow for removals
+  params.country = $form.serializeJSON(false)["country"];
 
   CTFd.api.patch_user_private({}, params).then(response => {
     if (response.success) {
