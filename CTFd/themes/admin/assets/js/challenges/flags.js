@@ -83,6 +83,7 @@ export function editFlagModal(event) {
     const data = response.data;
     $.get(CTFd.config.urlRoot + data.templates.update, function(template_data) {
       $("#edit-flags form").empty();
+      $("#edit-flags form").off();
 
       const template = nunjucks.compile(template_data);
       $("#edit-flags form").append(template.render(data));
