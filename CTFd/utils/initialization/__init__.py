@@ -201,7 +201,7 @@ def init_request_processors(app):
         token = request.headers.get("Authorization")
         if token and request.content_type == "application/json":
             try:
-                token_type, token = token.split(" ", maxsplit=1)
+                token_type, token = token.split(" ", 1)
                 user = lookup_user_token(token)
             except UserNotFoundException:
                 abort(401)
