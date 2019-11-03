@@ -47,5 +47,5 @@ def get_current_revision():
 
 def stamp_latest_revision():
     # Get proper migrations directory regardless of cwd
-    directory = os.path.join(os.path.dirname(app.root_path), 'migrations')
+    directory = os.path.join(os.path.dirname(app.root_path), "migrations")
     stamp(directory=directory)

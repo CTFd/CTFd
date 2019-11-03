@@ -1,9 +1,7 @@
-from CTFd.models import db, Users, UserTokens
+from CTFd.models import db, UserTokens
 from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils.security.signing import serialize, unserialize
-from CTFd.utils.dates import unix_time, unix_time_to_utc
 from CTFd.utils.encoding import hexencode
-from CTFd.exceptions import UserNotFoundException, APIKeyExpiredException
+from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from flask import session
 import datetime
 import os
@@ -28,17 +26,19 @@ def generate_api_key(user, expiration=None):
         temp_token = UserTokens.query.filter_by(value=value).first()
 
     token = UserTokens(
-        user_id=user.id,
-        expiration=expiration,
-        value=hexencode(os.urandom(32))
+        user_id=user.id, expiration=expiration, value=hexencode(os.urandom(32))
     )
     db.session.add(token)
     db.session.commit()
     return token
 
 
-def lookup_api_key(key):
-    token = UserTokens.query.filter_by(value=key).first()
+def lookup_user_token(token):
+    token = UserTokens.query.filter_by(value=token).first()
     if token:
+        if datetime.datetime.utcnow() >= token.expiration:
+            raise UserTokenExpiredException
         return token.user
+    else:
+        raise UserNotFoundException
     return None

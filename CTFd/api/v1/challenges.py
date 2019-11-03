@@ -260,13 +260,10 @@ class Challenge(Resource):
         Model = get_model()
 
         if scores_visible() is True and accounts_visible() is True:
-            solves = (
-                Solves.query.join(Model, Solves.account_id == Model.id)
-                .filter(
-                    Solves.challenge_id == chal.id,
-                    Model.banned == False,
-                    Model.hidden == False,
-                )
+            solves = Solves.query.join(Model, Solves.account_id == Model.id).filter(
+                Solves.challenge_id == chal.id,
+                Model.banned == False,
+                Model.hidden == False,
             )
 
             # Only show solves that happened before freeze time if configured

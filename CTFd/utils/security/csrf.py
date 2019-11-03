@@ -3,4 +3,4 @@ import os
 
 
 def generate_nonce():
-    return hexencode(os.urandom(32)).decode("utf-8")
+    return hexencode(os.urandom(32))

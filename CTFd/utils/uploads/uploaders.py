@@ -111,7 +111,7 @@ class S3Uploader(BaseUploader):
 
     def download(self, filename):
         key = filename
-        filename = filename.split('/').pop()
+        filename = filename.split("/").pop()
         url = self.s3.generate_presigned_url(
             "get_object",
             Params={

@@ -140,8 +140,7 @@ def test_themes_handler():
             assert r.status_code == 404
             r = client.get("/themes/core/static/%2e%2e/%2e%2e/%2e%2e/utils.py")
             assert r.status_code == 404
-            r = client.get(
-                "/themes/core/static/%2e%2e%2f%2e%2e%2f%2e%2e%2futils.py")
+            r = client.get("/themes/core/static/%2e%2e%2f%2e%2e%2f%2e%2e%2futils.py")
             assert r.status_code == 404
             r = client.get("/themes/core/static/..%2f..%2f..%2futils.py")
             assert r.status_code == 404

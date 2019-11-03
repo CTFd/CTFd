@@ -552,7 +552,7 @@ def test_api_challenge_get_solves_ctf_frozen():
             # Challenge 1 should have one solve (after freeze)
             r = client.get("/api/v1/challenges/1")
             data = r.get_json()["data"]
-            assert data['solves'] == 1
+            assert data["solves"] == 1
 
             # Challenge 1 should have one solve (after freeze)
             r = client.get("/api/v1/challenges/1/solves")

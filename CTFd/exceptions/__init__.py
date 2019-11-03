@@ -2,5 +2,5 @@ class UserNotFoundException(Exception):
     pass
 
 
-class APIKeyExpiredException(Exception):
+class UserTokenExpiredException(Exception):
     pass
