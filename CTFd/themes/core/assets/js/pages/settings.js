@@ -2,6 +2,7 @@ import "./main";
 import "../utils";
 import $ from "jquery";
 import CTFd from "../CTFd";
+import { ezAlert, ezQuery } from "../ezq";
 
 const error_template =
   '<div class="alert alert-danger alert-dismissable" role="alert">\n' +
@@ -17,7 +18,7 @@ const success_template =
   '  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>\n' +
   "</div>";
 
-function submit(event) {
+function profileUpdate(event) {
   event.preventDefault();
   $("#results").empty();
   const $form = $(this);
@@ -42,6 +43,61 @@ function submit(event) {
   });
 }
 
+function tokenGenerate(event) {
+  event.preventDefault();
+  const $form = $(this);
+  let params = $form.serializeJSON(true);
+
+  CTFd.fetch("/api/v1/tokens", {
+    method: "POST",
+    body: JSON.stringify(params)
+  })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(response) {
+      if (response.success) {
+        ezAlert({
+          title: "API Key Generated",
+          body: `Please copy your API Key, it won't be shown again! <br><br> <code>${
+            response.data.value
+          }</code>`,
+          button: "Got it!",
+          large: true
+        });
+      }
+    });
+}
+
+function deleteToken(event) {
+  event.preventDefault();
+  const $elem = $(this);
+  const id = $elem.data("token-id");
+
+  ezQuery({
+    title: "Delete Token",
+    body: "Are you sure you want to delete this token?",
+    success: function() {
+      CTFd.fetch("/api/v1/tokens/" + id, {
+        method: "DELETE"
+      })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(response) {
+          if (response.success) {
+            $elem
+              .parent()
+              .parent()
+              .remove();
+          }
+        });
+    }
+  });
+}
+
 $(() => {
-  $("#user-settings-form").submit(submit);
+  $("#user-profile-form").submit(profileUpdate);
+  $("#user-token-form").submit(tokenGenerate);
+  $(".delete-token").click(deleteToken);
 });

@@ -132,7 +132,7 @@ function uploadLogo(event) {
         if (response.success) {
           window.location.reload();
         } else {
-          ezal({
+          ezAlert({
             title: "Error!",
             body: "Logo uploading failed!",
             button: "Okay"

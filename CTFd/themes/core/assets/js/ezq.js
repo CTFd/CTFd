@@ -69,6 +69,10 @@ export function ezAlert(args) {
     });
   }
 
+  if (args.large) {
+    obj.find(".modal-dialog").addClass("modal-lg");
+  }
+
   obj.find(".modal-footer").append(button);
   $("main").append(obj);
 
