@@ -12,9 +12,9 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-2 offset-md-1">
-			<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-				<a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#profile" role="tab">Profile</a>
-				<a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#tokens" role="tab">Access Tokens</a>
+			<div class="nav flex-column nav-pills" role="tablist">
+				<a class="nav-link active" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab">Profile</a>
+				<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Access Tokens</a>
 			</div>
 		</div>
 		<div class="col-md-8">
@@ -120,7 +120,6 @@
 					<table class="table table-striped">
 						<thead>
 							<tr>
-								<td class="text-center"><b>ID</b></td>
 								<td class="text-center"><b>Type</b></td>
 								<td class="text-center"><b>Created</b></td>
 								<td class="text-center"><b>Expiration</b></td>
@@ -130,9 +129,6 @@
 						<tbody>
 							{% for token in tokens %}
 							<tr>
-								<td>
-									{{ loop.index }}
-								</td>
 								<td>{{ token.type }}</td>
 								<td><span data-time="{{ token.created | isoformat }}"></span></td>
 								<td><span data-time="{{ token.expiration | isoformat }}"></span></td>

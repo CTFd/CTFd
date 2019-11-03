@@ -12,7 +12,6 @@ const modalTpl =
   "        </button>" +
   "      </div>" +
   '      <div class="modal-body">' +
-  "        <p>{1}</p>" +
   "      </div>" +
   '      <div class="modal-footer">' +
   "      </div>" +
@@ -61,6 +60,13 @@ const yesTpl =
 export function ezAlert(args) {
   const modal = modalTpl.format(args.title, args.body);
   const obj = $(modal);
+
+  if (typeof args.body === "string") {
+    obj.find(".modal-body").append(`<p>${args.body}</p>`);
+  } else {
+    obj.find(".modal-body").append($(args.body));
+  }
+
   const button = $(buttonTpl.format(args.button));
 
   if (args.success) {
@@ -135,6 +141,12 @@ export function ezToast(args) {
 export function ezQuery(args) {
   const modal = modalTpl.format(args.title, args.body);
   const obj = $(modal);
+
+  if (typeof args.body === "string") {
+    obj.find(".modal-body").append(`<p>${args.body}</p>`);
+  } else {
+    obj.find(".modal-body").append($(args.body));
+  }
 
   const yes = $(yesTpl);
   const no = $(noTpl);

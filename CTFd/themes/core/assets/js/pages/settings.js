@@ -1,5 +1,5 @@
 import "./main";
-import "../utils";
+import { copyToClipboard } from "../utils";
 import $ from "jquery";
 import CTFd from "../CTFd";
 import { ezAlert, ezQuery } from "../ezq";
@@ -57,11 +57,25 @@ function tokenGenerate(event) {
     })
     .then(function(response) {
       if (response.success) {
+        let body = $(`
+        <p>Please copy your API Key, it won't be shown again!</p>
+        <div class="input-group mb-3">
+          <input type="text" id="user-token-result" class="form-control" value="${
+            response.data.value
+          }" readonly>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button">
+              <i class="fas fa-clipboard"></i>
+            </button>
+          </div>
+        </div>
+        `);
+        body.find("button").click(function(event) {
+          copyToClipboard(event, "#user-token-result");
+        });
         ezAlert({
           title: "API Key Generated",
-          body: `Please copy your API Key, it won't be shown again! <br><br> <code>${
-            response.data.value
-          }</code>`,
+          body: body,
           button: "Got it!",
           large: true
         });
@@ -100,4 +114,14 @@ $(() => {
   $("#user-profile-form").submit(profileUpdate);
   $("#user-token-form").submit(tokenGenerate);
   $(".delete-token").click(deleteToken);
+  $(".nav-pills a").click(function(event) {
+    window.location.hash = this.hash;
+  });
+
+  // Load location hash
+  let hash = window.location.hash;
+  if (hash) {
+    hash = hash.replace("<>[]'\"", "");
+    $('.nav-pills a[href="' + hash + '"]').tab("show");
+  }
 });
