@@ -280,7 +280,7 @@ def test_user_can_access_files_with_auth_token():
         chal_id = chal.id
         path = app.config.get("UPLOAD_FOLDER")
 
-        md5hash = hexencode(os.urandom(16)).decode("utf-8")
+        md5hash = hexencode(os.urandom(16))
 
         location = os.path.join(path, md5hash, "test.txt")
         directory = os.path.dirname(location)
@@ -395,7 +395,7 @@ def test_user_can_access_files_if_view_after_ctf():
         chal_id = chal.id
         path = app.config.get("UPLOAD_FOLDER")
 
-        md5hash = hexencode(os.urandom(16)).decode("utf-8")
+        md5hash = hexencode(os.urandom(16))
 
         location = os.path.join(path, md5hash, "test.txt")
         directory = os.path.dirname(location)
