@@ -19,7 +19,7 @@ def logout_user():
     session.clear()
 
 
-def generate_api_key(user, expiration=None):
+def generate_user_token(user, expiration=None):
     temp_token = True
     while temp_token is not None:
         value = hexencode(os.urandom(32))

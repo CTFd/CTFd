@@ -3,7 +3,7 @@ from flask_restplus import Namespace, Resource
 from CTFd.models import db, Tokens
 from CTFd.utils.user import get_current_user
 from CTFd.schemas.tokens import TokenSchema
-from CTFd.utils.security.auth import generate_api_key
+from CTFd.utils.security.auth import generate_user_token
 from CTFd.utils.decorators import require_verified_emails, admins_only, authed_only
 import datetime
 
@@ -21,7 +21,7 @@ class TokenList(Resource):
             expiration = datetime.datetime.strptime(expiration, "%Y-%m-%d")
 
         user = get_current_user()
-        token = generate_api_key(user, expiration=expiration)
+        token = generate_user_token(user, expiration=expiration)
 
         # Explicitly use admin view so that user's can see the value of their token
         schema = TokenSchema(view="admin")
