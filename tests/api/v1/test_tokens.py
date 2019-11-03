@@ -8,8 +8,6 @@ from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
     login_as_user,
-    gen_challenge,
-    gen_tag,
     gen_user,
 )
 import datetime
@@ -46,7 +44,7 @@ def test_api_tag_list_get():
     app = create_ctfd()
     with app.app_context():
         user = gen_user(app.db, name="user")
-        token = generate_user_token(user)
+        generate_user_token(user)
 
         user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
         generate_user_token(user2)
@@ -70,7 +68,7 @@ def test_api_tag_detail_get():
     app = create_ctfd()
     with app.app_context():
         user = gen_user(app.db, name="user")
-        token = generate_user_token(user)
+        generate_user_token(user)
 
         with login_as_user(app) as client:
             r = client.get("/api/v1/tokens/1", json="")
@@ -84,7 +82,7 @@ def test_api_tag_detail_get():
             resp = r.get_json()
             assert sorted(resp["data"].keys()) == sorted(TokenSchema().views["admin"])
 
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
+        gen_user(app.db, name="user2", email="user2@ctfd.io")
         with login_as_user(app, "user2") as client:
             r = client.get("/api/v1/tokens/1", json="")
             assert r.status_code == 404
