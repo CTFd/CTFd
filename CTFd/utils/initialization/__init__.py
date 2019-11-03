@@ -199,7 +199,7 @@ def init_request_processors(app):
     @app.before_request
     def tokens():
         token = request.headers.get("Authorization")
-        if token:
+        if token and request.content_type == "application/json":
             try:
                 token_type, token = token.split(" ", maxsplit=1)
                 user = lookup_user_token(token)
