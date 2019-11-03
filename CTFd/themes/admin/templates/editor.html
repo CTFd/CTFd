@@ -167,7 +167,7 @@
 									<div class="form-group pr-3">
 										Draft:
 										{% set draft = page is defined and page.draft == True %}
-										<select name="draft">
+										<select class="form-control custom-select" name="draft">
 											<option value="true" {% if draft == True %}selected{% endif %}>
 												True
 											</option>
@@ -180,7 +180,7 @@
 									<div class="form-group pr-3">
 										Hidden:
 										{% set hidden = page is defined and page.hidden == True %}
-										<select name="hidden">
+										<select class="form-control custom-select" name="hidden">
 											<option value="true" {% if hidden == True %}selected{% endif %}>True
 											</option>
 											<option value="false" {% if hidden == False %}selected{% endif %}>False
@@ -191,7 +191,7 @@
 									<div class="form-group pr-3">
 										Authentication Required:
 										{% set auth_required = page is defined and page.auth_required == True %}
-										<select name="auth_required">
+										<select class="form-control custom-select" name="auth_required">
 											<option value="true" {% if auth_required == True %}selected{% endif %}>
 												True
 											</option>

@@ -4,6 +4,12 @@ import CTFd from "core/CTFd";
 export function addRequirement(event) {
   event.preventDefault();
   const requirements = $("#prerequisite-add-form").serializeJSON();
+
+  // Shortcut if there's no prerequisite
+  if (!requirements["prerequisite"]) {
+    return;
+  }
+
   CHALLENGE_REQUIREMENTS.prerequisites.push(
     parseInt(requirements["prerequisite"])
   );
