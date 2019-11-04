@@ -25,7 +25,7 @@ before_install:
     - sudo rm -f /etc/boto.cfg
     - export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
     - export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-    - python3.6 -m pip install black>=19.3b0
+    - python3.6 -m pip install black==19.3b0
 install:
     - pip install -r development.txt
     - yarn global add prettier@1.17.0
