@@ -35,6 +35,7 @@ def test_reverse_proxy_config():
 
 def test_server_sent_events_config():
     """Test that SERVER_SENT_EVENTS configuration behaves properly"""
+
     class ServerSentEventsConfig(TestingConfig):
         SERVER_SENT_EVENTS = False
 

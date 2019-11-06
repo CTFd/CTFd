@@ -12,6 +12,4 @@ def get_pages():
 
 @cache.memoize()
 def get_page(route):
-    return Pages.query.filter(
-        Pages.route == route, Pages.draft.isnot(True)
-    ).first()
+    return Pages.query.filter(Pages.route == route, Pages.draft.isnot(True)).first()

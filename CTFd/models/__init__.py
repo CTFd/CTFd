@@ -631,6 +631,33 @@ class Configs(db.Model):
         super(Configs, self).__init__(**kwargs)
 
 
+class Tokens(db.Model):
+    __tablename__ = "tokens"
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(32))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    expiration = db.Column(
+        db.DateTime,
+        default=lambda: datetime.datetime.utcnow() + datetime.timedelta(days=30),
+    )
+    value = db.Column(db.String(128), unique=True)
+
+    user = db.relationship("Users", foreign_keys="Tokens.user_id", lazy="select")
+
+    __mapper_args__ = {"polymorphic_on": type}
+
+    def __init__(self, *args, **kwargs):
+        super(Tokens, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "<Token %r>" % self.id
+
+
+class UserTokens(Tokens):
+    __mapper_args__ = {"polymorphic_identity": "user"}
+
+
 @cache.memoize()
 def get_config(key):
     """

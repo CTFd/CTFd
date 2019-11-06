@@ -11,8 +11,6 @@ def test_hexencode():
         "78797a4142434445464748494a4b4c4d4e4f505152535455565758595a21222324"
         "25262728292a2b2c2d2e2f3a3b3c3d3e3f405b5c5d5e5f607b7c7d7e20090a0d0b0c"
     )
-    if six.PY3:
-        value = value.encode("utf-8")
     assert hexencode(string.printable) == value
 
 
@@ -22,7 +20,7 @@ def test_hexdecode():
         "78797a4142434445464748494a4b4c4d4e4f505152535455565758595a21222324"
         "25262728292a2b2c2d2e2f3a3b3c3d3e3f405b5c5d5e5f607b7c7d7e20090a0d0b0c"
     )
-    assert hexdecode(saved) == string.printable.encode("utf-8")
+    assert hexdecode(saved) == string.printable
 
 
 def test_base64encode():

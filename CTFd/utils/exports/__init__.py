@@ -1,5 +1,10 @@
 from CTFd.utils import get_app_config, set_config
-from CTFd.utils.migrations import get_current_revision, create_database, drop_database, stamp_latest_revision
+from CTFd.utils.migrations import (
+    get_current_revision,
+    create_database,
+    drop_database,
+    stamp_latest_revision,
+)
 from CTFd.utils.uploads import get_uploader
 from CTFd.models import db
 from CTFd.cache import cache

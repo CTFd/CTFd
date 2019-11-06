@@ -1,9 +1,4 @@
-from flask import (
-    request,
-    flash,
-    get_flashed_messages,
-    current_app,
-)
+from flask import request, flash, get_flashed_messages, current_app
 import os
 
 

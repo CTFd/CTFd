@@ -19,6 +19,7 @@ from CTFd.models import (
     Tracking,
     Unlocks,
     Users,
+    Tokens,
 )
 from CTFd.cache import cache, clear_standings
 from sqlalchemy_utils import drop_database
@@ -50,6 +51,8 @@ class CTFdTestClient(FlaskClient):
             with self.session_transaction() as sess:
                 api_key_headers = Headers({"CSRF-Token": sess.get("nonce")})
                 headers = kwargs.pop("headers", Headers())
+                if isinstance(headers, dict):
+                    headers = Headers(headers)
                 headers.extend(api_key_headers)
                 kwargs["headers"] = headers
         return super(CTFdTestClient, self).open(*args, **kwargs)
@@ -421,6 +424,13 @@ def gen_notification(db, title="title", content="content"):
     notif = Notifications(title=title, content=content)
     db.session.add(notif)
     db.session.commit()
+
+
+def gen_token(db, type="user", user_id=None, expiration=None):
+    token = Tokens(type=type, user_id=user_id, expiration=expiration)
+    db.session.add(token)
+    db.session.commit()
+    return token
 
 
 def simulate_user_activity(db, user):

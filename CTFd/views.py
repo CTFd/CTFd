@@ -12,7 +12,16 @@ from flask import (
 )
 from flask.helpers import safe_join
 
-from CTFd.models import db, Users, Admins, Teams, Files, Pages, Notifications
+from CTFd.models import (
+    db,
+    Users,
+    Admins,
+    Teams,
+    Files,
+    Pages,
+    Notifications,
+    UserTokens,
+)
 from CTFd.utils import markdown
 from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
@@ -61,9 +70,7 @@ def setup():
             name_len = len(name) == 0
             names = Users.query.add_columns("name", "id").filter_by(name=name).first()
             emails = (
-                Users.query.add_columns("email", "id")
-                .filter_by(email=email)
-                .first()
+                Users.query.add_columns("email", "id").filter_by(email=email).first()
             )
             pass_short = len(password) == 0
             pass_long = len(password) > 128
@@ -187,6 +194,9 @@ def settings():
     website = user.website
     affiliation = user.affiliation
     country = user.country
+
+    tokens = UserTokens.query.filter_by(user_id=user.id).all()
+
     prevent_name_change = get_config("prevent_name_change")
     confirm_email = get_config("verify_emails") and not user.verified
     return render_template(
@@ -196,6 +206,7 @@ def settings():
         website=website,
         affiliation=affiliation,
         country=country,
+        tokens=tokens,
         prevent_name_change=prevent_name_change,
         confirm_email=confirm_email,
     )
