@@ -36,6 +36,31 @@
 	</div>
 </div>
 
+<div id="team-award-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Award Team Member</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				<div class="form-group">
+					<label for="award-member-input">Member</label>
+					<select class="form-control custom-select" id="award-member-input">
+						<option value=""> -- </option>
+						{% for member in members %}
+						<option value="{{ member.id }}">{{ member.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				{% include "admin/modals/awards/create.html" %}
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="jumbotron">
 	<div class="container">
 		<h1 id="team-id" class="text-center">{{ team.name }}</h1>
@@ -92,6 +117,9 @@
 			<a class="edit-captain">
 				<i class="btn-fa fas fa-user-tag fa-2x px-2" data-toggle="tooltip" data-placement="top"
 				   title="Choose Captain"></i>
+			</a>
+			<a class="award-team">
+				<i class="btn-fa fas fa-trophy fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Award Team Member"></i>
 			</a>
 			<a class="delete-team">
 				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"

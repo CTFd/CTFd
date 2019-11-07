@@ -217,6 +217,61 @@ $(() => {
     $("#team-captain-modal").modal("toggle");
   });
 
+  $(".award-team").click(function(e) {
+    $("#team-award-modal").modal("toggle");
+  });
+
+  $("#user-award-form").submit(function(e) {
+    e.preventDefault();
+    const params = $("#user-award-form").serializeJSON(true);
+    params["user_id"] = $("#award-member-input").val();
+
+    $("#user-award-form > #results").empty();
+
+    if (!params["user_id"]) {
+      $("#user-award-form > #results").append(
+        ezBadge({
+          type: "error",
+          body: "Please select a team member"
+        })
+      );
+      return;
+    }
+    params["user_id"] = parseInt(params["user_id"]);
+
+    CTFd.fetch("/api/v1/awards", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(params)
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(response) {
+        if (response.success) {
+          window.location.reload();
+        } else {
+          $("#user-award-form > #results").empty();
+          Object.keys(response.errors).forEach(function(key, index) {
+            $("#user-award-form > #results").append(
+              ezBadge({
+                type: "error",
+                body: response.errors[key]
+              })
+            );
+            const i = $("#user-award-form").find("input[name={0}]".format(key));
+            const input = $(i);
+            input.addClass("input-filled-invalid");
+            input.removeClass("input-filled-valid");
+          });
+        }
+      });
+  });
+
   $(".delete-member").click(function(e) {
     e.preventDefault();
     const member_id = $(this).attr("member-id");
