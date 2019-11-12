@@ -88,4 +88,9 @@
 
 {% block scripts %}
 	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
+	<script>
+	jQuery(document).ready(function () {
+		  loadProperties('setup', language);
+	});
+	</script>
 {% endblock %}

@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Settings</h1>
+		<h1 name="settings"></h1>
 	</div>
 </div>
 <div class="container">
@@ -14,63 +14,46 @@
 		<div class="col-md-6 offset-md-3">
 			{% if confirm_email %}
 				<div class="alert alert-info alert-dismissable submit-row" role="alert">
-					Your email address isn't confirmed!
-					Please check your email to confirm your email address.
-					<br>
-					<br>
-					To have the confirmation email resent please <a href="{{ url_for('auth.confirm') }}">click
-					here.</a>
+					<p name="alert_unconfirmed"></p>
+					<p name="request_resend"></p>
+					<a name="resend_link" href="{{ url_for('auth.confirm') }}"></a>
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
 							aria-hidden="true">×</span></button>
 				</div>
 			{% endif %}
 			<form id="user-settings-form" method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
 				<div class="form-group">
-					<label for="name-input">
-						User Name
-					</label>
+					<label name="name_input" for="name-input"></label>
 					<input class="form-control" type="text" name="name" id="name-input" value="{{name}}"/>
 				</div>
 				<div class="form-group">
-					<label for="email-input">
-						Email
-					</label>
+					<label name="email_input" for="email-input"></label>
 					<input class="form-control" type="email" name="email" id="email-input" value="{{email}}"/>
 				</div>
 
 				<hr>
 
 				<div class="form-group">
-					<label for="confirm-input">
-						Current Password
-					</label>
+					<label name="confirm_input" for="confirm-input"></label>
 					<input class="form-control" type="password" name="confirm" id="confirm-input" />
 				</div>
 				<div class="form-group">
-					<label for="password-input">
-						New Password
-					</label>
+					<label name="password_input" for="password-input"></label>
 					<input class="form-control" type="password" name="password" id="password-input" />
 				</div>
 
 				<hr>
 
 				<div class="form-group">
-					<label for="affiliation-input">
-						Affiliation
-					</label>
+					<label name="affiliation_input" for="affiliation-input"></label>
 					<input class="form-control" type="text" name="affiliation" id="affiliation-input" value="{% if affiliation %}{{affiliation}}{% endif %}" />
 				</div>
 				<div class="form-group">
-					<label for="website-input">
-						Website
-					</label>
+					<label name="website_input" for="website-input"></label>
 					<input class="form-control" type="url" name="website" id="website-input" value="{% if website %}{{website}}{% endif %}" />
 				</div>
 				<div class="form-group">
-					<label for="country-input">
-						Country
-					</label>
+					<label name="country_input" for="country-input"></label>
 					<select class="form-control" id="country-input" name="country">
 						<option value=""></option>
 						{% set countries = get_countries() %}
@@ -84,7 +67,7 @@
 				</div>
 
 				<div class="form-group">
-					<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
+					<button name="submit" type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right"></button>
 				</div>
 			</form>
 		</div>
@@ -95,4 +78,9 @@
 {% block scripts %}
 	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/settings.js') }}"></script>
+	<script>
+	jQuery(document).ready(function () {
+		  loadProperties('settings', language);
+	});
+	</script>
 {% endblock %}

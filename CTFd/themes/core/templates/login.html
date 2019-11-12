@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Login</h1>
+		<h1 name="login"></h1>
 	</div>
 </div>
 <div class="container">
@@ -27,27 +27,19 @@
 
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
 				<div class="form-group">
-					<label for="name-input">
-						User Name or Email
-					</label>
+					<label name="name_input" for="name-input"></label>
 					<input class="form-control" type="text" name="name" id="name-input" />
 				</div>
 				<div class="form-group">
-					<label for="password-input">
-						Password
-					</label>
+					<label name="password_input" for="password-input"></label>
 					<input class="form-control" type="password" name="password" id="password-input" />
 				</div>
 				<div class="row pt-3">
 					<div class="col-md-6">
-						<a class="float-left align-text-to-button" href="{{ url_for('auth.reset_password') }}">
-							Forgot your password?
-						</a>
+						<a name="forgot_password" class="float-left align-text-to-button" href="{{ url_for('auth.reset_password') }}"></a>
 					</div>
 					<div class="col-md-6">
-						<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right">
-							Submit
-						</button>
+						<button name="submit" type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right"></button>
 					</div>
 				</div>
 				<input type="hidden" name="nonce" value="{{ nonce }}">
@@ -58,5 +50,10 @@
 {% endblock %}
 
 {% block scripts %}
+	<script>
+	jQuery(document).ready(function () {
+		loadProperties('login', language);
+	});
+	</script>
 {% endblock %}
 

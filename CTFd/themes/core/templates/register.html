@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Register</h1>
+		<h1 name="register"></h1>
 	</div>
 </div>
 <div class="container">
@@ -26,26 +26,20 @@
 
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
 				<div class="form-group">
-					<label for="name-input">
-						User Name
-					</label>
+					<label name="name_input" for="name-input"></label>
 					<input class="form-control" type="text" name="name" id="name-input" {% if name %}value="{{ name }}"{% endif %} />
 				</div>
 				<div class="form-group">
-					<label for="email-input">
-						Email
-					</label>
+					<label name="email_input" for="email-input"></label>
 					<input class="form-control" type="text" name="email" id="email-input" {% if email %}value="{{ email }}"{% endif %} />
 				</div>
 				<div class="form-group">
-					<label for="password-input">
-						Password
-					</label>
+					<label name="password_input" for="password-input"></label>
 					<input class="form-control" type="password" name="password" id="password-input" {% if password %}value="{{ password }}"{% endif %}/>
 				</div>
 				<div class="row pt-3">
 					<div class="col-md-12">
-						<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
+						<button name="submit" type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right"></button>
 					</div>
 				</div>
 				<input type="hidden" name="nonce" value="{{ nonce }}">
@@ -56,4 +50,9 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+	jQuery(document).ready(function () {
+		loadProperties('register', language);
+	});
+</script>
 {% endblock %}

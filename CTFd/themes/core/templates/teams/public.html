@@ -54,7 +54,7 @@
 
 			{% if score_frozen %}
 				<div class="row">
-					<h1 class="text-center">Scoreboard has been frozen.</h1>
+					<h1 name="scoreboard_frozen" class="text-center"></h1>
 				</div>
 			{% endif %}
 
@@ -62,12 +62,12 @@
 
 			<div class="row">
 				<div class="col-md-12">
-					<h3>Members</h3>
+					<h3 name="members"></h3>
 					<table class="table table-striped">
 						<thead>
 						<tr>
-							<td><b>User Name</b></td>
-							<td><b>Score</b></td>
+							<td><b name="username"></b></td>
+							<td><b name="score"></b></td>
 						</tr>
 						</thead>
 						<tbody>
@@ -109,7 +109,7 @@
 				{% if awards %}
 					<div class="row">
 						<div class="col-md-12">
-							<h3>Awards</h3>
+							<h3 name="awards"></h3>
 						</div>
 						{% for award in awards %}
 							<div class="col-md-3 col-sm-6">
@@ -126,14 +126,14 @@
 
 				<div class="row">
 					<div class="col-md-12">
-						<h3>Solves</h3>
+						<h3 name="solves"></h3>
 						<table class="table table-striped">
 							<thead>
 							<tr>
-								<td><b>Challenge</b></td>
-								<td class="d-none d-md-block d-lg-block"><b>Category</b></td>
-								<td><b>Value</b></td>
-								<td><b>Time</b></td>
+								<td><b name="challenge"></b></td>
+								<td class="d-none d-md-block d-lg-block"><b name="category"></b></td>
+								<td><b name="value"></b></td>
+								<td><b name="time"></b></td>
 							</tr>
 							</thead>
 							<tbody>
@@ -156,7 +156,7 @@
 					</div>
 				</div>
 			{% else %}
-				<div class="text-center"><h3 class="spinner-error">No solves yet</h3></div>
+				<div class="text-center"><h3 name="no_solves" class="spinner-error"></h3></div>
 			{% endif %}
 		{% endif %}
 	</div>
@@ -178,4 +178,9 @@
 	{% if solves %}
 		<script src="{{ url_for('views.themes', path='js/team.js') }}"></script>
 	{% endif %}
+	<script>
+		jQuery(document).ready(function () {
+			loadProperties('teams', language);
+		});
+	</script>
 {% endblock %}

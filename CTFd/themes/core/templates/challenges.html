@@ -8,7 +8,7 @@
 
 <div class="jumbotron">
 	<div class="container">
-		<h1>Challenges</h1>
+		<h1 name="challenges"></h1>
 	</div>
 </div>
 
@@ -63,4 +63,9 @@
 	<script src="{{ url_for('views.themes', path='js/hints.js') }}"></script>
 	{% endif %}
 	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
+	<script>
+	jQuery(document).ready(function () {
+		loadProperties('challenges', language);
+	});
+	</script>
 {% endblock %}
