@@ -122,7 +122,7 @@ class DynamicValueChallenge(BaseChallenge):
         # Hence this file uses from __future__ import division
         value = (
             ((challenge.minimum - challenge.initial) / (challenge.decay ** 2))
-            * (solve_count ** 2)
+            * ((solve_count - 1) ** 2)
         ) + challenge.initial
 
         value = math.ceil(value)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from CTFd.models import Challenges
 from CTFd.plugins.dynamic_challenges import DynamicChallenge, DynamicValueChallenge
 from tests.helpers import (
     create_ctfd,
@@ -90,6 +90,36 @@ def test_can_update_dynamic_challenge():
         assert challenge.minimum == 5
         assert challenge.state == "visible"
 
+    destroy_ctfd(app)
+
+
+def test_decay_bug():
+    app = create_ctfd(enable_plugins=True)
+    with app.app_context():
+        challenge_data = {
+            "name": "name",
+            "category": "category",
+            "description": "description",
+            "value": 100,
+            "decay": 3,
+            "minimum": 1,
+            "state": "visible",
+            "type": "dynamic",
+        }
+        req = FakeRequest(form=challenge_data)
+        challenge = DynamicValueChallenge.create(req)
+        challenge_id = challenge.id
+        gen_flag(app.db, challenge_id=challenge.id, content="flag")
+        register_user(app)
+        with login_as_user(app) as client:
+            data = {"submission": "flag", "challenge_id": challenge.id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 200
+            assert r.get_json()["data"]["status"] == "correct"
+        chal = Challenges.query.filter_by(id=challenge_id).first()
+        prev_chal_value = chal.value
+        chal = DynamicValueChallenge.update(chal, req)
+        assert (prev_chal_value == chal.value)
     destroy_ctfd(app)
 
 
