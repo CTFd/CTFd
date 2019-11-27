@@ -137,6 +137,52 @@
 						</div>
 					</div>
 					<div class="tab-pane fade" id="datetime" role="tabpanel">
+						<div class="form-group">
+							<label>
+								Start Time<br>
+								<small class="form-text text-muted">
+									Time when your CTF is scheduled to start. Optional.
+								</small>
+							</label>
+							<div class="row">
+								<div class="col-md-4">
+									<label>Date</label>
+									<input class="form-control" type="date" />
+								</div>
+								<div class="col-md-4">
+									<label>Time</label>
+									<input class="form-control" type="time" name="password" />
+								</div>
+								<div class="col-md-4">
+									<label>UTC Preview</label>
+									<input class="form-control" type="text" name="password" readonly/>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label>
+								End Time<br>
+								<small class="form-text text-muted">
+									Time when your CTF is scheduled to end. Optional.
+								</small>
+							</label>
+							<div class="row">
+								<div class="col-md-4">
+									<label>Date</label>
+									<input class="form-control" type="date" />
+								</div>
+								<div class="col-md-4">
+									<label>Time</label>
+									<input class="form-control" type="time" name="password" />
+								</div>
+								<div class="col-md-4">
+									<label>UTC Preview</label>
+									<input class="form-control" type="text" name="password" readonly />
+								</div>
+							</div>
+						</div>
+
 						<div class="float-right">
 							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#integrations">
 								Next
@@ -144,6 +190,27 @@
 						</div>
 					</div>
 					<div class="tab-pane fade" id="integrations" role="tabpanel">
+						<div class="form-group">
+							<h4>MajorLeagueCyber Integration</h4>
+							<p>
+							MajorLeagueCyber (MLC) is a cyber security event tracker written and maintained by the developers of CTFd.
+							Set up MLC integration to:
+							<ul>
+								<li>display your event on the MLC website and mailing list</li>
+								<li>share and track participant statistics</li>
+								<li>provide live updates in team Slack or Discord groups</li>
+								<li>archive challenges, team participation &amp; more</li>
+							</ul>
+							</p>
+							<button type="button" class="btn btn-primary btn-block integration-mlc">
+								Setup
+							</button>
+						</div>
+
+						<br>
+						<hr>
+						<br>
+
 						<div class="submit-row float-right">
 							<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined">
 								Finish
