@@ -56,7 +56,7 @@
 /******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
 /******/ 	// Promise = chunk loading, 0 = chunk loaded
 /******/ 	var installedChunks = {
-/******/ 		"pages/teams/private": 0
+/******/ 		"pages/setup": 0
 /******/ 	};
 /******/
 /******/ 	var deferredModules = [];
@@ -147,22 +147,22 @@
 /******/
 /******/
 /******/ 	// add entry module to deferred list
-/******/ 	deferredModules.push(["./CTFd/themes/core/assets/js/pages/teams/private.js","helpers","vendor","default~pages/challenges~pages/main~pages/notifications~pages/scoreboard~pages/settings~pages/setup~~6822bf1f"]);
+/******/ 	deferredModules.push(["./CTFd/themes/core/assets/js/pages/setup.js","helpers","vendor","default~pages/challenges~pages/main~pages/notifications~pages/scoreboard~pages/settings~pages/setup~~6822bf1f"]);
 /******/ 	// run deferred modules when ready
 /******/ 	return checkDeferredModules();
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./CTFd/themes/core/assets/js/pages/teams/private.js":
-/*!***********************************************************!*\
-  !*** ./CTFd/themes/core/assets/js/pages/teams/private.js ***!
-  \***********************************************************/
+/***/ "./CTFd/themes/core/assets/js/pages/setup.js":
+/*!***************************************************!*\
+  !*** ./CTFd/themes/core/assets/js/pages/setup.js ***!
+  \***************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;
-eval("\n\n__webpack_require__(/*! ../main */ \"./CTFd/themes/core/assets/js/pages/main.js\");\n\n__webpack_require__(/*! ../../utils */ \"./CTFd/themes/core/assets/js/utils.js\");\n\nvar _CTFd = _interopRequireDefault(__webpack_require__(/*! ../../CTFd */ \"./CTFd/themes/core/assets/js/CTFd.js\"));\n\n__webpack_require__(/*! bootstrap/js/dist/modal */ \"./node_modules/bootstrap/js/dist/modal.js\");\n\nvar _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n(0, _jquery.default)(function () {\n  if (window.team_captain) {\n    (0, _jquery.default)(\".edit-team\").click(function () {\n      (0, _jquery.default)(\"#team-edit-modal\").modal();\n    });\n    (0, _jquery.default)(\".edit-captain\").click(function () {\n      (0, _jquery.default)(\"#team-captain-modal\").modal();\n    });\n  }\n\n  var form = (0, _jquery.default)(\"#team-info-form\");\n  form.submit(function (e) {\n    e.preventDefault();\n    (0, _jquery.default)(\"#results\").empty();\n    var params = (0, _jquery.default)(this).serializeJSON();\n    var method = \"PATCH\";\n    var url = \"/api/v1/teams/me\";\n\n    _CTFd.default.fetch(url, {\n      method: method,\n      credentials: \"same-origin\",\n      headers: {\n        Accept: \"application/json\",\n        \"Content-Type\": \"application/json\"\n      },\n      body: JSON.stringify(params)\n    }).then(function (response) {\n      if (response.status === 400) {\n        response.json().then(function (object) {\n          if (!object.success) {\n            Object.keys(object.errors).map(function (error) {\n              var i = form.find(\"input[name={0}]\".format(error));\n              var input = (0, _jquery.default)(i);\n              input.addClass(\"input-filled-invalid\");\n              input.removeClass(\"input-filled-valid\");\n              var error_msg = object.errors[error];\n              var alert = error_template.format(error_msg);\n              (0, _jquery.default)(\"#results\").append(alert);\n            });\n          }\n        });\n      } else if (response.status === 200) {\n        response.json().then(function (object) {\n          if (object.success) {\n            window.location.reload();\n          }\n        });\n      }\n    });\n  });\n  (0, _jquery.default)(\"#team-captain-form\").submit(function (e) {\n    e.preventDefault();\n    var params = (0, _jquery.default)(\"#team-captain-form\").serializeJSON(true);\n\n    _CTFd.default.fetch(\"/api/v1/teams/me\", {\n      method: \"PATCH\",\n      credentials: \"same-origin\",\n      headers: {\n        Accept: \"application/json\",\n        \"Content-Type\": \"application/json\"\n      },\n      body: JSON.stringify(params)\n    }).then(function (response) {\n      return response.json();\n    }).then(function (response) {\n      if (response.success) {\n        window.location.reload();\n      } else {\n        (0, _jquery.default)(\"#team-captain-form > #results\").empty();\n        Object.keys(response.errors).forEach(function (key, index) {\n          (0, _jquery.default)(\"#team-captain-form > #results\").append(ezbadge({\n            type: \"error\",\n            body: response.errors[key]\n          }));\n          var i = (0, _jquery.default)(\"#team-captain-form\").find(\"select[name={0}]\".format(key));\n          var input = (0, _jquery.default)(i);\n          input.addClass(\"input-filled-invalid\");\n          input.removeClass(\"input-filled-valid\");\n        });\n      }\n    });\n  });\n});\n\n//# sourceURL=webpack:///./CTFd/themes/core/assets/js/pages/teams/private.js?");
+eval("\n\n__webpack_require__(/*! ./main */ \"./CTFd/themes/core/assets/js/pages/main.js\");\n\nvar _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\"));\n\nvar _CTFd = _interopRequireDefault(__webpack_require__(/*! ../CTFd */ \"./CTFd/themes/core/assets/js/CTFd.js\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction switchTab(event) {\n  event.preventDefault();\n  var href = (0, _jquery.default)(event.target).data('href');\n  (0, _jquery.default)(\".nav a[href=\\\"\".concat(href, \"\\\"]\")).tab('show');\n}\n\n(0, _jquery.default)(function () {\n  (0, _jquery.default)('.tab-next').click(switchTab);\n});\n\n//# sourceURL=webpack:///./CTFd/themes/core/assets/js/pages/setup.js?");
 
 /***/ })
 
