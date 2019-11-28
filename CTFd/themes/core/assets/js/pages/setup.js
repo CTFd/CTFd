@@ -1,5 +1,7 @@
 import "./main";
 import $ from "jquery";
+import Moment from "moment-timezone";
+import moment from "moment-timezone";
 import CTFd from "../CTFd";
 
 function switchTab(event) {
@@ -28,6 +30,23 @@ function switchTab(event) {
   $(`.nav a[href="${href}"]`).tab("show");
 }
 
+function processDateTime(datetime) {
+  let date_picker = $(`#${datetime}-date`);
+  let time_picker = $(`#${datetime}-time`);
+  return function(event) {
+    let unix_time = Moment(
+      `${date_picker.val()} ${time_picker.val()}`,
+      "YYYY-MM-DD HH:mm"
+    )
+      .utc()
+      .format("X");
+    $(`#${datetime}-preview`).val(unix_time);
+  };
+}
+
 $(() => {
   $(".tab-next").click(switchTab);
+
+  $("#start-date,#start-time").change(processDateTime("start"));
+  $("#end-date,#end-time").change(processDateTime("end"));
 });

@@ -27,6 +27,7 @@ from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
 from CTFd.utils.user import authed, get_current_user
 from CTFd.utils import config, validators
+from CTFd.utils.modes import USERS_MODE
 from CTFd.utils.helpers import get_errors
 from CTFd.utils.uploads import get_uploader
 from CTFd.utils.config.pages import get_page
@@ -59,12 +60,15 @@ def setup():
             # General
             ctf_name = request.form.get("ctf_name")
             ctf_description = request.form.get("ctf_description")
+            user_mode = request.form.get("user_mode", USERS_MODE)
             set_config("ctf_name", ctf_name)
             set_config("ctf_description", ctf_description)
+            set_config("user_mode", user_mode)
 
             # Style
+            theme = request.form.get("ctf_theme", "core")
+            set_config("ctf_theme", theme)
             theme_color = request.form.get("theme_color")
-            print(theme_color)
             if theme_color:
                 # Uses {{ and }} to insert curly braces while using the format method
                 css = (
@@ -75,10 +79,11 @@ def setup():
                 set_config("css", css)
 
             # DateTime
-            start = request.form.get("start", "")
-            end = request.form.get("end", "")
+            start = request.form.get("start")
+            end = request.form.get("end")
             set_config("start", start)
             set_config("end", end)
+            set_config("freeze", None)
 
             # Administration
             name = request.form["name"]
@@ -123,10 +128,6 @@ def setup():
                 name=name, email=email, password=password, type="admin", hidden=True
             )
 
-            user_mode = request.form["user_mode"]
-
-            set_config("user_mode", user_mode)
-
             # Index page
 
             index = """<div class="row">
@@ -149,16 +150,12 @@ def setup():
             )
 
             page = Pages(title=None, route="index", content=index, draft=False)
+
             # Visibility
             set_config("challenge_visibility", "private")
             set_config("registration_visibility", "public")
             set_config("score_visibility", "public")
             set_config("account_visibility", "public")
-
-            # Start time
-            set_config("start", None)
-            set_config("end", None)
-            set_config("freeze", None)
 
             # Verify emails
             set_config("verify_emails", None)
@@ -188,12 +185,12 @@ def setup():
             login_user(admin)
 
             db.session.close()
-            app.setup = False
+            # app.setup = False
             with app.app_context():
                 cache.clear()
 
             return redirect(url_for("views.static_html"))
-        return render_template("setup.html", nonce=session.get("nonce"))
+        return render_template("setup.html", nonce=session.get("nonce"), themes=config.get_themes())
     return redirect(url_for("views.static_html"))
 
 
