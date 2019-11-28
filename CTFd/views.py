@@ -56,13 +56,31 @@ def setup():
         if not session.get("nonce"):
             session["nonce"] = generate_nonce()
         if request.method == "POST":
-            ctf_name = request.form["ctf_name"]
+            # General
+            ctf_name = request.form.get("ctf_name")
+            ctf_description = request.form.get("ctf_description")
             set_config("ctf_name", ctf_name)
+            set_config("ctf_description", ctf_description)
 
-            # CSS
-            set_config("start", "")
+            # Style
+            theme_color = request.form.get("theme_color")
+            print(theme_color)
+            if theme_color:
+                # Uses {{ and }} to insert curly braces while using the format method
+                css = (
+                    ":root {{--theme-color: {theme_color};}}\n"
+                    ".navbar{{background-color: var(--theme-color) !important;}}\n"
+                    ".jumbotron{{background-color: var(--theme-color) !important;}}\n"
+                ).format(theme_color=theme_color)
+                set_config("css", css)
 
-            # Admin user
+            # DateTime
+            start = request.form.get("start", "")
+            end = request.form.get("end", "")
+            set_config("start", start)
+            set_config("end", end)
+
+            # Administration
             name = request.form["name"]
             email = request.form["email"]
             password = request.form["password"]
