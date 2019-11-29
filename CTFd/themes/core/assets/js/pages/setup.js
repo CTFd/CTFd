@@ -46,12 +46,13 @@ function processDateTime(datetime) {
 
 function mlcSetup(event) {
   let params = {
-    ctf_name: $("#ctf_name").val(),
-    ctf_type: "jeopardy",
-    ctf_description: $("#ctf_description").val(),
-    ctf_user_mode: $("#user_mode").val(),
+    name: $("#ctf_name").val(),
+    type: "jeopardy",
+    description: $("#ctf_description").val(),
+    user_mode: $("#user_mode").val(),
     event_url: window.location.origin + CTFd.config.urlRoot,
-    redirect_url:
+    redirect_url: window.location.origin + CTFd.config.urlRoot + "/redirect",
+    integration_setup_url:
       window.location.origin + CTFd.config.urlRoot + "/setup/integrations",
     start: $("#start-preview").val(),
     end: $("#end-preview").val(),
