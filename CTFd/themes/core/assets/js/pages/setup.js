@@ -83,7 +83,7 @@ $(() => {
           .text("Already Configured")
           .attr("disabled", true);
         window.focus();
-        localStorage.removeItem('integrations');
+        localStorage.removeItem("integrations");
       }
     }
   });
