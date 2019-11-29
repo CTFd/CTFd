@@ -25,18 +25,19 @@ from CTFd.models import (
 from CTFd.utils import markdown
 from CTFd.cache import cache
 from CTFd.utils import get_config, set_config
-from CTFd.utils.user import authed, get_current_user
+from CTFd.utils.user import authed, get_current_user, is_admin
 from CTFd.utils import config, validators
 from CTFd.utils.modes import USERS_MODE
 from CTFd.utils.helpers import get_errors
 from CTFd.utils.uploads import get_uploader
 from CTFd.utils.config.pages import get_page
 from CTFd.utils.config.visibility import challenges_visible
+from CTFd.utils.config import is_setup
 from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
 from CTFd.utils.dates import ctftime, ctf_ended, view_after_ctf
-from CTFd.utils.decorators import authed_only
+from CTFd.utils.decorators import authed_only, admins_only
 from CTFd.utils.security.signing import (
     unserialize,
     BadTimeSignature,
@@ -192,6 +193,26 @@ def setup():
             return redirect(url_for("views.static_html"))
         return render_template("setup.html", nonce=session.get("nonce"), themes=config.get_themes())
     return redirect(url_for("views.static_html"))
+
+
+@views.route("/setup/integrations", methods=["GET", "POST"])
+def integrations():
+    if is_admin() or is_setup() is False:
+        return render_template('admin/integrations.html')
+        name = request.values.get('name')
+        state = request.values.get('state')
+        if session['nonce'] == state:
+            if name == 'mlc':
+                mlc_client_id = request.values.get('mlc_client_id')
+                mlc_client_secret = request.values.get('mlc_client_secret')
+                print(name, state, mlc_client_id, mlc_client_secret)
+                return render_template('admin/integrations.html')
+            else:
+                abort(404)
+        else:
+            abort(403)
+    else:
+        abort(403)
 
 
 @views.route("/notifications", methods=["GET"])

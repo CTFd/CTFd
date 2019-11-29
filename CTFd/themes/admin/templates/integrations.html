@@ -1,0 +1,13 @@
+<script>
+    localStorage.removeItem('integrations');
+    var params = {};
+    var pieces = window.location.search
+            .substr(1)
+            .split("&");
+    for (let i = 0; i < pieces.length; i++) {
+        var tmp = pieces[i].split("=");
+        params[tmp[0]] = tmp[1];
+    }
+    localStorage.setItem('integrations', JSON.stringify(params));
+    window.close();
+</script>

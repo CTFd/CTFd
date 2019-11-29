@@ -147,7 +147,7 @@ def init_request_processors(app):
 
     @app.before_request
     def needs_setup():
-        if request.path == url_for("views.setup") or request.path.startswith("/themes"):
+        if request.path.startswith("/setup") or request.path.startswith("/themes"):
             return
         if not is_setup():
             return redirect(url_for("views.setup"))

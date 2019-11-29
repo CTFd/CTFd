@@ -44,9 +44,47 @@ function processDateTime(datetime) {
   };
 }
 
+function mlcSetup(event) {
+  let params = {
+    ctf_name: $("#ctf_name").val(),
+    ctf_type: "jeopardy",
+    ctf_description: $("#ctf_description").val(),
+    ctf_user_mode: $("#user_mode").val(),
+    event_url: window.location.origin + CTFd.config.urlRoot,
+    redirect_url:
+      window.location.origin + CTFd.config.urlRoot + "/setup/integrations",
+    start: $("#start-preview").val(),
+    end: $("#end-preview").val(),
+    platform: "CTFd"
+  };
+
+  const ret = [];
+  for (let p in params) {
+    ret.push(encodeURIComponent(p) + "=" + encodeURIComponent(params[p]));
+  }
+  window.open(
+    "https://www.majorleaguecyber.org/events/new?" + ret.join("&"),
+    "_blank"
+  );
+}
+
 $(() => {
   $(".tab-next").click(switchTab);
+  $("#integration-mlc").click(mlcSetup);
 
   $("#start-date,#start-time").change(processDateTime("start"));
   $("#end-date,#end-time").change(processDateTime("end"));
+
+  window.addEventListener("storage", function(event) {
+    if (event.key == "integrations" && event.newValue) {
+      let integration = JSON.parse(event.newValue);
+      if (integration["name"] == "mlc") {
+        $("#integration-mlc")
+          .text("Already Configured")
+          .attr("disabled", true);
+        window.focus();
+        localStorage.removeItem('integrations');
+      }
+    }
+  });
 });
