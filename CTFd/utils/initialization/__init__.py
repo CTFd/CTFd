@@ -147,11 +147,12 @@ def init_request_processors(app):
 
     @app.before_request
     def needs_setup():
+        print(request.endpoint)
         if is_setup() is False:
-            if (
-                request.path == url_for("views.setup")
-                or request.path == url_for("views.integrations")
-                or request.path.startswith("/themes")
+            if request.endpoint in (
+                "views.setup",
+                "views.integrations",
+                "views.themes",
             ):
                 return
             else:
