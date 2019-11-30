@@ -17,6 +17,7 @@ const roots = {
     },
     'js': {
       'pages/main': 'assets/js/pages/main.js',
+      'pages/setup': 'assets/js/pages/setup.js',
       'pages/challenges': 'assets/js/pages/challenges.js',
       'pages/scoreboard': 'assets/js/pages/scoreboard.js',
       'pages/settings': 'assets/js/pages/settings.js',

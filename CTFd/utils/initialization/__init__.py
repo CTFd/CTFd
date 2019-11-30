@@ -149,10 +149,15 @@ def init_request_processors(app):
 
     @app.before_request
     def needs_setup():
-        if request.path == url_for("views.setup") or request.path.startswith("/themes"):
-            return
-        if not is_setup():
-            return redirect(url_for("views.setup"))
+        if is_setup() is False:
+            if request.endpoint in (
+                "views.setup",
+                "views.integrations",
+                "views.themes",
+            ):
+                return
+            else:
+                return redirect(url_for("views.setup"))
 
     @app.before_request
     def tracker():

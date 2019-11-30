@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+<style>
+    #base-navbars {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 mt-5 text-center">
+            <h5>Integration enabled!</h5>
+            <p>You may now close this tab.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    localStorage.removeItem('integrations');
+    var params = {};
+    var pieces = window.location.search
+        .substr(1)
+        .split("&");
+    for (let i = 0; i < pieces.length; i++) {
+        var tmp = pieces[i].split("=");
+        params[tmp[0]] = tmp[1];
+    }
+    localStorage.setItem('integrations', JSON.stringify(params));
+</script>
+{% endblock %}
