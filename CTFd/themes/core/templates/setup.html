@@ -241,6 +241,9 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+	var STATE = {{ state | tojson }};
+</script>
 {% endblock %}
 
 {% block entrypoint %}

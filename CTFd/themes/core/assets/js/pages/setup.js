@@ -56,7 +56,8 @@ function mlcSetup(event) {
       window.location.origin + CTFd.config.urlRoot + "/setup/integrations",
     start: $("#start-preview").val(),
     end: $("#end-preview").val(),
-    platform: "CTFd"
+    platform: "CTFd",
+    state: STATE
   };
 
   const ret = [];

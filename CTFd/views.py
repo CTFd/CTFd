@@ -37,8 +37,9 @@ from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils import user as current_user
 from CTFd.utils.dates import ctftime, ctf_ended, view_after_ctf
-from CTFd.utils.decorators import authed_only, admins_only
+from CTFd.utils.decorators import authed_only
 from CTFd.utils.security.signing import (
+    serialize,
     unserialize,
     BadTimeSignature,
     SignatureExpired,
@@ -186,26 +187,25 @@ def setup():
             login_user(admin)
 
             db.session.close()
-            # app.setup = False
             with app.app_context():
                 cache.clear()
 
             return redirect(url_for("views.static_html"))
-        return render_template("setup.html", nonce=session.get("nonce"), themes=config.get_themes())
+        return render_template("setup.html", nonce=session.get("nonce"), state=serialize(generate_nonce()), themes=config.get_themes())
     return redirect(url_for("views.static_html"))
 
 
 @views.route("/setup/integrations", methods=["GET", "POST"])
 def integrations():
     if is_admin() or is_setup() is False:
-        return render_template('admin/integrations.html')
         name = request.values.get('name')
         state = request.values.get('state')
-        if session['nonce'] == state:
+        if unserialize(state, max_age=3600):
             if name == 'mlc':
                 mlc_client_id = request.values.get('mlc_client_id')
                 mlc_client_secret = request.values.get('mlc_client_secret')
-                print(name, state, mlc_client_id, mlc_client_secret)
+                set_config('oauth_client_id', mlc_client_id)
+                set_config('oauth_client_secret', mlc_client_secret)
                 return render_template('admin/integrations.html')
             else:
                 abort(404)
