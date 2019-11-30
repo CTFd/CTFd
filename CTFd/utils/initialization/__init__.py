@@ -23,6 +23,7 @@ from CTFd.utils.modes import generate_account_url
 from CTFd.utils.config import is_setup
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils.security.auth import logout_user
+from CTFd.utils.config.integrations import mlc
 
 from CTFd.utils.config.visibility import (
     accounts_visible,
@@ -70,6 +71,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(challenges_visible=challenges_visible)
     app.jinja_env.globals.update(registration_visible=registration_visible)
     app.jinja_env.globals.update(scores_visible=scores_visible)
+    app.jinja_env.globals.update(mlc=mlc)
 
 
 def init_logs(app):
