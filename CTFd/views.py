@@ -206,7 +206,15 @@ def integrations():
     if is_admin() or is_setup() is False:
         name = request.values.get("name")
         state = request.values.get("state")
-        if unserialize(state, max_age=3600):
+
+        try:
+            state = unserialize(state, max_age=3600)
+        except (BadSignature, BadTimeSignature):
+            state = False
+        except Exception:
+            state = False
+
+        if state:
             if name == "mlc":
                 mlc_client_id = request.values.get("mlc_client_id")
                 mlc_client_secret = request.values.get("mlc_client_secret")

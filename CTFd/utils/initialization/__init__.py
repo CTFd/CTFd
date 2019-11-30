@@ -147,7 +147,6 @@ def init_request_processors(app):
 
     @app.before_request
     def needs_setup():
-        print(request.endpoint)
         if is_setup() is False:
             if request.endpoint in (
                 "views.setup",
