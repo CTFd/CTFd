@@ -211,6 +211,8 @@ def import_ctf(backup, erase=True):
                     # See Issue #246
                     if sqlite:
                         for k, v in entry.items():
+                            if k not in ["created", "date"]:
+                                continue
                             if isinstance(v, six.string_types):
                                 match = re.match(
                                     r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v
