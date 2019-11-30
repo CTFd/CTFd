@@ -124,6 +124,7 @@ def setup():
                     name=name,
                     email=email,
                     password=password,
+                    state=serialize(generate_nonce()),
                 )
 
             admin = Admins(
@@ -191,22 +192,27 @@ def setup():
                 cache.clear()
 
             return redirect(url_for("views.static_html"))
-        return render_template("setup.html", nonce=session.get("nonce"), state=serialize(generate_nonce()), themes=config.get_themes())
+        return render_template(
+            "setup.html",
+            nonce=session.get("nonce"),
+            state=serialize(generate_nonce()),
+            themes=config.get_themes(),
+        )
     return redirect(url_for("views.static_html"))
 
 
 @views.route("/setup/integrations", methods=["GET", "POST"])
 def integrations():
     if is_admin() or is_setup() is False:
-        name = request.values.get('name')
-        state = request.values.get('state')
+        name = request.values.get("name")
+        state = request.values.get("state")
         if unserialize(state, max_age=3600):
-            if name == 'mlc':
-                mlc_client_id = request.values.get('mlc_client_id')
-                mlc_client_secret = request.values.get('mlc_client_secret')
-                set_config('oauth_client_id', mlc_client_id)
-                set_config('oauth_client_secret', mlc_client_secret)
-                return render_template('admin/integrations.html')
+            if name == "mlc":
+                mlc_client_id = request.values.get("mlc_client_id")
+                mlc_client_secret = request.values.get("mlc_client_secret")
+                set_config("oauth_client_id", mlc_client_id)
+                set_config("oauth_client_secret", mlc_client_secret)
+                return render_template("admin/integrations.html")
             else:
                 abort(404)
         else:
