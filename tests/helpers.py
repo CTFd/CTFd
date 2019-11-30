@@ -60,6 +60,7 @@ class CTFdTestClient(FlaskClient):
 
 def create_ctfd(
     ctf_name="CTFd",
+    ctf_description="CTF description",
     name="admin",
     email="admin@ctfd.io",
     password="password",
@@ -84,13 +85,22 @@ def create_ctfd(
     app.test_client_class = CTFdTestClient
 
     if setup:
-        app = setup_ctfd(app, ctf_name, name, email, password, user_mode)
+        app = setup_ctfd(
+            app,
+            ctf_name=ctf_name,
+            ctf_description=ctf_description,
+            name=name,
+            email=email,
+            password=password,
+            user_mode=user_mode
+        )
     return app
 
 
 def setup_ctfd(
     app,
     ctf_name="CTFd",
+    ctf_description="CTF description",
     name="admin",
     email="admin@ctfd.io",
     password="password",
@@ -102,6 +112,7 @@ def setup_ctfd(
             with client.session_transaction() as sess:
                 data = {
                     "ctf_name": ctf_name,
+                    "ctf_description": ctf_description,
                     "name": name,
                     "email": email,
                     "password": password,
