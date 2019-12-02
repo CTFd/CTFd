@@ -277,11 +277,21 @@ class Users(db.Model):
 
     @property
     def score(self):
-        return self.get_score(admin=False)
+        from CTFd.utils.config.visibility import scores_visible
+
+        if scores_visible():
+            return self.get_score(admin=False)
+        else:
+            return None
 
     @property
     def place(self):
-        return self.get_place(admin=False)
+        from CTFd.utils.config.visibility import scores_visible
+
+        if scores_visible():
+            return self.get_place(admin=False)
+        else:
+            return None
 
     def get_solves(self, admin=False):
         solves = Solves.query.filter_by(user_id=self.id)
@@ -413,11 +423,21 @@ class Teams(db.Model):
 
     @property
     def score(self):
-        return self.get_score(admin=False)
+        from CTFd.utils.config.visibility import scores_visible
+
+        if scores_visible():
+            return self.get_score(admin=False)
+        else:
+            return None
 
     @property
     def place(self):
-        return self.get_place(admin=False)
+        from CTFd.utils.config.visibility import scores_visible
+
+        if scores_visible():
+            return self.get_place(admin=False)
+        else:
+            return None
 
     def get_solves(self, admin=False):
         member_ids = [member.id for member in self.members]
