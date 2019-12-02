@@ -277,12 +277,7 @@ class Users(db.Model):
 
     @property
     def score(self):
-        from CTFd.utils.config.visibility import scores_visible
-
-        if scores_visible():
-            return self.get_score(admin=False)
-        else:
-            return None
+        return self.get_score(admin=False)
 
     @property
     def place(self):
@@ -423,12 +418,7 @@ class Teams(db.Model):
 
     @property
     def score(self):
-        from CTFd.utils.config.visibility import scores_visible
-
-        if scores_visible():
-            return self.get_score(admin=False)
-        else:
-            return None
+        return self.get_score(admin=False)
 
     @property
     def place(self):

@@ -118,6 +118,8 @@ class TeamPrivate(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
+        response["place"] = team.place
+        response["score"] = team.score
         return {"success": True, "data": response.data}
 
     @authed_only
