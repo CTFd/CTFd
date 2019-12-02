@@ -68,6 +68,8 @@ class TeamPublic(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
+        response.data["place"] = team.place
+        response.data["score"] = team.score
         return {"success": True, "data": response.data}
 
     @admins_only
@@ -118,8 +120,8 @@ class TeamPrivate(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        response["place"] = team.place
-        response["score"] = team.score
+        response.data["place"] = team.place
+        response.data["score"] = team.score
         return {"success": True, "data": response.data}
 
     @authed_only
