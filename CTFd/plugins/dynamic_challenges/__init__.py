@@ -211,7 +211,7 @@ class DynamicValueChallenge(BaseChallenge):
         )
 
         # We subtract -1 to allow the first solver to get max point value
-        solve_count -= 1
+        solve_count -= 1 if solve_count != 0 else solve_count
 
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division
