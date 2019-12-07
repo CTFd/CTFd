@@ -1,6 +1,6 @@
 import $ from "jquery";
 import jQuery from "jquery";
-import { ezProgressBar } from "./ezq";
+import { default as ezq } from "./ezq";
 
 const files = {
   upload: (form, extra_data, cb) => {
@@ -14,7 +14,7 @@ const files = {
       formData.append(key, value);
     }
 
-    var pg = ezProgressBar({
+    var pg = ezq.ezProgressBar({
       width: 0,
       title: "Upload Progress"
     });
@@ -30,7 +30,7 @@ const files = {
         xhr.upload.onprogress = function(e) {
           if (e.lengthComputable) {
             var width = (e.loaded / e.total) * 100;
-            pg = ezProgressBar({
+            pg = ezq.ezProgressBar({
               target: pg,
               width: width
             });
@@ -40,7 +40,7 @@ const files = {
       },
       success: function(data) {
         form.reset();
-        pg = ezProgressBar({
+        pg = ezq.ezProgressBar({
           target: pg,
           width: 100
         });
@@ -57,7 +57,8 @@ const files = {
 };
 
 const helpers = {
-  files
+  files,
+  ezq,
 };
 
 export default helpers;
