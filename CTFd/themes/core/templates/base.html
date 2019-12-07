@@ -190,24 +190,24 @@
 		</div>
 	</footer>
 
-	<script async src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"></script>
-	<script async src="{{ url_for('views.themes', path='js/core.js') }}"></script>
-	<script async src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/core.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
 
 	{% block scripts %}
 	{% endblock %}
 
 	{% block entrypoint %}
-	<script async src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
 	{% endblock %}
 
 	{% for script in get_registered_scripts() %}
 	{% if script.startswith('http') %}
-	<script src="{{ script }}"></script>
+	<script defer src="{{ script }}"></script>
 	{% elif request.script_root %}
-	<script src="{{ request.script_root }}/{{ script }}"></script>
+	<script defer src="{{ request.script_root }}/{{ script }}"></script>
 	{% else %}
-	<script src="{{ script }}"></script>
+	<script defer src="{{ script }}"></script>
 	{% endif %}
 	{% endfor %}
 </body>
