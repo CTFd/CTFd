@@ -29,7 +29,7 @@ def register_plugin_assets_directory(app, base_path, admins_only=False, endpoint
     """
     base_path = base_path.strip("/")
     if endpoint is None:
-        endpoint = base_path.replace('/', '.')
+        endpoint = base_path.replace("/", ".")
 
     def assets_handler(path):
         return send_from_directory(base_path, path)
@@ -49,7 +49,7 @@ def register_plugin_asset(app, asset_path, admins_only=False, endpoint=None):
     """
     asset_path = asset_path.strip("/")
     if endpoint is None:
-        endpoint = asset_path.replace('/', '.')
+        endpoint = asset_path.replace("/", ".")
 
     def asset_handler():
         return send_file(asset_path)

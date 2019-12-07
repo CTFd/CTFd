@@ -140,7 +140,13 @@
 							</label>
 							<br>
 							<div class="d-inline-block">
-								<input type="color" name="theme_color" id="config-color-picker" style="width: 100px; height: 30px;">
+								<input type="hidden" name="theme_color" id="config-color-input">
+								<div class="btn-group">
+									<input type="color" id="config-color-picker" class="pr-1" style="width: 100px; height: 30px;" value="">
+								</div>
+								<div class="btn-group">
+									<button type="button" id="config-color-reset">Reset</button>
+								</div>
 							</div>
 						</div>
 						<div class="float-right">

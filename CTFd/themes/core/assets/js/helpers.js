@@ -58,7 +58,7 @@ const files = {
 
 const helpers = {
   files,
-  ezq,
+  ezq
 };
 
 export default helpers;

@@ -72,10 +72,30 @@ function mlcSetup(event) {
 
 $(() => {
   $(".tab-next").click(switchTab);
+  $("input").on("keypress", function(e) {
+    // Hook Enter button
+    if (e.keyCode == 13) {
+      e.preventDefault();
+      $(e.target)
+        .closest(".tab-pane")
+        .find("button[data-href]")
+        .click();
+    }
+  });
+
   $("#integration-mlc").click(mlcSetup);
 
   $("#start-date,#start-time").change(processDateTime("start"));
   $("#end-date,#end-time").change(processDateTime("end"));
+
+  $("#config-color-picker").on("input", function(e) {
+    $("#config-color-input").val($(this).val());
+  });
+
+  $("#config-color-reset").click(function() {
+    $("#config-color-input").val("");
+    $("#config-color-picker").val("");
+  });
 
   window.addEventListener("storage", function(event) {
     if (event.key == "integrations" && event.newValue) {
