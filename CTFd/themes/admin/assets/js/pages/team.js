@@ -287,7 +287,7 @@ $(() => {
 
     ezQuery({
       title: "Remove Member",
-      body: "Are you sure you want to remove {0} from {1}".format(
+      body: "Are you sure you want to remove {0} from {1}? <br><br><strong>All of their challenges solves, attempts, awards, and unlocked hints will also be deleted!</strong>".format(
         "<strong>" + htmlEntities(member_name) + "</strong>",
         "<strong>" + htmlEntities(TEAM_NAME) + "</strong>"
       ),
