@@ -1,3 +1,4 @@
+import "./main";
 import $ from "jquery";
 import { ezQuery } from "core/ezq";
 

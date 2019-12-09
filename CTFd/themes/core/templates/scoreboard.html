@@ -75,9 +75,9 @@
 {% endblock %}
 
 {% block scripts %}
-	<script async src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
 {% endblock %}
 
 {% block entrypoint %}
-	<script async src="{{ url_for('views.themes', path='js/pages/scoreboard.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/pages/scoreboard.js') }}"></script>
 {% endblock %}

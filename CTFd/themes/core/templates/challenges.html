@@ -57,6 +57,6 @@
 
 {% block entrypoint %}
 	{% if admin or not errors %}
-		<script async src="{{ url_for('views.themes', path='js/pages/challenges.js') }}"></script>
+		<script defer src="{{ url_for('views.themes', path='js/pages/challenges.js') }}"></script>
 	{% endif %}
 {% endblock %}

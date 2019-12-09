@@ -187,10 +187,10 @@
 			'account_id': 'me' if user.id == id else user.id,
 		} | tojson }};
 	</script>
-	<script async src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
-	<script async src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
 {% endblock %}
 
 {% block entrypoint %}
-	<script async src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 {% endblock %}

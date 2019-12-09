@@ -195,3 +195,12 @@ export function ezBadge(args) {
   const tpl = mapping[args.type].format(args.body);
   return $(tpl);
 }
+
+const ezq = {
+  ezAlert: ezAlert,
+  ezToast: ezToast,
+  ezQuery: ezQuery,
+  ezProgressBar: ezProgressBar,
+  ezBadge: ezBadge
+};
+export default ezq;
