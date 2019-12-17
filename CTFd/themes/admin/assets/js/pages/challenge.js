@@ -210,7 +210,7 @@ function handleChallengeOptions(event) {
 
   Promise.all([
     // Save flag
-    new Promise(function (resolve, reject) {
+    new Promise(function(resolve, reject) {
       if (flag_params.content.length == 0) {
         resolve();
         return;
@@ -223,13 +223,12 @@ function handleChallengeOptions(event) {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(flag_params)
-      })
-        .then(function (response) {
-          resolve(response.json());
-        })
+      }).then(function(response) {
+        resolve(response.json());
+      });
     }),
     // Upload files
-    new Promise(function (resolve, reject) {
+    new Promise(function(resolve, reject) {
       let form = event.target;
       let data = {
         challenge: params.challenge_id,
@@ -240,7 +239,7 @@ function handleChallengeOptions(event) {
         helpers.files.upload(form, data);
       }
       resolve();
-    }),
+    })
   ]).then(responses => {
     save_challenge();
   });
