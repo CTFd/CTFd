@@ -178,7 +178,7 @@ function handleChallengeOptions(event) {
   var params = $(event.target).serializeJSON(true);
   let flag_params = {
     challenge_id: params.challenge_id,
-    content: params.flag,
+    content: params.flag || "",
     type: params.flag_type,
     data: params.flag_data ? params.flag_data : ""
   };
@@ -207,21 +207,28 @@ function handleChallengeOptions(event) {
         }
       });
   };
-  // Set flags
-  CTFd.fetch("/api/v1/flags", {
-    method: "POST",
-    credentials: "same-origin",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(flag_params)
-  })
-    .then(function(response) {
-      return response.json();
-    })
-    .then(function(response) {
-      // Upload file
+
+  Promise.all([
+    // Save flag
+    new Promise(function(resolve, reject) {
+      if (flag_params.content.length == 0) {
+        resolve();
+        return;
+      }
+      CTFd.fetch("/api/v1/flags", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(flag_params)
+      }).then(function(response) {
+        resolve(response.json());
+      });
+    }),
+    // Upload files
+    new Promise(function(resolve, reject) {
       let form = event.target;
       let data = {
         challenge: params.challenge_id,
@@ -229,14 +236,13 @@ function handleChallengeOptions(event) {
       };
       let filepath = $(form.elements["file"]).val();
       if (filepath) {
-        helpers.files.upload(form, data, function(response) {
-          // Set challenge visible
-          save_challenge();
-        });
-      } else {
-        save_challenge();
+        helpers.files.upload(form, data);
       }
-    });
+      resolve();
+    })
+  ]).then(responses => {
+    save_challenge();
+  });
 }
 
 function createChallenge(event) {
