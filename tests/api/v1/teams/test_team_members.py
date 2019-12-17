@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users, Submissions, Solves, Fails, Awards, Unlocks
+from CTFd.models import Users, Submissions, Solves, Awards, Unlocks
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
