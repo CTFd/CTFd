@@ -4,10 +4,6 @@ from CTFd.utils.formatters import safe_format
 from CTFd.utils.config import get_mail_provider
 from CTFd.utils.email import mailgun, smtp
 from CTFd.utils.security.signing import serialize
-import re
-
-
-EMAIL_REGEX = r"(^[^@\s]+@[^@\s]+\.[^@\s]+$)"
 
 
 def sendmail(addr, text, subject="Message from {ctf_name}"):
@@ -51,10 +47,6 @@ def user_created_notification(addr, name, password):
         password=password,
     )
     return sendmail(addr, text)
-
-
-def check_email_format(email):
-    return bool(re.match(EMAIL_REGEX, email))
 
 
 def check_email_is_whitelisted(email_address):
