@@ -6,6 +6,8 @@ from flask import request
 from marshmallow import ValidationError
 import re
 
+EMAIL_REGEX = r"(^[^@\s]+@[^@\s]+\.[^@\s]+$)"
+
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
@@ -18,7 +20,7 @@ def validate_url(url):
 
 
 def validate_email(email):
-    return bool(re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email))
+    return bool(re.match(EMAIL_REGEX, email))
 
 
 def unique_email(email, model=Users):
