@@ -17,15 +17,16 @@ CTFd._internal.challenge.submit = function (preview) {
     var challenge_id = parseInt(CTFd.lib.$('#challenge-id').val())
     var submission = CTFd.lib.$('#submission-input').val()
 
-    var params = {
+    var body = {
         'challenge_id': challenge_id,
         'submission': submission,
     }
+    var params = {}
     if (preview) {
         params['preview'] = true
     }
 
-    return CTFd.api.post_challenge_attempt(params).then(function (response) {
+    return CTFd.api.post_challenge_attempt(params, body).then(function (response) {
         if (response.status === 429) {
             // User was ratelimited but process response
             return response
