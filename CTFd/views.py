@@ -171,6 +171,27 @@ def setup():
             set_config("mail_password", None)
             set_config("mail_useauth", None)
 
+            # Set up default emails
+            set_config("verification_email_subject", "Message from {ctf_name}")
+            set_config(
+                "verification_email_body",
+                """Please click the following link to confirm your email address for {ctf_name}: {url}/{token}""",
+            )
+            set_config("user_creation_email_subject", "Message from {ctf_name}")
+            set_config(
+                "user_creation_email_body",
+                """An account has been created for you for {ctf_name} at {url}. \n\nUsername: {name}\nPassword: {password}""",
+            )
+            set_config("password_reset_subject", "Message from {ctf_name}")
+            set_config(
+                "password_reset_body",
+                """Did you initiate a password reset? Click the following link to reset your password:
+
+        {0}/{1}
+
+        """,
+            )
+
             set_config("setup", True)
 
             try:

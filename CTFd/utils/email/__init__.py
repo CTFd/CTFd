@@ -18,35 +18,52 @@ def sendmail(addr, text, subject="Message from {ctf_name}"):
 
 def forgot_password(email, team_name):
     token = serialize(team_name)
-    text = """Did you initiate a password reset? Click the following link to reset your password:
-
-{0}/{1}
-
-""".format(
-        url_for("auth.reset_password", _external=True), token
+    text = safe_format(
+        get_config("password_reset_body"),
+        ctf_name=get_config("ctf_name"),
+        ctf_description=get_config("ctf_description"),
+        email_sender=get_config("mailfrom_addr"),
+        url=url_for("auth.reset_password", _external=True),
+        token=token,
     )
-
-    return sendmail(email, text)
+    subject = safe_format(
+        get_config("password_reset_subject"), ctf_name=get_config("ctf_name")
+    )
+    return sendmail(email, text, subject)
 
 
 def verify_email_address(addr):
     token = serialize(addr)
-    text = """Please click the following link to confirm your email address for {ctf_name}: {url}/{token}""".format(
+    text = safe_format(
+        get_config("verification_email_body"),
         ctf_name=get_config("ctf_name"),
+        ctf_description=get_config("ctf_description"),
+        email_sender=get_config("mailfrom_addr"),
         url=url_for("auth.confirm", _external=True),
         token=token,
     )
-    return sendmail(addr, text)
+    subject = safe_format(
+        get_config("verification_email_subject"), ctf_name=get_config("ctf_name")
+    )
+    return sendmail(addr, text, subject)
 
 
 def user_created_notification(addr, name, password):
-    text = """An account has been created for you for {ctf_name} at {url}. \n\nUsername: {name}\nPassword: {password}""".format(
+    text = safe_format(
+        get_config("user_creation_email_body"),
         ctf_name=get_config("ctf_name"),
+        ctf_description=get_config("ctf_description"),
+        email_sender=get_config("mailfrom_addr"),
+        token=token,
         url=url_for("views.static_html", _external=True),
         name=name,
         password=password,
     )
-    return sendmail(addr, text)
+
+    subject = safe_format(
+        get_config("user_creation_email_subject"), ctf_name=get_config("ctf_name")
+    )
+    return sendmail(addr, text, subject)
 
 
 def check_email_is_whitelisted(email_address):
