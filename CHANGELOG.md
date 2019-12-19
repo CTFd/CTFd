@@ -1,5 +1,5 @@
-2.2.0 /
-================
+2.2.0 / 2019-12-22
+==================
 
 **General**
 * Team size limits can now be enforced from the configuration panel
