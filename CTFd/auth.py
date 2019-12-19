@@ -170,7 +170,7 @@ def register():
             .filter_by(email=email_address)
             .first()
         )
-        pass_short = len(password) == 0
+        pass_short = len(password.strip()) == 0
         pass_long = len(password) > 128
         valid_email = validators.validate_email(request.form["email"])
         team_name_email_check = validators.validate_email(name)

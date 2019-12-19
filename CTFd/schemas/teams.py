@@ -19,6 +19,7 @@ class TeamSchema(ma.ModelSchema):
         Teams,
         "name",
         required=True,
+        allow_none=False,
         validate=[
             validate.Length(min=1, max=128, error="Team names must not be empty")
         ],
@@ -26,6 +27,7 @@ class TeamSchema(ma.ModelSchema):
     email = field_for(
         Teams,
         "email",
+        allow_none=False,
         validate=validate.Email("Emails must be a properly formatted email address"),
     )
     website = field_for(
