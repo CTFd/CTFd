@@ -314,7 +314,7 @@ def import_ctf(backup, erase=True):
     # Alembic sqlite support is lacking so we should just create_all anyway
     try:
         upgrade(revision="head")
-    except (CommandError, RuntimeError, SystemExit):
+    except (OperationalError, CommandError, RuntimeError, SystemExit, Exception):
         app.db.create_all()
         stamp_latest_revision()
 
