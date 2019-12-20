@@ -187,7 +187,7 @@ def setup():
                 "password_reset_body",
                 """Did you initiate a password reset? Click the following link to reset your password:
 
-        {0}/{1}
+        {url}/{token}
 
         """,
             )
