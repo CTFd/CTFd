@@ -19,6 +19,7 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=
 
 
 def sendmail(addr, text, subject):
+    addr = str(addr)
     mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
     data = {
         "host": get_config("mail_server") or get_app_config("MAIL_SERVER"),

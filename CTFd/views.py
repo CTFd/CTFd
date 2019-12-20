@@ -185,11 +185,7 @@ def setup():
             set_config("password_reset_subject", "Message from {ctf_name}")
             set_config(
                 "password_reset_body",
-                """Did you initiate a password reset? Click the following link to reset your password:
-
-        {url}/{token}
-
-        """,
+                """Did you initiate a password reset? Click the following link to reset your password:\n\n{url}/{token}""",
             )
 
             set_config("setup", True)
