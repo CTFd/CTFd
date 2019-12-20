@@ -54,7 +54,6 @@ def user_created_notification(addr, name, password):
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
         email_sender=get_config("mailfrom_addr"),
-        token=token,
         url=url_for("views.static_html", _external=True),
         name=name,
         password=password,
