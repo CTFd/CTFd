@@ -402,10 +402,10 @@
 		'account_id': team.id,
 	} | tojson }};
 </script>
-<script async src="{{ url_for('views.themes', theme='admin', path='js/plotly.bundle.js') }}"></script>
-<script async src="{{ url_for('views.themes', theme='admin', path='js/graphs.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/plotly.bundle.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/graphs.js') }}"></script>
 {% endblock %}
 
 {% block entrypoint %}
-	<script async src="{{ url_for('views.themes', theme='admin', path='js/pages/team.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/team.js') }}"></script>
 {% endblock %}
