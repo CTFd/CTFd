@@ -197,6 +197,18 @@ companies = [
     'Squad',
     'Team',
 ]
+icons = [
+    None,
+    "shield",
+    "bug",
+    "crown",
+    "crosshairs",
+    "ban",
+    "lightning",
+    "code",
+    "cowboy",
+    "angry",
+]
 
 
 def gen_sentence():
@@ -229,6 +241,10 @@ def gen_value():
 
 def gen_word():
     return random.choice(hipsters)
+
+
+def gen_icon():
+    return random.choice(icons)
 
 
 def gen_file():
@@ -419,7 +435,8 @@ if __name__ == '__main__':
                     user_id=user.id,
                     team_id=user.team_id,
                     name=gen_word(),
-                    value=random.randint(-10, 10)
+                    value=random.randint(-10, 10),
+                    icon=gen_icon()
                 )
                 new_base = random_date(base_time, base_time + datetime.timedelta(minutes=random.randint(30, 60)))
                 award.date = new_base

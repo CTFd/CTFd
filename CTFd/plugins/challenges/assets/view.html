@@ -31,8 +31,7 @@
 						<div class="challenge-hints hint-row row">
 							{% for hint in hints %}
 								<div class='col-md-12 hint-button-wrapper text-center mb-3'>
-									<a class="btn btn-info btn-hint btn-block" href="javascript:;"
-									   onclick="javascript:loadhint({{ hint.id }})">
+									<a class="btn btn-info btn-hint btn-block load-hint" href="javascript:;" data-hint-id="{{ hint.id }}">
 										{% if hint.content %}
 											<small>
 												View Hint

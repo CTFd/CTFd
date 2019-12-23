@@ -487,7 +487,10 @@ def test_api_user_change_verify_email():
         user.verified = True
         app.db.session.commit()
         with login_as_user(app) as client:
-            r = client.patch("/api/v1/users/me", json={"email": "new_email@email.com", "confirm": "password"})
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"email": "new_email@email.com", "confirm": "password"},
+            )
             assert r.status_code == 200
             resp = r.get_json()
             assert resp["data"]["email"] == "new_email@email.com"
@@ -506,14 +509,18 @@ def test_api_user_change_email_under_whitelist():
             "domain_whitelist", "whitelisted.com, whitelisted.org, whitelisted.net"
         )
         with login_as_user(app) as client:
-            r = client.patch("/api/v1/users/me", json={"email": "new_email@email.com", "confirm": "password"})
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"email": "new_email@email.com", "confirm": "password"},
+            )
             assert r.status_code == 400
             resp = r.get_json()
             assert resp["errors"]["email"]
             assert resp["success"] is False
 
             r = client.patch(
-                "/api/v1/users/me", json={"email": "new_email@whitelisted.com", "confirm": "password"}
+                "/api/v1/users/me",
+                json={"email": "new_email@whitelisted.com", "confirm": "password"},
             )
             assert r.status_code == 200
             resp = r.get_json()

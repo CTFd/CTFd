@@ -18,7 +18,7 @@ from CTFd.utils.config.pages import get_pages
 Menu = namedtuple("Menu", ["title", "route"])
 
 
-def register_plugin_assets_directory(app, base_path, admins_only=False):
+def register_plugin_assets_directory(app, base_path, admins_only=False, endpoint=None):
     """
     Registers a directory to serve assets
 
@@ -28,15 +28,17 @@ def register_plugin_assets_directory(app, base_path, admins_only=False):
     :return:
     """
     base_path = base_path.strip("/")
+    if endpoint is None:
+        endpoint = base_path.replace("/", ".")
 
     def assets_handler(path):
         return send_from_directory(base_path, path)
 
     rule = "/" + base_path + "/<path:path>"
-    app.add_url_rule(rule=rule, endpoint=base_path, view_func=assets_handler)
+    app.add_url_rule(rule=rule, endpoint=endpoint, view_func=assets_handler)
 
 
-def register_plugin_asset(app, asset_path, admins_only=False):
+def register_plugin_asset(app, asset_path, admins_only=False, endpoint=None):
     """
     Registers an file path to be served by CTFd
 
@@ -46,6 +48,8 @@ def register_plugin_asset(app, asset_path, admins_only=False):
     :return:
     """
     asset_path = asset_path.strip("/")
+    if endpoint is None:
+        endpoint = asset_path.replace("/", ".")
 
     def asset_handler():
         return send_file(asset_path)
@@ -53,7 +57,7 @@ def register_plugin_asset(app, asset_path, admins_only=False):
     if admins_only:
         asset_handler = admins_only_wrapper(asset_handler)
     rule = "/" + asset_path
-    app.add_url_rule(rule=rule, endpoint=asset_path, view_func=asset_handler)
+    app.add_url_rule(rule=rule, endpoint=endpoint, view_func=asset_handler)
 
 
 def override_template(*args, **kwargs):

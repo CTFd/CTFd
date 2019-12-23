@@ -1,3 +1,66 @@
+2.2.0 / 2019-12-22
+==================
+
+## Notice
+2.2.0 focuses on updating the front end of CTFd to use more modern programming practices and changes some aspects of core CTFd design. If your current installation is using a custom theme or custom plugin with ***any*** kind of JavaScript, it is likely that you will need to upgrade that theme/plugin to be useable with v2.2.0.
+
+**General**
+* Team size limits can now be enforced from the configuration panel
+* Access tokens functionality for API usage
+* Admins can now choose how to deliver their notifications
+    * Toast (new default)
+    * Alert
+    * Background
+    * Sound On / Sound Off
+* There is now a notification counter showing how many unread notifications were received
+* Setup has been redesigned to have multiple steps
+    * Added Description
+    * Added Start time and End time,
+    * Added MajorLeagueCyber integration
+    * Added Theme and color selection
+* Fixes issue where updating dynamic challenges could change the value to an incorrect value
+* Properly use a less restrictive regex to validate email addresses
+* Bump Python dependencies to latest working versions
+* Admins can now give awards to team members from the team's admin panel page
+
+**API**
+* Team member removals (`DELETE /api/v1/teams/[team_id]/members`) from the admin panel will now delete the removed members's Submissions, Awards, Unlocks
+
+**Admin Panel**
+* Admins can now user a color input box to specify a theme color which is injected as part of the CSS configuration. Theme developers can use this CSS value to change colors and styles accordingly.
+* Challenge updates will now alert you if the challenge doesn't have a flag
+* Challenge entry now allows you to upload files and enter simple flags from the initial challenge creation page
+
+**Themes**
+* Significant JavaScript and CSS rewrite to use ES6, Webpack, yarn, and babel
+* Theme asset specially generated URLs
+    * Static theme assets are now loaded with either .dev.extension or .min.extension depending on production or development (i.e. debug server)
+    * Static theme assets are also given a `d` GET parameter that changes per server start. Used to bust browser caches.
+* Use `defer` for script tags to not block page rendering
+* Only show the MajorLeagueCyber button if configured in configuration
+* The admin panel now links to https://help.ctfd.io/ in the top right
+* Create an `ezToast()` function to use [Bootstrap's toasts](https://getbootstrap.com/docs/4.3/components/toasts/)
+* The user-facing navbar now features icons
+* Awards shown on a user's profile can now have award icons
+* The default MarkdownIt render created by CTFd will now open links in new tabs
+* Country flags can now be shown on the user pages
+
+**Deployment**
+* Switch `Dockerfile` from `python:2.7-alpine` to `python:3.7-alpine`
+* Add `SERVER_SENT_EVENTS` config value to control whether Notifications are enabled
+* Challenge ID is now recorded in the submission log
+
+**Plugins**
+* Add an endpoint parameter to `register_plugin_assets_directory()` and `register_plugin_asset()` to control what endpoint Flask uses for the added route
+
+**Miscellaneous**
+* `CTFd.utils.email.sendmail()` now allows the caller to specify subject as an argument
+    * The subject allows for injecting custom variable via the new `CTFd.utils.formatters.safe_format()` function
+* Admin user information is now error checked during setup
+* Added yarn to the toolchain and the yarn dev, yarn build, yarn verify, and yarn clean scripts
+* Prevent old CTFd imports from being imported
+
+
 2.1.5 / 2019-10-2
 =================
 

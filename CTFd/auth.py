@@ -400,6 +400,15 @@ def oauth_redirect():
                     db.session.add(team)
                     db.session.commit()
 
+                team_size_limit = get_config("team_size", default=0)
+                if team_size_limit and len(team.members) >= team_size_limit:
+                    plural = "" if team_size_limit == 1 else "s"
+                    size_error = "Teams are limited to {limit} member{plural}.".format(
+                        limit=team_size_limit, plural=plural
+                    )
+                    error_for(endpoint="auth.login", message=size_error)
+                    return redirect(url_for("auth.login"))
+
                 team.members.append(user)
                 db.session.commit()
 

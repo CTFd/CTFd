@@ -552,7 +552,7 @@ def test_api_challenge_get_solves_ctf_frozen():
             # Challenge 1 should have one solve (after freeze)
             r = client.get("/api/v1/challenges/1")
             data = r.get_json()["data"]
-            assert data['solves'] == 1
+            assert data["solves"] == 1
 
             # Challenge 1 should have one solve (after freeze)
             r = client.get("/api/v1/challenges/1/solves")
@@ -652,7 +652,7 @@ def test_api_challenges_get_solves_score_visibility():
         private_client = login_as_user(app)
         r = private_client.get("/api/v1/challenges/1/solves")
         assert r.status_code == 200
-        set_config("score_visibility", "admin")
+        set_config("score_visibility", "admins")
         admin = login_as_user(app, "admin", "password")
         r = admin.get("/api/v1/challenges/1/solves")
         assert r.status_code == 200

@@ -39,16 +39,8 @@
 {% endblock %}
 
 {% block scripts %}
-	<script>
-		$('#reset-ctf-form').submit(function(e){
-			e.preventDefault();
-			ezq({
-				title: "Reset CTF?",
-				body: "Are you sure you want to reset your CTFd instance?",
-				success: function () {
-					$('#reset-ctf-form').off('submit').submit();
-				}
-			});
-		});
-	</script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/reset.js') }}"></script>
 {% endblock %}

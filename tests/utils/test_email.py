@@ -1,30 +1,10 @@
 from tests.helpers import create_ctfd, destroy_ctfd
 from CTFd.utils import get_config, set_config
-from CTFd.utils.email import sendmail, verify_email_address, check_email_format
+from CTFd.utils.email import sendmail, verify_email_address
 from freezegun import freeze_time
 from mock import patch, Mock
 from email.mime.text import MIMEText
 import requests
-
-
-def test_check_email_format():
-    """Test that the check_email_format() works properly"""
-    assert check_email_format("user@ctfd.io") is True
-    assert check_email_format("user+plus@gmail.com") is True
-    assert check_email_format("user.period1234@gmail.com") is True
-    assert check_email_format("user.period1234@b.c") is True
-    assert check_email_format("user.period1234@b") is False
-    assert check_email_format("no.ampersand") is False
-    assert check_email_format("user@") is False
-    assert check_email_format("@ctfd.io") is False
-    assert check_email_format("user.io@ctfd") is False
-    assert check_email_format("user\\@ctfd") is False
-
-    for invalid_email in ["user.@ctfd.io", ".user@ctfd.io", "user@ctfd..io"]:
-        try:
-            assert check_email_format(invalid_email) is False
-        except AssertionError:
-            print(invalid_email, "did not pass validation")
 
 
 @patch("smtplib.SMTP")

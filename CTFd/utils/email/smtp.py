@@ -18,8 +18,7 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=
     return smtp
 
 
-def sendmail(addr, text):
-    ctf_name = get_config("ctf_name")
+def sendmail(addr, text, subject):
     mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
     data = {
         "host": get_config("mail_server") or get_app_config("MAIL_SERVER"),
@@ -45,7 +44,7 @@ def sendmail(addr, text):
     try:
         smtp = get_smtp(**data)
         msg = MIMEText(text)
-        msg["Subject"] = "Message from {0}".format(ctf_name)
+        msg["Subject"] = subject
         msg["From"] = mailfrom_addr
         msg["To"] = addr
 

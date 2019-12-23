@@ -3,7 +3,7 @@
 		{% for tag in challenge.tags %}
 		<span class='badge badge-primary mx-1 challenge-tag'>
 			<span>{{ tag.value }}</span>
-			<a tag-id="{{ tag.id }}" class='btn-fa delete-tag' onclick="delete_tag(this)"> &#215;</a>
+			<a tag-id="{{ tag.id }}" class='btn-fa delete-tag'> &#215;</a>
 		</span>
 		{% endfor %}
 	</div>

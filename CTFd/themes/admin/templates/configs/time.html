@@ -58,14 +58,7 @@
 
 					<div class="form-group col-md-12">
 						<label for="start-timezone">Timezone:</label>
-						<select class="form-control start-date" id="start-timezone">
-							<script>
-                                document.write('<option>' + moment.tz.guess() + '</option>');
-                                var tz_names = moment.tz.names();
-                                for (var i = 0; i < tz_names.length; i++) {
-                                    document.write('<option>' + tz_names[i] + '</option>');
-                                }
-							</script>
+						<select class="form-control custom-select start-date" id="start-timezone">
 						</select>
 					</div>
 
@@ -136,14 +129,7 @@
 
 					<div class="form-group col-md-12">
 						<label for="end-timezone">Timezone:</label>
-						<select class="form-control end-date" id="end-timezone">
-							<script>
-                                document.write('<option>' + moment.tz.guess() + '</option>');
-                                var tz_names = moment.tz.names();
-                                for (var i = 0; i < tz_names.length; i++) {
-                                    document.write('<option>' + tz_names[i] + '</option>');
-                                }
-							</script>
+						<select class="form-control custom-select end-date" id="end-timezone">
 						</select>
 					</div>
 
@@ -207,14 +193,7 @@
 
 					<div class="form-group col-md-12">
 						<label for="freeze-timezone">Timezone:</label>
-						<select class="form-control freeze-date" id="freeze-timezone">
-							<script>
-                                document.write('<option>' + moment.tz.guess() + '</option>');
-                                var tz_names = moment.tz.names();
-                                for (var i = 0; i < tz_names.length; i++) {
-                                    document.write('<option>' + tz_names[i] + '</option>');
-                                }
-							</script>
+						<select class="form-control custom-select freeze-date" id="freeze-timezone">
 						</select>
 					</div>
 

@@ -10,8 +10,7 @@
 		</div>
 	</div>
 	<div class="container">
-		<div class="col-md-6 offset-md-3">
-			<h2 class="text-center">CTF Settings</h2>
+		<div class="col-md-8 offset-md-2">
 			{% for error in errors %}
 				<div class="submit-row">
 					<div class="alert alert-danger alert-dismissable" role="alert">
@@ -23,63 +22,224 @@
 				</div>
 			{% endfor %}
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+				<ul class="nav nav-pills nav-fill mb-4">
+					<li class="nav-item">
+						<a class="nav-link active" data-toggle="pill" href="#general">General</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="pill" href="#administration">Administration</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="pill" href="#style">Style</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="pill" href="#datetime">Date &amp; Time</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="pill" href="#integrations">Integrations</a>
+					</li>
+				</ul>
+
+				<div class="tab-content">
+					<div class="tab-pane fade show active" id="general" role="tabpanel">
+						<div class="form-group">
+							<label>
+								CTF Name<br>
+								<small class="form-text text-muted">
+									Name for the CTF
+								</small>
+							</label>
+							<input class="form-control" type="text" id="ctf_name" name="ctf_name" />
+						</div>
+
+						<div class="form-group">
+							<label>
+								CTF Description<br>
+								<small class="form-text text-muted">
+									Description for the CTF
+								</small>
+							</label>
+							<textarea class="form-control" type="text" id="ctf_description" name="ctf_description" rows="5"></textarea>
+						</div>
+
+						<div class="form-group">
+							<label>
+								CTF User Mode
+								<small class="form-text text-muted">
+									User Mode for the CTF. <br>
+									Dictates whether users join teams to play (Team Mode) or
+									play as themselves (User Mode)
+								</small>
+							</label>
+							<select class="form-control custom-select" id="user_mode" name="user_mode">
+								<option value="teams">Team Mode</option>
+								<option value="users">User Mode</option>
+							</select>
+						</div>
+
+						<div class="float-right">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#administration">
+								Next
+							</button>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="administration" role="tabpanel">
+						<div class="form-group">
+							<label>
+								Admin Username<br>
+								<small class="form-text text-muted">
+									Your username for the administration account
+								</small>
+							</label>
+							<input class="form-control" type="text" name="name" required/>
+						</div>
+						<div class="form-group">
+							<label>
+								Admin Email<br>
+								<small class="form-text text-muted">
+									Your email address for the administration account
+								</small>
+							</label>
+							<input class="form-control" type="email" name="email" required/>
+						</div>
+						<div class="form-group">
+							<label>
+								Admin Password<br>
+								<small class="form-text text-muted">
+									Your password for the administration account
+								</small>
+							</label>
+							<input class="form-control" type="password" name="password" required/>
+						</div>
+						<div class="float-right">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#style">
+								Next
+							</button>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="style" role="tabpanel">
+						<div class="form-group">
+							<label>
+								Theme<br>
+								<small class="form-text text-muted">
+									CTFd Theme to use
+								</small>
+							</label>
+							<select class="form-control custom-select" name="ctf_theme">
+								{% for theme in themes %}
+								<option>{{ theme }}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="form-group">
+							<label>
+								Theme Color
+								<small class="form-text text-muted">
+									Color used by theme to control aesthetics. Requires theme support.
+								</small>
+							</label>
+							<br>
+							<div class="d-inline-block">
+								<input type="hidden" name="theme_color" id="config-color-input">
+								<div class="btn-group">
+									<input type="color" id="config-color-picker" class="pr-1" style="width: 100px; height: 30px;" value="">
+								</div>
+								<div class="btn-group">
+									<button type="button" id="config-color-reset">Reset</button>
+								</div>
+							</div>
+						</div>
+						<div class="float-right">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#datetime">
+								Next
+							</button>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="datetime" role="tabpanel">
+						<div class="form-group">
+							<label>
+								Start Time<br>
+								<small class="form-text text-muted">
+									Time when your CTF is scheduled to start. Optional.
+								</small>
+							</label>
+							<div class="row">
+								<div class="col-md-4">
+									<label>Date</label>
+									<input class="form-control" id="start-date" type="date" placeholder="yyyy-mm-dd" data-preview="#start"/>
+								</div>
+								<div class="col-md-4">
+									<label>Time</label>
+									<input class="form-control" id="start-time" type="time" placeholder="hh:mm" data-preview="#start"/>
+								</div>
+								<div class="col-md-4">
+									<label>UTC Preview</label>
+									<input class="form-control" type="text" id="start-preview" name="start" readonly/>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label>
+								End Time<br>
+								<small class="form-text text-muted">
+									Time when your CTF is scheduled to end. Optional.
+								</small>
+							</label>
+							<div class="row">
+								<div class="col-md-4">
+									<label>Date</label>
+									<input class="form-control" id="end-date" type="date" placeholder="yyyy-mm-dd" data-preview="#end"/>
+								</div>
+								<div class="col-md-4">
+									<label>Time</label>
+									<input class="form-control" id="end-time" type="time" placeholder="hh:mm" data-preview="#end"/>
+								</div>
+								<div class="col-md-4">
+									<label>UTC Preview</label>
+									<input class="form-control" type="text" id="end-preview" name="end" readonly />
+								</div>
+							</div>
+						</div>
+
+						<div class="float-right">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#integrations">
+								Next
+							</button>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="integrations" role="tabpanel">
+						<div class="form-group">
+							<h4>MajorLeagueCyber Integration</h4>
+							<p>
+							MajorLeagueCyber (MLC) is a cyber security event tracker written and maintained by the developers of CTFd.
+							Set up MLC integration to:
+							<ul>
+								<li>display your event on the MLC website and mailing list</li>
+								<li>share and track participant statistics</li>
+								<li>provide live updates in team Slack or Discord groups</li>
+								<li>archive challenges, team participation &amp; more</li>
+							</ul>
+							</p>
+							<button type="button" id="integration-mlc" class="btn btn-primary btn-block">
+								Setup
+							</button>
+						</div>
+
+						<br>
+						<hr>
+						<br>
+
+						<div class="submit-row float-right">
+							<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined">
+								Finish
+							</button>
+						</div>
+					</div>
+				</div>
+
 				<input type="hidden" name="nonce" value="{{ nonce }}">
 				{# This nonce is implemented specially in the route itself #}
-				<div class="form-group">
-					<label>
-						CTF Name<br>
-						<small class="form-text text-muted">
-							Name for the CTF
-						</small>
-					</label>
-					<input class="form-control" type="text" name="ctf_name"/>
-				</div>
-				<div class="form-group">
-					<label>
-						Admin Username<br>
-						<small class="form-text text-muted">
-							Your username for the administration account
-						</small>
-					</label>
-					<input class="form-control" type="text" name="name"/>
-				</div>
-				<div class="form-group">
-					<label>
-						Admin Email<br>
-						<small class="form-text text-muted">
-							Your email address for the administration account
-						</small>
-					</label>
-					<input class="form-control" type="email" name="email"/>
-				</div>
-				<div class="form-group">
-					<label>
-						Admin Password<br>
-						<small class="form-text text-muted">
-							Your password for the administration account
-						</small>
-					</label>
-					<input class="form-control" type="password" name="password"/>
-				</div>
-				<div class="form-group">
-					<label>
-						CTF User Mode
-						<small class="form-text text-muted">
-							User Mode for the CTF. <br>
-							Dictates whether users join teams to play (Team Mode) or
-							play as themselves (User Mode)
-						</small>
-					</label>
-					<select class="form-control" name="user_mode">
-						<option value="teams">Team Mode</option>
-						<option value="users">User Mode</option>
-					</select>
-				</div>
-				<br/>
-				<div class="submit-row text-center">
-					<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined">Submit
-					</button>
-				</div>
 			</form>
 		</div>
 	</div>
@@ -87,5 +247,11 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
+<script>
+	var STATE = {{ state | tojson }};
+</script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/setup.js') }}"></script>
 {% endblock %}

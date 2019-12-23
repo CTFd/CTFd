@@ -15,9 +15,7 @@
 						</a>
 					</td>
 					<td>
-						<script>
-							document.write(moment("{{ solve.date | isoformat }}").local().format('MMMM Do, h:mm:ss A'))
-						</script>
+						<span data-time="{{ solve.date | isoformat }}"></span>
 					</td>
 				</tr>
 			{% endfor %}

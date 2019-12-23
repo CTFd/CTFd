@@ -9,7 +9,10 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-4 text-right">
-			<h5><b>{{ team_count }}</b> {{ get_config('user_mode') }} registered</h5>
+			<h5><b>{{ user_count }}</b> users registered</h5>
+			{% if get_config('user_mode') == 'teams' %}
+			<h5><b>{{ team_count }}</b> teams registered</h5>
+			{% endif %}
 			<h5><b>{{ ip_count }}</b> IP addresses</h5>
 			<hr>
 			<h5><b>{{ challenge_count }}</b> challenges</h5>
@@ -66,11 +69,13 @@
 	</div>
 
 </div>
-
-
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='core', path='js/vendor/plotly.min.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/statistics/graphs.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/plotly.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/graphs.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/statistics.js') }}"></script>
 {% endblock %}

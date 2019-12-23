@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="team-info-modal" class="modal fade">
+<div id="team-info-edit-modal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -14,7 +14,7 @@
 				</button>
 			</div>
 			<div class="modal-body clearfix">
-				{% include "admin/modals/teams/create.html" %}
+				{% include "admin/modals/teams/edit.html" %}
 			</div>
 		</div>
 	</div>
@@ -31,6 +31,31 @@
 			</div>
 			<div class="modal-body clearfix">
 				{% include "admin/modals/teams/captain.html" %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="team-award-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Award Team Member</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				<div class="form-group">
+					<label for="award-member-input">Member</label>
+					<select class="form-control custom-select" id="award-member-input">
+						<option value=""> -- </option>
+						{% for member in members %}
+						<option value="{{ member.id }}">{{ member.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				{% include "admin/modals/awards/create.html" %}
 			</div>
 		</div>
 	</div>
@@ -58,7 +83,17 @@
 		{% endif %}
 
 		{% if team.affiliation %}
-			<h3><span class="badge badge-primary">{{ team.affiliation }}</span></h3>
+			<h3 class="d-inline-block">
+				<span class="badge badge-primary">{{ team.affiliation }}</span>
+			</h3>
+		{% endif %}
+		{% if team.country %}
+			<h3 class="d-inline-block">
+				<span class="badge badge-primary">
+					<i class="flag-{{ team.country.lower() }}"></i>
+					{{ lookup_country_code(team.country) }}
+				</span>
+			</h3>
 		{% endif %}
 
 		<h2 class="text-center">{{ members | length }} members</h2>
@@ -82,6 +117,9 @@
 			<a class="edit-captain">
 				<i class="btn-fa fas fa-user-tag fa-2x px-2" data-toggle="tooltip" data-placement="top"
 				   title="Choose Captain"></i>
+			</a>
+			<a class="award-team">
+				<i class="btn-fa fas fa-trophy fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Award Team Member"></i>
 			</a>
 			<a class="delete-team">
 				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
@@ -205,7 +243,7 @@
 							<td class="text-center">{{ solve.challenge.category }}</td>
 							<td class="text-center">{{ solve.challenge.value }}</td>
 							<td class="text-center solve-time">
-								<script>document.write(moment("{{ solve.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+								<span data-time="{{ solve.date | isoformat }}"></span>
 							</td>
 							<td class="text-center">
 								<span class="delete-submission" submission-id="{{ solve.id }}"
@@ -252,7 +290,7 @@
 							</td>
 							<td class="flag" id="{{ fail.id }}"><pre>{{ fail.provided }}</pre></td>
 							<td class="text-center solve-time">
-								<script>document.write(moment("{{ fail.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+								<span data-time="{{ fail.date | isoformat }}"></span>
 							</td>
 							<td class="text-center">
 								<span class="delete-submission" submission-id="{{ fail.id }}"
@@ -298,7 +336,7 @@
 								</td>
 								<td class=""><pre>{{ award.description }}</pre></td>
 								<td class="text-center solve-time">
-									<script>document.write(moment("{{ award.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+									<span data-time="{{ award.date | isoformat }}"></span>
 								</td>
 								<td class="text-center">{{ award.value }}</td>
 								<td class="text-center">{{ award.category }}</td>
@@ -340,7 +378,7 @@
 						</td>
 						<td class="text-center">{{ addr.ip }}</td>
 						<td class="text-center solve-time">
-							<script>document.write(moment("{{ addr.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+							<span data-time="{{ addr.date | isoformat }}"></span>
 						</td>
 					</tr>
 				{% endfor %}
@@ -357,9 +395,17 @@
 <script>
 	var TEAM_ID = {{ team.id }};
 	var TEAM_NAME = {{ team.name | tojson }};
+	var stats_data = {{ {
+		'type': 'team',
+		'id': team.id,
+		'name': team.name,
+		'account_id': team.id,
+	} | tojson }};
 </script>
-<script src="{{ url_for('views.themes', theme='core', path='js/vendor/plotly.min.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/teams/info.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/teams/graphs.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/teams/actions.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/plotly.bundle.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/graphs.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/team.js') }}"></script>
 {% endblock %}
