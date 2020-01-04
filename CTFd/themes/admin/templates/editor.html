@@ -238,5 +238,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script async src="{{ url_for('views.themes', theme='admin', path='js/pages/editor.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/editor.js') }}"></script>
 {% endblock %}

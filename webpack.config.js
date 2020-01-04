@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const RemoveStrictPlugin = require('remove-strict-webpack-plugin')
+const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const roots = {
   'themes/core': {
@@ -134,6 +135,14 @@ function getJSConfig(root, type, entries, mode) {
     plugins: [
       new webpack.NamedModulesPlugin(),
       new RemoveStrictPlugin(),
+      // Identify files that are generated in development but not in production and create stubs to avoid a 404
+      // Pretty nasty hack, would be a little better if this was purely JS
+      new WebpackShellPlugin({
+        onBuildEnd:[
+          mode == 'development' ? 'echo Skipping JS stub generation' : 'python -c \'exec(\"\"\"\nimport glob\nimport os\n\nstatic_js_dirs = [\n    "CTFd/themes/core/static/js/**/*.dev.js",\n    "CTFd/themes/admin/static/js/**/*.dev.js",\n]\n\nfor js_dir in static_js_dirs:\n    for path in glob.glob(js_dir, recursive=True):\n        if path.endswith(".dev.js"):\n            path = path.replace(".dev.js", ".min.js")\n            if os.path.isfile(path) is False:\n                open(path, "a").close()\n\"\"\")\''
+        ],
+        safe: true,
+      }),
     ],
     resolve: {
       extensions: ['.js'],

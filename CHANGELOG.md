@@ -1,6 +1,9 @@
 2.2.0 / 2019-12-22
 ==================
 
+## Notice
+2.2.0 focuses on updating the front end of CTFd to use more modern programming practices and changes some aspects of core CTFd design. If your current installation is using a custom theme or custom plugin with ***any*** kind of JavaScript, it is likely that you will need to upgrade that theme/plugin to be useable with v2.2.0.
+
 **General**
 * Team size limits can now be enforced from the configuration panel
 * Access tokens functionality for API usage

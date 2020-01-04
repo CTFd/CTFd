@@ -109,15 +109,15 @@
 
 {% endblock %}
 
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/challenge.js') }}"></script>
+{% endblock %}
+
 {% block scripts %}
 	<script>
         var CHALLENGE_ID = {{ challenge.id }};
         var CHALLENGE_NAME = {{ challenge.name | tojson }};
 	</script>
-	<script async src="{{ url_for('views.themes', theme='core', path='js/plotly.bundle.js') }}"></script>
-	<script src="{{ request.script_root }}{{ update_script }}"></script>
-{% endblock %}
-
-{% block entrypoint %}
-	<script async src="{{ url_for('views.themes', theme='admin', path='js/pages/challenge.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', theme='core', path='js/plotly.bundle.js') }}"></script>
+	<script defer src="{{ request.script_root }}{{ update_script }}"></script>
 {% endblock %}
