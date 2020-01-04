@@ -26,7 +26,7 @@
 			<form method="GET" class="form-inline">
 					<div class="form-group col-md-2">
 						<label for="sel1" class="sr-only" >Search Field</label>
-						<select name="field" class="form-control w-100" id="sel1">
+						<select class="form-control custom-select w-100" id="sel1" name="field">
 							<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
 							<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
 							<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
@@ -99,8 +99,13 @@
 								</a>
 							{% endif %}
 						</td>
-						<td class="team-country" value="{{ user.country if user.country is not none }}">
-							<span>{% if user.country %}{{ lookup_country_code(user.country) }}{% endif %}</span>
+						<td class="team-country text-center" value="{{ user.country if user.country is not none }}">
+							<span>
+								{% if user.country %}
+									<i class="flag-{{ user.country.lower() }}"></i>
+									{{ lookup_country_code(user.country) }}
+								{% endif %}
+							</span>
 						</td>
 						<td class="team-admin d-md-table-cell d-lg-table-cell text-center" value="{{ user.type }}">
 							{% if user.type == 'admin' %}
@@ -146,5 +151,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='admin', path='js/users/users.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/users.js') }}"></script>
 {% endblock %}

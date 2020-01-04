@@ -7,31 +7,18 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" href="{{ url_for('views.themes', theme='core', path='img/favicon.ico') }}" type="image/x-icon">
 	<link rel="icon" href="{{ url_for('views.themes', theme='core', path='img/favicon.ico') }}" type="image/x-icon">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/vendor/bootstrap.min.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/vendor/font-awesome/fontawesome-fonts.css') }}" type='text/css'>
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/vendor/font-awesome/fontawesome-all.min.css') }}" type='text/css'>
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/vendor/font.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/jumbotron.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/sticky-footer.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/base.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/style.css') }}">
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/promise-polyfill.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/eventsource.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/CTFd.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/fetch.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/moment.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/moment-timezone-with-data.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/nunjucks.min.js') }}"></script>
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/fonts.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/main.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/admin.css') }}">
 	<script type="text/javascript">
-		var script_root = "{{ request.script_root }}";
-		var csrf_nonce = "{{ nonce }}";
-		var user_mode = "{{ get_config('user_mode') }}";
-		var ctf_start = {{ get_config("start") | tojson }};
-		var ctf_end = {{ get_config("end") | tojson }};
-		CTFd.options.urlRoot = script_root;
-		CTFd.options.csrfNonce = csrf_nonce;
-		CTFd.options.start = ctf_start;
-		CTFd.options.end = ctf_end;
+		var init = {
+			'urlRoot': "{{ request.script_root }}",
+			'csrfNonce': "{{ nonce }}",
+			'userMode': "{{ get_config('user_mode') }}",
+			'userId': {{ id if (id is defined) else 0 }},
+			'start': {{ get_config("start") | tojson }},
+			'end': {{ get_config("end") | tojson }},
+		}
 	</script>
 	{% block stylesheets %} {% endblock %}
 	{% for stylesheet in get_registered_admin_stylesheets() %}
@@ -110,6 +97,13 @@
 						{% endif %}
 					{% endif %}
 				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="nav-item">
+						<a class="nav-link" href="https://help.ctfd.io/" target="_blank">
+							<i class="far fa-question-circle"></i>
+						</a>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</nav>
@@ -134,7 +128,7 @@
 
 	<footer class="footer pt-2">
 		<div class="container text-center">
-			<a href="https://ctfd.io">
+			<a href="https://ctfd.io" class="text-secondary">
 				<small class="text-muted">
 					Powered by CTFd
 				</small>
@@ -145,26 +139,23 @@
 		</div>
 	</footer>
 
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/jquery.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/markdown-it.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/bootstrap.bundle.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/multi-modal.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/howler.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/window-controller.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/main.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/utils.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/ezq.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/style.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/events.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/vendor.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/core.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/helpers.js') }}"></script>
+
+	{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/main.js') }}"></script>
+	{% endblock %}
+
 	{% block scripts %} {% endblock %}
 
 	{% for script in get_registered_admin_scripts() %}
 		{% if script.startswith('http') %}
-			<script src="{{ script }}"></script>
+			<script defer src="{{ script }}"></script>
 		{% elif request.script_root %}
-			<script src="{{ request.script_root }}/{{ script }}"></script>
+			<script defer src="{{ request.script_root }}/{{ script }}"></script>
 		{% else %}
-			<script src="{{ script }}"></script>
+			<script defer src="{{ script }}"></script>
 		{% endif %}
 	{% endfor %}
 </body>

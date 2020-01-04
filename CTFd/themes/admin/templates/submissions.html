@@ -45,13 +45,11 @@
 							<pre class="mb-0">{{ sub.provided }}</pre>
 						</td>
 						<td class="text-center solve-time">
-							<span>
-								<script>document.write( moment("{{ sub.date | isoformat }}").fromNow())</script>
-							</span>
+							<span data-time="{{ sub.date | isoformat }}"></span>
 						</td>
 						<td class="text-center">
 							<span class="delete-correct-submission" data-toggle="tooltip"
-								  data-placement="top" title="Delete submission #{{ sub.id }}">
+								  data-placement="top" title="Delete submission #{{ sub.id }}" data-submission-id="{{ sub.id }}">
 								<i class="fas fa-times"></i>
 							</span>
 						</td>
@@ -83,5 +81,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='admin', path='js/submissions/submissions.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/submissions.js') }}"></script>
 {% endblock %}

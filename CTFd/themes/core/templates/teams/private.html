@@ -40,12 +40,11 @@
 						</div>
 						<div class="form-group">
 							<label for="affiliation">Country</label>
-							<select class="form-control" id="country-input" name="country">
+							<select class="form-control custom-select" id="country-input" name="country">
 								<option></option>
 								{% set countries = get_countries() %}
 								{% for country_code in countries.keys() %}
-									<option value="{{ country_code }}"
-											{% if team is defined and team.country == country_code %}selected{% endif %}>
+									<option value="{{ country_code }}"{% if team is defined and team.country == country_code %} selected{% endif %}>
 										{{ countries[country_code] }}
 									</option>
 								{% endfor %}
@@ -78,7 +77,7 @@
 						<input type="hidden" name="id">
 						<div class="form-group">
 							<label for="captain">Team Captain</label>
-							<select class="form-control" id="captain" name="captain_id">
+							<select class="form-control custom-select" id="captain" name="captain_id">
 								{% if team is defined %}
 									<option value="{{ team.captain.id }}">{{ team.captain.name }}</option>
 									{% for member in team.members %}
@@ -110,7 +109,17 @@
 				</a>
 			{% endif %}
 			{% if team.affiliation %}
-				<h3><span class="badge badge-primary">{{ team.affiliation }}</span></h3>
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">{{ team.affiliation }}</span>
+				</h3>
+			{% endif %}
+			{% if team.country %}
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">
+						<i class="flag-{{ team.country.lower() }}"></i>
+						{{ lookup_country_code(team.country) }}
+					</span>
+				</h3>
 			{% endif %}
 			<h2 id="team-place" class="text-center">
 				{# This intentionally hides the team's place when scores are hidden because this can be their internal profile
@@ -236,7 +245,11 @@
 						</div>
 						{% for award in awards %}
 							<div class="col-md-3 col-sm-6">
-								<p class="text-center"><strong>{{ award.name }}</strong></p>
+								<p class="text-center">
+									<i class="award-icon award-{{ award.icon }} fa-2x"></i>
+									<br>
+									<strong>{{ award.name }}</strong>
+								</p>
 								{% if award.category %}<p class="text-center">{{ award.category }}</p>{% endif %}
 								{% if award.description %}<p class="text-center">{{ award.description }}</p>{% endif %}
 								<p class="text-center">{{ award.value }}</p>
@@ -268,9 +281,7 @@
 									<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
 									<td>{{ solve.challenge.value }}</td>
 									<td class="solve-time">
-										<script>
-                                            document.write(moment("{{ solve.date | isoformat }}").local().format('MMMM Do, h:mm:ss A'))
-										</script>
+										<span data-time="{{ solve.date | isoformat }}">{{ solve.date }}</span>
 									</td>
 								</tr>
 							{% endfor %}
@@ -287,104 +298,21 @@
 
 {% block scripts %}
 	<script>
-        var team_id = {{ team.id }};
-        var team_name = {{ team.name | tojson }};
-		var team_self = {{ (user.team_id == team.id) | tojson }};
+		var stats_data = {{ {
+			'type': 'team',
+			'id': team.id,
+			'name': team.name,
+			'account_id': 'me' if user is defined and user.team_id == team.id else team.id,
+		} | tojson }};
 		var team_captain = {{ (user.id == team.captain_id) | tojson }};
-        var team_account_id = team_self ? "me" : team_id;
 	</script>
-	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
 	{% if solves %}
-		<script src="{{ url_for('views.themes', path='js/team.js') }}"></script>
+		<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+		<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 	{% endif %}
-	<script>
-        if (team_captain) {
-            $('.edit-team').click(function () {
-                $('#team-edit-modal').modal();
-            });
+{% endblock %}
 
-            $('.edit-captain').click(function () {
-                $('#team-captain-modal').modal();
-            });
-        }
-
-        var form = $('#team-info-form');
-        form.submit(function (e) {
-            e.preventDefault();
-            $('#results').empty();
-            var params = $(this).serializeJSON();
-            var method = 'PATCH';
-            var url = '/api/v1/teams/me';
-            CTFd.fetch(url, {
-                method: method,
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(params)
-            }).then(function (response) {
-                if (response.status === 400) {
-                    response.json().then(function (object) {
-                        if (!object.success) {
-                            Object.keys(object.errors).map(function (error) {
-                                var i = form.find('input[name={0}]'.format(error));
-                                var input = $(i);
-                                input.addClass('input-filled-invalid');
-                                input.removeClass('input-filled-valid');
-                                var error_msg = object.errors[error];
-                                var alert = error_template.format(error_msg);
-                                console.log(error_template);
-                                $('#results').append(
-                                    alert
-                                );
-                            });
-                        }
-                    });
-                } else if (response.status === 200) {
-                    response.json().then(function (object) {
-                        if (object.success) {
-                            window.location.reload();
-                        }
-                    });
-                }
-            });
-        });
-
-        $('#team-captain-form').submit(function (e) {
-            e.preventDefault();
-            var params = $('#team-captain-form').serializeJSON(true);
-
-            CTFd.fetch('/api/v1/teams/me', {
-                method: 'PATCH',
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(params)
-            }).then(function (response) {
-                return response.json();
-            }).then(function (response) {
-                if (response.success) {
-                    window.location.reload();
-                } else {
-                    $('#team-captain-form > #results').empty();
-                    Object.keys(response.errors).forEach(function (key, index) {
-                        $('#team-captain-form > #results').append(
-                            ezbadge({
-                                type: 'error',
-                                body: response.errors[key]
-                            })
-                        );
-                        var i = $('#team-captain-form').find('select[name={0}]'.format(key));
-                        var input = $(i);
-                        input.addClass('input-filled-invalid');
-                        input.removeClass('input-filled-valid');
-                    });
-                }
-            })
-        });
-	</script>
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/teams/private.js') }}"></script>
 {% endblock %}

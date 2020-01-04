@@ -23,7 +23,7 @@
 					Control whether users must confirm their email addresses before playing
 				</small>
 			</label>
-			<select class="form-control" name="verify_emails">
+			<select class="form-control custom-select" name="verify_emails">
 				<option value="true" {% if verify_emails == True %}selected{% endif %}>Enabled</option>
 				<option value="false" {% if verify_emails == False or verify_emails == None %}selected{% endif %}>Disabled</option>
 			</select>
@@ -31,12 +31,22 @@
 
 		<div class="form-group">
 			<label>
-				Team Name Changes<br>
+				Team Size<br>
+				<small class="form-text text-muted">
+					Amount of users per team
+				</small>
+			</label>
+			<input class="form-control" id="team_size" name="team_size" type="number" min="0" {% if team_size %}value="{{ team_size }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Name Changes<br>
 				<small class="form-text text-muted">
 					Control whether users can change their names
 				</small>
 			</label>
-			<select class="form-control" name="name_changes">
+			<select class="form-control custom-select" name="name_changes">
 				<option value="true" {% if name_changes == True or name_changes == None %}selected{% endif %}>Enabled</option>
 				<option value="false" {% if name_changes == False %}selected{% endif %}>Disabled</option>
 			</select>

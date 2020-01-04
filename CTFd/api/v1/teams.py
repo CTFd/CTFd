@@ -1,6 +1,6 @@
 from flask import session, request, abort
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Users, Teams
+from CTFd.models import db, Users, Teams, Submissions, Awards, Unlocks
 from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.awards import AwardSchema
@@ -68,6 +68,8 @@ class TeamPublic(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
+        response.data["place"] = team.place
+        response.data["score"] = team.score
         return {"success": True, "data": response.data}
 
     @admins_only
@@ -118,6 +120,8 @@ class TeamPrivate(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
+        response.data["place"] = team.place
+        response.data["score"] = team.score
         return {"success": True, "data": response.data}
 
     @authed_only
@@ -206,6 +210,12 @@ class TeamMembers(Resource):
 
         if user.team_id == team.id:
             team.members.remove(user)
+
+            # Remove information that links the user to the team
+            Submissions.query.filter_by(user_id=user.id).delete()
+            Awards.query.filter_by(user_id=user.id).delete()
+            Unlocks.query.filter_by(user_id=user.id).delete()
+
             db.session.commit()
         else:
             return (

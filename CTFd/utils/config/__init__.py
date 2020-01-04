@@ -32,7 +32,7 @@ def ctf_theme():
 
 
 def is_setup():
-    return get_config("setup")
+    return bool(get_config("setup")) is True
 
 
 def is_scoreboard_frozen():

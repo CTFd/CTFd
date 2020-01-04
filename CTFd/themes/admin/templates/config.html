@@ -68,6 +68,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='admin', path='js/files/files.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/configs/configs.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/configs.js') }}"></script>
 {% endblock %}

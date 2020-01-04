@@ -1,6 +1,7 @@
 from flask import request, session, redirect, url_for, abort, render_template
 from werkzeug.wsgi import DispatcherMiddleware
 from CTFd.models import db, Tracking
+from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 
 from CTFd.utils import markdown, get_config
 from CTFd.utils.dates import unix_time_millis, unix_time, isoformat
@@ -19,10 +20,10 @@ from CTFd.utils.plugins import (
 
 from CTFd.utils.countries import get_countries, lookup_country_code
 from CTFd.utils.user import authed, get_ip, get_current_user, get_current_team
-from CTFd.utils.modes import generate_account_url
-from CTFd.utils.config import is_setup
+from CTFd.utils.modes import generate_account_url, get_mode_as_word
+from CTFd.utils.config import integrations, is_setup
 from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils.security.auth import logout_user
+from CTFd.utils.security.auth import login_user, logout_user, lookup_user_token
 
 from CTFd.utils.config.visibility import (
     accounts_visible,
@@ -70,6 +71,8 @@ def init_template_globals(app):
     app.jinja_env.globals.update(challenges_visible=challenges_visible)
     app.jinja_env.globals.update(registration_visible=registration_visible)
     app.jinja_env.globals.update(scores_visible=scores_visible)
+    app.jinja_env.globals.update(get_mode_as_word=get_mode_as_word)
+    app.jinja_env.globals.update(integrations=integrations)
 
 
 def init_logs(app):
@@ -146,10 +149,15 @@ def init_request_processors(app):
 
     @app.before_request
     def needs_setup():
-        if request.path == url_for("views.setup") or request.path.startswith("/themes"):
-            return
-        if not is_setup():
-            return redirect(url_for("views.setup"))
+        if is_setup() is False:
+            if request.endpoint in (
+                "views.setup",
+                "views.integrations",
+                "views.themes",
+            ):
+                return
+            else:
+                return redirect(url_for("views.setup"))
 
     @app.before_request
     def tracker():
@@ -196,12 +204,30 @@ def init_request_processors(app):
             db.session.close()
 
     @app.before_request
+    def tokens():
+        token = request.headers.get("Authorization")
+        if token and request.content_type == "application/json":
+            try:
+                token_type, token = token.split(" ", 1)
+                user = lookup_user_token(token)
+            except UserNotFoundException:
+                abort(401)
+            except UserTokenExpiredException:
+                abort(401)
+            except Exception:
+                abort(401)
+            else:
+                login_user(user)
+
+    @app.before_request
     def csrf():
         try:
             func = app.view_functions[request.endpoint]
         except KeyError:
             abort(404)
         if hasattr(func, "_bypass_csrf"):
+            return
+        if request.headers.get("Authorization"):
             return
         if not session.get("nonce"):
             session["nonce"] = generate_nonce()

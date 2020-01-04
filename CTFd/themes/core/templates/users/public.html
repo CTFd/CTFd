@@ -25,7 +25,18 @@
 			{% endif %}
 
 			{% if user.affiliation %}
-				<h3><span class="badge badge-primary">{{ user.affiliation }}</span></h3>
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">{{ user.affiliation }}</span>
+				</h3>
+			{% endif %}
+
+			{% if user.country %}
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">
+						<i class="flag-{{ user.country.lower() }}"></i>
+						{{ lookup_country_code(user.country) }}
+					</span>
+				</h3>
 			{% endif %}
 
 			{% if user.team_id %}
@@ -54,7 +65,7 @@
 						{% endif %}
 					</h2>
 					<h2 id="user-score" class="text-center">
-						{% if score %}
+						{% if user.score %}
 							{{ user.score }}
 							<small>points</small>
 						{% endif %}
@@ -119,7 +130,11 @@
 						</div>
 						{% for award in awards %}
 							<div class="col-md-3 col-sm-6">
-								<p class="text-center"><strong>{{ award.name }}</strong></p>
+								<p class="text-center">
+									<i class="award-icon award-{{ award.icon }} fa-2x"></i>
+									<br>
+									<strong>{{ award.name }}</strong>
+								</p>
 								{% if award.category %}<p class="text-center">{{ award.category }}</p>{% endif %}
 								{% if award.description %}<p class="text-center">{{ award.description }}</p>{% endif %}
 								<p class="text-center">{{ award.value }}</p>
@@ -151,7 +166,7 @@
 									<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
 									<td>{{ solve.challenge.value }}</td>
 									<td class="solve-time">
-										<script>document.write(moment("{{ solve.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+										<span data-time="{{ solve.date | isoformat }}"></span>
 									</td>
 								</tr>
 							{% endfor %}
@@ -168,13 +183,17 @@
 
 {% block scripts %}
 	<script>
-        var user_id = {{ user.id }};
-        var user_name = {{ user.name | tojson }};
-        var team_id = {{ user.team_id | tojson }};
-        var user_self = {{ (user.id == id) | tojson }};
-        var user_account_id = user_self ? "me" : user_id;
+		var stats_data = {{ {
+			'type': 'user',
+			'id': user.id,
+			'name': user.name,
+			'account_id': 'me' if user.id == id else user.id,
+		} | tojson }};
 	</script>
-	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/user.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 {% endblock %}

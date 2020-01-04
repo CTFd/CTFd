@@ -2,6 +2,7 @@ from CTFd import create_app
 import argparse
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--port", help="Port for debug server to listen on", default=4000)
 parser.add_argument("--profile", help="Enable flask_profiler profiling", action="store_true")
 args = parser.parse_args()
 
@@ -27,4 +28,4 @@ if args.profile:
     toolbar.init_app(app)
     print(" * Flask profiling running at http://127.0.0.1:4000/flask-profiler/")
 
-app.run(debug=True, threaded=True, host="127.0.0.1", port=4000)
+app.run(debug=True, threaded=True, host="127.0.0.1", port=args.port)

@@ -41,12 +41,12 @@
 						<td>{{ standing.score }}</td>
 						<td>
 						{% if standing.hidden %}
-							<button class="btn-sm btn-danger cursor-pointer" type="submit"
-									onclick="toggle_account(this)" team-id="{{ standing.account_id }}" state="hidden">Hidden
+							<button class="btn-sm btn-danger cursor-pointer scoreboard-toggle" type="submit"
+								data-account-id="{{ standing.account_id }}" data-state="hidden">Hidden
 							</button>
 						{% else %}
-							<button class="btn-sm btn-success cursor-pointer" type="submit"
-									onclick="toggle_account(this)" team-id="{{ standing.account_id }}" state="visible">Visible
+							<button class="btn-sm btn-success cursor-pointer scoreboard-toggle" type="submit"
+								data-account-id="{{ standing.account_id }}" data-state="visible">Visible
 							</button>
 						{% endif %}
 						</td>
@@ -60,5 +60,8 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme='admin', path='js/scoreboard/scoreboard.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/scoreboard.js') }}"></script>
 {% endblock %}

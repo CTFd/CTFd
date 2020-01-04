@@ -109,18 +109,15 @@
 
 {% endblock %}
 
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/challenge.js') }}"></script>
+{% endblock %}
+
 {% block scripts %}
 	<script>
         var CHALLENGE_ID = {{ challenge.id }};
         var CHALLENGE_NAME = {{ challenge.name | tojson }};
 	</script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/plotly.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/challenge.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='core', path='js/hints.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/hints.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/flags.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/tags.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/files.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/requirements.js') }}"></script>
-	<script src="{{ request.script_root }}{{ update_script }}"></script>
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/plotly.bundle.js') }}"></script>
+	<script defer src="{{ request.script_root }}{{ update_script }}"></script>
 {% endblock %}

@@ -13,7 +13,7 @@
 					<img id="ctf_logo_preview" class="img-responsive ctf_logo"
 						 src="{{ url_for('views.files', path=ctf_logo) }}"
 						 height="25">
-					<button type="button" class="btn-sm btn-danger" onclick="remove_logo()">
+					<button type="button" id="remove-logo" class="btn-sm btn-danger">
 						Remove Logo
 					</button>
 				</div>
@@ -48,6 +48,16 @@
 		</div>
 
 		<div class="form-group">
+			<label>
+				CTF Description<br>
+				<small class="form-text text-muted">
+					Description for the CTF
+				</small>
+			</label>
+			<textarea class="form-control" type="text" id="ctf_description" name="ctf_description" rows="5">{{ ctf_description }}</textarea>
+		</div>
+
+		<div class="form-group">
 			<label for="user_mode">
 				User Mode
 				<small class="form-text text-muted">User mode allows users to register as themselves
@@ -55,7 +65,7 @@
 				</small>
 			</label>
 			<div data-toggle="tooltip" data-placement="bottom" title="In order to change User Mode you must reset your CTF">
-				<select class="form-control" id="user_mode" name="user_mode" disabled="true" style="z-index: -1;">
+				<select class="form-control custom-select" id="user_mode" name="user_mode" disabled="true" style="z-index: -1;">
 					<option value="teams" {% if user_mode == 'teams' %}selected{% endif %}>
 						Teams
 					</option>
@@ -73,12 +83,25 @@
 					Switch themes to change CTFd's aesthetics
 				</small>
 			</label>
-			<select class="form-control" id="ctf_theme" name="ctf_theme">
+			<select class="form-control custom-select" id="ctf_theme" name="ctf_theme">
 				<option>{{ ctf_theme }}</option>
 				{% for theme in themes %}
 					<option>{{ theme }}</option>
 				{% endfor %}
 			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Theme Color
+				<small class="form-text text-muted">
+					Color used by theme to control aesthetics. Requires theme support.
+				</small>
+			</label>
+			<div class="d-inline-block">
+				<input type="color" id="config-color-picker">
+				<button type="button" class="btn-sm btn-primary" id="config-color-update">Update CSS</button>
+			</div>
 		</div>
 
 		<div class="form-group">

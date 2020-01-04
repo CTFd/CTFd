@@ -88,7 +88,8 @@ def test_that_ctfd_can_be_deployed_in_subdir():
             r = client.get("/setup")
             with client.session_transaction() as sess:
                 data = {
-                    "ctf_name": "name",
+                    "ctf_name": "CTFd",
+                    "ctf_description": "CTF description",
                     "name": "admin",
                     "email": "admin@ctfd.io",
                     "password": "password",

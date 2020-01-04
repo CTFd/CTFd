@@ -1,5 +1,10 @@
 from CTFd.utils import get_app_config, set_config
-from CTFd.utils.migrations import get_current_revision, create_database, drop_database, stamp_latest_revision
+from CTFd.utils.migrations import (
+    get_current_revision,
+    create_database,
+    drop_database,
+    stamp_latest_revision,
+)
 from CTFd.utils.uploads import get_uploader
 from CTFd.models import db
 from CTFd.cache import cache
@@ -120,16 +125,6 @@ def import_ctf(backup, erase=True):
     if not zipfile.is_zipfile(backup):
         raise zipfile.BadZipfile
 
-    if erase:
-        drop_database()
-        create_database()
-        # We explicitly do not want to upgrade or stamp here.
-        # The import will have this information.
-
-    side_db = dataset.connect(get_app_config("SQLALCHEMY_DATABASE_URI"))
-    sqlite = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("sqlite")
-    postgres = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("postgres")
-
     backup = zipfile.ZipFile(backup)
 
     members = backup.namelist()
@@ -142,6 +137,44 @@ def import_ctf(backup, erase=True):
         if max_content_length:
             if info.file_size > max_content_length:
                 raise zipfile.LargeZipFile
+
+    try:
+        alembic_version = json.loads(backup.open("db/alembic_version.json").read())
+        alembic_version = alembic_version["results"][0]["version_num"]
+    except Exception:
+        raise Exception(
+            "Could not determine appropriate database version. This backup cannot be automatically imported."
+        )
+
+    # Check if the alembic version is from CTFd 1.x
+    if alembic_version in (
+        "1ec4a28fe0ff",
+        "2539d8b5082e",
+        "7e9efd084c5a",
+        "87733981ca0e",
+        "a4e30c94c360",
+        "c12d2a1b0926",
+        "c7225db614c1",
+        "cb3cfcc47e2f",
+        "cbf5620f8e15",
+        "d5a224bf5862",
+        "d6514ec92738",
+        "dab615389702",
+        "e62fd69bd417",
+    ):
+        raise Exception(
+            "The version of CTFd that this backup is from is too old to be automatically imported."
+        )
+
+    if erase:
+        drop_database()
+        create_database()
+        # We explicitly do not want to upgrade or stamp here.
+        # The import will have this information.
+
+    side_db = dataset.connect(get_app_config("SQLALCHEMY_DATABASE_URI"))
+    sqlite = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("sqlite")
+    postgres = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("postgres")
 
     try:
         if postgres:
@@ -176,9 +209,6 @@ def import_ctf(backup, erase=True):
 
     members = first + members
 
-    alembic_version = json.loads(backup.open("db/alembic_version.json").read())[
-        "results"
-    ][0]["version_num"]
     upgrade(revision=alembic_version)
 
     # Create tables created by plugins
@@ -284,7 +314,7 @@ def import_ctf(backup, erase=True):
     # Alembic sqlite support is lacking so we should just create_all anyway
     try:
         upgrade(revision="head")
-    except (CommandError, RuntimeError, SystemExit):
+    except (OperationalError, CommandError, RuntimeError, SystemExit, Exception):
         app.db.create_all()
         stamp_latest_revision()
 

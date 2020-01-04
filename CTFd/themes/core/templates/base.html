@@ -4,15 +4,10 @@
 	<title>{{ get_ctf_name() }}</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" href="{{ url_for('views.themes', path='img/favicon.ico') }}"
-		  type="image/x-icon">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/vendor/bootstrap.min.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/vendor/font-awesome/fontawesome-fonts.css') }}" type='text/css'>
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/vendor/font-awesome/fontawesome-all.min.css') }}" type='text/css'>
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/vendor/font.css') }}"  type='text/css'>
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/jumbotron.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/sticky-footer.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/base.css') }}">
+	<link rel="shortcut icon" href="{{ url_for('views.themes', path='img/favicon.ico') }}" type="image/x-icon">
+	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/fonts.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/main.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/core.css') }}">
 	{% block stylesheets %}{% endblock %}
 	{% for stylesheet in get_registered_stylesheets() %}
 		{% if stylesheet.startswith('http') %}
@@ -24,22 +19,15 @@
 		{% endif %}
 	{% endfor %}
 	<link rel="stylesheet" type="text/css" href="{{ url_for('views.custom_css') }}">
-	<script src="{{ url_for('views.themes', path='js/vendor/promise-polyfill.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/vendor/eventsource.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/vendor/fetch.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/CTFd.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/vendor/moment.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/vendor/nunjucks.min.js') }}"></script>
 	<script type="text/javascript">
-		var script_root = "{{ request.script_root }}";
-		var csrf_nonce = "{{ nonce }}";
-		var user_mode = "{{ get_config('user_mode') }}";
-		var ctf_start = {{ get_config("start") | tojson }};
-		var ctf_end = {{ get_config("end") | tojson }};
-		CTFd.options.urlRoot = script_root;
-		CTFd.options.csrfNonce = csrf_nonce;
-		CTFd.options.start = ctf_start;
-		CTFd.options.end = ctf_end;
+		var init = {
+			'urlRoot': "{{ request.script_root }}",
+			'csrfNonce': "{{ nonce }}",
+			'userMode': "{{ get_config('user_mode') }}",
+			'userId': {{ id if (id is defined) else 0 }},
+			'start': {{ get_config("start") | tojson }},
+			'end': {{ get_config("end") | tojson }},
+		}
 	</script>
 </head>
 <body>
@@ -70,9 +58,6 @@
 						{% endif %}
 					{% endfor %}
 
-					<li class="nav-item">
-						<a class="nav-link" href="{{ url_for('views.notifications') }}">Notifications</a>
-					</li>
 					{% if get_config('account_visibility') != 'admins' %}
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('users.listing') }}">Users</a>
@@ -99,34 +84,92 @@
 					{% if name is defined %}
 						{% if type == 'admin' %}
 							<li class="nav-item">
-								<a class="nav-link" href="{{ url_for('admin.view') }}">Admin</a>
+								<a class="nav-link" href="{{ url_for('admin.view') }}">
+									<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Admin Panel">
+										<i class="fas fa-wrench d-none d-md-block d-lg-none"></i>
+									</span>
+									<span class="d-sm-block d-md-none d-lg-block">
+										<i class="fas fa-wrench pr-1"></i>Admin Panel
+									</span>
+								</a>
 							</li>
 						{% endif %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('views.notifications') }}">
+								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Notifications">
+									<i class="fas fa-bell d-none d-md-block d-lg-none"></i>
+								</span>
+								<span class="d-sm-block d-md-none d-lg-block">
+									<i class="fas fa-bell pr-1"></i>
+									<span class="badge badge-pill badge-danger badge-notification"></span>
+									Notifications
+								</span>
+							</a>
+						</li>
 						{% if config.user_mode() == "teams" %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('teams.private') }}">Team</a>
+							<a class="nav-link" href="{{ url_for('teams.private') }}">
+								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Team">
+									<i class="fas fa-users d-none d-md-block d-lg-none"></i>
+								</span>
+								<span class="d-sm-block d-md-none d-lg-block">
+									<i class="fas fa-users pr-1"></i>Team
+								</span>
+							</a>
 						</li>
 						{% endif %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('users.private') }}">Profile</a>
+							<a class="nav-link" href="{{ url_for('users.private') }}">
+								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Profile">
+									<i class="fas fa-user-circle d-none d-md-block d-lg-none"></i>
+								</span>
+								<span class="d-sm-block d-md-none d-lg-block">
+									<i class="fas fa-user-circle pr-1"></i>Profile
+								</span>
+							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('views.settings') }}">Settings</a>
+							<a class="nav-link" href="{{ url_for('views.settings') }}">
+								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Settings">
+									<i class="fas fa-cogs d-none d-md-block d-lg-none"></i>
+								</span>
+								<span class="d-sm-block d-md-none d-lg-block">
+									<i class="fas fa-cogs pr-1"></i>Settings
+								</span>
+							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+							<a class="nav-link" href="{{ url_for('auth.logout') }}">
+								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Logout">
+									<i class="fas fa-sign-out-alt d-none d-md-block d-lg-none"></i>
+								</span>
+								<span class="d-sm-block d-md-none d-lg-block">
+									<i class="fas fa-sign-out-alt pr-1"></i><span class="d-lg-none">Logout</span>
+								</span>
+							</a>
 						</li>
 					{% else %}
 						{% if registration_visible() %}
 							<li class="nav-item">
-								<a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link d-none d-md-block d-lg-block">|</a>
+								<a class="nav-link" href="{{ url_for('auth.register') }}">
+									<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Register">
+										<i class="fas fa-user-plus d-none d-md-block d-lg-none"></i>
+									</span>
+									<span class="d-sm-block d-md-none d-lg-block">
+										<i class="fas fa-user-plus pr-1"></i>Register
+									</span>
+								</a>
 							</li>
 						{% endif %}
 						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+							<a class="nav-link" href="{{ url_for('auth.login') }}">
+								<span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Login">
+									<i class="fas fa-sign-in-alt d-none d-md-block d-lg-none"></i>
+								</span>
+								<span class="d-sm-block d-md-none d-lg-block">
+									<i class="fas fa-sign-in-alt pr-1"></i>Login
+								</span>
+							</a>
 						</li>
 					{% endif %}
 				</ul>
@@ -141,31 +184,30 @@
 
 	<footer class="footer">
 		<div class="container text-center">
-			<a href="https://ctfd.io">
+			<a href="https://ctfd.io" class="text-secondary">
 				<small class="text-muted">Powered by CTFd</small>
 			</a>
 		</div>
 	</footer>
 
-	<script src="{{ url_for('views.themes', path='js/vendor/jquery.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/vendor/markdown-it.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/vendor/bootstrap.bundle.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/vendor/howler.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/vendor/window-controller.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/ezq.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/events.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/core.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
+
+	{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
+	{% endblock %}
+
 	{% block scripts %}
 	{% endblock %}
 
 	{% for script in get_registered_scripts() %}
 	{% if script.startswith('http') %}
-	<script src="{{ script }}"></script>
+	<script defer src="{{ script }}"></script>
 	{% elif request.script_root %}
-	<script src="{{ request.script_root }}/{{ script }}"></script>
+	<script defer src="{{ request.script_root }}/{{ script }}"></script>
 	{% else %}
-	<script src="{{ script }}"></script>
+	<script defer src="{{ script }}"></script>
 	{% endif %}
 	{% endfor %}
 </body>

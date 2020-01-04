@@ -10,6 +10,69 @@
 	</div>
 </div>
 
+<div class="modal fade bd-example-modal-lg" role="dialog" id="challenge-create-options">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Options</h5>
+				<button type="button" class="close" data-dismiss="modal">
+					<span>&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-8">
+								<label>
+									Flag:<br>
+									<small class="form-text text-muted">Static flag for your challenge</small>
+								</label>
+								<input type="text" class="form-control" name="flag">
+							</div>
+							<div class="col-md-4">
+								<label>
+									&nbsp;
+									<small class="form-text text-muted">&nbsp;</small>
+								</label>
+								<select class="form-control custom-select w-100" name="flag_data">
+									<option value="">Case Sensitive</option>
+									<option value="case_insensitive">Case Insensitive</option>
+								</select>
+							</div>
+						</div>
+						<input type="hidden" name="flag_type" value="static">
+					</div>
+					<div class="form-group">
+						<div class="form-group">
+							<label>
+								Files:
+								<small class="form-text text-muted">Files distributed along with your challenge</small>
+							</label>
+							<input class="form-control-file" type="file" name="file" multiple="multiple">
+							<sub>Attach multiple files using Control+Click or Cmd+Click</sub>
+						</div>
+					</div>
+					<div class="form-group">
+						<label>
+							State<br>
+							<small class="form-text text-muted">Should the challenge be visible to users</small>
+						</label>
+						<select class="form-control custom-select" name="state">
+							<option value="visible">Visible</option>
+							<option value="hidden" selected>Hidden</option>
+						</select>
+					</div>
+					<input id="challenge_id" type="hidden" name="challenge_id">
+					<div class="form-group">
+						<button class="btn btn-primary float-right create-challenge-submit" type="submit">Finish</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
@@ -17,7 +80,7 @@
 				<div class="col-md-6 offset-md-3">
 					<div id="create-chals-select-div" style="display: none;">
 						<label for="create-chals-select" class="control-label">Choose Challenge Type</label>
-						<select class="form-control" id="create-chals-select">
+						<select class="form-control custom-select" id="create-chals-select">
 						</select>
 					</div>
 					<br>
@@ -32,10 +95,8 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme='core', path='js/vendor/codemirror.min.js') }}"></script>
-	<script>
-	var nonce = "{{ nonce }}";
-	</script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/challenges/new.js') }}"></script>
-	<script src="{{ url_for('views.themes', theme='admin', path='js/style.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/challenge.js') }}"></script>
 {% endblock %}
