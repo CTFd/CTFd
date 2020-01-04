@@ -1,3 +1,11 @@
+2.2.1 / 2020-01-04
+==================
+
+**General**
+* Fix issue preventing admins from creating users or teams
+* Fix issue importing backups that contained empty directories
+
+
 2.2.0 / 2019-12-22
 ==================
 
