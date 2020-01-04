@@ -31,6 +31,7 @@ const roots = {
     'css': {
       'admin': 'assets/css/admin.scss',
       'challenge-board': 'assets/css/challenge-board.scss',
+      'codemirror': 'assets/css/codemirror.scss',
     },
     'js': {
       'pages/main': 'assets/js/pages/main.js',
