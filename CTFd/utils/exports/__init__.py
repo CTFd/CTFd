@@ -304,7 +304,7 @@ def import_ctf(backup, erase=True):
     for f in files:
         filename = f.split(os.sep, 1)
 
-        if len(filename) < 2:  # just an empty uploads directory (e.g. uploads/)
+        if len(filename) < 2 or os.path.basename(filename[1]) == '':  # just an empty uploads directory (e.g. uploads/) or any directory
             continue
 
         filename = filename[1]  # Get the second entry in the list (the actual filename)
