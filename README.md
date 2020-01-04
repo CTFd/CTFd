@@ -2,7 +2,7 @@
 ====
 
 [![Build Status](https://travis-ci.org/CTFd/CTFd.svg?branch=master)](https://travis-ci.org/CTFd/CTFd)
-[![CTFd Slack](https://slack.ctfd.io/badge.svg)](https://slack.ctfd.io/)
+[![MajorLeagueCyber Discourse](https://img.shields.io/discourse/status?server=https%3A%2F%2Fcommunity.majorleaguecyber.org%2F)](https://community.majorleaguecyber.org/)
 [![Documentation Status](https://readthedocs.org/projects/ctfd/badge/?version=latest)](https://docs.ctfd.io/en/latest/?badge=latest)
 
 ## What is CTFd?
@@ -57,7 +57,7 @@ Check out the [wiki](https://github.com/CTFd/CTFd/wiki) for [deployment options]
 https://demo.ctfd.io/
 
 ## Support
-To get basic support, you can join the [CTFd Slack Community](https://slack.ctfd.io/): [![CTFd Slack](https://slack.ctfd.io/badge.svg)](https://slack.ctfd.io/)
+To get basic support, you can join the [MajorLeagueCyber Community](https://community.majorleaguecyber.org/): [![MajorLeagueCyber Discourse](https://img.shields.io/discourse/status?server=https%3A%2F%2Fcommunity.majorleaguecyber.org%2F)](https://community.majorleaguecyber.org/)
 
 If you prefer commercial support or have a special project, feel free to [contact us](https://ctfd.io/contact/).
 
