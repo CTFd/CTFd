@@ -1,6 +1,13 @@
 import $ from "jquery";
 import jQuery from "jquery";
 import { default as ezq } from "./ezq";
+import { htmlEntities, colorHash, copyToClipboard } from "./utils";
+
+const utils = {
+  htmlEntities: htmlEntities,
+  colorHash: colorHash,
+  copyToClipboard: copyToClipboard
+};
 
 const files = {
   upload: (form, extra_data, cb) => {
@@ -58,6 +65,7 @@ const files = {
 
 const helpers = {
   files,
+  utils,
   ezq
 };
 
