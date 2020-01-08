@@ -7,7 +7,7 @@ const utils = {
   htmlEntities: htmlEntities,
   colorHash: colorHash,
   copyToClipboard: copyToClipboard
-}
+};
 
 const files = {
   upload: (form, extra_data, cb) => {
