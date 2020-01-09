@@ -233,6 +233,10 @@ function insertTimezones(target) {
 }
 
 $(() => {
+  insertTimezones($("#start-timezone"));
+  insertTimezones($("#end-timezone"));
+  insertTimezones($("#freeze-timezone"));
+
   $(".config-section > form:not(.form-upload)").submit(updateConfigs);
   $("#logo-upload").submit(uploadLogo);
   $("#remove-logo").click(removeLogo);
@@ -291,8 +295,4 @@ $(() => {
       $("#mail_username_password").toggle(this.checked);
     })
     .change();
-
-  insertTimezones($("#start-timezone"));
-  insertTimezones($("#end-timezone"));
-  insertTimezones($("#freeze-timezone"));
 });
