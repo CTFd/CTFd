@@ -1,3 +1,11 @@
+2.2.2 / 2020-01-09
+==================
+
+**General**
+* Add jQuery, Moment, nunjucks, and Howl to window globals to make it easier for plugins to access JS modules
+* Fix issue with timezone loading in config page which was preventing display of CTF times
+
+
 2.2.1 / 2020-01-04
 ==================
 
