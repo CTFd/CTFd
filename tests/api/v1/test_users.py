@@ -250,7 +250,7 @@ def test_api_team_get_private():
         with login_as_user(app) as client:
             set_config("account_visibility", "public")
             r = client.get("/api/v1/users/2")
-            print(r.__dict__)
+            print((r.__dict__))
             assert r.status_code == 200
             set_config("account_visibility", "private")
             r = client.get("/api/v1/users/2")

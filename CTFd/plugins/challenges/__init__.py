@@ -96,7 +96,7 @@ class CTFdStandardChallenge(BaseChallenge):
         :return:
         """
         data = request.form or request.get_json()
-        for attr, value in data.items():
+        for attr, value in list(data.items()):
             setattr(challenge, attr, value)
 
         db.session.commit()

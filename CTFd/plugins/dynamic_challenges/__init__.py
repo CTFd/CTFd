@@ -1,4 +1,4 @@
-from __future__ import division  # Use floating point for math calculations
+  # Use floating point for math calculations
 from CTFd.plugins.challenges import BaseChallenge, CHALLENGE_CLASSES
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.flags import get_flag_class
@@ -136,7 +136,7 @@ class DynamicValueChallenge(BaseChallenge):
         """
         data = request.form or request.get_json()
 
-        for attr, value in data.items():
+        for attr, value in list(data.items()):
             # We need to set these to floats so that the next operations don't operate on strings
             if attr in ("initial", "minimum", "decay"):
                 value = float(value)

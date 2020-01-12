@@ -4,8 +4,8 @@ from flask import current_app as app
 from CTFd.cache import cache
 
 if six.PY2:
-    string_types = (str, unicode)  # noqa: F821
-    text_type = unicode  # noqa: F821
+    string_types = (str, str)  # noqa: F821
+    text_type = str  # noqa: F821
     binary_type = str
 else:
     string_types = (str,)

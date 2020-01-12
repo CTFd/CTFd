@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 import sys
 import os
 
@@ -55,7 +55,7 @@ if __name__ == '__main__':
         old_data.pop('alembic_version')
 
     print('Current Tables:')
-    for table in old_data.keys():
+    for table in list(old_data.keys()):
         print('\t', table)
 
     old_conn.executable.close()
@@ -248,7 +248,7 @@ if __name__ == '__main__':
     manual = []
     not_created = []
     print('MIGRATING extra tables')
-    for table in old_data.keys():
+    for table in list(old_data.keys()):
         print('MIGRATING', table)
         new_conn.create_table(table, primary_id=False)
         data = old_data[table]

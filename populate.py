@@ -236,7 +236,7 @@ def gen_affiliation():
 
 
 def gen_value():
-    return random.choice(range(100, 500, 50))
+    return random.choice(list(range(100, 500, 50)))
 
 
 def gen_word():

@@ -25,7 +25,7 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        gen_flag(app.db, challenge_id=chal.id, content=u"flag")
+        gen_flag(app.db, challenge_id=chal.id, content="flag")
 
         with freeze_time("2017-10-3"):  # CTF has not started yet.
             client = login_as_user(app)
@@ -55,7 +55,7 @@ def test_ctftime_allows_accessing_challenges_during_ctf():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        gen_flag(app.db, challenge_id=chal.id, content=u"flag")
+        gen_flag(app.db, challenge_id=chal.id, content="flag")
 
         with freeze_time("2017-10-5"):
             client = login_as_user(app)
@@ -88,7 +88,7 @@ def test_ctftime_prevents_accessing_challenges_after_ctf():
         register_user(app)
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        gen_flag(app.db, challenge_id=chal.id, content=u"flag")
+        gen_flag(app.db, challenge_id=chal.id, content="flag")
 
         with freeze_time("2017-10-7"):
             client = login_as_user(app)

@@ -120,17 +120,17 @@ def test_redis_event_manager_subscription():
     else:
         with app.app_context():
             saved_data = {
-                u"data": {
-                    u"content": u"asdf",
-                    u"date": u"2019-01-28T05:02:19.830906+00:00",
-                    u"id": 13,
-                    u"team": None,
-                    u"team_id": None,
-                    u"title": u"asdf",
-                    u"user": None,
-                    u"user_id": None,
+                "data": {
+                    "content": "asdf",
+                    "date": "2019-01-28T05:02:19.830906+00:00",
+                    "id": 13,
+                    "team": None,
+                    "team_id": None,
+                    "title": "asdf",
+                    "user": None,
+                    "user_id": None,
                 },
-                u"type": u"notification",
+                "type": "notification",
             }
 
             saved_event = {

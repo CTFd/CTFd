@@ -15,5 +15,5 @@ def test_ordinalize():
         103: "103rd",
         111: "111th",
     }
-    for t, v in tests.items():
+    for t, v in list(tests.items()):
         assert ordinalize(t) == v

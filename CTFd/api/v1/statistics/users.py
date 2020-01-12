@@ -18,7 +18,7 @@ class UserStatistics(Resource):
 class UserPropertyCounts(Resource):
     @admins_only
     def get(self, column):
-        if column in Users.__table__.columns.keys():
+        if column in list(Users.__table__.columns.keys()):
             prop = getattr(Users, column)
             data = (
                 Users.query.with_entities(prop, func.count(prop)).group_by(prop).all()

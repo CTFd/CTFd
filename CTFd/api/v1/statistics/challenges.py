@@ -11,7 +11,7 @@ from sqlalchemy.sql import or_
 class ChallengePropertyCounts(Resource):
     @admins_only
     def get(self, column):
-        if column in Challenges.__table__.columns.keys():
+        if column in list(Challenges.__table__.columns.keys()):
             prop = getattr(Challenges, column)
             data = (
                 Challenges.query.with_entities(prop, func.count(prop))

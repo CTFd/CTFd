@@ -96,9 +96,9 @@ class S3Uploader(BaseUploader):
         return filename
 
     def upload(self, file_obj, filename):
-        filename = filter(
+        filename = list(filter(
             self._clean_filename, secure_filename(filename).replace(" ", "_")
-        )
+        ))
         filename = "".join(filename)
         if len(filename) <= 0:
             return False

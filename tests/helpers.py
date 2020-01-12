@@ -35,7 +35,7 @@ import random
 import string
 
 if six.PY2:
-    text_type = unicode  # noqa: F821
+    text_type = str  # noqa: F821
     binary_type = str
 else:
     text_type = str

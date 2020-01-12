@@ -204,7 +204,7 @@ def test_submitting_unicode_flag():
         register_user(app)
         client = login_as_user(app)
         chal = gen_challenge(app.db)
-        gen_flag(app.db, challenge_id=chal.id, content=u"你好")
+        gen_flag(app.db, challenge_id=chal.id, content="你好")
         with client.session_transaction():
             data = {"submission": "你好", "challenge_id": chal.id}
         r = client.post("/api/v1/challenges/attempt".format(chal.id), json=data)
@@ -227,7 +227,7 @@ def test_challenges_with_max_attempts():
         chal.max_attempts = 3
         app.db.session.commit()
 
-        gen_flag(app.db, challenge_id=chal.id, content=u"flag")
+        gen_flag(app.db, challenge_id=chal.id, content="flag")
         for x in range(3):
             data = {"submission": "notflag", "challenge_id": chal_id}
             r = client.post("/api/v1/challenges/attempt".format(chal_id), json=data)
@@ -257,7 +257,7 @@ def test_challenge_kpm_limit():
         chal = gen_challenge(app.db)
         chal_id = chal.id
 
-        gen_flag(app.db, challenge_id=chal.id, content=u"flag")
+        gen_flag(app.db, challenge_id=chal.id, content="flag")
         for x in range(11):
             with client.session_transaction():
                 data = {"submission": "notflag", "challenge_id": chal_id}

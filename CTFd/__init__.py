@@ -24,10 +24,11 @@ from CTFd.utils.initialization import (
 from CTFd.utils.crypto import sha256
 from CTFd.plugins import init_plugins
 import datetime
+import importlib
 
 # Hack to support Unicode in Python 2 properly
 if sys.version_info[0] < 3:
-    reload(sys)  # noqa: F821
+    importlib.reload(sys)  # noqa: F821
     sys.setdefaultencoding("utf-8")
 
 __version__ = "2.2.2"

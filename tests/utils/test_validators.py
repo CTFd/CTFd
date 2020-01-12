@@ -28,4 +28,4 @@ def test_validate_email():
         try:
             assert validate_email(invalid_email) is False
         except AssertionError:
-            print(invalid_email, "did not pass validation")
+            print((invalid_email, "did not pass validation"))

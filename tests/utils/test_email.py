@@ -93,7 +93,7 @@ def test_sendmail_with_mailgun_from_config_file(fake_post_request):
 
         args, kwargs = fake_post_request.call_args
         assert args[0] == "https://api.mailgun.net/v3/file.faked.com/messages"
-        assert kwargs["auth"] == ("api", u"key-1234567890-file-config")
+        assert kwargs["auth"] == ("api", "key-1234567890-file-config")
         assert kwargs["timeout"] == 1.0
         assert kwargs["data"] == {
             "to": ["user@user.com"],
@@ -140,7 +140,7 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
 
         args, kwargs = fake_post_request.call_args
         assert args[0] == "https://api.mailgun.net/v3/db.faked.com/messages"
-        assert kwargs["auth"] == ("api", u"key-1234567890-db-config")
+        assert kwargs["auth"] == ("api", "key-1234567890-db-config")
         assert kwargs["timeout"] == 1.0
         assert kwargs["data"] == {
             "to": ["user@user.com"],

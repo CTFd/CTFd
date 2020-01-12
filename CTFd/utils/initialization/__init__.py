@@ -95,7 +95,7 @@ def init_logs(app):
     }
 
     try:
-        for log in logs.values():
+        for log in list(logs.values()):
             if not os.path.exists(log):
                 open(log, "a").close()
 

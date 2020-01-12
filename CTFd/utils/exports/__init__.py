@@ -32,7 +32,7 @@ class CTFdSerializer(JSONSerializer):
     """
 
     def close(self):
-        for path, result in self.buckets.items():
+        for path, result in list(self.buckets.items()):
             result = self.wrap(result)
 
             if self.fileobj is None:
@@ -240,7 +240,7 @@ def import_ctf(backup, erase=True):
                     # This is a hack to get SQLite to properly accept datetime values from dataset
                     # See Issue #246
                     if sqlite:
-                        for k, v in entry.items():
+                        for k, v in list(entry.items()):
                             if isinstance(v, six.string_types):
                                 match = re.match(
                                     r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v

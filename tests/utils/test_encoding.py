@@ -27,10 +27,10 @@ def test_base64encode():
     """The base64encode wrapper works properly"""
     if six.PY2:
         assert base64encode("abc123") == "YWJjMTIz"
-        assert base64encode(unicode("abc123")) == "YWJjMTIz"  # noqa: F821
+        assert base64encode(str("abc123")) == "YWJjMTIz"  # noqa: F821
         assert (
             base64encode(
-                unicode(  # noqa: F821
+                str(  # noqa: F821
                     '"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'
                 )
             )
@@ -52,10 +52,10 @@ def test_base64decode():
     """The base64decode wrapper works properly"""
     if six.PY2:
         assert base64decode("YWJjMTIz") == "abc123"
-        assert base64decode(unicode("YWJjMTIz")) == "abc123"  # noqa: F821
+        assert base64decode(str("YWJjMTIz")) == "abc123"  # noqa: F821
         assert (
             base64decode(
-                unicode(  # noqa: F821
+                str(  # noqa: F821
                     "InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ"
                 )
             )

@@ -19,14 +19,14 @@
 
 # -- Project information -----------------------------------------------------
 
-project = u'CTFd'
-copyright = u'2019, CTFd LLC'
-author = u'Kevin Chung'
+project = 'CTFd'
+copyright = '2019, CTFd LLC'
+author = 'Kevin Chung'
 
 # The short X.Y version
-version = u''
+version = ''
 # The full version, including alpha/beta/rc tags
-release = u'2.2.2'
+release = '2.2.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -67,7 +67,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
@@ -132,8 +132,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'CTFd.tex', u'CTFd Documentation',
-     u'Kevin Chung', 'manual'),
+    (master_doc, 'CTFd.tex', 'CTFd Documentation',
+     'Kevin Chung', 'manual'),
 ]
 
 
@@ -142,7 +142,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'ctfd', u'CTFd Documentation',
+    (master_doc, 'ctfd', 'CTFd Documentation',
      [author], 1)
 ]
 
@@ -153,7 +153,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'CTFd', u'CTFd Documentation',
+    (master_doc, 'CTFd', 'CTFd Documentation',
      author, 'CTFd', 'A Capture The Flag framework focusing on ease of use and customizability.',
      'Miscellaneous'),
 ]

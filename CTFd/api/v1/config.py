@@ -45,7 +45,7 @@ class ConfigList(Resource):
     def patch(self):
         req = request.get_json()
 
-        for key, value in req.items():
+        for key, value in list(req.items()):
             set_config(key=key, value=value)
 
         clear_config()

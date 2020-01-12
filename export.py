@@ -22,4 +22,4 @@ with app.app_context():
         with open(full_name, 'wb') as target:
             shutil.copyfileobj(backup, target)
 
-        print("Exported {filename}".format(filename=full_name))
+        print(("Exported {filename}".format(filename=full_name)))

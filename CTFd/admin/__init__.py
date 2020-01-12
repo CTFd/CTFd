@@ -77,7 +77,7 @@ def plugin(plugin):
             return render_template_string(config_html)
         abort(404)
     elif request.method == "POST":
-        for k, v in request.form.items():
+        for k, v in list(request.form.items()):
             if k == "nonce":
                 continue
             set_config(k, v)
@@ -109,7 +109,7 @@ def export_ctf():
     backup = export_ctf_util()
     ctf_name = ctf_config.ctf_name()
     day = datetime.datetime.now().strftime("%Y-%m-%d")
-    full_name = u"{}.{}.zip".format(ctf_name, day)
+    full_name = "{}.{}.zip".format(ctf_name, day)
     return send_file(
         backup, cache_timeout=-1, as_attachment=True, attachment_filename=full_name
     )

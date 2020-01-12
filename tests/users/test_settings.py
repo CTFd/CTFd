@@ -33,7 +33,7 @@ def test_user_set_profile():
 
         r = client.get("/settings")
         resp = r.get_data(as_text=True)
-        for k, v in data.items():
+        for k, v in list(data.items()):
             assert v in resp
 
         data = {
