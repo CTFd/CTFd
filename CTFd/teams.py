@@ -105,7 +105,7 @@ def new():
 
         return render_template("teams/new_team.html", infos=infos, errors=errors)
     elif request.method == "POST":
-        teamname = request.form.get("name")
+        teamname = request.form.get("name", "").strip()
         passphrase = request.form.get("password", "").strip()
         errors = get_errors()
 

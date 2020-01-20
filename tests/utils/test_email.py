@@ -156,7 +156,6 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
 
 
 @patch("smtplib.SMTP")
-@freeze_time("2012-01-14 03:21:34")
 def test_verify_email(mock_smtp):
     """Does verify_email send emails"""
     app = create_ctfd()
@@ -171,7 +170,8 @@ def test_verify_email(mock_smtp):
         from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
         to_addr = "user@user.com"
 
-        verify_email_address(to_addr)
+        with freeze_time("2012-01-14 03:21:34"):
+            verify_email_address(to_addr)
 
         # This is currently not actually validated
         msg = (
@@ -182,7 +182,9 @@ def test_verify_email(mock_smtp):
 
         ctf_name = get_config("ctf_name")
         email_msg = MIMEText(msg)
-        email_msg["Subject"] = "Message from {0}".format(ctf_name)
+        email_msg["Subject"] = "Confirm your account for {ctf_name}".format(
+            ctf_name=ctf_name
+        )
         email_msg["From"] = from_addr
         email_msg["To"] = to_addr
 

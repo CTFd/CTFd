@@ -50,6 +50,7 @@ class TeamSchema(ma.ModelSchema):
         name = data.get("name")
         if name is None:
             return
+        name = name.strip()
 
         existing_team = Teams.query.filter_by(name=name).first()
         current_team = get_current_team()

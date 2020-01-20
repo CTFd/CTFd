@@ -98,7 +98,7 @@ def confirm(data=None):
 def reset_password(data=None):
     if data is not None:
         try:
-            name = unserialize(data, max_age=1800)
+            email_address = unserialize(data, max_age=1800)
         except (BadTimeSignature, SignatureExpired):
             return render_template(
                 "reset_password.html", errors=["Your link has expired"]
@@ -111,20 +111,35 @@ def reset_password(data=None):
         if request.method == "GET":
             return render_template("reset_password.html", mode="set")
         if request.method == "POST":
-            user = Users.query.filter_by(name=name).first_or_404()
-            user.password = request.form["password"].strip()
+            password = request.form.get("password", "").strip()
+            user = Users.query.filter_by(email=email_address).first_or_404()
+            if user.oauth_id:
+                return render_template(
+                    "reset_password.html",
+                    errors=[
+                        "Your account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
+                    ],
+                )
+
+            pass_short = len(password) == 0
+            if pass_short:
+                return render_template(
+                    "reset_password.html", errors=["Please pick a longer password"]
+                )
+
+            user.password = password
             db.session.commit()
             log(
                 "logins",
                 format="[{date}] {ip} -  successful password reset for {name}",
-                name=name,
+                name=user.name,
             )
             db.session.close()
             return redirect(url_for("auth.login"))
 
     if request.method == "POST":
         email_address = request.form["email"].strip()
-        team = Users.query.filter_by(email=email_address).first()
+        user = Users.query.filter_by(email=email_address).first()
 
         get_errors()
 
@@ -134,7 +149,7 @@ def reset_password(data=None):
                 errors=["Email could not be sent due to server misconfiguration"],
             )
 
-        if not team:
+        if not user:
             return render_template(
                 "reset_password.html",
                 errors=[
@@ -142,7 +157,15 @@ def reset_password(data=None):
                 ],
             )
 
-        email.forgot_password(email_address, team.name)
+        if user.oauth_id:
+            return render_template(
+                "reset_password.html",
+                errors=[
+                    "The email address associated with this account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
+                ],
+            )
+
+        email.forgot_password(email_address)
 
         return render_template(
             "reset_password.html",
@@ -159,9 +182,9 @@ def reset_password(data=None):
 def register():
     errors = get_errors()
     if request.method == "POST":
-        name = request.form["name"]
-        email_address = request.form["email"]
-        password = request.form["password"]
+        name = request.form.get("name", "").strip()
+        email_address = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "").strip()
 
         name_len = len(name) == 0
         names = Users.query.add_columns("name", "id").filter_by(name=name).first()
@@ -170,9 +193,9 @@ def register():
             .filter_by(email=email_address)
             .first()
         )
-        pass_short = len(password.strip()) == 0
+        pass_short = len(password) == 0
         pass_long = len(password) > 128
-        valid_email = validators.validate_email(request.form["email"])
+        valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
 
         if not valid_email:
@@ -206,11 +229,7 @@ def register():
             )
         else:
             with app.app_context():
-                user = Users(
-                    name=name.strip(),
-                    email=email_address.lower(),
-                    password=password.strip(),
-                )
+                user = Users(name=name, email=email_address, password=password)
                 db.session.add(user)
                 db.session.commit()
                 db.session.flush()

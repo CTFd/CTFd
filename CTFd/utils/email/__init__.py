@@ -16,17 +16,17 @@ def sendmail(addr, text, subject="Message from {ctf_name}"):
     return False, "No mail settings configured"
 
 
-def forgot_password(email, team_name):
-    token = serialize(team_name)
-    text = """Did you initiate a password reset? Click the following link to reset your password:
+def forgot_password(email):
+    token = serialize(email)
+    text = """Did you initiate a password reset?  If you didn't initiate this request you can ignore this email.
 
+Click the following link to reset your password:
 {0}/{1}
-
 """.format(
         url_for("auth.reset_password", _external=True), token
     )
-
-    return sendmail(email, text)
+    subject = "Password Reset Request from {ctf_name}"
+    return sendmail(addr=email, text=text, subject=subject)
 
 
 def verify_email_address(addr):
@@ -36,7 +36,8 @@ def verify_email_address(addr):
         url=url_for("auth.confirm", _external=True),
         token=token,
     )
-    return sendmail(addr, text)
+    subject = "Confirm your account for {ctf_name}"
+    return sendmail(addr=addr, text=text, subject=subject)
 
 
 def user_created_notification(addr, name, password):
