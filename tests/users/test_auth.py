@@ -48,6 +48,13 @@ def test_register_duplicate_username():
             password="password",
             raise_for_error=False,
         )
+        register_user(
+            app,
+            name="admin  ",
+            email="admin2@ctfd.io",
+            password="password",
+            raise_for_error=False,
+        )
         user_count = Users.query.count()
         assert user_count == 2  # There's the admin user and the first created user
     destroy_ctfd(app)
@@ -353,11 +360,15 @@ def test_user_can_reset_password(mock_smtp):
 
             # Build the email
             msg = (
-                """Did you initiate a password reset? Click the following link to reset """
-                """your password:\n\nhttp://localhost/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M\n\n"""
+                "Did you initiate a password reset?  If you didn't initiate this request you can ignore this email."
+                "\n\nClick the following link to reset your password:\n"
+                "http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U\n"
             )
+            ctf_name = get_config("ctf_name")
             email_msg = MIMEText(msg)
-            email_msg["Subject"] = "Message from CTFd"
+            email_msg["Subject"] = "Password Reset Request from {ctf_name}".format(
+                ctf_name=ctf_name
+            )
             email_msg["From"] = from_addr
             email_msg["To"] = to_addr
 
@@ -374,9 +385,11 @@ def test_user_can_reset_password(mock_smtp):
                 data = {"nonce": sess.get("nonce"), "password": "passwordtwo"}
 
             # Do the password reset
-            client.get("/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M")
+            client.get(
+                "/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U"
+            )
             client.post(
-                "/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M",
+                "/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U",
                 data=data,
             )
 
