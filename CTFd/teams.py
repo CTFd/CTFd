@@ -64,16 +64,16 @@ def join():
         team = Teams.query.filter_by(name=teamname).first()
         user = get_current_user()
 
-        team_size_limit = get_config("team_size", default=0)
-        if team_size_limit and len(team.members) >= team_size_limit:
-            errors.append(
-                "{name} has already reached the team size limit of {limit}".format(
-                    name=team.name, limit=team_size_limit
-                )
-            )
-            return render_template("teams/join_team.html", infos=infos, errors=errors)
-
         if team and verify_password(passphrase, team.password):
+            team_size_limit = get_config("team_size", default=0)
+            if team_size_limit and len(team.members) >= team_size_limit:
+                errors.append(
+                    "{name} has already reached the team size limit of {limit}".format(
+                        name=team.name, limit=team_size_limit
+                    )
+                )
+                return render_template("teams/join_team.html", infos=infos, errors=errors)
+
             user.team_id = team.id
             db.session.commit()
 
