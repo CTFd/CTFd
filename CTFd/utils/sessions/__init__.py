@@ -1,8 +1,10 @@
 from flask.sessions import SessionInterface, SessionMixin
 from flask.json.tag import TaggedJSONSerializer
 from werkzeug.datastructures import CallbackDict
+from itsdangerous import BadSignature, want_bytes
 from CTFd.cache import cache
 from CTFd.utils import text_type
+from CTFd.utils.security.signing import sign, unsign
 from uuid import uuid4
 import six
 
@@ -50,7 +52,7 @@ class CachingSessionInterface(SessionInterface):
     def _generate_sid(self):
         return str(uuid4())
 
-    def __init__(self, key_prefix, use_signer=False, permanent=False):
+    def __init__(self, key_prefix, use_signer=True, permanent=False):
         self.key_prefix = key_prefix
         self.use_signer = use_signer
         self.permanent = permanent
@@ -60,6 +62,14 @@ class CachingSessionInterface(SessionInterface):
         if not sid:
             sid = self._generate_sid()
             return self.session_class(sid=sid, permanent=self.permanent)
+
+        if self.use_signer:
+            try:
+                sid_as_bytes = unsign(sid)
+                sid = sid_as_bytes.decode()
+            except BadSignature:
+                sid = self._generate_sid()
+                return self.session_class(sid=sid, permanent=self.permanent)
 
         if not six.PY2 and not isinstance(sid, text_type):
             sid = sid.decode("utf-8", "strict")
@@ -99,7 +109,12 @@ class CachingSessionInterface(SessionInterface):
                 value=val,
                 timeout=total_seconds(app.permanent_session_lifetime),
             )
-            session_id = session.sid
+
+            if self.use_signer:
+                session_id = sign(want_bytes(session.sid))
+            else:
+                session_id = session.sid
+
             response.set_cookie(
                 app.session_cookie_name,
                 session_id,
