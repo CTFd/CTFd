@@ -16,6 +16,17 @@ def sendmail(addr, text, subject="Message from {ctf_name}"):
     return False, "No mail settings configured"
 
 
+def password_change_alert(email):
+    ctf_name = get_config("ctf_name")
+    text = (
+        "Your password for {ctf_name} has been changed.\n\n"
+        "If you didn't request a password change you can reset your password here: {url}"
+    ).format(ctf_name=ctf_name, url=url_for("auth.reset_password", _external=True))
+
+    subject = "Password Change Confirmation for {ctf_name}".format(ctf_name=ctf_name)
+    return sendmail(addr=email, text=text, subject=subject)
+
+
 def forgot_password(email):
     token = serialize(email)
     text = """Did you initiate a password reset?  If you didn't initiate this request you can ignore this email.

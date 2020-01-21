@@ -135,6 +135,7 @@ def reset_password(data=None):
                 name=user.name,
             )
             db.session.close()
+            email.password_change_alert(user.email)
             return redirect(url_for("auth.login"))
 
     if request.method == "POST":
