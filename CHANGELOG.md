@@ -1,12 +1,12 @@
 2.2.3 / 2020-01-21
 ==================
 
-This release includes a critical security fix for CTFd versions >= 2.0.0.
+### This release includes a critical security fix for CTFd versions >= 2.0.0
 
 All CTFd administrators are recommended to take the following steps:
-* Upgrade their installations to the latest version
-* Rotate the `SECRET_KEY` value
-* Reset the passwords for all administrator users
+1. Upgrade their installations to the latest version
+2. Rotate the `SECRET_KEY` value
+3. Reset the passwords for all administrator users
 
 **Security**
 * This release includes a fix for a vulnerability allowing an arbitrary user to take over other accounts given their username and a CTFd instance with emails enabled
