@@ -12,7 +12,7 @@ The core routes are identified in blueprints in the main CTFd folder for user fa
 
 API Routes/Controllers
 ----------------------
-The API routes are implemented in the ``CTFd/api`` folder as seperate blueprints for each type of resource used in CTFd. Most behavior that manipulates data should be implemented at the API level and seperated by method and resource level. The most common API methods are ``GET``, ``POST``, ``PATCH``, ``DELETE``.
+The API routes are implemented in the ``CTFd/api`` folder as separate blueprints for each type of resource used in CTFd. Most behavior that manipulates data should be implemented at the API level and seperated by method and resource level. The most common API methods are ``GET``, ``POST``, ``PATCH``, ``DELETE``.
 
 Models
 ------

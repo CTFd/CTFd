@@ -24,7 +24,7 @@ def sendmail(addr, text, subject):
     except requests.RequestException as e:
         return (
             False,
-            "{error} exception occured while handling your request".format(
+            "{error} exception occurred while handling your request".format(
                 error=type(e).__name__
             ),
         )

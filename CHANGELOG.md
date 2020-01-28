@@ -159,7 +159,7 @@ All CTFd administrators are recommended to take the following steps:
 * Change `/api/v1/teams/[team_id]/members` from taking `id` to `user_id`.
     * Endpoint was unused so the API change is considered non-breaking.
 * Add `account_type` and `account_url` field in `/api/v1/scoreboard`
-* Separate `/api/v1/[users,teams]/[me,id]/[solves,fails,awards]` into seperate API endpoints
+* Separate `/api/v1/[users,teams]/[me,id]/[solves,fails,awards]` into separate API endpoints
 * Clear standings cache after award creation/deletion
 
 **Exports**
