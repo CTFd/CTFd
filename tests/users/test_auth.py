@@ -355,7 +355,10 @@ def test_user_can_reset_password(mock_smtp):
             # Issue the password reset request
             client.post("/reset_password", data=data)
 
+            ctf_name = get_config("ctf_name")
             from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+            from_addr = "{} <{}>".format(ctf_name, from_addr)
+
             to_addr = "user@user.com"
 
             # Build the email
