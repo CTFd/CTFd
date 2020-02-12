@@ -1,11 +1,14 @@
-from flask import current_app as app, render_template, render_template_string, url_for
-from CTFd.utils.decorators import admins_only
-from CTFd.utils import binary_type
-from CTFd.models import Solves, Challenges, Flags
-from CTFd.plugins.challenges import get_chal_class
-from CTFd.admin import admin
 import os
+
 import six
+from flask import current_app as app
+from flask import render_template, render_template_string, url_for
+
+from CTFd.admin import admin
+from CTFd.models import Challenges, Flags, Solves
+from CTFd.plugins.challenges import get_chal_class
+from CTFd.utils import binary_type
+from CTFd.utils.decorators import admins_only
 
 
 @admin.route("/admin/challenges")

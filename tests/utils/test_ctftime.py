@@ -1,15 +1,16 @@
+from freezegun import freeze_time
+
+from CTFd.models import Solves
+from CTFd.utils import set_config
+from CTFd.utils.dates import ctf_ended, ctf_started
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
     gen_challenge,
     gen_flag,
+    login_as_user,
+    register_user,
 )
-from CTFd.models import Solves
-from CTFd.utils import set_config
-from CTFd.utils.dates import ctf_started, ctf_ended
-from freezegun import freeze_time
 
 
 def test_ctftime_prevents_accessing_challenges_before_ctf():

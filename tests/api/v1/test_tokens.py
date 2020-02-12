@@ -1,16 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users, Tokens
-from CTFd.utils.security.auth import generate_user_token
-from CTFd.schemas.tokens import TokenSchema
-from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
-    login_as_user,
-    gen_user,
-)
 import datetime
+
+from CTFd.models import Tokens, Users
+from CTFd.schemas.tokens import TokenSchema
+from CTFd.utils.security.auth import generate_user_token
+from tests.helpers import create_ctfd, destroy_ctfd, gen_user, login_as_user
 
 
 def test_api_tag_list_post():

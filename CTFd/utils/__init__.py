@@ -1,6 +1,7 @@
 import mistune
 import six
 from flask import current_app as app
+
 from CTFd.cache import cache
 
 if six.PY2:
@@ -59,4 +60,4 @@ def set_config(key, value):
     return config
 
 
-from CTFd.models import db, Configs  # noqa: E402
+from CTFd.models import Configs, db  # noqa: E402

@@ -1,6 +1,8 @@
-from CTFd.utils import string_types
-from passlib.hash import bcrypt_sha256
 import hashlib
+
+from passlib.hash import bcrypt_sha256
+
+from CTFd.utils import string_types
 
 
 def hash_password(plaintext):

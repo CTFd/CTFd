@@ -1,11 +1,13 @@
+import datetime
+
 from flask import request, session
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Tokens
-from CTFd.utils.user import get_current_user, is_admin
+
+from CTFd.models import Tokens, db
 from CTFd.schemas.tokens import TokenSchema
+from CTFd.utils.decorators import authed_only, require_verified_emails
 from CTFd.utils.security.auth import generate_user_token
-from CTFd.utils.decorators import require_verified_emails, authed_only
-import datetime
+from CTFd.utils.user import get_current_user, is_admin
 
 tokens_namespace = Namespace("tokens", description="Endpoint to retrieve Tokens")
 

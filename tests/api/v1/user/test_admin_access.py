@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import create_ctfd, destroy_ctfd, register_user, login_as_user
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
 def test_api_hint_404():

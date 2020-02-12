@@ -1,4 +1,4 @@
-from CTFd.models import ma, Files
+from CTFd.models import Files, ma
 from CTFd.utils import string_types
 
 

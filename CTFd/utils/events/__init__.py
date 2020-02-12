@@ -1,9 +1,11 @@
-from collections import defaultdict
-from CTFd.cache import cache
-from six.moves.queue import Queue
 import json
+from collections import defaultdict
+
 import six
 from gevent import Timeout
+from six.moves.queue import Queue
+
+from CTFd.cache import cache
 
 
 @six.python_2_unicode_compatible

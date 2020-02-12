@@ -1,7 +1,9 @@
-from flask import request, abort, redirect, url_for, render_template
-from CTFd.utils import get_config
-from CTFd.utils.user import is_admin, authed
 import functools
+
+from flask import abort, redirect, render_template, request, url_for
+
+from CTFd.utils import get_config
+from CTFd.utils.user import authed, is_admin
 
 
 def check_score_visibility(f):

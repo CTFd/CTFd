@@ -1,12 +1,14 @@
-from CTFd.utils import get_app_config
-from CTFd.utils.encoding import hexencode
-from flask import current_app, send_file, redirect
+import os
+import string
+from shutil import copyfileobj
+
+import boto3
+from flask import current_app, redirect, send_file
 from flask.helpers import safe_join
 from werkzeug.utils import secure_filename
-from shutil import copyfileobj
-import os
-import boto3
-import string
+
+from CTFd.utils import get_app_config
+from CTFd.utils.encoding import hexencode
 
 
 class BaseUploader(object):

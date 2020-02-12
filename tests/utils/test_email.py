@@ -1,10 +1,12 @@
-from tests.helpers import create_ctfd, destroy_ctfd
+from email.mime.text import MIMEText
+
+import requests
+from freezegun import freeze_time
+from mock import Mock, patch
+
 from CTFd.utils import get_config, set_config
 from CTFd.utils.email import sendmail, verify_email_address
-from freezegun import freeze_time
-from mock import patch, Mock
-from email.mime.text import MIMEText
-import requests
+from tests.helpers import create_ctfd, destroy_ctfd
 
 
 @patch("smtplib.SMTP")

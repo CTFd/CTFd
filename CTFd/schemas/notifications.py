@@ -1,4 +1,4 @@
-from CTFd.models import ma, Notifications
+from CTFd.models import Notifications, ma
 from CTFd.utils import string_types
 
 

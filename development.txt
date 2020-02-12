@@ -15,3 +15,4 @@ pytest-xdist==1.28.0
 pytest-cov==2.6.1
 sphinx_rtd_theme==0.4.3
 flask-debugtoolbar==0.10.1
+flake8-isort==2.8.0

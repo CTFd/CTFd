@@ -1,15 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
-    register_user,
-    login_as_user,
-)
 from CTFd.utils import get_config
-from CTFd.utils.security.signing import serialize
 from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils.security.signing import serialize
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
 def test_setup_integrations():

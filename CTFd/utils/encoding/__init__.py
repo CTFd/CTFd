@@ -1,8 +1,9 @@
-from CTFd.utils import string_types
+import base64
+import codecs
 
 import six
-import codecs
-import base64
+
+from CTFd.utils import string_types
 
 
 def hexencode(s):

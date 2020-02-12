@@ -1,24 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Teams, Users, Solves, Fails, Awards
+from freezegun import freeze_time
+
+from CTFd.models import Awards, Fails, Solves, Teams, Users
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
-    gen_user,
-    gen_team,
+    gen_award,
     gen_challenge,
+    gen_fail,
     gen_flag,
     gen_solve,
-    gen_award,
-    gen_fail,
+    gen_team,
+    gen_user,
+    login_as_user,
+    register_user,
     simulate_user_activity,
 )
-from freezegun import freeze_time
 
 
 def test_api_teams_get_public():
@@ -380,9 +381,7 @@ def test_api_team_patch_me_logged_in_admin_captain():
         app.db.session.commit()
         with login_as_user(app, name="admin") as client:
             # Users can't null out their team name
-            r = client.patch(
-                "/api/v1/teams/me", json={"name": None}
-            )
+            r = client.patch("/api/v1/teams/me", json={"name": None})
             resp = r.get_json()
             assert r.status_code == 400
             assert resp["errors"]["name"] == ["Field may not be null."]

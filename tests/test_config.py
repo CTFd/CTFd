@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 from CTFd.config import TestingConfig
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
 def test_reverse_proxy_config():

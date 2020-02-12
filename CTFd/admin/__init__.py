@@ -1,54 +1,51 @@
-from flask import (
-    current_app as app,
-    render_template,
-    request,
-    redirect,
-    url_for,
-    Blueprint,
-    abort,
-    render_template_string,
-    send_file,
-)
-
-from CTFd.utils.decorators import admins_only
-from CTFd.utils.user import is_admin
-from CTFd.utils.security.auth import logout_user
-from CTFd.utils import config as ctf_config, get_config, set_config
-from CTFd.cache import cache, clear_config
-from CTFd.utils.helpers import get_errors
-from CTFd.utils.exports import (
-    export_ctf as export_ctf_util,
-    import_ctf as import_ctf_util,
-)
-from CTFd.models import (
-    db,
-    get_class_by_tablename,
-    Users,
-    Teams,
-    Configs,
-    Submissions,
-    Solves,
-    Awards,
-    Unlocks,
-    Tracking,
-)
+import csv
 import datetime
 import os
-import six
-import csv
 
+import six
+from flask import Blueprint, abort
+from flask import current_app as app
+from flask import (
+    redirect,
+    render_template,
+    render_template_string,
+    request,
+    send_file,
+    url_for,
+)
+
+from CTFd.cache import cache, clear_config
+from CTFd.models import (
+    Awards,
+    Configs,
+    Solves,
+    Submissions,
+    Teams,
+    Tracking,
+    Unlocks,
+    Users,
+    db,
+    get_class_by_tablename,
+)
+from CTFd.utils import config as ctf_config
+from CTFd.utils import get_config, set_config
+from CTFd.utils.decorators import admins_only
+from CTFd.utils.exports import export_ctf as export_ctf_util
+from CTFd.utils.exports import import_ctf as import_ctf_util
+from CTFd.utils.helpers import get_errors
+from CTFd.utils.security.auth import logout_user
+from CTFd.utils.user import is_admin
 
 admin = Blueprint("admin", __name__)
 
-
 from CTFd.admin import challenges  # noqa: F401
+from CTFd.admin import notifications  # noqa: F401
 from CTFd.admin import pages  # noqa: F401
 from CTFd.admin import scoreboard  # noqa: F401
 from CTFd.admin import statistics  # noqa: F401
+from CTFd.admin import submissions  # noqa: F401
 from CTFd.admin import teams  # noqa: F401
 from CTFd.admin import users  # noqa: F401
-from CTFd.admin import submissions  # noqa: F401
-from CTFd.admin import notifications  # noqa: F401
 
 
 @admin.route("/admin", methods=["GET"])

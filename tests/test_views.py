@@ -4,20 +4,21 @@
 import os
 
 from flask import url_for
-from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
-    register_user,
-    login_as_user,
-    gen_challenge,
-    gen_file,
-    gen_page,
-)
+from freezegun import freeze_time
+
 from CTFd.cache import clear_pages
 from CTFd.utils import set_config
 from CTFd.utils.config.pages import get_pages
 from CTFd.utils.encoding import hexencode
-from freezegun import freeze_time
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    gen_challenge,
+    gen_file,
+    gen_page,
+    login_as_user,
+    register_user,
+)
 
 
 def test_index():

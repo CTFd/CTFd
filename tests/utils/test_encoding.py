@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from CTFd.utils.encoding import base64encode, base64decode, hexdecode, hexencode
 import string
+
 import six
+
+from CTFd.utils.encoding import base64decode, base64encode, hexdecode, hexencode
 
 
 def test_hexencode():

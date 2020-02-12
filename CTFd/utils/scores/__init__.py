@@ -1,9 +1,9 @@
 from sqlalchemy.sql.expression import union_all
 
 from CTFd.cache import cache
-from CTFd.models import db, Teams, Users, Solves, Awards, Challenges
-from CTFd.utils.dates import unix_time_to_utc
+from CTFd.models import Awards, Challenges, Solves, Teams, Users, db
 from CTFd.utils import get_config
+from CTFd.utils.dates import unix_time_to_utc
 from CTFd.utils.modes import get_model
 
 

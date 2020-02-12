@@ -1,8 +1,9 @@
 from flask import url_for
+
 from CTFd.utils import get_config
-from CTFd.utils.formatters import safe_format
 from CTFd.utils.config import get_mail_provider
 from CTFd.utils.email import mailgun, smtp
+from CTFd.utils.formatters import safe_format
 from CTFd.utils.security.signing import serialize
 
 

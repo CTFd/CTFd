@@ -3,13 +3,7 @@
 
 from CTFd.models import Users
 from CTFd.utils import set_config
-from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
-    login_as_user,
-    gen_team,
-    gen_award,
-)
+from tests.helpers import create_ctfd, destroy_ctfd, gen_award, gen_team, login_as_user
 
 
 def test_api_team_place_hidden_if_scores_hidden():

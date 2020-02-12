@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import Teams, Users
 from CTFd.utils import set_config
-from CTFd.models import Users, Teams
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
-    gen_user,
-    gen_team,
     gen_award,
+    gen_team,
+    gen_user,
+    login_as_user,
+    register_user,
 )
 
 
