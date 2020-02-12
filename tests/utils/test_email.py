@@ -18,7 +18,10 @@ def test_sendmail_with_smtp_from_config_file(mock_smtp):
         app.config["MAIL_USERNAME"] = "username"
         app.config["MAIL_PASSWORD"] = "password"
 
+        ctf_name = get_config("ctf_name")
         from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = "{} <{}>".format(ctf_name, from_addr)
+
         to_addr = "user@user.com"
         msg = "this is a test"
 
@@ -47,7 +50,10 @@ def test_sendmail_with_smtp_from_db_config(mock_smtp):
         set_config("mail_username", "username")
         set_config("mail_password", "password")
 
+        ctf_name = get_config("ctf_name")
         from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = "{} <{}>".format(ctf_name, from_addr)
+
         to_addr = "user@user.com"
         msg = "this is a test"
 
@@ -98,7 +104,7 @@ def test_sendmail_with_mailgun_from_config_file(fake_post_request):
         assert kwargs["data"] == {
             "to": ["user@user.com"],
             "text": "this is a test",
-            "from": "CTFd Admin <noreply@ctfd.io>",
+            "from": "CTFd <noreply@ctfd.io>",
             "subject": "Message from CTFd",
         }
 
@@ -145,7 +151,7 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
         assert kwargs["data"] == {
             "to": ["user@user.com"],
             "text": "this is a test",
-            "from": "CTFd Admin <noreply@ctfd.io>",
+            "from": "CTFd <noreply@ctfd.io>",
             "subject": "Message from CTFd",
         }
 
@@ -167,7 +173,10 @@ def test_verify_email(mock_smtp):
         set_config("mail_password", "password")
         set_config("verify_emails", True)
 
+        ctf_name = get_config("ctf_name")
         from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = "{} <{}>".format(ctf_name, from_addr)
+
         to_addr = "user@user.com"
 
         with freeze_time("2012-01-14 03:21:34"):
