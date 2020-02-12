@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import Teams, Users
+from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
     login_as_user,
     login_with_mlc,
+    register_user,
 )
-from CTFd.models import Teams, Users
-from CTFd.utils import set_config
 
 
 def test_oauth_not_configured():

@@ -1,5 +1,6 @@
-from flask import request, flash, get_flashed_messages, current_app
 import os
+
+from flask import current_app, flash, get_flashed_messages, request
 
 
 def info_for(endpoint, message):

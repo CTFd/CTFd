@@ -1,4 +1,4 @@
-from CTFd.models import ma, Configs
+from CTFd.models import Configs, ma
 from CTFd.utils import string_types
 
 

@@ -1,5 +1,6 @@
 from marshmallow import pre_load
-from CTFd.models import ma, Pages
+
+from CTFd.models import Pages, ma
 from CTFd.utils import string_types
 
 

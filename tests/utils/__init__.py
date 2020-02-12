@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import create_ctfd, destroy_ctfd
 from CTFd.utils import get_config, set_config
+from tests.helpers import create_ctfd, destroy_ctfd
 
 
 def test_ctf_version_is_set():

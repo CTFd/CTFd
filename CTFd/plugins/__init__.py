@@ -1,19 +1,22 @@
 import glob
 import importlib
 import os
-
 from collections import namedtuple
-from flask import current_app as app, send_file, send_from_directory
+
+from flask import current_app as app
+from flask import send_file, send_from_directory
+
+from CTFd.utils.config.pages import get_pages
 from CTFd.utils.decorators import admins_only as admins_only_wrapper
+from CTFd.utils.plugins import override_template as utils_override_template
 from CTFd.utils.plugins import (
-    override_template as utils_override_template,
-    register_script as utils_register_plugin_script,
-    register_stylesheet as utils_register_plugin_stylesheet,
     register_admin_script as utils_register_admin_plugin_script,
+)
+from CTFd.utils.plugins import (
     register_admin_stylesheet as utils_register_admin_plugin_stylesheet,
 )
-from CTFd.utils.config.pages import get_pages
-
+from CTFd.utils.plugins import register_script as utils_register_plugin_script
+from CTFd.utils.plugins import register_stylesheet as utils_register_plugin_stylesheet
 
 Menu = namedtuple("Menu", ["title", "route"])
 

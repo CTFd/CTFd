@@ -1,9 +1,9 @@
-from CTFd.models import Tokens
-from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
-from CTFd.utils.security.auth import generate_user_token, lookup_user_token
-from tests.helpers import gen_user, gen_token
-from tests.helpers import create_ctfd, destroy_ctfd
 import datetime
+
+from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
+from CTFd.models import Tokens
+from CTFd.utils.security.auth import generate_user_token, lookup_user_token
+from tests.helpers import create_ctfd, destroy_ctfd, gen_token, gen_user
 
 
 def test_generate_user_token():

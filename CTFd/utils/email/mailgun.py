@@ -1,5 +1,6 @@
-from CTFd.utils import get_config, get_app_config
 import requests
+
+from CTFd.utils import get_app_config, get_config
 
 
 def sendmail(addr, text, subject):

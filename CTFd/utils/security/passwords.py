@@ -1,4 +1,6 @@
-from CTFd.utils.crypto import hash_password as hp, verify_password as vp, sha256 as sha
+from CTFd.utils.crypto import hash_password as hp
+from CTFd.utils.crypto import sha256 as sha
+from CTFd.utils.crypto import verify_password as vp
 
 
 def hash_password(p):

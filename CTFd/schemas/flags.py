@@ -1,4 +1,4 @@
-from CTFd.models import ma, Flags
+from CTFd.models import Flags, ma
 from CTFd.utils import string_types
 
 

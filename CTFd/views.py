@@ -1,53 +1,43 @@
-from flask import (
-    current_app as app,
-    render_template,
-    request,
-    redirect,
-    abort,
-    url_for,
-    session,
-    Blueprint,
-    Response,
-    send_file,
-)
-from flask.helpers import safe_join
-
-from CTFd.models import (
-    db,
-    Users,
-    Admins,
-    Teams,
-    Files,
-    Pages,
-    Notifications,
-    UserTokens,
-)
-from CTFd.utils import markdown
-from CTFd.cache import cache
-from CTFd.utils import get_config, set_config
-from CTFd.utils.user import authed, get_current_user, is_admin
-from CTFd.utils import config, validators
-from CTFd.utils.modes import USERS_MODE
-from CTFd.utils.helpers import get_errors
-from CTFd.utils.uploads import get_uploader
-from CTFd.utils.config.pages import get_page
-from CTFd.utils.config.visibility import challenges_visible
-from CTFd.utils.config import is_setup
-from CTFd.utils.security.auth import login_user
-from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils import user as current_user
-from CTFd.utils.dates import ctftime, ctf_ended, view_after_ctf
-from CTFd.utils.decorators import authed_only
-from CTFd.utils.security.signing import (
-    serialize,
-    unserialize,
-    BadTimeSignature,
-    SignatureExpired,
-    BadSignature,
-)
-from sqlalchemy.exc import IntegrityError
 import os
 
+from flask import Blueprint, Response, abort
+from flask import current_app as app
+from flask import redirect, render_template, request, send_file, session, url_for
+from flask.helpers import safe_join
+from sqlalchemy.exc import IntegrityError
+
+from CTFd.cache import cache
+from CTFd.models import (
+    Admins,
+    Files,
+    Notifications,
+    Pages,
+    Teams,
+    Users,
+    UserTokens,
+    db,
+)
+from CTFd.utils import config, get_config, markdown, set_config
+from CTFd.utils import user as current_user
+from CTFd.utils import validators
+from CTFd.utils.config import is_setup
+from CTFd.utils.config.pages import get_page
+from CTFd.utils.config.visibility import challenges_visible
+from CTFd.utils.dates import ctf_ended, ctftime, view_after_ctf
+from CTFd.utils.decorators import authed_only
+from CTFd.utils.helpers import get_errors
+from CTFd.utils.modes import USERS_MODE
+from CTFd.utils.security.auth import login_user
+from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils.security.signing import (
+    BadSignature,
+    BadTimeSignature,
+    SignatureExpired,
+    serialize,
+    unserialize,
+)
+from CTFd.utils.uploads import get_uploader
+from CTFd.utils.user import authed, get_current_user, is_admin
 
 views = Blueprint("views", __name__)
 

@@ -1,9 +1,10 @@
 from flask import request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Hints, HintUnlocks
-from CTFd.utils.user import get_current_user, is_admin
+
+from CTFd.models import Hints, HintUnlocks, db
 from CTFd.schemas.hints import HintSchema
-from CTFd.utils.decorators import during_ctf_time_only, admins_only, authed_only
+from CTFd.utils.decorators import admins_only, authed_only, during_ctf_time_only
+from CTFd.utils.user import get_current_user, is_admin
 
 hints_namespace = Namespace("hints", description="Endpoint to retrieve Hints")
 

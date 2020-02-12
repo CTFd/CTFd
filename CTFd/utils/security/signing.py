@@ -1,11 +1,11 @@
 from flask import current_app
 from itsdangerous import Signer
-from itsdangerous.url_safe import URLSafeTimedSerializer
 from itsdangerous.exc import (  # noqa: F401
+    BadSignature,
     BadTimeSignature,
     SignatureExpired,
-    BadSignature,
 )
+from itsdangerous.url_safe import URLSafeTimedSerializer
 
 
 def serialize(data, secret=None):

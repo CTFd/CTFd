@@ -1,7 +1,8 @@
 from flask import request
 from flask_restplus import Namespace, Resource
+
 from CTFd.cache import clear_standings
-from CTFd.models import db, Awards
+from CTFd.models import Awards, db
 from CTFd.schemas.awards import AwardSchema
 from CTFd.utils.decorators import admins_only
 

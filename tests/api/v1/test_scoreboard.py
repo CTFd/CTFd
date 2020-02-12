@@ -5,11 +5,11 @@ from CTFd.cache import clear_standings
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
     gen_challenge,
     gen_flag,
     gen_solve,
+    login_as_user,
+    register_user,
 )
 
 

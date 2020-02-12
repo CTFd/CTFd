@@ -1,4 +1,4 @@
-from CTFd.models import ma, Tags
+from CTFd.models import Tags, ma
 from CTFd.utils import string_types
 
 

@@ -1,18 +1,19 @@
-from CTFd.plugins import register_plugin_assets_directory
-from CTFd.plugins.flags import get_flag_class
+from flask import Blueprint
+
 from CTFd.models import (
-    db,
-    Solves,
+    ChallengeFiles,
+    Challenges,
     Fails,
     Flags,
-    Challenges,
-    ChallengeFiles,
-    Tags,
     Hints,
+    Solves,
+    Tags,
+    db,
 )
-from CTFd.utils.user import get_ip
+from CTFd.plugins import register_plugin_assets_directory
+from CTFd.plugins.flags import get_flag_class
 from CTFd.utils.uploads import delete_file
-from flask import Blueprint
+from CTFd.utils.user import get_ip
 
 
 class BaseChallenge(object):

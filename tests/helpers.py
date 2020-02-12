@@ -1,38 +1,40 @@
+import datetime
+import gc
+import random
+import string
+import uuid
+from collections import namedtuple
+
+import requests
+import six
 from flask.testing import FlaskClient
+from mock import Mock, patch
+from sqlalchemy.engine.url import make_url
+from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers
+
 from CTFd import create_app
+from CTFd.cache import cache, clear_standings
 from CTFd.config import TestingConfig
 from CTFd.models import (
     Awards,
-    Challenges,
     ChallengeFiles,
+    Challenges,
     Fails,
     Files,
     Flags,
     Hints,
     Notifications,
-    Pages,
     PageFiles,
+    Pages,
     Solves,
     Tags,
     Teams,
+    Tokens,
     Tracking,
     Unlocks,
     Users,
-    Tokens,
 )
-from CTFd.cache import cache, clear_standings
-from sqlalchemy_utils import drop_database
-from collections import namedtuple
-from mock import Mock, patch
-from sqlalchemy.engine.url import make_url
-import datetime
-import six
-import gc
-import requests
-import uuid
-import random
-import string
 
 if six.PY2:
     text_type = unicode  # noqa: F821
@@ -92,7 +94,7 @@ def create_ctfd(
             name=name,
             email=email,
             password=password,
-            user_mode=user_mode
+            user_mode=user_mode,
         )
     return app
 

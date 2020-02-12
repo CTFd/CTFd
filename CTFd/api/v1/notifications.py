@@ -1,8 +1,8 @@
 from flask import current_app, request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Notifications
-from CTFd.schemas.notifications import NotificationSchema
 
+from CTFd.models import Notifications, db
+from CTFd.schemas.notifications import NotificationSchema
 from CTFd.utils.decorators import admins_only
 
 notifications_namespace = Namespace(

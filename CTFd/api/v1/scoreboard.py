@@ -1,15 +1,15 @@
 from flask_restplus import Namespace, Resource
 
-from CTFd.models import Solves, Awards, Teams
 from CTFd.cache import cache, make_cache_key
-from CTFd.utils.scores import get_standings
+from CTFd.models import Awards, Solves, Teams
 from CTFd.utils import get_config
-from CTFd.utils.modes import generate_account_url, get_mode_as_word, TEAMS_MODE
-from CTFd.utils.dates import unix_time_to_utc, isoformat
+from CTFd.utils.dates import isoformat, unix_time_to_utc
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
     check_score_visibility,
 )
+from CTFd.utils.modes import TEAMS_MODE, generate_account_url, get_mode_as_word
+from CTFd.utils.scores import get_standings
 
 scoreboard_namespace = Namespace(
     "scoreboard", description="Endpoint to retrieve scores"

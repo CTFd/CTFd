@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from freezegun import freeze_time
+
 from CTFd.models import Users
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
-    get_scores,
-    gen_challenge,
     gen_award,
+    gen_challenge,
     gen_flag,
     gen_solve,
+    get_scores,
+    login_as_user,
+    register_user,
 )
-from freezegun import freeze_time
 
 
 def test_user_get_scoreboard_components():

@@ -1,6 +1,7 @@
 from marshmallow import fields
+
+from CTFd.models import Submissions, ma
 from CTFd.schemas.challenges import ChallengeSchema
-from CTFd.models import ma, Submissions
 from CTFd.utils import string_types
 
 

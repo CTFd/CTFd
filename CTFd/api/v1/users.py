@@ -1,29 +1,28 @@
-from flask import session, request, abort
+from flask import abort, request, session
 from flask_restplus import Namespace, Resource
+
+from CTFd.cache import clear_standings
 from CTFd.models import (
-    db,
-    Users,
-    Solves,
     Awards,
+    Notifications,
+    Solves,
+    Submissions,
     Tracking,
     Unlocks,
-    Submissions,
-    Notifications,
+    Users,
+    db,
 )
-from CTFd.utils.decorators import authed_only, admins_only, ratelimit
-from CTFd.cache import clear_standings
+from CTFd.schemas.awards import AwardSchema
+from CTFd.schemas.submissions import SubmissionSchema
+from CTFd.schemas.users import UserSchema
 from CTFd.utils.config import get_mail_provider
-from CTFd.utils.email import sendmail, user_created_notification
-from CTFd.utils.user import get_current_user, is_admin
+from CTFd.utils.decorators import admins_only, authed_only, ratelimit
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
     check_score_visibility,
 )
-
-from CTFd.schemas.submissions import SubmissionSchema
-from CTFd.schemas.awards import AwardSchema
-from CTFd.schemas.users import UserSchema
-
+from CTFd.utils.email import sendmail, user_created_notification
+from CTFd.utils.user import get_current_user, is_admin
 
 users_namespace = Namespace("users", description="Endpoint to retrieve Users")
 

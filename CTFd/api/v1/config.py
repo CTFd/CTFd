@@ -1,10 +1,11 @@
 from flask import request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Configs
-from CTFd.schemas.config import ConfigSchema
-from CTFd.utils.decorators import admins_only
-from CTFd.utils import get_config, set_config
+
 from CTFd.cache import clear_config, clear_standings
+from CTFd.models import Configs, db
+from CTFd.schemas.config import ConfigSchema
+from CTFd.utils import get_config, set_config
+from CTFd.utils.decorators import admins_only
 
 configs_namespace = Namespace("configs", description="Endpoint to retrieve Configs")
 

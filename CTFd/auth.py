@@ -1,33 +1,25 @@
-from flask import (
-    current_app as app,
-    render_template,
-    request,
-    redirect,
-    url_for,
-    session,
-    Blueprint,
-)
-from itsdangerous.exc import BadTimeSignature, SignatureExpired, BadSignature
+import base64
 
-from CTFd.models import db, Users, Teams
+import requests
+from flask import Blueprint
+from flask import current_app as app
+from flask import redirect, render_template, request, session, url_for
+from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
 
-from CTFd.utils import get_config, get_app_config
-from CTFd.utils.decorators import ratelimit
+from CTFd.models import Teams, Users, db
+from CTFd.utils import config, email, get_app_config, get_config
 from CTFd.utils import user as current_user
-from CTFd.utils import config, validators
-from CTFd.utils import email
-from CTFd.utils.security.auth import login_user, logout_user
-from CTFd.utils.crypto import verify_password
-from CTFd.utils.logging import log
-from CTFd.utils.decorators.visibility import check_registration_visibility
+from CTFd.utils import validators
 from CTFd.utils.config import is_teams_mode
 from CTFd.utils.config.visibility import registration_visible
-from CTFd.utils.modes import TEAMS_MODE
-from CTFd.utils.security.signing import unserialize
+from CTFd.utils.crypto import verify_password
+from CTFd.utils.decorators import ratelimit
+from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.helpers import error_for, get_errors
-
-import base64
-import requests
+from CTFd.utils.logging import log
+from CTFd.utils.modes import TEAMS_MODE
+from CTFd.utils.security.auth import login_user, logout_user
+from CTFd.utils.security.signing import unserialize
 
 auth = Blueprint("auth", __name__)
 

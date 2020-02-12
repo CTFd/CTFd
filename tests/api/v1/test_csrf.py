@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from flask.testing import FlaskClient
+
 from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
 
 

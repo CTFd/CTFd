@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import db, Users
-from CTFd.utils import set_config, get_config
-from CTFd.utils.security.signing import serialize
-from CTFd.utils.crypto import verify_password
 from freezegun import freeze_time
-from tests.helpers import create_ctfd, destroy_ctfd, register_user, login_as_user
 from mock import patch
+
+from CTFd.models import Users, db
+from CTFd.utils import get_config, set_config
+from CTFd.utils.crypto import verify_password
+from CTFd.utils.security.signing import serialize
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
 def test_register_user():
