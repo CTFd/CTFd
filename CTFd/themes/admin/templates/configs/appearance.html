@@ -106,12 +106,24 @@
 
 		<div class="form-group">
 			<label>
-				Stylesheet editor
+				Theme Header
 				<small class="form-text text-muted">
-					CSS is applied to all public facing pages if the theme used supports custom CSS.
+					Theme headers are inserted just before the <code>&lt;/head&gt;</code> tag on all public facing pages.
+					Requires theme support.
 				</small>
 			</label>
-			<textarea class="form-control" id="css-editor" name="css" rows="7">{{ css }}</textarea>
+			<textarea class="form-control" id="theme-header" name="theme_header" rows="7">{{ theme_header or "" }}</textarea>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Theme Footer
+				<small class="form-text text-muted">
+					Theme footers are inserted just before the <code>&lt;/body&gt;</code> tag on all public facing pages.
+					Requires theme support.
+				</small>
+			</label>
+			<textarea class="form-control" id="theme-footer" name="theme_footer" rows="7">{{ theme_footer or "" }}</textarea>
 		</div>
 
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>

@@ -252,15 +252,6 @@ def settings():
     )
 
 
-@views.route("/static/user.css")
-def custom_css():
-    """
-    Custom CSS Handler route
-    :return:
-    """
-    return Response(get_config("css"), mimetype="text/css")
-
-
 @views.route("/", defaults={"route": "index"})
 @views.route("/<path:route>")
 def static_html(route):
