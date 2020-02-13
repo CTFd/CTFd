@@ -5,6 +5,7 @@ Revises: 080d29b15cd3
 Create Date: 2020-02-13 01:10:16.430424
 
 """
+from CTFd.models import Configs
 from CTFd.utils import get_config, set_config
 
 
@@ -16,9 +17,9 @@ depends_on = None
 
 
 def upgrade():
-    css = get_config("css")
-    if css:
-        new_css = "<style>\n" + css + "\n</style>"
+    css = Configs.query.filter_by(key="css").first()
+    if css and css.value:
+        new_css = "<style>\n" + css.value + "\n</style>"
         set_config("theme_header", new_css)
 
 
