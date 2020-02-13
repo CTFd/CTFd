@@ -5,8 +5,7 @@ Revises: 080d29b15cd3
 Create Date: 2020-02-13 01:10:16.430424
 
 """
-from CTFd.models import Configs
-from CTFd.utils import get_config, set_config
+from CTFd.models import db, Configs
 
 
 # revision identifiers, used by Alembic.
@@ -20,7 +19,13 @@ def upgrade():
     css = Configs.query.filter_by(key="css").first()
     if css and css.value:
         new_css = "<style>\n" + css.value + "\n</style>"
-        set_config("theme_header", new_css)
+        config = Configs.query.filter_by(key="theme_header").first()
+        if config:
+            config.value = new_css
+        else:
+            config = Configs(key="theme_header", value=new_css)
+            db.session.add(config)
+        db.session.commit()
 
 
 def downgrade():
