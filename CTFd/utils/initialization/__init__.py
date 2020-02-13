@@ -162,7 +162,7 @@ def init_request_processors(app):
 
     @app.before_request
     def tracker():
-        if request.endpoint in ("views.themes", "views.custom_css"):
+        if request.endpoint == "views.themes":
             return
 
         if authed():

@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint, Response, abort
+from flask import Blueprint, abort
 from flask import current_app as app
 from flask import redirect, render_template, request, send_file, session, url_for
 from flask.helpers import safe_join
