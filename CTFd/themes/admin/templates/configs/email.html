@@ -8,7 +8,11 @@
 			<li class="nav-item">
 				<a class="nav-link" href="#mailgun" role="tab" data-toggle="tab">Mailgun</a>
 			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#emailtext" role="tab" data-toggle="tab">Email Text</a>
+			</li>
 		</ul>
+
 
 		<div class="form-group">
 			<label>
@@ -17,7 +21,8 @@
 					Email address used to send email
 				</small>
 			</label>
-			<input class="form-control" id='mailfrom_addr' name='mailfrom_addr' type='text' {% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
+			<input class="form-control" id='mailfrom_addr' name='mailfrom_addr' type='text'
+					{% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
 		</div>
 
 		<div class="tab-content">
@@ -98,6 +103,7 @@
 				</div>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="mailgun">
+
 				<div class="form-group">
 					<label>
 						Mailgun API Base URL<br>
@@ -119,6 +125,70 @@
 						   {% if mailgun_api_key is defined and mailgun_api_key != None %}value="{{ mailgun_api_key }}"{% endif %}>
 				</div>
 			</div>
+
+			<div role="tabpanel" class="tab-pane" id="emailtext">
+
+				<div class="form-group">
+					<label>
+						Reset Password Email<br>
+						<small class="form-text text-muted">
+							Password Reset Email Subject
+						</small>
+					</label>
+					<input class="form-control" id='password_reset_subject' name='password_reset_subject' type='text'
+						   {% if password_reset_subject is defined and password_reset_subject != None %}value="{{ password_reset_subject }}"{% endif %}>
+					<small class="form-text text-muted">
+		 				Password Reset Email Body
+		 			</small>
+		 			<textarea class="form-control" id="password_reset_body" name="password_reset_body" rows="7">{{ password_reset_body }}</textarea>
+				</div>
+				
+				<div class="form-group">
+					<label>
+						Password Change Confirmation Email<br>
+						<small class="form-text text-muted">
+							Password Change Confirmation Subject
+						</small>
+					</label>
+					<input class="form-control" id='password_change_subject' name='password_change_subject' type='text'
+						   {% if password_change_subject is defined and password_change_subject != None %}value="{{ password_change_subject }}"{% endif %}>
+					<small class="form-text text-muted">
+		 				Password Change Confirmation Email Body
+		 			</small>
+		 			<textarea class="form-control" id="password_change_body" name="password_change_body" rows="7">{{ password_change_body }}</textarea>
+				</div>
+				
+				<div class="form-group">
+					<label>
+						Verication Email<br>
+						<small class="form-text text-muted">
+							Verication Email Subject
+						</small>
+					</label>
+					<input class="form-control" id='verification_email_subject' name='verification_email_subject' type='text'
+						   {% if verification_email_subject is defined and verification_email_subject != None %}value="{{ verification_email_subject }}"{% endif %}>
+					<small class="form-text text-muted">
+		 				Verification Email Body
+		 			</small>
+		 			<textarea class="form-control" id="verification_email_body" name="verification_email_body" rows="7">{{ verification_email_body }}</textarea>
+				</div>
+
+				<div class="form-group">
+					<label>
+						User Creation Email<br>
+						<small class="form-text text-muted">
+							User Creation Email Subject
+						</small>
+					</label>
+					<input class="form-control" id='user_creation_email_subject' name='user_creation_email_subject' type='text'
+							 {% if user_creation_email_subject is defined and user_creation_email_subject != None %}value="{{ user_creation_email_subject }}"{% endif %}>
+					<small class="form-text text-muted">
+						User Creation Email Body
+					</small>
+					<textarea class="form-control" id="user_creation_email_body" name="user_creation_email_body" rows="7">{{ user_creation_email_body }}</textarea>
+				</div>
+			</div>
+
 		</div>
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
 	</form>

@@ -20,6 +20,7 @@ def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=
 
 
 def sendmail(addr, text, subject):
+    addr = str(addr)
     ctf_name = get_config("ctf_name")
     mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
     mailfrom_addr = "{} <{}>".format(ctf_name, mailfrom_addr)
