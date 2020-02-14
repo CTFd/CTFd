@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint, Response, abort
+from flask import Blueprint, abort
 from flask import current_app as app
 from flask import redirect, render_template, request, send_file, session, url_for
 from flask.helpers import safe_join
@@ -250,15 +250,6 @@ def settings():
         prevent_name_change=prevent_name_change,
         confirm_email=confirm_email,
     )
-
-
-@views.route("/static/user.css")
-def custom_css():
-    """
-    Custom CSS Handler route
-    :return:
-    """
-    return Response(get_config("css"), mimetype="text/css")
 
 
 @views.route("/", defaults={"route": "index"})
