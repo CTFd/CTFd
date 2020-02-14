@@ -162,7 +162,9 @@ def setup():
             set_config("mail_useauth", None)
 
             # Set up default emails
-            set_config("verification_email_subject", "Confirm your account for {ctf_name}")
+            set_config(
+                "verification_email_subject", "Confirm your account for {ctf_name}"
+            )
             set_config(
                 "verification_email_body",
                 (
@@ -181,7 +183,9 @@ def setup():
                 ),
             )
 
-            set_config("password_reset_subject", "Password Reset Request from {ctf_name}")
+            set_config(
+                "password_reset_subject", "Password Reset Request from {ctf_name}"
+            )
             set_config(
                 "password_reset_body",
                 (
@@ -190,7 +194,10 @@ def setup():
                 ),
             )
 
-            set_config("password_change_alert_subject", "Password Change Confirmation for {ctf_name}")
+            set_config(
+                "password_change_alert_subject",
+                "Password Change Confirmation for {ctf_name}",
+            )
             set_config(
                 "password_change_alert_body",
                 (
