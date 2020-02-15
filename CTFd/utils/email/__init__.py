@@ -76,7 +76,7 @@ def verify_email_address(addr):
         get_config("verification_email_body") or DEFAULT_VERIFICATION_EMAIL_BODY,
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
-        url=url_for("auth.reset_password", data=serialize(addr), _external=True),
+        url=url_for("auth.confirm", data=serialize(addr), _external=True),
     )
 
     subject = safe_format(
