@@ -176,9 +176,13 @@ def setup():
             set_config("verification_email_body", DEFAULT_VERIFICATION_EMAIL_BODY)
 
             set_config(
-                "successful_registration_email_subject", DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT
+                "successful_registration_email_subject",
+                DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT,
             )
-            set_config("successful_registration_email_body", DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY)
+            set_config(
+                "successful_registration_email_body",
+                DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
+            )
 
             set_config(
                 "user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT

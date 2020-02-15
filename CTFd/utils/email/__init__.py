@@ -12,7 +12,9 @@ DEFAULT_VERIFICATION_EMAIL_BODY = (
     "address for {ctf_name}: {url}"
 )
 DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT = "Successfully registered for {ctf_name}"
-DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY = "You've successfully registered for {ctf_name}!"
+DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY = (
+    "You've successfully registered for {ctf_name}!"
+)
 DEFAULT_USER_CREATION_EMAIL_SUBJECT = "Message from {ctf_name}"
 DEFAULT_USER_CREATION_EMAIL_BODY = (
     "An account has been created for you for {ctf_name} at {url}. \n\n"
@@ -90,7 +92,8 @@ def verify_email_address(addr):
 
 def successful_registration_notification(addr):
     text = safe_format(
-        get_config("successful_registration_email_body") or DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
+        get_config("successful_registration_email_body")
+        or DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
         url=url_for("views.static_html", _external=True),
