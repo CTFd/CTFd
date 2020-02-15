@@ -19,8 +19,8 @@ from CTFd.utils.email import (
 )
 
 # revision identifiers, used by Alembic.
-revision = '1093835a1051'
-down_revision = 'a03403986a32'
+revision = "1093835a1051"
+down_revision = "a03403986a32"
 branch_labels = None
 depends_on = None
 
@@ -38,9 +38,7 @@ def get_config(key):
 
 def set_config(key, value):
     connection = op.get_bind()
-    connection.execute(
-        configs_table.insert().values(key=key, value=value)
-    )
+    connection.execute(configs_table.insert().values(key=key, value=value))
 
 
 def upgrade():
