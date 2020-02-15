@@ -53,6 +53,7 @@ def confirm(data=None):
             name=user.name,
         )
         db.session.commit()
+        email.successful_registration_notification(user.email)
         db.session.close()
         if current_user.authed():
             return redirect(url_for("challenges.listing"))
@@ -243,12 +244,7 @@ def register():
                     if (
                         config.can_send_mail()
                     ):  # We want to notify the user that they have registered.
-                        email.sendmail(
-                            request.form["email"],
-                            "You've successfully registered for {}".format(
-                                get_config("ctf_name")
-                            ),
-                        )
+                        email.successful_registration_notification(user.email)
 
         log("registrations", "[{date}] {ip} - {name} registered with {email}")
         db.session.close()

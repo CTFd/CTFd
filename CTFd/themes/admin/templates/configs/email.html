@@ -22,9 +22,30 @@
 			<div role="tabpanel" class="tab-pane active" id="confirmation-email-tab">
 				<div class="form-group">
 					<label class="pt-3">
+						Account Registration<br>
+						<small class="form-text text-muted">
+							Email sent to users after they've registered their account entirely
+						</small>
+					</label>
+					<div>
+						<label>
+							Subject
+						</label>
+						<input class="form-control" id='successful_registration_email_subject' name='successful_registration_email_subject' type='text'
+							value="{{ successful_registration_email_subject or ''}}">
+						<label>
+							Body
+						</label>
+						<textarea class="form-control" type="text" id="successful_registration_email_body" name="verification_email_body"
+							rows="5">{{ successful_registration_email_body or '' }}</textarea>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="pt-3">
 						Account Confirmation<br>
 						<small class="form-text text-muted">
-							Email sent to users to confirm their account.
+							Email sent to users to confirm their account
 						</small>
 					</label>
 					<div>
@@ -45,7 +66,7 @@
 					<label class="pt-3">
 						New Account Details<br>
 						<small class="form-text text-muted">
-							Email sent to new users (created by an admin) with their initial account details.
+							Email sent to new users (created by an admin) with their initial account details
 						</small>
 					</label>
 					<div>
@@ -110,7 +131,10 @@
 		<hr class="my-5">
 
 		<h5>Email Server</h5>
-		<ul class="nav nav-tabs mb-3" role="tablist">
+		<small class="form-text text-muted">
+			Change the email server used by CTFd to send email
+		</small>
+		<ul class="nav nav-tabs my-3" role="tablist">
 			<li class="nav-item active">
 				<a class="nav-link active" href="#mailserver" role="tab" data-toggle="tab">Mail
 					Server</a>

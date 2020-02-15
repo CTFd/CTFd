@@ -12,6 +12,8 @@ from CTFd.models import db
 from CTFd.utils.email import (
     DEFAULT_PASSWORD_RESET_BODY,
     DEFAULT_PASSWORD_RESET_SUBJECT,
+    DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
+    DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT,
     DEFAULT_USER_CREATION_EMAIL_BODY,
     DEFAULT_USER_CREATION_EMAIL_SUBJECT,
     DEFAULT_VERIFICATION_EMAIL_BODY,
@@ -47,6 +49,8 @@ def upgrade():
         for k, v in [
             ("password_reset_body", DEFAULT_PASSWORD_RESET_BODY),
             ("password_reset_subject", DEFAULT_PASSWORD_RESET_SUBJECT),
+            ("successful_registration_email_body", DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY),
+            ("successful_registration_email_subject", DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT),
             ("user_creation_email_body", DEFAULT_USER_CREATION_EMAIL_BODY),
             ("user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT),
             ("verification_email_body", DEFAULT_VERIFICATION_EMAIL_BODY),

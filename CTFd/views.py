@@ -28,6 +28,8 @@ from CTFd.utils.decorators import authed_only
 from CTFd.utils.email import (
     DEFAULT_PASSWORD_RESET_BODY,
     DEFAULT_PASSWORD_RESET_SUBJECT,
+    DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
+    DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT,
     DEFAULT_USER_CREATION_EMAIL_BODY,
     DEFAULT_USER_CREATION_EMAIL_SUBJECT,
     DEFAULT_VERIFICATION_EMAIL_BODY,
@@ -172,6 +174,11 @@ def setup():
             # Set up default emails
             set_config("verification_email_subject", DEFAULT_VERIFICATION_EMAIL_SUBJECT)
             set_config("verification_email_body", DEFAULT_VERIFICATION_EMAIL_BODY)
+
+            set_config(
+                "successful_registration_email_subject", DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT
+            )
+            set_config("successful_registration_email_body", DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY)
 
             set_config(
                 "user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT
