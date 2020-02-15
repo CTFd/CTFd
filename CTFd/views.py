@@ -25,6 +25,14 @@ from CTFd.utils.config.pages import get_page
 from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.dates import ctf_ended, ctftime, view_after_ctf
 from CTFd.utils.decorators import authed_only
+from CTFd.utils.email import (
+    DEFAULT_PASSWORD_RESET_BODY,
+    DEFAULT_PASSWORD_RESET_SUBJECT,
+    DEFAULT_USER_CREATION_EMAIL_BODY,
+    DEFAULT_USER_CREATION_EMAIL_SUBJECT,
+    DEFAULT_VERIFICATION_EMAIL_BODY,
+    DEFAULT_VERIFICATION_EMAIL_SUBJECT,
+)
 from CTFd.utils.helpers import get_errors
 from CTFd.utils.modes import USERS_MODE
 from CTFd.utils.security.auth import login_user
@@ -160,6 +168,30 @@ def setup():
             set_config("mail_username", None)
             set_config("mail_password", None)
             set_config("mail_useauth", None)
+
+            # Set up default emails
+            set_config("verification_email_subject", DEFAULT_VERIFICATION_EMAIL_SUBJECT)
+            set_config("verification_email_body", DEFAULT_VERIFICATION_EMAIL_BODY)
+
+            set_config(
+                "user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT
+            )
+            set_config("user_creation_email_body", DEFAULT_USER_CREATION_EMAIL_BODY)
+
+            set_config("password_reset_subject", DEFAULT_PASSWORD_RESET_SUBJECT)
+            set_config("password_reset_body", DEFAULT_PASSWORD_RESET_BODY)
+
+            set_config(
+                "password_change_alert_subject",
+                "Password Change Confirmation for {ctf_name}",
+            )
+            set_config(
+                "password_change_alert_body",
+                (
+                    "Your password for {ctf_name} has been changed.\n\n"
+                    "If you didn't request a password change you can reset your password here: {url}"
+                ),
+            )
 
             set_config("setup", True)
 
