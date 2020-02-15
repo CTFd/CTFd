@@ -189,8 +189,9 @@ def setup():
             set_config(
                 "password_reset_body",
                 (
-                    "Did you initiate a password reset?"
-                    "Click the following link to reset your password:\n\n{url}"
+                    "Did you initiate a password reset? "
+                    "If you didn't initiate this request you can ignore this email. \n\n"
+                    "Click the following link to reset your password:\n{url}"
                 ),
             )
 
