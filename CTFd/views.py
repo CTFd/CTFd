@@ -25,6 +25,14 @@ from CTFd.utils.config.pages import get_page
 from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.dates import ctf_ended, ctftime, view_after_ctf
 from CTFd.utils.decorators import authed_only
+from CTFd.utils.email import (
+    DEFAULT_PASSWORD_RESET_BODY,
+    DEFAULT_PASSWORD_RESET_SUBJECT,
+    DEFAULT_USER_CREATION_EMAIL_BODY,
+    DEFAULT_USER_CREATION_EMAIL_SUBJECT,
+    DEFAULT_VERIFICATION_EMAIL_BODY,
+    DEFAULT_VERIFICATION_EMAIL_SUBJECT,
+)
 from CTFd.utils.helpers import get_errors
 from CTFd.utils.modes import USERS_MODE
 from CTFd.utils.security.auth import login_user
@@ -162,38 +170,16 @@ def setup():
             set_config("mail_useauth", None)
 
             # Set up default emails
-            set_config(
-                "verification_email_subject", "Confirm your account for {ctf_name}"
-            )
-            set_config(
-                "verification_email_body",
-                (
-                    "Please click the following link to confirm your email "
-                    "address for {ctf_name}: {url}"
-                ),
-            )
-
-            set_config("user_creation_email_subject", "Message from {ctf_name}")
-            set_config(
-                "user_creation_email_body",
-                (
-                    "An account has been created for you for {ctf_name} at {url}. \n\n"
-                    "Username: {name}\n"
-                    "Password: {password}"
-                ),
-            )
+            set_config("verification_email_subject", DEFAULT_VERIFICATION_EMAIL_SUBJECT)
+            set_config("verification_email_body", DEFAULT_VERIFICATION_EMAIL_BODY)
 
             set_config(
-                "password_reset_subject", "Password Reset Request from {ctf_name}"
+                "user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT
             )
-            set_config(
-                "password_reset_body",
-                (
-                    "Did you initiate a password reset? "
-                    "If you didn't initiate this request you can ignore this email. \n\n"
-                    "Click the following link to reset your password:\n{url}"
-                ),
-            )
+            set_config("user_creation_email_body", DEFAULT_USER_CREATION_EMAIL_BODY)
+
+            set_config("password_reset_subject", DEFAULT_PASSWORD_RESET_SUBJECT)
+            set_config("password_reset_body", DEFAULT_PASSWORD_RESET_BODY)
 
             set_config(
                 "password_change_alert_subject",
