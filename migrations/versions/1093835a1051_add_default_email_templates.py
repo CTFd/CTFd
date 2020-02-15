@@ -42,16 +42,18 @@ def set_config(key, value):
 
 
 def upgrade():
-    for k, v in [
-        ("password_reset_body", DEFAULT_PASSWORD_RESET_BODY),
-        ("password_reset_subject", DEFAULT_PASSWORD_RESET_SUBJECT),
-        ("user_creation_email_body", DEFAULT_USER_CREATION_EMAIL_BODY),
-        ("user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT),
-        ("verification_email_body", DEFAULT_VERIFICATION_EMAIL_BODY),
-        ("verification_email_subject", DEFAULT_VERIFICATION_EMAIL_SUBJECT),
-    ]:
-        if get_config(k) is None:
-            set_config(k, v)
+    # Only run if this instance already been setup before
+    if bool(get_config("setup")) is True:
+        for k, v in [
+            ("password_reset_body", DEFAULT_PASSWORD_RESET_BODY),
+            ("password_reset_subject", DEFAULT_PASSWORD_RESET_SUBJECT),
+            ("user_creation_email_body", DEFAULT_USER_CREATION_EMAIL_BODY),
+            ("user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT),
+            ("verification_email_body", DEFAULT_VERIFICATION_EMAIL_BODY),
+            ("verification_email_subject", DEFAULT_VERIFICATION_EMAIL_SUBJECT),
+        ]:
+            if get_config(k) is None:
+                set_config(k, v)
 
 
 def downgrade():
