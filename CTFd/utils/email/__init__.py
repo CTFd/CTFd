@@ -22,7 +22,6 @@ def password_change_alert(email):
         get_config("password_change_alert_body"),
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
-        email_sender=get_config("mailfrom_addr"),
         url=url_for("auth.reset_password", _external=True),
     )
 
@@ -37,7 +36,6 @@ def forgot_password(email):
         get_config("password_reset_body"),
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
-        email_sender=get_config("mailfrom_addr"),
         url=url_for("auth.reset_password", data=serialize(email), _external=True),
     )
 
@@ -52,7 +50,6 @@ def verify_email_address(addr):
         get_config("verification_email_body"),
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
-        email_sender=get_config("mailfrom_addr"),
         url=url_for("auth.reset_password", data=serialize(addr), _external=True),
     )
 
@@ -67,7 +64,6 @@ def user_created_notification(addr, name, password):
         get_config("user_creation_email_body"),
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
-        email_sender=get_config("mailfrom_addr"),
         url=url_for("views.static_html", _external=True),
         name=name,
         password=password,
