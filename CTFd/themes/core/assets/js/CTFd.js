@@ -4,10 +4,14 @@ import { API } from "./api";
 import "./patch";
 import MarkdownIt from "markdown-it";
 import $ from "jquery";
+import ezq from "./ezq";
 
 const api = new API("/");
 const user = {};
 const _internal = {};
+const ui = {
+  ezq
+};
 const lib = {
   $,
   markdown
@@ -47,6 +51,7 @@ const CTFd = {
   config,
   fetch,
   user,
+  ui,
   api,
   lib,
   _internal,
