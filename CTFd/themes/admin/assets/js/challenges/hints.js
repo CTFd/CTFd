@@ -119,7 +119,7 @@ export function editHint(event) {
   params["challenge"] = CHALLENGE_ID;
 
   let method = "POST";
-  const url = "/api/v1/hints";
+  let url = "/api/v1/hints";
   if (params.id) {
     method = "PATCH";
     url = "/api/v1/hints/" + params.id;
