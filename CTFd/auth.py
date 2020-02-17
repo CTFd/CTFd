@@ -25,7 +25,6 @@ auth = Blueprint("auth", __name__)
 
 
 @auth.route("/confirm", methods=["POST", "GET"])
-# TODO: See Github #1251 as POST should not be on the route below
 @auth.route("/confirm/<data>", methods=["POST", "GET"])
 @ratelimit(method="POST", limit=10, interval=60)
 def confirm(data=None):
