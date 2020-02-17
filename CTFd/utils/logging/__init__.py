@@ -1,8 +1,10 @@
-from flask import session
-from CTFd.utils.user import get_ip
 import logging
 import logging.handlers
 import time
+
+from flask import session
+
+from CTFd.utils.user import get_ip
 
 
 def log(logger, format, **kwargs):

@@ -1,53 +1,53 @@
-from flask import (
-    current_app as app,
-    render_template,
-    request,
-    redirect,
-    abort,
-    url_for,
-    session,
-    Blueprint,
-    Response,
-    send_file,
-)
-from flask.helpers import safe_join
-
-from CTFd.models import (
-    db,
-    Users,
-    Admins,
-    Teams,
-    Files,
-    Pages,
-    Notifications,
-    UserTokens,
-)
-from CTFd.utils import markdown
-from CTFd.cache import cache
-from CTFd.utils import get_config, set_config
-from CTFd.utils.user import authed, get_current_user, is_admin
-from CTFd.utils import config, validators
-from CTFd.utils.modes import USERS_MODE
-from CTFd.utils.helpers import get_errors
-from CTFd.utils.uploads import get_uploader
-from CTFd.utils.config.pages import get_page
-from CTFd.utils.config.visibility import challenges_visible
-from CTFd.utils.config import is_setup
-from CTFd.utils.security.auth import login_user
-from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils import user as current_user
-from CTFd.utils.dates import ctftime, ctf_ended, view_after_ctf
-from CTFd.utils.decorators import authed_only
-from CTFd.utils.security.signing import (
-    serialize,
-    unserialize,
-    BadTimeSignature,
-    SignatureExpired,
-    BadSignature,
-)
-from sqlalchemy.exc import IntegrityError
 import os
 
+from flask import Blueprint, abort
+from flask import current_app as app
+from flask import redirect, render_template, request, send_file, session, url_for
+from flask.helpers import safe_join
+from sqlalchemy.exc import IntegrityError
+
+from CTFd.cache import cache
+from CTFd.models import (
+    Admins,
+    Files,
+    Notifications,
+    Pages,
+    Teams,
+    Users,
+    UserTokens,
+    db,
+)
+from CTFd.utils import config, get_config, markdown, set_config
+from CTFd.utils import user as current_user
+from CTFd.utils import validators
+from CTFd.utils.config import is_setup
+from CTFd.utils.config.pages import get_page
+from CTFd.utils.config.visibility import challenges_visible
+from CTFd.utils.dates import ctf_ended, ctftime, view_after_ctf
+from CTFd.utils.decorators import authed_only
+from CTFd.utils.email import (
+    DEFAULT_PASSWORD_RESET_BODY,
+    DEFAULT_PASSWORD_RESET_SUBJECT,
+    DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
+    DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT,
+    DEFAULT_USER_CREATION_EMAIL_BODY,
+    DEFAULT_USER_CREATION_EMAIL_SUBJECT,
+    DEFAULT_VERIFICATION_EMAIL_BODY,
+    DEFAULT_VERIFICATION_EMAIL_SUBJECT,
+)
+from CTFd.utils.helpers import get_errors
+from CTFd.utils.modes import USERS_MODE
+from CTFd.utils.security.auth import login_user
+from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils.security.signing import (
+    BadSignature,
+    BadTimeSignature,
+    SignatureExpired,
+    serialize,
+    unserialize,
+)
+from CTFd.utils.uploads import get_uploader
+from CTFd.utils.user import authed, get_current_user, is_admin
 
 views = Blueprint("views", __name__)
 
@@ -171,6 +171,39 @@ def setup():
             set_config("mail_password", None)
             set_config("mail_useauth", None)
 
+            # Set up default emails
+            set_config("verification_email_subject", DEFAULT_VERIFICATION_EMAIL_SUBJECT)
+            set_config("verification_email_body", DEFAULT_VERIFICATION_EMAIL_BODY)
+
+            set_config(
+                "successful_registration_email_subject",
+                DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT,
+            )
+            set_config(
+                "successful_registration_email_body",
+                DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
+            )
+
+            set_config(
+                "user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT
+            )
+            set_config("user_creation_email_body", DEFAULT_USER_CREATION_EMAIL_BODY)
+
+            set_config("password_reset_subject", DEFAULT_PASSWORD_RESET_SUBJECT)
+            set_config("password_reset_body", DEFAULT_PASSWORD_RESET_BODY)
+
+            set_config(
+                "password_change_alert_subject",
+                "Password Change Confirmation for {ctf_name}",
+            )
+            set_config(
+                "password_change_alert_body",
+                (
+                    "Your password for {ctf_name} has been changed.\n\n"
+                    "If you didn't request a password change you can reset your password here: {url}"
+                ),
+            )
+
             set_config("setup", True)
 
             try:
@@ -260,15 +293,6 @@ def settings():
         prevent_name_change=prevent_name_change,
         confirm_email=confirm_email,
     )
-
-
-@views.route("/static/user.css")
-def custom_css():
-    """
-    Custom CSS Handler route
-    :return:
-    """
-    return Response(get_config("css"), mimetype="text/css")
 
 
 @views.route("/", defaults={"route": "index"})

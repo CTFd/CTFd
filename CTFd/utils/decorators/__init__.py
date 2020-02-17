@@ -1,11 +1,13 @@
-from flask import request, redirect, url_for, abort, jsonify
-from CTFd.utils import config, get_config
-from CTFd.cache import cache
-from CTFd.utils.dates import ctf_ended, ctf_started, ctftime, view_after_ctf
-from CTFd.utils import user as current_user
-from CTFd.utils.user import get_current_team, is_admin, authed
-from CTFd.utils.modes import TEAMS_MODE
 import functools
+
+from flask import abort, jsonify, redirect, request, url_for
+
+from CTFd.cache import cache
+from CTFd.utils import config, get_config
+from CTFd.utils import user as current_user
+from CTFd.utils.dates import ctf_ended, ctf_started, ctftime, view_after_ctf
+from CTFd.utils.modes import TEAMS_MODE
+from CTFd.utils.user import authed, get_current_team, is_admin
 
 
 def during_ctf_time_only(f):
@@ -84,7 +86,10 @@ def authed_only(f):
         if authed():
             return f(*args, **kwargs)
         else:
-            if request.content_type == "application/json" or request.accept_mimetypes.best == "text/event-stream":
+            if (
+                request.content_type == "application/json"
+                or request.accept_mimetypes.best == "text/event-stream"
+            ):
                 abort(403)
             else:
                 return redirect(url_for("auth.login", next=request.full_path))

@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from flask import Flask
+
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
-    gen_page,
     gen_challenge,
+    gen_page,
     gen_team,
+    login_as_user,
+    register_user,
 )
-from flask import Flask
 
 
 def get_bp_urls(blueprint):

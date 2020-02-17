@@ -1,15 +1,16 @@
-from flask import render_template, request, redirect, url_for, Blueprint
-from CTFd.models import db, Teams
+from flask import Blueprint, redirect, render_template, request, url_for
+
+from CTFd.models import Teams, db
+from CTFd.utils import config, get_config
+from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators import authed_only, ratelimit
 from CTFd.utils.decorators.modes import require_team_mode
-from CTFd.utils import config, get_config
-from CTFd.utils.user import get_current_user
-from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
     check_score_visibility,
 )
 from CTFd.utils.helpers import get_errors, get_infos
+from CTFd.utils.user import get_current_user
 
 teams = Blueprint("teams", __name__)
 
@@ -72,7 +73,9 @@ def join():
                         name=team.name, limit=team_size_limit
                     )
                 )
-                return render_template("teams/join_team.html", infos=infos, errors=errors)
+                return render_template(
+                    "teams/join_team.html", infos=infos, errors=errors
+                )
 
             user.team_id = team.id
             db.session.commit()

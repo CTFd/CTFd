@@ -1,23 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users, Challenges, Tags, Hints, Flags, Solves
+from freezegun import freeze_time
+
+from CTFd.models import Challenges, Flags, Hints, Solves, Tags, Users
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
     gen_challenge,
-    gen_flag,
-    gen_tag,
-    gen_hint,
-    gen_user,
-    gen_team,
-    gen_solve,
     gen_fail,
+    gen_flag,
+    gen_hint,
+    gen_solve,
+    gen_tag,
+    gen_team,
+    gen_user,
+    login_as_user,
+    register_user,
 )
-from freezegun import freeze_time
 
 
 def test_api_challenges_get_visibility_public():

@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import create_ctfd, setup_ctfd, destroy_ctfd, login_as_user
 from CTFd.plugins import (
-    register_plugin_assets_directory,
-    register_plugin_asset,
-    register_plugin_script,
-    register_admin_plugin_script,
-    register_admin_plugin_stylesheet,
+    bypass_csrf_protection,
+    get_admin_plugin_menu_bar,
+    get_user_page_menu_bar,
     override_template,
     register_admin_plugin_menu_bar,
-    get_admin_plugin_menu_bar,
+    register_admin_plugin_script,
+    register_admin_plugin_stylesheet,
+    register_plugin_asset,
+    register_plugin_assets_directory,
+    register_plugin_script,
     register_user_page_menu_bar,
-    get_user_page_menu_bar,
-    bypass_csrf_protection,
 )
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, setup_ctfd
 
 
 def test_register_plugin_asset():

@@ -4,13 +4,13 @@
 from CTFd.models import Challenges
 from CTFd.plugins.dynamic_challenges import DynamicChallenge, DynamicValueChallenge
 from tests.helpers import (
+    FakeRequest,
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
     gen_flag,
     gen_user,
-    FakeRequest,
+    login_as_user,
+    register_user,
 )
 
 

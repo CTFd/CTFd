@@ -1,3 +1,25 @@
+2.3.0 / 2020-02-17
+==================
+
+**General**
+* During setup, admins can register their email address with the CTFd LLC newsletter for news and updates
+* Fix editting hints from the admin panel
+* Allow admins to insert HTML code directly into the header and footer (end of body tag) of pages. This replaces and supercedes the custom CSS feature.
+    * The `views.custom_css` route has been removed.
+* Admins can now customize the content of outgoing emails and inject certain variables into email content.
+* The `manage.py` script can now manipulate the CTFd Configs table via the `get_config` and `set_config` commands. (e.g. `python manage.py get_config ctf_theme` and `python manage.py set_config ctf_theme core`)
+
+**Themes**
+* Themes should now reference the `theme_header` and `theme_footer` configs instead of the `views.custom_css` endpoint to allow for user customizations. See the `base.html` file of the core theme.
+
+**Plugins**
+* Make `ezq` functions available to `CTFd.js` under `CTFd.ui.ezq`
+
+**Miscellaneous**
+* Python imports sorted with `isort` and import order enforced
+* Black formatter running on a majority of Python code
+
+
 2.2.3 / 2020-01-21
 ==================
 

@@ -1,28 +1,30 @@
-from CTFd.utils import get_app_config, set_config
-from CTFd.utils.migrations import (
-    get_current_revision,
-    create_database,
-    drop_database,
-    stamp_latest_revision,
-)
-from CTFd.utils.uploads import get_uploader
-from CTFd.models import db
-from CTFd.cache import cache
-from datafreeze.format import SERIALIZERS
-from flask import current_app as app
-from flask_migrate import upgrade
-from datafreeze.format.fjson import JSONSerializer, JSONEncoder
-from sqlalchemy.exc import OperationalError, ProgrammingError
-from alembic.util import CommandError
-import dataset
-import datafreeze
 import datetime
 import json
 import os
 import re
-import six
-import zipfile
 import tempfile
+import zipfile
+
+import datafreeze
+import dataset
+import six
+from alembic.util import CommandError
+from datafreeze.format import SERIALIZERS
+from datafreeze.format.fjson import JSONEncoder, JSONSerializer
+from flask import current_app as app
+from flask_migrate import upgrade
+from sqlalchemy.exc import OperationalError, ProgrammingError
+
+from CTFd.cache import cache
+from CTFd.models import db
+from CTFd.utils import get_app_config, set_config
+from CTFd.utils.migrations import (
+    create_database,
+    drop_database,
+    get_current_revision,
+    stamp_latest_revision,
+)
+from CTFd.utils.uploads import get_uploader
 
 
 class CTFdSerializer(JSONSerializer):
@@ -304,7 +306,9 @@ def import_ctf(backup, erase=True):
     for f in files:
         filename = f.split(os.sep, 1)
 
-        if len(filename) < 2 or os.path.basename(filename[1]) == '':  # just an empty uploads directory (e.g. uploads/) or any directory
+        if (
+            len(filename) < 2 or os.path.basename(filename[1]) == ""
+        ):  # just an empty uploads directory (e.g. uploads/) or any directory
             continue
 
         filename = filename[1]  # Get the second entry in the list (the actual filename)

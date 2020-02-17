@@ -1,8 +1,9 @@
 from flask import render_template, request
-from CTFd.utils.decorators import admins_only
-from CTFd.models import Challenges, Submissions
-from CTFd.utils.modes import get_model
+
 from CTFd.admin import admin
+from CTFd.models import Challenges, Submissions
+from CTFd.utils.decorators import admins_only
+from CTFd.utils.modes import get_model
 
 
 @admin.route("/admin/submissions", defaults={"submission_type": None})

@@ -18,7 +18,6 @@
 			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
 		{% endif %}
 	{% endfor %}
-	<link rel="stylesheet" type="text/css" href="{{ url_for('views.custom_css') }}">
 	<script type="text/javascript">
 		var init = {
 			'urlRoot': "{{ request.script_root }}",
@@ -29,6 +28,7 @@
 			'end': {{ get_config("end") | tojson }},
 		}
 	</script>
+	{{ get_config('theme_header', '') | safe }}
 </head>
 <body>
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -210,5 +210,7 @@
 	<script defer src="{{ script }}"></script>
 	{% endif %}
 	{% endfor %}
+
+	{{ get_config('theme_footer', '') | safe }}
 </body>
 </html>

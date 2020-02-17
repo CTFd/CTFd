@@ -1,7 +1,8 @@
 from flask import render_template
-from CTFd.utils.decorators import admins_only
+
 from CTFd.admin import admin
 from CTFd.scoreboard import get_standings
+from CTFd.utils.decorators import admins_only
 
 
 @admin.route("/admin/scoreboard")

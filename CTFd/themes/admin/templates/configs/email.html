@@ -1,6 +1,140 @@
 <div role="tabpanel" class="tab-pane config-section" id="email">
 	<form method="POST" autocomplete="off" class="w-100">
-		<ul class="nav nav-tabs mb-3" role="tablist">
+		<h5>Email Content</h5>
+		<small class="form-text text-muted">
+			Customize CTFd emails with <a href="https://help.ctfd.io/configuration/emails/#email-content" target="_blank">predefined variables</a> and custom content
+		</small>
+		<ul class="nav nav-tabs mt-3" role="tablist">
+			<li class="nav-item active">
+				<a class="nav-link active" href="#confirmation-email-tab" role="tab" data-toggle="tab">
+					Confirmation
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#account-details-email-tab" role="tab" data-toggle="tab">Account Details</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#password-reset-email-tab" role="tab" data-toggle="tab">Password Reset</a>
+			</li>
+		</ul>
+
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="confirmation-email-tab">
+				<div class="form-group">
+					<label class="pt-3">
+						Account Registration<br>
+						<small class="form-text text-muted">
+							Email sent to users after they've registered their account entirely
+						</small>
+					</label>
+					<div>
+						<label>
+							Subject
+						</label>
+						<input class="form-control" id='successful_registration_email_subject' name='successful_registration_email_subject' type='text'
+							value="{{ successful_registration_email_subject or ''}}">
+						<label>
+							Body
+						</label>
+						<textarea class="form-control" type="text" id="successful_registration_email_body" name="verification_email_body"
+							rows="5">{{ successful_registration_email_body or '' }}</textarea>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="pt-3">
+						Account Confirmation<br>
+						<small class="form-text text-muted">
+							Email sent to users to confirm their account
+						</small>
+					</label>
+					<div>
+						<label>
+							Subject
+						</label>
+						<input class="form-control" id='verification_email_subject' name='verification_email_subject' type='text' value="{{ verification_email_subject or ''}}">
+						<label>
+							Body
+						</label>
+						<textarea class="form-control" type="text" id="verification_email_body" name="verification_email_body"
+							rows="5">{{ verification_email_body or '' }}</textarea>
+					</div>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="account-details-email-tab">
+				<div class="form-group">
+					<label class="pt-3">
+						New Account Details<br>
+						<small class="form-text text-muted">
+							Email sent to new users (created by an admin) with their initial account details
+						</small>
+					</label>
+					<div>
+						<label>
+							Subject
+						</label>
+						<input class="form-control" id='user_creation_email_subject' name='user_creation_email_subject' type='text'
+							value="{{ user_creation_email_subject or ''}}">
+						<label>
+							Body
+						</label>
+						<textarea class="form-control" type="text" id="user_creation_email_body" name="user_creation_email_body"
+							rows="5">{{ user_creation_email_body or '' }}</textarea>
+					</div>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="password-reset-email-tab">
+				<div class="form-group">
+					<label class="pt-3">
+						Password Reset Request<br>
+						<small class="form-text text-muted">
+							Email sent whent a user requests a password reset
+						</small>
+					</label>
+					<div>
+						<label>
+							Subject
+						</label>
+						<input class="form-control" id='password_reset_subject' name='password_reset_subject' type='text'
+							value="{{ password_reset_subject or ''}}">
+						<label>
+							Body
+						</label>
+						<textarea class="form-control" type="text" id="password_reset_body" name="password_reset_body"
+							rows="5">{{ password_reset_body or '' }}</textarea>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="pt-3">
+						Password Reset Confirmation<br>
+						<small class="form-text text-muted">
+							Email sent whent a user successfully resets their password
+						</small>
+					</label>
+					<div>
+						<label>
+							Subject
+						</label>
+						<input class="form-control" id='password_change_alert_subject' name='password_change_alert_subject' type='text'
+							value="{{ password_change_alert_subject or ''}}">
+						<label>
+							Body
+						</label>
+						<textarea class="form-control" type="text" id="password_change_alert_body" name="password_change_alert_body"
+							rows="5">{{ password_change_alert_body or '' }}</textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<hr class="my-5">
+
+		<h5>Email Server</h5>
+		<small class="form-text text-muted">
+			Change the email server used by CTFd to send email
+		</small>
+		<ul class="nav nav-tabs my-3" role="tablist">
 			<li class="nav-item active">
 				<a class="nav-link active" href="#mailserver" role="tab" data-toggle="tab">Mail
 					Server</a>

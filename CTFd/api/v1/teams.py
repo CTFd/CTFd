@@ -1,17 +1,19 @@
-from flask import session, request, abort
+import copy
+
+from flask import abort, request, session
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Users, Teams, Submissions, Awards, Unlocks
-from CTFd.schemas.teams import TeamSchema
-from CTFd.schemas.submissions import SubmissionSchema
-from CTFd.schemas.awards import AwardSchema
+
 from CTFd.cache import clear_standings
+from CTFd.models import Awards, Submissions, Teams, Unlocks, Users, db
+from CTFd.schemas.awards import AwardSchema
+from CTFd.schemas.submissions import SubmissionSchema
+from CTFd.schemas.teams import TeamSchema
+from CTFd.utils.decorators import admins_only, authed_only, require_team
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
     check_score_visibility,
 )
 from CTFd.utils.user import get_current_team, is_admin
-from CTFd.utils.decorators import authed_only, admins_only, require_team
-import copy
 
 teams_namespace = Namespace("teams", description="Endpoint to retrieve Teams")
 

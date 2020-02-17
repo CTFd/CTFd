@@ -1,4 +1,4 @@
-from CTFd.models import ma, Tokens
+from CTFd.models import Tokens, ma
 from CTFd.utils import string_types
 
 

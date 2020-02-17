@@ -1,10 +1,16 @@
-from tests.helpers import create_ctfd, destroy_ctfd
-from CTFd.utils import get_config, set_config
-from CTFd.utils.email import sendmail, verify_email_address
-from freezegun import freeze_time
-from mock import patch, Mock
 from email.mime.text import MIMEText
+
 import requests
+from freezegun import freeze_time
+from mock import Mock, patch
+
+from CTFd.utils import get_config, set_config
+from CTFd.utils.email import (
+    sendmail,
+    verify_email_address,
+    successful_registration_notification,
+)
+from tests.helpers import create_ctfd, destroy_ctfd
 
 
 @patch("smtplib.SMTP")
@@ -192,6 +198,43 @@ def test_verify_email(mock_smtp):
         ctf_name = get_config("ctf_name")
         email_msg = MIMEText(msg)
         email_msg["Subject"] = "Confirm your account for {ctf_name}".format(
+            ctf_name=ctf_name
+        )
+        email_msg["From"] = from_addr
+        email_msg["To"] = to_addr
+
+        # Need to freeze time to predict the value of the itsdangerous token.
+        # For now just assert that sendmail was called.
+        mock_smtp.return_value.sendmail.assert_called_with(
+            from_addr, [to_addr], email_msg.as_string()
+        )
+    destroy_ctfd(app)
+
+
+@patch("smtplib.SMTP")
+def test_successful_registration_email(mock_smtp):
+    """Does successful_registration_notification send emails"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
+        set_config("verify_emails", True)
+
+        ctf_name = get_config("ctf_name")
+        from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = "{} <{}>".format(ctf_name, from_addr)
+
+        to_addr = "user@user.com"
+
+        successful_registration_notification(to_addr)
+
+        msg = "You've successfully registered for CTFd!"
+
+        email_msg = MIMEText(msg)
+        email_msg["Subject"] = "Successfully registered for {ctf_name}".format(
             ctf_name=ctf_name
         )
         email_msg["From"] = from_addr

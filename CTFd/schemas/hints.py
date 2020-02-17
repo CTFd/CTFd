@@ -1,4 +1,4 @@
-from CTFd.models import ma, Hints
+from CTFd.models import Hints, ma
 from CTFd.utils import string_types
 
 

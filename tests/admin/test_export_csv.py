@@ -1,4 +1,4 @@
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, gen_challenge
+from tests.helpers import create_ctfd, destroy_ctfd, gen_challenge, login_as_user
 
 
 def test_export_csv_works():

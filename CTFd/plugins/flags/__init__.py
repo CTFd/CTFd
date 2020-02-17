@@ -1,6 +1,6 @@
-from CTFd.plugins import register_plugin_assets_directory
-
 import re
+
+from CTFd.plugins import register_plugin_assets_directory
 
 
 class BaseFlag(object):

@@ -1,4 +1,4 @@
-from CTFd.models import ma, Awards
+from CTFd.models import Awards, ma
 from CTFd.utils import string_types
 
 

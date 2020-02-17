@@ -1,19 +1,20 @@
-from CTFd.models import Users, Teams, Challenges, Fails, Solves, Tracking
+import random
+
+from CTFd.models import Challenges, Fails, Solves, Teams, Tracking, Users
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
-    gen_challenge,
     gen_award,
-    gen_flag,
-    gen_user,
-    gen_team,
-    gen_solve,
+    gen_challenge,
     gen_fail,
+    gen_flag,
+    gen_solve,
+    gen_team,
     gen_tracking,
+    gen_user,
+    login_as_user,
+    register_user,
 )
-import random
 
 
 def test_reset():

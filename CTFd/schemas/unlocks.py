@@ -1,4 +1,4 @@
-from CTFd.models import ma, Unlocks
+from CTFd.models import Unlocks, ma
 from CTFd.utils import string_types
 
 

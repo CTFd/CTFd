@@ -21,7 +21,7 @@
 					</div>
 				</div>
 			{% endfor %}
-			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal" id="setup-form">
 				<ul class="nav nav-pills nav-fill mb-4">
 					<li class="nav-item">
 						<a class="nav-link active" data-toggle="pill" href="#general">General</a>
@@ -111,6 +111,14 @@
 							</label>
 							<input class="form-control" type="password" name="password" required/>
 						</div>
+
+						<div class="form-check">
+							<label class="form-check-label">
+								<input class="form-check-input" type="checkbox" value="" id="newsletter-checkbox" checked>
+								Subscribe email address to the CTFd LLC Newsletter for news and updates
+							</label>
+						</div>
+
 						<div class="float-right">
 							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#style">
 								Next

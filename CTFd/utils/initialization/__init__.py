@@ -1,43 +1,44 @@
-from flask import request, session, redirect, url_for, abort, render_template
+import datetime
+import logging
+import os
+import sys
+
+from flask import abort, redirect, render_template, request, session, url_for
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.wsgi import DispatcherMiddleware
-from CTFd.models import db, Tracking
+
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
-
-from CTFd.utils import markdown, get_config
-from CTFd.utils.dates import unix_time_millis, unix_time, isoformat
-
-from CTFd.utils import config
-from CTFd.utils.config import can_send_mail, ctf_logo, ctf_name, ctf_theme
-from CTFd.utils.config.pages import get_pages
-from CTFd.utils.events import EventManager, RedisEventManager
-from CTFd.utils.plugins import (
-    get_registered_stylesheets,
-    get_registered_scripts,
-    get_configurable_plugins,
-    get_registered_admin_scripts,
-    get_registered_admin_stylesheets,
+from CTFd.models import Tracking, db
+from CTFd.utils import config, get_config, markdown
+from CTFd.utils.config import (
+    can_send_mail,
+    ctf_logo,
+    ctf_name,
+    ctf_theme,
+    integrations,
+    is_setup,
 )
-
-from CTFd.utils.countries import get_countries, lookup_country_code
-from CTFd.utils.user import authed, get_ip, get_current_user, get_current_team
-from CTFd.utils.modes import generate_account_url, get_mode_as_word
-from CTFd.utils.config import integrations, is_setup
-from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils.security.auth import login_user, logout_user, lookup_user_token
-
+from CTFd.utils.config.pages import get_pages
 from CTFd.utils.config.visibility import (
     accounts_visible,
     challenges_visible,
     registration_visible,
     scores_visible,
 )
-
-from sqlalchemy.exc import InvalidRequestError, IntegrityError
-
-import datetime
-import logging
-import os
-import sys
+from CTFd.utils.countries import get_countries, lookup_country_code
+from CTFd.utils.dates import isoformat, unix_time, unix_time_millis
+from CTFd.utils.events import EventManager, RedisEventManager
+from CTFd.utils.modes import generate_account_url, get_mode_as_word
+from CTFd.utils.plugins import (
+    get_configurable_plugins,
+    get_registered_admin_scripts,
+    get_registered_admin_stylesheets,
+    get_registered_scripts,
+    get_registered_stylesheets,
+)
+from CTFd.utils.security.auth import login_user, logout_user, lookup_user_token
+from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils.user import authed, get_current_team, get_current_user, get_ip
 
 
 def init_template_filters(app):
@@ -161,7 +162,7 @@ def init_request_processors(app):
 
     @app.before_request
     def tracker():
-        if request.endpoint in ("views.themes", "views.custom_css"):
+        if request.endpoint == "views.themes":
             return
 
         if authed():

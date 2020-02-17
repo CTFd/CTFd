@@ -1,8 +1,9 @@
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
+import requests
+from mock import Mock, patch
+
 from CTFd.utils import get_config, set_config
 from CTFd.utils.updates import update_check
-from mock import patch, Mock
-import requests
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
 
 
 def test_update_check_is_called():

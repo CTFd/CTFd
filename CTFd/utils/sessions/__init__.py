@@ -1,12 +1,14 @@
-from flask.sessions import SessionInterface, SessionMixin
+from uuid import uuid4
+
+import six
 from flask.json.tag import TaggedJSONSerializer
-from werkzeug.datastructures import CallbackDict
+from flask.sessions import SessionInterface, SessionMixin
 from itsdangerous import BadSignature, want_bytes
+from werkzeug.datastructures import CallbackDict
+
 from CTFd.cache import cache
 from CTFd.utils import text_type
 from CTFd.utils.security.signing import sign, unsign
-from uuid import uuid4
-import six
 
 
 def total_seconds(td):

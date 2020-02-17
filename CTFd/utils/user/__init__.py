@@ -1,9 +1,11 @@
-from flask import current_app as app, session, request
-from CTFd.models import Users
-from CTFd.utils import get_config
-from CTFd.models import db, Fails
 import datetime
 import re
+
+from flask import current_app as app
+from flask import request, session
+
+from CTFd.models import Fails, Users, db
+from CTFd.utils import get_config
 
 
 def get_current_user():

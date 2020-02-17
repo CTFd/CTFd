@@ -4,11 +4,11 @@
 from CTFd.models import Users
 from CTFd.utils import set_config
 from tests.helpers import (
-    register_user,
-    simulate_user_activity,
     create_ctfd,
     destroy_ctfd,
     login_as_user,
+    register_user,
+    simulate_user_activity,
 )
 
 

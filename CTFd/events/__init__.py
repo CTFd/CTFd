@@ -1,4 +1,5 @@
-from flask import current_app, Blueprint, Response, stream_with_context
+from flask import Blueprint, Response, current_app, stream_with_context
+
 from CTFd.utils import get_app_config
 from CTFd.utils.decorators import authed_only, ratelimit
 

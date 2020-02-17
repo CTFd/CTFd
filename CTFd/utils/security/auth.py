@@ -1,10 +1,12 @@
-from CTFd.models import db, UserTokens
-from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils.encoding import hexencode
-from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
-from flask import session
 import datetime
 import os
+
+from flask import session
+
+from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
+from CTFd.models import UserTokens, db
+from CTFd.utils.encoding import hexencode
+from CTFd.utils.security.csrf import generate_nonce
 
 
 def login_user(user):
