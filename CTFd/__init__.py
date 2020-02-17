@@ -177,7 +177,7 @@ def create_app(config="CTFd.config.Config"):
 
         reverse_proxy = app.config.get("REVERSE_PROXY")
         if reverse_proxy:
-            if "," in reverse_proxy:
+            if type(reverse_proxy) is str and "," in reverse_proxy:
                 proxyfix_args = [int(i) for i in reverse_proxy.split(",")]
                 app.wsgi_app = ProxyFix(app.wsgi_app, None, *proxyfix_args)
             else:
