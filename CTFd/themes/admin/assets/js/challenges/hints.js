@@ -118,8 +118,8 @@ export function editHint(event) {
   const params = $(this).serializeJSON(true);
   params["challenge"] = CHALLENGE_ID;
 
-  const method = "POST";
-  const url = "/api/v1/hints";
+  let method = "POST";
+  let url = "/api/v1/hints";
   if (params.id) {
     method = "PATCH";
     url = "/api/v1/hints/" + params.id;
