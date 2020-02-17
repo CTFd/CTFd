@@ -16,7 +16,7 @@
 * Make `ezq` functions available to `CTFd.js` under `CTFd.ui.ezq`
 
 **Miscellaneous**
-* Python imports sorted with isort and import order enforced
+* Python imports sorted with `isort` and import order enforced
 * Black formatter running on a majority of Python code
 
 
