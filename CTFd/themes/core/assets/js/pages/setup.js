@@ -109,4 +109,25 @@ $(() => {
       }
     }
   });
+
+  $("#setup-form").submit(function(e) {
+    if ($("#newsletter-checkbox").prop("checked")) {
+      let email = $(e.target)
+        .find("input[name=email]")
+        .val();
+
+      $.ajax({
+        type: "POST",
+        url:
+          "https://ctfd.us15.list-manage.com/subscribe/post-json?u=6c7fa6feeced52775aec9d015&id=dd1484208e&c=?",
+        data: {
+          EMAIL: email,
+          subscribe: "Subscribe",
+          b_6c7fa6feeced52775aec9d015_dd1484208e: ""
+        },
+        dataType: "jsonp",
+        contentType: "application/json; charset=utf-8"
+      });
+    }
+  });
 });
