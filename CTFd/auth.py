@@ -46,6 +46,9 @@ def confirm(data=None):
             )
 
         user = Users.query.filter_by(email=user_email).first_or_404()
+        if user.verified:
+            return redirect(url_for("views.settings"))
+
         user.verified = True
         log(
             "registrations",
