@@ -40,3 +40,5 @@ def registration_visible():
         return True
     elif v == "private":
         return False
+    else:
+        return False
