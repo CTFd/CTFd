@@ -137,16 +137,17 @@ def setup():
     <div class="col-md-6 offset-md-3">
         <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="themes/core/static/img/logo.png" />
         <h3 class="text-center">
-            <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
-            <p>Follow us on social media:</p>
-            <a href="https://twitter.com/ctfdio"><i class="fab fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
-            <a href="https://facebook.com/ctfdio"><i class="fab fa-facebook fa-2x" aria-hidden="true"></i></a>&nbsp;
-            <a href="https://github.com/ctfd"><i class="fab fa-github fa-2x" aria-hidden="true"></i></a>
+            <p>Welcome to b01lers CTF presented by the Purdue University Capture the Flag Team!</p>
         </h3>
-        <br>
         <h4 class="text-center">
-            <a href="admin">Click here</a> to login and setup your CTF
+
+            <a href="https://twitter.com/b01lers"><i class="fab fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
+            <a href="https://github.com/b01lers"><i class="fab fa-github fa-2x" aria-hidden="true"></i></a>
         </h4>
+        <h4 class="text-center">
+            <iframe src="https://discordapp.com/widget?id=666431061844164625&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0"></iframe>
+        </h4>
+        <br>
     </div>
 </div>""".format(
                 request.script_root
