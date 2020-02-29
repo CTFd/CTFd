@@ -65,10 +65,12 @@ class Pages(db.Model):
 
 assoc_competences_chall = db.Table("competences_chall",
                                    db.Column("competence_id", db.Integer,
-                                             db.ForeignKey("competences.id"),
+                                             db.ForeignKey("competences.id",
+                                                           ondelete="CASCADE"),
                                              primary_key=True),
                                    db.Column("challenge_id", db.Integer,
-                                             db.ForeignKey("challenges.id"),
+                                             db.ForeignKey("challenges.id",
+                                                           ondelete="CASCADE"),
                                              primary_key=True))
 
 

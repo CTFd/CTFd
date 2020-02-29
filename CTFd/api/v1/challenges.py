@@ -11,6 +11,7 @@ from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.schemas.flags import FlagSchema
 from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.tags import TagSchema
+from CTFd.schemas.competences import CompetenceSchema
 from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils.config.visibility import (
@@ -75,6 +76,7 @@ class ChallengeList(Resource):
 
         response = []
         tag_schema = TagSchema(view="user", many=True)
+        comp_schema = CompetenceSchema(view="user", many=True)
         for challenge in challenges:
             if challenge.requirements:
                 requirements = challenge.requirements.get("prerequisites", [])
@@ -108,6 +110,7 @@ class ChallengeList(Resource):
                     "value": challenge.value,
                     "category": challenge.category,
                     "tags": tag_schema.dump(challenge.tags).data,
+                    "competences": comp_schema.dump(challenge.competences).data,
                     "template": challenge_type.templates["view"],
                     "script": challenge_type.scripts["view"],
                 }
@@ -202,6 +205,9 @@ class Challenge(Resource):
             tag["value"] for tag in TagSchema("user", many=True).dump(chal.tags).data
         ]
 
+        competences = [
+            comp["name"] for comp in CompetenceSchema(view="user", many=True).dump(chal.competences).data
+        ]
         unlocked_hints = set()
         hints = []
         if authed():
@@ -268,6 +274,7 @@ class Challenge(Resource):
         response["files"] = files
         response["tags"] = tags
         response["hints"] = hints
+        response["competences"] = competences
 
         db.session.close()
         return {"success": True, "data": response}
