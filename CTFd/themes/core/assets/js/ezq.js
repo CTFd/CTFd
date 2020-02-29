@@ -134,7 +134,7 @@ export function ezToast(args) {
   obj.toast({
     autohide: autohide,
     delay: delay,
-    animation: animation,
+    animation: animation
   });
   obj.toast("show");
   return obj;
