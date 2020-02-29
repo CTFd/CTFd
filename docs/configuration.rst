@@ -135,6 +135,10 @@ APPLICATION_ROOT
 Specifies what path CTFd is mounted under. It can be used to run CTFd in a subdirectory.
 Example: /ctfd
 
+SERVER_SENT_EVENTS
+~~~~~~~~~~~~~~~~~~
+Specifies whether or not to enable to server-sent events based Notifications system.
+
 OAUTH_CLIENT_ID
 ~~~~~~~~~~~~~~~
 

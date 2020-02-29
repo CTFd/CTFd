@@ -1,6 +1,7 @@
-from CTFd.utils import get_config
-from CTFd.models import Users, Teams
 from flask import url_for
+
+from CTFd.models import Teams, Users
+from CTFd.utils import get_config
 
 USERS_MODE = "users"
 TEAMS_MODE = "teams"

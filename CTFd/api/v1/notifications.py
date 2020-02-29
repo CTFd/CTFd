@@ -1,8 +1,8 @@
 from flask import current_app, request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Notifications
-from CTFd.schemas.notifications import NotificationSchema
 
+from CTFd.models import Notifications, db
+from CTFd.schemas.notifications import NotificationSchema
 from CTFd.utils.decorators import admins_only
 
 notifications_namespace = Namespace(
@@ -34,6 +34,13 @@ class NotificantionList(Resource):
         db.session.commit()
 
         response = schema.dump(result.data)
+
+        # Grab additional settings
+        notif_type = req.get("type", "alert")
+        notif_sound = req.get("sound", True)
+        response.data["type"] = notif_type
+        response.data["sound"] = notif_sound
+
         current_app.events_manager.publish(data=response.data, type="notification")
 
         return {"success": True, "data": response.data}

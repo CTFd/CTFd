@@ -1,30 +1,16 @@
-from tests.helpers import create_ctfd, destroy_ctfd
-from CTFd.utils import get_config, set_config
-from CTFd.utils.email import sendmail, verify_email_address, check_email_format
-from freezegun import freeze_time
-from mock import patch, Mock
 from email.mime.text import MIMEText
+
 import requests
+from freezegun import freeze_time
+from mock import Mock, patch
 
-
-def test_check_email_format():
-    """Test that the check_email_format() works properly"""
-    assert check_email_format("user@ctfd.io") is True
-    assert check_email_format("user+plus@gmail.com") is True
-    assert check_email_format("user.period1234@gmail.com") is True
-    assert check_email_format("user.period1234@b.c") is True
-    assert check_email_format("user.period1234@b") is False
-    assert check_email_format("no.ampersand") is False
-    assert check_email_format("user@") is False
-    assert check_email_format("@ctfd.io") is False
-    assert check_email_format("user.io@ctfd") is False
-    assert check_email_format("user\\@ctfd") is False
-
-    for invalid_email in ["user.@ctfd.io", ".user@ctfd.io", "user@ctfd..io"]:
-        try:
-            assert check_email_format(invalid_email) is False
-        except AssertionError:
-            print(invalid_email, "did not pass validation")
+from CTFd.utils import get_config, set_config
+from CTFd.utils.email import (
+    sendmail,
+    verify_email_address,
+    successful_registration_notification,
+)
+from tests.helpers import create_ctfd, destroy_ctfd
 
 
 @patch("smtplib.SMTP")
@@ -38,7 +24,10 @@ def test_sendmail_with_smtp_from_config_file(mock_smtp):
         app.config["MAIL_USERNAME"] = "username"
         app.config["MAIL_PASSWORD"] = "password"
 
+        ctf_name = get_config("ctf_name")
         from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = "{} <{}>".format(ctf_name, from_addr)
+
         to_addr = "user@user.com"
         msg = "this is a test"
 
@@ -67,7 +56,10 @@ def test_sendmail_with_smtp_from_db_config(mock_smtp):
         set_config("mail_username", "username")
         set_config("mail_password", "password")
 
+        ctf_name = get_config("ctf_name")
         from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = "{} <{}>".format(ctf_name, from_addr)
+
         to_addr = "user@user.com"
         msg = "this is a test"
 
@@ -118,7 +110,7 @@ def test_sendmail_with_mailgun_from_config_file(fake_post_request):
         assert kwargs["data"] == {
             "to": ["user@user.com"],
             "text": "this is a test",
-            "from": "CTFd Admin <noreply@ctfd.io>",
+            "from": "CTFd <noreply@ctfd.io>",
             "subject": "Message from CTFd",
         }
 
@@ -165,7 +157,7 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
         assert kwargs["data"] == {
             "to": ["user@user.com"],
             "text": "this is a test",
-            "from": "CTFd Admin <noreply@ctfd.io>",
+            "from": "CTFd <noreply@ctfd.io>",
             "subject": "Message from CTFd",
         }
 
@@ -176,7 +168,6 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
 
 
 @patch("smtplib.SMTP")
-@freeze_time("2012-01-14 03:21:34")
 def test_verify_email(mock_smtp):
     """Does verify_email send emails"""
     app = create_ctfd()
@@ -188,10 +179,14 @@ def test_verify_email(mock_smtp):
         set_config("mail_password", "password")
         set_config("verify_emails", True)
 
+        ctf_name = get_config("ctf_name")
         from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = "{} <{}>".format(ctf_name, from_addr)
+
         to_addr = "user@user.com"
 
-        verify_email_address(to_addr)
+        with freeze_time("2012-01-14 03:21:34"):
+            verify_email_address(to_addr)
 
         # This is currently not actually validated
         msg = (
@@ -202,7 +197,46 @@ def test_verify_email(mock_smtp):
 
         ctf_name = get_config("ctf_name")
         email_msg = MIMEText(msg)
-        email_msg["Subject"] = "Message from {0}".format(ctf_name)
+        email_msg["Subject"] = "Confirm your account for {ctf_name}".format(
+            ctf_name=ctf_name
+        )
+        email_msg["From"] = from_addr
+        email_msg["To"] = to_addr
+
+        # Need to freeze time to predict the value of the itsdangerous token.
+        # For now just assert that sendmail was called.
+        mock_smtp.return_value.sendmail.assert_called_with(
+            from_addr, [to_addr], email_msg.as_string()
+        )
+    destroy_ctfd(app)
+
+
+@patch("smtplib.SMTP")
+def test_successful_registration_email(mock_smtp):
+    """Does successful_registration_notification send emails"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
+        set_config("verify_emails", True)
+
+        ctf_name = get_config("ctf_name")
+        from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = "{} <{}>".format(ctf_name, from_addr)
+
+        to_addr = "user@user.com"
+
+        successful_registration_notification(to_addr)
+
+        msg = "You've successfully registered for CTFd!"
+
+        email_msg = MIMEText(msg)
+        email_msg["Subject"] = "Successfully registered for {ctf_name}".format(
+            ctf_name=ctf_name
+        )
         email_msg["From"] = from_addr
         email_msg["To"] = to_addr
 

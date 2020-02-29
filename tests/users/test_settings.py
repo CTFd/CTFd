@@ -3,7 +3,7 @@
 
 from CTFd.models import Users
 from CTFd.utils.crypto import verify_password
-from tests.helpers import create_ctfd, register_user, login_as_user, destroy_ctfd
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
 def test_user_set_profile():

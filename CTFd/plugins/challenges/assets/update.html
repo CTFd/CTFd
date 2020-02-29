@@ -50,7 +50,7 @@
 			<small class="form-text text-muted">Changes the state of the challenge (e.g. visible, hidden)</small>
 		</label>
 
-		<select class="form-control" name="state">
+		<select class="form-control custom-select" name="state">
 			<option value="visible" {% if challenge.state == "visible" %}selected{% endif %}>Visible</option>
 			<option value="hidden" {% if challenge.state == "hidden" %}selected{% endif %}>Hidden</option>
 		</select>

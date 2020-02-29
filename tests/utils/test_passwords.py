@@ -1,4 +1,4 @@
-from CTFd.utils.crypto import sha256, hash_password, verify_password
+from CTFd.utils.crypto import hash_password, sha256, verify_password
 
 
 def test_hash_password():

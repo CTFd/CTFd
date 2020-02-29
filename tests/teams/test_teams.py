@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import Teams, Users
 from CTFd.utils import set_config
-from CTFd.models import Users
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
-    gen_user,
-    gen_team,
     gen_award,
+    gen_team,
+    gen_user,
+    login_as_user,
+    register_user,
 )
 
 
@@ -174,4 +174,39 @@ def test_teams_id_get():
         with login_as_user(app, name="user_name", password="password") as client:
             r = client.get("/teams/1")
             assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_team_size_limit():
+    """Only team_size amount of members can join a team"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        set_config("team_size", 1)
+
+        # Create a team with only one member
+        team = gen_team(app.db, member_count=1)
+        team_id = team.id
+
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.get("/teams/join")
+            assert r.status_code == 200
+
+            # User should be blocked from joining
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "team_name",
+                    "password": "password",
+                    "nonce": sess.get("nonce"),
+                }
+            r = client.post("/teams/join", data=data)
+            resp = r.get_data(as_text=True)
+            assert len(Teams.query.filter_by(id=team_id).first().members) == 1
+            assert "already reached the team size limit of 1" in resp
+
+            # Can the user join after the size has been bumped
+            set_config("team_size", 2)
+            r = client.post("/teams/join", data=data)
+            resp = r.get_data(as_text=True)
+            assert len(Teams.query.filter_by(id=team_id).first().members) == 2
     destroy_ctfd(app)

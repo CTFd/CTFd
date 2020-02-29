@@ -1,4 +1,4 @@
-from CTFd.models import ma, Challenges
+from CTFd.models import Challenges, ma
 
 
 class ChallengeSchema(ma.ModelSchema):

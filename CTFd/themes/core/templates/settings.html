@@ -11,88 +11,147 @@
 </div>
 <div class="container">
 	<div class="row">
-		<div class="col-md-6 offset-md-3">
-			{% if confirm_email %}
-				<div class="alert alert-info alert-dismissable submit-row" role="alert">
-					Your email address isn't confirmed!
-					Please check your email to confirm your email address.
-					<br>
-					<br>
-					To have the confirmation email resent please <a href="{{ url_for('auth.confirm') }}">click
-					here.</a>
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-							aria-hidden="true">×</span></button>
-				</div>
-			{% endif %}
-			<form id="user-settings-form" method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
-				<div class="form-group">
-					<label for="name-input">
-						User Name
-					</label>
-					<input class="form-control" type="text" name="name" id="name-input" value="{{name}}"/>
-				</div>
-				<div class="form-group">
-					<label for="email-input">
-						Email
-					</label>
-					<input class="form-control" type="email" name="email" id="email-input" value="{{email}}"/>
-				</div>
+		<div class="col-md-2 offset-md-1">
+			<div class="nav flex-column nav-pills" role="tablist">
+				<a class="nav-link active" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab">Profile</a>
+				<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Access Tokens</a>
+			</div>
+		</div>
+		<div class="col-md-8">
+			<div class="tab-content" id="v-pills-tabContent">
+				<div class="tab-pane fade show active" id="profile" role="tabpanel">
+					{% if confirm_email %}
+					<div class="alert alert-info alert-dismissable submit-row" role="alert">
+						Your email address isn't confirmed!
+						Please check your email to confirm your email address.
+						<br>
+						<br>
+						To have the confirmation email resent please <a href="{{ url_for('auth.confirm') }}">click
+							here.</a>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+								aria-hidden="true">×</span></button>
+					</div>
+					{% endif %}
+					<form id="user-profile-form" method="post" accept-charset="utf-8" autocomplete="off" role="form"
+						class="form-horizontal">
+						<div class="form-group">
+							<label for="name-input">
+								User Name
+							</label>
+							<input class="form-control" type="text" name="name" id="name-input" value="{{name}}" />
+						</div>
+						<div class="form-group">
+							<label for="email-input">
+								Email
+							</label>
+							<input class="form-control" type="email" name="email" id="email-input" value="{{email}}" />
+						</div>
 
-				<hr>
+						<hr>
 
-				<div class="form-group">
-					<label for="confirm-input">
-						Current Password
-					</label>
-					<input class="form-control" type="password" name="confirm" id="confirm-input" />
-				</div>
-				<div class="form-group">
-					<label for="password-input">
-						New Password
-					</label>
-					<input class="form-control" type="password" name="password" id="password-input" />
-				</div>
+						<div class="form-group">
+							<label for="confirm-input">
+								Current Password
+							</label>
+							<input class="form-control" type="password" name="confirm" id="confirm-input" />
+						</div>
+						<div class="form-group">
+							<label for="password-input">
+								New Password
+							</label>
+							<input class="form-control" type="password" name="password" id="password-input" />
+						</div>
 
-				<hr>
+						<hr>
 
-				<div class="form-group">
-					<label for="affiliation-input">
-						Affiliation
-					</label>
-					<input class="form-control" type="text" name="affiliation" id="affiliation-input" value="{% if affiliation %}{{affiliation}}{% endif %}" />
-				</div>
-				<div class="form-group">
-					<label for="website-input">
-						Website
-					</label>
-					<input class="form-control" type="url" name="website" id="website-input" value="{% if website %}{{website}}{% endif %}" />
-				</div>
-				<div class="form-group">
-					<label for="country-input">
-						Country
-					</label>
-					<select class="form-control" id="country-input" name="country">
-						<option value=""></option>
-						{% set countries = get_countries() %}
-						{% for country_code in countries.keys() %}
-							<option value="{{ country_code }}" {% if country == country_code %}selected{% endif %}>{{ countries[country_code] }}</option>
-						{% endfor %}
-					</select>
-				</div>
+						<div class="form-group">
+							<label for="affiliation-input">
+								Affiliation
+							</label>
+							<input class="form-control" type="text" name="affiliation" id="affiliation-input"
+								value="{% if affiliation %}{{affiliation}}{% endif %}" />
+						</div>
+						<div class="form-group">
+							<label for="website-input">
+								Website
+							</label>
+							<input class="form-control" type="url" name="website" id="website-input"
+								value="{% if website %}{{website}}{% endif %}" />
+						</div>
+						<div class="form-group">
+							<label for="country-input">
+								Country
+							</label>
+							<select class="form-control custom-select" id="country-input" name="country">
+								<option value=""></option>
+								{% set countries = get_countries() %}
+								{% for country_code in countries.keys() %}
+								<option value="{{ country_code }}" {% if country == country_code %}selected{% endif %}>
+									{{ countries[country_code] }}</option>
+								{% endfor %}
+							</select>
+						</div>
 
-				<div id="results" class="form-group">
-				</div>
+						<div id="results" class="form-group">
+						</div>
 
-				<div class="form-group">
-					<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
+						<div class="form-group">
+							<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
+						</div>
+					</form>
 				</div>
-			</form>
+				<div class="tab-pane fade" id="tokens" role="tabpanel">
+					<form method="POST"id="user-token-form">
+						<div class="form-group">
+							<label for="name-input">
+								Expiration
+							</label>
+							<input class="form-control" type="date" name="expiration" id="expiration-input" />
+						</div>
+
+						<div class="form-group text-right">
+							<button type="submit" class="btn btn-md btn-primary btn-outlined">Generate</button>
+						</div>
+					</form>
+
+					{% if tokens %}
+					<hr>
+					<h4>Active Tokens</h4>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<td class="text-center"><b>Type</b></td>
+								<td class="text-center"><b>Created</b></td>
+								<td class="text-center"><b>Expiration</b></td>
+								<td class="text-center"><b>Delete</b></td>
+							</tr>
+						</thead>
+						<tbody>
+							{% for token in tokens %}
+							<tr>
+								<td>{{ token.type }}</td>
+								<td><span data-time="{{ token.created | isoformat }}"></span></td>
+								<td><span data-time="{{ token.expiration | isoformat }}"></span></td>
+								<td class="text-center">
+									<span class="delete-token" role="button" data-token-id="{{ token.id }}">
+										<i class="btn-fa fas fa-times"></i>
+									</span>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					{% endif %}
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/settings.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/settings.js') }}"></script>
 {% endblock %}

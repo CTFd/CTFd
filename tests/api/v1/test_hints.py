@@ -5,10 +5,10 @@ from CTFd.models import Hints
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
     gen_challenge,
     gen_hint,
+    login_as_user,
+    register_user,
 )
 
 

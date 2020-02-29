@@ -1,7 +1,8 @@
-from collections import namedtuple
-from flask import current_app as app
-import os
 import json
+import os
+from collections import namedtuple
+
+from flask import current_app as app
 
 
 def register_script(url):

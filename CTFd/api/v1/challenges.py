@@ -1,48 +1,37 @@
-from flask import request, abort, url_for
+import datetime
+
+from flask import abort, request, url_for
 from flask_restplus import Namespace, Resource
-from CTFd.models import (
-    db,
-    Challenges,
-    HintUnlocks,
-    Tags,
-    Hints,
-    Flags,
-    Solves,
-    Fails,
-    ChallengeFiles as ChallengeFilesModel,
+from sqlalchemy.sql import and_
+
+from CTFd.cache import clear_standings
+from CTFd.models import ChallengeFiles as ChallengeFilesModel
+from CTFd.models import Challenges, Fails, Flags, Hints, HintUnlocks, Solves, Tags, db
+from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
+from CTFd.schemas.flags import FlagSchema
+from CTFd.schemas.hints import HintSchema
+from CTFd.schemas.tags import TagSchema
+from CTFd.utils import config, get_config
+from CTFd.utils import user as current_user
+from CTFd.utils.config.visibility import (
+    accounts_visible,
+    challenges_visible,
+    scores_visible,
 )
-from CTFd.plugins.challenges import CHALLENGE_CLASSES
-from CTFd.utils.dates import isoformat
+from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime, isoformat, unix_time_to_utc
 from CTFd.utils.decorators import (
+    admins_only,
     during_ctf_time_only,
     require_verified_emails,
-    admins_only,
 )
 from CTFd.utils.decorators.visibility import (
     check_challenge_visibility,
     check_score_visibility,
 )
-from CTFd.cache import clear_standings
-from CTFd.utils.config.visibility import (
-    scores_visible,
-    accounts_visible,
-    challenges_visible,
-)
-from CTFd.utils.user import is_admin, authed
-from CTFd.utils.modes import get_model, generate_account_url
-from CTFd.schemas.tags import TagSchema
-from CTFd.schemas.hints import HintSchema
-from CTFd.schemas.flags import FlagSchema
-from CTFd.utils import config, get_config
-from CTFd.utils import user as current_user
-from CTFd.utils.user import get_current_team
-from CTFd.utils.user import get_current_user
-from CTFd.plugins.challenges import get_chal_class
-from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime, unix_time_to_utc
 from CTFd.utils.logging import log
+from CTFd.utils.modes import generate_account_url, get_model
 from CTFd.utils.security.signing import serialize
-from sqlalchemy.sql import and_
-import datetime
+from CTFd.utils.user import authed, get_current_team, get_current_user, is_admin
 
 challenges_namespace = Namespace(
     "challenges", description="Endpoint to retrieve Challenges"
@@ -260,13 +249,10 @@ class Challenge(Resource):
         Model = get_model()
 
         if scores_visible() is True and accounts_visible() is True:
-            solves = (
-                Solves.query.join(Model, Solves.account_id == Model.id)
-                .filter(
-                    Solves.challenge_id == chal.id,
-                    Model.banned == False,
-                    Model.hidden == False,
-                )
+            solves = Solves.query.join(Model, Solves.account_id == Model.id).filter(
+                Solves.challenge_id == chal.id,
+                Model.banned == False,
+                Model.hidden == False,
             )
 
             # Only show solves that happened before freeze time if configured
@@ -391,8 +377,9 @@ class ChallengeAttempt(Resource):
                 )
             log(
                 "submissions",
-                "[{date}] {name} submitted {submission} with kpm {kpm} [TOO FAST]",
+                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
                 submission=request_data["submission"].encode("utf-8"),
+                challenge_id=challenge_id,
                 kpm=kpm,
             )
             # Submitting too fast
@@ -437,8 +424,9 @@ class ChallengeAttempt(Resource):
 
                 log(
                     "submissions",
-                    "[{date}] {name} submitted {submission} with kpm {kpm} [CORRECT]",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
                     submission=request_data["submission"].encode("utf-8"),
+                    challenge_id=challenge_id,
                     kpm=kpm,
                 )
                 return {
@@ -454,8 +442,9 @@ class ChallengeAttempt(Resource):
 
                 log(
                     "submissions",
-                    "[{date}] {name} submitted {submission} with kpm {kpm} [WRONG]",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
                     submission=request_data["submission"].encode("utf-8"),
+                    challenge_id=challenge_id,
                     kpm=kpm,
                 )
 
@@ -487,8 +476,9 @@ class ChallengeAttempt(Resource):
         else:
             log(
                 "submissions",
-                "[{date}] {name} submitted {submission} with kpm {kpm} [ALREADY SOLVED]",
+                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
                 submission=request_data["submission"].encode("utf-8"),
+                challenge_id=challenge_id,
                 kpm=kpm,
             )
             return {

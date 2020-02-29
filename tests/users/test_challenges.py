@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Solves, Fails, Challenges
+from freezegun import freeze_time
+
+from CTFd.models import Challenges, Fails, Solves
 from CTFd.utils import set_config, text_type
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
     gen_challenge,
     gen_flag,
     gen_hint,
+    login_as_user,
+    register_user,
 )
-from freezegun import freeze_time
 
 
 def test_user_get_challenges():

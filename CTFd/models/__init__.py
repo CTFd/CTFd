@@ -1,12 +1,14 @@
-from flask_sqlalchemy import SQLAlchemy
+import datetime
+
+import six
 from flask_marshmallow import Marshmallow
-from sqlalchemy.orm import validates, column_property
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import column_property, validates
+
+from CTFd.cache import cache
 from CTFd.utils.crypto import hash_password
 from CTFd.utils.humanize.numbers import ordinalize
-from CTFd.cache import cache
-import datetime
-import six
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -281,7 +283,12 @@ class Users(db.Model):
 
     @property
     def place(self):
-        return self.get_place(admin=False)
+        from CTFd.utils.config.visibility import scores_visible
+
+        if scores_visible():
+            return self.get_place(admin=False)
+        else:
+            return None
 
     def get_solves(self, admin=False):
         solves = Solves.query.filter_by(user_id=self.id)
@@ -417,7 +424,12 @@ class Teams(db.Model):
 
     @property
     def place(self):
-        return self.get_place(admin=False)
+        from CTFd.utils.config.visibility import scores_visible
+
+        if scores_visible():
+            return self.get_place(admin=False)
+        else:
+            return None
 
     def get_solves(self, admin=False):
         member_ids = [member.id for member in self.members]
@@ -629,6 +641,33 @@ class Configs(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Configs, self).__init__(**kwargs)
+
+
+class Tokens(db.Model):
+    __tablename__ = "tokens"
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(32))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    expiration = db.Column(
+        db.DateTime,
+        default=lambda: datetime.datetime.utcnow() + datetime.timedelta(days=30),
+    )
+    value = db.Column(db.String(128), unique=True)
+
+    user = db.relationship("Users", foreign_keys="Tokens.user_id", lazy="select")
+
+    __mapper_args__ = {"polymorphic_on": type}
+
+    def __init__(self, *args, **kwargs):
+        super(Tokens, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "<Token %r>" % self.id
+
+
+class UserTokens(Tokens):
+    __mapper_args__ = {"polymorphic_identity": "user"}
 
 
 @cache.memoize()

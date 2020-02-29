@@ -1,8 +1,9 @@
 from flask import request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Flags
+
+from CTFd.models import Flags, db
+from CTFd.plugins.flags import FLAG_CLASSES, get_flag_class
 from CTFd.schemas.flags import FlagSchema
-from CTFd.plugins.flags import get_flag_class, FLAG_CLASSES
 from CTFd.utils.decorators import admins_only
 
 flags_namespace = Namespace("flags", description="Endpoint to retrieve Flags")

@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from freezegun import freeze_time
+
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
     gen_challenge,
     gen_user,
+    login_as_user,
+    register_user,
 )
-from freezegun import freeze_time
 
 
 def test_api_challenge_list_visibility():
@@ -368,7 +369,7 @@ def test_api_challenges_solves_score_visibility():
         private_client = login_as_user(app)
         r = private_client.get("/api/v1/challenges/1/solves")
         assert r.status_code == 200
-        set_config("score_visibility", "admin")
+        set_config("score_visibility", "admins")
         admin = login_as_user(app, "admin", "password")
         r = admin.get("/api/v1/challenges/1/solves")
         assert r.status_code == 200

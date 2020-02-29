@@ -70,9 +70,20 @@
 			{% endif %}
 		</div>
 
-		{% if user.affiliation %}
-			<h3><span class="badge badge-primary">{{ user.affiliation }}</span></h3>
-		{% endif %}
+			{% if user.affiliation %}
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">{{ user.affiliation }}</span>
+				</h3>
+			{% endif %}
+
+			{% if user.country %}
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">
+						<i class="flag-{{ user.country.lower() }}"></i>
+						{{ lookup_country_code(user.country) }}
+					</span>
+				</h3>
+			{% endif %}
 
 		<h2 id="team-email" class="text-center">{{ user.email }}</h2>
 		{% if user.oauth_id %}
@@ -184,7 +195,7 @@
 							<td class="text-center">{{ solve.challenge.category }}</td>
 							<td class="text-center">{{ solve.challenge.value }}</td>
 							<td class="text-center solve-time">
-								<script>document.write(moment("{{ solve.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+								<span data-time="{{ solve.date | isoformat }}"></span>
 							</td>
 							<td class="text-center">
 								<span class="delete-submission" submission-id="{{ solve.id }}"
@@ -226,7 +237,7 @@
 								<pre>{{ fail.provided }}</pre>
 							</td>
 							<td class="text-center solve-time">
-								<script>document.write(moment("{{ fail.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+								<span data-time="{{ fail.date | isoformat }}"></span>
 							</td>
 							<td class="text-center">
 								<a class="delete-submission" submission-id="{{ fail.id }}"
@@ -265,7 +276,7 @@
 								<td class="text-center chal" id="{{ award.id }}">{{ award.name }}</td>
 								<td class=""><pre>{{ award.description }}</pre></td>
 								<td class="text-center solve-time">
-									<script>document.write(moment("{{ award.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+									<span data-time="{{ award.date | isoformat }}"></span>
 								</td>
 								<td class="text-center">{{ award.value }}</td>
 								<td class="text-center">{{ award.category }}</td>
@@ -340,7 +351,7 @@
 					<tr>
 						<td class="text-center">{{ addr.ip }}</td>
 						<td class="text-center solve-time">
-							<script>document.write(moment("{{ addr.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script>
+							<span data-time="{{ addr.date | isoformat }}"></span>
 						</td>
 					</tr>
 				{% endfor %}
@@ -358,13 +369,17 @@
 var USER_ID = {{ user.id }};
 var USER_NAME = {{ user.name | tojson }};
 var TEAM_ID = {{ user.team_id | tojson }};
+var stats_data = {{ {
+	'type': 'user',
+	'id': user.id,
+	'name': user.name,
+	'account_id': user.id,
+} | tojson }};
 </script>
-<script src="{{ url_for('views.themes', theme='core', path='js/vendor/plotly.min.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/users/user.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/users/info.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/users/actions.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/users/graphs.js') }}"></script>
-<script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/plotly.bundle.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/graphs.js') }}"></script>
+{% endblock %}
 
-</script>
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/user.js') }}"></script>
 {% endblock %}

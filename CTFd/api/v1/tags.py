@@ -1,6 +1,7 @@
 from flask import request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Tags
+
+from CTFd.models import Tags, db
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils.decorators import admins_only
 

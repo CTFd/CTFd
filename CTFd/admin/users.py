@@ -1,12 +1,12 @@
 from flask import render_template, request
+from sqlalchemy.sql import not_
+
+from CTFd.admin import admin
+from CTFd.models import Challenges, Tracking, Users, db
 from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only
-from CTFd.utils.modes import TEAMS_MODE
-from CTFd.models import db, Users, Challenges, Tracking
-from CTFd.admin import admin
 from CTFd.utils.helpers import get_errors
-
-from sqlalchemy.sql import not_
+from CTFd.utils.modes import TEAMS_MODE
 
 
 @admin.route("/admin/users")

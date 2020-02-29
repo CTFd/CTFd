@@ -1,23 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users, Solves, Awards, Fails
+from freezegun import freeze_time
+
+from CTFd.models import Awards, Fails, Solves, Users
+from CTFd.schemas.users import UserSchema
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
-from CTFd.schemas.users import UserSchema
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
-    simulate_user_activity,
-    gen_challenge,
-    gen_user,
-    gen_solve,
     gen_award,
+    gen_challenge,
     gen_fail,
+    gen_solve,
+    gen_user,
+    login_as_user,
+    register_user,
+    simulate_user_activity,
 )
-from freezegun import freeze_time
 
 
 def test_api_users_get_public():
@@ -460,14 +461,19 @@ def test_api_user_change_email():
         app.db.session.commit()
         with login_as_user(app) as client:
             # Test users can't submit null
-            r = client.patch("/api/v1/users/me", json={"email": None, "confirm": "password"})
+            r = client.patch(
+                "/api/v1/users/me", json={"email": None, "confirm": "password"}
+            )
             resp = r.get_json()
             print(resp)
             assert r.status_code == 400
             assert resp["errors"]["email"] == ["Field may not be null."]
 
             # Test users can exercise the API
-            r = client.patch("/api/v1/users/me", json={"email": "new_email@email.com", "confirm": "password"})
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"email": "new_email@email.com", "confirm": "password"},
+            )
             assert r.status_code == 200
             resp = r.get_json()
             assert resp["data"]["email"] == "new_email@email.com"
@@ -487,7 +493,10 @@ def test_api_user_change_verify_email():
         user.verified = True
         app.db.session.commit()
         with login_as_user(app) as client:
-            r = client.patch("/api/v1/users/me", json={"email": "new_email@email.com", "confirm": "password"})
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"email": "new_email@email.com", "confirm": "password"},
+            )
             assert r.status_code == 200
             resp = r.get_json()
             assert resp["data"]["email"] == "new_email@email.com"
@@ -506,14 +515,18 @@ def test_api_user_change_email_under_whitelist():
             "domain_whitelist", "whitelisted.com, whitelisted.org, whitelisted.net"
         )
         with login_as_user(app) as client:
-            r = client.patch("/api/v1/users/me", json={"email": "new_email@email.com", "confirm": "password"})
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"email": "new_email@email.com", "confirm": "password"},
+            )
             assert r.status_code == 400
             resp = r.get_json()
             assert resp["errors"]["email"]
             assert resp["success"] is False
 
             r = client.patch(
-                "/api/v1/users/me", json={"email": "new_email@whitelisted.com", "confirm": "password"}
+                "/api/v1/users/me",
+                json={"email": "new_email@whitelisted.com", "confirm": "password"},
             )
             assert r.status_code == 200
             resp = r.get_json()

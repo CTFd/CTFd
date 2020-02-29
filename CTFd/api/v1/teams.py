@@ -1,17 +1,19 @@
-from flask import session, request, abort
+import copy
+
+from flask import abort, request, session
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Users, Teams
-from CTFd.schemas.teams import TeamSchema
-from CTFd.schemas.submissions import SubmissionSchema
-from CTFd.schemas.awards import AwardSchema
+
 from CTFd.cache import clear_standings
+from CTFd.models import Awards, Submissions, Teams, Unlocks, Users, db
+from CTFd.schemas.awards import AwardSchema
+from CTFd.schemas.submissions import SubmissionSchema
+from CTFd.schemas.teams import TeamSchema
+from CTFd.utils.decorators import admins_only, authed_only, require_team
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
     check_score_visibility,
 )
 from CTFd.utils.user import get_current_team, is_admin
-from CTFd.utils.decorators import authed_only, admins_only, require_team
-import copy
 
 teams_namespace = Namespace("teams", description="Endpoint to retrieve Teams")
 
@@ -68,6 +70,8 @@ class TeamPublic(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
+        response.data["place"] = team.place
+        response.data["score"] = team.score
         return {"success": True, "data": response.data}
 
     @admins_only
@@ -118,6 +122,8 @@ class TeamPrivate(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
+        response.data["place"] = team.place
+        response.data["score"] = team.score
         return {"success": True, "data": response.data}
 
     @authed_only
@@ -206,6 +212,12 @@ class TeamMembers(Resource):
 
         if user.team_id == team.id:
             team.members.remove(user)
+
+            # Remove information that links the user to the team
+            Submissions.query.filter_by(user_id=user.id).delete()
+            Awards.query.filter_by(user_id=user.id).delete()
+            Unlocks.query.filter_by(user_id=user.id).delete()
+
             db.session.commit()
         else:
             return (

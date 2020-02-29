@@ -1,9 +1,9 @@
 from flask import request
 from flask_restplus import Namespace, Resource
-from CTFd.models import db, Pages
-from CTFd.schemas.pages import PageSchema
-from CTFd.cache import clear_pages
 
+from CTFd.cache import clear_pages
+from CTFd.models import Pages, db
+from CTFd.schemas.pages import PageSchema
 from CTFd.utils.decorators import admins_only
 
 pages_namespace = Namespace("pages", description="Endpoint to retrieve Pages")

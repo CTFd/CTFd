@@ -1,15 +1,16 @@
-from flask import render_template, request, redirect, url_for, Blueprint
-from CTFd.models import db, Teams
+from flask import Blueprint, redirect, render_template, request, url_for
+
+from CTFd.models import Teams, db
+from CTFd.utils import config, get_config
+from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators import authed_only, ratelimit
 from CTFd.utils.decorators.modes import require_team_mode
-from CTFd.utils import config
-from CTFd.utils.user import get_current_user
-from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
     check_score_visibility,
 )
-from CTFd.utils.helpers import get_errors
+from CTFd.utils.helpers import get_errors, get_infos
+from CTFd.utils.user import get_current_user
 
 teams = Blueprint("teams", __name__)
 
@@ -44,15 +45,38 @@ def listing():
 @require_team_mode
 @ratelimit(method="POST", limit=10, interval=5)
 def join():
+    infos = get_infos()
+    errors = get_errors()
     if request.method == "GET":
-        return render_template("teams/join_team.html")
+        team_size_limit = get_config("team_size", default=0)
+        if team_size_limit:
+            plural = "" if team_size_limit == 1 else "s"
+            infos.append(
+                "Teams are limited to {limit} member{plural}".format(
+                    limit=team_size_limit, plural=plural
+                )
+            )
+        return render_template("teams/join_team.html", infos=infos, errors=errors)
+
     if request.method == "POST":
         teamname = request.form.get("name")
         passphrase = request.form.get("password", "").strip()
 
         team = Teams.query.filter_by(name=teamname).first()
         user = get_current_user()
+
         if team and verify_password(passphrase, team.password):
+            team_size_limit = get_config("team_size", default=0)
+            if team_size_limit and len(team.members) >= team_size_limit:
+                errors.append(
+                    "{name} has already reached the team size limit of {limit}".format(
+                        name=team.name, limit=team_size_limit
+                    )
+                )
+                return render_template(
+                    "teams/join_team.html", infos=infos, errors=errors
+                )
+
             user.team_id = team.id
             db.session.commit()
 
@@ -62,18 +86,29 @@ def join():
 
             return redirect(url_for("challenges.listing"))
         else:
-            errors = ["That information is incorrect"]
-            return render_template("teams/join_team.html", errors=errors)
+            errors.append("That information is incorrect")
+            return render_template("teams/join_team.html", infos=infos, errors=errors)
 
 
 @teams.route("/teams/new", methods=["GET", "POST"])
 @authed_only
 @require_team_mode
 def new():
+    infos = get_infos()
+    errors = get_errors()
     if request.method == "GET":
-        return render_template("teams/new_team.html")
+        team_size_limit = get_config("team_size", default=0)
+        if team_size_limit:
+            plural = "" if team_size_limit == 1 else "s"
+            infos.append(
+                "Teams are limited to {limit} member{plural}".format(
+                    limit=team_size_limit, plural=plural
+                )
+            )
+
+        return render_template("teams/new_team.html", infos=infos, errors=errors)
     elif request.method == "POST":
-        teamname = request.form.get("name")
+        teamname = request.form.get("name", "").strip()
         passphrase = request.form.get("password", "").strip()
         errors = get_errors()
 

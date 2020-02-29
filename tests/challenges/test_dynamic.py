@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import Challenges
 from CTFd.plugins.dynamic_challenges import DynamicChallenge, DynamicValueChallenge
 from tests.helpers import (
+    FakeRequest,
     create_ctfd,
     destroy_ctfd,
-    register_user,
-    login_as_user,
     gen_flag,
     gen_user,
-    FakeRequest,
+    login_as_user,
+    register_user,
 )
 
 
@@ -228,6 +229,37 @@ def test_dynamic_challenge_loses_value_properly():
                 else:
                     assert chal.initial >= chal.value
                     assert chal.value > chal.minimum
+    destroy_ctfd(app)
+
+
+def test_dynamic_challenge_doesnt_lose_value_on_update():
+    """Dynamic challenge updates without changing any values or solves shouldn't change the current value. See #1043"""
+    app = create_ctfd(enable_plugins=True)
+    with app.app_context():
+        challenge_data = {
+            "name": "name",
+            "category": "category",
+            "description": "description",
+            "value": 10000,
+            "decay": 4,
+            "minimum": 10,
+            "state": "visible",
+            "type": "dynamic",
+        }
+        req = FakeRequest(form=challenge_data)
+        challenge = DynamicValueChallenge.create(req)
+        challenge_id = challenge.id
+        gen_flag(app.db, challenge_id=challenge.id, content="flag")
+        register_user(app)
+        with login_as_user(app) as client:
+            data = {"submission": "flag", "challenge_id": challenge_id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 200
+            assert r.get_json()["data"]["status"] == "correct"
+        chal = Challenges.query.filter_by(id=challenge_id).first()
+        prev_chal_value = chal.value
+        chal = DynamicValueChallenge.update(chal, req)
+        assert prev_chal_value == chal.value
     destroy_ctfd(app)
 
 

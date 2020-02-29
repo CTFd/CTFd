@@ -26,7 +26,7 @@
 			<form method="GET" class="form-inline">
 					<div class="form-group col-md-2">
 						<label for="sel1" class="sr-only" >Search Field</label>
-						<select name="field" class="form-control w-100" id="sel1">
+						<select class="form-control custom-select w-100" id="sel1" name="field">
 							<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
 							<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
 							<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
@@ -92,8 +92,13 @@
 								</a>
 							{% endif %}
 						</td>
-						<td class="team-country" value="{{ team.country if team.country is not none }}">
-							<span>{% if team.country %}{{ lookup_country_code(team.country) }}{% endif %}</span>
+						<td class="team-country text-center" value="{{ team.country if team.country is not none }}">
+							<span>
+								{% if team.country %}
+									<i class="flag-{{ team.country.lower() }}"></i>
+									{{ lookup_country_code(team.country) }}
+								{% endif %}
+							</span>
 						</td>
 
 						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ team.hidden }}">
@@ -131,5 +136,4 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='admin', path='js/teams/teams.js') }}"></script>
 {% endblock %}

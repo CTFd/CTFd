@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import db, Users
-from CTFd.utils import set_config, get_config
-from CTFd.utils.security.signing import serialize
-from CTFd.utils.crypto import verify_password
 from freezegun import freeze_time
-from tests.helpers import create_ctfd, destroy_ctfd, register_user, login_as_user
 from mock import patch
+
+from CTFd.models import Users, db
+from CTFd.utils import get_config, set_config
+from CTFd.utils.crypto import verify_password
+from CTFd.utils.security.signing import serialize
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
 def test_register_user():
@@ -45,6 +46,13 @@ def test_register_duplicate_username():
             app,
             name="user1",
             email="user2@ctfd.io",
+            password="password",
+            raise_for_error=False,
+        )
+        register_user(
+            app,
+            name="admin  ",
+            email="admin2@ctfd.io",
             password="password",
             raise_for_error=False,
         )
@@ -348,16 +356,23 @@ def test_user_can_reset_password(mock_smtp):
             # Issue the password reset request
             client.post("/reset_password", data=data)
 
+            ctf_name = get_config("ctf_name")
             from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+            from_addr = "{} <{}>".format(ctf_name, from_addr)
+
             to_addr = "user@user.com"
 
             # Build the email
             msg = (
-                """Did you initiate a password reset? Click the following link to reset """
-                """your password:\n\nhttp://localhost/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M\n\n"""
+                "Did you initiate a password reset? If you didn't initiate this request you can ignore this email. "
+                "\n\nClick the following link to reset your password:\n"
+                "http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U"
             )
+            ctf_name = get_config("ctf_name")
             email_msg = MIMEText(msg)
-            email_msg["Subject"] = "Message from CTFd"
+            email_msg["Subject"] = "Password Reset Request from {ctf_name}".format(
+                ctf_name=ctf_name
+            )
             email_msg["From"] = from_addr
             email_msg["To"] = to_addr
 
@@ -374,9 +389,11 @@ def test_user_can_reset_password(mock_smtp):
                 data = {"nonce": sess.get("nonce"), "password": "passwordtwo"}
 
             # Do the password reset
-            client.get("/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M")
+            client.get(
+                "/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U"
+            )
             client.post(
-                "/reset_password/InVzZXIxIg.TxD0vg.-gvVg-KVy0RWkiclAE6JViv1I0M",
+                "/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U",
                 data=data,
             )
 

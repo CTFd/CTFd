@@ -1,4 +1,4 @@
-<form id="team-info-form" method="POST">
+<form id="team-info-create-form" method="POST">
 	<input type="hidden" name="id">
 	<div class="form-group">
 		<label for="name">Team Name</label>
@@ -26,7 +26,7 @@
 	</div>
 	<div class="form-group">
 		<label for="affiliation">Country</label>
-		<select class="form-control" id="country-input" name="country">
+		<select class="form-control custom-select" id="country-input" name="country">
 			<option></option>
 			{% set countries = get_countries() %}
 			{% for country_code in countries.keys() %}

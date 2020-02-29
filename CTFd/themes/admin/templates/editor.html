@@ -1,13 +1,7 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" type="text/css" href="
-			{{ url_for('views.themes', theme='core', path='css/vendor/codemirror.min.css') }}">
-	<style>
-	.CodeMirror-gutters {
-		min-height: 100% !important;;
-	}
-	</style>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('views.themes', theme='admin', path='css/codemirror.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -90,7 +84,7 @@
 			</div>
 			<div class="modal-footer">
 				<div class="float-right">
-					<button type="submit" class="btn btn-primary" onclick="upload_media()">Upload</button>
+					<button type="submit" class="btn btn-primary media-upload-button">Upload</button>
 				</div>
 			</div>
 		</div>
@@ -150,7 +144,7 @@
 								   data-toggle="tab">Write</a>
 							</li>
 							<li class="nav-item" role="presentation">
-								<a class="nav-link" onclick="preview_page(); return true;" href="#">Preview</a>
+								<a class="nav-link preview-page" href="#">Preview</a>
 							</li>
 						</ul>
 
@@ -173,7 +167,7 @@
 									<div class="form-group pr-3">
 										Draft:
 										{% set draft = page is defined and page.draft == True %}
-										<select name="draft">
+										<select class="form-control custom-select" name="draft">
 											<option value="true" {% if draft == True %}selected{% endif %}>
 												True
 											</option>
@@ -186,7 +180,7 @@
 									<div class="form-group pr-3">
 										Hidden:
 										{% set hidden = page is defined and page.hidden == True %}
-										<select name="hidden">
+										<select class="form-control custom-select" name="hidden">
 											<option value="true" {% if hidden == True %}selected{% endif %}>True
 											</option>
 											<option value="false" {% if hidden == False %}selected{% endif %}>False
@@ -197,7 +191,7 @@
 									<div class="form-group pr-3">
 										Authentication Required:
 										{% set auth_required = page is defined and page.auth_required == True %}
-										<select name="auth_required">
+										<select class="form-control custom-select" name="auth_required">
 											<option value="true" {% if auth_required == True %}selected{% endif %}>
 												True
 											</option>
@@ -241,8 +235,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='core', path='js/vendor/codemirror.min.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/files/files.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/pages/media.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/pages/editor.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/editor.js') }}"></script>
 {% endblock %}

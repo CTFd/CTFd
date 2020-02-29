@@ -13,7 +13,17 @@
 				</a>
 			{% endif %}
 			{% if team.affiliation %}
-				<h3><span class="badge badge-primary">{{ team.affiliation }}</span></h3>
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">{{ team.affiliation }}</span>
+				</h3>
+			{% endif %}
+			{% if team.country %}
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">
+						<i class="flag-{{ team.country.lower() }}"></i>
+						{{ lookup_country_code(team.country) }}
+					</span>
+				</h3>
 			{% endif %}
 			<h2 id="team-place" class="text-center">
 				{# This intentionally hides the team's place when scores are hidden because this can be their internal profile
@@ -113,7 +123,11 @@
 						</div>
 						{% for award in awards %}
 							<div class="col-md-3 col-sm-6">
-								<p class="text-center"><strong>{{ award.name }}</strong></p>
+								<p class="text-center">
+									<i class="award-icon award-{{ award.icon }} fa-2x"></i>
+									<br>
+									<strong>{{ award.name }}</strong>
+								</p>
 								{% if award.category %}<p class="text-center">{{ award.category }}</p>{% endif %}
 								{% if award.description %}<p class="text-center">{{ award.description }}</p>{% endif %}
 								<p class="text-center">{{ award.value }}</p>
@@ -145,9 +159,7 @@
 									<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
 									<td>{{ solve.challenge.value }}</td>
 									<td class="solve-time">
-										<script>
-                                            document.write(moment("{{ solve.date | isoformat }}").local().format('MMMM Do, h:mm:ss A'))
-										</script>
+										<span data-time="{{ solve.date | isoformat }}"></span>
 									</td>
 								</tr>
 							{% endfor %}
@@ -164,18 +176,19 @@
 
 {% block scripts %}
 	<script>
-        var team_id = {{ team.id }};
-        var team_name = {{ team.name | tojson }};
-        {% if user %}
-            var team_self = {{ (user.team_id == team.id) | tojson }};
-        {% else %}
-            var team_self = false;
-        {% endif %}
-        var team_account_id = team_self ? "me" : team_id;
+		var stats_data = {{ {
+			'type': 'team',
+			'id': team.id,
+			'name': team.name,
+			'account_id': 'me' if user is defined and user.team_id == team.id else team.id,
+		} | tojson }};
 	</script>
-	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
 	{% if solves %}
-		<script src="{{ url_for('views.themes', path='js/team.js') }}"></script>
+		<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 	{% endif %}
 {% endblock %}

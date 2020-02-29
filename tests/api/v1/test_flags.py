@@ -4,9 +4,9 @@
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
-    login_as_user,
     gen_challenge,
     gen_flag,
+    login_as_user,
 )
 
 

@@ -1,7 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, gen_user, gen_team
+from CTFd.models import Awards, Solves, Submissions, Unlocks, Users
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    gen_team,
+    gen_user,
+    login_as_user,
+    simulate_user_activity,
+)
 
 
 def test_api_team_get_members():
@@ -52,6 +60,33 @@ def test_api_team_remove_members():
             resp = r.get_json()
             assert "User is not part of this team" in resp["errors"]["id"]
             assert r.status_code == 400
+    destroy_ctfd(app)
+
+
+def test_api_removing_members_deletes_information():
+    """If an admin removes a user, their score information should also be removed"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        team = gen_team(app.db)
+        assert len(team.members) == 4
+        app.db.session.commit()
+
+        user = Users.query.filter_by(id=2).first()
+        simulate_user_activity(app.db, user)
+        assert Solves.query.filter_by(user_id=2).count() == 1
+        assert Submissions.query.filter_by(user_id=2).count() == 6
+        assert Awards.query.filter_by(user_id=2).count() == 1
+        assert Unlocks.query.filter_by(user_id=2).count() == 1
+
+        with login_as_user(app, name="admin") as client:
+            r = client.delete("/api/v1/teams/1/members", json={"user_id": 2})
+            assert r.status_code == 200
+
+        user = Users.query.filter_by(id=2).first()
+        assert Solves.query.filter_by(user_id=2).count() == 0
+        assert Submissions.query.filter_by(user_id=2).count() == 0
+        assert Awards.query.filter_by(user_id=2).count() == 0
+        assert Unlocks.query.filter_by(user_id=2).count() == 0
     destroy_ctfd(app)
 
 

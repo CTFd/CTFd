@@ -1,10 +1,14 @@
-from CTFd.utils.user import is_admin, get_current_user
-from CTFd.models import Users
-from CTFd.utils.countries import lookup_country_code
-from six.moves.urllib.parse import urlparse, urljoin
+import re
+
 from flask import request
 from marshmallow import ValidationError
-import re
+from six.moves.urllib.parse import urljoin, urlparse
+
+from CTFd.models import Users
+from CTFd.utils.countries import lookup_country_code
+from CTFd.utils.user import get_current_user, is_admin
+
+EMAIL_REGEX = r"(^[^@\s]+@[^@\s]+\.[^@\s]+$)"
 
 
 def is_safe_url(target):
@@ -18,7 +22,7 @@ def validate_url(url):
 
 
 def validate_email(email):
-    return bool(re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email))
+    return bool(re.match(EMAIL_REGEX, email))
 
 
 def unique_email(email, model=Users):

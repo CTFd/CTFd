@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, gen_user
-from CTFd.utils import get_config
+from flask import request
 from jinja2.sandbox import SecurityError
 from werkzeug.test import Client
-from flask import request
+
+from CTFd.utils import get_config
+from tests.helpers import create_ctfd, destroy_ctfd, gen_user, login_as_user
 
 
 def test_themes_run_in_sandbox():
@@ -51,24 +52,24 @@ def test_themes_escape_html():
     destroy_ctfd(app)
 
 
-def test_custom_css():
-    """Config should be able to properly set CSS"""
+def test_theme_header():
+    """Config should be able to properly set CSS in theme header"""
     app = create_ctfd()
     with app.app_context():
 
         with login_as_user(app, "admin") as admin:
             css_value = """.test{}"""
             css_value2 = """.test2{}"""
-            r = admin.patch("/api/v1/configs", json={"css": css_value})
+            r = admin.patch("/api/v1/configs", json={"theme_header": css_value})
             assert r.status_code == 200
-            assert get_config("css") == css_value
+            assert get_config("theme_header") == css_value
 
-            r = admin.get("/static/user.css")
-            assert r.get_data(as_text=True) == css_value
+            r = admin.get("/")
+            assert css_value in r.get_data(as_text=True)
 
-            r = admin.patch("/api/v1/configs", json={"css": css_value2})
-            r = admin.get("/static/user.css")
-            assert r.get_data(as_text=True) == css_value2
+            r = admin.patch("/api/v1/configs", json={"theme_header": css_value2})
+            r = admin.get("/")
+            assert css_value2 in r.get_data(as_text=True)
     destroy_ctfd(app)
 
 
@@ -88,7 +89,8 @@ def test_that_ctfd_can_be_deployed_in_subdir():
             r = client.get("/setup")
             with client.session_transaction() as sess:
                 data = {
-                    "ctf_name": "name",
+                    "ctf_name": "CTFd",
+                    "ctf_description": "CTF description",
                     "name": "admin",
                     "email": "admin@ctfd.io",
                     "password": "password",

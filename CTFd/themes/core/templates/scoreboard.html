@@ -75,7 +75,9 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/scoreboard.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/scoreboard.js') }}"></script>
 {% endblock %}

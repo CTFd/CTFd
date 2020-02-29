@@ -4,20 +4,21 @@
 import os
 
 from flask import url_for
-from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
-    register_user,
-    login_as_user,
-    gen_challenge,
-    gen_file,
-    gen_page,
-)
+from freezegun import freeze_time
+
 from CTFd.cache import clear_pages
 from CTFd.utils import set_config
 from CTFd.utils.config.pages import get_pages
 from CTFd.utils.encoding import hexencode
-from freezegun import freeze_time
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    gen_challenge,
+    gen_file,
+    gen_page,
+    login_as_user,
+    register_user,
+)
 
 
 def test_index():
@@ -134,14 +135,13 @@ def test_themes_handler():
     app = create_ctfd()
     with app.app_context():
         with app.test_client() as client:
-            r = client.get("/themes/core/static/css/style.css")
+            r = client.get("/themes/core/static/css/main.min.css")
             assert r.status_code == 200
             r = client.get("/themes/core/static/css/404_NOT_FOUND")
             assert r.status_code == 404
             r = client.get("/themes/core/static/%2e%2e/%2e%2e/%2e%2e/utils.py")
             assert r.status_code == 404
-            r = client.get(
-                "/themes/core/static/%2e%2e%2f%2e%2e%2f%2e%2e%2futils.py")
+            r = client.get("/themes/core/static/%2e%2e%2f%2e%2e%2f%2e%2e%2futils.py")
             assert r.status_code == 404
             r = client.get("/themes/core/static/..%2f..%2f..%2futils.py")
             assert r.status_code == 404
@@ -281,7 +281,7 @@ def test_user_can_access_files_with_auth_token():
         chal_id = chal.id
         path = app.config.get("UPLOAD_FOLDER")
 
-        md5hash = hexencode(os.urandom(16)).decode("utf-8")
+        md5hash = hexencode(os.urandom(16))
 
         location = os.path.join(path, md5hash, "test.txt")
         directory = os.path.dirname(location)
@@ -396,7 +396,7 @@ def test_user_can_access_files_if_view_after_ctf():
         chal_id = chal.id
         path = app.config.get("UPLOAD_FOLDER")
 
-        md5hash = hexencode(os.urandom(16)).decode("utf-8")
+        md5hash = hexencode(os.urandom(16))
 
         location = os.path.join(path, md5hash, "test.txt")
         directory = os.path.dirname(location)

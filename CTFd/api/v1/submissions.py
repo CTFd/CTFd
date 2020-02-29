@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Namespace, Resource
 
 from CTFd.cache import clear_standings
-from CTFd.models import db, Submissions
+from CTFd.models import Submissions, db
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import admins_only
 

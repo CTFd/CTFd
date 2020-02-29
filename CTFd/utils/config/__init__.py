@@ -1,8 +1,10 @@
-from flask import current_app as app
-from CTFd.utils import get_config
-from CTFd.utils.modes import USERS_MODE, TEAMS_MODE
-import time
 import os
+import time
+
+from flask import current_app as app
+
+from CTFd.utils import get_config
+from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
 
 
 def ctf_name():
@@ -32,7 +34,7 @@ def ctf_theme():
 
 
 def is_setup():
-    return get_config("setup")
+    return bool(get_config("setup")) is True
 
 
 def is_scoreboard_frozen():

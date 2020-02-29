@@ -28,6 +28,44 @@
 						</label>
 						<textarea class="form-control" type="text" name="content" rows="3"></textarea>
 					</div>
+					<div class="form-row">
+						<div class="col">
+							<div class="form-group">
+								<label>
+									Type
+									<small class="form-text text-muted">
+										What type of notification users receive
+									</small>
+								</label>
+							</div>
+							<div class="form-check form-check-inline pr-1">
+								<input class="form-check-input" type="radio" name="type" value="toast" id="type-radio-toast" checked>
+								<label class="form-check-label" for="type-radio-toast">Toast</label>
+							</div>
+							<div class="form-check form-check-inline pr-1">
+								<input class="form-check-input" type="radio" name="type" value="alert" id="type-radio-alert">
+								<label class="form-check-label" for="type-radio-alert">Alert</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="type" value="background" id="type-radio-bg">
+								<label class="form-check-label" for="type-radio-bg">Background</label>
+							</div>
+						</div>
+						<div class="col">
+							<div class="form-group">
+								<label>
+									Sound
+									<small class="form-text text-muted">
+										Play sound for users
+									</small>
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="sound" value="true" id="sound-enable" checked>
+								<label class="form-check-label" for="sound-enable">Play Sound</label>
+							</div>
+						</div>
+					</div>
 					<div class="float-right">
 						<button type="submit" class="btn btn-success text-center">Submit</button>
 					</div>
@@ -42,14 +80,14 @@
 				<hr>
 				{% for notification in notifications %}
 					<div class="card bg-light mb-4">
-						<button type="button" notif-id="{{ notification.id }}" class="delete-notification close position-absolute p-3" style="right:0;" data-dismiss="alert" aria-label="Close">
+						<button type="button" data-notif-id="{{ notification.id }}" class="delete-notification close position-absolute p-3" style="right:0;" data-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
 						<div class="card-body">
 							<h3 class="card-title">{{ notification.title }}</h3>
 							<blockquote class="blockquote mb-0">
 								<p>{{ notification.content | safe }}</p>
-								<small class="text-muted">{{ notification.date | isoformat }}</small>
+								<small class="text-muted"><span data-time="{{ notification.date | isoformat }}"></span></small>
 							</blockquote>
 						</div>
 					</div>
@@ -60,5 +98,8 @@
 {% endblock %}
 
 {% block scripts %}
-	<script src="{{ url_for('views.themes', theme='admin', path='js/notifications/notifications.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/notifications.js') }}"></script>
 {% endblock %}

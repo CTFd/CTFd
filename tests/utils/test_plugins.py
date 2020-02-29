@@ -1,6 +1,6 @@
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
-from CTFd.utils.plugins import override_template
 from CTFd.plugins import register_plugin_script
+from CTFd.utils.plugins import override_template
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
 
 
 def test_override_template():

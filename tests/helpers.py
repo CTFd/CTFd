@@ -1,37 +1,40 @@
+import datetime
+import gc
+import random
+import string
+import uuid
+from collections import namedtuple
+
+import requests
+import six
 from flask.testing import FlaskClient
+from mock import Mock, patch
+from sqlalchemy.engine.url import make_url
+from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers
+
 from CTFd import create_app
+from CTFd.cache import cache, clear_standings
 from CTFd.config import TestingConfig
 from CTFd.models import (
     Awards,
-    Challenges,
     ChallengeFiles,
+    Challenges,
     Fails,
     Files,
     Flags,
     Hints,
     Notifications,
-    Pages,
     PageFiles,
+    Pages,
     Solves,
     Tags,
     Teams,
+    Tokens,
     Tracking,
     Unlocks,
     Users,
 )
-from CTFd.cache import cache, clear_standings
-from sqlalchemy_utils import drop_database
-from collections import namedtuple
-from mock import Mock, patch
-from sqlalchemy.engine.url import make_url
-import datetime
-import six
-import gc
-import requests
-import uuid
-import random
-import string
 
 if six.PY2:
     text_type = unicode  # noqa: F821
@@ -50,6 +53,8 @@ class CTFdTestClient(FlaskClient):
             with self.session_transaction() as sess:
                 api_key_headers = Headers({"CSRF-Token": sess.get("nonce")})
                 headers = kwargs.pop("headers", Headers())
+                if isinstance(headers, dict):
+                    headers = Headers(headers)
                 headers.extend(api_key_headers)
                 kwargs["headers"] = headers
         return super(CTFdTestClient, self).open(*args, **kwargs)
@@ -57,6 +62,7 @@ class CTFdTestClient(FlaskClient):
 
 def create_ctfd(
     ctf_name="CTFd",
+    ctf_description="CTF description",
     name="admin",
     email="admin@ctfd.io",
     password="password",
@@ -81,13 +87,22 @@ def create_ctfd(
     app.test_client_class = CTFdTestClient
 
     if setup:
-        app = setup_ctfd(app, ctf_name, name, email, password, user_mode)
+        app = setup_ctfd(
+            app,
+            ctf_name=ctf_name,
+            ctf_description=ctf_description,
+            name=name,
+            email=email,
+            password=password,
+            user_mode=user_mode,
+        )
     return app
 
 
 def setup_ctfd(
     app,
     ctf_name="CTFd",
+    ctf_description="CTF description",
     name="admin",
     email="admin@ctfd.io",
     password="password",
@@ -99,6 +114,7 @@ def setup_ctfd(
             with client.session_transaction() as sess:
                 data = {
                     "ctf_name": ctf_name,
+                    "ctf_description": ctf_description,
                     "name": name,
                     "email": email,
                     "password": password,
@@ -421,6 +437,13 @@ def gen_notification(db, title="title", content="content"):
     notif = Notifications(title=title, content=content)
     db.session.add(notif)
     db.session.commit()
+
+
+def gen_token(db, type="user", user_id=None, expiration=None):
+    token = Tokens(type=type, user_id=user_id, expiration=expiration)
+    db.session.add(token)
+    db.session.commit()
+    return token
 
 
 def simulate_user_activity(db, user):

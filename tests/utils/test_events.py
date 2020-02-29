@@ -1,12 +1,14 @@
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
-from CTFd.utils.events import ServerSentEvent, EventManager, RedisEventManager
-from CTFd.config import TestingConfig
-from mock import patch
-from six.moves.queue import Queue
-from collections import defaultdict
-from redis.exceptions import ConnectionError
 import json
+from collections import defaultdict
+
 import redis
+from mock import patch
+from redis.exceptions import ConnectionError
+from six.moves.queue import Queue
+
+from CTFd.config import TestingConfig
+from CTFd.utils.events import EventManager, RedisEventManager, ServerSentEvent
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
 def test_event_manager_installed():

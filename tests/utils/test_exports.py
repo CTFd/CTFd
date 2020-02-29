@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
-from tests.helpers import (
-    create_ctfd,
-    destroy_ctfd,
-    register_user,
-    login_as_user,
-    gen_challenge,
-    gen_flag,
-    gen_user,
-    gen_team,
-    gen_hint,
-)
-from CTFd.models import Challenges, Flags, Users, Teams
-from CTFd.utils import text_type
-from CTFd.utils.exports import import_ctf, export_ctf
 import json
 import os
 import zipfile
+
+from CTFd.models import Challenges, Flags, Teams, Users
+from CTFd.utils import text_type
+from CTFd.utils.exports import export_ctf, import_ctf
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    gen_challenge,
+    gen_flag,
+    gen_hint,
+    gen_team,
+    gen_user,
+    login_as_user,
+    register_user,
+)
 
 
 def test_export_ctf():

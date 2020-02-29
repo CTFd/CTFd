@@ -13,7 +13,7 @@
 					<img id="ctf_logo_preview" class="img-responsive ctf_logo"
 						 src="{{ url_for('views.files', path=ctf_logo) }}"
 						 height="25">
-					<button type="button" class="btn-sm btn-danger" onclick="remove_logo()">
+					<button type="button" id="remove-logo" class="btn-sm btn-danger">
 						Remove Logo
 					</button>
 				</div>
@@ -48,6 +48,16 @@
 		</div>
 
 		<div class="form-group">
+			<label>
+				CTF Description<br>
+				<small class="form-text text-muted">
+					Description for the CTF
+				</small>
+			</label>
+			<textarea class="form-control" type="text" id="ctf_description" name="ctf_description" rows="5">{{ ctf_description }}</textarea>
+		</div>
+
+		<div class="form-group">
 			<label for="user_mode">
 				User Mode
 				<small class="form-text text-muted">User mode allows users to register as themselves
@@ -55,7 +65,7 @@
 				</small>
 			</label>
 			<div data-toggle="tooltip" data-placement="bottom" title="In order to change User Mode you must reset your CTF">
-				<select class="form-control" id="user_mode" name="user_mode" disabled="true" style="z-index: -1;">
+				<select class="form-control custom-select" id="user_mode" name="user_mode" disabled="true" style="z-index: -1;">
 					<option value="teams" {% if user_mode == 'teams' %}selected{% endif %}>
 						Teams
 					</option>
@@ -73,7 +83,7 @@
 					Switch themes to change CTFd's aesthetics
 				</small>
 			</label>
-			<select class="form-control" id="ctf_theme" name="ctf_theme">
+			<select class="form-control custom-select" id="ctf_theme" name="ctf_theme">
 				<option>{{ ctf_theme }}</option>
 				{% for theme in themes %}
 					<option>{{ theme }}</option>
@@ -83,12 +93,37 @@
 
 		<div class="form-group">
 			<label>
-				Stylesheet editor
+				Theme Color
 				<small class="form-text text-muted">
-					CSS is applied to all public facing pages if the theme used supports custom CSS.
+					Color used by theme to control aesthetics. Requires theme support.
 				</small>
 			</label>
-			<textarea class="form-control" id="css-editor" name="css" rows="7">{{ css }}</textarea>
+			<div class="d-inline-block">
+				<input type="color" id="config-color-picker">
+				<button type="button" class="btn-sm btn-primary" id="config-color-update">Update CSS</button>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Theme Header
+				<small class="form-text text-muted">
+					Theme headers are inserted just before the <code>&lt;/head&gt;</code> tag on all public facing pages.
+					Requires theme support.
+				</small>
+			</label>
+			<textarea class="form-control" id="theme-header" name="theme_header" rows="7">{{ theme_header or "" }}</textarea>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Theme Footer
+				<small class="form-text text-muted">
+					Theme footers are inserted just before the <code>&lt;/body&gt;</code> tag on all public facing pages.
+					Requires theme support.
+				</small>
+			</label>
+			<textarea class="form-control" id="theme-footer" name="theme_footer" rows="7">{{ theme_footer or "" }}</textarea>
 		</div>
 
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>

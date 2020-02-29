@@ -81,6 +81,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('views.themes', theme='core', path='js/vendor/codemirror.min.js') }}"></script>
-<script src="{{ url_for('views.themes', theme='admin', path='js/pages/pages.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/pages.js') }}"></script>
 {% endblock %}

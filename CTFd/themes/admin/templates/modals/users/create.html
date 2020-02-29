@@ -1,4 +1,4 @@
-<form id="user-info-form">
+<form id="user-info-create-form" method="POST">
 	<input type="hidden" name="id">
 	<div class="form-group">
 		<label for="name">User Name</label>
@@ -26,7 +26,7 @@
 	</div>
 	<div class="form-group">
 		<label for="affiliation">Country</label>
-		<select class="form-control" id="country-input" name="country">
+		<select class="form-control custom-select" id="country-input" name="country">
 			<option></option>
 			{% set countries = get_countries() %}
 			{% for country_code in countries.keys() %}
@@ -38,7 +38,7 @@
 	</div>
 	<div class="form-group">
 		<div class="form-check form-check-inline">
-			<select class="form-control form-inline" id="type-select" name="type">
+			<select class="form-control form-inline custom-select" id="type-select" name="type">
 				<option value="user"{% if user is defined and user.type == 'user' %} selected{% endif %}>
 					User
 				</option>

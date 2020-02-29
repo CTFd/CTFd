@@ -1,39 +1,32 @@
-from flask import (
-    current_app as app,
-    render_template,
-    request,
-    redirect,
-    url_for,
-    session,
-    Blueprint,
-)
-from itsdangerous.exc import BadTimeSignature, SignatureExpired, BadSignature
-
-from CTFd.models import db, Users, Teams
-
-from CTFd.utils import get_config, get_app_config
-from CTFd.utils.decorators import ratelimit
-from CTFd.utils import user as current_user
-from CTFd.utils import config, validators
-from CTFd.utils import email
-from CTFd.utils.security.auth import login_user, logout_user
-from CTFd.utils.crypto import verify_password
-from CTFd.utils.logging import log
-from CTFd.utils.decorators.visibility import check_registration_visibility
-from CTFd.utils.config import is_teams_mode
-from CTFd.utils.config.visibility import registration_visible
-from CTFd.utils.modes import TEAMS_MODE
-from CTFd.utils.security.signing import unserialize
-from CTFd.utils.helpers import error_for, get_errors
-
 import base64
+
 import requests
+from flask import Blueprint
+from flask import current_app as app
+from flask import redirect, render_template, request, session, url_for
+from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
+
+from CTFd.models import Teams, Users, db
+from CTFd.utils import config, email, get_app_config, get_config
+from CTFd.utils import user as current_user
+from CTFd.utils import validators
+from CTFd.utils.config import is_teams_mode
+from CTFd.utils.config.integrations import mlc_registration
+from CTFd.utils.config.visibility import registration_visible
+from CTFd.utils.crypto import verify_password
+from CTFd.utils.decorators import ratelimit
+from CTFd.utils.decorators.visibility import check_registration_visibility
+from CTFd.utils.helpers import error_for, get_errors
+from CTFd.utils.logging import log
+from CTFd.utils.modes import TEAMS_MODE
+from CTFd.utils.security.auth import login_user, logout_user
+from CTFd.utils.security.signing import unserialize
 
 auth = Blueprint("auth", __name__)
 
 
 @auth.route("/confirm", methods=["POST", "GET"])
-@auth.route("/confirm/<data>", methods=["GET"])
+@auth.route("/confirm/<data>", methods=["POST", "GET"])
 @ratelimit(method="POST", limit=10, interval=60)
 def confirm(data=None):
     if not get_config("verify_emails"):
@@ -54,6 +47,9 @@ def confirm(data=None):
             )
 
         user = Users.query.filter_by(email=user_email).first_or_404()
+        if user.verified:
+            return redirect(url_for("views.settings"))
+
         user.verified = True
         log(
             "registrations",
@@ -61,6 +57,7 @@ def confirm(data=None):
             name=user.name,
         )
         db.session.commit()
+        email.successful_registration_notification(user.email)
         db.session.close()
         if current_user.authed():
             return redirect(url_for("challenges.listing"))
@@ -98,7 +95,7 @@ def confirm(data=None):
 def reset_password(data=None):
     if data is not None:
         try:
-            name = unserialize(data, max_age=1800)
+            email_address = unserialize(data, max_age=1800)
         except (BadTimeSignature, SignatureExpired):
             return render_template(
                 "reset_password.html", errors=["Your link has expired"]
@@ -111,20 +108,36 @@ def reset_password(data=None):
         if request.method == "GET":
             return render_template("reset_password.html", mode="set")
         if request.method == "POST":
-            user = Users.query.filter_by(name=name).first_or_404()
-            user.password = request.form["password"].strip()
+            password = request.form.get("password", "").strip()
+            user = Users.query.filter_by(email=email_address).first_or_404()
+            if user.oauth_id:
+                return render_template(
+                    "reset_password.html",
+                    errors=[
+                        "Your account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
+                    ],
+                )
+
+            pass_short = len(password) == 0
+            if pass_short:
+                return render_template(
+                    "reset_password.html", errors=["Please pick a longer password"]
+                )
+
+            user.password = password
             db.session.commit()
             log(
                 "logins",
                 format="[{date}] {ip} -  successful password reset for {name}",
-                name=name,
+                name=user.name,
             )
             db.session.close()
+            email.password_change_alert(user.email)
             return redirect(url_for("auth.login"))
 
     if request.method == "POST":
         email_address = request.form["email"].strip()
-        team = Users.query.filter_by(email=email_address).first()
+        user = Users.query.filter_by(email=email_address).first()
 
         get_errors()
 
@@ -134,7 +147,7 @@ def reset_password(data=None):
                 errors=["Email could not be sent due to server misconfiguration"],
             )
 
-        if not team:
+        if not user:
             return render_template(
                 "reset_password.html",
                 errors=[
@@ -142,7 +155,15 @@ def reset_password(data=None):
                 ],
             )
 
-        email.forgot_password(email_address, team.name)
+        if user.oauth_id:
+            return render_template(
+                "reset_password.html",
+                errors=[
+                    "The email address associated with this account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
+                ],
+            )
+
+        email.forgot_password(email_address)
 
         return render_template(
             "reset_password.html",
@@ -159,9 +180,9 @@ def reset_password(data=None):
 def register():
     errors = get_errors()
     if request.method == "POST":
-        name = request.form["name"]
-        email_address = request.form["email"]
-        password = request.form["password"]
+        name = request.form.get("name", "").strip()
+        email_address = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "").strip()
 
         name_len = len(name) == 0
         names = Users.query.add_columns("name", "id").filter_by(name=name).first()
@@ -170,9 +191,9 @@ def register():
             .filter_by(email=email_address)
             .first()
         )
-        pass_short = len(password.strip()) == 0
+        pass_short = len(password) == 0
         pass_long = len(password) > 128
-        valid_email = validators.validate_email(request.form["email"])
+        valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
 
         if not valid_email:
@@ -206,11 +227,7 @@ def register():
             )
         else:
             with app.app_context():
-                user = Users(
-                    name=name.strip(),
-                    email=email_address.lower(),
-                    password=password.strip(),
-                )
+                user = Users(name=name, email=email_address, password=password)
                 db.session.add(user)
                 db.session.commit()
                 db.session.flush()
@@ -231,12 +248,7 @@ def register():
                     if (
                         config.can_send_mail()
                     ):  # We want to notify the user that they have registered.
-                        email.sendmail(
-                            request.form["email"],
-                            "You've successfully registered for {}".format(
-                                get_config("ctf_name")
-                            ),
-                        )
+                        email.successful_registration_notification(user.email)
 
         log("registrations", "[{date}] {ip} - {name} registered with {email}")
         db.session.close()
@@ -373,7 +385,7 @@ def oauth_redirect():
             user = Users.query.filter_by(email=user_email).first()
             if user is None:
                 # Check if we are allowing registration before creating users
-                if registration_visible():
+                if registration_visible() or mlc_registration():
                     user = Users(
                         name=user_name,
                         email=user_email,
@@ -399,6 +411,15 @@ def oauth_redirect():
                     team = Teams(name=team_name, oauth_id=team_id, captain_id=user.id)
                     db.session.add(team)
                     db.session.commit()
+
+                team_size_limit = get_config("team_size", default=0)
+                if team_size_limit and len(team.members) >= team_size_limit:
+                    plural = "" if team_size_limit == 1 else "s"
+                    size_error = "Teams are limited to {limit} member{plural}.".format(
+                        limit=team_size_limit, plural=plural
+                    )
+                    error_for(endpoint="auth.login", message=size_error)
+                    return redirect(url_for("auth.login"))
 
                 team.members.append(user)
                 db.session.commit()

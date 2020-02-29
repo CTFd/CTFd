@@ -1,12 +1,12 @@
-from marshmallow import validate, ValidationError, pre_load
+from marshmallow import ValidationError, pre_load, validate
 from marshmallow_sqlalchemy import field_for
-from CTFd.models import ma, Users
-from CTFd.utils import get_config
-from CTFd.utils.validators import validate_country_code
-from CTFd.utils.user import is_admin, get_current_user
+
+from CTFd.models import Users, ma
+from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.email import check_email_is_whitelisted
-from CTFd.utils import string_types
+from CTFd.utils.user import get_current_user, is_admin
+from CTFd.utils.validators import validate_country_code
 
 
 class UserSchema(ma.ModelSchema):
@@ -55,6 +55,7 @@ class UserSchema(ma.ModelSchema):
         name = data.get("name")
         if name is None:
             return
+        name = name.strip()
 
         existing_user = Users.query.filter_by(name=name).first()
         current_user = get_current_user()
@@ -95,6 +96,7 @@ class UserSchema(ma.ModelSchema):
         email = data.get("email")
         if email is None:
             return
+        email = email.strip()
 
         existing_user = Users.query.filter_by(email=email).first()
         current_user = get_current_user()
