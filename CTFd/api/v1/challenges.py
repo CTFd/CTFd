@@ -108,6 +108,7 @@ class ChallengeList(Resource):
                     "type": challenge_type.name,
                     "name": challenge.name,
                     "value": challenge.value,
+                    "level": challenge.level,
                     "category": challenge.category,
                     "tags": tag_schema.dump(challenge.tags).data,
                     "competences": comp_schema.dump(challenge.competences).data,
@@ -126,6 +127,38 @@ class ChallengeList(Resource):
         challenge_class = get_chal_class(challenge_type)
         challenge = challenge_class.create(request)
         response = challenge_class.read(challenge)
+        return {"success": True, "data": response}
+
+
+@challenges_namespace.route("/level/<level_id>")
+@challenges_namespace.param("level_id", "A level id")
+class ChallengeLevel(Resource):
+    @check_challenge_visibility
+    @during_ctf_time_only
+    @require_verified_emails
+    def get(self, level_id):
+        challenges = (Challenges.query.
+                      filter(Challenges.level == level_id)).all()
+        response = []
+        tag_schema = TagSchema(view="user", many=True)
+        comp_schema = CompetenceSchema(view="user", many=True)
+        for challenge in challenges:
+            challenge_type = get_chal_class(challenge.type)
+            response.append(
+                {
+                    "id": challenge.id,
+                    "type": challenge_type.name,
+                    "name": challenge.name,
+                    "value": challenge.value,
+                    "category": challenge.category,
+                    "level": challenge.level,
+                    "tags": tag_schema.dump(challenge.tags).data,
+                    "competences": comp_schema.dump(challenge.competences).data,
+                    "template": challenge_type.templates["view"],
+                    "script": challenge_type.scripts["view"],
+                }
+            )
+        db.session.close()
         return {"success": True, "data": response}
 
 

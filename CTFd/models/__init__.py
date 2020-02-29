@@ -97,6 +97,7 @@ class Challenges(db.Model):
     competences = db.relationship("Competences",
                                   secondary=assoc_competences_chall,
                                   back_populates="challenge_id")
+    level = db.Column(db.Integer, default=0)
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
     hints = db.relationship("Hints", backref="challenge")
