@@ -27,6 +27,11 @@
 								<span class='badge badge-info challenge-tag'>{{ tag }}</span>
 							{% endfor %}
 						</div>
+						<div class="challenge-competences text-center">
+							{% for skill in competences %}
+								<span class='badge badge-info challenge-tag'>{{ skill }}</span>
+							{% endfor %}
+						</div>
 						<span class="challenge-desc">{{ description | safe }}</span>
 						<div class="challenge-hints hint-row row">
 							{% for hint in hints %}

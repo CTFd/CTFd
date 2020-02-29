@@ -20,5 +20,5 @@ shell:
 
 clean:
 	rm -rf .data
-	rm CTFd/ctfd.db
+	rm -rf CTFd/ctfd.db
 	rm -rf CTFd/uploads/*
