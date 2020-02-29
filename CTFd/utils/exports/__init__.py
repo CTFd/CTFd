@@ -248,7 +248,10 @@ def import_ctf(backup, erase=True):
                                 # We only want to apply this hack to columns that are expecting a datetime object
                                 try:
                                     direct_table = get_class_by_tablename(table.name)
-                                    is_dt_column = type(getattr(direct_table, k).type) == sqltypes.DateTime
+                                    is_dt_column = (
+                                        type(getattr(direct_table, k).type)
+                                        == sqltypes.DateTime
+                                    )
                                 except AttributeError:
                                     is_dt_column = False
 
