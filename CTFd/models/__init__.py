@@ -63,6 +63,24 @@ class Pages(db.Model):
         return "<Pages {0}>".format(self.route)
 
 
+assoc_competences_chall = db.Table("competences_chall",
+                                   db.Column("competence_id", db.Integer,
+                                             db.ForeignKey("competences.id"),
+                                             primary_key=True),
+                                   db.Column("challenge_id", db.Integer,
+                                             db.ForeignKey("challenges.id"),
+                                             primary_key=True))
+
+
+class Competences(db.Model):
+    __tablename__ = "competences"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    challenge_id = db.relationship("Challenges",
+                                   secondary=assoc_competences_chall,
+                                   back_populates="competences")
+
+
 class Challenges(db.Model):
     __tablename__ = "challenges"
     id = db.Column(db.Integer, primary_key=True)
@@ -74,7 +92,9 @@ class Challenges(db.Model):
     type = db.Column(db.String(80))
     state = db.Column(db.String(80), nullable=False, default="visible")
     requirements = db.Column(db.JSON)
-
+    competences = db.relationship("Competences",
+                                  secondary=assoc_competences_chall,
+                                  back_populates="challenge_id")
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
     hints = db.relationship("Hints", backref="challenge")
