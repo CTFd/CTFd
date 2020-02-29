@@ -125,14 +125,16 @@ export function ezToast(args) {
     });
   }
 
-  let autohide = args.autohide || false;
+  let autohide = args.autohide !== false;
+  let animation = args.animation !== false;
   let delay = args.delay || 10000; // 10 seconds
 
   $("#ezq--notifications-toast-container").prepend(obj);
 
   obj.toast({
     autohide: autohide,
-    delay: delay
+    delay: delay,
+    animation: animation
   });
   obj.toast("show");
   return obj;
