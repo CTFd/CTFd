@@ -243,11 +243,11 @@ def import_ctf(backup, erase=True):
                     # This is a hack to get SQLite to properly accept datetime values from dataset
                     # See Issue #246
                     if sqlite:
+                        direct_table = get_class_by_tablename(table.name)
                         for k, v in entry.items():
                             if isinstance(v, six.string_types):
                                 # We only want to apply this hack to columns that are expecting a datetime object
                                 try:
-                                    direct_table = get_class_by_tablename(table.name)
                                     is_dt_column = (
                                         type(getattr(direct_table, k).type)
                                         == sqltypes.DateTime
