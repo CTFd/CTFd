@@ -13,7 +13,12 @@ test:
 	yarn verify
 
 serve:
-	python serve.py
+	python3 serve.py
 
 shell:
-	python manage.py shell
+	python3 manage.py shell
+
+clean:
+	rm -rf .data
+	rm CTFd/ctfd.db
+	rm -rf CTFd/uploads/*
