@@ -11,6 +11,7 @@ from CTFd.utils import config, email, get_app_config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
 from CTFd.utils.config import is_teams_mode
+from CTFd.utils.config.integrations import mlc_registration
 from CTFd.utils.config.visibility import registration_visible
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators import ratelimit
@@ -25,7 +26,7 @@ auth = Blueprint("auth", __name__)
 
 
 @auth.route("/confirm", methods=["POST", "GET"])
-@auth.route("/confirm/<data>", methods=["GET"])
+@auth.route("/confirm/<data>", methods=["POST", "GET"])
 @ratelimit(method="POST", limit=10, interval=60)
 def confirm(data=None):
     if not get_config("verify_emails"):
@@ -46,6 +47,9 @@ def confirm(data=None):
             )
 
         user = Users.query.filter_by(email=user_email).first_or_404()
+        if user.verified:
+            return redirect(url_for("views.settings"))
+
         user.verified = True
         log(
             "registrations",
@@ -381,7 +385,7 @@ def oauth_redirect():
             user = Users.query.filter_by(email=user_email).first()
             if user is None:
                 # Check if we are allowing registration before creating users
-                if registration_visible():
+                if registration_visible() or mlc_registration():
                     user = Users(
                         name=user_name,
                         email=user_email,

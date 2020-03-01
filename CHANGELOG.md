@@ -1,3 +1,10 @@
+2.3.1 / 2020-02-17
+==================
+
+**General**
+* User confirmation emails now have the correct URL format
+
+
 2.3.0 / 2020-02-17
 ==================
 
