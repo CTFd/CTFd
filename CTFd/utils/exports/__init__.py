@@ -14,9 +14,10 @@ from datafreeze.format.fjson import JSONEncoder, JSONSerializer
 from flask import current_app as app
 from flask_migrate import upgrade
 from sqlalchemy.exc import OperationalError, ProgrammingError
+from sqlalchemy.sql import sqltypes
 
 from CTFd.cache import cache
-from CTFd.models import db
+from CTFd.models import db, get_class_by_tablename
 from CTFd.utils import get_app_config, set_config
 from CTFd.utils.migrations import (
     create_database,
@@ -242,24 +243,36 @@ def import_ctf(backup, erase=True):
                     # This is a hack to get SQLite to properly accept datetime values from dataset
                     # See Issue #246
                     if sqlite:
+                        direct_table = get_class_by_tablename(table.name)
                         for k, v in entry.items():
                             if isinstance(v, six.string_types):
-                                match = re.match(
-                                    r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v
-                                )
-                                if match:
-                                    entry[k] = datetime.datetime.strptime(
-                                        v, "%Y-%m-%dT%H:%M:%S.%f"
+                                # We only want to apply this hack to columns that are expecting a datetime object
+                                try:
+                                    is_dt_column = (
+                                        type(getattr(direct_table, k).type)
+                                        == sqltypes.DateTime
                                     )
-                                    continue
-                                match = re.match(
-                                    r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", v
-                                )
-                                if match:
-                                    entry[k] = datetime.datetime.strptime(
-                                        v, "%Y-%m-%dT%H:%M:%S"
+                                except AttributeError:
+                                    is_dt_column = False
+
+                                # If the table is expecting a datetime, we should check if the string is one and convert it
+                                if is_dt_column:
+                                    match = re.match(
+                                        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v
                                     )
-                                    continue
+                                    if match:
+                                        entry[k] = datetime.datetime.strptime(
+                                            v, "%Y-%m-%dT%H:%M:%S.%f"
+                                        )
+                                        continue
+                                    match = re.match(
+                                        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", v
+                                    )
+                                    if match:
+                                        entry[k] = datetime.datetime.strptime(
+                                            v, "%Y-%m-%dT%H:%M:%S"
+                                        )
+                                        continue
                     # From v2.0.0 to v2.1.0 requirements could have been a string or JSON because of a SQLAlchemy issue
                     # This is a hack to ensure we can still accept older exports. See #867
                     if member in (
