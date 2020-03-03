@@ -75,7 +75,7 @@ def setup():
             if theme_color and bool(theme_header) is False:
                 # Uses {{ and }} to insert curly braces while using the format method
                 css = (
-                    "<style id=\"theme-color\">\n"
+                    '<style id="theme-color">\n'
                     ":root {{--theme-color: {theme_color};}}\n"
                     ".navbar{{background-color: var(--theme-color) !important;}}\n"
                     ".jumbotron{{background-color: var(--theme-color) !important;}}\n"
