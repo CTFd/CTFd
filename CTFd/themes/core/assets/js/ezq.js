@@ -11,8 +11,7 @@ const modalTpl =
   '          <span aria-hidden="true">&times;</span>' +
   "        </button>" +
   "      </div>" +
-  '      <div class="modal-body">' +
-  "      </div>" +
+  '      <div class="modal-body">{1}</div>' +
   '      <div class="modal-footer">' +
   "      </div>" +
   "    </div>" +
@@ -58,7 +57,7 @@ const yesTpl =
   '<button type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>';
 
 export function ezAlert(args) {
-  const modal = modalTpl.format(args.title, args.body);
+  const modal = modalTpl.format(args.title, '');
   const obj = $(modal);
 
   if (typeof args.body === "string") {
@@ -141,7 +140,7 @@ export function ezToast(args) {
 }
 
 export function ezQuery(args) {
-  const modal = modalTpl.format(args.title, args.body);
+  const modal = modalTpl.format(args.title, '');
   const obj = $(modal);
 
   if (typeof args.body === "string") {
