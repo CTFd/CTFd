@@ -71,14 +71,17 @@ def setup():
             theme = request.form.get("ctf_theme", "core")
             set_config("ctf_theme", theme)
             theme_color = request.form.get("theme_color")
-            if theme_color:
+            theme_header = get_config("theme_header")
+            if theme_color and bool(theme_header) is False:
                 # Uses {{ and }} to insert curly braces while using the format method
                 css = (
+                    '<style id="theme-color">\n'
                     ":root {{--theme-color: {theme_color};}}\n"
                     ".navbar{{background-color: var(--theme-color) !important;}}\n"
                     ".jumbotron{{background-color: var(--theme-color) !important;}}\n"
+                    "</style>\n"
                 ).format(theme_color=theme_color)
-                set_config("css", css)
+                set_config("theme_header", css)
 
             # DateTime
             start = request.form.get("start")
