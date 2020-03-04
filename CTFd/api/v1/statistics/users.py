@@ -8,6 +8,7 @@ from CTFd.utils.decorators import admins_only
 
 @statistics_namespace.route("/users")
 class UserStatistics(Resource):
+    @admins_only
     def get(self):
         registered = Users.query.count()
         confirmed = Users.query.filter_by(verified=True).count()
