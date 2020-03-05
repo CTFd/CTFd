@@ -58,7 +58,7 @@ const yesTpl =
   '<button type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>';
 
 export function ezAlert(args) {
-  const modal = modalTpl.format(args.title, args.body);
+  const modal = modalTpl.format(args.title);
   const obj = $(modal);
 
   if (typeof args.body === "string") {
@@ -141,7 +141,7 @@ export function ezToast(args) {
 }
 
 export function ezQuery(args) {
-  const modal = modalTpl.format(args.title, args.body);
+  const modal = modalTpl.format(args.title);
   const obj = $(modal);
 
   if (typeof args.body === "string") {
@@ -180,9 +180,10 @@ export function ezProgressBar(args) {
   }
 
   const progress = progressTpl.format(args.width);
-  const modal = modalTpl.format(args.title, progress);
+  const modal = modalTpl.format(args.title);
 
   const obj = $(modal);
+  obj.find(".modal-body").append($(progress));
   $("main").append(obj);
 
   return obj.modal("show");
