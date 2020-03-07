@@ -1,5 +1,5 @@
 from flask import request
-from flask_restplus import Namespace, Resource
+from flask_restx import Namespace, Resource
 
 from CTFd.models import Hints, HintUnlocks, db
 from CTFd.schemas.hints import HintSchema

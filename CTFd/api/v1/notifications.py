@@ -1,5 +1,5 @@
 from flask import current_app, request
-from flask_restplus import Namespace, Resource
+from flask_restx import Namespace, Resource
 
 from CTFd.models import Notifications, db
 from CTFd.schemas.notifications import NotificationSchema

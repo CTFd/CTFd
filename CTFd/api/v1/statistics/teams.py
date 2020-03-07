@@ -1,4 +1,4 @@
-from flask_restplus import Resource
+from flask_restx import Resource
 
 from CTFd.api.v1.statistics import statistics_namespace
 from CTFd.models import Teams
