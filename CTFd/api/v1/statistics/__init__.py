@@ -1,4 +1,4 @@
-from flask_restplus import Namespace
+from flask_restx import Namespace
 
 statistics_namespace = Namespace(
     "statistics", description="Endpoint to retrieve Statistics"

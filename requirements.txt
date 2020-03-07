@@ -21,7 +21,7 @@ redis==3.3.11
 datafreeze==0.1.0
 gevent==1.4.0
 python-dotenv==0.10.3
-flask-restplus==0.13.0
+flask-restx==0.1.1
 pathlib2==2.3.5
 flask-marshmallow==0.10.1
 marshmallow-sqlalchemy==0.17.0
