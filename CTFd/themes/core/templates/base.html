@@ -81,7 +81,7 @@
 				<hr class="d-sm-flex d-md-flex d-lg-none">
 
 				<ul class="navbar-nav ml-md-auto d-block d-sm-flex d-md-flex">
-					{% if name is defined %}
+					{% if authed() %}
 						{% if type == 'admin' %}
 							<li class="nav-item">
 								<a class="nav-link" href="{{ url_for('admin.view') }}">
