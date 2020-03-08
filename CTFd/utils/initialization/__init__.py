@@ -74,6 +74,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(scores_visible=scores_visible)
     app.jinja_env.globals.update(get_mode_as_word=get_mode_as_word)
     app.jinja_env.globals.update(integrations=integrations)
+    app.jinja_env.globals.update(authed=authed)
 
 
 def init_logs(app):
