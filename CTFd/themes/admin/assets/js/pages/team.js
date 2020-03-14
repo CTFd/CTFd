@@ -225,6 +225,7 @@ $(() => {
     e.preventDefault();
     const params = $("#user-award-form").serializeJSON(true);
     params["user_id"] = $("#award-member-input").val();
+    params["team_id"] = TEAM_ID;
 
     $("#user-award-form > #results").empty();
 

@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import Awards
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
     gen_award,
+    gen_team,
     login_as_user,
     register_user,
 )
@@ -51,6 +53,49 @@ def test_api_awards_post_admin():
             assert r.get_json()["success"] is True
             r = client.post("/api/v1/awards", json="")
             assert r.status_code == 400
+    destroy_ctfd(app)
+
+
+def test_api_awards_post_admin_teams_mode():
+    """Can a user post /api/v1/awards if admin in team mode"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        with login_as_user(app, "admin") as client:
+            r = client.post(
+                "/api/v1/awards",
+                json={
+                    "name": "Name",
+                    "value": "100",
+                    "category": "Cate",
+                    "description": "Desc",
+                    "user_id": 2,
+                },
+            )
+
+            # This should fail because the user doesn't have a team
+            assert r.status_code == 400
+            assert "team_id" in r.get_json()["errors"].keys()
+            assert r.get_json()["success"] is False
+
+            gen_team(app.db)
+            r = client.post(
+                "/api/v1/awards",
+                json={
+                    "name": "Name",
+                    "value": "100",
+                    "category": "Cate",
+                    "description": "Desc",
+                    "user_id": 3,
+                },
+            )
+
+            # This should pass as we should auto determine the user's team
+            assert r.status_code == 200
+            assert r.get_json()["success"] is True
+            award = Awards.query.filter_by(id=1).first()
+            assert award.user_id == 3
+            assert award.team_id == 1
     destroy_ctfd(app)
 
 
