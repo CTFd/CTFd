@@ -21,6 +21,18 @@ class AwardList(Resource):
             team_id = req.get("team_id")
             if team_id is None:
                 user = Users.query.filter_by(id=req["user_id"]).first()
+                if user.team_id is None:
+                    return (
+                        {
+                            "success": False,
+                            "errors": {
+                                "team_id": [
+                                    "User doesn't have a team to associate award with"
+                                ]
+                            },
+                        },
+                        400,
+                    )
                 req["team_id"] = user.team_id
 
         schema = AwardSchema()
