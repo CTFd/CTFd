@@ -1,7 +1,7 @@
 -r requirements.txt
 pytest==4.4.0
 pytest-randomly==1.2.3
-coverage==4.5.2
+coverage==5.0.3
 mock==2.0.0
 flake8==3.7.7
 freezegun==0.3.11
@@ -12,7 +12,7 @@ moto==1.3.7
 bandit==1.5.1
 flask_profiler==1.7
 pytest-xdist==1.28.0
-pytest-cov==2.6.1
+pytest-cov==2.8.1
 sphinx_rtd_theme==0.4.3
 flask-debugtoolbar==0.10.1
 flake8-isort==2.8.0
