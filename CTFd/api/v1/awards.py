@@ -2,7 +2,8 @@ from flask import request
 from flask_restplus import Namespace, Resource
 
 from CTFd.cache import clear_standings
-from CTFd.models import Awards, db
+from CTFd.utils.config import is_teams_mode
+from CTFd.models import Awards, db, Users
 from CTFd.schemas.awards import AwardSchema
 from CTFd.utils.decorators import admins_only
 
@@ -14,6 +15,14 @@ class AwardList(Resource):
     @admins_only
     def post(self):
         req = request.get_json()
+
+        # Force a team_id if in team mode and unspecified
+        if is_teams_mode():
+            team_id = req.get("team_id")
+            if team_id is None:
+                user = Users.query.filter_by(id=req["user_id"]).first()
+                req["team_id"] = user.team_id
+
         schema = AwardSchema()
 
         response = schema.load(req, session=db.session)
