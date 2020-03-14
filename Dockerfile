@@ -3,13 +3,26 @@ WORKDIR /opt/CTFd
 RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads
 
 RUN apk update && \
-    apk add python python-dev linux-headers libffi-dev gcc make musl-dev py-pip mysql-client git openssl-dev
+    apk add \
+        python \
+        python-dev \
+        linux-headers \
+        libffi-dev \
+        gcc \
+        make \
+        musl-dev \
+        py-pip \
+        mysql-client \
+        git \
+        openssl-dev
 
 COPY . /opt/CTFd
 
 RUN pip install -r requirements.txt
-RUN for d in CTFd/plugins/*/requirements.txt; do \
-      [ ! -f "${d}" ] || pip install -r $d; \
+RUN for d in CTFd/plugins/*; do \
+        if [ -f "$d/requirements.txt" ]; then \
+            pip install -r $d/requirements.txt; \
+        fi; \
     done;
 
 RUN chmod +x /opt/CTFd/docker-entrypoint.sh
