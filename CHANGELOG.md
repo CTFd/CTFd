@@ -1,3 +1,31 @@
+2.3.2 / 2020-03-15
+==================
+
+**General**
+* Fix awards not being properly assigned to teams in `TEAMS_MODE`
+
+**API**
+* Set `/api/v1/statistics/users` route to be admins_only
+* When POST'ing to `/api/v1/awards`, CTFd will look up a user's team ID if `team_id` is not specified
+
+**Admin Panel**
+* Adds a setting to registration visibility to allow for MLC registration while registration is disabled
+* Fix setting theme color during the setup flow and from the Admin Panel
+
+**Themes**
+* Fixes users/admins being able to remove profile settings.
+    * Previously a bug prevented users from removing some profile settings. Now the `core` theme stores the initial value of inputs as a `data` attribute and checks for changes when updating data. This should be a temporary hack until a proper front-end framework is in place.
+* Fix `ezToast()` issue that was keeping toast messages visible indefinitely
+* Fix `modal-body` parameters in ezq.js for `ezAlert` and `ezQuery` and fix the progress bar for certain cases in `ezProgressBar`
+* Use `authed()` function to check if user is authed in `base.html`. This fixes an issue where a page could look as if the user was logged in.
+
+**Miscellaneous**
+* Fix behavior for `REVERSE_PROXY` config setting when set to a boolean instead of a string
+* Improve `Dockerfile` to run fewer commands and re-use the build cache
+* Add `make coverage` to generate an HTML coverage report
+* Update `coverage` and `pytest-cov` development dependencies
+
+
 2.3.1 / 2020-02-17
 ==================
 
