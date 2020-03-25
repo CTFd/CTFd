@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.8-alpine
 WORKDIR /opt/CTFd
 RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads
 
