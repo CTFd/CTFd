@@ -96,7 +96,7 @@ class ThemeLoader(FileSystemLoader):
             return super(ThemeLoader, self).get_source(environment, template)
 
         # Load regular theme data
-        theme = utils.get_config("ctf_theme")
+        theme = str(utils.get_config("ctf_theme"))
         template = "/".join([theme, "templates", template])
         return super(ThemeLoader, self).get_source(environment, template)
 
