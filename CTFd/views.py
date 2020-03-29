@@ -266,6 +266,7 @@ def integrations():
 
 
 @views.route("/notifications", methods=["GET"])
+@authed_only
 def notifications():
     notifications = Notifications.query.order_by(Notifications.id.desc()).all()
     return render_template("notifications.html", notifications=notifications)
