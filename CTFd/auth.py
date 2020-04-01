@@ -307,9 +307,8 @@ def login():
 
 @auth.route("/oauth")
 def oauth_login():
-    endpoint = (
-        get_app_config("OAUTH_AUTHORIZATION_ENDPOINT")
-        or get_config("oauth_authorization_endpoint")
+    endpoint = get_app_config("OAUTH_AUTHORIZATION_ENDPOINT") or get_config(
+        "oauth_authorization_endpoint"
     )
 
     if get_config("user_mode") == "teams":
@@ -330,7 +329,9 @@ def oauth_login():
         endpoint=endpoint, client_id=client_id, scope=scope, state=session["nonce"]
     )
 
-    callback_url = get_app_config("OAUTH_CALLBACK_ENDPOINT") or get_config("oauth_callback_endpoint")
+    callback_url = get_app_config("OAUTH_CALLBACK_ENDPOINT") or get_config(
+        "oauth_callback_endpoint"
+    )
     if callback_url:
         redirect_url += "&redirect_uri={callback_url}".format(callback_url=callback_url)
     return redirect(redirect_url)
@@ -347,9 +348,8 @@ def oauth_redirect():
         return redirect(url_for("auth.login"))
 
     if oauth_code:
-        url = (
-            get_app_config("OAUTH_TOKEN_ENDPOINT")
-            or get_config("oauth_token_endpoint")
+        url = get_app_config("OAUTH_TOKEN_ENDPOINT") or get_config(
+            "oauth_token_endpoint"
         )
 
         client_id = get_app_config("OAUTH_CLIENT_ID") or get_config("oauth_client_id")
@@ -367,9 +367,8 @@ def oauth_redirect():
 
         if token_request.status_code == requests.codes.ok:
             token = token_request.json()["access_token"]
-            user_url = (
-                get_app_config("OAUTH_API_ENDPOINT")
-                or get_config("oauth_api_endpoint")
+            user_url = get_app_config("OAUTH_API_ENDPOINT") or get_config(
+                "oauth_api_endpoint"
             )
 
             headers = {
@@ -395,7 +394,10 @@ def oauth_redirect():
                     db.session.add(user)
                     db.session.commit()
                 else:
-                    log("logins", "[{date}] {ip} - Public registration via OAuth blocked")
+                    log(
+                        "logins",
+                        "[{date}] {ip} - Public registration via OAuth blocked",
+                    )
                     error_for(
                         endpoint="auth.login",
                         message="Public registration is disabled. Please try again later.",
