@@ -79,7 +79,7 @@ class Config(object):
         )
         CACHE_THRESHOLD = (
             0
-        ) # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
+        )  # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
 
     """
     === SECURITY ===
