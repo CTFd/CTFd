@@ -17,7 +17,7 @@ from CTFd.models import (
     UserTokens,
     db,
 )
-from CTFd.utils import config, get_config, markdown, set_config, get_app_config
+from CTFd.utils import config, get_config, markdown, set_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
 from CTFd.utils.config import is_setup
