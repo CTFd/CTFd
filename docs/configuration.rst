@@ -141,11 +141,24 @@ Specifies whether or not to enable to server-sent events based Notifications sys
 
 OAUTH_CLIENT_ID
 ~~~~~~~~~~~~~~~
-
+OAuth client ID
 
 OAUTH_CLIENT_SECRET
 ~~~~~~~~~~~~~~~~~~~
+OAuth client secret
 
+OAUTH_CALLBACK_ENDPOINT
+~~~~~~~~~~~~~~~~~~~~~~~
+URL handling OAuth callback.
+Usually is is URL of your CTFd installation with "/redirect" path.
+
+OAUTH_PROVIDER
+~~~~~~~~~~~~~~
+Can be used to switch OAuth integration endpoints.
+Current OAuth providers:
+"mlc" - [MajorLeagueCyber](https://majorleaguecyber.org/)
+"ctftime" - [CTFtime](https://ctftime.org/)
+Default: mlc
 
 Application Level Configuration
 -------------------------------

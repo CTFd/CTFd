@@ -76,6 +76,19 @@ OAUTH_CLIENT_ID = None
 OAUTH_CLIENT_SECRET = None
 ```
 
+## CTFtime.org
+CTFd can also be integrated with [CTFtime.org](https://ctftime.org/). CTF event tracking and archive plaform.
+By registering your CTF event with CTFtime.org users can automatically login and track their team scores.
+
+To integrate with CTFtime.org, register an account, create CTF an event.
+Switch oauth provider to "ctftime" and set OAuth callback endpoint:
+```
+OAUTH_PROVIDER = "ctftime"
+OAUTH_CALLBACK_ENDPOINT = "https://your-ctfd-domain.com/redirect"
+```
+then set client ID and client secret in the relevant portion in `CTFd/config.py` or in the admin panel.
+
+
 ## Credits
  * Logo by [Laura Barbera](http://www.laurabb.com/)
  * Theme by [Christopher Thompson](https://github.com/breadchris)
