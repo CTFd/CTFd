@@ -77,7 +77,9 @@ class Config(object):
         CACHE_DIR = os.path.join(
             os.path.dirname(__file__), os.pardir, ".data", "filesystem_cache"
         )
-        CACHE_THRESHOLD = 0  # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
+        CACHE_THRESHOLD = (
+            0
+        ) # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
 
     """
     === SECURITY ===
