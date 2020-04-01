@@ -17,10 +17,11 @@ from CTFd.models import (
     UserTokens,
     db,
 )
-from CTFd.utils import config, get_config, markdown, set_config
+from CTFd.utils import config, get_config, markdown, set_config, get_app_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
 from CTFd.utils.config import is_setup
+from CTFd.utils.config.integrations import ctftime as is_ctftime_mode
 from CTFd.utils.config.pages import get_page
 from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.dates import ctf_ended, ctftime, view_after_ctf
@@ -134,8 +135,16 @@ def setup():
                 name=name, email=email, password=password, type="admin", hidden=True
             )
 
-            # Index page
+            # CTFtime Integration handled here
+            if is_ctftime_mode():
+                oauth_client_id = request.form.get("oauth_client_id")
+                oauth_client_secret = request.form.get("oauth_client_secret")
+                oauth_callback_endpoint = request.form.get("oauth_callback_endpoint")
+                set_config("oauth_client_id", oauth_client_id)
+                set_config("oauth_client_secret", oauth_client_secret)
+                set_config("oauth_callback_endpoint", oauth_callback_endpoint)
 
+            # Index page
             index = """<div class="row">
     <div class="col-md-6 offset-md-3">
         <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="themes/core/static/img/logo.png" />
@@ -252,17 +261,12 @@ def integrations():
 
         if state:
             if name == "mlc":
-                mlc_client_id = request.values.get("mlc_client_id")
-                mlc_client_secret = request.values.get("mlc_client_secret")
-                set_config("oauth_client_id", mlc_client_id)
-                set_config("oauth_client_secret", mlc_client_secret)
+                oauth_client_id = request.values.get("mlc_client_id")
+                oauth_client_secret = request.values.get("mlc_client_secret")
+                set_config("oauth_client_id", oauth_client_id)
+                set_config("oauth_client_secret", oauth_client_secret)
                 return render_template("admin/integrations.html")
-            else:
-                abort(404)
-        else:
-            abort(403)
-    else:
-        abort(403)
+    abort(403)
 
 
 @views.route("/notifications", methods=["GET"])

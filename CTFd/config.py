@@ -247,7 +247,26 @@ class Config(object):
 
     MajorLeagueCyber Integration
         Register an event at https://majorleaguecyber.org/ and use the Client ID and Client Secret here
+
+    CTFtime Integration
+        Register an event at https://ctftime.org/ and use the Client ID and Client Secret here,
+        also set
+        OAUTH_PROVIDER = "ctftime"
+        OAUTH_CALLBACK_ENDPOINT = "https://yourctfd-domain.com/redirect"
     """
+    OAUTH_PROVIDER = os.getenv("OAUTH_PROVIDER") or "mlc"
+    OAUTH_CALLBACK_ENDPOINT = os.getenv("OAUTH_CALLBACK_ENDPOINT") or ""
+
+    if OAUTH_PROVIDER == "mlc":
+        OAUTH_TOKEN_ENDPOINT = "https://auth.majorleaguecyber.org/oauth/token"
+        OAUTH_AUTHORIZATION_ENDPOINT = "https://auth.majorleaguecyber.org/oauth/authorize"
+        OAUTH_API_ENDPOINT = "https://api.majorleaguecyber.org/user"
+
+    elif OAUTH_PROVIDER == "ctftime":
+        OAUTH_TOKEN_ENDPOINT = "https://oauth.ctftime.org/token"
+        OAUTH_AUTHORIZATION_ENDPOINT = "https://oauth.ctftime.org/authorize"
+        OAUTH_API_ENDPOINT = "https://oauth.ctftime.org/user"
+
     OAUTH_CLIENT_ID = os.getenv("OAUTH_CLIENT_ID")
     OAUTH_CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET")
 

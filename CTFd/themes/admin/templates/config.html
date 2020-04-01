@@ -16,9 +16,16 @@
 				<li class="nav-item">
 					<a class="nav-link rounded-0" href="#accounts" role="tab" data-toggle="tab">Accounts</a>
 				</li>
+                {% if integrations.mlc() %}
 				<li class="nav-item">
 					<a class="nav-link rounded-0" href="#mlc" role="tab" data-toggle="tab">MajorLeagueCyber</a>
 				</li>
+                {% endif %}
+                {% if integrations.ctftime() %}
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#ictftime" role="tab" data-toggle="tab">CTFtime.org</a>
+				</li>
+                {% endif %}
 				<li class="nav-item">
 					<a class="nav-link rounded-0" href="#settings" role="tab" data-toggle="tab">Settings</a>
 				</li>
@@ -53,6 +60,8 @@
 				{% include "admin/configs/accounts.html" %}
 
 				{% include "admin/configs/mlc.html" %}
+
+                {% include "admin/configs/ctftime.html" %}
 
 				{% include "admin/configs/settings.html" %}
 

@@ -1,0 +1,44 @@
+<div role="tabpanel" class="tab-pane config-section" id="ictftime">
+	<form method="POST" autocomplete="off" class="w-100">
+
+		<div class="form-group">
+			<label>
+				Client ID
+				<small class="form-text text-muted">
+					OAuth Client ID for <a href="https://ctftime.org/">CTFtime</a> integration.
+				</small>
+			</label>
+			<input class="form-control" id='oauth_client_id' name='oauth_client_id' type='text'
+				   placeholder=""
+				   {% if oauth_client_id is defined and oauth_client_id != None %}value="{{ oauth_client_id }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Client Secret
+				<small class="form-text text-muted">
+					OAuth Client Secret for <a href="https://ctftime.org/">CTFtime.org</a> integration.
+				</small>
+			</label>
+			<input class="form-control" id='oauth_client_secret' name='oauth_client_secret' type='text'
+				   placeholder=""
+				   {% if oauth_client_secret is defined and oauth_client_secret != None %}value="{{ oauth_client_secret }}"{% endif %}>
+		</div>
+
+        <div class="form-group">
+			<label>
+				OAuth callback endpoint
+				<small class="form-text text-muted">
+					Basically, domain of your CTFd installation plus /redirect
+				</small>
+			</label>
+			<input class="form-control" id='oauth_callback_endpoint' name='oauth_callback_endpoint' type='text'
+				   placeholder=""
+				   {% if oauth_callback_endpoint is defined and oauth_callback_endpoint != None %}
+                   value="{{ oauth_callback_endpoint }}"{% endif %}>
+		</div>
+
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+</div>

@@ -83,9 +83,17 @@
 				<option value="private" {% if registration_visibility == 'private' %}selected{% endif %}>
 					Private
 				</option>
+                {% if integrations.mlc() %}
 				<option value="mlc" {% if registration_visibility == 'mlc' %}selected{% endif %}>
 					MajorLeagueCyber Only
 				</option>
+                {% endif %}
+
+                {% if integrations.ctftime() %}
+				<option value="ctftime" {% if registration_visibility == 'ctftime' %}selected{% endif %}>
+					CTFtime Only
+				</option>
+                {% endif %}
 			</select>
 		</div>
 

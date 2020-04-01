@@ -8,9 +8,16 @@
 		<div class="container">
 			<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
 			{% if team.oauth_id %}
+                {% if integrations.mlc() %}
 				<a href="https://majorleaguecyber.org/t/{{ team.name }}">
 					<h3><span class="badge badge-primary">Official</span></h3>
 				</a>
+                {% endif %}
+                {% if integrations.ctftime() %}
+				<a href="https://ctftime.org/team/{{ team.oauth_id }}">
+					<h3><span class="badge badge-primary">CTFtime</span></h3>
+				</a>
+                {% endif %}
 			{% endif %}
 			{% if team.affiliation %}
 				<h3 class="d-inline-block">

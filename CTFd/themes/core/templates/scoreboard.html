@@ -51,13 +51,27 @@
 
 									{% if standing.oauth_id %}
 										{% if get_config('user_mode') == 'teams' %}
+                                            {% if integrations.mlc() %}
 										<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
 											<span class="badge badge-primary">Official</span>
 										</a>
+                                                {% endif %}
+                                            {% if integrations.ctftime() %}
+										<a href="https://ctftime.org/team/{{ standing.oauth_id }}">
+											<span class="badge badge-primary">CTFtime</span>
+										</a>
+                                                {% endif %}
 										{% elif get_config('user_mode') == 'users' %}
+                                            {% if integrations.mlc() %}
 										<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
 											<span class="badge badge-primary">Official</span>
 										</a>
+                                            {% endif %}
+                                            {% if integrations.ctftime() %}
+										<a href="https://ctftime.org/user/{{ standing.oauth_id }}">
+											<span class="badge badge-primary">CTFtime</span>
+										</a>
+                                            {% endif %}
 										{% endif %}
 									{% endif %}
 								</a>

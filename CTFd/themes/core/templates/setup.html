@@ -217,6 +217,51 @@
 						</div>
 					</div>
 					<div class="tab-pane fade" id="integrations" role="tabpanel">
+                        {% if integrations.ctftime() %}
+						<div class="form-group">
+							<h4>CTFtime Integration</h4>
+						</div>
+
+                    	<form method="POST" autocomplete="off" class="w-100">
+		                <div class="form-group">
+			            <label>
+				            Client ID
+				            <small class="form-text text-muted">
+                                Client ID for <a href="https://ctftime.org/">CTFtime</a> integration.
+            				</small>
+            			</label>
+            			<input class="form-control" id='oauth_client_id' name='oauth_client_id' type='text'
+				            placeholder=""
+    				   {% if oauth_client_id is defined and oauth_client_id != None %}
+                               value="{{ oauth_client_id }}"{% endif %}>
+		                </div>
+
+		                <div class="form-group">
+			            <label>
+				            Client Secret
+				            <small class="form-text text-muted">
+    					        OAuth Client Secret for <a href="https://ctftime.org/">CTFtime</a> integration.
+	    			        </small>
+			            </label>
+			            <input class="form-control" id='oauth_client_secret' name='oauth_client_secret' type='text'
+				            placeholder=""
+				            {% if oauth_client_secret is defined and oauth_client_secret != None %}
+                               value="{{ oauth_client_secret }}"{% endif %}>
+		                </div>
+
+                        <div class="form-group">
+			            <label>
+				            OAuth callback endpoint
+				            <small class="form-text text-muted">
+					            Basically, URL of your CTFd installation with "/redirect" as path
+				            </small>
+			            </label>
+			            <input class="form-control" id='oauth_callback_endpoint'
+                               name='oauth_callback_endpoint' type='text' placeholder=""
+				            {% if oauth_callback_endpoint is defined and oauth_callback_endpoint != None %}
+                                value="{{ oauth_callback_endpoint }}"{% endif %}>
+	                    </div>
+                        {% else %}
 						<div class="form-group">
 							<h4>MajorLeagueCyber Integration</h4>
 							<p>
@@ -233,6 +278,7 @@
 								Setup
 							</button>
 						</div>
+                        {% endif %}
 
 						<br>
 						<hr>

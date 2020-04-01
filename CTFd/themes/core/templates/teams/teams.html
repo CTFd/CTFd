@@ -31,9 +31,16 @@
 							<span>{{ team.name | truncate(50) }}</span>
 						{% endif %}
 						{% if team.oauth_id %}
+                            {% if integrations.mlc() %}
 							<a href="https://majorleaguecyber.org/t/{{ team.name }}">
 								<span class="badge badge-primary">Official</span>
 							</a>
+                            {% endif %}
+                            {% if integrations.ctftime() %}
+							<a href="https://ctftime.org/team/{{ team.oauth_id }}">
+								<span class="badge badge-primary">CTftime</span>
+							</a>
+                            {% endif %}
 						{% endif %}
 						</td>
 						<td class="text-center" style="width: 10px;">

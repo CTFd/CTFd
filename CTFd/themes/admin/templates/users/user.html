@@ -87,9 +87,16 @@
 
 		<h2 id="team-email" class="text-center">{{ user.email }}</h2>
 		{% if user.oauth_id %}
+            {% if integrations.mlc() %}
 			<a href="https://majorleaguecyber.org/u/{{ user.name }}">
 				<h3><span class="badge badge-primary">Official</span></h3>
 			</a>
+            {% endif %}
+            {% if integrations.ctftime() %}
+			<a href="https://ctftime.org/user/{{ user.oauth_id }}">
+				<h3><span class="badge badge-primary">CTFtime</span></h3>
+			</a>
+            {% endif %}
 		{% endif %}
 
 		{% if user.team_id %}
