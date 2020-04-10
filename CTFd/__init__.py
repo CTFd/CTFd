@@ -79,11 +79,14 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
         if self.loader is None:
             raise TypeError("no loader for this environment specified")
 
+        # Add theme to the LRUCache cache key
         cache_name = name
         if name.startswith("admin/") is False:
             theme = str(utils.get_config("ctf_theme"))
             cache_name = theme + "/" + name
 
+        # Rest of this code is copied from Jinja
+        # https://github.com/pallets/jinja/blob/master/src/jinja2/environment.py#L802-L815
         cache_key = (weakref.ref(self.loader), cache_name)
         if self.cache is not None:
             template = self.cache.get(cache_key)
