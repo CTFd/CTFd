@@ -3,7 +3,7 @@ WORKDIR /opt/CTFd
 RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads
 
 RUN apk update && \
-    apk add \
+    apk add --no-cache \
         python \
         python-dev \
         linux-headers \
@@ -18,10 +18,10 @@ RUN apk update && \
 
 COPY . /opt/CTFd
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --no-cache-dir
 RUN for d in CTFd/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \
-            pip install -r $d/requirements.txt; \
+            pip install -r $d/requirements.txt --no-cache-dir; \
         fi; \
     done;
 
