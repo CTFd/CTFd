@@ -102,11 +102,13 @@ def init_logs(app):
                 open(log, "a").close()
 
         submission_log = logging.handlers.RotatingFileHandler(
-            logs["submissions"], maxBytes=10000
+            logs["submissions"], maxBytes=10485760, backupCount=5
         )
-        login_log = logging.handlers.RotatingFileHandler(logs["logins"], maxBytes=10000)
+        login_log = logging.handlers.RotatingFileHandler(
+            logs["logins"], maxBytes=10485760, backupCount=5
+        )
         registration_log = logging.handlers.RotatingFileHandler(
-            logs["registrations"], maxBytes=10000
+            logs["registrations"], maxBytes=10485760, backupCount=5
         )
 
         logger_submissions.addHandler(submission_log)
