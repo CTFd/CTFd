@@ -1,3 +1,24 @@
+2.3.3 / 2020-04-12
+==================
+
+**General**
+* Re-enable the Jinja LRU Cache for **significant speedups** when returning HTML content
+
+**API**
+* `POST /api/v1/unlocks` will no longer allow duplicate unlocks to happen
+
+**Admin Panel**
+* Makes `Account Visibility` subtext clearer by explaining the `Private` setting in Config Panel
+
+**Themes**
+* Fixes an issue with using a theme with a purely numeric name
+* Fixes issue where the scoreboard graph always said Teams regardless of mode
+
+**Miscellaneous**
+* Bump max log file size to 10 MB and fix log rotation
+* Docker image dependencies (apk & pip) are no longer cached reducing the image size slightly
+
+
 2.3.2 / 2020-03-15
 ==================
 
