@@ -95,6 +95,27 @@ def test_api_hint_unlocked():
     destroy_ctfd(app)
 
 
+def test_api_hint_double_unlock():
+    """Can a target hint be unlocked twice"""
+    app = create_ctfd()
+    with app.app_context():
+        chal = gen_challenge(app.db)
+        gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
+        register_user(app)
+        # Give user points with an award
+        gen_award(app.db, 2)
+        client = login_as_user(app)
+        r = client.get("/api/v1/hints/1")
+        assert r.status_code == 200
+        r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+        assert r.status_code == 200
+        r = client.get("/api/v1/hints/1")
+        assert r.status_code == 200
+        r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+        assert r.status_code == 400
+    destroy_ctfd(app)
+
+
 def test_api_hints_admin_access():
     """Can the users access /api/v1/hints if not admin"""
     app = create_ctfd()
