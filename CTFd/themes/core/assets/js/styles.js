@@ -2,6 +2,12 @@ import "bootstrap/dist/js/bootstrap.bundle";
 import $ from "jquery";
 
 export default () => {
+  // TODO: This is kind of a hack to mimic a React-like state construct.
+  // It should be removed once we have a real front-end framework in place.
+  $(":input").each(function() {
+    $(this).data("initial", $(this).val());
+  });
+
   $(".form-control").bind({
     focus: function() {
       $(this).removeClass("input-filled-invalid");

@@ -1,6 +1,7 @@
 import datetime
 import os
 import sys
+import weakref
 from distutils.version import StrictVersion
 
 from flask import Flask, Request
@@ -30,7 +31,7 @@ if sys.version_info[0] < 3:
     reload(sys)  # noqa: F821
     sys.setdefaultencoding("utf-8")
 
-__version__ = "2.3.1"
+__version__ = "2.3.3"
 
 
 class CTFdRequest(Request):
@@ -71,10 +72,32 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
     def __init__(self, app, **options):
         if "loader" not in options:
             options["loader"] = app.create_global_jinja_loader()
-        # Disable cache entirely so that themes can be switched (#662)
-        # If the cache is enabled, switching themes will cause odd rendering errors
-        SandboxedEnvironment.__init__(self, cache_size=0, **options)
+        SandboxedEnvironment.__init__(self, **options)
         self.app = app
+
+    def _load_template(self, name, globals):
+        if self.loader is None:
+            raise TypeError("no loader for this environment specified")
+
+        # Add theme to the LRUCache cache key
+        cache_name = name
+        if name.startswith("admin/") is False:
+            theme = str(utils.get_config("ctf_theme"))
+            cache_name = theme + "/" + name
+
+        # Rest of this code is copied from Jinja
+        # https://github.com/pallets/jinja/blob/master/src/jinja2/environment.py#L802-L815
+        cache_key = (weakref.ref(self.loader), cache_name)
+        if self.cache is not None:
+            template = self.cache.get(cache_key)
+            if template is not None and (
+                not self.auto_reload or template.is_up_to_date
+            ):
+                return template
+        template = self.loader.load(self, name, globals)
+        if self.cache is not None:
+            self.cache[cache_key] = template
+        return template
 
 
 class ThemeLoader(FileSystemLoader):
@@ -96,7 +119,7 @@ class ThemeLoader(FileSystemLoader):
             return super(ThemeLoader, self).get_source(environment, template)
 
         # Load regular theme data
-        theme = utils.get_config("ctf_theme")
+        theme = str(utils.get_config("ctf_theme"))
         template = "/".join([theme, "templates", template])
         return super(ThemeLoader, self).get_source(environment, template)
 

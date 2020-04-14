@@ -5,3 +5,10 @@ CTFd/*.db
 CTFd/uploads/**/*
 .ctfd_secret_key
 .data
+.git
+.codecov.yml
+.dockerignore
+.github
+.gitignore
+.prettierignore
+.travis.yml

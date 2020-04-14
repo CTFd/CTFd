@@ -12,7 +12,7 @@ const config = {
   responsive: true
 };
 const layout = {
-  title: "Top 10 Teams",
+  title: "Top 10 " + (window.userMode === "teams" ? "Teams" : "Users"),
   paper_bgcolor: "rgba(0,0,0,0)",
   plot_bgcolor: "rgba(0,0,0,0)",
   hovermode: "closest",
