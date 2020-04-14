@@ -1,4 +1,4 @@
-from flask import abort, request, session
+from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.cache import clear_standings
