@@ -213,7 +213,6 @@ def test_dynamic_challenge_loses_value_properly():
                 with client.session_transaction() as sess:
                     sess["id"] = team_id
                     sess["name"] = name
-                    sess["type"] = "user"
                     sess["email"] = email
                     sess["nonce"] = "fake-nonce"
 
@@ -306,7 +305,6 @@ def test_dynamic_challenge_value_isnt_affected_by_hidden_users():
                 with client.session_transaction() as sess:
                     sess["id"] = team_id
                     sess["name"] = name
-                    sess["type"] = "user"
                     sess["email"] = email
                     sess["nonce"] = "fake-nonce"
 
