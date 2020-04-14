@@ -3,10 +3,7 @@
 
 name: CTFd CI
 
-on:
-  push:
-    paths:
-    - '**.py'
+on: [push]
 
 jobs:
   build:
