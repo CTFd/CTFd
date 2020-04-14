@@ -1,5 +1,5 @@
 from flask import Blueprint, current_app
-from flask_restplus import Api
+from flask_restx import Api
 
 from CTFd.api.v1.awards import awards_namespace
 from CTFd.api.v1.challenges import challenges_namespace

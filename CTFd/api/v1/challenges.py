@@ -1,7 +1,7 @@
 import datetime
 
 from flask import abort, request, url_for
-from flask_restplus import Namespace, Resource
+from flask_restx import Namespace, Resource
 from sqlalchemy.sql import and_
 
 from CTFd.cache import clear_standings
