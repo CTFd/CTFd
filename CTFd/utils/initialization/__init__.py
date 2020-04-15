@@ -38,7 +38,7 @@ from CTFd.utils.plugins import (
 )
 from CTFd.utils.security.auth import login_user, logout_user, lookup_user_token
 from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils.user import authed, get_current_team, get_current_user, get_ip
+from CTFd.utils.user import authed, get_current_team, get_current_user, get_ip, is_admin
 
 
 def init_template_filters(app):
@@ -75,6 +75,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_mode_as_word=get_mode_as_word)
     app.jinja_env.globals.update(integrations=integrations)
     app.jinja_env.globals.update(authed=authed)
+    app.jinja_env.globals.update(is_admin=is_admin)
 
 
 def init_logs(app):
