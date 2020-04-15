@@ -16,6 +16,7 @@ from flask_migrate import upgrade
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.sql import sqltypes
 
+from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
 from CTFd.models import db, get_class_by_tablename
 from CTFd.utils import get_app_config, set_config
@@ -348,3 +349,4 @@ def import_ctf(backup, erase=True):
 
     # Set default theme in case the current instance or the import does not provide it
     set_config("ctf_theme", "core")
+    set_config("ctf_version", CTFD_VERSION)
