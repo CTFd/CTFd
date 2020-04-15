@@ -72,7 +72,6 @@ def test_oauth_configured_flow():
         with client.session_transaction() as sess:
             assert sess["id"]
             assert sess["name"]
-            assert sess["type"]
             assert sess["email"]
             assert sess["nonce"]
     destroy_ctfd(app)

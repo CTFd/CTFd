@@ -13,7 +13,7 @@ from CTFd.utils.decorators.visibility import (
     check_account_visibility,
     check_score_visibility,
 )
-from CTFd.utils.user import get_current_team, is_admin
+from CTFd.utils.user import get_current_team, get_current_user_type, is_admin
 
 teams_namespace = Namespace("teams", description="Endpoint to retrieve Teams")
 
@@ -23,7 +23,8 @@ class TeamList(Resource):
     @check_account_visibility
     def get(self):
         teams = Teams.query.filter_by(hidden=False, banned=False)
-        view = copy.deepcopy(TeamSchema.views.get(session.get("type", "user")))
+        user_type = get_current_user_type(fallback="user")
+        view = copy.deepcopy(TeamSchema.views.get(user_type))
         view.remove("members")
         response = TeamSchema(view=view, many=True).dump(teams)
 
@@ -35,7 +36,8 @@ class TeamList(Resource):
     @admins_only
     def post(self):
         req = request.get_json()
-        view = TeamSchema.views.get(session.get("type", "self"))
+        user_type = get_current_user_type()
+        view = TeamSchema.views.get(user_type)
         schema = TeamSchema(view=view)
         response = schema.load(req)
 
@@ -63,7 +65,8 @@ class TeamPublic(Resource):
         if (team.banned or team.hidden) and is_admin() is False:
             abort(404)
 
-        view = TeamSchema.views.get(session.get("type", "user"))
+        user_type = get_current_user_type(fallback="user")
+        view = TeamSchema.views.get(user_type)
         schema = TeamSchema(view=view)
         response = schema.dump(team)
 

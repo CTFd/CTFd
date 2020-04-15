@@ -24,13 +24,22 @@ def get_current_team():
         return None
 
 
+def get_current_user_type(fallback=None):
+    if authed():
+        user = Users.query.filter_by(id=session["id"]).first()
+        return user.type
+    else:
+        return fallback
+
+
 def authed():
     return bool(session.get("id", False))
 
 
 def is_admin():
     if authed():
-        return session["type"] == "admin"
+        user = get_current_user()
+        return user.type == "admin"
     else:
         return False
 

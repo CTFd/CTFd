@@ -1,4 +1,4 @@
-from flask import abort, request, session
+from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.cache import clear_standings
@@ -22,7 +22,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.email import sendmail, user_created_notification
-from CTFd.utils.user import get_current_user, is_admin
+from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
 
 users_namespace = Namespace("users", description="Endpoint to retrieve Users")
 
@@ -80,7 +80,8 @@ class UserPublic(Resource):
         if (user.banned or user.hidden) and is_admin() is False:
             abort(404)
 
-        response = UserSchema(view=session.get("type", "user")).dump(user)
+        user_type = get_current_user_type(fallback="user")
+        response = UserSchema(view=user_type).dump(user)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
