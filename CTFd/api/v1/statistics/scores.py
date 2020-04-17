@@ -19,6 +19,9 @@ class ScoresDistribution(Resource):
             .first()
             .sum
         ) or 0
+        # Convert Decimal() to int in some database backends for Python 2
+        total_points = int(total_points)
+
         # Divide score by challenges to get brackets with explicit floor division
         bracket_size = total_points // challenge_count
 
