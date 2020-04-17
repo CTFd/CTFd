@@ -15,6 +15,7 @@ def test_api_hint_404():
         "/api/v1/statistics/users/{}",
         "/api/v1/configs",
         "/api/v1/statistics/challenges/solves/percentages",
+        "/api/v1/statistics/scores/distribution",
         "/api/v1/tags/{}",
         "/api/v1/pages",
         "/api/v1/files/{}",

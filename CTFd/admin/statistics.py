@@ -36,7 +36,7 @@ def statistics():
         .filter_by(state="visible")
         .first()
         .sum
-    )
+    ) or 0
 
     ip_count = Tracking.query.with_entities(Tracking.ip).distinct().count()
 
