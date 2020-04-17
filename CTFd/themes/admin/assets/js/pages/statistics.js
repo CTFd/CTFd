@@ -177,6 +177,59 @@ const graph_configs = {
         annotations
       ];
     }
+  },
+
+  "#score-distribution-graph": {
+    layout: annotations => ({
+      title: "Score Distribution",
+      xaxis: {
+        title: "Score Bracket",
+        showticklabels: true,
+        type: "category"
+      },
+      yaxis: {
+        title: "Number of {0}".format(
+          CTFd.config.userMode.charAt(0).toUpperCase() +
+            CTFd.config.userMode.slice(1)
+        )
+      },
+      annotations: annotations
+    }),
+    data: () =>
+      CTFd.fetch("/api/v1/statistics/scores/distribution").then(function(
+        response
+      ) {
+        return response.json();
+      }),
+    fn: () =>
+      "CTFd_score_distribution_" + new Date().toISOString().slice(0, 19),
+    format: response => {
+      const data = response.data.brackets;
+      const keys = [];
+      const brackets = [];
+      const sizes = [];
+
+      for (let key in data) {
+        keys.push(parseInt(key));
+      }
+      keys.sort((a, b) => a - b);
+
+      let start = "<0";
+      keys.map(key => {
+        brackets.push("{0} - {1}".format(start, key));
+        sizes.push(data[key]);
+        start = key;
+      });
+
+      return [
+        {
+          type: "bar",
+          x: brackets,
+          y: sizes,
+          orientation: "v"
+        }
+      ];
+    }
   }
 };
 

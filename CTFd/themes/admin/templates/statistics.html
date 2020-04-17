@@ -15,6 +15,7 @@
 			{% endif %}
 			<h5><b>{{ ip_count }}</b> IP addresses</h5>
 			<hr>
+			<h5><b>{{ total_points }}</b> total possible points</h5>
 			<h5><b>{{ challenge_count }}</b> challenges</h5>
 			{% if most_solved %}
 				<h5><b>{{ most_solved }}</b> has the most solves with <br>{{ solve_data[most_solved] }} solves</h5>
@@ -26,6 +27,18 @@
 
 		<div class="col-md-8">
 			<div id="solves-graph">
+				<div class="text-center">
+					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div id="score-distribution-graph">
 				<div class="text-center">
 					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
 				</div>
