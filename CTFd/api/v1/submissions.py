@@ -1,6 +1,9 @@
 from flask import request
 from flask_restx import Namespace, Resource
 
+from webargs import fields
+from webargs.flaskparser import use_args
+
 from CTFd.cache import clear_standings
 from CTFd.models import Submissions, db
 from CTFd.schemas.submissions import SubmissionSchema
@@ -13,21 +16,40 @@ submissions_namespace = Namespace(
 
 @submissions_namespace.route("")
 class SubmissionsList(Resource):
+    args = {
+        "ids": fields.DelimitedList(fields.Int()),
+        "challenge_id": fields.Int(),
+        "user_id": fields.Int(),
+        "team_id": fields.Int(),
+        "ip": fields.Str(),
+        "provided": fields.Str(),
+        "type": fields.Str(),
+    }
+
     @admins_only
-    def get(self):
-        args = request.args.to_dict()
+    @use_args(args, location="query")
+    def get(self, args):
         schema = SubmissionSchema(many=True)
-        if args:
-            submissions = Submissions.query.filter_by(**args).all()
+        ids = args.get("ids")
+        if ids:
+            query = Submissions.query.filter(Submissions.id.in_(ids)).paginate()
+            submissions = query.items
         else:
-            submissions = Submissions.query.all()
+            query = Submissions.query.filter_by(**args).paginate()
+            submissions = query.items
 
         response = schema.dump(submissions)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "success": True,
+            "data": response.data,
+            "page": query.page,
+            "pages": query.pages,
+            "total": query.total,
+        }
 
     @admins_only
     def post(self):
@@ -48,6 +70,20 @@ class SubmissionsList(Resource):
         clear_standings()
 
         return {"success": True, "data": response.data}
+
+    @admins_only
+    @use_args(args, location="query")
+    def delete(self, args):
+        ids = args.get("ids", [])
+        Submissions.query.filter(Submissions.id.in_(ids)).delete(
+            synchronize_session=False
+        )
+        db.session.commit()
+        db.session.close()
+
+        clear_standings()
+
+        return {"success": True}
 
 
 @submissions_namespace.route("/<submission_id>")
