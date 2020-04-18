@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import six
 from freezegun import freeze_time
 from mock import patch
 
@@ -304,8 +305,11 @@ def test_user_can_confirm_email(mock_smtp):
         r = client.get("http://localhost/confirm")
         assert "Need to resend the confirmation email?" in r.get_data(as_text=True)
 
-        # smtp.sendmail was called
-        mock_smtp.return_value.sendmail.assert_called()
+        # smtp send message function was called
+        if six.PY2:
+            mock_smtp.return_value.sendmail.assert_called()
+        else:
+            mock_smtp.return_value.send_message.assert_called()
 
         with client.session_transaction() as sess:
             data = {"nonce": sess.get("nonce")}
@@ -333,6 +337,9 @@ def test_user_can_confirm_email(mock_smtp):
 def test_user_can_reset_password(mock_smtp):
     """Test that a user is capable of resetting their password"""
     from email.mime.text import MIMEText
+
+    if six.PY3:
+        from email.message import EmailMessage
 
     app = create_ctfd()
     with app.app_context(), freeze_time("2012-01-14 03:21:34"):
@@ -369,7 +376,13 @@ def test_user_can_reset_password(mock_smtp):
                 "http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U"
             )
             ctf_name = get_config("ctf_name")
-            email_msg = MIMEText(msg)
+
+            if six.PY2:
+                email_msg = MIMEText(msg)
+            else:
+                email_msg = EmailMessage()
+                email_msg.set_content(msg)
+
             email_msg["Subject"] = "Password Reset Request from {ctf_name}".format(
                 ctf_name=ctf_name
             )
@@ -377,9 +390,15 @@ def test_user_can_reset_password(mock_smtp):
             email_msg["To"] = to_addr
 
             # Make sure that the reset password email is sent
-            mock_smtp.return_value.sendmail.assert_called_with(
-                from_addr, [to_addr], email_msg.as_string()
-            )
+            if six.PY2:
+                mock_smtp.return_value.sendmail.assert_called_with(
+                    from_addr, [to_addr], email_msg.as_string()
+                )
+            else:
+                mock_smtp.return_value.send_message.assert_called()
+                assert str(mock_smtp.return_value.send_message.call_args[0][0]) == str(
+                    email_msg
+                )
 
             # Get user's original password
             user = Users.query.filter_by(email="user@user.com").first()
