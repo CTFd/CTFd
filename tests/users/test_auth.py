@@ -337,6 +337,7 @@ def test_user_can_confirm_email(mock_smtp):
 def test_user_can_reset_password(mock_smtp):
     """Test that a user is capable of resetting their password"""
     from email.mime.text import MIMEText
+
     if six.PY3:
         from email.message import EmailMessage
 
@@ -395,7 +396,9 @@ def test_user_can_reset_password(mock_smtp):
                 )
             else:
                 mock_smtp.return_value.send_message.assert_called()
-                assert str(mock_smtp.return_value.send_message.call_args[0][0]) == str(email_msg)
+                assert str(mock_smtp.return_value.send_message.call_args[0][0]) == str(
+                    email_msg
+                )
 
             # Get user's original password
             user = Users.query.filter_by(email="user@user.com").first()
