@@ -407,8 +407,23 @@ $(() => {
             .then(function(response) {
               return response.json();
             })
-            .then(function(data) {
-              if (data.success) {
+            .then(function(response) {
+              if (response.success) {
+                $(".challenge-state").text(response.data.state);
+                switch (response.data.state) {
+                  case "visible":
+                    $(".challenge-state")
+                      .removeClass("badge-danger")
+                      .addClass("badge-success");
+                    break;
+                  case "hidden":
+                    $(".challenge-state")
+                      .removeClass("badge-success")
+                      .addClass("badge-danger");
+                    break;
+                  default:
+                    break;
+                }
                 ezToast({
                   title: "Success",
                   body: "Your challenge has been updated!"
