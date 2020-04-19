@@ -12,7 +12,8 @@ class APITypes(str, Enum):
 
 OPENAPI_TYPE_MAPPING = {
     "String": APITypes.STRING,
-    "Int": APITypes.INT,
+    "Integer": APITypes.INT,
+    "Boolean": APITypes.BOOLEAN,
     "DelimitedList": APITypes.STRING,
 }
 
