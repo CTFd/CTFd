@@ -8,6 +8,7 @@ from CTFd.cache import clear_standings
 from CTFd.models import Submissions, db
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import admins_only
+from CTFd.utils.helpers.api import build_endpoint_docs
 
 submissions_namespace = Namespace(
     "submissions", description="Endpoint to retrieve Submission"
@@ -17,17 +18,20 @@ submissions_namespace = Namespace(
 @submissions_namespace.route("")
 class SubmissionsList(Resource):
     args = {
-        "ids": fields.DelimitedList(fields.Int()),
-        "challenge_id": fields.Int(),
-        "user_id": fields.Int(),
-        "team_id": fields.Int(),
-        "ip": fields.Str(),
-        "provided": fields.Str(),
-        "type": fields.Str(),
+        "ids": fields.DelimitedList(
+            fields.Int(), doc="Comma seperated list of Submission IDs"
+        ),
+        "challenge_id": fields.Int(doc="The challenge ID associated with submissions"),
+        "user_id": fields.Int(doc="The user ID associated with submissions"),
+        "team_id": fields.Int(doc="The team ID associated with submissions"),
+        "ip": fields.Str(doc="The IP address associated with submissions"),
+        "provided": fields.Str(doc="The submitted value"),
+        "type": fields.Str(doc="The type of submission (e.g. correct, incorrect)"),
     }
 
     @admins_only
-    @use_args(args, location="query")
+    @use_args(args)
+    @submissions_namespace.doc(params=build_endpoint_docs(args))
     def get(self, args):
         schema = SubmissionSchema(many=True)
         ids = args.get("ids")
@@ -72,7 +76,8 @@ class SubmissionsList(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
-    @use_args(args, location="query")
+    @use_args(args)
+    @submissions_namespace.doc(params=build_endpoint_docs({"ids": args["ids"]}))
     def delete(self, args):
         ids = args.get("ids", [])
         Submissions.query.filter(Submissions.id.in_(ids)).delete(
