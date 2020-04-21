@@ -1,21 +1,4 @@
-from enum import Enum
-
-
-class APITypes(str, Enum):
-    STRING = "string"
-    INT = "int"
-    NUMBER = "number"
-    BOOLEAN = "boolean"
-    ARRAY = "array"
-    OBJECT = "object"
-
-
-OPENAPI_TYPE_MAPPING = {
-    "String": APITypes.STRING,
-    "Integer": APITypes.INT,
-    "Boolean": APITypes.BOOLEAN,
-    "DelimitedList": APITypes.STRING,
-}
+from CTFd.constants.api import OPENAPI_TYPE_MAPPING
 
 
 def build_endpoint_docs(args):
