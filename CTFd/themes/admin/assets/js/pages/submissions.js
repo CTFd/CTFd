@@ -40,6 +40,37 @@ function deleteCorrectSubmission(event) {
   });
 }
 
+function deleteSelectedSubmissions(event) {
+  let submissionIDs = $("input[data-submission-id]:checked").map(function() {
+    return $(this).data("submission-id");
+  });
+  let target = submissionIDs.length === 1 ? "submission" : "submissions";
+
+  ezQuery({
+    title: "Delete Submissions",
+    body: `Are you sure you want to delete ${submissionIDs.length} ${target}?`,
+    success: function() {
+      const reqs = [];
+      for (var subId of submissionIDs) {
+        reqs.push(CTFd.api.delete_submission({ submissionId: subId }));
+      }
+      Promise.all(reqs).then(responses => {
+        window.location.reload();
+      });
+    }
+  });
+}
+
+function toggleSubmissionSelect(event) {
+  const checked = $(this).prop("checked");
+  $(this)
+    .closest("table")
+    .find("input[data-submission-id]")
+    .prop("checked", checked);
+}
+
 $(() => {
   $(".delete-correct-submission").click(deleteCorrectSubmission);
+  $("#submissions-bulk-select").change(toggleSubmissionSelect);
+  $("#submission-delete-button").click(deleteSelectedSubmissions);
 });

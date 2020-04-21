@@ -1,4 +1,5 @@
 import "bootstrap/dist/js/bootstrap.bundle";
+import { makeSortableTables } from "core/utils";
 import $ from "jquery";
 
 export default () => {
@@ -52,6 +53,7 @@ export default () => {
       }
     });
 
+    makeSortableTables();
     $('[data-toggle="tooltip"]').tooltip();
   });
 };

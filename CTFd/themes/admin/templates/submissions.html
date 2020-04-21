@@ -14,21 +14,41 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
-			<table id="teamsboard" class=" table table-striped">
+			<div class="float-right pb-3">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-danger" id="submission-delete-button">
+						<i class="btn-fa fas fa-trash-alt"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table id="teamsboard" class="table table-striped border">
 				<thead>
 					<tr>
-						<td class="text-center"><b>ID</b></td>
-						<td><b>Team</b></td>
-						<td><b>Challenge</b></td>
-						<td><b>Type</b></td>
-						<td><b>Submission</b></td>
-						<td class="text-center"><b>Date</b></td>
-						<td class="text-center"><b>Delete</b></td>
+						<td class="d-block border-right border-bottom">
+							<div class="form-check text-center">
+								<input type="checkbox" class="form-check-input" id="submissions-bulk-select">&nbsp;
+							</div>
+						</td>
+						<th class="text-center sort-col"><b>ID</b></th>
+						<th class="sort-col"><b>Team</b></th>
+						<th class="sort-col"><b>Challenge</b></th>
+						<th class="sort-col"><b>Type</b></th>
+						<th class="sort-col"><b>Submission</b></th>
+						<th class="text-center sort-col"><b>Date</b></th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for sub in submissions %}
 					<tr>
+						<td class="d-block border-right">
+							<div class="form-check text-center">
+								<input type="checkbox" class="form-check-input" value="{{ sub.id }}" data-submission-id="{{ sub.id }}">&nbsp;
+							</div>
+						</td>
 						<td class="text-center" id="{{ sub.id }}">
 							{{ sub.id }}
 						</td>
@@ -46,12 +66,6 @@
 						</td>
 						<td class="text-center solve-time">
 							<span data-time="{{ sub.date | isoformat }}"></span>
-						</td>
-						<td class="text-center">
-							<span class="delete-correct-submission" data-toggle="tooltip"
-								  data-placement="top" title="Delete submission #{{ sub.id }}" data-submission-id="{{ sub.id }}">
-								<i class="fas fa-times"></i>
-							</span>
 						</td>
 					</tr>
 					{% endfor %}
