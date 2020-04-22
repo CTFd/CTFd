@@ -17,6 +17,7 @@
 </div>
 
 <div class="container">
+
 	<div class="row">
 		<div class="col-md-12">
 			{% if q and field %}
@@ -24,55 +25,71 @@
 			{% endif %}
 
 			<form method="GET" class="form-inline">
-					<div class="form-group col-md-2">
-						<label for="sel1" class="sr-only" >Search Field</label>
-						<select class="form-control custom-select w-100" id="sel1" name="field">
-							<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
-							<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
-							<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
-							<option value="affiliation" {% if field == 'affiliation' %}selected{% endif %}>Affiliation</option>
-							<option value="ip" {% if field == 'ip' %}selected{% endif %}>IP Address</option>
-					  </select>
-					</div>
-					<div class="form-group col-md-8">
-						<label for="team-name-search" class="sr-only">Parameter</label>
-						<input type="text" class="form-control w-100" id="team-name-search" name="q" placeholder="Search for matching user" {% if q %}value="{{q}}"{% endif %}>
-					</div>
-					<div class="form-group col-md-2">
-						<label for="team-name-search" class="sr-only">Search</label>
-						<button type="submit" class="btn btn-primary w-100"><i class="fas fa-search" aria-hidden="true"></i></button>
-					</div>
+				<div class="form-group col-md-2">
+					<label for="sel1" class="sr-only" >Search Field</label>
+					<select class="form-control custom-select w-100" id="sel1" name="field">
+						<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
+						<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
+						<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
+						<option value="affiliation" {% if field == 'affiliation' %}selected{% endif %}>Affiliation</option>
+						<option value="ip" {% if field == 'ip' %}selected{% endif %}>IP Address</option>
+					</select>
+				</div>
+				<div class="form-group col-md-8">
+					<label for="team-name-search" class="sr-only">Parameter</label>
+					<input type="text" class="form-control w-100" id="team-name-search" name="q" placeholder="Search for matching user" {% if q %}value="{{q}}"{% endif %}>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="team-name-search" class="sr-only">Search</label>
+					<button type="submit" class="btn btn-primary w-100"><i class="fas fa-search" aria-hidden="true"></i></button>
+				</div>
 			</form>
+		</div>
+	</div>
 
-			<br>
+	<hr>
 
-			<table id="teamsboard" class="table table-striped">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="float-right pb-3">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-outline-danger">
+						<i class="btn-fa fas fa-trash-alt"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table id="teamsboard" class="table table-striped border">
 				<thead>
 					<tr>
-						<td width="10px" class="text-center"><b>ID</b>
+						<td class="d-block border-right border-bottom text-center" data-checkbox>
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+							</div>
 						</td>
-						<td class="text-center"><b>User</b>
-						</td>
-						<td class="d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
-						</td>
-						<td class=""><b>Website</b>
-						</td>
-						<td class=""><b>Country</b>
-						</td>
-						<td class="text-center"><b>Admin</b>
-						</td>
-						<td class="text-center"><b>Verified</b>
-						</td>
-						<td class="text-center"><b>Hidden</b>
-						</td>
-						<td class="text-center"><b>Banned</b>
-						</td>
+						<th class="sort-col text-center"><b>ID</b></td>
+						<th class="sort-col text-center"><b>User</b></th>
+						<th class="d-md-table-cell d-lg-table-cell sort-col text-center"><b>Email</b></th>
+						<th class="sort-col"><b>Website</b></th>
+						<th class="sort-col"><b>Country</b></th>
+						<th class="sort-col text-center"><b>Admin</b></th>
+						<th class="sort-col text-center"><b>Verified</b></th>
+						<th class="sort-col text-center"><b>Hidden</b></th>
+						<th class="sort-col text-center"><b>Banned</b></th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for user in users %}
 					<tr name="{{ user.id }}" data-href="{{ url_for('admin.users_detail', user_id=user.id) }}">
-						<td class="team-id" value="{{ user.id }}">{{ user.id }}</td>
+						<td class="d-block border-right text-center" data-checkbox>
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" value="{{ user.id }}" data-account-id="{{ user.id }}">&nbsp;
+							</div>
+						</td>
+						<td class="team-id text-center" value="{{ user.id }}">{{ user.id }}</td>
 						<td class="team-name" value="{{ user.name }}">
 							<a href="{{ url_for('admin.users_detail', user_id=user.id) }}">
 								{{ user.name | truncate(32) }}
