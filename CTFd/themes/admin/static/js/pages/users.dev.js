@@ -147,7 +147,7 @@
 /******/
 /******/
 /******/ 	// add entry module to deferred list
-/******/ 	deferredModules.push(["./CTFd/themes/admin/assets/js/pages/users.js","helpers","vendor","default~pages/challenge~pages/configs~pages/editor~pages/main~pages/notifications~pages/pages~pages/~0fc9fcae"]);
+/******/ 	deferredModules.push(["./CTFd/themes/admin/assets/js/pages/users.js","helpers","vendor","default~pages/challenge~pages/challenges~pages/configs~pages/editor~pages/main~pages/notifications~p~d5a3cc0a"]);
 /******/ 	// run deferred modules when ready
 /******/ 	return checkDeferredModules();
 /******/ })
@@ -162,7 +162,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 ;
-eval("\n\n__webpack_require__(/*! ./main */ \"./CTFd/themes/admin/assets/js/pages/main.js\");\n\n//# sourceURL=webpack:///./CTFd/themes/admin/assets/js/pages/users.js?");
+eval("\n\n__webpack_require__(/*! ./main */ \"./CTFd/themes/admin/assets/js/pages/main.js\");\n\nvar _CTFd = _interopRequireDefault(__webpack_require__(/*! core/CTFd */ \"./CTFd/themes/core/assets/js/CTFd.js\"));\n\nvar _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\"));\n\nvar _ezq = __webpack_require__(/*! core/ezq */ \"./CTFd/themes/core/assets/js/ezq.js\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction deleteSelectedUsers(event) {\n  var userIDs = (0, _jquery.default)(\"input[data-user-id]:checked\").map(function () {\n    return (0, _jquery.default)(this).data(\"user-id\");\n  });\n  var target = userIDs.length === 1 ? \"user\" : \"users\";\n  (0, _ezq.ezQuery)({\n    title: \"Delete Users\",\n    body: \"Are you sure you want to delete \".concat(userIDs.length, \" \").concat(target, \"?\"),\n    success: function success() {\n      var reqs = [];\n      var _iteratorNormalCompletion = true;\n      var _didIteratorError = false;\n      var _iteratorError = undefined;\n\n      try {\n        for (var _iterator = userIDs[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {\n          var userID = _step.value;\n          reqs.push(_CTFd.default.fetch(\"/api/v1/users/\".concat(userID), {\n            method: \"DELETE\"\n          }));\n        }\n      } catch (err) {\n        _didIteratorError = true;\n        _iteratorError = err;\n      } finally {\n        try {\n          if (!_iteratorNormalCompletion && _iterator.return != null) {\n            _iterator.return();\n          }\n        } finally {\n          if (_didIteratorError) {\n            throw _iteratorError;\n          }\n        }\n      }\n\n      Promise.all(reqs).then(function (responses) {\n        window.location.reload();\n      });\n    }\n  });\n}\n\n(0, _jquery.default)(function () {\n  (0, _jquery.default)(\"#users-delete-button\").click(deleteSelectedUsers);\n});\n\n//# sourceURL=webpack:///./CTFd/themes/admin/assets/js/pages/users.js?");
 
 /***/ })
 

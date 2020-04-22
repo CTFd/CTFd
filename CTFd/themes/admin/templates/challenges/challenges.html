@@ -25,7 +25,7 @@
 					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Hide/Show Challenges">
 						<i class="btn-fa fas fa-eye"></i>
 					</button>
-					<button type="button" class="btn btn-outline-danger">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Challenges" id="challenges-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -80,4 +80,8 @@
 {% endblock %}
 
 {% block scripts %}
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/challenges.js') }}"></script>
 {% endblock %}

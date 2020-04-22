@@ -59,7 +59,7 @@
 					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Hide/Show Users">
 						<i class="btn-fa fas fa-eye"></i>
 					</button>
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Users">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Users" id="users-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -92,7 +92,7 @@
 					<tr name="{{ user.id }}" data-href="{{ url_for('admin.users_detail', user_id=user.id) }}">
 						<td class="border-right" data-checkbox>
 							<div class="form-check text-center">
-								<input type="checkbox" class="form-check-input" value="{{ user.id }}" data-account-id="{{ user.id }}">&nbsp;
+								<input type="checkbox" class="form-check-input" value="{{ user.id }}" data-user-id="{{ user.id }}">&nbsp;
 							</div>
 						</td>
 						<td class="team-id text-center" value="{{ user.id }}">{{ user.id }}</td>
