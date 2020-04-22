@@ -26,9 +26,9 @@
 			<table id="scoreboard" class="table table-striped border">
 				<thead>
 					<tr>
-						<td class="d-block border-right border-bottom text-center">
+						<td class="d-block border-right border-bottom text-center" data-checkbox>
 							<div class="form-check">
-								<input type="checkbox" class="form-check-input" id="scoreboard-bulk-select">&nbsp;
+								<input type="checkbox" class="form-check-input" id="scoreboard-bulk-select" data-checkbox-all>&nbsp;
 							</div>
 						</td>
 						<th class="sort-col text-center"><b>Place</b></th>
@@ -40,7 +40,7 @@
 				<tbody>
 				{% for standing in standings %}
 					<tr data-href="{{ generate_account_url(standing.account_id, admin=True) }}">
-						<td class="d-block border-right text-center">
+						<td class="d-block border-right text-center" data-checkbox>
 							<div class="form-check">
 								<input type="checkbox" class="form-check-input" value="{{ standing.account_id }}" data-account-id="{{ standing.account_id }}">&nbsp;
 							</div>

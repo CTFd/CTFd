@@ -61,16 +61,7 @@ function deleteSelectedSubmissions(event) {
   });
 }
 
-function toggleSubmissionSelect(event) {
-  const checked = $(this).prop("checked");
-  $(this)
-    .closest("table")
-    .find("input[data-submission-id]")
-    .prop("checked", checked);
-}
-
 $(() => {
   $(".delete-correct-submission").click(deleteCorrectSubmission);
-  $("#submissions-bulk-select").change(toggleSubmissionSelect);
   $("#submission-delete-button").click(deleteSelectedSubmissions);
 });

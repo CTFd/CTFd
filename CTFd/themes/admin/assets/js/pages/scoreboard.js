@@ -79,17 +79,8 @@ function showSelectedAccounts(event) {
   });
 }
 
-function toggleScoreboardSelect(event) {
-  const checked = $(this).prop("checked");
-  $(this)
-    .closest("table")
-    .find("input[data-account-id]")
-    .prop("checked", checked);
-}
-
 $(() => {
   $(".scoreboard-toggle").click(toggleAccount);
-  $("#scoreboard-bulk-select").click(toggleScoreboardSelect);
   $("#scoreboard-hide-button").click(hideSelectedAccounts);
   $("#scoreboard-show-button").click(showSelectedAccounts);
 });
