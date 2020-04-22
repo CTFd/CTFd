@@ -46,23 +46,24 @@ export default () => {
       return false;
     });
 
-    $("[data-checkbox]").click(function(e){
+    $("[data-checkbox]").click(function(e) {
       if ($(e.target).is("input[type=checkbox]")) {
         e.stopImmediatePropagation();
         return;
       }
-      let checkbox = $(this).find('input[type=checkbox]');
+      let checkbox = $(this).find("input[type=checkbox]");
       // Doing it this way with an event allows data-checkbox-all to work
       checkbox.click();
       e.stopImmediatePropagation();
     });
 
-    $("[data-checkbox-all]").on('click change', function(e){
+    $("[data-checkbox-all]").on("click change", function(e) {
       const checked = $(this).prop("checked");
       const idx = $(this).index() + 1;
-      $(this).closest("table")
-          .find(`tr td:nth-child(${idx}) input[type=checkbox]`)
-          .prop("checked", checked)
+      $(this)
+        .closest("table")
+        .find(`tr td:nth-child(${idx}) input[type=checkbox]`)
+        .prop("checked", checked);
       e.stopImmediatePropagation();
     });
 
