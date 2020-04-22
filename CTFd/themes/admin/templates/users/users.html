@@ -71,11 +71,11 @@
 			<table id="teamsboard" class="table table-striped border">
 				<thead>
 					<tr>
-						<td class="d-block border-right border-bottom text-center" data-checkbox>
-							<div class="form-check">
+						<th class="border-right" data-checkbox>
+							<div class="form-check text-center">
 								<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
 							</div>
-						</td>
+						</th>
 						<th class="sort-col text-center"><b>ID</b></td>
 						<th class="sort-col text-center"><b>User</b></th>
 						<th class="d-md-table-cell d-lg-table-cell sort-col text-center"><b>Email</b></th>
@@ -90,8 +90,8 @@
 				<tbody>
 					{% for user in users %}
 					<tr name="{{ user.id }}" data-href="{{ url_for('admin.users_detail', user_id=user.id) }}">
-						<td class="d-block border-right text-center" data-checkbox>
-							<div class="form-check">
+						<td class="border-right" data-checkbox>
+							<div class="form-check text-center">
 								<input type="checkbox" class="form-check-input" value="{{ user.id }}" data-account-id="{{ user.id }}">&nbsp;
 							</div>
 						</td>
