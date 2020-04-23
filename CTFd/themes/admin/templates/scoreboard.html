@@ -11,7 +11,7 @@
 		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" id="scoreboard-show-button" data-toggle="tooltip" title="Hide/Unhide Accounts">
+					<button type="button" class="btn btn-outline-secondary" id="scoreboard-edit-button" data-toggle="tooltip" title="Hide/Unhide Accounts">
 						<i class="btn-fa fas fa-eye"></i>
 					</button>
 				</div>
@@ -62,9 +62,9 @@
 						<td>{{ standing.score }}</td>
 						<td>
 							{% if standing.hidden %}
-								<span class="badge badge-danger">Hidden</span>
+								<span class="badge badge-danger">hidden</span>
 							{% else %}
-								<span class="badge badge-success">Visible</span>
+								<span class="badge badge-success">visible</span>
 							{% endif %}
 						</td>
 					</tr>
