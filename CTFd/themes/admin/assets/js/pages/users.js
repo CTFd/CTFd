@@ -28,13 +28,13 @@ function deleteSelectedUsers(event) {
   });
 }
 
-function bulkEditUsers(event){
+function bulkEditUsers(event) {
   let userIDs = $("input[data-user-id]:checked").map(function() {
     return $(this).data("user-id");
   });
 
   ezAlert({
-    title: 'Edit Users',
+    title: "Edit Users",
     body: $(`
     <form id="users-bulk-edit">
       <div class="form-group">

@@ -51,13 +51,13 @@ function toggleSelectedAccounts(accountIDs, action) {
   });
 }
 
-function bulkToggleAccounts(event){
+function bulkToggleAccounts(event) {
   let accountIDs = $("input[data-account-id]:checked").map(function() {
     return $(this).data("account-id");
   });
 
   ezAlert({
-    title: 'Toggle Visibility',
+    title: "Toggle Visibility",
     body: $(`
     <form id="scoreboard-bulk-edit">
       <div class="form-group">

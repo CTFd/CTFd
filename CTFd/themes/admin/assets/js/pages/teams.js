@@ -3,7 +3,6 @@ import CTFd from "core/CTFd";
 import $ from "jquery";
 import { ezAlert, ezQuery } from "core/ezq";
 
-
 function deleteSelectedTeams(event) {
   let teamIDs = $("input[data-team-id]:checked").map(function() {
     return $(this).data("team-id");
@@ -29,13 +28,13 @@ function deleteSelectedTeams(event) {
   });
 }
 
-function bulkEditTeams(event){
+function bulkEditTeams(event) {
   let teamIDs = $("input[data-team-id]:checked").map(function() {
     return $(this).data("team-id");
   });
 
   ezAlert({
-    title: 'Edit Teams',
+    title: "Edit Teams",
     body: $(`
     <form id="teams-bulk-edit">
       <div class="form-group">

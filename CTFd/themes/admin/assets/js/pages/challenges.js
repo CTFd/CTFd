@@ -3,7 +3,7 @@ import CTFd from "core/CTFd";
 import $ from "jquery";
 import { ezAlert, ezQuery } from "core/ezq";
 
-function deleteSelectedChallenges(event){
+function deleteSelectedChallenges(event) {
   let challengeIDs = $("input[data-challenge-id]:checked").map(function() {
     return $(this).data("challenge-id");
   });
@@ -28,13 +28,13 @@ function deleteSelectedChallenges(event){
   });
 }
 
-function bulkEditChallenges(event){
+function bulkEditChallenges(event) {
   let challengeIDs = $("input[data-challenge-id]:checked").map(function() {
     return $(this).data("challenge-id");
   });
 
   ezAlert({
-    title: 'Edit Challenges',
+    title: "Edit Challenges",
     body: $(`
     <form id="challenges-bulk-edit">
       <div class="form-group">
@@ -78,4 +78,3 @@ $(() => {
   $("#challenges-delete-button").click(deleteSelectedChallenges);
   $("#challenges-edit-button").click(bulkEditChallenges);
 });
-
