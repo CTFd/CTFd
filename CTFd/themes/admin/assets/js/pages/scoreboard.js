@@ -1,6 +1,7 @@
 import "./main";
 import CTFd from "core/CTFd";
 import $ from "jquery";
+import { ezAlert, ezQuery } from "core/ezq";
 
 const api_func = {
   users: (x, y) => CTFd.api.patch_user_public({ userId: x }, y),
@@ -37,6 +38,48 @@ function toggleAccount() {
   });
 }
 
+function toggleSelectedAccounts(accountIDs, action) {
+  const params = {
+    hidden: action === "hidden" ? true : false
+  };
+  const reqs = [];
+  for (var accId of accountIDs) {
+    reqs.push(api_func[CTFd.config.userMode](accId, params));
+  }
+  Promise.all(reqs).then(responses => {
+    window.location.reload();
+  });
+}
+
+function bulkToggleAccounts(event) {
+  let accountIDs = $("input[data-account-id]:checked").map(function() {
+    return $(this).data("account-id");
+  });
+
+  ezAlert({
+    title: "Toggle Visibility",
+    body: $(`
+    <form id="scoreboard-bulk-edit">
+      <div class="form-group">
+        <label>Visibility</label>
+        <select name="visibility" data-initial="">
+          <option value="">--</option>
+          <option value="visible">Visible</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+    </form>
+    `),
+    button: "Submit",
+    success: function() {
+      let data = $("#scoreboard-bulk-edit").serializeJSON(true);
+      let state = data.visibility;
+      toggleSelectedAccounts(accountIDs, state);
+    }
+  });
+}
+
 $(() => {
   $(".scoreboard-toggle").click(toggleAccount);
+  $("#scoreboard-edit-button").click(bulkToggleAccounts);
 });

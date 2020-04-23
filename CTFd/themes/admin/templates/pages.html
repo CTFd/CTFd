@@ -19,20 +19,40 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
-			<table id="pages" class="table table-striped">
+			<div class="float-right pb-3">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Pages" id="pages-delete-button">
+						<i class="btn-fa fas fa-trash-alt"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table id="pages" class="table table-striped border">
 				<thead>
 				<tr>
-					<td><b>Title</b></td>
-					<td><b>Route</b></td>
-					<td class="text-center"><b>Authentication</b></td>
-					<td class="text-center"><b>Hidden</b></td>
-					<td class="text-center"><b>Published</b></td>
-					<td class="text-center" width="10px"><b>Settings</b></td>
+					<th class="border-right" data-checkbox>
+						<div class="form-check text-center">
+							<input type="checkbox" class="form-check-input" id="scoreboard-bulk-select" data-checkbox-all>&nbsp;
+						</div>
+					</th>
+					<th class="sort-col text-center"><b>Title</b></th>
+					<th class="sort-col text-center"><b>Route</b></th>
+					<th class="sort-col text-center"><b>Authentication</b></th>
+					<th class="sort-col text-center"><b>Hidden</b></th>
+					<th class="sort-col text-center"><b>Published</b></th>
 				</tr>
 				</thead>
 				<tbody>
 				{% for page in pages %}
-					<tr>
+					<tr data-href="{{ url_for('admin.pages_detail', page_id=page.id) }}">
+						<td class="border-right" data-checkbox>
+							<div class="form-check text-center">
+								<input type="checkbox" class="form-check-input" value="{{ page.id }}" data-page-id="{{ page.id }}">&nbsp;
+							</div>
+						</td>
 						<td class="page-title">
 							{{ page.title }}
 						</td>
@@ -59,17 +79,6 @@
 							{% else %}
 								Published
 							{% endif %}
-						</td>
-						<td class="text-center">
-							<span class="edit-page" data-toggle="tooltip" data-placement="top"
-								  title="Edit {{ page.route }}">
-								<a class="no-decoration" href="{{ url_for('admin.pages_detail', page_id=page.id) }}"><i class="btn-fa fas fa-edit"></i></a>
-							</span>
-							<span class="delete-page" page-id="{{ page.id }}" page-route="{{ page.route }}"
-								  page-title="{{ page.title }}" data-toggle="tooltip" data-placement="top"
-								  title="Delete {{ page.route }}">
-								<i class="btn-fa fas fa-times"></i>
-							</span>
 						</td>
 					</tr>
 				{% endfor %}
