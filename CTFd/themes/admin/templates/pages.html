@@ -43,7 +43,6 @@
 					<th class="sort-col text-center"><b>Authentication</b></th>
 					<th class="sort-col text-center"><b>Hidden</b></th>
 					<th class="sort-col text-center"><b>Published</b></th>
-					<!-- <th class="sort-col text-center" width="10px"><b>Settings</b></th> -->
 				</tr>
 				</thead>
 				<tbody>
@@ -81,17 +80,6 @@
 								Published
 							{% endif %}
 						</td>
-						<!-- <td class="text-center">
-							<span class="edit-page" data-toggle="tooltip" data-placement="top"
-								  title="Edit {{ page.route }}">
-								<a class="no-decoration" href="{{ url_for('admin.pages_detail', page_id=page.id) }}"><i class="btn-fa fas fa-edit"></i></a>
-							</span>
-							<span class="delete-page" page-id="{{ page.id }}" page-route="{{ page.route }}"
-								  page-title="{{ page.title }}" data-toggle="tooltip" data-placement="top"
-								  title="Delete {{ page.route }}">
-								<i class="btn-fa fas fa-times"></i>
-							</span>
-						</td> -->
 					</tr>
 				{% endfor %}
 				</tbody>
