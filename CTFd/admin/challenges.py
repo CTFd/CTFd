@@ -9,7 +9,6 @@ from CTFd.models import Challenges, Flags, Solves
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.utils import binary_type
 from CTFd.utils.decorators import admins_only
-from CTFd.utils.helpers import get_errors
 
 
 @admin.route("/admin/challenges")
