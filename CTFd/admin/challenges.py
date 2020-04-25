@@ -15,8 +15,8 @@ from CTFd.utils.decorators import admins_only
 @admins_only
 def challenges_listing():
     q = request.args.get("q")
+    field = request.args.get("field")
     if q:
-        field = request.args.get("field")
         challenges = []
         if Challenges.__mapper__.has_property(
             field
@@ -28,14 +28,11 @@ def challenges_listing():
                 .order_by(Challenges.id.asc())
                 .all()
             )
-        return render_template(
-            "admin/challenges/challenges.html", challenges=challenges, q=q, field=field
-        )
     else:
         challenges = Challenges.query.all()
-        return render_template(
-            "admin/challenges/challenges.html", challenges=challenges
-        )
+    return render_template(
+        "admin/challenges/challenges.html", challenges=challenges, q=q, field=field
+    )
 
 
 @admin.route("/admin/challenges/<int:challenge_id>")
