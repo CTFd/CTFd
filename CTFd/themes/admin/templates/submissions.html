@@ -12,6 +12,35 @@
 </div>
 
 <div class="container">
+
+	<div class="row">
+		<div class="col-md-12">
+			{% if q and field %}
+			<h4 class="text-center">Searching for submissions with {{field}} matching {{q}}</h4>
+			{% endif %}
+
+			<form method="GET" class="form-inline">
+				<div class="form-group col-md-2">
+					<label for="sel1" class="sr-only" >Search Field</label>
+					<select class="form-control custom-select w-100" id="sel1" name="field">
+						<option value="provided" {% if field == 'provided' %}selected{% endif %}>Provided</option>
+						<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
+					</select>
+				</div>
+				<div class="form-group col-md-8">
+					<label for="team-name-search" class="sr-only">Parameter</label>
+					<input type="text" class="form-control w-100" id="team-name-search" name="q" placeholder="Search for matching submission" {% if q %}value="{{q}}"{% endif %}>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="team-name-search" class="sr-only">Search</label>
+					<button type="submit" class="btn btn-primary w-100"><i class="fas fa-search" aria-hidden="true"></i></button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<hr>
+
 	<div class="row">
 		<div class="col-md-12">
 			<div class="float-right pb-3">
@@ -37,7 +66,7 @@
 						<th class="sort-col"><b>Team</b></th>
 						<th class="sort-col"><b>Challenge</b></th>
 						<th class="sort-col"><b>Type</b></th>
-						<th class="sort-col"><b>Submission</b></th>
+						<th class="sort-col"><b>Provided</b></th>
 						<th class="text-center sort-col"><b>Date</b></th>
 					</tr>
 				</thead>
