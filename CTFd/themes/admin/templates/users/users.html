@@ -154,15 +154,17 @@
 			{% if pages > 1 %}
 			<div class="text-center">Page
 				<br>
-				{% if curr_page != 1 %}<a href="{{ url_for('admin.users_listing', page=curr_page - 1) }}">&lt;&lt;&lt;</a>{% endif %}
-				{% for page in range(1, pages + 1) %}
-					{% if curr_page != page %}
-						<a href="{{ url_for('admin.users_listing', page=page) }}">{{ page }}</a>
-					{% else %}
-						<b>{{ page }}</b>
-					{% endif %}
-				{% endfor %}
-				{% if curr_page != pages %}<a href="{{ url_for('admin.users_listing', page=curr_page + 1) }}">&gt;&gt;&gt;</a>{% endif %}
+				{% if curr_page != 1 %}
+				<a href="{{ url_for('admin.users_listing', page=curr_page - 1) }}">&lt;&lt;&lt;</a>
+				{% endif %}
+				<select class="page-select">
+					{% for page in range(1, pages + 1) %}
+					<option {% if curr_page == page %}selected{% endif %}>{{ page }}</option>
+					{% endfor %}
+				</select>
+				{% if curr_page != pages %}
+				<a href="{{ url_for('admin.users_listing', page=curr_page + 1) }}">&gt;&gt;&gt;</a>
+				{% endif %}
 			</div>
 			{% endif %}
 		</div>

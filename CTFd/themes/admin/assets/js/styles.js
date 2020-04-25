@@ -74,6 +74,12 @@ export default () => {
       }
     });
 
+    $(".page-select").change(function() {
+      let url = new URL(window.location);
+      url.searchParams.set("page", this.value);
+      window.location.href = url.toString();
+    })
+
     makeSortableTables();
     $('[data-toggle="tooltip"]').tooltip();
   });
