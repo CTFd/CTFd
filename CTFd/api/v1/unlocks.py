@@ -59,6 +59,16 @@ class UnlockList(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
+        existing = Unlocks.query.filter_by(**req).first()
+        if existing:
+            return (
+                {
+                    "success": False,
+                    "errors": {"target": "You've already unlocked this this target"},
+                },
+                400,
+            )
+
         db.session.add(response.data)
 
         award_schema = AwardSchema()

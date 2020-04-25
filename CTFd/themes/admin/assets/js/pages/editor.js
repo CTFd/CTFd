@@ -195,7 +195,7 @@ function preview_page() {
 }
 
 function upload_media() {
-  helpers.files.upload($("#media-library-upload"), function(data) {
+  helpers.files.upload($("#media-library-upload"), {}, function(data) {
     refresh_files();
   });
 }
