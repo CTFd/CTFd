@@ -20,6 +20,36 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
+			{% if q and field %}
+			<h4 class="text-center">Searching for challenges with {{field}} matching {{q}}</h4>
+			{% endif %}
+
+			<form method="GET" class="form-inline">
+				<div class="form-group col-md-2">
+					<label for="sel1" class="sr-only" >Search Field</label>
+					<select class="form-control custom-select w-100" id="sel1" name="field">
+						<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
+						<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
+						<option value="category" {% if field == 'category' %}selected{% endif %}>Category</option>
+						<option value="type" {% if field == 'type' %}selected{% endif %}>Type</option>
+					</select>
+				</div>
+				<div class="form-group col-md-8">
+					<label for="team-name-search" class="sr-only">Parameter</label>
+					<input type="text" class="form-control w-100" id="team-name-search" name="q" placeholder="Search for matching challenge" {% if q %}value="{{q}}"{% endif %}>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="team-name-search" class="sr-only">Search</label>
+					<button type="submit" class="btn btn-primary w-100"><i class="fas fa-search" aria-hidden="true"></i></button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
 					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Challenges" id="challenges-edit-button">
