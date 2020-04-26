@@ -1,5 +1,9 @@
 {% extends "admin/base.html" %}
 
+{% block stylesheets %}
+	<link rel="stylesheet" type="text/css" href="{{ url_for('views.themes', theme='admin', path='css/codemirror.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
