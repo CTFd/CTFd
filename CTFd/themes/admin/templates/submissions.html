@@ -79,13 +79,11 @@
 				{% if curr_page != 1 %}
 					<a href="?page={{ curr_page - 1 }}">&lt;&lt;&lt;</a>
 				{% endif %}
-				{% for page in range(1, page_count + 1) %}
-					{% if curr_page != page %}
-						<a href="?page={{ page }}">{{ page }}</a>
-					{% else %}
-						<b>{{ page }}</b>
-					{% endif %}
-				{% endfor %}
+				<select class="page-select">
+					{% for page in range(1, page_count + 1) %}
+					<option {% if curr_page == page %}selected{% endif %}>{{ page }}</option>
+					{% endfor %}
+				</select>
 				{% if curr_page != page_count %}
 					<a href="?page={{ curr_page + 1 }}">&gt;&gt;&gt;</a>
 				{% endif %}
