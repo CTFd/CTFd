@@ -15,8 +15,11 @@
 				<form method="POST" id="reset-ctf-form">
 					<div class="alert alert-danger" role="alert">
 						<p>
-							Resetting your CTF will delete all user and team data. Think carefully before resetting because
-							no automated backups are made and all non-challenge data is lost.
+							Resetting your CTF will delete the selected data <strong>PERMANENTLY</strong>.
+						</p>
+
+						<p>
+							Think carefully before resetting because no automated backups are made and all selected data will be lost.
 						</p>
 
 						<span>
@@ -26,6 +29,40 @@
 							</strong>
 						</span>
 					</div>
+
+					<hr>
+
+					<div class="form-check pb-1">
+						<label class="form-check-label">
+							<input class="form-check-input" type="checkbox" name="accounts"> Accounts (Users, Teams, Submissions)
+						</label>
+					</div>
+
+					<div class="form-check pb-1">
+						<label class="form-check-label">
+							<input class="form-check-input" type="checkbox" name="submissions"> Submissions (Submissions, Awards, Unlocks)
+						</label>
+					</div>
+
+					<div class="form-check pb-1">
+						<label class="form-check-label">
+							<input class="form-check-input" type="checkbox" name="challenges"> Challenges (Challenges, Flags, Hints, Tags, Hints)
+						</label>
+					</div>
+
+					<div class="form-check pb-1">
+						<label class="form-check-label">
+							<input class="form-check-input" type="checkbox" name="pages"> Pages (Pages)
+						</label>
+					</div>
+
+					<div class="form-check pb-1">
+						<label class="form-check-label">
+							<input class="form-check-input" type="checkbox" name="notifications"> Notifications (Notifications)
+						</label>
+					</div>
+
+					<br>
 
 					<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
 
