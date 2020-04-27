@@ -2,10 +2,9 @@ from flask import render_template, request, url_for
 from sqlalchemy.sql import not_
 
 from CTFd.admin import admin
-from CTFd.models import Challenges, Tracking, Users, db
+from CTFd.models import Challenges, Tracking, Users
 from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only
-from CTFd.utils.helpers import get_errors
 from CTFd.utils.modes import TEAMS_MODE
 
 
