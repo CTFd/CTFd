@@ -8,7 +8,7 @@ import { default as helpers } from "core/helpers";
 import $ from "jquery";
 import { ezQuery, ezProgressBar } from "core/ezq";
 import CodeMirror from "codemirror";
-import 'codemirror/mode/htmlmixed/htmlmixed.js';
+import "codemirror/mode/htmlmixed/htmlmixed.js";
 
 function loadTimestamp(place, timestamp) {
   if (typeof timestamp == "string") {
@@ -235,25 +235,19 @@ function insertTimezones(target) {
 }
 
 $(() => {
-  CodeMirror.fromTextArea(
-    document.getElementById("theme-header"),
-    {
-      lineNumbers: true,
-      lineWrapping: true,
-      mode: "htmlmixed",
-      htmlMode: true
-    }
-  );
+  CodeMirror.fromTextArea(document.getElementById("theme-header"), {
+    lineNumbers: true,
+    lineWrapping: true,
+    mode: "htmlmixed",
+    htmlMode: true
+  });
 
-  CodeMirror.fromTextArea(
-    document.getElementById("theme-footer"),
-    {
-      lineNumbers: true,
-      lineWrapping: true,
-      mode: "htmlmixed",
-      htmlMode: true
-    }
-  );
+  CodeMirror.fromTextArea(document.getElementById("theme-footer"), {
+    lineNumbers: true,
+    lineWrapping: true,
+    mode: "htmlmixed",
+    htmlMode: true
+  });
 
   insertTimezones($("#start-timezone"));
   insertTimezones($("#end-timezone"));

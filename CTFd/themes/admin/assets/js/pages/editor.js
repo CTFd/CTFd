@@ -4,7 +4,7 @@ import $ from "jquery";
 import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
 import CodeMirror from "codemirror";
-import 'codemirror/mode/htmlmixed/htmlmixed.js';
+import "codemirror/mode/htmlmixed/htmlmixed.js";
 import { ezQuery, ezToast } from "core/ezq";
 
 function get_filetype_icon_class(filename) {
