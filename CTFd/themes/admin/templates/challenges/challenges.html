@@ -21,7 +21,8 @@
 	<div class="row">
 		<div class="col-md-12">
 			{% if q and field %}
-			<h4 class="text-center">Searching for challenges with {{field}} matching {{q}}</h4>
+			<h5 class="text-muted text-center">Searching for challenges with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong></h5>
+			<h6 class="text-muted text-center pb-3">{{ total }} results</h6>
 			{% endif %}
 
 			<form method="GET" class="form-inline">
