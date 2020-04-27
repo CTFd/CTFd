@@ -7,6 +7,7 @@ import random
 import argparse
 
 from CTFd import create_app
+from CTFd.cache import clear_config, clear_standings, clear_pages
 from CTFd.models import (
     Users,
     Teams,
@@ -338,3 +339,7 @@ if __name__ == "__main__":
 
         db.session.commit()
         db.session.close()
+
+        clear_config()
+        clear_standings()
+        clear_pages()

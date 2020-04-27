@@ -181,6 +181,17 @@ def create_app(config="CTFd.config.Config"):
         if url.drivername.startswith("sqlite"):
             db.create_all()
             stamp_latest_revision()
+
+            # Enable foreign keys for SQLite
+            from sqlalchemy.engine import Engine
+            from sqlalchemy import event
+
+            @event.listens_for(Engine, "connect")
+            def set_sqlite_pragma(dbapi_connection, connection_record):
+                cursor = dbapi_connection.cursor()
+                cursor.execute("PRAGMA foreign_keys=ON")
+                cursor.close()
+
         else:
             # This creates tables instead of db.create_all()
             # Allows migrations to happen properly
