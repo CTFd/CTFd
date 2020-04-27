@@ -80,6 +80,24 @@ export default () => {
       window.location.href = url.toString();
     });
 
+    $(".page-prev").click(function(e) {
+      e.preventDefault();
+      let url = new URL(window.location);
+      let page = url.searchParams.get("page");
+      page = page ? page : 1;
+      url.searchParams.set("page", --page);
+      window.location.href = url.toString();
+    });
+
+    $(".page-next").click(function(e) {
+      e.preventDefault();
+      let url = new URL(window.location);
+      let page = url.searchParams.get("page");
+      page = page ? page : 1;
+      url.searchParams.set("page", ++page);
+      window.location.href = url.toString();
+    });
+
     makeSortableTables();
     $('[data-toggle="tooltip"]').tooltip();
   });
