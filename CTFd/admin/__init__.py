@@ -24,7 +24,6 @@ from CTFd.models import (
     Solves,
     Submissions,
     Teams,
-    Tracking,
     Unlocks,
     Users,
     db,
