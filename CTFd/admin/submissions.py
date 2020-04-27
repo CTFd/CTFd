@@ -48,13 +48,17 @@ def submissions_listing(submission_type):
     )
 
     args = dict(request.args)
-    args.pop('page', 1)
+    args.pop("page", 1)
 
     return render_template(
         "admin/submissions.html",
         submissions=submissions,
-        prev_page=url_for(request.endpoint, type=submission_type, **args, page=submissions.prev_num),
-        next_page=url_for(request.endpoint, type=submission_type, **args, page=submissions.next_num),
+        prev_page=url_for(
+            request.endpoint, type=submission_type, page=submissions.prev_num, **args
+        ),
+        next_page=url_for(
+            request.endpoint, type=submission_type, page=submissions.next_num, **args
+        ),
         type=submission_type,
         q=q,
         field=field,
