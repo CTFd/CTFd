@@ -4,7 +4,6 @@
 import datetime
 import hashlib
 import random
-import sys
 import argparse
 
 from CTFd import create_app
@@ -52,136 +51,6 @@ categories = [
     "Scripting",
     "Cryptography",
     "Networking",
-]
-extensions = [
-    ".doc",
-    ".log",
-    ".msg",
-    ".rtf",
-    ".txt",
-    ".wpd",
-    ".wps",
-    ".123",
-    ".csv",
-    ".dat",
-    ".db",
-    ".dll",
-    ".mdb",
-    ".pps",
-    ".ppt",
-    ".sql",
-    ".wks",
-    ".xls",
-    ".xml",
-    ".mng",
-    ".pct",
-    ".bmp",
-    ".gif",
-    ".jpe",
-    ".jpg",
-    ".png",
-    ".psd",
-    ".psp",
-    ".tif",
-    ".ai",
-    ".drw",
-    ".dxf",
-    ".eps",
-    ".ps",
-    ".svg",
-    ".3dm",
-    ".3dm",
-    ".ind",
-    ".pdf",
-    ".qxd",
-    ".qxp",
-    ".aac",
-    ".aif",
-    ".iff",
-    ".m3u",
-    ".mid",
-    ".mid",
-    ".mp3",
-    ".mpa",
-    ".ra",
-    ".ram",
-    ".wav",
-    ".wma",
-    ".3gp",
-    ".asf",
-    ".asx",
-    ".avi",
-    ".mov",
-    ".mp4",
-    ".mpg",
-    ".qt",
-    ".rm",
-    ".swf",
-    ".wmv",
-    ".asp",
-    ".css",
-    ".htm",
-    ".htm",
-    ".js",
-    ".jsp",
-    ".php",
-    ".xht",
-    ".fnt",
-    ".fon",
-    ".otf",
-    ".ttf",
-    ".8bi",
-    ".plu",
-    ".xll",
-    ".cab",
-    ".cpl",
-    ".cur",
-    ".dmp",
-    ".drv",
-    ".key",
-    ".lnk",
-    ".sys",
-    ".cfg",
-    ".ini",
-    ".reg",
-    ".app",
-    ".bat",
-    ".cgi",
-    ".com",
-    ".exe",
-    ".pif",
-    ".vb",
-    ".ws",
-    ".deb",
-    ".gz",
-    ".pkg",
-    ".rar",
-    ".sea",
-    ".sit",
-    ".sit",
-    ".zip",
-    ".bin",
-    ".hqx",
-    ".0 E",
-    ".mim",
-    ".uue",
-    ".cpp",
-    ".jav",
-    ".pl",
-    ".bak",
-    ".gho",
-    ".old",
-    ".ori",
-    ".tmp",
-    ".dmg",
-    ".iso",
-    ".toa",
-    ".vcd",
-    ".gam",
-    ".nes",
-    ".rom",
-    ".sav",
-    ".msi",
 ]
 companies = ["Corp", "Inc.", "Squad", "Team"]
 icons = [
@@ -235,7 +104,7 @@ def gen_icon():
 
 
 def gen_file():
-    return gen_word() + random.choice(extensions)
+    return fake.file_name()
 
 
 def random_date(start, end):
@@ -315,9 +184,7 @@ if __name__ == "__main__":
             if name not in used:
                 used.append(name)
                 try:
-                    user = Users(
-                        name=name, email=name + gen_email(), password="password"
-                    )
+                    user = Users(name=name, email=gen_email(), password="password")
                     user.verified = True
                     if random_chance():
                         user.affiliation = gen_affiliation()
