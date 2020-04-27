@@ -17,7 +17,7 @@ def submissions_listing(submission_type):
 
     q = request.args.get("q")
     field = request.args.get("field")
-    page = request.args.get("page", 1, type=int)
+    page = abs(request.args.get("page", 1, type=int))
 
     if q:
         submissions = []
