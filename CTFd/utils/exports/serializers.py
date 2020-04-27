@@ -1,8 +1,16 @@
 import json
 import six
 from collections import defaultdict, OrderedDict
+from datetime import datetime, date
+from decimal import Decimal
 
-from CTFd.utils.exports.encoders import JSONEncoder
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
+        if isinstance(obj, Decimal):
+            return str(obj)
 
 
 class JSONSerializer(object):
@@ -20,8 +28,9 @@ class JSONSerializer(object):
         self.buckets[path].append(result)
 
     def wrap(self, result):
-        result = OrderedDict([("count", len(result)), ("results", result)])
-        result["meta"] = {}
+        result = OrderedDict(
+            [("count", len(result)), ("results", result), ("meta", {})]
+        )
         return result
 
     def close(self):
@@ -40,5 +49,5 @@ class JSONSerializer(object):
                     except ValueError:
                         pass
 
-            data = json.dumps(result, cls=JSONEncoder, indent=2)
+            data = json.dumps(result, cls=JSONEncoder, separators=(",", ":"))
             self.fileobj.write(data.encode("utf-8"))
