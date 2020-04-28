@@ -49,7 +49,6 @@ def test_reset():
                 challenge_id=chal.id,
             )
 
-
         for x in range(10):
             user = base_user + str(x)
             user_email = user + "@ctfd.io"
@@ -69,7 +68,9 @@ def test_reset():
 
         assert Users.query.count() == 11  # 11 because of the first admin user
         assert Challenges.query.count() == 10
-        assert Files.query.count() == 15  # This should be 11 because ChallengeFiles=10 and PageFiles=5
+        assert (
+            Files.query.count() == 15
+        )  # This should be 11 because ChallengeFiles=10 and PageFiles=5
         assert Flags.query.count() == 10
         assert Hints.query.count() == 10
         assert Submissions.query.count() == 20
@@ -177,7 +178,9 @@ def test_reset_team_mode():
         # 10 random users, 40 users (10 teams * 4), 1 admin user
         assert Users.query.count() == 51
         assert Challenges.query.count() == 10
-        assert Files.query.count() == 15  # This should be 11 because ChallengeFiles=10 and PageFiles=5
+        assert (
+            Files.query.count() == 15
+        )  # This should be 11 because ChallengeFiles=10 and PageFiles=5
         assert Flags.query.count() == 10
         assert Hints.query.count() == 10
         assert Submissions.query.count() == 20
