@@ -4,6 +4,7 @@ from CTFd.models import (
     Awards,
     Challenges,
     Fails,
+    Files,
     Flags,
     Hints,
     Notifications,
@@ -22,6 +23,7 @@ from tests.helpers import (
     gen_award,
     gen_challenge,
     gen_fail,
+    gen_file,
     gen_flag,
     gen_hint,
     gen_solve,
@@ -41,6 +43,12 @@ def test_reset():
             chal = gen_challenge(app.db, name="chal_name{}".format(x))
             gen_flag(app.db, challenge_id=chal.id, content="flag")
             gen_hint(app.db, challenge_id=chal.id)
+            gen_file(
+                app.db,
+                location="{name}/{name}.file".format(name=chal.name),
+                challenge_id=chal.id,
+            )
+
 
         for x in range(10):
             user = base_user + str(x)
@@ -51,8 +59,17 @@ def test_reset():
             gen_fail(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
             gen_tracking(app.db, user_id=user_obj.id)
 
+        # Add PageFiles
+        for x in range(5):
+            gen_file(
+                app.db,
+                location="page_file{name}/page_file{name}.file".format(name=x),
+                page_id=1,
+            )
+
         assert Users.query.count() == 11  # 11 because of the first admin user
         assert Challenges.query.count() == 10
+        assert Files.query.count() == 15  # This should be 11 because ChallengeFiles=10 and PageFiles=5
         assert Flags.query.count() == 10
         assert Hints.query.count() == 10
         assert Submissions.query.count() == 20
@@ -83,6 +100,7 @@ def test_reset():
         assert Users.query.count() == 11
         assert Challenges.query.count() == 10
         assert Tracking.query.count() == 11
+        assert Files.query.count() == 10
 
         with client.session_transaction() as sess:
             data = {"nonce": sess.get("nonce"), "notifications": "on"}
@@ -100,6 +118,7 @@ def test_reset():
         assert Challenges.query.count() == 0
         assert Flags.query.count() == 0
         assert Hints.query.count() == 0
+        assert Files.query.count() == 0
         assert Tags.query.count() == 0
         assert Users.query.count() == 11
         assert Tracking.query.count() == 11
@@ -125,6 +144,11 @@ def test_reset_team_mode():
             chal = gen_challenge(app.db, name="chal_name{}".format(x))
             gen_flag(app.db, challenge_id=chal.id, content="flag")
             gen_hint(app.db, challenge_id=chal.id)
+            gen_file(
+                app.db,
+                location="{name}/{name}.file".format(name=chal.name),
+                challenge_id=chal.id,
+            )
 
         for x in range(10):
             user = base_user + str(x)
@@ -141,10 +165,21 @@ def test_reset_team_mode():
             gen_fail(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
             gen_tracking(app.db, user_id=user_obj.id)
 
+        # Add PageFiles
+        for x in range(5):
+            gen_file(
+                app.db,
+                location="page_file{name}/page_file{name}.file".format(name=x),
+                page_id=1,
+            )
+
         assert Teams.query.count() == 10
         # 10 random users, 40 users (10 teams * 4), 1 admin user
         assert Users.query.count() == 51
         assert Challenges.query.count() == 10
+        assert Files.query.count() == 15  # This should be 11 because ChallengeFiles=10 and PageFiles=5
+        assert Flags.query.count() == 10
+        assert Hints.query.count() == 10
         assert Submissions.query.count() == 20
         assert Solves.query.count() == 10
         assert Fails.query.count() == 10
@@ -176,6 +211,7 @@ def test_reset_team_mode():
         assert Users.query.count() == 51
         assert Challenges.query.count() == 10
         assert Tracking.query.count() == 11
+        assert Files.query.count() == 10
 
         with client.session_transaction() as sess:
             data = {"nonce": sess.get("nonce"), "notifications": "on"}
@@ -194,6 +230,7 @@ def test_reset_team_mode():
         assert Challenges.query.count() == 0
         assert Flags.query.count() == 0
         assert Hints.query.count() == 0
+        assert Files.query.count() == 0
         assert Tags.query.count() == 0
         assert Teams.query.count() == 10
         assert Users.query.count() == 51
