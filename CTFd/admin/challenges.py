@@ -3,7 +3,6 @@ import os
 import six
 from flask import current_app as app
 from flask import render_template, render_template_string, request, url_for
-from flask_sqlalchemy import Pagination
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Flags, Solves
