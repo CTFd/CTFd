@@ -79,20 +79,6 @@ def test_reset():
         client = login_as_user(app, name="admin", password="password")
 
         with client.session_transaction() as sess:
-            data = {"nonce": sess.get("nonce"), "submissions": "on"}
-            r = client.post("/admin/reset", data=data)
-            assert r.location.endswith("/admin/statistics")
-        assert Submissions.query.count() == 0
-        assert Solves.query.count() == 0
-        assert Fails.query.count() == 0
-        assert Awards.query.count() == 0
-        assert Unlocks.query.count() == 0
-        assert Users.query.count() == 11
-        assert Challenges.query.count() == 10
-        assert Flags.query.count() == 10
-        assert Tracking.query.count() == 11
-
-        with client.session_transaction() as sess:
             data = {"nonce": sess.get("nonce"), "pages": "on"}
             r = client.post("/admin/reset", data=data)
             assert r.location.endswith("/admin/statistics")
@@ -122,6 +108,20 @@ def test_reset():
         assert Tags.query.count() == 0
         assert Users.query.count() == 11
         assert Tracking.query.count() == 11
+
+        with client.session_transaction() as sess:
+            data = {"nonce": sess.get("nonce"), "submissions": "on"}
+            r = client.post("/admin/reset", data=data)
+            assert r.location.endswith("/admin/statistics")
+        assert Submissions.query.count() == 0
+        assert Solves.query.count() == 0
+        assert Fails.query.count() == 0
+        assert Awards.query.count() == 0
+        assert Unlocks.query.count() == 0
+        assert Users.query.count() == 11
+        assert Challenges.query.count() == 0
+        assert Flags.query.count() == 0
+        assert Tracking.query.count() == 0
 
         with client.session_transaction() as sess:
             data = {"nonce": sess.get("nonce"), "accounts": "on"}
@@ -188,21 +188,6 @@ def test_reset_team_mode():
         client = login_as_user(app, name="admin", password="password")
 
         with client.session_transaction() as sess:
-            data = {"nonce": sess.get("nonce"), "submissions": "on"}
-            r = client.post("/admin/reset", data=data)
-            assert r.location.endswith("/admin/statistics")
-        assert Submissions.query.count() == 0
-        assert Solves.query.count() == 0
-        assert Fails.query.count() == 0
-        assert Awards.query.count() == 0
-        assert Unlocks.query.count() == 0
-        assert Teams.query.count() == 10
-        assert Users.query.count() == 51
-        assert Challenges.query.count() == 10
-        assert Flags.query.count() == 10
-        assert Tracking.query.count() == 11
-
-        with client.session_transaction() as sess:
             data = {"nonce": sess.get("nonce"), "pages": "on"}
             r = client.post("/admin/reset", data=data)
             assert r.location.endswith("/admin/statistics")
@@ -235,6 +220,21 @@ def test_reset_team_mode():
         assert Teams.query.count() == 10
         assert Users.query.count() == 51
         assert Tracking.query.count() == 11
+
+        with client.session_transaction() as sess:
+            data = {"nonce": sess.get("nonce"), "submissions": "on"}
+            r = client.post("/admin/reset", data=data)
+            assert r.location.endswith("/admin/statistics")
+        assert Submissions.query.count() == 0
+        assert Solves.query.count() == 0
+        assert Fails.query.count() == 0
+        assert Awards.query.count() == 0
+        assert Unlocks.query.count() == 0
+        assert Teams.query.count() == 10
+        assert Users.query.count() == 51
+        assert Challenges.query.count() == 0
+        assert Flags.query.count() == 0
+        assert Tracking.query.count() == 0
 
         with client.session_transaction() as sess:
             data = {"nonce": sess.get("nonce"), "accounts": "on"}

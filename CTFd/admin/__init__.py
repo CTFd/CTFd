@@ -24,6 +24,7 @@ from CTFd.models import (
     Solves,
     Submissions,
     Teams,
+    Tracking,
     Unlocks,
     Users,
     db,
@@ -214,6 +215,7 @@ def reset():
             Submissions.query.delete()
             Awards.query.delete()
             Unlocks.query.delete()
+            Tracking.query.delete()
 
         if require_setup:
             set_config("setup", False)
