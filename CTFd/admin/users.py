@@ -1,75 +1,51 @@
-from flask import render_template, request
+from flask import render_template, request, url_for
 from sqlalchemy.sql import not_
 
 from CTFd.admin import admin
-from CTFd.models import Challenges, Tracking, Users, db
+from CTFd.models import Challenges, Tracking, Users
 from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only
-from CTFd.utils.helpers import get_errors
 from CTFd.utils.modes import TEAMS_MODE
 
 
 @admin.route("/admin/users")
 @admins_only
 def users_listing():
-    page = abs(request.args.get("page", 1, type=int))
     q = request.args.get("q")
-    if q:
-        field = request.args.get("field")
-        users = []
-        errors = get_errors()
-        if field == "id":
-            if q.isnumeric():
-                users = Users.query.filter(Users.id == q).order_by(Users.id.asc()).all()
-            else:
-                users = []
-                errors.append("Your ID search term is not numeric")
-        elif field == "name":
-            users = (
-                Users.query.filter(Users.name.like("%{}%".format(q)))
-                .order_by(Users.id.asc())
-                .all()
-            )
-        elif field == "email":
-            users = (
-                Users.query.filter(Users.email.like("%{}%".format(q)))
-                .order_by(Users.id.asc())
-                .all()
-            )
-        elif field == "affiliation":
-            users = (
-                Users.query.filter(Users.affiliation.like("%{}%".format(q)))
-                .order_by(Users.id.asc())
-                .all()
-            )
-        elif field == "ip":
-            users = (
-                Users.query.join(Tracking, Users.id == Tracking.user_id)
-                .filter(Tracking.ip.like("%{}%".format(q)))
-                .order_by(Users.id.asc())
-                .all()
-            )
+    field = request.args.get("field")
+    page = abs(request.args.get("page", 1, type=int))
+    filters = []
+    users = []
 
-        return render_template(
-            "admin/users/users.html",
-            users=users,
-            pages=0,
-            curr_page=None,
-            q=q,
-            field=field,
+    if q:
+        # The field exists as an exposed column
+        if Users.__mapper__.has_property(field):
+            filters.append(getattr(Users, field).like("%{}%".format(q)))
+
+    if q and field == "ip":
+        users = (
+            Users.query.join(Tracking, Users.id == Tracking.user_id)
+            .filter(Tracking.ip.like("%{}%".format(q)))
+            .order_by(Users.id.asc())
+            .paginate(page=page, per_page=50)
+        )
+    else:
+        users = (
+            Users.query.filter(*filters)
+            .order_by(Users.id.asc())
+            .paginate(page=page, per_page=50)
         )
 
-    page = abs(int(page))
-    results_per_page = 50
-    page_start = results_per_page * (page - 1)
-    page_end = results_per_page * (page - 1) + results_per_page
-
-    users = Users.query.order_by(Users.id.asc()).slice(page_start, page_end).all()
-    count = db.session.query(db.func.count(Users.id)).first()[0]
-    pages = int(count / results_per_page) + (count % results_per_page > 0)
+    args = dict(request.args)
+    args.pop("page", 1)
 
     return render_template(
-        "admin/users/users.html", users=users, pages=pages, curr_page=page
+        "admin/users/users.html",
+        users=users,
+        prev_page=url_for(request.endpoint, page=users.prev_num, **args),
+        next_page=url_for(request.endpoint, page=users.next_num, **args),
+        q=q,
+        field=field,
     )
 
 
