@@ -42,12 +42,8 @@ def users_listing():
     return render_template(
         "admin/users/users.html",
         users=users,
-        prev_page=url_for(
-            request.endpoint, page=users.prev_num, **args
-        ),
-        next_page=url_for(
-            request.endpoint, page=users.next_num, **args
-        ),
+        prev_page=url_for(request.endpoint, page=users.prev_num, **args),
+        next_page=url_for(request.endpoint, page=users.next_num, **args),
         q=q,
         field=field,
     )
