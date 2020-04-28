@@ -36,6 +36,7 @@ from CTFd.utils.exports import export_ctf as export_ctf_util
 from CTFd.utils.exports import import_ctf as import_ctf_util
 from CTFd.utils.helpers import get_errors
 from CTFd.utils.security.auth import logout_user
+from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import is_admin
 
 admin = Blueprint("admin", __name__)
@@ -185,15 +186,22 @@ def reset():
         data = request.form
 
         if data.get("pages"):
+            _pages = Pages.query.all()
+            for p in _pages:
+                for f in p.files:
+                    delete_file(file_id=f.id)
+
             Pages.query.delete()
-            # PageFiles
 
         if data.get("notifications"):
             Notifications.query.delete()
 
         if data.get("challenges"):
+            _challenges = Challenges.query.all()
+            for c in _challenges:
+                for f in c.files:
+                    delete_file(file_id=f.id)
             Challenges.query.delete()
-            # ChallengeFiles
 
         if data.get("accounts"):
             Users.query.delete()
