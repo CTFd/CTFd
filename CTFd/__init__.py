@@ -179,6 +179,18 @@ def create_app(config="CTFd.config.Config"):
 
         # Alembic sqlite support is lacking so we should just create_all anyway
         if url.drivername.startswith("sqlite"):
+            # Enable foreign keys for SQLite. This must be before the
+            # db.create_all call because tests use the in-memory SQLite
+            # database (each connection, including db creation, is a new db).
+            from sqlalchemy.engine import Engine
+            from sqlalchemy import event
+
+            @event.listens_for(Engine, "connect")
+            def set_sqlite_pragma(dbapi_connection, connection_record):
+                cursor = dbapi_connection.cursor()
+                cursor.execute("PRAGMA foreign_keys=ON")
+                cursor.close()
+
             db.create_all()
             stamp_latest_revision()
         else:
