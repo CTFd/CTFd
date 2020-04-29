@@ -48,4 +48,5 @@ def clear_pages():
 
 def clear_user_session(user_id):
     from CTFd.utils.user import get_user_type
+
     cache.delete_memoized(get_user_type, user_id=user_id)
