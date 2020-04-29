@@ -165,6 +165,27 @@ def init_request_processors(app):
                 return redirect(url_for("views.setup"))
 
     @app.before_request
+    def tracker():
+        if request.endpoint == "views.themes":
+            return
+
+        if authed():
+            track = Tracking.query.filter_by(ip=get_ip(), user_id=session["id"]).first()
+            if not track:
+                visit = Tracking(ip=get_ip(), user_id=session["id"])
+                db.session.add(visit)
+            else:
+                track.date = datetime.datetime.utcnow()
+
+            try:
+                db.session.commit()
+            except (InvalidRequestError, IntegrityError):
+                db.session.rollback()
+                logout_user()
+
+            db.session.close()
+
+    @app.before_request
     def banned():
         if request.endpoint == "views.themes":
             return
@@ -189,27 +210,6 @@ def init_request_processors(app):
                     ),
                     403,
                 )
-
-    @app.before_request
-    def tracker():
-        if request.endpoint == "views.themes":
-            return
-
-        if authed():
-            track = Tracking.query.filter_by(ip=get_ip(), user_id=session["id"]).first()
-            if not track:
-                visit = Tracking(ip=get_ip(), user_id=session["id"])
-                db.session.add(visit)
-            else:
-                track.date = datetime.datetime.utcnow()
-
-            try:
-                db.session.commit()
-            except (InvalidRequestError, IntegrityError):
-                db.session.rollback()
-                logout_user()
-
-            db.session.close()
 
     @app.before_request
     def tokens():

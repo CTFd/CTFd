@@ -48,6 +48,7 @@ def test_hidden_user_visibility():
 
         with login_as_user(app, name="hidden_user") as client:
             user = Users.query.filter_by(id=2).first()
+            user_id = user.id
             user_name = user.name
             user.hidden = True
             app.db.session.commit()
@@ -60,7 +61,7 @@ def test_hidden_user_visibility():
             response = r.get_json()
             assert user_name not in response
 
-            gen_award(app.db, user.id)
+            gen_award(app.db, user_id)
 
             r = client.get("/scoreboard")
             response = r.get_data(as_text=True)

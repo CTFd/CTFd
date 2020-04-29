@@ -59,28 +59,31 @@ def test_hidden_teams_visibility():
         register_user(app)
         with login_as_user(app) as client:
             user = Users.query.filter_by(id=2).first()
+            user_id = user.id
             team = gen_team(app.db, name="visible_team", hidden=True)
+            team_id = team.id
+            team_name = team.name
             team.members.append(user)
             user.team_id = team.id
             app.db.session.commit()
 
             r = client.get("/teams")
             response = r.get_data(as_text=True)
-            assert team.name not in response
+            assert team_name not in response
 
             r = client.get("/api/v1/teams")
             response = r.get_json()
-            assert team.name not in response
+            assert team_name not in response
 
-            gen_award(app.db, user.id, team_id=team.id)
+            gen_award(app.db, user_id, team_id=team_id)
 
             r = client.get("/scoreboard")
             response = r.get_data(as_text=True)
-            assert team.name not in response
+            assert team_name not in response
 
             r = client.get("/api/v1/scoreboard")
             response = r.get_json()
-            assert team.name not in response
+            assert team_name not in response
 
             # Team should re-appear after disabling hiding
             # Use an API call to cause a cache clear
@@ -90,15 +93,15 @@ def test_hidden_teams_visibility():
 
             r = client.get("/teams")
             response = r.get_data(as_text=True)
-            assert team.name in response
+            assert team_name in response
 
             r = client.get("/api/v1/teams")
             response = r.get_data(as_text=True)
-            assert team.name in response
+            assert team_name in response
 
             r = client.get("/api/v1/scoreboard")
             response = r.get_data(as_text=True)
-            assert team.name in response
+            assert team_name in response
     destroy_ctfd(app)
 
 
