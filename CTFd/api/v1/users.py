@@ -1,7 +1,7 @@
 from flask import abort, request
 from flask_restx import Namespace, Resource
 
-from CTFd.cache import clear_standings
+from CTFd.cache import clear_standings, clear_user_session
 from CTFd.models import (
     Awards,
     Notifications,
@@ -107,6 +107,7 @@ class UserPublic(Resource):
 
         db.session.close()
 
+        clear_user_session(user_id=user_id)
         clear_standings()
 
         return {"success": True, "data": response}
@@ -123,6 +124,7 @@ class UserPublic(Resource):
         db.session.commit()
         db.session.close()
 
+        clear_user_session(user_id=user_id)
         clear_standings()
 
         return {"success": True}
@@ -149,6 +151,7 @@ class UserPrivate(Resource):
 
         db.session.commit()
 
+        clear_user_session(user_id=user.id)
         response = schema.dump(response.data)
         db.session.close()
 
