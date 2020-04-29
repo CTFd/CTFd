@@ -4,6 +4,7 @@ import re
 from flask import current_app as app
 from flask import request, session
 
+from CTFd.cache import cache
 from CTFd.models import Fails, Users, db
 from CTFd.utils import get_config
 
@@ -32,14 +33,20 @@ def get_current_user_type(fallback=None):
         return fallback
 
 
+@cache.memoize()
+def get_user_type(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    return user.type
+
+
 def authed():
     return bool(session.get("id", False))
 
 
 def is_admin():
     if authed():
-        user = get_current_user()
-        return user.type == "admin"
+        user_type = get_user_type(user_id=session["id"])
+        return user_type == "admin"
     else:
         return False
 
