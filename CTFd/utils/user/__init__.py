@@ -4,7 +4,8 @@ import re
 from flask import current_app as app
 from flask import request, session
 
-from CTFd.models import Fails, Users, db
+from CTFd.cache import cache
+from CTFd.models import Fails, Users, db, Tracking
 from CTFd.utils import get_config
 
 
@@ -78,6 +79,15 @@ def get_ip(req=None):
     else:
         remote_addr = req.remote_addr
     return remote_addr
+
+
+def get_user_ips(user_id):
+    addrs = (
+        Tracking.query.with_entities(Tracking.ip.distinct())
+        .filter_by(user_id=user_id)
+        .all()
+    )
+    return [ip for ip, in addrs]
 
 
 def get_wrong_submissions_per_minute(account_id):

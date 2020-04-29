@@ -38,7 +38,14 @@ from CTFd.utils.plugins import (
 )
 from CTFd.utils.security.auth import login_user, logout_user, lookup_user_token
 from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils.user import authed, get_current_team, get_current_user, get_ip, is_admin
+from CTFd.utils.user import (
+    authed,
+    get_current_team,
+    get_current_user,
+    get_ip,
+    get_user_ips,
+    is_admin,
+)
 
 
 def init_template_filters(app):
@@ -170,12 +177,17 @@ def init_request_processors(app):
             return
 
         if authed():
-            track = Tracking.query.filter_by(ip=get_ip(), user_id=session["id"]).first()
-            if not track:
+            user_ips = get_user_ips(user_id=session["id"])
+            ip = get_ip()
+            if ip not in user_ips:
                 visit = Tracking(ip=get_ip(), user_id=session["id"])
                 db.session.add(visit)
             else:
-                track.date = datetime.datetime.utcnow()
+                if request.method != "GET":
+                    track = Tracking.query.filter_by(
+                        ip=get_ip(), user_id=session["id"]
+                    ).first()
+                    track.date = datetime.datetime.utcnow()
 
             try:
                 db.session.commit()
