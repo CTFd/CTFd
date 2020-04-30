@@ -5,7 +5,8 @@ from flask import current_app as app
 from flask import request, session
 
 from CTFd.cache import cache
-from CTFd.models import Fails, Users, db
+from CTFd.constants.users import UserAttrs
+from CTFd.models import Fails, Users, db, Teams
 from CTFd.utils import get_config
 
 
@@ -15,6 +16,24 @@ def get_current_user():
         return user
     else:
         return None
+
+
+def get_current_user_attrs():
+    if authed():
+        return get_user_attrs(user_id=session["id"])
+    else:
+        return None
+
+
+@cache.memoize()
+def get_user_attrs(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    if user:
+        d = {}
+        for field in UserAttrs._fields:
+            d[field] = getattr(user, field)
+        return UserAttrs(**d)
+    return user
 
 
 def get_current_team():
@@ -27,16 +46,10 @@ def get_current_team():
 
 def get_current_user_type(fallback=None):
     if authed():
-        user = Users.query.filter_by(id=session["id"]).first()
+        user = get_current_user_attrs()
         return user.type
     else:
         return fallback
-
-
-@cache.memoize()
-def get_user_type(user_id):
-    user = Users.query.filter_by(id=user_id).first()
-    return user.type
 
 
 def authed():
@@ -45,15 +58,15 @@ def authed():
 
 def is_admin():
     if authed():
-        user_type = get_user_type(user_id=session["id"])
-        return user_type == "admin"
+        user = get_current_user_attrs()
+        return user.type == "admin"
     else:
         return False
 
 
 def is_verified():
     if get_config("verify_emails"):
-        user = get_current_user()
+        user = get_current_user_attrs()
         if user:
             return user.verified
         else:
