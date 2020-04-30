@@ -58,9 +58,6 @@ def test_reset():
             gen_fail(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
             gen_tracking(app.db, user_id=user_obj.id)
 
-        print("eet")
-        print(Tracking.query.all())
-
         # Add PageFiles
         for x in range(5):
             gen_file(
