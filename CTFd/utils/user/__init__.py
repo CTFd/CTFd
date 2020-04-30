@@ -59,7 +59,7 @@ def get_team_attrs(team_id):
     if team:
         d = {}
         for field in TeamAttrs._fields:
-            d[field] = getattr(user, field)
+            d[field] = getattr(team, field)
         return TeamAttrs(**d)
     return None
 
