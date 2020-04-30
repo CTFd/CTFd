@@ -7,7 +7,7 @@ from flask import request, session
 from CTFd.cache import cache
 from CTFd.constants.users import UserAttrs
 from CTFd.constants.teams import TeamAttrs
-from CTFd.models import Fails, Users, db, Teams
+from CTFd.models import Fails, Users, db, Teams, Tracking
 from CTFd.utils import get_config
 
 

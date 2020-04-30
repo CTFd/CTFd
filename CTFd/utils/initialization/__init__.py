@@ -42,6 +42,7 @@ from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils.user import (
     authed,
     get_current_user_attrs,
+    get_current_user_ips,
     get_current_team_attrs,
     get_ip,
     is_admin,
@@ -201,7 +202,6 @@ def init_request_processors(app):
                     logout_user()
                 clear_user_ips(user_id=session["id"])
 
-            db.session.close()
 
     @app.before_request
     def banned():
