@@ -26,7 +26,7 @@ def get_current_user_attrs():
         return None
 
 
-@cache.memoize()
+@cache.memoize(timeout=30)
 def get_user_attrs(user_id):
     user = Users.query.filter_by(id=user_id).first()
     if user:
@@ -53,7 +53,7 @@ def get_current_team_attrs():
     return None
 
 
-@cache.memoize()
+@cache.memoize(timeout=30)
 def get_team_attrs(team_id):
     team = Teams.query.filter_by(id=team_id).first()
     if team:
