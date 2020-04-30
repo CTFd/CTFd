@@ -1,13 +1,12 @@
 from collections import namedtuple
 
-UserAttrs = namedtuple(
-    "UserAttrs",
+TeamAttrs = namedtuple(
+    "TeamAttrs",
     [
         "id",
         "oauth_id",
         "name",
         "email",
-        "type",
         "secret",
         "website",
         "affiliation",
@@ -15,8 +14,7 @@ UserAttrs = namedtuple(
         "bracket",
         "hidden",
         "banned",
-        "verified",
-        "team_id",
+        "captain_id",
         "created",
     ],
 )

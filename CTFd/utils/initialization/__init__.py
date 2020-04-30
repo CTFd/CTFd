@@ -38,7 +38,15 @@ from CTFd.utils.plugins import (
 )
 from CTFd.utils.security.auth import login_user, logout_user, lookup_user_token
 from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils.user import authed, get_current_team, get_current_user, get_ip, is_admin
+from CTFd.utils.user import (
+    authed,
+    get_current_team,
+    get_current_user,
+    get_current_user_attrs,
+    get_current_team_attrs,
+    get_ip,
+    is_admin,
+)
 
 
 def init_template_filters(app):
@@ -191,8 +199,8 @@ def init_request_processors(app):
             return
 
         if authed():
-            user = get_current_user()
-            team = get_current_team()
+            user = get_current_user_attrs()
+            team = get_current_team_attrs()
 
             if user and user.banned:
                 return (

@@ -6,6 +6,7 @@ from flask import request, session
 
 from CTFd.cache import cache
 from CTFd.constants.users import UserAttrs
+from CTFd.constants.teams import TeamAttrs
 from CTFd.models import Fails, Users, db, Teams
 from CTFd.utils import get_config
 
@@ -33,7 +34,7 @@ def get_user_attrs(user_id):
         for field in UserAttrs._fields:
             d[field] = getattr(user, field)
         return UserAttrs(**d)
-    return user
+    return None
 
 
 def get_current_team():
@@ -42,6 +43,25 @@ def get_current_team():
         return user.team
     else:
         return None
+
+
+def get_current_team_attrs():
+    if authed():
+        user = get_user_attrs(user_id=session["id"])
+        if user.team_id:
+            return get_team_attrs(team_id=user.team_id)
+    return None
+
+
+@cache.memoize()
+def get_team_attrs(team_id):
+    team = Teams.query.filter_by(id=team_id).first()
+    if team:
+        d = {}
+        for field in TeamAttrs._fields:
+            d[field] = getattr(user, field)
+        return TeamAttrs(**d)
+    return None
 
 
 def get_current_user_type(fallback=None):
