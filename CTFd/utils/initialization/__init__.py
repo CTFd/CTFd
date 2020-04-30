@@ -7,6 +7,7 @@ from flask import abort, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.wsgi import DispatcherMiddleware
 
+from CTFd.cache import clear_user_ips
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import Tracking, db
 from CTFd.utils import config, get_config, markdown
@@ -179,9 +180,10 @@ def init_request_processors(app):
         if authed():
             user_ips = get_current_user_ips()
             ip = get_ip()
+            track = None
             if ip not in user_ips:
-                visit = Tracking(ip=get_ip(), user_id=session["id"])
-                db.session.add(visit)
+                track = Tracking(ip=get_ip(), user_id=session["id"])
+                db.session.add(track)
             else:
                 if request.method != "GET":
                     track = Tracking.query.filter_by(
@@ -189,11 +191,13 @@ def init_request_processors(app):
                     ).first()
                     track.date = datetime.datetime.utcnow()
 
-            try:
-                db.session.commit()
-            except (InvalidRequestError, IntegrityError):
-                db.session.rollback()
-                logout_user()
+            if track:
+                try:
+                    db.session.commit()
+                except (InvalidRequestError, IntegrityError):
+                    db.session.rollback()
+                    logout_user()
+                clear_user_ips(user_id=session["id"])
 
             if authed():
                 user = get_current_user()

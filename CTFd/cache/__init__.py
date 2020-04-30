@@ -44,3 +44,9 @@ def clear_pages():
 
     cache.delete_memoized(get_pages)
     cache.delete_memoized(get_page)
+
+
+def clear_user_ips(user_id):
+    from CTFd.utils.user import get_user_ips
+
+    cache.delete_memoized(get_user_ips, user_id=user_id)
