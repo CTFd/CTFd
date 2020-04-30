@@ -9,6 +9,7 @@ from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
 from CTFd.models import Teams, Users, db
 from CTFd.utils import config, email, get_app_config, get_config
 from CTFd.utils import user as current_user
+from CTFd.cache import clear_user_session, clear_team_session
 from CTFd.utils import validators
 from CTFd.utils.config import is_teams_mode
 from CTFd.utils.config.integrations import mlc_registration
@@ -57,6 +58,7 @@ def confirm(data=None):
             name=user.name,
         )
         db.session.commit()
+        clear_user_session(user_id=user.id)
         email.successful_registration_notification(user.email)
         db.session.close()
         if current_user.authed():
@@ -126,6 +128,7 @@ def reset_password(data=None):
 
             user.password = password
             db.session.commit()
+            clear_user_session(user_id=user.id)
             log(
                 "logins",
                 format="[{date}] {ip} -  successful password reset for {name}",
@@ -411,6 +414,7 @@ def oauth_redirect():
                     team = Teams(name=team_name, oauth_id=team_id, captain_id=user.id)
                     db.session.add(team)
                     db.session.commit()
+                    clear_team_session(team_id=team.id)
 
                 team_size_limit = get_config("team_size", default=0)
                 if team_size_limit and len(team.members) >= team_size_limit:
@@ -428,6 +432,7 @@ def oauth_redirect():
                 user.oauth_id = user_id
                 user.verified = True
                 db.session.commit()
+                clear_user_session(user_id=user.id)
 
             login_user(user)
 
