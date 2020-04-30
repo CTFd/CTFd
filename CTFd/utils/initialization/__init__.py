@@ -43,7 +43,7 @@ from CTFd.utils.user import (
     get_current_team,
     get_current_user,
     get_ip,
-    get_user_ips,
+    get_current_user_ips,
     is_admin,
 )
 
@@ -177,7 +177,7 @@ def init_request_processors(app):
             return
 
         if authed():
-            user_ips = get_user_ips(user_id=session["id"])
+            user_ips = get_current_user_ips()
             ip = get_ip()
             if ip not in user_ips:
                 visit = Tracking(ip=get_ip(), user_id=session["id"])

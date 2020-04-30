@@ -81,6 +81,14 @@ def get_ip(req=None):
     return remote_addr
 
 
+def get_current_user_ips():
+    if authed():
+        return get_user_ips(user_id=session["id"])
+    else:
+        return None
+
+
+@cache.memoize
 def get_user_ips(user_id):
     addrs = (
         Tracking.query.with_entities(Tracking.ip.distinct())
