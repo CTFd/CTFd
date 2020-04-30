@@ -35,7 +35,7 @@
     "event-source-polyfill": "~1.0.7",
     "file-loader": "~3.0.1",
     "howler": "~2.1.2",
-    "jquery": "~3.4.1",
+    "jquery": "~3.5.0",
     "markdown-it": "~10.0.0",
     "mini-css-extract-plugin": "~0.7.0",
     "moment-timezone": "^0.5.26",
