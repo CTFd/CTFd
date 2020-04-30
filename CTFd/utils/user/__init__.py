@@ -88,7 +88,7 @@ def get_current_user_ips():
         return None
 
 
-@cache.memoize
+@cache.memoize(timeout=60)
 def get_user_ips(user_id):
     addrs = (
         Tracking.query.with_entities(Tracking.ip.distinct())
