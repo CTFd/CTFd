@@ -202,7 +202,6 @@ def init_request_processors(app):
                     logout_user()
                 clear_user_ips(user_id=session["id"])
 
-
     @app.before_request
     def banned():
         if request.endpoint == "views.themes":
