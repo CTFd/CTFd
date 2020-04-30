@@ -18,6 +18,7 @@ if args.profile:
         "enabled": app.config["DEBUG"],
         "storage": {"engine": "sqlite"},
         "basicAuth": {"enabled": False},
+        "ignore": ["^/themes/.*", "^/events"],
     }
     flask_profiler.init_app(app)
     app.config["DEBUG_TB_PROFILER_ENABLED"] = True

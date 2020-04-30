@@ -3,7 +3,7 @@ import copy
 from flask import abort, request, session
 from flask_restx import Namespace, Resource
 
-from CTFd.cache import clear_standings
+from CTFd.cache import clear_standings, clear_team_session, clear_user_session
 from CTFd.models import Awards, Submissions, Teams, Unlocks, Users, db
 from CTFd.schemas.awards import AwardSchema
 from CTFd.schemas.submissions import SubmissionSchema
@@ -91,24 +91,30 @@ class TeamPublic(Resource):
 
         response = schema.dump(response.data)
         db.session.commit()
-        db.session.close()
 
+        clear_team_session(team_id=team.id)
         clear_standings()
+
+        db.session.close()
 
         return {"success": True, "data": response.data}
 
     @admins_only
     def delete(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
+        team_id = team.id
 
         for member in team.members:
             member.team_id = None
+            clear_user_session(user_id=member.id)
 
         db.session.delete(team)
         db.session.commit()
-        db.session.close()
 
+        clear_team_session(team_id=team_id)
         clear_standings()
+
+        db.session.close()
 
         return {"success": True}
 
@@ -150,7 +156,7 @@ class TeamPrivate(Resource):
             return {"success": False, "errors": response.errors}, 400
 
         db.session.commit()
-
+        clear_team_session(team_id=team.id)
         response = TeamSchema("self").dump(response.data)
         db.session.close()
 

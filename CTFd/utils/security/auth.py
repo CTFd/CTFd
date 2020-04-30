@@ -26,9 +26,7 @@ def generate_user_token(user, expiration=None):
         value = hexencode(os.urandom(32))
         temp_token = UserTokens.query.filter_by(value=value).first()
 
-    token = UserTokens(
-        user_id=user.id, expiration=expiration, value=hexencode(os.urandom(32))
-    )
+    token = UserTokens(user_id=user.id, expiration=expiration, value=value)
     db.session.add(token)
     db.session.commit()
     return token

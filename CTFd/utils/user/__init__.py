@@ -5,7 +5,9 @@ from flask import current_app as app
 from flask import request, session
 
 from CTFd.cache import cache
-from CTFd.models import Fails, Users, db, Tracking
+from CTFd.constants.users import UserAttrs
+from CTFd.constants.teams import TeamAttrs
+from CTFd.models import Fails, Users, db, Teams
 from CTFd.utils import get_config
 
 
@@ -17,6 +19,24 @@ def get_current_user():
         return None
 
 
+def get_current_user_attrs():
+    if authed():
+        return get_user_attrs(user_id=session["id"])
+    else:
+        return None
+
+
+@cache.memoize(timeout=30)
+def get_user_attrs(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    if user:
+        d = {}
+        for field in UserAttrs._fields:
+            d[field] = getattr(user, field)
+        return UserAttrs(**d)
+    return None
+
+
 def get_current_team():
     if authed():
         user = get_current_user()
@@ -25,9 +45,28 @@ def get_current_team():
         return None
 
 
+def get_current_team_attrs():
+    if authed():
+        user = get_user_attrs(user_id=session["id"])
+        if user.team_id:
+            return get_team_attrs(team_id=user.team_id)
+    return None
+
+
+@cache.memoize(timeout=30)
+def get_team_attrs(team_id):
+    team = Teams.query.filter_by(id=team_id).first()
+    if team:
+        d = {}
+        for field in TeamAttrs._fields:
+            d[field] = getattr(team, field)
+        return TeamAttrs(**d)
+    return None
+
+
 def get_current_user_type(fallback=None):
     if authed():
-        user = Users.query.filter_by(id=session["id"]).first()
+        user = get_current_user_attrs()
         return user.type
     else:
         return fallback
@@ -39,7 +78,7 @@ def authed():
 
 def is_admin():
     if authed():
-        user = get_current_user()
+        user = get_current_user_attrs()
         return user.type == "admin"
     else:
         return False
@@ -47,7 +86,7 @@ def is_admin():
 
 def is_verified():
     if get_config("verify_emails"):
-        user = get_current_user()
+        user = get_current_user_attrs()
         if user:
             return user.verified
         else:
