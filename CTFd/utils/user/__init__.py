@@ -7,7 +7,7 @@ from flask import request, session
 from CTFd.cache import cache
 from CTFd.constants.users import UserAttrs
 from CTFd.constants.teams import TeamAttrs
-from CTFd.models import Fails, Users, db, Teams
+from CTFd.models import Fails, Users, db, Teams, Tracking
 from CTFd.utils import get_config
 
 
@@ -118,6 +118,23 @@ def get_ip(req=None):
     else:
         remote_addr = req.remote_addr
     return remote_addr
+
+
+def get_current_user_ips():
+    if authed():
+        return get_user_ips(user_id=session["id"])
+    else:
+        return None
+
+
+@cache.memoize(timeout=60)
+def get_user_ips(user_id):
+    addrs = (
+        Tracking.query.with_entities(Tracking.ip.distinct())
+        .filter_by(user_id=user_id)
+        .all()
+    )
+    return [ip for ip, in addrs]
 
 
 def get_wrong_submissions_per_minute(account_id):
