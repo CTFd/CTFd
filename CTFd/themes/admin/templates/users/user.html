@@ -130,23 +130,29 @@
 		</h3>
 		<hr class="w-50">
 		<div class="pt-3">
-			<a class="edit-user">
+			<a class="edit-user text-dark">
 				<i class="btn-fa fas fa-user-edit fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Edit User"></i>
 			</a>
-			<a class="award-user">
+			<a class="award-user text-dark">
 				<i class="btn-fa fas fa-trophy fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Award User"></i>
 			</a>
-			<a class="email-user">
+			<a class="email-user text-dark">
 				<i class="btn-fa fas fa-envelope fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Email User"></i>
 			</a>
-			<a class="delete-user">
+			<a class="delete-user text-dark">
 				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Delete User"></i>
 			</a>
 		</div>
 		<div class="pt-3">
-			<a class="addresses-user">
+			<a class="addresses-user text-dark">
 				<i class="btn-fa fas fa-network-wired fa-2x px-2" data-toggle="tooltip" data-placement="top" title="IP Addresses"></i>
 			</a>
+			{% if user.website %}
+			<a href="{{ user.website }}" target="_blank" class="text-decoration-none text-dark">
+				<i class="btn-fa fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					title="{{ user.website }}" aria-hidden="true"></i>
+			</a>
+			{% endif %}
 		</div>
 	</div>
 </div>

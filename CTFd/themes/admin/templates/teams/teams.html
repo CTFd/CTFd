@@ -74,10 +74,9 @@
 						</th>
 						<th class="sort-col text-center"><b>ID</b></th>
 						<th class="sort-col text-left"><b>Team</b></th>
-						<th class="sort-col text-center"><b>Website</b></th>
 						<th class="sort-col text-center"><b>Country</b></th>
-						<th class="sort-col text-center"><b>Hidden</b></th>
-						<th class="sort-col text-center"><b>Banned</b></th>
+						<th class="sort-col text-center px-0"><small><b>Hidden</b></small></th>
+						<th class="sort-col text-center px-0"><small><b>Banned</b></small></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -98,6 +97,12 @@
 									<span class="badge badge-primary">Official</span>
 								</a>
 							{% endif %}
+							{% if team.website %}
+								<a href="{{ team.website }}" target="_blank" class="badge badge-info">
+									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+									   title="{{ team.website }}" aria-hidden="true"></i>
+								</a>
+							{% endif %}
 							<span class="d-block text-muted">
 								<small>
 									{% if team.affiliation %}
@@ -106,20 +111,11 @@
 								</small>
 							</span>
 						</td>
-
-						<td class="team-website text-center">
-							{% if team.website %}
-								<a href="{{ team.website }}" target="_blank">
-									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
-									   title="{{ team.website }}" aria-hidden="true"></i>
-								</a>
-							{% endif %}
-						</td>
 						<td class="team-country text-center" value="{{ team.country if team.country is not none }}">
 							<span>
 								{% if team.country %}
 									<i class="flag-{{ team.country.lower() }}"></i>
-									{{ lookup_country_code(team.country) }}
+									<small>{{ lookup_country_code(team.country) }}</small>
 								{% endif %}
 							</span>
 						</td>

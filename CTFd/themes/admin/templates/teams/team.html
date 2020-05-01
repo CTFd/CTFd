@@ -127,26 +127,32 @@
 		</h3>
 		<hr class="w-50">
 		<div class="pt-3">
-			<a class="edit-team">
+			<a class="edit-team text-dark">
 				<i class="btn-fa fas fa-pencil-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 				   title="Edit Team"></i>
 			</a>
-			<a class="edit-captain">
+			<a class="edit-captain text-dark">
 				<i class="btn-fa fas fa-user-tag fa-2x px-2" data-toggle="tooltip" data-placement="top"
 				   title="Choose Captain"></i>
 			</a>
-			<a class="award-team">
+			<a class="award-team text-dark">
 				<i class="btn-fa fas fa-trophy fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Award Team Member"></i>
 			</a>
-			<a class="delete-team">
+			<a class="delete-team text-dark">
 				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 				   title="Delete Team"></i>
 			</a>
 		</div>
 		<div class="pt-3">
-			<a class="addresses-team">
+			<a class="addresses-team text-dark">
 				<i class="btn-fa fas fa-network-wired fa-2x px-2" data-toggle="tooltip" data-placement="top" title="IP Addresses"></i>
 			</a>
+			{% if team.website %}
+			<a href="{{ team.website }}" target="_blank" class="text-dark">
+				<i class="btn-fa fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					title="{{ team.website }}" aria-hidden="true"></i>
+			</a>
+			{% endif %}
 		</div>
 	</div>
 </div>

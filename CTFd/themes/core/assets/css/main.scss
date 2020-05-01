@@ -30,6 +30,10 @@ table > thead > tr > td {
   border-top: none !important;
 }
 
+.table thead th {
+  white-space: nowrap;
+}
+
 .fa-spin.spinner {
   margin-top: 225px;
   text-align: center;
