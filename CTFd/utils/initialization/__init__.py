@@ -7,7 +7,7 @@ from flask import abort, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.wsgi import DispatcherMiddleware
 
-from CTFd.cache import clear_user_ips
+from CTFd.cache import clear_user_recent_ips
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import Tracking, db
 from CTFd.utils import config, get_config, markdown
@@ -42,7 +42,7 @@ from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils.user import (
     authed,
     get_current_user_attrs,
-    get_current_user_ips,
+    get_current_user_recent_ips,
     get_current_team_attrs,
     get_ip,
     is_admin,
@@ -181,18 +181,20 @@ def init_request_processors(app):
             return
 
         if authed():
-            user_ips = get_current_user_ips()
+            user_ips = get_current_user_recent_ips()
             ip = get_ip()
+
             track = None
             if ip not in user_ips:
-                track = Tracking(ip=get_ip(), user_id=session["id"])
-                db.session.add(track)
-            else:
-                if request.method != "GET":
-                    track = Tracking.query.filter_by(
-                        ip=get_ip(), user_id=session["id"]
-                    ).first()
+                track = Tracking.query.filter_by(
+                    ip=get_ip(), user_id=session["id"]
+                ).first()
+
+                if track:
                     track.date = datetime.datetime.utcnow()
+                else:
+                    track = Tracking(ip=get_ip(), user_id=session["id"])
+                    db.session.add(track)
 
             if track:
                 try:
@@ -200,7 +202,7 @@ def init_request_processors(app):
                 except (InvalidRequestError, IntegrityError):
                     db.session.rollback()
                     logout_user()
-                clear_user_ips(user_id=session["id"])
+                clear_user_recent_ips(user_id=session["id"])
 
     @app.before_request
     def banned():

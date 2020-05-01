@@ -120,21 +120,22 @@ def get_ip(req=None):
     return remote_addr
 
 
-def get_current_user_ips():
+def get_current_user_recent_ips():
     if authed():
-        return get_user_ips(user_id=session["id"])
+        return get_user_recent_ips(user_id=session["id"])
     else:
         return None
 
 
 @cache.memoize(timeout=60)
-def get_user_ips(user_id):
+def get_user_recent_ips(user_id):
+    hour_ago = datetime.datetime.now() - datetime.timedelta(hours=1)
     addrs = (
         Tracking.query.with_entities(Tracking.ip.distinct())
-        .filter_by(user_id=user_id)
+        .filter(Tracking.user_id == user_id, Tracking.date >= hour_ago)
         .all()
     )
-    return [ip for ip, in addrs]
+    return set([ip for (ip,) in addrs])
 
 
 def get_wrong_submissions_per_minute(account_id):
