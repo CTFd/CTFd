@@ -221,6 +221,10 @@ $(() => {
     $("#team-award-modal").modal("toggle");
   });
 
+  $(".addresses-team").click(function(event) {
+    $("#team-addresses-modal").modal("toggle");
+  });
+
   $("#user-award-form").submit(function(e) {
     e.preventDefault();
     const params = $("#user-award-form").serializeJSON(true);

@@ -419,6 +419,10 @@ $(() => {
     $("#user-email-modal").modal("toggle");
   });
 
+  $(".addresses-user").click(function(event) {
+    $("#user-addresses-modal").modal("toggle");
+  });
+
   $("#user-mail-form").submit(emailUser);
 
   $(".delete-submission").click(deleteUserSubmission);
