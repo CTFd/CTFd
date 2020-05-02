@@ -359,14 +359,6 @@
 								<td class="text-center">{{ award.value }}</td>
 								<td class="text-center">{{ award.category }}</td>
 								<td class="text-center"> <i class="award-icon award-{{ award.icon }}"></i> {{ award.icon }}</td>
-
-								<!-- <td class="text-center">
-									<span class="delete-award" data-toggle="tooltip"
-										  data-placement="top" award-id="{{ award.id }}" award-name="{{ award.name }}"
-										  title="Delete award #{{ award.id }}">
-										<i class="fas fa-times"></i>
-									</span>
-								</td> -->
 							</tr>
 						{% endfor %}
 						</tbody>
@@ -419,13 +411,6 @@
 							</td>
 							<td class="text-center">{{ challenge.category }}</td>
 							<td class="text-center">{{ challenge.value }}</td>
-							<!-- <td class="text-center">
-								<a class="correct-submission" data-toggle="tooltip" challenge-id="{{ challenge.id }}"
-									  challenge-name="{{ challenge.name }}"
-									  data-placement="top" title="Mark {{ challenge.name }} correct for {{ user.name }}">
-									<i class="fas fa-check"></i>
-								</a>
-							</td> -->
 						</tr>
 					{% endfor %}
 					</tbody>

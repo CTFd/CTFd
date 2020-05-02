@@ -2,7 +2,7 @@ import "./main";
 import $ from "jquery";
 import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
-import { ezQuery, ezBadge } from "core/ezq";
+import { ezAlert, ezQuery, ezBadge } from "core/ezq";
 import { createGraph, updateGraph } from "core/graphs";
 
 function createTeam(event) {
@@ -84,16 +84,16 @@ function deleteSelectedSubmissions(event, target) {
   let submissions;
   let type;
   let title;
-  switch(target){
+  switch (target) {
     case "solves":
       submissions = $("input[data-submission-type=correct]:checked");
       type = "solve";
-      title = "Solves"
+      title = "Solves";
       break;
     case "fails":
       submissions = $("input[data-submission-type=incorrect]:checked");
       type = "fail";
-      title = "Fails"
+      title = "Fails";
       break;
     default:
       break;
@@ -102,11 +102,13 @@ function deleteSelectedSubmissions(event, target) {
   let submissionIDs = submissions.map(function() {
     return $(this).data("submission-id");
   });
-  let target_string = submissionIDs.length === 1 ? type : (type + "s");
+  let target_string = submissionIDs.length === 1 ? type : type + "s";
 
   ezQuery({
     title: `Delete ${title}`,
-    body: `Are you sure you want to delete ${submissionIDs.length} ${target_string}?`,
+    body: `Are you sure you want to delete ${
+      submissionIDs.length
+    } ${target_string}?`,
     success: function() {
       const reqs = [];
       for (var subId of submissionIDs) {
@@ -143,6 +145,62 @@ function deleteSelectedAwards(event) {
       }
       Promise.all(reqs).then(responses => {
         window.location.reload();
+      });
+    }
+  });
+}
+
+function solveSelectedMissingChallenges(event) {
+  event.preventDefault();
+  let challengeIDs = $("input[data-missing-challenge-id]:checked").map(
+    function() {
+      return $(this).data("missing-challenge-id");
+    }
+  );
+  let target = challengeIDs.length === 1 ? "challenge" : "challenges";
+
+  ezQuery({
+    title: `Mark Correct`,
+    body: `Are you sure you want to mark ${
+      challengeIDs.length
+    } correct for ${htmlEntities(TEAM_NAME)}?`,
+    success: function() {
+      ezAlert({
+        title: `User Attribution`,
+        body: `
+        Which user on ${htmlEntities(TEAM_NAME)} solved these challenges?
+        <div class="pb-3" id="query-team-member-solve">
+        ${$("#team-member-select").html()}
+        </div>
+        `,
+        button: "Mark Correct",
+        success: function() {
+          const USER_ID = $("#query-team-member-solve > select").val();
+          const reqs = [];
+          for (var challengeID of challengeIDs) {
+            let params = {
+              provided: "MARKED AS SOLVED BY ADMIN",
+              user_id: USER_ID,
+              team_id: TEAM_ID,
+              challenge_id: challengeID,
+              type: "correct"
+            };
+
+            let req = CTFd.fetch("/api/v1/submissions", {
+              method: "POST",
+              credentials: "same-origin",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(params)
+            });
+            reqs.push(req);
+          }
+          Promise.all(reqs).then(responses => {
+            window.location.reload();
+          });
+        }
       });
     }
   });
@@ -403,16 +461,20 @@ $(() => {
     });
   });
 
-  $("#solves-delete-button").click(function(e){
-    deleteSelectedSubmissions(e, "solves")
+  $("#solves-delete-button").click(function(e) {
+    deleteSelectedSubmissions(e, "solves");
   });
 
-  $("#fails-delete-button").click(function(e){
-    deleteSelectedSubmissions(e, "fails")
+  $("#fails-delete-button").click(function(e) {
+    deleteSelectedSubmissions(e, "fails");
   });
 
-  $("#awards-delete-button").click(function(e){
+  $("#awards-delete-button").click(function(e) {
     deleteSelectedAwards(e);
+  });
+
+  $("#missing-solve-button").click(function(e) {
+    solveSelectedMissingChallenges(e);
   });
 
   $("#team-info-create-form").submit(createTeam);

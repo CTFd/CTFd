@@ -193,16 +193,16 @@ function deleteSelectedSubmissions(event, target) {
   let submissions;
   let type;
   let title;
-  switch(target){
+  switch (target) {
     case "solves":
       submissions = $("input[data-submission-type=correct]:checked");
       type = "solve";
-      title = "Solves"
+      title = "Solves";
       break;
     case "fails":
       submissions = $("input[data-submission-type=incorrect]:checked");
       type = "fail";
-      title = "Fails"
+      title = "Fails";
       break;
     default:
       break;
@@ -211,11 +211,13 @@ function deleteSelectedSubmissions(event, target) {
   let submissionIDs = submissions.map(function() {
     return $(this).data("submission-id");
   });
-  let target_string = submissionIDs.length === 1 ? type : (type + "s");
+  let target_string = submissionIDs.length === 1 ? type : type + "s";
 
   ezQuery({
     title: `Delete ${title}`,
-    body: `Are you sure you want to delete ${submissionIDs.length} ${target_string}?`,
+    body: `Are you sure you want to delete ${
+      submissionIDs.length
+    } ${target_string}?`,
     success: function() {
       const reqs = [];
       for (var subId of submissionIDs) {
@@ -259,14 +261,18 @@ function deleteSelectedAwards(event) {
 
 function solveSelectedMissingChallenges(event) {
   event.preventDefault();
-  let challengeIDs = $("input[data-missing-challenge-id]:checked").map(function() {
-    return $(this).data("missing-challenge-id");
-  });
+  let challengeIDs = $("input[data-missing-challenge-id]:checked").map(
+    function() {
+      return $(this).data("missing-challenge-id");
+    }
+  );
   let target = challengeIDs.length === 1 ? "challenge" : "challenges";
 
   ezQuery({
     title: `Mark Correct`,
-    body: `Are you sure you want to mark ${challengeIDs.length} correct for ${htmlEntities(USER_NAME)}?`,
+    body: `Are you sure you want to mark ${
+      challengeIDs.length
+    } correct for ${htmlEntities(USER_NAME)}?`,
     success: function() {
       const reqs = [];
       for (var challengeID of challengeIDs) {
@@ -286,7 +292,7 @@ function solveSelectedMissingChallenges(event) {
             "Content-Type": "application/json"
           },
           body: JSON.stringify(params)
-        })
+        });
         reqs.push(req);
       }
       Promise.all(reqs).then(responses => {
@@ -406,19 +412,19 @@ $(() => {
 
   $("#user-mail-form").submit(emailUser);
 
-  $("#solves-delete-button").click(function(e){
-    deleteSelectedSubmissions(e, "solves")
+  $("#solves-delete-button").click(function(e) {
+    deleteSelectedSubmissions(e, "solves");
   });
 
-  $("#fails-delete-button").click(function(e){
-    deleteSelectedSubmissions(e, "fails")
+  $("#fails-delete-button").click(function(e) {
+    deleteSelectedSubmissions(e, "fails");
   });
 
-  $("#awards-delete-button").click(function(e){
+  $("#awards-delete-button").click(function(e) {
     deleteSelectedAwards(e);
   });
 
-  $("#missing-solve-button").click(function(e){
+  $("#missing-solve-button").click(function(e) {
     solveSelectedMissingChallenges(e);
   });
 
