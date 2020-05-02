@@ -31,7 +31,7 @@ if sys.version_info[0] < 3:
     reload(sys)  # noqa: F821
     sys.setdefaultencoding("utf-8")
 
-__version__ = "2.3.3"
+__version__ = "2.4.0"
 
 
 class CTFdRequest(Request):
@@ -182,6 +182,7 @@ def create_app(config="CTFd.config.Config"):
             # Enable foreign keys for SQLite. This must be before the
             # db.create_all call because tests use the in-memory SQLite
             # database (each connection, including db creation, is a new db).
+            # https://docs.sqlalchemy.org/en/13/dialects/sqlite.html#foreign-key-support
             from sqlalchemy.engine import Engine
             from sqlalchemy import event
 
