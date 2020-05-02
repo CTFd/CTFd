@@ -196,7 +196,7 @@
 				</thead>
 				<tbody>
 				{% for member in members %}
-					<tr>
+					<tr data-href="{{ url_for('admin.users_detail', user_id=member.id) }}">
 						<td class="text-center">
 							{% if team.captain_id == member.id %}
 								<span class="badge badge-primary">Captain</span>
@@ -256,7 +256,7 @@
 					</thead>
 					<tbody>
 					{% for solve in solves %}
-						<tr class="chal-solve">
+						<tr class="chal-solve" data-href="{{ url_for("admin.challenges_detail", challenge_id=solve.challenge_id) }}">
 							<td class="text-center chal" id="{{ solve.challenge_id }}">
 								<a href="{{ url_for("admin.challenges_detail", challenge_id=solve.challenge_id) }}">
 									{{ solve.challenge.name }}
@@ -305,7 +305,7 @@
 					</thead>
 					<tbody>
 					{% for fail in fails %}
-						<tr class="chal-wrong">
+						<tr class="chal-wrong" data-href="{{ url_for("admin.challenges_detail", challenge_id=fail.challenge_id) }}">
 							<td class="text-center chal" id="{{ fail.challenge_id }}">
 								<a href="{{ url_for("admin.challenges_detail", challenge_id=fail.challenge_id) }}">
 									{{ fail.challenge.name }}
