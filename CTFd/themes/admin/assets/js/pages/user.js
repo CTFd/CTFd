@@ -257,50 +257,41 @@ function deleteSelectedAwards(event) {
   });
 }
 
-function correctUserSubmission(event) {
+function solveSelectedMissingChallenges(event) {
   event.preventDefault();
-  const challenge_id = $(this).attr("challenge-id");
-  const challenge_name = $(this).attr("challenge-name");
-  const row = $(this)
-    .parent()
-    .parent();
-
-  const body = "<span>Are you sure you want to mark <strong>{0}</strong> solved for from <strong>{1}</strong>?".format(
-    htmlEntities(challenge_name),
-    htmlEntities(USER_NAME)
-  );
-
-  const params = {
-    provided: "MARKED AS SOLVED BY ADMIN",
-    user_id: USER_ID,
-    team_id: TEAM_ID,
-    challenge_id: challenge_id,
-    type: "correct"
-  };
+  let challengeIDs = $("input[data-missing-challenge-id]:checked").map(function() {
+    return $(this).data("missing-challenge-id");
+  });
+  let target = challengeIDs.length === 1 ? "challenge" : "challenges";
 
   ezQuery({
-    title: "Mark Correct",
-    body: body,
+    title: `Mark Correct`,
+    body: `Are you sure you want to mark ${challengeIDs.length} correct for ${htmlEntities(USER_NAME)}?`,
     success: function() {
-      CTFd.fetch("/api/v1/submissions", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(params)
-      })
-        .then(function(response) {
-          return response.json();
+      const reqs = [];
+      for (var challengeID of challengeIDs) {
+        let params = {
+          provided: "MARKED AS SOLVED BY ADMIN",
+          user_id: USER_ID,
+          team_id: TEAM_ID,
+          challenge_id: challengeID,
+          type: "correct"
+        };
+
+        let req = CTFd.fetch("/api/v1/submissions", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(params)
         })
-        .then(function(response) {
-          if (response.success) {
-            // TODO: Refresh missing and solves instead of reloading
-            row.remove();
-            window.location.reload();
-          }
-        });
+        reqs.push(req);
+      }
+      Promise.all(reqs).then(responses => {
+        window.location.reload();
+      });
     }
   });
 }
@@ -427,7 +418,9 @@ $(() => {
     deleteSelectedAwards(e);
   });
 
-  $(".correct-submission").click(correctUserSubmission);
+  $("#missing-solve-button").click(function(e){
+    solveSelectedMissingChallenges(e);
+  });
 
   $("#user-info-create-form").submit(createUser);
 
