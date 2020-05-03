@@ -80,6 +80,20 @@ export default () => {
       window.location.href = url.toString();
     });
 
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      sessionStorage.setItem('activeTab', $(e.target).attr('href'));
+    });
+
+    let activeTab = sessionStorage.getItem('activeTab');
+    if (activeTab) {
+      let target = $(`.nav-tabs a[href="${activeTab}"], .nav-pills a[href="${activeTab}"]`);
+      if (target.length) {
+        target.tab('show');
+      } else {
+        sessionStorage.removeItem('activeTab');
+      }
+    }
+
     makeSortableTables();
     $('[data-toggle="tooltip"]').tooltip();
   });

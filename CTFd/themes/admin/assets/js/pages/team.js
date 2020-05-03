@@ -163,7 +163,7 @@ function solveSelectedMissingChallenges(event) {
     title: `Mark Correct`,
     body: `Are you sure you want to mark ${
       challengeIDs.length
-    } correct for ${htmlEntities(TEAM_NAME)}?`,
+    } challenges correct for ${htmlEntities(TEAM_NAME)}?`,
     success: function() {
       ezAlert({
         title: `User Attribution`,
