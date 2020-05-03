@@ -220,14 +220,4 @@ $(() => {
       }
     });
   });
-
-  if (window.location.hash) {
-    let hash = window.location.hash.replace("<>[]'\"", "");
-    $('nav a[href="' + hash + '"]').tab("show");
-  }
-
-  $(".nav-tabs a").click(function(event) {
-    $(this).tab("show");
-    window.location.hash = this.hash;
-  });
 });

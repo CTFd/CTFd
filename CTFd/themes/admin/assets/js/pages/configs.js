@@ -220,10 +220,6 @@ function exportConfig(event) {
   window.location.href = $(this).attr("href");
 }
 
-function showTab(event) {
-  window.location.hash = this.hash;
-}
-
 function insertTimezones(target) {
   let current = $("<option>").text(moment.tz.guess());
   $(target).append(current);
@@ -258,7 +254,6 @@ $(() => {
   $("#remove-logo").click(removeLogo);
   $("#export-button").click(exportConfig);
   $("#import-button").click(importConfig);
-  $(".nav-pills a").click(showTab);
   $("#config-color-update").click(function() {
     const hex_code = $("#config-color-picker").val();
     const user_css = $("#theme-header").val();
@@ -286,12 +281,6 @@ $(() => {
   $(".freeze-date").change(function() {
     loadDateValues("freeze");
   });
-
-  let hash = window.location.hash;
-  if (hash) {
-    hash = hash.replace("<>[]'\"", "");
-    $('ul.nav a[href="' + hash + '"]').tab("show");
-  }
 
   const start = $("#start").val();
   const end = $("#end").val();
