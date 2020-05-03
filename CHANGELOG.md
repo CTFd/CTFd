@@ -10,12 +10,12 @@
 * Remove `datafreeze`, `normality`, and `banal` dependencies in favor of in-repo solutions to exporting database
 
 **Admin Panel**
+* Add bulk selection and deletion for Users, Teams, Scoreboard, Challenges, Submissions
 * Make some Admin tables sortable by table headers
 * Create a score distribution graph in the statistics page
 * Make instance reset more granular to allow for choosing to reset Accounts, Submissions, Challenges, Pages, and/or Notificatoins
 * Properly update challenge visibility after updating challenge
 * Show total possible points in Statistics page
-* Add bulk selection and deletion for Users, Teams, Scoreboard, Challenges, Submissions
 * Add searching for Users, Teams, Challenges, Submissions
 * Move User IP addresses into a modal
 * Move Team IP addresses into a modal
@@ -24,6 +24,7 @@
 * Make the Pages editor use proper HTML syntax highlighting
 * Theme header and footer editors now use CodeMirror
 * Make default CodeMirror font-size 12px
+* Stop storing last action via location hash and switch to using sessionStorage
 
 **Themes**
 * Make page selection a select and option instead of having a lot of page links
