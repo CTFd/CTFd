@@ -6,8 +6,6 @@ from CTFd.utils.user import is_admin, get_current_user
 from CTFd.utils.security.auth import login_user
 from tests.helpers import create_ctfd, destroy_ctfd, register_user
 
-from CTFd.cache import clear_user_session
-
 
 def test_clear_user_session():
     app = create_ctfd()
