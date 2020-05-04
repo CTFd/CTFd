@@ -1,0 +1,22 @@
+<div class="row">
+	<div class="col-md-12">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<td class="text-center"><b>IP Address</b></td>
+					<td class="text-center"><b>Last Seen</b></td>
+				</tr>
+			</thead>
+			<tbody>
+			{% for addr in addrs %}
+				<tr>
+					<td class="text-center">{{ addr.ip }}</td>
+					<td class="text-center solve-time">
+						<span data-time="{{ addr.date | isoformat }}"></span>
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>

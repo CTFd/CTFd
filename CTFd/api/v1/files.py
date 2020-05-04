@@ -1,5 +1,5 @@
 from flask import request
-from flask_restplus import Namespace, Resource
+from flask_restx import Namespace, Resource
 
 from CTFd.models import Files, db
 from CTFd.schemas.files import FileSchema

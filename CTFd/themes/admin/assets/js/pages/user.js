@@ -189,128 +189,115 @@ function emailUser(event) {
     });
 }
 
-function deleteUserSubmission(event) {
-  event.preventDefault();
-  const submission_id = $(this).attr("submission-id");
-  const submission_type = $(this).attr("submission-type");
-  const submission_challenge = $(this).attr("submission-challenge");
+function deleteSelectedSubmissions(event, target) {
+  let submissions;
+  let type;
+  let title;
+  switch (target) {
+    case "solves":
+      submissions = $("input[data-submission-type=correct]:checked");
+      type = "solve";
+      title = "Solves";
+      break;
+    case "fails":
+      submissions = $("input[data-submission-type=incorrect]:checked");
+      type = "fail";
+      title = "Fails";
+      break;
+    default:
+      break;
+  }
 
-  const body = "<span>Are you sure you want to delete <strong>{0}</strong> submission from <strong>{1}</strong> for <strong>{2}</strong>?</span>".format(
-    htmlEntities(submission_type),
-    htmlEntities(USER_NAME),
-    htmlEntities(submission_challenge)
-  );
-
-  const row = $(this)
-    .parent()
-    .parent();
+  let submissionIDs = submissions.map(function() {
+    return $(this).data("submission-id");
+  });
+  let target_string = submissionIDs.length === 1 ? type : type + "s";
 
   ezQuery({
-    title: "Delete Submission",
-    body: body,
+    title: `Delete ${title}`,
+    body: `Are you sure you want to delete ${
+      submissionIDs.length
+    } ${target_string}?`,
     success: function() {
-      CTFd.fetch("/api/v1/submissions/" + submission_id, {
-        method: "DELETE",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          return response.json();
-        })
-        .then(function(response) {
-          if (response.success) {
-            row.remove();
-          }
-        });
+      const reqs = [];
+      for (var subId of submissionIDs) {
+        reqs.push(CTFd.api.delete_submission({ submissionId: subId }));
+      }
+      Promise.all(reqs).then(responses => {
+        window.location.reload();
+      });
     }
   });
 }
 
-function deleteUserAward(event) {
-  event.preventDefault();
-  const award_id = $(this).attr("award-id");
-  const award_name = $(this).attr("award-name");
-
-  const body = "<span>Are you sure you want to delete the <strong>{0}</strong> award from <strong>{1}</strong>?".format(
-    htmlEntities(award_name),
-    htmlEntities(USER_NAME)
-  );
-
-  const row = $(this)
-    .parent()
-    .parent();
+function deleteSelectedAwards(event) {
+  let awardIDs = $("input[data-award-id]:checked").map(function() {
+    return $(this).data("award-id");
+  });
+  let target = awardIDs.length === 1 ? "award" : "awards";
 
   ezQuery({
-    title: "Delete Award",
-    body: body,
+    title: `Delete Awards`,
+    body: `Are you sure you want to delete ${awardIDs.length} ${target}?`,
     success: function() {
-      CTFd.fetch("/api/v1/awards/" + award_id, {
-        method: "DELETE",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          return response.json();
-        })
-        .then(function(response) {
-          if (response.success) {
-            row.remove();
+      const reqs = [];
+      for (var awardID of awardIDs) {
+        let req = CTFd.fetch("/api/v1/awards/" + awardID, {
+          method: "DELETE",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
           }
         });
+        reqs.push(req);
+      }
+      Promise.all(reqs).then(responses => {
+        window.location.reload();
+      });
     }
   });
 }
 
-function correctUserSubmission(event) {
+function solveSelectedMissingChallenges(event) {
   event.preventDefault();
-  const challenge_id = $(this).attr("challenge-id");
-  const challenge_name = $(this).attr("challenge-name");
-  const row = $(this)
-    .parent()
-    .parent();
-
-  const body = "<span>Are you sure you want to mark <strong>{0}</strong> solved for from <strong>{1}</strong>?".format(
-    htmlEntities(challenge_name),
-    htmlEntities(USER_NAME)
+  let challengeIDs = $("input[data-missing-challenge-id]:checked").map(
+    function() {
+      return $(this).data("missing-challenge-id");
+    }
   );
-
-  const params = {
-    provided: "MARKED AS SOLVED BY ADMIN",
-    user_id: USER_ID,
-    team_id: TEAM_ID,
-    challenge_id: challenge_id,
-    type: "correct"
-  };
+  let target = challengeIDs.length === 1 ? "challenge" : "challenges";
 
   ezQuery({
-    title: "Mark Correct",
-    body: body,
+    title: `Mark Correct`,
+    body: `Are you sure you want to mark ${
+      challengeIDs.length
+    } correct for ${htmlEntities(USER_NAME)}?`,
     success: function() {
-      CTFd.fetch("/api/v1/submissions", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(params)
-      })
-        .then(function(response) {
-          return response.json();
-        })
-        .then(function(response) {
-          if (response.success) {
-            // TODO: Refresh missing and solves instead of reloading
-            row.remove();
-            window.location.reload();
-          }
+      const reqs = [];
+      for (var challengeID of challengeIDs) {
+        let params = {
+          provided: "MARKED AS SOLVED BY ADMIN",
+          user_id: USER_ID,
+          team_id: TEAM_ID,
+          challenge_id: challengeID,
+          type: "correct"
+        };
+
+        let req = CTFd.fetch("/api/v1/submissions", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(params)
         });
+        reqs.push(req);
+      }
+      Promise.all(reqs).then(responses => {
+        window.location.reload();
+      });
     }
   });
 }
@@ -419,11 +406,27 @@ $(() => {
     $("#user-email-modal").modal("toggle");
   });
 
+  $(".addresses-user").click(function(event) {
+    $("#user-addresses-modal").modal("toggle");
+  });
+
   $("#user-mail-form").submit(emailUser);
 
-  $(".delete-submission").click(deleteUserSubmission);
-  $(".delete-award").click(deleteUserAward);
-  $(".correct-submission").click(correctUserSubmission);
+  $("#solves-delete-button").click(function(e) {
+    deleteSelectedSubmissions(e, "solves");
+  });
+
+  $("#fails-delete-button").click(function(e) {
+    deleteSelectedSubmissions(e, "fails");
+  });
+
+  $("#awards-delete-button").click(function(e) {
+    deleteSelectedAwards(e);
+  });
+
+  $("#missing-solve-button").click(function(e) {
+    solveSelectedMissingChallenges(e);
+  });
 
   $("#user-info-create-form").submit(createUser);
 

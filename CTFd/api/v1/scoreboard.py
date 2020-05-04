@@ -1,4 +1,4 @@
-from flask_restplus import Namespace, Resource
+from flask_restx import Namespace, Resource
 
 from CTFd.cache import cache, make_cache_key
 from CTFd.models import Awards, Solves, Teams

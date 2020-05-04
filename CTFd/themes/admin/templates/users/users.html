@@ -17,62 +17,82 @@
 </div>
 
 <div class="container">
+
 	<div class="row">
 		<div class="col-md-12">
 			{% if q and field %}
-			<h4 class="text-center">Searching for users with {{field}} matching {{q}}</h4>
+			<h5 class="text-muted text-center">Searching for users with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong></h5>
+			<h6 class="text-muted text-center pb-3">Page {{ users.page }} of {{ users.total }} results</h6>
 			{% endif %}
 
 			<form method="GET" class="form-inline">
-					<div class="form-group col-md-2">
-						<label for="sel1" class="sr-only" >Search Field</label>
-						<select class="form-control custom-select w-100" id="sel1" name="field">
-							<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
-							<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
-							<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
-							<option value="affiliation" {% if field == 'affiliation' %}selected{% endif %}>Affiliation</option>
-							<option value="ip" {% if field == 'ip' %}selected{% endif %}>IP Address</option>
-					  </select>
-					</div>
-					<div class="form-group col-md-8">
-						<label for="team-name-search" class="sr-only">Parameter</label>
-						<input type="text" class="form-control w-100" id="team-name-search" name="q" placeholder="Search for matching user" {% if q %}value="{{q}}"{% endif %}>
-					</div>
-					<div class="form-group col-md-2">
-						<label for="team-name-search" class="sr-only">Search</label>
-						<button type="submit" class="btn btn-primary w-100"><i class="fas fa-search" aria-hidden="true"></i></button>
-					</div>
+				<div class="form-group col-md-2">
+					<label for="sel1" class="sr-only" >Search Field</label>
+					<select class="form-control custom-select w-100" id="sel1" name="field">
+						<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
+						<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
+						<option value="email" {% if field == 'email' %}selected{% endif %}>Email</option>
+						<option value="affiliation" {% if field == 'affiliation' %}selected{% endif %}>Affiliation</option>
+						<option value="ip" {% if field == 'ip' %}selected{% endif %}>IP Address</option>
+					</select>
+				</div>
+				<div class="form-group col-md-8">
+					<label for="users-search" class="sr-only">Parameter</label>
+					<input type="text" class="form-control w-100" id="users-search" name="q" placeholder="Search for matching user" {% if q %}value="{{q}}"{% endif %}>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="users-search" class="sr-only">Search</label>
+					<button type="submit" class="btn btn-primary w-100"><i class="fas fa-search" aria-hidden="true"></i></button>
+				</div>
 			</form>
+		</div>
+	</div>
 
-			<br>
+	<hr>
 
-			<table id="teamsboard" class="table table-striped">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="float-right pb-3">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Users" id="users-edit-button">
+						<i class="btn-fa fas fa-pencil-alt"></i>
+					</button>
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Users" id="users-delete-button">
+						<i class="btn-fa fas fa-trash-alt"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table id="teamsboard" class="table table-striped border">
 				<thead>
 					<tr>
-						<td width="10px" class="text-center"><b>ID</b>
-						</td>
-						<td class="text-center"><b>User</b>
-						</td>
-						<td class="d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
-						</td>
-						<td class=""><b>Website</b>
-						</td>
-						<td class=""><b>Country</b>
-						</td>
-						<td class="text-center"><b>Admin</b>
-						</td>
-						<td class="text-center"><b>Verified</b>
-						</td>
-						<td class="text-center"><b>Hidden</b>
-						</td>
-						<td class="text-center"><b>Banned</b>
-						</td>
+						<th class="border-right" data-checkbox>
+							<div class="form-check text-center">
+								<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+							</div>
+						</th>
+						<th class="sort-col text-center"><b>ID</b></td>
+						<th class="sort-col text-center"><b>User</b></th>
+						<th class="d-md-table-cell d-lg-table-cell sort-col text-center"><b>Email</b></th>
+						<th class="sort-col text-center"><b>Country</b></th>
+						<th class="sort-col text-center px-0"><b>Admin</b></th>
+						<th class="sort-col text-center px-0"><b>Verified</b></th>
+						<th class="sort-col text-center px-0"><b>Hidden</b></th>
+						<th class="sort-col text-center px-0"><b>Banned</b></th>
 					</tr>
 				</thead>
 				<tbody>
-					{% for user in users %}
+					{% for user in users.items %}
 					<tr name="{{ user.id }}" data-href="{{ url_for('admin.users_detail', user_id=user.id) }}">
-						<td class="team-id" value="{{ user.id }}">{{ user.id }}</td>
+						<td class="border-right" data-checkbox>
+							<div class="form-check text-center">
+								<input type="checkbox" class="form-check-input" value="{{ user.id }}" data-user-id="{{ user.id }}">&nbsp;
+							</div>
+						</td>
+						<td class="team-id text-center" value="{{ user.id }}">{{ user.id }}</td>
 						<td class="team-name" value="{{ user.name }}">
 							<a href="{{ url_for('admin.users_detail', user_id=user.id) }}">
 								{{ user.name | truncate(32) }}
@@ -80,6 +100,12 @@
 							{% if user.oauth_id %}
 								<a href="https://majorleaguecyber.org/u/{{ user.name }}">
 									<span class="badge badge-primary">Official</span>
+								</a>
+							{% endif %}
+							{% if user.website %}
+								<a href="{{ user.website }}" target="_blank" class="badge badge-info">
+									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+									   title="{{ user.website }}" aria-hidden="true"></i>
 								</a>
 							{% endif %}
 							{% if user.affiliation %}
@@ -91,19 +117,11 @@
 								<a href="mailto:{{ user.email }}" target="_blank">{{ user.email | truncate(32) }}</a>
 							{% endif %}
 						</td>
-						<td class="team-website text-center">
-							{% if user.website %}
-								<a href="{{ user.website }}" target="_blank">
-									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
-									   title="{{ user.website }}" aria-hidden="true"></i>
-								</a>
-							{% endif %}
-						</td>
 						<td class="team-country text-center" value="{{ user.country if user.country is not none }}">
 							<span>
 								{% if user.country %}
 									<i class="flag-{{ user.country.lower() }}"></i>
-									{{ lookup_country_code(user.country) }}
+									<small>{{ lookup_country_code(user.country) }}</small>
 								{% endif %}
 							</span>
 						</td>
@@ -131,18 +149,20 @@
 					{% endfor %}
 				</tbody>
 			</table>
-			{% if pages > 1 %}
+			{% if users.pages > 1 %}
 			<div class="text-center">Page
 				<br>
-				{% if curr_page != 1 %}<a href="{{ url_for('admin.users_listing', page=curr_page - 1) }}">&lt;&lt;&lt;</a>{% endif %}
-				{% for page in range(1, pages + 1) %}
-					{% if curr_page != page %}
-						<a href="{{ url_for('admin.users_listing', page=page) }}">{{ page }}</a>
-					{% else %}
-						<b>{{ page }}</b>
-					{% endif %}
-				{% endfor %}
-				{% if curr_page != pages %}<a href="{{ url_for('admin.users_listing', page=curr_page + 1) }}">&gt;&gt;&gt;</a>{% endif %}
+				{% if users.page != 1 %}
+				<a href="{{ prev_page }}">&lt;&lt;&lt;</a>
+				{% endif %}
+				<select class="page-select">
+					{% for page in range(1, users.pages + 1) %}
+					<option {% if users.page == page %}selected{% endif %}>{{ page }}</option>
+					{% endfor %}
+				</select>
+				{% if users.next_num %}
+				<a href="{{ next_page }}">&gt;&gt;&gt;</a>
+				{% endif %}
 			</div>
 			{% endif %}
 		</div>

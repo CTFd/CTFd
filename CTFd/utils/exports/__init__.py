@@ -5,20 +5,19 @@ import re
 import tempfile
 import zipfile
 
-import datafreeze
 import dataset
 import six
 from alembic.util import CommandError
-from datafreeze.format import SERIALIZERS
-from datafreeze.format.fjson import JSONEncoder, JSONSerializer
 from flask import current_app as app
 from flask_migrate import upgrade
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.sql import sqltypes
 
+from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
 from CTFd.models import db, get_class_by_tablename
 from CTFd.utils import get_app_config, set_config
+from CTFd.utils.exports.freeze import freeze_export
 from CTFd.utils.migrations import (
     create_database,
     drop_database,
@@ -26,52 +25,6 @@ from CTFd.utils.migrations import (
     stamp_latest_revision,
 )
 from CTFd.utils.uploads import get_uploader
-
-
-class CTFdSerializer(JSONSerializer):
-    """
-    Slightly modified datafreeze serializer so that we can properly
-    export the CTFd database into a zip file.
-    """
-
-    def close(self):
-        for path, result in self.buckets.items():
-            result = self.wrap(result)
-
-            if self.fileobj is None:
-                fh = open(path, "wb")
-            else:
-                fh = self.fileobj
-
-            # Certain databases (MariaDB) store JSON as LONGTEXT.
-            # Before emitting a file we should standardize to valid JSON (i.e. a dict)
-            # See Issue #973
-            for i, r in enumerate(result["results"]):
-                data = r.get("requirements")
-                if data:
-                    try:
-                        if isinstance(data, six.string_types):
-                            result["results"][i]["requirements"] = json.loads(data)
-                    except ValueError:
-                        pass
-
-            data = json.dumps(
-                result, cls=JSONEncoder, indent=self.export.get_int("indent")
-            )
-
-            callback = self.export.get("callback")
-            if callback:
-                data = "%s && %s(%s);" % (callback, callback, data)
-
-            if six.PY3:
-                fh.write(bytes(data, encoding="utf-8"))
-            else:
-                fh.write(data)
-            if self.fileobj is None:
-                fh.close()
-
-
-SERIALIZERS["ctfd"] = CTFdSerializer  # Load the custom serializer
 
 
 def export_ctf():
@@ -88,7 +41,7 @@ def export_ctf():
     for table in tables:
         result = db[table].all()
         result_file = six.BytesIO()
-        datafreeze.freeze(result, format="ctfd", fileobj=result_file)
+        freeze_export(result, fileobj=result_file)
         result_file.seek(0)
         backup_zip.writestr("db/{}.json".format(table), result_file.read())
 
@@ -348,3 +301,4 @@ def import_ctf(backup, erase=True):
 
     # Set default theme in case the current instance or the import does not provide it
     set_config("ctf_theme", "core")
+    set_config("ctf_version", CTFD_VERSION)

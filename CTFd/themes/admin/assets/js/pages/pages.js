@@ -1,37 +1,33 @@
 import "./main";
 import CTFd from "core/CTFd";
 import $ from "jquery";
-import { htmlEntities } from "core/utils";
 import { ezQuery } from "core/ezq";
 
-function deletePage(event) {
-  const elem = $(this);
-  const name = elem.attr("page-route");
-  const page_id = elem.attr("page-id");
+function deleteSelectedUsers(event) {
+  let pageIDs = $("input[data-page-id]:checked").map(function() {
+    return $(this).data("page-id");
+  });
+  let target = pageIDs.length === 1 ? "page" : "pages";
+
   ezQuery({
-    title: "Delete " + htmlEntities(name),
-    body: "Are you sure you want to delete {0}?".format(
-      "<strong>" + htmlEntities(name) + "</strong>"
-    ),
+    title: "Delete Pages",
+    body: `Are you sure you want to delete ${pageIDs.length} ${target}?`,
     success: function() {
-      CTFd.fetch("/api/v1/pages/" + page_id, {
-        method: "DELETE"
-      })
-        .then(function(response) {
-          return response.json();
-        })
-        .then(function(response) {
-          if (response.success) {
-            elem
-              .parent()
-              .parent()
-              .remove();
-          }
-        });
+      const reqs = [];
+      for (var pageID of pageIDs) {
+        reqs.push(
+          CTFd.fetch(`/api/v1/pages/${pageID}`, {
+            method: "DELETE"
+          })
+        );
+      }
+      Promise.all(reqs).then(responses => {
+        window.location.reload();
+      });
     }
   });
 }
 
 $(() => {
-  $(".delete-page").click(deletePage);
+  $("#pages-delete-button").click(deleteSelectedUsers);
 });

@@ -7,6 +7,7 @@ from flask import abort, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.wsgi import DispatcherMiddleware
 
+from CTFd.cache import clear_user_recent_ips
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import Tracking, db
 from CTFd.utils import config, get_config, markdown
@@ -38,7 +39,14 @@ from CTFd.utils.plugins import (
 )
 from CTFd.utils.security.auth import login_user, logout_user, lookup_user_token
 from CTFd.utils.security.csrf import generate_nonce
-from CTFd.utils.user import authed, get_current_team, get_current_user, get_ip
+from CTFd.utils.user import (
+    authed,
+    get_current_user_attrs,
+    get_current_user_recent_ips,
+    get_current_team_attrs,
+    get_ip,
+    is_admin,
+)
 
 
 def init_template_filters(app):
@@ -75,6 +83,10 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_mode_as_word=get_mode_as_word)
     app.jinja_env.globals.update(integrations=integrations)
     app.jinja_env.globals.update(authed=authed)
+    app.jinja_env.globals.update(is_admin=is_admin)
+    app.jinja_env.globals.update(get_current_user_attrs=get_current_user_attrs)
+    app.jinja_env.globals.update(get_current_team_attrs=get_current_team_attrs)
+    app.jinja_env.globals.update(get_ip=get_ip)
 
 
 def init_logs(app):
@@ -169,43 +181,54 @@ def init_request_processors(app):
             return
 
         if authed():
-            track = Tracking.query.filter_by(ip=get_ip(), user_id=session["id"]).first()
-            if not track:
-                visit = Tracking(ip=get_ip(), user_id=session["id"])
-                db.session.add(visit)
-            else:
-                track.date = datetime.datetime.utcnow()
+            user_ips = get_current_user_recent_ips()
+            ip = get_ip()
 
-            try:
-                db.session.commit()
-            except (InvalidRequestError, IntegrityError):
-                db.session.rollback()
-                logout_user()
+            track = None
+            if (ip not in user_ips) or (request.method != "GET"):
+                track = Tracking.query.filter_by(
+                    ip=get_ip(), user_id=session["id"]
+                ).first()
 
-            if authed():
-                user = get_current_user()
-                team = get_current_team()
+                if track:
+                    track.date = datetime.datetime.utcnow()
+                else:
+                    track = Tracking(ip=get_ip(), user_id=session["id"])
+                    db.session.add(track)
 
-                if request.path.startswith("/themes") is False:
-                    if user and user.banned:
-                        return (
-                            render_template(
-                                "errors/403.html",
-                                error="You have been banned from this CTF",
-                            ),
-                            403,
-                        )
+            if track:
+                try:
+                    db.session.commit()
+                except (InvalidRequestError, IntegrityError):
+                    db.session.rollback()
+                    logout_user()
+                clear_user_recent_ips(user_id=session["id"])
 
-                    if team and team.banned:
-                        return (
-                            render_template(
-                                "errors/403.html",
-                                error="Your team has been banned from this CTF",
-                            ),
-                            403,
-                        )
+    @app.before_request
+    def banned():
+        if request.endpoint == "views.themes":
+            return
 
-            db.session.close()
+        if authed():
+            user = get_current_user_attrs()
+            team = get_current_team_attrs()
+
+            if user and user.banned:
+                return (
+                    render_template(
+                        "errors/403.html", error="You have been banned from this CTF"
+                    ),
+                    403,
+                )
+
+            if team and team.banned:
+                return (
+                    render_template(
+                        "errors/403.html",
+                        error="Your team has been banned from this CTF",
+                    ),
+                    403,
+                )
 
     @app.before_request
     def tokens():

@@ -52,6 +52,22 @@
 	</div>
 </div>
 
+<div id="user-addresses-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">IP Addresses</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				{% include "admin/modals/users/addresses.html" %}
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="jumbotron">
 	<div class="container">
 		<h1 id="team-id" class="text-center p-0 m-0">{{ user.name }}</h1>
@@ -112,25 +128,37 @@
 				<small>points</small>
 			{% endif %}
 		</h3>
+		<hr class="w-50">
 		<div class="pt-3">
-			<a class="edit-user">
+			<a class="edit-user text-dark">
 				<i class="btn-fa fas fa-user-edit fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Edit User"></i>
 			</a>
-			<a class="award-user">
+			<a class="award-user text-dark">
 				<i class="btn-fa fas fa-trophy fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Award User"></i>
 			</a>
-			<a class="email-user">
+			<a class="email-user text-dark">
 				<i class="btn-fa fas fa-envelope fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Email User"></i>
 			</a>
-			<a class="delete-user">
+			<a class="delete-user text-dark">
 				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Delete User"></i>
 			</a>
+		</div>
+		<div class="pt-3">
+			<a class="addresses-user text-dark">
+				<i class="btn-fa fas fa-network-wired fa-2x px-2" data-toggle="tooltip" data-placement="top" title="IP Addresses"></i>
+			</a>
+			{% if user.website %}
+			<a href="{{ user.website }}" target="_blank" class="text-decoration-none text-dark">
+				<i class="btn-fa fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					title="{{ user.website }}" aria-hidden="true"></i>
+			</a>
+			{% endif %}
 		</div>
 	</div>
 </div>
 
 <div class="container">
-	<div class="row">
+	<div class="row min-vh-25">
 		{% if solves %}
 			<div id="keys-pie-graph" class="col-md-6">
 				<div class="text-center">
@@ -148,7 +176,7 @@
 				</div>
 			</div>
 		{% else %}
-			<h3 class="spinner-error text-center w-100">No solves yet</h3>
+			<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">No solves yet</h3>
 		{% endif %}
 	</div>
 
@@ -167,25 +195,47 @@
 		   aria-controls="nav-missing" aria-selected="false">Missing</a>
 	</nav>
 
-	<div class="tab-content" id="nav-tabContent">
+	<div class="tab-content min-vh-50" id="nav-tabContent">
 		<div class="tab-pane fade show active" id="nav-solves" role="tabpanel" aria-labelledby="nav-solves-tab">
+			<h3 class="text-center pt-5 d-block">Solves</h3>
 			<div class="row">
 				<div class="col-md-12">
-					<table class="table table-striped">
-					<h3 class="text-center py-3 d-block">Solves</h3>
+					<div class="float-right pb-3">
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-outline-danger" id="solves-delete-button">
+								<i class="btn-fa fas fa-trash-alt"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped border">
 					<thead>
-					<tr>
-						<td class="text-center"><b>Challenge</b></td>
-						<td class="text-center"><b>Submitted</b></td>
-						<td class="text-center"><b>Category</b></td>
-						<td class="text-center"><b>Value</b></td>
-						<td class="text-center"><b>Time</b></td>
-						<td class="text-center"><b>Delete</b></td>
-					</tr>
+						<tr>
+							<th class="border-right" data-checkbox>
+								<div class="form-check text-center">
+									<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+								</div>
+							</th>
+							<th class="sort-col text-center"><b>Challenge</b></th>
+							<th class="sort-col text-center"><b>Submitted</b></th>
+							<th class="sort-col text-center"><b>Category</b></th>
+							<th class="sort-col text-center"><b>Value</b></th>
+							<th class="sort-col text-center"><b>Time</b></th>
+						</tr>
 					</thead>
 					<tbody>
 					{% for solve in solves %}
-						<tr class="chal-solve">
+						<tr class="chal-solve" data-href="{{ url_for("admin.challenges_detail", challenge_id=solve.challenge_id) }}">
+							<td class="border-right" data-checkbox>
+								<div class="form-check text-center">
+									<input type="checkbox" class="form-check-input" value="{{ solve.id }}" data-submission-id="{{ solve.id }}"
+									data-submission-type="{{ solve.type }}"
+									data-submission-challenge="{{ solve.challenge.name }}">&nbsp;
+								</div>
+							</td>
 							<td class="text-center chal" id="{{ solve.challenge_id }}">
 								<a href="{{ url_for("admin.challenges_detail", challenge_id=solve.challenge_id) }}">
 									{{ solve.challenge.name }}
@@ -197,13 +247,6 @@
 							<td class="text-center solve-time">
 								<span data-time="{{ solve.date | isoformat }}"></span>
 							</td>
-							<td class="text-center">
-								<span class="delete-submission" submission-id="{{ solve.id }}"
-									  submission-type="{{ solve.type }}" submission-challenge="{{ solve.challenge.name }}" data-toggle="tooltip"
-									  data-placement="top" title="Delete solve #{{ solve.id }}">
-									<i class="btn-fa fas fa-times"></i>
-								</span>
-							</td>
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -213,81 +256,53 @@
 		</div>
 
 		<div class="tab-pane fade" id="nav-wrong" role="tabpanel" aria-labelledby="nav-wrong-tab">
+			<h3 class="text-center pt-5 d-block">Fails</h3>
 			<div class="row">
 				<div class="col-md-12">
-					<table class="table table-striped">
-					<h3 class="text-center py-3 d-block">Fails</h3>
-					<thead>
-					<tr>
-						<td class="text-center"><b>Challenge</b></td>
-						<td class="text-center"><b>Submitted</b></td>
-						<td class="text-center"><b>Time</b></td>
-						<td class="text-center"><b>Delete</b></td>
-					</tr>
-					</thead>
-					<tbody>
-					{% for fail in fails %}
-						<tr class="chal-wrong">
-							<td class="text-center chal" id="{{ fail.challenge_id }}">
-								<a href="{{ url_for("admin.challenges_detail", challenge_id=fail.challenge_id) }}">
-									{{ fail.challenge.name }}
-								</a>
-							</td>
-							<td class="flag" id="{{ fail.id }}">
-								<pre>{{ fail.provided }}</pre>
-							</td>
-							<td class="text-center solve-time">
-								<span data-time="{{ fail.date | isoformat }}"></span>
-							</td>
-							<td class="text-center">
-								<a class="delete-submission" submission-id="{{ fail.id }}"
-								   submission-type="{{ fail.type }}" submission-challenge="{{ fail.challenge.name }}" data-toggle="tooltip"
-									  data-placement="top" title="Delete fail #{{ fail.id }}">
-									<i class="fas fa-times"></i>
-								</a>
-							</td>
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
+					<div class="float-right pb-3">
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-outline-danger" id="fails-delete-button">
+								<i class="btn-fa fas fa-trash-alt"></i>
+							</button>
+						</div>
+					</div>
 				</div>
 			</div>
-		</div>
-
-		<div class="tab-pane fade" id="nav-awards" role="tabpanel" aria-labelledby="nav-awards-tab">
 			<div class="row">
 				<div class="col-md-12">
-					<table class="table table-striped">
-						<h3 class="text-center py-3 d-block">Awards</h3>
+					<table class="table table-striped border">
 						<thead>
-						<tr>
-							<td class="text-center"><b>Name</b></td>
-							<td class="text-center"><b>Description</b></td>
-							<td class="text-center"><b>Date</b></td>
-							<td class="text-center"><b>Value</b></td>
-							<td class="text-center"><b>Category</b></td>
-							<td class="text-center"><b>Icon</b></td>
-							<td class="text-center"><b>Delete</b></td>
-						</tr>
+							<tr>
+								<th class="border-right" data-checkbox>
+									<div class="form-check text-center">
+										<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+									</div>
+								</th>
+								<th class="sort-col text-center"><b>Challenge</b></th>
+								<th class="sort-col text-center"><b>Submitted</b></th>
+								<th class="sort-col text-center"><b>Time</b></th>
+							</tr>
 						</thead>
-						<tbody id="awards-body">
-						{% for award in awards %}
-							<tr class="award-row">
-								<td class="text-center chal" id="{{ award.id }}">{{ award.name }}</td>
-								<td class=""><pre>{{ award.description }}</pre></td>
-								<td class="text-center solve-time">
-									<span data-time="{{ award.date | isoformat }}"></span>
+						<tbody>
+						{% for fail in fails %}
+							<tr class="chal-wrong" data-href="{{ url_for("admin.challenges_detail", challenge_id=fail.challenge_id) }}">
+								<td class="border-right" data-checkbox>
+									<div class="form-check text-center">
+										<input type="checkbox" class="form-check-input" value="{{ fail.id }}" data-submission-id="{{ fail.id }}"
+										data-submission-type="{{ fail.type }}"
+										data-submission-challenge="{{ fail.challenge.name }}">&nbsp;
+									</div>
 								</td>
-								<td class="text-center">{{ award.value }}</td>
-								<td class="text-center">{{ award.category }}</td>
-								<td class="text-center">{{ award.icon }}</td>
-
-								<td class="text-center">
-									<span class="delete-award" data-toggle="tooltip"
-										  data-placement="top" award-id="{{ award.id }}" award-name="{{ award.name }}"
-										  title="Delete award #{{ award.id }}">
-										<i class="fas fa-times"></i>
-									</span>
+								<td class="text-center chal" id="{{ fail.challenge_id }}">
+									<a href="{{ url_for("admin.challenges_detail", challenge_id=fail.challenge_id) }}">
+										{{ fail.challenge.name }}
+									</a>
+								</td>
+								<td class="flag" id="{{ fail.id }}">
+									<pre>{{ fail.provided }}</pre>
+								</td>
+								<td class="text-center solve-time">
+									<span data-time="{{ fail.date | isoformat }}"></span>
 								</td>
 							</tr>
 						{% endfor %}
@@ -297,22 +312,98 @@
 			</div>
 		</div>
 
-		<div class="tab-pane fade" id="nav-missing" role="tabpanel" aria-labelledby="nav-missing-tab">
+		<div class="tab-pane fade" id="nav-awards" role="tabpanel" aria-labelledby="nav-awards-tab">
+			<h3 class="text-center pt-5 d-block">Awards</h3>
 			<div class="row">
 				<div class="col-md-12">
-					<table class="table table-striped">
-					<h3 class="text-center py-3 d-block">Missing</h3>
+					<div class="float-right pb-3">
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-outline-danger" id="awards-delete-button">
+								<i class="btn-fa fas fa-trash-alt"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped border">
+						<thead>
+							<tr>
+								<th class="border-right" data-checkbox>
+									<div class="form-check text-center">
+										<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+									</div>
+								</th>
+								<th class="sort-col text-center"><b>Name</b></th>
+								<th class="sort-col text-center"><b>Description</b></th>
+								<th class="sort-col text-center"><b>Date</b></th>
+								<th class="sort-col text-center"><b>Value</b></th>
+								<th class="sort-col text-center"><b>Category</b></th>
+								<th class="sort-col text-center"><b>Icon</b></th>
+							</tr>
+						</thead>
+						<tbody id="awards-body">
+						{% for award in awards %}
+							<tr class="award-row">
+								<td class="border-right" data-checkbox>
+									<div class="form-check text-center">
+										<input type="checkbox" class="form-check-input" value="{{ award.id }}" data-award-id="{{ award.id }}" data-award-name="{{ award.name }}">&nbsp;
+									</div>
+								</td>
+								<td class="text-center chal" id="{{ award.id }}">{{ award.name }}</td>
+								<td class=""><pre>{{ award.description }}</pre></td>
+								<td class="text-center solve-time">
+									<span data-time="{{ award.date | isoformat }}"></span>
+								</td>
+								<td class="text-center">{{ award.value }}</td>
+								<td class="text-center">{{ award.category }}</td>
+								<td class="text-center"> <i class="award-icon award-{{ award.icon }}"></i> {{ award.icon }}</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="nav-missing" role="tabpanel" aria-labelledby="nav-missing-tab">
+			<h3 class="text-center pt-5 d-block">Missing</h3>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="float-right pb-3">
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-outline-success" id="missing-solve-button">
+								<i class="btn-fa fas fa-check"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-striped border">
 					<thead>
 						<tr>
-							<td class="text-center"><b>Challenge</b></td>
-							<td class="text-center"><b>Category</b></td>
-							<td class="text-center"><b>Value</b></td>
-							<td class="text-center"><b>Mark Solved</b></td>
+							<th class="border-right" data-checkbox>
+								<div class="form-check text-center">
+									<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+								</div>
+							</th>
+							<th class="sort-col text-center"><b>Challenge</b></th>
+							<th class="sort-col text-center"><b>Category</b></th>
+							<th class="sort-col text-center"><b>Value</b></th>
 						</tr>
 					</thead>
 					<tbody>
 					{% for challenge in missing %}
-						<tr class="chal-solve">
+						<tr class="chal-solve" data-href="{{ url_for("admin.challenges_detail", challenge_id=challenge.id) }}">
+							<td class="border-right" data-checkbox>
+								<div class="form-check text-center">
+									<input type="checkbox" class="form-check-input" value="{{ challenge.id }}" data-missing-challenge-id="{{ challenge.id }}"
+									data-missing-challenge-name="{{ challenge.name }}">&nbsp;
+								</div>
+							</td>
 							<td class="text-center chal" id="{{ challenge.id }}">
 								<a href="{{ url_for("admin.challenges_detail", challenge_id=challenge.id) }}">
 									{{ challenge.name }}
@@ -320,13 +411,6 @@
 							</td>
 							<td class="text-center">{{ challenge.category }}</td>
 							<td class="text-center">{{ challenge.value }}</td>
-							<td class="text-center">
-								<a class="correct-submission" data-toggle="tooltip" challenge-id="{{ challenge.id }}"
-									  challenge-name="{{ challenge.name }}"
-									  data-placement="top" title="Mark {{ challenge.name }} correct for {{ user.name }}">
-									<i class="fas fa-check"></i>
-								</a>
-							</td>
 						</tr>
 					{% endfor %}
 					</tbody>
@@ -335,31 +419,6 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="row pt-5">
-		<div class="col-md-12">
-			<table class="table table-striped">
-				<h3 class="text-center">IP Addresses</h3>
-				<thead>
-				<tr>
-					<td class="text-center"><b>IP Address</b></td>
-					<td class="text-center"><b>Last Seen</b></td>
-				</tr>
-				</thead>
-				<tbody>
-				{% for addr in addrs %}
-					<tr>
-						<td class="text-center">{{ addr.ip }}</td>
-						<td class="text-center solve-time">
-							<span data-time="{{ addr.date | isoformat }}"></span>
-						</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-
 </div>
 
 {% endblock %}

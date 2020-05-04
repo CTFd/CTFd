@@ -9,19 +9,40 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
-			<table id="scoreboard" class="table table-striped">
+			<div class="float-right pb-3">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-outline-secondary" id="scoreboard-edit-button" data-toggle="tooltip" title="Hide/Unhide Accounts">
+						<i class="btn-fa fas fa-eye"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table id="scoreboard" class="table table-striped border">
 				<thead>
 					<tr>
-						<td width="10px"><b>Place</b></td>
-						<td><b>Team</b></td>
-						<td><b>Score</b></td>
-						<td><b>Visibility</b></td>
+						<th class="border-right" data-checkbox>
+							<div class="form-check text-center">
+								<input type="checkbox" class="form-check-input" id="scoreboard-bulk-select" data-checkbox-all>&nbsp;
+							</div>
+						</th>
+						<th class="sort-col text-center"><b>Place</b></th>
+						<th class="sort-col"><b>Team</b></th>
+						<th class="sort-col"><b>Score</b></th>
+						<th class="sort-col"><b>Visibility</b></th>
 					</tr>
 				</thead>
 				<tbody>
 				{% for standing in standings %}
 					<tr data-href="{{ generate_account_url(standing.account_id, admin=True) }}">
-						<td>{{ loop.index }}</td>
+						<td class="border-right text-center" data-checkbox>
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" value="{{ standing.account_id }}" data-account-id="{{ standing.account_id }}">&nbsp;
+							</div>
+						</td>
+						<td class="text-center" width="10%">{{ loop.index }}</td>
 						<td>
 							<a href="{{ generate_account_url(standing.account_id, admin=True) }}">
 								{{ standing.name }}
@@ -40,15 +61,11 @@
 						</td>
 						<td>{{ standing.score }}</td>
 						<td>
-						{% if standing.hidden %}
-							<button class="btn-sm btn-danger cursor-pointer scoreboard-toggle" type="submit"
-								data-account-id="{{ standing.account_id }}" data-state="hidden">Hidden
-							</button>
-						{% else %}
-							<button class="btn-sm btn-success cursor-pointer scoreboard-toggle" type="submit"
-								data-account-id="{{ standing.account_id }}" data-state="visible">Visible
-							</button>
-						{% endif %}
+							{% if standing.hidden %}
+								<span class="badge badge-danger">hidden</span>
+							{% else %}
+								<span class="badge badge-success">visible</span>
+							{% endif %}
 						</td>
 					</tr>
 				{% endfor %}

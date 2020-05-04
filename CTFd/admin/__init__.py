@@ -14,10 +14,13 @@ from flask import (
     url_for,
 )
 
-from CTFd.cache import cache, clear_config
+from CTFd.cache import cache, clear_config, clear_standings, clear_pages
 from CTFd.models import (
     Awards,
+    Challenges,
     Configs,
+    Notifications,
+    Pages,
     Solves,
     Submissions,
     Teams,
@@ -34,6 +37,7 @@ from CTFd.utils.exports import export_ctf as export_ctf_util
 from CTFd.utils.exports import import_ctf as import_ctf_util
 from CTFd.utils.helpers import get_errors
 from CTFd.utils.security.auth import logout_user
+from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import is_admin
 
 admin = Blueprint("admin", __name__)
@@ -176,19 +180,60 @@ def config():
 @admins_only
 def reset():
     if request.method == "POST":
-        # Truncate Users, Teams, Submissions, Solves, Notifications, Awards, Unlocks, Tracking
-        Tracking.query.delete()
-        Solves.query.delete()
-        Submissions.query.delete()
-        Awards.query.delete()
-        Unlocks.query.delete()
-        Users.query.delete()
-        Teams.query.delete()
-        set_config("setup", False)
+        require_setup = False
+        logout = False
+        next_url = url_for("admin.statistics")
+
+        data = request.form
+
+        if data.get("pages"):
+            _pages = Pages.query.all()
+            for p in _pages:
+                for f in p.files:
+                    delete_file(file_id=f.id)
+
+            Pages.query.delete()
+
+        if data.get("notifications"):
+            Notifications.query.delete()
+
+        if data.get("challenges"):
+            _challenges = Challenges.query.all()
+            for c in _challenges:
+                for f in c.files:
+                    delete_file(file_id=f.id)
+            Challenges.query.delete()
+
+        if data.get("accounts"):
+            Users.query.delete()
+            Teams.query.delete()
+            require_setup = True
+            logout = True
+
+        if data.get("submissions"):
+            Solves.query.delete()
+            Submissions.query.delete()
+            Awards.query.delete()
+            Unlocks.query.delete()
+            Tracking.query.delete()
+
+        if require_setup:
+            set_config("setup", False)
+            cache.clear()
+            logout_user()
+            next_url = url_for("views.setup")
+
         db.session.commit()
-        cache.clear()
-        logout_user()
+
+        clear_pages()
+        clear_standings()
+        clear_config()
+
+        if logout is True:
+            cache.clear()
+            logout_user()
+
         db.session.close()
-        return redirect(url_for("views.setup"))
+        return redirect(next_url)
 
     return render_template("admin/reset.html")

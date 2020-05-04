@@ -1,3 +1,53 @@
+2.4.0 / 2020-05-04
+==================
+
+**General**
+* Cache user and team attributes and use those perform certain page operations intead of going to the database for data
+    * After modifying the user/team attributes you should call the appropriate cache clearing function (clear_user_session/clear_team_session)
+* Cache user IPs for the last hour to avoid hitting the database on every authenticated page view
+    * Update the user IP's last seen value at least every hour or on every non-GET request
+* Replace `flask_restplus` with `flask_restx`
+* Remove `datafreeze`, `normality`, and `banal` dependencies in favor of in-repo solutions to exporting database
+
+**Admin Panel**
+* Add bulk selection and deletion for Users, Teams, Scoreboard, Challenges, Submissions
+* Make some Admin tables sortable by table headers
+* Create a score distribution graph in the statistics page
+* Make instance reset more granular to allow for choosing to reset Accounts, Submissions, Challenges, Pages, and/or Notificatoins
+* Properly update challenge visibility after updating challenge
+* Show total possible points in Statistics page
+* Add searching for Users, Teams, Challenges, Submissions
+* Move User IP addresses into a modal
+* Move Team IP addresses into a modal
+* Show User website in a user page button
+* Show Team website in a team page button
+* Make the Pages editor use proper HTML syntax highlighting
+* Theme header and footer editors now use CodeMirror
+* Make default CodeMirror font-size 12px
+* Stop storing last action via location hash and switch to using sessionStorage
+
+**Themes**
+* Make page selection a select and option instead of having a lot of page links
+* Add the JSEnum class to create constants that can be accessed from webpack. Generate constants with `python manage.py build jsenums`
+* Add the JinjaEnum class to inject constants into the Jinja environment to access from themes
+* Update jQuery to 3.5.0 to resolve potential security issue
+* Add some new CSS utilities (`.min-vh-*` and `.opacity-*`)
+* Change some rows to have a minimum height so they don't render oddly without data
+* Deprecate `.spinner-error` CSS class
+* Deprecate accessing the type variable to check user role. Instead you should use `is_admin()`
+
+**Miscellaneous**
+* Enable foreign key enforcement for SQLite. Only really matters for the debug server.
+* Remove the duplicated `get_config` from `CTFd.models`
+* Fix possible email sending issues in Python 3 by using `EmailMessage`
+* Dont set User type in the user side session. Instead it should be set in the new user attributes
+* Fix flask-profiler and bump dependency to 1.8.1
+* Switch to using the `Faker` library for `populate.py` instead of hardcoded data
+* Add a `yarn lint` command to run eslint on JS files
+* Always insert the current CTFd version at the end of the import process
+* Fix issue where files could not be downloaded on Windows
+
+
 2.3.3 / 2020-04-12
 ==================
 

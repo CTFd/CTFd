@@ -13,16 +13,13 @@ itsdangerous==1.1.0
 requests>=2.20.0
 PyMySQL==0.9.3
 gunicorn==19.9.0
-banal==0.4.2
-normality==2.0.0
 dataset==1.1.2
 mistune==0.8.4
 netaddr==0.7.19
 redis==3.3.11
-datafreeze==0.1.0
 gevent==1.4.0
 python-dotenv==0.10.3
-flask-restplus==0.13.0
+flask-restx==0.1.1
 pathlib2==2.3.5
 flask-marshmallow==0.10.1
 marshmallow-sqlalchemy==0.17.0
