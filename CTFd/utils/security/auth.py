@@ -3,6 +3,7 @@ import os
 
 from flask import session
 
+from CTFd.cache import clear_user_session
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import UserTokens, db
 from CTFd.utils.encoding import hexencode
@@ -14,6 +15,9 @@ def login_user(user):
     session["name"] = user.name
     session["email"] = user.email
     session["nonce"] = generate_nonce()
+
+    # Clear out any currently cached user attributes
+    clear_user_session(user_id=user.id)
 
 
 def logout_user():

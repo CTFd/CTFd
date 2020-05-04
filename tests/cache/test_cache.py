@@ -28,18 +28,6 @@ def test_clear_user_session():
         user.type = "admin"
         app.db.session.commit()
 
-        # The user shouldn't be considered admin because their type is still cached
-        user = Users.query.filter_by(id=2).first()
-        with app.test_request_context("/"):
-            login_user(user)
-            user = get_current_user()
-            assert user.id == 2
-            assert user.type == "admin"
-            assert is_admin() is False
-
-        # Clear the user's cached session (for now just the type)
-        clear_user_session(user_id=2)
-
         # The user's type should now be admin
         user = Users.query.filter_by(id=2).first()
         with app.test_request_context("/"):
