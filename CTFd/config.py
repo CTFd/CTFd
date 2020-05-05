@@ -246,9 +246,10 @@ class Config(object):
     UPDATE_CHECK = not os.getenv("UPDATE_CHECK")  # Defaults True
     APPLICATION_ROOT = os.getenv("APPLICATION_ROOT") or "/"
     SERVER_SENT_EVENTS = not os.getenv("SERVER_SENT_EVENTS")  # Defaults True
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 20))
-    }
+    if DATABASE_URL.startswith("sqlite") is False:
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 20))
+        }
 
     """
     === OAUTH ===
