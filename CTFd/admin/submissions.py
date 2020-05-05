@@ -54,10 +54,16 @@ def submissions_listing(submission_type):
         "admin/submissions.html",
         submissions=submissions,
         prev_page=url_for(
-            request.endpoint, type=submission_type, page=submissions.prev_num, **args
+            request.endpoint,
+            submission_type=submission_type,
+            page=submissions.prev_num,
+            **args
         ),
         next_page=url_for(
-            request.endpoint, type=submission_type, page=submissions.next_num, **args
+            request.endpoint,
+            submission_type=submission_type,
+            page=submissions.next_num,
+            **args
         ),
         type=submission_type,
         q=q,
