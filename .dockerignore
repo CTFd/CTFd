@@ -12,3 +12,4 @@ CTFd/uploads/**/*
 .gitignore
 .prettierignore
 .travis.yml
+node_modules
