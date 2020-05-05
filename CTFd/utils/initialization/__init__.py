@@ -202,7 +202,8 @@ def init_request_processors(app):
                 except (InvalidRequestError, IntegrityError):
                     db.session.rollback()
                     logout_user()
-                clear_user_recent_ips(user_id=session["id"])
+                else:
+                    clear_user_recent_ips(user_id=session["id"])
 
     @app.before_request
     def banned():
