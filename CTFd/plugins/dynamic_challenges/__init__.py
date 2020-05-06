@@ -239,7 +239,9 @@ class DynamicValueChallenge(BaseChallenge):
 
 class DynamicChallenge(Challenges):
     __mapper_args__ = {"polymorphic_identity": "dynamic"}
-    id = db.Column(None, db.ForeignKey("challenges.id"), primary_key=True)
+    id = db.Column(
+        None, db.ForeignKey("challenges.id", ondelete="CASCADE"), primary_key=True
+    )
     initial = db.Column(db.Integer, default=0)
     minimum = db.Column(db.Integer, default=0)
     decay = db.Column(db.Integer, default=0)
