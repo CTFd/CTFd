@@ -1,3 +1,15 @@
+2.4.1 / 2020-05-06
+==================
+
+**Admin Panel**
+* Fix issue where admins couldn't update the "Account Creation" email
+* Fix issue where the Submissions page in the Admin Panel could not be paginated correctly
+
+**Miscellaneous**
+* Add `SQLALCHEMY_ENGINE_OPTIONS` to `config.py` with a slightly higher default `max_overflow` setting for `SQLALCHEMY_MAX_OVERFLOW`. This can be overridden with the `SQLALCHEMY_MAX_OVERFLOW` envvar
+* Add `node_modules/` to `.dockerignore`
+
+
 2.4.0 / 2020-05-04
 ==================
 
