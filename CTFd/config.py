@@ -231,6 +231,11 @@ class Config(object):
 
     SERVER_SENT_EVENTS:
         Specifies whether or not to enable to server-sent events based Notifications system.
+
+    SQLALCHEMY_ENGINE_OPTIONS:
+        A dictionary of keyword args to send to the underlying SQLAlchemy create_engine() call.
+        https://docs.sqlalchemy.org/en/13/core/engines.html#sqlalchemy.create_engine
+        https://flask-sqlalchemy.palletsprojects.com/en/2.x/config/#configuration-keys
     """
     REVERSE_PROXY = os.getenv("REVERSE_PROXY") or False
     TEMPLATES_AUTO_RELOAD = not os.getenv("TEMPLATES_AUTO_RELOAD")  # Defaults True
@@ -241,6 +246,10 @@ class Config(object):
     UPDATE_CHECK = not os.getenv("UPDATE_CHECK")  # Defaults True
     APPLICATION_ROOT = os.getenv("APPLICATION_ROOT") or "/"
     SERVER_SENT_EVENTS = not os.getenv("SERVER_SENT_EVENTS")  # Defaults True
+    if DATABASE_URL.startswith("sqlite") is False:
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 20))
+        }
 
     """
     === OAUTH ===
