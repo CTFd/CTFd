@@ -1,19 +1,14 @@
-import os
-
-from alembic.migration import MigrationContext
-from flask import current_app
-from flask_migrate import Migrate, stamp
-from sqlalchemy import create_engine
-from alembic.operations import Operations
-
-from alembic.script import ScriptDirectory
-from alembic.config import Config
-from sqlalchemy import pool
-
-from CTFd.utils import get_config, set_config
-
 import inspect
 import os
+
+from alembic.config import Config
+from alembic.migration import MigrationContext
+from alembic.operations import Operations
+from alembic.script import ScriptDirectory
+from flask import current_app
+from sqlalchemy import create_engine, pool
+
+from CTFd.utils import get_config, set_config
 
 
 def upgrade(plugin_name=None):
@@ -24,12 +19,13 @@ def upgrade(plugin_name=None):
 
     if plugin_name is None:
         # Get the directory name of the plugin if unspecified
-        caller_path = inspect.stack()[1].filename
+        # Doing it this way doesn't waste the rest of the inspect.stack call
+        frame = inspect.currentframe()
+        caller_info = inspect.getframeinfo(frame.f_back)
+        caller_path = caller_info[0]
         plugin_name = os.path.basename(os.path.dirname(caller_path))
 
-    engine = create_engine(
-        database_url, poolclass=pool.NullPool
-    )
+    engine = create_engine(database_url, poolclass=pool.NullPool)
     conn = engine.connect()
     context = MigrationContext.configure(conn)
     op = Operations(context)
