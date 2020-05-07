@@ -176,6 +176,7 @@ def init_plugins(app):
 
     app.admin_plugin_menu_bar = []
     app.plugin_menu_bar = []
+    app.plugins_dir = os.path.dirname(__file__)
 
     if app.config.get("SAFE_MODE", False) is False:
         modules = sorted(glob.glob(os.path.dirname(__file__) + "/*"))
