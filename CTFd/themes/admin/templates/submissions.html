@@ -12,23 +12,73 @@
 </div>
 
 <div class="container">
+
 	<div class="row">
 		<div class="col-md-12">
-			<table id="teamsboard" class=" table table-striped">
+			{% if q and field %}
+			<h5 class="text-muted text-center">Searching for submissions with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong></h5>
+			<h6 class="text-muted text-center pb-3">Page {{ submissions.page }} of {{ submissions.total }} results</h6>
+			{% endif %}
+
+			<form method="GET" class="form-inline">
+				<div class="form-group col-md-2">
+					<label for="sel1" class="sr-only" >Search Field</label>
+					<select class="form-control custom-select w-100" id="sel1" name="field">
+						<option value="provided" {% if field == 'provided' %}selected{% endif %}>Provided</option>
+						<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
+					</select>
+				</div>
+				<div class="form-group col-md-8">
+					<label for="team-name-search" class="sr-only">Parameter</label>
+					<input type="text" class="form-control w-100" id="team-name-search" name="q" placeholder="Search for matching submission" {% if q %}value="{{q}}"{% endif %}>
+				</div>
+				<div class="form-group col-md-2">
+					<label for="team-name-search" class="sr-only">Search</label>
+					<button type="submit" class="btn btn-primary w-100"><i class="fas fa-search" aria-hidden="true"></i></button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="float-right pb-3">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-outline-danger" id="submission-delete-button">
+						<i class="btn-fa fas fa-trash-alt"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table id="teamsboard" class="table table-striped border">
 				<thead>
 					<tr>
-						<td class="text-center"><b>ID</b></td>
-						<td><b>Team</b></td>
-						<td><b>Challenge</b></td>
-						<td><b>Type</b></td>
-						<td><b>Submission</b></td>
-						<td class="text-center"><b>Date</b></td>
-						<td class="text-center"><b>Delete</b></td>
+						<th class="border-right" data-checkbox>
+							<div class="form-check text-center">
+								<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+							</div>
+						</th>
+						<th class="text-center sort-col"><b>ID</b></th>
+						<th class="sort-col"><b>Team</b></th>
+						<th class="sort-col"><b>Challenge</b></th>
+						<th class="sort-col"><b>Type</b></th>
+						<th class="sort-col"><b>Provided</b></th>
+						<th class="text-center sort-col"><b>Date</b></th>
 					</tr>
 				</thead>
 				<tbody>
-					{% for sub in submissions %}
+					{% for sub in submissions.items %}
 					<tr>
+						<td class="border-right" data-checkbox>
+							<div class="form-check text-center">
+								<input type="checkbox" class="form-check-input" value="{{ sub.id }}" data-submission-id="{{ sub.id }}">&nbsp;
+							</div>
+						</td>
 						<td class="text-center" id="{{ sub.id }}">
 							{{ sub.id }}
 						</td>
@@ -36,7 +86,9 @@
 							<a href="{{ generate_account_url(sub.account_id, admin=True) }}">{{ sub.team_name }}</a>
 						</td>
 						<td class="chal" id="{{ sub.challenge_id }}">
-							{{ sub.challenge_name }}
+							<a href="{{ url_for('admin.challenges_detail', challenge_id=sub.challenge_id) }}">
+								{{ sub.challenge_name }}
+							</a>
 						</td>
 						<td>
 							{{ sub.type }}
@@ -47,31 +99,23 @@
 						<td class="text-center solve-time">
 							<span data-time="{{ sub.date | isoformat }}"></span>
 						</td>
-						<td class="text-center">
-							<span class="delete-correct-submission" data-toggle="tooltip"
-								  data-placement="top" title="Delete submission #{{ sub.id }}" data-submission-id="{{ sub.id }}">
-								<i class="fas fa-times"></i>
-							</span>
-						</td>
 					</tr>
 					{% endfor %}
 				</tbody>
 			</table>
-			{% if page_count > 1 %}
+			{% if submissions.pages > 1 %}
 			<div class="text-center">Page
 				<br>
-				{% if curr_page != 1 %}
-					<a href="?page={{ curr_page - 1 }}">&lt;&lt;&lt;</a>
+				{% if submissions.page != 1 %}
+					<a href="{{ prev_page }}">&lt;&lt;&lt;</a>
 				{% endif %}
-				{% for page in range(1, page_count + 1) %}
-					{% if curr_page != page %}
-						<a href="?page={{ page }}">{{ page }}</a>
-					{% else %}
-						<b>{{ page }}</b>
-					{% endif %}
-				{% endfor %}
-				{% if curr_page != page_count %}
-					<a href="?page={{ curr_page + 1 }}">&gt;&gt;&gt;</a>
+				<select class="page-select">
+					{% for page in range(1, submissions.pages + 1) %}
+					<option {% if submissions.page == page %}selected{% endif %}>{{ page }}</option>
+					{% endfor %}
+				</select>
+				{% if submissions.next_num %}
+					<a href="{{ next_page }}">&gt;&gt;&gt;</a>
 				{% endif %}
 			</div>
 			{% endif %}

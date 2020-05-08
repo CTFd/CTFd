@@ -13,7 +13,6 @@ def log(logger, format, **kwargs):
         "id": session.get("id"),
         "name": session.get("name"),
         "email": session.get("email"),
-        "type": session.get("type"),
         "date": time.strftime("%m/%d/%Y %X"),
         "ip": get_ip(),
     }

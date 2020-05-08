@@ -7,6 +7,8 @@ import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
 import $ from "jquery";
 import { ezQuery, ezProgressBar } from "core/ezq";
+import CodeMirror from "codemirror";
+import "codemirror/mode/htmlmixed/htmlmixed.js";
 
 function loadTimestamp(place, timestamp) {
   if (typeof timestamp == "string") {
@@ -218,10 +220,6 @@ function exportConfig(event) {
   window.location.href = $(this).attr("href");
 }
 
-function showTab(event) {
-  window.location.hash = this.hash;
-}
-
 function insertTimezones(target) {
   let current = $("<option>").text(moment.tz.guess());
   $(target).append(current);
@@ -233,6 +231,20 @@ function insertTimezones(target) {
 }
 
 $(() => {
+  CodeMirror.fromTextArea(document.getElementById("theme-header"), {
+    lineNumbers: true,
+    lineWrapping: true,
+    mode: "htmlmixed",
+    htmlMode: true
+  });
+
+  CodeMirror.fromTextArea(document.getElementById("theme-footer"), {
+    lineNumbers: true,
+    lineWrapping: true,
+    mode: "htmlmixed",
+    htmlMode: true
+  });
+
   insertTimezones($("#start-timezone"));
   insertTimezones($("#end-timezone"));
   insertTimezones($("#freeze-timezone"));
@@ -242,7 +254,6 @@ $(() => {
   $("#remove-logo").click(removeLogo);
   $("#export-button").click(exportConfig);
   $("#import-button").click(importConfig);
-  $(".nav-pills a").click(showTab);
   $("#config-color-update").click(function() {
     const hex_code = $("#config-color-picker").val();
     const user_css = $("#theme-header").val();
@@ -270,12 +281,6 @@ $(() => {
   $(".freeze-date").change(function() {
     loadDateValues("freeze");
   });
-
-  let hash = window.location.hash;
-  if (hash) {
-    hash = hash.replace("<>[]'\"", "");
-    $('ul.nav a[href="' + hash + '"]').tab("show");
-  }
 
   const start = $("#start").val();
   const end = $("#end").val();

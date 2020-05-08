@@ -15,6 +15,7 @@ from CTFd.models import (
     db,
 )
 from CTFd.plugins import register_plugin_assets_directory
+from CTFd.plugins.migrations import upgrade
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, BaseChallenge
 from CTFd.plugins.flags import get_flag_class
 from CTFd.utils.modes import get_model
@@ -239,7 +240,9 @@ class DynamicValueChallenge(BaseChallenge):
 
 class DynamicChallenge(Challenges):
     __mapper_args__ = {"polymorphic_identity": "dynamic"}
-    id = db.Column(None, db.ForeignKey("challenges.id"), primary_key=True)
+    id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE"), primary_key=True
+    )
     initial = db.Column(db.Integer, default=0)
     minimum = db.Column(db.Integer, default=0)
     decay = db.Column(db.Integer, default=0)
@@ -250,8 +253,7 @@ class DynamicChallenge(Challenges):
 
 
 def load(app):
-    # upgrade()
-    app.db.create_all()
+    upgrade()
     CHALLENGE_CLASSES["dynamic"] = DynamicValueChallenge
     register_plugin_assets_directory(
         app, base_path="/plugins/dynamic_challenges/assets/"

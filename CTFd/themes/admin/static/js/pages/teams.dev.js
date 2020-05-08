@@ -1,6 +1,65 @@
 /******/ (function(modules) { // webpackBootstrap
+/******/ 	// install a JSONP callback for chunk loading
+/******/ 	function webpackJsonpCallback(data) {
+/******/ 		var chunkIds = data[0];
+/******/ 		var moreModules = data[1];
+/******/ 		var executeModules = data[2];
+/******/
+/******/ 		// add "moreModules" to the modules object,
+/******/ 		// then flag all "chunkIds" as loaded and fire callback
+/******/ 		var moduleId, chunkId, i = 0, resolves = [];
+/******/ 		for(;i < chunkIds.length; i++) {
+/******/ 			chunkId = chunkIds[i];
+/******/ 			if(installedChunks[chunkId]) {
+/******/ 				resolves.push(installedChunks[chunkId][0]);
+/******/ 			}
+/******/ 			installedChunks[chunkId] = 0;
+/******/ 		}
+/******/ 		for(moduleId in moreModules) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+/******/ 				modules[moduleId] = moreModules[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 		if(parentJsonpFunction) parentJsonpFunction(data);
+/******/
+/******/ 		while(resolves.length) {
+/******/ 			resolves.shift()();
+/******/ 		}
+/******/
+/******/ 		// add entry modules from loaded chunk to deferred list
+/******/ 		deferredModules.push.apply(deferredModules, executeModules || []);
+/******/
+/******/ 		// run deferred modules when all chunks ready
+/******/ 		return checkDeferredModules();
+/******/ 	};
+/******/ 	function checkDeferredModules() {
+/******/ 		var result;
+/******/ 		for(var i = 0; i < deferredModules.length; i++) {
+/******/ 			var deferredModule = deferredModules[i];
+/******/ 			var fulfilled = true;
+/******/ 			for(var j = 1; j < deferredModule.length; j++) {
+/******/ 				var depId = deferredModule[j];
+/******/ 				if(installedChunks[depId] !== 0) fulfilled = false;
+/******/ 			}
+/******/ 			if(fulfilled) {
+/******/ 				deferredModules.splice(i--, 1);
+/******/ 				result = __webpack_require__(__webpack_require__.s = deferredModule[0]);
+/******/ 			}
+/******/ 		}
+/******/ 		return result;
+/******/ 	}
+/******/
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
+/******/
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// Promise = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		"pages/teams": 0
+/******/ 	};
+/******/
+/******/ 	var deferredModules = [];
 /******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
@@ -79,9 +138,18 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/themes/admin/static/js";
 /******/
+/******/ 	var jsonpArray = window["webpackJsonp"] = window["webpackJsonp"] || [];
+/******/ 	var oldJsonpFunction = jsonpArray.push.bind(jsonpArray);
+/******/ 	jsonpArray.push = webpackJsonpCallback;
+/******/ 	jsonpArray = jsonpArray.slice();
+/******/ 	for(var i = 0; i < jsonpArray.length; i++) webpackJsonpCallback(jsonpArray[i]);
+/******/ 	var parentJsonpFunction = oldJsonpFunction;
 /******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./CTFd/themes/admin/assets/js/pages/teams.js");
+/******/
+/******/ 	// add entry module to deferred list
+/******/ 	deferredModules.push(["./CTFd/themes/admin/assets/js/pages/teams.js","helpers","vendor","default~pages/challenge~pages/challenges~pages/configs~pages/editor~pages/main~pages/notifications~p~d5a3cc0a"]);
+/******/ 	// run deferred modules when ready
+/******/ 	return checkDeferredModules();
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -94,7 +162,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 ;
-eval("\n\n//# sourceURL=webpack:///./CTFd/themes/admin/assets/js/pages/teams.js?");
+eval("\n\n__webpack_require__(/*! ./main */ \"./CTFd/themes/admin/assets/js/pages/main.js\");\n\nvar _CTFd = _interopRequireDefault(__webpack_require__(/*! core/CTFd */ \"./CTFd/themes/core/assets/js/CTFd.js\"));\n\nvar _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\"));\n\nvar _ezq = __webpack_require__(/*! core/ezq */ \"./CTFd/themes/core/assets/js/ezq.js\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction deleteSelectedTeams(event) {\n  var teamIDs = (0, _jquery.default)(\"input[data-team-id]:checked\").map(function () {\n    return (0, _jquery.default)(this).data(\"team-id\");\n  });\n  var target = teamIDs.length === 1 ? \"team\" : \"teams\";\n  (0, _ezq.ezQuery)({\n    title: \"Delete Teams\",\n    body: \"Are you sure you want to delete \".concat(teamIDs.length, \" \").concat(target, \"?\"),\n    success: function success() {\n      var reqs = [];\n      var _iteratorNormalCompletion = true;\n      var _didIteratorError = false;\n      var _iteratorError = undefined;\n\n      try {\n        for (var _iterator = teamIDs[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {\n          var teamID = _step.value;\n          reqs.push(_CTFd.default.fetch(\"/api/v1/teams/\".concat(teamID), {\n            method: \"DELETE\"\n          }));\n        }\n      } catch (err) {\n        _didIteratorError = true;\n        _iteratorError = err;\n      } finally {\n        try {\n          if (!_iteratorNormalCompletion && _iterator.return != null) {\n            _iterator.return();\n          }\n        } finally {\n          if (_didIteratorError) {\n            throw _iteratorError;\n          }\n        }\n      }\n\n      Promise.all(reqs).then(function (responses) {\n        window.location.reload();\n      });\n    }\n  });\n}\n\nfunction bulkEditTeams(event) {\n  var teamIDs = (0, _jquery.default)(\"input[data-team-id]:checked\").map(function () {\n    return (0, _jquery.default)(this).data(\"team-id\");\n  });\n  (0, _ezq.ezAlert)({\n    title: \"Edit Teams\",\n    body: (0, _jquery.default)(\"\\n    <form id=\\\"teams-bulk-edit\\\">\\n      <div class=\\\"form-group\\\">\\n        <label>Banned</label>\\n        <select name=\\\"banned\\\" data-initial=\\\"\\\">\\n          <option value=\\\"\\\">--</option>\\n          <option value=\\\"true\\\">True</option>\\n          <option value=\\\"false\\\">False</option>\\n        </select>\\n      </div>\\n      <div class=\\\"form-group\\\">\\n        <label>Hidden</label>\\n        <select name=\\\"hidden\\\" data-initial=\\\"\\\">\\n          <option value=\\\"\\\">--</option>\\n          <option value=\\\"true\\\">True</option>\\n          <option value=\\\"false\\\">False</option>\\n        </select>\\n      </div>\\n    </form>\\n    \"),\n    button: \"Submit\",\n    success: function success() {\n      var data = (0, _jquery.default)(\"#teams-bulk-edit\").serializeJSON(true);\n      var reqs = [];\n      var _iteratorNormalCompletion2 = true;\n      var _didIteratorError2 = false;\n      var _iteratorError2 = undefined;\n\n      try {\n        for (var _iterator2 = teamIDs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {\n          var teamID = _step2.value;\n          reqs.push(_CTFd.default.fetch(\"/api/v1/teams/\".concat(teamID), {\n            method: \"PATCH\",\n            body: JSON.stringify(data)\n          }));\n        }\n      } catch (err) {\n        _didIteratorError2 = true;\n        _iteratorError2 = err;\n      } finally {\n        try {\n          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {\n            _iterator2.return();\n          }\n        } finally {\n          if (_didIteratorError2) {\n            throw _iteratorError2;\n          }\n        }\n      }\n\n      Promise.all(reqs).then(function (responses) {\n        window.location.reload();\n      });\n    }\n  });\n}\n\n(0, _jquery.default)(function () {\n  (0, _jquery.default)(\"#teams-delete-button\").click(deleteSelectedTeams);\n  (0, _jquery.default)(\"#teams-edit-button\").click(bulkEditTeams);\n});\n\n//# sourceURL=webpack:///./CTFd/themes/admin/assets/js/pages/teams.js?");
 
 /***/ })
 

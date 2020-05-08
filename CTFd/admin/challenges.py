@@ -2,7 +2,7 @@ import os
 
 import six
 from flask import current_app as app
-from flask import render_template, render_template_string, url_for
+from flask import render_template, render_template_string, request, url_for
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Flags, Solves
@@ -14,8 +14,26 @@ from CTFd.utils.decorators import admins_only
 @admin.route("/admin/challenges")
 @admins_only
 def challenges_listing():
-    challenges = Challenges.query.all()
-    return render_template("admin/challenges/challenges.html", challenges=challenges)
+    q = request.args.get("q")
+    field = request.args.get("field")
+    filters = []
+
+    if q:
+        # The field exists as an exposed column
+        if Challenges.__mapper__.has_property(field):
+            filters.append(getattr(Challenges, field).like("%{}%".format(q)))
+
+    query = Challenges.query.filter(*filters).order_by(Challenges.id.asc())
+    challenges = query.all()
+    total = query.count()
+
+    return render_template(
+        "admin/challenges/challenges.html",
+        challenges=challenges,
+        total=total,
+        q=q,
+        field=field,
+    )
 
 
 @admin.route("/admin/challenges/<int:challenge_id>")

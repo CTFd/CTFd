@@ -1,4 +1,5 @@
 import os
+import posixpath
 import string
 from shutil import copyfileobj
 
@@ -54,7 +55,7 @@ class FilesystemUploader(BaseUploader):
 
         filename = secure_filename(filename)
         md5hash = hexencode(os.urandom(16))
-        file_path = os.path.join(md5hash, filename)
+        file_path = posixpath.join(md5hash, filename)
 
         return self.store(file_obj, file_path)
 

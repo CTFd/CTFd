@@ -1,7 +1,7 @@
 import datetime
 
 from flask import abort, request, url_for
-from flask_restplus import Namespace, Resource
+from flask_restx import Namespace, Resource
 from sqlalchemy.sql import and_
 
 from CTFd.cache import clear_standings
@@ -378,7 +378,7 @@ class ChallengeAttempt(Resource):
             log(
                 "submissions",
                 "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
-                submission=request_data["submission"].encode("utf-8"),
+                submission=request_data.get("submission", "").encode("utf-8"),
                 challenge_id=challenge_id,
                 kpm=kpm,
             )
@@ -425,7 +425,7 @@ class ChallengeAttempt(Resource):
                 log(
                     "submissions",
                     "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
-                    submission=request_data["submission"].encode("utf-8"),
+                    submission=request_data.get("submission", "").encode("utf-8"),
                     challenge_id=challenge_id,
                     kpm=kpm,
                 )
@@ -443,7 +443,7 @@ class ChallengeAttempt(Resource):
                 log(
                     "submissions",
                     "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
-                    submission=request_data["submission"].encode("utf-8"),
+                    submission=request_data.get("submission", "").encode("utf-8"),
                     challenge_id=challenge_id,
                     kpm=kpm,
                 )
@@ -477,7 +477,7 @@ class ChallengeAttempt(Resource):
             log(
                 "submissions",
                 "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
-                submission=request_data["submission"].encode("utf-8"),
+                submission=request_data.get("submission", "").encode("utf-8"),
                 challenge_id=challenge_id,
                 kpm=kpm,
             )

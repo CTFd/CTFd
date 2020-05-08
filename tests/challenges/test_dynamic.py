@@ -47,7 +47,6 @@ def test_can_create_dynamic_challenge():
 
 
 def test_can_update_dynamic_challenge():
-    """Test that dynamic challenges can be deleted"""
     app = create_ctfd(enable_plugins=True)
     with app.app_context():
         challenge_data = {
@@ -150,6 +149,7 @@ def test_can_add_requirement_dynamic_challenge():
 
 
 def test_can_delete_dynamic_challenge():
+    """Test that dynamic challenges can be deleted"""
     app = create_ctfd(enable_plugins=True)
     with app.app_context():
         register_user(app)
@@ -213,7 +213,6 @@ def test_dynamic_challenge_loses_value_properly():
                 with client.session_transaction() as sess:
                     sess["id"] = team_id
                     sess["name"] = name
-                    sess["type"] = "user"
                     sess["email"] = email
                     sess["nonce"] = "fake-nonce"
 
@@ -306,7 +305,6 @@ def test_dynamic_challenge_value_isnt_affected_by_hidden_users():
                 with client.session_transaction() as sess:
                     sess["id"] = team_id
                     sess["name"] = name
-                    sess["type"] = "user"
                     sess["email"] = email
                     sess["nonce"] = "fake-nonce"
 
@@ -318,4 +316,34 @@ def test_dynamic_challenge_value_isnt_affected_by_hidden_users():
 
                 chal = DynamicChallenge.query.filter_by(id=1).first()
                 assert chal.value == chal.initial
+    destroy_ctfd(app)
+
+
+def test_dynamic_challenges_reset():
+    app = create_ctfd(enable_plugins=True)
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        challenge_data = {
+            "name": "name",
+            "category": "category",
+            "description": "description",
+            "value": 100,
+            "decay": 20,
+            "minimum": 1,
+            "state": "hidden",
+            "type": "dynamic",
+        }
+
+        r = client.post("/api/v1/challenges", json=challenge_data)
+        assert Challenges.query.count() == 1
+        assert DynamicChallenge.query.count() == 1
+
+        with client.session_transaction() as sess:
+            data = {"nonce": sess.get("nonce"), "challenges": "on"}
+            r = client.post("/admin/reset", data=data)
+            assert r.location.endswith("/admin/statistics")
+        assert Challenges.query.count() == 0
+        assert DynamicChallenge.query.count() == 0
+
     destroy_ctfd(app)

@@ -1,5 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
+from CTFd.cache import clear_user_session, clear_team_session
 from CTFd.models import Teams, db
 from CTFd.utils import config, get_config
 from CTFd.utils.crypto import verify_password
@@ -63,7 +64,6 @@ def join():
         passphrase = request.form.get("password", "").strip()
 
         team = Teams.query.filter_by(name=teamname).first()
-        user = get_current_user()
 
         if team and verify_password(passphrase, team.password):
             team_size_limit = get_config("team_size", default=0)
@@ -77,12 +77,16 @@ def join():
                     "teams/join_team.html", infos=infos, errors=errors
                 )
 
+            user = get_current_user()
             user.team_id = team.id
             db.session.commit()
 
             if len(team.members) == 1:
                 team.captain_id = user.id
                 db.session.commit()
+
+            clear_user_session(user_id=user.id)
+            clear_team_session(team_id=team.id)
 
             return redirect(url_for("challenges.listing"))
         else:
@@ -130,6 +134,10 @@ def new():
 
         user.team_id = team.id
         db.session.commit()
+
+        clear_user_session(user_id=user.id)
+        clear_team_session(team_id=team.id)
+
         return redirect(url_for("challenges.listing"))
 
 

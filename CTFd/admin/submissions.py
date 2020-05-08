@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, url_for
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Submissions
@@ -10,16 +10,21 @@ from CTFd.utils.modes import get_model
 @admin.route("/admin/submissions/<submission_type>")
 @admins_only
 def submissions_listing(submission_type):
-    filters = {}
+    filters_by = {}
     if submission_type:
-        filters["type"] = submission_type
+        filters_by["type"] = submission_type
+    filters = []
 
-    curr_page = abs(int(request.args.get("page", 1, type=int)))
-    results_per_page = 50
-    page_start = results_per_page * (curr_page - 1)
-    page_end = results_per_page * (curr_page - 1) + results_per_page
-    sub_count = Submissions.query.filter_by(**filters).count()
-    page_count = int(sub_count / results_per_page) + (sub_count % results_per_page > 0)
+    q = request.args.get("q")
+    field = request.args.get("field")
+    page = abs(request.args.get("page", 1, type=int))
+
+    if q:
+        submissions = []
+        if Submissions.__mapper__.has_property(
+            field
+        ):  # The field exists as an exposed column
+            filters.append(getattr(Submissions, field).like("%{}%".format(q)))
 
     Model = get_model()
 
@@ -34,18 +39,33 @@ def submissions_listing(submission_type):
             Challenges.name.label("challenge_name"),
             Model.name.label("team_name"),
         )
-        .filter_by(**filters)
+        .filter_by(**filters_by)
+        .filter(*filters)
         .join(Challenges)
         .join(Model)
         .order_by(Submissions.date.desc())
-        .slice(page_start, page_end)
-        .all()
+        .paginate(page=page, per_page=50)
     )
+
+    args = dict(request.args)
+    args.pop("page", 1)
 
     return render_template(
         "admin/submissions.html",
         submissions=submissions,
-        page_count=page_count,
-        curr_page=curr_page,
+        prev_page=url_for(
+            request.endpoint,
+            submission_type=submission_type,
+            page=submissions.prev_num,
+            **args
+        ),
+        next_page=url_for(
+            request.endpoint,
+            submission_type=submission_type,
+            page=submissions.next_num,
+            **args
+        ),
         type=submission_type,
+        q=q,
+        field=field,
     )

@@ -1,4 +1,4 @@
-from flask_restplus import Resource
+from flask_restx import Resource
 from sqlalchemy import func
 from sqlalchemy.sql import or_
 

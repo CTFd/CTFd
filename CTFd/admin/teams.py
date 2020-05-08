@@ -1,64 +1,40 @@
-from flask import render_template, request
+from flask import render_template, request, url_for
 from sqlalchemy.sql import not_
 
 from CTFd.admin import admin
-from CTFd.models import Challenges, Teams, Tracking, db
+from CTFd.models import Challenges, Teams, Tracking
 from CTFd.utils.decorators import admins_only
-from CTFd.utils.helpers import get_errors
 
 
 @admin.route("/admin/teams")
 @admins_only
 def teams_listing():
-    page = abs(request.args.get("page", 1, type=int))
     q = request.args.get("q")
+    field = request.args.get("field")
+    page = abs(request.args.get("page", 1, type=int))
+    filters = []
+
     if q:
-        field = request.args.get("field")
-        teams = []
-        errors = get_errors()
-        if field == "id":
-            if q.isnumeric():
-                teams = Teams.query.filter(Teams.id == q).order_by(Teams.id.asc()).all()
-            else:
-                teams = []
-                errors.append("Your ID search term is not numeric")
-        elif field == "name":
-            teams = (
-                Teams.query.filter(Teams.name.like("%{}%".format(q)))
-                .order_by(Teams.id.asc())
-                .all()
-            )
-        elif field == "email":
-            teams = (
-                Teams.query.filter(Teams.email.like("%{}%".format(q)))
-                .order_by(Teams.id.asc())
-                .all()
-            )
-        elif field == "affiliation":
-            teams = (
-                Teams.query.filter(Teams.affiliation.like("%{}%".format(q)))
-                .order_by(Teams.id.asc())
-                .all()
-            )
-        return render_template(
-            "admin/teams/teams.html",
-            teams=teams,
-            pages=0,
-            curr_page=None,
-            q=q,
-            field=field,
-        )
+        # The field exists as an exposed column
+        if Teams.__mapper__.has_property(field):
+            filters.append(getattr(Teams, field).like("%{}%".format(q)))
 
-    page = abs(int(page))
-    results_per_page = 50
-    page_start = results_per_page * (page - 1)
-    page_end = results_per_page * (page - 1) + results_per_page
+    teams = (
+        Teams.query.filter(*filters)
+        .order_by(Teams.id.asc())
+        .paginate(page=page, per_page=50)
+    )
 
-    teams = Teams.query.order_by(Teams.id.asc()).slice(page_start, page_end).all()
-    count = db.session.query(db.func.count(Teams.id)).first()[0]
-    pages = int(count / results_per_page) + (count % results_per_page > 0)
+    args = dict(request.args)
+    args.pop("page", 1)
+
     return render_template(
-        "admin/teams/teams.html", teams=teams, pages=pages, curr_page=page
+        "admin/teams/teams.html",
+        teams=teams,
+        prev_page=url_for(request.endpoint, page=teams.prev_num, **args),
+        next_page=url_for(request.endpoint, page=teams.next_num, **args),
+        q=q,
+        field=field,
     )
 
 

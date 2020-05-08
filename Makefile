@@ -8,7 +8,7 @@ format:
 	prettier --write 'CTFd/themes/**/assets/**/*'
 
 test:
-	pytest --cov=CTFd --cov-context=test --ignore=node_modules/ --disable-warnings -n auto
+	pytest -rf --cov=CTFd --cov-context=test --ignore=node_modules/ --disable-warnings -n auto
 	bandit -r CTFd -x CTFd/uploads
 	yarn verify
 

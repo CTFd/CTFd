@@ -3,6 +3,8 @@
 @import "includes/sticky-footer.css";
 @import "includes/award-icons.scss";
 @import "includes/flag-icons.scss";
+@import "includes/utils/opacity.scss";
+@import "includes/utils/min-height.scss";
 
 html,
 body,
@@ -26,6 +28,10 @@ table > thead > tr > td {
   /* Remove border line from thead of all tables */
   /* It can overlap with other element styles */
   border-top: none !important;
+}
+
+.table thead th {
+  white-space: nowrap;
 }
 
 .fa-spin.spinner {
