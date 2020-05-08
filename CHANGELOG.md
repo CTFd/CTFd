@@ -1,3 +1,17 @@
+2.4.2 / 2020-05-08
+==================
+
+**Admin Panel**
+* Fix Challenge Reset in Admin Panel where Dynamic Challenges prevented resetting Challenges
+
+**Plugins**
+* Add the `CTFd.plugins.migrations` module to allow plugins to handle migrations. Plugins should now call `CTFd.plugins.migrations.upgrade` instead of `app.db.create_all` which will allow the plugin to have database migrations.
+* Make Dynamic Challenges have a cascading deletion constraint against their respective Challenge row
+
+**Miscellaneous**
+* Add `app.plugins_dir` object to refer to the directory where plugins are installed
+
+
 2.4.1 / 2020-05-06
 ==================
 

@@ -20,13 +20,13 @@
 # -- Project information -----------------------------------------------------
 
 project = u"CTFd"
-copyright = u"2019, CTFd LLC"
+copyright = u"2020, CTFd LLC"
 author = u"Kevin Chung"
 
 # The short X.Y version
 version = u""
 # The full version, including alpha/beta/rc tags
-release = u"2.4.1"
+release = u"2.4.2"
 
 
 # -- General configuration ---------------------------------------------------
