@@ -31,7 +31,7 @@ if sys.version_info[0] < 3:
     reload(sys)  # noqa: F821
     sys.setdefaultencoding("utf-8")
 
-__version__ = "2.4.1"
+__version__ = "2.4.2"
 
 
 class CTFdRequest(Request):
