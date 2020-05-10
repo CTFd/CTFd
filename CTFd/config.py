@@ -190,6 +190,12 @@ class Config(object):
     AWS_S3_ENDPOINT_URL:
         A URL pointing to a custom S3 implementation.
 
+    DROPBOX_OAUTH2_TOKEN:
+        Dropbox secret token.
+
+    DROPBOX_ROOT_PATH:
+        The dropbox root path to store files. Default to /CTFd
+
     """
     UPLOAD_PROVIDER = os.getenv("UPLOAD_PROVIDER") or "filesystem"
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER") or os.path.join(
@@ -200,7 +206,9 @@ class Config(object):
         AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
         AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
         AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
-
+    elif UPLOAD_PROVIDER == "dropbox":
+        DROPBOX_OAUTH2_TOKEN = os.getenv("DROPBOX_OAUTH2_TOKEN")
+        DROPBOX_ROOT_PATH = os.getenv("DROPBOX_ROOT_PATH") or "/CTFd"
     """
     === OPTIONAL ===
 
