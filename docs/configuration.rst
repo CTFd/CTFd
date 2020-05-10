@@ -104,6 +104,14 @@ AWS_S3_ENDPOINT_URL
 ~~~~~~~~~~~~~~~~~~~
 A URL pointing to a custom S3 implementation.
 
+DROPBOX_OAUTH2_TOKEN:
+~~~~~~~~~~~~~~~~~~~
+Dropbox secret token.
+
+DROPBOX_ROOT_PATH:
+~~~~~~~~~~~~~~~~~~~
+The dropbox root path to store files. Default to /CTFd
+
 
 REVERSE_PROXY
 ~~~~~~~~~~~~~

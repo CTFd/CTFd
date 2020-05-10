@@ -18,7 +18,7 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
     * Static & Regex based flags
         * Custom flag plugins
     * Unlockable hints
-    * File uploads to the server or an Amazon S3-compatible backend
+    * File uploads to the server, an Amazon S3-compatible backend or Dropbox
     * Limit challenge attempts & hide challenges
     * Automatic bruteforce protection
 * Individual and Team based competitions
