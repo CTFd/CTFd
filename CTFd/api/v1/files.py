@@ -61,7 +61,6 @@ class FilesDetail(Resource):
     def delete(self, file_id):
         f = Files.query.filter_by(id=file_id).first_or_404()
 
-        uploads.delete_file(file_id=f.id)
         db.session.delete(f)
         db.session.commit()
         db.session.close()
