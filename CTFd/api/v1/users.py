@@ -56,7 +56,7 @@ class UserList(Resource):
         db.session.add(response.data)
         db.session.commit()
 
-        if request.args.get("notify"):
+        if req.get("notify"):
             name = response.data.name
             email = response.data.email
             password = req.get("password")
