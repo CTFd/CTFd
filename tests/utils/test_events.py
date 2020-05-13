@@ -157,13 +157,11 @@ def test_redis_event_manager_subscription():
                 assert isinstance(message, ServerSentEvent)
                 assert message.to_dict() == {"data": "", "type": "ping"}
                 assert message.__str__().startswith("event:ping")
-                assert len(event_manager.clients) == 1
 
                 message = next(events)
                 assert isinstance(message, ServerSentEvent)
                 assert message.to_dict() == saved_data
                 assert message.__str__().startswith("event:notification\ndata:")
-                assert len(event_manager.clients) == 1
         destroy_ctfd(app)
 
 
