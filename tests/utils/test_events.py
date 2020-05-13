@@ -35,11 +35,18 @@ def test_event_manager_subscription():
 
         fake_queue.return_value = saved_event
         event_manager = EventManager()
-        for message in event_manager.subscribe():
-            assert message.to_dict() == saved_event
-            assert message.__str__().startswith("event:notification\ndata:")
-            assert len(event_manager.clients) == 1
-            break
+        events = event_manager.subscribe()
+        message = next(events)
+        assert isinstance(message, ServerSentEvent)
+        assert message.to_dict() == {"data": "", "type": "ping"}
+        assert message.__str__().startswith("event:ping")
+        assert len(event_manager.clients) == 1
+
+        message = next(events)
+        assert isinstance(message, ServerSentEvent)
+        assert message.to_dict() == saved_event
+        assert message.__str__().startswith("event:notification\ndata:")
+        assert len(event_manager.clients) == 1
 
 
 def test_event_manager_publish():
@@ -144,11 +151,17 @@ def test_redis_event_manager_subscription():
             with patch.object(redis.client.PubSub, "listen") as fake_pubsub_listen:
                 fake_pubsub_listen.return_value = [saved_event]
                 event_manager = RedisEventManager()
-                for message in event_manager.subscribe():
-                    assert isinstance(message, ServerSentEvent)
-                    assert message.to_dict() == saved_data
-                    assert message.__str__().startswith("event:notification\ndata:")
-                    break
+
+                events = event_manager.subscribe()
+                message = next(events)
+                assert isinstance(message, ServerSentEvent)
+                assert message.to_dict() == {"data": "", "type": "ping"}
+                assert message.__str__().startswith("event:ping")
+
+                message = next(events)
+                assert isinstance(message, ServerSentEvent)
+                assert message.to_dict() == saved_data
+                assert message.__str__().startswith("event:notification\ndata:")
         destroy_ctfd(app)
 
 
