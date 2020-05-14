@@ -51,7 +51,9 @@ def get_config(key, default=None):
 
 
 def set_config(key, value):
-    config = Configs.query.filter_by(key=key).first()
+    config = db.session.execute(
+        Configs.__table__.select().where(Configs.key == key)
+    ).fetchone()
     if config:
         config.value = value
     else:
