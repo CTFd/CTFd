@@ -12,7 +12,7 @@ function createUser(event) {
   // Move the notify value into a GET param
   let url = "/api/v1/users";
   let notify = params.notify;
-  if (notify === true){
+  if (notify === true) {
     url = `${url}?notify=true`;
   }
   delete params.notify;
