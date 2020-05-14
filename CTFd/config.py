@@ -273,3 +273,8 @@ class TestingConfig(Config):
     CACHE_TYPE = "simple"
     CACHE_THRESHOLD = 500
     SAFE_MODE = True
+#    PRESERVE_CONTEXT_ON_EXCEPTION = False Returns the value of the PRESERVE_CONTEXT_ON_EXCEPTION configuration value in case it’s set, otherwise a sensible default is returned.
+#    TESTING = True Even though it did not run any actual tests, we already know that our flaskr application is syntactically valid
+#    DEBUG = True the main advantage is of getting a detailed error pages. That is helpful in debugging.
+#    SERVER_NAME = "localhost" Server name is what it will listen for, together with your port settings.So let’s say you have a domain, you point your A name like: example.com to your droplets IP. This lets the DNS server know where the domain should go (like a street adress).
+#    SAFE_MODE = True it gives little more flexibility while setting up web servers
