@@ -10,6 +10,7 @@ format:
 test:
 	pytest -rf --cov=CTFd --cov-context=test --ignore=node_modules/ --disable-warnings -n auto
 	bandit -r CTFd -x CTFd/uploads
+	pipdeptree
 	yarn verify
 
 coverage:
