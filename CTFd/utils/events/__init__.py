@@ -52,6 +52,10 @@ class EventManager(object):
         self.clients.append(q)
         while True:
             try:
+                # Immediately yield a ping event to force Response headers to be set
+                # or else some reverse proxies will incorrectly buffer SSE
+                yield ServerSentEvent(data="", type="ping")
+
                 with Timeout(10):
                     message = q[channel].get()
                     yield ServerSentEvent(**message)
@@ -76,6 +80,10 @@ class RedisEventManager(EventManager):
             pubsub = self.client.pubsub()
             pubsub.subscribe(channel)
             try:
+                # Immediately yield a ping event to force Response headers to be set
+                # or else some reverse proxies will incorrectly buffer SSE
+                yield ServerSentEvent(data="", type="ping")
+
                 with Timeout(10) as timeout:
                     for message in pubsub.listen():
                         if message["type"] == "message":

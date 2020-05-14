@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 from io import BytesIO
 
 from CTFd.models import ChallengeFiles, Challenges, Files
@@ -101,19 +102,37 @@ def test_api_file_delete_admin():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        f = gen_file(
-            app.db,
-            location="0bf1a55a5cd327c07af15df260979668/bird.swf",
-            challenge_id=chal.id,
+        path = os.path.join(
+            app.config["UPLOAD_FOLDER"], "0bf1a55a5cd327c07af15df260979668", "bird.swf"
         )
-        assert Files.query.count() == 1
-        assert ChallengeFiles.query.count() == 1
-        assert f in chal.files
-        with login_as_user(app, "admin") as client:
-            r = client.delete("/api/v1/files/1", json="")
-            assert r.status_code == 200
-            assert Files.query.count() == 0
-            assert ChallengeFiles.query.count() == 0
-            chal = Challenges.query.filter_by(id=1).first()
-            assert f not in chal.files
+        try:
+            # Create a fake file
+            os.makedirs(os.path.dirname(path))
+            open(path, "a").close()
+            f = gen_file(
+                app.db,
+                location="0bf1a55a5cd327c07af15df260979668/bird.swf",
+                challenge_id=chal.id,
+            )
+            assert Files.query.count() == 1
+            assert ChallengeFiles.query.count() == 1
+            assert f in chal.files
+
+            # Make sure the file was created
+            assert os.path.exists(path)
+
+            with login_as_user(app, "admin") as client:
+                r = client.delete("/api/v1/files/1", json="")
+                assert r.status_code == 200
+                assert Files.query.count() == 0
+                assert ChallengeFiles.query.count() == 0
+                chal = Challenges.query.filter_by(id=1).first()
+                assert f not in chal.files
+
+                # Make sure the API call deleted the file
+                assert os.path.exists(path) is False
+        finally:
+            # Always make sure the file is deleted
+            shutil.rmtree(os.path.dirname(path), ignore_errors=True)
+
     destroy_ctfd(app)
