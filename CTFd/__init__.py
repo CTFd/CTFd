@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 import sys
 import weakref
 from distutils.version import StrictVersion
@@ -116,12 +117,37 @@ class ThemeLoader(FileSystemLoader):
         if template.startswith("admin/"):
             template = template[6:]  # Strip out admin/
             template = "/".join(["admin", "templates", template])
-            return super(ThemeLoader, self).get_source(environment, template)
+        else:
+            # Load regular theme data
+            theme = str(utils.get_config("ctf_theme"))
+            template = "/".join([theme, "templates", template])
+        source = super(ThemeLoader, self).get_source(environment, template)
 
-        # Load regular theme data
-        theme = str(utils.get_config("ctf_theme"))
-        template = "/".join([theme, "templates", template])
-        return super(ThemeLoader, self).get_source(environment, template)
+        html = source[0].split("\n")
+        lines = []
+        start_ignores = r"(<script|<pre|<style|<textarea|{%)"
+        end_ignores = r"(</script|</pre|</style|</textarea|%})"
+        keep_skipping = False
+        for line in html:
+            if re.search(end_ignores, line):
+                keep_skipping = False
+                lines.append(line)
+                continue
+
+            if keep_skipping is True:
+                lines.append(line + "\n")
+                continue
+
+            if re.search(start_ignores, line):
+                lines.append(line)
+                keep_skipping = True
+                continue
+
+            line = line.lstrip()
+            lines.append(line)
+
+        html = "".join(lines)
+        return (html, source[1], source[2])
 
 
 def confirm_upgrade():
