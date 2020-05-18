@@ -123,6 +123,11 @@ def import_ctf(backup, erase=True):
         )
 
     if erase:
+        # Clear out existing connections to release any locks
+        db.session.close()
+        db.engine.dispose()
+
+        # Drop database and recreate it to get to a clean state
         drop_database()
         create_database()
         # We explicitly do not want to upgrade or stamp here.
