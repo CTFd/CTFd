@@ -1,0 +1,45 @@
+{
+  "name": "CTFd",
+  "description": "CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.",
+  "repository": "https://github.com/CTFd/CTFd",
+  "logo": "https://github.com/CTFd/CTFd/raw/master/CTFd/themes/core/static/img/logo.png?raw=true",
+  "buildpacks": [{
+    "url": "heroku/python"
+  }],
+  "addons": [{
+      "plan": "heroku-postgresql:hobby-dev",
+      "as": "DATABASE"
+    },
+    {
+      "plan": "heroku-redis:hobby-dev",
+      "as": "REDIS"
+    }
+  ],
+  "env": {
+    "UPLOAD_PROVIDER": {
+      "description": "Specifies the service that CTFd should use to store files",
+      "required": true,
+      "value": "s3"
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "description": "AWS access token used to authenticate to the S3 bucket",
+      "required": true,
+      "value": ""
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "description": "AWS secret token used to authenticate to the S3 bucket.",
+      "required": true,
+      "value": ""
+    },
+    "AWS_S3_BUCKET": {
+      "description": "The unique identifier for your S3 bucket",
+      "required": true,
+      "value": ""
+    },
+    "AWS_S3_ENDPOINT_URL": {
+      "description": "A URL pointing to a custom S3 implementation. Leave empty for default AWS S3 endpoint",
+      "required": false,
+      "value": ""
+    }
+  }
+}

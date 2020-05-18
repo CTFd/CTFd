@@ -13,6 +13,7 @@ RUN apk update && \
         musl-dev \
         py-pip \
         mysql-client \
+        postgresql-dev \
         git \
         openssl-dev
 

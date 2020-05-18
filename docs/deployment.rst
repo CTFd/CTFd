@@ -89,6 +89,20 @@ To access the internal gunicorn terminal session inside Vagrant run:
 
     CTFd's Vagrantfile is not commonly used and is only community supported
 
+Heroku
+-------
+
+CTFd provides a basic Procfile and app.json for use with Heroku. To run using Heroku click on the Deploy to Heroku button
+
+Hosting CTFd on Heroku is intended for testing purposes.
+Heroku provides a free PostgreSQL database with a limitation of 10k rows.
+Heroku provides a free Redis database with a limit of 25MB.
+Heroku provides a ephemeral filesystem, so you must configure s3 as UPLOAD_PROVIDER.
+
+.. Note::
+
+    Running CTFd on Heroku is not commonly used and is only community supported
+
 Debug Server
 ------------
 
