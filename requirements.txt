@@ -23,5 +23,5 @@ flask-restx==0.1.1
 pathlib2==2.3.5
 flask-marshmallow==0.10.1
 marshmallow-sqlalchemy==0.17.0
-boto3==1.10.39
+boto3==1.13.9
 marshmallow==2.20.2
