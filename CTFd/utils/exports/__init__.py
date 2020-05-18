@@ -9,13 +9,15 @@ import dataset
 import six
 from alembic.util import CommandError
 from flask import current_app as app
-from flask_migrate import upgrade
+from flask_migrate import upgrade as migration_upgrade
 from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.sql import sqltypes
 
 from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
 from CTFd.models import db, get_class_by_tablename
+from CTFd.plugins import get_plugin_names
+from CTFd.plugins.migrations import upgrade as plugin_upgrade
 from CTFd.utils import get_app_config, set_config
 from CTFd.utils.exports.freeze import freeze_export
 from CTFd.utils.migrations import (
@@ -165,11 +167,18 @@ def import_ctf(backup, erase=True):
 
     members = first + members
 
-    upgrade(revision=alembic_version)
+    migration_upgrade(revision=alembic_version)
 
     # Create tables created by plugins
     try:
-        app.db.create_all()
+        # Run plugin migrations
+        plugins = get_plugin_names()
+        try:
+            for plugin in plugins:
+                plugin_upgrade(plugin_name=plugin)
+        finally:
+            # Create tables that don't have migrations
+            app.db.create_all()
     except OperationalError as e:
         if not postgres:
             raise e
@@ -283,7 +292,7 @@ def import_ctf(backup, erase=True):
 
     # Alembic sqlite support is lacking so we should just create_all anyway
     try:
-        upgrade(revision="head")
+        migration_upgrade(revision="head")
     except (OperationalError, CommandError, RuntimeError, SystemExit, Exception):
         app.db.create_all()
         stamp_latest_revision()
