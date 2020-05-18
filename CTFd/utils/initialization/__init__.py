@@ -201,6 +201,7 @@ def init_request_processors(app):
                     db.session.commit()
                 except (InvalidRequestError, IntegrityError):
                     db.session.rollback()
+                    db.session.close()
                     logout_user()
                 else:
                     clear_user_recent_ips(user_id=session["id"])

@@ -27,7 +27,9 @@ def create_database():
         # drop or create the database
         exists = database_exists_util(url)
     except Exception:
-        exists = True
+        if url.drivername.startswith("postgres"):
+            print("Allowing don't create database due to permissions in Postgres")
+            exists = True
 
     if not exists:
         if url.drivername.startswith("mysql"):

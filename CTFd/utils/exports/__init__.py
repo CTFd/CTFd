@@ -118,6 +118,11 @@ def import_ctf(backup, erase=True):
         )
 
     if erase:
+        # Clear out existing connections to release any locks
+        db.session.close()
+        db.engine.dispose()
+
+        # Drop database and recreate it to get to a clean state
         app.db.drop_all()
         # We explicitly do not want to upgrade or stamp here.
         # The import will have this information.
@@ -158,6 +163,8 @@ def import_ctf(backup, erase=True):
             members.remove(item)
 
     members = first + members
+
+    upgrade(revision=alembic_version)
 
     # Create tables created by plugins
     try:
