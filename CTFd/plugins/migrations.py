@@ -25,6 +25,11 @@ def upgrade(plugin_name=None):
         caller_path = caller_info[0]
         plugin_name = os.path.basename(os.path.dirname(caller_path))
 
+    migrations_path = os.path.join(current_app.plugins_dir, plugin_name, "migrations")
+    if os.path.isdir(migrations_path) is False:
+        current_app.db.create_all()
+        return
+
     engine = create_engine(database_url, poolclass=pool.NullPool)
     conn = engine.connect()
     context = MigrationContext.configure(conn)
@@ -32,14 +37,8 @@ def upgrade(plugin_name=None):
 
     # Find the list of migrations to run
     config = Config()
-    config.set_main_option(
-        "script_location",
-        os.path.join(current_app.plugins_dir, plugin_name, "migrations"),
-    )
-    config.set_main_option(
-        "version_locations",
-        os.path.join(current_app.plugins_dir, plugin_name, "migrations"),
-    )
+    config.set_main_option("script_location", migrations_path)
+    config.set_main_option("version_locations", migrations_path)
     script = ScriptDirectory.from_config(config)
 
     # get current revision for plugin
