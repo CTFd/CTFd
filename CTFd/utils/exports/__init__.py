@@ -54,7 +54,7 @@ def export_ctf():
             "results": [{"version_num": get_current_revision()}],
             "meta": {},
         }
-        result_file = six.BytesIO()
+        result_file = six.StringIO()
         json.dump(result, result_file)
         result_file.seek(0)
         backup_zip.writestr("db/alembic_version.json", result_file.read())
@@ -166,13 +166,111 @@ def import_ctf(backup, erase=True):
         "db/config.json",
     ]
 
+    # We want to insert certain database tables first so we are specifying
+    # the order with a list. The leftover tables are tables that are from a
+    # plugin (more likely) or a table where we do not care about insertion order
     for item in first:
         if item in members:
             members.remove(item)
 
-    members = first + members
-
+    # Upgrade the database to the point in time that the import was taken from
     migration_upgrade(revision=alembic_version)
+
+    members.remove("db/alembic_version.json")
+
+    # Combine the database insertion code into a function so that we can pause
+    # insertion between official database tables and plugin tables
+    def insertion(table_filenames):
+        for member in table_filenames:
+            if member.startswith("db/"):
+                table_name = member[3:-5]
+
+                try:
+                    # Try to open a file but skip if it doesn't exist.
+                    data = backup.open(member).read()
+                except KeyError:
+                    continue
+
+                if data:
+                    table = side_db[table_name]
+
+                    saved = json.loads(data)
+                    for entry in saved["results"]:
+                        # This is a hack to get SQLite to properly accept datetime values from dataset
+                        # See Issue #246
+                        if sqlite:
+                            direct_table = get_class_by_tablename(table.name)
+                            for k, v in entry.items():
+                                if isinstance(v, six.string_types):
+                                    # We only want to apply this hack to columns that are expecting a datetime object
+                                    try:
+                                        is_dt_column = (
+                                            type(getattr(direct_table, k).type)
+                                            == sqltypes.DateTime
+                                        )
+                                    except AttributeError:
+                                        is_dt_column = False
+
+                                    # If the table is expecting a datetime, we should check if the string is one and convert it
+                                    if is_dt_column:
+                                        match = re.match(
+                                            r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v
+                                        )
+                                        if match:
+                                            entry[k] = datetime.datetime.strptime(
+                                                v, "%Y-%m-%dT%H:%M:%S.%f"
+                                            )
+                                            continue
+                                        match = re.match(
+                                            r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", v
+                                        )
+                                        if match:
+                                            entry[k] = datetime.datetime.strptime(
+                                                v, "%Y-%m-%dT%H:%M:%S"
+                                            )
+                                            continue
+                        # From v2.0.0 to v2.1.0 requirements could have been a string or JSON because of a SQLAlchemy issue
+                        # This is a hack to ensure we can still accept older exports. See #867
+                        if member in (
+                            "db/challenges.json",
+                            "db/hints.json",
+                            "db/awards.json",
+                        ):
+                            requirements = entry.get("requirements")
+                            if requirements and isinstance(requirements, six.string_types):
+                                entry["requirements"] = json.loads(requirements)
+
+                        try:
+                            table.insert(entry)
+                        except ProgrammingError:
+                            # MariaDB does not like JSON objects and prefers strings because it internally
+                            # represents JSON with LONGTEXT.
+                            # See Issue #973
+                            requirements = entry.get("requirements")
+                            if requirements and isinstance(requirements, dict):
+                                entry["requirements"] = json.dumps(requirements)
+                            table.insert(entry)
+
+                        db.session.commit()
+                    if postgres:
+                        # This command is to set the next primary key ID for the re-inserted tables in Postgres. However,
+                        # this command is very difficult to translate into SQLAlchemy code. Because Postgres is not
+                        # officially supported, no major work will go into this functionality.
+                        # https://stackoverflow.com/a/37972960
+                        if '"' not in table_name and "'" not in table_name:
+                            query = "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM \"{table_name}\"".format(  # nosec
+                                table_name=table_name
+                            )
+                            side_db.engine.execute(query)
+                        else:
+                            raise Exception(
+                                "Table name {table_name} contains quotes".format(
+                                    table_name=table_name
+                                )
+                            )
+
+    # Insert data from official tables
+    insertion(first)
 
     # Create tables created by plugins
     try:
@@ -190,95 +288,8 @@ def import_ctf(backup, erase=True):
         else:
             print("Allowing error during app.db.create_all() due to Postgres")
 
-    members.remove("db/alembic_version.json")
-
-    for member in members:
-        if member.startswith("db/"):
-            table_name = member[3:-5]
-
-            try:
-                # Try to open a file but skip if it doesn't exist.
-                data = backup.open(member).read()
-            except KeyError:
-                continue
-
-            if data:
-                table = side_db[table_name]
-
-                saved = json.loads(data)
-                for entry in saved["results"]:
-                    # This is a hack to get SQLite to properly accept datetime values from dataset
-                    # See Issue #246
-                    if sqlite:
-                        direct_table = get_class_by_tablename(table.name)
-                        for k, v in entry.items():
-                            if isinstance(v, six.string_types):
-                                # We only want to apply this hack to columns that are expecting a datetime object
-                                try:
-                                    is_dt_column = (
-                                        type(getattr(direct_table, k).type)
-                                        == sqltypes.DateTime
-                                    )
-                                except AttributeError:
-                                    is_dt_column = False
-
-                                # If the table is expecting a datetime, we should check if the string is one and convert it
-                                if is_dt_column:
-                                    match = re.match(
-                                        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v
-                                    )
-                                    if match:
-                                        entry[k] = datetime.datetime.strptime(
-                                            v, "%Y-%m-%dT%H:%M:%S.%f"
-                                        )
-                                        continue
-                                    match = re.match(
-                                        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", v
-                                    )
-                                    if match:
-                                        entry[k] = datetime.datetime.strptime(
-                                            v, "%Y-%m-%dT%H:%M:%S"
-                                        )
-                                        continue
-                    # From v2.0.0 to v2.1.0 requirements could have been a string or JSON because of a SQLAlchemy issue
-                    # This is a hack to ensure we can still accept older exports. See #867
-                    if member in (
-                        "db/challenges.json",
-                        "db/hints.json",
-                        "db/awards.json",
-                    ):
-                        requirements = entry.get("requirements")
-                        if requirements and isinstance(requirements, six.string_types):
-                            entry["requirements"] = json.loads(requirements)
-
-                    try:
-                        table.insert(entry)
-                    except ProgrammingError:
-                        # MariaDB does not like JSON objects and prefers strings because it internally
-                        # represents JSON with LONGTEXT.
-                        # See Issue #973
-                        requirements = entry.get("requirements")
-                        if requirements and isinstance(requirements, dict):
-                            entry["requirements"] = json.dumps(requirements)
-                        table.insert(entry)
-
-                    db.session.commit()
-                if postgres:
-                    # This command is to set the next primary key ID for the re-inserted tables in Postgres. However,
-                    # this command is very difficult to translate into SQLAlchemy code. Because Postgres is not
-                    # officially supported, no major work will go into this functionality.
-                    # https://stackoverflow.com/a/37972960
-                    if '"' not in table_name and "'" not in table_name:
-                        query = "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM \"{table_name}\"".format(  # nosec
-                            table_name=table_name
-                        )
-                        side_db.engine.execute(query)
-                    else:
-                        raise Exception(
-                            "Table name {table_name} contains quotes".format(
-                                table_name=table_name
-                            )
-                        )
+    # Insert data for plugin tables
+    insertion(members)
 
     # Extracting files
     files = [f for f in backup.namelist() if f.startswith("uploads/")]
