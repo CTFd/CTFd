@@ -96,10 +96,10 @@ def import_ctf(backup, erase=True):
             if info.file_size > max_content_length:
                 raise zipfile.LargeZipFile
 
-    member_dirs = [os.path.split(m)[0] for m in members if '/' in m]
+    member_dirs = [os.path.split(m)[0] for m in members if "/" in m]
     if "db" not in member_dirs:
         raise Exception(
-            "CTFd couldn't find the \"db\" folder in this backup. The backup may be malformed or corrupted and the import process cannot continue."
+            'CTFd couldn\'t find the "db" folder in this backup. The backup may be malformed or corrupted and the import process cannot continue.'
         )
 
     try:
