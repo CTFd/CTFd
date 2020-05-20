@@ -17,7 +17,7 @@ from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
 from CTFd.models import db, get_class_by_tablename
 from CTFd.plugins import get_plugin_names
-from CTFd.plugins.migrations import upgrade as plugin_upgrade
+from CTFd.plugins.migrations import upgrade as plugin_upgrade, current as plugin_current
 from CTFd.utils import get_app_config, set_config
 from CTFd.utils.exports.freeze import freeze_export
 from CTFd.utils.migrations import (
@@ -214,7 +214,8 @@ def import_ctf(backup, erase=True):
                                     # If the table is expecting a datetime, we should check if the string is one and convert it
                                     if is_dt_column:
                                         match = re.match(
-                                            r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d", v
+                                            r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d",
+                                            v,
                                         )
                                         if match:
                                             entry[k] = datetime.datetime.strptime(
@@ -237,7 +238,9 @@ def import_ctf(backup, erase=True):
                             "db/awards.json",
                         ):
                             requirements = entry.get("requirements")
-                            if requirements and isinstance(requirements, six.string_types):
+                            if requirements and isinstance(
+                                requirements, six.string_types
+                            ):
                                 entry["requirements"] = json.loads(requirements)
 
                         try:
@@ -278,7 +281,8 @@ def import_ctf(backup, erase=True):
         plugins = get_plugin_names()
         try:
             for plugin in plugins:
-                plugin_upgrade(plugin_name=plugin)
+                revision = plugin_current(plugin_name=plugin)
+                plugin_upgrade(plugin_name=plugin, revision=revision)
         finally:
             # Create tables that don't have migrations
             app.db.create_all()
@@ -290,6 +294,11 @@ def import_ctf(backup, erase=True):
 
     # Insert data for plugin tables
     insertion(members)
+
+    # Bring plugin tables up to head revision
+    plugins = get_plugin_names()
+    for plugin in plugins:
+        plugin_upgrade(plugin_name=plugin)
 
     # Extracting files
     files = [f for f in backup.namelist() if f.startswith("uploads/")]
