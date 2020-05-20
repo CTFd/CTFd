@@ -101,7 +101,7 @@ def import_ctf(backup, erase=True):
     if "db" not in member_dirs:
         raise Exception(
             'CTFd couldn\'t find the "db" folder in this backup. '
-            'The backup may be malformed or corrupted and the import process cannot continue.'
+            "The backup may be malformed or corrupted and the import process cannot continue."
         )
 
     try:
