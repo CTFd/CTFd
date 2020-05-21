@@ -8,7 +8,6 @@ import zipfile
 import dataset
 import six
 from alembic.util import CommandError
-from concurrent import futures
 from flask import current_app as app
 from flask_migrate import upgrade as migration_upgrade
 from sqlalchemy.exc import OperationalError, ProgrammingError
@@ -312,25 +311,17 @@ def import_ctf(backup, erase=True):
     # Extracting files
     files = [f for f in backup.namelist() if f.startswith("uploads/")]
     uploader = get_uploader()
+    for f in files:
+        filename = f.split(os.sep, 1)
 
-    awaitables = []
-    with futures.ThreadPoolExecutor() as executor:
-        for f in files:
-            filename = f.split(os.sep, 1)
+        if (
+            len(filename) < 2 or os.path.basename(filename[1]) == ""
+        ):  # just an empty uploads directory (e.g. uploads/) or any directory
+            continue
 
-            # just an empty uploads directory (e.g. uploads/) or any directory
-            if len(filename) < 2 or os.path.basename(filename[1]) == "":
-                continue
-
-            # Get the second entry in the list (the actual filename)
-            filename = filename[1]
-            source = backup.open(f)
-
-            # Parallelize the storage requests
-            awaitables.append(executor.submit(uploader.store, source, filename))
-
-        # Await the storage requests
-        futures.wait(awaitables, return_when=futures.FIRST_EXCEPTION)
+        filename = filename[1]  # Get the second entry in the list (the actual filename)
+        source = backup.open(f)
+        uploader.store(fileobj=source, filename=filename)
 
     # Alembic sqlite support is lacking so we should just create_all anyway
     try:
