@@ -205,7 +205,7 @@
 				</thead>
 				<tbody>
 				{% for member in members %}
-					<tr data-href="{{ url_for('admin.users_detail', user_id=member.id) }}">
+					<tr>
 						<td class="text-center">
 							{% if team.captain_id == member.id %}
 								<span class="badge badge-primary">Captain</span>
