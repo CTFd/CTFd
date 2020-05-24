@@ -35,7 +35,7 @@ export default () => {
       }
     });
 
-    $("tr[data-href]").click(function() {
+    $("tr[data-href], td[data-href]").click(function() {
       var sel = getSelection().toString();
       if (!sel) {
         var href = $(this).attr("data-href");
