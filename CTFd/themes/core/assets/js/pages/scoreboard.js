@@ -40,7 +40,7 @@ const updateScores = () => {
         '<th scope="row" class="text-center">',
         i + 1,
         "</th>",
-        '<td><a href="{0}/team/{1}">'.format(
+        '<td><a href="{0}/teams/{1}">'.format(
           CTFd.config.urlRoot,
           teams[i].account_id
         ),
