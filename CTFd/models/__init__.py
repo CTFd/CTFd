@@ -8,7 +8,7 @@ from sqlalchemy.orm import column_property, validates
 from CTFd.utils.crypto import hash_password
 from CTFd.utils.humanize.numbers import ordinalize
 
-db = SQLAlchemy()
+db = SQLAlchemy(engine_options=dict(pool_pre_ping=True))
 ma = Marshmallow()
 
 
