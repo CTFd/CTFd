@@ -4,6 +4,7 @@ lint:
 	prettier --check 'CTFd/themes/**/assets/**/*'
 
 format:
+	isort --skip=CTFd/uploads -rc CTFd/ tests/
 	black --exclude=CTFd/uploads --exclude=node_modules .
 	prettier --write 'CTFd/themes/**/assets/**/*'
 
