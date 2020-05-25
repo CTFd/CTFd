@@ -165,8 +165,8 @@ def bypass_csrf_protection(f):
     return f
 
 
-def get_plugin_names(plugins_dir):
-    modules = sorted(plugins_dir.glob("*"))
+def get_plugin_names():
+    modules = sorted(app.plugins_dir.glob("*"))
     blacklist = {"__pycache__"}
     plugins = []
     for module in modules:
@@ -190,11 +190,10 @@ def init_plugins(app):
 
     app.admin_plugin_menu_bar = []
     app.plugin_menu_bar = []
-    plugins_dir = Path(__file__).resolve().parent
-    app.plugins_dir = plugins_dir
+    app.plugins_dir = Path(__file__).resolve().parent
 
     if app.config.get("SAFE_MODE", False) is False:
-        for plugin in get_plugin_names(plugins_dir):
+        for plugin in get_plugin_names():
             module = "." + plugin
             module = importlib.import_module(module, package="CTFd.plugins")
             module.load(app)

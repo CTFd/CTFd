@@ -30,7 +30,7 @@ def upgrade(plugin_name=None):
         plugin_name = caller_path.parent.name
 
     # Check if the plugin has migraitons
-    migrations_path = Path(current_app.plugins_dir, plugin_name, "migrations")
+    migrations_path = current_app.plugins_dir.joinpath(plugin_name, "migrations")
     if migrations_path.is_dir() is False:
         # Create any tables that the plugin may have
         current_app.db.create_all()
