@@ -14,6 +14,9 @@ from flask import (
     url_for,
 )
 
+admin = Blueprint("admin", __name__)
+
+# isort:imports-firstparty
 from CTFd.admin import challenges  # noqa: F401
 from CTFd.admin import notifications  # noqa: F401
 from CTFd.admin import pages  # noqa: F401
@@ -47,8 +50,6 @@ from CTFd.utils.helpers import get_errors
 from CTFd.utils.security.auth import logout_user
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import is_admin
-
-admin = Blueprint("admin", __name__)
 
 
 @admin.route("/admin", methods=["GET"])

@@ -2,9 +2,6 @@ import mistune
 import six
 from flask import current_app as app
 
-from CTFd.cache import cache
-from CTFd.models import Configs, db  # noqa: E402
-
 if six.PY2:
     string_types = (str, unicode)  # noqa: F821
     text_type = unicode  # noqa: F821
@@ -15,6 +12,10 @@ else:
     binary_type = bytes
 
 markdown = mistune.Markdown()
+
+# isort:imports-firstparty
+from CTFd.cache import cache
+from CTFd.models import Configs, db  # noqa: E402
 
 
 def get_app_config(key, default=None):
