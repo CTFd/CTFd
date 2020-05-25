@@ -151,9 +151,7 @@ def setup():
             <a href="admin">Click here</a> to login and setup your CTF
         </h4>
     </div>
-</div>""".format(
-                request.script_root
-            )
+</div>"""
 
             page = Pages(title=None, route="index", content=index, draft=False)
 
