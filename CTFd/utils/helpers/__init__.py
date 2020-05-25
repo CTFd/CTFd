@@ -1,5 +1,7 @@
-import os
-
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 from flask import current_app, flash, get_flashed_messages, request
 
 
@@ -29,8 +31,8 @@ def env_asset_url_default(endpoint, values):
         if static_asset and not direct_access:
             env = values.get("env", current_app.env)
             mode = ".dev" if env == "development" else ".min"
-            base, ext = os.path.splitext(path)
-            values["path"] = base + mode + ext
+            path = Path(path)
+            values["path"] = str(path.parent.joinpath(path.stem, mode, path.suffix))
 
 
 @current_app.url_defaults

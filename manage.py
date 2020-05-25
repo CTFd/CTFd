@@ -1,3 +1,8 @@
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Manager
@@ -17,9 +22,9 @@ def jsenums():
     import json
     import os
 
-    path = os.path.join(app.root_path, "themes/core/assets/js/constants.js")
+    path = Path(app.root_path, "themes/core/assets/js/constants.js")
 
-    with open(path, "w+") as f:
+    with path.open("w+") as f:
         for k, v in JS_ENUMS.items():
             f.write("const {} = Object.freeze({});".format(k, json.dumps(v)))
 

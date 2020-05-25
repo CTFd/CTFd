@@ -1,5 +1,9 @@
 import os
 
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 import boto3
 from moto import mock_s3
 from six import BytesIO
@@ -49,12 +53,12 @@ def test_s3_sync():
 
         fake_file = BytesIO("fakedfile".encode())
         path = uploader.upload(fake_file, "fake_file.txt")
-        full_path = os.path.join(app.config["UPLOAD_FOLDER"], path)
+        full_path = Path(app.config["UPLOAD_FOLDER"]).joinpath(path)
 
         try:
             uploader.sync()
-            with open(full_path) as f:
+            with full_path.open() as f:
                 assert f.read() == "fakedfile"
         finally:
-            rmdir(os.path.dirname(full_path))
+            full_path.rmdir()
     destroy_ctfd(app)

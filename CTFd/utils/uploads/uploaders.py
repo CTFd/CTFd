@@ -3,6 +3,11 @@ import posixpath
 import string
 from shutil import copyfileobj
 
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
+
 import boto3
 from flask import current_app, redirect, send_file
 from flask.helpers import safe_join
@@ -35,16 +40,17 @@ class BaseUploader(object):
 class FilesystemUploader(BaseUploader):
     def __init__(self, base_path=None):
         super(BaseUploader, self).__init__()
-        self.base_path = base_path or current_app.config.get("UPLOAD_FOLDER")
+        base_path = base_path or current_app.config.get("UPLOAD_FOLDER")
+        self.base_path = Path(base_path)
 
     def store(self, fileobj, filename):
-        location = os.path.join(self.base_path, filename)
-        directory = os.path.dirname(location)
+        location = self.base_path.joinpath(filename)
+        directory = location.parent
 
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+        if not directory.exists():
+            directory.mkdir()
 
-        with open(location, "wb") as dst:
+        with location.open("wb") as dst:
             copyfileobj(fileobj, dst, 16384)
 
         return filename
@@ -60,11 +66,11 @@ class FilesystemUploader(BaseUploader):
         return self.store(file_obj, file_path)
 
     def download(self, filename):
-        return send_file(safe_join(self.base_path, filename), as_attachment=True)
+        return send_file(safe_join(str(self.base_path), filename), as_attachment=True)
 
     def delete(self, filename):
-        if os.path.exists(os.path.join(self.base_path, filename)):
-            os.unlink(os.path.join(self.base_path, filename))
+        if self.base_path.joinpath(filename).exists():
+            self.base_path.joinpath(filename).unlink()
             return True
         return False
 
@@ -132,7 +138,7 @@ class S3Uploader(BaseUploader):
         return True
 
     def sync(self):
-        local_folder = current_app.config.get("UPLOAD_FOLDER")
+        local_folder = Path(current_app.config.get("UPLOAD_FOLDER"))
         # If the bucket is empty then Contents will not be in the response
         bucket_list = self.s3.list_objects(Bucket=self.bucket).get("Contents", [])
 
@@ -140,9 +146,9 @@ class S3Uploader(BaseUploader):
             s3_object = s3_key["Key"]
             # We don't want to download any directories
             if s3_object.endswith("/") is False:
-                local_path = os.path.join(local_folder, s3_object)
-                directory = os.path.dirname(local_path)
-                if not os.path.exists(directory):
-                    os.makedirs(directory)
+                local_path = local_folder.joinpath(s3_object)
+                directory = local_path.parent
+                if not directory.exists():
+                    directory.mkdir()
 
                 self.s3.download_file(self.bucket, s3_object, local_path)

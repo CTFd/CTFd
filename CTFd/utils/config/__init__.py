@@ -1,5 +1,9 @@
-import os
 import time
+
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 from flask import current_app as app
 
@@ -80,9 +84,7 @@ def mailserver():
 
 
 def get_themes():
-    dir = os.path.join(app.root_path, "themes")
+    theme_path = Path(app.root_path, "themes")
     return [
-        name
-        for name in os.listdir(dir)
-        if os.path.isdir(os.path.join(dir, name)) and name != "admin"
+        dir.name for dir in theme_path.iterdir() if dir.is_dir() and dir.name != "admin"
     ]

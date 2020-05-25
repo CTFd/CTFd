@@ -1,7 +1,11 @@
 import glob
 import importlib
-import os
 from collections import namedtuple
+
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 from flask import current_app as app
 from flask import send_file, send_from_directory
@@ -176,15 +180,15 @@ def init_plugins(app):
 
     app.admin_plugin_menu_bar = []
     app.plugin_menu_bar = []
-    app.plugins_dir = os.path.dirname(__file__)
+    plugins_dir = Path(__file__).resolve().parent
+    app.plugins_dir = plugins_dir
 
     if app.config.get("SAFE_MODE", False) is False:
-        modules = sorted(glob.glob(os.path.dirname(__file__) + "/*"))
+        modules = sorted(plugins_dir.glob("*"))
         blacklist = {"__pycache__"}
         for module in modules:
-            module_name = os.path.basename(module)
-            if os.path.isdir(module) and module_name not in blacklist:
-                module = "." + module_name
+            if module.is_dir() and module.stem not in blacklist:
+                module = "." + module.stem
                 module = importlib.import_module(module, package="CTFd.plugins")
                 module.load(app)
                 print(" * Loaded module, %s" % module)

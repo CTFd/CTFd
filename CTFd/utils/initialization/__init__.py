@@ -3,6 +3,11 @@ import logging
 import os
 import sys
 
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
+
 from flask import abort, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.wsgi import DispatcherMiddleware
@@ -98,20 +103,20 @@ def init_logs(app):
     logger_logins.setLevel(logging.INFO)
     logger_registrations.setLevel(logging.INFO)
 
-    log_dir = app.config["LOG_FOLDER"]
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
+    log_dir = Path(app.config["LOG_FOLDER"])
+    if not log_dir.exists():
+        log_dir.mkdir()
 
     logs = {
-        "submissions": os.path.join(log_dir, "submissions.log"),
-        "logins": os.path.join(log_dir, "logins.log"),
-        "registrations": os.path.join(log_dir, "registrations.log"),
+        "submissions": log_dir.joinpath("submissions.log"),
+        "logins": log_dir.joinpath("logins.log"),
+        "registrations": log_dir.joinpath("registrations.log"),
     }
 
     try:
         for log in logs.values():
-            if not os.path.exists(log):
-                open(log, "a").close()
+            if not log.exists():
+                log.open("a").close()
 
         submission_log = logging.handlers.RotatingFileHandler(
             logs["submissions"], maxBytes=10485760, backupCount=5

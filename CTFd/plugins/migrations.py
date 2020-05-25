@@ -1,5 +1,9 @@
 import inspect
-import os
+
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 from alembic.config import Config
 from alembic.migration import MigrationContext
@@ -22,8 +26,8 @@ def upgrade(plugin_name=None):
         # Doing it this way doesn't waste the rest of the inspect.stack call
         frame = inspect.currentframe()
         caller_info = inspect.getframeinfo(frame.f_back)
-        caller_path = caller_info[0]
-        plugin_name = os.path.basename(os.path.dirname(caller_path))
+        caller_path = Path(caller_info[0])
+        plugin_name = caller_path.parent.name
 
     engine = create_engine(database_url, poolclass=pool.NullPool)
     conn = engine.connect()
@@ -33,12 +37,10 @@ def upgrade(plugin_name=None):
     # Find the list of migrations to run
     config = Config()
     config.set_main_option(
-        "script_location",
-        os.path.join(current_app.plugins_dir, plugin_name, "migrations"),
+        "script_location", Path(current_app.plugins_dir, plugin_name, "migrations"),
     )
     config.set_main_option(
-        "version_locations",
-        os.path.join(current_app.plugins_dir, plugin_name, "migrations"),
+        "version_locations", Path(current_app.plugins_dir, plugin_name, "migrations"),
     )
     script = ScriptDirectory.from_config(config)
 

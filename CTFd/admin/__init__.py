@@ -1,6 +1,10 @@
 import csv
 import datetime
-import os
+
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 import six
 from flask import Blueprint, abort
@@ -63,18 +67,10 @@ def view():
 @admins_only
 def plugin(plugin):
     if request.method == "GET":
-        plugins_path = os.path.join(app.root_path, "plugins")
+        plugin_path = Path(app.root_path, "plugins", plugin, "config.html")
 
-        config_html_plugins = [
-            name
-            for name in os.listdir(plugins_path)
-            if os.path.isfile(os.path.join(plugins_path, name, "config.html"))
-        ]
-
-        if plugin in config_html_plugins:
-            config_html = open(
-                os.path.join(app.root_path, "plugins", plugin, "config.html")
-            ).read()
+        if plugin_path.exists():
+            config_html = plugin_path.open().read()
             return render_template_string(config_html)
         abort(404)
     elif request.method == "POST":

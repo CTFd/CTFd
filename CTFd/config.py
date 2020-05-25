@@ -1,5 +1,9 @@
 import os
 
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 """ GENERATE SECRET KEY """
 
 if not os.getenv("SECRET_KEY"):
@@ -64,7 +68,7 @@ class Config(object):
     """
     SECRET_KEY = os.getenv("SECRET_KEY") or key
     DATABASE_URL = os.getenv("DATABASE_URL") or "sqlite:///{}/ctfd.db".format(
-        os.path.dirname(os.path.abspath(__file__))
+        (Path(__file__).resolve().parent)
     )
     REDIS_URL = os.getenv("REDIS_URL")
 
@@ -74,12 +78,12 @@ class Config(object):
         CACHE_TYPE = "redis"
     else:
         CACHE_TYPE = "filesystem"
-        CACHE_DIR = os.path.join(
-            os.path.dirname(__file__), os.pardir, ".data", "filesystem_cache"
+        CACHE_DIR = (
+            Path(__file__)
+            .resolve()
+            .parent.joinpath(os.pardir, ".data", "filesystem_cache")
         )
-        CACHE_THRESHOLD = (
-            0
-        )  # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
+        CACHE_THRESHOLD = 0  # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
 
     """
     === SECURITY ===
@@ -165,8 +169,8 @@ class Config(object):
         The location where logs are written. These are the logs for CTFd key submissions, registrations, and logins.
         The default location is the CTFd/logs folder.
     """
-    LOG_FOLDER = os.getenv("LOG_FOLDER") or os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "logs"
+    LOG_FOLDER = os.getenv("LOG_FOLDER") or Path(__file__).resolve().parent.joinpath(
+        "logs"
     )
 
     """
@@ -192,9 +196,9 @@ class Config(object):
 
     """
     UPLOAD_PROVIDER = os.getenv("UPLOAD_PROVIDER") or "filesystem"
-    UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER") or os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "uploads"
-    )
+    UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER") or Path(
+        __file__
+    ).resolve().parent.joinpath("uploads")
     if UPLOAD_PROVIDER == "s3":
         AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
         AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")

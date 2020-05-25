@@ -2,6 +2,11 @@ import json
 import os
 from collections import namedtuple
 
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
+
 from flask import current_app as app
 
 
@@ -44,22 +49,30 @@ def override_template(template, html):
 def get_configurable_plugins():
     Plugin = namedtuple("Plugin", ["name", "route"])
 
-    plugins_path = os.path.join(app.root_path, "plugins")
-    plugin_directories = os.listdir(plugins_path)
+    plugins_path = Path(app.root_path, "plugins")
+    plugin_directories = (
+        plugin_dir for plugin_dir in plugins_path.iterdir() if plugin_dir.is_dir()
+    )
+
+    config_files = [
+        file
+        for dir in plugin_directories
+        for file in dir.iterdir()
+        if file.name == "config"
+    ]
 
     plugins = []
 
-    for dir in plugin_directories:
-        if os.path.isfile(os.path.join(plugins_path, dir, "config.json")):
-            path = os.path.join(plugins_path, dir, "config.json")
-            with open(path) as f:
+    for file in config_files:
+        if file.suffix == ".json":
+            with file.open() as f:
                 plugin_json_data = json.loads(f.read())
                 p = Plugin(
                     name=plugin_json_data.get("name"),
                     route=plugin_json_data.get("route"),
                 )
                 plugins.append(p)
-        elif os.path.isfile(os.path.join(plugins_path, dir, "config.html")):
+        elif file.suffix == ".html":
             p = Plugin(name=dir, route="/admin/plugins/{}".format(dir))
             plugins.append(p)
 

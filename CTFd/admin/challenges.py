@@ -1,4 +1,7 @@
-import os
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 import six
 from flask import current_app as app
@@ -51,9 +54,8 @@ def challenges_detail(challenge_id):
     flags = Flags.query.filter_by(challenge_id=challenge.id).all()
     challenge_class = get_chal_class(challenge.type)
 
-    with open(
-        os.path.join(app.root_path, challenge_class.templates["update"].lstrip("/")),
-        "rb",
+    with Path(app.root_path, challenge_class.templates["update"].lstrip("/")).open(
+        "rb"
     ) as update:
         tpl = update.read()
         if six.PY3 and isinstance(tpl, binary_type):

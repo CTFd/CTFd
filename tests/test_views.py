@@ -3,6 +3,10 @@
 
 import os
 
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 from flask import url_for
 from freezegun import freeze_time
 
@@ -184,15 +188,15 @@ def test_user_can_access_files():
 
         chal = gen_challenge(app.db)
         chal_id = chal.id
-        path = app.config.get("UPLOAD_FOLDER")
+        path = Path(app.config.get("UPLOAD_FOLDER"))
 
-        location = os.path.join(path, "test_file_path", "test.txt")
-        directory = os.path.dirname(location)
-        model_path = os.path.join("test_file_path", "test.txt")
+        model_path = str(Path("test_file_path", "test.txt"))
+        location = path.joinpath(model_path)
+        directory = location.parent
 
         try:
-            os.makedirs(directory)
-            with open(location, "wb") as obj:
+            directory.mkdir()
+            with location.open("wb") as obj:
                 obj.write("testing file load".encode())
             gen_file(app.db, location=model_path, challenge_id=chal_id)
             url = url_for("views.files", path=model_path)
@@ -283,13 +287,13 @@ def test_user_can_access_files_with_auth_token():
 
         md5hash = hexencode(os.urandom(16))
 
-        location = os.path.join(path, md5hash, "test.txt")
-        directory = os.path.dirname(location)
-        model_path = os.path.join(md5hash, "test.txt")
+        model_path = str(Path(md5hash, "test.txt"))
+        location = path.joinpath(model_path)
+        directory = location.parent
 
         try:
-            os.makedirs(directory)
-            with open(location, "wb") as obj:
+            directory.mkdir()
+            with location.open("wb") as obj:
                 obj.write("testing file load".encode())
             gen_file(app.db, location=model_path, challenge_id=chal_id)
             url = url_for("views.files", path=model_path)
@@ -398,13 +402,13 @@ def test_user_can_access_files_if_view_after_ctf():
 
         md5hash = hexencode(os.urandom(16))
 
-        location = os.path.join(path, md5hash, "test.txt")
-        directory = os.path.dirname(location)
-        model_path = os.path.join(md5hash, "test.txt")
+        model_path = str(Path(md5hash, "test.txt"))
+        location = path.joinpath(model_path)
+        directory = location.parent
 
         try:
-            os.makedirs(directory)
-            with open(location, "wb") as obj:
+            directory.mkdir()
+            with location.open("wb") as obj:
                 obj.write("testing file load".encode())
             gen_file(app.db, location=model_path, challenge_id=chal_id)
 

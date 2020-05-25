@@ -1,4 +1,7 @@
-import os
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 from flask import Blueprint, abort
 from flask import current_app as app
@@ -392,7 +395,7 @@ def themes(theme, path):
     :return:
     """
     filename = safe_join(app.root_path, "themes", theme, "static", path)
-    if os.path.isfile(filename):
+    if Path(filename).is_file():
         return send_file(filename)
     else:
         abort(404)

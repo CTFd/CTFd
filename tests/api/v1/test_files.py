@@ -3,6 +3,11 @@
 
 import os
 import shutil
+
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 from io import BytesIO
 
 from CTFd.models import ChallengeFiles, Challenges, Files
@@ -74,7 +79,7 @@ def test_api_files_post_admin():
             )
             assert r.status_code == 200
             f = Files.query.filter_by(id=1).first()
-            os.remove(os.path.join(app.config["UPLOAD_FOLDER"] + "/" + f.location))
+            Path(app.config["UPLOAD_FOLDER"]).joinpath(f.location).unlink()
     destroy_ctfd(app)
 
 
@@ -102,13 +107,13 @@ def test_api_file_delete_admin():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        path = os.path.join(
-            app.config["UPLOAD_FOLDER"], "0bf1a55a5cd327c07af15df260979668", "bird.swf"
+        path = Path(app.config["UPLOAD_FOLDER"]).joinpath(
+            "0bf1a55a5cd327c07af15df260979668", "bird.swf"
         )
         try:
             # Create a fake file
-            os.makedirs(os.path.dirname(path))
-            open(path, "a").close()
+            path.parent.mkdir()
+            path.open("a").close()
             f = gen_file(
                 app.db,
                 location="0bf1a55a5cd327c07af15df260979668/bird.swf",
@@ -119,7 +124,7 @@ def test_api_file_delete_admin():
             assert f in chal.files
 
             # Make sure the file was created
-            assert os.path.exists(path)
+            assert path.exists()
 
             with login_as_user(app, "admin") as client:
                 r = client.delete("/api/v1/files/1", json="")
@@ -130,9 +135,9 @@ def test_api_file_delete_admin():
                 assert f not in chal.files
 
                 # Make sure the API call deleted the file
-                assert os.path.exists(path) is False
+                assert path.exists() is False
         finally:
             # Always make sure the file is deleted
-            shutil.rmtree(os.path.dirname(path), ignore_errors=True)
+            shutil.rmtree(path.parent, ignore_errors=True)
 
     destroy_ctfd(app)

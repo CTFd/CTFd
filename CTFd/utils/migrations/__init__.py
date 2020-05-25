@@ -1,5 +1,9 @@
 import os
 
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 from alembic.migration import MigrationContext
 from flask import current_app as app
 from flask_migrate import Migrate, stamp
@@ -46,5 +50,5 @@ def get_current_revision():
 
 def stamp_latest_revision():
     # Get proper migrations directory regardless of cwd
-    directory = os.path.join(os.path.dirname(app.root_path), "migrations")
-    stamp(directory=directory)
+    directory = Path(app.root_path).parent.joinpath("migrations")
+    stamp(directory=str(directory))

@@ -5,6 +5,11 @@ import re
 import tempfile
 import zipfile
 
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
+
 import dataset
 import six
 from alembic.util import CommandError
@@ -61,15 +66,13 @@ def export_ctf():
     uploader = get_uploader()
     uploader.sync()
 
-    upload_folder = os.path.join(
-        os.path.normpath(app.root_path), app.config.get("UPLOAD_FOLDER")
-    )
+    upload_folder = Path(app.root_path, app.config.get("UPLOAD_FOLDER"))
     for root, dirs, files in os.walk(upload_folder):
         for file in files:
-            parent_dir = os.path.basename(root)
+            parent_dir = root.name
             backup_zip.write(
-                os.path.join(root, file),
-                arcname=os.path.join("uploads", parent_dir, file),
+                Path(root).joinpath(file),
+                arcname=Path("uploads").joinpath(parent_dir, file),
             )
 
     backup_zip.close()
@@ -273,7 +276,7 @@ def import_ctf(backup, erase=True):
         filename = f.split(os.sep, 1)
 
         if (
-            len(filename) < 2 or os.path.basename(filename[1]) == ""
+            len(filename) < 2 or Path(filename[1]).parent == ""
         ):  # just an empty uploads directory (e.g. uploads/) or any directory
             continue
 
