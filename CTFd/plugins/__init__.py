@@ -165,6 +165,16 @@ def bypass_csrf_protection(f):
     return f
 
 
+def get_plugin_names(plugins_dir):
+    modules = sorted(plugins_dir.glob("*"))
+    blacklist = {"__pycache__"}
+    plugins = []
+    for module in modules:
+        if module.is_dir() and module.stem not in blacklist:
+            plugins.append(module.stem)
+    return plugins
+
+
 def init_plugins(app):
     """
     Searches for the load function in modules in the CTFd/plugins folder. This function is called with the current CTFd
@@ -184,14 +194,11 @@ def init_plugins(app):
     app.plugins_dir = plugins_dir
 
     if app.config.get("SAFE_MODE", False) is False:
-        modules = sorted(plugins_dir.glob("*"))
-        blacklist = {"__pycache__"}
-        for module in modules:
-            if module.is_dir() and module.stem not in blacklist:
-                module = "." + module.stem
-                module = importlib.import_module(module, package="CTFd.plugins")
-                module.load(app)
-                print(" * Loaded module, %s" % module)
+        for plugin in get_plugin_names(plugins_dir):
+            module = "." + plugin
+            module = importlib.import_module(module, package="CTFd.plugins")
+            module.load(app)
+            print(" * Loaded module, %s" % module)
 
     app.jinja_env.globals.update(get_admin_plugin_menu_bar=get_admin_plugin_menu_bar)
     app.jinja_env.globals.update(get_user_page_menu_bar=get_user_page_menu_bar)
