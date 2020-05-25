@@ -3,6 +3,7 @@ import six
 from flask import current_app as app
 
 from CTFd.cache import cache
+from CTFd.models import Configs, db  # noqa: E402
 
 if six.PY2:
     string_types = (str, unicode)  # noqa: F821
@@ -58,6 +59,3 @@ def set_config(key, value):
     db.session.commit()
     cache.delete_memoized(_get_config, key)
     return config
-
-
-from CTFd.models import Configs, db  # noqa: E402

@@ -1,8 +1,9 @@
 import json
-import six
-from collections import defaultdict, OrderedDict
-from datetime import datetime, date
+from collections import OrderedDict, defaultdict
+from datetime import date, datetime
 from decimal import Decimal
+
+import six
 
 
 class JSONEncoder(json.JSONEncoder):

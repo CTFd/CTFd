@@ -223,9 +223,7 @@ function deleteSelectedSubmissions(event, target) {
 
   ezQuery({
     title: `Delete ${title}`,
-    body: `Are you sure you want to delete ${
-      submissionIDs.length
-    } ${target_string}?`,
+    body: `Are you sure you want to delete ${submissionIDs.length} ${target_string}?`,
     success: function() {
       const reqs = [];
       for (var subId of submissionIDs) {

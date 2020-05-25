@@ -14,7 +14,15 @@ from flask import (
     url_for,
 )
 
-from CTFd.cache import cache, clear_config, clear_standings, clear_pages
+from CTFd.admin import challenges  # noqa: F401
+from CTFd.admin import notifications  # noqa: F401
+from CTFd.admin import pages  # noqa: F401
+from CTFd.admin import scoreboard  # noqa: F401
+from CTFd.admin import statistics  # noqa: F401
+from CTFd.admin import submissions  # noqa: F401
+from CTFd.admin import teams  # noqa: F401
+from CTFd.admin import users  # noqa: F401
+from CTFd.cache import cache, clear_config, clear_pages, clear_standings
 from CTFd.models import (
     Awards,
     Challenges,
@@ -41,15 +49,6 @@ from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import is_admin
 
 admin = Blueprint("admin", __name__)
-
-from CTFd.admin import challenges  # noqa: F401
-from CTFd.admin import notifications  # noqa: F401
-from CTFd.admin import pages  # noqa: F401
-from CTFd.admin import scoreboard  # noqa: F401
-from CTFd.admin import statistics  # noqa: F401
-from CTFd.admin import submissions  # noqa: F401
-from CTFd.admin import teams  # noqa: F401
-from CTFd.admin import users  # noqa: F401
 
 
 @admin.route("/admin", methods=["GET"])

@@ -57,9 +57,7 @@ function tokenGenerate(event) {
         let body = $(`
         <p>Please copy your API Key, it won't be shown again!</p>
         <div class="input-group mb-3">
-          <input type="text" id="user-token-result" class="form-control" value="${
-            response.data.value
-          }" readonly>
+          <input type="text" id="user-token-result" class="form-control" value="${response.data.value}" readonly>
           <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button">
               <i class="fas fa-clipboard"></i>

@@ -17,7 +17,8 @@ from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
 from CTFd.models import db, get_class_by_tablename
 from CTFd.plugins import get_plugin_names
-from CTFd.plugins.migrations import upgrade as plugin_upgrade, current as plugin_current
+from CTFd.plugins.migrations import current as plugin_current
+from CTFd.plugins.migrations import upgrade as plugin_upgrade
 from CTFd.utils import get_app_config, set_config
 from CTFd.utils.exports.freeze import freeze_export
 from CTFd.utils.migrations import (
