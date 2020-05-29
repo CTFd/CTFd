@@ -697,7 +697,7 @@ def test_api_accessing_hidden_banned_users():
 
         with login_as_user(app, name="visible_user") as client:
             list_teams = client.get("/api/v1/teams").get_json()["data"]
-            assert(len(list_teams) == 0)
+            assert len(list_teams) == 0
 
             assert client.get("/api/v1/teams/1").status_code == 404
             assert client.get("/api/v1/teams/1/solves").status_code == 404
@@ -712,7 +712,7 @@ def test_api_accessing_hidden_banned_users():
         with login_as_user(app, name="admin") as client:
             # Admins see hidden teams in lists
             list_users = client.get("/api/v1/teams?view=admin").get_json()["data"]
-            assert(len(list_users) == 2)
+            assert len(list_users) == 2
 
             assert client.get("/api/v1/teams/1").status_code == 200
             assert client.get("/api/v1/teams/1/solves").status_code == 200
