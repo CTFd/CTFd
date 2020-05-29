@@ -31,7 +31,11 @@ users_namespace = Namespace("users", description="Endpoint to retrieve Users")
 class UserList(Resource):
     @check_account_visibility
     def get(self):
-        users = Users.query.filter_by(banned=False, hidden=False)
+        if is_admin() and request.args.get("view") == "admin":
+            users = Users.query.filter_by()
+        else:
+            users = Users.query.filter_by(banned=False, hidden=False)
+
         response = UserSchema(view="user", many=True).dump(users)
 
         if response.errors:

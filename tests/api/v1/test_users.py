@@ -764,12 +764,19 @@ def test_api_accessing_hidden_users():
         app.db.session.commit()
 
         with login_as_user(app, name="visible_user") as client:
+            list_users = client.get("/api/v1/users").get_json()["data"]
+            assert len(list_users) == 1
+
             assert client.get("/api/v1/users/3").status_code == 404
             assert client.get("/api/v1/users/3/solves").status_code == 404
             assert client.get("/api/v1/users/3/fails").status_code == 404
             assert client.get("/api/v1/users/3/awards").status_code == 404
 
         with login_as_user(app, name="admin") as client:
+            # Admins see the user in lists
+            list_users = client.get("/api/v1/users?view=admin").get_json()["data"]
+            assert len(list_users) == 3
+
             assert client.get("/api/v1/users/3").status_code == 200
             assert client.get("/api/v1/users/3/solves").status_code == 200
             assert client.get("/api/v1/users/3/fails").status_code == 200
@@ -788,12 +795,19 @@ def test_api_accessing_banned_users():
         app.db.session.commit()
 
         with login_as_user(app, name="visible_user") as client:
+            list_users = client.get("/api/v1/users").get_json()["data"]
+            assert len(list_users) == 1
+
             assert client.get("/api/v1/users/3").status_code == 404
             assert client.get("/api/v1/users/3/solves").status_code == 404
             assert client.get("/api/v1/users/3/fails").status_code == 404
             assert client.get("/api/v1/users/3/awards").status_code == 404
 
         with login_as_user(app, name="admin") as client:
+            # Admins see the user in lists
+            list_users = client.get("/api/v1/users?view=admin").get_json()["data"]
+            assert len(list_users) == 3
+
             assert client.get("/api/v1/users/3").status_code == 200
             assert client.get("/api/v1/users/3/solves").status_code == 200
             assert client.get("/api/v1/users/3/fails").status_code == 200

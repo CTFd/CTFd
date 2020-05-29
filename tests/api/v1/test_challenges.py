@@ -135,6 +135,25 @@ def test_api_challenges_get_admin():
     destroy_ctfd(app)
 
 
+def test_api_challenges_get_hidden_admin():
+    """Can an admin see hidden challenges in API list response"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db, state="hidden")
+        gen_challenge(app.db)
+
+        with login_as_user(app, "admin") as admin:
+            challenges_list = admin.get("/api/v1/challenges", json="").get_json()[
+                "data"
+            ]
+            assert len(challenges_list) == 1
+            challenges_list = admin.get(
+                "/api/v1/challenges?view=admin", json=""
+            ).get_json()["data"]
+            assert len(challenges_list) == 2
+    destroy_ctfd(app)
+
+
 def test_api_challenges_post_admin():
     """Can a user post /api/v1/challenges if admin"""
     app = create_ctfd()
