@@ -47,7 +47,7 @@ from CTFd.utils.user import (
     get_ip,
     is_admin,
 )
-
+from CTFd.constants.sessions import Session
 
 def init_template_filters(app):
     app.jinja_env.filters["markdown"] = markdown
@@ -152,9 +152,7 @@ def init_events(app):
 def init_request_processors(app):
     @app.context_processor
     def inject_user():
-        if session:
-            return dict(session)
-        return dict()
+        return {"Session": Session(**session)}
 
     @app.url_defaults
     def inject_theme(endpoint, values):
