@@ -2,7 +2,7 @@ import datetime
 import re
 
 from flask import current_app as app
-from flask import abort, request, session
+from flask import abort, redirect, request, session, url_for
 
 from CTFd.cache import cache
 from CTFd.constants.users import UserAttrs
@@ -22,7 +22,7 @@ def get_current_user():
         if session_hash:
             if session_hash != hmac(user.password):
                 logout_user()
-                abort(403)
+                abort(redirect(url_for("auth.login", next=request.full_path)))
 
         return user
     else:
