@@ -1,9 +1,8 @@
 from email.message import EmailMessage
+from unittest.mock import Mock, patch
 
 import requests
-import six
 from freezegun import freeze_time
-from unittest.mock import Mock, patch
 
 from CTFd.utils import get_config, set_config
 from CTFd.utils.email import (
@@ -12,9 +11,6 @@ from CTFd.utils.email import (
     verify_email_address,
 )
 from tests.helpers import create_ctfd, destroy_ctfd
-
-if six.PY3:
-    from email.message import EmailMessage
 
 
 @patch("smtplib.SMTP")

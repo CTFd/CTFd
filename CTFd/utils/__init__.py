@@ -1,19 +1,19 @@
 import cmarkgfm
 from flask import current_app as app
 
+# isort:imports-firstparty
 from CTFd.cache import cache
+from CTFd.models import Configs, db
 
 string_types = (str,)
 text_type = str
 binary_type = bytes
 
-markdown = lambda md: cmarkgfm.markdown_to_html_with_extensions(
-    md, extensions=["autolink", "table", "strikethrough"]
-)
 
-# isort:imports-firstparty
-from CTFd.cache import cache
-from CTFd.models import Configs, db  # noqa: E402
+def markdown(md):
+    return cmarkgfm.markdown_to_html_with_extensions(
+        md, extensions=["autolink", "table", "strikethrough"]
+    )
 
 
 def get_app_config(key, default=None):

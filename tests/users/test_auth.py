@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from freezegun import freeze_time
 from unittest.mock import patch
+
+from freezegun import freeze_time
 
 from CTFd.models import Users, db
 from CTFd.utils import get_config, set_config

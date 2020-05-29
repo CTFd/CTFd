@@ -1,8 +1,8 @@
 import json
 from collections import defaultdict
+from queue import Queue
 
 from gevent import Timeout
-from queue import Queue
 
 from CTFd.cache import cache
 from CTFd.utils import string_types

@@ -1,8 +1,8 @@
 import os
+from io import BytesIO
 
 import boto3
 from moto import mock_s3
-from io import BytesIO
 
 from CTFd.utils.uploads import S3Uploader, rmdir
 from tests.helpers import create_ctfd, destroy_ctfd

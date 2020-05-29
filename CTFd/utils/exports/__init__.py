@@ -4,9 +4,9 @@ import os
 import re
 import tempfile
 import zipfile
+from io import BytesIO
 
 import dataset
-from io import BytesIO
 from alembic.util import CommandError
 from flask import current_app as app
 from flask_migrate import upgrade as migration_upgrade
@@ -19,7 +19,7 @@ from CTFd.models import db, get_class_by_tablename
 from CTFd.plugins import get_plugin_names
 from CTFd.plugins.migrations import current as plugin_current
 from CTFd.plugins.migrations import upgrade as plugin_upgrade
-from CTFd.utils import get_app_config, set_config
+from CTFd.utils import get_app_config, set_config, string_types
 from CTFd.utils.exports.freeze import freeze_export
 from CTFd.utils.migrations import (
     create_database,
@@ -28,7 +28,6 @@ from CTFd.utils.migrations import (
     stamp_latest_revision,
 )
 from CTFd.utils.uploads import get_uploader
-from CTFd.utils import string_types
 
 
 def export_ctf():

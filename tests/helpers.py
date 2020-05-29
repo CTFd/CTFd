@@ -4,10 +4,10 @@ import random
 import string
 import uuid
 from collections import namedtuple
+from unittest.mock import Mock, patch
 
 import requests
 from flask.testing import FlaskClient
-from unittest.mock import Mock, patch
 from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers

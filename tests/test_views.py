@@ -162,6 +162,7 @@ def test_pages_routing_and_rendering():
         with app.test_client() as client:
             r = client.get("/test")
             output = r.get_data(as_text=True)
+            print(output)
             assert "<h2>The quick brown fox jumped over the lazy dog</h2>" in output
     destroy_ctfd(app)
 

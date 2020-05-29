@@ -10,7 +10,7 @@ format:
 
 test:
 	pytest -rf --cov=CTFd --cov-context=test --ignore=node_modules/ --disable-warnings -n auto
-	bandit -r CTFd -x CTFd/uploads
+	bandit -r CTFd -x CTFd/uploads --skip B105,B322
 	pipdeptree
 	yarn verify
 
