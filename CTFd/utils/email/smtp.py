@@ -1,9 +1,5 @@
-import six
 import smtplib
-from email.mime.text import MIMEText
-
-if six.PY3:
-    from email.message import EmailMessage
+from email.message import EmailMessage
 from socket import timeout
 
 from CTFd.utils import get_app_config, get_config
@@ -52,20 +48,14 @@ def sendmail(addr, text, subject):
     try:
         smtp = get_smtp(**data)
 
-        if six.PY2:
-            msg = MIMEText(text)
-        else:
-            msg = EmailMessage()
-            msg.set_content(text)
+        msg = EmailMessage()
+        msg.set_content(text)
 
         msg["Subject"] = subject
         msg["From"] = mailfrom_addr
         msg["To"] = addr
 
-        if six.PY2:
-            smtp.sendmail(msg["From"], [msg["To"]], msg.as_string())
-        else:
-            smtp.send_message(msg)
+        smtp.send_message(msg)
 
         smtp.quit()
         return True, "Email sent"

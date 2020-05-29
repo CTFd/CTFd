@@ -1,14 +1,13 @@
 import json
 from collections import defaultdict
 
-import six
 from gevent import Timeout
-from six.moves.queue import Queue
+from queue import Queue
 
 from CTFd.cache import cache
+from CTFd.utils import string_types
 
 
-@six.python_2_unicode_compatible
 class ServerSentEvent(object):
     def __init__(self, data, type=None, id=None):
         self.data = data
@@ -16,7 +15,7 @@ class ServerSentEvent(object):
         self.id = id
 
     def __str__(self):
-        if isinstance(self.data, six.string_types):
+        if isinstance(self.data, string_types):
             data = self.data
         else:
             data = json.dumps(self.data)

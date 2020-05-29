@@ -4,7 +4,7 @@ from collections import defaultdict
 import redis
 from mock import patch
 from redis.exceptions import ConnectionError
-from six.moves.queue import Queue
+from queue import Queue
 
 from CTFd.config import TestingConfig
 from CTFd.utils.events import EventManager, RedisEventManager, ServerSentEvent

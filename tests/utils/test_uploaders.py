@@ -2,7 +2,7 @@ import os
 
 import boto3
 from moto import mock_s3
-from six import BytesIO
+from io import BytesIO
 
 from CTFd.utils.uploads import S3Uploader, rmdir
 from tests.helpers import create_ctfd, destroy_ctfd
