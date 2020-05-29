@@ -47,31 +47,36 @@ class ChallengeList(Resource):
         # This can return None (unauth) if visibility is set to public
         user = get_current_user()
 
-        challenges = (
-            Challenges.query.filter(
-                and_(Challenges.state != "hidden", Challenges.state != "locked")
-            )
-            .order_by(Challenges.value)
-            .all()
-        )
-
-        if user:
-            solve_ids = (
-                Solves.query.with_entities(Solves.challenge_id)
-                .filter_by(account_id=user.account_id)
-                .order_by(Solves.challenge_id.asc())
+        # Admins can request to see everything
+        if is_admin() and request.args.get("view") == "admin":
+            challenges = Challenges.query.order_by(Challenges.value).all()
+            solve_ids = set([challenge.id for challenge in challenges])
+        else:
+            challenges = (
+                Challenges.query.filter(
+                    and_(Challenges.state != "hidden", Challenges.state != "locked")
+                )
+                .order_by(Challenges.value)
                 .all()
             )
-            solve_ids = set([value for value, in solve_ids])
 
-            # TODO: Convert this into a re-useable decorator
-            if is_admin():
-                pass
+            if user:
+                solve_ids = (
+                    Solves.query.with_entities(Solves.challenge_id)
+                    .filter_by(account_id=user.account_id)
+                    .order_by(Solves.challenge_id.asc())
+                    .all()
+                )
+                solve_ids = set([value for value, in solve_ids])
+
+                # TODO: Convert this into a re-useable decorator
+                if is_admin():
+                    pass
+                else:
+                    if config.is_teams_mode() and get_current_team() is None:
+                        abort(403)
             else:
-                if config.is_teams_mode() and get_current_team() is None:
-                    abort(403)
-        else:
-            solve_ids = set()
+                solve_ids = set()
 
         response = []
         tag_schema = TagSchema(view="user", many=True)

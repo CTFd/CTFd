@@ -22,6 +22,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.email import sendmail, user_created_notification
+from CTFd.utils.security.auth import update_user
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
 
 users_namespace = Namespace("users", description="Endpoint to retrieve Users")
@@ -31,7 +32,11 @@ users_namespace = Namespace("users", description="Endpoint to retrieve Users")
 class UserList(Resource):
     @check_account_visibility
     def get(self):
-        users = Users.query.filter_by(banned=False, hidden=False)
+        if is_admin() and request.args.get("view") == "admin":
+            users = Users.query.filter_by()
+        else:
+            users = Users.query.filter_by(banned=False, hidden=False)
+
         response = UserSchema(view="user", many=True).dump(users)
 
         if response.errors:
@@ -151,7 +156,9 @@ class UserPrivate(Resource):
 
         db.session.commit()
 
-        clear_user_session(user_id=user.id)
+        # Update user's session for the new session hash
+        update_user(user)
+
         response = schema.dump(response.data)
         db.session.close()
 

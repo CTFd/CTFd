@@ -23,7 +23,9 @@ def get_app_config(key, default=None):
 
 @cache.memoize()
 def _get_config(key):
-    config = Configs.query.filter_by(key=key).first()
+    config = db.session.execute(
+        Configs.__table__.select().where(Configs.key == key)
+    ).fetchone()
     if config and config.value:
         value = config.value
         if value and value.isdigit():
