@@ -2,7 +2,7 @@ from email.message import EmailMessage
 
 import requests
 from freezegun import freeze_time
-from mock import Mock, patch
+from unittest.mock import Mock, patch
 
 from CTFd.utils import get_config, set_config
 from CTFd.utils.email import (

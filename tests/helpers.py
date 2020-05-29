@@ -7,7 +7,7 @@ from collections import namedtuple
 
 import requests
 from flask.testing import FlaskClient
-from mock import Mock, patch
+from unittest.mock import Mock, patch
 from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers

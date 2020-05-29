@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from freezegun import freeze_time
-from mock import patch
+from unittest.mock import patch
 
 from CTFd.models import Users, db
 from CTFd.utils import get_config, set_config

@@ -2,7 +2,7 @@ import json
 from collections import defaultdict
 
 import redis
-from mock import patch
+from unittest.mock import patch
 from redis.exceptions import ConnectionError
 from queue import Queue
 

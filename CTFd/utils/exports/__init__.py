@@ -247,9 +247,7 @@ def import_ctf(backup, erase=True):
                             "db/awards.json",
                         ):
                             requirements = entry.get("requirements")
-                            if requirements and isinstance(
-                                requirements, string_types
-                            ):
+                            if requirements and isinstance(requirements, string_types):
                                 entry["requirements"] = json.loads(requirements)
 
                         try:
