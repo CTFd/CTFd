@@ -1,6 +1,5 @@
 import os
 
-import six
 from flask import current_app as app
 from flask import render_template, render_template_string, request, url_for
 
@@ -56,7 +55,7 @@ def challenges_detail(challenge_id):
         "rb",
     ) as update:
         tpl = update.read()
-        if six.PY3 and isinstance(tpl, binary_type):
+        if isinstance(tpl, binary_type):
             tpl = tpl.decode("utf-8")
         update_j2 = render_template_string(tpl, challenge=challenge)
 

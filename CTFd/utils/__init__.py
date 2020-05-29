@@ -1,17 +1,15 @@
-import mistune
-import six
+import cmarkgfm
 from flask import current_app as app
 
-if six.PY2:
-    string_types = (str, unicode)  # noqa: F821
-    text_type = unicode  # noqa: F821
-    binary_type = str
-else:
-    string_types = (str,)
-    text_type = str
-    binary_type = bytes
+from CTFd.cache import cache
 
-markdown = mistune.Markdown()
+string_types = (str,)
+text_type = str
+binary_type = bytes
+
+markdown = lambda md: cmarkgfm.markdown_to_html_with_extensions(
+    md, extensions=["autolink", "table", "strikethrough"]
+)
 
 # isort:imports-firstparty
 from CTFd.cache import cache
@@ -25,12 +23,14 @@ def get_app_config(key, default=None):
 
 @cache.memoize()
 def _get_config(key):
-    config = Configs.query.filter_by(key=key).first()
+    config = db.session.execute(
+        Configs.__table__.select().where(Configs.key == key)
+    ).fetchone()
     if config and config.value:
         value = config.value
         if value and value.isdigit():
             return int(value)
-        elif value and isinstance(value, six.string_types):
+        elif value and isinstance(value, string_types):
             if value.lower() == "true":
                 return True
             elif value.lower() == "false":

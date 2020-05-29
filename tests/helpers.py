@@ -6,9 +6,8 @@ import uuid
 from collections import namedtuple
 
 import requests
-import six
 from flask.testing import FlaskClient
-from mock import Mock, patch
+from unittest.mock import Mock, patch
 from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers
@@ -36,12 +35,8 @@ from CTFd.models import (
     Users,
 )
 
-if six.PY2:
-    text_type = unicode  # noqa: F821
-    binary_type = str
-else:
-    text_type = str
-    binary_type = bytes
+text_type = str
+binary_type = bytes
 
 
 FakeRequest = namedtuple("FakeRequest", ["form"])
