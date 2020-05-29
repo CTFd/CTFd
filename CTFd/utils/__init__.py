@@ -1,4 +1,5 @@
 import cmarkgfm
+from cmarkgfm.cmark import Options as MarkdownOptions
 import six
 from flask import current_app as app
 
@@ -13,7 +14,7 @@ else:
     text_type = str
     binary_type = bytes
 
-markdown = cmarkgfm.github_flavored_markdown_to_html
+markdown = cmarkgfm.markdown_to_html
 
 
 def get_app_config(key, default=None):
