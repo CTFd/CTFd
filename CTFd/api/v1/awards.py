@@ -2,9 +2,9 @@ from flask import request
 from flask_restx import Namespace, Resource
 
 from CTFd.cache import clear_standings
-from CTFd.utils.config import is_teams_mode
-from CTFd.models import Awards, db, Users
+from CTFd.models import Awards, Users, db
 from CTFd.schemas.awards import AwardSchema
+from CTFd.utils.config import is_teams_mode
 from CTFd.utils.decorators import admins_only
 
 awards_namespace = Namespace("awards", description="Endpoint to retrieve Awards")

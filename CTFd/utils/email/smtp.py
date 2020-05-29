@@ -2,7 +2,12 @@ import smtplib
 from email.message import EmailMessage
 from socket import timeout
 
+import six
+
 from CTFd.utils import get_app_config, get_config
+
+if six.PY3:
+    from email.message import EmailMessage
 
 
 def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=None):

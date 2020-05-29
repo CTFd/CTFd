@@ -1,4 +1,4 @@
-from CTFd.constants import RawEnum, JSEnum, JinjaEnum
+from CTFd.constants import JinjaEnum, JSEnum, RawEnum
 from tests.helpers import create_ctfd, destroy_ctfd
 
 

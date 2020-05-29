@@ -11,6 +11,10 @@ markdown = lambda md: cmarkgfm.markdown_to_html_with_extensions(
     md, extensions=["autolink", "table", "strikethrough"]
 )
 
+# isort:imports-firstparty
+from CTFd.cache import cache
+from CTFd.models import Configs, db  # noqa: E402
+
 
 def get_app_config(key, default=None):
     value = app.config.get(key, default)
@@ -56,6 +60,3 @@ def set_config(key, value):
     db.session.commit()
     cache.delete_memoized(_get_config, key)
     return config
-
-
-from CTFd.models import Configs, db  # noqa: E402

@@ -1,9 +1,10 @@
 lint:
-	flake8 --ignore=E402,E501,E712,W503,E203,I002 --exclude=CTFd/uploads CTFd/ migrations/ tests/
+	flake8 --ignore=E402,E501,E712,W503,E203 --exclude=CTFd/uploads CTFd/ migrations/ tests/
 	black --check --exclude=CTFd/uploads --exclude=node_modules .
 	prettier --check 'CTFd/themes/**/assets/**/*'
 
 format:
+	isort --skip=CTFd/uploads -rc CTFd/ tests/
 	black --exclude=CTFd/uploads --exclude=node_modules .
 	prettier --write 'CTFd/themes/**/assets/**/*'
 

@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
-from CTFd.cache import clear_user_session, clear_team_session
+from CTFd.cache import clear_team_session, clear_user_session
 from CTFd.models import Teams, db
 from CTFd.utils import config, get_config
 from CTFd.utils.crypto import verify_password
