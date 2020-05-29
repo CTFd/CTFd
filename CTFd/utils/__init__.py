@@ -7,7 +7,9 @@ string_types = (str,)
 text_type = str
 binary_type = bytes
 
-markdown = cmarkgfm.github_flavored_markdown_to_html
+markdown = lambda md: cmarkgfm.markdown_to_html_with_extensions(
+    md, extensions=["autolink", "table", "strikethrough"]
+)
 
 
 def get_app_config(key, default=None):
