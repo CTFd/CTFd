@@ -67,7 +67,7 @@ class EventManager(object):
 class RedisEventManager(EventManager):
     def __init__(self):
         super(EventManager, self).__init__()
-        self.client = cache.cache._client
+        self.client = cache.cache._write_client
 
     def publish(self, data, type=None, channel="ctf"):
         event = ServerSentEvent(data, type=type)
