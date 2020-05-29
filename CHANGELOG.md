@@ -14,6 +14,7 @@
 
 **Miscellaneous**
 * The `get_config` and `get_page` config utilities now use SQLAlchemy Core instead of SQLAlchemy ORM for slight speedups
+* Update Flask-Migrate to 2.5.3 and regenerate the migration environment. Fixes using `%` signs in database passwords.
 
 
 2.4.3 / 2020-05-24
