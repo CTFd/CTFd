@@ -49,10 +49,14 @@ class CTFdRegexFlag(BaseFlag):
         saved = chal_key_obj.content
         data = chal_key_obj.data
 
-        if data == "case_insensitive":
-            res = re.match(saved, provided, re.IGNORECASE)
-        else:
-            res = re.match(saved, provided)
+        try:
+            if data == "case_insensitive":
+                res = re.match(saved, provided, re.IGNORECASE)
+            else:
+                res = re.match(saved, provided)
+        # TODO: this needs plugin improvements. See #1425.
+        except re.error:
+            return False
 
         return res and res.group() == provided
 

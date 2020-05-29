@@ -12,7 +12,7 @@ six==1.13.0
 itsdangerous==1.1.0
 requests>=2.20.0
 PyMySQL==0.9.3
-gunicorn==19.9.0
+gunicorn==19.10.0
 dataset==1.1.2
 mistune==0.8.4
 netaddr==0.7.19
@@ -23,5 +23,5 @@ flask-restx==0.1.1
 pathlib2==2.3.5
 flask-marshmallow==0.10.1
 marshmallow-sqlalchemy==0.17.0
-boto3==1.10.39
+boto3==1.13.9
 marshmallow==2.20.2

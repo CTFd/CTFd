@@ -9,7 +9,15 @@ function createUser(event) {
   event.preventDefault();
   const params = $("#user-info-create-form").serializeJSON(true);
 
-  CTFd.fetch("/api/v1/users", {
+  // Move the notify value into a GET param
+  let url = "/api/v1/users";
+  let notify = params.notify;
+  if (notify === true) {
+    url = `${url}?notify=true`;
+  }
+  delete params.notify;
+
+  CTFd.fetch(url, {
     method: "POST",
     credentials: "same-origin",
     headers: {
