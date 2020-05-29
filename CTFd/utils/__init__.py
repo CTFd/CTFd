@@ -1,5 +1,4 @@
 import cmarkgfm
-from cmarkgfm.cmark import Options as MarkdownOptions
 import six
 from flask import current_app as app
 
@@ -14,7 +13,9 @@ else:
     text_type = str
     binary_type = bytes
 
-markdown = cmarkgfm.markdown_to_html
+markdown = lambda md: cmarkgfm.markdown_to_html_with_extensions(
+    md, extensions=["autolink", "table", "strikethrough"]
+)
 
 
 def get_app_config(key, default=None):
