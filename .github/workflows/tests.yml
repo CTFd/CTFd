@@ -49,7 +49,6 @@ jobs:
             python -m pip install -r development.txt
             sudo yarn install --non-interactive
             sudo yarn global add prettier@1.17.0
-            sudo python3.6 -m pip install black==19.3b0
 
       - name: Lint
         run: make lint
