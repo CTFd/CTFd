@@ -1,11 +1,13 @@
-#!/bin/sh
-set -eo pipefail
+#!/bin/bash
+set -euo pipefail
 
 WORKERS=${WORKERS:-1}
 WORKER_CLASS=${WORKER_CLASS:-gevent}
 ACCESS_LOG=${ACCESS_LOG:--}
 ERROR_LOG=${ERROR_LOG:--}
 WORKER_TEMP_DIR=${WORKER_TEMP_DIR:-/dev/shm}
+SECRET_KEY=${SECRET_KEY:-}
+DATABASE_URL=${DATABASE_URL:-}
 
 # Check that a .ctfd_secret_key file or SECRET_KEY envvar is set
 if [ ! -f .ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
