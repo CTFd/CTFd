@@ -2,18 +2,22 @@ FROM python:3.7-slim-buster
 WORKDIR /opt/CTFd
 RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads
 
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y \
-    build-essential \
-    default-mysql-client \
-    python-dev \
-    libffi-dev \
-    libssl-dev \
-    git
+# hadolint ignore=DL3008
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        default-mysql-client \
+        python-dev \
+        libffi-dev \
+        libssl-dev \
+        git\
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . /opt/CTFd
 
 RUN pip install -r requirements.txt --no-cache-dir
+# hadolint ignore=SC2086
 RUN for d in CTFd/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \
             pip install -r $d/requirements.txt --no-cache-dir; \
