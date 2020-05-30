@@ -1,5 +1,5 @@
 from CTFd.cache import cache
-from CTFd.models import db, Pages
+from CTFd.models import Pages, db
 
 
 @cache.memoize()

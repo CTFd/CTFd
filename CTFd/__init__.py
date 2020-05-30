@@ -8,7 +8,6 @@ from flask import Flask, Request
 from flask_migrate import upgrade
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
-from six.moves import input
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import cached_property
 
@@ -129,7 +128,7 @@ def confirm_upgrade():
         print("/*\\ CTFd has updated and must update the database! /*\\")
         print("/*\\ Please backup your database before proceeding! /*\\")
         print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")
-        if input("Run database migrations (Y/N)").lower().strip() == "y":
+        if input("Run database migrations (Y/N)").lower().strip() == "y":  # nosec B322
             return True
         else:
             print("/*\\ Ignored database migrations... /*\\")
@@ -215,16 +214,10 @@ def create_app(config="CTFd.config.Config"):
         if reverse_proxy:
             if type(reverse_proxy) is str and "," in reverse_proxy:
                 proxyfix_args = [int(i) for i in reverse_proxy.split(",")]
-                app.wsgi_app = ProxyFix(app.wsgi_app, None, *proxyfix_args)
+                app.wsgi_app = ProxyFix(app.wsgi_app, *proxyfix_args)
             else:
                 app.wsgi_app = ProxyFix(
-                    app.wsgi_app,
-                    num_proxies=None,
-                    x_for=1,
-                    x_proto=1,
-                    x_host=1,
-                    x_port=1,
-                    x_prefix=1,
+                    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1
                 )
 
         version = utils.get_config("ctf_version")

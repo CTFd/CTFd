@@ -41,9 +41,9 @@ from CTFd.utils.security.auth import login_user, logout_user, lookup_user_token
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils.user import (
     authed,
+    get_current_team_attrs,
     get_current_user_attrs,
     get_current_user_recent_ips,
-    get_current_team_attrs,
     get_ip,
     is_admin,
 )

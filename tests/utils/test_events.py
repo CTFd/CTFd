@@ -1,10 +1,10 @@
 import json
 from collections import defaultdict
+from queue import Queue
+from unittest.mock import patch
 
 import redis
-from mock import patch
 from redis.exceptions import ConnectionError
-from six.moves.queue import Queue
 
 from CTFd.config import TestingConfig
 from CTFd.utils.events import EventManager, RedisEventManager, ServerSentEvent

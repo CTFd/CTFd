@@ -4,10 +4,10 @@ import os
 import sys
 
 import dataset
-from six.moves import input, string_types
 from sqlalchemy_utils import drop_database
 
 from CTFd import config, create_app
+from CTFd.utils import string_types
 
 # This is important to allow access to the CTFd application factory
 sys.path.append(os.getcwd())

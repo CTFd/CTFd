@@ -32,7 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['2.7', '3.6']
+        python-version: ['3.6']
         TESTING_DATABASE_URL: ['mysql+pymysql://root@localhost/ctfd', 'sqlite://', 'postgres://postgres@localhost/ctfd']
 
     name: Python ${{ matrix.python-version }}

@@ -1,4 +1,5 @@
 from enum import Enum
+
 from flask import current_app
 
 JS_ENUMS = {}
