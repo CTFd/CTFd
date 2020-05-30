@@ -1,14 +1,13 @@
 import json
 from collections import defaultdict
+from queue import Queue
 
-import six
 from gevent import Timeout
-from six.moves.queue import Queue
 
 from CTFd.cache import cache
+from CTFd.utils import string_types
 
 
-@six.python_2_unicode_compatible
 class ServerSentEvent(object):
     def __init__(self, data, type=None, id=None):
         self.data = data
@@ -16,7 +15,7 @@ class ServerSentEvent(object):
         self.id = id
 
     def __str__(self):
-        if isinstance(self.data, six.string_types):
+        if isinstance(self.data, string_types):
             data = self.data
         else:
             data = json.dumps(self.data)
@@ -68,7 +67,7 @@ class EventManager(object):
 class RedisEventManager(EventManager):
     def __init__(self):
         super(EventManager, self).__init__()
-        self.client = cache.cache._client
+        self.client = cache.cache._write_client
 
     def publish(self, data, type=None, channel="ctf"):
         event = ServerSentEvent(data, type=type)

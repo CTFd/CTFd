@@ -1,5 +1,6 @@
+from sqlalchemy.exc import OperationalError, ProgrammingError
+
 from CTFd.utils.exports.serializers import JSONSerializer
-from sqlalchemy.exc import ProgrammingError, OperationalError
 
 
 def freeze_export(result, fileobj):

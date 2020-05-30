@@ -1,8 +1,9 @@
 import json
-import six
-from collections import defaultdict, OrderedDict
-from datetime import datetime, date
+from collections import OrderedDict, defaultdict
+from datetime import date, datetime
 from decimal import Decimal
+
+from CTFd.utils import string_types
 
 
 class JSONEncoder(json.JSONEncoder):
@@ -44,7 +45,7 @@ class JSONSerializer(object):
                 data = r.get("requirements")
                 if data:
                     try:
-                        if isinstance(data, six.string_types):
+                        if isinstance(data, string_types):
                             result["results"][i]["requirements"] = json.loads(data)
                     except ValueError:
                         pass

@@ -36,6 +36,7 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .coverage
+.coverage.*
 .cache
 nosetests.xml
 coverage.xml
@@ -57,6 +58,7 @@ target/
 
 *.db
 *.log
+*.log.*
 .idea/
 .vscode/
 CTFd/static/uploads

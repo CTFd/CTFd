@@ -208,7 +208,7 @@ def test_submitting_unicode_flag():
         gen_flag(app.db, challenge_id=chal.id, content=u"你好")
         with client.session_transaction():
             data = {"submission": "你好", "challenge_id": chal.id}
-        r = client.post("/api/v1/challenges/attempt".format(chal.id), json=data)
+        r = client.post("/api/v1/challenges/attempt", json=data)
         assert r.status_code == 200
         resp = r.get_json()["data"]
         assert resp.get("status") == "correct"
@@ -231,7 +231,7 @@ def test_challenges_with_max_attempts():
         gen_flag(app.db, challenge_id=chal.id, content=u"flag")
         for x in range(3):
             data = {"submission": "notflag", "challenge_id": chal_id}
-            r = client.post("/api/v1/challenges/attempt".format(chal_id), json=data)
+            r = client.post("/api/v1/challenges/attempt", json=data)
 
         wrong_keys = Fails.query.count()
         assert wrong_keys == 3
@@ -307,7 +307,7 @@ def test_that_view_challenges_unregistered_works():
         assert r.get_json().get("data") is not None
 
         data = {"submission": "not_flag", "challenge_id": chal_id}
-        r = client.post("/api/v1/challenges/attempt".format(chal_id), json=data)
+        r = client.post("/api/v1/challenges/attempt", json=data)
         assert r.status_code == 403
         assert r.get_json().get("data").get("status") == "authentication_required"
         assert r.get_json().get("data").get("message") is None

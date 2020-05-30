@@ -1,8 +1,8 @@
 import re
+from urllib.parse import urljoin, urlparse
 
 from flask import request
 from marshmallow import ValidationError
-from six.moves.urllib.parse import urljoin, urlparse
 
 from CTFd.models import Users
 from CTFd.utils.countries import lookup_country_code

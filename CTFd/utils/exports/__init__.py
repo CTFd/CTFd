@@ -4,9 +4,9 @@ import os
 import re
 import tempfile
 import zipfile
+from io import BytesIO
 
 import dataset
-import six
 from alembic.util import CommandError
 from flask import current_app as app
 from flask_migrate import upgrade as migration_upgrade
@@ -17,8 +17,9 @@ from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
 from CTFd.models import db, get_class_by_tablename
 from CTFd.plugins import get_plugin_names
-from CTFd.plugins.migrations import upgrade as plugin_upgrade, current as plugin_current
-from CTFd.utils import get_app_config, set_config
+from CTFd.plugins.migrations import current as plugin_current
+from CTFd.plugins.migrations import upgrade as plugin_upgrade
+from CTFd.utils import get_app_config, set_config, string_types
 from CTFd.utils.exports.freeze import freeze_export
 from CTFd.utils.migrations import (
     create_database,
@@ -42,7 +43,7 @@ def export_ctf():
     tables = db.tables
     for table in tables:
         result = db[table].all()
-        result_file = six.BytesIO()
+        result_file = BytesIO()
         freeze_export(result, fileobj=result_file)
         result_file.seek(0)
         backup_zip.writestr("db/{}.json".format(table), result_file.read())
@@ -54,7 +55,7 @@ def export_ctf():
             "results": [{"version_num": get_current_revision()}],
             "meta": {},
         }
-        result_file = six.StringIO()
+        result_file = BytesIO()
         json.dump(result, result_file)
         result_file.seek(0)
         backup_zip.writestr("db/alembic_version.json", result_file.read())
@@ -209,7 +210,7 @@ def import_ctf(backup, erase=True):
                         if sqlite:
                             direct_table = get_class_by_tablename(table.name)
                             for k, v in entry.items():
-                                if isinstance(v, six.string_types):
+                                if isinstance(v, string_types):
                                     # We only want to apply this hack to columns that are expecting a datetime object
                                     try:
                                         is_dt_column = (
@@ -246,9 +247,7 @@ def import_ctf(backup, erase=True):
                             "db/awards.json",
                         ):
                             requirements = entry.get("requirements")
-                            if requirements and isinstance(
-                                requirements, six.string_types
-                            ):
+                            if requirements and isinstance(requirements, string_types):
                                 entry["requirements"] = json.loads(requirements)
 
                         try:
