@@ -17,7 +17,7 @@ from CTFd.models import (
     UserTokens,
     db,
 )
-from CTFd.utils import config, get_config, markdown, set_config
+from CTFd.utils import config, get_config, set_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
 from CTFd.utils.config import is_setup
@@ -311,7 +311,7 @@ def static_html(route):
         if page.auth_required and authed() is False:
             return redirect(url_for("auth.login", next=request.full_path))
 
-        return render_template("page.html", content=markdown(page.content))
+        return render_template("page.html", content=page.content)
 
 
 @views.route("/files", defaults={"path": ""})
