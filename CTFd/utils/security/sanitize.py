@@ -1,6 +1,8 @@
-from lxml.html import html5parser, tostring
-from lxml.html.clean import Cleaner
-from lxml.html.defs import safe_attrs
+# Bandit complains about security issues with lxml.
+# These issues have been addressed in the past and do not apply to parsing HTML.
+from lxml.html import html5parser, tostring  # nosec B410
+from lxml.html.clean import Cleaner  # nosec B410
+from lxml.html.defs import safe_attrs  # nosec B410
 
 cleaner = Cleaner(
     page_structure=False,
