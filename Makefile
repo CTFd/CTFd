@@ -9,7 +9,10 @@ format:
 	prettier --write 'CTFd/themes/**/assets/**/*'
 
 test:
-	pytest -rf --cov=CTFd --cov-context=test --ignore=node_modules/ --disable-warnings -n auto
+	pytest -rf --cov=CTFd --cov-context=test --ignore=node_modules/ \
+		-W ignore::sqlalchemy.exc.SADeprecationWarning \
+		-W ignore::sqlalchemy.exc.SAWarning \
+		-n auto
 	bandit -r CTFd -x CTFd/uploads --skip B105,B322
 	pipdeptree
 	yarn verify
