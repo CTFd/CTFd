@@ -21,24 +21,14 @@ teams = Blueprint("teams", __name__)
 @require_team_mode
 def listing():
     page = abs(request.args.get("page", 1, type=int))
-    results_per_page = 50
-    page_start = results_per_page * (page - 1)
-    page_end = results_per_page * (page - 1) + results_per_page
 
-    # TODO: Should teams confirm emails?
-    # if get_config('verify_emails'):
-    #     count = Teams.query.filter_by(verified=True, banned=False).count()
-    #     teams = Teams.query.filter_by(verified=True, banned=False).slice(page_start, page_end).all()
-    # else:
-    count = Teams.query.filter_by(hidden=False, banned=False).count()
     teams = (
         Teams.query.filter_by(hidden=False, banned=False)
-        .slice(page_start, page_end)
-        .all()
+        .order_by(Teams.id.asc())
+        .paginate(page=page, per_page=50)
     )
 
-    pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template("teams/teams.html", teams=teams, pages=pages, curr_page=page)
+    return render_template("teams/teams.html", teams=teams)
 
 
 @teams.route("/teams/join", methods=["GET", "POST"])
