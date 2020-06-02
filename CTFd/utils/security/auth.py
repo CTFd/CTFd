@@ -8,6 +8,7 @@ from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import UserTokens, db
 from CTFd.utils.encoding import hexencode
 from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils.security.signing import hmac
 
 
 def login_user(user):
@@ -15,6 +16,17 @@ def login_user(user):
     session["name"] = user.name
     session["email"] = user.email
     session["nonce"] = generate_nonce()
+    session["hash"] = hmac(user.password)
+
+    # Clear out any currently cached user attributes
+    clear_user_session(user_id=user.id)
+
+
+def update_user(user):
+    session["id"] = user.id
+    session["name"] = user.name
+    session["email"] = user.email
+    session["hash"] = hmac(user.password)
 
     # Clear out any currently cached user attributes
     clear_user_session(user_id=user.id)

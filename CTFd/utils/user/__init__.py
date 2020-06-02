@@ -2,18 +2,28 @@ import datetime
 import re
 
 from flask import current_app as app
-from flask import request, session
+from flask import abort, redirect, request, session, url_for
 
 from CTFd.cache import cache
 from CTFd.constants.users import UserAttrs
 from CTFd.constants.teams import TeamAttrs
 from CTFd.models import Fails, Users, db, Teams, Tracking
 from CTFd.utils import get_config
+from CTFd.utils.security.signing import hmac
+from CTFd.utils.security.auth import logout_user
 
 
 def get_current_user():
     if authed():
         user = Users.query.filter_by(id=session["id"]).first()
+
+        # Check if the session is still valid
+        session_hash = session.get("hash")
+        if session_hash:
+            if session_hash != hmac(user.password):
+                logout_user()
+                abort(redirect(url_for("auth.login", next=request.full_path)))
+
         return user
     else:
         return None
