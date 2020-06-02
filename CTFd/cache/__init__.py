@@ -37,7 +37,7 @@ def clear_standings():
     cache.delete_memoized(Users.get_score)
     cache.delete_memoized(Users.get_place)
     cache.delete_memoized(Teams.get_score)
-    cache.delete_memoized(Users.get_place)
+    cache.delete_memoized(Teams.get_place)
     cache.delete(make_cache_key(path="scoreboard.listing"))
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardList.endpoint))
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardDetail.endpoint))
