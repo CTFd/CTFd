@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property, validates
 
+from CTFd.cache import cache
 from CTFd.utils.crypto import hash_password
 from CTFd.utils.humanize.numbers import ordinalize
 
@@ -322,6 +323,7 @@ class Users(db.Model):
             awards = awards.filter(Awards.date < dt)
         return awards.all()
 
+    @cache.memoize()
     def get_score(self, admin=False):
         score = db.func.sum(Challenges.value).label("score")
         user = (
@@ -354,6 +356,7 @@ class Users(db.Model):
         else:
             return 0
 
+    @cache.memoize()
     def get_place(self, admin=False, numeric=False):
         """
         This method is generally a clone of CTFd.scoreboard.get_standings.
@@ -487,12 +490,14 @@ class Teams(db.Model):
 
         return awards.all()
 
+    @cache.memoize()
     def get_score(self, admin=False):
         score = 0
         for member in self.members:
             score += member.get_score(admin=admin)
         return score
 
+    @cache.memoize()
     def get_place(self, admin=False, numeric=False):
         """
         This method is generally a clone of CTFd.scoreboard.get_standings.
