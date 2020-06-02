@@ -66,7 +66,7 @@ def confirm(data=None):
         return redirect(url_for("auth.login"))
 
     # User is trying to start or restart the confirmation flow
-    if not current_user.authed():
+    if current_user.authed() is False:
         return redirect(url_for("auth.login"))
 
     user = Users.query.filter_by(id=session["id"]).first_or_404()
@@ -83,12 +83,11 @@ def confirm(data=None):
             )
             return render_template(
                 "confirm.html",
-                user=user,
-                infos=["Your confirmation email has been resent!"],
+                infos=[f"Confirmation email sent to {user.email}!"],
             )
         elif request.method == "GET":
             # User has been directed to the confirm page
-            return render_template("confirm.html", user=user)
+            return render_template("confirm.html")
 
 
 @auth.route("/reset_password", methods=["POST", "GET"])
