@@ -26,6 +26,8 @@ from CTFd.utils.config.visibility import (
     registration_visible,
     scores_visible,
 )
+from CTFd.constants.config import Configs
+from CTFd.constants.plugins import Plugins
 from CTFd.utils.countries import get_countries, lookup_country_code
 from CTFd.utils.dates import isoformat, unix_time, unix_time_millis
 from CTFd.utils.events import EventManager, RedisEventManager
@@ -87,6 +89,8 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_current_user_attrs=get_current_user_attrs)
     app.jinja_env.globals.update(get_current_team_attrs=get_current_team_attrs)
     app.jinja_env.globals.update(get_ip=get_ip)
+    app.jinja_env.globals.update(Configs=Configs)
+    app.jinja_env.globals.update(Plugins=Plugins)
 
 
 def init_logs(app):
