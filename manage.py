@@ -1,7 +1,4 @@
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
+from pathlib import Path
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy

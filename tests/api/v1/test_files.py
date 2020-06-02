@@ -3,11 +3,7 @@
 
 import os
 import shutil
-
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
+from pathlib import Path
 from io import BytesIO
 
 from CTFd.models import ChallengeFiles, Challenges, Files

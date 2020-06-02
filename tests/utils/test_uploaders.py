@@ -1,9 +1,6 @@
 import os
+from pathlib import Path
 
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
 import boto3
 from moto import mock_s3
 from six import BytesIO

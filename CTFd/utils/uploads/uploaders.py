@@ -2,11 +2,7 @@ import os
 import posixpath
 import string
 from shutil import copyfileobj
-
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
+from pathlib import Path
 
 import boto3
 from flask import current_app, redirect, send_file

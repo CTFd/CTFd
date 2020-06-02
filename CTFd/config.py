@@ -1,9 +1,6 @@
 import os
+from pathlib import Path
 
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
 """ GENERATE SECRET KEY """
 
 if not os.getenv("SECRET_KEY"):

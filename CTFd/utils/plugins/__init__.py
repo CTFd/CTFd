@@ -1,11 +1,7 @@
 import json
 import os
 from collections import namedtuple
-
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
+from pathlib import Path
 
 from flask import current_app as app
 

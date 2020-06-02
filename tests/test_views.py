@@ -2,11 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+from pathlib import Path
 
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
 from flask import url_for
 from freezegun import freeze_time
 

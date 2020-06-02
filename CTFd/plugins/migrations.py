@@ -1,9 +1,5 @@
 import inspect
-
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
+from pathlib import Path
 
 from alembic.config import Config
 from alembic.migration import MigrationContext

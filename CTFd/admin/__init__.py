@@ -1,10 +1,6 @@
 import csv
 import datetime
-
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
+from pathlib import Path
 
 import six
 from flask import Blueprint, abort

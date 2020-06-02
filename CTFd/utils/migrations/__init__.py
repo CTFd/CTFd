@@ -1,9 +1,6 @@
 import os
+from pathlib import Path
 
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
 from alembic.migration import MigrationContext
 from flask import current_app as app
 from flask_migrate import Migrate, stamp
