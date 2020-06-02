@@ -290,7 +290,7 @@ def settings():
         confirm_url = url_for("auth.confirm")
         infos.append(
             markup(
-                f'Your email address isn\'t confirmed! Please check your email to confirm your email address.<br><br>'
+                f"Your email address isn't confirmed! Please check your email to confirm your email address.<br><br>"
                 'To have the confirmation email resent please <a href="{confirm_url}">click here.'
             )
         )
