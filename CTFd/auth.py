@@ -115,7 +115,7 @@ def reset_password(data=None):
             if user.oauth_id:
                 return render_template(
                     "reset_password.html",
-                    errors=[
+                    infos=[
                         "Your account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
                     ],
                 )
@@ -153,7 +153,7 @@ def reset_password(data=None):
         if not user:
             return render_template(
                 "reset_password.html",
-                errors=[
+                infos=[
                     "If that account exists you will receive an email, please check your inbox"
                 ],
             )
@@ -161,7 +161,7 @@ def reset_password(data=None):
         if user.oauth_id:
             return render_template(
                 "reset_password.html",
-                errors=[
+                infos=[
                     "The email address associated with this account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
                 ],
             )
@@ -170,7 +170,7 @@ def reset_password(data=None):
 
         return render_template(
             "reset_password.html",
-            errors=[
+            infos=[
                 "If that account exists you will receive an email, please check your inbox"
             ],
         )
