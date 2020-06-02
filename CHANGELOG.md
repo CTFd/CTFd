@@ -1,14 +1,15 @@
-2.5.0 /
+2.5.0 / 2020-06-02
 ==================
 
 **General**
 * Use a session invalidation strategy inspired by Django. Newly generated user sessions will now include a HMAC of the user's password. When the user's password is changed by someone other than the user the previous HMACs will no longer be valid and the user will be logged out when they next attempt to perform an action.
+* A user and team's place, and score are now cached and invalidated on score changes.
 
 **API**
 * Add `/api/v1/challenges?view=admin` to allow admin users to see all challenges regardless of their visibility state
 * Add `/api/v1/users?view=admin` to allow admin users to see all users regardless of their hidden/banned state
 * Add `/api/v1/teams?view=admin` to allow admin users to see all teams regardless of their hidden/banned state
-* The scoreboard endpoints `/api/v1/scoreboard` & `/api/v1/scoreboard/top/[count]` should now be more performant
+* The scoreboard endpoints `/api/v1/scoreboard` & `/api/v1/scoreboard/top/[count]` should now be more performant because score and place for Users/Teams are now cached
 
 **Deployment**
 * `docker-compose` now provides a basic nginx configuration and deploys nginx on port 80
