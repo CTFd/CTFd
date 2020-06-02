@@ -8,6 +8,7 @@
 * Add `/api/v1/challenges?view=admin` to allow admin users to see all challenges regardless of their visibility state
 * Add `/api/v1/users?view=admin` to allow admin users to see all users regardless of their hidden/banned state
 * Add `/api/v1/teams?view=admin` to allow admin users to see all teams regardless of their hidden/banned state
+* The scoreboard endpoints `/api/v1/scoreboard` & `/api/v1/scoreboard/top/[count]` should now be more performant
 
 **Deployment**
 * `docker-compose` now provides a basic nginx configuration and deploys nginx on port 80
