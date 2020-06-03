@@ -1,7 +1,7 @@
 from flask import current_app
-from markupsafe import Markup
 
 from CTFd.plugins import get_admin_plugin_menu_bar, get_user_page_menu_bar
+from CTFd.utils.helpers import markup
 from CTFd.utils.plugins import get_registered_scripts, get_registered_stylesheets
 
 
@@ -20,7 +20,7 @@ class _PluginWrapper:
                 )
             else:
                 scripts.append(f'<script defer src="{script}"></script>')
-        return Markup("\n".join(scripts))
+        return markup("\n".join(scripts))
 
     @property
     def styles(self):
@@ -40,7 +40,7 @@ class _PluginWrapper:
                 _styles.append(
                     f'<link rel="stylesheet" type="text/css" href="{stylesheet}">'
                 )
-        return Markup("\n".join(_styles))
+        return markup("\n".join(_styles))
 
     @property
     def user_menu_pages(self):

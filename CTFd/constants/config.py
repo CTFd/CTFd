@@ -1,6 +1,5 @@
-from markupsafe import Markup
-
 from CTFd.utils import get_config
+from CTFd.utils.helpers import markup
 
 
 class _ConfigsWrapper:
@@ -9,11 +8,11 @@ class _ConfigsWrapper:
 
     @property
     def theme_header(self):
-        return Markup(get_config("theme_header", default=""))
+        return markup(get_config("theme_header", default=""))
 
     @property
     def theme_footer(self):
-        return Markup(get_config("theme_footer", default=""))
+        return markup(get_config("theme_footer", default=""))
 
 
 Configs = _ConfigsWrapper()
