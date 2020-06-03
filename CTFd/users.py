@@ -8,7 +8,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.user import get_current_user
-from CTFd.utils.helpers import  get_infos, get_errors
+from CTFd.utils.helpers import get_infos, get_errors
 
 users = Blueprint("users", __name__)
 
@@ -21,7 +21,7 @@ def listing():
     users = (
         Users.query.filter_by(banned=False, hidden=False)
         .order_by(Users.id.asc())
-        .paginate(page=page, per_page=10)
+        .paginate(page=page, per_page=50)
     )
 
     return render_template("users/users.html", users=users)
@@ -52,5 +52,13 @@ def private():
 @check_account_visibility
 @check_score_visibility
 def public(user_id):
+    infos = get_infos()
+    errors = get_errors()
     user = Users.query.filter_by(id=user_id, banned=False, hidden=False).first_or_404()
-    return render_template("users/public.html", user=user)
+
+    if config.is_scoreboard_frozen():
+        infos.append("Scoreboard has been frozen")
+
+    return render_template(
+        "users/public.html", user=user, account=user.account, infos=infos, errors=errors
+    )
