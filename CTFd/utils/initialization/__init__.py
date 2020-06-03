@@ -60,6 +60,7 @@ def init_template_globals(app):
     from CTFd.constants.config import Configs
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
+
     app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
     app.jinja_env.globals.update(can_send_mail=can_send_mail)

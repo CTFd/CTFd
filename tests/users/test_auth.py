@@ -311,7 +311,7 @@ def test_user_can_confirm_email(mock_smtp):
         with client.session_transaction() as sess:
             data = {"nonce": sess.get("nonce")}
             r = client.post("http://localhost/confirm", data=data)
-            assert "confirmation email has been resent" in r.get_data(as_text=True)
+            assert "Confirmation email sent to" in r.get_data(as_text=True)
 
             r = client.get("/challenges")
             assert (
