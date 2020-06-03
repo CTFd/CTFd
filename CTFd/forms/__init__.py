@@ -1,6 +1,8 @@
 from wtforms import Form
 from wtforms.csrf.core import CSRF
 
+from CTFd.forms import auth
+
 
 class CTFdCSRF(CSRF):
     def generate_csrf_token(self, csrf_token_field):
@@ -22,6 +24,5 @@ class _FormsWrapper:
 
 Forms = _FormsWrapper()
 
-from CTFd.forms import auth
 
 Forms.auth = auth

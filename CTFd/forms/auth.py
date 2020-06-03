@@ -1,12 +1,5 @@
-from wtforms import (
-    Form,
-    BooleanField,
-    StringField,
-    validators,
-    PasswordField,
-    SubmitField,
-    HiddenField,
-)
+from wtforms import PasswordField, StringField, SubmitField
+
 from CTFd.forms import BaseForm
 
 
