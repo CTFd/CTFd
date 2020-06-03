@@ -7,8 +7,8 @@ from CTFd.utils.decorators.visibility import (
     check_account_visibility,
     check_score_visibility,
 )
+from CTFd.utils.helpers import get_errors, get_infos
 from CTFd.utils.user import get_current_user
-from CTFd.utils.helpers import get_infos, get_errors
 
 users = Blueprint("users", __name__)
 

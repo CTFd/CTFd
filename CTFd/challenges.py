@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 
-from CTFd.utils import config, get_config
-from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started, view_after_ctf
+from CTFd.utils import config
+from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started
 from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_team,
@@ -21,8 +21,6 @@ challenges = Blueprint("challenges", __name__)
 def listing():
     infos = get_infos()
     errors = get_errors()
-    start = get_config("start") or 0
-    end = get_config("end") or 0
 
     if ctf_started() is False:
         errors.append(f"{config.ctf_name()} has not started yet")

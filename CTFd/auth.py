@@ -82,8 +82,7 @@ def confirm(data=None):
                 format="[{date}] {ip} - {name} initiated a confirmation email resend",
             )
             return render_template(
-                "confirm.html",
-                infos=[f"Confirmation email sent to {user.email}!"],
+                "confirm.html", infos=[f"Confirmation email sent to {user.email}!"]
             )
         elif request.method == "GET":
             # User has been directed to the confirm page

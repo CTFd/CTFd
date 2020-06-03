@@ -272,7 +272,6 @@ def notifications():
 @views.route("/settings", methods=["GET"])
 @authed_only
 def settings():
-    errors = get_errors()
     infos = get_infos()
 
     user = get_current_user()
