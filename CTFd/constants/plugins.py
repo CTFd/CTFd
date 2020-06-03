@@ -1,6 +1,7 @@
 from flask import current_app
 from markupsafe import Markup
 
+from CTFd.plugins import get_admin_plugin_menu_bar, get_user_page_menu_bar
 from CTFd.utils.plugins import get_registered_scripts, get_registered_stylesheets
 
 
@@ -40,6 +41,14 @@ class _PluginWrapper:
                     f'<link rel="stylesheet" type="text/css" href="{stylesheet}">'
                 )
         return Markup("\n".join(_styles))
+
+    @property
+    def user_menu_pages(self):
+        return get_user_page_menu_bar()
+
+    @property
+    def admin_menu_pages(self):
+        return get_admin_plugin_menu_bar()
 
 
 Plugins = _PluginWrapper()
