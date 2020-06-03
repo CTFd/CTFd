@@ -17,7 +17,7 @@
 			'urlRoot': "{{ request.script_root }}",
 			'csrfNonce': "{{ nonce }}",
 			'userMode': "{{ Configs.user_mode }}",
-			'userId': {{ id if (id is defined) else 0 }},
+			'userId': {{ Session.id }},
 			'start': {{ Configs.start | tojson }},
 			'end': {{ Configs.end | tojson }},
 		}

@@ -212,9 +212,8 @@ def test_dynamic_challenge_loses_value_properly():
                 # We need to bypass rate-limiting so creating a fake user instead of logging in
                 with client.session_transaction() as sess:
                     sess["id"] = team_id
-                    sess["name"] = name
-                    sess["email"] = email
                     sess["nonce"] = "fake-nonce"
+                    sess["hash"] = "fake-hash"
 
                 data = {"submission": "flag", "challenge_id": 1}
 
@@ -304,9 +303,8 @@ def test_dynamic_challenge_value_isnt_affected_by_hidden_users():
                 # We need to bypass rate-limiting so creating a fake user instead of logging in
                 with client.session_transaction() as sess:
                     sess["id"] = team_id
-                    sess["name"] = name
-                    sess["email"] = email
                     sess["nonce"] = "fake-nonce"
+                    sess["hash"] = "fake-hash"
 
                 data = {"submission": "flag", "challenge_id": 1}
 
