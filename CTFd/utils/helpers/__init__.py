@@ -1,6 +1,14 @@
 import os
 
 from flask import current_app, flash, get_flashed_messages, request
+from markupsafe import Markup
+
+
+def markup(text):
+    """
+    Mark text as safe to inject as HTML into templates
+    """
+    return Markup(text)
 
 
 def info_for(endpoint, message):

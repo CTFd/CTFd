@@ -66,7 +66,7 @@ def confirm(data=None):
         return redirect(url_for("auth.login"))
 
     # User is trying to start or restart the confirmation flow
-    if not current_user.authed():
+    if current_user.authed() is False:
         return redirect(url_for("auth.login"))
 
     user = Users.query.filter_by(id=session["id"]).first_or_404()
@@ -82,13 +82,11 @@ def confirm(data=None):
                 format="[{date}] {ip} - {name} initiated a confirmation email resend",
             )
             return render_template(
-                "confirm.html",
-                user=user,
-                infos=["Your confirmation email has been resent!"],
+                "confirm.html", infos=[f"Confirmation email sent to {user.email}!"]
             )
         elif request.method == "GET":
             # User has been directed to the confirm page
-            return render_template("confirm.html", user=user)
+            return render_template("confirm.html")
 
 
 @auth.route("/reset_password", methods=["POST", "GET"])
@@ -115,7 +113,7 @@ def reset_password(data=None):
             if user.oauth_id:
                 return render_template(
                     "reset_password.html",
-                    errors=[
+                    infos=[
                         "Your account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
                     ],
                 )
@@ -153,7 +151,7 @@ def reset_password(data=None):
         if not user:
             return render_template(
                 "reset_password.html",
-                errors=[
+                infos=[
                     "If that account exists you will receive an email, please check your inbox"
                 ],
             )
@@ -161,7 +159,7 @@ def reset_password(data=None):
         if user.oauth_id:
             return render_template(
                 "reset_password.html",
-                errors=[
+                infos=[
                     "The email address associated with this account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
                 ],
             )
@@ -170,7 +168,7 @@ def reset_password(data=None):
 
         return render_template(
             "reset_password.html",
-            errors=[
+            infos=[
                 "If that account exists you will receive an email, please check your inbox"
             ],
         )
