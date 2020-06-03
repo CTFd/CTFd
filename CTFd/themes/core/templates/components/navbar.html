@@ -1,10 +1,10 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <div class="container">
         <a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">
-            {% if get_ctf_logo() %}
-            <img class="img-responsive ctf_logo" src="{{ url_for('views.files', path=get_ctf_logo()) }}" height="25" alt="{{ get_ctf_name() }}">
+            {% if Configs.ctf_logo %}
+                <img class="img-responsive ctf_logo" src="{{ url_for('views.files', path=Configs.ctf_logo) }}" height="25" alt="{{ Configs.ctf_name }}">
             {% else %}
-            {{ get_ctf_name() }}
+                {{ Configs.ctf_name }}
             {% endif %}
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
