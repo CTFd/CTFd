@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 from markupsafe import Markup
 
 from CTFd.utils import get_config

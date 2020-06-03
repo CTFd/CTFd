@@ -1,9 +1,6 @@
-from dataclasses import dataclass
-
 from flask import current_app
 from markupsafe import Markup
 
-from CTFd.utils import get_config
 from CTFd.utils.plugins import get_registered_scripts, get_registered_stylesheets
 
 
@@ -36,7 +33,7 @@ class _PluginWrapper:
                 )
             elif subdir:
                 _styles.append(
-                    f'<link rel="stylesheet" type="text/css" href="{application_root}/{script}">'
+                    f'<link rel="stylesheet" type="text/css" href="{application_root}/{stylesheet}">'
                 )
             else:
                 _styles.append(
