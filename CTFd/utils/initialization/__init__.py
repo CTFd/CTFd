@@ -8,9 +8,6 @@ from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from CTFd.cache import clear_user_recent_ips
-from CTFd.constants.config import Configs
-from CTFd.constants.plugins import Plugins
-from CTFd.constants.sessions import Session
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import Tracking, db
 from CTFd.utils import config, get_config, markdown
@@ -60,6 +57,9 @@ def init_template_filters(app):
 
 
 def init_template_globals(app):
+    from CTFd.constants.config import Configs
+    from CTFd.constants.plugins import Plugins
+    from CTFd.constants.sessions import Session
     app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
     app.jinja_env.globals.update(can_send_mail=can_send_mail)
