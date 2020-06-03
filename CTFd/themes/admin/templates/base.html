@@ -13,7 +13,7 @@
 	<script type="text/javascript">
 		var init = {
 			'urlRoot': "{{ request.script_root }}",
-			'csrfNonce': "{{ nonce }}",
+			'csrfNonce': "{{ Session.nonce }}",
 			'userMode': "{{ get_config('user_mode') }}",
 			'userId': {{ id if (id is defined) else 0 }},
 			'start': {{ get_config("start") | tojson }},

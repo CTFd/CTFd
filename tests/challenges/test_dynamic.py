@@ -207,14 +207,15 @@ def test_dynamic_challenge_loses_value_properly():
             name = "user{}".format(team_id)
             email = "user{}@ctfd.io".format(team_id)
             # We need to bypass rate-limiting so gen_user instead of register_user
-            gen_user(app.db, name=name, email=email)
+            user = gen_user(app.db, name=name, email=email)
+            user_id = user.id
 
             with app.test_client() as client:
                 # We need to bypass rate-limiting so creating a fake user instead of logging in
                 with client.session_transaction() as sess:
-                    sess["id"] = team_id
+                    sess["id"] = user_id
                     sess["nonce"] = "fake-nonce"
-                    sess["hash"] = "fake-hash"
+                    sess["hash"] = hmac(user.password)
 
                 data = {"submission": "flag", "challenge_id": 1}
 
