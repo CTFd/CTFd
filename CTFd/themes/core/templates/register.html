@@ -22,31 +22,26 @@
 			<hr>
 			{% endif %}
 
+			{% set form = Forms.auth.RegistrationForm() %}
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form">
 				<div class="form-group">
-					<label>
-						User Name
-					</label>
-					<input class="form-control" type="text" name="name" {% if name %}value="{{ name }}"{% endif %} />
+					{{ form.name.label }}
+					{{ form.name(class="form-control", value=name) }}
 				</div>
 				<div class="form-group">
-					<label>
-						Email
-					</label>
-					<input class="form-control" type="text" name="email" {% if email %}value="{{ email }}"{% endif %} />
+					{{ form.email.label }}
+					{{ form.email(class="form-control", value=email) }}
 				</div>
 				<div class="form-group">
-					<label>
-						Password
-					</label>
-					<input class="form-control" type="password" name="password" {% if password %}value="{{ password }}"{% endif %}/>
+					{{ form.password.label }}
+					{{ form.password(class="form-control", value=password) }}
 				</div>
 				<div class="row pt-3">
 					<div class="col-md-12">
-						<button type="submit" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
+						{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}
 					</div>
 				</div>
-				<input type="hidden" name="nonce" value="{{ nonce }}">
+				{{ form.nonce() }}
 			</form>
 		</div>
 	</div>
