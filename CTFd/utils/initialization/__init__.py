@@ -10,6 +10,7 @@ from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from CTFd.cache import clear_user_recent_ips
 from CTFd.constants.config import Configs
 from CTFd.constants.plugins import Plugins
+from CTFd.constants.sessions import Session
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import Tracking, db
 from CTFd.utils import config, get_config, markdown
@@ -49,7 +50,7 @@ from CTFd.utils.user import (
     get_ip,
     is_admin,
 )
-from CTFd.constants.sessions import Session
+
 
 def init_template_filters(app):
     app.jinja_env.filters["markdown"] = markdown
@@ -91,6 +92,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_ip=get_ip)
     app.jinja_env.globals.update(Configs=Configs)
     app.jinja_env.globals.update(Plugins=Plugins)
+    app.jinja_env.globals.update(Session=Session)
 
 
 def init_logs(app):
@@ -154,10 +156,6 @@ def init_events(app):
 
 
 def init_request_processors(app):
-    @app.context_processor
-    def inject_user():
-        return {"Session": Session(**session)}
-
     @app.url_defaults
     def inject_theme(endpoint, values):
         if "theme" not in values and app.url_map.is_endpoint_expecting(

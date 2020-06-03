@@ -1,7 +1,18 @@
-from dataclasses import dataclass
+from flask import session
 
-@dataclass
-class Session:
-    id: int = None
-    nonce: str = None
-    hash: str = None
+
+class _SessionWrapper:
+    @property
+    def id(self):
+        return session.get("id", 0)
+
+    @property
+    def nonce(self):
+        return session.get("nonce")
+
+    @property
+    def hash(self):
+        return session.get("hash")
+
+
+Session = _SessionWrapper()
