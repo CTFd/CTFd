@@ -8,6 +8,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.user import get_current_user
+from CTFd.utils.helpers import  get_infos, get_errors
 
 users = Blueprint("users", __name__)
 
@@ -35,22 +36,20 @@ def listing():
 @users.route("/user")
 @authed_only
 def private():
+    infos = get_infos()
+    errors = get_errors()
+
     user = get_current_user()
 
-    solves = user.get_solves()
-    awards = user.get_awards()
-
-    place = user.place
-    score = user.score
+    if config.is_scoreboard_frozen():
+        infos.append("Scoreboard has been frozen")
 
     return render_template(
         "users/private.html",
-        solves=solves,
-        awards=awards,
         user=user,
-        score=score,
-        place=place,
-        score_frozen=config.is_scoreboard_frozen(),
+        account=user.account,
+        infos=infos,
+        errors=errors,
     )
 
 
