@@ -34,11 +34,11 @@
 								{{ standing.name | truncate(50) }}
 
 								{% if standing.oauth_id %}
-									{% if get_config('user_mode') == 'teams' %}
+									{% if Configs.user_mode == 'teams' %}
 									<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
 										<span class="badge badge-primary">Official</span>
 									</a>
-									{% elif get_config('user_mode') == 'users' %}
+									{% elif Configs.user_mode == 'users' %}
 									<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
 										<span class="badge badge-primary">Official</span>
 									</a>

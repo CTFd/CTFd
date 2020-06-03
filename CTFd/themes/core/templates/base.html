@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{ get_ctf_name() }}</title>
+	<title>{{ Configs.ctf_name }}</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" href="{{ url_for('views.themes', path='img/favicon.ico') }}" type="image/x-icon">
@@ -16,10 +16,10 @@
 		var init = {
 			'urlRoot': "{{ request.script_root }}",
 			'csrfNonce': "{{ nonce }}",
-			'userMode': "{{ get_config('user_mode') }}",
+			'userMode': "{{ Configs.user_mode }}",
 			'userId': {{ id if (id is defined) else 0 }},
-			'start': {{ get_config("start") | tojson }},
-			'end': {{ get_config("end") | tojson }},
+			'start': {{ Configs.start | tojson }},
+			'end': {{ Configs.end | tojson }},
 		}
 	</script>
 	{{ Configs.theme_header }}
