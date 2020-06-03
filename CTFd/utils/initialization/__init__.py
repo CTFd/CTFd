@@ -8,6 +8,8 @@ from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from CTFd.cache import clear_user_recent_ips
+from CTFd.constants.config import Configs
+from CTFd.constants.plugins import Plugins
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import Tracking, db
 from CTFd.utils import config, get_config, markdown
@@ -26,8 +28,6 @@ from CTFd.utils.config.visibility import (
     registration_visible,
     scores_visible,
 )
-from CTFd.constants.config import Configs
-from CTFd.constants.plugins import Plugins
 from CTFd.utils.countries import get_countries, lookup_country_code
 from CTFd.utils.dates import isoformat, unix_time, unix_time_millis
 from CTFd.utils.events import EventManager, RedisEventManager

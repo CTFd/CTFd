@@ -1,6 +1,8 @@
 from dataclasses import dataclass
-from CTFd.utils import get_config
+
 from markupsafe import Markup
+
+from CTFd.utils import get_config
 
 
 class _ConfigsWrapper:
