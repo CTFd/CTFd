@@ -17,19 +17,14 @@ users = Blueprint("users", __name__)
 @check_account_visibility
 def listing():
     page = abs(request.args.get("page", 1, type=int))
-    results_per_page = 50
-    page_start = results_per_page * (page - 1)
-    page_end = results_per_page * (page - 1) + results_per_page
 
-    count = Users.query.filter_by(banned=False, hidden=False).count()
     users = (
         Users.query.filter_by(banned=False, hidden=False)
-        .slice(page_start, page_end)
-        .all()
+        .order_by(Users.id.asc())
+        .paginate(page=page, per_page=10)
     )
 
-    pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template("users/users.html", users=users, pages=pages, curr_page=page)
+    return render_template("users/users.html", users=users)
 
 
 @users.route("/profile")

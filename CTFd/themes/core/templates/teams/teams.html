@@ -22,7 +22,7 @@
 					</tr>
 				</thead>
 				<tbody>
-				{% for team in teams %}
+				{% for team in teams.items %}
 					<tr>
 						<td>
 						{% if scores_visible() %}
@@ -70,23 +70,23 @@
 			</table>
 		</div>
 	</div>
-	{% if pages > 1 %}
+	{% if teams.pages > 1 %}
 	<div class="row">
 		<div class="col-md-12">
 			<div class="text-center">Page
 				<br>
-				{% if curr_page != 1 %}
-					<a href="{{ url_for('teams.listing', page=curr_page-1) }}">
+				{% if teams.page != 1 %}
+					<a href="{{ url_for('teams.listing', page=teams.page - 1) }}">
 						&lt;&lt;&lt;
 					</a>
 				{% endif %}
 				<select class="page-select">
-					{% for page in range(1, pages + 1) %}
-					<option {% if curr_page == page %}selected{% endif %}>{{ page }}</option>
+					{% for page in range(1, teams.pages + 1) %}
+					<option {% if teams.page == page %}selected{% endif %}>{{ page }}</option>
 					{% endfor %}
 				</select>
-				{% if curr_page != pages %}
-					<a href="{{ url_for('teams.listing', page=curr_page + 1) }}">
+				{% if teams.next_num %}
+					<a href="{{ url_for('teams.listing', page=teams.page + 1) }}">
 						&gt;&gt;&gt;
 					</a>
 				{% endif %}
