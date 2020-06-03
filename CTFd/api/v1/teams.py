@@ -22,7 +22,11 @@ teams_namespace = Namespace("teams", description="Endpoint to retrieve Teams")
 class TeamList(Resource):
     @check_account_visibility
     def get(self):
-        teams = Teams.query.filter_by(hidden=False, banned=False)
+        if is_admin() and request.args.get("view") == "admin":
+            teams = Teams.query.filter_by()
+        else:
+            teams = Teams.query.filter_by(hidden=False, banned=False)
+
         user_type = get_current_user_type(fallback="user")
         view = copy.deepcopy(TeamSchema.views.get(user_type))
         view.remove("members")
