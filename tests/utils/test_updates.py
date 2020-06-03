@@ -1,5 +1,6 @@
+from unittest.mock import Mock, patch
+
 import requests
-from mock import Mock, patch
 
 from CTFd.utils import get_config, set_config
 from CTFd.utils.updates import update_check

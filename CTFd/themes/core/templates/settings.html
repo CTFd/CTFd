@@ -20,18 +20,8 @@
 		<div class="col-md-8">
 			<div class="tab-content" id="v-pills-tabContent">
 				<div class="tab-pane fade show active" id="profile" role="tabpanel">
-					{% if confirm_email %}
-					<div class="alert alert-info alert-dismissable submit-row" role="alert">
-						Your email address isn't confirmed!
-						Please check your email to confirm your email address.
-						<br>
-						<br>
-						To have the confirmation email resent please <a href="{{ url_for('auth.confirm') }}">click
-							here.</a>
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-								aria-hidden="true">×</span></button>
-					</div>
-					{% endif %}
+					{% include "components/errors.html" %}
+
 					<form id="user-profile-form" method="post" accept-charset="utf-8" autocomplete="off" role="form"
 						class="form-horizontal">
 						<div class="form-group">

@@ -5,9 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property, validates
 
-from CTFd.utils.crypto import hash_password
-from CTFd.utils.humanize.numbers import ordinalize
-
 db = SQLAlchemy()
 ma = Marshmallow()
 
@@ -255,6 +252,8 @@ class Users(db.Model):
 
     @validates("password")
     def validate_password(self, key, plaintext):
+        from CTFd.utils.crypto import hash_password
+
         return hash_password(str(plaintext))
 
     @hybrid_property
@@ -266,6 +265,16 @@ class Users(db.Model):
             return self.team_id
         elif user_mode == "users":
             return self.id
+
+    @hybrid_property
+    def account(self):
+        from CTFd.utils import get_config
+
+        user_mode = get_config("user_mode")
+        if user_mode == "teams":
+            return self.team
+        elif user_mode == "users":
+            return self
 
     @property
     def solves(self):
@@ -362,6 +371,7 @@ class Users(db.Model):
         application itself will result in a circular import.
         """
         from CTFd.utils.scores import get_user_standings
+        from CTFd.utils.humanize.numbers import ordinalize
 
         standings = get_user_standings(admin=admin)
 
@@ -412,6 +422,8 @@ class Teams(db.Model):
 
     @validates("password")
     def validate_password(self, key, plaintext):
+        from CTFd.utils.crypto import hash_password
+
         return hash_password(str(plaintext))
 
     @property
@@ -501,6 +513,7 @@ class Teams(db.Model):
         application itself will result in a circular import.
         """
         from CTFd.utils.scores import get_team_standings
+        from CTFd.utils.humanize.numbers import ordinalize
 
         standings = get_team_standings(admin=admin)
 
