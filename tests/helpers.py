@@ -144,9 +144,8 @@ def register_user(
             if raise_for_error:
                 with client.session_transaction() as sess:
                     assert sess["id"]
-                    assert sess["name"] == name
-                    assert sess["email"]
                     assert sess["nonce"]
+                    assert sess["hash"]
 
 
 def register_team(app, name="team", password="password", raise_for_error=True):
@@ -171,9 +170,8 @@ def login_as_user(app, name="user", password="password", raise_for_error=True):
             if raise_for_error:
                 with client.session_transaction() as sess:
                     assert sess["id"]
-                    assert sess["name"]
-                    assert sess["email"]
                     assert sess["nonce"]
+                    assert sess["hash"]
             return client
 
 
@@ -229,9 +227,8 @@ def login_with_mlc(
         if raise_for_error:
             with client.session_transaction() as sess:
                 assert sess["id"]
-                assert sess["name"]
-                assert sess["email"]
                 assert sess["nonce"]
+                assert sess["hash"]
         return client
 
 
