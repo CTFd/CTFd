@@ -1,5 +1,7 @@
 from flask_restx import Namespace, Resource
 
+from sqlalchemy.orm import joinedload
+
 from CTFd.cache import cache, make_cache_key
 from CTFd.models import Awards, Solves, Teams
 from CTFd.utils import get_config
@@ -9,7 +11,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.modes import TEAMS_MODE, generate_account_url, get_mode_as_word
-from CTFd.utils.scores import get_standings
+from CTFd.utils.scores import get_standings, get_user_standings
 
 scoreboard_namespace = Namespace(
     "scoreboard", description="Endpoint to retrieve scores"
@@ -31,8 +33,19 @@ class ScoreboardList(Resource):
             team_ids = []
             for team in standings:
                 team_ids.append(team.account_id)
-            teams = Teams.query.filter(Teams.id.in_(team_ids)).all()
+
+            # Get team objects with members explicitly loaded in
+            teams = (
+                Teams.query.options(joinedload(Teams.members))
+                .filter(Teams.id.in_(team_ids))
+                .all()
+            )
+
+            # Sort according to team_ids order
             teams = [next(t for t in teams if t.id == id) for id in team_ids]
+
+            # Get user_standings so that we can more quickly get member scores
+            user_standings = get_user_standings()
 
         for i, x in enumerate(standings):
             entry = {
@@ -47,15 +60,36 @@ class ScoreboardList(Resource):
 
             if mode == TEAMS_MODE:
                 members = []
+
+                # This code looks like it would be slow
+                # but it is faster than accessing each member's score individually
                 for member in teams[i].members:
-                    members.append(
-                        {
-                            "id": member.id,
-                            "oauth_id": member.oauth_id,
-                            "name": member.name,
-                            "score": int(member.score),
-                        }
-                    )
+                    for i, u in enumerate(user_standings):
+                        if u.user_id == member.id:
+                            # Remove the found user from the pool because
+                            # a user can only belong to one team
+                            u = user_standings.pop(i)
+                            members.append(
+                                {
+                                    "id": u.user_id,
+                                    "oauth_id": u.oauth_id,
+                                    "name": u.name,
+                                    "score": int(u.score),
+                                }
+                            )
+                            break
+                    else:
+                        # A hidden or banned user should not show up in listings.
+                        # The presence of a hidden or banned user is not considered sensitive
+                        if member.hidden is False and member.banned is False:
+                            members.append(
+                                {
+                                    "id": member.id,
+                                    "oauth_id": member.oauth_id,
+                                    "name": member.name,
+                                    "score": 0,
+                                }
+                            )
 
                 entry["members"] = members
 

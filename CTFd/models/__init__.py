@@ -394,7 +394,9 @@ class Teams(db.Model):
     password = db.Column(db.String(128))
     secret = db.Column(db.String(128))
 
-    members = db.relationship("Users", backref="team", foreign_keys="Users.team_id")
+    members = db.relationship(
+        "Users", backref="team", foreign_keys="Users.team_id", lazy="joined"
+    )
 
     # Supplementary attributes
     website = db.Column(db.String(128))
