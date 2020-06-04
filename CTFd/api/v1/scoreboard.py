@@ -44,8 +44,11 @@ class ScoreboardList(Resource):
             # Sort according to team_ids order
             teams = [next(t for t in teams if t.id == id) for id in team_ids]
 
-            # Get user_standings so that we can more quickly get member scores
+            # Get user_standings as a dict so that we can more quickly get member scores
             user_standings = get_user_standings()
+            users = {}
+            for u in user_standings:
+                users[u.user_id] = u
 
         for i, x in enumerate(standings):
             entry = {
@@ -64,23 +67,17 @@ class ScoreboardList(Resource):
                 # This code looks like it would be slow
                 # but it is faster than accessing each member's score individually
                 for member in teams[i].members:
-                    for i, u in enumerate(user_standings):
-                        if u.user_id == member.id:
-                            # Remove the found user from the pool because
-                            # a user can only belong to one team
-                            u = user_standings.pop(i)
-                            members.append(
-                                {
-                                    "id": u.user_id,
-                                    "oauth_id": u.oauth_id,
-                                    "name": u.name,
-                                    "score": int(u.score),
-                                }
-                            )
-                            break
+                    user = users.get(member.id)
+                    if user:
+                        members.append(
+                            {
+                                "id": user.user_id,
+                                "oauth_id": user.oauth_id,
+                                "name": user.name,
+                                "score": int(user.score),
+                            }
+                        )
                     else:
-                        # A hidden or banned user should not show up in listings.
-                        # The presence of a hidden or banned user is not considered sensitive
                         if member.hidden is False and member.banned is False:
                             members.append(
                                 {
