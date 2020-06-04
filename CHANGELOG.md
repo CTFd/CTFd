@@ -1,4 +1,4 @@
-2.5.0 / 2020-06-02
+2.5.0 / 2020-06-04
 ==================
 
 **General**
@@ -9,13 +9,15 @@
 * Add `/api/v1/challenges?view=admin` to allow admin users to see all challenges regardless of their visibility state
 * Add `/api/v1/users?view=admin` to allow admin users to see all users regardless of their hidden/banned state
 * Add `/api/v1/teams?view=admin` to allow admin users to see all teams regardless of their hidden/banned state
-* The scoreboard endpoints `/api/v1/scoreboard` & `/api/v1/scoreboard/top/[count]` should now be more performant because score and place for Users/Teams are now cached
+* The scoreboard endpoint `/api/v1/scoreboard` is now significantly more performant due to better response generation
+* The scoreboard endpoint `/api/v1/scoreboard` will no longer show hidden/banned users in a non-hidden team
 
 **Deployment**
 * `docker-compose` now provides a basic nginx configuration and deploys nginx on port 80
 
 **Miscellaneous**
 * The `get_config` and `get_page` config utilities now use SQLAlchemy Core instead of SQLAlchemy ORM for slight speedups
+* The `get_team_standings` and `get_user_standings` functions now return more data (id, oauth_id, name, score for regular users and banned, hidden as well for admins)
 * Update Flask-Migrate to 2.5.3 and regenerate the migration environment. Fixes using `%` signs in database passwords.
 
 
