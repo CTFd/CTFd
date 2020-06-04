@@ -9,7 +9,8 @@
 * Add `/api/v1/challenges?view=admin` to allow admin users to see all challenges regardless of their visibility state
 * Add `/api/v1/users?view=admin` to allow admin users to see all users regardless of their hidden/banned state
 * Add `/api/v1/teams?view=admin` to allow admin users to see all teams regardless of their hidden/banned state
-* The scoreboard endpoint `/api/v1/scoreboard` is now significantly more performant due to better response generation
+* The scoreboard endpoint `/api/v1/scoreboard` is now significantly more performant (20x) due to better response generation
+* The top scoreboard endpoint `/api/v1/scoreboard/top/<count>` is now more performant (3x) due to better response generation
 * The scoreboard endpoint `/api/v1/scoreboard` will no longer show hidden/banned users in a non-hidden team
 
 **Deployment**

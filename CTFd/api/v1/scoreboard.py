@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from flask_restx import Namespace, Resource
 
 from sqlalchemy.orm import joinedload
@@ -119,38 +121,31 @@ class ScoreboardDetail(Resource):
         solves = solves.all()
         awards = awards.all()
 
+        # Build a mapping of accounts to their solves and awards
+        solves = solves + awards
+        solves_mapper = defaultdict(list)
+        for solve in solves:
+            solves_mapper[solve.account_id].append(
+                {
+                    "challenge_id": solve.challenge_id,
+                    "account_id": solve.account_id,
+                    "team_id": solve.team_id,
+                    "user_id": solve.user_id,
+                    "value": solve.challenge.value,
+                    "date": isoformat(solve.date),
+                }
+            )
+
+        # Sort all solves by date
+        for team_id in solves_mapper:
+            solves_mapper[team_id] = sorted(
+                solves_mapper[team_id], key=lambda k: k["date"]
+            )
+
         for i, team in enumerate(team_ids):
             response[i + 1] = {
                 "id": standings[i].account_id,
                 "name": standings[i].name,
-                "solves": [],
+                "solves": solves_mapper.get(standings[i].account_id, []),
             }
-            for solve in solves:
-                if solve.account_id == team:
-                    response[i + 1]["solves"].append(
-                        {
-                            "challenge_id": solve.challenge_id,
-                            "account_id": solve.account_id,
-                            "team_id": solve.team_id,
-                            "user_id": solve.user_id,
-                            "value": solve.challenge.value,
-                            "date": isoformat(solve.date),
-                        }
-                    )
-            for award in awards:
-                if award.account_id == team:
-                    response[i + 1]["solves"].append(
-                        {
-                            "challenge_id": None,
-                            "account_id": award.account_id,
-                            "team_id": award.team_id,
-                            "user_id": award.user_id,
-                            "value": award.value,
-                            "date": isoformat(award.date),
-                        }
-                    )
-            response[i + 1]["solves"] = sorted(
-                response[i + 1]["solves"], key=lambda k: k["date"]
-            )
-
         return {"success": True, "data": response}
