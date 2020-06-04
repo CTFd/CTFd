@@ -368,12 +368,13 @@ class Users(db.Model):
 
         standings = get_user_standings(admin=admin)
 
-        try:
-            n = standings.index((self.id,)) + 1
-            if numeric:
-                return n
-            return ordinalize(n)
-        except ValueError:
+        for i, user in enumerate(standings):
+            if user.user_id == self.id:
+                n = i + 1
+                if numeric:
+                    return n
+                return ordinalize(n)
+        else:
             return None
 
 
@@ -394,7 +395,9 @@ class Teams(db.Model):
     password = db.Column(db.String(128))
     secret = db.Column(db.String(128))
 
-    members = db.relationship("Users", backref="team", foreign_keys="Users.team_id")
+    members = db.relationship(
+        "Users", backref="team", foreign_keys="Users.team_id", lazy="joined"
+    )
 
     # Supplementary attributes
     website = db.Column(db.String(128))
@@ -509,12 +512,13 @@ class Teams(db.Model):
 
         standings = get_team_standings(admin=admin)
 
-        try:
-            n = standings.index((self.id,)) + 1
-            if numeric:
-                return n
-            return ordinalize(n)
-        except ValueError:
+        for i, team in enumerate(standings):
+            if team.team_id == self.id:
+                n = i + 1
+                if numeric:
+                    return n
+                return ordinalize(n)
+        else:
             return None
 
 
