@@ -136,7 +136,7 @@ class ScoreboardDetail(Resource):
             )
 
         for award in awards:
-            solves_mapper[solve.account_id].append(
+            solves_mapper[award.account_id].append(
                 {
                     "challenge_id": None,
                     "account_id": award.account_id,
