@@ -368,12 +368,13 @@ class Users(db.Model):
 
         standings = get_user_standings(admin=admin)
 
-        try:
-            n = standings.index((self.id,)) + 1
-            if numeric:
-                return n
-            return ordinalize(n)
-        except ValueError:
+        for i, user in enumerate(standings):
+            if user.user_id == self.id:
+                n = i + 1
+                if numeric:
+                    return n
+                return ordinalize(n)
+        else:
             return None
 
 
@@ -511,12 +512,13 @@ class Teams(db.Model):
 
         standings = get_team_standings(admin=admin)
 
-        try:
-            n = standings.index((self.id,)) + 1
-            if numeric:
-                return n
-            return ordinalize(n)
-        except ValueError:
+        for i, team in enumerate(standings):
+            if team.team_id == self.id:
+                n = i + 1
+                if numeric:
+                    return n
+                return ordinalize(n)
+        else:
             return None
 
 
