@@ -122,7 +122,6 @@ class ScoreboardDetail(Resource):
         awards = awards.all()
 
         # Build a mapping of accounts to their solves and awards
-        solves = solves + awards
         solves_mapper = defaultdict(list)
         for solve in solves:
             solves_mapper[solve.account_id].append(
@@ -133,6 +132,18 @@ class ScoreboardDetail(Resource):
                     "user_id": solve.user_id,
                     "value": solve.challenge.value,
                     "date": isoformat(solve.date),
+                }
+            )
+
+        for award in awards:
+            solves_mapper[award.account_id].append(
+                {
+                    "challenge_id": None,
+                    "account_id": award.account_id,
+                    "team_id": award.team_id,
+                    "user_id": award.user_id,
+                    "value": award.value,
+                    "date": isoformat(award.date),
                 }
             )
 
