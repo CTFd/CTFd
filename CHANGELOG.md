@@ -14,6 +14,7 @@
 
 **Deployment**
 * `docker-compose` now provides a basic nginx configuration and deploys nginx on port 80
+* `Dockerfile` now installs `python3` and `python3-dev` instead of `python` and `python-dev` because Alpine no longer provides those dependencies
 
 **Miscellaneous**
 * The `get_config` and `get_page` config utilities now use SQLAlchemy Core instead of SQLAlchemy ORM for slight speedups
