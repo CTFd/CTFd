@@ -1,6 +1,7 @@
 from marshmallow import pre_load
 
 from CTFd.models import Pages, ma
+from CTFd.schemas import JSONSchema
 from CTFd.utils import string_types
 
 
@@ -24,3 +25,6 @@ class PageSchema(ma.ModelSchema):
                 kwargs["only"] = view
 
         super(PageSchema, self).__init__(*args, **kwargs)
+
+
+JSONPageSchema = JSONSchema(PageSchema)

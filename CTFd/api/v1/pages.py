@@ -1,15 +1,29 @@
 from flask import request
-from flask_restx import Namespace, Resource
+from flask_restx import Namespace, Resource, fields
 
 from CTFd.cache import clear_pages
 from CTFd.models import Pages, db
-from CTFd.schemas.pages import PageSchema
+from CTFd.schemas.pages import JSONPageSchema, PageSchema
 from CTFd.utils.decorators import admins_only
 
 pages_namespace = Namespace("pages", description="Endpoint to retrieve Pages")
+PageModel = pages_namespace.model(
+    "PageModel",
+    {
+        "success": fields.Boolean,
+        "data": fields.Nested(
+            pages_namespace.schema_model(PageSchema.__name__, JSONPageSchema)
+        ),
+    },
+)
+PageErrorModel = pages_namespace.model(
+    "PageErrorModel", {"success": fields.Boolean, "errors": fields.List(fields.String)}
+)
 
 
 @pages_namespace.route("")
+@pages_namespace.response(200, "Success")
+@pages_namespace.response(400, "An error occured processing your data")
 class PageList(Resource):
     @admins_only
     def get(self):
@@ -42,8 +56,15 @@ class PageList(Resource):
 
 
 @pages_namespace.route("/<page_id>")
+@pages_namespace.response(200, "Success", PageModel)
+@pages_namespace.response(
+    400, "An error occured processing the provided or stored data", PageErrorModel
+)
+@pages_namespace.doc(params={"page_id": "ID of a page object"})
 class PageDetail(Resource):
     @admins_only
+    @pages_namespace.doc(description="Endpoint to read a page object")
+    @pages_namespace.response(200, "Success", PageModel)
     def get(self, page_id):
         page = Pages.query.filter_by(id=page_id).first_or_404()
         schema = PageSchema()
@@ -55,6 +76,7 @@ class PageDetail(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @pages_namespace.doc(description="Endpoint to edit a page object")
     def patch(self, page_id):
         page = Pages.query.filter_by(id=page_id).first_or_404()
         req = request.get_json()
@@ -75,6 +97,7 @@ class PageDetail(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @pages_namespace.doc(description="Endpoint to delete a page object")
     def delete(self, page_id):
         page = Pages.query.filter_by(id=page_id).first_or_404()
         db.session.delete(page)
