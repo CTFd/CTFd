@@ -15,7 +15,7 @@
 	<script type="text/javascript">
 		var init = {
 			'urlRoot': "{{ request.script_root }}",
-			'csrfNonce': "{{ nonce }}",
+			'csrfNonce': "{{ Session.nonce }}",
 			'userMode': "{{ Configs.user_mode }}",
 			'userId': {{ Session.id }},
 			'start': {{ Configs.start | tojson }},

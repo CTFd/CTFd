@@ -1,10 +1,8 @@
 from wtforms import PasswordField, SelectField, StringField, SubmitField
-from wtforms.fields.html5 import DateField
+from wtforms.fields.html5 import DateField, URLField
 
 from CTFd.forms import BaseForm
-from CTFd.utils.countries import COUNTRIES_LIST
-
-SELECT_COUNTRIES_LIST = [("", "")] + COUNTRIES_LIST
+from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
 
 class SettingsForm(BaseForm):
@@ -13,7 +11,7 @@ class SettingsForm(BaseForm):
     password = PasswordField("Password")
     confirm = PasswordField("Current Password")
     affiliation = StringField("Affiliation")
-    website = StringField("Website")
+    website = URLField("Website")
     country = SelectField("Country", choices=SELECT_COUNTRIES_LIST)
     submit = SubmitField("Submit")
 
