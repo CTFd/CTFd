@@ -22,7 +22,7 @@
 			<hr>
 			{% endif %}
 
-			{% set form = Forms.auth.RegistrationForm() %}
+			{% with form = Forms.auth.RegistrationForm() %}
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form">
 				<div class="form-group">
 					{{ form.name.label }}
@@ -43,6 +43,7 @@
 				</div>
 				{{ form.nonce() }}
 			</form>
+			{% endwith %}
 		</div>
 	</div>
 </div>
