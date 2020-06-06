@@ -7,6 +7,10 @@ class _ConfigsWrapper:
         return get_config(attr)
 
     @property
+    def ctf_name(self):
+        return get_config("theme_header", default="CTFd")
+
+    @property
     def theme_header(self):
         return markup(get_config("theme_header", default=""))
 

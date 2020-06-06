@@ -1,5 +1,5 @@
 from wtforms import PasswordField, SelectField, StringField, SubmitField
-from wtforms.fields.html5 import DateField, URLField
+from wtforms.fields.html5 import URLField
 
 from CTFd.forms import BaseForm
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST

@@ -25,7 +25,9 @@ Forms = _FormsWrapper()
 from CTFd.forms import auth  # noqa: I001 isort:skip
 from CTFd.forms import self  # noqa: I001 isort:skip
 from CTFd.forms import teams  # noqa: I001 isort:skip
+from CTFd.forms import setup  # noqa: I001 isort:skip
 
 Forms.auth = auth
 Forms.self = self
 Forms.teams = teams
+Forms.setup = setup
