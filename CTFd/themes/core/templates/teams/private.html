@@ -63,7 +63,6 @@
 				<div class="modal-body clearfix">
 					{% with form = Forms.teams.TeamCaptainForm(captain_id=team.captain_id) %}
 					<form id="team-captain-form" method="POST">
-						<input type="hidden" name="id">
 						<div class="form-group">
 							{{ form.captain_id.label }}
 							{% for member in team.members %}
