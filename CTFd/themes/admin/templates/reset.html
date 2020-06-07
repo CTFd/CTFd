@@ -12,6 +12,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 offset-md-3">
+				{% with form = Forms.config.ResetInstanceForm() %}
 				<form method="POST" id="reset-ctf-form">
 					<div class="alert alert-danger" role="alert">
 						<p>
@@ -38,9 +39,8 @@
 
 					<div class="form-group pb-2">
 						<div class="form-check">
-							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" name="accounts"> Accounts
-							</label>
+							{{ form.accounts(class="form-check-input") }}
+							{{ form.accounts.label(class="form-check-label") }}
 						</div>
 						<span class="text-muted">
 							Deletes all user and team accounts and their associated information<br>
@@ -50,9 +50,8 @@
 
 					<div class="form-group pb-2">
 						<div class="form-check">
-							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" name="submissions"> Submissions
-							</label>
+							{{ form.submissions(class="form-check-input") }}
+							{{ form.submissions.label(class="form-check-label") }}
 						</div>
 						<span class="text-muted">
 							Deletes all records that accounts gained points or took an action<br>
@@ -62,9 +61,8 @@
 
 					<div class="form-group pb-2">
 						<div class="form-check">
-							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" name="challenges"> Challenges
-							</label>
+							{{ form.challenges(class="form-check-input") }}
+							{{ form.challenges.label(class="form-check-label") }}
 						</div>
 						<span class="text-muted">
 							Deletes all challenges and associated data<br>
@@ -74,9 +72,8 @@
 
 					<div class="form-group pb-2">
 						<div class="form-check">
-							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" name="pages"> Pages
-							</label>
+							{{ form.pages(class="form-check-input") }}
+							{{ form.pages.label(class="form-check-label") }}
 						</div>
 						<span class="text-muted">
 							Deletes all pages and their associated files<br>
@@ -86,9 +83,8 @@
 
 					<div class="form-group pb-2">
 						<div class="form-check">
-							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" name="notifications"> Notifications
-							</label>
+							{{ form.notifications(class="form-check-input") }}
+							{{ form.notifications.label(class="form-check-label") }}
 						</div>
 						<span class="text-muted">
 							Deletes all notifications<br>
@@ -98,12 +94,11 @@
 
 					<br>
 
-					<input id="nonce" type="hidden" name="nonce" value="{{ nonce }}">
+					{{ form.nonce() }}
 
-					<button class="btn btn-warning btn-lg btn-block">
-						Reset CTF
-					</button>
+					{{ form.submit(class="btn btn-warning btn-lg btn-block") }}
 				</form>
+				{% endwith %}
 			</div>
 		</div>
 	</div>
