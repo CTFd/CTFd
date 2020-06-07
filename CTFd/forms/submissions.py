@@ -1,4 +1,5 @@
 from wtforms import SelectField, StringField, SubmitField
+from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
 
@@ -8,6 +9,7 @@ class SubmissionSearchForm(BaseForm):
         "Search Field",
         choices=[("provided", "Provided"), ("id", "ID")],
         default="provided",
+        validators=[InputRequired()],
     )
-    q = StringField("Parameter")
+    q = StringField("Parameter", validators=[InputRequired()])
     submit = SubmitField("Search")

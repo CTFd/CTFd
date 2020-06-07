@@ -4,15 +4,14 @@ from wtforms.validators import InputRequired
 from CTFd.forms import BaseForm
 
 
-class UserSearchForm(BaseForm):
+class ChallengeSearchForm(BaseForm):
     field = SelectField(
         "Search Field",
         choices=[
             ("name", "Name"),
             ("id", "ID"),
-            ("email", "Email"),
-            ("affiliation", "Affiliation"),
-            ("ip", "IP Address"),
+            ("category", "Category"),
+            ("type", "Type"),
         ],
         default="name",
         validators=[InputRequired()],
