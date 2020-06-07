@@ -18,7 +18,7 @@
 					<form id="team-info-form" method="POST">
 						<div class="form-group">
 							{{ form.name.label }}
-							{{ form.name(class="form-control") }}
+							{{ form.name(class="form-control" value=team.name) }}
 						</div>
 						<div class="form-group">
 							{{ form.confirm.label }}
@@ -30,15 +30,15 @@
 						</div>
 						<div class="form-group">
 							{{ form.website.label }}
-							{{ form.website(class="form-control") }}
+							{{ form.website(class="form-control", value=team.website) }}
 						</div>
 						<div class="form-group">
 							{{ form.affiliation.label }}
-							{{ form.affiliation(class="form-control") }}
+							{{ form.affiliation(class="form-control", value=team.affiliation) }}
 						</div>
 						<div class="form-group">
 							{{ form.country.label }}
-							{{ form.country(class="form-control custom-select", value=country) }}
+							{{ form.country(class="form-control custom-select", value=team.country) }}
 						</div>
 						<div id="results">
 
