@@ -1,18 +1,20 @@
 from wtforms import PasswordField, StringField, SubmitField
+from wtforms.fields.html5 import EmailField
+from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
 
 
 class RegistrationForm(BaseForm):
-    name = StringField("User Name")
-    email = StringField("Email")
-    password = PasswordField("Password")
+    name = StringField("User Name", validators=[InputRequired()])
+    email = EmailField("Email", validators=[InputRequired()])
+    password = PasswordField("Password", validators=[InputRequired()])
     submit = SubmitField("Submit")
 
 
 class LoginForm(BaseForm):
-    name = StringField("User Name or Email")
-    password = PasswordField("Password")
+    name = StringField("User Name or Email", validators=[InputRequired()])
+    password = PasswordField("Password", validators=[InputRequired()])
     submit = SubmitField("Submit")
 
 
@@ -21,10 +23,10 @@ class ConfirmForm(BaseForm):
 
 
 class ResetPasswordRequestForm(BaseForm):
-    email = StringField("Email")
+    email = EmailField("Email", validators=[InputRequired()])
     submit = SubmitField("Submit")
 
 
 class ResetPasswordForm(BaseForm):
-    password = PasswordField("Password")
+    password = PasswordField("Password", validators=[InputRequired()])
     submit = SubmitField("Submit")
