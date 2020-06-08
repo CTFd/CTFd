@@ -32,3 +32,14 @@ class TeamCaptainForm(BaseForm):
     # Choices are populated dynamically at form creation time
     captain_id = SelectField("Team Captain", choices=[], validators=[InputRequired()])
     submit = SubmitField("Submit")
+
+
+class TeamSearchForm(BaseForm):
+    field = SelectField(
+        "Search Field",
+        choices=[("name", "Name"), ("id", "ID"), ("affiliation", "Affiliation")],
+        default="name",
+        validators=[InputRequired()],
+    )
+    q = StringField("Parameter", validators=[InputRequired()])
+    submit = SubmitField("Search")
