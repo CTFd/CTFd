@@ -231,14 +231,14 @@ function insertTimezones(target) {
 }
 
 $(() => {
-  CodeMirror.fromTextArea(document.getElementById("theme-header"), {
+  const theme_header_editor = CodeMirror.fromTextArea(document.getElementById("theme-header"), {
     lineNumbers: true,
     lineWrapping: true,
     mode: "htmlmixed",
     htmlMode: true
   });
 
-  CodeMirror.fromTextArea(document.getElementById("theme-footer"), {
+  const theme_footer_editor = CodeMirror.fromTextArea(document.getElementById("theme-footer"), {
     lineNumbers: true,
     lineWrapping: true,
     mode: "htmlmixed",
@@ -256,7 +256,7 @@ $(() => {
   $("#import-button").click(importConfig);
   $("#config-color-update").click(function() {
     const hex_code = $("#config-color-picker").val();
-    const user_css = $("#theme-header").val();
+    const user_css = theme_header_editor.getValue();
     let new_css;
     if (user_css.length) {
       let css_vars = `theme-color: ${hex_code};`;
@@ -269,7 +269,7 @@ $(() => {
         `.jumbotron{background-color: var(--theme-color) !important;}\n` +
         `</style>\n`;
     }
-    $("#theme-header").val(new_css);
+    theme_header_editor.getDoc().setValue(new_css);
   });
 
   $(".start-date").change(function() {
