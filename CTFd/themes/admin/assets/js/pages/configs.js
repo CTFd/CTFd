@@ -231,19 +231,25 @@ function insertTimezones(target) {
 }
 
 $(() => {
-  const theme_header_editor = CodeMirror.fromTextArea(document.getElementById("theme-header"), {
-    lineNumbers: true,
-    lineWrapping: true,
-    mode: "htmlmixed",
-    htmlMode: true
-  });
+  const theme_header_editor = CodeMirror.fromTextArea(
+    document.getElementById("theme-header"),
+    {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "htmlmixed",
+      htmlMode: true
+    }
+  );
 
-  const theme_footer_editor = CodeMirror.fromTextArea(document.getElementById("theme-footer"), {
-    lineNumbers: true,
-    lineWrapping: true,
-    mode: "htmlmixed",
-    htmlMode: true
-  });
+  const theme_footer_editor = CodeMirror.fromTextArea(
+    document.getElementById("theme-footer"),
+    {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "htmlmixed",
+      htmlMode: true
+    }
+  );
 
   insertTimezones($("#start-timezone"));
   insertTimezones($("#end-timezone"));
