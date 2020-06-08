@@ -3,6 +3,7 @@ from wtforms.fields.html5 import IntegerField
 from wtforms.widgets.html5 import NumberInput
 
 from CTFd.forms import BaseForm, SubmitField
+from CTFd.models import db
 
 
 class ResetInstanceForm(BaseForm):
@@ -48,3 +49,13 @@ class AccountSettingsForm(BaseForm):
     )
 
     submit = SubmitField("Update")
+
+
+class ExportCSVForm(BaseForm):
+    table = SelectField(
+        "Database Table",
+        choices=list(
+            zip(sorted(db.metadata.tables.keys()), sorted(db.metadata.tables.keys()))
+        ),
+    )
+    submit = SubmitField("Download CSV")
