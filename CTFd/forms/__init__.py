@@ -48,6 +48,7 @@ from CTFd.forms import users  # noqa: I001 isort:skip
 from CTFd.forms import challenges  # noqa: I001 isort:skip
 from CTFd.forms import notifications  # noqa: I001 isort:skip
 from CTFd.forms import config  # noqa: I001 isort:skip
+from CTFd.forms import pages  # noqa: I001 isort:skip
 
 Forms.auth = auth
 Forms.self = self
@@ -58,3 +59,4 @@ Forms.users = users
 Forms.challenges = challenges
 Forms.notifications = notifications
 Forms.config = config
+Forms.pages = pages

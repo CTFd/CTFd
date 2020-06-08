@@ -25,11 +25,11 @@
 			{% with form = Forms.auth.LoginForm() %}
 			<form method="post" accept-charset="utf-8" autocomplete="off">
 				<div class="form-group">
-					{{ form.name.label }}
+					<b>{{ form.name.label }}</b>
 					{{ form.name(class="form-control", value=name) }}
 				</div>
 				<div class="form-group">
-					{{ form.password.label }}
+					<b>{{ form.password.label }}</b>
 					{{ form.password(class="form-control", value=password) }}
 				</div>
 				<div class="row pt-3">

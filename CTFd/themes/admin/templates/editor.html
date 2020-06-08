@@ -69,18 +69,19 @@
 						</div>
 					</div>
 				</div>
+
+				{% with form = Forms.pages.PageFilesUploadForm() %}
 				<form id="media-library-upload" enctype="multipart/form-data">
 					<div class="form-group">
-						<label for="media-files">
-							Upload Files
-						</label>
-						<input type="file" name="file" id="media-files" class="form-control-file" multiple>
+						<b>{{ form.file.label }}</b>
+						{{ form.file(id="media-files", class="form-control-file") }}
 						<sub class="help-block">
-							Attach multiple files using Control+Click or Cmd+Click.
+							{{ form.file.description }}
 						</sub>
 					</div>
 					<input type="hidden" value="page" name="type">
 				</form>
+				{% endwith %}
 			</div>
 			<div class="modal-footer">
 				<div class="float-right">
