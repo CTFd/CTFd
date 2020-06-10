@@ -1,4 +1,12 @@
-from wtforms import SelectField, StringField, SubmitField
+from wtforms import (
+    BooleanField,
+    HiddenField,
+    MultipleFileField,
+    StringField,
+    TextAreaField,
+    SubmitField,
+    SelectField
+)
 from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
@@ -18,3 +26,12 @@ class ChallengeSearchForm(BaseForm):
     )
     q = StringField("Parameter", validators=[InputRequired()])
     submit = SubmitField("Search")
+
+
+class ChallengeFilesUploadForm(BaseForm):
+    file = MultipleFileField(
+        "Upload Files",
+        description="Attach multiple files using Control+Click or Cmd+Click.",
+        validators=[InputRequired()],
+    )
+    submit = SubmitField("Upload")
