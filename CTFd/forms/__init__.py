@@ -50,6 +50,7 @@ from CTFd.forms import notifications  # noqa: I001 isort:skip
 from CTFd.forms import config  # noqa: I001 isort:skip
 from CTFd.forms import pages  # noqa: I001 isort:skip
 from CTFd.forms import awards  # noqa: I001 isort:skip
+from CTFd.forms import email  # noqa: I001 isort:skip
 
 Forms.auth = auth
 Forms.self = self
@@ -62,3 +63,4 @@ Forms.notifications = notifications
 Forms.config = config
 Forms.pages = pages
 Forms.awards = awards
+Forms.email = email
