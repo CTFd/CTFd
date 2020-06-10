@@ -77,6 +77,13 @@ class Challenges(db.Model):
 
     __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
 
+    @property
+    def html(self):
+        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.helpers import markup
+
+        return markup(build_html(self.description))
+
     def __init__(self, *args, **kwargs):
         super(Challenges, self).__init__(**kwargs)
 

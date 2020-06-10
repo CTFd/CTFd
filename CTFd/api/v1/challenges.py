@@ -30,7 +30,6 @@ from CTFd.utils.decorators.visibility import (
 )
 from CTFd.utils.logging import log
 from CTFd.utils.modes import generate_account_url, get_model
-from CTFd.utils.pages import build_html
 from CTFd.utils.security.signing import serialize
 from CTFd.utils.user import authed, get_current_team, get_current_user, is_admin
 
@@ -281,7 +280,7 @@ class Challenge(Resource):
             files=files,
             tags=tags,
             hints=[Hints(**h) for h in hints],
-            description=build_html(chal.description),
+            challenge=chal,
         )
 
         db.session.close()

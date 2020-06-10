@@ -1,6 +1,5 @@
 import "./main";
 import "bootstrap/js/dist/tab";
-import nunjucks from "nunjucks";
 import { ezQuery, ezAlert } from "../ezq";
 import { htmlEntities } from "../utils";
 import Moment from "moment";
@@ -46,21 +45,11 @@ const displayChal = chal => {
     $.getScript(config.urlRoot + chal.script),
     $.get(config.urlRoot + chal.template)
   ]).then(responses => {
-    const challenge_data = responses[0].data;
-    const template_data = responses[2];
     const challenge = CTFd._internal.challenge;
 
     $("#challenge-window").empty();
-    const template = nunjucks.compile(template_data);
-    challenge.data = challenge_data;
-    challenge.preRender();
 
-    challenge_data["description"] = challenge.render(
-      challenge_data["description"]
-    );
-    challenge_data["script_root"] = CTFd.config.urlRoot;
-
-    $("#challenge-window").append(template.render(challenge_data));
+    $("#challenge-window").append(responses[0].data.view);
 
     $(".challenge-solves").click(function(event) {
       getSolves($("#challenge-id").val());

@@ -1,7 +1,15 @@
 {% extends "challenge.html" %}
 
 {% block description %}
+    {{ challenge.html }}
 {% endblock %}
 
 {% block input %}
+    <input class="form-control" type="text" name="answer" id="submission-input" placeholder="Flag"/>
+{% endblock %}
+
+{% block submit %}
+    <button type="submit" id="submit-key" class="btn btn-md btn-outline-secondary float-right">
+        Submit
+    </button>
 {% endblock %}

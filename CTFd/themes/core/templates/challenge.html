@@ -9,23 +9,25 @@
 					<a class="nav-link active" href="#challenge">Challenge</a>
 				</li>
 				{% block solves %}
-				{% if solves is defined %}
-					{% if solves == None %}
-					{% else %}
-						<li class="nav-item">
-							<a class="nav-link challenge-solves" href="#solves">
+					<li class="nav-item">
+						<a class="nav-link challenge-solves" href="#solves">
+							{% if solves != None %}
 								{{ solves }} {% if solves > 1 %}Solves{% else %}Solves{% endif %}
-							</a>
-						</li>
-					{% endif %}
-				{% endif %}
+							{% endif %}
+						</a>
+					</li>
 				{% endblock %}
 			</ul>
 			<div role="tabpanel">
 				<div class="tab-content">
 					<div role="tabpanel" class="tab-pane fade show active" id="challenge">
-						<h2 class='challenge-name text-center pt-3'>{{ name }}</h2>
-						<h3 class="challenge-value text-center">{{ value }}</h3>
+						<h2 class='challenge-name text-center pt-3'>
+							{{ challenge.name }}
+						</h2>
+						<h3 class="challenge-value text-center">
+							{{ challenge.value }}
+						</h3>
+
 						<div class="challenge-tags text-center">
 							{% block tags %}
 								{% for tag in tags %}
@@ -33,7 +35,9 @@
 								{% endfor %}
 							{% endblock %}
 						</div>
+
 						<span class="challenge-desc">{% block description %}{% endblock %}</span>
+
 						<div class="challenge-hints hint-row row">
 							{% for hint in hints %}
 								<div class='col-md-12 hint-button-wrapper text-center mb-3'>
@@ -57,6 +61,7 @@
 								</div>
 							{% endfor %}
 						</div>
+
 						<div class="row challenge-files text-center pb-3">
 							{% for file in files %}
 								<div class='col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block'>
@@ -80,15 +85,20 @@
 
 						<div class="row submit-row">
 							<div class="col-md-9 form-group">
-								<input class="form-control" type="text" name="answer" id="submission-input" placeholder="Flag"/>
-								<input id="challenge-id" type="hidden" value="{{ id }}">
+								<input id="challenge-id" type="hidden" value="{{ challenge.id }}">
+								{% block input %}
+									<input class="form-control" type="text" name="answer" id="submission-input" placeholder="Flag"/>
+								{% endblock %}
 							</div>
 							<div class="col-md-3 form-group key-submit">
-								<button type="submit" id="submit-key" tabindex="0"
-										class="btn btn-md btn-outline-secondary float-right">Submit
+								{% block submit %}
+								<button type="submit" id="submit-key" class="btn btn-md btn-outline-secondary float-right">
+									Submit
 								</button>
+								{% endblock %}
 							</div>
 						</div>
+
 						<div class="row notification-row">
 							<div class="col-md-12">
 								<div id="result-notification" class="alert alert-dismissable text-center w-100"
@@ -98,6 +108,7 @@
 							</div>
 						</div>
 					</div>
+
 					<div role="tabpanel" class="tab-pane fade" id="solves">
 						<div class="row">
 							<div class="col-md-12">
