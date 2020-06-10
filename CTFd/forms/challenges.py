@@ -2,10 +2,10 @@ from wtforms import (
     BooleanField,
     HiddenField,
     MultipleFileField,
+    SelectField,
     StringField,
-    TextAreaField,
     SubmitField,
-    SelectField
+    TextAreaField,
 )
 from wtforms.validators import InputRequired
 
