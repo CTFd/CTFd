@@ -28,9 +28,9 @@
 						<h3 class="challenge-value text-center">{{ value }}</h3>
 						<div class="challenge-tags text-center">
 							{% block tags %}
-							{% for tag in tags %}
-								<span class='badge badge-info challenge-tag'>{{ tag }}</span>
-							{% endfor %}
+								{% for tag in tags %}
+									<span class='badge badge-info challenge-tag'>{{ tag }}</span>
+								{% endfor %}
 							{% endblock %}
 						</div>
 						<span class="challenge-desc">{% block description %}{% endblock %}</span>

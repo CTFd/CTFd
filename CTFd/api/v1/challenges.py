@@ -1,6 +1,6 @@
 import datetime
 
-from flask import abort, request, url_for
+from flask import abort, render_template, request, url_for
 from flask_restx import Namespace, Resource
 from sqlalchemy.sql import and_
 
@@ -30,6 +30,7 @@ from CTFd.utils.decorators.visibility import (
 )
 from CTFd.utils.logging import log
 from CTFd.utils.modes import generate_account_url, get_model
+from CTFd.utils.pages import build_html
 from CTFd.utils.security.signing import serialize
 from CTFd.utils.user import authed, get_current_team, get_current_user, is_admin
 
@@ -273,6 +274,15 @@ class Challenge(Resource):
         response["files"] = files
         response["tags"] = tags
         response["hints"] = hints
+
+        response["view"] = render_template(
+            chal_class.templates["view"].lstrip("/"),
+            solves=solves,
+            files=files,
+            tags=tags,
+            hints=[Hints(**h) for h in hints],
+            description=build_html(chal.description),
+        )
 
         db.session.close()
         return {"success": True, "data": response}
