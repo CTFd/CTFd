@@ -8,14 +8,18 @@
 				<li class="nav-item">
 					<a class="nav-link active" href="#challenge">Challenge</a>
 				</li>
-				{% if solves == None %}
-				{% else %}
-					<li class="nav-item">
-						<a class="nav-link challenge-solves" href="#solves">
-							{{ solves }} {% if solves > 1 %}Solves{% else %}Solves{% endif %}
-						</a>
-					</li>
+				{% block solves %}
+				{% if solves is defined %}
+					{% if solves == None %}
+					{% else %}
+						<li class="nav-item">
+							<a class="nav-link challenge-solves" href="#solves">
+								{{ solves }} {% if solves > 1 %}Solves{% else %}Solves{% endif %}
+							</a>
+						</li>
+					{% endif %}
 				{% endif %}
+				{% endblock %}
 			</ul>
 			<div role="tabpanel">
 				<div class="tab-content">
@@ -23,11 +27,13 @@
 						<h2 class='challenge-name text-center pt-3'>{{ name }}</h2>
 						<h3 class="challenge-value text-center">{{ value }}</h3>
 						<div class="challenge-tags text-center">
+							{% block tags %}
 							{% for tag in tags %}
 								<span class='badge badge-info challenge-tag'>{{ tag }}</span>
 							{% endfor %}
+							{% endblock %}
 						</div>
-						<span class="challenge-desc">{{ description | safe }}</span>
+						<span class="challenge-desc">{% block description %}{% endblock %}</span>
 						<div class="challenge-hints hint-row row">
 							{% for hint in hints %}
 								<div class='col-md-12 hint-button-wrapper text-center mb-3'>
