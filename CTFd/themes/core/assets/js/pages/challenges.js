@@ -51,6 +51,9 @@ const displayChal = chal => {
 
     $("#challenge-window").append(responses[0].data.view);
 
+    $("#challenge-window #challenge-input").addClass("form-control");
+    $("#challenge-window #challenge-submit").addClass("btn btn-md btn-outline-secondary float-right");
+
     $(".challenge-solves").click(function(event) {
       getSolves($("#challenge-id").val());
     });
@@ -61,8 +64,8 @@ const displayChal = chal => {
 
     // Handle modal toggling
     $("#challenge-window").on("hide.bs.modal", function(event) {
-      $("#submission-input").removeClass("wrong");
-      $("#submission-input").removeClass("correct");
+      $("#challenge-input").removeClass("wrong");
+      $("#challenge-input").removeClass("correct");
       $("#incorrect-key").slideUp();
       $("#correct-key").slideUp();
       $("#already-solved").slideUp();
@@ -73,10 +76,10 @@ const displayChal = chal => {
       loadHint($(this).data("hint-id"));
     });
 
-    $("#submit-key").click(function(event) {
+    $("#challenge-submit").click(function(event) {
       event.preventDefault();
-      $("#submit-key").addClass("disabled-button");
-      $("#submit-key").prop("disabled", true);
+      $("#challenge-submit").addClass("disabled-button");
+      $("#challenge-submit").prop("disabled", true);
       CTFd._internal.challenge
         .submit()
         .then(renderSubmissionResponse)
@@ -84,25 +87,9 @@ const displayChal = chal => {
         .then(markSolves);
     });
 
-    $("#submission-input").keyup(event => {
+    $("#challenge-input").keyup(event => {
       if (event.keyCode == 13) {
-        $("#submit-key").click();
-      }
-    });
-
-    $(".input-field").bind({
-      focus: function() {
-        $(this)
-          .parent()
-          .addClass("input--filled");
-      },
-      blur: function() {
-        const $this = $(this);
-        if ($this.val() === "") {
-          $this.parent().removeClass("input--filled");
-          const $label = $this.siblings(".input-label");
-          $label.removeClass("input--hide");
-        }
+        $("#challenge-submit").click();
       }
     });
 
@@ -120,7 +107,7 @@ function renderSubmissionResponse(response) {
 
   const result_message = $("#result-message");
   const result_notification = $("#result-notification");
-  const answer_input = $("#submission-input");
+  const answer_input = $("#challenge-input");
   result_notification.removeClass();
   result_message.text(result.message);
 
@@ -192,8 +179,8 @@ function renderSubmissionResponse(response) {
   }
   setTimeout(function() {
     $(".alert").slideUp();
-    $("#submit-key").removeClass("disabled-button");
-    $("#submit-key").prop("disabled", false);
+    $("#challenge-submit").removeClass("disabled-button");
+    $("#challenge-submit").prop("disabled", false);
   }, 3000);
 }
 
@@ -340,9 +327,9 @@ $(() => {
     }
   });
 
-  $("#submission-input").keyup(function(event) {
+  $("#challenge-input").keyup(function(event) {
     if (event.keyCode == 13) {
-      $("#submit-key").click();
+      $("#challenge-submit").click();
     }
   });
 
@@ -361,8 +348,8 @@ $(() => {
   });
 
   $("#challenge-window").on("hide.bs.modal", function(event) {
-    $("#submission-input").removeClass("wrong");
-    $("#submission-input").removeClass("correct");
+    $("#challenge-input").removeClass("wrong");
+    $("#challenge-input").removeClass("correct");
     $("#incorrect-key").slideUp();
     $("#correct-key").slideUp();
     $("#already-solved").slideUp();

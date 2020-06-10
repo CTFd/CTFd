@@ -5,11 +5,12 @@
 {% endblock %}
 
 {% block input %}
-    <input class="form-control" type="text" name="answer" id="submission-input" placeholder="Flag"/>
+    <input id="challenge-id" class="challenge-id" type="hidden" value="{{ challenge.id }}">
+    <input id="challenge-input" class="challenge-input" type="text" name="answer" placeholder="Flag"/>
 {% endblock %}
 
 {% block submit %}
-    <button type="submit" id="submit-key" class="btn btn-md btn-outline-secondary float-right">
+    <button id="challenge-submit" class="challenge-submit" type="submit">
         Submit
     </button>
 {% endblock %}

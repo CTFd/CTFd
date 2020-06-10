@@ -36,7 +36,7 @@
 							{% endblock %}
 						</div>
 
-						<span class="challenge-desc">{% block description %}{% endblock %}</span>
+						<span class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</span>
 
 						<div class="challenge-hints hint-row row">
 							{% for hint in hints %}
@@ -85,8 +85,8 @@
 
 						<div class="row submit-row">
 							<div class="col-md-9 form-group">
-								<input id="challenge-id" type="hidden" value="{{ challenge.id }}">
 								{% block input %}
+									<input id="challenge-id" type="hidden" value="{{ challenge.id }}">
 									<input class="form-control" type="text" name="answer" id="submission-input" placeholder="Flag"/>
 								{% endblock %}
 							</div>

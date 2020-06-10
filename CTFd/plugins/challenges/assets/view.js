@@ -15,7 +15,7 @@ CTFd._internal.challenge.postRender = function () { }
 
 CTFd._internal.challenge.submit = function (preview) {
     var challenge_id = parseInt(CTFd.lib.$('#challenge-id').val())
-    var submission = CTFd.lib.$('#submission-input').val()
+    var submission = CTFd.lib.$('#challenge-input').val()
 
     var body = {
         'challenge_id': challenge_id,
