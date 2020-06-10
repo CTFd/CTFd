@@ -1,12 +1,8 @@
-import os
-
-from flask import current_app as app
-from flask import render_template, render_template_string, request, url_for
+from flask import render_template, request, url_for
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Flags, Solves
 from CTFd.plugins.challenges import get_chal_class
-from CTFd.utils import binary_type
 from CTFd.utils.decorators import admins_only
 
 
