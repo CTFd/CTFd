@@ -23,7 +23,11 @@ def get_current_user():
         if session_hash:
             if session_hash != hmac(user.password):
                 logout_user()
-                abort(redirect(url_for("auth.login", next=request.full_path)))
+                if request.content_type == "application/json":
+                    error = 401
+                else:
+                    error = redirect(url_for("auth.login", next=request.full_path))
+                abort(error)
 
         return user
     else:

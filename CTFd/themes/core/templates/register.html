@@ -12,13 +12,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-6 offset-md-3">
-			{% for error in errors %}
-				<div class="alert alert-danger alert-dismissable" role="alert">
-				  <span class="sr-only">Error:</span>
-				  {{ error }}
-				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-				</div>
-			{% endfor %}
+			{% include "components/errors.html" %}
 
 			{% if integrations.mlc() %}
 			<a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('auth.oauth_login') }}">
@@ -28,28 +22,28 @@
 			<hr>
 			{% endif %}
 
-			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+			<form method="post" accept-charset="utf-8" autocomplete="off" role="form">
 				<div class="form-group">
-					<label for="name-input">
+					<label>
 						User Name
 					</label>
-					<input class="form-control" type="text" name="name" id="name-input" {% if name %}value="{{ name }}"{% endif %} />
+					<input class="form-control" type="text" name="name" {% if name %}value="{{ name }}"{% endif %} />
 				</div>
 				<div class="form-group">
-					<label for="email-input">
+					<label>
 						Email
 					</label>
-					<input class="form-control" type="text" name="email" id="email-input" {% if email %}value="{{ email }}"{% endif %} />
+					<input class="form-control" type="text" name="email" {% if email %}value="{{ email }}"{% endif %} />
 				</div>
 				<div class="form-group">
-					<label for="password-input">
+					<label>
 						Password
 					</label>
-					<input class="form-control" type="password" name="password" id="password-input" {% if password %}value="{{ password }}"{% endif %}/>
+					<input class="form-control" type="password" name="password" {% if password %}value="{{ password }}"{% endif %}/>
 				</div>
 				<div class="row pt-3">
 					<div class="col-md-12">
-						<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
+						<button type="submit" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
 					</div>
 				</div>
 				<input type="hidden" name="nonce" value="{{ nonce }}">

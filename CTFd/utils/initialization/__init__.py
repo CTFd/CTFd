@@ -57,6 +57,10 @@ def init_template_filters(app):
 
 
 def init_template_globals(app):
+    from CTFd.constants.config import Configs
+    from CTFd.constants.plugins import Plugins
+    from CTFd.constants.sessions import Session
+
     app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
     app.jinja_env.globals.update(can_send_mail=can_send_mail)
@@ -87,6 +91,9 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_current_user_attrs=get_current_user_attrs)
     app.jinja_env.globals.update(get_current_team_attrs=get_current_team_attrs)
     app.jinja_env.globals.update(get_ip=get_ip)
+    app.jinja_env.globals.update(Configs=Configs)
+    app.jinja_env.globals.update(Plugins=Plugins)
+    app.jinja_env.globals.update(Session=Session)
 
 
 def init_logs(app):
@@ -150,12 +157,6 @@ def init_events(app):
 
 
 def init_request_processors(app):
-    @app.context_processor
-    def inject_user():
-        if session:
-            return dict(session)
-        return dict()
-
     @app.url_defaults
     def inject_theme(endpoint, values):
         if "theme" not in values and app.url_map.is_endpoint_expecting(

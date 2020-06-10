@@ -266,6 +266,16 @@ class Users(db.Model):
         elif user_mode == "users":
             return self.id
 
+    @hybrid_property
+    def account(self):
+        from CTFd.utils import get_config
+
+        user_mode = get_config("user_mode")
+        if user_mode == "teams":
+            return self.team
+        elif user_mode == "users":
+            return self
+
     @property
     def solves(self):
         return self.get_solves(admin=False)
