@@ -13,8 +13,6 @@ from CTFd.utils.security.signing import hmac
 
 def login_user(user):
     session["id"] = user.id
-    session["name"] = user.name
-    session["email"] = user.email
     session["nonce"] = generate_nonce()
     session["hash"] = hmac(user.password)
 
@@ -24,8 +22,6 @@ def login_user(user):
 
 def update_user(user):
     session["id"] = user.id
-    session["name"] = user.name
-    session["email"] = user.email
     session["hash"] = hmac(user.password)
 
     # Clear out any currently cached user attributes

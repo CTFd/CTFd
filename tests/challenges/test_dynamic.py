@@ -3,6 +3,7 @@
 
 from CTFd.models import Challenges
 from CTFd.plugins.dynamic_challenges import DynamicChallenge, DynamicValueChallenge
+from CTFd.utils.security.signing import hmac
 from tests.helpers import (
     FakeRequest,
     create_ctfd,
@@ -206,15 +207,15 @@ def test_dynamic_challenge_loses_value_properly():
             name = "user{}".format(team_id)
             email = "user{}@ctfd.io".format(team_id)
             # We need to bypass rate-limiting so gen_user instead of register_user
-            gen_user(app.db, name=name, email=email)
+            user = gen_user(app.db, name=name, email=email)
+            user_id = user.id
 
             with app.test_client() as client:
                 # We need to bypass rate-limiting so creating a fake user instead of logging in
                 with client.session_transaction() as sess:
-                    sess["id"] = team_id
-                    sess["name"] = name
-                    sess["email"] = email
+                    sess["id"] = user_id
                     sess["nonce"] = "fake-nonce"
+                    sess["hash"] = hmac(user.password)
 
                 data = {"submission": "flag", "challenge_id": 1}
 
@@ -299,18 +300,19 @@ def test_dynamic_challenge_value_isnt_affected_by_hidden_users():
             user = gen_user(app.db, name=name, email=email)
             user.hidden = True
             app.db.session.commit()
+            user_id = user.id
 
             with app.test_client() as client:
                 # We need to bypass rate-limiting so creating a fake user instead of logging in
                 with client.session_transaction() as sess:
-                    sess["id"] = team_id
-                    sess["name"] = name
-                    sess["email"] = email
+                    sess["id"] = user_id
                     sess["nonce"] = "fake-nonce"
+                    sess["hash"] = hmac(user.password)
 
                 data = {"submission": "flag", "challenge_id": 1}
 
                 r = client.post("/api/v1/challenges/attempt", json=data)
+                assert r.status_code == 200
                 resp = r.get_json()["data"]
                 assert resp["status"] == "correct"
 

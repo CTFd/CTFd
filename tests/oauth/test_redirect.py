@@ -71,9 +71,8 @@ def test_oauth_configured_flow():
         client = login_with_mlc(app)
         with client.session_transaction() as sess:
             assert sess["id"]
-            assert sess["name"]
-            assert sess["email"]
             assert sess["nonce"]
+            assert sess["hash"]
     destroy_ctfd(app)
 
 

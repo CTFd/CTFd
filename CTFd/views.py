@@ -35,7 +35,7 @@ from CTFd.utils.email import (
     DEFAULT_VERIFICATION_EMAIL_BODY,
     DEFAULT_VERIFICATION_EMAIL_SUBJECT,
 )
-from CTFd.utils.helpers import get_errors
+from CTFd.utils.helpers import get_errors, get_infos, markup
 from CTFd.utils.modes import USERS_MODE
 from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
@@ -272,6 +272,8 @@ def notifications():
 @views.route("/settings", methods=["GET"])
 @authed_only
 def settings():
+    infos = get_infos()
+
     user = get_current_user()
     name = user.name
     email = user.email
@@ -282,7 +284,17 @@ def settings():
     tokens = UserTokens.query.filter_by(user_id=user.id).all()
 
     prevent_name_change = get_config("prevent_name_change")
-    confirm_email = get_config("verify_emails") and not user.verified
+
+    if get_config("verify_emails") and not user.verified:
+        confirm_url = markup(url_for("auth.confirm"))
+        infos.append(
+            markup(
+                "Your email address isn't confirmed!<br>"
+                "Please check your email to confirm your email address.<br><br>"
+                f'To have the confirmation email resent please <a href="{confirm_url}">click here</a>.'
+            )
+        )
+
     return render_template(
         "settings.html",
         name=name,
@@ -292,7 +304,7 @@ def settings():
         country=country,
         tokens=tokens,
         prevent_name_change=prevent_name_change,
-        confirm_email=confirm_email,
+        infos=infos,
     )
 
 
