@@ -148,11 +148,11 @@ def create_app(config="CTFd.config.Config"):
     with app.app_context():
         app.config.from_object(config)
 
-        theme_loader = ThemeLoader(
+        app.theme_loader = ThemeLoader(
             os.path.join(app.root_path, "themes"), followlinks=True
         )
         # Weird nested solution for accessing plugin templates
-        plugin_loader = jinja2.PrefixLoader(
+        app.plugin_loader = jinja2.PrefixLoader(
             {
                 "plugins": jinja2.FileSystemLoader(
                     searchpath=os.path.join(app.root_path, "plugins"), followlinks=True
@@ -160,7 +160,7 @@ def create_app(config="CTFd.config.Config"):
             }
         )
         # Load from themes first but fallback to loading from the plugin folder
-        app.jinja_loader = jinja2.ChoiceLoader([theme_loader, plugin_loader])
+        app.jinja_loader = jinja2.ChoiceLoader([app.theme_loader, app.plugin_loader])
 
         from CTFd.models import (  # noqa: F401
             db,
