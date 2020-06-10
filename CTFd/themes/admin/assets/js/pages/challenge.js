@@ -132,15 +132,9 @@ function renderSubmissionResponse(response, cb) {
 function loadChalTemplate(challenge) {
   CTFd._internal.challenge = {};
   $.getScript(CTFd.config.urlRoot + challenge.scripts.view, function() {
-    $.get(CTFd.config.urlRoot + challenge.templates.create, function(
-      template_data
-    ) {
-      const template = nunjucks.compile(template_data);
+      let template_data = challenge.create;
       $("#create-chal-entry-div").html(
-        template.render({
-          nonce: CTFd.config.csrfNonce,
-          script_root: CTFd.config.urlRoot
-        })
+        template_data
       );
 
       $.getScript(CTFd.config.urlRoot + challenge.scripts.create, function() {
@@ -169,7 +163,6 @@ function loadChalTemplate(challenge) {
             });
         });
       });
-    });
   });
 }
 

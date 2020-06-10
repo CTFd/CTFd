@@ -144,6 +144,7 @@ class ChallengeTypes(Resource):
                 "name": challenge_class.name,
                 "templates": challenge_class.templates,
                 "scripts": challenge_class.scripts,
+                "create": render_template(challenge_class.templates["create"].lstrip("/"))
             }
         return {"success": True, "data": response}
 

@@ -50,14 +50,10 @@ def challenges_detail(challenge_id):
     flags = Flags.query.filter_by(challenge_id=challenge.id).all()
     challenge_class = get_chal_class(challenge.type)
 
-    with open(
-        os.path.join(app.root_path, challenge_class.templates["update"].lstrip("/")),
-        "rb",
-    ) as update:
-        tpl = update.read()
-        if isinstance(tpl, binary_type):
-            tpl = tpl.decode("utf-8")
-        update_j2 = render_template_string(tpl, challenge=challenge)
+    update_j2 = render_template(
+        challenge_class.templates["update"].lstrip("/"),
+        challenge=challenge
+    )
 
     update_script = url_for(
         "views.static_html", route=challenge_class.scripts["update"].lstrip("/")
