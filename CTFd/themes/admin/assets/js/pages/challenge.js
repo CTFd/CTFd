@@ -132,42 +132,33 @@ function renderSubmissionResponse(response, cb) {
 function loadChalTemplate(challenge) {
   CTFd._internal.challenge = {};
   $.getScript(CTFd.config.urlRoot + challenge.scripts.view, function() {
-    $.get(CTFd.config.urlRoot + challenge.templates.create, function(
-      template_data
-    ) {
-      const template = nunjucks.compile(template_data);
-      $("#create-chal-entry-div").html(
-        template.render({
-          nonce: CTFd.config.csrfNonce,
-          script_root: CTFd.config.urlRoot
-        })
-      );
+    let template_data = challenge.create;
+    $("#create-chal-entry-div").html(template_data);
 
-      $.getScript(CTFd.config.urlRoot + challenge.scripts.create, function() {
-        $("#create-chal-entry-div form").submit(function(event) {
-          event.preventDefault();
-          const params = $("#create-chal-entry-div form").serializeJSON();
-          CTFd.fetch("/api/v1/challenges", {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(params)
+    $.getScript(CTFd.config.urlRoot + challenge.scripts.create, function() {
+      $("#create-chal-entry-div form").submit(function(event) {
+        event.preventDefault();
+        const params = $("#create-chal-entry-div form").serializeJSON();
+        CTFd.fetch("/api/v1/challenges", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(params)
+        })
+          .then(function(response) {
+            return response.json();
           })
-            .then(function(response) {
-              return response.json();
-            })
-            .then(function(response) {
-              if (response.success) {
-                $("#challenge-create-options #challenge_id").val(
-                  response.data.id
-                );
-                $("#challenge-create-options").modal();
-              }
-            });
-        });
+          .then(function(response) {
+            if (response.success) {
+              $("#challenge-create-options #challenge_id").val(
+                response.data.id
+              );
+              $("#challenge-create-options").modal();
+            }
+          });
       });
     });
   });
@@ -270,87 +261,57 @@ $(() => {
       $.getScript(
         CTFd.config.urlRoot + challenge_data.type_data.scripts.view,
         function() {
-          $.get(
-            CTFd.config.urlRoot + challenge_data.type_data.templates.view,
-            function(template_data) {
-              $("#challenge-window").empty();
-              var template = nunjucks.compile(template_data);
-              // window.challenge.data = challenge_data;
-              // window.challenge.preRender();
-              challenge.data = challenge_data;
-              challenge.preRender();
+          $("#challenge-window").empty();
 
-              challenge_data["description"] = challenge.render(
-                challenge_data["description"]
-              );
-              challenge_data["script_root"] = CTFd.config.urlRoot;
+          $("#challenge-window").append(challenge_data.view);
 
-              $("#challenge-window").append(template.render(challenge_data));
-
-              $(".challenge-solves").click(function(e) {
-                getsolves($("#challenge-id").val());
-              });
-              $(".nav-tabs a").click(function(e) {
-                e.preventDefault();
-                $(this).tab("show");
-              });
-
-              // Handle modal toggling
-              $("#challenge-window").on("hide.bs.modal", function(event) {
-                $("#submission-input").removeClass("wrong");
-                $("#submission-input").removeClass("correct");
-                $("#incorrect-key").slideUp();
-                $("#correct-key").slideUp();
-                $("#already-solved").slideUp();
-                $("#too-fast").slideUp();
-              });
-
-              $(".load-hint").on("click", function(event) {
-                loadHint($(this).data("hint-id"));
-              });
-
-              $("#submit-key").click(function(e) {
-                e.preventDefault();
-                $("#submit-key").addClass("disabled-button");
-                $("#submit-key").prop("disabled", true);
-                CTFd._internal.challenge
-                  .submit(true)
-                  .then(renderSubmissionResponse);
-                // Preview passed as true
-              });
-
-              $("#submission-input").keyup(function(event) {
-                if (event.keyCode == 13) {
-                  $("#submit-key").click();
-                }
-              });
-
-              $(".input-field").bind({
-                focus: function() {
-                  $(this)
-                    .parent()
-                    .addClass("input--filled");
-                  $label = $(this).siblings(".input-label");
-                },
-                blur: function() {
-                  if ($(this).val() === "") {
-                    $(this)
-                      .parent()
-                      .removeClass("input--filled");
-                    $label = $(this).siblings(".input-label");
-                    $label.removeClass("input--hide");
-                  }
-                }
-              });
-
-              challenge.postRender();
-              window.location.replace(
-                window.location.href.split("#")[0] + "#preview"
-              );
-
-              $("#challenge-window").modal();
-            }
+          $("#challenge-window #challenge-input").addClass("form-control");
+          $("#challenge-window #challenge-submit").addClass(
+            "btn btn-md btn-outline-secondary float-right"
           );
+
+          $(".challenge-solves").hide();
+          $(".nav-tabs a").click(function(e) {
+            e.preventDefault();
+            $(this).tab("show");
+          });
+
+          // Handle modal toggling
+          $("#challenge-window").on("hide.bs.modal", function(event) {
+            $("#challenge-input").removeClass("wrong");
+            $("#challenge-input").removeClass("correct");
+            $("#incorrect-key").slideUp();
+            $("#correct-key").slideUp();
+            $("#already-solved").slideUp();
+            $("#too-fast").slideUp();
+          });
+
+          $(".load-hint").on("click", function(event) {
+            loadHint($(this).data("hint-id"));
+          });
+
+          $("#challenge-submit").click(function(e) {
+            e.preventDefault();
+            $("#challenge-submit").addClass("disabled-button");
+            $("#challenge-submit").prop("disabled", true);
+            CTFd._internal.challenge
+              .submit(true)
+              .then(renderSubmissionResponse);
+            // Preview passed as true
+          });
+
+          $("#challenge-input").keyup(function(event) {
+            if (event.keyCode == 13) {
+              $("#challenge-submit").click();
+            }
+          });
+
+          challenge.postRender();
+          window.location.replace(
+            window.location.href.split("#")[0] + "#preview"
+          );
+
+          $("#challenge-window").modal();
         }
       );
     });
