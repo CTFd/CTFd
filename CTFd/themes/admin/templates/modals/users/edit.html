@@ -1,6 +1,5 @@
-{% with form = Forms.users.UserCreateForm(obj=user) %}
+{% with form = Forms.users.UserEditForm(obj=user) %}
 <form id="user-info-edit-form">
-	<input type="hidden" name="id">
 	<div class="form-group">
 		{{ form.name.label }}
 		{{ form.name(class="form-control") }}

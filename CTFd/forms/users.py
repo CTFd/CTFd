@@ -23,7 +23,7 @@ class UserSearchForm(BaseForm):
     submit = SubmitField("Search")
 
 
-class UserCreateForm(BaseForm):
+class UserEditForm(BaseForm):
     name = StringField("User Name", validators=[InputRequired()])
     email = EmailField("Email", validators=[InputRequired()])
     password = PasswordField("Password")
@@ -35,3 +35,7 @@ class UserCreateForm(BaseForm):
     hidden = BooleanField("Hidden")
     banned = BooleanField("Banned")
     submit = SubmitField("Submit")
+
+
+class UserCreateForm(UserEditForm):
+    notify = BooleanField("Email account credentials to user", default=True)
