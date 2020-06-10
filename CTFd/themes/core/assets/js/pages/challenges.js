@@ -52,7 +52,9 @@ const displayChal = chal => {
     $("#challenge-window").append(responses[0].data.view);
 
     $("#challenge-window #challenge-input").addClass("form-control");
-    $("#challenge-window #challenge-submit").addClass("btn btn-md btn-outline-secondary float-right");
+    $("#challenge-window #challenge-submit").addClass(
+      "btn btn-md btn-outline-secondary float-right"
+    );
 
     $(".challenge-solves").click(function(event) {
       getSolves($("#challenge-id").val());

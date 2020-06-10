@@ -51,8 +51,7 @@ def challenges_detail(challenge_id):
     challenge_class = get_chal_class(challenge.type)
 
     update_j2 = render_template(
-        challenge_class.templates["update"].lstrip("/"),
-        challenge=challenge
+        challenge_class.templates["update"].lstrip("/"), challenge=challenge
     )
 
     update_script = url_for(
