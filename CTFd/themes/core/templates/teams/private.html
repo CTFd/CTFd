@@ -14,11 +14,11 @@
 					</button>
 				</div>
 				<div class="modal-body clearfix">
-					{% with form = Forms.teams.TeamEditForm(country=team.country ) %}
+					{% with form = Forms.teams.TeamSettingsForm(obj=team) %}
 					<form id="team-info-form" method="POST">
 						<div class="form-group">
 							{{ form.name.label }}
-							{{ form.name(class="form-control", value=team.name) }}
+							{{ form.name(class="form-control") }}
 						</div>
 						<div class="form-group">
 							{{ form.confirm.label }}
@@ -30,15 +30,15 @@
 						</div>
 						<div class="form-group">
 							{{ form.website.label }}
-							{{ form.website(class="form-control", value=team.website) }}
+							{{ form.website(class="form-control") }}
 						</div>
 						<div class="form-group">
 							{{ form.affiliation.label }}
-							{{ form.affiliation(class="form-control", value=team.affiliation) }}
+							{{ form.affiliation(class="form-control") }}
 						</div>
 						<div class="form-group">
 							{{ form.country.label }}
-							{{ form.country(class="form-control custom-select", value=team.country) }}
+							{{ form.country(class="form-control custom-select") }}
 						</div>
 						<div id="results">
 

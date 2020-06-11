@@ -14,7 +14,7 @@
 			<div class="col-md-6 offset-md-3">
 				{% include "components/errors.html" %}
 
-				{% with form = Forms.teams.TeamCreateForm() %}
+				{% with form = Forms.teams.TeamRegisterForm() %}
 				<form method="POST">
 					<div class="form-group">
 						{{ form.name.label }}

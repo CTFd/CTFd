@@ -1,5 +1,5 @@
-from wtforms import PasswordField, SelectField, StringField, SubmitField
-from wtforms.fields.html5 import URLField
+from wtforms import PasswordField, SelectField, StringField, SubmitField, BooleanField
+from wtforms.fields.html5 import URLField, EmailField
 from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
@@ -12,13 +12,13 @@ class TeamJoinForm(BaseForm):
     submit = SubmitField("Join")
 
 
-class TeamCreateForm(BaseForm):
+class TeamRegisterForm(BaseForm):
     name = StringField("Team Name", validators=[InputRequired()])
     password = PasswordField("Team Password", validators=[InputRequired()])
     submit = SubmitField("Create")
 
 
-class TeamEditForm(BaseForm):
+class TeamSettingsForm(BaseForm):
     name = StringField("Team Name")
     confirm = PasswordField("Current Password")
     password = PasswordField("Team Password")
@@ -43,3 +43,19 @@ class TeamSearchForm(BaseForm):
     )
     q = StringField("Parameter", validators=[InputRequired()])
     submit = SubmitField("Search")
+
+
+class TeamCreateForm(BaseForm):
+    name = StringField("Team Name", validators=[InputRequired()])
+    email = EmailField("Email")
+    password = PasswordField("Password")
+    website = URLField("Website")
+    affiliation = StringField("Affiliation")
+    country = SelectField("Country", choices=SELECT_COUNTRIES_LIST)
+    hidden = BooleanField("Hidden")
+    banned = BooleanField("Banned")
+    submit = SubmitField("Submit")
+
+
+class TeamEditForm(TeamCreateForm):
+    pass
