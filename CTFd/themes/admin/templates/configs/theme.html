@@ -1,4 +1,17 @@
 <div role="tabpanel" class="tab-pane config-section" id="theme">
+	<div class="modal fade" role="document" id="theme-settings-modal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Theme Settings</h5>
+				</div>
+				<div class="modal-body">
+				{% include "config.html" ignore missing %}
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<form method="POST" autocomplete="off" class="w-100">
 		<div class="form-group">
 			<label for="ctf_theme">
@@ -14,21 +27,6 @@
 				{% endfor %}
 			</select>
 		</div>
-
-		{# <div class="form-group">
-			<label for="ctf_theme">
-				Theme Settings
-			</label>
-			<select class="form-control custom-select" id="ctf_theme" name="ctf_theme">
-				<option>{{ ctf_theme }}</option>
-				{% for theme in themes %}
-					<option>{{ theme }}</option>
-				{% endfor %}
-			</select>
-			<small class="form-text text-muted">
-				Settings specific to the theme
-			</small>
-		</div> #}
 
 		<div class="form-group">
 			<label>
@@ -63,6 +61,21 @@
 				</small>
 			</label>
 			<textarea class="form-control" id="theme-footer" name="theme_footer" rows="7">{{ theme_footer or "" }}</textarea>
+		</div>
+
+		<div class="form-group">
+			<label for="ctf_theme">
+				Theme Settings
+			</label>
+			<div class="d-block pb-2">
+				<button type="button" class="btn-sm btn-primary" id="theme-settings-button">
+					Settings Editor
+				</button>
+			</div>
+			<textarea class="form-control" id="theme-settings" name="theme_settings" rows="7">{{ theme_settings or "" }}</textarea>
+			<small class="form-text text-muted">
+				Settings specific to the theme
+			</small>
 		</div>
 
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>

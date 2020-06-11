@@ -62,6 +62,23 @@ const displayChal = chal => {
 
     $("#challenge-window").append(template.render(challenge_data));
 
+    let modal = $("#challenge-window").find(".modal-dialog");
+    if (window.init.settings && window.init.settings.challenge_window_size) {
+      switch (window.init.settings.challenge_window_size) {
+        case "sm":
+          modal.addClass("modal-sm");
+          break;
+        case "lg":
+          modal.addClass("modal-lg");
+          break;
+        case "xl":
+          modal.addClass("modal-xl");
+          break;
+        default:
+          break;
+      }
+    }
+
     $(".challenge-solves").click(function(event) {
       getSolves($("#challenge-id").val());
     });
