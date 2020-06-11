@@ -1,19 +1,25 @@
-2.5.0 /
+2.5.0 / 2020-06-04
 ==================
 
 **General**
 * Use a session invalidation strategy inspired by Django. Newly generated user sessions will now include a HMAC of the user's password. When the user's password is changed by someone other than the user the previous HMACs will no longer be valid and the user will be logged out when they next attempt to perform an action.
+* A user and team's place, and score are now cached and invalidated on score changes.
 
 **API**
 * Add `/api/v1/challenges?view=admin` to allow admin users to see all challenges regardless of their visibility state
 * Add `/api/v1/users?view=admin` to allow admin users to see all users regardless of their hidden/banned state
 * Add `/api/v1/teams?view=admin` to allow admin users to see all teams regardless of their hidden/banned state
+* The scoreboard endpoint `/api/v1/scoreboard` is now significantly more performant (20x) due to better response generation
+* The top scoreboard endpoint `/api/v1/scoreboard/top/<count>` is now more performant (3x) due to better response generation
+* The scoreboard endpoint `/api/v1/scoreboard` will no longer show hidden/banned users in a non-hidden team
 
 **Deployment**
 * `docker-compose` now provides a basic nginx configuration and deploys nginx on port 80
+* `Dockerfile` now installs `python3` and `python3-dev` instead of `python` and `python-dev` because Alpine no longer provides those dependencies
 
 **Miscellaneous**
 * The `get_config` and `get_page` config utilities now use SQLAlchemy Core instead of SQLAlchemy ORM for slight speedups
+* The `get_team_standings` and `get_user_standings` functions now return more data (id, oauth_id, name, score for regular users and banned, hidden as well for admins)
 * Update Flask-Migrate to 2.5.3 and regenerate the migration environment. Fixes using `%` signs in database passwords.
 
 
