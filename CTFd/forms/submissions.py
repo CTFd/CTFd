@@ -1,7 +1,7 @@
-from wtforms import SelectField, StringField, SubmitField
+from wtforms import SelectField, StringField
 from wtforms.validators import InputRequired
 
-from CTFd.forms import BaseForm
+from CTFd.forms import BaseForm, SubmitField
 
 
 class SubmissionSearchForm(BaseForm):

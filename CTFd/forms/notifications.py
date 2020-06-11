@@ -1,7 +1,7 @@
-from wtforms import BooleanField, RadioField, StringField, SubmitField, TextAreaField
+from wtforms import BooleanField, RadioField, StringField, TextAreaField
 from wtforms.validators import InputRequired
 
-from CTFd.forms import BaseForm
+from CTFd.forms import BaseForm, SubmitField
 
 
 class NotificationForm(BaseForm):

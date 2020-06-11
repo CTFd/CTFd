@@ -1,8 +1,8 @@
-from wtforms import BooleanField, PasswordField, SelectField, StringField, SubmitField
+from wtforms import BooleanField, PasswordField, SelectField, StringField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
-from CTFd.forms import BaseForm
+from CTFd.forms import BaseForm, SubmitField
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
 

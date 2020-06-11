@@ -1,7 +1,7 @@
-from wtforms import SubmitField, TextAreaField
+from wtforms import TextAreaField
 from wtforms.validators import InputRequired
 
-from CTFd.forms import BaseForm
+from CTFd.forms import BaseForm, SubmitField
 
 
 class SendEmailForm(BaseForm):

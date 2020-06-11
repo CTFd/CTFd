@@ -1,7 +1,7 @@
-from wtforms import RadioField, StringField, SubmitField, TextAreaField
+from wtforms import RadioField, StringField, TextAreaField
 from wtforms.fields.html5 import IntegerField
 
-from CTFd.forms import BaseForm
+from CTFd.forms import BaseForm, SubmitField
 
 
 class AwardCreationForm(BaseForm):
