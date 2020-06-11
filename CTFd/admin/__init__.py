@@ -163,17 +163,13 @@ def config():
     # Clear the config cache so that we don't get stale values
     clear_config()
 
-    database_tables = sorted(db.metadata.tables.keys())
-
     configs = Configs.query.all()
     configs = dict([(c.key, get_config(c.key)) for c in configs])
 
     themes = ctf_config.get_themes()
     themes.remove(get_config("ctf_theme"))
 
-    return render_template(
-        "admin/config.html", database_tables=database_tables, themes=themes, **configs
-    )
+    return render_template("admin/config.html", themes=themes, **configs)
 
 
 @admin.route("/admin/reset", methods=["GET", "POST"])

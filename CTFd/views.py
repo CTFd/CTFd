@@ -226,12 +226,7 @@ def setup():
                 cache.clear()
 
             return redirect(url_for("views.static_html"))
-        return render_template(
-            "setup.html",
-            nonce=session.get("nonce"),
-            state=serialize(generate_nonce()),
-            themes=config.get_themes(),
-        )
+        return render_template("setup.html", state=serialize(generate_nonce()))
     return redirect(url_for("views.static_html"))
 
 

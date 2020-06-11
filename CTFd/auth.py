@@ -17,7 +17,7 @@ from CTFd.utils.config.visibility import registration_visible
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators import ratelimit
 from CTFd.utils.decorators.visibility import check_registration_visibility
-from CTFd.utils.helpers import error_for, get_errors
+from CTFd.utils.helpers import error_for, get_errors, markup
 from CTFd.utils.logging import log
 from CTFd.utils.modes import TEAMS_MODE
 from CTFd.utils.security.auth import login_user, logout_user
@@ -93,6 +93,16 @@ def confirm(data=None):
 @auth.route("/reset_password/<data>", methods=["POST", "GET"])
 @ratelimit(method="POST", limit=10, interval=60)
 def reset_password(data=None):
+    if config.can_send_mail() is False:
+        return render_template(
+            "reset_password.html",
+            errors=[
+                markup(
+                    "This CTF is not configured to send email.<br> Please contact an organizer to have your password reset."
+                )
+            ],
+        )
+
     if data is not None:
         try:
             email_address = unserialize(data, max_age=1800)
@@ -141,12 +151,6 @@ def reset_password(data=None):
         user = Users.query.filter_by(email=email_address).first()
 
         get_errors()
-
-        if config.can_send_mail() is False:
-            return render_template(
-                "reset_password.html",
-                errors=["Email could not be sent due to server misconfiguration"],
-            )
 
         if not user:
             return render_template(

@@ -22,18 +22,15 @@
 			<hr>
 			{% endif %}
 
+			{% with form = Forms.auth.LoginForm() %}
 			<form method="post" accept-charset="utf-8" autocomplete="off">
 				<div class="form-group">
-					<label>
-						User Name or Email
-					</label>
-					<input class="form-control" type="text" name="name" />
+					<b>{{ form.name.label }}</b>
+					{{ form.name(class="form-control", value=name) }}
 				</div>
 				<div class="form-group">
-					<label>
-						Password
-					</label>
-					<input class="form-control" type="password" name="password" />
+					<b>{{ form.password.label }}</b>
+					{{ form.password(class="form-control", value=password) }}
 				</div>
 				<div class="row pt-3">
 					<div class="col-md-6">
@@ -42,13 +39,12 @@
 						</a>
 					</div>
 					<div class="col-md-6">
-						<button type="submit" class="btn btn-md btn-primary btn-outlined float-right">
-							Submit
-						</button>
+						{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}
 					</div>
 				</div>
-				<input type="hidden" name="nonce" value="{{ nonce }}">
+				{{ form.nonce() }}
 			</form>
+			{% endwith %}
 		</div>
 	</div>
 </div>

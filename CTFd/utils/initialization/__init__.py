@@ -60,6 +60,7 @@ def init_template_globals(app):
     from CTFd.constants.config import Configs
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
+    from CTFd.forms import Forms
 
     app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
@@ -94,6 +95,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(Configs=Configs)
     app.jinja_env.globals.update(Plugins=Plugins)
     app.jinja_env.globals.update(Session=Session)
+    app.jinja_env.globals.update(Forms=Forms)
 
 
 def init_logs(app):

@@ -9,67 +9,55 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
+				{% with form = Forms.notifications.NotificationForm() %}
 				<form method="POST" id="notifications_form">
 					<div class="form-group">
-						<label>
-							Title
-							<small class="form-text text-muted">
-								Notification title
-							</small>
-						</label>
-						<input class="form-control" type="text" name="title">
+						<b>{{ form.title.label }}</b>
+						{{ form.title(class="form-control") }}
+						<small class="form-text text-muted">
+							{{ form.title.description }}
+						</small>
 					</div>
 					<div class="form-group">
-						<label>
-							Content
-							<small class="form-text text-muted">
-								Notification contents can be made up of HTML
-							</small>
-						</label>
-						<textarea class="form-control" type="text" name="content" rows="3"></textarea>
+						<b>{{ form.content.label }}</b>
+						{{ form.content(class="form-control", rows="3") }}
+						<small class="form-text text-muted">
+							{{ form.content.description }}
+						</small>
 					</div>
 					<div class="form-row">
 						<div class="col">
 							<div class="form-group">
-								<label>
-									Type
-									<small class="form-text text-muted">
-										What type of notification users receive
-									</small>
-								</label>
+								<b>{{ form.type.label }}</b>
 							</div>
-							<div class="form-check form-check-inline pr-1">
-								<input class="form-check-input" type="radio" name="type" value="toast" id="type-radio-toast" checked>
-								<label class="form-check-label" for="type-radio-toast">Toast</label>
-							</div>
-							<div class="form-check form-check-inline pr-1">
-								<input class="form-check-input" type="radio" name="type" value="alert" id="type-radio-alert">
-								<label class="form-check-label" for="type-radio-alert">Alert</label>
-							</div>
-							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="radio" name="type" value="background" id="type-radio-bg">
-								<label class="form-check-label" for="type-radio-bg">Background</label>
-							</div>
+							{% for radio in form.type %}
+								<div class="form-check form-check-inline pr-1">
+									{{ radio(class="form-check-input") }}
+									{{ radio.label(class="form-check-label") }}
+								</div>
+							{% endfor %}
+							<small class="form-text text-muted">
+								{{ form.type.description }}
+							</small>
 						</div>
 						<div class="col">
 							<div class="form-group">
-								<label>
-									Sound
-									<small class="form-text text-muted">
-										Play sound for users
-									</small>
-								</label>
+								<b>{{ form.sound.label }}</b>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="checkbox" name="sound" value="true" id="sound-enable" checked>
-								<label class="form-check-label" for="sound-enable">Play Sound</label>
+								{{ form.sound(class="form-check-input") }}
+								{{ form.sound.label(class="form-check-label") }}
 							</div>
+							<small class="form-text text-muted">
+								{{ form.sound.description }}
+							</small>
 						</div>
 					</div>
 					<div class="float-right">
-						<button type="submit" class="btn btn-success text-center">Submit</button>
+						{{ form.submit(class="btn btn-success text-center") }}
 					</div>
 				</form>
+				{% endwith %}
 			</div>
 		</div>
 	</div>
