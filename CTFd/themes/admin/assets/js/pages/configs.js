@@ -251,6 +251,13 @@ $(() => {
     }
   );
 
+  // Handle refreshing codemirror when switching tabs.
+  // Better than the autorefresh approach b/c there's no flicker
+  $("a[href='#theme']").on("shown.bs.tab", function (e) {
+    theme_header_editor.refresh();
+    theme_footer_editor.refresh();
+  });
+
   insertTimezones($("#start-timezone"));
   insertTimezones($("#end-timezone"));
   insertTimezones($("#freeze-timezone"));
