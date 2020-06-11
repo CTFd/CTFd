@@ -1,10 +1,9 @@
-from wtforms import PasswordField, StringField, SubmitField, TextAreaField
-from wtforms.fields.html5 import EmailField
+from wtforms import SubmitField, TextAreaField
 from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
 
 
 class SendEmailForm(BaseForm):
-    message = TextAreaField("Message")
+    message = TextAreaField("Message", validators=[InputRequired()])
     submit = SubmitField("Send")

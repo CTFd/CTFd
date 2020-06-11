@@ -1,5 +1,5 @@
-from wtforms import PasswordField, SelectField, StringField, SubmitField, BooleanField
-from wtforms.fields.html5 import URLField, EmailField
+from wtforms import BooleanField, PasswordField, SelectField, StringField, SubmitField
+from wtforms.fields.html5 import EmailField, URLField
 from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm

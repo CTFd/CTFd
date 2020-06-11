@@ -1,12 +1,4 @@
-from wtforms import (
-    BooleanField,
-    HiddenField,
-    MultipleFileField,
-    SelectField,
-    StringField,
-    SubmitField,
-    TextAreaField,
-)
+from wtforms import MultipleFileField, SelectField, StringField, SubmitField
 from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
