@@ -9,7 +9,8 @@ from wtforms import (
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
-from CTFd.forms import BaseForm, SubmitField
+from CTFd.forms import BaseForm
+from CTFd.forms.fields import SubmitField
 from CTFd.utils.config import get_themes
 
 

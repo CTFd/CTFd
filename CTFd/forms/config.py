@@ -2,7 +2,8 @@ from wtforms import BooleanField, SelectField, StringField
 from wtforms.fields.html5 import IntegerField
 from wtforms.widgets.html5 import NumberInput
 
-from CTFd.forms import BaseForm, SubmitField
+from CTFd.forms import BaseForm
+from CTFd.forms.fields import SubmitField
 from CTFd.models import db
 
 
