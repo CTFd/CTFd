@@ -24,3 +24,4 @@ boto3==1.13.9
 marshmallow==2.20.2
 lxml==4.5.1
 html5lib==1.0.1
+WTForms==2.3.1

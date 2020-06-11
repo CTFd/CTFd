@@ -21,29 +21,29 @@
 	<div class="row">
 		<div class="col-md-12">
 			{% if q and field %}
-			<h5 class="text-muted text-center">Searching for challenges with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong></h5>
-			<h6 class="text-muted text-center pb-3">{{ total }} results</h6>
+			<h5 class="text-muted text-center">
+				Searching for challenges with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>
+			</h5>
+			<h6 class="text-muted text-center pb-3">
+				{{ total }} results
+			</h6>
 			{% endif %}
 
+			{% with form = Forms.challenges.ChallengeSearchForm(field=field, q=q) %}
 			<form method="GET" class="form-inline">
 				<div class="form-group col-md-2">
-					<label for="sel1" class="sr-only" >Search Field</label>
-					<select class="form-control custom-select w-100" id="sel1" name="field">
-						<option value="name" {% if field == 'name' %}selected{% endif %}>Name</option>
-						<option value="id" {% if field == 'id' %}selected{% endif %}>ID</option>
-						<option value="category" {% if field == 'category' %}selected{% endif %}>Category</option>
-						<option value="type" {% if field == 'type' %}selected{% endif %}>Type</option>
-					</select>
+					{{ form.field(class="form-control custom-select w-100") }}
 				</div>
 				<div class="form-group col-md-8">
-					<label for="challenges-search" class="sr-only">Parameter</label>
-					<input type="text" class="form-control w-100" id="challenges-search" name="q" placeholder="Search for matching challenge" {% if q %}value="{{q}}"{% endif %}>
+					{{ form.q(class="form-control w-100", placeholder="Search for matching challenge") }}
 				</div>
 				<div class="form-group col-md-2">
-					<label class="sr-only">Search</label>
-					<button type="submit" class="btn btn-primary w-100"><i class="fas fa-search" aria-hidden="true"></i></button>
+					<button type="submit" class="btn btn-primary w-100">
+						<i class="fas fa-search" aria-hidden="true"></i>
+					</button>
 				</div>
 			</form>
+			{% endwith %}
 		</div>
 	</div>
 

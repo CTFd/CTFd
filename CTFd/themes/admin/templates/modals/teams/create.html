@@ -1,57 +1,42 @@
+{% with form = Forms.teams.TeamEditForm() %}
 <form id="team-info-create-form" method="POST">
-	<input type="hidden" name="id">
 	<div class="form-group">
-		<label for="name">Team Name</label>
-		<input type="text" class="form-control" name="name" id="name"
-			   {% if team is defined and team.name %}value="{{ team.name }}"{% endif %} required>
+		<b>{{ form.name.label }}</b>
+		{{ form.name(class="form-control") }}
 	</div>
 	<div class="form-group">
-		<label for="email">Email</label>
-		<input type="email" class="form-control" name="email" id="email"
-			   {% if team is defined and team.email %}value="{{ team.email }}"{% endif %}>
+		<b>{{ form.email.label }}</b>
+		{{ form.email(class="form-control") }}
 	</div>
 	<div class="form-group">
-		<label for="password">Password</label>
-		<input type="password" class="form-control" name="password" id="password"/>
+		<b>{{ form.password.label }}</b>
+		{{ form.password(class="form-control") }}
 	</div>
 	<div class="form-group">
-		<label for="website">Website</label>
-		<input type="url" class="form-control" name="website" id="website"
-			   {% if team is defined and team.website %}value="{{ team.website }}"{% endif %}>
+		<b>{{ form.website.label }}</b>
+		{{ form.website(class="form-control") }}
 	</div>
 	<div class="form-group">
-		<label for="affiliation">Affiliation</label>
-		<input type="text" class="form-control" name="affiliation" id="affiliation"
-			   {% if team is defined and team.affiliation %}value="{{ team.affiliation }}"{% endif %}>
+		<b>{{ form.affiliation.label }}</b>
+		{{ form.affiliation(class="form-control") }}
 	</div>
 	<div class="form-group">
-		<label for="affiliation">Country</label>
-		<select class="form-control custom-select" id="country-input" name="country">
-			<option></option>
-			{% set countries = get_countries() %}
-			{% for country_code in countries.keys() %}
-				<option value="{{ country_code }}" {% if team is defined and team.country == country_code %}selected{% endif %}>
-					{{ countries[country_code] }}
-				</option>
-			{% endfor %}
-		</select>
+		<b>{{ form.country.label }}</b>
+		{{ form.country(class="form-control custom-select") }}
 	</div>
 	<div class="form-group">
 		<div class="form-check form-check-inline">
-			<input class="form-check-input" type="checkbox" name="hidden" id="hidden-checkbox"
-				   {% if team is defined and team.hidden %}checked{% endif %}>
-			<label class="form-check-label" for="hidden-checkbox">Hidden</label>
+			{{ form.hidden(class="form-check-input") }}
+			{{ form.hidden.label(class="form-check-label") }}
 		</div>
 		<div class="form-check form-check-inline">
-			<input class="form-check-input" type="checkbox" name="banned" id="banned-checkbox"
-				   {% if team is defined and team.banned %}checked{% endif %}>
-			<label class="form-check-label" for="banned-checkbox">Banned</label>
+			{{ form.banned(class="form-check-input") }}
+			{{ form.banned.label(class="form-check-label") }}
 		</div>
 	</div>
 	<div id="results">
 
 	</div>
-	<button id="update-team" type="submit" class="btn btn-primary btn-outlined float-right modal-action">
-		Submit
-	</button>
+	{{ form.submit(id="update-team", class="btn btn-primary btn-outlined float-right modal-action") }}
 </form>
+{% endwith %}

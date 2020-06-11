@@ -158,8 +158,9 @@ function submit_form() {
   var target = "/api/v1/pages";
   var method = "POST";
 
-  if (params.id) {
-    target += "/" + params.id;
+  let part = window.location.pathname.split("/").pop();
+  if (part !== "new") {
+    target += "/" + part;
     method = "PATCH";
   }
 
