@@ -3,7 +3,7 @@ import CTFd from "core/CTFd";
 import $ from "jquery";
 import { ezAlert, ezQuery } from "core/ezq";
 
-function deleteSelectedUsers(event) {
+function deleteSelectedUsers(_event) {
   let userIDs = $("input[data-user-id]:checked").map(function() {
     return $(this).data("user-id");
   });
@@ -21,14 +21,14 @@ function deleteSelectedUsers(event) {
           })
         );
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }
   });
 }
 
-function bulkEditUsers(event) {
+function bulkEditUsers(_event) {
   let userIDs = $("input[data-user-id]:checked").map(function() {
     return $(this).data("user-id");
   });
@@ -75,7 +75,7 @@ function bulkEditUsers(event) {
           })
         );
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }

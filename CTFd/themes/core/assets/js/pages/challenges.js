@@ -76,7 +76,7 @@ const displayChal = chal => {
       }
     }
 
-    $(".challenge-solves").click(function(event) {
+    $(".challenge-solves").click(function(_event) {
       getSolves($("#challenge-id").val());
     });
     $(".nav-tabs a").click(function(event) {
@@ -85,7 +85,7 @@ const displayChal = chal => {
     });
 
     // Handle modal toggling
-    $("#challenge-window").on("hide.bs.modal", function(event) {
+    $("#challenge-window").on("hide.bs.modal", function(_event) {
       $("#challenge-input").removeClass("wrong");
       $("#challenge-input").removeClass("correct");
       $("#incorrect-key").slideUp();
@@ -94,7 +94,7 @@ const displayChal = chal => {
       $("#too-fast").slideUp();
     });
 
-    $(".load-hint").on("click", function(event) {
+    $(".load-hint").on("click", function(_event) {
       loadHint($(this).data("hint-id"));
     });
 
@@ -329,7 +329,7 @@ function loadChals() {
         .append(chalwrap);
     }
 
-    $(".challenge-button").click(function(event) {
+    $(".challenge-button").click(function(_event) {
       loadChal(this.value);
       getSolves(this.value);
     });
@@ -360,16 +360,16 @@ $(() => {
     $(this).tab("show");
   });
 
-  $("#challenge-window").on("hidden.bs.modal", function(event) {
+  $("#challenge-window").on("hidden.bs.modal", function(_event) {
     $(".nav-tabs a:first").tab("show");
     history.replaceState("", window.document.title, window.location.pathname);
   });
 
-  $(".challenge-solves").click(function(event) {
+  $(".challenge-solves").click(function(_event) {
     getSolves($("#challenge-id").val());
   });
 
-  $("#challenge-window").on("hide.bs.modal", function(event) {
+  $("#challenge-window").on("hide.bs.modal", function(_event) {
     $("#challenge-input").removeClass("wrong");
     $("#challenge-input").removeClass("correct");
     $("#incorrect-key").slideUp();

@@ -6,7 +6,7 @@ import moment from "moment-timezone";
 import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
 import $ from "jquery";
-import { ezQuery, ezProgressBar } from "core/ezq";
+import { ezQuery, ezProgressBar, ezAlert } from "core/ezq";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
 
@@ -110,7 +110,7 @@ function updateConfigs(event) {
     }
   });
 
-  CTFd.api.patch_config_list({}, params).then(response => {
+  CTFd.api.patch_config_list({}, params).then(_response => {
     window.location.reload();
   });
 }
@@ -154,7 +154,7 @@ function removeLogo() {
       };
       CTFd.api
         .patch_config({ configKey: "ctf_logo" }, params)
-        .then(response => {
+        .then(_response => {
           window.location.reload();
         });
     }
@@ -182,7 +182,6 @@ function importConfig(event) {
     contentType: false,
     statusCode: {
       500: function(resp) {
-        console.log(resp.responseText);
         alert(resp.responseText);
       }
     },
@@ -199,7 +198,7 @@ function importConfig(event) {
       };
       return xhr;
     },
-    success: function(data) {
+    success: function(_data) {
       pg = ezProgressBar({
         target: pg,
         width: 100
@@ -216,7 +215,6 @@ function importConfig(event) {
 
 function exportConfig(event) {
   event.preventDefault();
-  const href = CTFd.config.urlRoot + "/admin/export";
   window.location.href = $(this).attr("href");
 }
 
@@ -262,7 +260,7 @@ $(() => {
 
   // Handle refreshing codemirror when switching tabs.
   // Better than the autorefresh approach b/c there's no flicker
-  $("a[href='#theme']").on("shown.bs.tab", function(e) {
+  $("a[href='#theme']").on("shown.bs.tab", function(_e) {
     theme_header_editor.refresh();
     theme_footer_editor.refresh();
     theme_settings_editor.refresh();

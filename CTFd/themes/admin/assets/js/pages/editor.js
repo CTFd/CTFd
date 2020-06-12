@@ -93,7 +93,7 @@ function show_files(data) {
         .text(fname)
     );
 
-    link.click(function(e) {
+    link.click(function(_e) {
       var media_div = $(this).parent();
       var icon = $(this).find("i")[0];
       var f_loc = media_div.attr("data-location");
@@ -190,14 +190,14 @@ function submit_form() {
 }
 
 function preview_page() {
-  editor.save(); // Save the CodeMirror data to the Textarea
+  window.editor.save(); // Save the CodeMirror data to the Textarea
   $("#page-edit").attr("action", CTFd.config.urlRoot + "/admin/pages/preview");
   $("#page-edit").attr("target", "_blank");
   $("#page-edit").submit();
 }
 
 function upload_media() {
-  helpers.files.upload($("#media-library-upload"), {}, function(data) {
+  helpers.files.upload($("#media-library-upload"), {}, function(_data) {
     refresh_files();
   });
 }
@@ -213,7 +213,7 @@ $(() => {
     }
   );
 
-  $("#media-insert").click(function(e) {
+  $("#media-insert").click(function(_e) {
     var tag = "";
     try {
       tag = $("#media-icon")
@@ -230,15 +230,15 @@ $(() => {
     } else {
       entry = "[{0}]({1})".format(fname, link);
     }
-    insert_at_cursor(editor, entry);
+    insert_at_cursor(window.editor, entry);
   });
 
-  $("#media-download").click(function(e) {
+  $("#media-download").click(function(_e) {
     var link = $("#media-link").val();
     window.open(link, "_blank");
   });
 
-  $("#media-delete").click(function(e) {
+  $("#media-delete").click(function(_e) {
     var file_id = $(this).attr("data-id");
     ezQuery({
       title: "Delete File?",

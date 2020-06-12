@@ -42,7 +42,7 @@ export default root => {
 
   function render(data) {
     switch (data.type) {
-      case "toast":
+      case "toast": {
         inc_notification_counter();
         // Trim toast body to length
         let length = 50;
@@ -72,7 +72,8 @@ export default root => {
           }
         });
         break;
-      case "alert":
+      }
+      case "alert": {
         inc_notification_counter();
         ezAlert({
           title: data.title,
@@ -83,12 +84,15 @@ export default root => {
           }
         });
         break;
-      case "background":
+      }
+      case "background": {
         inc_notification_counter();
         break;
-      default:
+      }
+      default: {
         inc_notification_counter();
         break;
+      }
     }
 
     if (data.sound) {

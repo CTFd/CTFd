@@ -1,7 +1,7 @@
 import "./main";
 import CTFd from "core/CTFd";
 import $ from "jquery";
-import { ezAlert, ezQuery } from "core/ezq";
+import { ezAlert } from "core/ezq";
 
 const api_func = {
   users: (x, y) => CTFd.api.patch_user_public({ userId: x }, y),
@@ -46,12 +46,12 @@ function toggleSelectedAccounts(accountIDs, action) {
   for (var accId of accountIDs) {
     reqs.push(api_func[CTFd.config.userMode](accId, params));
   }
-  Promise.all(reqs).then(responses => {
+  Promise.all(reqs).then(_responses => {
     window.location.reload();
   });
 }
 
-function bulkToggleAccounts(event) {
+function bulkToggleAccounts(_event) {
   let accountIDs = $("input[data-account-id]:checked").map(function() {
     return $(this).data("account-id");
   });

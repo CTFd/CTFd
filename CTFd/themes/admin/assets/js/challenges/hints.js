@@ -1,37 +1,6 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
-import { ezQuery, ezAlert } from "core/ezq";
-
-function hint(id) {
-  return CTFd.fetch("/api/v1/hints/" + id + "?preview=true", {
-    method: "GET",
-    credentials: "same-origin",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
-  });
-}
-
-function loadhint(hintid) {
-  const md = CTFd.lib.markdown();
-
-  hint(hintid).then(function(response) {
-    if (response.data.content) {
-      ezAlert({
-        title: "Hint",
-        body: md.render(response.data.content),
-        button: "Got it!"
-      });
-    } else {
-      ezAlert({
-        title: "Error",
-        body: "Error loading hint!",
-        button: "OK"
-      });
-    }
-  });
-}
+import { ezQuery } from "core/ezq";
 
 export function showHintModal(event) {
   event.preventDefault();
@@ -116,7 +85,7 @@ export function deleteHint(event) {
 export function editHint(event) {
   event.preventDefault();
   const params = $(this).serializeJSON(true);
-  params["challenge"] = CHALLENGE_ID;
+  params["challenge"] = window.CHALLENGE_ID;
 
   let method = "POST";
   let url = "/api/v1/hints";
