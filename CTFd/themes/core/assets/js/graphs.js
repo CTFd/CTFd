@@ -113,8 +113,8 @@ const graph_configs = {
           }
         },
         legend: {
-          orient: "vertical",
-          left: 10,
+          orient: "horizontal",
+          bottom: 0,
           data: []
         },
         series: [
@@ -218,8 +218,8 @@ const graph_configs = {
           }
         },
         legend: {
-          orient: "vertical",
-          left: 10,
+          orient: "horizontal",
+          bottom: 0,
           data: ["Fails", "Solves"]
         },
         series: [

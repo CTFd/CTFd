@@ -22,7 +22,12 @@
 }
 
 #solve-percentages-graph {
-  height: 400px;
+  min-height: 400px;
+  display: block;
+}
+
+#score-distribution-graph {
+  min-height: 400px;
   display: block;
 }
 

@@ -59,7 +59,7 @@ const buildGraphData = () => {
         type: "scroll",
         orient: "horizontal",
         align: "left",
-        bottom: 0,
+        bottom: 35,
         data: []
       },
       toolbox: {
@@ -83,6 +83,14 @@ const buildGraphData = () => {
       yAxis: [
         {
           type: "value"
+        }
+      ],
+      dataZoom: [
+        {
+          id: "dataZoomX",
+          type: "slider",
+          xAxisIndex: [0],
+          filterMode: "filter"
         }
       ],
       series: []
