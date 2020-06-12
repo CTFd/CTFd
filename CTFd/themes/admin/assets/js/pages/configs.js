@@ -285,7 +285,7 @@ $(() => {
         case "radio":
         case "checkbox":
           ctrl.each(function() {
-            if ($(this).attr("value") == value){
+            if ($(this).attr("value") == value) {
               $(this).attr("checked", value);
             }
           });
