@@ -63,7 +63,10 @@ const displayChal = chal => {
     $("#challenge-window").append(template.render(challenge_data));
 
     let modal = $("#challenge-window").find(".modal-dialog");
-    if (window.init.theme_settings && window.init.theme_settings.challenge_window_size) {
+    if (
+      window.init.theme_settings &&
+      window.init.theme_settings.challenge_window_size
+    ) {
       switch (window.init.theme_settings.challenge_window_size) {
         case "sm":
           modal.addClass("modal-sm");
