@@ -1,3 +1,5 @@
+import json
+
 from CTFd.utils import get_config
 from CTFd.utils.helpers import markup
 
@@ -17,6 +19,10 @@ class _ConfigsWrapper:
     @property
     def theme_footer(self):
         return markup(get_config("theme_footer", default=""))
+
+    @property
+    def theme_settings(self):
+        return json.loads(get_config("theme_settings", default="null"))
 
 
 Configs = _ConfigsWrapper()

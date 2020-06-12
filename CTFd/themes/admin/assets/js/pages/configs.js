@@ -251,6 +251,52 @@ $(() => {
     }
   );
 
+  const theme_settings_editor = CodeMirror.fromTextArea(
+    document.getElementById("theme-settings"),
+    {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: { name: "javascript", json: true }
+    }
+  );
+
+  // Handle refreshing codemirror when switching tabs.
+  // Better than the autorefresh approach b/c there's no flicker
+  $("a[href='#theme']").on("shown.bs.tab", function(e) {
+    theme_header_editor.refresh();
+    theme_footer_editor.refresh();
+    theme_settings_editor.refresh();
+  });
+
+  $("#theme-settings-modal form").submit(function(e) {
+    e.preventDefault();
+    theme_settings_editor
+      .getDoc()
+      .setValue(JSON.stringify($(this).serializeJSON(), null, 2));
+    $("#theme-settings-modal").modal("hide");
+  });
+
+  $("#theme-settings-button").click(function() {
+    let form = $("#theme-settings-modal form");
+    let data = JSON.parse(theme_settings_editor.getValue());
+    $.each(data, function(key, value) {
+      var ctrl = form.find(`[name='${key}']`);
+      switch (ctrl.prop("type")) {
+        case "radio":
+        case "checkbox":
+          ctrl.each(function() {
+            if ($(this).attr("value") == value) {
+              $(this).attr("checked", value);
+            }
+          });
+          break;
+        default:
+          ctrl.val(value);
+      }
+    });
+    $("#theme-settings-modal").modal();
+  });
+
   insertTimezones($("#start-timezone"));
   insertTimezones($("#end-timezone"));
   insertTimezones($("#freeze-timezone"));
