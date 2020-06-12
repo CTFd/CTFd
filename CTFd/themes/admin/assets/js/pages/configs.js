@@ -277,6 +277,23 @@ $(() => {
   });
 
   $("#theme-settings-button").click(function() {
+    let form = $("#theme-settings-modal form");
+    let data = JSON.parse(theme_settings_editor.getValue());
+    $.each(data, function(key, value) {
+      var ctrl = form.find(`[name='${key}']`);
+      switch (ctrl.prop("type")) {
+        case "radio":
+        case "checkbox":
+          ctrl.each(function() {
+            if ($(this).attr("value") == value){
+              $(this).attr("checked", value);
+            }
+          });
+          break;
+        default:
+          ctrl.val(value);
+      }
+    });
     $("#theme-settings-modal").modal();
   });
 
