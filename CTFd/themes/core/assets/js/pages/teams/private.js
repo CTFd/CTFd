@@ -3,6 +3,7 @@ import "../../utils";
 import CTFd from "../../CTFd";
 import "bootstrap/js/dist/modal";
 import $ from "jquery";
+import { ezBadge } from "../../ezq";
 
 $(() => {
   if (window.team_captain) {
@@ -34,6 +35,12 @@ $(() => {
       if (response.status === 400) {
         response.json().then(function(object) {
           if (!object.success) {
+            const error_template =
+              '<div class="alert alert-danger alert-dismissable" role="alert">\n' +
+              '  <span class="sr-only">Error:</span>\n' +
+              "  {0}\n" +
+              '  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>\n' +
+              "</div>";
             Object.keys(object.errors).map(function(error) {
               var i = form.find("input[name={0}]".format(error));
               var input = $(i);
@@ -76,9 +83,9 @@ $(() => {
           window.location.reload();
         } else {
           $("#team-captain-form > #results").empty();
-          Object.keys(response.errors).forEach(function(key, index) {
+          Object.keys(response.errors).forEach(function(key, _index) {
             $("#team-captain-form > #results").append(
-              ezbadge({
+              ezBadge({
                 type: "error",
                 body: response.errors[key]
               })

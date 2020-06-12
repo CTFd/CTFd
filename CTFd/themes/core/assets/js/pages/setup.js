@@ -1,7 +1,6 @@
 import "./main";
 import $ from "jquery";
 import Moment from "moment-timezone";
-import moment from "moment-timezone";
 import CTFd from "../CTFd";
 
 function switchTab(event) {
@@ -13,7 +12,7 @@ function switchTab(event) {
     .closest("[role=tabpanel]")
     .find("input,textarea")
     .each(function(i, e) {
-      $e = $(e);
+      let $e = $(e);
       let status = e.checkValidity();
       if (status === false) {
         $e.removeClass("input-filled-valid");
@@ -33,7 +32,7 @@ function switchTab(event) {
 function processDateTime(datetime) {
   let date_picker = $(`#${datetime}-date`);
   let time_picker = $(`#${datetime}-time`);
-  return function(event) {
+  return function(_event) {
     let unix_time = Moment(
       `${date_picker.val()} ${time_picker.val()}`,
       "YYYY-MM-DD HH:mm"
@@ -44,7 +43,7 @@ function processDateTime(datetime) {
   };
 }
 
-function mlcSetup(event) {
+function mlcSetup(_event) {
   let params = {
     name: $("#ctf_name").val(),
     type: "jeopardy",
@@ -57,7 +56,7 @@ function mlcSetup(event) {
     start: $("#start-preview").val(),
     end: $("#end-preview").val(),
     platform: "CTFd",
-    state: STATE
+    state: window.STATE
   };
 
   const ret = [];
@@ -88,7 +87,7 @@ $(() => {
   $("#start-date,#start-time").change(processDateTime("start"));
   $("#end-date,#end-time").change(processDateTime("end"));
 
-  $("#config-color-picker").on("input", function(e) {
+  $("#config-color-picker").on("input", function(_e) {
     $("#config-color-input").val($(this).val());
   });
 

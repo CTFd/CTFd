@@ -22,11 +22,11 @@ const graph_configs = {
         orientation: "h"
       }
     },
-    fn: (type, id, name, account_id) =>
+    fn: (type, id, name, _account_id) =>
       `CTFd_score_${type}_${name}_${id}_${new Date()
         .toISOString()
         .slice(0, 19)}`,
-    format: (type, id, name, account_id, responses) => {
+    format: (type, id, name, _account_id, responses) => {
       const times = [];
       const scores = [];
       const solves = responses[0].data;
@@ -74,7 +74,7 @@ const graph_configs = {
       },
       height: "400px"
     },
-    fn: (type, id, name, account_id) =>
+    fn: (type, id, name, _account_id) =>
       `CTFd_submissions_${type}_${name}_${id}_${new Date()
         .toISOString()
         .slice(0, 19)}`,
@@ -122,7 +122,7 @@ const graph_configs = {
       },
       height: "400px"
     },
-    fn: (type, id, name, account_id) =>
+    fn: (type, id, name, _account_id) =>
       `CTFd_submissions_${type}_${name}_${id}_${new Date()
         .toISOString()
         .slice(0, 19)}`,
@@ -164,7 +164,6 @@ export function createGraph(
   const $elem = $(target);
   $elem.empty();
   if ($elem[0] === undefined) {
-    console.log("Couldn't find graph target: " + target);
     return;
   }
   $elem[0].fn = cfg.fn(type, id, name, account_id);

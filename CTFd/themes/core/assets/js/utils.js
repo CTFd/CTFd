@@ -108,7 +108,9 @@ WindowController.prototype.handleEvent = function(event) {
       if (data.id !== this.id) {
         this[data.type](data);
       }
-    } catch (error) {}
+    } catch (error) {
+      // Ignore error
+    }
   }
 };
 
@@ -134,7 +136,7 @@ WindowController.prototype.bye = function(event) {
   this.check();
 };
 
-WindowController.prototype.check = function(event) {
+WindowController.prototype.check = function(_event) {
   var now = +new Date(),
     takeMaster = true,
     id;
@@ -164,6 +166,7 @@ WindowController.prototype.broadcast = function(type, data) {
   try {
     localStorage.setItem("broadcast", JSON.stringify(event));
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log(error);
   }
 };
