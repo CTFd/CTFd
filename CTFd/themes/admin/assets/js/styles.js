@@ -20,7 +20,7 @@ export default () => {
     }
   });
 
-  $(".modal").on("show.bs.modal", function(e) {
+  $(".modal").on("show.bs.modal", function(_e) {
     $(".form-control").each(function() {
       if ($(this).val()) {
         $(this).addClass("input-filled-valid");

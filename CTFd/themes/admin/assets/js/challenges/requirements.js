@@ -10,15 +10,15 @@ export function addRequirement(event) {
     return;
   }
 
-  CHALLENGE_REQUIREMENTS.prerequisites.push(
+  window.CHALLENGE_REQUIREMENTS.prerequisites.push(
     parseInt(requirements["prerequisite"])
   );
 
   const params = {
-    requirements: CHALLENGE_REQUIREMENTS
+    requirements: window.CHALLENGE_REQUIREMENTS
   };
 
-  CTFd.fetch("/api/v1/challenges/" + CHALLENGE_ID, {
+  CTFd.fetch("/api/v1/challenges/" + window.CHALLENGE_ID, {
     method: "PATCH",
     credentials: "same-origin",
     headers: {
@@ -38,18 +38,18 @@ export function addRequirement(event) {
     });
 }
 
-export function deleteRequirement(event) {
+export function deleteRequirement(_event) {
   const challenge_id = $(this).attr("challenge-id");
   const row = $(this)
     .parent()
     .parent();
 
-  CHALLENGE_REQUIREMENTS.prerequisites.pop(challenge_id);
+  window.CHALLENGE_REQUIREMENTS.prerequisites.pop(challenge_id);
 
   const params = {
-    requirements: CHALLENGE_REQUIREMENTS
+    requirements: window.CHALLENGE_REQUIREMENTS
   };
-  CTFd.fetch("/api/v1/challenges/" + CHALLENGE_ID, {
+  CTFd.fetch("/api/v1/challenges/" + window.CHALLENGE_ID, {
     method: "PATCH",
     credentials: "same-origin",
     headers: {

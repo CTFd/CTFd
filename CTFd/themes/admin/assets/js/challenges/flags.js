@@ -29,7 +29,7 @@ export function deleteFlag(event) {
   });
 }
 
-export function addFlagModal(event) {
+export function addFlagModal(_event) {
   $.get(CTFd.config.urlRoot + "/api/v1/flags/types", function(response) {
     const data = response.data;
     const flag_type_select = $("#flags-create-select");
@@ -52,7 +52,7 @@ export function addFlagModal(event) {
   $("#flag-edit-modal form").submit(function(event) {
     event.preventDefault();
     const params = $(this).serializeJSON(true);
-    params["challenge"] = CHALLENGE_ID;
+    params["challenge"] = window.CHALLENGE_ID;
     CTFd.fetch("/api/v1/flags", {
       method: "POST",
       credentials: "same-origin",
@@ -65,7 +65,7 @@ export function addFlagModal(event) {
       .then(function(response) {
         return response.json();
       })
-      .then(function(response) {
+      .then(function(_response) {
         window.location.reload();
       });
   });

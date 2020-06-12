@@ -3,6 +3,7 @@ import "core/utils";
 import CTFd from "core/CTFd";
 import $ from "jquery";
 import Plotly from "plotly.js-basic-dist";
+// eslint-disable-next-line no-unused-vars
 import { createGraph, updateGraph } from "core/graphs";
 
 const graph_configs = {

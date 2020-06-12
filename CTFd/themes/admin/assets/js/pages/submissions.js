@@ -4,7 +4,7 @@ import $ from "jquery";
 import { htmlEntities } from "core/utils";
 import { ezQuery } from "core/ezq";
 
-function deleteCorrectSubmission(event) {
+function deleteCorrectSubmission(_event) {
   const key_id = $(this).data("submission-id");
   const $elem = $(this)
     .parent()
@@ -40,7 +40,7 @@ function deleteCorrectSubmission(event) {
   });
 }
 
-function deleteSelectedSubmissions(event) {
+function deleteSelectedSubmissions(_event) {
   let submissionIDs = $("input[data-submission-id]:checked").map(function() {
     return $(this).data("submission-id");
   });
@@ -54,7 +54,7 @@ function deleteSelectedSubmissions(event) {
       for (var subId of submissionIDs) {
         reqs.push(CTFd.api.delete_submission({ submissionId: subId }));
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }

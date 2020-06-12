@@ -1,4 +1,5 @@
 import CTFd from "core/CTFd";
+import nunjucks from "nunjucks";
 import $ from "jquery";
 
 window.challenge = new Object();
@@ -63,7 +64,7 @@ $.get(CTFd.config.urlRoot + "/api/v1/challenges/types", function(response) {
   }
 });
 
-function createChallenge(event) {
+function createChallenge(_event) {
   const challenge = $(this)
     .find("option:selected")
     .data("meta");

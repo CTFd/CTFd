@@ -5,7 +5,6 @@ import "bootstrap/js/dist/tab";
 import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
 import { ezQuery, ezAlert, ezToast } from "core/ezq";
-import nunjucks from "nunjucks";
 import { default as helpers } from "core/helpers";
 import { addFile, deleteFile } from "../challenges/files";
 import { addTag, deleteTag } from "../challenges/tags";
@@ -39,7 +38,7 @@ const loadHint = id => {
       displayHint(response.data);
       return;
     }
-    displayUnlock(id);
+    // displayUnlock(id);
   });
 };
 
@@ -201,7 +200,7 @@ function handleChallengeOptions(event) {
 
   Promise.all([
     // Save flag
-    new Promise(function(resolve, reject) {
+    new Promise(function(resolve, _reject) {
       if (flag_params.content.length == 0) {
         resolve();
         return;
@@ -219,7 +218,7 @@ function handleChallengeOptions(event) {
       });
     }),
     // Upload files
-    new Promise(function(resolve, reject) {
+    new Promise(function(resolve, _reject) {
       let form = event.target;
       let data = {
         challenge: params.challenge_id,
@@ -231,12 +230,12 @@ function handleChallengeOptions(event) {
       }
       resolve();
     })
-  ]).then(responses => {
+  ]).then(_responses => {
     save_challenge();
   });
 }
 
-function createChallenge(event) {
+function createChallenge(_event) {
   const challenge = $(this)
     .find("option:selected")
     .data("meta");
@@ -248,83 +247,84 @@ function createChallenge(event) {
 }
 
 $(() => {
-  $(".preview-challenge").click(function(e) {
+  $(".preview-challenge").click(function(_e) {
     window.challenge = new Object();
     CTFd._internal.challenge = {};
-    $.get(CTFd.config.urlRoot + "/api/v1/challenges/" + CHALLENGE_ID, function(
-      response
-    ) {
-      const challenge = CTFd._internal.challenge;
-      var challenge_data = response.data;
-      challenge_data["solves"] = null;
+    $.get(
+      CTFd.config.urlRoot + "/api/v1/challenges/" + window.CHALLENGE_ID,
+      function(response) {
+        const challenge = CTFd._internal.challenge;
+        var challenge_data = response.data;
+        challenge_data["solves"] = null;
 
-      $.getScript(
-        CTFd.config.urlRoot + challenge_data.type_data.scripts.view,
-        function() {
-          $("#challenge-window").empty();
+        $.getScript(
+          CTFd.config.urlRoot + challenge_data.type_data.scripts.view,
+          function() {
+            $("#challenge-window").empty();
 
-          $("#challenge-window").append(challenge_data.view);
+            $("#challenge-window").append(challenge_data.view);
 
-          $("#challenge-window #challenge-input").addClass("form-control");
-          $("#challenge-window #challenge-submit").addClass(
-            "btn btn-md btn-outline-secondary float-right"
-          );
+            $("#challenge-window #challenge-input").addClass("form-control");
+            $("#challenge-window #challenge-submit").addClass(
+              "btn btn-md btn-outline-secondary float-right"
+            );
 
-          $(".challenge-solves").hide();
-          $(".nav-tabs a").click(function(e) {
-            e.preventDefault();
-            $(this).tab("show");
-          });
+            $(".challenge-solves").hide();
+            $(".nav-tabs a").click(function(e) {
+              e.preventDefault();
+              $(this).tab("show");
+            });
 
-          // Handle modal toggling
-          $("#challenge-window").on("hide.bs.modal", function(event) {
-            $("#challenge-input").removeClass("wrong");
-            $("#challenge-input").removeClass("correct");
-            $("#incorrect-key").slideUp();
-            $("#correct-key").slideUp();
-            $("#already-solved").slideUp();
-            $("#too-fast").slideUp();
-          });
+            // Handle modal toggling
+            $("#challenge-window").on("hide.bs.modal", function(_event) {
+              $("#challenge-input").removeClass("wrong");
+              $("#challenge-input").removeClass("correct");
+              $("#incorrect-key").slideUp();
+              $("#correct-key").slideUp();
+              $("#already-solved").slideUp();
+              $("#too-fast").slideUp();
+            });
 
-          $(".load-hint").on("click", function(event) {
-            loadHint($(this).data("hint-id"));
-          });
+            $(".load-hint").on("click", function(_event) {
+              loadHint($(this).data("hint-id"));
+            });
 
-          $("#challenge-submit").click(function(e) {
-            e.preventDefault();
-            $("#challenge-submit").addClass("disabled-button");
-            $("#challenge-submit").prop("disabled", true);
-            CTFd._internal.challenge
-              .submit(true)
-              .then(renderSubmissionResponse);
-            // Preview passed as true
-          });
+            $("#challenge-submit").click(function(e) {
+              e.preventDefault();
+              $("#challenge-submit").addClass("disabled-button");
+              $("#challenge-submit").prop("disabled", true);
+              CTFd._internal.challenge
+                .submit(true)
+                .then(renderSubmissionResponse);
+              // Preview passed as true
+            });
 
-          $("#challenge-input").keyup(function(event) {
-            if (event.keyCode == 13) {
-              $("#challenge-submit").click();
-            }
-          });
+            $("#challenge-input").keyup(function(event) {
+              if (event.keyCode == 13) {
+                $("#challenge-submit").click();
+              }
+            });
 
-          challenge.postRender();
-          window.location.replace(
-            window.location.href.split("#")[0] + "#preview"
-          );
+            challenge.postRender();
+            window.location.replace(
+              window.location.href.split("#")[0] + "#preview"
+            );
 
-          $("#challenge-window").modal();
-        }
-      );
-    });
+            $("#challenge-window").modal();
+          }
+        );
+      }
+    );
   });
 
-  $(".delete-challenge").click(function(e) {
+  $(".delete-challenge").click(function(_e) {
     ezQuery({
       title: "Delete Challenge",
       body: "Are you sure you want to delete {0}".format(
-        "<strong>" + htmlEntities(CHALLENGE_NAME) + "</strong>"
+        "<strong>" + htmlEntities(window.CHALLENGE_NAME) + "</strong>"
       ),
       success: function() {
-        CTFd.fetch("/api/v1/challenges/" + CHALLENGE_ID, {
+        CTFd.fetch("/api/v1/challenges/" + window.CHALLENGE_ID, {
           method: "DELETE"
         })
           .then(function(response) {
@@ -343,7 +343,7 @@ $(() => {
     e.preventDefault();
     var params = $(e.target).serializeJSON(true);
 
-    CTFd.fetch("/api/v1/challenges/" + CHALLENGE_ID + "/flags", {
+    CTFd.fetch("/api/v1/challenges/" + window.CHALLENGE_ID + "/flags", {
       method: "GET",
       credentials: "same-origin",
       headers: {
@@ -356,7 +356,7 @@ $(() => {
       })
       .then(function(response) {
         let update_challenge = function() {
-          CTFd.fetch("/api/v1/challenges/" + CHALLENGE_ID, {
+          CTFd.fetch("/api/v1/challenges/" + window.CHALLENGE_ID, {
             method: "PATCH",
             credentials: "same-origin",
             headers: {
