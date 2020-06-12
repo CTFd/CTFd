@@ -74,10 +74,10 @@ function getJSConfig(root, type, entries, mode) {
       splitChunks: {
         chunks: 'all',
         cacheGroups: {
-          plotly: {
-            name: 'plotly',
-            filename: `plotly.bundle.${ext}.js`,
-            test: /plotly/,
+          echarts: {
+            name: 'echarts',
+            filename: `echarts.bundle.${ext}.js`,
+            test: /echarts/,
             priority: 1,
             enforce: true,
           },
