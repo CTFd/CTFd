@@ -231,18 +231,70 @@ function insertTimezones(target) {
 }
 
 $(() => {
-  CodeMirror.fromTextArea(document.getElementById("theme-header"), {
-    lineNumbers: true,
-    lineWrapping: true,
-    mode: "htmlmixed",
-    htmlMode: true
+  const theme_header_editor = CodeMirror.fromTextArea(
+    document.getElementById("theme-header"),
+    {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "htmlmixed",
+      htmlMode: true
+    }
+  );
+
+  const theme_footer_editor = CodeMirror.fromTextArea(
+    document.getElementById("theme-footer"),
+    {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "htmlmixed",
+      htmlMode: true
+    }
+  );
+
+  const theme_settings_editor = CodeMirror.fromTextArea(
+    document.getElementById("theme-settings"),
+    {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: { name: "javascript", json: true }
+    }
+  );
+
+  // Handle refreshing codemirror when switching tabs.
+  // Better than the autorefresh approach b/c there's no flicker
+  $("a[href='#theme']").on("shown.bs.tab", function(e) {
+    theme_header_editor.refresh();
+    theme_footer_editor.refresh();
+    theme_settings_editor.refresh();
   });
 
-  CodeMirror.fromTextArea(document.getElementById("theme-footer"), {
-    lineNumbers: true,
-    lineWrapping: true,
-    mode: "htmlmixed",
-    htmlMode: true
+  $("#theme-settings-modal form").submit(function(e) {
+    e.preventDefault();
+    theme_settings_editor
+      .getDoc()
+      .setValue(JSON.stringify($(this).serializeJSON(), null, 2));
+    $("#theme-settings-modal").modal("hide");
+  });
+
+  $("#theme-settings-button").click(function() {
+    let form = $("#theme-settings-modal form");
+    let data = JSON.parse(theme_settings_editor.getValue());
+    $.each(data, function(key, value) {
+      var ctrl = form.find(`[name='${key}']`);
+      switch (ctrl.prop("type")) {
+        case "radio":
+        case "checkbox":
+          ctrl.each(function() {
+            if ($(this).attr("value") == value) {
+              $(this).attr("checked", value);
+            }
+          });
+          break;
+        default:
+          ctrl.val(value);
+      }
+    });
+    $("#theme-settings-modal").modal();
   });
 
   insertTimezones($("#start-timezone"));
@@ -256,7 +308,7 @@ $(() => {
   $("#import-button").click(importConfig);
   $("#config-color-update").click(function() {
     const hex_code = $("#config-color-picker").val();
-    const user_css = $("#theme-header").val();
+    const user_css = theme_header_editor.getValue();
     let new_css;
     if (user_css.length) {
       let css_vars = `theme-color: ${hex_code};`;
@@ -269,7 +321,7 @@ $(() => {
         `.jumbotron{background-color: var(--theme-color) !important;}\n` +
         `</style>\n`;
     }
-    $("#theme-header").val(new_css);
+    theme_header_editor.getDoc().setValue(new_css);
   });
 
   $(".start-date").change(function() {
