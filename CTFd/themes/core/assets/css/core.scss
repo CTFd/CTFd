@@ -25,6 +25,27 @@ select.form-control {
 }
 
 #score-graph {
+  min-height: 400px;
+  display: block;
+  clear: both;
+}
+
+#solves-graph {
+  display: block;
+  height: 350px;
+}
+
+#keys-pie-graph {
+  min-height: 400px;
+  display: block;
+}
+
+#categories-pie-graph {
+  min-height: 400px;
+  display: block;
+}
+
+#score-graph {
   height: 450px;
   display: block;
   clear: both;
