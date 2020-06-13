@@ -187,7 +187,7 @@
 			'account_id': 'me' if user is defined and user.team_id == team.id else team.id,
 		} | tojson }};
 	</script>
-	<script defer src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
 	<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
 {% endblock %}
 
