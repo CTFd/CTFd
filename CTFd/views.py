@@ -7,6 +7,13 @@ from flask.helpers import safe_join
 from sqlalchemy.exc import IntegrityError
 
 from CTFd.cache import cache
+from CTFd.constants.config import (
+    AccountVisibilityTypes,
+    ChallengeVisibilityTypes,
+    ConfigTypes,
+    RegistrationVisibilityTypes,
+    ScoreVisibilityTypes,
+)
 from CTFd.models import (
     Admins,
     Files,
@@ -156,10 +163,14 @@ def setup():
             page = Pages(title=None, route="index", content=index, draft=False)
 
             # Visibility
-            set_config("challenge_visibility", "private")
-            set_config("registration_visibility", "public")
-            set_config("score_visibility", "public")
-            set_config("account_visibility", "public")
+            set_config(
+                ConfigTypes.CHALLENGE_VISIBILITY, ChallengeVisibilityTypes.PRIVATE
+            )
+            set_config(
+                ConfigTypes.REGISTRATION_VISIBILITY, RegistrationVisibilityTypes.PUBLIC
+            )
+            set_config(ConfigTypes.SCORE_VISIBILITY, ScoreVisibilityTypes.PUBLIC)
+            set_config(ConfigTypes.ACCOUNT_VISIBILITY, AccountVisibilityTypes.PUBLIC)
 
             # Verify emails
             set_config("verify_emails", None)
@@ -354,7 +365,7 @@ def files(path):
 
                 # Check user is admin if challenge_visibility is admins only
                 if (
-                    get_config("challenge_visibility") == "admins"
+                    get_config(ConfigTypes.CHALLENGE_VISIBILITY) == "admins"
                     and user.type != "admin"
                 ):
                     abort(403)
