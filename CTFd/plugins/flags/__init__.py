@@ -3,6 +3,14 @@ import re
 from CTFd.plugins import register_plugin_assets_directory
 
 
+class FlagException(Exception):
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return self.message
+
+
 class BaseFlag(object):
     name = None
     templates = {}
@@ -55,8 +63,8 @@ class CTFdRegexFlag(BaseFlag):
             else:
                 res = re.match(saved, provided)
         # TODO: this needs plugin improvements. See #1425.
-        except re.error:
-            return False
+        except re.error as e:
+            raise FlagException("Regex parse error occured") from e
 
         return res and res.group() == provided
 

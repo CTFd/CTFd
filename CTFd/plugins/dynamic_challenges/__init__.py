@@ -16,7 +16,7 @@ from CTFd.models import (
 )
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, BaseChallenge
-from CTFd.plugins.flags import get_flag_class
+from CTFd.plugins.flags import FlagException, get_flag_class
 from CTFd.plugins.migrations import upgrade
 from CTFd.utils.modes import get_model
 from CTFd.utils.uploads import delete_file
@@ -184,8 +184,11 @@ class DynamicValueChallenge(BaseChallenge):
         submission = data["submission"].strip()
         flags = Flags.query.filter_by(challenge_id=challenge.id).all()
         for flag in flags:
-            if get_flag_class(flag.type).compare(flag, submission):
-                return True, "Correct"
+            try:
+                if get_flag_class(flag.type).compare(flag, submission):
+                    return True, "Correct"
+            except FlagException as e:
+                return False, e.message
         return False, "Incorrect"
 
     @staticmethod

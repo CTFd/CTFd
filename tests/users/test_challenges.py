@@ -181,6 +181,29 @@ def test_submitting_correct_regex_case_insensitive_flag():
     destroy_ctfd(app)
 
 
+def test_submitting_invalid_regex_flag():
+    """Test that invalid regex flags are errored out to the user"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        gen_flag(
+            app.db,
+            challenge_id=chal.id,
+            type="regex",
+            content="**",
+            data="case_insensitive",
+        )
+        data = {"submission": "FLAG", "challenge_id": chal.id}
+        r = client.post("/api/v1/challenges/attempt", json=data)
+        assert r.status_code == 200
+        resp = r.get_json()["data"]
+        assert resp.get("status") == "incorrect"
+        assert resp.get("message") == "Regex parse error occured"
+    destroy_ctfd(app)
+
+
 def test_submitting_incorrect_flag():
     """Test that incorrect flags are incorrect"""
     app = create_ctfd()
