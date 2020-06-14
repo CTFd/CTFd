@@ -20,12 +20,6 @@ from CTFd.utils.config import (
     is_setup,
 )
 from CTFd.utils.config.pages import get_pages
-from CTFd.utils.config.visibility import (
-    accounts_visible,
-    challenges_visible,
-    registration_visible,
-    scores_visible,
-)
 from CTFd.utils.countries import get_countries, lookup_country_code
 from CTFd.utils.dates import isoformat, unix_time, unix_time_millis
 from CTFd.utils.events import EventManager, RedisEventManager
@@ -61,6 +55,12 @@ def init_template_globals(app):
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
     from CTFd.forms import Forms
+    from CTFd.utils.config.visibility import (
+        accounts_visible,
+        challenges_visible,
+        registration_visible,
+        scores_visible,
+    )
 
     app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
