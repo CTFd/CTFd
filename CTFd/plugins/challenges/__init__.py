@@ -21,6 +21,7 @@ class BaseChallenge(object):
     name = None
     templates = {}
     scripts = {}
+    challenge_model = Challenges
 
     @classmethod
     def create(cls, request):
@@ -32,7 +33,7 @@ class BaseChallenge(object):
         """
         data = request.form or request.get_json()
 
-        challenge = Challenges(**data)
+        challenge = cls.challenge_model(**data)
 
         db.session.add(challenge)
         db.session.commit()
@@ -99,7 +100,7 @@ class BaseChallenge(object):
         ChallengeFiles.query.filter_by(challenge_id=challenge.id).delete()
         Tags.query.filter_by(challenge_id=challenge.id).delete()
         Hints.query.filter_by(challenge_id=challenge.id).delete()
-        Challenges.query.filter_by(id=challenge.id).delete()
+        cls.challenge_model.query.filter_by(id=challenge.id).delete()
         db.session.commit()
 
     @classmethod
@@ -145,7 +146,6 @@ class BaseChallenge(object):
         )
         db.session.add(solve)
         db.session.commit()
-        db.session.close()
 
     @classmethod
     def fail(cls, user, team, challenge, request):
@@ -168,7 +168,6 @@ class BaseChallenge(object):
         )
         db.session.add(wrong)
         db.session.commit()
-        db.session.close()
 
 
 class CTFdStandardChallenge(BaseChallenge):
@@ -190,6 +189,7 @@ class CTFdStandardChallenge(BaseChallenge):
     blueprint = Blueprint(
         "standard", __name__, template_folder="templates", static_folder="assets"
     )
+    challenge_model = Challenges
 
 
 def get_chal_class(class_id):
