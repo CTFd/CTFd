@@ -8,19 +8,6 @@ jobs:
 
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_HOST_AUTH_METHOD: trust
-          POSTGRES_DB: ctfd
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
       mysql:
         image: mysql
         ports:
@@ -33,7 +20,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.6']
-        TESTING_DATABASE_URL: ['mysql+pymysql://root@localhost/ctfd', 'sqlite://', 'postgres://postgres@localhost/ctfd']
+        TESTING_DATABASE_URL: ['mysql+pymysql://root@localhost/ctfd', 'sqlite://']
 
     name: Python ${{ matrix.python-version }}
     steps:
