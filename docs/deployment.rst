@@ -53,12 +53,15 @@ While CTFd is a standard WSGI application and most WSGI servers (e.g. gunicorn, 
 Database Server
 ~~~~~~~~~~~~~~~
 
-CTFd makes use of SQLAlchemy and as such supports a number of SQL databases. As of CTFd 2.0, the recommended database type is MySQL. CTFd is tested and has been installed against SQLite, Postgres, and MariaDB but this could change in the future.
+CTFd makes use of SQLAlchemy and as such supports a number of SQL databases. The recommended database type is MySQL. CTFd is tested with and has been installed against SQLite, Postgres, and MariaDB.
 
 By default CTFd will create a SQLite database if no database server has been configured.
 
 .. Note::
-    CTFd makes use of the JSON data type. MySQL >= 5.7.8 implements a proper JSON type while MariaDB does not. Small differences like these could eventually result in CTFd only supporting a few database servers.
+    CTFd makes use of the JSON data type which your database backend must support.
+
+.. Note::
+    CTFd is typicaly used with MySQL, MariaDB, or SQLite. Using CTFd with Postgres is uncommon and could be deprecated in any version. Even though Postgres may be part of the CTFd test suite, using Postgres as your database backend is at your own peril. Any issues raised regarding Postgres support will carry the expectation that the issue author write an accompanying pull request to resolve said issue.
 
 Caching Server
 ~~~~~~~~~~~~~~
