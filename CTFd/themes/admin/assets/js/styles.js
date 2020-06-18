@@ -1,6 +1,7 @@
 import "bootstrap/dist/js/bootstrap.bundle";
 import { makeSortableTables } from "core/utils";
 import $ from "jquery";
+import EasyMDE from "easymde";
 
 export default () => {
   // TODO: This is kind of a hack to mimic a React-like state construct.
@@ -95,6 +96,37 @@ export default () => {
         sessionStorage.removeItem("activeTab");
       }
     }
+
+    $("textarea.markdown").each(function() {
+      let mde = new EasyMDE({
+        autoDownloadFontAwesome: false,
+        toolbar: [
+          "bold",
+          "italic",
+          "heading",
+          "|",
+          "quote",
+          "unordered-list",
+          "ordered-list",
+          "|",
+          "link",
+          "image",
+          "|",
+          "preview",
+          "guide"
+        ],
+        element: this,
+        initialValue: $(this).val(),
+        forceSync: true,
+        minHeight: "200px"
+      });
+      this.mde = mde;
+      this.codemirror = mde.codemirror;
+      $(this).on("change keyup paste", function() {
+        mde.codemirror.getDoc().setValue($(this).val());
+        mde.codemirror.refresh();
+      });
+    });
 
     makeSortableTables();
     $('[data-toggle="tooltip"]').tooltip();
