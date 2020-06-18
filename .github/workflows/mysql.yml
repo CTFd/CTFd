@@ -35,10 +35,6 @@ jobs:
             python -m pip install --upgrade pip
             python -m pip install -r development.txt
             sudo yarn install --non-interactive
-            sudo yarn global add prettier@1.17.0
-
-      - name: Lint
-        run: make lint
 
       - name: Test
         run: |

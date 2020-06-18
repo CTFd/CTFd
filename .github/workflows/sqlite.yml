@@ -28,9 +28,6 @@ jobs:
             sudo yarn install --non-interactive
             sudo yarn global add prettier@1.17.0
 
-      - name: Lint
-        run: make lint
-
       - name: Test
         run: |
             sudo rm -f /etc/boto.cfg
