@@ -45,32 +45,7 @@ export default () => {
     $(this).data("initial", $(this).val());
   });
 
-  $(".form-control").bind({
-    focus: function() {
-      $(this).addClass("input-filled-valid");
-    },
-    blur: function() {
-      if ($(this).val() === "") {
-        $(this).removeClass("input-filled-valid");
-      }
-    }
-  });
-
-  $(".modal").on("show.bs.modal", function(_e) {
-    $(".form-control").each(function() {
-      if ($(this).val()) {
-        $(this).addClass("input-filled-valid");
-      }
-    });
-  });
-
   $(function() {
-    $(".form-control").each(function() {
-      if ($(this).val()) {
-        $(this).addClass("input-filled-valid");
-      }
-    });
-
     $("tr[data-href], td[data-href]").click(function() {
       var sel = getSelection().toString();
       if (!sel) {
