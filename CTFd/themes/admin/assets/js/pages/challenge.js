@@ -9,6 +9,7 @@ import { default as helpers } from "core/helpers";
 import { addFile, deleteFile } from "../challenges/files";
 import { addTag, deleteTag } from "../challenges/tags";
 import { addRequirement, deleteRequirement } from "../challenges/requirements";
+import { bindMarkdownEditors } from "../styles";
 import {
   showHintModal,
   editHint,
@@ -133,6 +134,7 @@ function loadChalTemplate(challenge) {
   $.getScript(CTFd.config.urlRoot + challenge.scripts.view, function() {
     let template_data = challenge.create;
     $("#create-chal-entry-div").html(template_data);
+    bindMarkdownEditors();
 
     $.getScript(CTFd.config.urlRoot + challenge.scripts.create, function() {
       $("#create-chal-entry-div form").submit(function(event) {

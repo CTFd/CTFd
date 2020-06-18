@@ -3,6 +3,41 @@ import { makeSortableTables } from "core/utils";
 import $ from "jquery";
 import EasyMDE from "easymde";
 
+export function bindMarkdownEditors() {
+  $("textarea.markdown").each(function(_i, e) {
+    if (e.hasOwnProperty("mde") === false) {
+      let mde = new EasyMDE({
+        autoDownloadFontAwesome: false,
+        toolbar: [
+          "bold",
+          "italic",
+          "heading",
+          "|",
+          "quote",
+          "unordered-list",
+          "ordered-list",
+          "|",
+          "link",
+          "image",
+          "|",
+          "preview",
+          "guide"
+        ],
+        element: this,
+        initialValue: $(this).val(),
+        forceSync: true,
+        minHeight: "200px"
+      });
+      this.mde = mde;
+      this.codemirror = mde.codemirror;
+      $(this).on("change keyup paste", function() {
+        mde.codemirror.getDoc().setValue($(this).val());
+        mde.codemirror.refresh();
+      });
+    }
+  });
+}
+
 export default () => {
   // TODO: This is kind of a hack to mimic a React-like state construct.
   // It should be removed once we have a real front-end framework in place.
@@ -97,37 +132,7 @@ export default () => {
       }
     }
 
-    $("textarea.markdown").each(function() {
-      let mde = new EasyMDE({
-        autoDownloadFontAwesome: false,
-        toolbar: [
-          "bold",
-          "italic",
-          "heading",
-          "|",
-          "quote",
-          "unordered-list",
-          "ordered-list",
-          "|",
-          "link",
-          "image",
-          "|",
-          "preview",
-          "guide"
-        ],
-        element: this,
-        initialValue: $(this).val(),
-        forceSync: true,
-        minHeight: "200px"
-      });
-      this.mde = mde;
-      this.codemirror = mde.codemirror;
-      $(this).on("change keyup paste", function() {
-        mde.codemirror.getDoc().setValue($(this).val());
-        mde.codemirror.refresh();
-      });
-    });
-
+    bindMarkdownEditors();
     makeSortableTables();
     $('[data-toggle="tooltip"]').tooltip();
   });
