@@ -6,14 +6,13 @@ export function showHintModal(event) {
   event.preventDefault();
   $("#hint-edit-modal form")
     .find("input, textarea")
-    .val("");
+    .val("")
+    // Trigger a change on the textarea to get codemirror to clone changes in
+    .trigger("change");
 
-  // Markdown Preview
-  $("#new-hint-edit").on("shown.bs.tab", function(event) {
-    if (event.target.hash == "#hint-preview") {
-      const renderer = CTFd.lib.markdown();
-      const editor_value = $("#hint-write textarea").val();
-      $(event.target.hash).html(renderer.render(editor_value));
+  $("#hint-edit-form textarea").each(function(i, e) {
+    if (e.hasOwnProperty("codemirror")) {
+      e.codemirror.refresh();
     }
   });
 
@@ -37,20 +36,32 @@ export function showEditHintModal(event) {
     })
     .then(function(response) {
       if (response.success) {
-        $("#hint-edit-form input[name=content],textarea[name=content]").val(
-          response.data.content
-        );
+        $("#hint-edit-form input[name=content],textarea[name=content]")
+          .val(response.data.content)
+          // Trigger a change on the textarea to get codemirror to clone changes in
+          .trigger("change");
+
+        $("#hint-edit-modal")
+          .on("shown.bs.modal", function() {
+            $("#hint-edit-form textarea").each(function(i, e) {
+              if (e.hasOwnProperty("codemirror")) {
+                e.codemirror.refresh();
+              }
+            });
+          })
+          .on("hide.bs.modal", function() {
+            $("#hint-edit-form textarea").each(function(i, e) {
+              $(e)
+                .val("")
+                .trigger("change");
+              if (e.hasOwnProperty("codemirror")) {
+                e.codemirror.refresh();
+              }
+            });
+          });
+
         $("#hint-edit-form input[name=cost]").val(response.data.cost);
         $("#hint-edit-form input[name=id]").val(response.data.id);
-
-        // Markdown Preview
-        $("#new-hint-edit").on("shown.bs.tab", function(event) {
-          if (event.target.hash == "#hint-preview") {
-            const renderer = CTFd.lib.markdown();
-            const editor_value = $("#hint-write textarea").val();
-            $(event.target.hash).html(renderer.render(editor_value));
-          }
-        });
 
         $("#hint-edit-modal").modal();
       }
