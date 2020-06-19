@@ -17,17 +17,38 @@ class SubmissionsList(Resource):
     def get(self):
         args = request.args.to_dict()
         schema = SubmissionSchema(many=True)
+        pagination_args = {
+            "per_page": int(args.pop("per_page", 50)),
+            "page": int(args.pop("page", 1)),
+        }
         if args:
-            submissions = Submissions.query.filter_by(**args).all()
+            submissions = Submissions.query.filter_by(**args).paginate(
+                **pagination_args, max_per_page=100
+            )
         else:
-            submissions = Submissions.query.all()
+            submissions = Submissions.query.paginate(
+                **pagination_args, max_per_page=100
+            )
 
-        response = schema.dump(submissions)
+        response = schema.dump(submissions.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": submissions.page,
+                    "next": submissions.next_num,
+                    "prev": submissions.prev_num,
+                    "pages": submissions.pages,
+                    "per_page": submissions.per_page,
+                    "total": submissions.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @admins_only
     def post(self):

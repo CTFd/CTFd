@@ -33,10 +33,10 @@ class UserList(Resource):
     @check_account_visibility
     def get(self):
         if is_admin() and request.args.get("view") == "admin":
-            users = Users.query.filter_by().paginate(max_per_page=50)
+            users = Users.query.filter_by().paginate(max_per_page=100)
         else:
             users = Users.query.filter_by(banned=False, hidden=False).paginate(
-                max_per_page=50
+                max_per_page=100
             )
 
         response = UserSchema(view="user", many=True).dump(users.items)

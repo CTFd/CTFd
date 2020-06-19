@@ -13,14 +13,27 @@ class TagList(Resource):
     @admins_only
     def get(self):
         # TODO: Filter by challenge_id
-        tags = Tags.query.all()
+        tags = Tags.query.paginate(max_per_page=100)
         schema = TagSchema(many=True)
-        response = schema.dump(tags)
+        response = schema.dump(tags.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": tags.page,
+                    "next": tags.next_num,
+                    "prev": tags.prev_num,
+                    "pages": tags.pages,
+                    "per_page": tags.per_page,
+                    "total": tags.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @admins_only
     def post(self):

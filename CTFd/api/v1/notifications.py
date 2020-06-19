@@ -13,12 +13,25 @@ notifications_namespace = Namespace(
 @notifications_namespace.route("")
 class NotificantionList(Resource):
     def get(self):
-        notifications = Notifications.query.all()
+        notifications = Notifications.query.paginate(max_per_page=100)
         schema = NotificationSchema(many=True)
-        result = schema.dump(notifications)
+        result = schema.dump(notifications.items)
         if result.errors:
             return {"success": False, "errors": result.errors}, 400
-        return {"success": True, "data": result.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": notifications.page,
+                    "next": notifications.next_num,
+                    "prev": notifications.prev_num,
+                    "pages": notifications.pages,
+                    "per_page": notifications.per_page,
+                    "total": notifications.total,
+                }
+            },
+            "success": True,
+            "data": result.data,
+        }
 
     @admins_only
     def post(self):

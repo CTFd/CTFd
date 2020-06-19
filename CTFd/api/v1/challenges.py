@@ -49,15 +49,18 @@ class ChallengeList(Resource):
 
         # Admins can request to see everything
         if is_admin() and request.args.get("view") == "admin":
-            challenges = Challenges.query.order_by(Challenges.value).all()
-            solve_ids = set([challenge.id for challenge in challenges])
+            challenges = Challenges.query.order_by(Challenges.value).paginate(
+                max_per_page=100
+            )
+            # As far as prerequisites go, admins should be able to see/attempt on any challenge
+            solve_ids = set([challenge.id for challenge in Challenges.query.with_entities(Challenges.id).all()])
         else:
             challenges = (
                 Challenges.query.filter(
                     and_(Challenges.state != "hidden", Challenges.state != "locked")
                 )
                 .order_by(Challenges.value)
-                .all()
+                .paginate(max_per_page=100)
             )
 
             if user:
@@ -80,7 +83,7 @@ class ChallengeList(Resource):
 
         response = []
         tag_schema = TagSchema(view="user", many=True)
-        for challenge in challenges:
+        for challenge in challenges.items:
             if challenge.requirements:
                 requirements = challenge.requirements.get("prerequisites", [])
                 anonymize = challenge.requirements.get("anonymize")
@@ -119,7 +122,20 @@ class ChallengeList(Resource):
             )
 
         db.session.close()
-        return {"success": True, "data": response}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": challenges.page,
+                    "next": challenges.next_num,
+                    "prev": challenges.prev_num,
+                    "pages": challenges.pages,
+                    "per_page": challenges.per_page,
+                    "total": challenges.total,
+                }
+            },
+            "success": True,
+            "data": response,
+        }
 
     @admins_only
     def post(self):
