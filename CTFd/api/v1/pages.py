@@ -56,12 +56,21 @@ class PageList(Resource):
 
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, create_model
+from pydantic.main import ModelMetaclass
 from functools import wraps
 
 
 def test(spec, location):
+    if isinstance(spec, dict):
+        spec = create_model("", **spec)
+
     props = spec.schema()["properties"]
+    required = spec.schema()["required"]
+    for k in props:
+        if k in required:
+            props[k]["required"] = True
+        props[k]["in"] = location
 
     def dec(f):
         apidoc = getattr(f, "__apidoc__", {"params": {}})
@@ -69,8 +78,13 @@ def test(spec, location):
         f.__apidoc__ = apidoc
         print(f.__apidoc__)
 
+        params = getattr(f , "params", {})
+        params[location] = spec
+        f.params = params
+
         @wraps(f)
         def wrapper(*args, **kwargs):
+            print(spec)
             loaded = spec(**request.args).dict()
             return f(*args, loaded, **kwargs)
 
@@ -88,14 +102,15 @@ class PageDetail(Resource):
 
     class User(BaseModel):
         id: int
-        name: str = 'John Doe'
+        name: str = 'user'
 
     @admins_only
     @pages_namespace.doc(description="Endpoint to read a page object")
     @pages_namespace.response(200, "Success", PageModel)
     @test(User, "query")
-    def get(self, args, page_id):
-        print(args)
+    def get(self, argsj, argsq, page_id):
+        print(argsj)
+        print(argsq)
         page = Pages.query.filter_by(id=page_id).first_or_404()
         schema = PageSchema()
         response = schema.dump(page)
