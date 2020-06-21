@@ -54,6 +54,29 @@ class PageList(Resource):
 
         return {"success": True, "data": response.data}
 
+from datetime import datetime
+from typing import List, Optional
+from pydantic import BaseModel
+from functools import wraps
+
+
+def test(spec, location):
+    props = spec.schema()["properties"]
+
+    def dec(f):
+        apidoc = getattr(f, "__apidoc__", {"params": {}})
+        apidoc["params"].update(props)
+        f.__apidoc__ = apidoc
+        print(f.__apidoc__)
+
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            loaded = spec(**request.args).dict()
+            return f(*args, loaded, **kwargs)
+
+        return wrapper
+    return dec
+
 
 @pages_namespace.route("/<page_id>")
 @pages_namespace.response(200, "Success", PageModel)
@@ -62,10 +85,17 @@ class PageList(Resource):
 )
 @pages_namespace.doc(params={"page_id": "ID of a page object"})
 class PageDetail(Resource):
+
+    class User(BaseModel):
+        id: int
+        name: str = 'John Doe'
+
     @admins_only
     @pages_namespace.doc(description="Endpoint to read a page object")
     @pages_namespace.response(200, "Success", PageModel)
-    def get(self, page_id):
+    @test(User, "query")
+    def get(self, args, page_id):
+        print(args)
         page = Pages.query.filter_by(id=page_id).first_or_404()
         schema = PageSchema()
         response = schema.dump(page)
