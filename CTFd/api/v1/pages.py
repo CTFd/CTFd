@@ -55,6 +55,30 @@ class PageList(Resource):
         return {"success": True, "data": response.data}
 
 
+from webargs import fields
+from webargs.flaskparser import use_args
+from CTFd.schemas import JSONSchema
+from webargs.dict2schema import dict2schema
+
+
+def use_documented_args(*args, **kwargs):
+    location = kwargs.get("location", "query")
+    schema = JSONSchema(dict2schema(args[0])())["properties"]
+    print(schema)
+
+    for k in schema:
+        schema[k]["in"] = location
+
+    dec = use_args(*args, **kwargs)
+
+    def test(f):
+        doc = getattr(f, "__apidoc__", {"params": {}})
+        doc["params"].update(schema)
+        f.__apidoc__ = doc
+        return dec(f)
+    return test
+
+
 @pages_namespace.route("/<page_id>")
 @pages_namespace.response(200, "Success", PageModel)
 @pages_namespace.response(
@@ -65,7 +89,8 @@ class PageDetail(Resource):
     @admins_only
     @pages_namespace.doc(description="Endpoint to read a page object")
     @pages_namespace.response(200, "Success", PageModel)
-    def get(self, page_id):
+    @use_documented_args({"name": fields.Str(required=True)}, location="query")
+    def get(self, args, page_id):
         page = Pages.query.filter_by(id=page_id).first_or_404()
         schema = PageSchema()
         response = schema.dump(page)
