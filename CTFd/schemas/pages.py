@@ -1,8 +1,21 @@
+from functools import wraps
+from typing import Any, List, Optional
+
+from flask import request
 from marshmallow import pre_load
+from pydantic import BaseModel, create_model
+from pydantic.main import ModelMetaclass
+from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 
 from CTFd.models import Pages, ma
 from CTFd.schemas import JSONSchema
 from CTFd.utils import string_types
+
+
+class APIResponse(BaseModel):
+    success: bool
+    data: Optional[Any]
+    errors: Optional[List[str]]
 
 
 class PageSchema(ma.ModelSchema):
@@ -27,4 +40,4 @@ class PageSchema(ma.ModelSchema):
         super(PageSchema, self).__init__(*args, **kwargs)
 
 
-JSONPageSchema = JSONSchema(PageSchema)
+JSONPageSchema = sqlalchemy_to_pydantic(Pages).schema()

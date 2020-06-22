@@ -1,9 +1,10 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
 
+from CTFd.api.v1.helpers.request import validate_args
 from CTFd.cache import clear_pages
 from CTFd.models import Pages, db
-from CTFd.schemas.pages import JSONPageSchema, PageSchema
+from CTFd.schemas.pages import APIResponse, JSONPageSchema, PageSchema
 from CTFd.utils.decorators import admins_only
 
 pages_namespace = Namespace("pages", description="Endpoint to retrieve Pages")
@@ -19,15 +20,29 @@ PageModel = pages_namespace.model(
 PageErrorModel = pages_namespace.model(
     "PageErrorModel", {"success": fields.Boolean, "errors": fields.List(fields.String)}
 )
+pages_namespace.schema_model("APIResponse", APIResponse.schema())
 
 
 @pages_namespace.route("")
-@pages_namespace.response(200, "Success")
-@pages_namespace.response(400, "An error occured processing your data")
+@pages_namespace.doc(
+    responses={200: "Success", 400: "An error occured processing your data"}
+)
 class PageList(Resource):
     @admins_only
-    def get(self):
-        pages = Pages.query.all()
+    @pages_namespace.doc(description="Endpoint to get page objects in bulk")
+    @validate_args(
+        {
+            "id": (int, None),
+            "title": (str, None),
+            "route": (str, None),
+            "draft": (bool, None),
+            "hidden": (bool, None),
+            "auth_required": (bool, None),
+        },
+        location="query",
+    )
+    def get(self, query):
+        pages = Pages.query.filter_by(**query).all()
         schema = PageSchema(exclude=["content"], many=True)
         response = schema.dump(pages)
         if response.errors:
@@ -36,6 +51,7 @@ class PageList(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @pages_namespace.doc(description="Endpoint to create a page object")
     def post(self):
         req = request.get_json()
         schema = PageSchema()
@@ -56,15 +72,19 @@ class PageList(Resource):
 
 
 @pages_namespace.route("/<page_id>")
-@pages_namespace.response(200, "Success", PageModel)
-@pages_namespace.response(
-    400, "An error occured processing the provided or stored data", PageErrorModel
+@pages_namespace.doc(
+    params={"page_id": "ID of a page object"},
+    responses={
+        200: ("Success", "APIResponse"),
+        400: (
+            "An error occured processing the provided or stored data",
+            PageErrorModel,
+        ),
+    },
 )
-@pages_namespace.doc(params={"page_id": "ID of a page object"})
 class PageDetail(Resource):
     @admins_only
     @pages_namespace.doc(description="Endpoint to read a page object")
-    @pages_namespace.response(200, "Success", PageModel)
     def get(self, page_id):
         page = Pages.query.filter_by(id=page_id).first_or_404()
         schema = PageSchema()
