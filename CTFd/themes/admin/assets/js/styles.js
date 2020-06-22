@@ -1,6 +1,42 @@
 import "bootstrap/dist/js/bootstrap.bundle";
 import { makeSortableTables } from "core/utils";
 import $ from "jquery";
+import EasyMDE from "easymde";
+
+export function bindMarkdownEditors() {
+  $("textarea.markdown").each(function(_i, e) {
+    if (e.hasOwnProperty("mde") === false) {
+      let mde = new EasyMDE({
+        autoDownloadFontAwesome: false,
+        toolbar: [
+          "bold",
+          "italic",
+          "heading",
+          "|",
+          "quote",
+          "unordered-list",
+          "ordered-list",
+          "|",
+          "link",
+          "image",
+          "|",
+          "preview",
+          "guide"
+        ],
+        element: this,
+        initialValue: $(this).val(),
+        forceSync: true,
+        minHeight: "200px"
+      });
+      this.mde = mde;
+      this.codemirror = mde.codemirror;
+      $(this).on("change keyup paste", function() {
+        mde.codemirror.getDoc().setValue($(this).val());
+        mde.codemirror.refresh();
+      });
+    }
+  });
+}
 
 export default () => {
   // TODO: This is kind of a hack to mimic a React-like state construct.
@@ -9,32 +45,7 @@ export default () => {
     $(this).data("initial", $(this).val());
   });
 
-  $(".form-control").bind({
-    focus: function() {
-      $(this).addClass("input-filled-valid");
-    },
-    blur: function() {
-      if ($(this).val() === "") {
-        $(this).removeClass("input-filled-valid");
-      }
-    }
-  });
-
-  $(".modal").on("show.bs.modal", function(e) {
-    $(".form-control").each(function() {
-      if ($(this).val()) {
-        $(this).addClass("input-filled-valid");
-      }
-    });
-  });
-
   $(function() {
-    $(".form-control").each(function() {
-      if ($(this).val()) {
-        $(this).addClass("input-filled-valid");
-      }
-    });
-
     $("tr[data-href], td[data-href]").click(function() {
       var sel = getSelection().toString();
       if (!sel) {
@@ -96,6 +107,7 @@ export default () => {
       }
     }
 
+    bindMarkdownEditors();
     makeSortableTables();
     $('[data-toggle="tooltip"]').tooltip();
   });

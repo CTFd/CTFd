@@ -1,0 +1,70 @@
+{% block header %}
+{% endblock %}
+
+<form method="POST" action="{{ script_root }}/admin/challenges/new" enctype="multipart/form-data">
+	{% block name %}
+	<div class="form-group">
+		<label>
+			Name:<br>
+			<small class="form-text text-muted">
+				The name of your challenge
+			</small>
+		</label>
+		<input type="text" class="form-control" name="name" placeholder="Enter challenge name">
+	</div>
+	{% endblock %}
+
+	{% block category %}
+	<div class="form-group">
+		<label>
+			Category:<br>
+			<small class="form-text text-muted">
+				The category of your challenge
+			</small>
+		</label>
+		<input type="text" class="form-control" name="category" placeholder="Enter challenge category">
+	</div>
+	{% endblock %}
+
+
+	{% block message %}
+	<div class="form-group">
+		<label>
+			Message:<br>
+			<small class="form-text text-muted">
+				Use this to give a brief introduction to your challenge.
+			</small>
+		</label>
+		<textarea id="new-desc-editor" class="form-control markdown" name="description" rows="10"></textarea>
+	</div>
+	{% endblock %}
+
+	{% block value %}
+	<div class="form-group">
+		<label>
+			Value:<br>
+			<small class="form-text text-muted">
+				This is how many points are rewarded for solving this challenge.
+			</small>
+		</label>
+		<input type="number" class="form-control" name="value" placeholder="Enter value" required>
+	</div>
+	{% endblock %}
+
+	{% block state %}
+	<input type="hidden" name="state" value="hidden">
+	{% endblock %}
+
+	{% block type %}
+	<input type="hidden" name="type" value="standard">
+	{% endblock %}
+
+	{% block submit %}
+	<div class="form-group">
+		<button class="btn btn-primary float-right create-challenge-submit" type="submit">Create</button>
+	</div>
+	{% endblock %}
+</form>
+
+{% block footer %}
+{% endblock %}

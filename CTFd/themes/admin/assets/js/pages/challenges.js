@@ -3,7 +3,7 @@ import CTFd from "core/CTFd";
 import $ from "jquery";
 import { ezAlert, ezQuery } from "core/ezq";
 
-function deleteSelectedChallenges(event) {
+function deleteSelectedChallenges(_event) {
   let challengeIDs = $("input[data-challenge-id]:checked").map(function() {
     return $(this).data("challenge-id");
   });
@@ -21,14 +21,14 @@ function deleteSelectedChallenges(event) {
           })
         );
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }
   });
 }
 
-function bulkEditChallenges(event) {
+function bulkEditChallenges(_event) {
   let challengeIDs = $("input[data-challenge-id]:checked").map(function() {
     return $(this).data("challenge-id");
   });
@@ -67,7 +67,7 @@ function bulkEditChallenges(event) {
           })
         );
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }

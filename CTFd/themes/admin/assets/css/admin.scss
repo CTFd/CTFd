@@ -1,7 +1,7 @@
 @import "includes/sticky-footer.css";
 
 #score-graph {
-  height: 450px;
+  min-height: 400px;
   display: block;
   clear: both;
 }
@@ -12,17 +12,22 @@
 }
 
 #keys-pie-graph {
-  height: 400px;
+  min-height: 400px;
   display: block;
 }
 
 #categories-pie-graph {
-  height: 400px;
+  min-height: 400px;
   display: block;
 }
 
 #solve-percentages-graph {
-  height: 400px;
+  min-height: 400px;
+  display: block;
+}
+
+#score-distribution-graph {
+  min-height: 400px;
   display: block;
 }
 

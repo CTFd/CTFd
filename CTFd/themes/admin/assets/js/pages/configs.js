@@ -6,7 +6,7 @@ import moment from "moment-timezone";
 import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
 import $ from "jquery";
-import { ezQuery, ezProgressBar } from "core/ezq";
+import { ezQuery, ezProgressBar, ezAlert } from "core/ezq";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
 
@@ -110,7 +110,7 @@ function updateConfigs(event) {
     }
   });
 
-  CTFd.api.patch_config_list({}, params).then(response => {
+  CTFd.api.patch_config_list({}, params).then(_response => {
     window.location.reload();
   });
 }
@@ -154,7 +154,7 @@ function removeLogo() {
       };
       CTFd.api
         .patch_config({ configKey: "ctf_logo" }, params)
-        .then(response => {
+        .then(_response => {
           window.location.reload();
         });
     }
@@ -182,7 +182,6 @@ function importConfig(event) {
     contentType: false,
     statusCode: {
       500: function(resp) {
-        console.log(resp.responseText);
         alert(resp.responseText);
       }
     },
@@ -199,7 +198,7 @@ function importConfig(event) {
       };
       return xhr;
     },
-    success: function(data) {
+    success: function(_data) {
       pg = ezProgressBar({
         target: pg,
         width: 100
@@ -216,7 +215,6 @@ function importConfig(event) {
 
 function exportConfig(event) {
   event.preventDefault();
-  const href = CTFd.config.urlRoot + "/admin/export";
   window.location.href = $(this).attr("href");
 }
 
@@ -231,18 +229,70 @@ function insertTimezones(target) {
 }
 
 $(() => {
-  CodeMirror.fromTextArea(document.getElementById("theme-header"), {
-    lineNumbers: true,
-    lineWrapping: true,
-    mode: "htmlmixed",
-    htmlMode: true
+  const theme_header_editor = CodeMirror.fromTextArea(
+    document.getElementById("theme-header"),
+    {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "htmlmixed",
+      htmlMode: true
+    }
+  );
+
+  const theme_footer_editor = CodeMirror.fromTextArea(
+    document.getElementById("theme-footer"),
+    {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "htmlmixed",
+      htmlMode: true
+    }
+  );
+
+  const theme_settings_editor = CodeMirror.fromTextArea(
+    document.getElementById("theme-settings"),
+    {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: { name: "javascript", json: true }
+    }
+  );
+
+  // Handle refreshing codemirror when switching tabs.
+  // Better than the autorefresh approach b/c there's no flicker
+  $("a[href='#theme']").on("shown.bs.tab", function(_e) {
+    theme_header_editor.refresh();
+    theme_footer_editor.refresh();
+    theme_settings_editor.refresh();
   });
 
-  CodeMirror.fromTextArea(document.getElementById("theme-footer"), {
-    lineNumbers: true,
-    lineWrapping: true,
-    mode: "htmlmixed",
-    htmlMode: true
+  $("#theme-settings-modal form").submit(function(e) {
+    e.preventDefault();
+    theme_settings_editor
+      .getDoc()
+      .setValue(JSON.stringify($(this).serializeJSON(), null, 2));
+    $("#theme-settings-modal").modal("hide");
+  });
+
+  $("#theme-settings-button").click(function() {
+    let form = $("#theme-settings-modal form");
+    let data = JSON.parse(theme_settings_editor.getValue());
+    $.each(data, function(key, value) {
+      var ctrl = form.find(`[name='${key}']`);
+      switch (ctrl.prop("type")) {
+        case "radio":
+        case "checkbox":
+          ctrl.each(function() {
+            if ($(this).attr("value") == value) {
+              $(this).attr("checked", value);
+            }
+          });
+          break;
+        default:
+          ctrl.val(value);
+      }
+    });
+    $("#theme-settings-modal").modal();
   });
 
   insertTimezones($("#start-timezone"));
@@ -256,7 +306,7 @@ $(() => {
   $("#import-button").click(importConfig);
   $("#config-color-update").click(function() {
     const hex_code = $("#config-color-picker").val();
-    const user_css = $("#theme-header").val();
+    const user_css = theme_header_editor.getValue();
     let new_css;
     if (user_css.length) {
       let css_vars = `theme-color: ${hex_code};`;
@@ -269,7 +319,7 @@ $(() => {
         `.jumbotron{background-color: var(--theme-color) !important;}\n` +
         `</style>\n`;
     }
-    $("#theme-header").val(new_css);
+    theme_header_editor.getDoc().setValue(new_css);
   });
 
   $(".start-date").change(function() {

@@ -7,6 +7,13 @@ from flask.helpers import safe_join
 from sqlalchemy.exc import IntegrityError
 
 from CTFd.cache import cache
+from CTFd.constants.config import (
+    AccountVisibilityTypes,
+    ChallengeVisibilityTypes,
+    ConfigTypes,
+    RegistrationVisibilityTypes,
+    ScoreVisibilityTypes,
+)
 from CTFd.models import (
     Admins,
     Files,
@@ -17,7 +24,7 @@ from CTFd.models import (
     UserTokens,
     db,
 )
-from CTFd.utils import config, get_config, markdown, set_config
+from CTFd.utils import config, get_config, set_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
 from CTFd.utils.config import is_setup
@@ -156,10 +163,14 @@ def setup():
             page = Pages(title=None, route="index", content=index, draft=False)
 
             # Visibility
-            set_config("challenge_visibility", "private")
-            set_config("registration_visibility", "public")
-            set_config("score_visibility", "public")
-            set_config("account_visibility", "public")
+            set_config(
+                ConfigTypes.CHALLENGE_VISIBILITY, ChallengeVisibilityTypes.PRIVATE
+            )
+            set_config(
+                ConfigTypes.REGISTRATION_VISIBILITY, RegistrationVisibilityTypes.PUBLIC
+            )
+            set_config(ConfigTypes.SCORE_VISIBILITY, ScoreVisibilityTypes.PUBLIC)
+            set_config(ConfigTypes.ACCOUNT_VISIBILITY, AccountVisibilityTypes.PUBLIC)
 
             # Verify emails
             set_config("verify_emails", None)
@@ -226,12 +237,7 @@ def setup():
                 cache.clear()
 
             return redirect(url_for("views.static_html"))
-        return render_template(
-            "setup.html",
-            nonce=session.get("nonce"),
-            state=serialize(generate_nonce()),
-            themes=config.get_themes(),
-        )
+        return render_template("setup.html", state=serialize(generate_nonce()))
     return redirect(url_for("views.static_html"))
 
 
@@ -323,7 +329,7 @@ def static_html(route):
         if page.auth_required and authed() is False:
             return redirect(url_for("auth.login", next=request.full_path))
 
-        return render_template("page.html", content=markdown(page.content))
+        return render_template("page.html", content=page.content)
 
 
 @views.route("/files", defaults={"path": ""})
@@ -359,7 +365,7 @@ def files(path):
 
                 # Check user is admin if challenge_visibility is admins only
                 if (
-                    get_config("challenge_visibility") == "admins"
+                    get_config(ConfigTypes.CHALLENGE_VISIBILITY) == "admins"
                     and user.type != "admin"
                 ):
                     abort(403)

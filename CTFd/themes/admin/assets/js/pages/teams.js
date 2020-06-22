@@ -3,7 +3,7 @@ import CTFd from "core/CTFd";
 import $ from "jquery";
 import { ezAlert, ezQuery } from "core/ezq";
 
-function deleteSelectedTeams(event) {
+function deleteSelectedTeams(_event) {
   let teamIDs = $("input[data-team-id]:checked").map(function() {
     return $(this).data("team-id");
   });
@@ -21,14 +21,14 @@ function deleteSelectedTeams(event) {
           })
         );
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }
   });
 }
 
-function bulkEditTeams(event) {
+function bulkEditTeams(_event) {
   let teamIDs = $("input[data-team-id]:checked").map(function() {
     return $(this).data("team-id");
   });
@@ -67,7 +67,7 @@ function bulkEditTeams(event) {
           })
         );
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }

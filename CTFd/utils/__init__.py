@@ -1,3 +1,5 @@
+from enum import Enum
+
 import cmarkgfm
 from flask import current_app as app
 
@@ -43,6 +45,10 @@ def _get_config(key):
 
 
 def get_config(key, default=None):
+    # Convert enums to raw string values to cache better
+    if isinstance(key, Enum):
+        key = str(key)
+
     value = _get_config(key)
     if value is KeyError:
         return default
@@ -58,5 +64,10 @@ def set_config(key, value):
         config = Configs(key=key, value=value)
         db.session.add(config)
     db.session.commit()
+
+    # Convert enums to raw string values to cache better
+    if isinstance(key, Enum):
+        key = str(key)
+
     cache.delete_memoized(_get_config, key)
     return config

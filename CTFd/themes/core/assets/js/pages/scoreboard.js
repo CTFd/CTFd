@@ -1,33 +1,12 @@
 import "./main";
 import $ from "jquery";
 import CTFd from "../CTFd";
-import Plotly from "plotly.js-basic-dist";
+import echarts from "echarts/dist/echarts-en.common";
 import Moment from "moment";
 import { htmlEntities, cumulativeSum, colorHash } from "../utils";
 
 const graph = $("#score-graph");
 const table = $("#scoreboard tbody");
-const config = {
-  displaylogo: false,
-  responsive: true
-};
-const layout = {
-  title: "Top 10 " + (window.userMode === "teams" ? "Teams" : "Users"),
-  paper_bgcolor: "rgba(0,0,0,0)",
-  plot_bgcolor: "rgba(0,0,0,0)",
-  hovermode: "closest",
-  xaxis: {
-    showgrid: false,
-    showspikes: true
-  },
-  yaxis: {
-    showgrid: false,
-    showspikes: true
-  },
-  legend: {
-    orientation: "h"
-  }
-};
 
 const updateScores = () => {
   CTFd.api.get_scoreboard_list().then(response => {
@@ -56,97 +35,131 @@ const updateScores = () => {
   });
 };
 
-const createGraph = () => {
-  CTFd.api.get_scoreboard_detail({ count: 10 }).then(response => {
+const buildGraphData = () => {
+  return CTFd.api.get_scoreboard_detail({ count: 10 }).then(response => {
     const places = response.data;
 
     const teams = Object.keys(places);
-    const traces = [];
     if (teams.length === 0) {
+      return false;
+    }
+
+    const option = {
+      title: {
+        left: "center",
+        text: "Top 10 " + (CTFd.config.userMode === "teams" ? "Teams" : "Users")
+      },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "cross"
+        }
+      },
+      legend: {
+        type: "scroll",
+        orient: "horizontal",
+        align: "left",
+        bottom: 35,
+        data: []
+      },
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: "none"
+          },
+          saveAsImage: {}
+        }
+      },
+      grid: {
+        containLabel: true
+      },
+      xAxis: [
+        {
+          type: "time",
+          boundaryGap: false,
+          data: []
+        }
+      ],
+      yAxis: [
+        {
+          type: "value"
+        }
+      ],
+      dataZoom: [
+        {
+          id: "dataZoomX",
+          type: "slider",
+          xAxisIndex: [0],
+          filterMode: "filter"
+        }
+      ],
+      series: []
+    };
+
+    for (let i = 0; i < teams.length; i++) {
+      const team_score = [];
+      const times = [];
+      for (let j = 0; j < places[teams[i]]["solves"].length; j++) {
+        team_score.push(places[teams[i]]["solves"][j].value);
+        const date = Moment(places[teams[i]]["solves"][j].date);
+        times.push(date.toDate());
+      }
+
+      const total_scores = cumulativeSum(team_score);
+      var scores = times.map(function(e, i) {
+        return [e, total_scores[i]];
+      });
+
+      option.legend.data.push(places[teams[i]]["name"]);
+
+      const data = {
+        name: places[teams[i]]["name"],
+        type: "line",
+        label: {
+          normal: {
+            position: "top"
+          }
+        },
+        itemStyle: {
+          normal: {
+            color: colorHash(places[teams[i]]["name"] + places[teams[i]]["id"])
+          }
+        },
+        data: scores
+      };
+      option.series.push(data);
+    }
+
+    return option;
+  });
+};
+
+const createGraph = () => {
+  buildGraphData().then(option => {
+    if (option === false) {
       // Replace spinner
       graph.html(
         '<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">No solves yet</h3>'
       );
       return;
     }
-    for (let i = 0; i < teams.length; i++) {
-      const team_score = [];
-      const times = [];
-      for (let j = 0; j < places[teams[i]]["solves"].length; j++) {
-        team_score.push(places[teams[i]]["solves"][j].value);
-        const date = Moment(places[teams[i]]["solves"][j].date);
-        times.push(date.toDate());
-      }
-      const trace = {
-        x: times,
-        y: cumulativeSum(team_score),
-        mode: "lines+markers",
-        name: places[teams[i]]["name"],
-        marker: {
-          color: colorHash(places[teams[i]]["name"] + places[teams[i]]["id"])
-        },
-        line: {
-          color: colorHash(places[teams[i]]["name"] + places[teams[i]]["id"])
-        }
-      };
-      traces.push(trace);
-    }
-
-    traces.sort((a, b) => {
-      const score_diff = b["y"][b["y"].length - 1] - a["y"][a["y"].length - 1];
-      if (!score_diff) {
-        return a["x"][a["x"].length - 1] - b["x"][b["x"].length - 1];
-      }
-      return score_diff;
-    });
 
     graph.empty(); // Remove spinners
-    graph[0].fn = "CTFd_scoreboard_" + new Date().toISOString().slice(0, 19);
-    Plotly.newPlot(graph[0], traces, layout, config);
+    let chart = echarts.init(document.querySelector("#score-graph"));
+    chart.setOption(option);
+
+    $(window).on("resize", function() {
+      if (chart != null && chart != undefined) {
+        chart.resize();
+      }
+    });
   });
 };
 
 const updateGraph = () => {
-  CTFd.api.get_scoreboard_detail({ count: 10 }).then(response => {
-    const places = response.data;
-
-    const teams = Object.keys(places);
-    const traces = [];
-    if (teams.length === 0) {
-      return;
-    }
-    for (let i = 0; i < teams.length; i++) {
-      const team_score = [];
-      const times = [];
-      for (let j = 0; j < places[teams[i]]["solves"].length; j++) {
-        team_score.push(places[teams[i]]["solves"][j].value);
-        const date = Moment(places[teams[i]]["solves"][j].date);
-        times.push(date.toDate());
-      }
-      const trace = {
-        x: times,
-        y: cumulativeSum(team_score),
-        mode: "lines+markers",
-        name: places[teams[i]]["name"],
-        marker: {
-          color: colorHash(places[teams[i]]["name"] + places[teams[i]]["id"])
-        },
-        line: {
-          color: colorHash(places[teams[i]]["name"] + places[teams[i]]["id"])
-        }
-      };
-      traces.push(trace);
-    }
-
-    traces.sort((a, b) => {
-      const score_diff = b["y"][b["y"].length - 1] - a["y"][a["y"].length - 1];
-      if (!score_diff) {
-        return a["x"][a["x"].length - 1] - b["x"][b["x"].length - 1];
-      }
-      return score_diff;
-    });
-
-    Plotly.react(graph[0], traces, layout, config);
+  buildGraphData().then(option => {
+    let chart = echarts.init(document.querySelector("#score-graph"));
+    chart.setOption(option);
   });
 };
 
@@ -158,5 +171,4 @@ function update() {
 $(() => {
   setInterval(update, 300000); // Update scores every 5 minutes
   createGraph();
-  updateGraph();
 });

@@ -22,7 +22,6 @@ def login_user(user):
 
 def update_user(user):
     session["id"] = user.id
-    session["email"] = user.email
     session["hash"] = hmac(user.password)
 
     # Clear out any currently cached user attributes

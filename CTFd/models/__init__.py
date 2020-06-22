@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property, validates
 
+from CTFd.cache import cache
+
 db = SQLAlchemy()
 ma = Marshmallow()
 
@@ -76,6 +78,13 @@ class Challenges(db.Model):
     flags = db.relationship("Flags", backref="challenge")
 
     __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+
+    @property
+    def html(self):
+        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.helpers import markup
+
+        return markup(build_html(self.description))
 
     def __init__(self, *args, **kwargs):
         super(Challenges, self).__init__(**kwargs)
@@ -331,6 +340,7 @@ class Users(db.Model):
             awards = awards.filter(Awards.date < dt)
         return awards.all()
 
+    @cache.memoize()
     def get_score(self, admin=False):
         score = db.func.sum(Challenges.value).label("score")
         user = (
@@ -363,6 +373,7 @@ class Users(db.Model):
         else:
             return 0
 
+    @cache.memoize()
     def get_place(self, admin=False, numeric=False):
         """
         This method is generally a clone of CTFd.scoreboard.get_standings.
@@ -375,12 +386,13 @@ class Users(db.Model):
 
         standings = get_user_standings(admin=admin)
 
-        try:
-            n = standings.index((self.id,)) + 1
-            if numeric:
-                return n
-            return ordinalize(n)
-        except ValueError:
+        for i, user in enumerate(standings):
+            if user.user_id == self.id:
+                n = i + 1
+                if numeric:
+                    return n
+                return ordinalize(n)
+        else:
             return None
 
 
@@ -401,7 +413,9 @@ class Teams(db.Model):
     password = db.Column(db.String(128))
     secret = db.Column(db.String(128))
 
-    members = db.relationship("Users", backref="team", foreign_keys="Users.team_id")
+    members = db.relationship(
+        "Users", backref="team", foreign_keys="Users.team_id", lazy="joined"
+    )
 
     # Supplementary attributes
     website = db.Column(db.String(128))
@@ -499,12 +513,14 @@ class Teams(db.Model):
 
         return awards.all()
 
+    @cache.memoize()
     def get_score(self, admin=False):
         score = 0
         for member in self.members:
             score += member.get_score(admin=admin)
         return score
 
+    @cache.memoize()
     def get_place(self, admin=False, numeric=False):
         """
         This method is generally a clone of CTFd.scoreboard.get_standings.
@@ -517,12 +533,13 @@ class Teams(db.Model):
 
         standings = get_team_standings(admin=admin)
 
-        try:
-            n = standings.index((self.id,)) + 1
-            if numeric:
-                return n
-            return ordinalize(n)
-        except ValueError:
+        for i, team in enumerate(standings):
+            if team.team_id == self.id:
+                n = i + 1
+                if numeric:
+                    return n
+                return ordinalize(n)
+        else:
             return None
 
 

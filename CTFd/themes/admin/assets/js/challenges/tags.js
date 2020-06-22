@@ -1,7 +1,7 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
 
-export function deleteTag(event) {
+export function deleteTag(_event) {
   const $elem = $(this);
   const tag_id = $elem.attr("tag-id");
 
@@ -22,7 +22,7 @@ export function addTag(event) {
   const tag = $elem.val();
   const params = {
     value: tag,
-    challenge: CHALLENGE_ID
+    challenge: window.CHALLENGE_ID
   };
 
   CTFd.api.post_tag_list({}, params).then(response => {

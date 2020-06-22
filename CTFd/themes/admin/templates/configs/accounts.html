@@ -1,57 +1,43 @@
 <div role="tabpanel" class="tab-pane config-section" id="accounts">
+
+	{% set verify_emails = "true" if verify_emails == True else "false" %}
+	{% set name_changes = "true" if name_changes == True else "false" %}
+	{% with form = Forms.config.AccountSettingsForm(verify_emails=verify_emails, name_changes=name_changes) %}
 	<form method="POST" autocomplete="off" class="w-100">
 
 		<div class="form-group">
-			<label>
-				Account Email Whitelist
-				<small class="form-text text-muted">
-					Comma-seperated email domains which users can register under.
-				</small>
-			</label>
-			<input class="form-control" id='domain-whitelist' name='domain_whitelist' type='text'
-				   placeholder=""
-				   {% if domain_whitelist is defined and domain_whitelist != None %}value="{{ domain_whitelist }}"{% endif %}>
+			{{ form.domain_whitelist.label }}
+			{{ form.domain_whitelist(class="form-control", value=domain_whitelist or "") }}
 			<small class="form-text text-muted">
-				e.g. ctfd.io,gmail.com,yahoo.com
+				{{ form.domain_whitelist.description }}
 			</small>
 		</div>
 
 		<div class="form-group">
-			<label>
-				Verify Emails<br>
-				<small class="form-text text-muted">
-					Control whether users must confirm their email addresses before playing
-				</small>
-			</label>
-			<select class="form-control custom-select" name="verify_emails">
-				<option value="true" {% if verify_emails == True %}selected{% endif %}>Enabled</option>
-				<option value="false" {% if verify_emails == False or verify_emails == None %}selected{% endif %}>Disabled</option>
-			</select>
+			{{ form.verify_emails.label }}
+			{{ form.verify_emails(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.verify_emails.description }}
+			</small>
 		</div>
 
 		<div class="form-group">
-			<label>
-				Team Size<br>
-				<small class="form-text text-muted">
-					Amount of users per team
-				</small>
-			</label>
-			<input class="form-control" id="team_size" name="team_size" type="number" min="0" {% if team_size %}value="{{ team_size }}"{% endif %}>
+			{{ form.team_size.label }}
+			{{ form.team_size(class="form-control", value=team_size) }}
+			<small class="form-text text-muted">
+				{{ form.team_size.description }}
+			</small>
 		</div>
 
 		<div class="form-group">
-			<label>
-				Name Changes<br>
-				<small class="form-text text-muted">
-					Control whether users can change their names
-				</small>
-			</label>
-			<select class="form-control custom-select" name="name_changes">
-				<option value="true" {% if name_changes == True or name_changes == None %}selected{% endif %}>Enabled</option>
-				<option value="false" {% if name_changes == False %}selected{% endif %}>Disabled</option>
-			</select>
+			{{ form.name_changes.label }}
+			{{ form.name_changes(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.name_changes.description }}
+			</small>
 		</div>
 
-		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+		{{ form.submit(class="btn btn-md btn-primary float-right") }}
 	</form>
+	{% endwith %}
 </div>

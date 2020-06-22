@@ -1,11 +1,10 @@
 language: python
-dist: xenial
+dist: bionic
 cache:
     - pip
     - yarn
 services:
     - mysql
-    - postgresql
     - redis-server
 addons:
   apt:
@@ -17,7 +16,6 @@ addons:
 env:
     - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
     - TESTING_DATABASE_URL='sqlite://'
-    - TESTING_DATABASE_URL='postgres://postgres@localhost/ctfd'
 python:
     - 3.6
 before_install:
@@ -28,8 +26,6 @@ install:
     - pip install -r development.txt
     - yarn install --non-interactive
     - yarn global add prettier@1.17.0
-before_script:
-    - psql -c 'create database ctfd;' -U postgres
 script:
     - make lint
     - make test

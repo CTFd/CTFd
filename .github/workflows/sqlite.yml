@@ -1,39 +1,17 @@
 ---
-name: CTFd CI
+name: CTFd SQLite CI
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_HOST_AUTH_METHOD: trust
-          POSTGRES_DB: ctfd
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      mysql:
-        image: mysql
-        ports:
-          - 3306:3306
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
 
     strategy:
       matrix:
         python-version: ['3.6']
-        TESTING_DATABASE_URL: ['mysql+pymysql://root@localhost/ctfd', 'sqlite://', 'postgres://postgres@localhost/ctfd']
+        TESTING_DATABASE_URL: ['sqlite://']
 
     name: Python ${{ matrix.python-version }}
     steps:
@@ -49,9 +27,6 @@ jobs:
             python -m pip install -r development.txt
             sudo yarn install --non-interactive
             sudo yarn global add prettier@1.17.0
-
-      - name: Lint
-        run: make lint
 
       - name: Test
         run: |

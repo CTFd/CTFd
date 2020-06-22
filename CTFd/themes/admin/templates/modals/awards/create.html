@@ -1,22 +1,23 @@
+{% with form = Forms.awards.AwardCreationForm() %}
 <form id="user-award-form" method="POST">
 	<div class="form-group">
-		<label for="award-name-input">Name</label>
-		<input type="text" class="form-control" id="award-name-input" name="name">
+		<b>{{ form.name.label }}</b>
+		{{ form.name(class="form-control", id="award-name-input") }}
 	</div>
 	<div class="form-group">
-		<label for="award-value-input">Value</label>
-		<input type="number" class="form-control" id="award-value-input" name="value">
+		<b>{{ form.value.label }}</b>
+		{{ form.value(class="form-control", id="award-value-input") }}
 	</div>
 	<div class="form-group">
-		<label for="award-category-input">Category</label>
-		<input type="text" class="form-control" id="award-category-input" name="category">
+		<b>{{ form.category.label }}</b>
+		{{ form.category(class="form-control", id="award-category-input") }}
 	</div>
 	<div class="form-group">
-		<label for="award-description-input" class="control-label">Description</label>
-		<textarea id="award-description-input" class="form-control" name="description" rows="10"></textarea>
+		<b>{{ form.description.label }}</b>
+		{{ form.description(id="award-description-input", class="form-control", rows="5") }}
 	</div>
 	<div class="form-group">
-		<label for="award-icon-input">Icon</label>
+		<b>{{ form.icon.label }}</b>
 		<div class="pt-1">
 			<table class="table table-sm w-100">
 				<tr>
@@ -129,6 +130,7 @@
 	<div id="results">
 	</div>
 	<div class="modal-footer">
-		<button type="submit" id="award-create-button" class="btn btn-primary">Create</button>
+		{{ form.submit(id="award-create-button", class="btn btn-primary") }}
 	</div>
 </form>
+{% endwith %}

@@ -277,7 +277,7 @@ def test_contact_for_password_reset():
             forgot_link = "http://localhost/reset_password"
             r = client.get(forgot_link)
 
-            assert "Contact a CTF organizer" in r.get_data(as_text=True)
+            assert "contact an organizer" in r.get_data(as_text=True)
     destroy_ctfd(app)
 
 

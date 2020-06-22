@@ -15,11 +15,12 @@
 	<script type="text/javascript">
 		var init = {
 			'urlRoot': "{{ request.script_root }}",
-			'csrfNonce': "{{ nonce }}",
+			'csrfNonce': "{{ Session.nonce }}",
 			'userMode': "{{ Configs.user_mode }}",
 			'userId': {{ Session.id }},
 			'start': {{ Configs.start | tojson }},
 			'end': {{ Configs.end | tojson }},
+			'theme_settings': {{ Configs.theme_settings | tojson }}
 		}
 	</script>
 	{{ Configs.theme_header }}

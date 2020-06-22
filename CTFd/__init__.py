@@ -4,6 +4,7 @@ import sys
 import weakref
 from distutils.version import StrictVersion
 
+import jinja2
 from flask import Flask, Request
 from flask_migrate import upgrade
 from jinja2 import FileSystemLoader
@@ -147,10 +148,19 @@ def create_app(config="CTFd.config.Config"):
     with app.app_context():
         app.config.from_object(config)
 
-        theme_loader = ThemeLoader(
+        app.theme_loader = ThemeLoader(
             os.path.join(app.root_path, "themes"), followlinks=True
         )
-        app.jinja_loader = theme_loader
+        # Weird nested solution for accessing plugin templates
+        app.plugin_loader = jinja2.PrefixLoader(
+            {
+                "plugins": jinja2.FileSystemLoader(
+                    searchpath=os.path.join(app.root_path, "plugins"), followlinks=True
+                )
+            }
+        )
+        # Load from themes first but fallback to loading from the plugin folder
+        app.jinja_loader = jinja2.ChoiceLoader([app.theme_loader, app.plugin_loader])
 
         from CTFd.models import (  # noqa: F401
             db,

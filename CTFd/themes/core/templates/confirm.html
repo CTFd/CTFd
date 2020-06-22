@@ -26,15 +26,17 @@
 
 				<hr>
 
+				{% with form = Forms.auth.ConfirmForm() %}
 				<form method="POST" action="{{ url_for('auth.confirm') }}">
 					<h4 class="text-center">
 						Need to resend the confirmation email?
 					</h4>
 					<div class="col-md-12 text-center">
-						<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined">Resend</button>
+						{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
 					</div>
-					<input type="hidden" name="nonce" value="{{ nonce }}">
+					{{ form.nonce() }}
 				</form>
+				{% endwith %}
 			</div>
 		</div>
 	</div>
