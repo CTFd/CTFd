@@ -1,9 +1,7 @@
 from functools import wraps
-from typing import List, Optional
 
 from flask import request
-from pydantic import BaseModel, create_model
-from pydantic.main import ModelMetaclass
+from pydantic import create_model
 
 ARG_LOCATIONS = {
     "query": lambda: request.args,

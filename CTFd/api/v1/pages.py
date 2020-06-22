@@ -1,26 +1,37 @@
+from typing import List
+
 from flask import request
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
+from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
+from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.cache import clear_pages
 from CTFd.models import Pages, db
-from CTFd.schemas.pages import APIResponse, JSONPageSchema, PageSchema
+from CTFd.schemas.pages import PageSchema
 from CTFd.utils.decorators import admins_only
 
 pages_namespace = Namespace("pages", description="Endpoint to retrieve Pages")
-PageModel = pages_namespace.model(
-    "PageModel",
-    {
-        "success": fields.Boolean,
-        "data": fields.Nested(
-            pages_namespace.schema_model(PageSchema.__name__, JSONPageSchema)
-        ),
-    },
+
+
+PageModel = sqlalchemy_to_pydantic(Pages)
+
+
+class PageDetailedSuccessResponse(APIDetailedSuccessResponse):
+    data: PageModel
+
+
+class PageListSuccessResponse(APIListSuccessResponse):
+    data: List[PageModel]
+
+
+pages_namespace.schema_model(
+    "PageDetailedSuccessResponse", PageDetailedSuccessResponse.apidoc()
 )
-PageErrorModel = pages_namespace.model(
-    "PageErrorModel", {"success": fields.Boolean, "errors": fields.List(fields.String)}
+
+pages_namespace.schema_model(
+    "PageListSuccessResponse", PageListSuccessResponse.apidoc()
 )
-pages_namespace.schema_model("APIResponse", APIResponse.schema())
 
 
 @pages_namespace.route("")
@@ -29,7 +40,16 @@ pages_namespace.schema_model("APIResponse", APIResponse.schema())
 )
 class PageList(Resource):
     @admins_only
-    @pages_namespace.doc(description="Endpoint to get page objects in bulk")
+    @pages_namespace.doc(
+        description="Endpoint to get page objects in bulk",
+        responses={
+            200: ("Success", "PageListSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     @validate_args(
         {
             "id": (int, None),
@@ -51,7 +71,16 @@ class PageList(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
-    @pages_namespace.doc(description="Endpoint to create a page object")
+    @pages_namespace.doc(
+        description="Endpoint to create a page object",
+        responses={
+            200: ("Success", "PageDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def post(self):
         req = request.get_json()
         schema = PageSchema()
@@ -75,10 +104,10 @@ class PageList(Resource):
 @pages_namespace.doc(
     params={"page_id": "ID of a page object"},
     responses={
-        200: ("Success", "APIResponse"),
+        200: ("Success", "PageDetailedSuccessResponse"),
         400: (
             "An error occured processing the provided or stored data",
-            PageErrorModel,
+            "APISimpleErrorResponse",
         ),
     },
 )
@@ -117,7 +146,10 @@ class PageDetail(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
-    @pages_namespace.doc(description="Endpoint to delete a page object")
+    @pages_namespace.doc(
+        description="Endpoint to delete a page object",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
     def delete(self, page_id):
         page = Pages.query.filter_by(id=page_id).first_or_404()
         db.session.delete(page)
