@@ -45,7 +45,7 @@ class APIListSuccessResponse(APIDetailedSuccessResponse):
             key = schema["properties"]["data"]["items"]["$ref"]
             ref = key.split("/").pop()
             definition = schema["definitions"][ref]
-            schema["properties"]["data"] = definition
+            schema["properties"]["data"]["items"] = definition
             del schema["definitions"][ref]
             if bool(schema["definitions"]) is False:
                 del schema["definitions"]
