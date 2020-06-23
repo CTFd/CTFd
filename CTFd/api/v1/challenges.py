@@ -6,7 +6,17 @@ from sqlalchemy.sql import and_
 
 from CTFd.cache import clear_standings
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
-from CTFd.models import Challenges, Fails, Flags, Hints, HintUnlocks, Solves, Tags, db
+from CTFd.models import (
+    Challenges,
+    Fails,
+    Flags,
+    Hints,
+    HintUnlocks,
+    Solves,
+    Submissions,
+    Tags,
+    db,
+)
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.schemas.flags import FlagSchema
 from CTFd.schemas.hints import HintSchema
@@ -273,6 +283,15 @@ class Challenge(Resource):
         else:
             response["solves"] = None
 
+        if authed():
+            # Get current attempts for the user
+            attempts = Submissions.query.filter_by(
+                account_id=user.account_id, challenge_id=challenge_id
+            ).count()
+        else:
+            attempts = 0
+
+        response["attempts"] = attempts
         response["files"] = files
         response["tags"] = tags
         response["hints"] = hints
@@ -283,6 +302,8 @@ class Challenge(Resource):
             files=files,
             tags=tags,
             hints=[Hints(**h) for h in hints],
+            max_attempts=chal.max_attempts,
+            attempts=attempts,
             challenge=chal,
         )
 

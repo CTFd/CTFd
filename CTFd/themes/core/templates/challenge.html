@@ -83,6 +83,16 @@
 							{% endfor %}
 						</div>
 
+						{% if max_attempts > 1 %}
+						<div class="row text-center">
+							<div class="col-md-12">
+								<p>
+									{{ attempts }}/{{ max_attempts }} attempt{{ attempts|pluralize(attempts) }}
+								</p>
+							</div>
+						</div>
+						{% endif %}
+
 						<div class="row submit-row">
 							<div class="col-md-9 form-group">
 								{% block input %}
