@@ -15,6 +15,7 @@ pages_namespace = Namespace("pages", description="Endpoint to retrieve Pages")
 
 
 PageModel = sqlalchemy_to_pydantic(Pages)
+TransientPageModel = sqlalchemy_to_pydantic(Pages, exclude=["id"])
 
 
 class PageDetailedSuccessResponse(APIDetailedSuccessResponse):
@@ -81,8 +82,9 @@ class PageList(Resource):
             ),
         },
     )
-    def post(self):
-        req = request.get_json()
+    @validate_args(TransientPageModel, location="json")
+    def post(self, json_args):
+        req = json_args
         schema = PageSchema()
         response = schema.load(req)
 
