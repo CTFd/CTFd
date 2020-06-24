@@ -2,6 +2,8 @@ import "bootstrap/dist/js/bootstrap.bundle";
 import { makeSortableTables } from "core/utils";
 import $ from "jquery";
 import EasyMDE from "easymde";
+import Vue from 'vue/dist/vue.esm.browser'
+import MediaLibrary from './components/files/MediaLibrary.vue'
 
 export function bindMarkdownEditors() {
   $("textarea.markdown").each(function(_i, e) {
@@ -22,7 +24,16 @@ export function bindMarkdownEditors() {
           {
             name: "media",
             action: function (editor){
-              alert();
+              const mediaModal = Vue.extend(MediaLibrary);
+              let vueContainer = document.createElement('div')
+              document.body.appendChild(vueContainer)
+              let m = new mediaModal().$mount(vueContainer);
+
+              $("#media-modal").on('hidden.bs.modal', function (e) {
+                m.$destroy();
+                $("#media-modal").remove();
+              })
+              $("#media-modal").modal();
             },
             className: "fas fa-file-upload",
             title: "Media Library",
