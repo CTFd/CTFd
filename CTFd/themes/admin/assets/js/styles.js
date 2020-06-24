@@ -2,8 +2,8 @@ import "bootstrap/dist/js/bootstrap.bundle";
 import { makeSortableTables } from "core/utils";
 import $ from "jquery";
 import EasyMDE from "easymde";
-import Vue from 'vue/dist/vue.esm.browser'
-import MediaLibrary from './components/files/MediaLibrary.vue'
+import Vue from "vue/dist/vue.esm.browser";
+import MediaLibrary from "./components/files/MediaLibrary.vue";
 
 export function bindMarkdownEditors() {
   $("textarea.markdown").each(function(_i, e) {
@@ -23,20 +23,32 @@ export function bindMarkdownEditors() {
           "image",
           {
             name: "media",
-            action: function (editor){
+            action: function(editor) {
               const mediaModal = Vue.extend(MediaLibrary);
-              let vueContainer = document.createElement('div')
-              document.body.appendChild(vueContainer)
-              let m = new mediaModal().$mount(vueContainer);
 
-              $("#media-modal").on('hidden.bs.modal', function (e) {
+              // Create an empty div and append it to our <main>
+              let vueContainer = document.createElement("div");
+              document.querySelector("main").appendChild(vueContainer);
+
+              // Create MediaLibrary component and pass it our editor
+              let m = new mediaModal({
+                propsData: {
+                  editor: editor
+                }
+                // Mount to the empty div
+              }).$mount(vueContainer);
+
+              // Destroy the Vue instance and the media modal when closed
+              $("#media-modal").on("hidden.bs.modal", function(_e) {
                 m.$destroy();
                 $("#media-modal").remove();
-              })
+              });
+
+              // Pop the Component modal
               $("#media-modal").modal();
             },
             className: "fas fa-file-upload",
-            title: "Media Library",
+            title: "Media Library"
           },
           "|",
           "preview",
