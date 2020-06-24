@@ -591,7 +591,7 @@ All CTFd administrators are recommended to take the following steps:
   - This affects the API and the main user interface. This does not affect admins
 - Users without a Team can no longer view challenges when the CTF is in Team Mode
 
-  # 2.0.5 / 2019-03-23
+# 2.0.5 / 2019-03-23
 
 **Security**
 
@@ -615,7 +615,7 @@ All CTFd administrators are recommended to take the following steps:
 - Exports are now saved on disk with `tempfile.NamedTemporaryFile()` instead of memory during creation
 - After importing an export, CTFd will now recreate all tables it expects to be available. This resolves an issue where tables created by plugins would be missing after an import.
 
-  # 2.0.4 / 2019-01-30
+# 2.0.4 / 2019-01-30
 
 **General**
 
@@ -862,8 +862,9 @@ If you are upgrading from a prior version be sure to make backups and have a rev
 **Plugins**
 
 - Challenge type plugins now use a global challenge object with exposed functions to specify how to display a challenge.
-  (`preRender()`, `render()`, `postRender()`, `submit()`). \* Challenge type plugins also have access to window.challenge.data which allow for the previously mentioned functions to
-  process challenge data and change logic accordingly.
+  (`preRender()`, `render()`, `postRender()`, `submit()`).
+  - Challenge type plugins also have access to window.challenge.data which allow for the previously mentioned functions to
+    process challenge data and change logic accordingly.
 - Challenge type plugins now get full control over how a challenge is displayed via the nunjucks files.
 - Challenge plugins should now pass the entire flag/key object to a Custom flag type.
   - This allows the flag type to make use of the data column to decide how to operate on the flag. This is used to implement
@@ -1080,7 +1081,7 @@ If you are upgrading from a prior version be sure to make backups and have a rev
 
 - **Always backup database before upgrading!**
 
-  # 1.0.0 / 2017-01-24
+# 1.0.0 / 2017-01-24
 
 **Implemented enhancements:**
 
