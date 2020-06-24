@@ -5,6 +5,31 @@ import EasyMDE from "easymde";
 import Vue from "vue/dist/vue.esm.browser";
 import MediaLibrary from "./components/files/MediaLibrary.vue";
 
+export function showMediaLibrary(editor) {
+  const mediaModal = Vue.extend(MediaLibrary);
+
+  // Create an empty div and append it to our <main>
+  let vueContainer = document.createElement("div");
+  document.querySelector("main").appendChild(vueContainer);
+
+  // Create MediaLibrary component and pass it our editor
+  let m = new mediaModal({
+    propsData: {
+      editor: editor
+    }
+    // Mount to the empty div
+  }).$mount(vueContainer);
+
+  // Destroy the Vue instance and the media modal when closed
+  $("#media-modal").on("hidden.bs.modal", function(_e) {
+    m.$destroy();
+    $("#media-modal").remove();
+  });
+
+  // Pop the Component modal
+  $("#media-modal").modal();
+}
+
 export function bindMarkdownEditors() {
   $("textarea.markdown").each(function(_i, e) {
     if (e.hasOwnProperty("mde") === false) {
@@ -23,29 +48,8 @@ export function bindMarkdownEditors() {
           "image",
           {
             name: "media",
-            action: function(editor) {
-              const mediaModal = Vue.extend(MediaLibrary);
-
-              // Create an empty div and append it to our <main>
-              let vueContainer = document.createElement("div");
-              document.querySelector("main").appendChild(vueContainer);
-
-              // Create MediaLibrary component and pass it our editor
-              let m = new mediaModal({
-                propsData: {
-                  editor: editor
-                }
-                // Mount to the empty div
-              }).$mount(vueContainer);
-
-              // Destroy the Vue instance and the media modal when closed
-              $("#media-modal").on("hidden.bs.modal", function(_e) {
-                m.$destroy();
-                $("#media-modal").remove();
-              });
-
-              // Pop the Component modal
-              $("#media-modal").modal();
+            action: editor => {
+              showMediaLibrary(editor);
             },
             className: "fas fa-file-upload",
             title: "Media Library"
