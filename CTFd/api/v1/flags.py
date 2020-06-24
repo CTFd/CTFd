@@ -1,6 +1,10 @@
+from typing import List
+
 from flask import request
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
+from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.models import Flags, db
 from CTFd.plugins.flags import FLAG_CLASSES, get_flag_class
 from CTFd.schemas.flags import FlagSchema
@@ -8,10 +12,39 @@ from CTFd.utils.decorators import admins_only
 
 flags_namespace = Namespace("flags", description="Endpoint to retrieve Flags")
 
+FlagModel = sqlalchemy_to_pydantic(Flags)
+
+
+class FlagDetailedSuccessResponse(APIDetailedSuccessResponse):
+    data: FlagModel
+
+
+class FlagListSuccessResponse(APIListSuccessResponse):
+    data: List[FlagModel]
+
+
+flags_namespace.schema_model(
+    "FlagDetailedSuccessResponse", FlagDetailedSuccessResponse.apidoc()
+)
+
+flags_namespace.schema_model(
+    "FlagListSuccessResponse", FlagListSuccessResponse.apidoc()
+)
+
 
 @flags_namespace.route("")
 class FlagList(Resource):
     @admins_only
+    @flags_namespace.doc(
+        description="Endpoint to list Flag objects in bulk",
+        responses={
+            200: ("Success", "FlagListSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self):
         flags = Flags.query.all()
         schema = FlagSchema(many=True)
@@ -22,6 +55,16 @@ class FlagList(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @flags_namespace.doc(
+        description="Endpoint to create a Flag object",
+        responses={
+            200: ("Success", "FlagDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def post(self):
         req = request.get_json()
         schema = FlagSchema()
@@ -62,6 +105,16 @@ class FlagTypes(Resource):
 @flags_namespace.route("/<flag_id>")
 class Flag(Resource):
     @admins_only
+    @flags_namespace.doc(
+        description="Endpoint to get a specific Flag object",
+        responses={
+            200: ("Success", "FlagDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self, flag_id):
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
         schema = FlagSchema()
@@ -75,6 +128,10 @@ class Flag(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @flags_namespace.doc(
+        description="Endpoint to delete a specific Flag object",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
     def delete(self, flag_id):
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
 
@@ -85,6 +142,16 @@ class Flag(Resource):
         return {"success": True}
 
     @admins_only
+    @flags_namespace.doc(
+        description="Endpoint to edit a specific Flag object",
+        responses={
+            200: ("Success", "FlagDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def patch(self, flag_id):
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
         schema = FlagSchema()

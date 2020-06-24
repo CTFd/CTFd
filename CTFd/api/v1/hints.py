@@ -1,6 +1,10 @@
+from typing import List
+
 from flask import request
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
+from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.models import Hints, HintUnlocks, db
 from CTFd.schemas.hints import HintSchema
 from CTFd.utils.decorators import admins_only, authed_only, during_ctf_time_only
@@ -8,10 +12,39 @@ from CTFd.utils.user import get_current_user, is_admin
 
 hints_namespace = Namespace("hints", description="Endpoint to retrieve Hints")
 
+HintModel = sqlalchemy_to_pydantic(Hints)
+
+
+class HintDetailedSuccessResponse(APIDetailedSuccessResponse):
+    data: HintModel
+
+
+class HintListSuccessResponse(APIListSuccessResponse):
+    data: List[HintModel]
+
+
+hints_namespace.schema_model(
+    "HintDetailedSuccessResponse", HintDetailedSuccessResponse.apidoc()
+)
+
+hints_namespace.schema_model(
+    "HintListSuccessResponse", HintListSuccessResponse.apidoc()
+)
+
 
 @hints_namespace.route("")
 class HintList(Resource):
     @admins_only
+    @hints_namespace.doc(
+        description="Endpoint to list Hint objects in bulk",
+        responses={
+            200: ("Success", "HintListSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self):
         hints = Hints.query.all()
         response = HintSchema(many=True).dump(hints)
@@ -22,6 +55,16 @@ class HintList(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @hints_namespace.doc(
+        description="Endpoint to create a Hint object",
+        responses={
+            200: ("Success", "HintDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def post(self):
         req = request.get_json()
         schema = HintSchema("admin")
@@ -42,6 +85,16 @@ class HintList(Resource):
 class Hint(Resource):
     @during_ctf_time_only
     @authed_only
+    @hints_namespace.doc(
+        description="Endpoint to get a specific Hint object",
+        responses={
+            200: ("Success", "HintDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self, hint_id):
         user = get_current_user()
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
@@ -67,6 +120,16 @@ class Hint(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @hints_namespace.doc(
+        description="Endpoint to edit a specific Hint object",
+        responses={
+            200: ("Success", "HintDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def patch(self, hint_id):
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
         req = request.get_json()
@@ -85,6 +148,10 @@ class Hint(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @hints_namespace.doc(
+        description="Endpoint to delete a specific Tag object",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
     def delete(self, hint_id):
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
         db.session.delete(hint)
