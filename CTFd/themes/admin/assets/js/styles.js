@@ -19,6 +19,14 @@ export function bindMarkdownEditors() {
           "|",
           "link",
           "image",
+          {
+            name: "media",
+            action: function (editor){
+              alert();
+            },
+            className: "fas fa-file-upload",
+            title: "Media Library",
+          },
           "|",
           "preview",
           "guide"
