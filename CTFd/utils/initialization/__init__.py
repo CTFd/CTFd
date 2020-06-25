@@ -56,6 +56,8 @@ def init_template_globals(app):
     from CTFd.constants.config import Configs
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
+    from CTFd.constants.users import User
+    from CTFd.constants.teams import Team
     from CTFd.forms import Forms
     from CTFd.utils.config.visibility import (
         accounts_visible,
@@ -98,6 +100,8 @@ def init_template_globals(app):
     app.jinja_env.globals.update(Plugins=Plugins)
     app.jinja_env.globals.update(Session=Session)
     app.jinja_env.globals.update(Forms=Forms)
+    app.jinja_env.globals.update(User=User)
+    app.jinja_env.globals.update(Team=Team)
 
 
 def init_logs(app):
