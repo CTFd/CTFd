@@ -20,7 +20,6 @@ from CTFd.utils.config import (
     is_setup,
 )
 from CTFd.utils.config.pages import get_pages
-from CTFd.utils.countries import get_countries, lookup_country_code
 from CTFd.utils.dates import isoformat, unix_time, unix_time_millis
 from CTFd.utils.events import EventManager, RedisEventManager
 from CTFd.utils.humanize.words import pluralize
@@ -65,6 +64,11 @@ def init_template_globals(app):
         registration_visible,
         scores_visible,
     )
+    from CTFd.utils.countries import (
+        get_countries,
+        lookup_country_code,
+        lookup_ip_address,
+    )
 
     app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
@@ -85,6 +89,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(generate_account_url=generate_account_url)
     app.jinja_env.globals.update(get_countries=get_countries)
     app.jinja_env.globals.update(lookup_country_code=lookup_country_code)
+    app.jinja_env.globals.update(lookup_ip_address=lookup_ip_address)
     app.jinja_env.globals.update(accounts_visible=accounts_visible)
     app.jinja_env.globals.update(challenges_visible=challenges_visible)
     app.jinja_env.globals.update(registration_visible=registration_visible)
