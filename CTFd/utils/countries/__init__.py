@@ -2,14 +2,6 @@
 
 from collections import OrderedDict
 
-import geoacumen
-import maxminddb
-from flask import current_app
-
-IP_ADDR_LOOKUP = maxminddb.open_database(
-    current_app.config.get("GEOIP_DATABASE_PATH", geoacumen.db_path)
-)
-
 COUNTRIES_LIST = [
     ("AF", "Afghanistan"),
     ("AX", "Åland Islands"),
@@ -280,11 +272,3 @@ def get_countries():
 
 def lookup_country_code(country_code):
     return COUNTRIES_DICT.get(country_code)
-
-
-def lookup_ip_address(addr):
-    response = IP_ADDR_LOOKUP.get(addr)
-    try:
-        return response["country"]["iso_code"]
-    except KeyError:
-        return None

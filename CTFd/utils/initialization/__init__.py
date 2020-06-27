@@ -64,11 +64,8 @@ def init_template_globals(app):
         registration_visible,
         scores_visible,
     )
-    from CTFd.utils.countries import (
-        get_countries,
-        lookup_country_code,
-        lookup_ip_address,
-    )
+    from CTFd.utils.countries import get_countries, lookup_country_code
+    from CTFd.utils.countries.geoip import lookup_ip_address
 
     app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
