@@ -56,19 +56,34 @@ class TeamList(Resource):
     )
     def get(self):
         if is_admin() and request.args.get("view") == "admin":
-            teams = Teams.query.filter_by()
+            teams = Teams.query.filter_by().paginate(per_page=50, max_per_page=100)
         else:
-            teams = Teams.query.filter_by(hidden=False, banned=False)
+            teams = Teams.query.filter_by(hidden=False, banned=False).paginate(
+                per_page=50, max_per_page=100
+            )
 
         user_type = get_current_user_type(fallback="user")
         view = copy.deepcopy(TeamSchema.views.get(user_type))
         view.remove("members")
-        response = TeamSchema(view=view, many=True).dump(teams)
+        response = TeamSchema(view=view, many=True).dump(teams.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": teams.page,
+                    "next": teams.next_num,
+                    "prev": teams.prev_num,
+                    "pages": teams.pages,
+                    "per_page": teams.per_page,
+                    "total": teams.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @admins_only
     @teams_namespace.doc(
