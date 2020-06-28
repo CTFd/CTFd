@@ -47,14 +47,27 @@ class FilesList(Resource):
     )
     def get(self):
         file_type = request.args.get("type")
-        files = Files.query.filter_by(type=file_type).all()
+        files = Files.query.filter_by(type=file_type).paginate(max_per_page=100)
         schema = FileSchema(many=True)
-        response = schema.dump(files)
+        response = schema.dump(files.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": files.page,
+                    "next": files.next_num,
+                    "prev": files.prev_num,
+                    "pages": files.pages,
+                    "per_page": files.per_page,
+                    "total": files.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @admins_only
     @files_namespace.doc(

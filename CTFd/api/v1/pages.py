@@ -63,13 +63,26 @@ class PageList(Resource):
         location="query",
     )
     def get(self, query):
-        pages = Pages.query.filter_by(**query).all()
+        pages = Pages.query.filter_by(**query).paginate(max_per_page=100)
         schema = PageSchema(exclude=["content"], many=True)
-        response = schema.dump(pages)
+        response = schema.dump(pages.items)
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": pages.page,
+                    "next": pages.next_num,
+                    "prev": pages.prev_num,
+                    "pages": pages.pages,
+                    "per_page": pages.per_page,
+                    "total": pages.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @admins_only
     @pages_namespace.doc(

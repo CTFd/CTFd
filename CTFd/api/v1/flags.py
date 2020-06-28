@@ -46,13 +46,26 @@ class FlagList(Resource):
         },
     )
     def get(self):
-        flags = Flags.query.all()
+        flags = Flags.query.paginate(max_per_page=100)
         schema = FlagSchema(many=True)
-        response = schema.dump(flags)
+        response = schema.dump(flags.items)
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": flags.page,
+                    "next": flags.next_num,
+                    "prev": flags.prev_num,
+                    "pages": flags.pages,
+                    "per_page": flags.per_page,
+                    "total": flags.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @admins_only
     @flags_namespace.doc(

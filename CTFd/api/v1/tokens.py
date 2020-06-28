@@ -60,15 +60,28 @@ class TokenList(Resource):
     )
     def get(self):
         user = get_current_user()
-        tokens = Tokens.query.filter_by(user_id=user.id)
+        tokens = Tokens.query.filter_by(user_id=user.id).paginate(max_per_page=100)
         response = TokenSchema(view=["id", "type", "expiration"], many=True).dump(
-            tokens
+            tokens.items
         )
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": tokens.page,
+                    "next": tokens.next_num,
+                    "prev": tokens.prev_num,
+                    "pages": tokens.pages,
+                    "per_page": tokens.per_page,
+                    "total": tokens.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @require_verified_emails
     @authed_only

@@ -46,13 +46,26 @@ class HintList(Resource):
         },
     )
     def get(self):
-        hints = Hints.query.all()
-        response = HintSchema(many=True).dump(hints)
+        hints = Hints.query.paginate(max_per_page=100)
+        response = HintSchema(many=True).dump(hints.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": hints.page,
+                    "next": hints.next_num,
+                    "prev": hints.prev_num,
+                    "pages": hints.pages,
+                    "per_page": hints.per_page,
+                    "total": hints.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @admins_only
     @hints_namespace.doc(

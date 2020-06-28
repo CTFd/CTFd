@@ -54,14 +54,27 @@ class UnlockList(Resource):
         },
     )
     def get(self):
-        hints = Unlocks.query.all()
+        unlocks = Unlocks.query.paginate(max_per_page=100)
         schema = UnlockSchema()
-        response = schema.dump(hints)
+        response = schema.dump(unlocks.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": unlocks.page,
+                    "next": unlocks.next_num,
+                    "prev": unlocks.prev_num,
+                    "pages": unlocks.pages,
+                    "per_page": unlocks.per_page,
+                    "total": unlocks.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @during_ctf_time_only
     @require_verified_emails
