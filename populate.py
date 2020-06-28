@@ -17,6 +17,7 @@ from CTFd.models import (
     ChallengeFiles,
     Fails,
     Solves,
+    Tracking,
 )
 from faker import Faker
 
@@ -106,6 +107,10 @@ def gen_icon():
 
 def gen_file():
     return fake.file_name()
+
+
+def gen_ip():
+    return fake.ipv4()
 
 
 def random_date(start, end):
@@ -198,6 +203,11 @@ if __name__ == "__main__":
                     if mode == "teams":
                         user.team_id = random.randint(1, TEAM_AMOUNT)
                     db.session.add(user)
+                    db.session.flush()
+
+                    track = Tracking(ip=gen_ip(), user_id=user.id)
+                    db.session.add(track)
+                    db.session.flush()
                     count += 1
                 except Exception:
                     pass

@@ -6,6 +6,7 @@
                     <td class="text-center"><b>User</b></td>
                     <td class="text-center"><b>IP Address</b></td>
                     <td class="text-center"><b>Last Seen</b></td>
+                    <td class="text-center"><b>Country</b></td>
                 </tr>
             </thead>
             <tbody>
@@ -20,6 +21,17 @@
                     <td class="text-center solve-time">
                         <span data-time="{{ addr.date | isoformat }}"></span>
                     </td>
+                    {% set country = lookup_ip_address(addr.ip) %}
+                    {% if country %}
+                    <td class="text-center">
+                        <i class="flag-{{ country.lower() }}"></i>
+                        &nbsp;
+                        {{ lookup_country_code(country) }}
+                    </td>
+                    {% else %}
+                    <td class="text-center">
+                    </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
             </tbody>

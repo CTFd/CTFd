@@ -26,3 +26,5 @@ pydantic==1.5.1
 lxml==4.5.1
 html5lib==1.0.1
 WTForms==2.3.1
+python-geoacumen==0.0.1
+maxminddb==1.5.4
