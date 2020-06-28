@@ -4,12 +4,15 @@ from typing import List
 from flask import abort, request, session
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.models import build_model_filters
+from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import (
     APIDetailedSuccessResponse,
     PaginatedAPIListSuccessResponse,
 )
 from CTFd.cache import clear_standings, clear_team_session, clear_user_session
+from CTFd.constants import RawEnum
 from CTFd.models import Awards, Submissions, Teams, Unlocks, Users, db
 from CTFd.schemas.awards import AwardSchema
 from CTFd.schemas.submissions import SubmissionSchema
@@ -57,12 +60,44 @@ class TeamList(Resource):
             ),
         },
     )
-    def get(self):
+    @validate_args(
+        {
+            "affiliation": (str, None),
+            "country": (str, None),
+            "bracket": (str, None),
+            "q": (str, None),
+            "field": (
+                RawEnum(
+                    "TeamFields",
+                    {
+                        "name": "name",
+                        "website": "website",
+                        "country": "country",
+                        "bracket": "bracket",
+                        "affiliation": "affiliation",
+                    },
+                ),
+                None,
+            ),
+        },
+        location="query",
+    )
+    def get(self, query_args):
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        filters = build_model_filters(model=Teams, query=q, field=field)
+
         if is_admin() and request.args.get("view") == "admin":
-            teams = Teams.query.filter_by().paginate(per_page=50, max_per_page=100)
+            teams = (
+                Teams.query.filter_by(**query_args)
+                .filter(*filters)
+                .paginate(per_page=50, max_per_page=100)
+            )
         else:
-            teams = Teams.query.filter_by(hidden=False, banned=False).paginate(
-                per_page=50, max_per_page=100
+            teams = (
+                Teams.query.filter_by(hidden=False, banned=False, **query_args)
+                .filter(*filters)
+                .paginate(per_page=50, max_per_page=100)
             )
 
         user_type = get_current_user_type(fallback="user")

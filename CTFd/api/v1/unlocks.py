@@ -3,9 +3,12 @@ from typing import List
 from flask import request
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.models import build_model_filters
+from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.cache import clear_standings
+from CTFd.constants import RawEnum
 from CTFd.models import Unlocks, db, get_class_by_tablename
 from CTFd.schemas.awards import AwardSchema
 from CTFd.schemas.unlocks import UnlockSchema
@@ -53,10 +56,28 @@ class UnlockList(Resource):
             ),
         },
     )
-    def get(self):
-        hints = Unlocks.query.all()
+    @validate_args(
+        {
+            "user_id": (int, None),
+            "team_id": (int, None),
+            "target": (int, None),
+            "type": (str, None),
+            "q": (str, None),
+            "field": (
+                RawEnum("UnlockFields", {"target": "target", "type": "type"}),
+                None,
+            ),
+        },
+        location="query",
+    )
+    def get(self, query_args):
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        filters = build_model_filters(model=Unlocks, query=q, field=field)
+
+        unlocks = Unlocks.query.filter_by(**query_args).filter(*filters).all()
         schema = UnlockSchema()
-        response = schema.dump(hints)
+        response = schema.dump(unlocks)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400

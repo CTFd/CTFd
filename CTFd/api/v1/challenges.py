@@ -5,9 +5,12 @@ from flask import abort, render_template, request, url_for
 from flask_restx import Namespace, Resource
 from sqlalchemy.sql import and_
 
+from CTFd.api.v1.helpers.models import build_model_filters
+from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.cache import clear_standings
+from CTFd.constants import RawEnum
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
 from CTFd.models import (
     Challenges,
@@ -86,19 +89,56 @@ class ChallengeList(Resource):
             ),
         },
     )
-    def get(self):
+    @validate_args(
+        {
+            "name": (str, None),
+            "max_attempts": (int, None),
+            "value": (int, None),
+            "category": (str, None),
+            "type": (str, None),
+            "state": (str, None),
+            "q": (str, None),
+            "field": (
+                RawEnum(
+                    "ChallengeFields",
+                    {
+                        "name": "name",
+                        "description": "description",
+                        "category": "category",
+                        "type": "type",
+                        "state": "state",
+                    },
+                ),
+                None,
+            ),
+        },
+        location="query",
+    )
+    def get(self, query_args):
+        # Build filtering queries
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        filters = build_model_filters(model=Challenges, query=q, field=field)
+
         # This can return None (unauth) if visibility is set to public
         user = get_current_user()
 
         # Admins can request to see everything
         if is_admin() and request.args.get("view") == "admin":
-            challenges = Challenges.query.order_by(Challenges.value).all()
+            challenges = (
+                Challenges.query.filter_by(**query_args)
+                .filter(*filters)
+                .order_by(Challenges.value)
+                .all()
+            )
             solve_ids = set([challenge.id for challenge in challenges])
         else:
             challenges = (
                 Challenges.query.filter(
                     and_(Challenges.state != "hidden", Challenges.state != "locked")
                 )
+                .filter_by(**query_args)
+                .filter(*filters)
                 .order_by(Challenges.value)
                 .all()
             )
