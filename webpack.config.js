@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries")
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const RemoveStrictPlugin = require('remove-strict-webpack-plugin')
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
@@ -110,10 +110,9 @@ function getJSConfig(root, type, entries, mode) {
           },
         },
       },
+      minimize: true,
       minimizer: [
-        new UglifyJsPlugin({
-            cache: true,
-            parallel: true,
+        new TerserPlugin({
             sourceMap: true
         }),
       ],
@@ -141,7 +140,7 @@ function getJSConfig(root, type, entries, mode) {
       // Pretty nasty hack, would be a little better if this was purely JS
       new WebpackShellPlugin({
         onBuildEnd:[
-          mode == 'development' ? 'echo Skipping JS stub generation' : 'python3 -c \'exec(\"\"\"\nimport glob\nimport os\n\nstatic_js_dirs = [\n    "CTFd/themes/core/static/js/**/*.dev.js",\n    "CTFd/themes/admin/static/js/**/*.dev.js",\n]\n\nfor js_dir in static_js_dirs:\n    for path in glob.glob(js_dir, recursive=True):\n        if path.endswith(".dev.js"):\n            path = path.replace(".dev.js", ".min.js")\n            if os.path.isfile(path) is False:\n                open(path, "a").close()\n\"\"\")\''
+          mode == 'development' ? 'echo Skipping JS stub generation' : 'python3 stub.py' // It's better and more readable execute an script file than embedding source code here
         ],
         safe: true,
       }),

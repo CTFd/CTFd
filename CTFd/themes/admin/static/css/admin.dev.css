@@ -1,4 +1,84 @@
-html{position:relative;min-height:100%}body{margin-bottom:60px}.footer{position:absolute;bottom:1px;width:100%;height:60px;line-height:normal !important;z-index:-20}
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%; }
 
-#score-graph{height:450px;display:block;clear:both}#solves-graph{display:block;height:350px}#keys-pie-graph{height:400px;display:block}#categories-pie-graph{height:400px;display:block}#solve-percentages-graph{height:400px;display:block}.no-decoration{color:inherit !important;text-decoration:none !important}.no-decoration:hover{color:inherit !important;text-decoration:none !important}.table td,.table th{vertical-align:inherit}pre{white-space:pre-wrap;margin:0;padding:0}.form-control{position:relative;display:block;border-radius:0;font-weight:400;font-family:"Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;-webkit-appearance:none}tbody tr:hover{background-color:rgba(0,0,0,0.1) !important}[data-href]{cursor:pointer}.sort-col{cursor:pointer}input[type="checkbox"]{cursor:pointer}
+body {
+  margin-bottom: 60px;
+  /* Margin bottom by footer height */ }
+
+.footer {
+  position: absolute;
+  /* prevent scrollbars from showing on pages that don't use the full page height */
+  bottom: 1px;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  /* Override line-height from core because we have two lines in the admin panel */
+  line-height: normal !important;
+  /* Avoid covering things */
+  z-index: -20;
+  /*background-color: #f5f5f5;*/ }
+
+#score-graph {
+  height: 450px;
+  display: block;
+  clear: both; }
+
+#solves-graph {
+  display: block;
+  height: 350px; }
+
+#keys-pie-graph {
+  height: 400px;
+  display: block; }
+
+#categories-pie-graph {
+  height: 400px;
+  display: block; }
+
+#solve-percentages-graph {
+  height: 400px;
+  display: block; }
+
+.no-decoration {
+  color: inherit !important;
+  text-decoration: none !important; }
+
+.no-decoration:hover {
+  color: inherit !important;
+  text-decoration: none !important; }
+
+.table td,
+.table th {
+  vertical-align: inherit; }
+
+pre {
+  white-space: pre-wrap;
+  margin: 0;
+  padding: 0; }
+
+.form-control {
+  position: relative;
+  display: block;
+  /*padding: 0.8em;*/
+  border-radius: 0;
+  /*background: #f0f0f0;*/
+  /*color: #aaa;*/
+  font-weight: 400;
+  font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-appearance: none; }
+
+tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important; }
+
+[data-href] {
+  cursor: pointer; }
+
+.sort-col {
+  cursor: pointer; }
+
+input[type="checkbox"] {
+  cursor: pointer; }
 
