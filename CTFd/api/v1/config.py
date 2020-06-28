@@ -11,7 +11,7 @@ from CTFd.cache import clear_config, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.models import Configs, db
 from CTFd.schemas.config import ConfigSchema
-from CTFd.utils import get_config, set_config
+from CTFd.utils import set_config
 from CTFd.utils.decorators import admins_only
 
 configs_namespace = Namespace("configs", description="Endpoint to retrieve Configs")
@@ -121,13 +121,33 @@ class ConfigList(Resource):
 @configs_namespace.route("/<config_key>")
 class Config(Resource):
     @admins_only
-    # TODO: This returns weirdly structured data. It should more closely match ConfigDetailedSuccessResponse #1506
+    @configs_namespace.doc(
+        description="Endpoint to get a specific Config object",
+        responses={
+            200: ("Success", "ConfigDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self, config_key):
-
-        return {"success": True, "data": get_config(config_key)}
+        config = Configs.query.filter_by(key=config_key).first_or_404()
+        schema = ConfigSchema()
+        response = schema.dump(config)
+        return {"success": True, "data": response.data}
 
     @admins_only
-    # TODO: This returns weirdly structured data. It should more closely match ConfigDetailedSuccessResponse #1506
+    @configs_namespace.doc(
+        description="Endpoint to edit a specific Config object",
+        responses={
+            200: ("Success", "ConfigDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def patch(self, config_key):
         config = Configs.query.filter_by(key=config_key).first()
         data = request.get_json()
