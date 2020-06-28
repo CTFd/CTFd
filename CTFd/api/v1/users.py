@@ -4,7 +4,10 @@ from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
-from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
+from CTFd.api.v1.schemas import (
+    APIDetailedSuccessResponse,
+    PaginatedAPIListSuccessResponse,
+)
 from CTFd.cache import clear_standings, clear_user_session
 from CTFd.models import (
     Awards,
@@ -40,7 +43,7 @@ class UserDetailedSuccessResponse(APIDetailedSuccessResponse):
     data: UserModel
 
 
-class UserListSuccessResponse(APIListSuccessResponse):
+class UserListSuccessResponse(PaginatedAPIListSuccessResponse):
     data: List[UserModel]
 
 

@@ -5,7 +5,10 @@ from flask import abort, request, session
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
-from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
+from CTFd.api.v1.schemas import (
+    APIDetailedSuccessResponse,
+    PaginatedAPIListSuccessResponse,
+)
 from CTFd.cache import clear_standings, clear_team_session, clear_user_session
 from CTFd.models import Awards, Submissions, Teams, Unlocks, Users, db
 from CTFd.schemas.awards import AwardSchema
@@ -28,7 +31,7 @@ class TeamDetailedSuccessResponse(APIDetailedSuccessResponse):
     data: TeamModel
 
 
-class TeamListSuccessResponse(APIListSuccessResponse):
+class TeamListSuccessResponse(PaginatedAPIListSuccessResponse):
     data: List[TeamModel]
 
 
