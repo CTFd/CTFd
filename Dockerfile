@@ -4,8 +4,8 @@ RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads
 
 RUN apk update && \
     apk add --no-cache \
-        python \
-        python-dev \
+        python3 \
+        python3-dev \
         linux-headers \
         libffi-dev \
         gcc \

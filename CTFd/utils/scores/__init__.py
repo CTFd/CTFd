@@ -159,13 +159,25 @@ def get_team_standings(count=None, admin=False):
 
     if admin:
         standings_query = (
-            db.session.query(Teams.id.label("team_id"))
+            db.session.query(
+                Teams.id.label("team_id"),
+                Teams.oauth_id.label("oauth_id"),
+                Teams.name.label("name"),
+                Teams.hidden,
+                Teams.banned,
+                sumscores.columns.score,
+            )
             .join(sumscores, Teams.id == sumscores.columns.team_id)
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
         )
     else:
         standings_query = (
-            db.session.query(Teams.id.label("team_id"))
+            db.session.query(
+                Teams.id.label("team_id"),
+                Teams.oauth_id.label("oauth_id"),
+                Teams.name.label("name"),
+                sumscores.columns.score,
+            )
             .join(sumscores, Teams.id == sumscores.columns.team_id)
             .filter(Teams.banned == False)
             .filter(Teams.hidden == False)
@@ -225,13 +237,25 @@ def get_user_standings(count=None, admin=False):
 
     if admin:
         standings_query = (
-            db.session.query(Users.id.label("user_id"))
+            db.session.query(
+                Users.id.label("user_id"),
+                Users.oauth_id.label("oauth_id"),
+                Users.name.label("name"),
+                Users.hidden,
+                Users.banned,
+                sumscores.columns.score,
+            )
             .join(sumscores, Users.id == sumscores.columns.user_id)
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
         )
     else:
         standings_query = (
-            db.session.query(Users.id.label("user_id"))
+            db.session.query(
+                Users.id.label("user_id"),
+                Users.oauth_id.label("oauth_id"),
+                Users.name.label("name"),
+                sumscores.columns.score,
+            )
             .join(sumscores, Users.id == sumscores.columns.user_id)
             .filter(Users.banned == False, Users.hidden == False)
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)

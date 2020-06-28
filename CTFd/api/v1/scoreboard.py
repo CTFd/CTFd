@@ -1,4 +1,8 @@
+from collections import defaultdict
+
 from flask_restx import Namespace, Resource
+
+from sqlalchemy.orm import joinedload
 
 from CTFd.cache import cache, make_cache_key
 from CTFd.models import Awards, Solves, Teams
@@ -9,7 +13,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.modes import TEAMS_MODE, generate_account_url, get_mode_as_word
-from CTFd.utils.scores import get_standings
+from CTFd.utils.scores import get_standings, get_user_standings
 
 scoreboard_namespace = Namespace(
     "scoreboard", description="Endpoint to retrieve scores"
@@ -31,8 +35,22 @@ class ScoreboardList(Resource):
             team_ids = []
             for team in standings:
                 team_ids.append(team.account_id)
-            teams = Teams.query.filter(Teams.id.in_(team_ids)).all()
+
+            # Get team objects with members explicitly loaded in
+            teams = (
+                Teams.query.options(joinedload(Teams.members))
+                .filter(Teams.id.in_(team_ids))
+                .all()
+            )
+
+            # Sort according to team_ids order
             teams = [next(t for t in teams if t.id == id) for id in team_ids]
+
+            # Get user_standings as a dict so that we can more quickly get member scores
+            user_standings = get_user_standings()
+            users = {}
+            for u in user_standings:
+                users[u.user_id] = u
 
         for i, x in enumerate(standings):
             entry = {
@@ -47,15 +65,30 @@ class ScoreboardList(Resource):
 
             if mode == TEAMS_MODE:
                 members = []
+
+                # This code looks like it would be slow
+                # but it is faster than accessing each member's score individually
                 for member in teams[i].members:
-                    members.append(
-                        {
-                            "id": member.id,
-                            "oauth_id": member.oauth_id,
-                            "name": member.name,
-                            "score": int(member.score),
-                        }
-                    )
+                    user = users.get(member.id)
+                    if user:
+                        members.append(
+                            {
+                                "id": user.user_id,
+                                "oauth_id": user.oauth_id,
+                                "name": user.name,
+                                "score": int(user.score),
+                            }
+                        )
+                    else:
+                        if member.hidden is False and member.banned is False:
+                            members.append(
+                                {
+                                    "id": member.id,
+                                    "oauth_id": member.oauth_id,
+                                    "name": member.name,
+                                    "score": 0,
+                                }
+                            )
 
                 entry["members"] = members
 
@@ -88,38 +121,42 @@ class ScoreboardDetail(Resource):
         solves = solves.all()
         awards = awards.all()
 
+        # Build a mapping of accounts to their solves and awards
+        solves_mapper = defaultdict(list)
+        for solve in solves:
+            solves_mapper[solve.account_id].append(
+                {
+                    "challenge_id": solve.challenge_id,
+                    "account_id": solve.account_id,
+                    "team_id": solve.team_id,
+                    "user_id": solve.user_id,
+                    "value": solve.challenge.value,
+                    "date": isoformat(solve.date),
+                }
+            )
+
+        for award in awards:
+            solves_mapper[award.account_id].append(
+                {
+                    "challenge_id": None,
+                    "account_id": award.account_id,
+                    "team_id": award.team_id,
+                    "user_id": award.user_id,
+                    "value": award.value,
+                    "date": isoformat(award.date),
+                }
+            )
+
+        # Sort all solves by date
+        for team_id in solves_mapper:
+            solves_mapper[team_id] = sorted(
+                solves_mapper[team_id], key=lambda k: k["date"]
+            )
+
         for i, team in enumerate(team_ids):
             response[i + 1] = {
                 "id": standings[i].account_id,
                 "name": standings[i].name,
-                "solves": [],
+                "solves": solves_mapper.get(standings[i].account_id, []),
             }
-            for solve in solves:
-                if solve.account_id == team:
-                    response[i + 1]["solves"].append(
-                        {
-                            "challenge_id": solve.challenge_id,
-                            "account_id": solve.account_id,
-                            "team_id": solve.team_id,
-                            "user_id": solve.user_id,
-                            "value": solve.challenge.value,
-                            "date": isoformat(solve.date),
-                        }
-                    )
-            for award in awards:
-                if award.account_id == team:
-                    response[i + 1]["solves"].append(
-                        {
-                            "challenge_id": None,
-                            "account_id": award.account_id,
-                            "team_id": award.team_id,
-                            "user_id": award.user_id,
-                            "value": award.value,
-                            "date": isoformat(award.date),
-                        }
-                    )
-            response[i + 1]["solves"] = sorted(
-                response[i + 1]["solves"], key=lambda k: k["date"]
-            )
-
         return {"success": True, "data": response}
