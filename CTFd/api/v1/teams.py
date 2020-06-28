@@ -1,8 +1,14 @@
 import copy
+from typing import List
 
 from flask import abort, request, session
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
+from CTFd.api.v1.schemas import (
+    APIDetailedSuccessResponse,
+    PaginatedAPIListSuccessResponse,
+)
 from CTFd.cache import clear_standings, clear_team_session, clear_user_session
 from CTFd.models import Awards, Submissions, Teams, Unlocks, Users, db
 from CTFd.schemas.awards import AwardSchema
@@ -17,10 +23,40 @@ from CTFd.utils.user import get_current_team, get_current_user_type, is_admin
 
 teams_namespace = Namespace("teams", description="Endpoint to retrieve Teams")
 
+TeamModel = sqlalchemy_to_pydantic(Teams)
+TransientTeamModel = sqlalchemy_to_pydantic(Teams, exclude=["id"])
+
+
+class TeamDetailedSuccessResponse(APIDetailedSuccessResponse):
+    data: TeamModel
+
+
+class TeamListSuccessResponse(PaginatedAPIListSuccessResponse):
+    data: List[TeamModel]
+
+
+teams_namespace.schema_model(
+    "TeamDetailedSuccessResponse", TeamDetailedSuccessResponse.apidoc()
+)
+
+teams_namespace.schema_model(
+    "TeamListSuccessResponse", TeamListSuccessResponse.apidoc()
+)
+
 
 @teams_namespace.route("")
 class TeamList(Resource):
     @check_account_visibility
+    @teams_namespace.doc(
+        description="Endpoint to get Team objects in bulk",
+        responses={
+            200: ("Success", "TeamListSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self):
         if is_admin() and request.args.get("view") == "admin":
             teams = Teams.query.filter_by().paginate(per_page=50, max_per_page=100)
@@ -53,6 +89,16 @@ class TeamList(Resource):
         }
 
     @admins_only
+    @teams_namespace.doc(
+        description="Endpoint to create a Team object",
+        responses={
+            200: ("Success", "TeamDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def post(self):
         req = request.get_json()
         user_type = get_current_user_type()
@@ -78,6 +124,16 @@ class TeamList(Resource):
 @teams_namespace.param("team_id", "Team ID")
 class TeamPublic(Resource):
     @check_account_visibility
+    @teams_namespace.doc(
+        description="Endpoint to get a specific Team object",
+        responses={
+            200: ("Success", "TeamDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
 
@@ -97,6 +153,16 @@ class TeamPublic(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @teams_namespace.doc(
+        description="Endpoint to edit a specific Team object",
+        responses={
+            200: ("Success", "TeamDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def patch(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
         data = request.get_json()
@@ -119,6 +185,10 @@ class TeamPublic(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @teams_namespace.doc(
+        description="Endpoint to delete a specific Team object",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
     def delete(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
         team_id = team.id
@@ -143,6 +213,16 @@ class TeamPublic(Resource):
 class TeamPrivate(Resource):
     @authed_only
     @require_team
+    @teams_namespace.doc(
+        description="Endpoint to get the current user's Team object",
+        responses={
+            200: ("Success", "TeamDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self):
         team = get_current_team()
         response = TeamSchema(view="self").dump(team)
@@ -156,6 +236,16 @@ class TeamPrivate(Resource):
 
     @authed_only
     @require_team
+    @teams_namespace.doc(
+        description="Endpoint to edit the current user's Team object",
+        responses={
+            200: ("Success", "TeamDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def patch(self):
         team = get_current_team()
         if team.captain_id != session["id"]:

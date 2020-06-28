@@ -27,7 +27,7 @@ def pages_preview():
     data = request.form.to_dict()
     schema = PageSchema()
     page = schema.load(data)
-    return render_template("page.html", content=build_html(page.data["content"]))
+    return render_template("page.html", content=build_html(page.data.content))
 
 
 @admin.route("/admin/pages/<int:page_id>")

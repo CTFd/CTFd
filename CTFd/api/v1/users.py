@@ -1,6 +1,13 @@
+from typing import List
+
 from flask import abort, request
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
+from CTFd.api.v1.schemas import (
+    APIDetailedSuccessResponse,
+    PaginatedAPIListSuccessResponse,
+)
 from CTFd.cache import clear_standings, clear_user_session
 from CTFd.models import (
     Awards,
@@ -28,15 +35,46 @@ from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
 users_namespace = Namespace("users", description="Endpoint to retrieve Users")
 
 
+UserModel = sqlalchemy_to_pydantic(Users)
+TransientUserModel = sqlalchemy_to_pydantic(Users, exclude=["id"])
+
+
+class UserDetailedSuccessResponse(APIDetailedSuccessResponse):
+    data: UserModel
+
+
+class UserListSuccessResponse(PaginatedAPIListSuccessResponse):
+    data: List[UserModel]
+
+
+users_namespace.schema_model(
+    "UserDetailedSuccessResponse", UserDetailedSuccessResponse.apidoc()
+)
+
+users_namespace.schema_model(
+    "UserListSuccessResponse", UserListSuccessResponse.apidoc()
+)
+
+
 @users_namespace.route("")
 class UserList(Resource):
     @check_account_visibility
+    @users_namespace.doc(
+        description="Endpoint to get User objects in bulk",
+        responses={
+            200: ("Success", "UserListSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self):
         if is_admin() and request.args.get("view") == "admin":
-            users = Users.query.filter_by().paginate(max_per_page=100)
+            users = Users.query.filter_by().paginate(per_page=50, max_per_page=100)
         else:
             users = Users.query.filter_by(banned=False, hidden=False).paginate(
-                max_per_page=100
+                per_page=50, max_per_page=100
             )
 
         response = UserSchema(view="user", many=True).dump(users.items)
@@ -59,12 +97,21 @@ class UserList(Resource):
             "data": response.data,
         }
 
+    @users_namespace.doc()
+    @admins_only
     @users_namespace.doc(
+        description="Endpoint to create a User object",
+        responses={
+            200: ("Success", "UserDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
         params={
             "notify": "Whether to send the created user an email with their credentials"
-        }
+        },
     )
-    @admins_only
     def post(self):
         req = request.get_json()
         schema = UserSchema("admin")
@@ -94,6 +141,16 @@ class UserList(Resource):
 @users_namespace.param("user_id", "User ID")
 class UserPublic(Resource):
     @check_account_visibility
+    @users_namespace.doc(
+        description="Endpoint to get a specific User object",
+        responses={
+            200: ("Success", "UserDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
 
@@ -112,6 +169,16 @@ class UserPublic(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @users_namespace.doc(
+        description="Endpoint to edit a specific User object",
+        responses={
+            200: ("Success", "UserDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def patch(self, user_id):
         user = Users.query.filter_by(id=user_id).first_or_404()
         data = request.get_json()
@@ -133,6 +200,10 @@ class UserPublic(Resource):
         return {"success": True, "data": response}
 
     @admins_only
+    @users_namespace.doc(
+        description="Endpoint to delete a specific User object",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
     def delete(self, user_id):
         Notifications.query.filter_by(user_id=user_id).delete()
         Awards.query.filter_by(user_id=user_id).delete()
@@ -153,6 +224,16 @@ class UserPublic(Resource):
 @users_namespace.route("/me")
 class UserPrivate(Resource):
     @authed_only
+    @users_namespace.doc(
+        description="Endpoint to get the User object for the current user",
+        responses={
+            200: ("Success", "UserDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self):
         user = get_current_user()
         response = UserSchema("self").dump(user).data
@@ -161,6 +242,16 @@ class UserPrivate(Resource):
         return {"success": True, "data": response}
 
     @authed_only
+    @users_namespace.doc(
+        description="Endpoint to edit the User object for the current user",
+        responses={
+            200: ("Success", "UserDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def patch(self):
         user = get_current_user()
         data = request.get_json()
@@ -309,6 +400,10 @@ class UserPublicAwards(Resource):
 @users_namespace.param("user_id", "User ID")
 class UserEmails(Resource):
     @admins_only
+    @users_namespace.doc(
+        description="Endpoint to email a User object",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
     @ratelimit(method="POST", limit=10, interval=60)
     def post(self, user_id):
         req = request.get_json()
@@ -329,4 +424,4 @@ class UserEmails(Resource):
 
         result, response = sendmail(addr=user.email, text=text)
 
-        return {"success": result, "data": {}}
+        return {"success": result}

@@ -3,11 +3,13 @@ lint:
 	yarn lint
 	black --check --exclude=CTFd/uploads --exclude=node_modules .
 	prettier --check 'CTFd/themes/**/assets/**/*'
+	prettier --check '**/*.md'
 
 format:
 	isort --skip=CTFd/uploads -rc CTFd/ tests/
 	black --exclude=CTFd/uploads --exclude=node_modules .
 	prettier --write 'CTFd/themes/**/assets/**/*'
+	prettier --write '**/*.md'
 
 test:
 	pytest -rf --cov=CTFd --cov-context=test --ignore=node_modules/ \

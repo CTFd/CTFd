@@ -23,6 +23,7 @@ from CTFd.utils.config.pages import get_pages
 from CTFd.utils.countries import get_countries, lookup_country_code
 from CTFd.utils.dates import isoformat, unix_time, unix_time_millis
 from CTFd.utils.events import EventManager, RedisEventManager
+from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.modes import generate_account_url, get_mode_as_word
 from CTFd.utils.plugins import (
     get_configurable_plugins,
@@ -48,12 +49,15 @@ def init_template_filters(app):
     app.jinja_env.filters["unix_time"] = unix_time
     app.jinja_env.filters["unix_time_millis"] = unix_time_millis
     app.jinja_env.filters["isoformat"] = isoformat
+    app.jinja_env.filters["pluralize"] = pluralize
 
 
 def init_template_globals(app):
     from CTFd.constants.config import Configs
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
+    from CTFd.constants.users import User
+    from CTFd.constants.teams import Team
     from CTFd.forms import Forms
     from CTFd.utils.config.visibility import (
         accounts_visible,
@@ -96,6 +100,8 @@ def init_template_globals(app):
     app.jinja_env.globals.update(Plugins=Plugins)
     app.jinja_env.globals.update(Session=Session)
     app.jinja_env.globals.update(Forms=Forms)
+    app.jinja_env.globals.update(User=User)
+    app.jinja_env.globals.update(Team=Team)
 
 
 def init_logs(app):
