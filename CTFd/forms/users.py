@@ -15,7 +15,23 @@ class UserSearchForm(BaseForm):
             ("id", "ID"),
             ("email", "Email"),
             ("affiliation", "Affiliation"),
+            ("website", "Website"),
             ("ip", "IP Address"),
+        ],
+        default="name",
+        validators=[InputRequired()],
+    )
+    q = StringField("Parameter", validators=[InputRequired()])
+    submit = SubmitField("Search")
+
+
+class PublicUserSearchForm(BaseForm):
+    field = SelectField(
+        "Search Field",
+        choices=[
+            ("name", "Name"),
+            ("affiliation", "Affiliation"),
+            ("website", "Website"),
         ],
         default="name",
         validators=[InputRequired()],
