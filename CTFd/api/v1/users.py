@@ -4,7 +4,10 @@ from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
-from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
+from CTFd.api.v1.schemas import (
+    APIDetailedSuccessResponse,
+    PaginatedAPIListSuccessResponse,
+)
 from CTFd.cache import clear_standings, clear_user_session
 from CTFd.models import (
     Awards,
@@ -40,7 +43,7 @@ class UserDetailedSuccessResponse(APIDetailedSuccessResponse):
     data: UserModel
 
 
-class UserListSuccessResponse(APIListSuccessResponse):
+class UserListSuccessResponse(PaginatedAPIListSuccessResponse):
     data: List[UserModel]
 
 
@@ -68,16 +71,31 @@ class UserList(Resource):
     )
     def get(self):
         if is_admin() and request.args.get("view") == "admin":
-            users = Users.query.filter_by()
+            users = Users.query.filter_by().paginate(per_page=50, max_per_page=100)
         else:
-            users = Users.query.filter_by(banned=False, hidden=False)
+            users = Users.query.filter_by(banned=False, hidden=False).paginate(
+                per_page=50, max_per_page=100
+            )
 
-        response = UserSchema(view="user", many=True).dump(users)
+        response = UserSchema(view="user", many=True).dump(users.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": users.page,
+                    "next": users.next_num,
+                    "prev": users.prev_num,
+                    "pages": users.pages,
+                    "per_page": users.per_page,
+                    "total": users.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @users_namespace.doc()
     @admins_only
