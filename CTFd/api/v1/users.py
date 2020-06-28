@@ -3,12 +3,15 @@ from typing import List
 from flask import abort, request
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.models import build_model_filters
+from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import (
     APIDetailedSuccessResponse,
     PaginatedAPIListSuccessResponse,
 )
 from CTFd.cache import clear_standings, clear_user_session
+from CTFd.constants import RawEnum
 from CTFd.models import (
     Awards,
     Notifications,
@@ -69,12 +72,44 @@ class UserList(Resource):
             ),
         },
     )
-    def get(self):
+    @validate_args(
+        {
+            "affiliation": (str, None),
+            "country": (str, None),
+            "bracket": (str, None),
+            "q": (str, None),
+            "field": (
+                RawEnum(
+                    "UserFields",
+                    {
+                        "name": "name",
+                        "website": "website",
+                        "country": "country",
+                        "bracket": "bracket",
+                        "affiliation": "affiliation",
+                    },
+                ),
+                None,
+            ),
+        },
+        location="query",
+    )
+    def get(self, query_args):
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        filters = build_model_filters(model=Users, query=q, field=field)
+
         if is_admin() and request.args.get("view") == "admin":
-            users = Users.query.filter_by().paginate(per_page=50, max_per_page=100)
+            users = (
+                Users.query.filter_by(**query_args)
+                .filter(*filters)
+                .paginate(per_page=50, max_per_page=100)
+            )
         else:
-            users = Users.query.filter_by(banned=False, hidden=False).paginate(
-                per_page=50, max_per_page=100
+            users = (
+                Users.query.filter_by(banned=False, hidden=False, **query_args)
+                .filter(*filters)
+                .paginate(per_page=50, max_per_page=100)
             )
 
         response = UserSchema(view="user", many=True).dump(users.items)

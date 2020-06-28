@@ -3,8 +3,11 @@ from typing import List
 from flask import current_app, request
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.models import build_model_filters
+from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
+from CTFd.constants import RawEnum
 from CTFd.models import Notifications, db
 from CTFd.schemas.notifications import NotificationSchema
 from CTFd.utils.decorators import admins_only
@@ -46,8 +49,28 @@ class NotificantionList(Resource):
             ),
         },
     )
-    def get(self):
-        notifications = Notifications.query.all()
+    @validate_args(
+        {
+            "title": (str, None),
+            "content": (str, None),
+            "user_id": (int, None),
+            "team_id": (int, None),
+            "q": (str, None),
+            "field": (
+                RawEnum("NotificationFields", {"title": "title", "content": "content"}),
+                None,
+            ),
+        },
+        location="query",
+    )
+    def get(self, query_args):
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        filters = build_model_filters(model=Notifications, query=q, field=field)
+
+        notifications = (
+            Notifications.query.filter_by(**query_args).filter(*filters).all()
+        )
         schema = NotificationSchema(many=True)
         result = schema.dump(notifications)
         if result.errors:

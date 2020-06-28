@@ -1,8 +1,8 @@
 from typing import List
 
-from flask import request
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.models import build_model_filters
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import (
@@ -10,6 +10,7 @@ from CTFd.api.v1.schemas import (
     PaginatedAPIListSuccessResponse,
 )
 from CTFd.cache import clear_standings
+from CTFd.constants import RawEnum
 from CTFd.models import Submissions, db
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import admins_only
@@ -52,21 +53,45 @@ class SubmissionsList(Resource):
             ),
         },
     )
-    def get(self):
-        args = request.args.to_dict()
+    @validate_args(
+        {
+            "challenge_id": (int, None),
+            "user_id": (int, None),
+            "team_id": (int, None),
+            "ip": (str, None),
+            "provided": (str, None),
+            "type": (str, None),
+            "q": (str, None),
+            "field": (
+                RawEnum(
+                    "SubmissionFields",
+                    {
+                        "challenge_id": "challenge_id",
+                        "user_id": "user_id",
+                        "team_id": "team_id",
+                        "ip": "ip",
+                        "provided": "provided",
+                        "type": "type",
+                    },
+                ),
+                None,
+            ),
+        },
+        location="query",
+    )
+    def get(self, query_args):
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        filters = build_model_filters(model=Submissions, query=q, field=field)
+
+        args = query_args
         schema = SubmissionSchema(many=True)
-        pagination_args = {
-            "per_page": int(args.pop("per_page", 50)),
-            "page": int(args.pop("page", 1)),
-        }
-        if args:
-            submissions = Submissions.query.filter_by(**args).paginate(
-                **pagination_args, max_per_page=100
-            )
-        else:
-            submissions = Submissions.query.paginate(
-                **pagination_args, max_per_page=100
-            )
+
+        submissions = (
+            Submissions.query.filter_by(**args)
+            .filter(*filters)
+            .paginate(max_per_page=100)
+        )
 
         response = schema.dump(submissions.items)
 

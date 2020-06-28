@@ -3,9 +3,12 @@ from typing import List
 from flask import request
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.models import build_model_filters
+from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.cache import clear_config, clear_standings
+from CTFd.constants import RawEnum
 from CTFd.models import Configs, db
 from CTFd.schemas.config import ConfigSchema
 from CTFd.utils import get_config, set_config
@@ -46,8 +49,21 @@ class ConfigList(Resource):
             ),
         },
     )
-    def get(self):
-        configs = Configs.query.all()
+    @validate_args(
+        {
+            "key": (str, None),
+            "value": (str, None),
+            "q": (str, None),
+            "field": (RawEnum("ConfigFields", {"key": "key", "value": "value"}), None),
+        },
+        location="query",
+    )
+    def get(self, query_args):
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        filters = build_model_filters(model=Configs, query=q, field=field)
+
+        configs = Configs.query.filter_by(**query_args).filter(*filters).all()
         schema = ConfigSchema(many=True)
         response = schema.dump(configs)
         if response.errors:

@@ -3,8 +3,11 @@ from typing import List
 from flask import request
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.models import build_model_filters
+from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
+from CTFd.constants import RawEnum
 from CTFd.models import Tags, db
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils.decorators import admins_only
@@ -42,9 +45,26 @@ class TagList(Resource):
             ),
         },
     )
-    def get(self):
-        # TODO: Filter by challenge_id
-        tags = Tags.query.all()
+    @validate_args(
+        {
+            "challenge_id": (int, None),
+            "value": (str, None),
+            "q": (str, None),
+            "field": (
+                RawEnum(
+                    "TagFields", {"challenge_id": "challenge_id", "value": "value"}
+                ),
+                None,
+            ),
+        },
+        location="query",
+    )
+    def get(self, query_args):
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        filters = build_model_filters(model=Tags, query=q, field=field)
+
+        tags = Tags.query.filter_by(**query_args).filter(*filters).all()
         schema = TagSchema(many=True)
         response = schema.dump(tags)
 
