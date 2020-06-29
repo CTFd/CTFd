@@ -127,10 +127,11 @@ class Config(object):
         solely on IP addresses unless you know what you are doing.
     """
     SESSION_COOKIE_HTTPONLY: bool = process_boolean_str(os.getenv("SESSION_COOKIE_HTTPONLY")) \
-        or config_ini["security"].getboolean("SESSION_COOKIE_HTTPONLY")
+        or config_ini["security"].getboolean("SESSION_COOKIE_HTTPONLY") \
+        or True
 
     SESSION_COOKIE_SAMESITE: str = os.getenv("SESSION_COOKIE_SAMESITE") \
-        or config_ini["security"]["SESSION_COOKIE_HTTPONLY"] \
+        or empty_str_cast(config_ini["security"]["SESSION_COOKIE_SAMESITE"]) \
         or "Lax"
 
     PERMANENT_SESSION_LIFETIME: int = int(os.getenv("PERMANENT_SESSION_LIFETIME", 0)) \
