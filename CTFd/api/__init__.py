@@ -24,7 +24,7 @@ from CTFd.api.v1.unlocks import unlocks_namespace
 from CTFd.api.v1.users import users_namespace
 
 api = Blueprint("api", __name__, url_prefix="/api/v1")
-CTFd_API_v1 = Api(api, version="v1", doc=current_app.config.get("SWAGGER_UI"))
+CTFd_API_v1 = Api(api, version="v1", doc=current_app.config.get("SWAGGER_UI_ENDPOINT"))
 
 CTFd_API_v1.schema_model("APISimpleErrorResponse", APISimpleErrorResponse.schema())
 CTFd_API_v1.schema_model(
