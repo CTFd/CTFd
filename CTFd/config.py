@@ -340,6 +340,9 @@ class Config(object):
             "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 0))
                 or int(empty_str_cast(config_ini["optional"]["SQLALCHEMY_MAX_OVERFLOW"], default=0))  # noqa: E131
                 or 20,  # noqa: E131
+            "pool_pre_ping": process_boolean_str(os.getenv("SQLALCHEMY_POOL_PRE_PING"))
+                or empty_str_cast(config_ini["optional"]["SQLALCHEMY_POOL_PRE_PING"])  # noqa: E131
+                or True,  # noqa: E131
         }
 
     """
