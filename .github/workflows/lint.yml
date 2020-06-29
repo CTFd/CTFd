@@ -36,3 +36,8 @@ jobs:
         with:
           dockerfile: "Dockerfile"
 
+      - name: Lint docker-compose
+        run: |
+            python -m pip install docker-compose==1.26.0
+            docker-compose -f docker-compose.yml config
+
