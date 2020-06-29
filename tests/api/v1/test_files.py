@@ -3,7 +3,6 @@
 
 import os
 import shutil
-from pathlib import Path
 from io import BytesIO
 
 from CTFd.models import ChallengeFiles, Challenges, Files
@@ -75,7 +74,7 @@ def test_api_files_post_admin():
             )
             assert r.status_code == 200
             f = Files.query.filter_by(id=1).first()
-            Path(app.config["UPLOAD_FOLDER"]).joinpath(f.location).unlink()
+            os.remove(os.path.join(app.config["UPLOAD_FOLDER"] + "/" + f.location))
     destroy_ctfd(app)
 
 
@@ -103,13 +102,13 @@ def test_api_file_delete_admin():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        path = Path(app.config["UPLOAD_FOLDER"]).joinpath(
-            "0bf1a55a5cd327c07af15df260979668", "bird.swf"
+        path = os.path.join(
+            app.config["UPLOAD_FOLDER"], "0bf1a55a5cd327c07af15df260979668", "bird.swf"
         )
         try:
             # Create a fake file
-            path.parent.mkdir()
-            path.open("a").close()
+            os.makedirs(os.path.dirname(path))
+            open(path, "a").close()
             f = gen_file(
                 app.db,
                 location="0bf1a55a5cd327c07af15df260979668/bird.swf",
@@ -120,7 +119,7 @@ def test_api_file_delete_admin():
             assert f in chal.files
 
             # Make sure the file was created
-            assert path.exists()
+            assert os.path.exists(path)
 
             with login_as_user(app, "admin") as client:
                 r = client.delete("/api/v1/files/1", json="")
@@ -131,9 +130,9 @@ def test_api_file_delete_admin():
                 assert f not in chal.files
 
                 # Make sure the API call deleted the file
-                assert path.exists() is False
+                assert os.path.exists(path) is False
         finally:
             # Always make sure the file is deleted
-            shutil.rmtree(path.parent, ignore_errors=True)
+            shutil.rmtree(os.path.dirname(path), ignore_errors=True)
 
     destroy_ctfd(app)
