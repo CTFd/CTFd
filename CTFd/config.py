@@ -87,15 +87,15 @@ class Config(object):
         http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     """
     SECRET_KEY: str = os.getenv("SECRET_KEY") \
-        or empty_str_cast(config_ini["required"]["SECRET_KEY"]) \
+        or empty_str_cast(config_ini["server"]["SECRET_KEY"]) \
         or gen_secret_key()
 
     DATABASE_URL: str = os.getenv("DATABASE_URL") \
-        or empty_str_cast(config_ini["required"]["DATABASE_URL"]) \
+        or empty_str_cast(config_ini["server"]["DATABASE_URL"]) \
         or f"sqlite:///{os.path.dirname(os.path.abspath(__file__))}/ctfd.db"
 
     REDIS_URL: str = os.getenv("REDIS_URL") \
-        or empty_str_cast(config_ini["required"]["REDIS_URL"])
+        or empty_str_cast(config_ini["server"]["REDIS_URL"])
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     CACHE_REDIS_URL = REDIS_URL
