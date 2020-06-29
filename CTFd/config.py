@@ -48,6 +48,7 @@ config_ini = configparser.ConfigParser()
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.ini")
 config_ini.read(path)
 
+
 # fmt: off
 class Config(object):
     """
@@ -335,9 +336,9 @@ class Config(object):
 
     if DATABASE_URL.startswith("sqlite") is False:
         SQLALCHEMY_ENGINE_OPTIONS = {
-            "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 0)) \
-                or int(empty_str_cast(config_ini["optional"]["SQLALCHEMY_MAX_OVERFLOW"], default=0)) \
-                or 20
+            "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 0))
+                or int(empty_str_cast(config_ini["optional"]["SQLALCHEMY_MAX_OVERFLOW"], default=0))  # noqa: E131
+                or 20,  # noqa: E131
         }
 
     """
