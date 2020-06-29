@@ -31,3 +31,13 @@ jobs:
       - name: Lint
         run: make lint
 
+      - name: Lint Dockerfile
+        uses: brpaz/hadolint-action@master
+        with:
+          dockerfile: "Dockerfile"
+
+      - name: Lint docker-compose
+        run: |
+            python -m pip install docker-compose==1.26.0
+            docker-compose -f docker-compose.yml config
+
