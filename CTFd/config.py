@@ -250,7 +250,8 @@ class Config(object):
     SERVER_SENT_EVENTS = not os.getenv("SERVER_SENT_EVENTS")  # Defaults True
     if DATABASE_URL.startswith("sqlite") is False:
         SQLALCHEMY_ENGINE_OPTIONS = {
-            "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 20))
+            "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 20)),
+            "pool_pre_ping": True,
         }
 
     """
