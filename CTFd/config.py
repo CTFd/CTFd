@@ -190,7 +190,7 @@ class Config(object):
         or "noreply@ctfd.io"
 
     MAIL_SERVER: str = os.getenv("MAIL_SERVER") \
-        or empty_str_cast(config_ini["email"]["MAILFROM_ADDR"])
+        or empty_str_cast(config_ini["email"]["MAIL_SERVER"])
 
     MAIL_PORT: str = os.getenv("MAIL_PORT") \
         or empty_str_cast(config_ini["email"]["MAIL_PORT"])
@@ -318,7 +318,7 @@ class Config(object):
         or False
 
     SWAGGER_UI: bool = os.getenv("SWAGGER_UI") \
-        or empty_str_cast(config_ini["optional"]["SQLALCHEMY_TRACK_MODIFICATIONS"]) \
+        or empty_str_cast(config_ini["optional"]["SWAGGER_UI"]) \
         or False
 
     SWAGGER_UI_ENDPOINT: str = "/" if SWAGGER_UI else None
