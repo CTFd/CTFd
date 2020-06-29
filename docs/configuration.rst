@@ -69,11 +69,11 @@ Whether to connect to the SMTP server over SSL
 
 MAILGUN_API_KEY
 ~~~~~~~~~~~~~~~
-Mailgun API key to send email over Mailgun
+Mailgun API key to send email over Mailgun. As of CTFd v3, Mailgun integration is deprecated. Installations using the Mailgun API should migrate over to SMTP settings.
 
 MAILGUN_BASE_URL
 ~~~~~~~~~~~~~~~~
-Mailgun base url to send email over Mailgun
+Mailgun base url to send email over Mailgun. As of CTFd v3, Mailgun integration is deprecated. Installations using the Mailgun API should migrate over to SMTP settings.
 
 LOG_FOLDER
 ~~~~~~~~~~
