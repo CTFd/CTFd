@@ -31,3 +31,8 @@ jobs:
       - name: Lint
         run: make lint
 
+      - name: Lint Dockerfile
+        uses: brpaz/hadolint-action@master
+        with:
+          dockerfile: "Dockerfile"
+
