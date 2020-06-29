@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, url_for
 
 from CTFd.models import Users
 from CTFd.utils import config
@@ -16,15 +16,33 @@ users = Blueprint("users", __name__)
 @users.route("/users")
 @check_account_visibility
 def listing():
-    page = abs(request.args.get("page", 1, type=int))
+    q = request.args.get("q")
+    field = request.args.get("field", "name")
+    if field not in ("name", "affiliation", "website"):
+        field = "name"
+
+    filters = []
+    if q:
+        filters.append(getattr(Users, field).like("%{}%".format(q)))
 
     users = (
         Users.query.filter_by(banned=False, hidden=False)
+        .filter(*filters)
         .order_by(Users.id.asc())
-        .paginate(page=page, per_page=50)
+        .paginate(per_page=50)
     )
 
-    return render_template("users/users.html", users=users)
+    args = dict(request.args)
+    args.pop("page", 1)
+
+    return render_template(
+        "users/users.html",
+        users=users,
+        prev_page=url_for(request.endpoint, page=users.prev_num, **args),
+        next_page=url_for(request.endpoint, page=users.next_num, **args),
+        q=q,
+        field=field,
+    )
 
 
 @users.route("/profile")

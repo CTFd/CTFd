@@ -38,7 +38,27 @@ class TeamCaptainForm(BaseForm):
 class TeamSearchForm(BaseForm):
     field = SelectField(
         "Search Field",
-        choices=[("name", "Name"), ("id", "ID"), ("affiliation", "Affiliation")],
+        choices=[
+            ("name", "Name"),
+            ("id", "ID"),
+            ("affiliation", "Affiliation"),
+            ("website", "Website"),
+        ],
+        default="name",
+        validators=[InputRequired()],
+    )
+    q = StringField("Parameter", validators=[InputRequired()])
+    submit = SubmitField("Search")
+
+
+class PublicTeamSearchForm(BaseForm):
+    field = SelectField(
+        "Search Field",
+        choices=[
+            ("name", "Name"),
+            ("affiliation", "Affiliation"),
+            ("website", "Website"),
+        ],
         default="name",
         validators=[InputRequired()],
     )

@@ -20,15 +20,34 @@ teams = Blueprint("teams", __name__)
 @check_account_visibility
 @require_team_mode
 def listing():
-    page = abs(request.args.get("page", 1, type=int))
+    q = request.args.get("q")
+    field = request.args.get("field", "name")
+    filters = []
+
+    if field not in ("name", "affiliation", "website"):
+        field = "name"
+
+    if q:
+        filters.append(getattr(Teams, field).like("%{}%".format(q)))
 
     teams = (
         Teams.query.filter_by(hidden=False, banned=False)
+        .filter(*filters)
         .order_by(Teams.id.asc())
-        .paginate(page=page, per_page=50)
+        .paginate(per_page=50)
     )
 
-    return render_template("teams/teams.html", teams=teams)
+    args = dict(request.args)
+    args.pop("page", 1)
+
+    return render_template(
+        "teams/teams.html",
+        teams=teams,
+        prev_page=url_for(request.endpoint, page=teams.prev_num, **args),
+        next_page=url_for(request.endpoint, page=teams.next_num, **args),
+        q=q,
+        field=field,
+    )
 
 
 @teams.route("/teams/join", methods=["GET", "POST"])

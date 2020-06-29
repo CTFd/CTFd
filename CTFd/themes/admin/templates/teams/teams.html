@@ -28,7 +28,7 @@
 			</h6>
 			{% endif %}
 
-			{% with form = Forms.teams.TeamSearchForm() %}
+			{% with form = Forms.teams.TeamSearchForm(field=field, q=q) %}
 			<form method="GET" class="form-inline">
 				<div class="form-group col-md-2">
 					{{ form.field(class="form-control custom-select w-100") }}
