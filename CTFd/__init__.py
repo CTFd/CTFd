@@ -110,7 +110,7 @@ class ThemeLoader(FileSystemLoader):
     def get_source(self, environment, template):
         # Check if the template has been overriden
         if template in self.overriden_templates:
-            return self.overriden_templates[template], template, True
+            return self.overriden_templates[template], template, lambda: True
 
         # Check if the template requested is for the admin panel
         if template.startswith("admin/"):
