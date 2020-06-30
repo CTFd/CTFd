@@ -52,6 +52,38 @@ def get_user_attrs(user_id):
     return None
 
 
+@cache.memoize(timeout=300)
+def get_user_place(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    if user:
+        return user.account.place
+    return None
+
+
+@cache.memoize(timeout=300)
+def get_user_score(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    if user:
+        return user.account.score
+    return None
+
+
+@cache.memoize(timeout=300)
+def get_team_place(team_id):
+    team = Teams.query.filter_by(id=team_id).first()
+    if team:
+        return team.place
+    return None
+
+
+@cache.memoize(timeout=300)
+def get_team_score(team_id):
+    team = Teams.query.filter_by(id=team_id).first()
+    if team:
+        return team.score
+    return None
+
+
 def get_current_team():
     if authed():
         user = get_current_user()
