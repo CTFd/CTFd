@@ -31,21 +31,15 @@ class _UserAttrsWrapper:
 
     @property
     def place(self):
-        from CTFd.utils.user import get_current_user
+        from CTFd.utils.user import get_user_place
 
-        user = get_current_user()
-        if user:
-            return user.place
-        return None
+        return get_user_place(user_id=self.id)
 
     @property
     def score(self):
-        from CTFd.utils.user import get_current_user
+        from CTFd.utils.user import get_user_score
 
-        user = get_current_user()
-        if user:
-            return user.score
-        return None
+        return get_user_score(user_id=self.id)
 
 
 User = _UserAttrsWrapper()

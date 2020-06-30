@@ -29,21 +29,15 @@ class _TeamAttrsWrapper:
 
     @property
     def place(self):
-        from CTFd.utils.user import get_current_team
+        from CTFd.utils.user import get_team_place
 
-        team = get_current_team()
-        if team:
-            return team.place
-        return None
+        return get_team_place(team_id=self.id)
 
     @property
     def score(self):
-        from CTFd.utils.user import get_current_team
+        from CTFd.utils.user import get_team_score
 
-        team = get_current_team()
-        if team:
-            return team.score
-        return None
+        return get_team_score(team_id=self.id)
 
 
 Team = _TeamAttrsWrapper()
