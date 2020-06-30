@@ -41,7 +41,7 @@ def get_current_user_attrs():
         return None
 
 
-@cache.memoize(timeout=30)
+@cache.memoize(timeout=300)
 def get_user_attrs(user_id):
     user = Users.query.filter_by(id=user_id).first()
     if user:
@@ -68,7 +68,7 @@ def get_current_team_attrs():
     return None
 
 
-@cache.memoize(timeout=30)
+@cache.memoize(timeout=300)
 def get_team_attrs(team_id):
     team = Teams.query.filter_by(id=team_id).first()
     if team:
@@ -142,7 +142,7 @@ def get_current_user_recent_ips():
         return None
 
 
-@cache.memoize(timeout=60)
+@cache.memoize(timeout=300)
 def get_user_recent_ips(user_id):
     hour_ago = datetime.datetime.now() - datetime.timedelta(hours=1)
     addrs = (
