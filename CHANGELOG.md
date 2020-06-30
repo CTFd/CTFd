@@ -36,6 +36,7 @@
   - From Jinja you can access forms via the Forms global i.e. `{{ Forms }}`
   - This allows theme developers to more easily re-use a form without having to copy-paste HTML.
 - Themes can now provide a theme settings JSON blob which can be injected into the theme with `{{ Configs.theme_settings }}`
+- Core theme now includes the challenge ID in location hash identifiers to always refer the right challenge despite duplicate names
 
 **Plugins**
 
