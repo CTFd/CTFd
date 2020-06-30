@@ -12,7 +12,7 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
 
 ## Beta Notice
 
-Currently CTFd master contains an alpha version of the next major CTFd release. The latest stable CTFd release can be found at https://github.com/CTFd/CTFd/releases.
+Currently CTFd master contains an alpha version of the next major CTFd release. For most purposes, the alpha is stable and is the recommended setup for new installations but if you rely on old behavior the latest stable CTFd release can be found at https://github.com/CTFd/CTFd/releases.
 
 ## Features
 
