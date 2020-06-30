@@ -1,63 +1,69 @@
 # 3.0.0a1 /
 
 **General**
-* CTFd is now Python 3 only
-* Render markdown with the CommonMark spec provided by `cmarkgfm`
-* Render markdown stripped of any malicious JavaScript or HTML.
-  * This is a significant change from previous versions of CTFd where any HTML content from an admin was considered safe.
-* Inject `Config`, `User`, `Team`, `Session`, and `Plugin` globals into Jinja
-* User sessions no longer store any user-specific attributes.
-  * Sessions only store the user's ID, CSRF nonce, and an hmac of the user's password
-* The user facing side of CTFd now has user and team searching
-* GeoIP support now available for converting IP addresses to guessed countries
+
+- CTFd is now Python 3 only
+- Render markdown with the CommonMark spec provided by `cmarkgfm`
+- Render markdown stripped of any malicious JavaScript or HTML.
+  - This is a significant change from previous versions of CTFd where any HTML content from an admin was considered safe.
+- Inject `Config`, `User`, `Team`, `Session`, and `Plugin` globals into Jinja
+- User sessions no longer store any user-specific attributes.
+  - Sessions only store the user's ID, CSRF nonce, and an hmac of the user's password
+- The user facing side of CTFd now has user and team searching
+- GeoIP support now available for converting IP addresses to guessed countries
 
 **Admin Panel**
-* Use EasyMDE as an improved description/text editor for Markdown enabled fields.
-* Media Library button now integrated into EasyMDE enabled fields
-* VueJS now used as the underlying implementation for the Media Library
-* Fix setting theme color in Admin Panel
-* Green outline border has been removed from the Admin Panel
+
+- Use EasyMDE as an improved description/text editor for Markdown enabled fields.
+- Media Library button now integrated into EasyMDE enabled fields
+- VueJS now used as the underlying implementation for the Media Library
+- Fix setting theme color in Admin Panel
+- Green outline border has been removed from the Admin Panel
 
 **API**
-* Significant overhauls in API documentation provided by Swagger UI and Swagger json
-* Make almost all API endpoints provide filtering and searching capabilities
-* Change `GET /api/v1/config/<config_key>` to return structured data according to ConfigSchema
+
+- Significant overhauls in API documentation provided by Swagger UI and Swagger json
+- Make almost all API endpoints provide filtering and searching capabilities
+- Change `GET /api/v1/config/<config_key>` to return structured data according to ConfigSchema
 
 **Themes**
-* Themes now have access to the `Configs` global which provides wrapped access to `get_config`.
-  * For example, `{{ Configs.ctf_name }}` instead of `get_ctf_name()` or `get_config('ctf_name')`
-* Themes must now specify a `challenge.html` which control how a challenge should look.
-* The main library for charts has been changed from Plotly to Apache ECharts.
-* Forms have been moved into wtforms for easier form rendering inside of Jinja.
-  * From Jinja you can access forms via the Forms global i.e. `{{ Forms }}`
-  * This allows theme developers to more easily re-use a form without having to copy-paste HTML.
-* Themes can now provide a theme settings JSON blob which can be injected into the theme with `{{ Configs.theme_settings }}`
+
+- Themes now have access to the `Configs` global which provides wrapped access to `get_config`.
+  - For example, `{{ Configs.ctf_name }}` instead of `get_ctf_name()` or `get_config('ctf_name')`
+- Themes must now specify a `challenge.html` which control how a challenge should look.
+- The main library for charts has been changed from Plotly to Apache ECharts.
+- Forms have been moved into wtforms for easier form rendering inside of Jinja.
+  - From Jinja you can access forms via the Forms global i.e. `{{ Forms }}`
+  - This allows theme developers to more easily re-use a form without having to copy-paste HTML.
+- Themes can now provide a theme settings JSON blob which can be injected into the theme with `{{ Configs.theme_settings }}`
 
 **Plugins**
-* Challenge plugins have changed in structure to better allow integration with themes and prevent obtrusive Javascript/XSS.
-  * TODO: Document challenge plugin changes
-* Display current attempt count in challenge view when max attempts is enabled
-* `get_standings()`, `get_team_stanadings()`, `get_user_standings()` now has a fields keyword argument that allows for specificying additional fields that SQLAlchemy should return when building the response set.
-  * Useful for gathering additional data when building scoreboard pages
-* Flags can now control the message that is shown to the user by raising `FlagException`
-* Fix `override_template()` functionality
+
+- Challenge plugins have changed in structure to better allow integration with themes and prevent obtrusive Javascript/XSS.
+  - TODO: Document challenge plugin changes
+- Display current attempt count in challenge view when max attempts is enabled
+- `get_standings()`, `get_team_stanadings()`, `get_user_standings()` now has a fields keyword argument that allows for specificying additional fields that SQLAlchemy should return when building the response set.
+  - Useful for gathering additional data when building scoreboard pages
+- Flags can now control the message that is shown to the user by raising `FlagException`
+- Fix `override_template()` functionality
 
 **Deployment**
-* Enable SQLAlchemy's `pool_pre_ping` by default to reduce the likelihood of database connection issues
-* Mailgun email settings are now deprecated. Admins should move to SMTP email settings instead.
-* Postgres is now considered a second class citizen in CTFd. It is tested against but not a main database backend. If you use Postgres, you are entirely on your own with regards to supporting CTFd.
-* Docker image now uses Debian instead of Alpine. See https://github.com/CTFd/CTFd/issues/1215 for rationale.
-* `docker-compose.yml` now uses a non-root user to connect to MySQL/MariaDB
-* `config.py` should no longer be editting for configuration, instead edit `config.ini` or the environment variables in `docker-compose.yml`
+
+- Enable SQLAlchemy's `pool_pre_ping` by default to reduce the likelihood of database connection issues
+- Mailgun email settings are now deprecated. Admins should move to SMTP email settings instead.
+- Postgres is now considered a second class citizen in CTFd. It is tested against but not a main database backend. If you use Postgres, you are entirely on your own with regards to supporting CTFd.
+- Docker image now uses Debian instead of Alpine. See https://github.com/CTFd/CTFd/issues/1215 for rationale.
+- `docker-compose.yml` now uses a non-root user to connect to MySQL/MariaDB
+- `config.py` should no longer be editting for configuration, instead edit `config.ini` or the environment variables in `docker-compose.yml`
 
 **Miscellaneous**
-* Lint Markdown files with Prettier
-* Lint Dockerfile and docker-compose.yml in Github Actions
-* Lint JavaScript files with eslint
-* Certain static strings have been converted into Enums for better re-useability throughout the code base
-* Main testing now done by Github Actions. Travis testing is deprecated but still used until full parity exists
-* Travis testing has been upgraded to use Ubuntu Bionic (18.04)
 
+- Lint Markdown files with Prettier
+- Lint Dockerfile and docker-compose.yml in Github Actions
+- Lint JavaScript files with eslint
+- Certain static strings have been converted into Enums for better re-useability throughout the code base
+- Main testing now done by Github Actions. Travis testing is deprecated but still used until full parity exists
+- Travis testing has been upgraded to use Ubuntu Bionic (18.04)
 
 # 2.5.0 / 2020-06-04
 
