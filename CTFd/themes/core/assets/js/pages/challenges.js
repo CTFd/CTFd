@@ -34,8 +34,11 @@ const loadChal = id => {
 };
 
 const loadChalByName = name => {
-  const chal = $.grep(challenges, chal => chal.name == name)[0];
+  let idx = name.lastIndexOf("-");
+  let pieces = [name.slice(0, idx), name.slice(idx + 1)];
+  let id = pieces[1];
 
+  const chal = $.grep(challenges, chal => chal.id == id)[0];
   displayChal(chal);
 };
 
@@ -118,7 +121,7 @@ const displayChal = chal => {
     challenge.postRender();
 
     window.location.replace(
-      window.location.href.split("#")[0] + "#" + chal.name
+      window.location.href.split("#")[0] + `#${chal.name}-${chal.id}`
     );
     $("#challenge-window").modal();
   });

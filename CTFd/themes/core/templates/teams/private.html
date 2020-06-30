@@ -257,7 +257,9 @@
 							{% for solve in solves %}
 								<tr>
 									<td>
-										<a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}">{{ solve.challenge.name }}</a>
+										<a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+											{{ solve.challenge.name }}
+										</a>
 									</td>
 									<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
 									<td>{{ solve.challenge.value }}</td>
