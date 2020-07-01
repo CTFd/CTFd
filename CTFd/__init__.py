@@ -26,12 +26,7 @@ from CTFd.utils.migrations import create_database, migrations, stamp_latest_revi
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 
-# Hack to support Unicode in Python 2 properly
-if sys.version_info[0] < 3:
-    reload(sys)  # noqa: F821
-    sys.setdefaultencoding("utf-8")
-
-__version__ = "2.5.0"
+__version__ = "3.0.0a1"
 
 
 class CTFdRequest(Request):
