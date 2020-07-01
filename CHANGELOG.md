@@ -9,6 +9,7 @@
 - Inject `Config`, `User`, `Team`, `Session`, and `Plugin` globals into Jinja
 - User sessions no longer store any user-specific attributes.
   - Sessions only store the user's ID, CSRF nonce, and an hmac of the user's password
+  - This allows for session invalidation on password changes
 - The user facing side of CTFd now has user and team searching
 - GeoIP support now available for converting IP addresses to guessed countries
 
@@ -41,7 +42,10 @@
 **Plugins**
 
 - Challenge plugins have changed in structure to better allow integration with themes and prevent obtrusive Javascript/XSS.
-  - TODO: Document challenge plugin changes
+  - Challenge rendering now uses `challenge.html` from the provided theme.
+  - Accessing the challenge view content is now provided by `/api/v1/challenges/<challenge_id>` in the `view` section. This allows for HTML to be properly sanitized and rendered by the server allowing CTFd to remove client side Jinja rendering.
+  - `challenge.html` now specifies what's required and what's rendered by the theme. This allows the challenge plugin to avoid having to deal with aspects of the challenge besides the description and input.
+  - A more complete migration guide will be provided when CTFd v3 leaves beta
 - Display current attempt count in challenge view when max attempts is enabled
 - `get_standings()`, `get_team_stanadings()`, `get_user_standings()` now has a fields keyword argument that allows for specificying additional fields that SQLAlchemy should return when building the response set.
   - Useful for gathering additional data when building scoreboard pages
