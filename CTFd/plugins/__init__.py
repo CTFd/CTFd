@@ -4,7 +4,7 @@ import os
 from collections import namedtuple
 
 from flask import current_app as app
-from flask import send_file, send_from_directory, url_for
+from flask import send_file, send_from_directory
 
 from CTFd.utils.config.pages import get_pages
 from CTFd.utils.decorators import admins_only as admins_only_wrapper
@@ -114,9 +114,6 @@ def register_admin_plugin_menu_bar(title, route):
     :param route: A string that is the href used by the link
     :return:
     """
-    if (route.startswith("http://") or route.startswith("https://")) is False:
-        route = url_for("views.static_html", route=route)
-
     am = Menu(title=title, route=route)
     app.admin_plugin_menu_bar.append(am)
 
@@ -138,9 +135,6 @@ def register_user_page_menu_bar(title, route):
     :param route: A string that is the href used by the link
     :return:
     """
-    if (route.startswith("http://") or route.startswith("https://")) is False:
-        route = url_for("views.static_html", route=route)
-
     p = Menu(title=title, route=route)
     app.plugin_menu_bar.append(p)
 
