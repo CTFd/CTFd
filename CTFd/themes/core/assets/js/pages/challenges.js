@@ -52,6 +52,8 @@ const displayChal = chal => {
 
     $("#challenge-window").empty();
 
+    challenge.preRender();
+
     $("#challenge-window").append(responses[0].data.view);
 
     $("#challenge-window #challenge-input").addClass("form-control");
