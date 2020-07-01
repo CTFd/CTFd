@@ -111,7 +111,7 @@ $(() => {
   $("#user-profile-form").submit(profileUpdate);
   $("#user-token-form").submit(tokenGenerate);
   $(".delete-token").click(deleteToken);
-  $(".nav-pills a").click(function(event) {
+  $(".nav-pills a").click(function(_event) {
     window.location.hash = this.hash;
   });
 

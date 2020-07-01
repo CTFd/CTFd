@@ -1,16 +1,17 @@
 import datetime
 import re
 
+from flask import abort
 from flask import current_app as app
-from flask import abort, redirect, request, session, url_for
+from flask import redirect, request, session, url_for
 
 from CTFd.cache import cache
-from CTFd.constants.users import UserAttrs
 from CTFd.constants.teams import TeamAttrs
-from CTFd.models import Fails, Users, db, Teams, Tracking
+from CTFd.constants.users import UserAttrs
+from CTFd.models import Fails, Teams, Tracking, Users, db
 from CTFd.utils import get_config
-from CTFd.utils.security.signing import hmac
 from CTFd.utils.security.auth import logout_user
+from CTFd.utils.security.signing import hmac
 
 
 def get_current_user():
@@ -22,7 +23,11 @@ def get_current_user():
         if session_hash:
             if session_hash != hmac(user.password):
                 logout_user()
-                abort(redirect(url_for("auth.login", next=request.full_path)))
+                if request.content_type == "application/json":
+                    error = 401
+                else:
+                    error = redirect(url_for("auth.login", next=request.full_path))
+                abort(error)
 
         return user
     else:
@@ -36,7 +41,7 @@ def get_current_user_attrs():
         return None
 
 
-@cache.memoize(timeout=30)
+@cache.memoize(timeout=300)
 def get_user_attrs(user_id):
     user = Users.query.filter_by(id=user_id).first()
     if user:
@@ -44,6 +49,38 @@ def get_user_attrs(user_id):
         for field in UserAttrs._fields:
             d[field] = getattr(user, field)
         return UserAttrs(**d)
+    return None
+
+
+@cache.memoize(timeout=300)
+def get_user_place(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    if user:
+        return user.account.place
+    return None
+
+
+@cache.memoize(timeout=300)
+def get_user_score(user_id):
+    user = Users.query.filter_by(id=user_id).first()
+    if user:
+        return user.account.score
+    return None
+
+
+@cache.memoize(timeout=300)
+def get_team_place(team_id):
+    team = Teams.query.filter_by(id=team_id).first()
+    if team:
+        return team.place
+    return None
+
+
+@cache.memoize(timeout=300)
+def get_team_score(team_id):
+    team = Teams.query.filter_by(id=team_id).first()
+    if team:
+        return team.score
     return None
 
 
@@ -63,7 +100,7 @@ def get_current_team_attrs():
     return None
 
 
-@cache.memoize(timeout=30)
+@cache.memoize(timeout=300)
 def get_team_attrs(team_id):
     team = Teams.query.filter_by(id=team_id).first()
     if team:
@@ -137,7 +174,7 @@ def get_current_user_recent_ips():
         return None
 
 
-@cache.memoize(timeout=60)
+@cache.memoize(timeout=300)
 def get_user_recent_ips(user_id):
     hour_ago = datetime.datetime.now() - datetime.timedelta(hours=1)
     addrs = (

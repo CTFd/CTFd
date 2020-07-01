@@ -3,7 +3,7 @@ import CTFd from "core/CTFd";
 import $ from "jquery";
 import { ezQuery } from "core/ezq";
 
-function deleteSelectedUsers(event) {
+function deleteSelectedUsers(_event) {
   let pageIDs = $("input[data-page-id]:checked").map(function() {
     return $(this).data("page-id");
   });
@@ -21,7 +21,7 @@ function deleteSelectedUsers(event) {
           })
         );
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }

@@ -262,6 +262,9 @@ COUNTRIES_LIST = [
 # Nicely titled (and translatable) country names.
 COUNTRIES_DICT = OrderedDict(COUNTRIES_LIST)
 
+# List of countries suitable for use in forms
+SELECT_COUNTRIES_LIST = [("", "")] + COUNTRIES_LIST
+
 
 def get_countries():
     return COUNTRIES_DICT

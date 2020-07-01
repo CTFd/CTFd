@@ -1,32 +1,52 @@
 import $ from "jquery";
-import Plotly from "plotly.js-basic-dist";
+import echarts from "echarts/dist/echarts-en.common";
 import Moment from "moment";
 import { cumulativeSum, colorHash } from "./utils";
 
 const graph_configs = {
   score_graph: {
-    layout: {
-      title: "Score over Time",
-      paper_bgcolor: "rgba(0,0,0,0)",
-      plot_bgcolor: "rgba(0,0,0,0)",
-      hovermode: "closest",
-      xaxis: {
-        showgrid: false,
-        showspikes: true
-      },
-      yaxis: {
-        showgrid: false,
-        showspikes: true
-      },
-      legend: {
-        orientation: "h"
-      }
-    },
-    fn: (type, id, name, account_id) =>
-      `CTFd_score_${type}_${name}_${id}_${new Date()
-        .toISOString()
-        .slice(0, 19)}`,
-    format: (type, id, name, account_id, responses) => {
+    format: (type, id, name, _account_id, responses) => {
+      let option = {
+        title: {
+          left: "center",
+          text: "Score over Time"
+        },
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "cross"
+          }
+        },
+        legend: {
+          type: "scroll",
+          orient: "horizontal",
+          align: "left",
+          bottom: 0,
+          data: [name]
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        grid: {
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: "category",
+            boundaryGap: false,
+            data: []
+          }
+        ],
+        yAxis: [
+          {
+            type: "value"
+          }
+        ],
+        series: []
+      };
+
       const times = [];
       const scores = [];
       const solves = responses[0].data;
@@ -47,38 +67,103 @@ const graph_configs = {
         }
       }
 
-      return [
-        {
-          x: times,
-          y: cumulativeSum(scores),
-          type: "scatter",
-          marker: {
+      times.forEach(time => {
+        option.xAxis[0].data.push(time);
+      });
+
+      option.series.push({
+        name: window.stats_data.name,
+        type: "line",
+        label: {
+          normal: {
+            show: true,
+            position: "top"
+          }
+        },
+        areaStyle: {
+          normal: {
             color: colorHash(name + id)
-          },
-          line: {
+          }
+        },
+        itemStyle: {
+          normal: {
             color: colorHash(name + id)
-          },
-          fill: "tozeroy"
-        }
-      ];
+          }
+        },
+        data: cumulativeSum(scores)
+      });
+      return option;
     }
   },
 
   category_breakdown: {
-    layout: {
-      title: "Category Breakdown",
-      paper_bgcolor: "rgba(0,0,0,0)",
-      plot_bgcolor: "rgba(0,0,0,0)",
-      legend: {
-        orientation: "v"
-      },
-      height: "400px"
-    },
-    fn: (type, id, name, account_id) =>
-      `CTFd_submissions_${type}_${name}_${id}_${new Date()
-        .toISOString()
-        .slice(0, 19)}`,
     format: (type, id, name, account_id, responses) => {
+      let option = {
+        title: {
+          left: "center",
+          text: "Category Breakdown"
+        },
+        tooltip: {
+          trigger: "item"
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        legend: {
+          orient: "horizontal",
+          bottom: 0,
+          data: []
+        },
+        series: [
+          {
+            name: "Category Breakdown",
+            type: "pie",
+            radius: ["30%", "50%"],
+            avoidLabelOverlap: false,
+            label: {
+              show: false,
+              position: "center"
+            },
+            itemStyle: {
+              normal: {
+                label: {
+                  show: true,
+                  formatter: function(data) {
+                    return `${data.name} - ${data.value} (${data.percent}%)`;
+                  }
+                },
+                labelLine: {
+                  show: true
+                }
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  position: "center",
+                  textStyle: {
+                    fontSize: "14",
+                    fontWeight: "normal"
+                  }
+                }
+              }
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: "30",
+                fontWeight: "bold"
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: []
+          }
+        ]
+      };
       const solves = responses[0].data;
       const categories = [];
 
@@ -101,53 +186,104 @@ const graph_configs = {
         counts.push(count);
       }
 
-      return [
-        {
-          values: counts,
-          labels: keys,
-          hole: 0.4,
-          type: "pie"
-        }
-      ];
+      keys.forEach((category, index) => {
+        option.legend.data.push(category);
+        option.series[0].data.push({
+          value: counts[index],
+          name: category,
+          itemStyle: { color: colorHash(category) }
+        });
+      });
+
+      return option;
     }
   },
 
   solve_percentages: {
-    layout: {
-      title: "Solve Percentages",
-      paper_bgcolor: "rgba(0,0,0,0)",
-      plot_bgcolor: "rgba(0,0,0,0)",
-      legend: {
-        orientation: "h"
-      },
-      height: "400px"
-    },
-    fn: (type, id, name, account_id) =>
-      `CTFd_submissions_${type}_${name}_${id}_${new Date()
-        .toISOString()
-        .slice(0, 19)}`,
     format: (type, id, name, account_id, responses) => {
       const solves_count = responses[0].data.length;
       const fails_count = responses[1].meta.count;
+      let option = {
+        title: {
+          left: "center",
+          text: "Solve Percentages"
+        },
+        tooltip: {
+          trigger: "item"
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        legend: {
+          orient: "horizontal",
+          bottom: 0,
+          data: ["Fails", "Solves"]
+        },
+        series: [
+          {
+            name: "Solve Percentages",
+            type: "pie",
+            radius: ["30%", "50%"],
+            avoidLabelOverlap: false,
+            label: {
+              show: false,
+              position: "center"
+            },
+            itemStyle: {
+              normal: {
+                label: {
+                  show: true,
+                  formatter: function(data) {
+                    return `${data.name} - ${data.value} (${data.percent}%)`;
+                  }
+                },
+                labelLine: {
+                  show: true
+                }
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  position: "center",
+                  textStyle: {
+                    fontSize: "14",
+                    fontWeight: "normal"
+                  }
+                }
+              }
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: "30",
+                fontWeight: "bold"
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: [
+              {
+                value: fails_count,
+                name: "Fails",
+                itemStyle: { color: "rgb(207, 38, 0)" }
+              },
+              {
+                value: solves_count,
+                name: "Solves",
+                itemStyle: { color: "rgb(0, 209, 64)" }
+              }
+            ]
+          }
+        ]
+      };
 
-      return [
-        {
-          values: [solves_count, fails_count],
-          labels: ["Solves", "Fails"],
-          marker: {
-            colors: ["rgb(0, 209, 64)", "rgb(207, 38, 0)"]
-          },
-          hole: 0.4,
-          type: "pie"
-        }
-      ];
+      return option;
     }
   }
-};
-
-const config = {
-  displaylogo: false,
-  responsive: true
 };
 
 export function createGraph(
@@ -160,17 +296,13 @@ export function createGraph(
   account_id
 ) {
   const cfg = graph_configs[graph_type];
-
-  const $elem = $(target);
-  $elem.empty();
-  if ($elem[0] === undefined) {
-    console.log("Couldn't find graph target: " + target);
-    return;
-  }
-  $elem[0].fn = cfg.fn(type, id, name, account_id);
-
-  const graph_data = cfg.format(type, id, name, account_id, data);
-  Plotly.newPlot($elem[0], graph_data, cfg.layout, config);
+  let chart = echarts.init(document.querySelector(target));
+  chart.setOption(cfg.format(type, id, name, account_id, data));
+  $(window).on("resize", function() {
+    if (chart != null && chart != undefined) {
+      chart.resize();
+    }
+  });
 }
 
 export function updateGraph(
@@ -183,8 +315,6 @@ export function updateGraph(
   account_id
 ) {
   const cfg = graph_configs[graph_type];
-
-  const $elem = $(target);
-  const graph_data = cfg.format(type, id, name, account_id, data);
-  Plotly.update($elem[0], graph_data, cfg.layout, config);
+  let chart = echarts.init(document.querySelector(target));
+  chart.setOption(cfg.format(type, id, name, account_id, data));
 }

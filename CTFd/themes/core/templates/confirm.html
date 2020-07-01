@@ -12,25 +12,10 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 offset-md-3">
-				{% for info in infos %}
-					<div class="alert alert-info alert-dismissable" role="alert">
-						<span class="sr-only"></span>
-						{{ info }}
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-								aria-hidden="true">×</span></button>
-					</div>
-				{% endfor %}
-				{% for error in errors %}
-					<div class="alert alert-danger alert-dismissable" role="alert">
-						<span class="sr-only">Error:</span>
-						{{ error }}
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-								aria-hidden="true">×</span></button>
-					</div>
-				{% endfor %}
-				{% if user %}
+				{% include "components/errors.html" %}
+
 				<h3 class="text-center">
-					We've sent a confirmation email to {{ user.email }}
+					We've sent a confirmation email to your email address.
 				</h3>
 
 				<br>
@@ -38,21 +23,20 @@
 				<h4 class="text-center">
 					Please click the link in that email to confirm your account.
 				</h4>
-				{% endif %}
 
 				<hr>
 
-				{% if name %}
+				{% with form = Forms.auth.ConfirmForm() %}
 				<form method="POST" action="{{ url_for('auth.confirm') }}">
 					<h4 class="text-center">
 						Need to resend the confirmation email?
 					</h4>
 					<div class="col-md-12 text-center">
-						<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined">Resend</button>
+						{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
 					</div>
-					<input type="hidden" name="nonce" value="{{ nonce }}">
+					{{ form.nonce() }}
 				</form>
-				{% endif %}
+				{% endwith %}
 			</div>
 		</div>
 	</div>

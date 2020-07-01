@@ -1,11 +1,10 @@
 language: python
-dist: xenial
+dist: bionic
 cache:
     - pip
     - yarn
 services:
     - mysql
-    - postgresql
     - redis-server
 addons:
   apt:
@@ -17,21 +16,16 @@ addons:
 env:
     - TESTING_DATABASE_URL='mysql+pymysql://root@localhost/ctfd'
     - TESTING_DATABASE_URL='sqlite://'
-    - TESTING_DATABASE_URL='postgres://postgres@localhost/ctfd'
 python:
-    - 2.7
     - 3.6
 before_install:
     - sudo rm -f /etc/boto.cfg
     - export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
     - export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-    - python3.6 -m pip install black==19.3b0
 install:
     - pip install -r development.txt
     - yarn install --non-interactive
     - yarn global add prettier@1.17.0
-before_script:
-    - psql -c 'create database ctfd;' -U postgres
 script:
     - make lint
     - make test

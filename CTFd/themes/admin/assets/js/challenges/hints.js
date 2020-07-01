@@ -1,50 +1,18 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
-import { ezQuery, ezAlert } from "core/ezq";
-
-function hint(id) {
-  return CTFd.fetch("/api/v1/hints/" + id + "?preview=true", {
-    method: "GET",
-    credentials: "same-origin",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
-  });
-}
-
-function loadhint(hintid) {
-  const md = CTFd.lib.markdown();
-
-  hint(hintid).then(function(response) {
-    if (response.data.content) {
-      ezAlert({
-        title: "Hint",
-        body: md.render(response.data.content),
-        button: "Got it!"
-      });
-    } else {
-      ezAlert({
-        title: "Error",
-        body: "Error loading hint!",
-        button: "OK"
-      });
-    }
-  });
-}
+import { ezQuery } from "core/ezq";
 
 export function showHintModal(event) {
   event.preventDefault();
   $("#hint-edit-modal form")
     .find("input, textarea")
-    .val("");
+    .val("")
+    // Trigger a change on the textarea to get codemirror to clone changes in
+    .trigger("change");
 
-  // Markdown Preview
-  $("#new-hint-edit").on("shown.bs.tab", function(event) {
-    if (event.target.hash == "#hint-preview") {
-      const renderer = CTFd.lib.markdown();
-      const editor_value = $("#hint-write textarea").val();
-      $(event.target.hash).html(renderer.render(editor_value));
+  $("#hint-edit-form textarea").each(function(i, e) {
+    if (e.hasOwnProperty("codemirror")) {
+      e.codemirror.refresh();
     }
   });
 
@@ -68,20 +36,32 @@ export function showEditHintModal(event) {
     })
     .then(function(response) {
       if (response.success) {
-        $("#hint-edit-form input[name=content],textarea[name=content]").val(
-          response.data.content
-        );
+        $("#hint-edit-form input[name=content],textarea[name=content]")
+          .val(response.data.content)
+          // Trigger a change on the textarea to get codemirror to clone changes in
+          .trigger("change");
+
+        $("#hint-edit-modal")
+          .on("shown.bs.modal", function() {
+            $("#hint-edit-form textarea").each(function(i, e) {
+              if (e.hasOwnProperty("codemirror")) {
+                e.codemirror.refresh();
+              }
+            });
+          })
+          .on("hide.bs.modal", function() {
+            $("#hint-edit-form textarea").each(function(i, e) {
+              $(e)
+                .val("")
+                .trigger("change");
+              if (e.hasOwnProperty("codemirror")) {
+                e.codemirror.refresh();
+              }
+            });
+          });
+
         $("#hint-edit-form input[name=cost]").val(response.data.cost);
         $("#hint-edit-form input[name=id]").val(response.data.id);
-
-        // Markdown Preview
-        $("#new-hint-edit").on("shown.bs.tab", function(event) {
-          if (event.target.hash == "#hint-preview") {
-            const renderer = CTFd.lib.markdown();
-            const editor_value = $("#hint-write textarea").val();
-            $(event.target.hash).html(renderer.render(editor_value));
-          }
-        });
 
         $("#hint-edit-modal").modal();
       }
@@ -116,7 +96,7 @@ export function deleteHint(event) {
 export function editHint(event) {
   event.preventDefault();
   const params = $(this).serializeJSON(true);
-  params["challenge"] = CHALLENGE_ID;
+  params["challenge"] = window.CHALLENGE_ID;
 
   let method = "POST";
   let url = "/api/v1/hints";

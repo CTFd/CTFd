@@ -1,97 +1,9 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" type="text/css" href="{{ url_for('views.themes', theme='admin', path='css/codemirror.css') }}">
 {% endblock %}
 
 {% block content %}
-<div id="media-modal" class="modal fade" tabindex="-1">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<div class="container">
-					<div class="row">
-						<div class="col-md-12">
-							<h3 class="text-center">Media Library</h3>
-						</div>
-					</div>
-				</div>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="modal-header">
-					<div class="container">
-						<div class="row mh-100">
-							<div class="col-md-6" id="media-library-list">
-							</div>
-							<div class="col-md-6" id="media-library-details">
-								<h4 class="text-center">Media Details</h4>
-								<div id="media-item">
-									<div class="text-center" id="media-icon">
-									</div>
-									<br>
-									<div class="text-center" id="media-filename">
-									</div>
-									<br>
-									<div class="form-group">
-										Link: <input class="form-control" type="text" id="media-link" readonly>
-									</div>
-
-									<div class="form-group text-center">
-										<div class="row">
-											<div class="col-md-6">
-												<button class="btn btn-success w-100" id="media-insert"
-														data-toggle="tooltip" data-placement="top"
-														title="Insert link into editor">
-													Insert
-												</button>
-											</div>
-											<div class="col-md-3">
-												<button class="btn btn-primary w-100" id="media-download"
-														data-toggle="tooltip" data-placement="top"
-														title="Download file">
-													<i class="fas fa-download"></i>
-												</button>
-											</div>
-											<div class="col-md-3">
-												<button class="btn btn-danger w-100" id="media-delete"
-														data-toggle="tooltip" data-placement="top"
-														title="Delete file">
-													<i class="far fa-trash-alt"></i>
-												</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<form id="media-library-upload" enctype="multipart/form-data">
-					<div class="form-group">
-						<label for="media-files">
-							Upload Files
-						</label>
-						<input type="file" name="file" id="media-files" class="form-control-file" multiple>
-						<sub class="help-block">
-							Attach multiple files using Control+Click or Cmd+Click.
-						</sub>
-					</div>
-					<input type="hidden" value="page" name="type">
-				</form>
-			</div>
-			<div class="modal-footer">
-				<div class="float-right">
-					<button type="submit" class="btn btn-primary media-upload-button">Upload</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-
 <div class="container">
 	<div class="row pt-5">
 		<div class="col-md-12">
@@ -106,29 +18,28 @@
 				{% endfor %}
 			</div>
 
+			{% set content = page.content if page is defined else "" %}
+			{% with form = Forms.pages.PageEditForm(content=content) %}
 			<form id="page-edit" method="POST">
 				<div class="form-group">
 					<div class="col-md-12">
-						<label>
-							Title<br>
-							<small class="text-muted">This is the title shown on the navigation bar</small>
-						</label>
-						<input class="form-control radius" id="route" type="text" name="title"
-							   value="{% if page is defined %}{{ page.title }}{% endif %}" placeholder="Title">
+						{% set title = page.title if page is defined %}
+						<b>{{ form.title.label }}</b>
+						{{ form.title(class="form-control radius", id="route", placeholder="Title", value=title) }}
+						<small class="text-muted">
+							{{ form.title.description }}
+						</small>
 					</div>
 				</div>
 
 				<div class="form-group">
 					<div class="col-md-12">
-						<label>
-							Route<br>
-							<small class="text-muted">
-								This is the URL route that your page will be at (e.g. /page). You can
-								also enter links to link to that page.
-							</small>
-						</label>
-						<input class="form-control radius" id="route" type="text" name="route"
-							   value="{% if page is defined %}{{ page.route }}{% endif %}" placeholder="Route">
+						{% set route = page.route if page is defined %}
+						<b>{{ form.route.label }}</b>
+						{{ form.route(class="form-control radius", placeholder="Route", value=route) }}
+						<small class="text-muted">
+							{{ form.route.description }}
+						</small>
 					</div>
 				</div>
 
@@ -165,50 +76,28 @@
 									<span class="nav-link d-none d-md-block d-lg-block">|</span>
 
 									<div class="form-group pr-3">
-										Draft:
 										{% set draft = page is defined and page.draft == True %}
-										<select class="form-control custom-select" name="draft">
-											<option value="true" {% if draft == True %}selected{% endif %}>
-												True
-											</option>
-											<option value="false" {% if draft == False %}selected{% endif %}>
-												False
-											</option>
-										</select>
+										{{ form.draft(class="form-check-input", checked=draft) }}
+										{{ form.draft.label(class="form-check-label") }}
 									</div>
 
 									<div class="form-group pr-3">
-										Hidden:
 										{% set hidden = page is defined and page.hidden == True %}
-										<select class="form-control custom-select" name="hidden">
-											<option value="true" {% if hidden == True %}selected{% endif %}>True
-											</option>
-											<option value="false" {% if hidden == False %}selected{% endif %}>False
-											</option>
-										</select>
+										{{ form.hidden(class="form-check-input", checked=hidden) }}
+										{{ form.hidden.label(class="form-check-label") }}
 									</div>
 
 									<div class="form-group pr-3">
-										Authentication Required:
 										{% set auth_required = page is defined and page.auth_required == True %}
-										<select class="form-control custom-select" name="auth_required">
-											<option value="true" {% if auth_required == True %}selected{% endif %}>
-												True
-											</option>
-											<option value="false" {% if auth_required == False %}selected{% endif %}>
-												False
-											</option>
-										</select>
+										{{ form.auth_required(class="form-check-input", checked=auth_required) }}
+										{{ form.auth_required.label(class="form-check-label") }}
 									</div>
 								</div>
 
 								<br>
 
 								<div class="form-group">
-									<textarea id="admin-pages-editor" class="d-none"
-											  name="content">{% if page is defined %}{{ page.content }}{% endif %}</textarea>
-									<input name='id' type='hidden'
-										   {% if page is defined %}value="{{ page.id }}"{% endif %}>
+									{{ form.content(id="admin-pages-editor", class="d-none") }}
 								</div>
 							</div>
 							<div role="tabpanel" class="tab-pane content" id="content-preview" style="height:400px">
@@ -218,17 +107,14 @@
 				</div>
 
 				<div class="form-group float-right">
-					<input name='nonce' type='hidden' value="{{ nonce }}">
+					{{ form.nonce() }}
 					<button class="btn btn-primary" id="save-page">
-						{% if page is defined %}
-							Update
-						{% else %}
-							Save
-						{% endif %}
+						Save
 					</button>
 				</div>
 
 			</form>
+			{% endwith %}
 		</div>
 	</div>
 </div>

@@ -4,11 +4,11 @@ import sys
 import weakref
 from distutils.version import StrictVersion
 
+import jinja2
 from flask import Flask, Request
 from flask_migrate import upgrade
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
-from six.moves import input
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import cached_property
 
@@ -26,12 +26,7 @@ from CTFd.utils.migrations import create_database, migrations, stamp_latest_revi
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 
-# Hack to support Unicode in Python 2 properly
-if sys.version_info[0] < 3:
-    reload(sys)  # noqa: F821
-    sys.setdefaultencoding("utf-8")
-
-__version__ = "2.5.0"
+__version__ = "3.0.0a1"
 
 
 class CTFdRequest(Request):
@@ -129,7 +124,7 @@ def confirm_upgrade():
         print("/*\\ CTFd has updated and must update the database! /*\\")
         print("/*\\ Please backup your database before proceeding! /*\\")
         print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")
-        if input("Run database migrations (Y/N)").lower().strip() == "y":
+        if input("Run database migrations (Y/N)").lower().strip() == "y":  # nosec B322
             return True
         else:
             print("/*\\ Ignored database migrations... /*\\")
@@ -148,10 +143,19 @@ def create_app(config="CTFd.config.Config"):
     with app.app_context():
         app.config.from_object(config)
 
-        theme_loader = ThemeLoader(
+        app.theme_loader = ThemeLoader(
             os.path.join(app.root_path, "themes"), followlinks=True
         )
-        app.jinja_loader = theme_loader
+        # Weird nested solution for accessing plugin templates
+        app.plugin_loader = jinja2.PrefixLoader(
+            {
+                "plugins": jinja2.FileSystemLoader(
+                    searchpath=os.path.join(app.root_path, "plugins"), followlinks=True
+                )
+            }
+        )
+        # Load from themes first but fallback to loading from the plugin folder
+        app.jinja_loader = jinja2.ChoiceLoader([app.theme_loader, app.plugin_loader])
 
         from CTFd.models import (  # noqa: F401
             db,
@@ -215,16 +219,10 @@ def create_app(config="CTFd.config.Config"):
         if reverse_proxy:
             if type(reverse_proxy) is str and "," in reverse_proxy:
                 proxyfix_args = [int(i) for i in reverse_proxy.split(",")]
-                app.wsgi_app = ProxyFix(app.wsgi_app, None, *proxyfix_args)
+                app.wsgi_app = ProxyFix(app.wsgi_app, *proxyfix_args)
             else:
                 app.wsgi_app = ProxyFix(
-                    app.wsgi_app,
-                    num_proxies=None,
-                    x_for=1,
-                    x_proto=1,
-                    x_host=1,
-                    x_port=1,
-                    x_prefix=1,
+                    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1
                 )
 
         version = utils.get_config("ctf_version")

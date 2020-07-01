@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
-from CTFd.cache import clear_user_session, clear_team_session
+from CTFd.cache import clear_team_session, clear_user_session
 from CTFd.models import Teams, db
 from CTFd.utils import config, get_config
 from CTFd.utils.crypto import verify_password
@@ -20,25 +20,34 @@ teams = Blueprint("teams", __name__)
 @check_account_visibility
 @require_team_mode
 def listing():
-    page = abs(request.args.get("page", 1, type=int))
-    results_per_page = 50
-    page_start = results_per_page * (page - 1)
-    page_end = results_per_page * (page - 1) + results_per_page
+    q = request.args.get("q")
+    field = request.args.get("field", "name")
+    filters = []
 
-    # TODO: Should teams confirm emails?
-    # if get_config('verify_emails'):
-    #     count = Teams.query.filter_by(verified=True, banned=False).count()
-    #     teams = Teams.query.filter_by(verified=True, banned=False).slice(page_start, page_end).all()
-    # else:
-    count = Teams.query.filter_by(hidden=False, banned=False).count()
+    if field not in ("name", "affiliation", "website"):
+        field = "name"
+
+    if q:
+        filters.append(getattr(Teams, field).like("%{}%".format(q)))
+
     teams = (
         Teams.query.filter_by(hidden=False, banned=False)
-        .slice(page_start, page_end)
-        .all()
+        .filter(*filters)
+        .order_by(Teams.id.asc())
+        .paginate(per_page=50)
     )
 
-    pages = int(count / results_per_page) + (count % results_per_page > 0)
-    return render_template("teams/teams.html", teams=teams, pages=pages, curr_page=page)
+    args = dict(request.args)
+    args.pop("page", 1)
+
+    return render_template(
+        "teams/teams.html",
+        teams=teams,
+        prev_page=url_for(request.endpoint, page=teams.prev_num, **args),
+        next_page=url_for(request.endpoint, page=teams.next_num, **args),
+        q=q,
+        field=field,
+    )
 
 
 @teams.route("/teams/join", methods=["GET", "POST"])

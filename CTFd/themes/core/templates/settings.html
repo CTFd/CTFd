@@ -20,103 +20,72 @@
 		<div class="col-md-8">
 			<div class="tab-content" id="v-pills-tabContent">
 				<div class="tab-pane fade show active" id="profile" role="tabpanel">
-					{% if confirm_email %}
-					<div class="alert alert-info alert-dismissable submit-row" role="alert">
-						Your email address isn't confirmed!
-						Please check your email to confirm your email address.
-						<br>
-						<br>
-						To have the confirmation email resent please <a href="{{ url_for('auth.confirm') }}">click
-							here.</a>
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-								aria-hidden="true">×</span></button>
-					</div>
-					{% endif %}
+					{% include "components/errors.html" %}
+
+					{% with form = Forms.self.SettingsForm(country=country) %}
 					<form id="user-profile-form" method="post" accept-charset="utf-8" autocomplete="off" role="form"
 						class="form-horizontal">
 						<div class="form-group">
-							<label for="name-input">
-								User Name
-							</label>
-							<input class="form-control" type="text" name="name" id="name-input" value="{{name}}" />
+							{{ form.name.label }}
+							{{ form.name(class="form-control", value=name) }}
 						</div>
 						<div class="form-group">
-							<label for="email-input">
-								Email
-							</label>
-							<input class="form-control" type="email" name="email" id="email-input" value="{{email}}" />
+							{{ form.email.label }}
+							{{ form.email(class="form-control", value=email) }}
 						</div>
 
 						<hr>
 
 						<div class="form-group">
-							<label for="confirm-input">
-								Current Password
-							</label>
-							<input class="form-control" type="password" name="confirm" id="confirm-input" />
+							{{ form.confirm.label }}
+							{{ form.confirm(class="form-control") }}
 						</div>
 						<div class="form-group">
-							<label for="password-input">
-								New Password
-							</label>
-							<input class="form-control" type="password" name="password" id="password-input" />
+							{{ form.password.label }}
+							{{ form.password(class="form-control") }}
 						</div>
 
 						<hr>
 
 						<div class="form-group">
-							<label for="affiliation-input">
-								Affiliation
-							</label>
-							<input class="form-control" type="text" name="affiliation" id="affiliation-input"
-								value="{% if affiliation %}{{affiliation}}{% endif %}" />
+							{{ form.affiliation.label }}
+							{{ form.affiliation(class="form-control", value=affiliation or "") }}
 						</div>
 						<div class="form-group">
-							<label for="website-input">
-								Website
-							</label>
-							<input class="form-control" type="url" name="website" id="website-input"
-								value="{% if website %}{{website}}{% endif %}" />
+							{{ form.website.label }}
+							{{ form.website(class="form-control", value=website or "") }}
 						</div>
 						<div class="form-group">
-							<label for="country-input">
-								Country
-							</label>
-							<select class="form-control custom-select" id="country-input" name="country">
-								<option value=""></option>
-								{% set countries = get_countries() %}
-								{% for country_code in countries.keys() %}
-								<option value="{{ country_code }}" {% if country == country_code %}selected{% endif %}>
-									{{ countries[country_code] }}</option>
-								{% endfor %}
-							</select>
+							{{ form.country.label }}
+							{{ form.country(class="form-control custom-select", value=country) }}
 						</div>
 
 						<div id="results" class="form-group">
 						</div>
 
 						<div class="form-group">
-							<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
+							{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}
 						</div>
 					</form>
+					{% endwith %}
 				</div>
 				<div class="tab-pane fade" id="tokens" role="tabpanel">
-					<form method="POST"id="user-token-form">
+					{% with form = Forms.self.TokensForm() %}
+					<form method="POST" id="user-token-form">
 						<div class="form-group">
-							<label for="name-input">
-								Expiration
-							</label>
-							<input class="form-control" type="date" name="expiration" id="expiration-input" />
+							{{ form.expiration.label }}
+							{{ form.expiration(class="form-control") }}
 						</div>
 
 						<div class="form-group text-right">
-							<button type="submit" class="btn btn-md btn-primary btn-outlined">Generate</button>
+							{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
 						</div>
 					</form>
+					{% endwith %}
 
 					{% if tokens %}
 					<hr>
-					<h4>Active Tokens</h4>
+					<h4 class="text-center">Active Tokens</h4>
 					<table class="table table-striped">
 						<thead>
 							<tr>

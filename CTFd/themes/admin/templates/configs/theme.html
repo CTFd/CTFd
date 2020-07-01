@@ -1,0 +1,83 @@
+<div role="tabpanel" class="tab-pane config-section" id="theme">
+	<div class="modal fade" role="document" id="theme-settings-modal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Theme Settings</h5>
+				</div>
+				<div class="modal-body">
+				{% include "config.html" ignore missing %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			<label for="ctf_theme">
+				Theme
+				<small class="form-text text-muted">
+					Switch themes to change CTFd's aesthetics
+				</small>
+			</label>
+			<select class="form-control custom-select" id="ctf_theme" name="ctf_theme">
+				<option>{{ ctf_theme }}</option>
+				{% for theme in themes %}
+					<option>{{ theme }}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Theme Color
+				<small class="form-text text-muted">
+					Color used by theme to control aesthetics. Requires theme support.
+				</small>
+			</label>
+			<div class="d-inline-block">
+				<input type="color" id="config-color-picker">
+				<button type="button" class="btn-sm btn-primary" id="config-color-update">Update CSS</button>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Theme Header
+				<small class="form-text text-muted">
+					Theme headers are inserted just before the <code>&lt;/head&gt;</code> tag on all public facing pages.
+					Requires theme support.
+				</small>
+			</label>
+			<textarea class="form-control" id="theme-header" name="theme_header" rows="7">{{ theme_header or "" }}</textarea>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Theme Footer
+				<small class="form-text text-muted">
+					Theme footers are inserted just before the <code>&lt;/body&gt;</code> tag on all public facing pages.
+					Requires theme support.
+				</small>
+			</label>
+			<textarea class="form-control" id="theme-footer" name="theme_footer" rows="7">{{ theme_footer or "" }}</textarea>
+		</div>
+
+		<div class="form-group">
+			<label for="ctf_theme">
+				Theme Settings
+			</label>
+			<div class="d-block pb-2">
+				<button type="button" class="btn-sm btn-primary" id="theme-settings-button">
+					Settings Editor
+				</button>
+			</div>
+			<textarea class="form-control" id="theme-settings" name="theme_settings" rows="7">{{ theme_settings or "" }}</textarea>
+			<small class="form-text text-muted">
+				Settings specific to the theme
+			</small>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+</div>

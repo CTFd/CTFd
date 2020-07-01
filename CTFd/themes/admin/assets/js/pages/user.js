@@ -35,7 +35,7 @@ function createUser(event) {
         window.location = CTFd.config.urlRoot + "/admin/users/" + user_id;
       } else {
         $("#user-info-create-form > #results").empty();
-        Object.keys(response.errors).forEach(function(key, index) {
+        Object.keys(response.errors).forEach(function(key, _index) {
           $("#user-info-create-form > #results").append(
             ezBadge({
               type: "error",
@@ -55,7 +55,7 @@ function updateUser(event) {
   event.preventDefault();
   const params = $("#user-info-edit-form").serializeJSON(true);
 
-  CTFd.fetch("/api/v1/users/" + USER_ID, {
+  CTFd.fetch("/api/v1/users/" + window.USER_ID, {
     method: "PATCH",
     credentials: "same-origin",
     headers: {
@@ -72,7 +72,7 @@ function updateUser(event) {
         window.location.reload();
       } else {
         $("#user-info-edit-form > #results").empty();
-        Object.keys(response.errors).forEach(function(key, index) {
+        Object.keys(response.errors).forEach(function(key, _index) {
           $("#user-info-edit-form > #results").append(
             ezBadge({
               type: "error",
@@ -95,10 +95,10 @@ function deleteUser(event) {
   ezQuery({
     title: "Delete User",
     body: "Are you sure you want to delete {0}".format(
-      "<strong>" + htmlEntities(USER_NAME) + "</strong>"
+      "<strong>" + htmlEntities(window.USER_NAME) + "</strong>"
     ),
     success: function() {
-      CTFd.fetch("/api/v1/users/" + USER_ID, {
+      CTFd.fetch("/api/v1/users/" + window.USER_ID, {
         method: "DELETE"
       })
         .then(function(response) {
@@ -116,7 +116,7 @@ function deleteUser(event) {
 function awardUser(event) {
   event.preventDefault();
   const params = $("#user-award-form").serializeJSON(true);
-  params["user_id"] = USER_ID;
+  params["user_id"] = window.USER_ID;
 
   CTFd.fetch("/api/v1/awards", {
     method: "POST",
@@ -135,7 +135,7 @@ function awardUser(event) {
         window.location.reload();
       } else {
         $("#user-award-form > #results").empty();
-        Object.keys(response.errors).forEach(function(key, index) {
+        Object.keys(response.errors).forEach(function(key, _index) {
           $("#user-award-form > #results").append(
             ezBadge({
               type: "error",
@@ -154,7 +154,7 @@ function awardUser(event) {
 function emailUser(event) {
   event.preventDefault();
   var params = $("#user-mail-form").serializeJSON(true);
-  CTFd.fetch("/api/v1/users/" + USER_ID + "/email", {
+  CTFd.fetch("/api/v1/users/" + window.USER_ID + "/email", {
     method: "POST",
     credentials: "same-origin",
     headers: {
@@ -179,7 +179,7 @@ function emailUser(event) {
           .val("");
       } else {
         $("#user-mail-form > #results").empty();
-        Object.keys(response.errors).forEach(function(key, index) {
+        Object.keys(response.errors).forEach(function(key, _index) {
           $("#user-mail-form > #results").append(
             ezBadge({
               type: "error",
@@ -231,14 +231,14 @@ function deleteSelectedSubmissions(event, target) {
       for (var subId of submissionIDs) {
         reqs.push(CTFd.api.delete_submission({ submissionId: subId }));
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }
   });
 }
 
-function deleteSelectedAwards(event) {
+function deleteSelectedAwards(_event) {
   let awardIDs = $("input[data-award-id]:checked").map(function() {
     return $(this).data("award-id");
   });
@@ -260,7 +260,7 @@ function deleteSelectedAwards(event) {
         });
         reqs.push(req);
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }
@@ -280,14 +280,14 @@ function solveSelectedMissingChallenges(event) {
     title: `Mark Correct`,
     body: `Are you sure you want to mark ${
       challengeIDs.length
-    } correct for ${htmlEntities(USER_NAME)}?`,
+    } ${target} correct for ${htmlEntities(window.USER_NAME)}?`,
     success: function() {
       const reqs = [];
       for (var challengeID of challengeIDs) {
         let params = {
           provided: "MARKED AS SOLVED BY ADMIN",
-          user_id: USER_ID,
-          team_id: TEAM_ID,
+          user_id: window.USER_ID,
+          team_id: window.TEAM_ID,
           challenge_id: challengeID,
           type: "correct"
         };
@@ -303,7 +303,7 @@ function solveSelectedMissingChallenges(event) {
         });
         reqs.push(req);
       }
-      Promise.all(reqs).then(responses => {
+      Promise.all(reqs).then(_responses => {
         window.location.reload();
       });
     }
@@ -402,19 +402,19 @@ const updateGraphs = (type, id, name, account_id) => {
 $(() => {
   $(".delete-user").click(deleteUser);
 
-  $(".edit-user").click(function(event) {
+  $(".edit-user").click(function(_event) {
     $("#user-info-modal").modal("toggle");
   });
 
-  $(".award-user").click(function(event) {
+  $(".award-user").click(function(_event) {
     $("#user-award-modal").modal("toggle");
   });
 
-  $(".email-user").click(function(event) {
+  $(".email-user").click(function(_event) {
     $("#user-email-modal").modal("toggle");
   });
 
-  $(".addresses-user").click(function(event) {
+  $(".addresses-user").click(function(_event) {
     $("#user-addresses-modal").modal("toggle");
   });
 

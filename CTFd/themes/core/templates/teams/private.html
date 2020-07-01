@@ -14,50 +14,38 @@
 					</button>
 				</div>
 				<div class="modal-body clearfix">
+					{% with form = Forms.teams.TeamSettingsForm(obj=team) %}
 					<form id="team-info-form" method="POST">
 						<div class="form-group">
-							<label for="name">Team Name</label>
-							<input type="text" class="form-control" name="name" id="name"
-								   {% if team is defined and team.name %}value="{{ team.name }}"{% endif %} required />
+							{{ form.name.label }}
+							{{ form.name(class="form-control") }}
 						</div>
 						<div class="form-group">
-							<label for="password">Current Password</label>
-							<input type="password" class="form-control" name="confirm" id="confirm"/>
+							{{ form.confirm.label }}
+							{{ form.confirm(class="form-control") }}
 						</div>
 						<div class="form-group">
-							<label for="password">Password</label>
-							<input type="password" class="form-control" name="password" id="password"/>
+							{{ form.password.label }}
+							{{ form.password(class="form-control") }}
 						</div>
 						<div class="form-group">
-							<label for="website">Website</label>
-							<input type="url" class="form-control" name="website" id="website"
-								   {% if team is defined and team.website %}value="{{ team.website }}"{% endif %} />
+							{{ form.website.label }}
+							{{ form.website(class="form-control") }}
 						</div>
 						<div class="form-group">
-							<label for="affiliation">Affiliation</label>
-							<input type="text" class="form-control" name="affiliation" id="affiliation"
-								   {% if team is defined and team.affiliation %}value="{{ team.affiliation }}"{% endif %} />
+							{{ form.affiliation.label }}
+							{{ form.affiliation(class="form-control") }}
 						</div>
 						<div class="form-group">
-							<label for="affiliation">Country</label>
-							<select class="form-control custom-select" id="country-input" name="country">
-								<option></option>
-								{% set countries = get_countries() %}
-								{% for country_code in countries.keys() %}
-									<option value="{{ country_code }}"{% if team is defined and team.country == country_code %} selected{% endif %}>
-										{{ countries[country_code] }}
-									</option>
-								{% endfor %}
-							</select>
+							{{ form.country.label }}
+							{{ form.country(class="form-control custom-select") }}
 						</div>
 						<div id="results">
 
 						</div>
-						<button id="update-team" type="submit"
-								class="btn btn-primary btn-outlined float-right modal-action">
-							Submit
-						</button>
+						{{ form.submit(class="btn btn-primary btn-outlined float-right modal-action") }}
 					</form>
+					{% endwith %}
 				</div>
 			</div>
 		</div>
@@ -73,28 +61,21 @@
 					</button>
 				</div>
 				<div class="modal-body clearfix">
+					{% with form = Forms.teams.TeamCaptainForm(captain_id=team.captain_id) %}
 					<form id="team-captain-form" method="POST">
-						<input type="hidden" name="id">
 						<div class="form-group">
-							<label for="captain">Team Captain</label>
-							<select class="form-control custom-select" id="captain" name="captain_id">
-								{% if team is defined %}
-									<option value="{{ team.captain.id }}">{{ team.captain.name }}</option>
-									{% for member in team.members %}
-										{% if member.id != team.captain.id %}
-											<option value="{{ member.id }}">{{ member.name }}</option>
-										{% endif %}
-									{% endfor %}
-								{% endif %}
-							</select>
+							{{ form.captain_id.label }}
+							{% for member in team.members %}
+								{# Append members to the select choices #}
+								{% set _ = form.captain_id.choices.append((member.id, member.name)) %}
+							{% endfor %}
+							{{ form.captain_id(class="form-control custom-select") }}
 						</div>
 						<div id="results">
-
 						</div>
-						<button type="submit" class="btn btn-primary btn-outlined float-right modal-action">
-							Submit
-						</button>
+						{{ form.submit(class="btn btn-primary btn-outlined float-right modal-action") }}
 					</form>
+					{% endwith %}
 				</div>
 			</div>
 		</div>
@@ -276,7 +257,9 @@
 							{% for solve in solves %}
 								<tr>
 									<td>
-										<a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}">{{ solve.challenge.name }}</a>
+										<a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+											{{ solve.challenge.name }}
+										</a>
 									</td>
 									<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
 									<td>{{ solve.challenge.value }}</td>
@@ -310,7 +293,7 @@
 		} | tojson }};
 		var team_captain = {{ (user.id == team.captain_id) | tojson }};
 	</script>
-	<script defer src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
 	{% if solves %}
 		<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
 		<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>

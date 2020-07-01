@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import six
+from unittest.mock import patch
+
 from freezegun import freeze_time
-from mock import patch
 
 from CTFd.models import Users, db
 from CTFd.utils import get_config, set_config
@@ -277,7 +277,7 @@ def test_contact_for_password_reset():
             forgot_link = "http://localhost/reset_password"
             r = client.get(forgot_link)
 
-            assert "Contact a CTF organizer" in r.get_data(as_text=True)
+            assert "contact an organizer" in r.get_data(as_text=True)
     destroy_ctfd(app)
 
 
@@ -306,15 +306,12 @@ def test_user_can_confirm_email(mock_smtp):
         assert "Need to resend the confirmation email?" in r.get_data(as_text=True)
 
         # smtp send message function was called
-        if six.PY2:
-            mock_smtp.return_value.sendmail.assert_called()
-        else:
-            mock_smtp.return_value.send_message.assert_called()
+        mock_smtp.return_value.send_message.assert_called()
 
         with client.session_transaction() as sess:
             data = {"nonce": sess.get("nonce")}
             r = client.post("http://localhost/confirm", data=data)
-            assert "confirmation email has been resent" in r.get_data(as_text=True)
+            assert "Confirmation email sent to" in r.get_data(as_text=True)
 
             r = client.get("/challenges")
             assert (
@@ -336,10 +333,7 @@ def test_user_can_confirm_email(mock_smtp):
 @patch("smtplib.SMTP")
 def test_user_can_reset_password(mock_smtp):
     """Test that a user is capable of resetting their password"""
-    from email.mime.text import MIMEText
-
-    if six.PY3:
-        from email.message import EmailMessage
+    from email.message import EmailMessage
 
     app = create_ctfd()
     with app.app_context(), freeze_time("2012-01-14 03:21:34"):
@@ -377,11 +371,8 @@ def test_user_can_reset_password(mock_smtp):
             )
             ctf_name = get_config("ctf_name")
 
-            if six.PY2:
-                email_msg = MIMEText(msg)
-            else:
-                email_msg = EmailMessage()
-                email_msg.set_content(msg)
+            email_msg = EmailMessage()
+            email_msg.set_content(msg)
 
             email_msg["Subject"] = "Password Reset Request from {ctf_name}".format(
                 ctf_name=ctf_name
@@ -390,15 +381,10 @@ def test_user_can_reset_password(mock_smtp):
             email_msg["To"] = to_addr
 
             # Make sure that the reset password email is sent
-            if six.PY2:
-                mock_smtp.return_value.sendmail.assert_called_with(
-                    from_addr, [to_addr], email_msg.as_string()
-                )
-            else:
-                mock_smtp.return_value.send_message.assert_called()
-                assert str(mock_smtp.return_value.send_message.call_args[0][0]) == str(
-                    email_msg
-                )
+            mock_smtp.return_value.send_message.assert_called()
+            assert str(mock_smtp.return_value.send_message.call_args[0][0]) == str(
+                email_msg
+            )
 
             # Get user's original password
             user = Users.query.filter_by(email="user@user.com").first()

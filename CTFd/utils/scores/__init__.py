@@ -8,7 +8,7 @@ from CTFd.utils.modes import get_model
 
 
 @cache.memoize(timeout=60)
-def get_standings(count=None, admin=False):
+def get_standings(count=None, admin=False, fields=[]):
     """
     Get standings as a list of tuples containing account_id, name, and score e.g. [(account_id, team_name, score)].
 
@@ -86,6 +86,7 @@ def get_standings(count=None, admin=False):
                 Model.hidden,
                 Model.banned,
                 sumscores.columns.score,
+                *fields,
             )
             .join(sumscores, Model.id == sumscores.columns.account_id)
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
@@ -97,6 +98,7 @@ def get_standings(count=None, admin=False):
                 Model.oauth_id.label("oauth_id"),
                 Model.name.label("name"),
                 sumscores.columns.score,
+                *fields,
             )
             .join(sumscores, Model.id == sumscores.columns.account_id)
             .filter(Model.banned == False, Model.hidden == False)
@@ -115,7 +117,7 @@ def get_standings(count=None, admin=False):
 
 
 @cache.memoize(timeout=60)
-def get_team_standings(count=None, admin=False):
+def get_team_standings(count=None, admin=False, fields=[]):
     scores = (
         db.session.query(
             Solves.team_id.label("team_id"),
@@ -166,6 +168,7 @@ def get_team_standings(count=None, admin=False):
                 Teams.hidden,
                 Teams.banned,
                 sumscores.columns.score,
+                *fields,
             )
             .join(sumscores, Teams.id == sumscores.columns.team_id)
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
@@ -177,6 +180,7 @@ def get_team_standings(count=None, admin=False):
                 Teams.oauth_id.label("oauth_id"),
                 Teams.name.label("name"),
                 sumscores.columns.score,
+                *fields,
             )
             .join(sumscores, Teams.id == sumscores.columns.team_id)
             .filter(Teams.banned == False)
@@ -193,7 +197,7 @@ def get_team_standings(count=None, admin=False):
 
 
 @cache.memoize(timeout=60)
-def get_user_standings(count=None, admin=False):
+def get_user_standings(count=None, admin=False, fields=[]):
     scores = (
         db.session.query(
             Solves.user_id.label("user_id"),
@@ -244,6 +248,7 @@ def get_user_standings(count=None, admin=False):
                 Users.hidden,
                 Users.banned,
                 sumscores.columns.score,
+                *fields,
             )
             .join(sumscores, Users.id == sumscores.columns.user_id)
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
@@ -255,6 +260,7 @@ def get_user_standings(count=None, admin=False):
                 Users.oauth_id.label("oauth_id"),
                 Users.name.label("name"),
                 sumscores.columns.score,
+                *fields,
             )
             .join(sumscores, Users.id == sumscores.columns.user_id)
             .filter(Users.banned == False, Users.hidden == False)

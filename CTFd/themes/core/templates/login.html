@@ -12,13 +12,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-6 offset-md-3">
-			{% for error in errors %}
-				<div class="alert alert-danger alert-dismissable" role="alert">
-				  <span class="sr-only">Error:</span>
-				  {{ error }}
-				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-				</div>
-			{% endfor %}
+			{% include "components/errors.html" %}
 
 			{% if integrations.mlc() %}
 			<a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('auth.oauth_login') }}">
@@ -28,18 +22,15 @@
 			<hr>
 			{% endif %}
 
-			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+			{% with form = Forms.auth.LoginForm() %}
+			<form method="post" accept-charset="utf-8" autocomplete="off">
 				<div class="form-group">
-					<label for="name-input">
-						User Name or Email
-					</label>
-					<input class="form-control" type="text" name="name" id="name-input" />
+					<b>{{ form.name.label }}</b>
+					{{ form.name(class="form-control", value=name) }}
 				</div>
 				<div class="form-group">
-					<label for="password-input">
-						Password
-					</label>
-					<input class="form-control" type="password" name="password" id="password-input" />
+					<b>{{ form.password.label }}</b>
+					{{ form.password(class="form-control", value=password) }}
 				</div>
 				<div class="row pt-3">
 					<div class="col-md-6">
@@ -48,13 +39,12 @@
 						</a>
 					</div>
 					<div class="col-md-6">
-						<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined float-right">
-							Submit
-						</button>
+						{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}
 					</div>
 				</div>
-				<input type="hidden" name="nonce" value="{{ nonce }}">
+				{{ form.nonce() }}
 			</form>
+			{% endwith %}
 		</div>
 	</div>
 </div>

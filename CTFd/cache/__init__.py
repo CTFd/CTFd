@@ -30,14 +30,31 @@ def clear_standings():
     from CTFd.utils.scores import get_standings, get_team_standings, get_user_standings
     from CTFd.api.v1.scoreboard import ScoreboardDetail, ScoreboardList
     from CTFd.api import api
+    from CTFd.utils.user import (
+        get_user_score,
+        get_user_place,
+        get_team_score,
+        get_team_place,
+    )
 
+    # Clear out the bulk standings functions
     cache.delete_memoized(get_standings)
     cache.delete_memoized(get_team_standings)
     cache.delete_memoized(get_user_standings)
+
+    # Clear out the individual helpers for accessing score via the model
     cache.delete_memoized(Users.get_score)
     cache.delete_memoized(Users.get_place)
     cache.delete_memoized(Teams.get_score)
     cache.delete_memoized(Teams.get_place)
+
+    # Clear the Jinja Attrs constants
+    cache.delete_memoized(get_user_score)
+    cache.delete_memoized(get_user_place)
+    cache.delete_memoized(get_team_score)
+    cache.delete_memoized(get_team_place)
+
+    # Clear out HTTP request responses
     cache.delete(make_cache_key(path="scoreboard.listing"))
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardList.endpoint))
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardDetail.endpoint))

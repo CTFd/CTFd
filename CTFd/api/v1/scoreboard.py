@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 from flask_restx import Namespace, Resource
-
 from sqlalchemy.orm import joinedload
 
 from CTFd.cache import cache, make_cache_key

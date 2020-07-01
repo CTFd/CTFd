@@ -7,17 +7,17 @@ export function addFile(event) {
   event.preventDefault();
   let form = event.target;
   let data = {
-    challenge: CHALLENGE_ID,
+    challenge: window.CHALLENGE_ID,
     type: "challenge"
   };
-  helpers.files.upload(form, data, function(response) {
+  helpers.files.upload(form, data, function(_response) {
     setTimeout(function() {
       window.location.reload();
     }, 700);
   });
 }
 
-export function deleteFile(event) {
+export function deleteFile(_event) {
   const file_id = $(this).attr("file-id");
   const row = $(this)
     .parent()

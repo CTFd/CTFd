@@ -154,7 +154,9 @@
 							{% for solve in solves %}
 								<tr>
 									<td>
-										<a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}">{{ solve.challenge.name }}</a>
+										<a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+											{{ solve.challenge.name }}
+										</a>
 									</td>
 									<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
 									<td>{{ solve.challenge.value }}</td>
@@ -187,7 +189,7 @@
 			'account_id': 'me' if user is defined and user.team_id == team.id else team.id,
 		} | tojson }};
 	</script>
-	<script defer src="{{ url_for('views.themes', path='js/plotly.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
 	<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
 {% endblock %}
 

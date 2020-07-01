@@ -11,16 +11,9 @@
 	</div>
 	<div class="container">
 		<div class="col-md-8 offset-md-2">
-			{% for error in errors %}
-				<div class="submit-row">
-					<div class="alert alert-danger alert-dismissable" role="alert">
-						<span class="sr-only">Error:</span>
-						{{ error }}
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-								aria-hidden="true">×</span></button>
-					</div>
-				</div>
-			{% endfor %}
+			{% include "components/errors.html" %}
+
+			{% with form = Forms.setup.SetupForm() %}
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal" id="setup-form">
 				<ul class="nav nav-pills nav-fill mb-4">
 					<li class="nav-item">
@@ -43,38 +36,32 @@
 				<div class="tab-content">
 					<div class="tab-pane fade show active" id="general" role="tabpanel">
 						<div class="form-group">
-							<label>
-								CTF Name<br>
-								<small class="form-text text-muted">
-									Name for the CTF
-								</small>
-							</label>
-							<input class="form-control" type="text" id="ctf_name" name="ctf_name" />
+							<b>{{ form.ctf_name.label }}</b>
+							{{ form.ctf_name(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_name.description }}
+							</small>
 						</div>
 
 						<div class="form-group">
-							<label>
-								CTF Description<br>
-								<small class="form-text text-muted">
-									Description for the CTF
-								</small>
-							</label>
-							<textarea class="form-control" type="text" id="ctf_description" name="ctf_description" rows="5"></textarea>
+							<b>{{ form.ctf_description.label }}</b>
+							{{ form.ctf_description(class="form-control", rows="5") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_description.description }}
+							</small>
 						</div>
 
 						<div class="form-group">
-							<label>
-								CTF User Mode
-								<small class="form-text text-muted">
-									User Mode for the CTF. <br>
-									Dictates whether users join teams to play (Team Mode) or
-									play as themselves (User Mode)
-								</small>
-							</label>
-							<select class="form-control custom-select" id="user_mode" name="user_mode">
-								<option value="teams">Team Mode</option>
-								<option value="users">User Mode</option>
-							</select>
+							<b>{{ form.user_mode.label }}</b>
+							{% for radio in form.user_mode %}
+								<div class="form-check ml-3">
+									{{ radio(class="form-check-input") }}
+									{{ radio.label }}
+								</div>
+							{% endfor %}
+							<small class="form-text text-muted">
+								{{ form.user_mode.description }}
+							</small>
 						</div>
 
 						<div class="float-right">
@@ -85,31 +72,25 @@
 					</div>
 					<div class="tab-pane fade" id="administration" role="tabpanel">
 						<div class="form-group">
-							<label>
-								Admin Username<br>
-								<small class="form-text text-muted">
-									Your username for the administration account
-								</small>
-							</label>
-							<input class="form-control" type="text" name="name" required/>
+							<b>{{ form.name.label }}</b>
+							{{ form.name(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.name.description }}
+							</small>
 						</div>
 						<div class="form-group">
-							<label>
-								Admin Email<br>
-								<small class="form-text text-muted">
-									Your email address for the administration account
-								</small>
-							</label>
-							<input class="form-control" type="email" name="email" required/>
+							<b>{{ form.email.label }}</b>
+							{{ form.email(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.email.description }}
+							</small>
 						</div>
 						<div class="form-group">
-							<label>
-								Admin Password<br>
-								<small class="form-text text-muted">
-									Your password for the administration account
-								</small>
-							</label>
-							<input class="form-control" type="password" name="password" required/>
+							<b>{{ form.password.label }}</b>
+							{{ form.password(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.password.description }}
+							</small>
 						</div>
 
 						<div class="form-check">
@@ -127,28 +108,17 @@
 					</div>
 					<div class="tab-pane fade" id="style" role="tabpanel">
 						<div class="form-group">
-							<label>
-								Theme<br>
-								<small class="form-text text-muted">
-									CTFd Theme to use
-								</small>
-							</label>
-							<select class="form-control custom-select" name="ctf_theme">
-								{% for theme in themes %}
-								<option>{{ theme }}</option>
-								{% endfor %}
-							</select>
+							<b>{{ form.ctf_theme.label }}</b>
+							{{ form.ctf_theme(class="form-control custom-select") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_theme.description }}
+							</small>
 						</div>
 						<div class="form-group">
-							<label>
-								Theme Color
-								<small class="form-text text-muted">
-									Color used by theme to control aesthetics. Requires theme support.
-								</small>
-							</label>
+							<b>{{ form.theme_color.label }}</b>
 							<br>
 							<div class="d-inline-block">
-								<input type="hidden" name="theme_color" id="config-color-input">
+								{{ form.theme_color(id="config-color-input") }}
 								<div class="btn-group">
 									<input type="color" id="config-color-picker" class="pr-1" style="width: 100px; height: 30px;" value="">
 								</div>
@@ -156,6 +126,9 @@
 									<button type="button" id="config-color-reset">Reset</button>
 								</div>
 							</div>
+							<small class="form-text text-muted">
+								{{ form.theme_color.description }}
+							</small>
 						</div>
 						<div class="float-right">
 							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#datetime">
@@ -165,12 +138,7 @@
 					</div>
 					<div class="tab-pane fade" id="datetime" role="tabpanel">
 						<div class="form-group">
-							<label>
-								Start Time<br>
-								<small class="form-text text-muted">
-									Time when your CTF is scheduled to start. Optional.
-								</small>
-							</label>
+							<b>{{ form.start.label }}</b>
 							<div class="row">
 								<div class="col-md-4">
 									<label>Date</label>
@@ -182,18 +150,16 @@
 								</div>
 								<div class="col-md-4">
 									<label>UTC Preview</label>
-									<input class="form-control" type="text" id="start-preview" name="start" readonly/>
+									{{ form.start(class="form-control", id="start-preview", readonly=True) }}
 								</div>
 							</div>
+							<small class="form-text text-muted">
+								{{ form.start.description }}
+							</small>
 						</div>
 
 						<div class="form-group">
-							<label>
-								End Time<br>
-								<small class="form-text text-muted">
-									Time when your CTF is scheduled to end. Optional.
-								</small>
-							</label>
+							<b>{{ form.end.label }}</b>
 							<div class="row">
 								<div class="col-md-4">
 									<label>Date</label>
@@ -205,9 +171,12 @@
 								</div>
 								<div class="col-md-4">
 									<label>UTC Preview</label>
-									<input class="form-control" type="text" id="end-preview" name="end" readonly />
+									{{ form.start(class="form-control", id="end-preview", readonly=True) }}
 								</div>
 							</div>
+							<small class="form-text text-muted">
+								{{ form.end.description }}
+							</small>
 						</div>
 
 						<div class="float-right">
@@ -239,16 +208,14 @@
 						<br>
 
 						<div class="submit-row float-right">
-							<button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined">
-								Finish
-							</button>
+							{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
 						</div>
 					</div>
 				</div>
 
-				<input type="hidden" name="nonce" value="{{ nonce }}">
-				{# This nonce is implemented specially in the route itself #}
+				{{ form.nonce() }}
 			</form>
+			{% endwith %}
 		</div>
 	</div>
 

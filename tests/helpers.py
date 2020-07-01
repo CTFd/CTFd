@@ -4,11 +4,10 @@ import random
 import string
 import uuid
 from collections import namedtuple
+from unittest.mock import Mock, patch
 
 import requests
-import six
 from flask.testing import FlaskClient
-from mock import Mock, patch
 from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers
@@ -36,12 +35,8 @@ from CTFd.models import (
     Users,
 )
 
-if six.PY2:
-    text_type = unicode  # noqa: F821
-    binary_type = str
-else:
-    text_type = str
-    binary_type = bytes
+text_type = str
+binary_type = bytes
 
 
 FakeRequest = namedtuple("FakeRequest", ["form"])
@@ -149,9 +144,8 @@ def register_user(
             if raise_for_error:
                 with client.session_transaction() as sess:
                     assert sess["id"]
-                    assert sess["name"] == name
-                    assert sess["email"]
                     assert sess["nonce"]
+                    assert sess["hash"]
 
 
 def register_team(app, name="team", password="password", raise_for_error=True):
@@ -176,9 +170,8 @@ def login_as_user(app, name="user", password="password", raise_for_error=True):
             if raise_for_error:
                 with client.session_transaction() as sess:
                     assert sess["id"]
-                    assert sess["name"]
-                    assert sess["email"]
                     assert sess["nonce"]
+                    assert sess["hash"]
             return client
 
 
@@ -234,9 +227,8 @@ def login_with_mlc(
         if raise_for_error:
             with client.session_transaction() as sess:
                 assert sess["id"]
-                assert sess["name"]
-                assert sess["email"]
                 assert sess["nonce"]
+                assert sess["hash"]
         return client
 
 

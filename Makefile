@@ -1,15 +1,22 @@
 lint:
-	flake8 --ignore=E402,E501,E712,W503,E203,I002 --exclude=CTFd/uploads CTFd/ migrations/ tests/
+	flake8 --ignore=E402,E501,E712,W503,E203 --exclude=CTFd/uploads CTFd/ migrations/ tests/
+	yarn lint
 	black --check --exclude=CTFd/uploads --exclude=node_modules .
 	prettier --check 'CTFd/themes/**/assets/**/*'
+	prettier --check '**/*.md'
 
 format:
+	isort --skip=CTFd/uploads -rc CTFd/ tests/
 	black --exclude=CTFd/uploads --exclude=node_modules .
 	prettier --write 'CTFd/themes/**/assets/**/*'
+	prettier --write '**/*.md'
 
 test:
-	pytest -rf --cov=CTFd --cov-context=test --ignore=node_modules/ --disable-warnings -n auto
-	bandit -r CTFd -x CTFd/uploads
+	pytest -rf --cov=CTFd --cov-context=test --ignore=node_modules/ \
+		-W ignore::sqlalchemy.exc.SADeprecationWarning \
+		-W ignore::sqlalchemy.exc.SAWarning \
+		-n auto
+	bandit -r CTFd -x CTFd/uploads --skip B105,B322
 	pipdeptree
 	yarn verify
 

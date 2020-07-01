@@ -1,19 +1,21 @@
-import mistune
-import six
+from enum import Enum
+
+import cmarkgfm
 from flask import current_app as app
 
+# isort:imports-firstparty
 from CTFd.cache import cache
+from CTFd.models import Configs, db
 
-if six.PY2:
-    string_types = (str, unicode)  # noqa: F821
-    text_type = unicode  # noqa: F821
-    binary_type = str
-else:
-    string_types = (str,)
-    text_type = str
-    binary_type = bytes
+string_types = (str,)
+text_type = str
+binary_type = bytes
 
-markdown = mistune.Markdown()
+
+def markdown(md):
+    return cmarkgfm.markdown_to_html_with_extensions(
+        md, extensions=["autolink", "table", "strikethrough"]
+    )
 
 
 def get_app_config(key, default=None):
@@ -30,7 +32,7 @@ def _get_config(key):
         value = config.value
         if value and value.isdigit():
             return int(value)
-        elif value and isinstance(value, six.string_types):
+        elif value and isinstance(value, string_types):
             if value.lower() == "true":
                 return True
             elif value.lower() == "false":
@@ -43,6 +45,10 @@ def _get_config(key):
 
 
 def get_config(key, default=None):
+    # Convert enums to raw string values to cache better
+    if isinstance(key, Enum):
+        key = str(key)
+
     value = _get_config(key)
     if value is KeyError:
         return default
@@ -58,8 +64,10 @@ def set_config(key, value):
         config = Configs(key=key, value=value)
         db.session.add(config)
     db.session.commit()
+
+    # Convert enums to raw string values to cache better
+    if isinstance(key, Enum):
+        key = str(key)
+
     cache.delete_memoized(_get_config, key)
     return config
-
-
-from CTFd.models import Configs, db  # noqa: E402

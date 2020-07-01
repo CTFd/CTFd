@@ -12,40 +12,26 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 offset-md-3">
-				{% for info in infos %}
-					<div class="alert alert-info alert-dismissable" role="alert">
-						<span class="sr-only"></span>
-						{{ info }}
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-								aria-hidden="true">×</span></button>
-					</div>
-				{% endfor %}
-				{% for error in errors %}
-					<div class="alert alert-danger alert-dismissable" role="alert">
-						<span class="sr-only">Error:</span>
-						{{ error }}
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-								aria-hidden="true">×</span></button>
-					</div>
-				{% endfor %}
+				{% include "components/errors.html" %}
+
+				{% with form = Forms.teams.TeamJoinForm() %}
 				<form method="POST">
 					<div class="form-group">
-						<label>Team Name:</label>
-						<input class="form-control" type="text" name="name">
+						{{ form.name.label }}
+						{{ form.name(class="form-control") }}
 					</div>
 					<div class="form-group">
-						<label>Team Password:</label>
-						<input class="form-control" type="password" name="password">
+						{{ form.password.label }}
+						{{ form.password(class="form-control") }}
 					</div>
-					<input type="hidden" name="nonce" value="{{ nonce }}">
 					<div class="row pt-3">
 						<div class="col-md-12">
-							<button type="submit" class="btn btn-success float-right">
-								Join
-							</button>
+							{{ form.submit(class="btn btn-success float-right") }}
 						</div>
 					</div>
+					{{ form.nonce() }}
 				</form>
+				{% endwith %}
 			</div>
 		</div>
 	</div>

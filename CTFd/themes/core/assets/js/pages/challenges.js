@@ -1,6 +1,5 @@
 import "./main";
 import "bootstrap/js/dist/tab";
-import nunjucks from "nunjucks";
 import { ezQuery, ezAlert } from "../ezq";
 import { htmlEntities } from "../utils";
 import Moment from "moment";
@@ -35,8 +34,11 @@ const loadChal = id => {
 };
 
 const loadChalByName = name => {
-  const chal = $.grep(challenges, chal => chal.name == name)[0];
+  let idx = name.lastIndexOf("-");
+  let pieces = [name.slice(0, idx), name.slice(idx + 1)];
+  let id = pieces[1];
 
+  const chal = $.grep(challenges, chal => chal.id == id)[0];
   displayChal(chal);
 };
 
@@ -46,23 +48,38 @@ const displayChal = chal => {
     $.getScript(config.urlRoot + chal.script),
     $.get(config.urlRoot + chal.template)
   ]).then(responses => {
-    const challenge_data = responses[0].data;
-    const template_data = responses[2];
     const challenge = CTFd._internal.challenge;
 
     $("#challenge-window").empty();
-    const template = nunjucks.compile(template_data);
-    challenge.data = challenge_data;
-    challenge.preRender();
 
-    challenge_data["description"] = challenge.render(
-      challenge_data["description"]
+    $("#challenge-window").append(responses[0].data.view);
+
+    $("#challenge-window #challenge-input").addClass("form-control");
+    $("#challenge-window #challenge-submit").addClass(
+      "btn btn-md btn-outline-secondary float-right"
     );
-    challenge_data["script_root"] = CTFd.config.urlRoot;
 
-    $("#challenge-window").append(template.render(challenge_data));
+    let modal = $("#challenge-window").find(".modal-dialog");
+    if (
+      window.init.theme_settings &&
+      window.init.theme_settings.challenge_window_size
+    ) {
+      switch (window.init.theme_settings.challenge_window_size) {
+        case "sm":
+          modal.addClass("modal-sm");
+          break;
+        case "lg":
+          modal.addClass("modal-lg");
+          break;
+        case "xl":
+          modal.addClass("modal-xl");
+          break;
+        default:
+          break;
+      }
+    }
 
-    $(".challenge-solves").click(function(event) {
+    $(".challenge-solves").click(function(_event) {
       getSolves($("#challenge-id").val());
     });
     $(".nav-tabs a").click(function(event) {
@@ -71,23 +88,23 @@ const displayChal = chal => {
     });
 
     // Handle modal toggling
-    $("#challenge-window").on("hide.bs.modal", function(event) {
-      $("#submission-input").removeClass("wrong");
-      $("#submission-input").removeClass("correct");
+    $("#challenge-window").on("hide.bs.modal", function(_event) {
+      $("#challenge-input").removeClass("wrong");
+      $("#challenge-input").removeClass("correct");
       $("#incorrect-key").slideUp();
       $("#correct-key").slideUp();
       $("#already-solved").slideUp();
       $("#too-fast").slideUp();
     });
 
-    $(".load-hint").on("click", function(event) {
+    $(".load-hint").on("click", function(_event) {
       loadHint($(this).data("hint-id"));
     });
 
-    $("#submit-key").click(function(event) {
+    $("#challenge-submit").click(function(event) {
       event.preventDefault();
-      $("#submit-key").addClass("disabled-button");
-      $("#submit-key").prop("disabled", true);
+      $("#challenge-submit").addClass("disabled-button");
+      $("#challenge-submit").prop("disabled", true);
       CTFd._internal.challenge
         .submit()
         .then(renderSubmissionResponse)
@@ -95,32 +112,16 @@ const displayChal = chal => {
         .then(markSolves);
     });
 
-    $("#submission-input").keyup(event => {
+    $("#challenge-input").keyup(event => {
       if (event.keyCode == 13) {
-        $("#submit-key").click();
-      }
-    });
-
-    $(".input-field").bind({
-      focus: function() {
-        $(this)
-          .parent()
-          .addClass("input--filled");
-      },
-      blur: function() {
-        const $this = $(this);
-        if ($this.val() === "") {
-          $this.parent().removeClass("input--filled");
-          const $label = $this.siblings(".input-label");
-          $label.removeClass("input--hide");
-        }
+        $("#challenge-submit").click();
       }
     });
 
     challenge.postRender();
 
     window.location.replace(
-      window.location.href.split("#")[0] + "#" + chal.name
+      window.location.href.split("#")[0] + `#${chal.name}-${chal.id}`
     );
     $("#challenge-window").modal();
   });
@@ -131,7 +132,7 @@ function renderSubmissionResponse(response) {
 
   const result_message = $("#result-message");
   const result_notification = $("#result-notification");
-  const answer_input = $("#submission-input");
+  const answer_input = $("#challenge-input");
   result_notification.removeClass();
   result_message.text(result.message);
 
@@ -203,8 +204,8 @@ function renderSubmissionResponse(response) {
   }
   setTimeout(function() {
     $(".alert").slideUp();
-    $("#submit-key").removeClass("disabled-button");
-    $("#submit-key").prop("disabled", false);
+    $("#challenge-submit").removeClass("disabled-button");
+    $("#challenge-submit").prop("disabled", false);
   }, 3000);
 }
 
@@ -331,7 +332,7 @@ function loadChals() {
         .append(chalwrap);
     }
 
-    $(".challenge-button").click(function(event) {
+    $(".challenge-button").click(function(_event) {
       loadChal(this.value);
       getSolves(this.value);
     });
@@ -351,9 +352,9 @@ $(() => {
     }
   });
 
-  $("#submission-input").keyup(function(event) {
+  $("#challenge-input").keyup(function(event) {
     if (event.keyCode == 13) {
-      $("#submit-key").click();
+      $("#challenge-submit").click();
     }
   });
 
@@ -362,18 +363,18 @@ $(() => {
     $(this).tab("show");
   });
 
-  $("#challenge-window").on("hidden.bs.modal", function(event) {
+  $("#challenge-window").on("hidden.bs.modal", function(_event) {
     $(".nav-tabs a:first").tab("show");
     history.replaceState("", window.document.title, window.location.pathname);
   });
 
-  $(".challenge-solves").click(function(event) {
+  $(".challenge-solves").click(function(_event) {
     getSolves($("#challenge-id").val());
   });
 
-  $("#challenge-window").on("hide.bs.modal", function(event) {
-    $("#submission-input").removeClass("wrong");
-    $("#submission-input").removeClass("correct");
+  $("#challenge-window").on("hide.bs.modal", function(_event) {
+    $("#challenge-input").removeClass("wrong");
+    $("#challenge-input").removeClass("correct");
     $("#incorrect-key").slideUp();
     $("#correct-key").slideUp();
     $("#already-solved").slideUp();

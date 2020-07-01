@@ -1,91 +1,39 @@
-<form method="POST">
-	<div class="form-group">
-		<label for="name">Name<br>
-			<small class="form-text text-muted">
-				The name of your challenge
-			</small>
-		</label>
-		<input type="text" class="form-control chal-name" name="name" value="{{ challenge.name }}">
-	</div>
-	<div class="form-group">
-		<label for="category">Category<br>
-			<small class="form-text text-muted">
-				The category of your challenge
-			</small>
-		</label>
-		<input type="text" class="form-control chal-category" name="category" value="{{ challenge.category }}">
-	</div>
+{% extends "admin/challenges/update.html" %}
 
-	<div class="form-group">
-		<label for="message-text" class="control-label">Message<br>
-			<small class="form-text text-muted">
-				Use this to give a brief introduction to your challenge.
-			</small>
-		</label>
-		<textarea id="desc-editor" class="form-control chal-desc-editor" name="description" rows="10">{{ challenge.description }}</textarea>
-	</div>
+{% block value %}
+<div class="form-group">
+	<label for="value">Current Value<br>
+		<small class="form-text text-muted">
+			This is how many points the challenge is worth right now.
+		</small>
+	</label>
+	<input type="number" class="form-control chal-value" name="value" value="{{ challenge.value }}" disabled>
+</div>
 
-	<div class="form-group">
-		<label for="value">Current Value<br>
-			<small class="form-text text-muted">
-				This is how many points the challenge is worth right now.
-			</small>
-		</label>
-		<input type="number" class="form-control chal-value" name="value" value="{{ challenge.value }}" disabled>
-	</div>
+<div class="form-group">
+	<label for="value">Initial Value<br>
+		<small class="form-text text-muted">
+			This is how many points the challenge was worth initially.
+		</small>
+	</label>
+	<input type="number" class="form-control chal-initial" name="initial" value="{{ challenge.initial }}" required>
+</div>
 
-	<div class="form-group">
-		<label for="value">Initial Value<br>
-			<small class="form-text text-muted">
-				This is how many points the challenge was worth initially.
-			</small>
-		</label>
-		<input type="number" class="form-control chal-initial" name="initial" value="{{ challenge.initial }}" required>
-	</div>
+<div class="form-group">
+	<label for="value">Decay Limit<br>
+		<small class="form-text text-muted">
+			The amount of solves before the challenge reaches its minimum value
+		</small>
+	</label>
+	<input type="number" class="form-control chal-decay" name="decay" value="{{ challenge.decay }}" required>
+</div>
 
-	<div class="form-group">
-		<label for="value">Decay Limit<br>
-			<small class="form-text text-muted">
-				The amount of solves before the challenge reaches its minimum value
-			</small>
-		</label>
-		<input type="number" class="form-control chal-decay" name="decay" value="{{ challenge.decay }}" required>
-	</div>
-
-	<div class="form-group">
-		<label for="value">Minimum Value<br>
-			<small class="form-text text-muted">
-				This is the lowest that the challenge can be worth
-			</small>
-		</label>
-		<input type="number" class="form-control chal-minimum" name="minimum" value="{{ challenge.minimum }}" required>
-	</div>
-
-	<div class="form-group">
-		<label>
-			Max Attempts<br>
-			<small class="form-text text-muted">Maximum amount of attempts users receive. Leave at 0 for unlimited.</small>
-		</label>
-
-		<input type="number" class="form-control chal-attempts" name="max_attempts"
-			   value="{{ challenge.max_attempts }}">
-	</div>
-
-	<div class="form-group">
-		<label>
-			State<br>
-			<small class="form-text text-muted">Changes the state of the challenge (e.g. visible, hidden)</small>
-		</label>
-
-		<select class="form-control custom-select" name="state">
-			<option value="visible" {% if challenge.state == "visible" %}selected{% endif %}>Visible</option>
-			<option value="hidden" {% if challenge.state == "hidden" %}selected{% endif %}>Hidden</option>
-		</select>
-	</div>
-
-	<div>
-		<button class="btn btn-success btn-outlined float-right" type="submit">
-			Update
-		</button>
-	</div>
-</form>
+<div class="form-group">
+	<label for="value">Minimum Value<br>
+		<small class="form-text text-muted">
+			This is the lowest that the challenge can be worth
+		</small>
+	</label>
+	<input type="number" class="form-control chal-minimum" name="minimum" value="{{ challenge.minimum }}" required>
+</div>
+{% endblock %}

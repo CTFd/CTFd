@@ -39,17 +39,15 @@
 			<input id="import-button" type="submit" class="btn btn-warning" value="Import">
 		</div>
 		<div role="tabpanel" class="tab-pane" id="save-csv">
+			{% with form = Forms.config.ExportCSVForm() %}
 			<form method="GET" action="{{ url_for('admin.export_csv') }}">
 				<div class="form-group">
-					<label for="container-files">Database Table</label>
-					<select class="form-control custom-select" name="table">
-						{% for table in database_tables %}
-							<option value="{{ table }}">{{ table }}</option>
-						{% endfor %}
-					</select>
+					{{ form.table.label }}
+					{{ form.table(class="form-control custom-select") }}
 				</div>
 				<input type="submit" class="btn btn-warning" value="Download CSV">
 			</form>
+			{% endwith %}
 		</div>
 	</div>
 </div>

@@ -1,16 +1,12 @@
+{% with form = Forms.email.SendEmailForm() %}
 <form id="user-mail-form" method="POST">
 	<div class="form-group">
-		<label>
-			Message
-			<br>
-			<small></small>
-		</label>
-		<textarea class="form-control" name="text" placeholder="" rows="15"></textarea>
+		{{ form.message.label }}
+		{{ form.message(class="form-control", rows="15") }}
 	</div>
 	<div id="results">
 
 	</div>
-	<button type="submit" class="btn btn-primary float-right">
-		Send
-	</button>
+	{{ form.submit(class="btn btn-primary float-right") }}
 </form>
+{% endwith %}

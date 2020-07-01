@@ -1,8 +1,8 @@
 import csv
 import datetime
 import os
+from io import BytesIO, StringIO
 
-import six
 from flask import Blueprint, abort
 from flask import current_app as app
 from flask import (
@@ -14,7 +14,18 @@ from flask import (
     url_for,
 )
 
-from CTFd.cache import cache, clear_config, clear_standings, clear_pages
+admin = Blueprint("admin", __name__)
+
+# isort:imports-firstparty
+from CTFd.admin import challenges  # noqa: F401
+from CTFd.admin import notifications  # noqa: F401
+from CTFd.admin import pages  # noqa: F401
+from CTFd.admin import scoreboard  # noqa: F401
+from CTFd.admin import statistics  # noqa: F401
+from CTFd.admin import submissions  # noqa: F401
+from CTFd.admin import teams  # noqa: F401
+from CTFd.admin import users  # noqa: F401
+from CTFd.cache import cache, clear_config, clear_pages, clear_standings
 from CTFd.models import (
     Awards,
     Challenges,
@@ -39,17 +50,6 @@ from CTFd.utils.helpers import get_errors
 from CTFd.utils.security.auth import logout_user
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import is_admin
-
-admin = Blueprint("admin", __name__)
-
-from CTFd.admin import challenges  # noqa: F401
-from CTFd.admin import notifications  # noqa: F401
-from CTFd.admin import pages  # noqa: F401
-from CTFd.admin import scoreboard  # noqa: F401
-from CTFd.admin import statistics  # noqa: F401
-from CTFd.admin import submissions  # noqa: F401
-from CTFd.admin import teams  # noqa: F401
-from CTFd.admin import users  # noqa: F401
 
 
 @admin.route("/admin", methods=["GET"])
@@ -126,7 +126,7 @@ def export_csv():
     if model is None:
         abort(404)
 
-    temp = six.StringIO()
+    temp = StringIO()
     writer = csv.writer(temp)
 
     header = [column.name for column in model.__mapper__.columns]
@@ -142,7 +142,7 @@ def export_csv():
     temp.seek(0)
 
     # In Python 3 send_file requires bytes
-    output = six.BytesIO()
+    output = BytesIO()
     output.write(temp.getvalue().encode("utf-8"))
     output.seek(0)
     temp.close()
@@ -163,17 +163,13 @@ def config():
     # Clear the config cache so that we don't get stale values
     clear_config()
 
-    database_tables = sorted(db.metadata.tables.keys())
-
     configs = Configs.query.all()
     configs = dict([(c.key, get_config(c.key)) for c in configs])
 
     themes = ctf_config.get_themes()
     themes.remove(get_config("ctf_theme"))
 
-    return render_template(
-        "admin/config.html", database_tables=database_tables, themes=themes, **configs
-    )
+    return render_template("admin/config.html", themes=themes, **configs)
 
 
 @admin.route("/admin/reset", methods=["GET", "POST"])

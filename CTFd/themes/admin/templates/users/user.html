@@ -53,7 +53,7 @@
 </div>
 
 <div id="user-addresses-modal" class="modal fade">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">IP Addresses</h2>
@@ -435,7 +435,7 @@ var stats_data = {{ {
 	'account_id': user.id,
 } | tojson }};
 </script>
-<script defer src="{{ url_for('views.themes', theme='admin', path='js/plotly.bundle.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/echarts.bundle.js') }}"></script>
 <script defer src="{{ url_for('views.themes', theme='admin', path='js/graphs.js') }}"></script>
 {% endblock %}
 

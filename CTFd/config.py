@@ -1,8 +1,28 @@
+import configparser
 import os
+from distutils.util import strtobool
 
-""" GENERATE SECRET KEY """
 
-if not os.getenv("SECRET_KEY"):
+def process_boolean_str(value):
+    if type(value) is bool:
+        return value
+
+    if value is None:
+        return False
+
+    if value == "":
+        return None
+
+    return bool(strtobool(value))
+
+
+def empty_str_cast(value, default=None):
+    if value == "":
+        return default
+    return value
+
+
+def gen_secret_key():
     # Attempt to read the secret from the secret file
     # This will fail if the secret has not been written
     try:
@@ -21,11 +41,15 @@ if not os.getenv("SECRET_KEY"):
                 secret.flush()
         except (OSError, IOError):
             pass
+    return key
 
 
-""" SERVER SETTINGS """
+config_ini = configparser.ConfigParser()
+path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.ini")
+config_ini.read(path)
 
 
+# fmt: off
 class Config(object):
     """
     CTFd Configuration Object
@@ -62,33 +86,37 @@ class Config(object):
         e.g. redis://user:password@localhost:6379
         http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
     """
-    SECRET_KEY = os.getenv("SECRET_KEY") or key
-    DATABASE_URL = os.getenv("DATABASE_URL") or "sqlite:///{}/ctfd.db".format(
-        os.path.dirname(os.path.abspath(__file__))
-    )
-    REDIS_URL = os.getenv("REDIS_URL")
+    SECRET_KEY: str = os.getenv("SECRET_KEY") \
+        or empty_str_cast(config_ini["server"]["SECRET_KEY"]) \
+        or gen_secret_key()
+
+    DATABASE_URL: str = os.getenv("DATABASE_URL") \
+        or empty_str_cast(config_ini["server"]["DATABASE_URL"]) \
+        or f"sqlite:///{os.path.dirname(os.path.abspath(__file__))}/ctfd.db"
+
+    REDIS_URL: str = os.getenv("REDIS_URL") \
+        or empty_str_cast(config_ini["server"]["REDIS_URL"])
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     CACHE_REDIS_URL = REDIS_URL
     if CACHE_REDIS_URL:
-        CACHE_TYPE = "redis"
+        CACHE_TYPE: str = "redis"
     else:
-        CACHE_TYPE = "filesystem"
-        CACHE_DIR = os.path.join(
+        CACHE_TYPE: str = "filesystem"
+        CACHE_DIR: str = os.path.join(
             os.path.dirname(__file__), os.pardir, ".data", "filesystem_cache"
         )
-        CACHE_THRESHOLD = (
-            0
-        )  # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
+        # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
+        CACHE_THRESHOLD: int = 0
 
     """
     === SECURITY ===
 
     SESSION_COOKIE_HTTPONLY:
-        Controls if cookies should be set with the HttpOnly flag.
+        Controls if cookies should be set with the HttpOnly flag. Defaults to True
 
     PERMANENT_SESSION_LIFETIME:
-        The lifetime of a session. The default is 604800 seconds.
+        The lifetime of a session. The default is 604800 seconds (7 days).
 
     TRUSTED_PROXIES:
         Defines a set of regular expressions used for finding a user's IP address if the CTFd instance
@@ -98,11 +126,18 @@ class Config(object):
         CTFd only uses IP addresses for cursory tracking purposes. It is ill-advised to do anything complicated based
         solely on IP addresses unless you know what you are doing.
     """
-    SESSION_COOKIE_HTTPONLY = not os.getenv("SESSION_COOKIE_HTTPONLY")  # Defaults True
-    SESSION_COOKIE_SAMESITE = os.getenv("SESSION_COOKIE_SAMESITE") or "Lax"
-    PERMANENT_SESSION_LIFETIME = int(
-        os.getenv("PERMANENT_SESSION_LIFETIME") or 604800
-    )  # 7 days in seconds
+    SESSION_COOKIE_HTTPONLY: bool = process_boolean_str(os.getenv("SESSION_COOKIE_HTTPONLY")) \
+        or config_ini["security"].getboolean("SESSION_COOKIE_HTTPONLY") \
+        or True
+
+    SESSION_COOKIE_SAMESITE: str = os.getenv("SESSION_COOKIE_SAMESITE") \
+        or empty_str_cast(config_ini["security"]["SESSION_COOKIE_SAMESITE"]) \
+        or "Lax"
+
+    PERMANENT_SESSION_LIFETIME: int = int(os.getenv("PERMANENT_SESSION_LIFETIME", 0)) \
+        or config_ini["security"].getint("PERMANENT_SESSION_LIFETIME") \
+        or 604800
+
     TRUSTED_PROXIES = [
         r"^127\.0\.0\.1$",
         # Remove the following proxies if you do not trust the local network
@@ -143,21 +178,43 @@ class Config(object):
         Whether to connect to the SMTP server over SSL
 
     MAILGUN_API_KEY
-        Mailgun API key to send email over Mailgun
+        Mailgun API key to send email over Mailgun. As of CTFd v3, Mailgun integration is deprecated.
+        Installations using the Mailgun API should migrate over to SMTP settings.
 
     MAILGUN_BASE_URL
-        Mailgun base url to send email over Mailgun
+        Mailgun base url to send email over Mailgun. As of CTFd v3, Mailgun integration is deprecated.
+        Installations using the Mailgun API should migrate over to SMTP settings.
     """
-    MAILFROM_ADDR = os.getenv("MAILFROM_ADDR") or "noreply@ctfd.io"
-    MAIL_SERVER = os.getenv("MAIL_SERVER") or None
-    MAIL_PORT = os.getenv("MAIL_PORT")
-    MAIL_USEAUTH = os.getenv("MAIL_USEAUTH")
-    MAIL_USERNAME = os.getenv("MAIL_USERNAME")
-    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
-    MAIL_TLS = os.getenv("MAIL_TLS") or False
-    MAIL_SSL = os.getenv("MAIL_SSL") or False
-    MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
-    MAILGUN_BASE_URL = os.getenv("MAILGUN_BASE_URL")
+    MAILFROM_ADDR: str = os.getenv("MAILFROM_ADDR") \
+        or config_ini["email"]["MAILFROM_ADDR"] \
+        or "noreply@ctfd.io"
+
+    MAIL_SERVER: str = os.getenv("MAIL_SERVER") \
+        or empty_str_cast(config_ini["email"]["MAIL_SERVER"])
+
+    MAIL_PORT: str = os.getenv("MAIL_PORT") \
+        or empty_str_cast(config_ini["email"]["MAIL_PORT"])
+
+    MAIL_USEAUTH: bool = process_boolean_str(os.getenv("MAIL_USEAUTH")) \
+        or process_boolean_str(config_ini["email"]["MAIL_USEAUTH"])
+
+    MAIL_USERNAME: str = os.getenv("MAIL_USERNAME") \
+        or empty_str_cast(config_ini["email"]["MAIL_USERNAME"])
+
+    MAIL_PASSWORD: str = os.getenv("MAIL_PASSWORD") \
+        or empty_str_cast(config_ini["email"]["MAIL_PASSWORD"])
+
+    MAIL_TLS: bool = process_boolean_str(os.getenv("MAIL_TLS")) \
+        or process_boolean_str(config_ini["email"]["MAIL_TLS"])
+
+    MAIL_SSL: bool = process_boolean_str(os.getenv("MAIL_SSL")) \
+        or process_boolean_str(config_ini["email"]["MAIL_SSL"])
+
+    MAILGUN_API_KEY: str = os.getenv("MAILGUN_API_KEY") \
+        or empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
+
+    MAILGUN_BASE_URL: str = os.getenv("MAILGUN_BASE_URL") \
+        or empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
 
     """
     === LOGS ===
@@ -165,9 +222,9 @@ class Config(object):
         The location where logs are written. These are the logs for CTFd key submissions, registrations, and logins.
         The default location is the CTFd/logs folder.
     """
-    LOG_FOLDER = os.getenv("LOG_FOLDER") or os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "logs"
-    )
+    LOG_FOLDER: str = os.getenv("LOG_FOLDER") \
+        or empty_str_cast(config_ini["logs"]["LOG_FOLDER"]) \
+        or os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
 
     """
     === UPLOADS ===
@@ -191,15 +248,26 @@ class Config(object):
         A URL pointing to a custom S3 implementation.
 
     """
-    UPLOAD_PROVIDER = os.getenv("UPLOAD_PROVIDER") or "filesystem"
-    UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER") or os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "uploads"
-    )
+    UPLOAD_PROVIDER: str = os.getenv("UPLOAD_PROVIDER") \
+        or empty_str_cast(config_ini["uploads"]["UPLOAD_PROVIDER"]) \
+        or "filesystem"
+
+    UPLOAD_FOLDER: str = os.getenv("UPLOAD_FOLDER") \
+        or empty_str_cast(config_ini["uploads"]["UPLOAD_FOLDER"]) \
+        or os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+
     if UPLOAD_PROVIDER == "s3":
-        AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-        AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-        AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
-        AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+        AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID") \
+            or empty_str_cast(config_ini["uploads"]["AWS_ACCESS_KEY_ID"])
+
+        AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY") \
+            or empty_str_cast(config_ini["uploads"]["AWS_SECRET_ACCESS_KEY"])
+
+        AWS_S3_BUCKET: str = os.getenv("AWS_S3_BUCKET") \
+            or empty_str_cast(config_ini["uploads"]["AWS_S3_BUCKET"])
+
+        AWS_S3_ENDPOINT_URL: str = os.getenv("AWS_S3_ENDPOINT_URL") \
+            or empty_str_cast(config_ini["uploads"]["AWS_S3_ENDPOINT_URL"])
 
     """
     === OPTIONAL ===
@@ -214,16 +282,16 @@ class Config(object):
         Alternatively if you specify `true` CTFd will default to the above behavior with all proxy settings set to 1.
 
     TEMPLATES_AUTO_RELOAD:
-        Specifies whether Flask should check for modifications to templates and reload them automatically.
+        Specifies whether Flask should check for modifications to templates and reload them automatically. Defaults True.
 
     SQLALCHEMY_TRACK_MODIFICATIONS:
-        Automatically disabled to suppress warnings and save memory. You should only enable this if you need it.
+        Automatically disabled to suppress warnings and save memory. You should only enable this if you need it. Defaults False.
 
     SWAGGER_UI:
         Enable the Swagger UI endpoint at /api/v1/
 
     UPDATE_CHECK:
-        Specifies whether or not CTFd will check whether or not there is a new version of CTFd
+        Specifies whether or not CTFd will check whether or not there is a new version of CTFd. Defaults True.
 
     APPLICATION_ROOT:
         Specifies what path CTFd is mounted under. It can be used to run CTFd in a subdirectory.
@@ -237,18 +305,44 @@ class Config(object):
         https://docs.sqlalchemy.org/en/13/core/engines.html#sqlalchemy.create_engine
         https://flask-sqlalchemy.palletsprojects.com/en/2.x/config/#configuration-keys
     """
-    REVERSE_PROXY = os.getenv("REVERSE_PROXY") or False
-    TEMPLATES_AUTO_RELOAD = not os.getenv("TEMPLATES_AUTO_RELOAD")  # Defaults True
-    SQLALCHEMY_TRACK_MODIFICATIONS = (
-        os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS") is not None
-    )  # Defaults False
-    SWAGGER_UI = "/" if os.getenv("SWAGGER_UI") is not None else False  # Defaults False
-    UPDATE_CHECK = not os.getenv("UPDATE_CHECK")  # Defaults True
-    APPLICATION_ROOT = os.getenv("APPLICATION_ROOT") or "/"
-    SERVER_SENT_EVENTS = not os.getenv("SERVER_SENT_EVENTS")  # Defaults True
+    REVERSE_PROXY: bool = process_boolean_str(os.getenv("REVERSE_PROXY")) \
+        or empty_str_cast(config_ini["optional"]["REVERSE_PROXY"]) \
+        or False
+
+    TEMPLATES_AUTO_RELOAD: bool = process_boolean_str(os.getenv("TEMPLATES_AUTO_RELOAD")) \
+        or empty_str_cast(config_ini["optional"]["TEMPLATES_AUTO_RELOAD"]) \
+        or True
+
+    SQLALCHEMY_TRACK_MODIFICATIONS: bool = process_boolean_str(os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS")) \
+        or empty_str_cast(config_ini["optional"]["SQLALCHEMY_TRACK_MODIFICATIONS"]) \
+        or False
+
+    SWAGGER_UI: bool = os.getenv("SWAGGER_UI") \
+        or empty_str_cast(config_ini["optional"]["SWAGGER_UI"]) \
+        or False
+
+    SWAGGER_UI_ENDPOINT: str = "/" if SWAGGER_UI else None
+
+    UPDATE_CHECK: bool = process_boolean_str(os.getenv("UPDATE_CHECK")) \
+        or empty_str_cast(config_ini["optional"]["UPDATE_CHECK"]) \
+        or True
+
+    APPLICATION_ROOT: str = os.getenv("APPLICATION_ROOT") \
+        or empty_str_cast(config_ini["optional"]["APPLICATION_ROOT"]) \
+        or "/"
+
+    SERVER_SENT_EVENTS: bool = process_boolean_str(os.getenv("SERVER_SENT_EVENTS")) \
+        or empty_str_cast(config_ini["optional"]["SERVER_SENT_EVENTS"]) \
+        or True
+
     if DATABASE_URL.startswith("sqlite") is False:
         SQLALCHEMY_ENGINE_OPTIONS = {
-            "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 20))
+            "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 0))
+                or int(empty_str_cast(config_ini["optional"]["SQLALCHEMY_MAX_OVERFLOW"], default=0))  # noqa: E131
+                or 20,  # noqa: E131
+            "pool_pre_ping": process_boolean_str(os.getenv("SQLALCHEMY_POOL_PRE_PING"))
+                or empty_str_cast(config_ini["optional"]["SQLALCHEMY_POOL_PRE_PING"])  # noqa: E131
+                or True,  # noqa: E131
         }
 
     """
@@ -257,8 +351,11 @@ class Config(object):
     MajorLeagueCyber Integration
         Register an event at https://majorleaguecyber.org/ and use the Client ID and Client Secret here
     """
-    OAUTH_CLIENT_ID = os.getenv("OAUTH_CLIENT_ID")
-    OAUTH_CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET")
+    OAUTH_CLIENT_ID: str = os.getenv("OAUTH_CLIENT_ID") \
+        or empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
+    OAUTH_CLIENT_SECRET: str = os.getenv("OAUTH_CLIENT_SECRET") \
+        or empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_SECRET"])
+# fmt: on
 
 
 class TestingConfig(Config):
