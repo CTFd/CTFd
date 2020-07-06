@@ -52,6 +52,13 @@ const displayChal = chal => {
 
     $("#challenge-window").empty();
 
+    // Inject challenge data into the plugin
+    challenge.data = responses[0].data;
+
+    // Call preRender function in plugin
+    challenge.preRender();
+
+    // Build HTML from the Jinja response in API
     $("#challenge-window").append(responses[0].data.view);
 
     $("#challenge-window #challenge-input").addClass("form-control");
