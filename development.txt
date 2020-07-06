@@ -14,6 +14,7 @@ pytest-xdist==1.32.0
 pytest-cov==2.9.0
 sphinx_rtd_theme==0.4.3
 flask-debugtoolbar==0.11.0
+isort==4.3.21
 flake8-isort==3.0.0
 Faker==4.1.0
 pipdeptree==0.13.2
