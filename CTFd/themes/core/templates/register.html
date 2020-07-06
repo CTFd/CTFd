@@ -25,15 +25,15 @@
 			{% with form = Forms.auth.RegistrationForm() %}
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form">
 				<div class="form-group">
-					{{ form.name.label }}
+					<b>{{ form.name.label }}</b>
 					{{ form.name(class="form-control", value=name) }}
 				</div>
 				<div class="form-group">
-					{{ form.email.label }}
+					<b>{{ form.email.label }}</b>
 					{{ form.email(class="form-control", value=email) }}
 				</div>
 				<div class="form-group">
-					{{ form.password.label }}
+					<b>{{ form.password.label }}</b>
 					{{ form.password(class="form-control", value=password) }}
 				</div>
 				<div class="row pt-3">
