@@ -11,7 +11,6 @@ from CTFd.models import Teams, Users, db
 from CTFd.utils import config, email, get_app_config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
-from CTFd.utils.validators import ValidationError
 from CTFd.utils.config import is_teams_mode
 from CTFd.utils.config.integrations import mlc_registration
 from CTFd.utils.config.visibility import registration_visible
@@ -23,6 +22,7 @@ from CTFd.utils.logging import log
 from CTFd.utils.modes import TEAMS_MODE
 from CTFd.utils.security.auth import login_user, logout_user
 from CTFd.utils.security.signing import unserialize
+from CTFd.utils.validators import ValidationError
 
 auth = Blueprint("auth", __name__)
 

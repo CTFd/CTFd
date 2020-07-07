@@ -219,7 +219,8 @@ class UserPublic(Resource):
         data = request.get_json()
         data["id"] = user_id
 
-        if data["id"] == session["id"]:
+        # Admins should not be able to ban themselves
+        if data["id"] == session["id"] and (data.get("banned") is True or data.get("banned") == "true"):
             return (
                 {"success": False, "errors": {"id": "You cannot ban yourself"}},
                 400,
