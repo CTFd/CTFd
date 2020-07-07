@@ -45,7 +45,7 @@ class _ConfigsWrapper:
 
     @property
     def ctf_name(self):
-        return get_config("theme_header", default="CTFd")
+        return get_config("ctf_name", default="CTFd")
 
     @property
     def theme_header(self):
