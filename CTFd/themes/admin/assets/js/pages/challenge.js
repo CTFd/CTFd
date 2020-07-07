@@ -399,7 +399,7 @@ $(() => {
           ezQuery({
             title: "Missing Flags",
             body:
-              "This challenge does not have any flags meaning it is unsolveable. Are you sure you'd like to update this challenge?",
+              "This challenge does not have any flags meaning it may be unsolveable. Are you sure you'd like to update this challenge?",
             success: update_challenge
           });
         } else {

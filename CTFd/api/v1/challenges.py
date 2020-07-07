@@ -374,6 +374,7 @@ class Challenge(Resource):
             response["solves"] = solves
         else:
             response["solves"] = None
+            solves = None
 
         if authed():
             # Get current attempts for the user

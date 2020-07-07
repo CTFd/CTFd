@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import abort, request
+from flask import abort, request, session
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.models import build_model_filters
@@ -218,6 +218,13 @@ class UserPublic(Resource):
         user = Users.query.filter_by(id=user_id).first_or_404()
         data = request.get_json()
         data["id"] = user_id
+
+        if data["id"] == session["id"]:
+            return (
+                {"success": False, "errors": {"id": "You cannot ban yourself"}},
+                400,
+            )
+
         schema = UserSchema(view="admin", instance=user, partial=True)
         response = schema.load(data)
         if response.errors:

@@ -1,6 +1,6 @@
 from flask_restx import Resource
 from sqlalchemy import func
-from sqlalchemy.sql import or_
+from sqlalchemy.sql import and_
 
 from CTFd.api.v1.statistics import statistics_namespace
 from CTFd.models import Challenges, Solves, db
@@ -31,7 +31,7 @@ class ChallengeSolveStatistics(Resource):
     def get(self):
         chals = (
             Challenges.query.filter(
-                or_(Challenges.state != "hidden", Challenges.state != "locked")
+                and_(Challenges.state != "hidden", Challenges.state != "locked")
             )
             .order_by(Challenges.value)
             .all()

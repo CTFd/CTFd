@@ -244,6 +244,21 @@ def test_api_challenge_get_visibility_private():
     destroy_ctfd(app)
 
 
+def test_api_challenge_get_with_admin_only_account_visibility():
+    """Can a private user get /api/v1/challenges/<challenge_id> if account_visibility is admins_only"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get("/api/v1/challenges/1")
+        assert r.status_code == 200
+        set_config("account_visibility", "admins")
+        r = client.get("/api/v1/challenges/1")
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
 def test_api_challenge_get_ctftime_private():
     """Can a private user get /api/v1/challenges/<challenge_id> if ctftime is over"""
     app = create_ctfd()
