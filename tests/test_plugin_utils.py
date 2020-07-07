@@ -148,7 +148,7 @@ def test_register_admin_plugin_menu_bar():
 
         menu_item = get_admin_plugin_menu_bar()[0]
         assert menu_item.title == "test_admin_plugin_name"
-        assert menu_item.route == "http://localhost/test_plugin"
+        assert menu_item.route == "/test_plugin"
     destroy_ctfd(app)
 
 
@@ -172,7 +172,7 @@ def test_register_user_page_menu_bar():
 
         menu_item = get_user_page_menu_bar()[0]
         assert menu_item.title == "test_user_menu_link"
-        assert menu_item.route == "http://localhost/test_user_href"
+        assert menu_item.route == "/test_user_href"
     destroy_ctfd(app)
 
 
