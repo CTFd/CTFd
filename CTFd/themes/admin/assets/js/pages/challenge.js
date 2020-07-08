@@ -237,17 +237,6 @@ function handleChallengeOptions(event) {
   });
 }
 
-function createChallenge(_event) {
-  const challenge = $(this)
-    .find("option:selected")
-    .data("meta");
-  if (challenge === undefined) {
-    $("#create-chal-entry-div").empty();
-    return;
-  }
-  loadChalTemplate(challenge);
-}
-
 $(() => {
   $(".preview-challenge").click(function(_e) {
     window.challenge = new Object();
