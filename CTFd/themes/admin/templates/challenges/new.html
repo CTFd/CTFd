@@ -1,6 +1,20 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
+<style>
+.card-radio:checked + .card {
+	background-color: transparent !important;
+	border-color: #a3d39c;
+	box-shadow: 0 0 0 0.1rem #a3d39c;
+	transition: background-color 0.3s, border-color 0.3s;
+}
+.card-radio:checked + .card .card-radio-clone{
+	visibility: visible !important;
+}
+.card:hover {
+	cursor: pointer;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -73,20 +87,32 @@
 	</div>
 </div>
 
-<div class="container">
+<div class="container-fluid">
 	<div class="row">
-		<div class="col-md-12">
-			<div class="row">
-				<div class="col-md-6 offset-md-3">
-					<div id="create-chals-select-div" style="display: none;">
-						<label for="create-chals-select" class="control-label">Choose Challenge Type</label>
-						<select class="form-control custom-select" id="create-chals-select">
-						</select>
+		<div class="col-md-2 offset-md-2">
+			<h5 class="text-center pb-3">
+				Challenge Types
+			</h5>
+			<div id="create-chals-select">
+				{% for type in types %}
+				<label class="w-100">
+					<input type="radio" name="type" class="card-radio d-none" value="{{ type }}" {% if type == "standard" %}checked{% endif %}/>
+					<div class="card rounded-0">
+						<div class="card-body">
+							<span class="card-title">
+								<div class="form-check">
+									<input class="form-check-input card-radio-clone" type="radio" style="visibility: hidden;" checked>
+									<label class="form-check-label">{{ type }}</label>
+								</div>
+							</span>
+						</div>
 					</div>
-					<br>
-					<div id="create-chal-entry-div">
-					</div>
-				</div>
+				</label>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div id="create-chal-entry-div">
 			</div>
 		</div>
 	</div>
