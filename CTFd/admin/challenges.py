@@ -2,7 +2,7 @@ from flask import render_template, request, url_for
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Flags, Solves
-from CTFd.plugins.challenges import get_chal_class
+from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.utils.decorators import admins_only
 
 
@@ -67,4 +67,5 @@ def challenges_detail(challenge_id):
 @admin.route("/admin/challenges/new")
 @admins_only
 def challenges_new():
-    return render_template("admin/challenges/new.html")
+    types = CHALLENGE_CLASSES.keys()
+    return render_template("admin/challenges/new.html", types=types)
