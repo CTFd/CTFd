@@ -22,6 +22,7 @@ from CTFd.utils.logging import log
 from CTFd.utils.modes import TEAMS_MODE
 from CTFd.utils.security.auth import login_user, logout_user
 from CTFd.utils.security.signing import unserialize
+from CTFd.utils.validators import ValidationError
 
 auth = Blueprint("auth", __name__)
 
@@ -189,6 +190,10 @@ def register():
         email_address = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "").strip()
 
+        website = request.form.get("website")
+        affiliation = request.form.get("affiliation")
+        country = request.form.get("country")
+
         name_len = len(name) == 0
         names = Users.query.add_columns("name", "id").filter_by(name=name).first()
         emails = (
@@ -200,6 +205,25 @@ def register():
         pass_long = len(password) > 128
         valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
+
+        if country:
+            try:
+                validators.validate_country_code(country)
+                valid_country = True
+            except ValidationError:
+                valid_country = False
+        else:
+            valid_country = True
+
+        if website:
+            valid_website = validators.validate_url(website)
+        else:
+            valid_website = True
+
+        if affiliation:
+            valid_affiliation = len(affiliation) < 128
+        else:
+            valid_affiliation = True
 
         if not valid_email:
             errors.append("Please enter a valid email address")
@@ -221,6 +245,12 @@ def register():
             errors.append("Pick a shorter password")
         if name_len:
             errors.append("Pick a longer user name")
+        if valid_website is False:
+            errors.append("Websites must be a proper URL starting with http or https")
+        if valid_country is False:
+            errors.append("Invalid country")
+        if valid_affiliation is False:
+            errors.append("Please provide a shorter affiliation")
 
         if len(errors) > 0:
             return render_template(
@@ -233,6 +263,14 @@ def register():
         else:
             with app.app_context():
                 user = Users(name=name, email=email_address, password=password)
+
+                if website:
+                    user.website = website
+                if affiliation:
+                    user.affiliation = affiliation
+                if country:
+                    user.country = country
+
                 db.session.add(user)
                 db.session.commit()
                 db.session.flush()

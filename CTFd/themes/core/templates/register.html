@@ -36,12 +36,12 @@
 					<b>{{ form.password.label }}</b>
 					{{ form.password(class="form-control", value=password) }}
 				</div>
+				{{ form.nonce() }}
 				<div class="row pt-3">
 					<div class="col-md-12">
 						{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}
 					</div>
 				</div>
-				{{ form.nonce() }}
 			</form>
 			{% endwith %}
 		</div>
