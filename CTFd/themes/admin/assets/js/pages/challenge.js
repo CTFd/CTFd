@@ -237,17 +237,6 @@ function handleChallengeOptions(event) {
   });
 }
 
-function createChallenge(_event) {
-  const challenge = $(this)
-    .find("option:selected")
-    .data("meta");
-  if (challenge === undefined) {
-    $("#create-chal-entry-div").empty();
-    return;
-  }
-  loadChalTemplate(challenge);
-}
-
 $(() => {
   $(".preview-challenge").click(function(_e) {
     window.challenge = new Object();
@@ -430,29 +419,12 @@ $(() => {
   $(".edit-flag").click(editFlagModal);
 
   $.get(CTFd.config.urlRoot + "/api/v1/challenges/types", function(response) {
-    $("#create-chals-select").empty();
     const data = response.data;
-    const chal_type_amt = Object.keys(data).length;
-    if (chal_type_amt > 1) {
-      const option = "<option> -- </option>";
-      $("#create-chals-select").append(option);
-      for (const key in data) {
-        const challenge = data[key];
-        const option = $("<option/>");
-        option.attr("value", challenge.type);
-        option.text(challenge.name);
-        option.data("meta", challenge);
-        $("#create-chals-select").append(option);
-      }
-      $("#create-chals-select-div").show();
-      $("#create-chals-select").val("standard");
-      loadChalTemplate(data["standard"]);
-    } else if (chal_type_amt == 1) {
-      const key = Object.keys(data)[0];
-      $("#create-chals-select").empty();
-      loadChalTemplate(data[key]);
-    }
-  });
+    loadChalTemplate(data["standard"]);
 
-  $("#create-chals-select").change(createChallenge);
+    $("#create-chals-select input[name=type]").change(function() {
+      let challenge = data[this.value];
+      loadChalTemplate(challenge);
+    });
+  });
 });

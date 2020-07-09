@@ -26,37 +26,37 @@
 					<form id="user-profile-form" method="post" accept-charset="utf-8" autocomplete="off" role="form"
 						class="form-horizontal">
 						<div class="form-group">
-							{{ form.name.label }}
+							<b>{{ form.name.label }}</b>
 							{{ form.name(class="form-control", value=name) }}
 						</div>
 						<div class="form-group">
-							{{ form.email.label }}
+							<b>{{ form.email.label }}</b>
 							{{ form.email(class="form-control", value=email) }}
 						</div>
 
 						<hr>
 
 						<div class="form-group">
-							{{ form.confirm.label }}
+							<b>{{ form.confirm.label }}</b>
 							{{ form.confirm(class="form-control") }}
 						</div>
 						<div class="form-group">
-							{{ form.password.label }}
+							<b>{{ form.password.label }}</b>
 							{{ form.password(class="form-control") }}
 						</div>
 
 						<hr>
 
 						<div class="form-group">
-							{{ form.affiliation.label }}
+							<b>{{ form.affiliation.label }}</b>
 							{{ form.affiliation(class="form-control", value=affiliation or "") }}
 						</div>
 						<div class="form-group">
-							{{ form.website.label }}
+							<b>{{ form.website.label }}</b>
 							{{ form.website(class="form-control", value=website or "") }}
 						</div>
 						<div class="form-group">
-							{{ form.country.label }}
+							<b>{{ form.country.label }}</b>
 							{{ form.country(class="form-control custom-select", value=country) }}
 						</div>
 
@@ -73,7 +73,7 @@
 					{% with form = Forms.self.TokensForm() %}
 					<form method="POST" id="user-token-form">
 						<div class="form-group">
-							{{ form.expiration.label }}
+							<b>{{ form.expiration.label }}</b>
 							{{ form.expiration(class="form-control") }}
 						</div>
 
