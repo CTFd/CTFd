@@ -1,4 +1,5 @@
 import datetime
+from collections import defaultdict
 
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
@@ -77,7 +78,15 @@ class Challenges(db.Model):
     hints = db.relationship("Hints", backref="challenge")
     flags = db.relationship("Flags", backref="challenge")
 
-    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+    class alt_defaultdict(defaultdict):
+        def __missing__(self, key):
+            return self["standard"]
+
+    __mapper_args__ = {
+        "polymorphic_identity": "standard",
+        "polymorphic_on": type,
+        "_polymorphic_map": alt_defaultdict(),
+    }
 
     @property
     def html(self):

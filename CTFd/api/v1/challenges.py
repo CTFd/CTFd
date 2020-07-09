@@ -187,7 +187,13 @@ class ChallengeList(Resource):
                     # Fallthrough to continue
                     continue
 
-            challenge_type = get_chal_class(challenge.type)
+            try:
+                challenge_type = get_chal_class(challenge.type)
+            except KeyError:
+                # Challenge type does not exist. Fall through to next challenge.
+                continue
+
+            # Challenge passes all checks, add it to response
             response.append(
                 {
                     "id": challenge.id,
@@ -268,7 +274,13 @@ class Challenge(Resource):
                 and_(Challenges.state != "hidden", Challenges.state != "locked"),
             ).first_or_404()
 
-        chal_class = get_chal_class(chal.type)
+        try:
+            chal_class = get_chal_class(chal.type)
+        except KeyError:
+            abort(
+                500,
+                f"The underlying challenge type ({chal.type}) is not installed. This challenge can not be loaded.",
+            )
 
         if chal.requirements:
             requirements = chal.requirements.get("prerequisites", [])
