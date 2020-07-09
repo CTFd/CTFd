@@ -1,3 +1,32 @@
+# 3.0.0a2 / 2020-07-09
+
+**General**
+
+- Accept additional profile fields during registration (affiliation, website, country)
+  - This does not add additional inputs. Themes or additional JavaScript can add the form inputs.
+
+**Admin Panel**
+
+- Redesign the challenge creation form to use a radio button with challenge type selection instead of a select input
+
+**API**
+
+- Admins can no longer ban themselves through `PATCH /api/v1/users/[user_id]`
+
+**Themes**
+
+- Spinner centering has been switched from a hard coded margin in CSS to flexbox CSS classes from Bootstrap
+
+**Plugins**
+
+- Revert plugin menu (`register_admin_plugin_menu_bar`, `register_user_page_menu_bar`) changes to 2.x code
+
+**Miscellaneous**
+
+- Fix issue with `Configs.ctf_name` returning incorrect value
+- Add prerender step back into challenges.js
+- Better handling of missing challenge types. Missing challenge types no longer bring down all other challenges.
+
 # 3.0.0a1 / 2020-07-01
 
 **General**
