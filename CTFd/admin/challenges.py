@@ -1,4 +1,4 @@
-from flask import render_template, request, url_for
+from flask import abort, render_template, request, url_for
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Flags, Solves
@@ -44,7 +44,14 @@ def challenges_detail(challenge_id):
         .all()
     )
     flags = Flags.query.filter_by(challenge_id=challenge.id).all()
-    challenge_class = get_chal_class(challenge.type)
+
+    try:
+        challenge_class = get_chal_class(challenge.type)
+    except KeyError:
+        abort(
+            500,
+            f"The underlying challenge type ({challenge.type}) is not installed. This challenge can not be loaded.",
+        )
 
     update_j2 = render_template(
         challenge_class.templates["update"].lstrip("/"), challenge=challenge

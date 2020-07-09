@@ -1,4 +1,5 @@
 import datetime
+from collections import defaultdict
 
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
@@ -77,7 +78,22 @@ class Challenges(db.Model):
     hints = db.relationship("Hints", backref="challenge")
     flags = db.relationship("Flags", backref="challenge")
 
-    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+    class alt_defaultdict(defaultdict):
+        """
+        This slightly modified defaultdict is intended to allow SQLAlchemy to
+        not fail when querying Challenges that contain a missing challenge type.
+
+        e.g. Challenges.query.all() should not fail if `type` is `a_missing_type`
+        """
+
+        def __missing__(self, key):
+            return self["standard"]
+
+    __mapper_args__ = {
+        "polymorphic_identity": "standard",
+        "polymorphic_on": type,
+        "_polymorphic_map": alt_defaultdict(),
+    }
 
     @property
     def html(self):
