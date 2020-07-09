@@ -79,6 +79,13 @@ class Challenges(db.Model):
     flags = db.relationship("Flags", backref="challenge")
 
     class alt_defaultdict(defaultdict):
+        """
+        This slightly modified defaultdict is intended to allow SQLAlchemy to
+        not fail when querying Challenges that contain a missing challenge type.
+
+        e.g. Challenges.query.all() should not fail if `type` is `a_missing_type`
+        """
+
         def __missing__(self, key):
             return self["standard"]
 
