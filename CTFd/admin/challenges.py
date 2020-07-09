@@ -47,7 +47,7 @@ def challenges_detail(challenge_id):
 
     try:
         challenge_class = get_chal_class(challenge.type)
-    except:
+    except KeyError:
         abort(
             500,
             f"The underlying challenge type ({challenge.type}) is not installed. This challenge can not be loaded.",
