@@ -1,3 +1,15 @@
+# 3.0.0b1 / 2020-07-15
+
+**General**
+
+- Fix an issue where dynamic challenge solutions could not be submitted
+
+**Documentation**
+
+- Documentation has been seperated out into a seperate repo (https://github.com/CTFd/docs).
+- Documentation hosting has moved from ReadTheDocs to Netlify
+- Any links in the codebase to help.ctfd.io have been changed to docs.ctfd.io.
+
 # 3.0.0a2 / 2020-07-09
 
 **General**
