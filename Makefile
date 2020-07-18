@@ -12,7 +12,7 @@ format:
 	prettier --write '**/*.md'
 
 test:
-	pytest -rf --cov=CTFd --cov-context=test \
+	pytest -rf --cov=CTFd --cov-context=test --cov-report=xml \
 		--ignore-glob="**/node_modules/" \
 		--ignore=node_modules/ \
 		-W ignore::sqlalchemy.exc.SADeprecationWarning \
