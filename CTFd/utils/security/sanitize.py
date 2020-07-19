@@ -12,7 +12,41 @@ cleaner = Cleaner(
     links=False,
     meta=False,
     style=False,
-    safe_attrs=(safe_attrs | set(["style"])),
+    safe_attrs=(
+        safe_attrs
+        | set(
+            [
+                "style",
+                # Allow data attributes from bootstrap elements
+                "data-toggle",
+                "data-target",
+                "data-dismiss",
+                "data-spy",
+                "data-offset",
+                "data-html",
+                "data-placement",
+                "data-parent",
+                "data-title",
+                "data-template",
+                "data-interval",
+                "data-keyboard",
+                "data-pause",
+                "data-ride",
+                "data-wrap",
+                "data-touch",
+                "data-flip",
+                "data-boundary",
+                "data-reference",
+                "data-display",
+                "data-animation",
+                "data-container",
+                "data-delay",
+                "data-selector",
+                "data-content",
+                "data-trigger",
+            ]
+        )
+    ),
     annoying_tags=False,
 )
 
