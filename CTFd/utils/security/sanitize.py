@@ -14,6 +14,7 @@ cleaner = Cleaner(
     style=False,
     safe_attrs=(safe_attrs | set(["style"])),
     annoying_tags=False,
+    safe_attrs_only=False,
 )
 
 
