@@ -1,3 +1,23 @@
+# 3.0.0b2 / 2020-07-19
+
+**General**
+
+- Make HTML Sanitization an optional setting that's configurable via `HTML_SANITIZATION` in config.ini
+- Allow HTML comments through sanitization
+- Allow Bootstrap data attributes through sanitization
+
+**Admin Panel**
+
+- Fix an unclickable label in the Challenge creation interface
+
+**Plugins**
+
+- Fix bug preventing deleting alternative challenge types
+
+**Miscellaneous**
+
+- Switch to using Github Actions for testing and linting
+
 # 3.0.0b1 / 2020-07-15
 
 **General**
