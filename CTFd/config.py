@@ -297,6 +297,9 @@ class Config(object):
         Specifies what path CTFd is mounted under. It can be used to run CTFd in a subdirectory.
         Example: /ctfd
 
+    HTML_SANITIZATION:
+        Specifies whether CTFd should sanitize HTML content from pages and descriptions
+
     SERVER_SENT_EVENTS:
         Specifies whether or not to enable to server-sent events based Notifications system.
 
@@ -334,6 +337,10 @@ class Config(object):
     SERVER_SENT_EVENTS: bool = process_boolean_str(os.getenv("SERVER_SENT_EVENTS")) \
         or empty_str_cast(config_ini["optional"]["SERVER_SENT_EVENTS"]) \
         or True
+
+    HTML_SANITIZATION: bool = process_boolean_str(os.getenv("HTML_SANITIZATION")) \
+        or empty_str_cast(config_ini["optional"]["HTML_SANITIZATION"]) \
+        or False
 
     if DATABASE_URL.startswith("sqlite") is False:
         SQLALCHEMY_ENGINE_OPTIONS = {
