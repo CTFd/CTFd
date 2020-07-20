@@ -5,6 +5,7 @@ from lxml.html.clean import Cleaner  # nosec B410
 from lxml.html.defs import safe_attrs  # nosec B410
 
 cleaner = Cleaner(
+    comments=False,
     page_structure=False,
     embedded=False,
     frames=False,
