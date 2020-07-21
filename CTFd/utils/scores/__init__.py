@@ -110,6 +110,8 @@ def get_standings(count=None, admin=False, fields=[], raw_query=False):
     """
     if count:
         standings = standings_query.limit(count)
+    else:
+        standings = standings_query
 
     """
     Return the raw query if requested
@@ -194,6 +196,8 @@ def get_team_standings(count=None, admin=False, fields=[], raw_query=False):
 
     if count:
         standings = standings_query.limit(count)
+    else:
+        standings = standings_query
 
     if raw_query:
         return standings
@@ -274,6 +278,8 @@ def get_user_standings(count=None, admin=False, fields=[], raw_query=False):
 
     if count:
         standings = standings_query.limit(count)
+    else:
+        standings = standings_query
 
     if raw_query:
         return standings
