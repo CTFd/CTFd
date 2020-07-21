@@ -120,8 +120,8 @@ function renderSubmissionResponse(response, cb) {
   }
   setTimeout(function() {
     $(".alert").slideUp();
-    $("#submit-key").removeClass("disabled-button");
-    $("#submit-key").prop("disabled", false);
+    $("#challenge-submit").removeClass("disabled-button");
+    $("#challenge-submit").prop("disabled", false);
   }, 3000);
 
   if (cb) {
