@@ -1,3 +1,5 @@
+from email.utils import formataddr
+
 import requests
 
 from CTFd.utils import get_app_config, get_config
@@ -6,7 +8,7 @@ from CTFd.utils import get_app_config, get_config
 def sendmail(addr, text, subject):
     ctf_name = get_config("ctf_name")
     mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
-    mailfrom_addr = "{} <{}>".format(ctf_name, mailfrom_addr)
+    mailfrom_addr = formataddr((ctf_name, mailfrom_addr))
 
     mailgun_base_url = get_config("mailgun_base_url") or get_app_config(
         "MAILGUN_BASE_URL"
