@@ -1,3 +1,24 @@
+# 3.0.0b3 / 2020-07-22
+
+**General**
+
+- Render Hint content on the server side and provide it in the Hint API response
+  - In a sense this would deprecate the `content` field but it's left in for backwards compatability
+
+**API**
+
+- Add `html` item for `GET /api/v1/hints/[hint_id]` which contains the rendered HTML of the Hint content
+- Remove `content` from `GET /api/v1/hints`
+
+**Admin Panel**
+
+- Fix an issue where an admin couldn't submit more than once on a challenge preview
+- Fix an issue where the theme settings editor wouldn't load if the theme settings JSON was malformed
+
+**Miscellaneous**
+
+- Fix an issue where email sending would be broken if the CTF name contained a colon
+
 # 3.0.0b2 / 2020-07-19
 
 **General**
