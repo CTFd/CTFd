@@ -39,7 +39,7 @@ Currently CTFd master contains an alpha version of the next major CTFd release. 
   - Forgot password support
 - Automatic competition starting and ending
 - Team management, hiding, and banning
-- Customize everything using the [plugin](https://github.com/CTFd/CTFd/wiki/Plugins) and [theme](https://github.com/CTFd/CTFd/tree/master/CTFd/themes) interfaces
+- Customize everything using the [plugin](https://docs.ctfd.io/docs/plugins/) and [theme](https://docs.ctfd.io/docs/themes/) interfaces
 - Importing and Exporting of CTF data for archival
 - And a lot more...
 
@@ -58,7 +58,7 @@ Or you can use Docker Compose with the following command from the source reposit
 
 `docker-compose up`
 
-Check out the [wiki](https://github.com/CTFd/CTFd/wiki) for [deployment options](https://github.com/CTFd/CTFd/wiki/Basic-Deployment) and the [Getting Started](https://github.com/CTFd/CTFd/wiki/Getting-Started) guide
+Check out the [CTFd docs](https://docs.ctfd.io/) for [deployment options](https://docs.ctfd.io/docs/deployment/) and the [Getting Started](https://github.com/CTFd/CTFd/wiki/Getting-Started) guide
 
 ## Live Demo
 
