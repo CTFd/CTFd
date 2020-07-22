@@ -276,7 +276,15 @@ $(() => {
 
   $("#theme-settings-button").click(function() {
     let form = $("#theme-settings-modal form");
-    let data = JSON.parse(theme_settings_editor.getValue());
+    let data;
+
+    // Ignore invalid JSON data
+    try {
+      data = JSON.parse(theme_settings_editor.getValue());
+    } catch (e) {
+      data = {};
+    }
+
     $.each(data, function(key, value) {
       var ctrl = form.find(`[name='${key}']`);
       switch (ctrl.prop("type")) {
