@@ -68,7 +68,7 @@ class HintList(Resource):
         filters = build_model_filters(model=Hints, query=q, field=field)
 
         hints = Hints.query.filter_by(**query_args).filter(*filters).all()
-        response = HintSchema(many=True).dump(hints)
+        response = HintSchema(many=True, view="locked").dump(hints)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
@@ -88,7 +88,7 @@ class HintList(Resource):
     )
     def post(self):
         req = request.get_json()
-        schema = HintSchema("admin")
+        schema = HintSchema(view="admin")
         response = schema.load(req, session=db.session)
 
         if response.errors:
@@ -155,7 +155,7 @@ class Hint(Resource):
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
         req = request.get_json()
 
-        schema = HintSchema()
+        schema = HintSchema(view="admin")
         response = schema.load(req, instance=hint, partial=True, session=db.session)
 
         if response.errors:

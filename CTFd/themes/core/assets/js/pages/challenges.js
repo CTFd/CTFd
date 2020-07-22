@@ -12,8 +12,6 @@ const api_func = {
   users: x => CTFd.api.get_user_solves({ userId: x })
 };
 
-const md = CTFd.lib.markdown();
-
 CTFd._internal.challenge = {};
 let challenges = [];
 let solves = [];
@@ -393,7 +391,7 @@ setInterval(update, 300000); // Update every 5 minutes.
 const displayHint = data => {
   ezAlert({
     title: "Hint",
-    body: md.render(data.content),
+    body: data.html,
     button: "Got it!"
   });
 };
@@ -418,7 +416,7 @@ const displayUnlock = id => {
 
         ezAlert({
           title: "Error",
-          body: md.render(response.errors.score),
+          body: response.errors.score,
           button: "Got it!"
         });
       });
