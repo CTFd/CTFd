@@ -23,12 +23,10 @@ import {
   flagTypeSelect
 } from "../challenges/flags";
 
-const md = CTFd.lib.markdown();
-
 const displayHint = data => {
   ezAlert({
     title: "Hint",
-    body: md.render(data.content),
+    body: data.html,
     button: "Got it!"
   });
 };

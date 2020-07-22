@@ -134,6 +134,13 @@ class Hints(db.Model):
     def description(self):
         return "Hint for {name}".format(name=self.challenge.name)
 
+    @property
+    def html(self):
+        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.helpers import markup
+
+        return markup(build_html(self.content))
+
     def __init__(self, *args, **kwargs):
         super(Hints, self).__init__(**kwargs)
 
