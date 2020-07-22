@@ -279,9 +279,9 @@ $(() => {
     let data;
 
     // Ignore invalid JSON data
-    try{
+    try {
       data = JSON.parse(theme_settings_editor.getValue());
-    } catch(e) {
+    } catch (e) {
       data = {};
     }
 
