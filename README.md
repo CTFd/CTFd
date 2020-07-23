@@ -47,7 +47,7 @@ Currently CTFd master contains an alpha version of the next major CTFd release. 
 
 1. Install dependencies: `pip install -r requirements.txt`
    1. You can also use the `prepare.sh` script to install system dependencies using apt.
-2. Modify [CTFd/config.py](https://github.com/CTFd/CTFd/blob/master/CTFd/config.py) to your liking.
+2. Modify [CTFd/config.ini](https://github.com/CTFd/CTFd/blob/master/CTFd/config.ini) to your liking.
 3. Use `flask run` in a terminal to drop into debug mode.
 
 You can use the auto-generated Docker images with the following command:

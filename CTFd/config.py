@@ -45,47 +45,13 @@ def gen_secret_key():
 
 
 config_ini = configparser.ConfigParser()
+config_ini.optionxform = str  # Makes the key value case-insensitive
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.ini")
 config_ini.read(path)
 
 
 # fmt: off
-class Config(object):
-    """
-    CTFd Configuration Object
-    """
-
-    """
-    === REQUIRED SETTINGS ===
-
-    SECRET_KEY:
-        The secret value used to creation sessions and sign strings. This should be set to a random string. In the
-        interest of ease, CTFd will automatically create a secret key file for you. If you wish to add this secret key
-        to your instance you should hard code this value to a random static value.
-
-        You can also remove .ctfd_secret_key from the .gitignore file and commit this file into whatever repository
-        you are using.
-
-        http://flask.pocoo.org/docs/latest/quickstart/#sessions
-
-    DATABASE_URL:
-        The URI that specifies the username, password, hostname, port, and database of the server
-        used to hold the CTFd database.
-
-        e.g. mysql+pymysql://root:<YOUR_PASSWORD_HERE>@localhost/ctfd
-
-    CACHE_TYPE:
-        Specifies how CTFd should cache configuration values. If CACHE_TYPE is set to 'redis', CTFd will make use
-        of the REDIS_URL specified in environment variables. You can also choose to hardcode the REDIS_URL here.
-
-        It is important that you specify some sort of cache as CTFd uses it to store values received from the database. If
-        no cache is specified, CTFd will default to a simple per-worker cache. The simple cache cannot be effectively used
-        with multiple workers.
-
-    REDIS_URL is the URL to connect to a Redis server.
-        e.g. redis://user:password@localhost:6379
-        http://pythonhosted.org/Flask-Caching/#configuring-flask-caching
-    """
+class ServerConfig(object):
     SECRET_KEY: str = os.getenv("SECRET_KEY") \
         or empty_str_cast(config_ini["server"]["SECRET_KEY"]) \
         or gen_secret_key()
@@ -109,23 +75,7 @@ class Config(object):
         # Override the threshold of cached values on the filesystem. The default is 500. Don't change unless you know what you're doing.
         CACHE_THRESHOLD: int = 0
 
-    """
-    === SECURITY ===
-
-    SESSION_COOKIE_HTTPONLY:
-        Controls if cookies should be set with the HttpOnly flag. Defaults to True
-
-    PERMANENT_SESSION_LIFETIME:
-        The lifetime of a session. The default is 604800 seconds (7 days).
-
-    TRUSTED_PROXIES:
-        Defines a set of regular expressions used for finding a user's IP address if the CTFd instance
-        is behind a proxy. If you are running a CTF and users are on the same network as you, you may choose to remove
-        some proxies from the list.
-
-        CTFd only uses IP addresses for cursory tracking purposes. It is ill-advised to do anything complicated based
-        solely on IP addresses unless you know what you are doing.
-    """
+    # === SECURITY ===
     SESSION_COOKIE_HTTPONLY: bool = process_boolean_str(os.getenv("SESSION_COOKIE_HTTPONLY")) \
         or config_ini["security"].getboolean("SESSION_COOKIE_HTTPONLY") \
         or True
@@ -138,6 +88,15 @@ class Config(object):
         or config_ini["security"].getint("PERMANENT_SESSION_LIFETIME") \
         or 604800
 
+    """
+    TRUSTED_PROXIES:
+    Defines a set of regular expressions used for finding a user's IP address if the CTFd instance
+    is behind a proxy. If you are running a CTF and users are on the same network as you, you may choose to remove
+    some proxies from the list.
+
+    CTFd only uses IP addresses for cursory tracking purposes. It is ill-advised to do anything complicated based
+    solely on IP addresses unless you know what you are doing.
+    """
     TRUSTED_PROXIES = [
         r"^127\.0\.0\.1$",
         # Remove the following proxies if you do not trust the local network
@@ -150,41 +109,7 @@ class Config(object):
         r"^192\.168\.",
     ]
 
-    """
-    === EMAIL ===
-
-    MAILFROM_ADDR:
-        The email address that emails are sent from if not overridden in the configuration panel.
-
-    MAIL_SERVER:
-        The mail server that emails are sent from if not overriden in the configuration panel.
-
-    MAIL_PORT:
-        The mail port that emails are sent from if not overriden in the configuration panel.
-
-    MAIL_USEAUTH
-        Whether or not to use username and password to authenticate to the SMTP server
-
-    MAIL_USERNAME
-        The username used to authenticate to the SMTP server if MAIL_USEAUTH is defined
-
-    MAIL_PASSWORD
-        The password used to authenticate to the SMTP server if MAIL_USEAUTH is defined
-
-    MAIL_TLS
-        Whether to connect to the SMTP server over TLS
-
-    MAIL_SSL
-        Whether to connect to the SMTP server over SSL
-
-    MAILGUN_API_KEY
-        Mailgun API key to send email over Mailgun. As of CTFd v3, Mailgun integration is deprecated.
-        Installations using the Mailgun API should migrate over to SMTP settings.
-
-    MAILGUN_BASE_URL
-        Mailgun base url to send email over Mailgun. As of CTFd v3, Mailgun integration is deprecated.
-        Installations using the Mailgun API should migrate over to SMTP settings.
-    """
+    # === EMAIL ===
     MAILFROM_ADDR: str = os.getenv("MAILFROM_ADDR") \
         or config_ini["email"]["MAILFROM_ADDR"] \
         or "noreply@ctfd.io"
@@ -216,38 +141,12 @@ class Config(object):
     MAILGUN_BASE_URL: str = os.getenv("MAILGUN_BASE_URL") \
         or empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
 
-    """
-    === LOGS ===
-    LOG_FOLDER:
-        The location where logs are written. These are the logs for CTFd key submissions, registrations, and logins.
-        The default location is the CTFd/logs folder.
-    """
+    # === LOGS ===
     LOG_FOLDER: str = os.getenv("LOG_FOLDER") \
         or empty_str_cast(config_ini["logs"]["LOG_FOLDER"]) \
         or os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
 
-    """
-    === UPLOADS ===
-
-    UPLOAD_PROVIDER:
-        Specifies the service that CTFd should use to store files.
-
-    UPLOAD_FOLDER:
-        The location where files are uploaded. The default destination is the CTFd/uploads folder.
-
-    AWS_ACCESS_KEY_ID:
-        AWS access token used to authenticate to the S3 bucket.
-
-    AWS_SECRET_ACCESS_KEY:
-        AWS secret token used to authenticate to the S3 bucket.
-
-    AWS_S3_BUCKET:
-        The unique identifier for your S3 bucket.
-
-    AWS_S3_ENDPOINT_URL:
-        A URL pointing to a custom S3 implementation.
-
-    """
+    # === UPLOADS ===
     UPLOAD_PROVIDER: str = os.getenv("UPLOAD_PROVIDER") \
         or empty_str_cast(config_ini["uploads"]["UPLOAD_PROVIDER"]) \
         or "filesystem"
@@ -269,45 +168,7 @@ class Config(object):
         AWS_S3_ENDPOINT_URL: str = os.getenv("AWS_S3_ENDPOINT_URL") \
             or empty_str_cast(config_ini["uploads"]["AWS_S3_ENDPOINT_URL"])
 
-    """
-    === OPTIONAL ===
-
-    REVERSE_PROXY:
-        Specifies whether CTFd is behind a reverse proxy or not. Set to True if using a reverse proxy like nginx.
-        You can also specify a comma seperated set of numbers specifying the reverse proxy configuration settings.
-
-        See https://werkzeug.palletsprojects.com/en/0.15.x/middleware/proxy_fix/#werkzeug.middleware.proxy_fix.ProxyFix.
-        For example to configure `x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1` specify `1,1,1,1,1`.
-
-        Alternatively if you specify `true` CTFd will default to the above behavior with all proxy settings set to 1.
-
-    TEMPLATES_AUTO_RELOAD:
-        Specifies whether Flask should check for modifications to templates and reload them automatically. Defaults True.
-
-    SQLALCHEMY_TRACK_MODIFICATIONS:
-        Automatically disabled to suppress warnings and save memory. You should only enable this if you need it. Defaults False.
-
-    SWAGGER_UI:
-        Enable the Swagger UI endpoint at /api/v1/
-
-    UPDATE_CHECK:
-        Specifies whether or not CTFd will check whether or not there is a new version of CTFd. Defaults True.
-
-    APPLICATION_ROOT:
-        Specifies what path CTFd is mounted under. It can be used to run CTFd in a subdirectory.
-        Example: /ctfd
-
-    HTML_SANITIZATION:
-        Specifies whether CTFd should sanitize HTML content from pages and descriptions
-
-    SERVER_SENT_EVENTS:
-        Specifies whether or not to enable to server-sent events based Notifications system.
-
-    SQLALCHEMY_ENGINE_OPTIONS:
-        A dictionary of keyword args to send to the underlying SQLAlchemy create_engine() call.
-        https://docs.sqlalchemy.org/en/13/core/engines.html#sqlalchemy.create_engine
-        https://flask-sqlalchemy.palletsprojects.com/en/2.x/config/#configuration-keys
-    """
+    # === OPTIONAL ===
     REVERSE_PROXY: bool = process_boolean_str(os.getenv("REVERSE_PROXY")) \
         or empty_str_cast(config_ini["optional"]["REVERSE_PROXY"]) \
         or False
@@ -352,12 +213,7 @@ class Config(object):
                 or True,  # noqa: E131
         }
 
-    """
-    === OAUTH ===
-
-    MajorLeagueCyber Integration
-        Register an event at https://majorleaguecyber.org/ and use the Client ID and Client Secret here
-    """
+    # === OAUTH ===
     OAUTH_CLIENT_ID: str = os.getenv("OAUTH_CLIENT_ID") \
         or empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
     OAUTH_CLIENT_SECRET: str = os.getenv("OAUTH_CLIENT_SECRET") \
@@ -365,7 +221,7 @@ class Config(object):
 # fmt: on
 
 
-class TestingConfig(Config):
+class TestingConfig(ServerConfig):
     SECRET_KEY = "AAAAAAAAAAAAAAAAAAAA"
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
@@ -377,3 +233,15 @@ class TestingConfig(Config):
     CACHE_TYPE = "simple"
     CACHE_THRESHOLD = 500
     SAFE_MODE = True
+
+
+# Actually initialize ServerConfig to allow us to add more attributes on
+Config = ServerConfig()
+for k, v in config_ini.items("extra"):
+    # Cast numeric values to their appropriate type
+    if v.isdigit():
+        setattr(Config, k, int(v))
+    elif v.replace(".", "", 1).isdigit():
+        setattr(Config, k, float(v))
+    else:
+        setattr(Config, k, v)
