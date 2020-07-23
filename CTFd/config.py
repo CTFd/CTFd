@@ -45,12 +45,13 @@ def gen_secret_key():
 
 
 config_ini = configparser.ConfigParser()
+config_ini.optionxform = str  # Makes the key value case-insensitive
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.ini")
 config_ini.read(path)
 
 
 # fmt: off
-class Config(object):
+class ServerConfig(object):
     """
     CTFd Configuration Object
     """
@@ -365,7 +366,7 @@ class Config(object):
 # fmt: on
 
 
-class TestingConfig(Config):
+class TestingConfig(ServerConfig):
     SECRET_KEY = "AAAAAAAAAAAAAAAAAAAA"
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
@@ -377,3 +378,15 @@ class TestingConfig(Config):
     CACHE_TYPE = "simple"
     CACHE_THRESHOLD = 500
     SAFE_MODE = True
+
+
+# Actually initialize ServerConfig to allow us to add more attributes on
+Config = ServerConfig()
+for k, v in config_ini.items("extra"):
+    # Cast numeric values to their appropriate type
+    if v.isdigit():
+        setattr(Config, k, int(v))
+    elif v.replace(".", "", 1).isdigit():
+        setattr(Config, k, float(v))
+    else:
+        setattr(Config, k, v)
