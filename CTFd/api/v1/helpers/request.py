@@ -1,7 +1,7 @@
 from functools import wraps
 
 from flask import request
-from pydantic import create_model, ValidationError
+from pydantic import ValidationError, create_model
 
 ARG_LOCATIONS = {
     "query": lambda: request.args,
