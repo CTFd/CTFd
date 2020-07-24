@@ -27,6 +27,7 @@ from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 
 __version__ = "3.0.0b3"
+__channel__ = "oss"
 
 
 class CTFdRequest(Request):
@@ -209,6 +210,7 @@ def create_app(config="CTFd.config.Config"):
 
         app.db = db
         app.VERSION = __version__
+        app.CHANNEL = __channel__
 
         from CTFd.cache import cache
 
