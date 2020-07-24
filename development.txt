@@ -18,4 +18,4 @@ isort==4.3.21
 flake8-isort==3.0.0
 Faker==4.1.0
 pipdeptree==0.13.2
-black==19.3b0
+black==19.10b0

@@ -1,7 +1,7 @@
 lint:
 	flake8 --ignore=E402,E501,E712,W503,E203 --exclude=CTFd/uploads CTFd/ migrations/ tests/
 	yarn lint
-	black --check --exclude=CTFd/uploads --exclude=node_modules .
+	black --check --diff --exclude=CTFd/uploads --exclude=node_modules .
 	prettier --check 'CTFd/themes/**/assets/**/*'
 	prettier --check '**/*.md'
 
