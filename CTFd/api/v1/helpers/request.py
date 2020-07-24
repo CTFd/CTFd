@@ -1,7 +1,7 @@
 from functools import wraps
 
 from flask import request
-from pydantic import create_model
+from pydantic import ValidationError, create_model
 
 ARG_LOCATIONS = {
     "query": lambda: request.args,
@@ -41,7 +41,18 @@ def validate_args(spec, location):
         @wraps(func)
         def wrapper(*args, **kwargs):
             data = ARG_LOCATIONS[location]()
-            loaded = spec(**data).dict(exclude_unset=True)
+            try:
+                # Try to load data according to pydantic spec
+                loaded = spec(**data).dict(exclude_unset=True)
+            except ValidationError as e:
+                # Handle reporting errors when invalid
+                resp = {}
+                errors = e.errors()
+                for err in errors:
+                    loc = err["loc"][0]
+                    msg = err["msg"]
+                    resp[loc] = msg
+                return {"success": False, "errors": resp}, 400
             return func(*args, loaded, **kwargs)
 
         return wrapper
