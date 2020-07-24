@@ -50,9 +50,10 @@ def update_check(force=False):
                 "team_count": Teams.query.count(),
                 "theme": get_config("ctf_theme"),
                 "upload_provider": get_app_config("UPLOAD_PROVIDER"),
+                "channel": app.CHANNEL,
             }
-            check = requests.post(
-                "https://versioning.ctfd.io/", json=params, timeout=0.1
+            check = requests.get(
+                "https://versioning.ctfd.io/check", params=params, timeout=0.1
             ).json()
         except requests.exceptions.RequestException:
             pass

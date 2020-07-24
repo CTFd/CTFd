@@ -14,7 +14,7 @@ def test_update_check_is_called():
         assert get_config("version_latest") is None
 
 
-@patch.object(requests, "post")
+@patch.object(requests, "get")
 def test_update_check_identifies_update(fake_get_request):
     """Update checks properly identify new versions"""
     app = create_ctfd()
