@@ -8,7 +8,7 @@ The major changes in CTFd v3 are as follows with the detailed changelog beneath:
 
 - ## Server Side HTML/Markdown Rendering
 
-HTML rendering in some cases (challenge description rendering, hint content rendering) has been moved to the server side. Previously it was rendered by the browser but this led to a lot of duplicated behavior and complexity in some plugins. Instead, this content rendering has been moved to the server side. This allows CTFd to take more advantage of theme content.
+HTML rendering in some cases (challenge description rendering, hint content rendering) has been moved to the server side. Previously it was rendered by the browser but this led to a lot of duplicated behavior and complexity in some plugins. Rendering that HTML content on the server allows CTFd to take more advantage of theme content and reduce duplicated code across themes.
 
 In addition, HTML sanitization can be enabled on the CTFd installation to prevent the injection of malicious scripts in HTML content.
 
@@ -20,7 +20,7 @@ CTFd now uses CommonMark for HTML/Markdown rendering. In some cases, this can br
 
 CTFd no longer directly injects values into the global session object for a theme. You may have used this as `{{ nonce }}` or `{{ id }}`. Instead these values should be accessed via the `Session` global as so: `{{ Session.nonce }}`.
 
-All of the public facing forms in CTFd have been converted to form globals. You can access them via the `Form` global in Jinja. For example, `{{ Form.LoginForm }}`. A `{{ form.nonce() }}` function is available on all forms for easier access to the CSRF nonce as well.
+All of the public facing forms in CTFd have been converted to form globals with WTForms. You can access them via the `Form` global in Jinja. For example, `{{ Form.LoginForm }}`. A `{{ form.nonce() }}` function is available on all forms for easier access to the CSRF nonce as well.
 
 Old forms will still work if the nonce is updated to `{{ Session.nonce }}`.
 
@@ -38,7 +38,7 @@ CTFd v3 is Python 3 only.
 
 - ## Docker image based on Debian
 
-The Docker image used in CTFd is now based on Debian
+The Docker image used in CTFd is now based on Debian.
 
 - ## config.ini
 
