@@ -1,5 +1,7 @@
 # 3.0.0 / 2020-07-27
 
+## Changelog Summary
+
 The CTFd v3 Changelog represents the changes from v2.5.0 to v3. It is a summarized version of the changes that occured in all CTFd v3 beta/alpha releases.
 
 CTFd v3 contains some breaking changes but many plugins remain compatible. Themes will need some minor changes to be compatible with v3.
@@ -8,17 +10,19 @@ These changes are made with great consideration to existing installations and fo
 
 The major changes in CTFd v3 are as follows with the detailed changelog beneath:
 
-- ## Server Side HTML/Markdown Rendering
+- ### Server Side HTML/Markdown Rendering
 
 HTML rendering in some cases (challenge description rendering, hint content rendering) has been moved to the server side. Previously it was rendered by the browser but this led to a lot of duplicated behavior and complexity in some plugins. Rendering that HTML content on the server allows CTFd to take more advantage of theme content and reduce duplicated code across themes.
 
 In addition, HTML sanitization can be enabled on the CTFd installation to prevent the injection of malicious scripts in HTML content.
 
-- ## CommonMark
+- ### CommonMark
 
-CTFd now uses CommonMark for HTML/Markdown rendering. In some cases, this can break your HTML output. You can use our [development testing script](https://gist.github.com/ColdHeat/085c47359ab86c18864135a198cbe505) to check if your HTML output will change and correct it accordingly.
+CTFd now uses [CommonMark](https://commonmark.org/) for HTML/Markdown rendering. This leads to much more consistent rendering of HTML/Markdown content.
 
-- ## Forms, Nonces, Sessions
+In some cases, this can break your HTML output. You can use our [development testing script](https://gist.github.com/ColdHeat/085c47359ab86c18864135a198cbe505) to check if your HTML output will change and correct it accordingly.
+
+- ### Forms, Nonces, Sessions
 
 CTFd no longer directly injects values into the global session object for a theme. You may have used this as `{{ nonce }}` or `{{ id }}`. Instead these values should be accessed via the `Session` global as so: `{{ Session.nonce }}`.
 
@@ -28,23 +32,25 @@ Old forms will still work if the nonce used in the form is updated to `{{ Sessio
 
 Values provided by configuration and plugins can now be accessed via the `Configs` and `Plugins` globals. For example `{{ Configs.ctf_name }}` and `{{ Plugins.scripts }}`. See the `base.html` file of the core theme to get an idea of how to use these values.
 
-- ## Challenge Type Plugin Enhancements
+- ### Challenge Type Plugin Enhancements
 
 Challenge type plugins now have better re-useability with the rest of CTFd. Plugin code no longer needs to copy unchanged methods over from the base challenge plugin classes.
 
 In addition, challenge HTML is now rendered on the server side using a new `challenge.html` file provided by the current theme. This means that the theme effectively controls how a challenge should look overall, but the challenge plugin controls the overall content.
 
-- ## Python 3
+- ### Python 3
 
 CTFd v3 is Python 3 only.
 
-- ## Docker image based on Debian
+- ### Docker image based on Debian
 
 The Docker image used in CTFd is now based on Debian.
 
-- ## config.ini
+- ### config.ini
 
 Instead of editting `config.py` directly, it's now a better idea to edit `config.ini` or provide your configuration via environment variables
+
+## Detailed Changelog
 
 **General**
 
