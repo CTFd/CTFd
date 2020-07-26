@@ -1,8 +1,10 @@
-# 3.0.0 /
+# 3.0.0 / 2020-07-27
 
 The CTFd v3 Changelog represents the changes from v2.5.0 to v3. It is a summarized version of the changes that occured in all CTFd v3 beta/alpha releases.
 
-CTFd v3 contains some breaking changes but many plugins remain compatible. These changes are made with great consideration to existing installations and for the health of the overall CTFd project. If you rely on specific behavior, you can always download the last CTFd v2 release on Github. Official plugin updates will be sent to the email addresses on file.
+CTFd v3 contains some breaking changes but many plugins remain compatible. Themes will need some minor changes to be compatible with v3.
+
+These changes are made with great consideration to existing installations and for the health of the overall CTFd project. If you rely on specific behavior, you can always download the last CTFd v2 release on Github. Official plugin/theme updates will be sent to the email addresses on file.
 
 The major changes in CTFd v3 are as follows with the detailed changelog beneath:
 
@@ -20,9 +22,9 @@ CTFd now uses CommonMark for HTML/Markdown rendering. In some cases, this can br
 
 CTFd no longer directly injects values into the global session object for a theme. You may have used this as `{{ nonce }}` or `{{ id }}`. Instead these values should be accessed via the `Session` global as so: `{{ Session.nonce }}`.
 
-All of the public facing forms in CTFd have been converted to form globals with WTForms. You can access them via the `Form` global in Jinja. For example, `{{ Form.LoginForm }}`. A `{{ form.nonce() }}` function is available on all forms for easier access to the CSRF nonce as well.
+All of the public facing forms in CTFd have been converted to form globals with WTForms. You can access them via the `Form` global in Jinja. For example, `{{ Forms.auth.LoginForm() }}`. A `{{ form.nonce() }}` function is available on all forms for easier access to the CSRF nonce as well.
 
-Old forms will still work if the nonce is updated to `{{ Session.nonce }}`.
+Old forms will still work if the nonce used in the form is updated to `{{ Session.nonce }}`.
 
 Values provided by configuration and plugins can now be accessed via the `Configs` and `Plugins` globals. For example `{{ Configs.ctf_name }}` and `{{ Plugins.scripts }}`. See the `base.html` file of the core theme to get an idea of how to use these values.
 
