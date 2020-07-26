@@ -1,3 +1,33 @@
+# 3.0.0 /
+
+The CTFd v3 Changelog represents the changes from v2.5.0 to v3. It is a summarized version of the changes that occured in all CTFd v3 beta/alpha releases.
+
+CTFd v3 contains some breaking changes but many plugins remain compatible. The main points to know are:
+
+- CommonMark
+
+CTFd now uses CommonMark for HTML/Markdown rendering. In some cases, this can break your HTML output. You can use our [development testing script](https://gist.github.com/ColdHeat/085c47359ab86c18864135a198cbe505) to check if your HTML output will change and correct it accordingly.
+
+- Forms, Nonces, Sessions
+
+CTFd no longer directly injects values into the global session object. You may have used this as `{{ nonce }}` or `{{ id }}`. Instead these values should be accessed via the `Session` global as so: `{{ Session.nonce }}`.
+
+In addition, all of the public facing forms in CTFd have been converted to form globals. You can access them via the `Form` global in Jinja. For example, `{{ Form.LoginForm }}`. A `{{ form.nonce() }}` function is available on all forms for easier access to the CSRF nonce as well.
+
+- Challenge Type Plugin Enhancements
+
+
+**General**
+
+**API**
+
+**Admin Panel**
+
+**Miscellaneous**
+
+**Deployment**
+
+
 # 3.0.0b3 / 2020-07-22
 
 **General**
