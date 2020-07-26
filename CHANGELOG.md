@@ -2,7 +2,7 @@
 
 The CTFd v3 Changelog represents the changes from v2.5.0 to v3. It is a summarized version of the changes that occured in all CTFd v3 beta/alpha releases.
 
-CTFd v3 contains some breaking changes but many plugins remain compatible. These changes are made with great consideration to existing installations and for the health of the overall CTFd project.If you rely on specific behavior, you can always download the last CTFd v2 release on Github.
+CTFd v3 contains some breaking changes but many plugins remain compatible. These changes are made with great consideration to existing installations and for the health of the overall CTFd project. If you rely on specific behavior, you can always download the last CTFd v2 release on Github. Official plugin updates will be sent to the email addresses on the file.
 
 The major changes in CTFd v3 are as follows with the detailed changelog beneath:
 
@@ -43,7 +43,6 @@ The Docker image used in CTFd is now based on Debian
 - config.ini
 
 Instead of editting `config.py` directly, it's now a better idea to edit `config.ini`.
-
 
 **General**
 
@@ -127,7 +126,6 @@ Instead of editting `config.py` directly, it's now a better idea to edit `config
 - Documentation has been seperated out into a seperate repo (https://github.com/CTFd/docs).
 - Documentation hosting has moved from ReadTheDocs to Netlify
 - Any links in the codebase to help.ctfd.io have been changed to docs.ctfd.io.
-
 
 # 3.0.0b3 / 2020-07-22
 
