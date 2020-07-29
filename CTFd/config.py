@@ -3,6 +3,33 @@ import os
 from distutils.util import strtobool
 
 
+class EnvInterpolation(configparser.BasicInterpolation):
+    """Interpolation which expands environment variables in values."""
+
+    def before_get(self, parser, section, option, value, defaults):
+        value = super().before_get(parser, section, option, value, defaults)
+        envvar = os.getenv(option)
+        if value == "" and envvar:
+            return process_string_var(envvar)
+        else:
+            return value
+
+
+def process_string_var(value):
+    if value == "":
+        return None
+
+    if value.isdigit():
+        return int(value)
+    elif value.replace(".", "", 1).isdigit():
+        return float(value)
+
+    try:
+        return bool(strtobool(value))
+    except ValueError:
+        return value
+
+
 def process_boolean_str(value):
     if type(value) is bool:
         return value
@@ -44,7 +71,7 @@ def gen_secret_key():
     return key
 
 
-config_ini = configparser.ConfigParser()
+config_ini = configparser.ConfigParser(interpolation=EnvInterpolation())
 config_ini.optionxform = str  # Makes the key value case-insensitive
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.ini")
 config_ini.read(path)
@@ -52,16 +79,13 @@ config_ini.read(path)
 
 # fmt: off
 class ServerConfig(object):
-    SECRET_KEY: str = os.getenv("SECRET_KEY") \
-        or empty_str_cast(config_ini["server"]["SECRET_KEY"]) \
+    SECRET_KEY: str = empty_str_cast(config_ini["server"]["SECRET_KEY"]) \
         or gen_secret_key()
 
-    DATABASE_URL: str = os.getenv("DATABASE_URL") \
-        or empty_str_cast(config_ini["server"]["DATABASE_URL"]) \
+    DATABASE_URL: str = empty_str_cast(config_ini["server"]["DATABASE_URL"]) \
         or f"sqlite:///{os.path.dirname(os.path.abspath(__file__))}/ctfd.db"
 
-    REDIS_URL: str = os.getenv("REDIS_URL") \
-        or empty_str_cast(config_ini["server"]["REDIS_URL"])
+    REDIS_URL: str = empty_str_cast(config_ini["server"]["REDIS_URL"])
 
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     CACHE_REDIS_URL = REDIS_URL
@@ -76,16 +100,13 @@ class ServerConfig(object):
         CACHE_THRESHOLD: int = 0
 
     # === SECURITY ===
-    SESSION_COOKIE_HTTPONLY: bool = process_boolean_str(os.getenv("SESSION_COOKIE_HTTPONLY")) \
-        or config_ini["security"].getboolean("SESSION_COOKIE_HTTPONLY") \
+    SESSION_COOKIE_HTTPONLY: bool = config_ini["security"].getboolean("SESSION_COOKIE_HTTPONLY") \
         or True
 
-    SESSION_COOKIE_SAMESITE: str = os.getenv("SESSION_COOKIE_SAMESITE") \
-        or empty_str_cast(config_ini["security"]["SESSION_COOKIE_SAMESITE"]) \
+    SESSION_COOKIE_SAMESITE: str = empty_str_cast(config_ini["security"]["SESSION_COOKIE_SAMESITE"]) \
         or "Lax"
 
-    PERMANENT_SESSION_LIFETIME: int = int(os.getenv("PERMANENT_SESSION_LIFETIME", 0)) \
-        or config_ini["security"].getint("PERMANENT_SESSION_LIFETIME") \
+    PERMANENT_SESSION_LIFETIME: int = config_ini["security"].getint("PERMANENT_SESSION_LIFETIME") \
         or 604800
 
     """
@@ -110,114 +131,85 @@ class ServerConfig(object):
     ]
 
     # === EMAIL ===
-    MAILFROM_ADDR: str = os.getenv("MAILFROM_ADDR") \
-        or config_ini["email"]["MAILFROM_ADDR"] \
+    MAILFROM_ADDR: str = config_ini["email"]["MAILFROM_ADDR"] \
         or "noreply@ctfd.io"
 
-    MAIL_SERVER: str = os.getenv("MAIL_SERVER") \
-        or empty_str_cast(config_ini["email"]["MAIL_SERVER"])
+    MAIL_SERVER: str = empty_str_cast(config_ini["email"]["MAIL_SERVER"])
 
-    MAIL_PORT: str = os.getenv("MAIL_PORT") \
-        or empty_str_cast(config_ini["email"]["MAIL_PORT"])
+    MAIL_PORT: int = empty_str_cast(config_ini["email"]["MAIL_PORT"])
 
-    MAIL_USEAUTH: bool = process_boolean_str(os.getenv("MAIL_USEAUTH")) \
-        or process_boolean_str(config_ini["email"]["MAIL_USEAUTH"])
+    MAIL_USEAUTH: bool = process_boolean_str(config_ini["email"]["MAIL_USEAUTH"])
 
-    MAIL_USERNAME: str = os.getenv("MAIL_USERNAME") \
-        or empty_str_cast(config_ini["email"]["MAIL_USERNAME"])
+    MAIL_USERNAME: str = empty_str_cast(config_ini["email"]["MAIL_USERNAME"])
 
-    MAIL_PASSWORD: str = os.getenv("MAIL_PASSWORD") \
-        or empty_str_cast(config_ini["email"]["MAIL_PASSWORD"])
+    MAIL_PASSWORD: str = empty_str_cast(config_ini["email"]["MAIL_PASSWORD"])
 
-    MAIL_TLS: bool = process_boolean_str(os.getenv("MAIL_TLS")) \
-        or process_boolean_str(config_ini["email"]["MAIL_TLS"])
+    MAIL_TLS: bool = process_boolean_str(config_ini["email"]["MAIL_TLS"])
 
-    MAIL_SSL: bool = process_boolean_str(os.getenv("MAIL_SSL")) \
-        or process_boolean_str(config_ini["email"]["MAIL_SSL"])
+    MAIL_SSL: bool = process_boolean_str(config_ini["email"]["MAIL_SSL"])
 
-    MAILGUN_API_KEY: str = os.getenv("MAILGUN_API_KEY") \
-        or empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
+    MAILGUN_API_KEY: str = empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
 
-    MAILGUN_BASE_URL: str = os.getenv("MAILGUN_BASE_URL") \
-        or empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
+    MAILGUN_BASE_URL: str = empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
 
     # === LOGS ===
-    LOG_FOLDER: str = os.getenv("LOG_FOLDER") \
-        or empty_str_cast(config_ini["logs"]["LOG_FOLDER"]) \
+    LOG_FOLDER: str = empty_str_cast(config_ini["logs"]["LOG_FOLDER"]) \
         or os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
 
     # === UPLOADS ===
-    UPLOAD_PROVIDER: str = os.getenv("UPLOAD_PROVIDER") \
-        or empty_str_cast(config_ini["uploads"]["UPLOAD_PROVIDER"]) \
+    UPLOAD_PROVIDER: str = empty_str_cast(config_ini["uploads"]["UPLOAD_PROVIDER"]) \
         or "filesystem"
 
-    UPLOAD_FOLDER: str = os.getenv("UPLOAD_FOLDER") \
-        or empty_str_cast(config_ini["uploads"]["UPLOAD_FOLDER"]) \
+    UPLOAD_FOLDER: str = empty_str_cast(config_ini["uploads"]["UPLOAD_FOLDER"]) \
         or os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 
     if UPLOAD_PROVIDER == "s3":
-        AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID") \
-            or empty_str_cast(config_ini["uploads"]["AWS_ACCESS_KEY_ID"])
+        AWS_ACCESS_KEY_ID: str = empty_str_cast(config_ini["uploads"]["AWS_ACCESS_KEY_ID"])
 
-        AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY") \
-            or empty_str_cast(config_ini["uploads"]["AWS_SECRET_ACCESS_KEY"])
+        AWS_SECRET_ACCESS_KEY: str = empty_str_cast(config_ini["uploads"]["AWS_SECRET_ACCESS_KEY"])
 
-        AWS_S3_BUCKET: str = os.getenv("AWS_S3_BUCKET") \
-            or empty_str_cast(config_ini["uploads"]["AWS_S3_BUCKET"])
+        AWS_S3_BUCKET: str = empty_str_cast(config_ini["uploads"]["AWS_S3_BUCKET"])
 
-        AWS_S3_ENDPOINT_URL: str = os.getenv("AWS_S3_ENDPOINT_URL") \
-            or empty_str_cast(config_ini["uploads"]["AWS_S3_ENDPOINT_URL"])
+        AWS_S3_ENDPOINT_URL: str = empty_str_cast(config_ini["uploads"]["AWS_S3_ENDPOINT_URL"])
 
     # === OPTIONAL ===
-    REVERSE_PROXY: bool = process_boolean_str(os.getenv("REVERSE_PROXY")) \
-        or empty_str_cast(config_ini["optional"]["REVERSE_PROXY"]) \
+    REVERSE_PROXY: bool = empty_str_cast(config_ini["optional"]["REVERSE_PROXY"]) \
         or False
 
-    TEMPLATES_AUTO_RELOAD: bool = process_boolean_str(os.getenv("TEMPLATES_AUTO_RELOAD")) \
-        or empty_str_cast(config_ini["optional"]["TEMPLATES_AUTO_RELOAD"]) \
+    TEMPLATES_AUTO_RELOAD: bool = empty_str_cast(config_ini["optional"]["TEMPLATES_AUTO_RELOAD"]) \
         or True
 
-    SQLALCHEMY_TRACK_MODIFICATIONS: bool = process_boolean_str(os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS")) \
-        or empty_str_cast(config_ini["optional"]["SQLALCHEMY_TRACK_MODIFICATIONS"]) \
+    SQLALCHEMY_TRACK_MODIFICATIONS: bool = empty_str_cast(config_ini["optional"]["SQLALCHEMY_TRACK_MODIFICATIONS"]) \
         or False
 
-    SWAGGER_UI: bool = os.getenv("SWAGGER_UI") \
-        or empty_str_cast(config_ini["optional"]["SWAGGER_UI"]) \
+    SWAGGER_UI: bool = empty_str_cast(config_ini["optional"]["SWAGGER_UI"]) \
         or False
 
     SWAGGER_UI_ENDPOINT: str = "/" if SWAGGER_UI else None
 
-    UPDATE_CHECK: bool = process_boolean_str(os.getenv("UPDATE_CHECK")) \
-        or empty_str_cast(config_ini["optional"]["UPDATE_CHECK"]) \
+    UPDATE_CHECK: bool = empty_str_cast(config_ini["optional"]["UPDATE_CHECK"]) \
         or True
 
-    APPLICATION_ROOT: str = os.getenv("APPLICATION_ROOT") \
-        or empty_str_cast(config_ini["optional"]["APPLICATION_ROOT"]) \
+    APPLICATION_ROOT: str = empty_str_cast(config_ini["optional"]["APPLICATION_ROOT"]) \
         or "/"
 
-    SERVER_SENT_EVENTS: bool = process_boolean_str(os.getenv("SERVER_SENT_EVENTS")) \
-        or empty_str_cast(config_ini["optional"]["SERVER_SENT_EVENTS"]) \
+    SERVER_SENT_EVENTS: bool = empty_str_cast(config_ini["optional"]["SERVER_SENT_EVENTS"]) \
         or True
 
-    HTML_SANITIZATION: bool = process_boolean_str(os.getenv("HTML_SANITIZATION")) \
-        or empty_str_cast(config_ini["optional"]["HTML_SANITIZATION"]) \
+    HTML_SANITIZATION: bool = empty_str_cast(config_ini["optional"]["HTML_SANITIZATION"]) \
         or False
 
     if DATABASE_URL.startswith("sqlite") is False:
         SQLALCHEMY_ENGINE_OPTIONS = {
-            "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 0))
-                or int(empty_str_cast(config_ini["optional"]["SQLALCHEMY_MAX_OVERFLOW"], default=0))  # noqa: E131
+            "max_overflow": int(empty_str_cast(config_ini["optional"]["SQLALCHEMY_MAX_OVERFLOW"], default=0))  # noqa: E131
                 or 20,  # noqa: E131
-            "pool_pre_ping": process_boolean_str(os.getenv("SQLALCHEMY_POOL_PRE_PING"))
-                or empty_str_cast(config_ini["optional"]["SQLALCHEMY_POOL_PRE_PING"])  # noqa: E131
+            "pool_pre_ping": empty_str_cast(config_ini["optional"]["SQLALCHEMY_POOL_PRE_PING"])  # noqa: E131
                 or True,  # noqa: E131
         }
 
     # === OAUTH ===
-    OAUTH_CLIENT_ID: str = os.getenv("OAUTH_CLIENT_ID") \
-        or empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
-    OAUTH_CLIENT_SECRET: str = os.getenv("OAUTH_CLIENT_SECRET") \
-        or empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_SECRET"])
+    OAUTH_CLIENT_ID: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
+    OAUTH_CLIENT_SECRET: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_SECRET"])
 # fmt: on
 
 
@@ -238,10 +230,4 @@ class TestingConfig(ServerConfig):
 # Actually initialize ServerConfig to allow us to add more attributes on
 Config = ServerConfig()
 for k, v in config_ini.items("extra"):
-    # Cast numeric values to their appropriate type
-    if v.isdigit():
-        setattr(Config, k, int(v))
-    elif v.replace(".", "", 1).isdigit():
-        setattr(Config, k, float(v))
-    else:
-        setattr(Config, k, v)
+    setattr(Config, k, process_string_var(v))
