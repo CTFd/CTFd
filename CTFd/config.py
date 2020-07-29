@@ -10,9 +10,24 @@ class EnvInterpolation(configparser.BasicInterpolation):
         value = super().before_get(parser, section, option, value, defaults)
         envvar = os.getenv(option)
         if value == "" and envvar:
-            return envvar
+            return process_string_var(envvar)
         else:
             return value
+
+
+def process_string_var(value):
+    if value == "":
+        return None
+
+    if value.isdigit():
+        return int(value)
+    elif value.replace(".", "", 1).isdigit():
+        return float(value)
+
+    try:
+        return bool(strtobool(value))
+    except ValueError:
+        return value
 
 
 def process_boolean_str(value):
@@ -121,7 +136,7 @@ class ServerConfig(object):
 
     MAIL_SERVER: str = empty_str_cast(config_ini["email"]["MAIL_SERVER"])
 
-    MAIL_PORT: str = empty_str_cast(config_ini["email"]["MAIL_PORT"])
+    MAIL_PORT: int = empty_str_cast(config_ini["email"]["MAIL_PORT"])
 
     MAIL_USEAUTH: bool = process_boolean_str(config_ini["email"]["MAIL_USEAUTH"])
 
@@ -215,10 +230,4 @@ class TestingConfig(ServerConfig):
 # Actually initialize ServerConfig to allow us to add more attributes on
 Config = ServerConfig()
 for k, v in config_ini.items("extra"):
-    # Cast numeric values to their appropriate type
-    if v.isdigit():
-        setattr(Config, k, int(v))
-    elif v.replace(".", "", 1).isdigit():
-        setattr(Config, k, float(v))
-    else:
-        setattr(Config, k, v)
+    setattr(Config, k, process_string_var(v))
