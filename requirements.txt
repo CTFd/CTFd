@@ -16,7 +16,7 @@ gunicorn==19.9.0
 normality==2.0.0
 dataset==1.1.2
 mistune==0.8.4
-netaddr==0.7.19
+netaddr==0.8.0
 redis==3.3.11
 datafreeze==0.1.0
 gevent==1.4.0
