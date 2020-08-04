@@ -30,10 +30,18 @@ def check_score_visibility(f):
                     return redirect(url_for("auth.login", next=request.full_path))
 
         elif v == ScoreVisibilityTypes.HIDDEN:
-            return (
-                render_template("errors/403.html", error="Scores are currently hidden"),
-                403,
-            )
+            if is_admin():
+                return f(*args, **kwargs)
+            else:
+                if request.content_type == "application/json":
+                    abort(403)
+                else:
+                    return (
+                        render_template(
+                            "errors/403.html", error="Scores are currently hidden"
+                        ),
+                        403,
+                    )
 
         elif v == ScoreVisibilityTypes.ADMINS:
             if is_admin():
