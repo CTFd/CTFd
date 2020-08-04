@@ -23,23 +23,23 @@ def test_admins_can_see_scores_with_hidden_scores():
         set_config("score_visibility", "hidden")
 
         # Users can see their own data
-        r = user.get("/api/v1/users/me/fails")
+        r = user.get("/api/v1/users/me/fails", json="")
         assert r.status_code == 200
-        r = user.get("/api/v1/users/me/solves")
+        r = user.get("/api/v1/users/me/solves", json="")
         assert r.status_code == 200
 
         # Users cannot see public data
-        r = user.get("/api/v1/users/2/solves")
+        r = user.get("/api/v1/users/2/solves", json="")
         assert r.status_code == 403
-        r = user.get("/api/v1/users/2/fails")
+        r = user.get("/api/v1/users/2/fails", json="")
         assert r.status_code == 403
         r = user.get("/scoreboard")
         assert r.status_code == 403
-        r = user.get("/api/v1/scoreboard")
+        r = user.get("/api/v1/scoreboard", json="")
         assert r.status_code == 403
 
         # Admins can see user data
-        r = admin.get("/api/v1/users/2/fails")
+        r = admin.get("/api/v1/users/2/fails", json="")
         assert r.status_code != 403
 
         # Admins can see the scoreboard
@@ -48,7 +48,7 @@ def test_admins_can_see_scores_with_hidden_scores():
         assert "Scores are not currently visible to users" in r.get_data(as_text=True)
 
         # Admins can see the scoreboard
-        r = admin.get("/api/v1/scoreboard")
+        r = admin.get("/api/v1/scoreboard", json="")
         assert r.status_code != 403
 
     destroy_ctfd(app)
