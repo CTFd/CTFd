@@ -9,9 +9,26 @@ class HintSchema(ma.ModelSchema):
         dump_only = ("id", "type", "html")
 
     views = {
-        "locked": ["id", "type", "challenge", "cost"],
-        "unlocked": ["id", "type", "challenge", "content", "html", "cost"],
-        "admin": ["id", "type", "challenge", "content", "html", "cost", "requirements"],
+        "locked": ["id", "type", "challenge", "challenge_id", "cost"],
+        "unlocked": [
+            "id",
+            "type",
+            "challenge",
+            "challenge_id",
+            "content",
+            "html",
+            "cost",
+        ],
+        "admin": [
+            "id",
+            "type",
+            "challenge",
+            "challenge_id",
+            "content",
+            "html",
+            "cost",
+            "requirements",
+        ],
     }
 
     def __init__(self, view=None, *args, **kwargs):
