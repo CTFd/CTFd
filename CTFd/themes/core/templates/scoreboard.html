@@ -15,6 +15,7 @@
 		</div>
 	</div>
 
+	{% cache 60, "public_scoreboard_table" %}
 	{% if standings %}
 	<div id="scoreboard" class="row">
 		<div class="col-md-12">
@@ -27,34 +28,35 @@
 					</tr>
 				</thead>
 				<tbody>
-				{% for standing in standings %}
-					<tr>
-						<th scope="row" class="text-center">{{ loop.index }}</th>
-						<td>
-							<a href="{{ generate_account_url(standing.account_id) }}">
-								{{ standing.name | truncate(50) }}
+					{% for standing in standings %}
+						<tr>
+							<th scope="row" class="text-center">{{ loop.index }}</th>
+							<td>
+								<a href="{{ generate_account_url(standing.account_id) }}">
+									{{ standing.name | truncate(50) }}
 
-								{% if standing.oauth_id %}
-									{% if Configs.user_mode == 'teams' %}
-									<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
-										<span class="badge badge-primary">Official</span>
-									</a>
-									{% elif Configs.user_mode == 'users' %}
-									<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
-										<span class="badge badge-primary">Official</span>
-									</a>
+									{% if standing.oauth_id %}
+										{% if Configs.user_mode == 'teams' %}
+										<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
+											<span class="badge badge-primary">Official</span>
+										</a>
+										{% elif Configs.user_mode == 'users' %}
+										<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
+											<span class="badge badge-primary">Official</span>
+										</a>
+										{% endif %}
 									{% endif %}
-								{% endif %}
-							</a>
-						</td>
-						<td>{{ standing.score }}</td>
-					</tr>
-				{% endfor %}
+								</a>
+							</td>
+							<td>{{ standing.score }}</td>
+						</tr>
+					{% endfor %}
 				</tbody>
 			</table>
 		</div>
 	</div>
 	{% endif %}
+	{% endcache %}
 </div>
 {% endblock %}
 

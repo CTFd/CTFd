@@ -1,5 +1,5 @@
 from flask import request
-from flask_caching import Cache
+from flask_caching import Cache, make_template_fragment_key
 
 cache = Cache()
 
@@ -55,10 +55,12 @@ def clear_standings():
     cache.delete_memoized(get_team_place)
 
     # Clear out HTTP request responses
-    cache.delete(make_cache_key(path="scoreboard.listing"))
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardList.endpoint))
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardDetail.endpoint))
     cache.delete_memoized(ScoreboardList.get)
+
+    # Clear out scoreboard templates
+    cache.delete(make_template_fragment_key("public_scoreboard_table"))
 
 
 def clear_pages():

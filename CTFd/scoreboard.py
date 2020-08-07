@@ -13,7 +13,6 @@ scoreboard = Blueprint("scoreboard", __name__)
 
 @scoreboard.route("/scoreboard")
 @check_score_visibility
-@cache.cached(timeout=60, key_prefix=make_cache_key)
 def listing():
     infos = get_infos()
 
