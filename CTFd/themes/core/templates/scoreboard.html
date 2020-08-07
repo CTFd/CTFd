@@ -15,7 +15,7 @@
 		</div>
 	</div>
 
-	{% cache 60, "public_scoreboard_table" %}
+	{% cache 60, CacheKeys.PUBLIC_SCOREBOARD_TABLE %}
 	{% if standings %}
 	<div id="scoreboard" class="row">
 		<div class="col-md-12">
