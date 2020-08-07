@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template
 
-from CTFd.cache import cache, make_cache_key
 from CTFd.utils import config
 from CTFd.utils.config.visibility import scores_visible
 from CTFd.utils.decorators.visibility import check_score_visibility
