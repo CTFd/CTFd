@@ -154,6 +154,9 @@ def new():
 @authed_only
 @require_team_mode
 def private():
+    infos = get_infos()
+    errors = get_errors()
+
     user = get_current_user()
     if not user.team_id:
         return render_template("teams/team_enrollment.html")
@@ -167,6 +170,9 @@ def private():
     place = team.place
     score = team.score
 
+    if config.is_scoreboard_frozen():
+        infos.append("Scoreboard has been frozen")
+
     return render_template(
         "teams/private.html",
         solves=solves,
@@ -176,6 +182,8 @@ def private():
         score=score,
         place=place,
         score_frozen=config.is_scoreboard_frozen(),
+        infos=infos,
+        errors=errors,
     )
 
 
@@ -184,6 +192,7 @@ def private():
 @check_score_visibility
 @require_team_mode
 def public(team_id):
+    infos = get_infos()
     errors = get_errors()
     team = Teams.query.filter_by(id=team_id, banned=False, hidden=False).first_or_404()
     solves = team.get_solves()
@@ -195,6 +204,9 @@ def public(team_id):
     if errors:
         return render_template("teams/public.html", team=team, errors=errors)
 
+    if config.is_scoreboard_frozen():
+        infos.append("Scoreboard has been frozen")
+
     return render_template(
         "teams/public.html",
         solves=solves,
@@ -203,4 +215,6 @@ def public(team_id):
         score=score,
         place=place,
         score_frozen=config.is_scoreboard_frozen(),
+        infos=infos,
+        errors=errors,
     )
