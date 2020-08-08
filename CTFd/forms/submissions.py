@@ -11,7 +11,7 @@ class SubmissionSearchForm(BaseForm):
         choices=[
             ("provided", "Provided"),
             ("id", "ID"),
-            ("user_id", "User ID"),
+            ("account_id", "Account ID"),
             ("challenge_id", "Challenge ID"),
             ("challenge_name", "Challenge Name"),
         ],

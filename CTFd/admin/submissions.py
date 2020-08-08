@@ -24,7 +24,10 @@ def submissions_listing(submission_type):
         model=Submissions,
         query=q,
         field=field,
-        extra_columns={"challenge_name": Challenges.name},
+        extra_columns={
+            "challenge_name": Challenges.name,
+            "account_id": Submissions.account_id,
+        },
     )
 
     Model = get_model()
@@ -38,7 +41,7 @@ def submissions_listing(submission_type):
             Submissions.account_id,
             Submissions.date,
             Challenges.name.label("challenge_name"),
-            Model.name.label("team_name"),
+            Model.name.label("account_name"),
         )
         .filter_by(**filters_by)
         .filter(*filters)

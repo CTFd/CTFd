@@ -84,8 +84,10 @@
 						<td class="text-center" id="{{ sub.id }}">
 							{{ sub.id }}
 						</td>
-						<td class="team" id="{{ sub.team_id }}">
-							<a href="{{ generate_account_url(sub.account_id, admin=True) }}">{{ sub.team_name }}</a>
+						<td class="team" id="{{ sub.account_id }}">
+							<a href="{{ generate_account_url(sub.account_id, admin=True) }}">
+								{{ sub.account_name }}
+							</a>
 						</td>
 						<td class="chal" id="{{ sub.challenge_id }}">
 							<a href="{{ url_for('admin.challenges_detail', challenge_id=sub.challenge_id) }}">
