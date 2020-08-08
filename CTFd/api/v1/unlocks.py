@@ -3,7 +3,6 @@ from typing import List
 from flask import request
 from flask_restx import Namespace, Resource
 
-from CTFd.api.v1.helpers.models import build_model_filters
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
@@ -18,6 +17,7 @@ from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
 )
+from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.user import get_current_user
 
 unlocks_namespace = Namespace("unlocks", description="Endpoint to retrieve Unlocks")

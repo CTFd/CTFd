@@ -8,7 +8,13 @@ from CTFd.forms.fields import SubmitField
 class SubmissionSearchForm(BaseForm):
     field = SelectField(
         "Search Field",
-        choices=[("provided", "Provided"), ("id", "ID")],
+        choices=[
+            ("provided", "Provided"),
+            ("id", "ID"),
+            ("user_id", "User ID"),
+            ("challenge_id", "Challenge ID"),
+            ("challenge_name", "Challenge Name"),
+        ],
         default="provided",
         validators=[InputRequired()],
     )

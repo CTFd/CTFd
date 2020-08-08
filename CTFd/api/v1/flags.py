@@ -3,7 +3,6 @@ from typing import List
 from flask import request
 from flask_restx import Namespace, Resource
 
-from CTFd.api.v1.helpers.models import build_model_filters
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
@@ -12,6 +11,7 @@ from CTFd.models import Flags, db
 from CTFd.plugins.flags import FLAG_CLASSES, get_flag_class
 from CTFd.schemas.flags import FlagSchema
 from CTFd.utils.decorators import admins_only
+from CTFd.utils.helpers.models import build_model_filters
 
 flags_namespace = Namespace("flags", description="Endpoint to retrieve Flags")
 
