@@ -2,7 +2,6 @@ from typing import List
 
 from flask_restx import Namespace, Resource
 
-from CTFd.api.v1.helpers.models import build_model_filters
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import (
@@ -14,6 +13,7 @@ from CTFd.constants import RawEnum
 from CTFd.models import Submissions, db
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import admins_only
+from CTFd.utils.helpers.models import build_model_filters
 
 submissions_namespace = Namespace(
     "submissions", description="Endpoint to retrieve Submission"

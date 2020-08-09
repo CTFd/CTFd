@@ -3,7 +3,6 @@ from typing import List
 from flask import request
 from flask_restx import Namespace, Resource
 
-from CTFd.api.v1.helpers.models import build_model_filters
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
@@ -12,6 +11,7 @@ from CTFd.models import Files, db
 from CTFd.schemas.files import FileSchema
 from CTFd.utils import uploads
 from CTFd.utils.decorators import admins_only
+from CTFd.utils.helpers.models import build_model_filters
 
 files_namespace = Namespace("files", description="Endpoint to retrieve Files")
 
