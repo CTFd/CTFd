@@ -22,42 +22,63 @@ from CTFd.utils.decorators import admins_only
 comments_namespace = Namespace("comments", description="Endpoint to retrieve Comments")
 
 
+def get_comment_model(data):
+    model = Comments
+    if "challenge_id" in data:
+        model = ChallengeComments
+    elif "user_id" in data:
+        model = UserComments
+    elif "team_id" in data:
+        model = TeamComments
+    elif "page_id" in data:
+        model = PageComments
+    else:
+        model = Comments
+    return model
+
+
 @comments_namespace.route("")
 class CommentList(Resource):
-    # @admins_only
-    # def get(self, query_args):
-    #     q = query_args.pop("q", None)
-    #     field = str(query_args.pop("field", None))
-    #     filters = build_model_filters(model=Tags, query=q, field=field)
+    @admins_only
+    @validate_args(
+        {
+            "challenge_id": (int, None),
+            "user_id": (int, None),
+            "team_id": (int, None),
+            "page_id": (int, None),
+            "q": (str, None),
+            "field": (
+                RawEnum(
+                    "CommentFields", {"content": "content"}
+                ),
+                None,
+            ),
+        },
+        location="query",
+    )
+    def get(self, query_args):
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        CommentModel = get_comment_model(data=query_args)
+        filters = build_model_filters(model=CommentModel, query=q, field=field)
 
-    #     tags = Tags.query.filter_by(**query_args).filter(*filters).all()
-    #     schema = TagSchema(many=True)
-    #     response = schema.dump(tags)
+        comments = CommentModel.query.filter_by(**query_args).filter(*filters).all()
+        schema = CommentSchema(many=True)
+        response = schema.dump(comments)
 
-    #     if response.errors:
-    #         return {"success": False, "errors": response.errors}, 400
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
 
-    #     return {"success": True, "data": response.data}
+        return {"success": True, "data": response.data}
 
     @admins_only
     def post(self):
         req = request.get_json()
-
+        # Always force author IDs to be the actual user
         req["author_id"] = session["id"]
+        CommentModel = get_comment_model(data=req)
 
-        model = Comments
-        if "challenge_id" in req:
-            model = ChallengeComments
-        elif "user_id" in req:
-            model = ChallengeComments
-        elif "team_id" in req:
-            model = TeamComments
-        elif "page_id" in req:
-            model = PageComments
-        else:
-            model = Comments
-
-        m = model(**req)
+        m = CommentModel(**req)
         db.session.add(m)
         db.session.commit()
 

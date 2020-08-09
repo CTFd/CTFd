@@ -64,6 +64,19 @@ const files = {
 };
 
 const comments = {
+  get_comments: extra_args => {
+    const CTFd = window.CTFd;
+    return CTFd.fetch("/api/v1/comments?" + $.param(extra_args), {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }).then(function(response) {
+      return response.json();
+    });
+  },
   add_comment: (comment, type, extra_args, cb) => {
     const CTFd = window.CTFd;
     let body = {
