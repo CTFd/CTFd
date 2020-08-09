@@ -63,8 +63,37 @@ const files = {
   }
 };
 
+const comments = {
+  add_comment: (comment, type, extra_args, cb) => {
+    const CTFd = window.CTFd;
+    let body = {
+      content: comment,
+      type: type,
+      ...extra_args
+    };
+    CTFd.fetch("/api/v1/comments", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(response) {
+        if (cb) {
+          cb(response);
+        }
+      });
+  }
+};
+
 const helpers = {
   files,
+  comments,
   utils,
   ezq
 };

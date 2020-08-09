@@ -423,6 +423,17 @@ $(() => {
   $("#flags-create-select").change(flagTypeSelect);
   $(".edit-flag").click(editFlagModal);
 
+  $("#comment-submit").click(function() {
+    let comment = $("#comment-input")
+      .val()
+      .trim();
+    if (comment.length > 0) {
+      helpers.comments.add_comment(comment, "challenge", {
+        challenge_id: window.CHALLENGE_ID
+      });
+    }
+  });
+
   $.get(CTFd.config.urlRoot + "/api/v1/challenges/types", function(response) {
     const data = response.data;
     loadChalTemplate(data["standard"]);

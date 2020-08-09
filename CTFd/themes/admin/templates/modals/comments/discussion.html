@@ -1,0 +1,25 @@
+<div class="row mb-3">
+    <div class="col-md-12">
+        <div class="comment">
+            <textarea class="form-control mb-2" rows="4" id="comment-input"></textarea>
+            <button class="btn btn-sm btn-success btn-outlined float-right" type="submit" id="comment-submit">
+                Comment
+            </button>
+        </div>
+    </div>
+</div>
+<div class="comments">
+    {% for comment in challenge.comments | reverse %}
+    <div class="card mb-2">
+        <div class="card-body">
+            <span class="card-text">{{ comment.html }}</span>
+            <small class="text-muted float-left">
+                <span>{{ comment.author.name }}</span>
+            </small>
+            <small class="text-muted float-right">
+                <span class="float-right" data-time="{{ comment.date | isoformat }}"></span>
+            </small>
+        </div>
+    </div>
+    {% endfor %}
+</div>
