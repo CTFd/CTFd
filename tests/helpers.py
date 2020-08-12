@@ -17,21 +17,26 @@ from CTFd.cache import cache, clear_standings
 from CTFd.config import TestingConfig
 from CTFd.models import (
     Awards,
+    ChallengeComments,
     ChallengeFiles,
     Challenges,
+    Comments,
     Fails,
     Files,
     Flags,
     Hints,
     Notifications,
+    PageComments,
     PageFiles,
     Pages,
     Solves,
     Tags,
+    TeamComments,
     Teams,
     Tokens,
     Tracking,
     Unlocks,
+    UserComments,
     Users,
 )
 
@@ -433,6 +438,24 @@ def gen_token(db, type="user", user_id=None, expiration=None):
     db.session.add(token)
     db.session.commit()
     return token
+
+
+def gen_comment(db, content="comment", author_id=None, type="challenge", **kwargs):
+    if type == "challenge":
+        model = ChallengeComments
+    elif type == "user":
+        model = UserComments
+    elif type == "team":
+        model = TeamComments
+    elif type == "page":
+        model = PageComments
+    else:
+        model = Comments
+
+    comment = model(content=content, author_id=author_id, type=type, **kwargs)
+    db.session.add(comment)
+    db.session.commit()
+    return comment
 
 
 def simulate_user_activity(db, user):
