@@ -1,3 +1,35 @@
+# 3.0.1 / 2020-08-12
+
+**General**
+
+- Fix issue where admins could not see user graphs/api data if score visibility was set to hidden
+
+**Admin Panel**
+
+- Allow the Admin Panel Submissions page to filter by Account IDs, Challenge IDs, and Challenge Names
+- Link to correct submissions for challenge from the challenge page
+
+**API**
+
+- Fix regression for creating hints via ctfcli. See #1582 for details. https://github.com/CTFd/CTFd/issues/1582.
+- Deprecate `CTFd.api.v1.helpers.models.build_model_filters` and wrap it to `CTFd.utils.helpers.models.build_model_filters`
+
+**Themes**
+
+- Fix team pages to use the correct core errors component
+
+**Plugins**
+
+- Fix issues with previewing challenges under some challenge type plugins
+
+**Deployment**
+
+- Values specified in `config.ini` will now supercede values specified via environment variable. Config behavior is as follows:
+  1. Config Key exists in `config.ini` and is set to a value. That value becomes the app config.
+  2. Config Key exists in `config.ini` but is set to an empty string. An envvar with the same name is looked up. The envvar's value is used as the app config.
+  3. If the envvar is not found, fall back to the default specified value in `config.py`
+  4. If there is no default, use None or an empty string
+
 # 3.0.0 / 2020-07-27
 
 ## Changelog Summary
