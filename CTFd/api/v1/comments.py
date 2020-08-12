@@ -22,6 +22,26 @@ from CTFd.utils.decorators import admins_only
 comments_namespace = Namespace("comments", description="Endpoint to retrieve Comments")
 
 
+CommentModel = sqlalchemy_to_pydantic(Comments)
+
+
+class CommentDetailedSuccessResponse(APIDetailedSuccessResponse):
+    data: CommentModel
+
+
+class CommentListSuccessResponse(APIListSuccessResponse):
+    data: List[CommentModel]
+
+
+comments_namespace.schema_model(
+    "CommentDetailedSuccessResponse", CommentDetailedSuccessResponse.apidoc()
+)
+
+comments_namespace.schema_model(
+    "CommentListSuccessResponse", CommentListSuccessResponse.apidoc()
+)
+
+
 def get_comment_model(data):
     model = Comments
     if "challenge_id" in data:
@@ -40,6 +60,16 @@ def get_comment_model(data):
 @comments_namespace.route("")
 class CommentList(Resource):
     @admins_only
+    @comments_namespace.doc(
+        description="Endpoint to list Comment objects in bulk",
+        responses={
+            200: ("Success", "CommentListSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     @validate_args(
         {
             "challenge_id": (int, None),
@@ -67,6 +97,16 @@ class CommentList(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @comments_namespace.doc(
+        description="Endpoint to create a Comment object",
+        responses={
+            200: ("Success", "CommentDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def post(self):
         req = request.get_json()
         # Always force author IDs to be the actual user
