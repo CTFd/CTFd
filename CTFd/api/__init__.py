@@ -3,6 +3,7 @@ from flask_restx import Api
 
 from CTFd.api.v1.awards import awards_namespace
 from CTFd.api.v1.challenges import challenges_namespace
+from CTFd.api.v1.comments import comments_namespace
 from CTFd.api.v1.config import configs_namespace
 from CTFd.api.v1.files import files_namespace
 from CTFd.api.v1.flags import flags_namespace
@@ -48,3 +49,4 @@ CTFd_API_v1.add_namespace(configs_namespace, "/configs")
 CTFd_API_v1.add_namespace(pages_namespace, "/pages")
 CTFd_API_v1.add_namespace(unlocks_namespace, "/unlocks")
 CTFd_API_v1.add_namespace(tokens_namespace, "/tokens")
+CTFd_API_v1.add_namespace(comments_namespace, "/comments")

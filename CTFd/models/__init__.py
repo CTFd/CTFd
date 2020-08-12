@@ -77,6 +77,7 @@ class Challenges(db.Model):
     tags = db.relationship("Tags", backref="challenge")
     hints = db.relationship("Hints", backref="challenge")
     flags = db.relationship("Flags", backref="challenge")
+    comments = db.relationship("ChallengeComments", backref="challenge")
 
     class alt_defaultdict(defaultdict):
         """
@@ -739,3 +740,44 @@ class Tokens(db.Model):
 
 class UserTokens(Tokens):
     __mapper_args__ = {"polymorphic_identity": "user"}
+
+
+class Comments(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(80), default="standard")
+    content = db.Column(db.Text)
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    author = db.relationship("Users", foreign_keys="Comments.author_id", lazy="select")
+
+    @property
+    def html(self):
+        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.helpers import markup
+
+        return markup(build_html(self.content, sanitize=True))
+
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+
+
+class ChallengeComments(Comments):
+    __mapper_args__ = {"polymorphic_identity": "challenge"}
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
+    )
+
+
+class UserComments(Comments):
+    __mapper_args__ = {"polymorphic_identity": "user"}
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+
+
+class TeamComments(Comments):
+    __mapper_args__ = {"polymorphic_identity": "team"}
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+
+
+class PageComments(Comments):
+    __mapper_args__ = {"polymorphic_identity": "page"}
+    page_id = db.Column(db.Integer, db.ForeignKey("pages.id", ondelete="CASCADE"))

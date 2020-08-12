@@ -65,6 +65,7 @@ function getJSConfig(root, type, entries, mode) {
 
   return {
     entry: out,
+    mode: mode,
     output: {
       path: path.resolve(__dirname, 'CTFd', root, 'static', type),
       publicPath: '/' + root + '/static/' + type,
@@ -147,7 +148,16 @@ function getJSConfig(root, type, entries, mode) {
             },
             cacheBusting: true,
           },
-        }
+        },
+        // This rule is magically used to load the <style> section of VueJS SFC.
+        // Don't really understand what magic Vue is using here but it works.
+        {
+          test: /\.css$/,
+          use: [
+            'vue-style-loader',
+            'css-loader'
+          ]
+        },
       ],
     },
     plugins: [
@@ -184,6 +194,7 @@ function getCSSConfig(root, type, entries, mode) {
 
   return {
     entry: out,
+    mode: mode,
     output: {
       path: path.resolve(__dirname, 'CTFd', root, 'static', type),
       publicPath: '/' + root + '/static/' + type,
@@ -208,13 +219,6 @@ function getCSSConfig(root, type, entries, mode) {
             }
           ]
         },
-        // {
-        //   test: /\.css$/,
-        //   use: [
-        //     'vue-style-loader',
-        //     'css-loader'
-        //   ]
-        // },
         {
           test: /\.(s?)css$/,
           use: [
