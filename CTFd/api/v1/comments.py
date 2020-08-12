@@ -47,12 +47,7 @@ class CommentList(Resource):
             "team_id": (int, None),
             "page_id": (int, None),
             "q": (str, None),
-            "field": (
-                RawEnum(
-                    "CommentFields", {"content": "content"}
-                ),
-                None,
-            ),
+            "field": (RawEnum("CommentFields", {"content": "content"}), None,),
         },
         location="query",
     )
@@ -88,3 +83,19 @@ class CommentList(Resource):
         db.session.close()
 
         return {"success": True, "data": response.data}
+
+
+@comments_namespace.route("/<comment_id>")
+class Comment(Resource):
+    @admins_only
+    @comments_namespace.doc(
+        description="Endpoint to delete a specific Comment object",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
+    def delete(self, comment_id):
+        comment = Comments.query.filter_by(id=comment_id).first_or_404()
+        db.session.delete(comment)
+        db.session.commit()
+        db.session.close()
+
+        return {"success": True}

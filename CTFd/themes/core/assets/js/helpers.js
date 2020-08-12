@@ -101,6 +101,19 @@ const comments = {
           cb(response);
         }
       });
+  },
+  delete_comment: comment_id => {
+    const CTFd = window.CTFd;
+    return CTFd.fetch(`/api/v1/comments/${comment_id}`, {
+      method: "DELETE",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }).then(function(response) {
+      return response.json();
+    });
   }
 };
 

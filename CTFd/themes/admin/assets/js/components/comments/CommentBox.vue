@@ -21,21 +21,37 @@
       </div>
     </div>
     <div class="comments">
-      <div
-        class="card mb-2"
-        v-for="comment in comments.slice().reverse()"
-        :key="comment.id"
-      >
-        <div class="card-body">
-          <div class="card-text" v-html="comment.html"></div>
-          <small class="text-muted float-left">
-            <span>{{ comment.author.name }}</span>
-          </small>
-          <small class="text-muted float-right">
-            <span class="float-right">{{ toLocalTime(comment.date) }}</span>
-          </small>
+      <transition-group name="comment-card">
+        <div
+          class="comment-card card mb-2"
+          v-for="comment in comments.slice().reverse()"
+          :key="comment.id"
+        >
+          <div class="card-body pl-0 pb-0 pt-2 pr-2">
+            <button
+              type="button"
+              class="close float-right"
+              aria-label="Close"
+              @click="deleteComment(comment.id)"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="card-text" v-html="comment.html"></div>
+            <small class="text-muted float-left">
+              <span>
+                <a :href="`${urlRoot}/admin/users/${comment.author_id}`">{{
+                  comment.author.name
+                }}</a>
+              </span>
+            </small>
+            <small class="text-muted float-right">
+              <span class="float-right">{{ toLocalTime(comment.date) }}</span>
+            </small>
+          </div>
         </div>
-      </div>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -54,7 +70,8 @@ export default {
   data: function() {
     return {
       comment: "",
-      comments: []
+      comments: [],
+      urlRoot: CTFd.config.urlRoot
     };
   },
   methods: {
@@ -87,6 +104,20 @@ export default {
           }
         );
       }
+      this.comment = "";
+    },
+    deleteComment: function(commentId) {
+      if (confirm("Are you sure you'd like to delete this comment?")) {
+        helpers.comments.delete_comment(commentId).then(response => {
+          if (response.success === true) {
+            for (let i = this.comments.length - 1; i >= 0; --i) {
+              if (this.comments[i].id == commentId) {
+                this.comments.splice(i, 1);
+              }
+            }
+          }
+        });
+      }
     }
   },
   created() {
@@ -94,3 +125,31 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.card .close {
+  opacity: 0;
+  transition: 0.2s;
+}
+.card:hover .close {
+  opacity: 0.5;
+}
+.close:hover {
+  opacity: 0.75 !important;
+}
+
+.comment-card-leave {
+  max-height: 200px;
+}
+.comment-card-leave-to {
+  max-height: 0;
+}
+.comment-card-active {
+  position: absolute;
+}
+.comment-card-enter-active,
+.comment-card-move,
+.comment-card-leave-active {
+  transition: all 0.3s;
+}
+</style>
