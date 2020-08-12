@@ -617,9 +617,7 @@ class Submissions(db.Model):
         return child_classes[type]
 
     def __repr__(self):
-        return "<Submission {}, {}, {}, {}>".format(
-            self.team_id, self.challenge_id, self.ip, self.provided
-        )
+        return f"<Submission id={self.id}, challenge_id={self.challenge_id}, ip={self.ip}, provided={self.provided}>"
 
 
 class Solves(Submissions):

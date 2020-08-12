@@ -3,7 +3,6 @@ from typing import List
 from flask import request
 from flask_restx import Namespace, Resource
 
-from CTFd.api.v1.helpers.models import build_model_filters
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
@@ -12,6 +11,7 @@ from CTFd.constants import RawEnum
 from CTFd.models import Pages, db
 from CTFd.schemas.pages import PageSchema
 from CTFd.utils.decorators import admins_only
+from CTFd.utils.helpers.models import build_model_filters
 
 pages_namespace = Namespace("pages", description="Endpoint to retrieve Pages")
 

@@ -3,6 +3,7 @@ from flask import render_template, request, url_for
 from CTFd.admin import admin
 from CTFd.models import Challenges, Submissions
 from CTFd.utils.decorators import admins_only
+from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modes import get_model
 
 
@@ -19,12 +20,15 @@ def submissions_listing(submission_type):
     field = request.args.get("field")
     page = abs(request.args.get("page", 1, type=int))
 
-    if q:
-        submissions = []
-        if Submissions.__mapper__.has_property(
-            field
-        ):  # The field exists as an exposed column
-            filters.append(getattr(Submissions, field).like("%{}%".format(q)))
+    filters = build_model_filters(
+        model=Submissions,
+        query=q,
+        field=field,
+        extra_columns={
+            "challenge_name": Challenges.name,
+            "account_id": Submissions.account_id,
+        },
+    )
 
     Model = get_model()
 
@@ -37,7 +41,7 @@ def submissions_listing(submission_type):
             Submissions.account_id,
             Submissions.date,
             Challenges.name.label("challenge_name"),
-            Model.name.label("team_name"),
+            Model.name.label("account_name"),
         )
         .filter_by(**filters_by)
         .filter(*filters)

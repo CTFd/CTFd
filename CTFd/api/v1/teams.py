@@ -4,7 +4,6 @@ from typing import List
 from flask import abort, request, session
 from flask_restx import Namespace, Resource
 
-from CTFd.api.v1.helpers.models import build_model_filters
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import (
@@ -22,6 +21,7 @@ from CTFd.utils.decorators.visibility import (
     check_account_visibility,
     check_score_visibility,
 )
+from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.user import get_current_team, get_current_user_type, is_admin
 
 teams_namespace = Namespace("teams", description="Endpoint to retrieve Teams")
