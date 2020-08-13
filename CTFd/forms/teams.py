@@ -20,12 +20,28 @@ class TeamRegisterForm(BaseForm):
 
 
 class TeamSettingsForm(BaseForm):
-    name = StringField("Team Name")
-    confirm = PasswordField("Current Password")
-    password = PasswordField("Team Password")
-    affiliation = StringField("Affiliation")
-    website = URLField("Website")
-    country = SelectField("Country", choices=SELECT_COUNTRIES_LIST)
+    name = StringField(
+        "Team Name", description="Your team's public name shown to other competitors"
+    )
+    password = PasswordField(
+        "New Team Password", description="Set a new team join password",
+    )
+    confirm = PasswordField(
+        "Confirm Password",
+        description="Provide your current team password (or your password) to update your team's password",
+    )
+    affiliation = StringField(
+        "Affiliation",
+        description="Your team's affiliation publicly shown to other competitors",
+    )
+    website = URLField(
+        "Website", description="Your team's website publicly shown to other competitors"
+    )
+    country = SelectField(
+        "Country",
+        choices=SELECT_COUNTRIES_LIST,
+        description="Your team's country publicly shown to other competitors",
+    )
     submit = SubmitField("Submit")
 
 

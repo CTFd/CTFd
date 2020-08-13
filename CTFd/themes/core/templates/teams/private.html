@@ -5,7 +5,7 @@
 
 {% block content %}
 	<div id="team-edit-modal" class="modal fade">
-		<div class="modal-dialog">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2 class="modal-action text-center w-100">Edit Team</h2>
@@ -17,28 +17,46 @@
 					{% with form = Forms.teams.TeamSettingsForm(obj=team) %}
 					<form id="team-info-form" method="POST">
 						<div class="form-group">
-							{{ form.name.label }}
+							<b>{{ form.name.label }}</b>
 							{{ form.name(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.name.description }}
+							</small>
 						</div>
 						<div class="form-group">
-							{{ form.confirm.label }}
-							{{ form.confirm(class="form-control") }}
-						</div>
-						<div class="form-group">
-							{{ form.password.label }}
+							<b>{{ form.password.label }}</b>
 							{{ form.password(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.password.description }}
+							</small>
 						</div>
 						<div class="form-group">
-							{{ form.website.label }}
+							<b>{{ form.confirm.label }}</b>
+							{{ form.confirm(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.confirm.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.website.label }}</b>
 							{{ form.website(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.website.description }}
+							</small>
 						</div>
 						<div class="form-group">
-							{{ form.affiliation.label }}
+							<b>{{ form.affiliation.label }}</b>
 							{{ form.affiliation(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.affiliation.description }}
+							</small>
 						</div>
 						<div class="form-group">
-							{{ form.country.label }}
+							<b>{{ form.country.label }}</b>
 							{{ form.country(class="form-control custom-select") }}
+							<small class="form-text text-muted">
+								{{ form.country.description }}
+							</small>
 						</div>
 						<div id="results">
 
