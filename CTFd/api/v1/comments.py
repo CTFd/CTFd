@@ -77,7 +77,7 @@ class CommentList(Resource):
             "team_id": (int, None),
             "page_id": (int, None),
             "q": (str, None),
-            "field": (RawEnum("CommentFields", {"content": "content"}), None,),
+            "field": (RawEnum("CommentFields", {"content": "content"}), None),
         },
         location="query",
     )

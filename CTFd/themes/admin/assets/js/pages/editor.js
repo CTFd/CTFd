@@ -6,6 +6,8 @@ import CTFd from "core/CTFd";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
 import { ezToast } from "core/ezq";
+import Vue from "vue/dist/vue.esm.browser";
+import CommentBox from "../components/comments/CommentBox.vue";
 
 function submit_form() {
   // Save the CodeMirror data to the Textarea
@@ -75,4 +77,14 @@ $(() => {
   $(".preview-page").click(function() {
     preview_page();
   });
+
+  // Insert CommentBox element
+  if (window.PAGE_ID) {
+    const commentBox = Vue.extend(CommentBox);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#comment-box").appendChild(vueContainer);
+    new commentBox({
+      propsData: { type: "page", id: window.PAGE_ID }
+    }).$mount(vueContainer);
+  }
 });
