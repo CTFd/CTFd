@@ -318,3 +318,7 @@ export function updateGraph(
   let chart = echarts.init(document.querySelector(target));
   chart.setOption(cfg.format(type, id, name, account_id, data));
 }
+
+export function disposeGraph(target) {
+  echarts.dispose(document.querySelector(target));
+}

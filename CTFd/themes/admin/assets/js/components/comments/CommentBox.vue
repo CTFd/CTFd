@@ -97,7 +97,7 @@ export default {
       if (comment.length > 0) {
         helpers.comments.add_comment(
           comment,
-          "challenge",
+          this.$props.type,
           this.getArgs(),
           () => {
             this.loadComments();
