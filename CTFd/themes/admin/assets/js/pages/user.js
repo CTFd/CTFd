@@ -455,19 +455,18 @@ $(() => {
   ({ type, id, name, account_id } = window.stats_data);
 
   let intervalId;
-  $("#user-statistics-modal").on('shown.bs.modal', function (_e) {
+  $("#user-statistics-modal").on("shown.bs.modal", function(_e) {
     createGraphs(type, id, name, account_id);
     intervalId = setInterval(() => {
       updateGraphs(type, id, name, account_id);
     }, 300000);
-  })
+  });
 
-  $("#user-statistics-modal").on('hidden.bs.modal', function (_e) {
-    // createGraphs(type, id, name, account_id);
+  $("#user-statistics-modal").on("hidden.bs.modal", function(_e) {
     clearInterval(intervalId);
-  })
+  });
 
-  $(".statistics-user").click(function (_event) {
+  $(".statistics-user").click(function(_event) {
     $("#user-statistics-modal").modal("toggle");
   });
 });
