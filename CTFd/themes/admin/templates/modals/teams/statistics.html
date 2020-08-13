@@ -1,0 +1,23 @@
+<div class="row min-vh-25">
+	{% if solves %}
+		<div id="keys-pie-graph" class="col-md-6 d-flex align-items-center">
+			<div class="text-center w-100">
+				<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+			</div>
+		</div>
+		<div id="categories-pie-graph" class="col-md-6 d-flex align-items-center">
+			<div class="text-center w-100">
+				<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+			</div>
+		</div>
+		<div id="score-graph" class="col-md-12 d-flex align-items-center">
+			<div class="text-center w-100">
+				<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+			</div>
+		</div>
+	{% else %}
+		<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">
+			No data yet
+		</h3>
+	{% endif %}
+</div>

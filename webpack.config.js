@@ -104,6 +104,13 @@ function getJSConfig(root, type, entries, mode) {
             priority: 1,
             reuseExistingChunk: true,
           },
+          components: {
+            name: 'components',
+            filename: `components.${ext}.js`,
+            test: /components/,
+            priority: 1,
+            reuseExistingChunk: true,
+          },
           default: {
             filename: `core.${ext}.js`,
             minChunks: 2,
