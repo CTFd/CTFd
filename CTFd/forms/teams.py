@@ -24,7 +24,7 @@ class TeamSettingsForm(BaseForm):
         "Team Name", description="Your team's public name shown to other competitors"
     )
     password = PasswordField(
-        "New Team Password", description="Set a new team join password",
+        "New Team Password", description="Set a new team join password"
     )
     confirm = PasswordField(
         "Confirm Password",
