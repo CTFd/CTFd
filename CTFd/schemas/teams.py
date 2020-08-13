@@ -142,10 +142,13 @@ class TeamSchema(ma.ModelSchema):
                 )
 
             if password and confirm:
-                test = verify_password(
+                test_team = verify_password(
                     plaintext=confirm, ciphertext=current_team.password
                 )
-                if test is True:
+                test_captain = verify_password(
+                    plaintext=confirm, ciphertext=current_user.password
+                )
+                if test_team is True or test_captain is True:
                     return data
                 else:
                     raise ValidationError(
