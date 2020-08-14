@@ -42,7 +42,7 @@ jobs:
         env:
             AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
             AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-            TESTING_DATABASE_URL: 'mysql+pymysql://root@localhost/ctfd'
+            TESTING_DATABASE_URL: 'mysql+pymysql://root@mysql/ctfd'
 
       - name: Codecov
         uses: codecov/codecov-action@v1.0.11
