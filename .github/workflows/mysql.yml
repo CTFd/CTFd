@@ -11,11 +11,11 @@ jobs:
       mysql:
         image: mysql
         ports:
-          - 3306
+          - 3306:3306
       redis:
         image: redis
         ports:
-          - 6379
+          - 6379:6379
 
     strategy:
       matrix:
@@ -42,7 +42,7 @@ jobs:
         env:
             AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
             AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-            TESTING_DATABASE_URL: mysql+pymysql://root@mysql/ctfd
+            TESTING_DATABASE_URL: mysql+pymysql://root@mysql:${{ job.services.mysql.ports[3306] }}/ctfd
 
       - name: Codecov
         uses: codecov/codecov-action@v1.0.11
