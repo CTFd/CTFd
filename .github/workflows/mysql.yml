@@ -9,11 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mysql
-        ports:
-          - 3306:3306
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       redis:
         image: redis
         ports:
@@ -44,7 +45,7 @@ jobs:
         env:
             AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
             AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-            TESTING_DATABASE_URL: mysql+pymysql://root:password@mysql:${{ job.services.mysql.ports[3306] }}/ctfd
+            TESTING_DATABASE_URL: mysql+pymysql://root:password@localhost:${{ job.services.mysql.ports[3306] }}/ctfd
 
       - name: Codecov
         uses: codecov/codecov-action@v1.0.11
