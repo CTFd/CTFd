@@ -781,3 +781,35 @@ class TeamComments(Comments):
 class PageComments(Comments):
     __mapper_args__ = {"polymorphic_identity": "page"}
     page_id = db.Column(db.Integer, db.ForeignKey("pages.id", ondelete="CASCADE"))
+
+
+class Fields(db.Model):
+    __tablename__ = "fields"
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Name of the field. Used as label.
+    name = db.Column(db.Text)
+
+    # What type of field it is (user or team)
+    type = db.Column(db.String(80), default="standard")
+
+    # The actual type of field (text, boolean)
+    field_type = db.Column(db.String(80))
+
+    # Help text used for the input
+    description = db.Column(db.Text)
+
+    # Required on form submission
+    required = db.Column(db.Boolean)
+
+    # show_on_profile
+    public = db.Column(db.Boolean)
+
+    # User can edit this field in settings. All fields should be edittable by an admin
+    editable = db.Column(db.Boolean)
+
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+
+
+class UserFields(Comments):
+    __mapper_args__ = {"polymorphic_identity": "user"}

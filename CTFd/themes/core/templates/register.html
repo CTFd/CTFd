@@ -37,6 +37,14 @@
 					{{ form.password(class="form-control", value=password) }}
 				</div>
 				{{ form.nonce() }}
+
+				{% for k, v in form.extra %}
+				<div class="form-group">
+					<b>{{ v.label }}</b>
+					{{ v(class="form-control") }}
+				</div>
+				{% endfor %}
+
 				<div class="row pt-3">
 					<div class="col-md-12">
 						{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}
