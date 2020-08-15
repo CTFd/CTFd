@@ -1,7 +1,9 @@
-from marshmallow import ValidationError, pre_load, validate
+from marshmallow import ValidationError, pre_load, pre_dump, validate
+from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 
-from CTFd.models import Users, ma
+from CTFd.models import Fields, FieldEntries, Users, ma
+from CTFd.schemas.fields import FieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.email import check_email_is_whitelisted
@@ -49,6 +51,7 @@ class UserSchema(ma.ModelSchema):
     )
     country = field_for(Users, "country", validate=[validate_country_code])
     password = field_for(Users, "password")
+    fields = Nested(FieldEntriesSchema(), partial=True, many=True)
 
     @pre_load
     def validate_name(self, data):
@@ -180,6 +183,48 @@ class UserSchema(ma.ModelSchema):
                 data.pop("password", None)
                 data.pop("confirm", None)
 
+    @pre_load
+    def validate_fields(self, data):
+        """
+        This validator is used to only allow users to update the field entry for their user.
+        It's not possible to exclude it because without the PK Marshmallow cannot load the right instance
+        """
+        current_user = get_current_user()
+        fields = data.get("fields")
+
+        if is_admin():
+            pass
+        else:
+            for f in fields:
+                # Remove any existing set
+                f.pop("id", None)
+                field_id = f.get("field_id")
+
+                # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
+                # field = Fields.query.filter_by(id=field_id).first_or_404()
+
+                # Get the existing field entry if one exists
+                entry = FieldEntries.query.filter_by(field_id=field.id, user_id=current_user.id).first()
+                if entry:
+                    f["id"] = entry.id
+
+    @pre_dump
+    def process_fields(self, obj):
+        """
+        Handle permissions levels for fields.
+
+        Admins can see all fields.
+        Users (self) can see their edittable and public fields
+        Public (user) can only see public fields
+        """
+        for i, entry in enumerate(obj.fields):
+            if self.view == "user":
+                if entry.field.public is False:
+                    del obj.fields[i]
+            elif self.view == "self":
+                if entry.field.editable is False and entry.field.public is False:
+                    del obj.fields[i]
+
     views = {
         "user": [
             "website",
@@ -189,6 +234,7 @@ class UserSchema(ma.ModelSchema):
             "bracket",
             "id",
             "oauth_id",
+            "fields",
         ],
         "self": [
             "website",
@@ -200,6 +246,7 @@ class UserSchema(ma.ModelSchema):
             "id",
             "oauth_id",
             "password",
+            "fields",
         ],
         "admin": [
             "website",
@@ -217,6 +264,7 @@ class UserSchema(ma.ModelSchema):
             "password",
             "type",
             "verified",
+            "fields",
         ],
     }
 
@@ -226,5 +274,6 @@ class UserSchema(ma.ModelSchema):
                 kwargs["only"] = self.views[view]
             elif isinstance(view, list):
                 kwargs["only"] = view
+        self.view = view
 
         super(UserSchema, self).__init__(*args, **kwargs)

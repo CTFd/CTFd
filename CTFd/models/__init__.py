@@ -276,7 +276,9 @@ class Users(db.Model):
     # Relationship for Teams
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
-    fields = db.relationship("FieldEntries", foreign_keys="FieldEntries.user_id", lazy="select")
+    fields = db.relationship(
+        "FieldEntries", foreign_keys="FieldEntries.user_id", lazy="joined"
+    )
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 

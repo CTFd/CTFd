@@ -289,8 +289,11 @@ def register():
                 db.session.flush()
 
                 from CTFd.models import FieldEntries
+
                 for field_id, value in entries.items():
-                    entry = FieldEntries(field_id=field_id, value=value, user_id=user.id)
+                    entry = FieldEntries(
+                        field_id=field_id, value=value, user_id=user.id
+                    )
                     db.session.add(entry)
                 db.session.commit()
 

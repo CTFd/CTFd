@@ -4,8 +4,8 @@ from wtforms.fields.html5 import DateField, URLField
 
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
+from CTFd.models import FieldEntries, Fields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
-from CTFd.models import Fields, FieldEntries
 
 
 def SettingsForm(*args, **kwargs):

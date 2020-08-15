@@ -24,12 +24,15 @@ function profileUpdate(event) {
   const $form = $(this);
   let params = $form.serializeJSON(true);
 
-  params.fields = {}
+  params.fields = [];
 
   for (const property in params) {
-    if( property.match(/fields\[\d+\]/)) {
-      let id = property.slice(7, -1);
-      params.fields[id] = params[property];
+    if (property.match(/fields\[\d+\]/)) {
+      let field = {};
+      let id = parseInt(property.slice(7, -1));
+      field["field_id"] = id;
+      field["value"] = params[property];
+      params.fields.push(field);
       delete params[property];
     }
   }
