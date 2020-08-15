@@ -307,10 +307,9 @@ class UserPrivate(Resource):
 
         from CTFd.models import FieldEntries
         fields = data.get("fields")
-        for k, v in fields.items():
-            field_id = int(k.split('-')[1])
-            e = FieldEntries.query.filter_by(field_id=field_id, user_id=session["id"]).first()
-            e.value = v
+        for field_id, value in fields.items():
+            e = FieldEntries.query.filter_by(field_id=field_id, user_id=user.id).first()
+            e.value = value
 
         db.session.commit()
 

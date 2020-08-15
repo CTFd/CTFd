@@ -29,7 +29,7 @@ def SettingsForm(*args, **kwargs):
                 user_fields[f.field_id] = f.value
 
             for field in new_fields:
-                form_field = getattr(self, f"field-{field.id}")
+                form_field = getattr(self, f"fields[{field.id}]")
                 form_field.data = user_fields.get(field.id, "")
                 entry = (field.name, form_field)
                 fields.append(entry)
@@ -37,7 +37,7 @@ def SettingsForm(*args, **kwargs):
 
     new_fields = Fields.query.all()
     for field in new_fields:
-        setattr(_SettingsForm, f"field-{field.id}", StringField(field.name))
+        setattr(_SettingsForm, f"fields[{field.id}]", StringField(field.name))
 
     return _SettingsForm(*args, **kwargs)
 

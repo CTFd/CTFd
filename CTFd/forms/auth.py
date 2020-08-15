@@ -19,13 +19,13 @@ def RegistrationForm(*args, **kwargs):
             fields = []
             new_fields = Fields.query.all()
             for field in new_fields:
-                entry = (field.name, getattr(self, f"field-{field.id}"))
+                entry = (field.name, getattr(self, f"fields[{field.id}]"))
                 fields.append(entry)
             return fields
 
     new_fields = Fields.query.all()
     for field in new_fields:
-        setattr(_RegistrationForm, f"field-{field.id}", StringField(field.name))
+        setattr(_RegistrationForm, f"fields[{field.id}]", StringField(field.name))
 
     return _RegistrationForm(*args, **kwargs)
 

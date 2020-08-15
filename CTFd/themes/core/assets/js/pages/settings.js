@@ -27,8 +27,9 @@ function profileUpdate(event) {
   params.fields = {}
 
   for (const property in params) {
-    if (property.startsWith("field-")) {
-      params.fields[property] = params[property];
+    if( property.match(/fields\[\d+\]/)) {
+      let id = property.slice(7, -1);
+      params.fields[id] = params[property];
       delete params[property];
     }
   }

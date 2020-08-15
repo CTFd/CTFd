@@ -260,7 +260,7 @@ def register():
 
         entries = {}
         for field_id, field in fields.items():
-            value = request.form.get(f"field-{field_id}", "").strip()
+            value = request.form.get(f"fields[{field_id}]", "").strip()
             if field.required is True and (value is None or value == ""):
                 errors.append("Please enter in all required fields")
             entries[field_id] = value
