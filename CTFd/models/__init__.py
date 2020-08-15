@@ -813,3 +813,14 @@ class Fields(db.Model):
 
 class UserFields(Comments):
     __mapper_args__ = {"polymorphic_identity": "user"}
+
+
+class FieldEntries(db.Model):
+    __tablename__ = "field_entries"
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.Text)
+    field_id = db.Column(db.Integer, db.ForeignKey("fields.id", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+
+    user = db.relationship("Users", foreign_keys="FieldEntries.user_id")
+    field = db.relationship("Fields", foreign_keys="FieldEntries.field_id")

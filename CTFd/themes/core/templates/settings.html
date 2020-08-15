@@ -60,6 +60,16 @@
 							{{ form.country(class="form-control custom-select", value=country) }}
 						</div>
 
+						<hr>
+
+						{% for k, v in form.extra %}
+						<div class="form-group">
+							<b>{{ v.label }}</b>
+							{{ v(class="form-control") }}
+						</div>
+						{% endfor %}
+
+
 						<div id="results" class="form-group">
 						</div>
 

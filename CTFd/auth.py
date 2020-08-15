@@ -252,6 +252,19 @@ def register():
         if valid_affiliation is False:
             errors.append("Please provide a shorter affiliation")
 
+        from CTFd.models import Fields
+
+        fields = {}
+        for field in Fields.query.all():
+            fields[field.id] = field
+
+        entries = {}
+        for field_id, field in fields.items():
+            value = request.form.get(f"field-{field_id}", "").strip()
+            if field.required is True and (value is None or value == ""):
+                errors.append("Please enter in all required fields")
+            entries[field_id] = value
+
         if len(errors) > 0:
             return render_template(
                 "register.html",
@@ -274,6 +287,12 @@ def register():
                 db.session.add(user)
                 db.session.commit()
                 db.session.flush()
+
+                from CTFd.models import FieldEntries
+                for field_id, value in entries.items():
+                    entry = FieldEntries(field_id=field_id, value=value, user_id=user.id)
+                    db.session.add(entry)
+                db.session.commit()
 
                 login_user(user)
 
