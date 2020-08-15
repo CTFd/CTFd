@@ -2,7 +2,7 @@ from marshmallow import ValidationError, pre_load, pre_dump, validate
 from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 
-from CTFd.models import Fields, FieldEntries, Users, ma
+from CTFd.models import Fields, FieldEntries, Users, ma, db
 from CTFd.schemas.fields import FieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
@@ -217,6 +217,8 @@ class UserSchema(ma.ModelSchema):
         Users (self) can see their edittable and public fields
         Public (user) can only see public fields
         """
+        # Make the object detatched so that changes don't accidentally persist
+        db.session.expunge(obj)
         for i, entry in enumerate(obj.fields):
             if self.view == "user":
                 if entry.field.public is False:
