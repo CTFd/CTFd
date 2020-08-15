@@ -1,10 +1,11 @@
+from flask import session
 from wtforms import PasswordField, SelectField, StringField
 from wtforms.fields.html5 import DateField, URLField
 
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
-from CTFd.models import Fields
+from CTFd.models import Fields, FieldEntries
 
 
 def SettingsForm(*args, **kwargs):
@@ -22,8 +23,15 @@ def SettingsForm(*args, **kwargs):
         def extra(self):
             fields = []
             new_fields = Fields.query.all()
+            user_fields = {}
+
+            for f in FieldEntries.query.filter_by(user_id=session["id"]).all():
+                user_fields[f.field_id] = f.value
+
             for field in new_fields:
-                entry = (field.name, getattr(self, f"field-{field.id}"))
+                form_field = getattr(self, f"field-{field.id}")
+                form_field.data = user_fields.get(field.id, "")
+                entry = (field.name, form_field)
                 fields.append(entry)
             return fields
 

@@ -24,6 +24,15 @@ function profileUpdate(event) {
   const $form = $(this);
   let params = $form.serializeJSON(true);
 
+  params.fields = {}
+
+  for (const property in params) {
+    if (property.startsWith("field-")) {
+      params.fields[property] = params[property];
+      delete params[property];
+    }
+  }
+
   CTFd.api.patch_user_private({}, params).then(response => {
     if (response.success) {
       $("#results").html(success_template);
