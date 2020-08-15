@@ -804,13 +804,13 @@ class Fields(db.Model):
     description = db.Column(db.Text)
 
     # Required on form submission
-    required = db.Column(db.Boolean)
+    required = db.Column(db.Boolean, default=False)
 
     # show_on_profile
-    public = db.Column(db.Boolean)
+    public = db.Column(db.Boolean, default=False)
 
     # User can edit this field in settings. All fields should be edittable by an admin
-    editable = db.Column(db.Boolean)
+    editable = db.Column(db.Boolean, default=False)
 
     __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
 
