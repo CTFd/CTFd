@@ -24,6 +24,14 @@
 		{{ form.country.label }}
 		{{ form.country(class="form-control custom-select") }}
 	</div>
+
+	{% for k, v in form.extra %}
+	<div class="form-group">
+		<b>{{ v.label }}</b>
+		{{ v(class="form-control") }}
+	</div>
+	{% endfor %}
+
 	<div class="form-group">
 		<div class="form-check form-check-inline">
 			{{ form.type(class="form-control form-inline custom-select", id="type-select") }}

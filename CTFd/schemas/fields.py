@@ -15,7 +15,7 @@ class FieldEntriesSchema(ma.ModelSchema):
     class Meta:
         model = FieldEntries
         include_fk = True
-        load_only = ("id", )
+        load_only = ("id",)
         exclude = ("field", "user", "user_id")
         dump_only = ("user_id", "name", "description", "type")
 

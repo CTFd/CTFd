@@ -1,8 +1,8 @@
-from marshmallow import ValidationError, pre_load, pre_dump, validate
+from marshmallow import ValidationError, post_dump, pre_load, validate
 from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 
-from CTFd.models import Fields, FieldEntries, Users, ma, db
+from CTFd.models import FieldEntries, Fields, Users, ma
 from CTFd.schemas.fields import FieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
@@ -51,7 +51,7 @@ class UserSchema(ma.ModelSchema):
     )
     country = field_for(Users, "country", validate=[validate_country_code])
     password = field_for(Users, "password")
-    fields = Nested(FieldEntriesSchema(), partial=True, many=True)
+    fields = Nested(FieldEntriesSchema, partial=True, many=True)
 
     @pre_load
     def validate_name(self, data):
@@ -193,7 +193,25 @@ class UserSchema(ma.ModelSchema):
         fields = data.get("fields")
 
         if is_admin():
-            pass
+            user_id = data.get("id")
+            if user_id:
+                target_user = Users.query.filter_by(id=data["id"]).first()
+                for f in fields:
+                    f.pop("id", None)
+                    field_id = f.get("field_id")
+
+                    # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
+                    field = Fields.query.filter_by(id=field_id).first_or_404()
+
+                    # Get the existing field entry if one exists
+                    entry = FieldEntries.query.filter_by(
+                        field_id=field.id, user_id=target_user.id
+                    ).first()
+                    if entry:
+                        f["id"] = entry.id
+            else:
+                # Marshmallow automatically links the fields to newly created users
+                pass
         else:
             for f in fields:
                 # Remove any existing set
@@ -201,31 +219,44 @@ class UserSchema(ma.ModelSchema):
                 field_id = f.get("field_id")
 
                 # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
-                # field = Fields.query.filter_by(id=field_id).first_or_404()
+                field = Fields.query.filter_by(id=field_id).first_or_404()
 
                 # Get the existing field entry if one exists
-                entry = FieldEntries.query.filter_by(field_id=field.id, user_id=current_user.id).first()
+                entry = FieldEntries.query.filter_by(
+                    field_id=field.id, user_id=current_user.id
+                ).first()
                 if entry:
                     f["id"] = entry.id
 
-    @pre_dump
-    def process_fields(self, obj):
+    @post_dump()
+    def process_fields(self, data):
         """
         Handle permissions levels for fields.
+        This is post_dump to manipulate JSON instead of the raw db object
 
         Admins can see all fields.
         Users (self) can see their edittable and public fields
         Public (user) can only see public fields
         """
-        # Make the object detatched so that changes don't accidentally persist
-        db.session.expunge(obj)
-        for i, entry in enumerate(obj.fields):
+        # Gather all possible fields
+        removed_field_ids = []
+        fields = Fields.query.all()
+
+        # Select fields for removal based on current view and properties of the field
+        for field in fields:
             if self.view == "user":
-                if entry.field.public is False:
-                    del obj.fields[i]
+                if field.public is False:
+                    removed_field_ids.append(field.id)
             elif self.view == "self":
-                if entry.field.editable is False and entry.field.public is False:
-                    del obj.fields[i]
+                if field.editable is False and field.public is False:
+                    removed_field_ids.append(field.id)
+
+        # Rebuild fuilds
+        fields = data.get("fields")
+        if fields:
+            data["fields"] = [
+                field for field in fields if field["field_id"] not in removed_field_ids
+            ]
 
     views = {
         "user": [
