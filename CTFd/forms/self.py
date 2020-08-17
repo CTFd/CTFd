@@ -30,7 +30,12 @@ def SettingsForm(*args, **kwargs):
 
             for field in new_fields:
                 form_field = getattr(self, f"fields[{field.id}]")
-                form_field.data = user_fields.get(field.id, "")
+                initial = user_fields.get(field.id, "")
+                form_field.data = initial
+                if form_field.render_kw:
+                    form_field.render_kw["initial"] = initial
+                else:
+                    form_field.render_kw = {"data-initial": initial}
                 entry = (field.name, form_field)
                 fields.append(entry)
             return fields

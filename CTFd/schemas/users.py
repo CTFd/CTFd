@@ -199,35 +199,35 @@ class UserSchema(ma.ModelSchema):
             user_id = data.get("id")
             if user_id:
                 target_user = Users.query.filter_by(id=data["id"]).first()
-                provided_ids = []
-                for f in fields:
-                    f.pop("id", None)
-                    field_id = f.get("field_id")
-
-                    # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
-                    field = UserFields.query.filter_by(id=field_id).first_or_404()
-
-                    # Get the existing field entry if one exists
-                    entry = FieldEntries.query.filter_by(
-                        field_id=field.id, user_id=target_user.id
-                    ).first()
-                    if entry:
-                        f["id"] = entry.id
-
-                # Extremely dirty hack to prevent deleting previously provided data.
-                # This needs a better soln.
-                entries = (
-                    FieldEntries.query.options(load_only("id"))
-                    .filter_by(user_id=current_user.id)
-                    .all()
-                )
-                print(entries)
-                for entry in entries:
-                    if entry.id not in provided_ids:
-                        fields.append({"id": entry.id})
             else:
-                # Marshmallow automatically links the fields to newly created users
-                pass
+                target_user = current_user
+
+            provided_ids = []
+            for f in fields:
+                f.pop("id", None)
+                field_id = f.get("field_id")
+
+                # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
+                field = UserFields.query.filter_by(id=field_id).first_or_404()
+
+                # Get the existing field entry if one exists
+                entry = FieldEntries.query.filter_by(
+                    field_id=field.id, user_id=target_user.id
+                ).first()
+                if entry:
+                    f["id"] = entry.id
+                    provided_ids.append(entry.id)
+
+            # Extremely dirty hack to prevent deleting previously provided data.
+            # This needs a better soln.
+            entries = (
+                FieldEntries.query.options(load_only("id"))
+                .filter_by(user_id=target_user.id)
+                .all()
+            )
+            for entry in entries:
+                if entry.id not in provided_ids:
+                    fields.append({"id": entry.id})
         else:
             provided_ids = []
             for f in fields:
@@ -259,7 +259,6 @@ class UserSchema(ma.ModelSchema):
                 .filter_by(user_id=current_user.id)
                 .all()
             )
-            print(entries)
             for entry in entries:
                 if entry.id not in provided_ids:
                     fields.append({"id": entry.id})

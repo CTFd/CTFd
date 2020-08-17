@@ -26,7 +26,7 @@ $.fn.serializeJSON = function(omit_nulls) {
       if (x.value !== null && x.value !== "") {
         params[x.name] = x.value;
       } else {
-        let input = form.find(`:input[name=${x.name}]`);
+        let input = form.find(`:input[name='${x.name}']`);
         if (input.data("initial") !== input.val()) {
           params[x.name] = x.value;
         }
