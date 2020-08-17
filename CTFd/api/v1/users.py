@@ -305,12 +305,6 @@ class UserPrivate(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        # from CTFd.models import FieldEntries
-        # fields = data.get("fields")
-        # for field_id, value in fields.items():
-        #     e = FieldEntries.query.filter_by(field_id=field_id, user_id=user.id).first()
-        #     e.value = value
-
         db.session.commit()
 
         # Update user's session for the new session hash
