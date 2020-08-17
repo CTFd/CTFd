@@ -252,17 +252,18 @@ def register():
         if valid_affiliation is False:
             errors.append("Please provide a shorter affiliation")
 
-        from CTFd.models import Fields
+        from CTFd.models import UserFields
 
         fields = {}
-        for field in Fields.query.all():
+        for field in UserFields.query.all():
             fields[field.id] = field
 
         entries = {}
         for field_id, field in fields.items():
             value = request.form.get(f"fields[{field_id}]", "").strip()
             if field.required is True and (value is None or value == ""):
-                errors.append("Please enter in all required fields")
+                errors.append("Please provide all required fields")
+                break
             entries[field_id] = value
 
         if len(errors) > 0:

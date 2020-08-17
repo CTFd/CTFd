@@ -4,7 +4,7 @@ from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.models import Fields
+from CTFd.models import UserFields
 
 
 def RegistrationForm(*args, **kwargs):
@@ -17,13 +17,13 @@ def RegistrationForm(*args, **kwargs):
         @property
         def extra(self):
             fields = []
-            new_fields = Fields.query.all()
+            new_fields = UserFields.query.all()
             for field in new_fields:
                 entry = (field.name, getattr(self, f"fields[{field.id}]"))
                 fields.append(entry)
             return fields
 
-    new_fields = Fields.query.all()
+    new_fields = UserFields.query.all()
     for field in new_fields:
         setattr(_RegistrationForm, f"fields[{field.id}]", StringField(field.name))
 

@@ -4,7 +4,7 @@ from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.models import FieldEntries, Fields
+from CTFd.models import FieldEntries, UserFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
 
@@ -62,7 +62,7 @@ def UserEditForm(*args, **kwargs):
         @property
         def extra(self):
             fields = []
-            new_fields = Fields.query.all()
+            new_fields = UserFields.query.all()
             user_fields = {}
 
             for f in FieldEntries.query.filter_by(user_id=self.obj.id).all():
@@ -84,7 +84,7 @@ def UserEditForm(*args, **kwargs):
             if obj:
                 self.obj = obj
 
-    new_fields = Fields.query.all()
+    new_fields = UserFields.query.all()
     for field in new_fields:
         setattr(_UserEditForm, f"fields[{field.id}]", StringField(field.name))
 
@@ -98,7 +98,7 @@ def UserCreateForm(*args, **kwargs):
         @property
         def extra(self):
             fields = []
-            new_fields = Fields.query.all()
+            new_fields = UserFields.query.all()
 
             for field in new_fields:
                 form_field = getattr(self, f"fields[{field.id}]")
@@ -106,7 +106,7 @@ def UserCreateForm(*args, **kwargs):
                 fields.append(entry)
             return fields
 
-    new_fields = Fields.query.all()
+    new_fields = UserFields.query.all()
     for field in new_fields:
         setattr(_UserCreateForm, f"fields[{field.id}]", StringField(field.name))
 

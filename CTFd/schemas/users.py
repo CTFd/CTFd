@@ -2,7 +2,7 @@ from marshmallow import ValidationError, post_dump, pre_load, validate
 from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 
-from CTFd.models import FieldEntries, Fields, Users, ma
+from CTFd.models import FieldEntries, UserFields, Users, ma
 from CTFd.schemas.fields import FieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
@@ -201,7 +201,7 @@ class UserSchema(ma.ModelSchema):
                     field_id = f.get("field_id")
 
                     # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
-                    field = Fields.query.filter_by(id=field_id).first_or_404()
+                    field = UserFields.query.filter_by(id=field_id).first_or_404()
 
                     # Get the existing field entry if one exists
                     entry = FieldEntries.query.filter_by(
@@ -219,7 +219,7 @@ class UserSchema(ma.ModelSchema):
                 field_id = f.get("field_id")
 
                 # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
-                field = Fields.query.filter_by(id=field_id).first_or_404()
+                field = UserFields.query.filter_by(id=field_id).first_or_404()
 
                 if field.editable is False:
                     raise ValidationError(
@@ -246,7 +246,7 @@ class UserSchema(ma.ModelSchema):
         """
         # Gather all possible fields
         removed_field_ids = []
-        fields = Fields.query.all()
+        fields = UserFields.query.all()
 
         # Select fields for removal based on current view and properties of the field
         for field in fields:

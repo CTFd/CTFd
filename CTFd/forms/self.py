@@ -4,7 +4,7 @@ from wtforms.fields.html5 import DateField, URLField
 
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.models import FieldEntries, Fields
+from CTFd.models import FieldEntries, UserFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
 
@@ -22,7 +22,7 @@ def SettingsForm(*args, **kwargs):
         @property
         def extra(self):
             fields = []
-            new_fields = Fields.query.all()
+            new_fields = UserFields.query.filter_by(editable=True).all()
             user_fields = {}
 
             for f in FieldEntries.query.filter_by(user_id=session["id"]).all():
@@ -35,7 +35,7 @@ def SettingsForm(*args, **kwargs):
                 fields.append(entry)
             return fields
 
-    new_fields = Fields.query.all()
+    new_fields = UserFields.query.filter_by(editable=True).all()
     for field in new_fields:
         setattr(_SettingsForm, f"fields[{field.id}]", StringField(field.name))
 

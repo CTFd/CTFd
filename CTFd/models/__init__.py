@@ -825,7 +825,7 @@ class Fields(db.Model):
     __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
 
 
-class UserFields(Comments):
+class UserFields(Fields):
     __mapper_args__ = {"polymorphic_identity": "user"}
 
 
