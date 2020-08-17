@@ -51,7 +51,7 @@ class UserSchema(ma.ModelSchema):
     )
     country = field_for(Users, "country", validate=[validate_country_code])
     password = field_for(Users, "password")
-    fields = Nested(FieldEntriesSchema, partial=True, many=True)
+    fields = Nested(FieldEntriesSchema, partial=True, many=True, attribute="field_entries")
 
     @pre_load
     def validate_name(self, data):

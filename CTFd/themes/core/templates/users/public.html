@@ -39,6 +39,12 @@
 				</h3>
 			{% endif %}
 
+			{% for field in user.get_fields() %}
+				<h3 class="d-block">
+					{{ field.name }}: {{ field.value }}
+				</h3>
+			{% endfor %}
+
 			<div>
 				<h2 class="text-center">
 					{% if account.place %}

@@ -276,7 +276,7 @@ class Users(db.Model):
     # Relationship for Teams
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
-    fields = db.relationship(
+    field_entries = db.relationship(
         "FieldEntries", foreign_keys="FieldEntries.user_id", lazy="joined"
     )
 
@@ -314,6 +314,10 @@ class Users(db.Model):
             return self
 
     @property
+    def fields(self):
+        return self.get_fields(admin=False)
+
+    @property
     def solves(self):
         return self.get_solves(admin=False)
 
@@ -337,6 +341,12 @@ class Users(db.Model):
             return self.get_place(admin=False)
         else:
             return None
+
+    def get_fields(self, admin=False):
+        if admin:
+            return self.field_entries
+
+        return [entry for entry in self.field_entries if entry.field.public]
 
     def get_solves(self, admin=False):
         from CTFd.utils import get_config
@@ -828,3 +838,11 @@ class FieldEntries(db.Model):
 
     user = db.relationship("Users", foreign_keys="FieldEntries.user_id")
     field = db.relationship("Fields", foreign_keys="FieldEntries.field_id")
+
+    @hybrid_property
+    def name(self):
+        return self.field.name
+
+    @hybrid_property
+    def description(self):
+        return self.field.description
