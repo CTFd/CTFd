@@ -221,10 +221,16 @@ class UserSchema(ma.ModelSchema):
                 # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
                 field = Fields.query.filter_by(id=field_id).first_or_404()
 
+                if field.editable is False:
+                    raise ValidationError(
+                        f"Field {field.name} cannot be editted", field_names=["fields"]
+                    )
+
                 # Get the existing field entry if one exists
                 entry = FieldEntries.query.filter_by(
                     field_id=field.id, user_id=current_user.id
                 ).first()
+
                 if entry:
                     f["id"] = entry.id
 
