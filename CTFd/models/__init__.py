@@ -815,6 +815,10 @@ class UserFields(Fields):
     __mapper_args__ = {"polymorphic_identity": "user"}
 
 
+class TeamFields(Fields):
+    __mapper_args__ = {"polymorphic_identity": "team"}
+
+
 class FieldEntries(db.Model):
     __tablename__ = "field_entries"
     id = db.Column(db.Integer, primary_key=True)
@@ -841,3 +845,9 @@ class UserFieldEntries(FieldEntries):
     __mapper_args__ = {"polymorphic_identity": "user"}
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
     user = db.relationship("Users", foreign_keys="UserFieldEntries.user_id")
+
+
+class TeamFieldEntries(FieldEntries):
+    __mapper_args__ = {"polymorphic_identity": "team"}
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+    team = db.relationship("Teams", foreign_keys="TeamFieldEntries.team_id")
