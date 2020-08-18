@@ -7,6 +7,25 @@ from CTFd.forms.fields import SubmitField
 from CTFd.models import FieldEntries, UserFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
+def build_custom_user_fields():
+    pass
+
+
+def attach_custom_user_fields(form_cls, **kwargs):
+    new_fields = UserFields.filter_by(**kwargs).query.all()
+    for field in new_fields:
+        validators = []
+        if field.required:
+            validators.append(InputRequired())
+
+        setattr(
+            form_cls,
+            f"fields[{field.id}]",
+            StringField(
+                field.name, description=field.description, validators=validators
+            ),
+        )
+
 
 class UserSearchForm(BaseForm):
     field = SelectField(
@@ -89,19 +108,7 @@ def UserEditForm(*args, **kwargs):
             if obj:
                 self.obj = obj
 
-    new_fields = UserFields.query.all()
-    for field in new_fields:
-        validators = []
-        if field.required:
-            validators.append(InputRequired())
-
-        setattr(
-            _UserEditForm,
-            f"fields[{field.id}]",
-            StringField(
-                field.name, description=field.description, validators=validators
-            ),
-        )
+    attach_custom_user_fields(_UserEditForm)
 
     return _UserEditForm(*args, **kwargs)
 
@@ -121,18 +128,6 @@ def UserCreateForm(*args, **kwargs):
                 fields.append(entry)
             return fields
 
-    new_fields = UserFields.query.all()
-    for field in new_fields:
-        validators = []
-        if field.required:
-            validators.append(InputRequired())
-
-        setattr(
-            _UserCreateForm,
-            f"fields[{field.id}]",
-            StringField(
-                field.name, description=field.description, validators=validators
-            ),
-        )
+    attach_custom_user_fields(_UserCreateForm)
 
     return _UserCreateForm(*args, **kwargs)

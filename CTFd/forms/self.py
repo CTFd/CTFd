@@ -3,6 +3,7 @@ from wtforms import PasswordField, SelectField, StringField
 from wtforms.fields.html5 import DateField, URLField
 
 from CTFd.forms import BaseForm
+from CTFd.forms.users import attach_custom_user_fields
 from CTFd.forms.fields import SubmitField
 from CTFd.models import FieldEntries, UserFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
@@ -33,26 +34,14 @@ def SettingsForm(*args, **kwargs):
                 initial = user_fields.get(field.id, "")
                 form_field.data = initial
                 if form_field.render_kw:
-                    form_field.render_kw["initial"] = initial
+                    form_field.render_kw["data-initial"] = initial
                 else:
                     form_field.render_kw = {"data-initial": initial}
                 entry = (field.name, form_field)
                 fields.append(entry)
             return fields
 
-    new_fields = UserFields.query.filter_by(editable=True).all()
-    for field in new_fields:
-        validators = []
-        if field.required:
-            validators.append(InputRequired())
-
-        setattr(
-            _SettingsForm,
-            f"fields[{field.id}]",
-            StringField(
-                field.name, description=field.description, validators=validators
-            ),
-        )
+    attach_custom_user_fields(_SettingsForm, editable=True)
 
     return _SettingsForm(*args, **kwargs)
 

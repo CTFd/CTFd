@@ -3,6 +3,7 @@ from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
+from CTFd.forms.users import attach_custom_user_fields
 from CTFd.forms.fields import SubmitField
 from CTFd.models import UserFields
 
@@ -23,18 +24,7 @@ def RegistrationForm(*args, **kwargs):
                 fields.append(entry)
             return fields
 
-    new_fields = UserFields.query.all()
-    for field in new_fields:
-        validators = []
-        if field.required:
-            validators.append(InputRequired())
-        setattr(
-            _RegistrationForm,
-            f"fields[{field.id}]",
-            StringField(
-                field.name, description=field.description, validators=validators
-            ),
-        )
+    attach_custom_user_fields(_RegistrationForm)
 
     return _RegistrationForm(*args, **kwargs)
 
