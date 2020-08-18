@@ -277,7 +277,7 @@ class Users(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
     field_entries = db.relationship(
-        "FieldEntries", foreign_keys="FieldEntries.user_id", lazy="joined"
+        "UserFieldEntries", foreign_keys="UserFieldEntries.user_id", lazy="joined"
     )
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -818,12 +818,15 @@ class UserFields(Fields):
 class FieldEntries(db.Model):
     __tablename__ = "field_entries"
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(80), default="standard")
     value = db.Column(db.Text)
     field_id = db.Column(db.Integer, db.ForeignKey("fields.id", ondelete="CASCADE"))
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
 
-    user = db.relationship("Users", foreign_keys="FieldEntries.user_id")
-    field = db.relationship("Fields", foreign_keys="FieldEntries.field_id", lazy="joined")
+    field = db.relationship(
+        "Fields", foreign_keys="FieldEntries.field_id", lazy="joined"
+    )
+
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
 
     @hybrid_property
     def name(self):
@@ -832,3 +835,9 @@ class FieldEntries(db.Model):
     @hybrid_property
     def description(self):
         return self.field.description
+
+
+class UserFieldEntries(FieldEntries):
+    __mapper_args__ = {"polymorphic_identity": "user"}
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    user = db.relationship("Users", foreign_keys="UserFieldEntries.user_id")

@@ -1,7 +1,6 @@
-from marshmallow import fields, pre_load
+from marshmallow import fields
 
-from CTFd.models import FieldEntries, Fields, db, ma
-from CTFd.utils.user import get_current_user, is_admin
+from CTFd.models import Fields, UserFieldEntries, ma
 
 
 class FieldSchema(ma.ModelSchema):
@@ -11,9 +10,9 @@ class FieldSchema(ma.ModelSchema):
         dump_only = ("id",)
 
 
-class FieldEntriesSchema(ma.ModelSchema):
+class UserFieldEntriesSchema(ma.ModelSchema):
     class Meta:
-        model = FieldEntries
+        model = UserFieldEntries
         include_fk = True
         load_only = ("id",)
         exclude = ("field", "user", "user_id")

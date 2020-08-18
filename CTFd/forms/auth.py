@@ -5,7 +5,6 @@ from wtforms.validators import InputRequired
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.forms.users import attach_custom_user_fields, build_custom_user_fields
-from CTFd.models import UserFields
 
 
 def RegistrationForm(*args, **kwargs):

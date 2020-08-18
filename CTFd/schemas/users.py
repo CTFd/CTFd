@@ -3,8 +3,8 @@ from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 from sqlalchemy.orm import load_only
 
-from CTFd.models import FieldEntries, UserFields, Users, ma
-from CTFd.schemas.fields import FieldEntriesSchema
+from CTFd.models import UserFieldEntries, UserFields, Users, ma
+from CTFd.schemas.fields import UserFieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.email import check_email_is_whitelisted
@@ -53,7 +53,7 @@ class UserSchema(ma.ModelSchema):
     country = field_for(Users, "country", validate=[validate_country_code])
     password = field_for(Users, "password")
     fields = Nested(
-        FieldEntriesSchema, partial=True, many=True, attribute="field_entries"
+        UserFieldEntriesSchema, partial=True, many=True, attribute="field_entries"
     )
 
     @pre_load
@@ -211,7 +211,7 @@ class UserSchema(ma.ModelSchema):
                 field = UserFields.query.filter_by(id=field_id).first_or_404()
 
                 # Get the existing field entry if one exists
-                entry = FieldEntries.query.filter_by(
+                entry = UserFieldEntries.query.filter_by(
                     field_id=field.id, user_id=target_user.id
                 ).first()
                 if entry:
@@ -221,7 +221,7 @@ class UserSchema(ma.ModelSchema):
             # Extremely dirty hack to prevent deleting previously provided data.
             # This needs a better soln.
             entries = (
-                FieldEntries.query.options(load_only("id"))
+                UserFieldEntries.query.options(load_only("id"))
                 .filter_by(user_id=target_user.id)
                 .all()
             )
@@ -244,7 +244,7 @@ class UserSchema(ma.ModelSchema):
                     )
 
                 # Get the existing field entry if one exists
-                entry = FieldEntries.query.filter_by(
+                entry = UserFieldEntries.query.filter_by(
                     field_id=field.id, user_id=current_user.id
                 ).first()
 
@@ -255,7 +255,7 @@ class UserSchema(ma.ModelSchema):
             # Extremely dirty hack to prevent deleting previously provided data.
             # This needs a better soln.
             entries = (
-                FieldEntries.query.options(load_only("id"))
+                UserFieldEntries.query.options(load_only("id"))
                 .filter_by(user_id=current_user.id)
                 .all()
             )

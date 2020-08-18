@@ -4,7 +4,7 @@ from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.models import FieldEntries, UserFields
+from CTFd.models import UserFieldEntries, UserFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
 
@@ -25,7 +25,7 @@ def build_custom_user_fields(
 
     # Only include preexisting values if asked
     if include_entries is True:
-        for f in FieldEntries.query.filter_by(**field_entries_kwargs).all():
+        for f in UserFieldEntries.query.filter_by(**field_entries_kwargs).all():
             user_fields[f.field_id] = f.value
 
     for field in new_fields:
