@@ -91,7 +91,17 @@ def UserEditForm(*args, **kwargs):
 
     new_fields = UserFields.query.all()
     for field in new_fields:
-        setattr(_UserEditForm, f"fields[{field.id}]", StringField(field.name))
+        validators = []
+        if field.required:
+            validators.append(InputRequired())
+
+        setattr(
+            _UserEditForm,
+            f"fields[{field.id}]",
+            StringField(
+                field.name, description=field.description, validators=validators
+            ),
+        )
 
     return _UserEditForm(*args, **kwargs)
 
@@ -113,6 +123,16 @@ def UserCreateForm(*args, **kwargs):
 
     new_fields = UserFields.query.all()
     for field in new_fields:
-        setattr(_UserCreateForm, f"fields[{field.id}]", StringField(field.name))
+        validators = []
+        if field.required:
+            validators.append(InputRequired())
+
+        setattr(
+            _UserCreateForm,
+            f"fields[{field.id}]",
+            StringField(
+                field.name, description=field.description, validators=validators
+            ),
+        )
 
     return _UserCreateForm(*args, **kwargs)

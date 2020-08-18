@@ -25,7 +25,16 @@ def RegistrationForm(*args, **kwargs):
 
     new_fields = UserFields.query.all()
     for field in new_fields:
-        setattr(_RegistrationForm, f"fields[{field.id}]", StringField(field.name))
+        validators = []
+        if field.required:
+            validators.append(InputRequired())
+        setattr(
+            _RegistrationForm,
+            f"fields[{field.id}]",
+            StringField(
+                field.name, description=field.description, validators=validators
+            ),
+        )
 
     return _RegistrationForm(*args, **kwargs)
 

@@ -42,7 +42,17 @@ def SettingsForm(*args, **kwargs):
 
     new_fields = UserFields.query.filter_by(editable=True).all()
     for field in new_fields:
-        setattr(_SettingsForm, f"fields[{field.id}]", StringField(field.name))
+        validators = []
+        if field.required:
+            validators.append(InputRequired())
+
+        setattr(
+            _SettingsForm,
+            f"fields[{field.id}]",
+            StringField(
+                field.name, description=field.description, validators=validators
+            ),
+        )
 
     return _SettingsForm(*args, **kwargs)
 

@@ -28,7 +28,15 @@
 	{% for k, v in form.extra %}
 	<div class="form-group">
 		<b>{{ v.label }}</b>
+		{% if v.flags.required is false %}
+			<small class="float-right text-muted align-text-bottom">Optional</small>
+		{% endif %}
 		{{ v(class="form-control") }}
+		{% if v.description %}
+		<small class="form-text text-muted">
+			{{ v.description }}
+		</small>
+		{% endif %}
 	</div>
 	{% endfor %}
 
