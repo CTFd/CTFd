@@ -122,7 +122,7 @@ export default {
     saveField: function() {
       let body = this.field;
       if (this.persistedField()) {
-        CTFd.fetch(`/api/v1/fields/${this.field.id}`, {
+        CTFd.fetch(`/api/v1/configs/fields/${this.field.id}`, {
           method: "PATCH",
           credentials: "same-origin",
           headers: {
@@ -145,7 +145,7 @@ export default {
             }
           });
       } else {
-        CTFd.fetch(`/api/v1/fields`, {
+        CTFd.fetch(`/api/v1/configs/fields`, {
           method: "POST",
           credentials: "same-origin",
           headers: {
@@ -172,7 +172,7 @@ export default {
     deleteField: function() {
       if (confirm("Are you sure you'd like to delete this field?")) {
         if (this.persistedField()) {
-          CTFd.fetch(`/api/v1/fields/${this.field.id}`, {
+          CTFd.fetch(`/api/v1/configs/fields/${this.field.id}`, {
             method: "DELETE",
             credentials: "same-origin",
             headers: {
