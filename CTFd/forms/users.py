@@ -40,8 +40,7 @@ def build_custom_user_fields(
             else:
                 form_field.render_kw = {"data-initial": initial}
 
-        entry = (field.name, form_field)
-        fields.append(entry)
+        fields.append(form_field)
     return fields
 
 

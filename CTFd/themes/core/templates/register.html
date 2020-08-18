@@ -23,6 +23,7 @@
 			{% endif %}
 
 			{% with form = Forms.auth.RegistrationForm() %}
+			{% from "macros/forms.html" import render_extra_fields %}
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form">
 				<div class="form-group">
 					<b>{{ form.name.label }}</b>
@@ -47,20 +48,7 @@
 				</div>
 				{{ form.nonce() }}
 
-				{% for k, v in form.extra %}
-				<div class="form-group">
-					<b>{{ v.label }}</b>
-					{% if v.flags.required is false %}
-						<small class="float-right text-muted align-text-bottom">Optional</small>
-					{% endif %}
-					{{ v(class="form-control") }}
-					{% if v.description %}
-					<small class="form-text text-muted">
-						{{ v.description }}
-					</small>
-					{% endif %}
-				</div>
-				{% endfor %}
+				{{ render_extra_fields(form.extra) }}
 
 				<div class="row pt-3">
 					<div class="col-md-12">

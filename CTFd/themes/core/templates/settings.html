@@ -23,6 +23,7 @@
 					{% include "components/errors.html" %}
 
 					{% with form = Forms.self.SettingsForm(country=country) %}
+					{% from "macros/forms.html" import render_extra_fields %}
 					<form id="user-profile-form" method="post" accept-charset="utf-8" autocomplete="off" role="form"
 						class="form-horizontal">
 						<div class="form-group">
@@ -62,13 +63,7 @@
 
 						<hr>
 
-						{% for k, v in form.extra %}
-						<div class="form-group">
-							<b>{{ v.label }}</b>
-							{{ v(class="form-control") }}
-						</div>
-						{% endfor %}
-
+						{{ render_extra_fields(form.extra) }}
 
 						<div id="results" class="form-group">
 						</div>

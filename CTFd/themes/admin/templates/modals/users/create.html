@@ -1,4 +1,5 @@
 {% with form = Forms.users.UserCreateForm() %}
+{% from "admin/macros/forms.html" import render_extra_fields %}
 <form id="user-info-create-form" method="POST">
 	<div class="form-group">
 		{{ form.name.label }}
@@ -28,20 +29,7 @@
 		{{ form.country(class="form-control custom-select") }}
 	</div>
 
-	{% for k, v in form.extra %}
-	<div class="form-group">
-		<b>{{ v.label }}</b>
-		{% if v.flags.required is false %}
-			<small class="float-right text-muted align-text-bottom">Optional</small>
-		{% endif %}
-		{{ v(class="form-control") }}
-		{% if v.description %}
-		<small class="form-text text-muted">
-			{{ v.description }}
-		</small>
-		{% endif %}
-	</div>
-	{% endfor %}
+	{{ render_extra_fields(form.extra) }}
 
 	<div class="form-group">
 		<div class="form-check form-check-inline">
