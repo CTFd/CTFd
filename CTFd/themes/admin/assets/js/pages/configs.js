@@ -10,7 +10,6 @@ import { ezQuery, ezProgressBar, ezAlert } from "core/ezq";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
 import Vue from "vue/dist/vue.esm.browser";
-import Field from "../components/configs/fields/Field.vue";
 import FieldList from "../components/configs/fields/FieldList.vue";
 
 function loadTimestamp(place, timestamp) {
