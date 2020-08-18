@@ -132,7 +132,7 @@
 			</h2>
 		{% endif %}
 
-		{% for field in user.get_fields(true) %}
+		{% for field in user.get_fields(admin=true) %}
 			<h3 class="d-block">
 				{{ field.name }}: {{ field.value }}
 			</h3>
