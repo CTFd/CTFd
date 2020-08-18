@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     loadFields: function() {
-      CTFd.fetch("/api/v1/fields?type=user", {
+      CTFd.fetch("/api/v1/configs/fields?type=user", {
         method: "GET",
         credentials: "same-origin",
         headers: {
