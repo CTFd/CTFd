@@ -3,8 +3,8 @@ from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
-from CTFd.forms.users import attach_custom_user_fields
 from CTFd.forms.fields import SubmitField
+from CTFd.forms.users import attach_custom_user_fields, build_custom_user_fields
 from CTFd.models import UserFields
 
 
@@ -17,12 +17,7 @@ def RegistrationForm(*args, **kwargs):
 
         @property
         def extra(self):
-            fields = []
-            new_fields = UserFields.query.all()
-            for field in new_fields:
-                entry = (field.name, getattr(self, f"fields[{field.id}]"))
-                fields.append(entry)
-            return fields
+            return build_custom_user_fields(self, include_entries=False)
 
     attach_custom_user_fields(_RegistrationForm)
 

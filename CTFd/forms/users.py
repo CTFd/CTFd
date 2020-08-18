@@ -7,12 +7,52 @@ from CTFd.forms.fields import SubmitField
 from CTFd.models import FieldEntries, UserFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
-def build_custom_user_fields():
-    pass
+
+def build_custom_user_fields(
+    form_cls, include_entries=False, fields_kwargs=None, field_entries_kwargs=None
+):
+    """
+    Function used to reinject values back into forms for accessing by themes
+    """
+    if fields_kwargs is None:
+        fields_kwargs = {}
+    if field_entries_kwargs is None:
+        field_entries_kwargs = {}
+
+    fields = []
+    new_fields = UserFields.query.filter_by(**fields_kwargs).all()
+    user_fields = {}
+
+    # Only include preexisting values if asked
+    if include_entries is True:
+        for f in FieldEntries.query.filter_by(**field_entries_kwargs).all():
+            user_fields[f.field_id] = f.value
+
+    for field in new_fields:
+        form_field = getattr(form_cls, f"fields[{field.id}]")
+
+        # Only include preexisting values if asked
+        if include_entries is True:
+            initial = user_fields.get(field.id, "")
+            form_field.data = initial
+            if form_field.render_kw:
+                form_field.render_kw["data-initial"] = initial
+            else:
+                form_field.render_kw = {"data-initial": initial}
+
+        entry = (field.name, form_field)
+        fields.append(entry)
+    return fields
 
 
 def attach_custom_user_fields(form_cls, **kwargs):
-    new_fields = UserFields.filter_by(**kwargs).query.all()
+    """
+    Function used to attach form fields to wtforms.
+    Not really a great solution but is approved by wtforms.
+
+    https://wtforms.readthedocs.io/en/2.3.x/specific_problems/#dynamic-form-composition
+    """
+    new_fields = UserFields.query.filter_by(**kwargs).all()
     for field in new_fields:
         validators = []
         if field.required:
@@ -80,24 +120,12 @@ def UserEditForm(*args, **kwargs):
 
         @property
         def extra(self):
-            fields = []
-            new_fields = UserFields.query.all()
-            user_fields = {}
-
-            for f in FieldEntries.query.filter_by(user_id=self.obj.id).all():
-                user_fields[f.field_id] = f.value
-
-            for field in new_fields:
-                form_field = getattr(self, f"fields[{field.id}]")
-                initial = user_fields.get(field.id, "")
-                form_field.data = initial
-                if form_field.render_kw:
-                    form_field.render_kw["initial"] = initial
-                else:
-                    form_field.render_kw = {"data-initial": initial}
-                entry = (field.name, form_field)
-                fields.append(entry)
-            return fields
+            return build_custom_user_fields(
+                self,
+                include_entries=True,
+                fields_kwargs=None,
+                field_entries_kwargs={"user_id": self.obj.id},
+            )
 
         def __init__(self, *args, **kwargs):
             """
@@ -119,14 +147,7 @@ def UserCreateForm(*args, **kwargs):
 
         @property
         def extra(self):
-            fields = []
-            new_fields = UserFields.query.all()
-
-            for field in new_fields:
-                form_field = getattr(self, f"fields[{field.id}]")
-                entry = (field.name, form_field)
-                fields.append(entry)
-            return fields
+            return build_custom_user_fields(self, include_entries=False)
 
     attach_custom_user_fields(_UserCreateForm)
 
