@@ -6,21 +6,26 @@
       <Field
         :index="index"
         :initialField.sync="fields[index]"
-        @delete-field="deleteField"
+        @remove-field="removeField"
       />
     </div>
 
-    <button
-      class="btn btn-sm btn-success btn-outlined float-right"
-      type="button"
-      @click="addField()"
-    >
-      Add New Field
-    </button>
+    <div class="row">
+      <div class="col text-center">
+        <button
+          class="btn btn-sm btn-success btn-outlined m-auto"
+          type="button"
+          @click="addField()"
+        >
+          Add New Field
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import CTFd from "core/CTFd";
 import Field from "./Field.vue";
 
 export default {
@@ -35,35 +40,41 @@ export default {
     };
   },
   methods: {
+    loadFields: function() {
+      CTFd.fetch("/api/v1/fields?type=user", {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(response => {
+          this.fields = response.data;
+        });
+    },
     addField: function() {
       this.fields.push({
-        id: `#${Math.random().toString(16).slice(2)}`,
+        id: Math.random(),
+        type: "user",
+        field_type: "text",
         name: "",
         description: "",
         editable: false,
         required: false,
         public: false
-      })
-      console.log(this.$data.fields)
+      });
     },
-    deleteField: function(index) {
-      // if (fieldId) {
-        // Wait for API implementation
-      // }
-      // Remove field at index
+    removeField: function(index) {
       this.fields.splice(index, 1);
-      console.log(this.fields)
+      console.log(this.fields);
     }
   },
   created() {
-    this.fields.push({
-      id: 1,
-      name: "Name",
-      description: "Desc",
-      editable: true,
-      required: false,
-      public: true
-    });
+    this.loadFields();
   }
 };
 </script>
