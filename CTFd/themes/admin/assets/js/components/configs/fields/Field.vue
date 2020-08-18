@@ -1,6 +1,5 @@
 <template>
   <div class="border-bottom">
-
     <div>
       <button
         type="button"
@@ -16,17 +15,22 @@
       <div class="col-md-3">
         <div class="form-group">
           <label>Field Type</label>
-          <select class="form-control custom-select">
-            <option>Text Field</option>
-            <option>Checkbox</option>
+          <select
+            class="form-control custom-select"
+            v-model.lazy="field.field_type"
+          >
+            <option value="text">Text Field</option>
+            <option value="checkbox">Checkbox</option>
           </select>
-          <small class="form-text text-muted">Type of field shown to the user</small>
+          <small class="form-text text-muted"
+            >Type of field shown to the user</small
+          >
         </div>
       </div>
       <div class="col-md-9">
         <div class="form-group">
           <label>Field Name</label>
-          <input type="text" class="form-control" v-model.lazy="field.name">
+          <input type="text" class="form-control" v-model.lazy="field.name" />
           <small class="form-text text-muted">Field name</small>
         </div>
       </div>
@@ -34,25 +38,46 @@
       <div class="col-md-12">
         <div class="form-group">
           <label>Field Description</label>
-          <input type="text" class="form-control" v-model.lazy="field.description">
-          <small id="emailHelp" class="form-text text-muted">Field Description</small>
+          <input
+            type="text"
+            class="form-control"
+            v-model.lazy="field.description"
+          />
+          <small id="emailHelp" class="form-text text-muted"
+            >Field Description</small
+          >
         </div>
       </div>
 
       <div class="col-md-12">
         <div class="form-check">
           <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" v-model.lazy="field.editable"> Editable by user in profile
+            <input
+              class="form-check-input"
+              type="checkbox"
+              v-model.lazy="field.editable"
+            />
+            Editable by user in profile
           </label>
         </div>
         <div class="form-check">
           <label class="form-check-label">
-            <input class="form-check-input" type="checkbox" v-model.lazy="field.required"> Required on registration
+            <input
+              class="form-check-input"
+              type="checkbox"
+              v-model.lazy="field.required"
+            />
+            Required on registration
           </label>
         </div>
         <div class="form-check">
           <label class="form-check-label">
-            <input class="form-check-input" type="checkbox" v-model.lazy="field.public"> Shown on public profile
+            <input
+              class="form-check-input"
+              type="checkbox"
+              v-model.lazy="field.public"
+            />
+            Shown on public profile
           </label>
         </div>
       </div>
@@ -75,6 +100,9 @@
 </template>
 
 <script>
+import CTFd from "core/CTFd";
+import { ezToast } from "core/ezq";
+
 export default {
   props: {
     index: Number,
@@ -83,20 +111,90 @@ export default {
   data: function() {
     return {
       field: this.initialField
-    }
+    };
   },
   methods: {
-    saveField: function(){
-      console.log(this.field)
-      // Update field in API
+    persistedField: function() {
+      // We're using Math.random() for unique IDs so new items have IDs < 1
+      // Real items will have an ID > 1
+      return this.field.id >= 1;
+    },
+    saveField: function() {
+      let body = this.field;
+      if (this.persistedField()) {
+        CTFd.fetch(`/api/v1/fields/${this.field.id}`, {
+          method: "PATCH",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+        })
+          .then(response => {
+            return response.json();
+          })
+          .then(response => {
+            if (response.success === true) {
+              this.field = response.data;
+              ezToast({
+                title: "Success",
+                body: "Field has been updated!",
+                delay: 1000
+              });
+            }
+          });
+      } else {
+        CTFd.fetch(`/api/v1/fields`, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+        })
+          .then(response => {
+            return response.json();
+          })
+          .then(response => {
+            if (response.success === true) {
+              this.field = response.data;
+              ezToast({
+                title: "Success",
+                body: "Field has been created!",
+                delay: 1000
+              });
+            }
+          });
+      }
     },
     deleteField: function() {
-      // Delete field in API
-      this.$emit('delete-field', this.index);
-    },
+      if (confirm("Are you sure you'd like to delete this field?")) {
+        if (this.persistedField()) {
+          CTFd.fetch(`/api/v1/fields/${this.field.id}`, {
+            method: "DELETE",
+            credentials: "same-origin",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            }
+          })
+            .then(response => {
+              return response.json();
+            })
+            .then(response => {
+              if (response.success === true) {
+                this.$emit("remove-field", this.index);
+              }
+            });
+        } else {
+          this.$emit("remove-field", this.index);
+        }
+      }
+    }
   }
-}
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
