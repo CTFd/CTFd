@@ -31,6 +31,9 @@ def build_custom_user_fields(
     for field in new_fields:
         form_field = getattr(form_cls, f"fields[{field.id}]")
 
+        # Add the field_type to the field so we know how to render it
+        form_field.field_type = field.field_type
+
         # Only include preexisting values if asked
         if include_entries is True:
             initial = user_fields.get(field.id, "")
@@ -57,12 +60,19 @@ def attach_custom_user_fields(form_cls, **kwargs):
         if field.required:
             validators.append(InputRequired())
 
+        if field.field_type == "text":
+            input_field = StringField(
+                field.name, description=field.description, validators=validators
+            )
+        elif field.field_type == "boolean":
+            input_field = BooleanField(
+                field.name, description=field.description, validators=validators
+            )
+
         setattr(
             form_cls,
             f"fields[{field.id}]",
-            StringField(
-                field.name, description=field.description, validators=validators
-            ),
+            input_field,
         )
 
 
