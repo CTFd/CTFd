@@ -7,7 +7,7 @@ from flask import redirect, render_template, request, session, url_for
 from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
 
 from CTFd.cache import clear_team_session, clear_user_session
-from CTFd.models import Teams, Users, db
+from CTFd.models import FieldEntries, Teams, UserFields, Users, db
 from CTFd.utils import config, email, get_app_config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
@@ -252,8 +252,6 @@ def register():
         if valid_affiliation is False:
             errors.append("Please provide a shorter affiliation")
 
-        from CTFd.models import UserFields
-
         fields = {}
         for field in UserFields.query.all():
             fields[field.id] = field
@@ -288,8 +286,6 @@ def register():
                 db.session.add(user)
                 db.session.commit()
                 db.session.flush()
-
-                from CTFd.models import FieldEntries
 
                 for field_id, value in entries.items():
                     entry = FieldEntries(
