@@ -823,7 +823,7 @@ class FieldEntries(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
 
     user = db.relationship("Users", foreign_keys="FieldEntries.user_id")
-    field = db.relationship("Fields", foreign_keys="FieldEntries.field_id")
+    field = db.relationship("Fields", foreign_keys="FieldEntries.field_id", lazy="joined")
 
     @hybrid_property
     def name(self):
