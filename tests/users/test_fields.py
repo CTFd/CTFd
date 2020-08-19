@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import UserFieldEntries
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -157,4 +158,47 @@ def test_fields_properties():
             assert "CustomField2" in resp
             assert "CustomField3" not in resp
             assert "CustomField4" not in resp
+    destroy_ctfd(app)
+
+
+def test_boolean_checkbox_field():
+    app = create_ctfd()
+    with app.app_context():
+        gen_field(app.db, name="CustomField1", field_type="boolean", required=False)
+
+        with app.app_context():
+            with app.test_client() as client:
+                r = client.get("/register")
+                resp = r.get_data(as_text=True)
+
+                # We should have rendered a checkbox input
+                assert "checkbox" in resp
+
+                with client.session_transaction() as sess:
+                    data = {
+                        "name": "user",
+                        "email": "user@ctfd.io",
+                        "password": "password",
+                        "nonce": sess.get("nonce"),
+                        "fields[1]": "y",
+                    }
+                client.post("/register", data=data)
+                with client.session_transaction() as sess:
+                    assert sess["id"]
+
+        assert UserFieldEntries.query.count() == 1
+        assert UserFieldEntries.query.filter_by(id=1).first().value is True
+
+        with login_as_user(app) as client:
+            r = client.get("/settings")
+            resp = r.get_data(as_text=True)
+            assert "CustomField1" in resp
+            assert "checkbox" in resp
+
+            r = client.patch(
+                "/api/v1/users/me", json={"fields": [{"field_id": 1, "value": False}]},
+            )
+            assert r.status_code == 200
+            assert UserFieldEntries.query.count() == 1
+            assert UserFieldEntries.query.filter_by(id=1).first().value is False
     destroy_ctfd(app)
