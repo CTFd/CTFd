@@ -20,11 +20,42 @@
         </div>
       </div>
     </div>
+
+    <div class="row" v-if="pages > 1">
+      <div class="col-md-12">
+        <div class="text-center">
+          <!-- Inversed ternary b/c disabled will turn the button off -->
+          <button
+            type="button"
+            class="btn btn-link p-0"
+            @click="prevPage()"
+            :disabled="prev ? false : true"
+          >
+            &lt;&lt;&lt;
+          </button>
+          <button
+            type="button"
+            class="btn btn-link p-0"
+            @click="nextPage()"
+            :disabled="next ? false : true"
+          >
+            &gt;&gt;&gt;
+          </button>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="text-center">
+          <small class="text-muted"
+            >Page {{ page }} of {{ total }} comments</small
+          >
+        </div>
+      </div>
+    </div>
     <div class="comments">
       <transition-group name="comment-card">
         <div
           class="comment-card card mb-2"
-          v-for="comment in comments.slice().reverse()"
+          v-for="comment in comments"
           :key="comment.id"
         >
           <div class="card-body pl-0 pb-0 pt-2 pr-2">
@@ -69,6 +100,11 @@ export default {
   },
   data: function() {
     return {
+      page: 1,
+      pages: null,
+      next: null,
+      prev: null,
+      total: null,
       comment: "",
       comments: [],
       urlRoot: CTFd.config.urlRoot
@@ -80,6 +116,14 @@ export default {
         .local()
         .format("MMMM Do, h:mm:ss A");
     },
+    nextPage: function() {
+      this.page++;
+      this.loadComments();
+    },
+    prevPage: function() {
+      this.page--;
+      this.loadComments();
+    },
     getArgs: function() {
       let args = {};
       args[`${this.$props.type}_id`] = this.$props.id;
@@ -87,7 +131,15 @@ export default {
     },
     loadComments: function() {
       let apiArgs = this.getArgs();
+      apiArgs[`page`] = this.page;
+      apiArgs[`per_page`] = 10;
+
       helpers.comments.get_comments(apiArgs).then(response => {
+        this.page = response.meta.pagination.page;
+        this.pages = response.meta.pagination.pages;
+        this.next = response.meta.pagination.next;
+        this.prev = response.meta.pagination.prev;
+        this.total = response.meta.pagination.total;
         this.comments = response.data;
         return this.comments;
       });
