@@ -164,9 +164,7 @@ def test_fields_properties():
 def test_boolean_checkbox_field():
     app = create_ctfd()
     with app.app_context():
-        gen_field(
-            app.db, name="CustomField1", field_type="boolean", required=False
-        )
+        gen_field(app.db, name="CustomField1", field_type="boolean", required=False)
 
         with app.app_context():
             with app.test_client() as client:
@@ -198,12 +196,7 @@ def test_boolean_checkbox_field():
             assert "checkbox" in resp
 
             r = client.patch(
-                "/api/v1/users/me",
-                json={
-                    "fields": [
-                        {"field_id": 1, "value": False},
-                    ]
-                },
+                "/api/v1/users/me", json={"fields": [{"field_id": 1, "value": False},]},
             )
             assert r.status_code == 200
             assert UserFieldEntries.query.count() == 1
