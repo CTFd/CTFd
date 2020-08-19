@@ -262,7 +262,10 @@ def register():
             if field.required is True and (value is None or value == ""):
                 errors.append("Please provide all required fields")
                 break
-            entries[field_id] = value
+            if field.field_type == "boolean":
+                entries[field_id] = bool(value)
+            else:
+                entries[field_id] = value
 
         if len(errors) > 0:
             return render_template(
