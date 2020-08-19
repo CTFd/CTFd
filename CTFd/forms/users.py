@@ -9,7 +9,11 @@ from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
 
 def build_custom_user_fields(
-    form_cls, include_entries=False, fields_kwargs=None, field_entries_kwargs=None
+    form_cls,
+    include_entries=False,
+    fields_kwargs=None,
+    field_entries_kwargs=None,
+    blacklisted_items=("affiliation", "website"),
 ):
     """
     Function used to reinject values back into forms for accessing by themes
@@ -29,6 +33,9 @@ def build_custom_user_fields(
             user_fields[f.field_id] = f.value
 
     for field in new_fields:
+        if field.name.lower() in blacklisted_items:
+            continue
+
         form_field = getattr(form_cls, f"fields[{field.id}]")
 
         # Add the field_type to the field so we know how to render it

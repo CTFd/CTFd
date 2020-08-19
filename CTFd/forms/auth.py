@@ -16,7 +16,9 @@ def RegistrationForm(*args, **kwargs):
 
         @property
         def extra(self):
-            return build_custom_user_fields(self, include_entries=False)
+            return build_custom_user_fields(
+                self, include_entries=False, blacklisted_items=()
+            )
 
     attach_custom_user_fields(_RegistrationForm)
 

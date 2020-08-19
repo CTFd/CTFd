@@ -206,6 +206,31 @@ def register():
         valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
 
+        # Process additional user fields
+        fields = {}
+        for field in UserFields.query.all():
+            fields[field.id] = field
+
+        entries = {}
+        for field_id, field in fields.items():
+            value = request.form.get(f"fields[{field_id}]", "").strip()
+            if field.required is True and (value is None or value == ""):
+                errors.append("Please provide all required fields")
+                break
+
+            # Handle special casing of existing profile fields
+            if field.name.lower() == "affiliation":
+                affiliation = value
+                break
+            elif field.name.lower() == "website":
+                website = value
+                break
+
+            if field.field_type == "boolean":
+                entries[field_id] = bool(value)
+            else:
+                entries[field_id] = value
+
         if country:
             try:
                 validators.validate_country_code(country)
@@ -251,21 +276,6 @@ def register():
             errors.append("Invalid country")
         if valid_affiliation is False:
             errors.append("Please provide a shorter affiliation")
-
-        fields = {}
-        for field in UserFields.query.all():
-            fields[field.id] = field
-
-        entries = {}
-        for field_id, field in fields.items():
-            value = request.form.get(f"fields[{field_id}]", "").strip()
-            if field.required is True and (value is None or value == ""):
-                errors.append("Please provide all required fields")
-                break
-            if field.field_type == "boolean":
-                entries[field_id] = bool(value)
-            else:
-                entries[field_id] = value
 
         if len(errors) > 0:
             return render_template(
