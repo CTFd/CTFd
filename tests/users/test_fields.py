@@ -64,7 +64,7 @@ def test_fields_required_on_register():
                         "password": "password",
                         "nonce": sess.get("nonce"),
                     }
-                r = client.post("/register", data=data)
+                client.post("/register", data=data)
                 with client.session_transaction() as sess:
                     assert sess.get("id") is None
 
