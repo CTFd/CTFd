@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import Fields
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -135,6 +136,7 @@ def test_api_custom_fields():
                 "public": False,
                 "required": False,
                 "editable": False,
+                "id": 3,
                 "type": "user",
                 "field_type": "text",
                 "description": "CustomFieldDescription",
@@ -146,4 +148,52 @@ def test_api_custom_fields():
 
             r = admin.get("/api/v1/configs/fields/3")
             assert r.status_code == 404
+    destroy_ctfd(app)
+
+
+def test_api_self_fields_permissions():
+    app = create_ctfd()
+    with app.app_context():
+        gen_field(app.db, name="CustomField1", public=False, editable=False)
+        gen_field(app.db, name="CustomField2", public=True, editable=True)
+
+        with app.test_client() as client:
+            client.get("/register")
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user",
+                    "email": "user@ctfd.io",
+                    "password": "password",
+                    "nonce": sess.get("nonce"),
+                    "fields[1]": "CustomValue1",
+                    "fields[2]": "CustomValue2",
+                }
+            r = client.post("/register", data=data)
+            with client.session_transaction() as sess:
+                assert sess["id"]
+
+        with login_as_user(app) as user, login_as_user(app, name="admin") as admin:
+            r = user.get("/api/v1/users/me")
+            resp = r.get_json()
+            assert resp["data"]["fields"] == [
+                {
+                    "value": "CustomValue2",
+                    "name": "CustomField2",
+                    "description": "CustomFieldDescription",
+                    "type": "text",
+                    "field_id": 2,
+                }
+            ]
+
+            r = admin.get("/api/v1/users/2")
+            resp = r.get_json()
+            assert len(resp["data"]["fields"]) == 2
+
+            field = Fields.query.filter_by(id=1).first()
+            field.public = True
+            app.db.session.commit()
+            r = user.get("/api/v1/users/me")
+            resp = r.get_json()
+            assert len(resp["data"]["fields"]) == 2
+
     destroy_ctfd(app)
