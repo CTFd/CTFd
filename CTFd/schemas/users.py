@@ -192,8 +192,11 @@ class UserSchema(ma.ModelSchema):
         This validator is used to only allow users to update the field entry for their user.
         It's not possible to exclude it because without the PK Marshmallow cannot load the right instance
         """
-        current_user = get_current_user()
         fields = data.get("fields")
+        if fields is None:
+            return
+
+        current_user = get_current_user()
 
         if is_admin():
             user_id = data.get("id")
