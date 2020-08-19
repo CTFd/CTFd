@@ -8,7 +8,7 @@ from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.cache import clear_config, clear_standings
 from CTFd.constants import RawEnum
-from CTFd.models import Fields, Configs, db
+from CTFd.models import Configs, Fields, db
 from CTFd.schemas.config import ConfigSchema
 from CTFd.schemas.fields import FieldSchema
 from CTFd.utils import set_config
