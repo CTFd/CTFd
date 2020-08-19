@@ -9,6 +9,8 @@ import $ from "jquery";
 import { ezQuery, ezProgressBar, ezAlert } from "core/ezq";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
+import Vue from "vue/dist/vue.esm.browser";
+import FieldList from "../components/configs/fields/FieldList.vue";
 
 function loadTimestamp(place, timestamp) {
   if (typeof timestamp == "string") {
@@ -360,4 +362,10 @@ $(() => {
       $("#mail_username_password").toggle(this.checked);
     })
     .change();
+
+  // Insert CommentBox element
+  const fieldList = Vue.extend(FieldList);
+  let vueContainer = document.createElement("div");
+  document.querySelector("#user-field-list").appendChild(vueContainer);
+  new fieldList({}).$mount(vueContainer);
 });
