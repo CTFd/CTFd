@@ -266,7 +266,7 @@ class UserSchema(ma.ModelSchema):
                 if entry.id not in provided_ids:
                     fields.append({"id": entry.id})
 
-    @post_dump()
+    @post_dump
     def process_fields(self, data):
         """
         Handle permissions levels for fields.
