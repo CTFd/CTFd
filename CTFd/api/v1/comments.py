@@ -3,7 +3,6 @@ from typing import List
 from flask import request, session
 from flask_restx import Namespace, Resource
 
-from CTFd.api.v1.helpers.models import build_model_filters
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
@@ -18,6 +17,7 @@ from CTFd.models import (
 )
 from CTFd.schemas.comments import CommentSchema
 from CTFd.utils.decorators import admins_only
+from CTFd.utils.helpers.models import build_model_filters
 
 comments_namespace = Namespace("comments", description="Endpoint to retrieve Comments")
 
@@ -87,14 +87,32 @@ class CommentList(Resource):
         CommentModel = get_comment_model(data=query_args)
         filters = build_model_filters(model=CommentModel, query=q, field=field)
 
-        comments = CommentModel.query.filter_by(**query_args).filter(*filters).all()
+        comments = (
+            CommentModel.query.filter_by(**query_args)
+            .filter(*filters)
+            .order_by(CommentModel.id.desc())
+            .paginate(max_per_page=100)
+        )
         schema = CommentSchema(many=True)
-        response = schema.dump(comments)
+        response = schema.dump(comments.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        return {
+            "meta": {
+                "pagination": {
+                    "page": comments.page,
+                    "next": comments.next_num,
+                    "prev": comments.prev_num,
+                    "pages": comments.pages,
+                    "per_page": comments.per_page,
+                    "total": comments.total,
+                }
+            },
+            "success": True,
+            "data": response.data,
+        }
 
     @admins_only
     @comments_namespace.doc(
