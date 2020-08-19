@@ -196,7 +196,7 @@ def test_boolean_checkbox_field():
             assert "checkbox" in resp
 
             r = client.patch(
-                "/api/v1/users/me", json={"fields": [{"field_id": 1, "value": False},]},
+                "/api/v1/users/me", json={"fields": [{"field_id": 1, "value": False}]},
             )
             assert r.status_code == 200
             assert UserFieldEntries.query.count() == 1
