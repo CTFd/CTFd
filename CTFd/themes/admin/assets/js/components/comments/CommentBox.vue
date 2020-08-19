@@ -84,6 +84,36 @@
         </div>
       </transition-group>
     </div>
+    <div class="row" v-if="pages > 1">
+      <div class="col-md-12">
+        <div class="text-center">
+          <!-- Inversed ternary b/c disabled will turn the button off -->
+          <button
+            type="button"
+            class="btn btn-link p-0"
+            @click="prevPage()"
+            :disabled="prev ? false : true"
+          >
+            &lt;&lt;&lt;
+          </button>
+          <button
+            type="button"
+            class="btn btn-link p-0"
+            @click="nextPage()"
+            :disabled="next ? false : true"
+          >
+            &gt;&gt;&gt;
+          </button>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="text-center">
+          <small class="text-muted"
+            >Page {{ page }} of {{ total }} comments</small
+          >
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
