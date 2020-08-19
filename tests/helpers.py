@@ -22,6 +22,7 @@ from CTFd.models import (
     Challenges,
     Comments,
     Fails,
+    Fields,
     Files,
     Flags,
     Hints,
@@ -456,6 +457,30 @@ def gen_comment(db, content="comment", author_id=None, type="challenge", **kwarg
     db.session.add(comment)
     db.session.commit()
     return comment
+
+
+def gen_field(
+    db,
+    name="CustomField",
+    type="user",
+    field_type="text",
+    description="CustomFieldDescription",
+    required=True,
+    public=True,
+    editable=True,
+):
+    field = Fields(
+        name=name,
+        type=type,
+        field_type=field_type,
+        description=description,
+        required=required,
+        public=public,
+        editable=editable,
+    )
+    db.session.add(field)
+    db.session.commit()
+    return field
 
 
 def simulate_user_activity(db, user):

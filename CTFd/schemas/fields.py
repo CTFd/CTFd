@@ -1,6 +1,6 @@
 from marshmallow import fields
 
-from CTFd.models import Fields, UserFieldEntries, ma
+from CTFd.models import Fields, UserFieldEntries, db, ma
 
 
 class FieldSchema(ma.ModelSchema):
@@ -13,6 +13,7 @@ class FieldSchema(ma.ModelSchema):
 class UserFieldEntriesSchema(ma.ModelSchema):
     class Meta:
         model = UserFieldEntries
+        sqla_session = db.session
         include_fk = True
         load_only = ("id",)
         exclude = ("field", "user", "user_id")
