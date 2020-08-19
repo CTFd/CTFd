@@ -70,9 +70,7 @@ def attach_custom_user_fields(form_cls, **kwargs):
             )
 
         setattr(
-            form_cls,
-            f"fields[{field.id}]",
-            input_field,
+            form_cls, f"fields[{field.id}]", input_field,
         )
 
 
