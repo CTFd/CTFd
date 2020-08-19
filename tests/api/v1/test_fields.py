@@ -130,7 +130,7 @@ def test_api_custom_fields():
                 "name": "PatchedCustomField3",
             }
 
-            r = admin.get("/api/v1/configs/fields/3")
+            r = admin.get("/api/v1/configs/fields/3", json="")
             assert r.status_code == 200
             assert r.get_json()["data"] == {
                 "public": False,
@@ -143,10 +143,10 @@ def test_api_custom_fields():
                 "name": "PatchedCustomField3",
             }
 
-            r = admin.delete("/api/v1/configs/fields/3")
+            r = admin.delete("/api/v1/configs/fields/3", json="")
             assert r.status_code == 200
 
-            r = admin.get("/api/v1/configs/fields/3")
+            r = admin.get("/api/v1/configs/fields/3", json="")
             assert r.status_code == 404
     destroy_ctfd(app)
 
