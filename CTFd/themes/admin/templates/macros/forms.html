@@ -3,7 +3,7 @@
     <div class="form-group">
         {% if field.field_type == "text" %}
             {% if show_labels %}
-                <b>{{ field.label }}</b>
+                {{ field.label }}
             {% endif %}
 
             {% if show_optionals %}
