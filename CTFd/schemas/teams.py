@@ -202,14 +202,14 @@ class TeamSchema(ma.ModelSchema):
         if fields is None:
             return
 
-        current_user = get_current_user()
+        current_team = get_current_team()
 
         if is_admin():
-            user_id = data.get("id")
-            if user_id:
-                target_user = Users.query.filter_by(id=data["id"]).first()
+            team_id = data.get("id")
+            if team_id:
+                target_team = Teams.query.filter_by(id=data["id"]).first()
             else:
-                target_user = current_user
+                target_team = current_team
 
             provided_ids = []
             for f in fields:
@@ -221,7 +221,7 @@ class TeamSchema(ma.ModelSchema):
 
                 # Get the existing field entry if one exists
                 entry = TeamFieldEntries.query.filter_by(
-                    field_id=field.id, user_id=target_user.id
+                    field_id=field.id, team_id=target_team.id
                 ).first()
                 if entry:
                     f["id"] = entry.id
@@ -231,7 +231,7 @@ class TeamSchema(ma.ModelSchema):
             # This needs a better soln.
             entries = (
                 TeamFieldEntries.query.options(load_only("id"))
-                .filter_by(user_id=target_user.id)
+                .filter_by(team_id=target_team.id)
                 .all()
             )
             for entry in entries:
@@ -254,7 +254,7 @@ class TeamSchema(ma.ModelSchema):
 
                 # Get the existing field entry if one exists
                 entry = TeamFieldEntries.query.filter_by(
-                    field_id=field.id, user_id=current_user.id
+                    field_id=field.id, team_id=current_team.id
                 ).first()
 
                 if entry:
@@ -265,7 +265,7 @@ class TeamSchema(ma.ModelSchema):
             # This needs a better soln.
             entries = (
                 TeamFieldEntries.query.options(load_only("id"))
-                .filter_by(user_id=current_user.id)
+                .filter_by(team_id=current_team.id)
                 .all()
             )
             for entry in entries:

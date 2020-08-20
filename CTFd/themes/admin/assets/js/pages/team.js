@@ -47,7 +47,20 @@ function createTeam(event) {
 
 function updateTeam(event) {
   event.preventDefault();
-  const params = $("#team-info-edit-form").serializeJSON(true);
+  let params = $("#team-info-edit-form").serializeJSON(true);
+
+  params.fields = [];
+
+  for (const property in params) {
+    if (property.match(/fields\[\d+\]/)) {
+      let field = {};
+      let id = parseInt(property.slice(7, -1));
+      field["field_id"] = id;
+      field["value"] = params[property];
+      params.fields.push(field);
+      delete params[property];
+    }
+  }
 
   CTFd.fetch("/api/v1/teams/" + window.TEAM_ID, {
     method: "PATCH",
