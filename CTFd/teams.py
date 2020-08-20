@@ -2,7 +2,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 
 from CTFd.cache import clear_team_session, clear_user_session
 from CTFd.models import TeamFieldEntries, TeamFields, Teams, db
-from CTFd.utils import config, get_config
+from CTFd.utils import config, get_config, validators
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators import authed_only, ratelimit
 from CTFd.utils.decorators.modes import require_team_mode
@@ -125,6 +125,9 @@ def new():
         passphrase = request.form.get("password", "").strip()
         errors = get_errors()
 
+        website = request.form.get("website")
+        affiliation = request.form.get("affiliation")
+
         user = get_current_user()
 
         existing_team = Teams.query.filter_by(name=teamname).first()
@@ -158,27 +161,30 @@ def new():
             else:
                 entries[field_id] = value
 
-        # if website:
-        #     valid_website = validators.validate_url(website)
-        # else:
-        #     valid_website = True
+        if website:
+            valid_website = validators.validate_url(website)
+        else:
+            valid_website = True
 
-        # if affiliation:
-        #     valid_affiliation = len(affiliation) < 128
-        # else:
-        #     valid_affiliation = True
+        if affiliation:
+            valid_affiliation = len(affiliation) < 128
+        else:
+            valid_affiliation = True
+
+        if valid_website is False:
+            errors.append("Websites must be a proper URL starting with http or https")
+        if valid_affiliation is False:
+            errors.append("Please provide a shorter affiliation")
 
         if errors:
             return render_template("teams/new_team.html", errors=errors)
 
         team = Teams(name=teamname, password=passphrase, captain_id=user.id)
 
-        # if website:
-        #     user.website = website
-        # if affiliation:
-        #     user.affiliation = affiliation
-        # if country:
-        #     user.country = country
+        if website:
+            team.website = website
+        if affiliation:
+            team.affiliation = affiliation
 
         db.session.add(team)
         db.session.commit()

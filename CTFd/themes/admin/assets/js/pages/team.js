@@ -49,7 +49,9 @@ function createTeam(event) {
               body: response.errors[key]
             })
           );
-          const i = $("#team-info-create-form").find("input[name={0}]".format(key));
+          const i = $("#team-info-create-form").find(
+            "input[name={0}]".format(key)
+          );
           const input = $(i);
           input.addClass("input-filled-invalid");
           input.removeClass("input-filled-valid");
