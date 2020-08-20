@@ -205,32 +205,33 @@ class UserSchema(ma.ModelSchema):
             else:
                 target_user = current_user
 
-            provided_ids = []
-            for f in fields:
-                f.pop("id", None)
-                field_id = f.get("field_id")
+            if self.view == "admin":
+                provided_ids = []
+                for f in fields:
+                    f.pop("id", None)
+                    field_id = f.get("field_id")
 
-                # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
-                field = UserFields.query.filter_by(id=field_id).first_or_404()
+                    # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
+                    field = UserFields.query.filter_by(id=field_id).first_or_404()
 
-                # Get the existing field entry if one exists
-                entry = UserFieldEntries.query.filter_by(
-                    field_id=field.id, user_id=target_user.id
-                ).first()
-                if entry:
-                    f["id"] = entry.id
-                    provided_ids.append(entry.id)
+                    # Get the existing field entry if one exists
+                    entry = UserFieldEntries.query.filter_by(
+                        field_id=field.id, user_id=target_user.id
+                    ).first()
+                    if entry:
+                        f["id"] = entry.id
+                        provided_ids.append(entry.id)
 
-            # Extremely dirty hack to prevent deleting previously provided data.
-            # This needs a better soln.
-            entries = (
-                UserFieldEntries.query.options(load_only("id"))
-                .filter_by(user_id=target_user.id)
-                .all()
-            )
-            for entry in entries:
-                if entry.id not in provided_ids:
-                    fields.append({"id": entry.id})
+                # Extremely dirty hack to prevent deleting previously provided data.
+                # This needs a better soln.
+                entries = (
+                    UserFieldEntries.query.options(load_only("id"))
+                    .filter_by(user_id=target_user.id)
+                    .all()
+                )
+                for entry in entries:
+                    if entry.id not in provided_ids:
+                        fields.append({"id": entry.id})
         else:
             provided_ids = []
             for f in fields:

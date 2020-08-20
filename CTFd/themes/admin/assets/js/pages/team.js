@@ -11,6 +11,19 @@ function createTeam(event) {
   event.preventDefault();
   const params = $("#team-info-create-form").serializeJSON(true);
 
+  params.fields = [];
+
+  for (const property in params) {
+    if (property.match(/fields\[\d+\]/)) {
+      let field = {};
+      let id = parseInt(property.slice(7, -1));
+      field["field_id"] = id;
+      field["value"] = params[property];
+      params.fields.push(field);
+      delete params[property];
+    }
+  }
+
   CTFd.fetch("/api/v1/teams", {
     method: "POST",
     credentials: "same-origin",
