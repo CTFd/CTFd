@@ -41,15 +41,15 @@ function createTeam(event) {
         const team_id = response.data.id;
         window.location = CTFd.config.urlRoot + "/admin/teams/" + team_id;
       } else {
-        $("#team-info-form > #results").empty();
+        $("#team-info-create-form > #results").empty();
         Object.keys(response.errors).forEach(function(key, _index) {
-          $("#team-info-form > #results").append(
+          $("#team-info-create-form > #results").append(
             ezBadge({
               type: "error",
               body: response.errors[key]
             })
           );
-          const i = $("#team-info-form").find("input[name={0}]".format(key));
+          const i = $("#team-info-create-form").find("input[name={0}]".format(key));
           const input = $(i);
           input.addClass("input-filled-invalid");
           input.removeClass("input-filled-valid");

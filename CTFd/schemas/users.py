@@ -205,7 +205,9 @@ class UserSchema(ma.ModelSchema):
             else:
                 target_user = current_user
 
-            if self.view == "admin":
+            # We are editting an existing user
+            if self.view == "admin" and self.instance:
+                target_user = self.instance
                 provided_ids = []
                 for f in fields:
                     f.pop("id", None)

@@ -211,7 +211,9 @@ class TeamSchema(ma.ModelSchema):
             else:
                 target_team = current_team
 
-            if self.view == "admin":
+            # We are editting an existing
+            if self.view == "admin" and self.instance:
+                target_team = self.instance
                 provided_ids = []
                 for f in fields:
                     f.pop("id", None)
