@@ -1,7 +1,9 @@
 from marshmallow import ValidationError, pre_load, validate
+from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 
-from CTFd.models import Teams, Users, ma
+from CTFd.models import TeamFieldEntries, TeamFields, Teams, Users, ma
+from CTFd.schemas.fields import TeamFieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.user import get_current_team, get_current_user, is_admin
@@ -44,6 +46,9 @@ class TeamSchema(ma.ModelSchema):
         ],
     )
     country = field_for(Teams, "country", validate=[validate_country_code])
+    fields = Nested(
+        TeamFieldEntriesSchema, partial=True, many=True, attribute="field_entries"
+    )
 
     @pre_load
     def validate_name(self, data):
@@ -197,6 +202,7 @@ class TeamSchema(ma.ModelSchema):
             "id",
             "oauth_id",
             "captain_id",
+            "fields",
         ],
         "self": [
             "website",
@@ -210,6 +216,7 @@ class TeamSchema(ma.ModelSchema):
             "oauth_id",
             "password",
             "captain_id",
+            "fields",
         ],
         "admin": [
             "website",
@@ -227,6 +234,7 @@ class TeamSchema(ma.ModelSchema):
             "oauth_id",
             "password",
             "captain_id",
+            "fields",
         ],
     }
 
@@ -236,5 +244,6 @@ class TeamSchema(ma.ModelSchema):
                 kwargs["only"] = self.views[view]
             elif isinstance(view, list):
                 kwargs["only"] = view
+        self.view = view
 
         super(TeamSchema, self).__init__(*args, **kwargs)
