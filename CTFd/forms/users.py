@@ -76,9 +76,7 @@ def attach_custom_user_fields(form_cls, **kwargs):
                 field.name, description=field.description, validators=validators
             )
 
-        setattr(
-            form_cls, f"fields[{field.id}]", input_field,
-        )
+        setattr(form_cls, f"fields[{field.id}]", input_field)
 
 
 class UserSearchForm(BaseForm):

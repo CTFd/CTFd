@@ -1,4 +1,5 @@
-{% with form = Forms.teams.TeamCreateForm(obj=team) %}
+{% with form = Forms.teams.TeamEditForm(obj=team) %}
+{% from "admin/macros/forms.html" import render_extra_fields %}
 <form id="team-info-edit-form" method="POST">
 	<div class="form-group">
 		{{ form.name.label }}
@@ -24,6 +25,9 @@
 		{{ form.country.label }}
 		{{ form.country(class="form-control custom-select") }}
 	</div>
+
+	{{ render_extra_fields(form.extra) }}
+
 	<div class="form-group">
 		<div class="form-check form-check-inline">
 			{{ form.hidden(class="form-check-input") }}

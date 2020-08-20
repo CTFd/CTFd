@@ -15,15 +15,19 @@
 				{% include "components/errors.html" %}
 
 				{% with form = Forms.teams.TeamRegisterForm() %}
+				{% from "macros/forms.html" import render_extra_fields %}
 				<form method="POST">
 					<div class="form-group">
-						{{ form.name.label }}
+						<b>{{ form.name.label }}</b>
 						{{ form.name(class="form-control") }}
 					</div>
 					<div class="form-group">
-						{{ form.password.label }}
+						<b>{{ form.password.label }}</b>
 						{{ form.password(class="form-control") }}
 					</div>
+
+					{{ render_extra_fields(form.extra) }}
+
 					<div class="row pt-3">
 						<div class="col-md-12">
 							<p>After creating your team, share the team name and password with your teammates so they can join your team.</p>

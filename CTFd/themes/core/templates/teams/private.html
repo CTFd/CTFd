@@ -15,6 +15,7 @@
 				</div>
 				<div class="modal-body clearfix">
 					{% with form = Forms.teams.TeamSettingsForm(obj=team) %}
+					{% from "macros/forms.html" import render_extra_fields %}
 					<form id="team-info-form" method="POST">
 						<div class="form-group">
 							<b>{{ form.name.label }}</b>
@@ -58,6 +59,11 @@
 								{{ form.country.description }}
 							</small>
 						</div>
+
+						<hr>
+
+						{{ render_extra_fields(form.extra) }}
+
 						<div id="results">
 
 						</div>
