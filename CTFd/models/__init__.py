@@ -346,7 +346,9 @@ class Users(db.Model):
         if admin:
             return self.field_entries
 
-        return [entry for entry in self.field_entries if entry.field.public]
+        return [
+            entry for entry in self.field_entries if entry.field.public and entry.value
+        ]
 
     def get_solves(self, admin=False):
         from CTFd.utils import get_config
@@ -515,7 +517,9 @@ class Teams(db.Model):
         if admin:
             return self.field_entries
 
-        return [entry for entry in self.field_entries if entry.field.public]
+        return [
+            entry for entry in self.field_entries if entry.field.public and entry.value
+        ]
 
     def get_solves(self, admin=False):
         from CTFd.utils import get_config
