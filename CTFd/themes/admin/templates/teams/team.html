@@ -137,6 +137,12 @@
 			</h3>
 		{% endif %}
 
+		{% for field in team.get_fields(admin=true) %}
+			<h3 class="d-block">
+				{{ field.name }}: {{ field.value }}
+			</h3>
+		{% endfor %}
+
 		<h2 class="text-center">{{ members | length }} members</h2>
 		<h3 id="team-place" class="text-center">
 			{% if place %}
