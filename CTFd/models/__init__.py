@@ -467,6 +467,10 @@ class Teams(db.Model):
     captain_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     captain = db.relationship("Users", foreign_keys=[captain_id])
 
+    field_entries = db.relationship(
+        "TeamFieldEntries", foreign_keys="TeamFieldEntries.team_id", lazy="joined"
+    )
+
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, **kwargs):
@@ -477,6 +481,10 @@ class Teams(db.Model):
         from CTFd.utils.crypto import hash_password
 
         return hash_password(str(plaintext))
+
+    @property
+    def fields(self):
+        return self.get_fields(admin=False)
 
     @property
     def solves(self):
@@ -502,6 +510,12 @@ class Teams(db.Model):
             return self.get_place(admin=False)
         else:
             return None
+
+    def get_fields(self, admin=False):
+        if admin:
+            return self.field_entries
+
+        return [entry for entry in self.field_entries if entry.field.public]
 
     def get_solves(self, admin=False):
         from CTFd.utils import get_config
