@@ -20,7 +20,7 @@
             v-model.lazy="field.field_type"
           >
             <option value="text">Text Field</option>
-            <option value="checkbox">Checkbox</option>
+            <option value="boolean">Checkbox</option>
           </select>
           <small class="form-text text-muted"
             >Type of field shown to the user</small

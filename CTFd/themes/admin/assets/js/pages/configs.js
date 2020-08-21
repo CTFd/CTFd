@@ -363,9 +363,22 @@ $(() => {
     })
     .change();
 
-  // Insert CommentBox element
+  // Insert FieldList element for users
   const fieldList = Vue.extend(FieldList);
-  let vueContainer = document.createElement("div");
-  document.querySelector("#user-field-list").appendChild(vueContainer);
-  new fieldList({}).$mount(vueContainer);
+  let userVueContainer = document.createElement("div");
+  document.querySelector("#user-field-list").appendChild(userVueContainer);
+  new fieldList({
+    propsData: {
+      type: "user"
+    }
+  }).$mount(userVueContainer);
+
+  // Insert FieldList element for teams
+  let teamVueContainer = document.createElement("div");
+  document.querySelector("#team-field-list").appendChild(teamVueContainer);
+  new fieldList({
+    propsData: {
+      type: "team"
+    }
+  }).$mount(teamVueContainer);
 });

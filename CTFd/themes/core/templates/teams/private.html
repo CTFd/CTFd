@@ -15,6 +15,7 @@
 				</div>
 				<div class="modal-body clearfix">
 					{% with form = Forms.teams.TeamSettingsForm(obj=team) %}
+					{% from "macros/forms.html" import render_extra_fields %}
 					<form id="team-info-form" method="POST">
 						<div class="form-group">
 							<b>{{ form.name.label }}</b>
@@ -58,6 +59,11 @@
 								{{ form.country.description }}
 							</small>
 						</div>
+
+						<hr>
+
+						{{ render_extra_fields(form.extra) }}
+
 						<div id="results">
 
 						</div>
@@ -120,6 +126,11 @@
 					</span>
 				</h3>
 			{% endif %}
+			{% for field in team.fields %}
+				<h3 class="d-block">
+					{{ field.name }}: {{ field.value }}
+				</h3>
+			{% endfor %}
 			<h2 id="team-place" class="text-center">
 				{# This intentionally hides the team's place when scores are hidden because this can be their internal profile
 			and we don't want to leak their place in the CTF. #}

@@ -1,29 +1,36 @@
-{% with form = Forms.teams.TeamEditForm() %}
+{% with form = Forms.teams.TeamCreateForm() %}
+{% from "admin/macros/forms.html" import render_extra_fields %}
 <form id="team-info-create-form" method="POST">
 	<div class="form-group">
-		<b>{{ form.name.label }}</b>
+		{{ form.name.label }}
 		{{ form.name(class="form-control") }}
 	</div>
 	<div class="form-group">
-		<b>{{ form.email.label }}</b>
+		{{ form.email.label }}
 		{{ form.email(class="form-control") }}
 	</div>
 	<div class="form-group">
-		<b>{{ form.password.label }}</b>
+		{{ form.password.label }}
 		{{ form.password(class="form-control") }}
 	</div>
 	<div class="form-group">
-		<b>{{ form.website.label }}</b>
+		{{ form.website.label }}
+		<small class="float-right text-muted align-text-bottom">Optional</small>
 		{{ form.website(class="form-control") }}
 	</div>
 	<div class="form-group">
-		<b>{{ form.affiliation.label }}</b>
+		{{ form.affiliation.label }}
+		<small class="float-right text-muted align-text-bottom">Optional</small>
 		{{ form.affiliation(class="form-control") }}
 	</div>
 	<div class="form-group">
-		<b>{{ form.country.label }}</b>
+		{{ form.country.label }}
+		<small class="float-right text-muted align-text-bottom">Optional</small>
 		{{ form.country(class="form-control custom-select") }}
 	</div>
+
+	{{ render_extra_fields(form.extra) }}
+
 	<div class="form-group">
 		<div class="form-check form-check-inline">
 			{{ form.hidden(class="form-check-input") }}

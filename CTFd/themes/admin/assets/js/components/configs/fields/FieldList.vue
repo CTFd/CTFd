@@ -33,7 +33,9 @@ export default {
   components: {
     Field
   },
-  props: {},
+  props: {
+    type: String
+  },
   data: function() {
     return {
       fields: []
@@ -41,7 +43,7 @@ export default {
   },
   methods: {
     loadFields: function() {
-      CTFd.fetch("/api/v1/configs/fields?type=user", {
+      CTFd.fetch(`/api/v1/configs/fields?type=${this.type}`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
@@ -59,7 +61,7 @@ export default {
     addField: function() {
       this.fields.push({
         id: Math.random(),
-        type: "user",
+        type: this.type,
         field_type: "text",
         name: "",
         description: "",

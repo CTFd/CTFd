@@ -1,115 +1,156 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import UserFieldEntries
+from CTFd.models import TeamFieldEntries, Teams, Users
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
     gen_field,
+    gen_team,
     login_as_user,
     register_user,
 )
 
 
 def test_new_fields_show_on_pages():
-    app = create_ctfd()
+    app = create_ctfd(user_mode="teams")
     with app.app_context():
         register_user(app)
+        team = gen_team(app.db)
+        user = Users.query.filter_by(id=2).first()
+        user.team_id = team.id
+        team = Teams.query.filter_by(id=1).first()
+        team.captain_id = 2
+        app.db.session.commit()
 
-        gen_field(app.db)
+        gen_field(app.db, name="CustomField1", type="team")
 
         with login_as_user(app) as client:
-            r = client.get("/register")
-            assert "CustomField" in r.get_data(as_text=True)
+            r = client.get("/teams/new")
+            assert "CustomField1" in r.get_data(as_text=True)
             assert "CustomFieldDescription" in r.get_data(as_text=True)
 
-            r = client.get("/settings")
-            assert "CustomField" in r.get_data(as_text=True)
+            r = client.get("/team")
+            assert "CustomField1" in r.get_data(as_text=True)
             assert "CustomFieldDescription" in r.get_data(as_text=True)
 
             r = client.patch(
-                "/api/v1/users/me",
+                "/api/v1/teams/me",
                 json={"fields": [{"field_id": 1, "value": "CustomFieldEntry"}]},
             )
             resp = r.get_json()
             assert resp["success"] is True
             assert resp["data"]["fields"][0]["value"] == "CustomFieldEntry"
             assert resp["data"]["fields"][0]["description"] == "CustomFieldDescription"
-            assert resp["data"]["fields"][0]["name"] == "CustomField"
+            assert resp["data"]["fields"][0]["name"] == "CustomField1"
             assert resp["data"]["fields"][0]["field_id"] == 1
 
-            r = client.get("/user")
+            r = client.get("/team")
             resp = r.get_data(as_text=True)
-            assert "CustomField" in resp
+            assert "CustomField1" in resp
             assert "CustomFieldEntry" in resp
 
-            r = client.get("/users/2")
+            r = client.get("/teams/1")
             resp = r.get_data(as_text=True)
-            assert "CustomField" in resp
+            assert "CustomField1" in resp
             assert "CustomFieldEntry" in resp
     destroy_ctfd(app)
 
 
-def test_fields_required_on_register():
-    app = create_ctfd()
-    with app.app_context():
-        gen_field(app.db)
-
-        with app.app_context():
-            with app.test_client() as client:
-                client.get("/register")
-                with client.session_transaction() as sess:
-                    data = {
-                        "name": "user",
-                        "email": "user@ctfd.io",
-                        "password": "password",
-                        "nonce": sess.get("nonce"),
-                    }
-                client.post("/register", data=data)
-                with client.session_transaction() as sess:
-                    assert sess.get("id") is None
-
-                with client.session_transaction() as sess:
-                    data = {
-                        "name": "user",
-                        "email": "user@ctfd.io",
-                        "password": "password",
-                        "fields[1]": "custom_field_value",
-                        "nonce": sess.get("nonce"),
-                    }
-                client.post("/register", data=data)
-                with client.session_transaction() as sess:
-                    assert sess["id"]
-    destroy_ctfd(app)
-
-
-def test_fields_properties():
-    app = create_ctfd()
+def test_team_fields_required_on_creation():
+    app = create_ctfd(user_mode="teams")
     with app.app_context():
         register_user(app)
+        gen_field(app.db, type="team")
+
+        with app.app_context():
+            with login_as_user(app) as client:
+                assert Teams.query.count() == 0
+                r = client.get("/teams/new")
+                resp = r.get_data(as_text=True)
+                assert "CustomField" in resp
+                assert "CustomFieldDescription" in resp
+
+                with client.session_transaction() as sess:
+                    data = {
+                        "name": "team",
+                        "password": "password",
+                        "nonce": sess.get("nonce"),
+                    }
+                r = client.post("/teams/new", data=data)
+                assert "Please provide all required fields" in r.get_data(as_text=True)
+                assert Teams.query.count() == 0
+
+                with client.session_transaction() as sess:
+                    data = {
+                        "name": "team",
+                        "password": "password",
+                        "fields[1]": "CustomFieldEntry",
+                        "nonce": sess.get("nonce"),
+                    }
+                r = client.post("/teams/new", data=data)
+                assert r.status_code == 302
+                assert Teams.query.count() == 1
+
+                entry = TeamFieldEntries.query.filter_by(id=1).first()
+                assert entry.team_id == 1
+                assert entry.value == "CustomFieldEntry"
+    destroy_ctfd(app)
+
+
+def test_team_fields_properties():
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        team = gen_team(app.db)
+        user = Users.query.filter_by(id=2).first()
+        user.team_id = team.id
+        team = Teams.query.filter_by(id=1).first()
+        team.captain_id = 2
+        app.db.session.commit()
 
         gen_field(
-            app.db, name="CustomField1", required=True, public=True, editable=True
+            app.db,
+            name="CustomField1",
+            type="team",
+            required=True,
+            public=True,
+            editable=True,
         )
         gen_field(
-            app.db, name="CustomField2", required=False, public=True, editable=True
+            app.db,
+            name="CustomField2",
+            type="team",
+            required=False,
+            public=True,
+            editable=True,
         )
         gen_field(
-            app.db, name="CustomField3", required=False, public=False, editable=True
+            app.db,
+            name="CustomField3",
+            type="team",
+            required=False,
+            public=False,
+            editable=True,
         )
         gen_field(
-            app.db, name="CustomField4", required=False, public=False, editable=False
+            app.db,
+            name="CustomField4",
+            type="team",
+            required=False,
+            public=False,
+            editable=False,
         )
 
         with login_as_user(app) as client:
-            r = client.get("/register")
+            r = client.get("/teams/new")
             resp = r.get_data(as_text=True)
             assert "CustomField1" in resp
             assert "CustomField2" in resp
             assert "CustomField3" in resp
             assert "CustomField4" in resp
 
-            r = client.get("/settings")
+            r = client.get("/team")
             resp = r.get_data(as_text=True)
             assert "CustomField1" in resp
             assert "CustomField2" in resp
@@ -117,7 +158,7 @@ def test_fields_properties():
             assert "CustomField4" not in resp
 
             r = client.patch(
-                "/api/v1/users/me",
+                "/api/v1/teams/me",
                 json={
                     "fields": [
                         {"field_id": 1, "value": "CustomFieldEntry1"},
@@ -134,7 +175,7 @@ def test_fields_properties():
             }
 
             r = client.patch(
-                "/api/v1/users/me",
+                "/api/v1/teams/me",
                 json={
                     "fields": [
                         {"field_id": 1, "value": "CustomFieldEntry1"},
@@ -145,14 +186,16 @@ def test_fields_properties():
             )
             assert r.status_code == 200
 
-            r = client.get("/user")
+            r = client.get("/team")
             resp = r.get_data(as_text=True)
             assert "CustomField1" in resp
             assert "CustomField2" in resp
-            assert "CustomField3" not in resp
+            assert (
+                "CustomField3" in resp
+            )  # This is here because /team contains team settings
             assert "CustomField4" not in resp
 
-            r = client.get("/users/2")
+            r = client.get("/teams/1")
             resp = r.get_data(as_text=True)
             assert "CustomField1" in resp
             assert "CustomField2" in resp
@@ -161,13 +204,20 @@ def test_fields_properties():
     destroy_ctfd(app)
 
 
-def test_boolean_checkbox_field():
-    app = create_ctfd()
+def test_teams_boolean_checkbox_field():
+    app = create_ctfd(user_mode="teams")
     with app.app_context():
-        gen_field(app.db, name="CustomField1", field_type="boolean", required=False)
+        register_user(app)
+        gen_field(
+            app.db,
+            name="CustomField1",
+            type="team",
+            field_type="boolean",
+            required=False,
+        )
 
-        with app.test_client() as client:
-            r = client.get("/register")
+        with login_as_user(app) as client:
+            r = client.get("/teams/new")
             resp = r.get_data(as_text=True)
 
             # We should have rendered a checkbox input
@@ -175,29 +225,27 @@ def test_boolean_checkbox_field():
 
             with client.session_transaction() as sess:
                 data = {
-                    "name": "user",
-                    "email": "user@ctfd.io",
+                    "name": "team",
                     "password": "password",
                     "nonce": sess.get("nonce"),
                     "fields[1]": "y",
                 }
-            client.post("/register", data=data)
-            with client.session_transaction() as sess:
-                assert sess["id"]
+            client.post("/teams/new", data=data)
+            assert Teams.query.count() == 1
 
-        assert UserFieldEntries.query.count() == 1
-        assert UserFieldEntries.query.filter_by(id=1).first().value is True
+        assert TeamFieldEntries.query.count() == 1
+        assert TeamFieldEntries.query.filter_by(id=1).first().value is True
 
         with login_as_user(app) as client:
-            r = client.get("/settings")
+            r = client.get("/team")
             resp = r.get_data(as_text=True)
             assert "CustomField1" in resp
             assert "checkbox" in resp
 
             r = client.patch(
-                "/api/v1/users/me", json={"fields": [{"field_id": 1, "value": False}]}
+                "/api/v1/teams/me", json={"fields": [{"field_id": 1, "value": False}]}
             )
             assert r.status_code == 200
-            assert UserFieldEntries.query.count() == 1
-            assert UserFieldEntries.query.filter_by(id=1).first().value is False
+            assert TeamFieldEntries.query.count() == 1
+            assert TeamFieldEntries.query.filter_by(id=1).first().value is False
     destroy_ctfd(app)

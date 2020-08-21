@@ -11,6 +11,19 @@ function createTeam(event) {
   event.preventDefault();
   const params = $("#team-info-create-form").serializeJSON(true);
 
+  params.fields = [];
+
+  for (const property in params) {
+    if (property.match(/fields\[\d+\]/)) {
+      let field = {};
+      let id = parseInt(property.slice(7, -1));
+      field["field_id"] = id;
+      field["value"] = params[property];
+      params.fields.push(field);
+      delete params[property];
+    }
+  }
+
   CTFd.fetch("/api/v1/teams", {
     method: "POST",
     credentials: "same-origin",
@@ -28,15 +41,17 @@ function createTeam(event) {
         const team_id = response.data.id;
         window.location = CTFd.config.urlRoot + "/admin/teams/" + team_id;
       } else {
-        $("#team-info-form > #results").empty();
+        $("#team-info-create-form > #results").empty();
         Object.keys(response.errors).forEach(function(key, _index) {
-          $("#team-info-form > #results").append(
+          $("#team-info-create-form > #results").append(
             ezBadge({
               type: "error",
               body: response.errors[key]
             })
           );
-          const i = $("#team-info-form").find("input[name={0}]".format(key));
+          const i = $("#team-info-create-form").find(
+            "input[name={0}]".format(key)
+          );
           const input = $(i);
           input.addClass("input-filled-invalid");
           input.removeClass("input-filled-valid");
@@ -47,7 +62,20 @@ function createTeam(event) {
 
 function updateTeam(event) {
   event.preventDefault();
-  const params = $("#team-info-edit-form").serializeJSON(true);
+  let params = $("#team-info-edit-form").serializeJSON(true);
+
+  params.fields = [];
+
+  for (const property in params) {
+    if (property.match(/fields\[\d+\]/)) {
+      let field = {};
+      let id = parseInt(property.slice(7, -1));
+      field["field_id"] = id;
+      field["value"] = params[property];
+      params.fields.push(field);
+      delete params[property];
+    }
+  }
 
   CTFd.fetch("/api/v1/teams/" + window.TEAM_ID, {
     method: "PATCH",
