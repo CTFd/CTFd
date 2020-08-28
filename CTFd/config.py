@@ -173,31 +173,23 @@ class ServerConfig(object):
         AWS_S3_ENDPOINT_URL: str = empty_str_cast(config_ini["uploads"]["AWS_S3_ENDPOINT_URL"])
 
     # === OPTIONAL ===
-    REVERSE_PROXY: bool = empty_str_cast(config_ini["optional"]["REVERSE_PROXY"]) \
-        or False
+    REVERSE_PROXY: bool = empty_str_cast(config_ini["optional"]["REVERSE_PROXY"], False)
 
-    TEMPLATES_AUTO_RELOAD: bool = empty_str_cast(config_ini["optional"]["TEMPLATES_AUTO_RELOAD"]) \
-        or True
+    TEMPLATES_AUTO_RELOAD: bool = empty_str_cast(config_ini["optional"]["TEMPLATES_AUTO_RELOAD"], True)
 
-    SQLALCHEMY_TRACK_MODIFICATIONS: bool = empty_str_cast(config_ini["optional"]["SQLALCHEMY_TRACK_MODIFICATIONS"]) \
-        or False
+    SQLALCHEMY_TRACK_MODIFICATIONS: bool = empty_str_cast(config_ini["optional"]["SQLALCHEMY_TRACK_MODIFICATIONS"], False)
 
-    SWAGGER_UI: bool = empty_str_cast(config_ini["optional"]["SWAGGER_UI"]) \
-        or False
+    SWAGGER_UI: bool = empty_str_cast(config_ini["optional"]["SWAGGER_UI"], False)
 
     SWAGGER_UI_ENDPOINT: str = "/" if SWAGGER_UI else None
 
-    UPDATE_CHECK: bool = empty_str_cast(config_ini["optional"]["UPDATE_CHECK"]) \
-        or True
+    UPDATE_CHECK: bool = empty_str_cast(config_ini["optional"]["UPDATE_CHECK"], True)
 
-    APPLICATION_ROOT: str = empty_str_cast(config_ini["optional"]["APPLICATION_ROOT"]) \
-        or "/"
+    APPLICATION_ROOT: str = empty_str_cast(config_ini["optional"]["APPLICATION_ROOT"], "/")
 
-    SERVER_SENT_EVENTS: bool = empty_str_cast(config_ini["optional"]["SERVER_SENT_EVENTS"]) \
-        or True
+    SERVER_SENT_EVENTS: bool = empty_str_cast(config_ini["optional"]["SERVER_SENT_EVENTS"], True)
 
-    HTML_SANITIZATION: bool = empty_str_cast(config_ini["optional"]["HTML_SANITIZATION"]) \
-        or False
+    HTML_SANITIZATION: bool = empty_str_cast(config_ini["optional"]["HTML_SANITIZATION"], False)
 
     if DATABASE_URL.startswith("sqlite") is False:
         SQLALCHEMY_ENGINE_OPTIONS = {
