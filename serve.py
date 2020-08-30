@@ -6,7 +6,9 @@ parser.add_argument(
     "--profile", help="Enable flask_profiler profiling", action="store_true"
 )
 parser.add_argument(
-    "--disable-gevent", help="Disable importing gevent and monkey patching", action="store_false"
+    "--disable-gevent",
+    help="Disable importing gevent and monkey patching",
+    action="store_false",
 )
 args = parser.parse_args()
 if args.disable_gevent:
