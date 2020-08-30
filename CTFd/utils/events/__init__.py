@@ -46,7 +46,7 @@ class EventManager(object):
             client[channel].put(message)
         return len(self.clients)
 
-    def listen():
+    def listen(self):
         pass
 
     def subscribe(self, channel="ctf"):
