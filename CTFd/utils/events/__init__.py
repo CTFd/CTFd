@@ -43,7 +43,7 @@ class EventManager(object):
     def publish(self, data, type=None, channel="ctf"):
         event = ServerSentEvent(data, type=type)
         message = event.to_dict()
-        for client in self.clients.values():
+        for client in list(self.clients.values()):
             client[channel].put(message)
         return len(self.clients)
 
