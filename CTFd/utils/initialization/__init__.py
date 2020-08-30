@@ -176,6 +176,7 @@ def init_events(app):
         app.events_manager = EventManager()
     else:
         app.events_manager = EventManager()
+    app.events_manager.listen()
 
 
 def init_request_processors(app):
