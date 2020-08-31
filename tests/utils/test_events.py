@@ -63,7 +63,8 @@ def test_event_manager_publish():
     }
 
     event_manager = EventManager()
-    event_manager.clients.append(defaultdict(Queue))
+    q = defaultdict(Queue)
+    event_manager.clients[id(q)] = q
     event_manager.publish(data=saved_data, type="notification", channel="ctf")
 
     event = event_manager.clients[0]["ctf"].get()
