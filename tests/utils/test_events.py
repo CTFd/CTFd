@@ -130,27 +130,19 @@ def test_redis_event_manager_subscription():
     else:
         with app.app_context():
             saved_data = {
-                u"data": {
-                    u"content": u"asdf",
-                    u"date": u"2019-01-28T05:02:19.830906+00:00",
-                    u"id": 13,
-                    u"team": None,
-                    u"team_id": None,
-                    u"title": u"asdf",
-                    u"user": None,
-                    u"user_id": None,
-                },
-                u"type": u"notification",
+                "user_id": None,
+                "title": "asdf",
+                "content": "asdf",
+                "team_id": None,
+                "user": None,
+                "team": None,
+                "date": "2019-01-28T01:20:46.017649+00:00",
+                "id": 10,
             }
+            saved_event = {"type": "notification", "data": saved_data}
 
-            saved_event = {
-                "pattern": None,
-                "type": "message",
-                "channel": "ctf",
-                "data": json.dumps(saved_data),
-            }
-            with patch.object(redis.client.PubSub, "listen") as fake_pubsub_listen:
-                fake_pubsub_listen.return_value = [saved_event]
+            with patch.object(Queue, "get") as fake_queue:
+                fake_queue.return_value = saved_event
                 event_manager = RedisEventManager()
 
                 events = event_manager.subscribe()
@@ -161,7 +153,7 @@ def test_redis_event_manager_subscription():
 
                 message = next(events)
                 assert isinstance(message, ServerSentEvent)
-                assert message.to_dict() == saved_data
+                assert message.to_dict() == saved_event
                 assert message.__str__().startswith("event:notification\ndata:")
         destroy_ctfd(app)
 
