@@ -67,7 +67,7 @@ def test_event_manager_publish():
     event_manager.clients[id(q)] = q
     event_manager.publish(data=saved_data, type="notification", channel="ctf")
 
-    event = event_manager.clients[0]["ctf"].get()
+    event = event_manager.clients[id(q)]["ctf"].get()
     event = ServerSentEvent(**event)
     assert event.data == saved_data
 
