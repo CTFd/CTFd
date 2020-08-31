@@ -1,9 +1,7 @@
-import json
 from collections import defaultdict
 from queue import Queue
 from unittest.mock import patch
 
-import redis
 from redis.exceptions import ConnectionError
 
 from CTFd.config import TestingConfig
