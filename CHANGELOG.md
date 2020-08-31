@@ -1,3 +1,14 @@
+# 3.0.2 / 2020-08-23
+
+**Admin Panel**
+
+- Fix submission searching in Admin Panel
+- Fix update banner being hidden behind navbar
+
+**Plugins**
+
+- Change default `input` & `submit` blocks in `challenge.html` to use the default values specified in the original challenge type plugins
+
 # 3.0.1 / 2020-08-12
 
 **General**

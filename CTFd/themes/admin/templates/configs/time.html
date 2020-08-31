@@ -29,30 +29,30 @@
 
 					<div class="form-group col-md-2">
 						<label for="start-month">Month:</label>
-						<input class="form-control start-date" id='start-month' name='start-month' min="0" max="12"
+						<input class="form-control start-date" id='start-month' min="0" max="12"
 							   type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="start-day">Day:</label>
-						<input class="form-control start-date" id='start-day' name='start-day' min="0" max="31"
+						<input class="form-control start-date" id='start-day' min="0" max="31"
 							   type='number'>
 					</div>
 
 					<div class="form-group col-md-3">
 						<label for="start-year">Year:</label>
-						<input class="form-control start-date" id='start-year' name='start-year' type='number'>
+						<input class="form-control start-date" id='start-year' type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="start-hour">Hour:</label>
-						<input class="form-control start-date" id='start-hour' name='start-hour' min="0" max="23"
+						<input class="form-control start-date" id='start-hour' min="0" max="23"
 							   type='number'>
 					</div>
 
 					<div class="form-group col-md-3">
 						<label for="start-minute">Minute:</label>
-						<input class="form-control start-date" id='start-minute' name='start-minute' min="0" max="59"
+						<input class="form-control start-date" id='start-minute' min="0" max="59"
 							   type='number'>
 					</div>
 
@@ -76,7 +76,7 @@
 
 					<div class="form-group col-md-12">
 						<label>UTC Timestamp:</label>
-						<input class="form-control" id='start' name='start' type='text'
+						<input class="form-control" id='start' name='start' type='number'
 							   placeholder="Start Date (UTC timestamp)"
 							   {% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly>
 					</div>
@@ -92,30 +92,30 @@
 
 					<div class="form-group col-md-2">
 						<label for="end-month">Month:</label>
-						<input class="form-control end-date" id='end-month' name='end-month' min="0" max="12"
+						<input class="form-control end-date" id='end-month' min="0" max="12"
 							   type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="end-day">Day:</label>
-						<input class="form-control end-date" id='end-day' name='end-day' min="0" max="31"
+						<input class="form-control end-date" id='end-day' min="0" max="31"
 							   type='number'>
 					</div>
 
 					<div class="form-group col-md-4">
 						<label for="end-year">Year:</label>
-						<input class="form-control end-date" id='end-year' name='end-year' type='number'>
+						<input class="form-control end-date" id='end-year' type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="end-hour">Hour:</label>
-						<input class="form-control end-date" id='end-hour' name='end-hour' min="0" max="23"
+						<input class="form-control end-date" id='end-hour' min="0" max="23"
 							   type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="end-minute">Minute:</label>
-						<input class="form-control end-date" id='end-minute' name='end-minute' min="0"
+						<input class="form-control end-date" id='end-minute' min="0"
 							   max="59" type='number'>
 					</div>
 
@@ -147,7 +147,7 @@
 
 					<div class="form-group col-md-12">
 						<label for="end">UTC Timestamp:</label>
-						<input class="form-control" id='end' name='end' type='text'
+						<input class="form-control" id='end' name='end' type='number'
 							   placeholder="End Date (UTC timestamp)"
 							   {% if end is defined and end != None %}value="{{ end }}"{% endif %} readonly>
 					</div>
@@ -164,30 +164,30 @@
 
 					<div class="form-group col-md-2">
 						<label for="freeze-month">Month:</label>
-						<input class="form-control freeze-date" id='freeze-month' name='freeze-month' min="0" max="12"
+						<input class="form-control freeze-date" id='freeze-month' min="0" max="12"
 							   type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="freeze-day">Day:</label>
-						<input class="form-control freeze-date" id='freeze-day' name='freeze-day' min="0" max="31"
+						<input class="form-control freeze-date" id='freeze-day' min="0" max="31"
 							   type='number'>
 					</div>
 
 					<div class="form-group col-md-4">
 						<label for="freeze-year">Year:</label>
-						<input class="form-control freeze-date" id='freeze-year' name='freeze-year' type='number'>
+						<input class="form-control freeze-date" id='freeze-year' type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="freeze-hour">Hour:</label>
-						<input class="form-control freeze-date" id='freeze-hour' name='freeze-hour' min="0" max="23"
+						<input class="form-control freeze-date" id='freeze-hour' min="0" max="23"
 							   type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="freeze-minute">Minute:</label>
-						<input class="form-control freeze-date" id='freeze-minute' name='freeze-minute' min="0"
+						<input class="form-control freeze-date" id='freeze-minute' min="0"
 							   max="59" type='number'>
 					</div>
 
@@ -211,7 +211,7 @@
 
 					<div class="form-group col-md-12">
 						<label for="freeze">UTC Timestamp:</label>
-						<input class="form-control" id='freeze' name='freeze' type='text'
+						<input class="form-control" id='freeze' name='freeze' type='number'
 							   placeholder="Freeze Date (UTC timestamp)"
 							   {% if freeze is defined and freeze != None %}value="{{ freeze }}"{% endif %} readonly>
 					</div>
