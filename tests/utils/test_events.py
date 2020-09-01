@@ -1,9 +1,7 @@
-import json
 from collections import defaultdict
 from queue import Queue
 from unittest.mock import patch
 
-import redis
 from redis.exceptions import ConnectionError
 
 from CTFd.config import TestingConfig
@@ -224,17 +222,10 @@ def test_redis_event_manager_listen():
                 "type": "notification",
             }
 
-            saved_redis_message = {
-                "pattern": None,
-                "type": "message",
-                "channel": "ctf",
-                "data": json.dumps(saved_event),
-            }
+            event_manager = RedisEventManager()
+            event_manager.listen()
 
-            with patch.object(
-                redis.client.PubSub, "get_message"
-            ) as fake_pubsub_get_message:
-                fake_pubsub_get_message.return_value = saved_redis_message
-                event_manager = RedisEventManager()
-                event_manager.listen()
+            event_manager.publish(
+                data=saved_event["data"], type="notification", channel="ctf"
+            )
         destroy_ctfd(app)
