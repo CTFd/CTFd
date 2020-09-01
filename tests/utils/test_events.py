@@ -228,8 +228,12 @@ def test_redis_event_manager_listen():
 
                 event_manager = RedisEventManager()
 
-                with Timeout(3):
-                    event_manager.listen()
+                def disable_retry(f, *args, **kwargs):
+                    return f()
+
+                with patch('tenacity.retry', side_effect=disable_retry):
+                    with Timeout(10):
+                        event_manager.listen()
 
                 event_manager.publish(
                     data=saved_event["data"], type="notification", channel="ctf"
