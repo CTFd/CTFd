@@ -2,7 +2,8 @@ import json
 from collections import defaultdict
 from queue import Queue
 
-from gevent import Timeout
+from gevent import Timeout, spawn
+from tenacity import retry, wait_exponential
 
 from CTFd.cache import cache
 from CTFd.utils import string_types
@@ -37,60 +38,85 @@ class ServerSentEvent(object):
 
 class EventManager(object):
     def __init__(self):
-        self.clients = []
+        self.clients = {}
 
     def publish(self, data, type=None, channel="ctf"):
         event = ServerSentEvent(data, type=type)
         message = event.to_dict()
-        for client in self.clients:
+        for client in list(self.clients.values()):
             client[channel].put(message)
         return len(self.clients)
 
+    def listen(self):
+        pass
+
     def subscribe(self, channel="ctf"):
         q = defaultdict(Queue)
-        self.clients.append(q)
-        while True:
-            try:
-                # Immediately yield a ping event to force Response headers to be set
-                # or else some reverse proxies will incorrectly buffer SSE
-                yield ServerSentEvent(data="", type="ping")
+        self.clients[id(q)] = q
+        try:
+            while True:
+                try:
+                    # Immediately yield a ping event to force Response headers to be set
+                    # or else some reverse proxies will incorrectly buffer SSE
+                    yield ServerSentEvent(data="", type="ping")
 
-                with Timeout(10):
-                    message = q[channel].get()
-                    yield ServerSentEvent(**message)
-            except Timeout:
-                yield ServerSentEvent(data="", type="ping")
-            except Exception:
-                raise
+                    with Timeout(5):
+                        message = q[channel].get()
+                        yield ServerSentEvent(**message)
+                except Timeout:
+                    yield ServerSentEvent(data="", type="ping")
+        finally:
+            del self.clients[id(q)]
+            del q
 
 
 class RedisEventManager(EventManager):
     def __init__(self):
         super(EventManager, self).__init__()
         self.client = cache.cache._write_client
+        self.clients = {}
 
     def publish(self, data, type=None, channel="ctf"):
         event = ServerSentEvent(data, type=type)
         message = json.dumps(event.to_dict())
         return self.client.publish(message=message, channel=channel)
 
-    def subscribe(self, channel="ctf"):
-        while True:
-            pubsub = self.client.pubsub()
-            pubsub.subscribe(channel)
-            try:
-                # Immediately yield a ping event to force Response headers to be set
-                # or else some reverse proxies will incorrectly buffer SSE
-                yield ServerSentEvent(data="", type="ping")
+    def listen(self, channel="ctf"):
+        @retry(wait=wait_exponential(min=1, max=30))
+        def _listen():
+            while True:
+                pubsub = self.client.pubsub()
+                pubsub.subscribe(channel)
+                try:
+                    while True:
+                        message = pubsub.get_message(
+                            ignore_subscribe_messages=True, timeout=5
+                        )
+                        if message:
+                            if message["type"] == "message":
+                                event = json.loads(message["data"])
+                                for client in list(self.clients.values()):
+                                    client[channel].put(event)
+                finally:
+                    pubsub.close()
 
-                with Timeout(10) as timeout:
-                    for message in pubsub.listen():
-                        if message["type"] == "message":
-                            event = json.loads(message["data"])
-                            yield ServerSentEvent(**event)
-                            timeout.cancel()
-                            timeout.start()
-            except Timeout:
-                yield ServerSentEvent(data="", type="ping")
-            except Exception:
-                raise
+        spawn(_listen)
+
+    def subscribe(self, channel="ctf"):
+        q = defaultdict(Queue)
+        self.clients[id(q)] = q
+        try:
+            while True:
+                try:
+                    # Immediately yield a ping event to force Response headers to be set
+                    # or else some reverse proxies will incorrectly buffer SSE
+                    yield ServerSentEvent(data="", type="ping")
+
+                    with Timeout(5):
+                        message = q[channel].get()
+                        yield ServerSentEvent(**message)
+                except Timeout:
+                    yield ServerSentEvent(data="", type="ping")
+        finally:
+            del self.clients[id(q)]
+            del q

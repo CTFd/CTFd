@@ -19,3 +19,4 @@ flake8-isort==3.0.0
 Faker==4.1.0
 pipdeptree==0.13.2
 black==19.10b0
+pytest-sugar==0.9.4
