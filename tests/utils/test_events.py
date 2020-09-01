@@ -191,10 +191,6 @@ def test_redis_event_manager_listen():
     # This test is sort of incomplete b/c we aren't also subscribing
     # I wasnt able to get listening and subscribing to work at the same time
     # But the code does work under gunicorn and serve.py
-    from gevent import monkey
-
-    monkey.patch_all()
-
     class RedisConfig(TestingConfig):
         REDIS_URL = "redis://localhost:6379/4"
         CACHE_REDIS_URL = "redis://localhost:6379/4"
