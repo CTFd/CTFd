@@ -191,37 +191,53 @@ def test_redis_event_manager_listen():
     # This test is sort of incomplete b/c we aren't also subscribing
     # I wasnt able to get listening and subscribing to work at the same time
     # But the code does work under gunicorn and serve.py
-    class RedisConfig(TestingConfig):
-        REDIS_URL = "redis://localhost:6379/4"
-        CACHE_REDIS_URL = "redis://localhost:6379/4"
-        CACHE_TYPE = "redis"
-
     try:
-        app = create_ctfd(config=RedisConfig)
-    except ConnectionError:
-        print("Failed to connect to redis. Skipping test.")
-    else:
-        with app.app_context():
-            saved_event = {
-                "data": {
-                    "team_id": None,
-                    "user_id": None,
-                    "content": "asdf",
-                    "title": "asdf",
-                    "id": 1,
-                    "team": None,
-                    "user": None,
-                    "date": "2020-08-31T23:57:27.193081+00:00",
-                    "type": "toast",
-                    "sound": None,
-                },
-                "type": "notification",
-            }
+        import importlib
+        from gevent.monkey import patch_time, patch_socket
+        from gevent import Timeout
 
-            event_manager = RedisEventManager()
-            event_manager.listen()
+        patch_time()
+        patch_socket()
 
-            event_manager.publish(
-                data=saved_event["data"], type="notification", channel="ctf"
-            )
-        destroy_ctfd(app)
+        class RedisConfig(TestingConfig):
+            REDIS_URL = "redis://localhost:6379/4"
+            CACHE_REDIS_URL = "redis://localhost:6379/4"
+            CACHE_TYPE = "redis"
+
+        try:
+            app = create_ctfd(config=RedisConfig)
+        except ConnectionError:
+            print("Failed to connect to redis. Skipping test.")
+        else:
+            with app.app_context():
+                saved_event = {
+                    "data": {
+                        "team_id": None,
+                        "user_id": None,
+                        "content": "asdf",
+                        "title": "asdf",
+                        "id": 1,
+                        "team": None,
+                        "user": None,
+                        "date": "2020-08-31T23:57:27.193081+00:00",
+                        "type": "toast",
+                        "sound": None,
+                    },
+                    "type": "notification",
+                }
+
+                event_manager = RedisEventManager()
+
+                with Timeout(3):
+                    event_manager.listen()
+
+                event_manager.publish(
+                    data=saved_event["data"], type="notification", channel="ctf"
+                )
+            destroy_ctfd(app)
+    finally:
+        import socket
+        import time
+
+        importlib.reload(socket)
+        importlib.reload(time)
