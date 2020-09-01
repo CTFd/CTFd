@@ -231,7 +231,7 @@ def test_redis_event_manager_listen():
                 def disable_retry(f, *args, **kwargs):
                     return f()
 
-                with patch('tenacity.retry', side_effect=disable_retry):
+                with patch("tenacity.retry", side_effect=disable_retry):
                     with Timeout(10):
                         event_manager.listen()
 
