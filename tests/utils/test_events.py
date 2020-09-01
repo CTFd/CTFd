@@ -1,7 +1,9 @@
+import json
 from collections import defaultdict
 from queue import Queue
 from unittest.mock import patch
 
+import redis
 from redis.exceptions import ConnectionError
 
 from CTFd.config import TestingConfig
@@ -183,4 +185,53 @@ def test_redis_event_manager_publish():
 
             event_manager = RedisEventManager()
             event_manager.publish(data=saved_data, type="notification", channel="ctf")
+        destroy_ctfd(app)
+
+
+def test_redis_event_manager_listen():
+    """Test that RedisEventManager listening pubsub works."""
+    from gevent import monkey
+
+    monkey.patch_all()
+
+    class RedisConfig(TestingConfig):
+        REDIS_URL = "redis://localhost:6379/4"
+        CACHE_REDIS_URL = "redis://localhost:6379/4"
+        CACHE_TYPE = "redis"
+
+    try:
+        app = create_ctfd(config=RedisConfig)
+    except ConnectionError:
+        print("Failed to connect to redis. Skipping test.")
+    else:
+        with app.app_context():
+            saved_event = {
+                "data": {
+                    "team_id": None,
+                    "user_id": None,
+                    "content": "asdf",
+                    "title": "asdf",
+                    "id": 1,
+                    "team": None,
+                    "user": None,
+                    "date": "2020-08-31T23:57:27.193081+00:00",
+                    "type": "toast",
+                    "sound": None,
+                },
+                "type": "notification",
+            }
+
+            saved_redis_message = {
+                "pattern": None,
+                "type": "message",
+                "channel": "ctf",
+                "data": json.dumps(saved_event),
+            }
+
+            with patch.object(
+                redis.client.PubSub, "get_message"
+            ) as fake_pubsub_get_message:
+                fake_pubsub_get_message.return_value = saved_redis_message
+                event_manager = RedisEventManager()
+                event_manager.listen()
         destroy_ctfd(app)
