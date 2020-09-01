@@ -190,6 +190,9 @@ def test_redis_event_manager_publish():
 
 def test_redis_event_manager_listen():
     """Test that RedisEventManager listening pubsub works."""
+    # This test is sort of incomplete b/c we aren't also subscribing
+    # I wasnt able to get listening and subscribing to work at the same time
+    # But the code does work under gunicorn and serve.py
     from gevent import monkey
 
     monkey.patch_all()
