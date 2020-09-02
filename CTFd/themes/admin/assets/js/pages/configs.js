@@ -268,6 +268,15 @@ $(() => {
     theme_settings_editor.refresh();
   });
 
+  $("a[href='#legal']").on("shown.bs.tab", function(_e) {
+    $("#tos-config .CodeMirror").each(function(i, el) {
+      el.CodeMirror.refresh();
+    });
+    $("#privacy-policy-config .CodeMirror").each(function(i, el) {
+      el.CodeMirror.refresh();
+    });
+  });
+
   $("#theme-settings-modal form").submit(function(e) {
     e.preventDefault();
     theme_settings_editor

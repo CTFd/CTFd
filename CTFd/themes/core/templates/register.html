@@ -55,6 +55,16 @@
 						{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}
 					</div>
 				</div>
+
+				<div class="row pt-3">
+					<div class="col-md-12 text-center">
+						<small class="text-muted text-center">
+							By registering, you agree to the
+							<a href="{{ url_for('views.privacy') }}" target="_blank">privacy policy</a>
+							and <a href="{{ url_for('views.tos') }}" target="_blank">terms of service</a>
+						</small>
+					</div>
+				</div>
 			</form>
 			{% endwith %}
 		</div>
