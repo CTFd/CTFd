@@ -13,7 +13,7 @@ from CTFd.schemas.notifications import NotificationSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modes import TEAMS_MODE
-from CTFd.utils.user import is_admin, get_current_user, get_current_team
+from CTFd.utils.user import get_current_user, get_current_team
 from CTFd.utils import get_config
 
 notifications_namespace = Namespace(
@@ -77,14 +77,14 @@ class NotificantionList(Resource):
         # Filter on user/team id if present in the notification
         notifications = notifications.filter(
             or_(
-                Notifications.user_id == None,
+                Notifications.user_id.is_(None),
                 Notifications.user_id == get_current_user().id,
             )
         )
         if get_config("user_mode") == TEAMS_MODE:
             notifications = notifications.filter(
                 or_(
-                    Notifications.team_id == None,
+                    Notifications.team_id.is_(None),
                     Notifications.team_id == get_current_team().id,
                 )
             )
