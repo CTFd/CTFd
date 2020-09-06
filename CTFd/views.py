@@ -5,6 +5,7 @@ from flask import current_app as app
 from flask import redirect, render_template, request, send_file, session, url_for
 from flask.helpers import safe_join
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import or_
 
 from CTFd.cache import cache
 from CTFd.constants.config import (
@@ -55,6 +56,9 @@ from CTFd.utils.security.signing import (
 )
 from CTFd.utils.uploads import get_uploader
 from CTFd.utils.user import authed, get_current_user, is_admin
+from CTFd.utils.modes import TEAMS_MODE
+from CTFd.utils.user import is_admin, get_current_user, get_current_team
+from CTFd.utils import get_config
 
 views = Blueprint("views", __name__)
 
@@ -271,7 +275,25 @@ def integrations():
 
 @views.route("/notifications", methods=["GET"])
 def notifications():
-    notifications = Notifications.query.order_by(Notifications.id.desc()).all()
+    notifications = Notifications.query.order_by(Notifications.id.desc())
+
+    # Filter on user/team id if present in the notification
+    notifications = notifications.filter(
+        or_(
+            Notifications.user_id == None,
+            Notifications.user_id == get_current_user().id,
+        )
+    )
+    if get_config("user_mode") == TEAMS_MODE:
+        notifications = notifications.filter(
+            or_(
+                Notifications.team_id == None,
+                Notifications.team_id == get_current_team().id,
+            )
+        )
+
+    notifications = notifications.all()
+
     return render_template("notifications.html", notifications=notifications)
 
 
