@@ -1,9 +1,9 @@
 from flask import Blueprint, Response, current_app, stream_with_context
 
 from CTFd.utils import get_app_config, get_config
-from CTFd.utils.modes import TEAMS_MODE
 from CTFd.utils.decorators import authed_only, ratelimit
-from CTFd.utils.user import get_current_user, get_current_team
+from CTFd.utils.modes import TEAMS_MODE
+from CTFd.utils.user import get_current_team, get_current_user
 
 events = Blueprint("events", __name__)
 

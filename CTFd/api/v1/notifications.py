@@ -10,11 +10,11 @@ from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessRespon
 from CTFd.constants import RawEnum
 from CTFd.models import Notifications, db
 from CTFd.schemas.notifications import NotificationSchema
+from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modes import TEAMS_MODE
-from CTFd.utils.user import get_current_user, get_current_team
-from CTFd.utils import get_config
+from CTFd.utils.user import get_current_team, get_current_user
 
 notifications_namespace = Namespace(
     "notifications", description="Endpoint to retrieve Notifications"
