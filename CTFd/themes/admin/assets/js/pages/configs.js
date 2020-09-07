@@ -268,7 +268,9 @@ $(() => {
     theme_settings_editor.refresh();
   });
 
-  $("a[href='#legal']").on("shown.bs.tab", function(_e) {
+  $(
+    "a[href='#legal'], a[href='#tos-config'], a[href='#privacy-policy-config']"
+  ).on("shown.bs.tab", function(_e) {
     $("#tos-config .CodeMirror").each(function(i, el) {
       el.CodeMirror.refresh();
     });
