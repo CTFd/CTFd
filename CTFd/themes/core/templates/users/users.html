@@ -71,7 +71,7 @@
 							</td>
 							<td class="text-center" style="width: 10px;">
 								{% if user.website and (user.website.startswith('http://') or user.website.startswith('https://')) %}
-									<a href="{{ user.website }}" target="_blank">
+									<a href="{{ user.website }}" target="_blank" rel="noopener">
 										<i class="fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
 										   title="{{ user.website }}"></i>
 									</a>
