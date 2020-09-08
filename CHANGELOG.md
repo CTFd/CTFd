@@ -20,6 +20,8 @@
 **Themes**
 
 - Make scoreboard caching only cache the score table instead of the entire page. This is done by caching the specific template section. Refer to #1586, specifically the changes in `scoreboard.html`.
+- Add custom field inputs to profile pages (`teams/public.html`, `teams/private.html`, `users/public.html`, `users/private.html`), registration pages (`register.html`), and settings pages (`settings.html`).
+  - This is implemented in the core theme with `form.extra` & `user.fields` with a special helper (`render_extra_fields`) defined in `macros/forms.html`. The best way to implement this is to look at how the core theme handles it and copy the relevant behavior.
 - Add rel=noopener to external links to prevent tab napping attacks
 - Change the registration page to reference links to Terms of Service and Privacy Policy if specified in configuration
 
