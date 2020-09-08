@@ -6,9 +6,9 @@ from CTFd.utils import markdown
 from CTFd.utils.security.sanitize import sanitize_html
 
 
-def build_html(html):
+def build_html(html, sanitize=False):
     html = markdown(html)
-    if current_app.config["HTML_SANITIZATION"] is True:
+    if current_app.config["HTML_SANITIZATION"] is True or sanitize is True:
         html = sanitize_html(html)
     return html
 

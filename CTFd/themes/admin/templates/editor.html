@@ -117,10 +117,25 @@
 			{% endwith %}
 		</div>
 	</div>
+
+	{% if page is defined %}
+	<div class="row min-vh-25 pt-5">
+		<div class="col-md-10 offset-md-1">
+			<h3 class="text-center py-3 d-block">
+				Comments
+			</h3>
+			<div id="comment-box">
+			</div>
+		</div>
+	</div>
+	{% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script>
+var PAGE_ID = {{ page.id if page is defined else "null"}};
+</script>
 {% endblock %}
 
 {% block entrypoint %}

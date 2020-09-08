@@ -10,6 +10,8 @@ import { addFile, deleteFile } from "../challenges/files";
 import { addTag, deleteTag } from "../challenges/tags";
 import { addRequirement, deleteRequirement } from "../challenges/requirements";
 import { bindMarkdownEditors } from "../styles";
+import Vue from "vue/dist/vue.esm.browser";
+import CommentBox from "../components/comments/CommentBox.vue";
 import {
   showHintModal,
   editHint,
@@ -422,6 +424,14 @@ $(() => {
   $(".delete-flag").click(deleteFlag);
   $("#flags-create-select").change(flagTypeSelect);
   $(".edit-flag").click(editFlagModal);
+
+  // Insert CommentBox element
+  const commentBox = Vue.extend(CommentBox);
+  let vueContainer = document.createElement("div");
+  document.querySelector("#comment-box").appendChild(vueContainer);
+  new commentBox({
+    propsData: { type: "challenge", id: window.CHALLENGE_ID }
+  }).$mount(vueContainer);
 
   $.get(CTFd.config.urlRoot + "/api/v1/challenges/types", function(response) {
     const data = response.data;

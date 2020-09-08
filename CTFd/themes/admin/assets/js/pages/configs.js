@@ -9,6 +9,8 @@ import $ from "jquery";
 import { ezQuery, ezProgressBar, ezAlert } from "core/ezq";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
+import Vue from "vue/dist/vue.esm.browser";
+import FieldList from "../components/configs/fields/FieldList.vue";
 
 function loadTimestamp(place, timestamp) {
   if (typeof timestamp == "string") {
@@ -266,6 +268,17 @@ $(() => {
     theme_settings_editor.refresh();
   });
 
+  $(
+    "a[href='#legal'], a[href='#tos-config'], a[href='#privacy-policy-config']"
+  ).on("shown.bs.tab", function(_e) {
+    $("#tos-config .CodeMirror").each(function(i, el) {
+      el.CodeMirror.refresh();
+    });
+    $("#privacy-policy-config .CodeMirror").each(function(i, el) {
+      el.CodeMirror.refresh();
+    });
+  });
+
   $("#theme-settings-modal form").submit(function(e) {
     e.preventDefault();
     theme_settings_editor
@@ -360,4 +373,23 @@ $(() => {
       $("#mail_username_password").toggle(this.checked);
     })
     .change();
+
+  // Insert FieldList element for users
+  const fieldList = Vue.extend(FieldList);
+  let userVueContainer = document.createElement("div");
+  document.querySelector("#user-field-list").appendChild(userVueContainer);
+  new fieldList({
+    propsData: {
+      type: "user"
+    }
+  }).$mount(userVueContainer);
+
+  // Insert FieldList element for teams
+  let teamVueContainer = document.createElement("div");
+  document.querySelector("#team-field-list").appendChild(teamVueContainer);
+  new fieldList({
+    propsData: {
+      type: "team"
+    }
+  }).$mount(teamVueContainer);
 });

@@ -7,7 +7,7 @@ from flask import redirect, render_template, request, session, url_for
 from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
 
 from CTFd.cache import clear_team_session, clear_user_session
-from CTFd.models import Teams, Users, db
+from CTFd.models import Teams, UserFieldEntries, UserFields, Users, db
 from CTFd.utils import config, email, get_app_config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
@@ -206,6 +206,31 @@ def register():
         valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
 
+        # Process additional user fields
+        fields = {}
+        for field in UserFields.query.all():
+            fields[field.id] = field
+
+        entries = {}
+        for field_id, field in fields.items():
+            value = request.form.get(f"fields[{field_id}]", "").strip()
+            if field.required is True and (value is None or value == ""):
+                errors.append("Please provide all required fields")
+                break
+
+            # Handle special casing of existing profile fields
+            if field.name.lower() == "affiliation":
+                affiliation = value
+                break
+            elif field.name.lower() == "website":
+                website = value
+                break
+
+            if field.field_type == "boolean":
+                entries[field_id] = bool(value)
+            else:
+                entries[field_id] = value
+
         if country:
             try:
                 validators.validate_country_code(country)
@@ -274,6 +299,13 @@ def register():
                 db.session.add(user)
                 db.session.commit()
                 db.session.flush()
+
+                for field_id, value in entries.items():
+                    entry = UserFieldEntries(
+                        field_id=field_id, value=value, user_id=user.id
+                    )
+                    db.session.add(entry)
+                db.session.commit()
 
                 login_user(user)
 

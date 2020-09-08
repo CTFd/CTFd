@@ -1,5 +1,7 @@
 import json
 
+from flask import url_for
+
 from CTFd.constants import JinjaEnum, RawEnum
 from CTFd.utils import get_config
 
@@ -62,6 +64,20 @@ class _ConfigsWrapper:
     @property
     def theme_settings(self):
         return json.loads(get_config("theme_settings", default="null"))
+
+    @property
+    def tos_or_privacy(self):
+        tos = bool(get_config("tos_url") or get_config("tos_text"))
+        privacy = bool(get_config("privacy_url") or get_config("privacy_text"))
+        return tos or privacy
+
+    @property
+    def tos_link(self):
+        return get_config("tos_url", default=url_for("views.tos"))
+
+    @property
+    def privacy_link(self):
+        return get_config("privacy_url", default=url_for("views.privacy"))
 
 
 Configs = _ConfigsWrapper()

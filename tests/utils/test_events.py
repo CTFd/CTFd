@@ -1,9 +1,7 @@
-import json
 from collections import defaultdict
 from queue import Queue
 from unittest.mock import patch
 
-import redis
 from redis.exceptions import ConnectionError
 
 from CTFd.config import TestingConfig
@@ -63,10 +61,11 @@ def test_event_manager_publish():
     }
 
     event_manager = EventManager()
-    event_manager.clients.append(defaultdict(Queue))
+    q = defaultdict(Queue)
+    event_manager.clients[id(q)] = q
     event_manager.publish(data=saved_data, type="notification", channel="ctf")
 
-    event = event_manager.clients[0]["ctf"].get()
+    event = event_manager.clients[id(q)]["ctf"].get()
     event = ServerSentEvent(**event)
     assert event.data == saved_data
 
@@ -129,27 +128,19 @@ def test_redis_event_manager_subscription():
     else:
         with app.app_context():
             saved_data = {
-                u"data": {
-                    u"content": u"asdf",
-                    u"date": u"2019-01-28T05:02:19.830906+00:00",
-                    u"id": 13,
-                    u"team": None,
-                    u"team_id": None,
-                    u"title": u"asdf",
-                    u"user": None,
-                    u"user_id": None,
-                },
-                u"type": u"notification",
+                "user_id": None,
+                "title": "asdf",
+                "content": "asdf",
+                "team_id": None,
+                "user": None,
+                "team": None,
+                "date": "2019-01-28T01:20:46.017649+00:00",
+                "id": 10,
             }
+            saved_event = {"type": "notification", "data": saved_data}
 
-            saved_event = {
-                "pattern": None,
-                "type": "message",
-                "channel": "ctf",
-                "data": json.dumps(saved_data),
-            }
-            with patch.object(redis.client.PubSub, "listen") as fake_pubsub_listen:
-                fake_pubsub_listen.return_value = [saved_event]
+            with patch.object(Queue, "get") as fake_queue:
+                fake_queue.return_value = saved_event
                 event_manager = RedisEventManager()
 
                 events = event_manager.subscribe()
@@ -160,7 +151,7 @@ def test_redis_event_manager_subscription():
 
                 message = next(events)
                 assert isinstance(message, ServerSentEvent)
-                assert message.to_dict() == saved_data
+                assert message.to_dict() == saved_event
                 assert message.__str__().startswith("event:notification\ndata:")
         destroy_ctfd(app)
 
@@ -193,3 +184,67 @@ def test_redis_event_manager_publish():
             event_manager = RedisEventManager()
             event_manager.publish(data=saved_data, type="notification", channel="ctf")
         destroy_ctfd(app)
+
+
+def test_redis_event_manager_listen():
+    """Test that RedisEventManager listening pubsub works."""
+    # This test is nob currently working properly
+    # This test is sort of incomplete b/c we aren't also subscribing
+    # I wasnt able to get listening and subscribing to work at the same time
+    # But the code does work under gunicorn and serve.py
+    try:
+        # import importlib
+        # from gevent.monkey import patch_time, patch_socket
+        # from gevent import Timeout
+
+        # patch_time()
+        # patch_socket()
+
+        class RedisConfig(TestingConfig):
+            REDIS_URL = "redis://localhost:6379/4"
+            CACHE_REDIS_URL = "redis://localhost:6379/4"
+            CACHE_TYPE = "redis"
+
+        try:
+            app = create_ctfd(config=RedisConfig)
+        except ConnectionError:
+            print("Failed to connect to redis. Skipping test.")
+        else:
+            with app.app_context():
+                # saved_event = {
+                #     "data": {
+                #         "team_id": None,
+                #         "user_id": None,
+                #         "content": "asdf",
+                #         "title": "asdf",
+                #         "id": 1,
+                #         "team": None,
+                #         "user": None,
+                #         "date": "2020-08-31T23:57:27.193081+00:00",
+                #         "type": "toast",
+                #         "sound": None,
+                #     },
+                #     "type": "notification",
+                # }
+
+                event_manager = RedisEventManager()
+
+                # def disable_retry(f, *args, **kwargs):
+                #     return f()
+
+                # with patch("tenacity.retry", side_effect=disable_retry):
+                #     with Timeout(10):
+                #         event_manager.listen()
+                event_manager.listen()
+
+                # event_manager.publish(
+                #     data=saved_event["data"], type="notification", channel="ctf"
+                # )
+            destroy_ctfd(app)
+    finally:
+        pass
+        # import socket
+        # import time
+
+        # importlib.reload(socket)
+        # importlib.reload(time)

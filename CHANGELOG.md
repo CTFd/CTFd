@@ -1,3 +1,39 @@
+# 3.1.0 / 2020-09-08
+
+**General**
+
+- Loosen team password confirmation in team settings to also accept the team captain's password to make it easier to change the team password
+- Adds the ability to add custom user and team fields for registration/profile settings.
+- Improve Notifications pubsub events system to use a subscriber per server instead of a subscriber per browser. This should improve the reliability of CTFd at higher load and make it easier to deploy the Notifications system
+
+**Admin Panel**
+
+- Add a comments functionality for admins to discuss challenges, users, teams, pages
+- Adds a legal section in Configs where users can add a terms of service and privacy policy
+- Add a Custom Fields section in Configs where admins can add/edit custom user/team fields
+- Move user graphs into a modal for Admin Panel
+
+**API**
+
+- Add `/api/v1/comments` to manipulate and create comments
+
+**Themes**
+
+- Make scoreboard caching only cache the score table instead of the entire page. This is done by caching the specific template section. Refer to #1586, specifically the changes in `scoreboard.html`.
+- Add rel=noopener to external links to prevent tab napping attacks
+- Change the registration page to reference links to Terms of Service and Privacy Policy if specified in configuration
+
+**Miscellaneous**
+
+- Make team settings modal larger in the core theme
+- Update tests in Github Actions to properly test under MySQL and Postgres
+- Make gevent default in serve.py and add a `--disable-gevent` switch in serve.py
+- Add `tenacity` library for retrying logic
+- Add `pytest-sugar` for slightly prettier pytest output
+- Add a `listen()` method to `CTFd.utils.events.EventManager` and `CTFd.utils.events.RedisEventManager`.
+  - This method should implement subscription for a CTFd worker to whatever underlying notification system there is. This should be implemented with gevent or a background thread.
+  - The `subscribe()` method (which used to implement the functionality of the new `listen()` function) now only handles passing notifications from CTFd to the browser. This should also be implemented with gevent or a background thread.
+
 # 3.0.2 / 2020-08-23
 
 **Admin Panel**

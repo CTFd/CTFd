@@ -1,0 +1,56 @@
+<div role="tabpanel" class="tab-pane config-section" id="legal">
+
+	{% with form = Forms.config.LegalSettingsForm(tos_url=tos_url, tos_text=tos_text, privacy_url=privacy_url, privacy_text=privacy_text) %}
+	<form method="POST" autocomplete="off" class="w-100">
+		<ul class="nav nav-tabs mb-3">
+			<li class="nav-item">
+				<a class="nav-link active" href="#tos-config" role="tab" data-toggle="tab">
+					Terms of Service
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#privacy-policy-config" role="tab" data-toggle="tab">
+					Privacy Policy
+				</a>
+			</li>
+		</ul>
+
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="tos-config">
+				<div class="form-group">
+					{{ form.tos_url.label }}
+					{{ form.tos_url(class="form-control") }}
+					<small class="form-text text-muted">
+						{{ form.tos_url.description }}
+					</small>
+				</div>
+				<div class="form-group">
+					{{ form.tos_text.label }}
+					<small class="form-text text-muted">
+						{{ form.tos_text.description }}
+					</small>
+					{{ form.tos_text(class="form-control markdown", rows=15) }}
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="privacy-policy-config">
+				<div class="form-group">
+					{{ form.privacy_url.label }}
+					{{ form.privacy_url(class="form-control") }}
+					<small class="form-text text-muted">
+						{{ form.privacy_url.description }}
+					</small>
+				</div>
+				<div class="form-group">
+					{{ form.privacy_text.label }}
+					<small class="form-text text-muted">
+						{{ form.privacy_text.description }}
+					</small>
+					{{ form.privacy_text(class="form-control markdown", rows=15) }}
+				</div>
+			</div>
+		</div>
+
+		{{ form.submit(class="btn btn-md btn-primary float-right") }}
+	</form>
+	{% endwith %}
+</div>

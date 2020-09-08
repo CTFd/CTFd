@@ -25,6 +25,11 @@
 					</span>
 				</h3>
 			{% endif %}
+			{% for field in team.fields %}
+				<h3 class="d-block">
+					{{ field.name }}: {{ field.value }}
+				</h3>
+			{% endfor %}
 			<h2 id="team-place" class="text-center">
 				{# This intentionally hides the team's place when scores are hidden because this can be their internal profile
 			and we don't want to leak their place in the CTF. #}
@@ -45,7 +50,7 @@
 
 			<div class="pt-3">
 				{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
-					<a href="{{ team.website }}" target="_blank" style="color: inherit;">
+					<a href="{{ team.website }}" target="_blank" style="color: inherit;" rel="noopener">
 						<i class="fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 						   title="{{ team.website }}"></i>
 					</a>

@@ -16,13 +16,27 @@ $(() => {
     });
   }
 
-  var form = $("#team-info-form");
+  let form = $("#team-info-form");
   form.submit(function(e) {
     e.preventDefault();
     $("#results").empty();
-    var params = $(this).serializeJSON();
-    var method = "PATCH";
-    var url = "/api/v1/teams/me";
+    let params = $(this).serializeJSON();
+
+    params.fields = [];
+
+    for (const property in params) {
+      if (property.match(/fields\[\d+\]/)) {
+        let field = {};
+        let id = parseInt(property.slice(7, -1));
+        field["field_id"] = id;
+        field["value"] = params[property];
+        params.fields.push(field);
+        delete params[property];
+      }
+    }
+
+    let method = "PATCH";
+    let url = "/api/v1/teams/me";
     CTFd.fetch(url, {
       method: method,
       credentials: "same-origin",
@@ -42,12 +56,12 @@ $(() => {
               '  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>\n' +
               "</div>";
             Object.keys(object.errors).map(function(error) {
-              var i = form.find("input[name={0}]".format(error));
-              var input = $(i);
+              let i = form.find("input[name={0}]".format(error));
+              let input = $(i);
               input.addClass("input-filled-invalid");
               input.removeClass("input-filled-valid");
-              var error_msg = object.errors[error];
-              var alert = error_template.format(error_msg);
+              let error_msg = object.errors[error];
+              let alert = error_template.format(error_msg);
               $("#results").append(alert);
             });
           }

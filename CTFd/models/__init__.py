@@ -77,6 +77,7 @@ class Challenges(db.Model):
     tags = db.relationship("Tags", backref="challenge")
     hints = db.relationship("Hints", backref="challenge")
     flags = db.relationship("Flags", backref="challenge")
+    comments = db.relationship("ChallengeComments", backref="challenge")
 
     class alt_defaultdict(defaultdict):
         """
@@ -275,6 +276,10 @@ class Users(db.Model):
     # Relationship for Teams
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
+    field_entries = db.relationship(
+        "UserFieldEntries", foreign_keys="UserFieldEntries.user_id", lazy="joined"
+    )
+
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     __mapper_args__ = {"polymorphic_identity": "user", "polymorphic_on": type}
@@ -309,6 +314,10 @@ class Users(db.Model):
             return self
 
     @property
+    def fields(self):
+        return self.get_fields(admin=False)
+
+    @property
     def solves(self):
         return self.get_solves(admin=False)
 
@@ -332,6 +341,14 @@ class Users(db.Model):
             return self.get_place(admin=False)
         else:
             return None
+
+    def get_fields(self, admin=False):
+        if admin:
+            return self.field_entries
+
+        return [
+            entry for entry in self.field_entries if entry.field.public and entry.value
+        ]
 
     def get_solves(self, admin=False):
         from CTFd.utils import get_config
@@ -452,6 +469,10 @@ class Teams(db.Model):
     captain_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     captain = db.relationship("Users", foreign_keys=[captain_id])
 
+    field_entries = db.relationship(
+        "TeamFieldEntries", foreign_keys="TeamFieldEntries.team_id", lazy="joined"
+    )
+
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, **kwargs):
@@ -462,6 +483,10 @@ class Teams(db.Model):
         from CTFd.utils.crypto import hash_password
 
         return hash_password(str(plaintext))
+
+    @property
+    def fields(self):
+        return self.get_fields(admin=False)
 
     @property
     def solves(self):
@@ -487,6 +512,14 @@ class Teams(db.Model):
             return self.get_place(admin=False)
         else:
             return None
+
+    def get_fields(self, admin=False):
+        if admin:
+            return self.field_entries
+
+        return [
+            entry for entry in self.field_entries if entry.field.public and entry.value
+        ]
 
     def get_solves(self, admin=False):
         from CTFd.utils import get_config
@@ -739,3 +772,100 @@ class Tokens(db.Model):
 
 class UserTokens(Tokens):
     __mapper_args__ = {"polymorphic_identity": "user"}
+
+
+class Comments(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(80), default="standard")
+    content = db.Column(db.Text)
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    author = db.relationship("Users", foreign_keys="Comments.author_id", lazy="select")
+
+    @property
+    def html(self):
+        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.helpers import markup
+
+        return markup(build_html(self.content, sanitize=True))
+
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+
+
+class ChallengeComments(Comments):
+    __mapper_args__ = {"polymorphic_identity": "challenge"}
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
+    )
+
+
+class UserComments(Comments):
+    __mapper_args__ = {"polymorphic_identity": "user"}
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+
+
+class TeamComments(Comments):
+    __mapper_args__ = {"polymorphic_identity": "team"}
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+
+
+class PageComments(Comments):
+    __mapper_args__ = {"polymorphic_identity": "page"}
+    page_id = db.Column(db.Integer, db.ForeignKey("pages.id", ondelete="CASCADE"))
+
+
+class Fields(db.Model):
+    __tablename__ = "fields"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    type = db.Column(db.String(80), default="standard")
+    field_type = db.Column(db.String(80))
+    description = db.Column(db.Text)
+    required = db.Column(db.Boolean, default=False)
+    public = db.Column(db.Boolean, default=False)
+    editable = db.Column(db.Boolean, default=False)
+
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+
+
+class UserFields(Fields):
+    __mapper_args__ = {"polymorphic_identity": "user"}
+
+
+class TeamFields(Fields):
+    __mapper_args__ = {"polymorphic_identity": "team"}
+
+
+class FieldEntries(db.Model):
+    __tablename__ = "field_entries"
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(80), default="standard")
+    value = db.Column(db.JSON)
+    field_id = db.Column(db.Integer, db.ForeignKey("fields.id", ondelete="CASCADE"))
+
+    field = db.relationship(
+        "Fields", foreign_keys="FieldEntries.field_id", lazy="joined"
+    )
+
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+
+    @hybrid_property
+    def name(self):
+        return self.field.name
+
+    @hybrid_property
+    def description(self):
+        return self.field.description
+
+
+class UserFieldEntries(FieldEntries):
+    __mapper_args__ = {"polymorphic_identity": "user"}
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    user = db.relationship("Users", foreign_keys="UserFieldEntries.user_id")
+
+
+class TeamFieldEntries(FieldEntries):
+    __mapper_args__ = {"polymorphic_identity": "team"}
+    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+    team = db.relationship("Teams", foreign_keys="TeamFieldEntries.team_id")

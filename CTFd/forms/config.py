@@ -1,5 +1,5 @@
-from wtforms import BooleanField, SelectField, StringField
-from wtforms.fields.html5 import IntegerField
+from wtforms import BooleanField, SelectField, StringField, TextAreaField
+from wtforms.fields.html5 import IntegerField, URLField
 from wtforms.widgets.html5 import NumberInput
 
 from CTFd.forms import BaseForm
@@ -60,3 +60,21 @@ class ExportCSVForm(BaseForm):
         ),
     )
     submit = SubmitField("Download CSV")
+
+
+class LegalSettingsForm(BaseForm):
+    tos_url = URLField(
+        "Terms of Service URL",
+        description="External URL to a Terms of Service document hosted elsewhere",
+    )
+    tos_text = TextAreaField(
+        "Terms of Service", description="Text shown on the Terms of Service page",
+    )
+    privacy_url = URLField(
+        "Privacy Policy URL",
+        description="External URL to a Privacy Policy document hosted elsewhere",
+    )
+    privacy_text = TextAreaField(
+        "Privacy Policy", description="Text shown on the Privacy Policy page",
+    )
+    submit = SubmitField("Update")

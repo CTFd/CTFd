@@ -39,6 +39,12 @@
 				</h3>
 			{% endif %}
 
+			{% for field in user.fields %}
+				<h3 class="d-inline-block">
+					{{ field.name }}: {{ field.value }}
+				</h3>
+			{% endfor %}
+
 			<div>
 				<h2 class="text-center">
 					{% if account.place %}
@@ -54,7 +60,7 @@
 
 			<div class="pt-3">
 				{% if user.website %}
-					<a href="{{ user.website }}" target="_blank" style="color: inherit;">
+					<a href="{{ user.website }}" target="_blank" style="color: inherit;" rel="noopener">
 						<i class="fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 						   title="{{ user.website }}"></i>
 					</a>

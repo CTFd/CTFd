@@ -11,7 +11,6 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.6']
-        TESTING_DATABASE_URL: ['sqlite://']
 
     name: Python ${{ matrix.python-version }}
     steps:
@@ -35,6 +34,7 @@ jobs:
         env:
             AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
             AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+            TESTING_DATABASE_URL: 'sqlite://'
 
       - name: Codecov
         uses: codecov/codecov-action@v1.0.11

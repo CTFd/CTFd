@@ -1,7 +1,10 @@
-from marshmallow import ValidationError, pre_load, validate
+from marshmallow import ValidationError, post_dump, pre_load, validate
+from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
+from sqlalchemy.orm import load_only
 
-from CTFd.models import Teams, Users, ma
+from CTFd.models import TeamFieldEntries, TeamFields, Teams, Users, ma
+from CTFd.schemas.fields import TeamFieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.user import get_current_team, get_current_user, is_admin
@@ -44,6 +47,9 @@ class TeamSchema(ma.ModelSchema):
         ],
     )
     country = field_for(Teams, "country", validate=[validate_country_code])
+    fields = Nested(
+        TeamFieldEntriesSchema, partial=True, many=True, attribute="field_entries"
+    )
 
     @pre_load
     def validate_name(self, data):
@@ -142,10 +148,13 @@ class TeamSchema(ma.ModelSchema):
                 )
 
             if password and confirm:
-                test = verify_password(
+                test_team = verify_password(
                     plaintext=confirm, ciphertext=current_team.password
                 )
-                if test is True:
+                test_captain = verify_password(
+                    plaintext=confirm, ciphertext=current_user.password
+                )
+                if test_team is True or test_captain is True:
                     return data
                 else:
                     raise ValidationError(
@@ -183,6 +192,126 @@ class TeamSchema(ma.ModelSchema):
                     field_names=["captain_id"],
                 )
 
+    @pre_load
+    def validate_fields(self, data):
+        """
+        This validator is used to only allow users to update the field entry for their user.
+        It's not possible to exclude it because without the PK Marshmallow cannot load the right instance
+        """
+        fields = data.get("fields")
+        if fields is None:
+            return
+
+        current_team = get_current_team()
+
+        if is_admin():
+            team_id = data.get("id")
+            if team_id:
+                target_team = Teams.query.filter_by(id=data["id"]).first()
+            else:
+                target_team = current_team
+
+            # We are editting an existing
+            if self.view == "admin" and self.instance:
+                target_team = self.instance
+                provided_ids = []
+                for f in fields:
+                    f.pop("id", None)
+                    field_id = f.get("field_id")
+
+                    # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
+                    field = TeamFields.query.filter_by(id=field_id).first_or_404()
+
+                    # Get the existing field entry if one exists
+                    entry = TeamFieldEntries.query.filter_by(
+                        field_id=field.id, team_id=target_team.id
+                    ).first()
+                    if entry:
+                        f["id"] = entry.id
+                        provided_ids.append(entry.id)
+
+                # Extremely dirty hack to prevent deleting previously provided data.
+                # This needs a better soln.
+                entries = (
+                    TeamFieldEntries.query.options(load_only("id"))
+                    .filter_by(team_id=target_team.id)
+                    .all()
+                )
+                for entry in entries:
+                    if entry.id not in provided_ids:
+                        fields.append({"id": entry.id})
+        else:
+            provided_ids = []
+            for f in fields:
+                # Remove any existing set
+                f.pop("id", None)
+                field_id = f.get("field_id")
+                value = f.get("value")
+
+                # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
+                field = TeamFields.query.filter_by(id=field_id).first_or_404()
+
+                if field.required is True and value.strip() == "":
+                    raise ValidationError(
+                        f"Field '{field.name}' is required", field_names=["fields"]
+                    )
+
+                if field.editable is False:
+                    raise ValidationError(
+                        f"Field '{field.name}' cannot be editted",
+                        field_names=["fields"],
+                    )
+
+                # Get the existing field entry if one exists
+                entry = TeamFieldEntries.query.filter_by(
+                    field_id=field.id, team_id=current_team.id
+                ).first()
+
+                if entry:
+                    f["id"] = entry.id
+                    provided_ids.append(entry.id)
+
+            # Extremely dirty hack to prevent deleting previously provided data.
+            # This needs a better soln.
+            entries = (
+                TeamFieldEntries.query.options(load_only("id"))
+                .filter_by(team_id=current_team.id)
+                .all()
+            )
+            for entry in entries:
+                if entry.id not in provided_ids:
+                    fields.append({"id": entry.id})
+
+    @post_dump
+    def process_fields(self, data):
+        """
+        Handle permissions levels for fields.
+        This is post_dump to manipulate JSON instead of the raw db object
+
+        Admins can see all fields.
+        Users (self) can see their edittable and public fields
+        Public (user) can only see public fields
+        """
+        # Gather all possible fields
+        removed_field_ids = []
+        fields = TeamFields.query.all()
+
+        # Select fields for removal based on current view and properties of the field
+        for field in fields:
+            if self.view == "user":
+                if field.public is False:
+                    removed_field_ids.append(field.id)
+            elif self.view == "self":
+                if field.editable is False and field.public is False:
+                    removed_field_ids.append(field.id)
+
+        # Rebuild fuilds
+        fields = data.get("fields")
+        if fields:
+            data["fields"] = [
+                field for field in fields if field["field_id"] not in removed_field_ids
+            ]
+
     views = {
         "user": [
             "website",
@@ -194,6 +323,7 @@ class TeamSchema(ma.ModelSchema):
             "id",
             "oauth_id",
             "captain_id",
+            "fields",
         ],
         "self": [
             "website",
@@ -207,6 +337,7 @@ class TeamSchema(ma.ModelSchema):
             "oauth_id",
             "password",
             "captain_id",
+            "fields",
         ],
         "admin": [
             "website",
@@ -224,6 +355,7 @@ class TeamSchema(ma.ModelSchema):
             "oauth_id",
             "password",
             "captain_id",
+            "fields",
         ],
     }
 
@@ -233,5 +365,6 @@ class TeamSchema(ma.ModelSchema):
                 kwargs["only"] = self.views[view]
             elif isinstance(view, list):
                 kwargs["only"] = view
+        self.view = view
 
         super(TeamSchema, self).__init__(*args, **kwargs)

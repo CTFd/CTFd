@@ -52,9 +52,11 @@ def init_template_filters(app):
 
 
 def init_template_globals(app):
+    from CTFd.constants import JINJA_ENUMS
     from CTFd.constants.config import Configs
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
+    from CTFd.constants.static import Static
     from CTFd.constants.users import User
     from CTFd.constants.teams import Team
     from CTFd.forms import Forms
@@ -101,9 +103,19 @@ def init_template_globals(app):
     app.jinja_env.globals.update(Configs=Configs)
     app.jinja_env.globals.update(Plugins=Plugins)
     app.jinja_env.globals.update(Session=Session)
+    app.jinja_env.globals.update(Static=Static)
     app.jinja_env.globals.update(Forms=Forms)
     app.jinja_env.globals.update(User=User)
     app.jinja_env.globals.update(Team=Team)
+
+    # Add in JinjaEnums
+    # The reason this exists is that on double import, JinjaEnums are not reinitialized
+    # Thus, if you try to create two jinja envs (e.g. during testing), sometimes
+    # an Enum will not be available to Jinja.
+    # Instead we can just directly grab them from the persisted global dictionary.
+    for k, v in JINJA_ENUMS.items():
+        # .update() can't be used here because it would use the literal value k
+        app.jinja_env.globals[k] = v
 
 
 def init_logs(app):
@@ -164,6 +176,7 @@ def init_events(app):
         app.events_manager = EventManager()
     else:
         app.events_manager = EventManager()
+    app.events_manager.listen()
 
 
 def init_request_processors(app):
