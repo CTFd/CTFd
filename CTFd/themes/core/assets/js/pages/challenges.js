@@ -168,15 +168,22 @@ function renderSubmissionResponse(response) {
     );
     result_notification.slideDown();
 
-    $(".challenge-solves").text(
-      parseInt(
-        $(".challenge-solves")
-          .text()
-          .split(" ")[0]
-      ) +
-        1 +
-        " Solves"
-    );
+    if (
+      $(".challenge-solves")
+        .text()
+        .trim()
+    ) {
+      // Only try to increment solves if the text isn't hidden
+      $(".challenge-solves").text(
+        parseInt(
+          $(".challenge-solves")
+            .text()
+            .split(" ")[0]
+        ) +
+          1 +
+          " Solves"
+      );
+    }
 
     answer_input.val("");
     answer_input.removeClass("wrong");
