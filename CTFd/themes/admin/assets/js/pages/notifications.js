@@ -13,6 +13,9 @@ function submit(event) {
   $form.find("button[type=submit]").attr("disabled", true);
 
   CTFd.api.post_notification_list({}, params).then(response => {
+    $form.find(":input[name=title]").val("");
+    $form.find(":input[name=content]").val("");
+
     // Admin should also see the notification sent out
     setTimeout(function() {
       $form.find("button[type=submit]").attr("disabled", false);

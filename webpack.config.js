@@ -123,7 +123,15 @@ function getJSConfig(root, type, entries, mode) {
         new UglifyJsPlugin({
             cache: true,
             parallel: true,
-            sourceMap: true
+            sourceMap: mode == 'development',
+            uglifyOptions: {
+              compress: {
+                // Remove warnings in production
+                warnings: mode == 'development',
+                // Remove console.log in production
+                drop_console: mode == 'development'
+              },
+            },
         }),
       ],
     },

@@ -26,9 +26,16 @@ export default root => {
     source.addEventListener(
       "notification",
       function(event) {
-        var data = JSON.parse(event.data);
+        let data = JSON.parse(event.data);
         wc.broadcast("notification", data);
+
+        // Render in the master tab
         render(data);
+
+        // Only play sounds in the master tab
+        if (data.sound) {
+          howl.play();
+        }
       },
       false
     );
@@ -94,13 +101,17 @@ export default root => {
         break;
       }
     }
-
-    if (data.sound) {
-      howl.play();
-    }
   }
 
-  wc.notification = function(data) {
+  wc.alert = function(data) {
+    render(data);
+  };
+
+  wc.toast = function(data) {
+    render(data);
+  };
+
+  wc.background = function(data) {
     render(data);
   };
 
