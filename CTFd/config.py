@@ -133,6 +133,8 @@ class ServerConfig(object):
     MAILFROM_ADDR: str = config_ini["email"]["MAILFROM_ADDR"] \
         or "noreply@ctfd.io"
 
+    MAILSENDER_ADDR: str = empty_str_cast(config_ini["email"]["MAILSENDER_ADDR"])
+
     MAIL_SERVER: str = empty_str_cast(config_ini["email"]["MAIL_SERVER"])
 
     MAIL_PORT: int = empty_str_cast(config_ini["email"]["MAIL_PORT"])

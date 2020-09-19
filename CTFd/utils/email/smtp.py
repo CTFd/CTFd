@@ -24,6 +24,7 @@ def sendmail(addr, text, subject):
     ctf_name = get_config("ctf_name")
     mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
     mailfrom_addr = formataddr((ctf_name, mailfrom_addr))
+    mailsender_addr = get_app_config("MAILSENDER_ADDR")
 
     data = {
         "host": get_config("mail_server") or get_app_config("MAIL_SERVER"),
@@ -56,7 +57,7 @@ def sendmail(addr, text, subject):
         msg["From"] = mailfrom_addr
         msg["To"] = addr
 
-        smtp.send_message(msg)
+        smtp.send_message(msg, from_addr=mailsender_addr)
 
         smtp.quit()
         return True, "Email sent"
