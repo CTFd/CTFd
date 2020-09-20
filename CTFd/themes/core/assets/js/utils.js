@@ -109,7 +109,8 @@ WindowController.prototype.handleEvent = function(event) {
         this[data.type](data);
       }
     } catch (error) {
-      // Ignore error
+      // eslint-disable-next-line no-console
+      console.log(error);
     }
   }
 };
