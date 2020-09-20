@@ -66,6 +66,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<hr>
+				<div id="notifications-list">
 				{% for notification in notifications %}
 					<div class="card bg-light mb-4">
 						<button type="button" data-notif-id="{{ notification.id }}" class="delete-notification close position-absolute p-3" style="right:0;" data-dismiss="alert" aria-label="Close">
@@ -80,6 +81,7 @@
 						</div>
 					</div>
 				{% endfor %}
+				</div>
 			</div>
 		</div>
 	</div>

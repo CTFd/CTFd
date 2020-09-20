@@ -3,6 +3,8 @@ import "core/utils";
 import $ from "jquery";
 import CTFd from "core/CTFd";
 import { ezQuery, ezAlert } from "core/ezq";
+import Moment from "moment";
+import { htmlEntities } from "core/utils";
 
 function submit(event) {
   event.preventDefault();
@@ -27,6 +29,31 @@ function submit(event) {
         button: "OK"
       });
     }
+
+    let date = Moment(response.data.date)
+      .local()
+      .format("MMMM Do, h:mm:ss A");
+    let title = htmlEntities(response.data.title);
+
+    let content = $(`<div class="card bg-light mb-4">
+      <button type="button" data-notif-id="${
+        response.data.id
+      }" class="delete-notification close position-absolute p-3" style="right:0;" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class="card-body">
+        <h3 class="card-title">${title}</h3>
+        <blockquote class="blockquote mb-0">
+          <p>${response.data.content}</p>
+          <small class="text-muted"><span data-time="${
+            response.data.date
+          }">${date}</span></small>
+        </blockquote>
+      </div>
+    </div>`);
+
+    content.find(".delete-notification").click(deleteNotification);
+    $("#notifications-list").prepend(content);
   });
 }
 
