@@ -123,13 +123,10 @@ function getJSConfig(root, type, entries, mode) {
         new UglifyJsPlugin({
             cache: true,
             parallel: true,
-            sourceMap: mode !== 'development',
             uglifyOptions: {
               compress: {
-                // Remove warnings in production
-                warnings: mode !== 'development',
                 // Remove console.log in production
-                drop_console: mode !== 'development'
+                drop_console: mode === 'production'
               },
             },
         }),
@@ -293,6 +290,8 @@ const mapping = {
 module.exports = (env, options) => {
   let output = []
   let mode = options.mode
+  console.log(mode);
+  console.log(mode !== 'development')
   for (let root in roots) {
     for (let type in roots[root]) {
       let entry = mapping[type](root, type, roots[root][type], mode);
