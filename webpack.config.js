@@ -290,8 +290,6 @@ const mapping = {
 module.exports = (env, options) => {
   let output = []
   let mode = options.mode
-  console.log(mode);
-  console.log(mode !== 'development')
   for (let root in roots) {
     for (let type in roots[root]) {
       let entry = mapping[type](root, type, roots[root][type], mode);
