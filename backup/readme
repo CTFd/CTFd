@@ -1,0 +1,8 @@
+backups are at sigpwny@3.21.138.34 with the key in this directory
+this is an ec2 instance in aws, log in by spinning up bastion and sshing into ubuntu@(local ip)
+cron job runs script every hour (uploads are free) and puts .data folder into ~/data/.data
+needs to run as sudo because mysql data is owned by docker user
+root crontab contents:
+0 * * * * rsync -a -e "ssh -i /home/ctfd/CTFd/backup/id_rsa" /home/ctfd/CTFd/.data sigpwny@3.21.138.34:~/data
+
+for questions ask kuilin, or if he's graduated, *shrugs*
