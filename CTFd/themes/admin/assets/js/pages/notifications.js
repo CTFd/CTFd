@@ -2,8 +2,7 @@ import "./main";
 import "core/utils";
 import $ from "jquery";
 import CTFd from "core/CTFd";
-import { ezQuery, ezAlert } from "core/ezq";
-import Moment from "moment";
+import { ezAlert } from "core/ezq";
 import Vue from "vue/dist/vue.esm.browser";
 import Notification from "../components/notifications/Notification.vue";
 
