@@ -20,6 +20,22 @@
 	</div>
 </div>
 
+<div id="team-statistics-modal" class="modal fade">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Team Statistics</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				{% include "admin/modals/teams/statistics.html" %}
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="team-captain-modal" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -121,6 +137,12 @@
 			</h3>
 		{% endif %}
 
+		{% for field in team.get_fields(admin=true) %}
+			<h3 class="d-block">
+				{{ field.name }}: {{ field.value }}
+			</h3>
+		{% endfor %}
+
 		<h2 class="text-center">{{ members | length }} members</h2>
 		<h3 id="team-place" class="text-center">
 			{% if place %}
@@ -140,6 +162,10 @@
 				<i class="btn-fa fas fa-pencil-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 				   title="Edit Team"></i>
 			</a>
+			<a class="statistics-team text-dark">
+				<i class="btn-fa fas fa-chart-pie fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				   title="Team Statistics"></i>
+			</a>
 			<a class="edit-captain text-dark">
 				<i class="btn-fa fas fa-user-tag fa-2x px-2" data-toggle="tooltip" data-placement="top"
 				   title="Choose Captain"></i>
@@ -157,7 +183,7 @@
 				<i class="btn-fa fas fa-network-wired fa-2x px-2" data-toggle="tooltip" data-placement="top" title="IP Addresses"></i>
 			</a>
 			{% if team.website %}
-			<a href="{{ team.website }}" target="_blank" class="text-dark">
+			<a href="{{ team.website }}" target="_blank" class="text-dark" rel="noopener">
 				<i class="btn-fa fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					title="{{ team.website }}" aria-hidden="true"></i>
 			</a>
@@ -167,31 +193,7 @@
 </div>
 
 <div class="container">
-	<div class="row min-vh-25">
-		{% if solves %}
-			<div id="keys-pie-graph" class="col-md-6 d-flex align-items-center">
-				<div class="text-center w-100">
-					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-				</div>
-			</div>
-			<div id="categories-pie-graph" class="col-md-6 d-flex align-items-center">
-				<div class="text-center w-100">
-					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-				</div>
-			</div>
-			<div id="score-graph" class="col-md-12 d-flex align-items-center">
-				<div class="text-center w-100">
-					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-				</div>
-			</div>
-		{% else %}
-			<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">
-				No solves yet
-			</h3>
-		{% endif %}
-	</div>
-
-	<div class="row pt-5 min-vh-25">
+	<div class="row min-vh-25 pt-5 pb-5">
 		<div class="col-md-12">
 			<table class="table table-striped">
 				<h3 class="text-center">Team Members</h3>
@@ -249,7 +251,7 @@
 		   aria-controls="nav-missing" aria-selected="false">Missing</a>
 	</nav>
 
-	<div class="tab-content min-vh-50" id="nav-tabContent">
+	<div class="tab-content min-vh-50 pb-5" id="nav-tabContent">
 		<div class="tab-pane fade show active" id="nav-solves" role="tabpanel" aria-labelledby="nav-solves-tab">
 			<h3 class="text-center pt-5 d-block">Solves</h3>
 			<div class="row">
@@ -486,6 +488,13 @@
 					</tbody>
 				</table>
 				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row min-vh-25 pt-5">
+		<div class="col-md-10 offset-md-1">
+			<div id="comment-box">
 			</div>
 		</div>
 	</div>

@@ -1,4 +1,5 @@
 {% with form = Forms.users.UserEditForm(obj=user) %}
+{% from "admin/macros/forms.html" import render_extra_fields %}
 <form id="user-info-edit-form">
 	<div class="form-group">
 		{{ form.name.label }}
@@ -24,6 +25,9 @@
 		{{ form.country.label }}
 		{{ form.country(class="form-control custom-select") }}
 	</div>
+
+	{{ render_extra_fields(form.extra) }}
+
 	<div class="form-group">
 		<div class="form-check form-check-inline">
 			{{ form.type(class="form-control form-inline custom-select", id="type-select") }}

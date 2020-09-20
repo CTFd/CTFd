@@ -1,5 +1,5 @@
 from flask import request
-from flask_caching import Cache
+from flask_caching import Cache, make_template_fragment_key
 
 cache = Cache()
 
@@ -27,6 +27,7 @@ def clear_config():
 
 def clear_standings():
     from CTFd.models import Users, Teams
+    from CTFd.constants.static import CacheKeys
     from CTFd.utils.scores import get_standings, get_team_standings, get_user_standings
     from CTFd.api.v1.scoreboard import ScoreboardDetail, ScoreboardList
     from CTFd.api import api
@@ -55,10 +56,12 @@ def clear_standings():
     cache.delete_memoized(get_team_place)
 
     # Clear out HTTP request responses
-    cache.delete(make_cache_key(path="scoreboard.listing"))
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardList.endpoint))
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardDetail.endpoint))
     cache.delete_memoized(ScoreboardList.get)
+
+    # Clear out scoreboard templates
+    cache.delete(make_template_fragment_key(CacheKeys.PUBLIC_SCOREBOARD_TABLE))
 
 
 def clear_pages():

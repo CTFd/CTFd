@@ -4,10 +4,25 @@ import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
 import { ezQuery, ezBadge } from "core/ezq";
 import { createGraph, updateGraph } from "core/graphs";
+import Vue from "vue/dist/vue.esm.browser";
+import CommentBox from "../components/comments/CommentBox.vue";
 
 function createUser(event) {
   event.preventDefault();
   const params = $("#user-info-create-form").serializeJSON(true);
+
+  params.fields = [];
+
+  for (const property in params) {
+    if (property.match(/fields\[\d+\]/)) {
+      let field = {};
+      let id = parseInt(property.slice(7, -1));
+      field["field_id"] = id;
+      field["value"] = params[property];
+      params.fields.push(field);
+      delete params[property];
+    }
+  }
 
   // Move the notify value into a GET param
   let url = "/api/v1/users";
@@ -54,6 +69,19 @@ function createUser(event) {
 function updateUser(event) {
   event.preventDefault();
   const params = $("#user-info-edit-form").serializeJSON(true);
+
+  params.fields = [];
+
+  for (const property in params) {
+    if (property.match(/fields\[\d+\]/)) {
+      let field = {};
+      let id = parseInt(property.slice(7, -1));
+      field["field_id"] = id;
+      field["value"] = params[property];
+      params.fields.push(field);
+      delete params[property];
+    }
+  }
 
   CTFd.fetch("/api/v1/users/" + window.USER_ID, {
     method: "PATCH",
@@ -441,11 +469,30 @@ $(() => {
   $("#user-info-edit-form").submit(updateUser);
   $("#user-award-form").submit(awardUser);
 
+  // Insert CommentBox element
+  const commentBox = Vue.extend(CommentBox);
+  let vueContainer = document.createElement("div");
+  document.querySelector("#comment-box").appendChild(vueContainer);
+  new commentBox({
+    propsData: { type: "user", id: window.USER_ID }
+  }).$mount(vueContainer);
+
   let type, id, name, account_id;
   ({ type, id, name, account_id } = window.stats_data);
 
-  createGraphs(type, id, name, account_id);
-  setInterval(() => {
-    updateGraphs(type, id, name, account_id);
-  }, 300000);
+  let intervalId;
+  $("#user-statistics-modal").on("shown.bs.modal", function(_e) {
+    createGraphs(type, id, name, account_id);
+    intervalId = setInterval(() => {
+      updateGraphs(type, id, name, account_id);
+    }, 300000);
+  });
+
+  $("#user-statistics-modal").on("hidden.bs.modal", function(_e) {
+    clearInterval(intervalId);
+  });
+
+  $(".statistics-user").click(function(_event) {
+    $("#user-statistics-modal").modal("toggle");
+  });
 });

@@ -3,6 +3,7 @@ from enum import Enum
 from flask import current_app
 
 JS_ENUMS = {}
+JINJA_ENUMS = {}
 
 
 class RawEnum(Enum):
@@ -59,6 +60,7 @@ def JinjaEnum(cls):
     """
     if cls.__name__ not in current_app.jinja_env.globals:
         current_app.jinja_env.globals[cls.__name__] = cls
+        JINJA_ENUMS[cls.__name__] = cls
     else:
         raise KeyError("{} was already defined as a JinjaEnum".format(cls.__name__))
     return cls

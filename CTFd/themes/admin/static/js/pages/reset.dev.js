@@ -147,7 +147,7 @@
 /******/
 /******/
 /******/ 	// add entry module to deferred list
-/******/ 	deferredModules.push(["./CTFd/themes/admin/assets/js/pages/reset.js","helpers","vendor","default~pages/challenge~pages/challenges~pages/configs~pages/editor~pages/main~pages/notifications~p~d5a3cc0a"]);
+/******/ 	deferredModules.push(["./CTFd/themes/admin/assets/js/pages/reset.js","components","helpers","vendor","default~pages/challenge~pages/challenges~pages/configs~pages/editor~pages/main~pages/notifications~p~d5a3cc0a"]);
 /******/ 	// run deferred modules when ready
 /******/ 	return checkDeferredModules();
 /******/ })
@@ -162,7 +162,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 ;
-eval("\n\n__webpack_require__(/*! ./main */ \"./CTFd/themes/admin/assets/js/pages/main.js\");\n\nvar _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\"));\n\nvar _ezq = __webpack_require__(/*! core/ezq */ \"./CTFd/themes/core/assets/js/ezq.js\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction reset(event) {\n  event.preventDefault();\n  (0, _ezq.ezQuery)({\n    title: \"Reset CTF?\",\n    body: \"Are you sure you want to reset your CTFd instance?\",\n    success: function success() {\n      (0, _jquery.default)(\"#reset-ctf-form\").off(\"submit\").submit();\n    }\n  });\n}\n\n(0, _jquery.default)(function () {\n  (0, _jquery.default)(\"#reset-ctf-form\").submit(reset);\n});\n\n//# sourceURL=webpack:///./CTFd/themes/admin/assets/js/pages/reset.js?");
+eval("\n\n__webpack_require__(/*! ./main */ \"./CTFd/themes/admin/assets/js/pages/main.js\");\n\nvar _jquery = _interopRequireDefault(__webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js\"));\n\nvar _ezq = __webpack_require__(/*! core/ezq */ \"./CTFd/themes/core/assets/js/ezq.js\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { \"default\": obj }; }\n\nfunction reset(event) {\n  event.preventDefault();\n  (0, _ezq.ezQuery)({\n    title: \"Reset CTF?\",\n    body: \"Are you sure you want to reset your CTFd instance?\",\n    success: function success() {\n      (0, _jquery[\"default\"])(\"#reset-ctf-form\").off(\"submit\").submit();\n    }\n  });\n}\n\n(0, _jquery[\"default\"])(function () {\n  (0, _jquery[\"default\"])(\"#reset-ctf-form\").submit(reset);\n});\n\n//# sourceURL=webpack:///./CTFd/themes/admin/assets/js/pages/reset.js?");
 
 /***/ })
 

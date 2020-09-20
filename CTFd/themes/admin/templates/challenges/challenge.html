@@ -45,7 +45,7 @@
 		<div class="row">
 			<div class="col-md-6">
 				<nav class="nav nav-tabs nav-fill" id="challenge-properties" role="tablist">
-					<a class="nav-item nav-link active" data-toggle="tab" href="#solves" role="tab" >Solves</a>
+					<a class="nav-item nav-link active" data-toggle="tab" href="#comments" role="tab" >Comments</a>
 					<a class="nav-item nav-link" data-toggle="tab" href="#flags" role="tab">Flags</a>
 					<a class="nav-item nav-link" data-toggle="tab" href="#files" role="tab">Files</a>
 					<a class="nav-item nav-link" data-toggle="tab" href="#tags" role="tab">Tags</a>
@@ -54,11 +54,14 @@
 				</nav>
 
 				<div class="tab-content" id="nav-tabContent">
-					<div class="tab-pane fade show active" id="solves" role="tabpanel">
+					<div class="tab-pane fade show active" id="comments" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">Solves</h3>
-								{% include "admin/modals/challenges/solves.html" %}
+								<h3 class="text-center py-3 d-block">
+									Comments
+								</h3>
+								<div id="comment-box">
+								</div>
 							</div>
 						</div>
 					</div>

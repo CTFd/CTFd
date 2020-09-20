@@ -1,8 +1,8 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
 from CTFd.cache import clear_team_session, clear_user_session
-from CTFd.models import Teams, db
-from CTFd.utils import config, get_config
+from CTFd.models import TeamFieldEntries, TeamFields, Teams, db
+from CTFd.utils import config, get_config, validators
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators import authed_only, ratelimit
 from CTFd.utils.decorators.modes import require_team_mode
@@ -125,6 +125,9 @@ def new():
         passphrase = request.form.get("password", "").strip()
         errors = get_errors()
 
+        website = request.form.get("website")
+        affiliation = request.form.get("affiliation")
+
         user = get_current_user()
 
         existing_team = Teams.query.filter_by(name=teamname).first()
@@ -133,12 +136,62 @@ def new():
         if not teamname:
             errors.append("That team name is invalid")
 
+        # Process additional user fields
+        fields = {}
+        for field in TeamFields.query.all():
+            fields[field.id] = field
+
+        entries = {}
+        for field_id, field in fields.items():
+            value = request.form.get(f"fields[{field_id}]", "").strip()
+            if field.required is True and (value is None or value == ""):
+                errors.append("Please provide all required fields")
+                break
+
+            # Handle special casing of existing profile fields
+            if field.name.lower() == "affiliation":
+                affiliation = value
+                break
+            elif field.name.lower() == "website":
+                website = value
+                break
+
+            if field.field_type == "boolean":
+                entries[field_id] = bool(value)
+            else:
+                entries[field_id] = value
+
+        if website:
+            valid_website = validators.validate_url(website)
+        else:
+            valid_website = True
+
+        if affiliation:
+            valid_affiliation = len(affiliation) < 128
+        else:
+            valid_affiliation = True
+
+        if valid_website is False:
+            errors.append("Websites must be a proper URL starting with http or https")
+        if valid_affiliation is False:
+            errors.append("Please provide a shorter affiliation")
+
         if errors:
             return render_template("teams/new_team.html", errors=errors)
 
         team = Teams(name=teamname, password=passphrase, captain_id=user.id)
 
+        if website:
+            team.website = website
+        if affiliation:
+            team.affiliation = affiliation
+
         db.session.add(team)
+        db.session.commit()
+
+        for field_id, value in entries.items():
+            entry = TeamFieldEntries(field_id=field_id, value=value, team_id=team.id)
+            db.session.add(entry)
         db.session.commit()
 
         user.team_id = team.id
