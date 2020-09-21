@@ -57,7 +57,14 @@ def sendmail(addr, text, subject):
         msg["From"] = mailfrom_addr
         msg["To"] = addr
 
-        smtp.send_message(msg, from_addr=mailsender_addr)
+        # Check whether we are using an admin-defined SMTP server
+        custom_smtp = bool(get_config("mail_server"))
+
+        # We should only consider the MAILSENDER_ADDR value on servers defined in config
+        if custom_smtp:
+            smtp.send_message(msg)
+        else:
+            smtp.send_message(msg, from_addr=mailsender_addr)
 
         smtp.quit()
         return True, "Email sent"
