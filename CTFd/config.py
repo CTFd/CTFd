@@ -147,6 +147,8 @@ class ServerConfig(object):
 
     MAIL_SSL: bool = process_boolean_str(config_ini["email"]["MAIL_SSL"])
 
+    MAILSENDER_ADDR: str = empty_str_cast(config_ini["email"]["MAILSENDER_ADDR"])
+
     MAILGUN_API_KEY: str = empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
 
     MAILGUN_BASE_URL: str = empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
