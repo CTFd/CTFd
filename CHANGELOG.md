@@ -1,3 +1,29 @@
+# 3.1.1 / 2020-09-22
+
+**General**
+
+- Fix notification deliverability when there are multiple tabs open
+- Only play notification sounds in the master tab that receives the notification
+
+**Admin Panel**
+
+- Fix issue preventing admins from emailing users through the Admin Panel
+- Improve Notification UI
+  - Clears notification form after notification submission
+  - Add notification to notification list after creation
+
+**Themes**
+
+- Add fix for trying to increment solves when solves are hidden
+- Update JS dependencies to fix a transpiliation error preventing optional custom fields from being left empty
+  - `@babel/core`, `@babel/preset-env`, `@fortawesome/fontawesome-free`, `babel-loader`, and `@babel/polyfill` were updated but only `@babel/core` needs to be updated to resolve the transpiliation issue
+- Remove `console.log` statements from minified production JS
+- Compress notification sound and document the compression command
+
+**Miscellaneous**
+
+- Add the ability to override the sender header of email sent via SMTP with the `MAILSENDER_ADDR` config value
+
 # 3.1.0 / 2020-09-08
 
 **General**
