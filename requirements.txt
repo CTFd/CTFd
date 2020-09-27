@@ -24,6 +24,6 @@ python-dotenv==0.10.3
 flask-restplus==0.13.0
 pathlib2==2.3.5
 flask-marshmallow==0.10.1
-marshmallow-sqlalchemy==0.17.0
+marshmallow-sqlalchemy==0.23.1
 boto3==1.15.3
 marshmallow==3.8.0
