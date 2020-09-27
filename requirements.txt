@@ -12,7 +12,7 @@ six==1.13.0
 itsdangerous==1.1.0
 requests>=2.20.0
 PyMySQL==0.10.1
-gunicorn==19.9.0
+gunicorn==20.0.4
 normality==2.0.0
 dataset==1.1.2
 mistune==0.8.4
