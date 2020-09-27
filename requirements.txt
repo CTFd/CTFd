@@ -17,7 +17,7 @@ normality==2.0.0
 dataset==1.1.2
 mistune==0.8.4
 netaddr==0.7.19
-redis==3.3.11
+redis==3.5.3
 datafreeze==0.1.0
 gevent==20.9.0
 python-dotenv==0.10.3
