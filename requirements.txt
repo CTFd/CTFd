@@ -1,6 +1,6 @@
 Flask==1.1.1
 Werkzeug==0.16.0
-Flask-SQLAlchemy==2.4.1
+Flask-SQLAlchemy==2.4.4
 Flask-Caching==1.9.0
 Flask-Migrate==2.5.2
 Flask-Script==2.0.6
