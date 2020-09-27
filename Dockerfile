@@ -1,4 +1,4 @@
-FROM python:3.7-slim-buster
+FROM python:3.8.6-slim-buster
 WORKDIR /opt/CTFd
 RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads
 
@@ -7,7 +7,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         default-mysql-client \
-        python-dev \
+        python3 \
+        python3-dev \
+        gcc \
+        make \
         libffi-dev \
         libssl-dev \
         git\
