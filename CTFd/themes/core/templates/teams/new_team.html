@@ -6,7 +6,7 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Create Team</h1>
+			<h1 data-i18n="new_team.Create Team">Create Team</h1>
 		</div>
 	</div>
 	<div class="container">
@@ -18,11 +18,11 @@
 				{% from "macros/forms.html" import render_extra_fields %}
 				<form method="POST">
 					<div class="form-group">
-						<b>{{ form.name.label }}</b>
+						<b><span data-i18n="new_team.Team Name">{{ form.name.label }}</span></b>
 						{{ form.name(class="form-control") }}
 					</div>
 					<div class="form-group">
-						<b>{{ form.password.label }}</b>
+						<b><span data-i18n="new_team.Team Password">{{ form.password.label }}</span></b>
 						{{ form.password(class="form-control") }}
 					</div>
 
@@ -30,7 +30,9 @@
 
 					<div class="row pt-3">
 						<div class="col-md-12">
-							<p>After creating your team, share the team name and password with your teammates so they can join your team.</p>
+							<p data-i18n="new_team.After creating your team, share the team name and password with your teammates so they can join your team">
+								After creating your team, share the team name and password with your teammates so they can join your team.
+							</p>
 							{{ form.submit(class="btn btn-success float-right") }}
 						</div>
 					</div>

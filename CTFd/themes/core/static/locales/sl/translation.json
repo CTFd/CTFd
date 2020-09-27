@@ -1,0 +1,204 @@
+{
+  "navbar": {
+    "Users": "Uporabniki",
+    "Scoreboard": "Točke",
+    "Challanges": "Izivi",
+    "AdminPanel": "Administracijska plošča",
+    "Notifications": "Obvestila",
+    "Team": "Skupina",
+    "Profile": "Profil",
+    "Settings": "Nastavitve",
+    "Teams": "Skupine",
+    "Register": "Registracija",
+    "Login": "Prijava",
+    "Logout": "Odjavi se"
+  },
+  "users": {
+    "Users": "Uporabniki",
+    "Searching for users with": "Iskanje uporabnikov z katerim se ",
+    "matching": "ujema z",
+    "Affiliation" : "Dodelitev",
+    "User": "Uporabnik",
+    "Website": "Spletna stran",
+    "Country" : "Država",
+    "Page": "Stran",
+    "of": "izmed",
+    "results": "rezultatov"
+  },
+  "users_private": {
+    "Official": "Uradno",
+    "place": "mesto",
+    "points": "točke",
+    "Awards": "Nagrade",
+    "Solves": "Rešene",
+    "Challange": "Izziv",
+    "Category": "Kategorija",
+    "Value": "Vrednost",
+    "Time": "Čas",
+    "No solves yet": "Ni še rešnih izzivov"
+  },
+  "users_public": {
+    "Official": "Uradno",
+    "place": "mesto",
+    "points": "točke",
+    "Awards": "Nagrade",
+    "Solves": "Rešene",
+    "Challange": "Izziv",
+    "Category": "Kategorija",
+    "Value": "Vrednost",
+    "Time": "Čas",
+    "No solves yet": "Ni še rešnih izzivov"
+  },
+  "teams": {
+    "Teams": "Skupine",
+    "Searching for teams with": "Iskanje skupin z katerim se ",
+    "matching": "ujema z ",
+    "Page": "Stran",
+    "of": "izmed",
+    "results": "rezultatov",
+    "Team": "Skupina",
+    "Website": "Spletna stran",
+    "Affiliation": "Dodelitev",
+    "Country": "Država",
+    "Official": "Uradno"
+  },
+  "join_team": {
+    "Join Team": "Pridruži se skupini",
+    "Team Name": "Ime skupine",
+    "Team Password": "Geslo skupine"
+  },
+  "new_team": {
+    "Create Team": "Ustvari Skupino",
+    "After creating your team, share the team name and password with your teammates so they can join your team": "Po kreaciji skupine, deli njeno ime in geslo s svojimi soigralci, da se bodo lahko le tej pridružili",
+    "Team Name": "Ime skupine",
+    "Team Password": "Geslo skupine",
+    "Create": "Ustvari"
+  },
+  "teams_private": {
+    "Edit Team": "Uredi skupino",
+    "Choose Captain": "Izberi kapitana",
+    "Official": "Uradno",
+    "place": "mesto",
+    "points": "točke",
+    "Members": "Člani",
+    "User Name": "Uporabniško ime",
+    "Score": "Rezultat",
+    "Captain": "Kapitan",
+    "Awards": "Nagrade",
+    "Solves": "Rešene",
+    "Challange": "Izziv",
+    "Category": "Kategorija",
+    "Value": "Vrednost",
+    "Time": "Čas",
+    "No solves yet": "Ni še rešnih izzivov"
+  },
+  "teams_public": {
+    "Official": "Uradno",
+    "place": "mesto",
+    "points": "točke",
+    "Members": "Člani",
+    "User Name": "Uporabniško ime",
+    "Score": "Rezultat",
+    "Awards": "Nagrade",
+    "Solves": "Rešene",
+    "Challange": "Izziv",
+    "Category": "Kategorija",
+    "Value": "Vrednost",
+    "Time": "Čas",
+    "No solves yet": "Ni še rešnih izzivov"
+  },
+  "team_enrollment": {
+    "Team": "Skupina",
+    "Welcome to": "Dobrodošel v",
+    "In order to participate you must either join or create a team": "Za sodelovanje se pridruži že obstoječi skupini oz. ustvari novo skupino",
+    "Play with Official Team": "Igraj z uradno skupino",
+    "Join Unofficial Team": "Pridruži se neuradni skupini",
+    "Create Unofficial Team": "Ustvari neuradno skupino",
+    "Join Team": "Pridruži se skupini",
+    "Create Team": "Ustvari Skupino"
+
+  },
+  "register": {
+    "Register": "Registracija",
+    "Login with Major League Cyber": "Prijavi se z Major League Cyber",
+    "User Name": "Uporabniško ime",
+    "Your username on the site": "Tvoje uporabniško ime na tej strani",
+    "Email": "E-pošta",
+    "Never shown to the public": "Nikoli ne bo uporabljena v javnosti",
+    "Password": "Geslo",
+    "Password used to log into your account": "Geslo, katerega boš uporabil/a za prijavo"
+  },
+  "login": {
+    "Login": "Prijava",
+    "Login with Major League Cyber": "Prijavi se z Major League Cyber",
+    "User Name or Email": "Uporabniško ime ali e-pošta",
+    "Password": "Geslo",
+    "Forgot your password?": "Pozabljeno geslo?"
+  },
+  "setup": {
+    "Setup": "Začetna nastavitev",
+    "General": "Osnovno",
+    "Administration": "Administracija",
+    "Style": "Izgled",
+    "Date": "Datum",
+    "Time": "Čas",
+    "Integrations": "Integracije",
+    "Event Name": "Ime dogodka",
+    "The name of your CTF event/workshop": "Ime tvojega dogodka",
+    "Event Description": "Opis dogodka",
+    "Description for the CTF": "Opis za CTF",
+    "User Mode": "Uporabniški način",
+    "Next": "Naprej",
+    "Admin Username": "Uporabniško ime administratorja",
+    "Your username for the administration account": "Uporabniško ime za administracijski račun",
+    "Admin Email": "E-pošta administratorja",
+    "Your email address for the administration account": "E-pošta administracijskega računa",
+    "Admin Password": "Administratorsko geslo",
+    "Your password for the administration account": "Geslo za administracijski račun",
+    "Subscribe email address to the CTFd LLC Newsletter for news and updates": "Naroči se na novice o CTFd",
+    "Theme": "Tema",
+    "CTFd Theme to use": "Tema za  CTFd UI",
+    "Theme Color": "Barva Teme",
+    "Color used by theme to control aesthetics and Requires theme support it is optional": "Izbira barve za namene estetike in ni obvezna",
+    "Start Time": "Datum pričetka",
+    "UTC Preview": "UTC predogled",
+    "Time when your CTF is scheduled to start": "Določi čas pričetka CTF",
+    "End Time": "Datum zaključka",
+    "Time when your CTF is scheduled to end": "Določi čas zaključka CTF"
+  },
+  "settings": {
+    "Settings": "Nastavitve",
+    "Profile": "Profil",
+    "Access Tokens": "Dostopni žetoni",
+    "User Name": "Uporabniško ime",
+    "Email": "E-pošta",
+    "Crrent Password": "Trenutno geslo",
+    "Password": "Geslo",
+    "Affiliation": "Dodelitev",
+    "Website": "Spletna stran",
+    "Country": "Država",
+    "Active Tokens": "Aktivni žetoni",
+    "Type": "Tip",
+    "Created": "Nastanek",
+    "Expiration": "Poteče",
+    "Delete": "Izbriši"
+  },
+  "notifications" : {
+    "Notifications" : "Obvestila",
+    "There are no notifications yet": "Nisi prejel/a še nobenega obvestila"
+  },
+  "four_oh_three": {
+    "Forbidden": "Onemogočeno"
+  },
+  "four_oh_four": {
+    "File not found": "Te strani ni mogoče najti",
+    "Sorry about that": "CTF se opravičuje za napako"
+  },
+  "four_twenty_nine": {
+    "Too many requests": "Preveč obiskov te strani",
+    "Please slow down": "Prosim ne ponavljaj več teh dejanj!"
+  },
+  "five_oh_two": {
+    "Bad Gateway": "Napaka"
+  }
+}

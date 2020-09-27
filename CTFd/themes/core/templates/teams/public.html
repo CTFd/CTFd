@@ -9,7 +9,7 @@
 			<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
 			{% if team.oauth_id %}
 				<a href="https://majorleaguecyber.org/t/{{ team.name }}">
-					<h3><span class="badge badge-primary">Official</span></h3>
+					<h3><span class="badge badge-primary" data-i18n="teams_public.Official">Official</span></h3>
 				</a>
 			{% endif %}
 			{% if team.affiliation %}
@@ -37,14 +37,14 @@
 				{% if scores_visible() %}
 					{% if place %}
 						{{ place }}
-						<small>place</small>
+						<small><span data-i18n="teams_public.place">place</span></small>
 					{% endif %}
 				{% endif %}
 			</h2>
 			<h2 id="team-score" class="text-center">
 				{% if score %}
 					{{ score }}
-					<small>points</small>
+					<small><span data-i18n="teams_public.points">points</span></small>
 				{% endif %}
 			</h2>
 
@@ -65,12 +65,12 @@
 
 		<div class="row">
 			<div class="col-md-12">
-				<h3>Members</h3>
+				<h3 data-i18n="teams_public.Members">Members</h3>
 				<table class="table table-striped">
 					<thead>
 					<tr>
-						<td><b>User Name</b></td>
-						<td><b>Score</b></td>
+						<td><b><span data-i18n="teams_public.User Name">User Name</span></b></td>
+						<td><b><span data-i18n="teams_public.Score">Score</span></b></td>
 					</tr>
 					</thead>
 					<tbody>
@@ -120,7 +120,7 @@
 			{% if awards %}
 				<div class="row">
 					<div class="col-md-12">
-						<h3>Awards</h3>
+						<h3 data-i18n="teams_public.Awards">Awards</h3>
 					</div>
 					{% for award in awards %}
 						<div class="col-md-3 col-sm-6">
@@ -141,14 +141,14 @@
 
 			<div class="row">
 				<div class="col-md-12">
-					<h3>Solves</h3>
+					<h3 data-i18n="teams_public.Solves">Solves</h3>
 					<table class="table table-striped">
 						<thead>
 						<tr>
-							<td><b>Challenge</b></td>
-							<td class="d-none d-md-block d-lg-block"><b>Category</b></td>
-							<td><b>Value</b></td>
-							<td><b>Time</b></td>
+							<td><b><span data-i18n="teams_public.Challange">Challenge</span></b></td>
+							<td class="d-none d-md-block d-lg-block"><b><span data-i18n="teams_public.Category">Category</span></b></td>
+							<td><b><span data-i18n="teams_public.Value">Value</span></b></td>
+							<td><b><span data-i18n="teams_public.Time">Time</span></b></td>
 						</tr>
 						</thead>
 						<tbody>
@@ -172,7 +172,7 @@
 			</div>
 		{% else %}
 			<div class="row min-vh-25">
-				<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">
+				<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center" data-i18n="teams_public.No solves yet">
 					No solves yet
 				</h3>
 			</div>

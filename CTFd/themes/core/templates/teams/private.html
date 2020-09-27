@@ -8,7 +8,7 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h2 class="modal-action text-center w-100">Edit Team</h2>
+					<h2 class="modal-action text-center w-100" data-i18n="teams_private.Edit Team">Edit Team</h2>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -79,7 +79,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h2 class="modal-action text-center w-100">Choose Captain</h2>
+					<h2 class="modal-action text-center w-100" data-i18n="teams_private.Choose Captain">Choose Captain</h2>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -110,7 +110,7 @@
 			<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
 			{% if team.oauth_id %}
 				<a href="https://majorleaguecyber.org/t/{{ team.name }}">
-					<h3><span class="badge badge-primary">Official</span></h3>
+					<h3><span class="badge badge-primary" data-i18n="teams_private.Official">Official</span></h3>
 				</a>
 			{% endif %}
 			{% if team.affiliation %}
@@ -138,14 +138,14 @@
 				{% if scores_visible() %}
 					{% if place %}
 						{{ place }}
-						<small>place</small>
+						<small><span data-i18n="teams_private.place">place</span></small>
 					{% endif %}
 				{% endif %}
 			</h2>
 			<h2 id="team-score" class="text-center">
 				{% if score %}
 					{{ score }}
-					<small>points</small>
+					<small><span data-i18n="teams_private.points">points</span></small>
 				{% endif %}
 			</h2>
 			<div class="pt-3">
@@ -153,12 +153,16 @@
 					{% if team.captain_id == user.id %}
 						<i class="btn-fa fas fa-cogs fa-2x px-2"
 						   data-toggle="tooltip"
-						   data-placement="top"
-						   title="Edit Team"></i>
+							 data-placement="top"
+							 data-i18n="[title]teams_private.Edit Team"
+						></i>
 
 						<a class="edit-captain">
-							<i class="btn-fa fas fa-user-tag fa-2x px-2" data-toggle="tooltip" data-placement="top"
-							   title="Choose Captain"></i>
+							<i class="btn-fa fas fa-user-tag fa-2x px-2"
+								 data-toggle="tooltip"
+								 data-placement="top"
+								 data-i18n="[title]teams_private.Choose Captain"
+							></i>
 						</a>
 					{% else %}
 						<i class="btn-fa fas fa-cogs fa-2x px-2 fa-disabled"
@@ -189,12 +193,12 @@
 
 		<div class="row min-vh-25">
 			<div class="col-md-12">
-				<h3>Members</h3>
+				<h3 data-i18n="teams_private.Members">Members</h3>
 				<table class="table table-striped">
 					<thead>
 					<tr>
-						<td><b>User Name</b></td>
-						<td><b>Score</b></td>
+						<td><b><span data-i18n="teams_private.User Name">User Name</span></b></td>
+						<td><b><span data-i18n="teams_private.Score">Score</span></b></td>
 					</tr>
 					</thead>
 					<tbody>
@@ -205,7 +209,7 @@
 									{{ member.name }}
 								</a>
 								{% if team.captain_id == member.id %}
-									<span class="badge badge-primary ml-2">Captain</span>
+									<span class="badge badge-primary ml-2" data-i18n="teams_private.Captain">Captain</span>
 								{% endif %}
 							</td>
 							<td>{{ member.score }}</td>
@@ -247,7 +251,7 @@
 			{% if awards %}
 				<div class="row">
 					<div class="col-md-12">
-						<h3>Awards</h3>
+						<h3 data-i18n="teams_private.Awards">Awards</h3>
 					</div>
 					{% for award in awards %}
 						<div class="col-md-3 col-sm-6">
@@ -268,14 +272,14 @@
 
 			<div class="row">
 				<div class="col-md-12">
-					<h3>Solves</h3>
+					<h3 data-i18n="teams_private.Solves">Solves</h3>
 					<table class="table table-striped">
 						<thead>
 						<tr>
-							<td><b>Challenge</b></td>
-							<td class="d-none d-md-block d-lg-block"><b>Category</b></td>
-							<td><b>Value</b></td>
-							<td><b>Time</b></td>
+							<td><b><span data-i18n="teams_private.Challange">Challenge</span></b></td>
+							<td class="d-none d-md-block d-lg-block"><b><span data-i18n="teams_private.Category">Category</span></b></td>
+							<td><b><span data-i18n="teams_private.Value">Value</span></b></td>
+							<td><b><span data-i18n="teams_private.Time">Time</span></b></td>
 						</tr>
 						</thead>
 						<tbody>
@@ -299,7 +303,7 @@
 			</div>
 		{% else %}
 			<div class="row min-vh-25">
-				<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">
+				<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center" data-i18n="teams_private.No solves yet">
 					No solves yet
 				</h3>
 			</div>

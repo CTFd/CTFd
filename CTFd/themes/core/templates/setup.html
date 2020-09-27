@@ -6,7 +6,7 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Setup</h1>
+			<h1 data-i18n="setup.Setup">Setup</h1>
 		</div>
 	</div>
 	<div class="container">
@@ -17,42 +17,42 @@
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal" id="setup-form">
 				<ul class="nav nav-pills nav-fill mb-4">
 					<li class="nav-item">
-						<a class="nav-link active" data-toggle="pill" href="#general">General</a>
+						<a class="nav-link active" data-toggle="pill" href="#general"><span data-i18n="setup.General">General</span></a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" data-toggle="pill" href="#administration">Administration</a>
+						<a class="nav-link" data-toggle="pill" href="#administration"><span data-i18n="setup.Administration">Administration</span></a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" data-toggle="pill" href="#style">Style</a>
+						<a class="nav-link" data-toggle="pill" href="#style"> <span data-i18n="setup.Style">Style</span></a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" data-toggle="pill" href="#datetime">Date &amp; Time</a>
+						<a class="nav-link" data-toggle="pill" href="#datetime"> <span data-i18n="setup.Date">Date</span> &amp; <span data-i18n="setup.Time">Time</span></a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" data-toggle="pill" href="#integrations">Integrations</a>
+						<a class="nav-link" data-toggle="pill" href="#integrations"><span data-i18n="setup.Integrations">Integrations</span></a>
 					</li>
 				</ul>
 
 				<div class="tab-content">
 					<div class="tab-pane fade show active" id="general" role="tabpanel">
 						<div class="form-group">
-							<b>{{ form.ctf_name.label }}</b>
+							<b><span data-i18n="setup.Event Name">{{ form.ctf_name.label }}</span></b>
 							{{ form.ctf_name(class="form-control") }}
 							<small class="form-text text-muted">
-								{{ form.ctf_name.description }}
+								<span data-i18n="setup.The name of your CTF event/workshop">{{ form.ctf_name.description }}</span>
 							</small>
 						</div>
 
 						<div class="form-group">
-							<b>{{ form.ctf_description.label }}</b>
+							<b><span data-i18n="setup.Event Description">{{ form.ctf_description.label }}</span></b>
 							{{ form.ctf_description(class="form-control", rows="5") }}
 							<small class="form-text text-muted">
-								{{ form.ctf_description.description }}
+								<span data-i18n="setup.Description for the CTF">{{ form.ctf_description.description }}</span>
 							</small>
 						</div>
 
 						<div class="form-group">
-							<b>{{ form.user_mode.label }}</b>
+							<b> <span data-i18n="setup.User Mode">{{ form.user_mode.label }}</span></b>
 							{% for radio in form.user_mode %}
 								<div class="form-check ml-3">
 									{{ radio(class="form-check-input") }}
@@ -60,62 +60,70 @@
 								</div>
 							{% endfor %}
 							<small class="form-text text-muted">
-								{{ form.user_mode.description }}
+									{{ form.user_mode.description }}
 							</small>
 						</div>
 
 						<div class="text-right">
 							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#administration">
-								Next
+								<span data-i18n="setup.Next">Next</span>
 							</button>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="administration" role="tabpanel">
 						<div class="form-group">
-							<b>{{ form.name.label }}</b>
+							<b><span data-i18n="setup.Admin Username">{{ form.name.label }}</span></b>
 							{{ form.name(class="form-control") }}
 							<small class="form-text text-muted">
-								{{ form.name.description }}
+								<span data-i18n="setup.Your username for the administration account">
+									{{ form.name.description }}
+								</span>
 							</small>
 						</div>
 						<div class="form-group">
-							<b>{{ form.email.label }}</b>
+							<b><span data-i18n="setup.Admin Email">{{ form.email.label }}</span></b>
 							{{ form.email(class="form-control") }}
 							<small class="form-text text-muted">
-								{{ form.email.description }}
+								<span data-i18n="setup.Your email address for the administration account">
+									{{ form.email.description }}
+								</span>
 							</small>
 						</div>
 						<div class="form-group">
-							<b>{{ form.password.label }}</b>
+							<b><span data-i18n="setup.Admin Password">{{ form.password.label }}</span></b>
 							{{ form.password(class="form-control") }}
 							<small class="form-text text-muted">
-								{{ form.password.description }}
+								<span data-i18n="setup.Your password for the administration account">
+									{{ form.password.description }}
+								</span>
 							</small>
 						</div>
 
 						<div class="form-check">
 							<label class="form-check-label">
 								<input class="form-check-input" type="checkbox" value="" id="newsletter-checkbox" checked>
-								Subscribe email address to the CTFd LLC Newsletter for news and updates
+								<span data-i18n="setup.Subscribe email address to the CTFd LLC Newsletter for news and updates">
+									Subscribe email address to the CTFd LLC Newsletter for news and updates
+								</span>
 							</label>
 						</div>
 
 						<div class="text-right">
 							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#style">
-								Next
+								<span data-i18n="setup.Next">Next</span>
 							</button>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="style" role="tabpanel">
 						<div class="form-group">
-							<b>{{ form.ctf_theme.label }}</b>
+							<b><span data-i18n="setup.Theme">{{ form.ctf_theme.label }}</span></b>
 							{{ form.ctf_theme(class="form-control custom-select") }}
 							<small class="form-text text-muted">
-								{{ form.ctf_theme.description }}
+								<span data-i18n="setup.CTFd Theme to use">{{ form.ctf_theme.description }}</span>
 							</small>
 						</div>
 						<div class="form-group">
-							<b>{{ form.theme_color.label }}</b>
+							<b><span data-i18n="setup.Theme Color">{{ form.theme_color.label }}</span></b>
 							<br>
 							<div class="d-inline-block">
 								{{ form.theme_color(id="config-color-input") }}
@@ -123,65 +131,71 @@
 									<input type="color" id="config-color-picker" class="pr-1" style="width: 100px; height: 30px;" value="">
 								</div>
 								<div class="btn-group">
-									<button type="button" id="config-color-reset">Reset</button>
+									<button type="button" id="config-color-reset"><span data-i18n="setup.Reset">Reset</span></button>
 								</div>
 							</div>
 							<small class="form-text text-muted">
-								{{ form.theme_color.description }}
+								<span data-i18n="setup.Color used by theme to control aesthetics and Requires theme support it is optional">
+									{{ form.theme_color.description }}
+								</span>
 							</small>
 						</div>
 						<div class="text-right">
 							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#datetime">
-								Next
+								<span data-i18n="setup.Next">Next</span>
 							</button>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="datetime" role="tabpanel">
 						<div class="form-group">
-							<b>{{ form.start.label }}</b>
+							<b><span data-i18n="setup.Start Time">{{ form.start.label }}</span></b>
 							<div class="row">
 								<div class="col-md-4">
-									<label>Date</label>
+									<label><span data-i18n="setup.Date">Date</span></label>
 									<input class="form-control" id="start-date" type="date" placeholder="yyyy-mm-dd" data-preview="#start"/>
 								</div>
 								<div class="col-md-4">
-									<label>Time</label>
+									<label><span data-i18n="setup.Time">Time</span></label>
 									<input class="form-control" id="start-time" type="time" placeholder="hh:mm" data-preview="#start"/>
 								</div>
 								<div class="col-md-4">
-									<label>UTC Preview</label>
+									<label><span data-i18n="setup.UTC Preview">UTC Preview</span></label>
 									{{ form.start(class="form-control", id="start-preview", readonly=True) }}
 								</div>
 							</div>
 							<small class="form-text text-muted">
-								{{ form.start.description }}
+								<span data-i18n="setup.Time when your CTF is scheduled to start">
+									{{ form.start.description }}
+								</span>
 							</small>
 						</div>
 
 						<div class="form-group">
-							<b>{{ form.end.label }}</b>
+							<b><span data-i18n="setup.End Time">{{ form.end.label }}</span></b>
 							<div class="row">
 								<div class="col-md-4">
-									<label>Date</label>
+									<label><span data-i18n="setup.Date">Date</span></label>
 									<input class="form-control" id="end-date" type="date" placeholder="yyyy-mm-dd" data-preview="#end"/>
 								</div>
 								<div class="col-md-4">
-									<label>Time</label>
+									<label><span data-i18n="setup.Time">Time</span></label>
 									<input class="form-control" id="end-time" type="time" placeholder="hh:mm" data-preview="#end"/>
 								</div>
 								<div class="col-md-4">
-									<label>UTC Preview</label>
+									<label><span data-i18n="setup.UTC Preview">UTC Preview</span></label>
 									{{ form.start(class="form-control", id="end-preview", readonly=True) }}
 								</div>
 							</div>
 							<small class="form-text text-muted">
-								{{ form.end.description }}
+								<span data-i18n="setup.Time when your CTF is scheduled to end">
+									{{ form.end.description }}
+								</span>
 							</small>
 						</div>
 
 						<div class="text-right">
 							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#integrations">
-								Next
+								<span data-i18n="setup.Next">Next</span>
 							</button>
 						</div>
 					</div>
@@ -199,7 +213,7 @@
 							</ul>
 							</p>
 							<button type="button" id="integration-mlc" class="btn btn-primary btn-block">
-								Setup
+								<span data-i18n="setup.Setup">Setup</span>
 							</button>
 						</div>
 
