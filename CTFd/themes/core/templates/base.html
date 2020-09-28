@@ -45,13 +45,12 @@
 	<script defer src="{{ url_for('views.themes', path='js/core.js') }}"></script>
 	<script defer src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
 
+	{% blockentrypoint %}
 	<script defer src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/jquery-3.5.1.min.js') }}"></script>
+	{% endblock %}
 	<script src="{{ url_for('views.themes', path='js/i18next.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/jquery-i18next.min.js') }}"></script>
 	<script src="{{ url_for('views.themes', path='js/i18nextHttpBackend.min.js') }}"></script>
-
-
 	{% block scripts %}
 
 	{% endblock %}
