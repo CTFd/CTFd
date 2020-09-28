@@ -44,7 +44,7 @@
 	<script defer src="{{ url_for('views.themes', path='js/core.js') }}"></script>
 	<script defer src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
 
-	{% blockentrypoint %}
+	{% block entrypoint %}
 	<script defer src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
 	{% endblock %}
 	<script src="{{ url_for('views.themes', path='js/i18next.min.js') }}"></script>
