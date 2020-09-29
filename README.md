@@ -40,7 +40,7 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
 - And a lot more...
 
 ## Install
-
+ #this sucks 
 1. Install dependencies: `pip install -r requirements.txt`
    1. You can also use the `prepare.sh` script to install system dependencies using apt.
 2. Modify [CTFd/config.ini](https://github.com/CTFd/CTFd/blob/master/CTFd/config.ini) to your liking.
