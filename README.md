@@ -48,7 +48,7 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
 
 You can use the auto-generated Docker images with the following command:
 
-`docker run -p 8000:8000 -it ctfd/ctfd`
+`docker run -p 8500:8500 -it ctfd/ctfd`
 
 Or you can use Docker Compose with the following command from the source repository:
 

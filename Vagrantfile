@@ -43,7 +43,7 @@ cd /vagrant
 python manage.py db upgrade
 
 echo "Starting CTFd"
-tmux new-session -d -n "ctfd" -c "/vagrant" -s "ctfd" "gunicorn --bind 0.0.0.0:8000 -w 4 'CTFd:create_app()'"
+tmux new-session -d -n "ctfd" -c "/vagrant" -s "ctfd" "gunicorn --bind 0.0.0.0:8500 -w 4 'CTFd:create_app()'"
 SCRIPT
 
 Vagrant.configure("2") do |config|
@@ -53,9 +53,9 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", ip: "10.9.8.7"
 
   # Forward the default port for the development server (4000)
-  # and docker or gunicorn (8000) to host machine
+  # and docker or gunicorn (8500) to host machine
   config.vm.network "forwarded_port", guest: 4000, host: 4000
-  config.vm.network "forwarded_port", guest: 8000, host: 8000
+  config.vm.network "forwarded_port", guest: 8500, host: 8500
 
   # Pre-provision
   config.vm.provision "shell", inline: $preProvision

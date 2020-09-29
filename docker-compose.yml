@@ -6,7 +6,7 @@ services:
     user: root
     restart: always
     ports:
-      - "8000:8000"
+      - "8500:8500"
     environment:
       - UPLOAD_FOLDER=/var/uploads
       - DATABASE_URL=mysql+pymysql://ctfd:ctfd@db/ctfd
