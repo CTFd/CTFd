@@ -5,17 +5,17 @@ parser.add_argument("--port", help="Port for debug server to listen on", default
 parser.add_argument(
     "--profile", help="Enable flask_profiler profiling", action="store_true"
 )
-parser.add_argument(
-    "--disable-gevent",
-    help="Disable importing gevent and monkey patching",
-    action="store_false",
-)
+# parser.add_argument(
+#     "--disable-gevent",
+#     help="Disable importing gevent and monkey patching",
+#     action="store_false",
+# )
 args = parser.parse_args()
-if args.disable_gevent:
-    print(" * Importing gevent and monkey patching. Use --disable-gevent to disable.")
-    from gevent import monkey
+# if args.disable_gevent:
+#     print(" * Importing gevent and monkey patching. Use --disable-gevent to disable.")
+#     from gevent import monkey
 
-    monkey.patch_all()
+#     monkey.patch_all()
 
 # Import not at top of file to allow gevent to monkey patch uninterrupted
 from CTFd import create_app
