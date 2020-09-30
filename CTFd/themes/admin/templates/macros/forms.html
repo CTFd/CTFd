@@ -7,7 +7,7 @@
             {% endif %}
 
             {% if show_optionals %}
-                {% if not field.flags.required %}
+                {% if field.flags.required is false %}
                     <small class="float-right text-muted">Optional</small>
                 {% endif %}
             {% endif %}
@@ -27,7 +27,7 @@
                 {{ field.label(class="form-check-label") }}
 
                 {% if show_optionals %}
-                    {% if not field.flags.required %}
+                    {% if field.flags.required is false %}
                         <sup class="text-muted">Optional</sup>
                     {% endif %}
                 {% endif %}
