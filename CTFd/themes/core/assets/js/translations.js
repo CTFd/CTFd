@@ -27,6 +27,7 @@ export default () => {
         }
         );
 
+
     i18next.on('languageChanged', () => {
         jqueryI18next.init(i18next, $);
         $('html').localize();
@@ -45,7 +46,6 @@ export default () => {
         document.cookie = cookie
         i18next.changeLanguage(newLang, (err, t) => {
             if (err) {
-                console.log('something went wrong loading translations', err);
                 return null;
             }
             t('key');
