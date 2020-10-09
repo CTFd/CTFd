@@ -82,7 +82,7 @@
     "points": "točke",
     "Members": "Člani",
     "User Name": "Uporabniško ime",
-    "Score": "Rezultat",
+    "Score": "Točke",
     "Captain": "Kapitan",
     "Awards": "Nagrade",
     "Solves": "Rešene",
@@ -90,7 +90,19 @@
     "Category": "Kategorija",
     "Value": "Vrednost",
     "Time": "Čas",
-    "No solves yet": "Ni še rešnih izzivov"
+    "No solves yet": "Ni še rešnih izzivov",
+    "Team Name": "Ime skupine",
+    "Your team's public name shown to other competitors": "Ime tvoje skupine, katero si lahko ogledajo ostali igralci",
+    "New Team Password": "Novo geslo skupine",
+    "Set a new team join password": "Nastavi novo geslo",
+    "Confirm Password": "Vnesi staro geslo",
+    "Confrim Password Description": "Za zamenjavo gesla z novim, moraš vnesti staro geslo",
+    "Website": "Spletna stran",
+    "Website Description": "Spletna stran skupine je vidna ostalim igralcem",
+    "Affiliation": "Dodelitev",
+    "Affiliation Description": "Dodelitev skupine je vidna ostalim igralcem",
+    "Country": "Država",
+    "Country Description": "Država skupine je vidna ostalim igralcem"
   },
   "teams_public": {
     "Official": "Uradno",
@@ -98,7 +110,7 @@
     "points": "točke",
     "Members": "Člani",
     "User Name": "Uporabniško ime",
-    "Score": "Rezultat",
+    "Score": "Točke",
     "Awards": "Nagrade",
     "Solves": "Rešene",
     "Challange": "Izziv",
@@ -182,6 +194,25 @@
     "Created": "Nastanek",
     "Expiration": "Poteče",
     "Delete": "Izbriši"
+  },
+  "challanges": {
+    "Challanges": "Izivi"
+  },
+  "challange": {
+    "Challange": "Izziv",
+    "View Hint": "Pomoč",
+    "Unlock Hint for": "Odkleni pomoč za",
+    "points": "točk",
+    "Submit": "Potrdi",
+    "Name": "Ime",
+    "Date": "Datum"
+  },
+  "scoreboard": {
+    "Scoreboard": "Točke",
+    "Place": "Mesto",
+    "Team": "Skupina",
+    "Score": "Točke",
+    "Official": "Uradno"
   },
   "notifications" : {
     "Notifications" : "Obvestila",

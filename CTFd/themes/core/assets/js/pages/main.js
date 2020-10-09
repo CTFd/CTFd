@@ -7,6 +7,7 @@ import events from "../events";
 import config from "../config";
 import styles from "../styles";
 import times from "../times";
+import translations from "../translations";
 import { default as helpers } from "../helpers";
 
 CTFd.init(window.init);
@@ -20,5 +21,6 @@ window.Howl = Howl;
 $(() => {
   styles();
   times();
+  translations();
   events(config.urlRoot);
 });

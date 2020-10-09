@@ -18,45 +18,45 @@
 					{% from "macros/forms.html" import render_extra_fields %}
 					<form id="team-info-form" method="POST">
 						<div class="form-group">
-							<b>{{ form.name.label }}</b>
+							<b><span data-i18n="teams_private.Team Name">{{ form.name.label }}</span></b>
 							{{ form.name(class="form-control") }}
 							<small class="form-text text-muted">
-								{{ form.name.description }}
+								<span data-i18n="teams_private.Your team's public name shown to other competitors">{{ form.name.description }}</span>
 							</small>
 						</div>
 						<div class="form-group">
-							<b>{{ form.password.label }}</b>
+							<b><span data-i18n="teams_private.New Team Password">{{ form.password.label }}</span></b>
 							{{ form.password(class="form-control") }}
-							<small class="form-text text-muted">
-								{{ form.password.description }}
+							<small class="form-text text-muted"> 
+								<span data-i18n="teams_private.Set a new team join password">{{ form.password.description }}</span>
 							</small>
 						</div>
 						<div class="form-group">
-							<b>{{ form.confirm.label }}</b>
+							<b><span data-i18n="teams_private.Confirm Password">{{ form.confirm.label }}</span></b>
 							{{ form.confirm(class="form-control") }}
 							<small class="form-text text-muted">
-								{{ form.confirm.description }}
+								<span data-i18n="teams_private.Confrim Password Description">{{ form.confirm.description }}</span>
 							</small>
 						</div>
 						<div class="form-group">
-							<b>{{ form.website.label }}</b>
+							<b><span data-i18n="teams_private.Website">{{ form.website.label }}</span></b>
 							{{ form.website(class="form-control") }}
 							<small class="form-text text-muted">
-								{{ form.website.description }}
+								<span data-i18n="teams_private.Website Description">{{ form.website.description }}</span>
 							</small>
 						</div>
 						<div class="form-group">
-							<b>{{ form.affiliation.label }}</b>
+							<b><span data-i18n="teams_private.Affiliation">{{ form.affiliation.label }}</span></b>
 							{{ form.affiliation(class="form-control") }}
 							<small class="form-text text-muted">
-								{{ form.affiliation.description }}
+								<span data-i18n="teams_private.Affiliation Description">{{ form.affiliation.description }}</span>
 							</small>
 						</div>
 						<div class="form-group">
-							<b>{{ form.country.label }}</b>
+							<b><span data-i18n="teams_private.Country">{{ form.country.label }}</span></b>
 							{{ form.country(class="form-control custom-select") }}
 							<small class="form-text text-muted">
-								{{ form.country.description }}
+								<span data-i18n="teams_private.Country Description">{{ form.country.description }}</span>
 							</small>
 						</div>
 

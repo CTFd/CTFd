@@ -65,6 +65,9 @@
     "whatwg-fetch": "~3.0.0"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.11.5"
+    "@babel/polyfill": "^7.11.5",
+    "i18next": "^19.8.2",
+    "i18next-http-backend": "^1.0.21",
+    "jquery-i18next": "^1.2.1"
   }
 }

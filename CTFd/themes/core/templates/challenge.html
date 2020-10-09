@@ -6,13 +6,13 @@
 			</button>
 			<ul class="nav nav-tabs">
 				<li class="nav-item">
-					<a class="nav-link active" href="#challenge">Challenge</a>
+					<a class="nav-link active" href="#challenge"><span data-i18n="challange.Challange">Challenge</span></a>
 				</li>
 				{% block solves %}
 					<li class="nav-item">
 						<a class="nav-link challenge-solves" href="#solves">
 							{% if solves != None %}
-								{{ solves }} {% if solves > 1 %}Solves{% else %}Solves{% endif %}
+								{{ solves }} {% if solves > 1 %}Solves{% else %}<span data-i18n="challange.Solves">Solves</span>{% endif %}
 							{% endif %}
 						</a>
 					</li>
@@ -44,16 +44,16 @@
 									<a class="btn btn-info btn-hint btn-block load-hint" href="javascript:;" data-hint-id="{{ hint.id }}">
 										{% if hint.content %}
 											<small>
-												View Hint
+												<span data-i18n="challange.View Hint">View Hint</span>
 											</small>
 										{% else %}
 											{% if hint.cost %}
 												<small>
-													Unlock Hint for {{ hint.cost }} points
+													<span data-i18n="challange.Unlock Hint for">Unlock Hint for</span>	{{ hint.cost }} <span data-i18n="challange.points">points</span>
 												</small>
 											{% else %}
 												<small>
-													View Hint
+													<span data-i18n="challange.View Hint">View Hint</span>
 												</small>
 											{% endif %}
 										{% endif %}
@@ -102,7 +102,7 @@
 							</div>
 							<div class="col-md-3 form-group key-submit">
 								{% block submit %}
-								<button id="challenge-submit" class="challenge-submit" type="submit">
+								<button id="challenge-submit" class="challenge-submit" type="submit" data-i18n="challange.Submit">
 									Submit
 								</button>
 								{% endblock %}
@@ -125,9 +125,9 @@
 								<table class="table table-striped text-center">
 									<thead>
 									<tr>
-										<td><b>Name</b>
+										<td><b><span data-i18n="challange.Name">Name</span></b>
 										</td>
-										<td><b>Date</b>
+										<td><b><span data-i18n="challange.Date">Date</span></b>
 										</td>
 									</tr>
 									</thead>

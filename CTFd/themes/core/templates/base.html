@@ -1,117 +1,74 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>{{ Configs.ctf_name }}</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" href="{{ url_for('views.themes', path='img/favicon.ico') }}" type="image/x-icon">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/fonts.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/main.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/core.css') }}">
-	{% block stylesheets %}
-	{% endblock %}
+  <head>
+    <title>{{ Configs.ctf_name }}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('views.themes', path='img/favicon.ico') }}"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('views.themes', path='css/fonts.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('views.themes', path='css/main.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('views.themes', path='css/core.css') }}"
+    />
+    {% block stylesheets %} {% endblock %} {{ Plugins.styles }}
+    <script type="text/javascript">
+      var init = {
+      	'urlRoot': "{{ request.script_root }}",
+      	'csrfNonce': "{{ Session.nonce }}",
+      	'userMode': "{{ Configs.user_mode }}",
+      	'userId': {{ Session.id }},
+      	'start': {{ Configs.start | tojson }},
+      	'end': {{ Configs.end | tojson }},
+      	'theme_settings': {{ Configs.theme_settings | tojson }}
+      }
+    </script>
+    {{ Configs.theme_header }}
+  </head>
+  <body>
+    {% include "components/navbar.html" %}
 
-	{{ Plugins.styles }}
-	<script type="text/javascript">
-		var init = {
-			'urlRoot': "{{ request.script_root }}",
-			'csrfNonce': "{{ Session.nonce }}",
-			'userMode': "{{ Configs.user_mode }}",
-			'userId': {{ Session.id }},
-			'start': {{ Configs.start | tojson }},
-			'end': {{ Configs.end | tojson }},
-			'theme_settings': {{ Configs.theme_settings | tojson }}
-		}
-	</script>
-	{{ Configs.theme_header }}
-</head>
-<body>
-	{% include "components/navbar.html" %}
+    <main role="main">{% block content %} {% endblock %}</main>
 
-	<main role="main">
-		{% block content %}
-		{% endblock %}
-	</main>
+    <footer class="footer">
+      <div class="container text-center">
+        <a href="https://ctfd.io" class="text-secondary">
+          <small class="text-muted">Powered by CTFd</small>
+        </a>
+      </div>
+    </footer>
+    <script
+      defer
+      src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"
+    ></script>
+    <script
+      defer
+      src="{{ url_for('views.themes', path='js/core.js') }}"
+    ></script>
+    <script
+      defer
+      src="{{ url_for('views.themes', path='js/helpers.js') }}"
+    ></script>
 
-	<footer class="footer">
-		<div class="container text-center">
-			<a href="https://ctfd.io" class="text-secondary">
-				<small class="text-muted">Powered by CTFd</small>
-			</a>
-		</div>
-	</footer>
-	<script defer src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', path='js/core.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
+    {% block entrypoint %}
+    <script
+      defer
+      src="{{ url_for('views.themes', path='js/pages/main.js') }}"
+    ></script>
+    {% endblock %}
+    {% block scripts %} {% endblock %}
 
-	{% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
-	{% endblock %}
-	<script src="{{ url_for('views.themes', path='js/i18next.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/jquery-i18next.min.js') }}"></script>
-	<script src="{{ url_for('views.themes', path='js/i18nextHttpBackend.min.js') }}"></script>
-	{% block scripts %}
 
-	{% endblock %}
-	<script>
-		var language = 'en'
-		if(getCookie("_lang") !== '') {
-			language = getCookie("_lang")
-		}
-
-		{% raw %}
-		i18next
-			.use(i18nextHttpBackend)
-    	.init({
-      	debug: true,
-      	lng: language,
-      	fallbackLng: 'en',
-      	backend: {
-          loadPath: '/themes/core/static/locales/{{lng}}/translation.json',
-        },
-    	 	},function(err, t) {
-						updateContent();
-				 	}
-			);
-		{% endraw %}
-
-		i18next.on('languageChanged', () => {
-        updateContent();
-      });
-
-    function updateContent() {
-      jqueryI18next.init(i18next, $);
-			$('html').localize();
-		}
-
-		function switchLanguage(newLang) {
-			var cookie = '_lang=' + newLang + ';'
-			document.cookie =  cookie
-			i18next.changeLanguage(newLang, (err, t) => {
-  			if (err) return console.log('something went wrong loading translations', err);
-  			t('key');
-			});
-		}
-
-		function getCookie(cname) {
- 		 	var name = cname + "=";
-  		var decodedCookie = decodeURIComponent(document.cookie);
-  		var ca = decodedCookie.split(';');
-  		for(var i = 0; i <ca.length; i++) {
-  		  var c = ca[i];
-  		  while (c.charAt(0) == ' ') {
-  		    c = c.substring(1);
-  		  }
-  		  if (c.indexOf(name) == 0) {
-  		    return c.substring(name.length, c.length);
-  		  }
-  		}
-  		return "";
-		}
-	</script>
-
-	{{ Plugins.scripts }}
-
-	{{ Configs.theme_footer }}
-</body>
+    {{ Plugins.scripts }} {{ Configs.theme_footer }}
+  </body>
 </html>
