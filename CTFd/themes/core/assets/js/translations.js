@@ -21,7 +21,7 @@ export default () => {
             backend: {
                 loadPath: '/themes/core/static/locales/{{ lng }}/translation.json',
             },
-        }, function (err, t) {
+        }, function () {
             jqueryI18next.init(i18next, $);
             $('html').localize();
         }
@@ -45,7 +45,10 @@ export default () => {
         var cookie = '_lang=' + newLang + ';'
         document.cookie = cookie
         i18next.changeLanguage(newLang, (err, t) => {
-            if (err) return console.log('something went wrong loading translations', err);
+            if (err) {
+                console.log('something went wrong loading translations', err);
+                return null;
+            }
             t('key');
         });
     }
