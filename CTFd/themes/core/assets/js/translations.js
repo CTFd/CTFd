@@ -27,7 +27,6 @@ export default () => {
         }
         );
 
-
     i18next.on('languageChanged', () => {
         jqueryI18next.init(i18next, $);
         $('html').localize();
