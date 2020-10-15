@@ -218,6 +218,13 @@ class ChallengeList(Resource):
             )
 
         db.session.close()
+
+        # Reorder response
+        # TODO: Able to set arbitrary total ordering
+        # For now just set the ones matching config.top_category to the front
+        # JS will put categories in order of first appearance at top
+        response.sort(key= lambda x: x["category"] == get_config("top_category"))
+
         return {"success": True, "data": response}
 
     @admins_only
