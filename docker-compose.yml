@@ -28,6 +28,7 @@ services:
 
   nginx:
     image: nginx:1.17
+    restart: always
     volumes:
       - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
     ports:
