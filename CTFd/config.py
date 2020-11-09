@@ -210,6 +210,7 @@ class TestingConfig(ServerConfig):
     TESTING = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("TESTING_DATABASE_URL") or "sqlite://"
+    MAIL_SERVER = os.getenv("TESTING_MAIL_SERVER")
     SERVER_NAME = "localhost"
     UPDATE_CHECK = False
     REDIS_URL = None
