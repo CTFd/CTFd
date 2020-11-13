@@ -11,7 +11,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.helpers import get_errors, get_infos
-from CTFd.utils.user import get_current_user
+from CTFd.utils.user import get_current_user, get_current_user_attrs
 
 teams = Blueprint("teams", __name__)
 
@@ -57,6 +57,12 @@ def listing():
 def join():
     infos = get_infos()
     errors = get_errors()
+
+    user = get_current_user_attrs()
+    if user.team_id:
+        errors.append("You are already in a team. You cannot join another.")
+        return render_template("teams/join_team.html", infos=infos, errors=errors)
+
     if request.method == "GET":
         team_size_limit = get_config("team_size", default=0)
         if team_size_limit:
@@ -109,6 +115,12 @@ def join():
 def new():
     infos = get_infos()
     errors = get_errors()
+
+    user = get_current_user_attrs()
+    if user.team_id:
+        errors.append("You are already in a team. You cannot join another.")
+        return render_template("teams/new_team.html", infos=infos, errors=errors)
+
     if request.method == "GET":
         team_size_limit = get_config("team_size", default=0)
         if team_size_limit:
@@ -118,12 +130,11 @@ def new():
                     limit=team_size_limit, plural=plural
                 )
             )
-
         return render_template("teams/new_team.html", infos=infos, errors=errors)
+
     elif request.method == "POST":
         teamname = request.form.get("name", "").strip()
         passphrase = request.form.get("password", "").strip()
-        errors = get_errors()
 
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
