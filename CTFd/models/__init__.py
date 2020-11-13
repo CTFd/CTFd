@@ -37,6 +37,13 @@ class Notifications(db.Model):
     user = db.relationship("Users", foreign_keys="Notifications.user_id", lazy="select")
     team = db.relationship("Teams", foreign_keys="Notifications.team_id", lazy="select")
 
+    @property
+    def html(self):
+        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.helpers import markup
+
+        return markup(build_html(self.content))
+
     def __init__(self, *args, **kwargs):
         super(Notifications, self).__init__(**kwargs)
 
