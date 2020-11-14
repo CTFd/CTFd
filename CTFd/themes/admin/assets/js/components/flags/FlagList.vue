@@ -126,17 +126,19 @@ export default {
       $(modal).modal();
     },
     deleteFlag: function(flag_id) {
-      CTFd.fetch(`/api/v1/flags/${flag_id}`, {
-        method: "DELETE"
-      })
-        .then(response => {
-          return response.json();
+      if (confirm("Are you sure you'd like to delete this flag?")) {
+        CTFd.fetch(`/api/v1/flags/${flag_id}`, {
+          method: "DELETE"
         })
-        .then(response => {
-          if (response.success) {
-            this.loadFlags();
-          }
-        });
+          .then(response => {
+            return response.json();
+          })
+          .then(response => {
+            if (response.success) {
+              this.loadFlags();
+            }
+          });
+      }
     }
   },
   created() {
