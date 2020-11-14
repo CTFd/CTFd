@@ -18,11 +18,7 @@ import {
   deleteHint,
   showEditHintModal
 } from "../challenges/hints";
-import {
-  addFlagModal,
-  editFlagModal,
-  deleteFlag,
-} from "../challenges/flags";
+import { addFlagModal, editFlagModal, deleteFlag } from "../challenges/flags";
 
 const displayHint = data => {
   ezAlert({

@@ -41,7 +41,7 @@ export function addFlagModal(_event) {
     propsData: { challenge_id: window.CHALLENGE_ID }
   }).$mount(vueContainer);
 
-  $("#flag-create-modal").on("hidden.bs.modal", function (_e) {
+  $("#flag-create-modal").on("hidden.bs.modal", function(_e) {
     f.$destroy();
     $("#flag-create-modal").remove();
   });
@@ -60,7 +60,7 @@ export function editFlagModal(_event) {
     propsData: { flag_id: flag_id }
   }).$mount(vueContainer);
 
-  $("#flag-edit-modal").on("hidden.bs.modal", function (_e) {
+  $("#flag-edit-modal").on("hidden.bs.modal", function(_e) {
     f.$destroy();
     $("#flag-edit-modal").remove();
   });

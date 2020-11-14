@@ -25,7 +25,10 @@
             <label for="create-keys-select" class="control-label">
               Choose Flag Type
             </label>
-            <select class="form-control custom-select" @change="selectType($event)">
+            <select
+              class="form-control custom-select"
+              @change="selectType($event)"
+            >
               <option> -- </option>
               <option
                 v-for="type in Object.keys(types)"
