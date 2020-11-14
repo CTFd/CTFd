@@ -37,6 +37,7 @@ import CTFd from "core/CTFd";
 import nunjucks from "nunjucks";
 
 export default {
+  name: "FlagEditForm",
   props: {
     flag_id: Number
   },
@@ -45,6 +46,16 @@ export default {
       flag: {},
       editForm: ""
     };
+  },
+  watch: {
+    flag_id: {
+      immediate: true,
+      handler(val, oldVal) {
+        if (val !== null) {
+          this.loadFlag();
+        }
+      }
+    }
   },
   methods: {
     loadFlag: function() {
@@ -77,23 +88,23 @@ export default {
         },
         body: JSON.stringify(params)
       })
-        .then(function(response) {
+        .then(response => {
           return response.json();
         })
-        .then(function(response) {
-          // TODO: Refresh the list of flags
-          window.location.reload();
-          // if (response.success) {
-          //   $(row)
-          //     .find(".flag-content")
-          //     .text(response.data.content);
-          //   $("#edit-flags").modal("toggle");
-          // }
+        .then(response => {
+          this.$emit("refreshFlags", this.$options.name);
         });
     }
   },
+  mounted() {
+    if (this.flag_id) {
+      this.loadFlag();
+    }
+  },
   created() {
-    this.loadFlag();
+    if (this.flag_id) {
+      this.loadFlag();
+    }
   }
 };
 </script>

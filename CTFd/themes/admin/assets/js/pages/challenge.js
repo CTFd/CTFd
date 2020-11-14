@@ -12,13 +12,13 @@ import { addRequirement, deleteRequirement } from "../challenges/requirements";
 import { bindMarkdownEditors } from "../styles";
 import Vue from "vue/dist/vue.esm.browser";
 import CommentBox from "../components/comments/CommentBox.vue";
+import FlagList from "../components/flags/FlagList.vue";
 import {
   showHintModal,
   editHint,
   deleteHint,
   showEditHintModal
 } from "../challenges/hints";
-import { addFlagModal, editFlagModal, deleteFlag } from "../challenges/flags";
 
 const displayHint = data => {
   ezAlert({
@@ -415,9 +415,15 @@ $(() => {
   $(".edit-hint").click(showEditHintModal);
   $("#hint-edit-form").submit(editHint);
 
-  $("#flag-add-button").click(addFlagModal);
-  $(".delete-flag").click(deleteFlag);
-  $(".edit-flag").click(editFlagModal);
+  // Load FlagList component
+  if (document.querySelector("#challenge-flags")) {
+    const flagList = Vue.extend(FlagList);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#challenge-flags").appendChild(vueContainer);
+    new flagList({
+      propsData: { challenge_id: window.CHALLENGE_ID }
+    }).$mount(vueContainer);
+  }
 
   // Because this JS is shared by a few pages,
   // we should only insert the CommentBox if it's actually in use

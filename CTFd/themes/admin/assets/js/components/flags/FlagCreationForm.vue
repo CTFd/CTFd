@@ -61,6 +61,7 @@ import CTFd from "core/CTFd";
 import nunjucks from "nunjucks";
 
 export default {
+  name: "FlagCreationForm",
   props: {
     challenge_id: Number
   },
@@ -112,12 +113,11 @@ export default {
         },
         body: JSON.stringify(params)
       })
-        .then(function(response) {
+        .then(response => {
           return response.json();
         })
-        .then(function(_response) {
-          // TODO: Refresh list of flags in the parent component
-          window.location.reload();
+        .then(_response => {
+          this.$emit("refreshFlags", this.$options.name);
         });
     }
   },
