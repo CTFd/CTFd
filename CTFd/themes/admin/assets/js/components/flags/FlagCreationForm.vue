@@ -1,6 +1,6 @@
 <template>
   <div id="flag-create-modal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header text-center">
           <div class="container">
@@ -98,7 +98,7 @@ export default {
     submitFlag: function(event) {
       let form = $(event.target);
       let params = form.serializeJSON(true);
-      params["challenge"] = window.CHALLENGE_ID;
+      params["challenge"] = this.$props.challenge_id;
 
       CTFd.fetch("/api/v1/flags", {
         method: "POST",

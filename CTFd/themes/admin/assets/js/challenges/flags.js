@@ -1,9 +1,9 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
-import nunjucks from "nunjucks";
 import { ezQuery } from "core/ezq";
 import Vue from "vue/dist/vue.esm.browser";
 import FlagCreationForm from "../components/flags/FlagCreationForm.vue";
+import FlagEditForm from "../components/flags/FlagEditForm.vue";
 
 export function deleteFlag(event) {
   event.preventDefault();
@@ -49,48 +49,21 @@ export function addFlagModal(_event) {
   $("#flag-create-modal").modal();
 }
 
-export function editFlagModal(event) {
-  event.preventDefault();
-  const flag_id = $(this).attr("flag-id");
-  const row = $(this)
-    .parent()
-    .parent();
+export function editFlagModal(_event) {
+  let flag_id = parseInt($(this).attr("flag-id"));
+  const flagEditForm = Vue.extend(FlagEditForm);
 
-  $.get(CTFd.config.urlRoot + "/api/v1/flags/" + flag_id, function(response) {
-    const data = response.data;
-    $.get(CTFd.config.urlRoot + data.templates.update, function(template_data) {
-      $("#edit-flags form").empty();
-      $("#edit-flags form").off();
+  let vueContainer = document.createElement("div");
+  document.querySelector("main").appendChild(vueContainer);
 
-      const template = nunjucks.compile(template_data);
-      $("#edit-flags form").append(template.render(data));
+  let f = new flagEditForm({
+    propsData: { flag_id: flag_id }
+  }).$mount(vueContainer);
 
-      $("#edit-flags form").submit(function(event) {
-        event.preventDefault();
-        const params = $("#edit-flags form").serializeJSON();
-
-        CTFd.fetch("/api/v1/flags/" + flag_id, {
-          method: "PATCH",
-          credentials: "same-origin",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(params)
-        })
-          .then(function(response) {
-            return response.json();
-          })
-          .then(function(response) {
-            if (response.success) {
-              $(row)
-                .find(".flag-content")
-                .text(response.data.content);
-              $("#edit-flags").modal("toggle");
-            }
-          });
-      });
-      $("#edit-flags").modal();
-    });
+  $("#flag-edit-modal").on("hidden.bs.modal", function (_e) {
+    f.$destroy();
+    $("#flag-edit-modal").remove();
   });
+
+  $("#flag-edit-modal").modal();
 }
