@@ -39,6 +39,7 @@ function submit(event) {
         id: response.data.id,
         title: response.data.title,
         content: response.data.content,
+        html: response.data.html,
         date: response.data.date
       }
     }).$mount(vueContainer);
