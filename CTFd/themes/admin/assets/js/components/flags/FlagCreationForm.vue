@@ -116,6 +116,7 @@ export default {
           return response.json();
         })
         .then(function(_response) {
+          // TODO: Refresh list of flags in the parent component
           window.location.reload();
         });
     }
