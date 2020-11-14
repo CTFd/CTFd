@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import fields
 
 from CTFd.models import Notifications, ma
 from CTFd.utils import string_types
