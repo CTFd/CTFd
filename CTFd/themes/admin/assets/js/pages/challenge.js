@@ -22,7 +22,6 @@ import {
   addFlagModal,
   editFlagModal,
   deleteFlag,
-  flagTypeSelect
 } from "../challenges/flags";
 
 const displayHint = data => {
@@ -422,7 +421,6 @@ $(() => {
 
   $("#flag-add-button").click(addFlagModal);
   $(".delete-flag").click(deleteFlag);
-  $("#flags-create-select").change(flagTypeSelect);
   $(".edit-flag").click(editFlagModal);
 
   // Because this JS is shared by a few pages,

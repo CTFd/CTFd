@@ -2,6 +2,8 @@ import $ from "jquery";
 import CTFd from "core/CTFd";
 import nunjucks from "nunjucks";
 import { ezQuery } from "core/ezq";
+import Vue from "vue/dist/vue.esm.browser";
+import FlagCreationForm from "../components/flags/FlagCreationForm.vue";
 
 export function deleteFlag(event) {
   event.preventDefault();
@@ -30,46 +32,21 @@ export function deleteFlag(event) {
 }
 
 export function addFlagModal(_event) {
-  $.get(CTFd.config.urlRoot + "/api/v1/flags/types", function(response) {
-    const data = response.data;
-    const flag_type_select = $("#flags-create-select");
-    flag_type_select.empty();
+  const flagCreationForm = Vue.extend(FlagCreationForm);
 
-    let option = $("<option> -- </option>");
-    flag_type_select.append(option);
+  let vueContainer = document.createElement("div");
+  document.querySelector("main").appendChild(vueContainer);
 
-    for (const key in data) {
-      if (data.hasOwnProperty(key)) {
-        option = $(
-          "<option value='{0}'>{1}</option>".format(key, data[key].name)
-        );
-        flag_type_select.append(option);
-      }
-    }
-    $("#flag-edit-modal").modal();
+  let f = new flagCreationForm({
+    propsData: { challenge_id: window.CHALLENGE_ID }
+  }).$mount(vueContainer);
+
+  $("#flag-create-modal").on("hidden.bs.modal", function (_e) {
+    f.$destroy();
+    $("#flag-create-modal").remove();
   });
 
-  $("#flag-edit-modal form").submit(function(event) {
-    event.preventDefault();
-    const params = $(this).serializeJSON(true);
-    params["challenge"] = window.CHALLENGE_ID;
-    CTFd.fetch("/api/v1/flags", {
-      method: "POST",
-      credentials: "same-origin",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(params)
-    })
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(_response) {
-        window.location.reload();
-      });
-  });
-  $("#flag-edit-modal").modal();
+  $("#flag-create-modal").modal();
 }
 
 export function editFlagModal(event) {
@@ -114,24 +91,6 @@ export function editFlagModal(event) {
           });
       });
       $("#edit-flags").modal();
-    });
-  });
-}
-
-export function flagTypeSelect(event) {
-  event.preventDefault();
-  const flag_type_name = $(this)
-    .find("option:selected")
-    .text();
-
-  $.get(CTFd.config.urlRoot + "/api/v1/flags/types/" + flag_type_name, function(
-    response
-  ) {
-    const data = response.data;
-    $.get(CTFd.config.urlRoot + data.templates.create, function(template_data) {
-      const template = nunjucks.compile(template_data);
-      $("#create-keys-entry-div").html(template.render());
-      $("#create-keys-button-div").show();
     });
   });
 }
