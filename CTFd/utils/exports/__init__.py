@@ -133,10 +133,25 @@ def import_ctf(backup, erase=True):
             "The version of CTFd that this backup is from is too old to be automatically imported."
         )
 
+    sqlite = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("sqlite")
+    postgres = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("postgres")
+    mysql = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("mysql")
+
     if erase:
         # Clear out existing connections to release any locks
         db.session.close()
         db.engine.dispose()
+
+        # Kill sleeping processes on MySQL so we don't get a metadata lock
+        # In my testing I didn't find that Postgres or SQLite needed the same treatment
+        # This is a very dirty hack. Don't try this at home kids.
+        if mysql:
+            r = db.session.execute("SHOW PROCESSLIST")
+            processes = r.fetchall()
+            for proc in processes:
+                if proc.Command == "Sleep":
+                    proc_id = proc.Id
+                    db.session.execute(f"KILL {proc_id}")
 
         # Drop database and recreate it to get to a clean state
         drop_database()
@@ -145,8 +160,6 @@ def import_ctf(backup, erase=True):
         # The import will have this information.
 
     side_db = dataset.connect(get_app_config("SQLALCHEMY_DATABASE_URI"))
-    sqlite = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("sqlite")
-    postgres = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("postgres")
 
     try:
         if postgres:
@@ -283,21 +296,11 @@ def import_ctf(backup, erase=True):
     insertion(first)
 
     # Create tables created by plugins
-    try:
-        # Run plugin migrations
-        plugins = get_plugin_names()
-        try:
-            for plugin in plugins:
-                revision = plugin_current(plugin_name=plugin)
-                plugin_upgrade(plugin_name=plugin, revision=revision)
-        finally:
-            # Create tables that don't have migrations
-            app.db.create_all()
-    except OperationalError as e:
-        if not postgres:
-            raise e
-        else:
-            print("Allowing error during app.db.create_all() due to Postgres")
+    # Run plugin migrations
+    plugins = get_plugin_names()
+    for plugin in plugins:
+        revision = plugin_current(plugin_name=plugin)
+        plugin_upgrade(plugin_name=plugin, revision=revision)
 
     # Insert data for plugin tables
     insertion(members)
@@ -323,11 +326,14 @@ def import_ctf(backup, erase=True):
         uploader.store(fileobj=source, filename=filename)
 
     # Alembic sqlite support is lacking so we should just create_all anyway
-    try:
-        migration_upgrade(revision="head")
-    except (OperationalError, CommandError, RuntimeError, SystemExit, Exception):
+    if sqlite:
         app.db.create_all()
         stamp_latest_revision()
+    else:
+        # Run migrations to bring to latest version
+        migration_upgrade(revision="head")
+        # Create any leftover tables, perhaps from old plugins
+        app.db.create_all()
 
     try:
         if postgres:
