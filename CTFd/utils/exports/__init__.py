@@ -7,10 +7,9 @@ import zipfile
 from io import BytesIO
 
 import dataset
-from alembic.util import CommandError
 from flask import current_app as app
 from flask_migrate import upgrade as migration_upgrade
-from sqlalchemy.exc import OperationalError, ProgrammingError
+from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.sql import sqltypes
 
 from CTFd import __version__ as CTFD_VERSION
