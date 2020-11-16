@@ -146,7 +146,6 @@ def import_ctf(backup, erase=True):
         # Only run this when not in tests as we can't isolate the queries out
         # This is a very dirty hack. Don't try this at home kids.
         if mysql and get_app_config("TESTING", default=False) is True:
-            print("Killing Mysql processes...")
             r = db.session.execute("SHOW PROCESSLIST")
             processes = r.fetchall()
             for proc in processes:
