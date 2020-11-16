@@ -1,7 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-BOX_IMG = "generic/ubuntu1810"
+# BOX_IMG = "generic/ubuntu1810" # Working  
+# BOX_IMG = "ubuntu/bionic64" # psycopg2 problem
+# BOX_IMG = "generic/ubuntu2004" # ssh problem
+BOX_IMG = "generic/ubuntu1804"
 
 # Install tmux, virtualenv, and mariadb-server to support development
 $preProvision= <<SCRIPT
