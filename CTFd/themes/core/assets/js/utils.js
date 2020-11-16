@@ -203,6 +203,7 @@ export function cumulativeSum(arr) {
 
 const storage = window.localStorage;
 const counter_key = "unread_notifications";
+const original_title = document.title;
 
 export function init_notification_counter() {
   let count = storage.getItem(counter_key);
@@ -211,18 +212,21 @@ export function init_notification_counter() {
   } else {
     if (count > 0) {
       $(".badge-notification").text(count);
+      document.title = `(${count}) ${original_title}`;
     }
   }
 }
 
 export function set_notification_counter(count) {
   storage.setItem(counter_key, count);
+  document.title = `(${count}) ${original_title}`;
 }
 
 export function inc_notification_counter() {
   let count = storage.getItem(counter_key) || 0;
   storage.setItem(counter_key, ++count);
   $(".badge-notification").text(count);
+  document.title = `(${count}) ${original_title}`;
 }
 
 export function dec_notification_counter() {
@@ -230,6 +234,7 @@ export function dec_notification_counter() {
   if (count > 0) {
     storage.setItem(counter_key, --count);
     $(".badge-notification").text(count);
+    document.title = `(${count}) ${original_title}`;
   }
   // Always clear if count is 0
   if (count == 0) {
@@ -240,6 +245,7 @@ export function dec_notification_counter() {
 export function clear_notification_counter() {
   storage.setItem(counter_key, 0);
   $(".badge-notification").empty();
+  document.title = `${original_title}`;
 }
 
 export function copyToClipboard(event, selector) {
