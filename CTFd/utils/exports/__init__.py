@@ -9,6 +9,7 @@ from io import BytesIO
 import dataset
 from flask import current_app as app
 from flask_migrate import upgrade as migration_upgrade
+from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.sql import sqltypes
 
@@ -146,10 +147,15 @@ def import_ctf(backup, erase=True):
         # Only run this when not in tests as we can't isolate the queries out
         # This is a very dirty hack. Don't try this at home kids.
         if mysql and get_app_config("TESTING", default=False) is False:
+            url = make_url(get_app_config("SQLALCHEMY_DATABASE_URI"))
             r = db.session.execute("SHOW PROCESSLIST")
             processes = r.fetchall()
             for proc in processes:
-                if proc.Command == "Sleep":
+                if (
+                    proc.Command == "Sleep"
+                    and proc.User == url.username
+                    and proc.db == url.database
+                ):
                     proc_id = proc.Id
                     db.session.execute(f"KILL {proc_id}")
 
