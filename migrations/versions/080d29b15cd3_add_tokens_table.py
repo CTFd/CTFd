@@ -16,20 +16,18 @@ depends_on = None
 
 
 def upgrade():
-    bind = op.get_bind()
-    if bind.engine.has_table("tokens") is False:
-        op.create_table(
-            "tokens",
-            sa.Column("id", sa.Integer(), nullable=False),
-            sa.Column("type", sa.String(length=32), nullable=True),
-            sa.Column("user_id", sa.Integer(), nullable=True),
-            sa.Column("created", sa.DateTime(), nullable=True),
-            sa.Column("expiration", sa.DateTime(), nullable=True),
-            sa.Column("value", sa.String(length=128), nullable=True),
-            sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
-            sa.PrimaryKeyConstraint("id"),
-            sa.UniqueConstraint("value"),
-        )
+    op.create_table(
+        "tokens",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("type", sa.String(length=32), nullable=True),
+        sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("created", sa.DateTime(), nullable=True),
+        sa.Column("expiration", sa.DateTime(), nullable=True),
+        sa.Column("value", sa.String(length=128), nullable=True),
+        sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("value"),
+    )
 
 
 def downgrade():
