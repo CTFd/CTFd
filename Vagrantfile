@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 # BOX_IMG = "generic/ubuntu1810" # Working  
-BOX_IMG = "ubuntu/bionic64"
+BOX_IMG = "ubuntu/bionic64" # Unable to ssh
 # BOX_IMG = "generic/ubuntu1804" # Working
 # BOX_IMG = "generic/ubuntu2004" # ssh problem
 
@@ -13,8 +13,10 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Installation kept failing due to python 2.
 # Changing default python to 3.
-update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+apt -y update
+apt -y upgrade
 apt -y install python3-pip
+update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 python -m pip install --upgrade pip
 python -m pip install virtualenvwrapper
 
@@ -69,6 +71,9 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 4000, host: 4000
   config.vm.network "forwarded_port", guest: 8000, host: 8000
   config.vm.synced_folder ".", "/vagrant"
+  
+  # Fix ssh problem
+  config.vm.provision :shell, :inline => "sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config; sudo systemctl restart sshd;", run: "always"
 
   # Pre-provision
   config.vm.provision "shell", inline: $preProvision
@@ -82,5 +87,4 @@ Vagrant.configure("2") do |config|
 
   # Install docker (convenience)
   config.vm.provision "shell", path: "scripts/install_docker.sh", privileged: false
-
 end
