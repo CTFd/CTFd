@@ -1,3 +1,35 @@
+# 3.2.0 / unreleased
+
+**General**
+
+**Themes**
+
+- Removed MomentJS (see https://momentjs.com/docs/#/-project-status/) in favor of dayjs
+  - dayjs is mostly API compatible with MomentJS. The only major changes were:
+    - dayjs always uses browser local time so you don't need to call `.local()`
+    - dayjs segments out some MomentJS functionality into plugins which need to be imported in before using those features
+- Fixed issue in `challenge.html` where the current attempt count would have a typo
+- Fixed issue in `challenge.html` where the max attempts for a challenge would not show if it was set to 1
+
+**Admin Panel**
+
+- Fixed a bug where the update available alert wouldn't go away on server restart
+- Flag creation UI in the admin challenges page is now written in VueJS
+- Examples for regex flags are now provided
+- Wrong submissions has been renamed to Incorrect Submissions
+
+**Deployment**
+
+- A restart policy set to `always` has been added to nginx in docker-compose
+- Rename `requirements.txt` to `requirements.in` and generate `requirements.txt` using `pip-tools` under Python 3.6
+
+**Miscellaneous**
+
+- The `psycopg2` dependency in development.txt has been removed in favor of `psycopg2-binary` which was updated to 2.8.6
+- Add `pip-tools` to `development.txt`
+- Add `import_ctf` and `export_ctf` commands to `manage.py` and deprecate `import.py` and `export.py`
+- Override the `MAIL_SERVER` config with the `TESTING_MAIL_SERVER` envvar during tests
+
 # 3.1.1 / 2020-09-22
 
 **General**

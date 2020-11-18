@@ -120,7 +120,7 @@
 <script>
 import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
-import Moment from "moment";
+import dayjs from "dayjs";
 export default {
   props: {
     // These props are passed to the api via query string.
@@ -142,9 +142,7 @@ export default {
   },
   methods: {
     toLocalTime(date) {
-      return Moment(date)
-        .local()
-        .format("MMMM Do, h:mm:ss A");
+      return dayjs(date).format("MMMM Do, h:mm:ss A");
     },
     nextPage: function() {
       this.page++;

@@ -1,8 +1,11 @@
 import "./main";
 import "core/utils";
 import "bootstrap/js/dist/tab";
-import Moment from "moment-timezone";
-import moment from "moment-timezone";
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import timezones from "../timezones";
 import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
 import $ from "jquery";
@@ -12,16 +15,20 @@ import "codemirror/mode/htmlmixed/htmlmixed.js";
 import Vue from "vue/dist/vue.esm.browser";
 import FieldList from "../components/configs/fields/FieldList.vue";
 
+dayjs.extend(advancedFormat);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 function loadTimestamp(place, timestamp) {
   if (typeof timestamp == "string") {
-    timestamp = parseInt(timestamp, 10);
+    timestamp = parseInt(timestamp, 10) * 1000;
   }
-  const m = Moment(timestamp * 1000);
-  $("#" + place + "-month").val(m.month() + 1); // Months are zero indexed (http://momentjs.com/docs/#/get-set/month/)
-  $("#" + place + "-day").val(m.date());
-  $("#" + place + "-year").val(m.year());
-  $("#" + place + "-hour").val(m.hour());
-  $("#" + place + "-minute").val(m.minute());
+  const d = dayjs(timestamp);
+  $("#" + place + "-month").val(d.month() + 1); // Months are zero indexed (https://day.js.org/docs/en/get-set/month)
+  $("#" + place + "-day").val(d.date());
+  $("#" + place + "-year").val(d.year());
+  $("#" + place + "-hour").val(d.hour());
+  $("#" + place + "-minute").val(d.minute());
   loadDateValues(place);
 }
 
@@ -31,7 +38,7 @@ function loadDateValues(place) {
   const year = $("#" + place + "-year").val();
   const hour = $("#" + place + "-hour").val();
   const minute = $("#" + place + "-minute").val();
-  const timezone = $("#" + place + "-timezone").val();
+  const timezone_string = $("#" + place + "-timezone").val();
 
   const utc = convertDateToMoment(month, day, year, hour, minute);
   if (isNaN(utc.unix())) {
@@ -41,10 +48,10 @@ function loadDateValues(place) {
   } else {
     $("#" + place).val(utc.unix());
     $("#" + place + "-local").val(
-      utc.local().format("dddd, MMMM Do YYYY, h:mm:ss a zz")
+      utc.format("dddd, MMMM Do YYYY, h:mm:ss a z (zzz)")
     );
     $("#" + place + "-zonetime").val(
-      utc.tz(timezone).format("dddd, MMMM Do YYYY, h:mm:ss a zz")
+      utc.tz(timezone_string).format("dddd, MMMM Do YYYY, h:mm:ss a z (zzz)")
     );
   }
 }
@@ -82,7 +89,7 @@ function convertDateToMoment(month, day, year, hour, minute) {
     ":" +
     min_str +
     ":00";
-  return Moment(date_string, Moment.ISO_8601);
+  return dayjs(date_string);
 }
 
 function updateConfigs(event) {
@@ -221,9 +228,9 @@ function exportConfig(event) {
 }
 
 function insertTimezones(target) {
-  let current = $("<option>").text(moment.tz.guess());
+  let current = $("<option>").text(dayjs.tz.guess());
   $(target).append(current);
-  let tz_names = moment.tz.names();
+  let tz_names = timezones;
   for (let i = 0; i < tz_names.length; i++) {
     let tz = $("<option>").text(tz_names[i]);
     $(target).append(tz);

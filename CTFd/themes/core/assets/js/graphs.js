@@ -1,6 +1,6 @@
 import $ from "jquery";
 import echarts from "echarts/dist/echarts-en.common";
-import Moment from "moment";
+import dayjs from "dayjs";
 import { cumulativeSum, colorHash } from "./utils";
 
 const graph_configs = {
@@ -58,7 +58,7 @@ const graph_configs = {
       });
 
       for (let i = 0; i < total.length; i++) {
-        const date = Moment(total[i].date);
+        const date = dayjs(total[i].date);
         times.push(date.toDate());
         try {
           scores.push(total[i].challenge.value);
