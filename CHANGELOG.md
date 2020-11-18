@@ -2,8 +2,15 @@
 
 **General**
 
+**API**
+
+- `/api/v1/notifications` and `/api/v1/notifications/[notification_id]` now have an html parameter which specifies the rendered content of the notification content
+
 **Themes**
 
+- Fix notifications to properly fix/support Markdown and HTML notifications
+  - Notifications SQL Model now has an html propery
+  - Notifications API schemas now has an html field
 - Removed MomentJS (see https://momentjs.com/docs/#/-project-status/) in favor of dayjs
   - dayjs is mostly API compatible with MomentJS. The only major changes were:
     - dayjs always uses browser local time so you don't need to call `.local()`
