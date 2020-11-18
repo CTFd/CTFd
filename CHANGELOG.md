@@ -4,6 +4,10 @@
 
 **Themes**
 
+- Removed MomentJS (see https://momentjs.com/docs/#/-project-status/) in favor of dayjs
+  - dayjs is mostly API compatible with MomentJS. The only major changes were:
+    - dayjs always uses browser local time so you don't need to call `.local()`
+    - dayjs segments out some MomentJS functionality into plugins which need to be imported in before using those features
 - Fixed issue in `challenge.html` where the current attempt count would have a typo
 - Fixed issue in `challenge.html` where the max attempts for a challenge would not show if it was set to 1
 
