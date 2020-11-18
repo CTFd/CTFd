@@ -14,7 +14,7 @@
     <div class="card-body">
       <h3 class="card-title">{{ title }}</h3>
       <blockquote class="blockquote mb-0">
-        <p v-html="this.content"></p>
+        <p v-html="this.html"></p>
         <small class="text-muted">
           <span :data-time="this.date">{{ this.localDate() }}</span>
         </small>
@@ -31,6 +31,7 @@ export default {
     id: Number,
     title: String,
     content: String,
+    html: String,
     date: String
   },
   methods: {
