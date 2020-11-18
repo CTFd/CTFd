@@ -53,7 +53,7 @@ def update_check(force=False):
                 "channel": app.CHANNEL,
             }
             check = requests.get(
-                "https://versioning.ctfd.io/check", params=params, timeout=0.1
+                "https://versioning.ctfd.io/check", params=params, timeout=3
             ).json()
         except requests.exceptions.RequestException:
             pass
