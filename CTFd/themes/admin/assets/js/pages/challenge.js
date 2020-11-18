@@ -19,6 +19,7 @@ import {
   deleteHint,
   showEditHintModal
 } from "../challenges/hints";
+import hljs from "highlight.js";
 
 const displayHint = data => {
   ezAlert({
@@ -299,6 +300,13 @@ $(() => {
             });
 
             challenge.postRender();
+
+            $("#challenge-window")
+              .find("pre code")
+              .each(function(_idx) {
+                hljs.highlightBlock(this);
+              });
+
             window.location.replace(
               window.location.href.split("#")[0] + "#preview"
             );
