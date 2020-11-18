@@ -2,7 +2,7 @@ import "./main";
 import $ from "jquery";
 import CTFd from "../CTFd";
 import echarts from "echarts/dist/echarts-en.common";
-import Moment from "moment";
+import dayjs from "dayjs";
 import { htmlEntities, cumulativeSum, colorHash } from "../utils";
 
 const graph = $("#score-graph");
@@ -101,7 +101,7 @@ const buildGraphData = () => {
       const times = [];
       for (let j = 0; j < places[teams[i]]["solves"].length; j++) {
         team_score.push(places[teams[i]]["solves"][j].value);
-        const date = Moment(places[teams[i]]["solves"][j].date);
+        const date = dayjs(places[teams[i]]["solves"][j].date);
         times.push(date.toDate());
       }
 

@@ -25,7 +25,7 @@
 
 <script>
 import CTFd from "core/CTFd";
-import Moment from "moment";
+import dayjs from "dayjs";
 export default {
   props: {
     id: Number,
@@ -35,9 +35,7 @@ export default {
   },
   methods: {
     localDate: function() {
-      return Moment(this.date)
-        .local()
-        .format("MMMM Do, h:mm:ss A");
+      return dayjs(this.date).format("MMMM Do, h:mm:ss A");
     },
     deleteNotification: function() {
       if (confirm("Are you sure you want to delete this notification?")) {
