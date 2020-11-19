@@ -54,12 +54,11 @@ class EventManager(object):
         q = defaultdict(Queue)
         self.clients[id(q)] = q
         try:
+            # Immediately yield a ping event to force Response headers to be set
+            # or else some reverse proxies will incorrectly buffer SSE
+            yield ServerSentEvent(data="", type="ping")
             while True:
                 try:
-                    # Immediately yield a ping event to force Response headers to be set
-                    # or else some reverse proxies will incorrectly buffer SSE
-                    yield ServerSentEvent(data="", type="ping")
-
                     with Timeout(5):
                         message = q[channel].get()
                         yield ServerSentEvent(**message)
@@ -106,12 +105,11 @@ class RedisEventManager(EventManager):
         q = defaultdict(Queue)
         self.clients[id(q)] = q
         try:
+            # Immediately yield a ping event to force Response headers to be set
+            # or else some reverse proxies will incorrectly buffer SSE
+            yield ServerSentEvent(data="", type="ping")
             while True:
                 try:
-                    # Immediately yield a ping event to force Response headers to be set
-                    # or else some reverse proxies will incorrectly buffer SSE
-                    yield ServerSentEvent(data="", type="ping")
-
                     with Timeout(5):
                         message = q[channel].get()
                         yield ServerSentEvent(**message)
