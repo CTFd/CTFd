@@ -26,6 +26,7 @@
 <script>
 import CTFd from "core/CTFd";
 import dayjs from "dayjs";
+import hljs from "highlight.js";
 export default {
   props: {
     id: Number,
@@ -52,6 +53,11 @@ export default {
           });
       }
     }
+  },
+  mounted() {
+    this.$el.querySelectorAll("pre code").forEach(block => {
+      hljs.highlightBlock(block);
+    });
   }
 };
 </script>

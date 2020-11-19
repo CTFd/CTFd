@@ -4,6 +4,7 @@ import $ from "jquery";
 import EasyMDE from "easymde";
 import Vue from "vue/dist/vue.esm.browser";
 import MediaLibrary from "./components/files/MediaLibrary.vue";
+import hljs from "highlight.js";
 
 export function showMediaLibrary(editor) {
   const mediaModal = Vue.extend(MediaLibrary);
@@ -61,7 +62,11 @@ export function bindMarkdownEditors() {
         element: this,
         initialValue: $(this).val(),
         forceSync: true,
-        minHeight: "200px"
+        minHeight: "200px",
+        renderingConfig: {
+          codeSyntaxHighlighting: true,
+          hljs: hljs
+        }
       });
       this.mde = mde;
       this.codemirror = mde.codemirror;
@@ -145,5 +150,10 @@ export default () => {
     bindMarkdownEditors();
     makeSortableTables();
     $('[data-toggle="tooltip"]').tooltip();
+
+    // Syntax highlighting
+    document.querySelectorAll("pre code").forEach(block => {
+      hljs.highlightBlock(block);
+    });
   });
 };

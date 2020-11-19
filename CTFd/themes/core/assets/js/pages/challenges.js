@@ -7,6 +7,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import $ from "jquery";
 import CTFd from "../CTFd";
 import config from "../config";
+import hljs from "highlight.js";
 
 dayjs.extend(relativeTime);
 
@@ -127,6 +128,12 @@ const displayChal = chal => {
     });
 
     challenge.postRender();
+
+    $("#challenge-window")
+      .find("pre code")
+      .each(function(_idx) {
+        hljs.highlightBlock(this);
+      });
 
     window.location.replace(
       window.location.href.split("#")[0] + `#${chal.name}-${chal.id}`

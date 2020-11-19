@@ -121,6 +121,7 @@
 import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
 import dayjs from "dayjs";
+import hljs from "highlight.js";
 export default {
   props: {
     // These props are passed to the api via query string.
@@ -202,6 +203,11 @@ export default {
   },
   created() {
     this.loadComments();
+  },
+  updated() {
+    this.$el.querySelectorAll("pre code").forEach(block => {
+      hljs.highlightBlock(block);
+    });
   }
 };
 </script>
