@@ -757,12 +757,4 @@ class ChallengeRequirements(Resource):
     @admins_only
     def get(self, challenge_id):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
-        # schema = FlagSchema(many=True)
-        # response = schema.dump(flags)
-
-        # if response.errors:
-        #     return {"success": False, "errors": response.errors}, 400
-        # if challenge.requirements:
         return {"success": True, "data": challenge.requirements}
-        # else:
-        #     return {"success": True, "data": {}}

@@ -64,7 +64,7 @@ export default {
     };
   },
   computed: {
-    // Get all challenges besides the current one
+    // Get all challenges besides the current one and current prereqs
     otherChallenges: function() {
       const prerequisites = this.requirements.prerequisites || [];
       return this.challenges.filter(challenge => {
