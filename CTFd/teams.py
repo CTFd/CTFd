@@ -80,7 +80,10 @@ def join():
         team = Teams.query.filter_by(name=teamname).first()
 
         if errors:
-            return render_template("teams/join_team.html", infos=infos, errors=errors), 403
+            return (
+                render_template("teams/join_team.html", infos=infos, errors=errors),
+                403,
+            )
 
         if team and verify_password(passphrase, team.password):
             team_size_limit = get_config("team_size", default=0)
