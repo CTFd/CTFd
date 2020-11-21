@@ -310,7 +310,7 @@ class TeamPrivate(Resource):
     @require_team
     @teams_namespace.doc(
         description="Endpoint to disband your current team. Can only be used if the team has performed no actions in the CTF.",
-        responses={200: ("Success", "APISimpleSuccessResponse"),},
+        responses={200: ("Success", "APISimpleSuccessResponse")},
     )
     def delete(self):
         team = get_current_team()
