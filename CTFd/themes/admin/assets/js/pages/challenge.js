@@ -8,11 +8,11 @@ import { ezQuery, ezAlert, ezToast } from "core/ezq";
 import { default as helpers } from "core/helpers";
 import { addFile, deleteFile } from "../challenges/files";
 import { addTag, deleteTag } from "../challenges/tags";
-import { addRequirement, deleteRequirement } from "../challenges/requirements";
 import { bindMarkdownEditors } from "../styles";
 import Vue from "vue/dist/vue.esm.browser";
 import CommentBox from "../components/comments/CommentBox.vue";
 import FlagList from "../components/flags/FlagList.vue";
+import Requirements from "../components/requirements/Requirements.vue";
 import {
   showHintModal,
   editHint,
@@ -412,9 +412,6 @@ $(() => {
   $("#tags-add-input").keyup(addTag);
   $(".delete-tag").click(deleteTag);
 
-  $("#prerequisite-add-form").submit(addRequirement);
-  $(".delete-requirement").click(deleteRequirement);
-
   $("#file-add-form").submit(addFile);
   $(".delete-file").click(deleteFile);
 
@@ -429,6 +426,16 @@ $(() => {
     let vueContainer = document.createElement("div");
     document.querySelector("#challenge-flags").appendChild(vueContainer);
     new flagList({
+      propsData: { challenge_id: window.CHALLENGE_ID }
+    }).$mount(vueContainer);
+  }
+
+  // Load Requirements component
+  if (document.querySelector("#prerequisite-add-form")) {
+    const reqsComponent = Vue.extend(Requirements);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#prerequisite-add-form").appendChild(vueContainer);
+    new reqsComponent({
       propsData: { challenge_id: window.CHALLENGE_ID }
     }).$mount(vueContainer);
   }

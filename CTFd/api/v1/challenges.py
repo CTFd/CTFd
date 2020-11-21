@@ -750,3 +750,11 @@ class ChallengeFlags(Resource):
             return {"success": False, "errors": response.errors}, 400
 
         return {"success": True, "data": response.data}
+
+
+@challenges_namespace.route("/<challenge_id>/requirements")
+class ChallengeRequirements(Resource):
+    @admins_only
+    def get(self, challenge_id):
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        return {"success": True, "data": challenge.requirements}
