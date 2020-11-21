@@ -6,6 +6,9 @@ from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.models import TeamFieldEntries, TeamFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
+from CTFd.utils.user import get_current_team
+from CTFd.utils.security.signing import serialize
+from flask import url_for
 
 
 def build_custom_team_fields(
@@ -229,3 +232,15 @@ def TeamEditForm(*args, **kwargs):
     attach_custom_team_fields(_TeamEditForm)
 
     return _TeamEditForm(*args, **kwargs)
+
+
+def TeamInviteForm(*args, **kwargs):
+    team = get_current_team()
+    link = url_for("teams.join", code=team.get_invite_code(), _external=True)
+
+    class _TeamInviteForm(BaseForm):
+        link = URLField("Invite Link")
+
+    form = _TeamInviteForm(*args, **kwargs)
+    form.link.data = link
+    return form

@@ -105,6 +105,32 @@
 		</div>
 	</div>
 
+	<div id="team-invite-modal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-action text-center w-100">Invite Users</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body clearfix">
+					{% with form = Forms.teams.TeamInviteForm() %}
+					<form id="team-captain-form" method="POST">
+						<div class="form-group">
+							<b>{{ form.link.label }}</b>
+							{{ form.link(class="form-control") }}
+							<small class="form-text text-muted">
+								Share this link with your team members for them to join your team
+							</small>
+						</div>
+					</form>
+					{% endwith %}
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="jumbotron">
 		<div class="container">
 			<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
@@ -159,6 +185,11 @@
 						<a class="edit-captain">
 							<i class="btn-fa fas fa-user-tag fa-2x px-2" data-toggle="tooltip" data-placement="top"
 							   title="Choose Captain"></i>
+						</a>
+
+						<a class="invite-members">
+							<i class="btn-fa fas fa-ticket-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+							   title="Invite Users"></i>
 						</a>
 					{% else %}
 						<i class="btn-fa fas fa-cogs fa-2x px-2 fa-disabled"

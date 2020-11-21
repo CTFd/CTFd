@@ -528,6 +528,14 @@ class Teams(db.Model):
             entry for entry in self.field_entries if entry.field.public and entry.value
         ]
 
+    def get_invite_code(self):
+        from flask import current_app
+        from CTFd.utils.security.signing import serialize
+
+        secret = current_app.config["SECRET_KEY"] + self.password.encode("utf-8")
+        code = serialize(data={"id": self.id}, secret=secret)
+        return code
+
     def get_solves(self, admin=False):
         from CTFd.utils import get_config
 

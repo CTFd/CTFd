@@ -307,6 +307,19 @@ class TeamPrivate(Resource):
         return {"success": True, "data": response.data}
 
 
+@teams_namespace.route("/me/members")
+class TeamPrivateMembers(Resource):
+    @authed_only
+    @require_team
+    def post(self):
+        team = get_current_team()
+        invite_code = team.get_invite_code()
+        response = {
+            "code": invite_code
+        }
+        return {"success": True, "data": response}
+
+
 @teams_namespace.route("/<team_id>/members")
 @teams_namespace.param("team_id", "Team ID")
 class TeamMembers(Resource):

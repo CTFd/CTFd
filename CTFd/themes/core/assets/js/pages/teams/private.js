@@ -3,7 +3,7 @@ import "../../utils";
 import CTFd from "../../CTFd";
 import "bootstrap/js/dist/modal";
 import $ from "jquery";
-import { ezBadge } from "../../ezq";
+import { ezBadge, ezAlert } from "../../ezq";
 
 $(() => {
   if (window.team_captain) {
@@ -13,6 +13,27 @@ $(() => {
 
     $(".edit-captain").click(function() {
       $("#team-captain-modal").modal();
+    });
+
+    $(".invite-members").click(function() {
+      CTFd.fetch("/api/v1/teams/me/members", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+      })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(response) {
+          if (response.success) {
+            // let code = response.data.code;
+            // $("#team-invite-modal input[name=link]").val(code);
+            $("#team-invite-modal").modal();
+          }
+        });
     });
   }
 

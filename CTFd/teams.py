@@ -12,6 +12,7 @@ from CTFd.utils.decorators.visibility import (
 )
 from CTFd.utils.helpers import get_errors, get_infos
 from CTFd.utils.user import get_current_user
+from CTFd.utils.teams.invites import load_team_invite
 
 teams = Blueprint("teams", __name__)
 
@@ -57,6 +58,8 @@ def listing():
 def join():
     infos = get_infos()
     errors = get_errors()
+    code = request.args.get("code")
+
     if request.method == "GET":
         team_size_limit = get_config("team_size", default=0)
         if team_size_limit:
@@ -66,6 +69,12 @@ def join():
                     limit=team_size_limit, plural=plural
                 )
             )
+        if code:
+            team = load_team_invite(code)
+            print(team)
+        else:
+            team = None
+
         return render_template("teams/join_team.html", infos=infos, errors=errors)
 
     if request.method == "POST":
