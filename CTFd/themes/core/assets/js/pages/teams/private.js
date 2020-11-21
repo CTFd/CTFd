@@ -3,7 +3,7 @@ import "../../utils";
 import CTFd from "../../CTFd";
 import "bootstrap/js/dist/modal";
 import $ from "jquery";
-import { ezBadge } from "../../ezq";
+import { ezBadge, ezQuery, ezAlert } from "../../ezq";
 
 $(() => {
   if (window.team_captain) {
@@ -13,6 +13,32 @@ $(() => {
 
     $(".edit-captain").click(function() {
       $("#team-captain-modal").modal();
+    });
+
+    $(".disband-team").click(function() {
+      ezQuery({
+        title: "Disband Team",
+        body: "Are you sure you want to disband your team?",
+        success: function() {
+          CTFd.fetch("/api/v1/teams/me", {
+            method: "DELETE"
+          })
+            .then(function(response) {
+              return response.json();
+            })
+            .then(function(response) {
+              if (response.success) {
+                window.location.reload();
+              } else {
+                ezAlert({
+                  title: "Error",
+                  body: response.errors[""].join(" "),
+                  button: "Got it!"
+                });
+              }
+            });
+        }
+      });
     });
   }
 
