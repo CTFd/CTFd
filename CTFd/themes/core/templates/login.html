@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Login</h1>
+		<h1 data-i18n="login.Login">Login</h1>
 	</div>
 </div>
 <div class="container">
@@ -16,7 +16,7 @@
 
 			{% if integrations.mlc() %}
 			<a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('auth.oauth_login') }}">
-				Login with Major League Cyber
+				<span data-i18n="login.Login with Major League Cyber">Login with Major League Cyber</span>
 			</a>
 
 			<hr>
@@ -25,17 +25,17 @@
 			{% with form = Forms.auth.LoginForm() %}
 			<form method="post" accept-charset="utf-8" autocomplete="off">
 				<div class="form-group">
-					<b>{{ form.name.label }}</b>
+					<b><span data-i18n="login.User Name or Email">{{ form.name.label }}</span></b>
 					{{ form.name(class="form-control", value=name) }}
 				</div>
 				<div class="form-group">
-					<b>{{ form.password.label }}</b>
+					<b><span data-i18n="login.Password">{{ form.password.label }}</span></b>
 					{{ form.password(class="form-control", value=password) }}
 				</div>
 				<div class="row pt-3">
 					<div class="col-md-6">
 						<a class="float-left align-text-to-button" href="{{ url_for('auth.reset_password') }}">
-							Forgot your password?
+							<span data-i18n="login.Forgot your password?">Forgot your password?</span>
 						</a>
 					</div>
 					<div class="col-md-6">

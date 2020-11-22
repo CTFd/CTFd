@@ -20,7 +20,7 @@
 
 			{% if user.oauth_id %}
 				<a href="https://majorleaguecyber.org/u/{{ user.name }}">
-					<h3><span class="badge badge-primary">Official</span></h3>
+					<h3><span class="badge badge-primary" data-i18n="users_public.Official">Official</span></h3>
 				</a>
 			{% endif %}
 
@@ -48,12 +48,12 @@
 			<div>
 				<h2 class="text-center">
 					{% if account.place %}
-						{{ account.place }} <small>place</small>
+						{{ account.place }} <small><span data-i18n="users_public.place">place</span></small>
 					{% endif %}
 				</h2>
 				<h2 class="text-center">
 					{% if account.place %}
-						{{ account.score }} <small>points</small>
+						{{ account.score }} <small><span data-i18n="users_public.points">points</span></small>
 					{% endif %}
 				</h2>
 			</div>
@@ -101,7 +101,7 @@
 
 			<div class="row">
 				<div class="col-md-12">
-					<h3>Awards</h3>
+					<h3 data-i18n="users_public.Awards">Awards</h3>
 				</div>
 				{% for award in user.awards %}
 					<div class="col-md-3 col-sm-6">
@@ -121,14 +121,14 @@
 
 			<div class="row">
 				<div class="col-md-12">
-					<h3>Solves</h3>
+					<h3 data-i18n="users_public.Solves">Solves</h3>
 					<table class="table table-striped">
 						<thead>
 						<tr>
-							<td><b>Challenge</b></td>
-							<td class="d-none d-md-block d-lg-block"><b>Category</b></td>
-							<td><b>Value</b></td>
-							<td><b>Time</b></td>
+							<td><b><span data-i18n="users_public.Challange">Challange</span></b></td>
+							<td class="d-none d-md-block d-lg-block"><b><span data-i18n="users_public.Category">Category</span></b></td>
+							<td><b><span data-i18n="users_public.Value">Value</span></b></td>
+							<td><b><span data-i18n="users_public.Time">Time</span></b></td>
 						</tr>
 						</thead>
 						<tbody>
@@ -152,7 +152,7 @@
 			</div>
 		{% else %}
 			<div class="row min-vh-25">
-				<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">
+				<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center" data-i18n="users_public.No solves yet">
 					No solves yet
 				</h3>
 			</div>

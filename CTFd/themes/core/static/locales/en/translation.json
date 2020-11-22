@@ -1,0 +1,27 @@
+{
+  "users": {
+    "Users": "Users",
+    "Searching for users with": "Searching for users with",
+    "matching": "matching",
+    "Affiliation" : "Affiliation",
+    "User": "User",
+    "Website": "Website",
+    "Country" : "Country",
+    "Page" : "Page",
+    "results": "results"
+  },
+  "navbar": {
+    "Users": "Users",
+    "Scoreboard": "Scoreboard",
+    "Challanges": "Challanges",
+    "AdminPanel": "AdminPanel",
+    "Notifications": "Notifications",
+    "Team": "Team",
+    "Profile": "Profile",
+    "Settings": "Settings",
+    "Teams": "Teams",
+    "Register": "Register",
+    "Login": "Login",
+    "Logout": "Logout"
+  }
+}

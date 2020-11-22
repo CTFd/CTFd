@@ -6,14 +6,14 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Team</h1>
+			<h1 data-i18n="team_enrollment.Team">Team</h1>
 		</div>
 	</div>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 offset-md-3 text-center">
-				<p>Welcome to {{ Configs.ctf_name }}!</p>
-				<p>
+				<p> <span data-i18n="team_enrollment.Welcome to">Welcome to</span> {{ Configs.ctf_name }}!</p>
+				<p data-i18n="team_enrollment.In order to participate you must either join or create a team">
 					In order to participate you must either join or create a team.
 				</p>
 			</div>
@@ -21,24 +21,24 @@
 		{% if integrations.mlc() %}
 		<div class="row">
 			<div class="col-md-6 offset-md-3 text-center">
-				<a class="btn btn-primary w-100" href="{{ url_for('auth.oauth_login') }}">Play with Official Team</a>
+				<a class="btn btn-primary w-100" href="{{ url_for('auth.oauth_login') }}"><span data-i18n="team_enrollment.Play with Official Team">Play with Official Team</span></a>
 			</div>
 		</div>
 		<div class="row pt-3">
 			<div class="col-md-3 offset-md-3 text-center">
-				<a class="btn btn-light w-100" href="{{ url_for('teams.join') }}">Join Unofficial Team</a>
+				<a class="btn btn-light w-100" href="{{ url_for('teams.join') }}"><span data-i18n="team_enrollment.Join Unofficial Team">Join Unofficial Team</span></a>
 			</div>
 			<div class="col-md-3 text-center">
-				<a class="btn btn-light w-100" href="{{ url_for('teams.new') }}">Create Unofficial Team</a>
+				<a class="btn btn-light w-100" href="{{ url_for('teams.new') }}"><span data-i18n="team_enrollment.Create Unofficial Team">Create Unofficial Team</span></a>
 			</div>
 		</div>
 		{% else %}
 		<div class="row pt-3">
 			<div class="col-md-3 offset-md-3 text-center">
-				<a class="btn btn-primary w-100" href="{{ url_for('teams.join') }}">Join Team</a>
+				<a class="btn btn-primary w-100" href="{{ url_for('teams.join') }}"><span data-i18n="team_enrollment.Join Team">Join Team</span></a>
 			</div>
 			<div class="col-md-3 text-center">
-				<a class="btn btn-primary w-100" href="{{ url_for('teams.new') }}">Create Team</a>
+				<a class="btn btn-primary w-100" href="{{ url_for('teams.new') }}"><span data-i18n="team_enrollment.Create Team">Create Team</span></a>
 			</div>
 		</div>
 		{% endif %}

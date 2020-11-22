@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Teams</h1>
+		<h1 data-i18n="teams.Teams">Teams</h1>
 	</div>
 </div>
 <div class="container">
@@ -14,10 +14,11 @@
 		<div class="col-md-12">
 			{% if q and field %}
 			<h5 class="text-muted text-center">
-				Searching for teams with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>
+				<span data-i18n="teams.Searching for teams with">Searching for teams with </span>
+				<strong>{{ field }}</strong> <span data-i18n="teams.matching">matching </span><strong>{{ q }}</strong>
 			</h5>
 			<h6 class="text-muted text-center pb-3">
-				Page {{ teams.page }} of {{ teams.total }} results
+				<span data-i18n="teams.Page">Page </span> {{ teams.page }} <span data-i18n="teams.of">of</span>  {{ teams.total }} <span data-i18n="teams.results"> results</span>
 			</h6>
 			{% endif %}
 
@@ -46,10 +47,10 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
-						<td><b>Team</b></td>
-						<td><b>Website</b></td>
-						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Affiliation</b></td>
-						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Country</b></td>
+						<td><b><span data-i18n="teams.Team"> Team</span></b></td>
+						<td><b><span data-i18n="teams.Website"> Website</span></b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b><span data-i18n="teams.Affiliation"> Affiliation</span></b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b><span data-i18n="teams.Country"> Country</span></b></td>
 					</tr>
 				</thead>
 				<tbody>
@@ -63,7 +64,7 @@
 						{% endif %}
 						{% if team.oauth_id %}
 							<a href="https://majorleaguecyber.org/t/{{ team.name }}">
-								<span class="badge badge-primary">Official</span>
+								<span class="badge badge-primary" data-i18n="teams.Official">Official</span>
 							</a>
 						{% endif %}
 						</td>
@@ -104,7 +105,7 @@
 	{% if teams.pages > 1 %}
 	<div class="row">
 		<div class="col-md-12">
-			<div class="text-center">Page
+			<div class="text-center"><span data-i18n="teams.Page">Page</span>
 				<br>
 				{% if teams.page != 1 %}
 				<a href="{{ prev_page }}">&lt;&lt;&lt;</a>

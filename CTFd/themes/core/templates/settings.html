@@ -6,15 +6,15 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Settings</h1>
+		<h1 data-i18n="settings.Settings">Settings</h1>
 	</div>
 </div>
 <div class="container">
 	<div class="row">
 		<div class="col-md-2 offset-md-1">
 			<div class="nav flex-column nav-pills" role="tablist">
-				<a class="nav-link active" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab">Profile</a>
-				<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Access Tokens</a>
+				<a class="nav-link active" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab"><span data-i18n="settings.Profile">Profile</span></a>
+				<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab"><span data-i18n="settings.Access Tokens">Access Tokens</span></a>
 			</div>
 		</div>
 		<div class="col-md-8">
@@ -27,37 +27,37 @@
 					<form id="user-profile-form" method="post" accept-charset="utf-8" autocomplete="off" role="form"
 						class="form-horizontal">
 						<div class="form-group">
-							<b>{{ form.name.label }}</b>
+							<b><span data-i18n="settings.User Name">{{ form.name.label }}</span></b>
 							{{ form.name(class="form-control", value=name) }}
 						</div>
 						<div class="form-group">
-							<b>{{ form.email.label }}</b>
+							<b><span data-i18n="settings.Email">{{ form.email.label }}</span></b>
 							{{ form.email(class="form-control", value=email) }}
 						</div>
 
 						<hr>
 
 						<div class="form-group">
-							<b>{{ form.confirm.label }}</b>
+							<b><span data-i18n="settings.Current Password">{{ form.confirm.label }}</span></b>
 							{{ form.confirm(class="form-control") }}
 						</div>
 						<div class="form-group">
-							<b>{{ form.password.label }}</b>
+							<b><span data-i18n="settings.Password">{{ form.password.label }}</span></b>
 							{{ form.password(class="form-control") }}
 						</div>
 
 						<hr>
 
 						<div class="form-group">
-							<b>{{ form.affiliation.label }}</b>
+							<b><span data-i18n="settings.Affiliation">{{ form.affiliation.label }}</span></b>
 							{{ form.affiliation(class="form-control", value=affiliation or "") }}
 						</div>
 						<div class="form-group">
-							<b>{{ form.website.label }}</b>
+							<b><span data-i18n="settings.Website">{{ form.website.label }}</span></b>
 							{{ form.website(class="form-control", value=website or "") }}
 						</div>
 						<div class="form-group">
-							<b>{{ form.country.label }}</b>
+							<b><span data-i18n="settings.Country">{{ form.country.label }}</span></b>
 							{{ form.country(class="form-control custom-select", value=country) }}
 						</div>
 
@@ -78,7 +78,7 @@
 					{% with form = Forms.self.TokensForm() %}
 					<form method="POST" id="user-token-form">
 						<div class="form-group">
-							<b>{{ form.expiration.label }}</b>
+							<b><span data-i18n="settings.Expiration">{{ form.expiration.label }}</span></b>
 							{{ form.expiration(class="form-control") }}
 						</div>
 
@@ -90,14 +90,14 @@
 
 					{% if tokens %}
 					<hr>
-					<h4 class="text-center">Active Tokens</h4>
+					<h4 class="text-center" data-i18n="settings.Active Tokens">Active Tokens</h4>
 					<table class="table table-striped">
 						<thead>
 							<tr>
-								<td class="text-center"><b>Type</b></td>
-								<td class="text-center"><b>Created</b></td>
-								<td class="text-center"><b>Expiration</b></td>
-								<td class="text-center"><b>Delete</b></td>
+								<td class="text-center"><b> <span data-i18n="settings.Type">Type</span></b></td>
+								<td class="text-center"><b><span data-i18n="settings.Created">Created</span></b></td>
+								<td class="text-center"><b><span data-i18n="settings.Expiration">Expiration</span></b></td>
+								<td class="text-center"><b><span data-i18n="settings.Delete">Delete</span></b></td>
 							</tr>
 						</thead>
 						<tbody>

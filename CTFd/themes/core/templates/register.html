@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Register</h1>
+		<h1 data-i18n="register.Register">Register</h1>
 	</div>
 </div>
 <div class="container">
@@ -16,7 +16,7 @@
 
 			{% if integrations.mlc() %}
 			<a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('auth.oauth_login') }}">
-				Login with Major League Cyber
+				<span data-i18n="register.Login with Major League Cyber">Login with Major League Cyber</span>
 			</a>
 
 			<hr>
@@ -26,24 +26,24 @@
 			{% from "macros/forms.html" import render_extra_fields %}
 			<form method="post" accept-charset="utf-8" autocomplete="off" role="form">
 				<div class="form-group">
-					<b>{{ form.name.label }}</b>
+					<b><span data-i18n="register.User Name">{{ form.name.label }}</span></b>
 					{{ form.name(class="form-control", value=name) }}
 					<small class="form-text text-muted">
-						Your username on the site
+						<span data-i18n="register.Your username on the site">Your username on the site</span>
 					</small>
 				</div>
 				<div class="form-group">
-					<b>{{ form.email.label }}</b>
+					<b><span data-i18n="register.Email">{{ form.email.label }}</span></b>
 					{{ form.email(class="form-control", value=email) }}
 					<small class="form-text text-muted">
-						Never shown to the public
+						<span data-i18n="register.Never shown to the public">Never shown to the public</span>
 					</small>
 				</div>
 				<div class="form-group">
-					<b>{{ form.password.label }}</b>
+					<b><span data-i18n="register.Password">{{ form.password.label }}</span></b>
 					{{ form.password(class="form-control", value=password) }}
 					<small class="form-text text-muted">
-						Password used to log into your account
+						<span data-i18n="register.Password used to log into your account">Password used to log into your account</span>
 					</small>
 				</div>
 				{{ form.nonce() }}

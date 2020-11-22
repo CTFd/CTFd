@@ -3,7 +3,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Scoreboard</h1>
+		<h1 data-i18n="scoreboard.Scoreboard">Scoreboard</h1>
 	</div>
 </div>
 <div class="container">
@@ -22,9 +22,9 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
-						<td scope="col" width="10px"><b>Place</b></td>
-						<td scope="col"><b>Team</b></td>
-						<td scope="col"><b>Score</b></td>
+						<td scope="col" width="10px"><b><span data-i18n="scoreboard.Place">Place</span></b></td>
+						<td scope="col"><b><span data-i18n="scoreboard.Team">Team</span></b></td>
+						<td scope="col"><b><span data-i18n="scoreboard.Score">Score</span></b></td>
 					</tr>
 				</thead>
 				<tbody>
@@ -38,11 +38,11 @@
 								{% if standing.oauth_id %}
 									{% if Configs.user_mode == 'teams' %}
 									<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
-										<span class="badge badge-primary">Official</span>
+										<span class="badge badge-primary" data-i18n="scoreboard.Official">Official</span>
 									</a>
 									{% elif Configs.user_mode == 'users' %}
 									<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
-										<span class="badge badge-primary">Official</span>
+										<span class="badge badge-primary" data-i18n="scoreboard.Official">Official</span>
 									</a>
 									{% endif %}
 								{% endif %}

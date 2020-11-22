@@ -3,12 +3,12 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Notifications</h1>
+			<h1 data-i18n="notifications.Notifications">Notifications</h1>
 		</div>
 	</div>
 	<div class="container">
 		{% if not notifications %}
-		<h2 class="text-center">There are no notifications yet</h2>
+		<h2 class="text-center" data-i18n="notifications.There are no notifications yet">There are no notifications yet</h2>
 		{% endif %}
 		{% for notification in notifications %}
 		<div class="card bg-light mb-4">

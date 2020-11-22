@@ -6,7 +6,7 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Join Team</h1>
+			<h1 data-i18n="join_team.Join Team">Join Team</h1>
 		</div>
 	</div>
 	<div class="container">
@@ -17,11 +17,11 @@
 				{% with form = Forms.teams.TeamJoinForm() %}
 				<form method="POST">
 					<div class="form-group">
-						{{ form.name.label }}
+						<span data-i18n="join_team.Team Name">{{ form.name.label }}</span>
 						{{ form.name(class="form-control") }}
 					</div>
 					<div class="form-group">
-						{{ form.password.label }}
+						<span data-i18n="join_team.Team Password">{{ form.password.label }}</span>
 						{{ form.password(class="form-control") }}
 					</div>
 					<div class="row pt-3">
