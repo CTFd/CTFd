@@ -316,6 +316,8 @@ def register():
                     log(
                         "registrations",
                         format="[{date}] {ip} - {name} registered (UNCONFIRMED) with {email}",
+                        name=user.name,
+                        email=user.email
                     )
                     email.verify_email_address(user.email)
                     db.session.close()
