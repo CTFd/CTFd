@@ -81,7 +81,7 @@ def confirm(data=None):
             log(
                 "registrations",
                 format="[{date}] {ip} - {name} initiated a confirmation email resend",
-                name=user.name
+                name=user.name,
             )
             return render_template(
                 "confirm.html", infos=[f"Confirmation email sent to {user.email}!"]
@@ -317,7 +317,7 @@ def register():
                         "registrations",
                         format="[{date}] {ip} - {name} registered (UNCONFIRMED) with {email}",
                         name=user.name,
-                        email=user.email
+                        email=user.email,
                     )
                     email.verify_email_address(user.email)
                     db.session.close()
@@ -328,7 +328,12 @@ def register():
                     ):  # We want to notify the user that they have registered.
                         email.successful_registration_notification(user.email)
 
-        log("registrations", format="[{date}] {ip} - {name} registered with {email}", name=user.name, email=user.email)
+        log(
+            "registrations",
+            format="[{date}] {ip} - {name} registered with {email}",
+            name=user.name,
+            email=user.email,
+        )
         db.session.close()
 
         if is_teams_mode():
