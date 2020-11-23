@@ -53,7 +53,7 @@ from CTFd.utils.security.signing import (
     serialize,
     unserialize,
 )
-from CTFd.utils.uploads import get_uploader
+from CTFd.utils.uploads import get_uploader, upload_file
 from CTFd.utils.user import authed, get_current_user, is_admin
 
 views = Blueprint("views", __name__)
@@ -75,6 +75,16 @@ def setup():
             set_config("user_mode", user_mode)
 
             # Style
+            ctf_logo = request.files.get("ctf_logo")
+            if ctf_logo:
+                f = upload_file(file=ctf_logo)
+                set_config("ctf_logo", f.location)
+
+            ctf_small_icon = request.files.get("ctf_small_icon")
+            if ctf_small_icon:
+                f = upload_file(file=ctf_small_icon)
+                set_config("ctf_small_icon", f.location)
+
             theme = request.form.get("ctf_theme", "core")
             set_config("ctf_theme", theme)
             theme_color = request.form.get("theme_color")
