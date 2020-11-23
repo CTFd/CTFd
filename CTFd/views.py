@@ -4,6 +4,7 @@ from flask import Blueprint, abort
 from flask import current_app as app
 from flask import redirect, render_template, request, send_file, session, url_for
 from flask.helpers import safe_join
+from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 
 from CTFd.cache import cache
@@ -43,7 +44,7 @@ from CTFd.utils.email import (
     DEFAULT_VERIFICATION_EMAIL_SUBJECT,
 )
 from CTFd.utils.helpers import get_errors, get_infos, markup
-from CTFd.utils.modes import USERS_MODE
+from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
 from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
 from CTFd.utils.security.signing import (
@@ -54,7 +55,7 @@ from CTFd.utils.security.signing import (
     unserialize,
 )
 from CTFd.utils.uploads import get_uploader
-from CTFd.utils.user import authed, get_current_user, is_admin
+from CTFd.utils.user import authed, get_current_team, get_current_user, is_admin
 
 views = Blueprint("views", __name__)
 
@@ -271,7 +272,25 @@ def integrations():
 
 @views.route("/notifications", methods=["GET"])
 def notifications():
-    notifications = Notifications.query.order_by(Notifications.id.desc()).all()
+    notifications = Notifications.query.order_by(Notifications.id.desc())
+
+    # Filter on user/team id if present in the notification
+    notifications = notifications.filter(
+        or_(
+            Notifications.user_id.is_(None),
+            Notifications.user_id == get_current_user().id,
+        )
+    )
+    if get_config("user_mode") == TEAMS_MODE:
+        notifications = notifications.filter(
+            or_(
+                Notifications.team_id.is_(None),
+                Notifications.team_id == get_current_team().id,
+            )
+        )
+
+    notifications = notifications.all()
+
     return render_template("notifications.html", notifications=notifications)
 
 

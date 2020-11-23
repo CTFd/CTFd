@@ -2,6 +2,7 @@ from typing import List
 
 from flask import current_app, request
 from flask_restx import Namespace, Resource
+from sqlalchemy import or_
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -9,8 +10,11 @@ from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessRespon
 from CTFd.constants import RawEnum
 from CTFd.models import Notifications, db
 from CTFd.schemas.notifications import NotificationSchema
+from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.modes import TEAMS_MODE
+from CTFd.utils.user import get_current_team, get_current_user
 
 notifications_namespace = Namespace(
     "notifications", description="Endpoint to retrieve Notifications"
@@ -68,9 +72,26 @@ class NotificantionList(Resource):
         field = str(query_args.pop("field", None))
         filters = build_model_filters(model=Notifications, query=q, field=field)
 
-        notifications = (
-            Notifications.query.filter_by(**query_args).filter(*filters).all()
+        notifications = Notifications.query.filter_by(**query_args).filter(*filters)
+
+        # Filter on user/team id if present in the notification
+        notifications = notifications.filter(
+            or_(
+                Notifications.user_id.is_(None),
+                Notifications.user_id == get_current_user().id,
+            )
         )
+        if get_config("user_mode") == TEAMS_MODE:
+            notifications = notifications.filter(
+                or_(
+                    Notifications.team_id.is_(None),
+                    Notifications.team_id == get_current_team().id,
+                )
+            )
+
+        # Grab the full list
+        notifications = notifications.all()
+
         schema = NotificationSchema(many=True)
         result = schema.dump(notifications)
         if result.errors:
