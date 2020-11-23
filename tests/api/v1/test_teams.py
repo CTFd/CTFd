@@ -695,6 +695,79 @@ def test_api_team_patch_password():
             )
 
 
+def test_api_team_captain_disbanding():
+    """Test that only team captains can disband teams"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        user = gen_user(app.db, name="user")
+        team = gen_team(app.db)
+        team.members.append(user)
+        user.team_id = team.id
+        team.captain_id = 2
+        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
+        team.members.append(user2)
+        app.db.session.commit()
+        with login_as_user(app, name="user2") as client:
+            r = client.delete("/api/v1/teams/me", json="")
+            assert r.status_code == 403
+            assert r.get_json() == {
+                "success": False,
+                "errors": {"": ["Only team captains can disband their team"]},
+            }
+        with login_as_user(app) as client:
+            r = client.delete("/api/v1/teams/me", json="")
+            assert r.status_code == 200
+            assert r.get_json() == {
+                "success": True,
+            }
+    destroy_ctfd(app)
+
+
+def test_api_team_captain_disbanding_only_inactive_teams():
+    """Test that only teams that haven't conducted any actions can be disbanded"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        user = gen_user(app.db, name="user")
+        team = gen_team(app.db)
+        team.members.append(user)
+        user.team_id = team.id
+        team.captain_id = 2
+        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
+        team.members.append(user2)
+        app.db.session.commit()
+
+        gen_challenge(app.db)
+        gen_flag(app.db, 1)
+        gen_solve(app.db, user_id=3, team_id=1, challenge_id=1)
+
+        with login_as_user(app) as client:
+            r = client.delete("/api/v1/teams/me", json="")
+            assert r.status_code == 403
+            assert r.get_json() == {
+                "success": False,
+                "errors": {
+                    "": [
+                        "You cannot disband your team as it has participated in the event. "
+                        "Please contact an admin to disband your team or remove a member."
+                    ]
+                },
+            }
+
+        user = gen_user(app.db, name="user3", email="user3@ctfd.io")
+        team = gen_team(app.db, name="team2", email="team2@ctfd.io")
+        print(user.id)
+        team.members.append(user)
+        user.team_id = team.id
+        team.captain_id = user.id
+        app.db.session.commit()
+        with login_as_user(app, name="user3") as client:
+            r = client.delete("/api/v1/teams/me", json="")
+            print(r.get_json())
+            assert r.status_code == 200
+            assert r.get_json() == {"success": True}
+    destroy_ctfd(app)
+
+
 def test_api_accessing_hidden_banned_users():
     """Hidden/Banned users should not be visible to normal users, only to admins"""
     app = create_ctfd(user_mode="teams")
