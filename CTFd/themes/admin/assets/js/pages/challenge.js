@@ -7,12 +7,12 @@ import { htmlEntities } from "core/utils";
 import { ezQuery, ezAlert, ezToast } from "core/ezq";
 import { default as helpers } from "core/helpers";
 import { addFile, deleteFile } from "../challenges/files";
-import { addTag, deleteTag } from "../challenges/tags";
 import { bindMarkdownEditors } from "../styles";
 import Vue from "vue/dist/vue.esm.browser";
 import CommentBox from "../components/comments/CommentBox.vue";
 import FlagList from "../components/flags/FlagList.vue";
 import Requirements from "../components/requirements/Requirements.vue";
+import TagsList from "../components/tags/TagsList.vue";
 import {
   showHintModal,
   editHint,
@@ -409,9 +409,6 @@ $(() => {
 
   $("#challenge-create-options form").submit(handleChallengeOptions);
 
-  $("#tags-add-input").keyup(addTag);
-  $(".delete-tag").click(deleteTag);
-
   $("#file-add-form").submit(addFile);
   $(".delete-file").click(deleteFile);
 
@@ -426,6 +423,16 @@ $(() => {
     let vueContainer = document.createElement("div");
     document.querySelector("#challenge-flags").appendChild(vueContainer);
     new flagList({
+      propsData: { challenge_id: window.CHALLENGE_ID }
+    }).$mount(vueContainer);
+  }
+
+  // Load TagsList component
+  if (document.querySelector("#challenge-tags")) {
+    const tagList = Vue.extend(TagsList);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#challenge-tags").appendChild(vueContainer);
+    new tagList({
       propsData: { challenge_id: window.CHALLENGE_ID }
     }).$mount(vueContainer);
   }
