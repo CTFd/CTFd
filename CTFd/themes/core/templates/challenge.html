@@ -83,11 +83,11 @@
 							{% endfor %}
 						</div>
 
-						{% if max_attempts > 1 %}
+						{% if max_attempts > 0 %}
 						<div class="row text-center">
 							<div class="col-md-12">
 								<p>
-									{{ attempts }}/{{ max_attempts }} attempt{{ attempts|pluralize(attempts) }}
+									{{ attempts }}/{{ max_attempts }} attempt{{ max_attempts|pluralize }}
 								</p>
 							</div>
 						</div>

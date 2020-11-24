@@ -306,6 +306,62 @@ class TeamPrivate(Resource):
 
         return {"success": True, "data": response.data}
 
+    @authed_only
+    @require_team
+    @teams_namespace.doc(
+        description="Endpoint to disband your current team. Can only be used if the team has performed no actions in the CTF.",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
+    def delete(self):
+        team = get_current_team()
+        if team.captain_id != session["id"]:
+            return (
+                {
+                    "success": False,
+                    "errors": {"": ["Only team captains can disband their team"]},
+                },
+                403,
+            )
+
+        # The team must not have performed any actions in the CTF
+        performed_actions = any(
+            [
+                team.solves != [],
+                team.fails != [],
+                team.awards != [],
+                Submissions.query.filter_by(team_id=team.id).all() != [],
+                Unlocks.query.filter_by(team_id=team.id).all() != [],
+            ]
+        )
+
+        if performed_actions:
+            return (
+                {
+                    "success": False,
+                    "errors": {
+                        "": [
+                            "You cannot disband your team as it has participated in the event. "
+                            "Please contact an admin to disband your team or remove a member."
+                        ]
+                    },
+                },
+                403,
+            )
+
+        for member in team.members:
+            member.team_id = None
+            clear_user_session(user_id=member.id)
+
+        db.session.delete(team)
+        db.session.commit()
+
+        clear_team_session(team_id=team.id)
+        clear_standings()
+
+        db.session.close()
+
+        return {"success": True}
+
 
 @teams_namespace.route("/<team_id>/members")
 @teams_namespace.param("team_id", "Team ID")

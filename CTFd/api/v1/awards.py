@@ -105,7 +105,7 @@ class AwardList(Resource):
         if is_teams_mode():
             team_id = req.get("team_id")
             if team_id is None:
-                user = Users.query.filter_by(id=req["user_id"]).first()
+                user = Users.query.filter_by(id=req["user_id"]).first_or_404()
                 if user.team_id is None:
                     return (
                         {
