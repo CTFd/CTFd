@@ -90,7 +90,10 @@ const buildGraphData = () => {
           id: "dataZoomX",
           type: "slider",
           xAxisIndex: [0],
-          filterMode: "filter"
+          filterMode: "filter",
+          height: 20,
+          top: 35,
+          fillerColor: "rgba(233, 236, 241, 0.4)"
         }
       ],
       series: []
