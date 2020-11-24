@@ -170,6 +170,52 @@ function removeLogo() {
   });
 }
 
+function smallIconUpload(event) {
+  event.preventDefault();
+  let form = event.target;
+  helpers.files.upload(form, {}, function(response) {
+    const f = response.data[0];
+    const params = {
+      value: f.location
+    };
+    CTFd.fetch("/api/v1/configs/ctf_small_icon", {
+      method: "PATCH",
+      body: JSON.stringify(params)
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(response) {
+        if (response.success) {
+          window.location.reload();
+        } else {
+          ezAlert({
+            title: "Error!",
+            body: "Icon uploading failed!",
+            button: "Okay"
+          });
+        }
+      });
+  });
+}
+
+function removeSmallIcon() {
+  ezQuery({
+    title: "Remove logo",
+    body: "Are you sure you'd like to remove the small site icon?",
+    success: function() {
+      const params = {
+        value: null
+      };
+      CTFd.api
+        .patch_config({ configKey: "ctf_small_icon" }, params)
+        .then(_response => {
+          window.location.reload();
+        });
+    }
+  });
+}
+
 function importConfig(event) {
   event.preventDefault();
   let import_file = document.getElementById("import-file").files[0];
@@ -330,6 +376,8 @@ $(() => {
   $(".config-section > form:not(.form-upload)").submit(updateConfigs);
   $("#logo-upload").submit(uploadLogo);
   $("#remove-logo").click(removeLogo);
+  $("#ctf-small-icon-upload").submit(smallIconUpload);
+  $("#remove-small-icon").click(removeSmallIcon);
   $("#export-button").click(exportConfig);
   $("#import-button").click(importConfig);
   $("#config-color-update").click(function() {
