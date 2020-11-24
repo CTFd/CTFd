@@ -115,6 +115,13 @@
 							</small>
 						</div>
 						<div class="form-group">
+							<b>{{ form.ctf_banner.label }}</b>
+							{{ form.ctf_banner(class="form-control-file", accept="image/*") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_banner.description }}
+							</small>
+						</div>
+						<div class="form-group">
 							<b>{{ form.ctf_small_icon.label }}</b>
 							{{ form.ctf_small_icon(class="form-control-file", accept=".png") }}
 							<small class="form-text text-muted">

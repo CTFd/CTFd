@@ -151,11 +151,20 @@ def setup():
                 name=name, email=email, password=password, type="admin", hidden=True
             )
 
-            # Index page
+            # Create an empty index page
+            page = Pages(title=None, route="index", content="", draft=False)
 
-            index = """<div class="row">
+            # Upload banner
+            default_ctf_banner_location = url_for("views.themes", path="img/logo.png")
+            ctf_banner = request.files.get("ctf_banner")
+            if ctf_banner:
+                f = upload_file(file=ctf_banner, page_id=page.id)
+                default_ctf_banner_location = url_for("views.files", path=f.location)
+
+            # Splice in our banner
+            index = f"""<div class="row">
     <div class="col-md-6 offset-md-3">
-        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="themes/core/static/img/logo.png" />
+        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="{default_ctf_banner_location}" />
         <h3 class="text-center">
             <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
             <p>Follow us on social media:</p>
@@ -169,8 +178,7 @@ def setup():
         </h4>
     </div>
 </div>"""
-
-            page = Pages(title=None, route="index", content=index, draft=False)
+            page.content = index
 
             # Visibility
             set_config(
