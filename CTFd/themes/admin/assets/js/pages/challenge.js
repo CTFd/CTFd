@@ -6,13 +6,13 @@ import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
 import { ezQuery, ezAlert, ezToast } from "core/ezq";
 import { default as helpers } from "core/helpers";
-import { addFile, deleteFile } from "../challenges/files";
 import { addTag, deleteTag } from "../challenges/tags";
 import { bindMarkdownEditors } from "../styles";
 import Vue from "vue/dist/vue.esm.browser";
 import CommentBox from "../components/comments/CommentBox.vue";
 import FlagList from "../components/flags/FlagList.vue";
 import Requirements from "../components/requirements/Requirements.vue";
+import ChallengeFilesList from "../components/files/ChallengeFilesList.vue";
 import {
   showHintModal,
   editHint,
@@ -412,9 +412,6 @@ $(() => {
   $("#tags-add-input").keyup(addTag);
   $(".delete-tag").click(deleteTag);
 
-  $("#file-add-form").submit(addFile);
-  $(".delete-file").click(deleteFile);
-
   $("#hint-add-button").click(showHintModal);
   $(".delete-hint").click(deleteHint);
   $(".edit-hint").click(showEditHintModal);
@@ -436,6 +433,16 @@ $(() => {
     let vueContainer = document.createElement("div");
     document.querySelector("#prerequisite-add-form").appendChild(vueContainer);
     new reqsComponent({
+      propsData: { challenge_id: window.CHALLENGE_ID }
+    }).$mount(vueContainer);
+  }
+
+  // Load ChallengeFilesList component
+  if (document.querySelector("#challenge-files")) {
+    const challengeFilesList = Vue.extend(ChallengeFilesList);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#challenge-files").appendChild(vueContainer);
+    new challengeFilesList({
       propsData: { challenge_id: window.CHALLENGE_ID }
     }).$mount(vueContainer);
   }
