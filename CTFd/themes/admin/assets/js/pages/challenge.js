@@ -13,12 +13,7 @@ import CommentBox from "../components/comments/CommentBox.vue";
 import FlagList from "../components/flags/FlagList.vue";
 import Requirements from "../components/requirements/Requirements.vue";
 import ChallengeFilesList from "../components/files/ChallengeFilesList.vue";
-import {
-  showHintModal,
-  editHint,
-  deleteHint,
-  showEditHintModal
-} from "../challenges/hints";
+import HintsList from "../components/hints/HintsList.vue";
 import hljs from "highlight.js";
 
 const displayHint = data => {
@@ -412,11 +407,6 @@ $(() => {
   $("#tags-add-input").keyup(addTag);
   $(".delete-tag").click(deleteTag);
 
-  $("#hint-add-button").click(showHintModal);
-  $(".delete-hint").click(deleteHint);
-  $(".edit-hint").click(showEditHintModal);
-  $("#hint-edit-form").submit(editHint);
-
   // Load FlagList component
   if (document.querySelector("#challenge-flags")) {
     const flagList = Vue.extend(FlagList);
@@ -443,6 +433,16 @@ $(() => {
     let vueContainer = document.createElement("div");
     document.querySelector("#challenge-files").appendChild(vueContainer);
     new challengeFilesList({
+      propsData: { challenge_id: window.CHALLENGE_ID }
+    }).$mount(vueContainer);
+  }
+
+  // Load HintsList component
+  if (document.querySelector("#challenge-hints")) {
+    const hintsList = Vue.extend(HintsList);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#challenge-hints").appendChild(vueContainer);
+    new hintsList({
       propsData: { challenge_id: window.CHALLENGE_ID }
     }).$mount(vueContainer);
   }
