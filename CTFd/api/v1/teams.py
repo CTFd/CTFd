@@ -404,14 +404,14 @@ class TeamMembers(Resource):
     @admins_only
     def post(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
-        data = request.get_json(silent=True)
 
         # Generate an invite code if no user or body is specified
-        if data is None:
+        if len(request.data) == 0:
             invite_code = team.get_invite_code()
             response = {"code": invite_code}
             return {"success": True, "data": response}
 
+        data = request.get_json()
         user_id = data.get("user_id")
         user = Users.query.filter_by(id=user_id).first_or_404()
         if user.team_id is None:
