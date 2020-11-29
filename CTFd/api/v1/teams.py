@@ -313,6 +313,15 @@ class TeamPrivateMembers(Resource):
     @require_team
     def post(self):
         team = get_current_team()
+        if team.captain_id != session["id"]:
+            return (
+                {
+                    "success": False,
+                    "errors": {"": ["Only team captains can generate invite codes"]},
+                },
+                403,
+            )
+
         invite_code = team.get_invite_code()
         response = {"code": invite_code}
         return {"success": True, "data": response}
