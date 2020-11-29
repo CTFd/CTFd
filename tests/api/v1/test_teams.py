@@ -723,6 +723,28 @@ def test_api_team_captain_disbanding():
     destroy_ctfd(app)
 
 
+def test_api_team_disbanding_disabled():
+    """Test that team disbanding can be disabled"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        set_config("team_disbanding", "disabled")
+        team = gen_team(app.db)
+        captain = Users.query.filter_by(id=team.captain_id).first()
+        app.db.session.commit()
+        with login_as_user(app, name=captain.name) as client:
+            r = client.delete("/api/v1/teams/me", json="")
+            assert r.status_code == 403
+            assert r.get_json() == {
+                "success": False,
+                "errors": {"": ["Team disbanding is currently disabled"]},
+            }
+        set_config("team_disbanding", "inactive_only")
+        with login_as_user(app, name=captain.name) as client:
+            r = client.delete("/api/v1/teams/me", json="")
+            assert r.status_code == 200
+    destroy_ctfd(app)
+
+
 def test_api_team_captain_disbanding_only_inactive_teams():
     """Test that only teams that haven't conducted any actions can be disbanded"""
     app = create_ctfd(user_mode="teams")
