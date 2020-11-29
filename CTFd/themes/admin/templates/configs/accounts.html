@@ -2,7 +2,6 @@
 
 	{% set verify_emails = "true" if verify_emails == True else "false" %}
 	{% set name_changes = "true" if name_changes == True else "false" %}
-	{% set team_disbanding = "false" if team_disbanding == False else team_disbanding %}
 	{% with form = Forms.config.AccountSettingsForm(verify_emails=verify_emails, name_changes=name_changes, team_disbanding=team_disbanding) %}
 	<form method="POST" autocomplete="off" class="w-100">
 
