@@ -13,7 +13,6 @@ from CTFd.utils.decorators.visibility import (
 )
 from CTFd.utils.helpers import get_errors, get_infos
 from CTFd.utils.humanize.words import pluralize
-from CTFd.utils.teams.invites import load_team_invite
 from CTFd.utils.user import get_current_user, get_current_user_attrs
 
 teams = Blueprint("teams", __name__)
@@ -61,6 +60,9 @@ def invite():
     errors = get_errors()
     code = request.args.get("code")
 
+    if code is None:
+        abort(404)
+
     user = get_current_user_attrs()
     if user.team_id:
         errors.append("You are already in a team. You cannot join another.")
@@ -93,7 +95,7 @@ def invite():
                     name=team.name, limit=team_size_limit
                 )
             )
-            return render_template("teams/invite.html", infos=infos, errors=errors)
+            return render_template("teams/invite.html", team=team, infos=infos, errors=errors)
 
         user = get_current_user()
         user.team_id = team.id

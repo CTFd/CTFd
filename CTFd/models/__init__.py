@@ -549,7 +549,7 @@ class Teams(db.Model):
     @classmethod
     def load_invite_code(cls, code):
         from flask import current_app
-        from CTFd.utils.security.signing import unserialize, hmac, BadTimeSignature
+        from CTFd.utils.security.signing import unserialize, hmac, BadTimeSignature, BadSignature
         from CTFd.exceptions import TeamTokenExpiredException, TeamTokenInvalidException
 
         secret_key = current_app.config["SECRET_KEY"]
@@ -558,13 +558,16 @@ class Teams(db.Model):
 
         # Unserialize the invite code
         try:
-            invite_object = unserialize(code)
+            # Links expire after 1 day
+            invite_object = unserialize(code, max_age=86400)
         except BadTimeSignature:
             raise TeamTokenExpiredException
+        except BadSignature:
+            raise TeamTokenInvalidException
 
         # Load the team by the ID in the invite
         team_id = invite_object["id"]
-        team = cls.query.filter_by(id=team_id).first()
+        team = cls.query.filter_by(id=team_id).first_or_404()
 
         # Create the team specific secret
         team_password_key = team.password.encode("utf-8")

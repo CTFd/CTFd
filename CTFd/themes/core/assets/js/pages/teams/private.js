@@ -29,8 +29,9 @@ $(() => {
         })
         .then(function(response) {
           if (response.success) {
-            // let code = response.data.code;
-            // $("#team-invite-modal input[name=link]").val(code);
+            let code = response.data.code;
+            let url = `${window.location.origin}${CTFd.config.urlRoot}/teams/invite?code=${code}`;
+            $("#team-invite-modal input[name=link]").val(url);
             $("#team-invite-modal").modal();
           }
         });

@@ -97,13 +97,6 @@ def authed_only(f):
     return authed_only_wrapper
 
 
-def registered_only(f):
-    """
-    Decorator that requires the user to have an account
-    """
-    pass
-
-
 def admins_only(f):
     """
     Decorator that requires the user to be authenticated and an admin

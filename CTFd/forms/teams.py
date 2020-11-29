@@ -234,16 +234,8 @@ def TeamEditForm(*args, **kwargs):
     return _TeamEditForm(*args, **kwargs)
 
 
-def TeamInviteForm(*args, **kwargs):
-    team = get_current_team()
-    link = url_for("teams.invite", code=team.get_invite_code(), _external=True)
-
-    class _TeamInviteForm(BaseForm):
-        link = URLField("Invite Link")
-
-    form = _TeamInviteForm(*args, **kwargs)
-    form.link.data = link
-    return form
+class TeamInviteForm(BaseForm):
+    link = URLField("Invite Link")
 
 
 class TeamInviteJoinForm(BaseForm):
