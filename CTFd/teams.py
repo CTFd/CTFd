@@ -116,6 +116,11 @@ def invite():
 def join():
     infos = get_infos()
     errors = get_errors()
+
+    user = get_current_user_attrs()
+    if user.team_id:
+        errors.append("You are already in a team. You cannot join another.")
+
     if request.method == "GET":
         team_size_limit = get_config("team_size", default=0)
         if team_size_limit:
@@ -132,6 +137,12 @@ def join():
         passphrase = request.form.get("password", "").strip()
 
         team = Teams.query.filter_by(name=teamname).first()
+
+        if errors:
+            return (
+                render_template("teams/join_team.html", infos=infos, errors=errors),
+                403,
+            )
 
         if team and verify_password(passphrase, team.password):
             team_size_limit = get_config("team_size", default=0)
@@ -168,6 +179,11 @@ def join():
 def new():
     infos = get_infos()
     errors = get_errors()
+
+    user = get_current_user_attrs()
+    if user.team_id:
+        errors.append("You are already in a team. You cannot join another.")
+
     if request.method == "GET":
         team_size_limit = get_config("team_size", default=0)
         if team_size_limit:
@@ -177,12 +193,11 @@ def new():
                     limit=team_size_limit, plural=plural
                 )
             )
-
         return render_template("teams/new_team.html", infos=infos, errors=errors)
+
     elif request.method == "POST":
         teamname = request.form.get("name", "").strip()
         passphrase = request.form.get("password", "").strip()
-        errors = get_errors()
 
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
@@ -236,7 +251,7 @@ def new():
             errors.append("Please provide a shorter affiliation")
 
         if errors:
-            return render_template("teams/new_team.html", errors=errors)
+            return render_template("teams/new_team.html", errors=errors), 403
 
         team = Teams(name=teamname, password=passphrase, captain_id=user.id)
 

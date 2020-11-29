@@ -6,19 +6,14 @@ import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
 import { ezQuery, ezAlert, ezToast } from "core/ezq";
 import { default as helpers } from "core/helpers";
-import { addFile, deleteFile } from "../challenges/files";
-import { addTag, deleteTag } from "../challenges/tags";
 import { bindMarkdownEditors } from "../styles";
 import Vue from "vue/dist/vue.esm.browser";
 import CommentBox from "../components/comments/CommentBox.vue";
 import FlagList from "../components/flags/FlagList.vue";
 import Requirements from "../components/requirements/Requirements.vue";
-import {
-  showHintModal,
-  editHint,
-  deleteHint,
-  showEditHintModal
-} from "../challenges/hints";
+import TagsList from "../components/tags/TagsList.vue";
+import ChallengeFilesList from "../components/files/ChallengeFilesList.vue";
+import HintsList from "../components/hints/HintsList.vue";
 import hljs from "highlight.js";
 
 const displayHint = data => {
@@ -409,17 +404,6 @@ $(() => {
 
   $("#challenge-create-options form").submit(handleChallengeOptions);
 
-  $("#tags-add-input").keyup(addTag);
-  $(".delete-tag").click(deleteTag);
-
-  $("#file-add-form").submit(addFile);
-  $(".delete-file").click(deleteFile);
-
-  $("#hint-add-button").click(showHintModal);
-  $(".delete-hint").click(deleteHint);
-  $(".edit-hint").click(showEditHintModal);
-  $("#hint-edit-form").submit(editHint);
-
   // Load FlagList component
   if (document.querySelector("#challenge-flags")) {
     const flagList = Vue.extend(FlagList);
@@ -430,12 +414,42 @@ $(() => {
     }).$mount(vueContainer);
   }
 
+  // Load TagsList component
+  if (document.querySelector("#challenge-tags")) {
+    const tagList = Vue.extend(TagsList);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#challenge-tags").appendChild(vueContainer);
+    new tagList({
+      propsData: { challenge_id: window.CHALLENGE_ID }
+    }).$mount(vueContainer);
+  }
+
   // Load Requirements component
   if (document.querySelector("#prerequisite-add-form")) {
     const reqsComponent = Vue.extend(Requirements);
     let vueContainer = document.createElement("div");
     document.querySelector("#prerequisite-add-form").appendChild(vueContainer);
     new reqsComponent({
+      propsData: { challenge_id: window.CHALLENGE_ID }
+    }).$mount(vueContainer);
+  }
+
+  // Load ChallengeFilesList component
+  if (document.querySelector("#challenge-files")) {
+    const challengeFilesList = Vue.extend(ChallengeFilesList);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#challenge-files").appendChild(vueContainer);
+    new challengeFilesList({
+      propsData: { challenge_id: window.CHALLENGE_ID }
+    }).$mount(vueContainer);
+  }
+
+  // Load HintsList component
+  if (document.querySelector("#challenge-hints")) {
+    const hintsList = Vue.extend(HintsList);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#challenge-hints").appendChild(vueContainer);
+    new hintsList({
       propsData: { challenge_id: window.CHALLENGE_ID }
     }).$mount(vueContainer);
   }
