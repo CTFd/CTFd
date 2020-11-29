@@ -229,3 +229,11 @@ def TeamEditForm(*args, **kwargs):
     attach_custom_team_fields(_TeamEditForm)
 
     return _TeamEditForm(*args, **kwargs)
+
+
+class TeamInviteForm(BaseForm):
+    link = URLField("Invite Link")
+
+
+class TeamInviteJoinForm(BaseForm):
+    submit = SubmitField("Join")

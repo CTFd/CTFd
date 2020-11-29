@@ -6,6 +6,7 @@ import { ezAlert, ezQuery, ezBadge } from "core/ezq";
 import { createGraph, updateGraph } from "core/graphs";
 import Vue from "vue/dist/vue.esm.browser";
 import CommentBox from "../components/comments/CommentBox.vue";
+import { copyToClipboard } from "../../../../core/assets/js/utils";
 
 function createTeam(event) {
   event.preventDefault();
@@ -367,6 +368,34 @@ $(() => {
 
   $(".edit-team").click(function(_e) {
     $("#team-info-edit-modal").modal("toggle");
+  });
+
+  $(".invite-team").click(function(_e) {
+    CTFd.fetch(`/api/v1/teams/${window.TEAM_ID}/members`, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(response) {
+        if (response.success) {
+          let code = response.data.code;
+          let url = `${window.location.origin}${
+            CTFd.config.urlRoot
+          }/teams/invite?code=${code}`;
+          $("#team-invite-modal input[name=link]").val(url);
+          $("#team-invite-modal").modal("toggle");
+        }
+      });
+  });
+
+  $("#team-invite-link-copy").click(function(e) {
+    copyToClipboard(e, "#team-invite-link");
   });
 
   $(".edit-captain").click(function(_e) {
