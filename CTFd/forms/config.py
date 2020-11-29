@@ -44,7 +44,7 @@ class AccountSettingsForm(BaseForm):
     )
     name_changes = SelectField(
         "Name Changes",
-        description="Control whether users can change their names",
+        description="Control whether users and teams can change their names",
         choices=[("true", "Enabled"), ("false", "Disabled")],
         default="true",
     )
