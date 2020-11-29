@@ -1,4 +1,3 @@
-from flask import url_for
 from wtforms import BooleanField, PasswordField, SelectField, StringField
 from wtforms.fields.html5 import EmailField, URLField
 from wtforms.validators import InputRequired
@@ -7,8 +6,6 @@ from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.models import TeamFieldEntries, TeamFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
-from CTFd.utils.security.signing import serialize
-from CTFd.utils.user import get_current_team
 
 
 def build_custom_team_fields(

@@ -549,7 +549,12 @@ class Teams(db.Model):
     @classmethod
     def load_invite_code(cls, code):
         from flask import current_app
-        from CTFd.utils.security.signing import unserialize, hmac, BadTimeSignature, BadSignature
+        from CTFd.utils.security.signing import (
+            unserialize,
+            hmac,
+            BadTimeSignature,
+            BadSignature,
+        )
         from CTFd.exceptions import TeamTokenExpiredException, TeamTokenInvalidException
 
         secret_key = current_app.config["SECRET_KEY"]

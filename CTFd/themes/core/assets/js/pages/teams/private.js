@@ -3,7 +3,7 @@ import "../../utils";
 import CTFd from "../../CTFd";
 import "bootstrap/js/dist/modal";
 import $ from "jquery";
-import { ezBadge, ezAlert } from "../../ezq";
+import { ezBadge } from "../../ezq";
 
 $(() => {
   if (window.team_captain) {
@@ -30,7 +30,9 @@ $(() => {
         .then(function(response) {
           if (response.success) {
             let code = response.data.code;
-            let url = `${window.location.origin}${CTFd.config.urlRoot}/teams/invite?code=${code}`;
+            let url = `${window.location.origin}${
+              CTFd.config.urlRoot
+            }/teams/invite?code=${code}`;
             $("#team-invite-modal input[name=link]").val(url);
             $("#team-invite-modal").modal();
           }
