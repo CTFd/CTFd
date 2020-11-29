@@ -530,11 +530,51 @@ class Teams(db.Model):
 
     def get_invite_code(self):
         from flask import current_app
-        from CTFd.utils.security.signing import serialize
+        from CTFd.utils.security.signing import serialize, hmac
 
-        secret = current_app.config["SECRET_KEY"] + self.password.encode("utf-8")
-        code = serialize(data={"id": self.id}, secret=secret)
+        secret_key = current_app.config["SECRET_KEY"]
+        if isinstance(secret_key, str):
+            secret_key = secret_key.encode("utf-8")
+
+        team_password_key = self.password.encode("utf-8")
+        verification_secret = secret_key + team_password_key
+
+        invite_object = {
+            "id": self.id,
+            "v": hmac(str(self.id), secret=verification_secret),
+        }
+        code = serialize(data=invite_object, secret=secret_key)
         return code
+
+    @classmethod
+    def load_invite_code(cls, code):
+        from flask import current_app
+        from CTFd.utils.security.signing import unserialize, hmac, BadTimeSignature
+        from CTFd.exceptions import TeamTokenExpiredException, TeamTokenInvalidException
+
+        secret_key = current_app.config["SECRET_KEY"]
+        if isinstance(secret_key, str):
+            secret_key = secret_key.encode("utf-8")
+
+        # Unserialize the invite code
+        try:
+            invite_object = unserialize(code)
+        except BadTimeSignature:
+            raise TeamTokenExpiredException
+
+        # Load the team by the ID in the invite
+        team_id = invite_object["id"]
+        team = cls.query.filter_by(id=team_id).first()
+
+        # Create the team specific secret
+        team_password_key = team.password.encode("utf-8")
+        verification_secret = secret_key + team_password_key
+
+        # Verify the team verficiation code
+        verified = hmac(str(team.id), secret=verification_secret) == invite_object["v"]
+        if verified is False:
+            raise TeamTokenInvalidException
+        return team
 
     def get_solves(self, admin=False):
         from CTFd.utils import get_config

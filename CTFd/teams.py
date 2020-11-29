@@ -1,6 +1,7 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, abort, redirect, render_template, request, url_for
 
 from CTFd.cache import clear_team_session, clear_user_session
+from CTFd.exceptions import TeamTokenExpiredException, TeamTokenInvalidException
 from CTFd.models import TeamFieldEntries, TeamFields, Teams, db
 from CTFd.utils import config, get_config, validators
 from CTFd.utils.crypto import verify_password
@@ -11,8 +12,9 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.helpers import get_errors, get_infos
-from CTFd.utils.user import get_current_user
+from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.teams.invites import load_team_invite
+from CTFd.utils.user import get_current_user, get_current_user_attrs
 
 teams = Blueprint("teams", __name__)
 
@@ -51,6 +53,58 @@ def listing():
     )
 
 
+@teams.route("/teams/invite", methods=["GET", "POST"])
+@authed_only
+@require_team_mode
+def invite():
+    infos = get_infos()
+    errors = get_errors()
+    code = request.args.get("code")
+
+    user = get_current_user_attrs()
+    if user.team_id:
+        errors.append("You are already in a team. You cannot join another.")
+
+    try:
+        team = Teams.load_invite_code(code)
+    except TeamTokenExpiredException:
+        abort(403, description="This invite URL has expired")
+    except TeamTokenInvalidException:
+        abort(403, description="This invite URL is invalid")
+
+    team_size_limit = get_config("team_size", default=0)
+
+    if request.method == "GET":
+        if team_size_limit:
+            infos.append(
+                "Teams are limited to {limit} member{plural}".format(
+                    limit=team_size_limit, plural=pluralize(number=team_size_limit)
+                )
+            )
+
+        return render_template(
+            "teams/invite.html", team=team, infos=infos, errors=errors
+        )
+
+    if request.method == "POST":
+        if team_size_limit and len(team.members) >= team_size_limit:
+            errors.append(
+                "{name} has already reached the team size limit of {limit}".format(
+                    name=team.name, limit=team_size_limit
+                )
+            )
+            return render_template("teams/invite.html", infos=infos, errors=errors)
+
+        user = get_current_user()
+        user.team_id = team.id
+        db.session.commit()
+
+        clear_user_session(user_id=user.id)
+        clear_team_session(team_id=team.id)
+
+        return redirect(url_for("challenges.listing"))
+
+
 @teams.route("/teams/join", methods=["GET", "POST"])
 @authed_only
 @require_team_mode
@@ -58,7 +112,6 @@ def listing():
 def join():
     infos = get_infos()
     errors = get_errors()
-    code = request.args.get("code")
 
     if request.method == "GET":
         team_size_limit = get_config("team_size", default=0)
@@ -69,11 +122,6 @@ def join():
                     limit=team_size_limit, plural=plural
                 )
             )
-        if code:
-            team = load_team_invite(code)
-            print(team)
-        else:
-            team = None
 
         return render_template("teams/join_team.html", infos=infos, errors=errors)
 

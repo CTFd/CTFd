@@ -314,9 +314,7 @@ class TeamPrivateMembers(Resource):
     def post(self):
         team = get_current_team()
         invite_code = team.get_invite_code()
-        response = {
-            "code": invite_code
-        }
+        response = {"code": invite_code}
         return {"success": True, "data": response}
 
 
