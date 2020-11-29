@@ -95,8 +95,11 @@ def invite():
                     name=team.name, limit=team_size_limit
                 )
             )
-            return render_template(
-                "teams/invite.html", team=team, infos=infos, errors=errors
+            return (
+                render_template(
+                    "teams/invite.html", team=team, infos=infos, errors=errors
+                ),
+                403,
             )
 
         user = get_current_user()
