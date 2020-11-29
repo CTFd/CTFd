@@ -40,7 +40,7 @@ $(() => {
         });
     });
 
-    $("#team-invite-link-copy").click(function(event){
+    $("#team-invite-link-copy").click(function(event) {
       copyToClipboard(event, "#team-invite-link");
     });
 

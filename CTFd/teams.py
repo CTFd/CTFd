@@ -89,6 +89,14 @@ def invite():
         )
 
     if request.method == "POST":
+        if errors:
+            return (
+                render_template(
+                    "teams/invite.html", team=team, infos=infos, errors=errors
+                ),
+                403,
+            )
+
         if team_size_limit and len(team.members) >= team_size_limit:
             errors.append(
                 "{name} has already reached the team size limit of {limit}".format(
