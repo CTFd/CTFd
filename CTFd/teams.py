@@ -112,7 +112,6 @@ def invite():
 def join():
     infos = get_infos()
     errors = get_errors()
-
     if request.method == "GET":
         team_size_limit = get_config("team_size", default=0)
         if team_size_limit:
@@ -122,7 +121,6 @@ def join():
                     limit=team_size_limit, plural=plural
                 )
             )
-
         return render_template("teams/join_team.html", infos=infos, errors=errors)
 
     if request.method == "POST":
