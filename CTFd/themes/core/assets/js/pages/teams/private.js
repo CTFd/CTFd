@@ -3,6 +3,7 @@ import "../../utils";
 import CTFd from "../../CTFd";
 import "bootstrap/js/dist/modal";
 import $ from "jquery";
+import { copyToClipboard } from "../../utils";
 import { ezBadge, ezQuery, ezAlert } from "../../ezq";
 
 $(() => {
@@ -37,6 +38,10 @@ $(() => {
             $("#team-invite-modal").modal();
           }
         });
+    });
+
+    $("#team-invite-link-copy").click(function(event){
+      copyToClipboard(event, "#team-invite-link");
     });
 
     $(".disband-team").click(function() {

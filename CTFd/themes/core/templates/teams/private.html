@@ -116,10 +116,17 @@
 				</div>
 				<div class="modal-body clearfix">
 					{% with form = Forms.teams.TeamInviteForm() %}
-					<form id="team-captain-form" method="POST">
+					<form method="POST">
 						<div class="form-group">
 							<b>{{ form.link.label }}</b>
-							{{ form.link(class="form-control") }}
+							<div class="input-group mb-3">
+								{{ form.link(id="team-invite-link", class="form-control") }}
+								<div class="input-group-append">
+									<button id="team-invite-link-copy" class="btn btn-outline-secondary" type="button">
+										<i class="fas fa-clipboard"></i>
+									</button>
+								</div>
+							</div>
 							<small class="form-text text-muted">
 								Share this link with your team members for them to join your team
 							</small>
