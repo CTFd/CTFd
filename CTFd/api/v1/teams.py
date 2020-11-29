@@ -16,6 +16,7 @@ from CTFd.models import Awards, Submissions, Teams, Unlocks, Users, db
 from CTFd.schemas.awards import AwardSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.teams import TeamSchema
+from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only, authed_only, require_team
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
@@ -313,6 +314,16 @@ class TeamPrivate(Resource):
         responses={200: ("Success", "APISimpleSuccessResponse")},
     )
     def delete(self):
+        team_disbanding = get_config("team_disbanding", default="inactive_only")
+        if team_disbanding == "disabled":
+            return (
+                {
+                    "success": False,
+                    "errors": {"": ["Team disbanding is currently disabled"]},
+                },
+                403,
+            )
+
         team = get_current_team()
         if team.captain_id != session["id"]:
             return (
