@@ -68,3 +68,32 @@ def test_hint_team_unlock():
             assert standings[0][2] == "team_name"
             assert standings[0][3] == 99
     destroy_ctfd(app)
+
+
+def test_hint_team_unlocking_without_points():
+    """Test that teams cannot enter negative point valuations from unlocking hints"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        user = gen_user(app.db)
+        second_user = gen_user(app.db, name="user", email="second@ctfd.io")
+        team = gen_team(app.db)
+        user.team_id = team.id
+        second_user.team_id = team.id
+        team.members.append(user)
+        team.members.append(second_user)
+        chal = gen_challenge(app.db)
+        gen_hint(app.db, chal.id, content="hint", cost=1, type="standard")
+        app.db.session.commit()
+        with login_as_user(app, name="user_name") as client:
+            # Assert that we don't see a hint
+            r = client.get("/api/v1/hints/1")
+            assert r.get_json()["data"].get("content") is None
+
+            # Attempt to unlock the hint
+            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            assert r.status_code == 400
+            assert (
+                r.get_json()["errors"]["score"]
+                == "You do not have enough points to unlock this hint"
+            )
+    destroy_ctfd(app)
