@@ -30,14 +30,38 @@ def test_hint_team_unlock():
         gen_award(app.db, 2, team.id)
         app.db.session.commit()
         with login_as_user(app, name="user_name") as client:
-            client.get("/api/v1/hints/1")
+            # Assert that we don't see a hint
+            r = client.get("/api/v1/hints/1")
+            assert r.get_json()["data"].get("content") is None
+
+            # Unlock the hint
             client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
-            client.get("/api/v1/hints/1")
+
+            # Assert that we see a hint
+            r = client.get("/api/v1/hints/1")
+            assert r.get_json()["data"].get("content")
         with login_as_user(app) as second_client:
-            second_client.get("/api/v1/hints/1")
-            second_client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            # Assert that we see a hint
+            r = second_client.get("/api/v1/hints/1")
+            assert r.get_json()["data"].get("content")
+
+            # Assert that we can't double unlock
+            r = second_client.post(
+                "/api/v1/unlocks", json={"target": 1, "type": "hints"}
+            )
+            assert r.status_code == 400
+            assert (
+                r.get_json()["errors"]["target"]
+                == "You've already unlocked this this target"
+            )
+
+            # Assert that we see a hint
             r = second_client.get("/api/v1/hints/1")
             assert r.json["data"]["content"] == "hint"
+
+            # Verify standings
+            # We start with 100 points from the award.
+            # We lose a point because we unlock successfully once
             standings = get_standings()
             assert standings[0][2] == "team_name"
             assert standings[0][3] == 99
