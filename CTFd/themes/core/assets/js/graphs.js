@@ -1,6 +1,6 @@
 import $ from "jquery";
 import echarts from "echarts/dist/echarts-en.common";
-import Moment from "moment";
+import dayjs from "dayjs";
 import { cumulativeSum, colorHash } from "./utils";
 
 const graph_configs = {
@@ -44,6 +44,17 @@ const graph_configs = {
             type: "value"
           }
         ],
+        dataZoom: [
+          {
+            id: "dataZoomX",
+            type: "slider",
+            xAxisIndex: [0],
+            filterMode: "filter",
+            height: 20,
+            top: 35,
+            fillerColor: "rgba(233, 236, 241, 0.4)"
+          }
+        ],
         series: []
       };
 
@@ -58,7 +69,7 @@ const graph_configs = {
       });
 
       for (let i = 0; i < total.length; i++) {
-        const date = Moment(total[i].date);
+        const date = dayjs(total[i].date);
         times.push(date.toDate());
         try {
           scores.push(total[i].challenge.value);
@@ -113,8 +124,10 @@ const graph_configs = {
           }
         },
         legend: {
-          orient: "horizontal",
-          bottom: 0,
+          type: "scroll",
+          orient: "vertical",
+          top: "middle",
+          right: 0,
           data: []
         },
         series: [
@@ -132,7 +145,7 @@ const graph_configs = {
                 label: {
                   show: true,
                   formatter: function(data) {
-                    return `${data.name} - ${data.value} (${data.percent}%)`;
+                    return `${data.percent}% (${data.value})`;
                   }
                 },
                 labelLine: {
@@ -218,8 +231,9 @@ const graph_configs = {
           }
         },
         legend: {
-          orient: "horizontal",
-          bottom: 0,
+          orient: "vertical",
+          top: "middle",
+          right: 0,
           data: ["Fails", "Solves"]
         },
         series: [

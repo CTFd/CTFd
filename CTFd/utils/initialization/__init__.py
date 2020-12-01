@@ -194,6 +194,7 @@ def init_request_processors(app):
                 "views.setup",
                 "views.integrations",
                 "views.themes",
+                "views.files",
             ):
                 return
             else:

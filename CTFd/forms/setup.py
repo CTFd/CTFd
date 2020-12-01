@@ -1,4 +1,5 @@
 from wtforms import (
+    FileField,
     HiddenField,
     PasswordField,
     RadioField,
@@ -45,6 +46,15 @@ class SetupForm(BaseForm):
         validators=[InputRequired()],
     )
 
+    ctf_logo = FileField(
+        "Logo",
+        description="Logo to use for the website instead of a CTF name. Used as the home page button.",
+    )
+    ctf_banner = FileField("Banner", description="Banner to use for the homepage.")
+    ctf_small_icon = FileField(
+        "Small Icon",
+        description="favicon used in user's browsers. Only PNGs accepted. Must be 32x32px.",
+    )
     ctf_theme = SelectField(
         "Theme",
         description="CTFd Theme to use",

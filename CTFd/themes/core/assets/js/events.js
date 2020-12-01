@@ -64,7 +64,7 @@ export default root => {
           onclick: function() {
             ezAlert({
               title: data.title,
-              body: data.content,
+              body: data.html,
               button: "Got it!",
               success: function() {
                 clicked = true;
@@ -84,7 +84,7 @@ export default root => {
         inc_notification_counter();
         ezAlert({
           title: data.title,
-          body: data.content,
+          body: data.html,
           button: "Got it!",
           success: function() {
             dec_notification_counter();

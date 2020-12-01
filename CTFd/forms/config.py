@@ -42,9 +42,18 @@ class AccountSettingsForm(BaseForm):
         choices=[("true", "Enabled"), ("false", "Disabled")],
         default="false",
     )
+    team_disbanding = SelectField(
+        "Team Disbanding",
+        description="Control whether team capatins are allowed to disband their own teams",
+        choices=[
+            ("inactive_only", "Enabled for Inactive Teams"),
+            ("disabled", "Disabled"),
+        ],
+        default="inactive_only",
+    )
     name_changes = SelectField(
         "Name Changes",
-        description="Control whether users can change their names",
+        description="Control whether users and teams can change their names",
         choices=[("true", "Enabled"), ("false", "Disabled")],
         default="true",
     )

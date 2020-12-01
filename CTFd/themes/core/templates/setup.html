@@ -14,7 +14,7 @@
 			{% include "components/errors.html" %}
 
 			{% with form = Forms.setup.SetupForm() %}
-			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal" id="setup-form">
+			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal" id="setup-form" enctype="multipart/form-data">
 				<ul class="nav nav-pills nav-fill mb-4">
 					<li class="nav-item">
 						<a class="nav-link active" data-toggle="pill" href="#general">General</a>
@@ -107,6 +107,27 @@
 						</div>
 					</div>
 					<div class="tab-pane fade" id="style" role="tabpanel">
+						<div class="form-group">
+							<b>{{ form.ctf_logo.label }}</b>
+							{{ form.ctf_logo(class="form-control-file", accept="image/*") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_logo.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.ctf_banner.label }}</b>
+							{{ form.ctf_banner(class="form-control-file", accept="image/*") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_banner.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.ctf_small_icon.label }}</b>
+							{{ form.ctf_small_icon(class="form-control-file", accept=".png") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_small_icon.description }}
+							</small>
+						</div>
 						<div class="form-group">
 							<b>{{ form.ctf_theme.label }}</b>
 							{{ form.ctf_theme(class="form-control custom-select") }}

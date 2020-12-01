@@ -105,6 +105,39 @@
 		</div>
 	</div>
 
+	<div id="team-invite-modal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-action text-center w-100">Invite Users</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body clearfix">
+					{% with form = Forms.teams.TeamInviteForm() %}
+					<form method="POST">
+						<div class="form-group">
+							<b>{{ form.link.label }}</b>
+							<div class="input-group mb-3">
+								{{ form.link(id="team-invite-link", class="form-control") }}
+								<div class="input-group-append">
+									<button id="team-invite-link-copy" class="btn btn-outline-secondary" type="button">
+										<i class="fas fa-clipboard"></i>
+									</button>
+								</div>
+							</div>
+							<small class="form-text text-muted">
+								Share this link with your team members for them to join your team
+							</small>
+						</div>
+					</form>
+					{% endwith %}
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="jumbotron">
 		<div class="container">
 			<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
@@ -161,6 +194,10 @@
 							   title="Choose Captain"></i>
 						</a>
 
+						<a class="invite-members">
+							<i class="btn-fa fas fa-ticket-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+							   title="Invite Users"></i>
+						</a>
 						<a class="disband-team">
 							<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 								title="Disband Team"></i>
@@ -175,6 +212,12 @@
 							   data-toggle="tooltip"
 							   data-placement="top"
 							   title="Only team captains can choose a new captain"></i>
+						</a>
+						<a class="invite-members">
+							<i class="btn-fa fas fa-ticket-alt fa-2x px-2"
+								data-toggle="tooltip"
+								data-placement="top"
+								title="Only team captains can generate invite links"></i>
 						</a>
 						<a class="disband-team">
 							<i class="btn-fa fas fa-trash-alt fa-2x px-2 fa-disabled"

@@ -65,10 +65,21 @@ const graph_configs = {
         },
         dataZoom: [
           {
-            id: "dataZoomY",
-            type: "slider",
-            yAxisIndex: [0],
-            filterMode: "empty"
+            show: false,
+            start: 0,
+            end: 100
+          },
+          {
+            type: "inside",
+            yAxisIndex: 0,
+            show: true,
+            width: 20
+          },
+          {
+            fillerColor: "rgba(233, 236, 241, 0.4)",
+            show: true,
+            yAxisIndex: 0,
+            width: 20
           }
         ],
         series: [
@@ -107,8 +118,9 @@ const graph_configs = {
           }
         },
         legend: {
-          orient: "horizontal",
-          bottom: 0,
+          orient: "vertical",
+          top: "middle",
+          right: 0,
           data: ["Fails", "Solves"]
         },
         series: [
@@ -210,8 +222,10 @@ const graph_configs = {
           }
         },
         legend: {
-          orient: "horizontal",
-          bottom: 0,
+          type: "scroll",
+          orient: "vertical",
+          top: "middle",
+          right: 10,
           data: []
         },
         series: [
@@ -219,7 +233,6 @@ const graph_configs = {
             name: "Category Breakdown",
             type: "pie",
             radius: ["30%", "50%"],
-            avoidLabelOverlap: false,
             label: {
               show: false,
               position: "center"
@@ -229,7 +242,7 @@ const graph_configs = {
                 label: {
                   show: true,
                   formatter: function(data) {
-                    return `${data.name} - ${data.value} (${data.percent}%)`;
+                    return `${data.percent}% (${data.value})`;
                   }
                 },
                 labelLine: {
@@ -253,9 +266,6 @@ const graph_configs = {
                 fontSize: "30",
                 fontWeight: "bold"
               }
-            },
-            labelLine: {
-              show: false
             },
             data: []
           }
@@ -359,6 +369,35 @@ const graph_configs = {
           min: 0,
           max: 100
         },
+        dataZoom: [
+          {
+            show: false,
+            start: 0,
+            end: 100
+          },
+          {
+            type: "inside",
+            show: true,
+            start: 0,
+            end: 100
+          },
+          {
+            fillerColor: "rgba(233, 236, 241, 0.4)",
+            show: true,
+            right: 60,
+            yAxisIndex: 0,
+            width: 20
+          },
+          {
+            type: "slider",
+            fillerColor: "rgba(233, 236, 241, 0.4)",
+            top: 35,
+            height: 20,
+            show: true,
+            start: 0,
+            end: 100
+          }
+        ],
         series: [
           {
             itemStyle: { normal: { color: "#1f76b4" } },
@@ -446,6 +485,35 @@ const graph_configs = {
           nameLocation: "middle",
           type: "value"
         },
+        dataZoom: [
+          {
+            show: false,
+            start: 0,
+            end: 100
+          },
+          {
+            type: "inside",
+            show: true,
+            start: 0,
+            end: 100
+          },
+          {
+            fillerColor: "rgba(233, 236, 241, 0.4)",
+            show: true,
+            right: 60,
+            yAxisIndex: 0,
+            width: 20
+          },
+          {
+            type: "slider",
+            fillerColor: "rgba(233, 236, 241, 0.4)",
+            top: 35,
+            height: 20,
+            show: true,
+            start: 0,
+            end: 100
+          }
+        ],
         series: [
           {
             itemStyle: { normal: { color: "#1f76b4" } },

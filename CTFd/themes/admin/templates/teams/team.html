@@ -20,6 +20,39 @@
 	</div>
 </div>
 
+<div id="team-invite-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Team Invite</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				{% with form = Forms.teams.TeamInviteForm() %}
+				<form method="POST">
+					<div class="form-group">
+						<b>{{ form.link.label }}</b>
+						<div class="input-group mb-3">
+							{{ form.link(id="team-invite-link", class="form-control") }}
+							<div class="input-group-append">
+								<button id="team-invite-link-copy" class="btn btn-outline-secondary" type="button">
+									<i class="fas fa-clipboard"></i>
+								</button>
+							</div>
+						</div>
+						<small class="form-text text-muted">
+							Share this link for users to join this team
+						</small>
+					</div>
+				</form>
+				{% endwith %}
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="team-statistics-modal" class="modal fade">
 	<div class="modal-dialog modal-xl">
 		<div class="modal-content">
@@ -161,6 +194,10 @@
 			<a class="edit-team text-dark">
 				<i class="btn-fa fas fa-pencil-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 				   title="Edit Team"></i>
+			</a>
+			<a class="invite-team text-dark">
+				<i class="btn-fa fas fa-ticket-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				   title="Team Invite Link"></i>
 			</a>
 			<a class="statistics-team text-dark">
 				<i class="btn-fa fas fa-chart-pie fa-2x px-2" data-toggle="tooltip" data-placement="top"

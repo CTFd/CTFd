@@ -4,3 +4,11 @@ class UserNotFoundException(Exception):
 
 class UserTokenExpiredException(Exception):
     pass
+
+
+class TeamTokenExpiredException(Exception):
+    pass
+
+
+class TeamTokenInvalidException(Exception):
+    pass

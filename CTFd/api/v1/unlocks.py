@@ -11,6 +11,7 @@ from CTFd.constants import RawEnum
 from CTFd.models import Unlocks, db, get_class_by_tablename
 from CTFd.schemas.awards import AwardSchema
 from CTFd.schemas.unlocks import UnlockSchema
+from CTFd.utils.config import is_teams_mode
 from CTFd.utils.decorators import (
     admins_only,
     authed_only,
@@ -18,7 +19,7 @@ from CTFd.utils.decorators import (
     require_verified_emails,
 )
 from CTFd.utils.helpers.models import build_model_filters
-from CTFd.utils.user import get_current_user
+from CTFd.utils.user import get_current_team, get_current_user
 
 unlocks_namespace = Namespace("unlocks", description="Endpoint to retrieve Unlocks")
 
@@ -107,7 +108,14 @@ class UnlockList(Resource):
         Model = get_class_by_tablename(req["type"])
         target = Model.query.filter_by(id=req["target"]).first_or_404()
 
-        if target.cost > user.score:
+        # We should use the team's score if in teams mode
+        if is_teams_mode():
+            team = get_current_team()
+            score = team.score
+        else:
+            score = user.score
+
+        if target.cost > score:
             return (
                 {
                     "success": False,
@@ -124,7 +132,13 @@ class UnlockList(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        existing = Unlocks.query.filter_by(**req).first()
+        # Search for an existing unlock that matches the target and type
+        # And matches either the requesting user id or the requesting team id
+        existing = Unlocks.query.filter(
+            Unlocks.target == req["target"],
+            Unlocks.type == req["type"],
+            (Unlocks.user_id == req["user_id"]) | (Unlocks.team_id == req["team_id"]),
+        ).first()
         if existing:
             return (
                 {

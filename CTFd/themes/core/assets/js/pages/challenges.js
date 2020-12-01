@@ -2,10 +2,14 @@ import "./main";
 import "bootstrap/js/dist/tab";
 import { ezQuery, ezAlert } from "../ezq";
 import { htmlEntities } from "../utils";
-import Moment from "moment";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import $ from "jquery";
 import CTFd from "../CTFd";
 import config from "../config";
+import hljs from "highlight.js";
+
+dayjs.extend(relativeTime);
 
 const api_func = {
   teams: x => CTFd.api.get_team_solves({ teamId: x }),
@@ -124,6 +128,12 @@ const displayChal = chal => {
     });
 
     challenge.postRender();
+
+    $("#challenge-window")
+      .find("pre code")
+      .each(function(_idx) {
+        hljs.highlightBlock(this);
+      });
 
     window.location.replace(
       window.location.href.split("#")[0] + `#${chal.name}-${chal.id}`
@@ -256,9 +266,7 @@ function getSolves(id) {
     for (let i = 0; i < data.length; i++) {
       const id = data[i].account_id;
       const name = data[i].name;
-      const date = Moment(data[i].date)
-        .local()
-        .fromNow();
+      const date = dayjs(data[i].date).fromNow();
       const account_url = data[i].account_url;
       box.append(
         '<tr><td><a href="{0}">{2}</td><td>{3}</td></tr>'.format(

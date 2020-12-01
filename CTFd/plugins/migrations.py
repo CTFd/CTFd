@@ -40,8 +40,6 @@ def upgrade(plugin_name=None, revision=None):
     # Check if the plugin has migraitons
     migrations_path = os.path.join(current_app.plugins_dir, plugin_name, "migrations")
     if os.path.isdir(migrations_path) is False:
-        # Create any tables that the plugin may have
-        current_app.db.create_all()
         return
 
     engine = create_engine(database_url, poolclass=pool.NullPool)

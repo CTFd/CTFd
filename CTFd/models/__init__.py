@@ -37,6 +37,13 @@ class Notifications(db.Model):
     user = db.relationship("Users", foreign_keys="Notifications.user_id", lazy="select")
     team = db.relationship("Teams", foreign_keys="Notifications.team_id", lazy="select")
 
+    @property
+    def html(self):
+        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.helpers import markup
+
+        return markup(build_html(self.content))
+
     def __init__(self, *args, **kwargs):
         super(Notifications, self).__init__(**kwargs)
 
@@ -520,6 +527,62 @@ class Teams(db.Model):
         return [
             entry for entry in self.field_entries if entry.field.public and entry.value
         ]
+
+    def get_invite_code(self):
+        from flask import current_app
+        from CTFd.utils.security.signing import serialize, hmac
+
+        secret_key = current_app.config["SECRET_KEY"]
+        if isinstance(secret_key, str):
+            secret_key = secret_key.encode("utf-8")
+
+        team_password_key = self.password.encode("utf-8")
+        verification_secret = secret_key + team_password_key
+
+        invite_object = {
+            "id": self.id,
+            "v": hmac(str(self.id), secret=verification_secret),
+        }
+        code = serialize(data=invite_object, secret=secret_key)
+        return code
+
+    @classmethod
+    def load_invite_code(cls, code):
+        from flask import current_app
+        from CTFd.utils.security.signing import (
+            unserialize,
+            hmac,
+            BadTimeSignature,
+            BadSignature,
+        )
+        from CTFd.exceptions import TeamTokenExpiredException, TeamTokenInvalidException
+
+        secret_key = current_app.config["SECRET_KEY"]
+        if isinstance(secret_key, str):
+            secret_key = secret_key.encode("utf-8")
+
+        # Unserialize the invite code
+        try:
+            # Links expire after 1 day
+            invite_object = unserialize(code, max_age=86400)
+        except BadTimeSignature:
+            raise TeamTokenExpiredException
+        except BadSignature:
+            raise TeamTokenInvalidException
+
+        # Load the team by the ID in the invite
+        team_id = invite_object["id"]
+        team = cls.query.filter_by(id=team_id).first_or_404()
+
+        # Create the team specific secret
+        team_password_key = team.password.encode("utf-8")
+        verification_secret = secret_key + team_password_key
+
+        # Verify the team verficiation code
+        verified = hmac(str(team.id), secret=verification_secret) == invite_object["v"]
+        if verified is False:
+            raise TeamTokenInvalidException
+        return team
 
     def get_solves(self, admin=False):
         from CTFd.utils import get_config

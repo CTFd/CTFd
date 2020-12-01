@@ -2,7 +2,7 @@
 
 	{% set verify_emails = "true" if verify_emails == True else "false" %}
 	{% set name_changes = "true" if name_changes == True else "false" %}
-	{% with form = Forms.config.AccountSettingsForm(verify_emails=verify_emails, name_changes=name_changes) %}
+	{% with form = Forms.config.AccountSettingsForm(verify_emails=verify_emails, name_changes=name_changes, team_disbanding=team_disbanding) %}
 	<form method="POST" autocomplete="off" class="w-100">
 
 		<div class="form-group">
@@ -26,6 +26,14 @@
 			{{ form.team_size(class="form-control", value=team_size) }}
 			<small class="form-text text-muted">
 				{{ form.team_size.description }}
+			</small>
+		</div>
+
+		<div class="form-group">
+			{{ form.team_disbanding.label }}
+			{{ form.team_disbanding(class="form-control", value=team_disbanding) }}
+			<small class="form-text text-muted">
+				{{ form.team_disbanding.description }}
 			</small>
 		</div>
 
