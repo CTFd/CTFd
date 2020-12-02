@@ -16,7 +16,6 @@
 - Imports have been made more stable
   - This is primarily done by killing MySQL processes that are locking metadta
   - This is a subpar approach but it seems to be the only solution to avoid a metadata lock in MySQL. This approach did not appear to be needed under Postgres or SQLite
-- Update some migrations to first check if a table already exists.
 
 **API**
 
