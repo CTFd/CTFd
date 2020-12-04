@@ -185,6 +185,9 @@ def reset_password(data=None):
 @ratelimit(method="POST", limit=10, interval=5)
 def register():
     errors = get_errors()
+    if current_user.authed():
+        return redirect(url_for("challenges.listing"))
+
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         email_address = request.form.get("email", "").strip().lower()
@@ -308,6 +311,11 @@ def register():
                 db.session.commit()
 
                 login_user(user)
+
+                if request.args.get("next") and validators.is_safe_url(
+                    request.args.get("next")
+                ):
+                    return redirect(request.args.get("next"))
 
                 if config.can_send_mail() and get_config(
                     "verify_emails"

@@ -46,6 +46,8 @@
 
 **Plugins**
 
+- The `auth.register` (`/register`) endpoint now accepts a `?next=` parameter to define where to redirect to after registration
+- There is now a `registered_only` decorator to redirect users to `auth.register` (`/register`) instead of `auth.login` (`/login`)
 - Don't run `db.create_all()` as much during plugin upgrade or during imports
   - By avoiding this we can let alembic and migrations do more of the table creation work but this means that plugins specifically opt into `app.db.create_all()` and will not implicitly get it through `upgrade()`.
   - This means plugins that run `upgrade()` without a migrations folder (no idea who would do this really) will need to upgrade their code.
