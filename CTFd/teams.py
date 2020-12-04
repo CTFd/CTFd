@@ -5,7 +5,7 @@ from CTFd.exceptions import TeamTokenExpiredException, TeamTokenInvalidException
 from CTFd.models import TeamFieldEntries, TeamFields, Teams, db
 from CTFd.utils import config, get_config, validators
 from CTFd.utils.crypto import verify_password
-from CTFd.utils.decorators import authed_only, ratelimit
+from CTFd.utils.decorators import authed_only, ratelimit, registered_only
 from CTFd.utils.decorators.modes import require_team_mode
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
@@ -53,7 +53,7 @@ def listing():
 
 
 @teams.route("/teams/invite", methods=["GET", "POST"])
-@authed_only
+@registered_only
 @require_team_mode
 def invite():
     infos = get_infos()

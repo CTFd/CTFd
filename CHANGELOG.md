@@ -16,7 +16,6 @@
 - Imports have been made more stable
   - This is primarily done by killing MySQL processes that are locking metadta
   - This is a subpar approach but it seems to be the only solution to avoid a metadata lock in MySQL. This approach did not appear to be needed under Postgres or SQLite
-- Update some migrations to first check if a table already exists.
 
 **API**
 
@@ -28,6 +27,8 @@
 
 **Themes**
 
+- Add Team Invite icon and Disband Team icon to teams/private.html
+- Add teams/invite.html file to handle team joining with invites
 - Added syntax highlighting to challenge descriptions, pages, hints, notifications, comments, and markdown editors
   - This is done with `highlight.js` which has been added to `package.json`
 - Fix notifications to properly fix/support Markdown and HTML notifications
@@ -41,9 +42,12 @@
 - Fixed issue in `challenge.html` where the max attempts for a challenge would not show if it was set to 1
 - Edit donut charts to have easier to read legends and labels
 - Make data zoom bars thinner and more transparent
+- Add logo, banner, and favicon settings to the setup.html
 
 **Plugins**
 
+- The `auth.register` (`/register`) endpoint now accepts a `?next=` parameter to define where to redirect to after registration
+- There is now a `registered_only` decorator to redirect users to `auth.register` (`/register`) instead of `auth.login` (`/login`)
 - Don't run `db.create_all()` as much during plugin upgrade or during imports
   - By avoiding this we can let alembic and migrations do more of the table creation work but this means that plugins specifically opt into `app.db.create_all()` and will not implicitly get it through `upgrade()`.
   - This means plugins that run `upgrade()` without a migrations folder (no idea who would do this really) will need to upgrade their code.
