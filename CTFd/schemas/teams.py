@@ -33,6 +33,7 @@ class TeamSchema(ma.ModelSchema):
         allow_none=False,
         validate=validate.Email("Emails must be a properly formatted email address"),
     )
+    password = field_for(Teams, "password", required=True, allow_none=False)
     website = field_for(
         Teams,
         "website",

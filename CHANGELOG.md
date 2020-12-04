@@ -63,6 +63,7 @@
 - Examples for regex flags are now provided
 - Wrong submissions has been renamed to Incorrect Submissions
 - Graphs in the Admin Statistics page will now scroll with mouse wheel to improve browsing large datasets
+- Fixed an issue where Users/Teams could be created with a null password
 
 **Deployment**
 
