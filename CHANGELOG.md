@@ -27,6 +27,8 @@
 
 **Themes**
 
+- Add Team Invite icon and Disband Team icon to teams/private.html
+- Add teams/invite.html file to handle team joining with invites
 - Added syntax highlighting to challenge descriptions, pages, hints, notifications, comments, and markdown editors
   - This is done with `highlight.js` which has been added to `package.json`
 - Fix notifications to properly fix/support Markdown and HTML notifications
@@ -40,6 +42,7 @@
 - Fixed issue in `challenge.html` where the max attempts for a challenge would not show if it was set to 1
 - Edit donut charts to have easier to read legends and labels
 - Make data zoom bars thinner and more transparent
+- Add logo, banner, and favicon settings to the setup.html
 
 **Plugins**
 
