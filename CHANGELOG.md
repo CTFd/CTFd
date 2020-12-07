@@ -54,6 +54,7 @@
 - The plugin `upgrade()` function now accepts a `lower` parameter which specifies what lower revision should be used to start from.
   - This is used to support plugin migrations during import so that we can import data directly at the point that the import was taken from
   - `lower="current"` means to use the current revision and `lower=None` would mean to use the absolute base revision (e.g. plugin's first installation)
+  - By default this doesn't change `upgrade()` behavior
 
 **Admin Panel**
 
