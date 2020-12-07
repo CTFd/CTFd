@@ -306,7 +306,7 @@ def import_ctf(backup, erase=True):
     plugins = get_plugin_names()
     for plugin in plugins:
         revision = plugin_current(plugin_name=plugin)
-        plugin_upgrade(plugin_name=plugin, revision=revision)
+        plugin_upgrade(plugin_name=plugin, revision=revision, lower=None)
 
     # Insert data for plugin tables
     insertion(members)
