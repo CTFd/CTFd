@@ -56,7 +56,7 @@ def upgrade(plugin_name=None, revision=None, lower="current"):
     # Choose base revision for plugin upgrade
     # "current" points to the current plugin version stored in config
     # None represents the absolute base layer (e.g. first installation)
-    if lower is "current":
+    if lower == "current":
         lower = get_config(plugin_name + "_alembic_version")
 
     # Do we upgrade to head or to a specific revision
