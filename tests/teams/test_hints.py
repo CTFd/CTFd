@@ -97,3 +97,42 @@ def test_hint_team_unlocking_without_points():
                 == "You do not have enough points to unlock this hint"
             )
     destroy_ctfd(app)
+
+
+def test_teams_dont_prevent_other_teams_from_unlocking_hints():
+    """Unlocks from one user don't affect other users"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        chal = gen_challenge(app.db)
+        gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
+
+        team1 = gen_team(app.db, name="team1", email="team1@ctfd.io")
+        team2 = gen_team(app.db, name="team2", email="team2@ctfd.io")
+
+        # Give users points with an award
+        gen_award(app.db, user_id=team1.captain_id)
+        gen_award(app.db, user_id=team2.captain_id)
+
+        captain1 = team1.captain.name
+        captain2 = team2.captain.name
+
+        app.db.session.commit()
+
+        # First team unlocks hint
+        with login_as_user(app, name=captain1) as client:
+            r = client.get("/api/v1/hints/1")
+            assert r.status_code == 200
+            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            assert r.status_code == 200
+            r = client.get("/api/v1/hints/1")
+            assert r.status_code == 200
+
+        # Second team unlocks hint
+        with login_as_user(app, name=captain2) as client:
+            r = client.get("/api/v1/hints/1")
+            assert r.status_code == 200
+            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            assert r.status_code == 200
+            r = client.get("/api/v1/hints/1")
+            assert r.status_code == 200
+    destroy_ctfd(app)

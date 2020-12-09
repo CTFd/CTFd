@@ -1,3 +1,7 @@
+# 3.2.1 / 2020-12-09
+
+- Fixed an issue where Users could not unlock Hints
+
 # 3.2.0 / 2020-12-07
 
 **General**
