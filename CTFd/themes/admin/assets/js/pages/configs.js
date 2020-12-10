@@ -41,11 +41,7 @@ function loadDateValues(place) {
   const timezone_string = $("#" + place + "-timezone").val();
 
   const utc = convertDateToMoment(month, day, year, hour, minute);
-  if (isNaN(utc.unix())) {
-    $("#" + place).val("");
-    $("#" + place + "-local").val("");
-    $("#" + place + "-zonetime").val("");
-  } else {
+  if (utc.unix() && month && day && year && hour && minute) {
     $("#" + place).val(utc.unix());
     $("#" + place + "-local").val(
       utc.format("dddd, MMMM Do YYYY, h:mm:ss a z (zzz)")
@@ -53,6 +49,10 @@ function loadDateValues(place) {
     $("#" + place + "-zonetime").val(
       utc.tz(timezone_string).format("dddd, MMMM Do YYYY, h:mm:ss a z (zzz)")
     );
+  } else {
+    $("#" + place).val("");
+    $("#" + place + "-local").val("");
+    $("#" + place + "-zonetime").val("");
   }
 }
 
