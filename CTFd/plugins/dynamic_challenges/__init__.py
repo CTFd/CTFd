@@ -66,9 +66,9 @@ class DynamicValueChallenge(BaseChallenge):
         # If the solve count is 0 we shouldn't manipulate the solve count to
         # let the math update back to normal
         # CTFd方式.
-        #if solve_count != 0:
-        #    # We subtract -1 to allow the first solver to get max point value
-        #    solve_count -= 1
+        # if solve_count != 0:
+        #     # We subtract -1 to allow the first solver to get max point value
+        #     solve_count -= 1
 
         # TSG CTF方式.
         # こちらを参考に導入: https://github.com/tsg-ut/CTFd/commit/05dc62e9ed56f4e27d270156e1815bad4869ab93
@@ -78,10 +78,10 @@ class DynamicValueChallenge(BaseChallenge):
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division
         # CTFd方式.
-        #value = (
-        #    ((challenge.minimum - challenge.initial) / (challenge.decay ** 2))
-        #    * (solve_count ** 2)
-        #) + challenge.initial
+        # value = (
+        #     ((challenge.minimum - challenge.initial) / (challenge.decay ** 2))
+        #     * (solve_count ** 2)
+        # ) + challenge.initial
 
         # TSG CTF方式.
         # こちらを参考に導入: https://github.com/tsg-ut/CTFd/commit/4d0d86dbeb8dcae8c52dbeb2c009b3edb0fc9361
