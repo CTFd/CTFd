@@ -29,12 +29,11 @@ greenlet==0.4.17          # via gevent
 gunicorn==20.0.4          # via -r requirements.in
 html5lib==1.0.1           # via -r requirements.in
 idna==2.10                # via requests
-importlib-metadata==2.0.0  # via jsonschema
 itsdangerous==1.1.0       # via -r requirements.in, flask
 jinja2==2.11.2            # via -r requirements.in, flask
 jmespath==0.10.0          # via boto3, botocore
 jsonschema==3.2.0         # via flask-restx
-lxml==4.5.1               # via -r requirements.in
+lxml==4.6.2               # via -r requirements.in
 mako==1.1.3               # via alembic
 markupsafe==1.1.1         # via jinja2, mako, wtforms
 marshmallow-sqlalchemy==0.17.0  # via -r requirements.in
@@ -61,7 +60,6 @@ urllib3==1.25.11          # via botocore, requests
 webencodings==0.5.1       # via html5lib
 werkzeug==1.0.1           # via -r requirements.in, flask, flask-restx
 wtforms==2.3.1            # via -r requirements.in
-zipp==3.4.0               # via importlib-metadata
 zope.event==4.5.0         # via gevent
 zope.interface==5.2.0     # via gevent
 
