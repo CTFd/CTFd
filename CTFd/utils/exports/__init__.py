@@ -15,6 +15,7 @@ from sqlalchemy.sql import sqltypes
 
 from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
+from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import db, get_class_by_tablename
 from CTFd.plugins import get_plugin_names
 from CTFd.plugins.migrations import current as plugin_current
@@ -353,5 +354,5 @@ def import_ctf(backup, erase=True):
     cache.clear()
 
     # Set default theme in case the current instance or the import does not provide it
-    set_config("ctf_theme", "core")
+    set_config("ctf_theme", DEFAULT_THEME)
     set_config("ctf_version", CTFD_VERSION)
