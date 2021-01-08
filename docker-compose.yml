@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   ctfd:
@@ -27,7 +27,7 @@ services:
         internal:
 
   nginx:
-    image: nginx:1.17
+    image: nginx:1.18
     restart: always
     volumes:
       - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
@@ -37,7 +37,7 @@ services:
       - ctfd
 
   db:
-    image: mariadb:10.4.12
+    image: mariadb:10.5
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=ctfd
@@ -52,7 +52,7 @@ services:
     command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
 
   cache:
-    image: redis:4
+    image: redis:6
     restart: always
     volumes:
     - .data/redis:/data
