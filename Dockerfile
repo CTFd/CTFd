@@ -7,10 +7,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         default-mysql-client \
-        python-dev \
+        python3-dev \
         libffi-dev \
         libssl-dev \
-        git\
+        git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
