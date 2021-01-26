@@ -1,7 +1,7 @@
 FROM python:3.7-slim-buster AS cache
 
 COPY . /opt/CTFd
-RUN find /opt/CTFd -name requirements.txt -exec cat {} \; > /opt/requirements.txt
+RUN find /opt/CTFd -not -name "requirements.txt" -type f -delete
 
 FROM python:3.7-slim-buster
 WORKDIR /opt/CTFd
@@ -14,9 +14,16 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=cache /opt/requirements.txt /opt/requirements.txt
+COPY --from=cache /opt/CTFd /opt/CTFd
 
-RUN pip install -r /opt/requirements.txt --no-cache-dir
+RUN pip install -r requirements.txt --no-cache-dir
+
+# hadolint ignore=SC2086
+RUN for d in CTFd/plugins/*; do \
+        if [ -f "$d/requirements.txt" ]; then \
+            pip install -r $d/requirements.txt --no-cache-dir; \
+        fi; \
+    done;
 
 COPY . /opt/CTFd
 
