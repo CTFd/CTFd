@@ -1,4 +1,8 @@
-# 3.2.0 / unreleased
+# 3.2.1 / 2020-12-09
+
+- Fixed an issue where Users could not unlock Hints
+
+# 3.2.0 / 2020-12-07
 
 **General**
 
@@ -51,6 +55,10 @@
 - Don't run `db.create_all()` as much during plugin upgrade or during imports
   - By avoiding this we can let alembic and migrations do more of the table creation work but this means that plugins specifically opt into `app.db.create_all()` and will not implicitly get it through `upgrade()`.
   - This means plugins that run `upgrade()` without a migrations folder (no idea who would do this really) will need to upgrade their code.
+- The plugin `upgrade()` function now accepts a `lower` parameter which specifies what lower revision should be used to start from.
+  - This is used to support plugin migrations during import so that we can import data directly at the point that the import was taken from
+  - `lower="current"` means to use the current revision and `lower=None` would mean to use the absolute base revision (e.g. plugin's first installation)
+  - By default this doesn't change `upgrade()` behavior
 
 **Admin Panel**
 
@@ -63,6 +71,7 @@
 - Examples for regex flags are now provided
 - Wrong submissions has been renamed to Incorrect Submissions
 - Graphs in the Admin Statistics page will now scroll with mouse wheel to improve browsing large datasets
+- Fixed an issue where Users/Teams could be created with a null password
 
 **Deployment**
 

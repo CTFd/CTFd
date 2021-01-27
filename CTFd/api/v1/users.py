@@ -250,6 +250,13 @@ class UserPublic(Resource):
         responses={200: ("Success", "APISimpleSuccessResponse")},
     )
     def delete(self, user_id):
+        # Admins should not be able to delete themselves
+        if user_id == session["id"]:
+            return (
+                {"success": False, "errors": {"id": "You cannot delete yourself"}},
+                400,
+            )
+
         Notifications.query.filter_by(user_id=user_id).delete()
         Awards.query.filter_by(user_id=user_id).delete()
         Unlocks.query.filter_by(user_id=user_id).delete()

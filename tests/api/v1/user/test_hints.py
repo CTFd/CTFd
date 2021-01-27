@@ -116,6 +116,39 @@ def test_api_hint_double_unlock():
     destroy_ctfd(app)
 
 
+def test_users_dont_prevent_other_users_from_unlocking_hints():
+    """Unlocks from one user don't affect other users"""
+    app = create_ctfd()
+    with app.app_context():
+        chal = gen_challenge(app.db)
+        gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
+        register_user(app)
+        register_user(app, name="user2", email="user2@ctfd.io")
+
+        # Give users points with an award
+        gen_award(app.db, user_id=2)
+        gen_award(app.db, user_id=3)
+
+        # First user unlocks hints
+        with login_as_user(app) as client:
+            r = client.get("/api/v1/hints/1")
+            assert r.status_code == 200
+            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            assert r.status_code == 200
+            r = client.get("/api/v1/hints/1")
+            assert r.status_code == 200
+
+        # Second user unlocks hints
+        with login_as_user(app, name="user2") as client:
+            r = client.get("/api/v1/hints/1")
+            assert r.status_code == 200
+            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            assert r.status_code == 200
+            r = client.get("/api/v1/hints/1")
+            assert r.status_code == 200
+    destroy_ctfd(app)
+
+
 def test_api_hints_admin_access():
     """Can the users access /api/v1/hints if not admin"""
     app = create_ctfd()

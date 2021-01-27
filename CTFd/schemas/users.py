@@ -51,7 +51,7 @@ class UserSchema(ma.ModelSchema):
         ],
     )
     country = field_for(Users, "country", validate=[validate_country_code])
-    password = field_for(Users, "password")
+    password = field_for(Users, "password", required=True, allow_none=False)
     fields = Nested(
         UserFieldEntriesSchema, partial=True, many=True, attribute="field_entries"
     )
