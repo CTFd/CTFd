@@ -86,6 +86,17 @@ export default {
         const template = nunjucks.compile(template_data);
         this.selectedType = flagType;
         this.createForm = template.render();
+
+        // TODO: See https://github.com/CTFd/CTFd/issues/1779
+        if (this.createForm.includes("<script")) {
+          setTimeout(() => {
+            $(`<div>` + this.createForm + `</div>`)
+              .find("script")
+              .each(function() {
+                eval($(this).html());
+              });
+          }, 100);
+        }
       });
     },
     loadTypes: function() {
