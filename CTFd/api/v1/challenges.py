@@ -23,6 +23,7 @@ from CTFd.models import (
     db,
 )
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
+from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.flags import FlagSchema
 from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.tags import TagSchema
@@ -223,6 +224,13 @@ class ChallengeList(Resource):
     )
     def post(self):
         data = request.form or request.get_json()
+
+        # Load data through schema for validation but not for insertion
+        schema = ChallengeSchema()
+        response = schema.load(data)
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
         challenge_type = data["type"]
         challenge_class = get_chal_class(challenge_type)
         challenge = challenge_class.create(request)
@@ -427,6 +435,14 @@ class Challenge(Resource):
         },
     )
     def patch(self, challenge_id):
+        data = request.get_json()
+
+        # Load data through schema for validation but not for insertion
+        schema = ChallengeSchema()
+        response = schema.load(data)
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         challenge_class = get_chal_class(challenge.type)
         challenge = challenge_class.update(challenge, request)

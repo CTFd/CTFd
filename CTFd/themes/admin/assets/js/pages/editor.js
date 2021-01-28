@@ -37,7 +37,7 @@ function submit_form() {
     .then(function(response) {
       // Show errors reported by API
       if (response.success === false) {
-        let body = ""
+        let body = "";
         for (k in response.errors) {
           body += response.errors[k].join("\n");
           body += "\n";
@@ -46,7 +46,7 @@ function submit_form() {
         ezAlert({
           title: "Error",
           body: body,
-          button: "OK",
+          button: "OK"
         });
         return;
       }

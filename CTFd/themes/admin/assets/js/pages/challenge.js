@@ -149,6 +149,18 @@ function loadChalTemplate(challenge) {
                 response.data.id
               );
               $("#challenge-create-options").modal();
+            } else {
+              let body = "";
+              for (k in response.errors) {
+                body += response.errors[k].join("\n");
+                body += "\n";
+              }
+
+              ezAlert({
+                title: "Error",
+                body: body,
+                button: "OK"
+              });
             }
           });
       });
@@ -384,6 +396,18 @@ $(() => {
                 ezToast({
                   title: "Success",
                   body: "Your challenge has been updated!"
+                });
+              } else {
+                let body = "";
+                for (k in response.errors) {
+                  body += response.errors[k].join("\n");
+                  body += "\n";
+                }
+
+                ezAlert({
+                  title: "Error",
+                  body: body,
+                  button: "OK"
                 });
               }
             });
