@@ -151,7 +151,7 @@ function loadChalTemplate(challenge) {
               $("#challenge-create-options").modal();
             } else {
               let body = "";
-              for (k in response.errors) {
+              for (const k in response.errors) {
                 body += response.errors[k].join("\n");
                 body += "\n";
               }
@@ -399,7 +399,7 @@ $(() => {
                 });
               } else {
                 let body = "";
-                for (k in response.errors) {
+                for (const k in response.errors) {
                   body += response.errors[k].join("\n");
                   body += "\n";
                 }

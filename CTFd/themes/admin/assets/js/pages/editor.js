@@ -38,7 +38,7 @@ function submit_form() {
       // Show errors reported by API
       if (response.success === false) {
         let body = "";
-        for (k in response.errors) {
+        for (const k in response.errors) {
           body += response.errors[k].join("\n");
           body += "\n";
         }
