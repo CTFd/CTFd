@@ -15,7 +15,11 @@ class PageSchema(ma.ModelSchema):
         Pages,
         "title",
         validate=[
-            validate.Length(min=0, max=128, error="Page could not be saved. Your title is too long.")
+            validate.Length(
+                min=0,
+                max=128,
+                error="Page could not be saved. Your title is too long.",
+            )
         ],
     )
 
@@ -24,8 +28,12 @@ class PageSchema(ma.ModelSchema):
         "route",
         allow_none=True,
         validate=[
-            validate.Length(min=0, max=128, error="Page could not be saved. Your route is too long.")
-        ]
+            validate.Length(
+                min=0,
+                max=128,
+                error="Page could not be saved. Your route is too long.",
+            )
+        ],
     )
 
     content = field_for(
@@ -33,8 +41,12 @@ class PageSchema(ma.ModelSchema):
         "content",
         allow_none=True,
         validate=[
-            validate.Length(min=0, max=65535, error="Page could not be saved. Your content is too long.")
-        ]
+            validate.Length(
+                min=0,
+                max=65535,
+                error="Page could not be saved. Your content is too long.",
+            )
+        ],
     )
 
     @pre_load

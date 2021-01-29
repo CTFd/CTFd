@@ -14,7 +14,11 @@ class ChallengeSchema(ma.ModelSchema):
         Challenges,
         "name",
         validate=[
-            validate.Length(min=0, max=80, error="Challenge could not be saved. Challenge name too long")
+            validate.Length(
+                min=0,
+                max=80,
+                error="Challenge could not be saved. Challenge name too long",
+            )
         ],
     )
 
@@ -22,8 +26,12 @@ class ChallengeSchema(ma.ModelSchema):
         Challenges,
         "category",
         validate=[
-            validate.Length(min=0, max=80, error="Challenge could not be saved. Challenge category too long")
-        ]
+            validate.Length(
+                min=0,
+                max=80,
+                error="Challenge could not be saved. Challenge category too long",
+            )
+        ],
     )
 
     description = field_for(
@@ -31,6 +39,10 @@ class ChallengeSchema(ma.ModelSchema):
         "description",
         allow_none=True,
         validate=[
-            validate.Length(min=0, max=65535, error="Challenge could not be saved. Challenge description too long")
-        ]
+            validate.Length(
+                min=0,
+                max=65535,
+                error="Challenge could not be saved. Challenge description too long",
+            )
+        ],
     )
