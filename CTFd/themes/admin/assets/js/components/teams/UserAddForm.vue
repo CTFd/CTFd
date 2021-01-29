@@ -1,16 +1,66 @@
 <template>
   <div>
-    <div>
-      <input type="text">
+    <div class="form-group">
+      <label>Search Users</label>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search for users"
+        v-model="searchedName"
+        @keyup.down="moveCursor('down')"
+        @keyup.up="moveCursor('up')"
+        @keyup.enter="selectUser()"
+      />
     </div>
-    <div>
-      <input type="text">
+    <div class="form-group">
+      <span
+        class="badge badge-primary mr-1"
+        v-for="user in selectedUsers"
+        :key="user.id"
+      >
+        {{ user.name }}
+        <a class="btn-fa" @click="removeSelectedUser(user.id)"> &#215;</a>
+      </span>
+    </div>
+    <div class="form-group">
+      <div
+        class="text-center"
+        v-if="
+          userResults.length == 0 &&
+            this.searchedName != '' &&
+            awaitingSearch == false
+        "
+      >
+        <span class="text-muted">
+          No users found
+        </span>
+      </div>
+      <ul class="list-group">
+        <li
+          :class="{
+            'list-group-item': true,
+            active: idx === selectedResultIdx
+          }"
+          v-for="(user, idx) in userResults"
+          :key="user.id"
+          @click="selectUser(idx)"
+        >
+          {{ user.name }}
+        </li>
+      </ul>
+    </div>
+    <div class="form-group">
+      <button
+        class="btn btn-success d-inline-block float-right"
+        @click="addUsers()"
+      >
+        Add Users
+      </button>
     </div>
   </div>
 </template>
 
 <script>
-import $ from "jquery";
 import CTFd from "core/CTFd";
 
 export default {
@@ -20,15 +70,107 @@ export default {
   },
   data: function() {
     return {
-      users: [],
+      searchedName: "",
+      awaitingSearch: false,
+      emptyResults: false,
+      userResults: [],
+      selectedResultIdx: 0,
+      selectedUsers: []
     };
   },
   methods: {
     searchUsers: function() {
+      this.selectedResultIdx = 0;
+      if (this.searchedName == "") {
+        this.userResults = [];
+        return;
+      }
 
+      CTFd.fetch(`/api/v1/users?view=admin&field=name&q=${this.searchedName}`, {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(response => {
+          if (response.success) {
+            this.userResults = response.data.slice(0, 10);
+          }
+        });
     },
-    addUsertoTeam: function() {
+    moveCursor: function(dir) {
+      switch (dir) {
+        case "up":
+          if (this.selectedResultIdx) {
+            this.selectedResultIdx -= 1;
+          }
+          break;
+        case "down":
+          if (this.selectedResultIdx < this.userResults.length - 1) {
+            this.selectedResultIdx += 1;
+          }
+          break;
+      }
+    },
+    selectUser: function(idx) {
+      if (idx === undefined) {
+        idx = this.selectedResultIdx;
+      }
+      let user = this.userResults[idx];
 
+      // Avoid duplicates
+      const found = this.selectedUsers.some(
+        searchUser => searchUser.id === user.id
+      );
+      if (found === false) {
+        this.selectedUsers.push(user);
+      }
+
+      this.userResults = [];
+      this.searchedName = "";
+    },
+    removeSelectedUser: function(user_id) {
+      this.selectedUsers = this.selectedUsers.filter(
+        user => user.id !== user_id
+      );
+    },
+    addUsers: function() {
+      console.log(this.$props.team_id);
+      let reqs = [];
+      this.selectedUsers.forEach(user => {
+        let body = { user_id: user.id };
+        reqs.push(
+          CTFd.fetch(`/api/v1/teams/${this.$props.team_id}/members`, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+          })
+        );
+        Promise.all(reqs).then(_resps => {
+          window.location.reload();
+        });
+      });
+    }
+  },
+  watch: {
+    searchedName: function(val) {
+      if (this.awaitingSearch === false) {
+        // 1 second delay after typing
+        setTimeout(() => {
+          this.searchUsers();
+          this.awaitingSearch = false;
+        }, 1000);
+      }
+      this.awaitingSearch = true;
     }
   }
 };
