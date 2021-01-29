@@ -17,7 +17,7 @@ class PageSchema(ma.ModelSchema):
         validate=[
             validate.Length(
                 min=0,
-                max=128,
+                max=80,
                 error="Page could not be saved. Your title is too long.",
             )
         ],
