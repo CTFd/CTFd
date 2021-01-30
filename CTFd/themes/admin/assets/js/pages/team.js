@@ -6,7 +6,7 @@ import { ezAlert, ezQuery, ezBadge } from "core/ezq";
 import { createGraph, updateGraph } from "core/graphs";
 import Vue from "vue/dist/vue.esm.browser";
 import CommentBox from "../components/comments/CommentBox.vue";
-import UserAddForm from "../components/teams/UserAddForm.vue"
+import UserAddForm from "../components/teams/UserAddForm.vue";
 import { copyToClipboard } from "../../../../core/assets/js/utils";
 
 function createTeam(event) {
@@ -399,7 +399,7 @@ $(() => {
     copyToClipboard(e, "#team-invite-link");
   });
 
-  $(".members-team").click(function (_e) {
+  $(".members-team").click(function(_e) {
     $("#team-add-modal").modal("toggle");
   });
 
@@ -482,7 +482,7 @@ $(() => {
 
     ezQuery({
       title: "Remove Member",
-      body: "Are you sure you want to remove {0} from {1}? <br><br><strong>All of their challenges solves, attempts, awards, and unlocked hints will also be deleted!</strong>".format(
+      body: "Are you sure you want to remove {0} from {1}? <br><br><strong>All of their challenge solves, attempts, awards, and unlocked hints will also be deleted!</strong>".format(
         "<strong>" + htmlEntities(member_name) + "</strong>",
         "<strong>" + htmlEntities(window.TEAM_NAME) + "</strong>"
       ),
@@ -556,9 +556,11 @@ $(() => {
   // Insert team member addition form
   const userAddForm = Vue.extend(UserAddForm);
   let memberFormContainer = document.createElement("div");
-  document.querySelector("#team-add-modal .modal-body").appendChild(memberFormContainer);
+  document
+    .querySelector("#team-add-modal .modal-body")
+    .appendChild(memberFormContainer);
   new userAddForm({
-    propsData: {team_id: window.TEAM_ID}
+    propsData: { team_id: window.TEAM_ID }
   }).$mount(memberFormContainer);
 
   let type, id, name, account_id;

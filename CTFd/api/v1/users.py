@@ -132,7 +132,6 @@ class UserList(Resource):
             "data": response.data,
         }
 
-    @users_namespace.doc()
     @admins_only
     @users_namespace.doc(
         description="Endpoint to create a User object",

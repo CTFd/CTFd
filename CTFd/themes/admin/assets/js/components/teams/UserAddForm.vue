@@ -46,6 +46,16 @@
           @click="selectUser(idx)"
         >
           {{ user.name }}
+          <small
+            v-if="user.team_id"
+            :class="{
+              'float-right': true,
+              'text-white': idx === selectedResultIdx,
+              'text-muted': idx !== selectedResultIdx
+            }"
+          >
+            already in a team
+          </small>
         </li>
       </ul>
     </div>
@@ -62,6 +72,8 @@
 
 <script>
 import CTFd from "core/CTFd";
+import { ezQuery } from "core/ezq";
+import { htmlEntities } from "core/utils";
 
 export default {
   name: "UserAddForm",
@@ -139,9 +151,9 @@ export default {
         user => user.id !== user_id
       );
     },
-    addUsers: function() {
-      console.log(this.$props.team_id);
+    handleAddUsersRequest: function() {
       let reqs = [];
+
       this.selectedUsers.forEach(user => {
         let body = { user_id: user.id };
         reqs.push(
@@ -155,10 +167,48 @@ export default {
             body: JSON.stringify(body)
           })
         );
-        Promise.all(reqs).then(_resps => {
+      });
+
+      return Promise.all(reqs);
+    },
+    handleRemoveUsersFromTeams: function() {
+      let reqs = [];
+      this.selectedUsers.forEach(user => {
+        let body = { user_id: user.id };
+        reqs.push(
+          CTFd.fetch(`/api/v1/teams/${user.team_id}/members`, {
+            method: "DELETE",
+            body: JSON.stringify(body)
+          })
+        );
+      });
+      return Promise.all(reqs);
+    },
+    addUsers: function() {
+      let usersInTeams = [];
+      this.selectedUsers.forEach(user => {
+        if (user.team_id) {
+          usersInTeams.push(user.name);
+        }
+      });
+      if (usersInTeams.length) {
+        let users = htmlEntities(usersInTeams.join(", "));
+        ezQuery({
+          title: "Confirm Team Removal",
+          body: `The following users are currently in teams:<br><br> ${users} <br><br>Are you sure you want to remove them from their current teams and add them to this one? <br><br>All of their challenge solves, attempts, awards, and unlocked hints will also be deleted!`,
+          success: () => {
+            this.handleRemoveUsersFromTeams().then(_resps => {
+              this.handleAddUsersRequest().then(_resps => {
+                window.location.reload();
+              });
+            });
+          }
+        });
+      } else {
+        this.handleAddUsersRequest().then(_resps => {
           window.location.reload();
         });
-      });
+      }
     }
   },
   watch: {
