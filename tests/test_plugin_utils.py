@@ -165,14 +165,14 @@ def test_register_user_page_menu_bar():
 
         with app.test_client() as client:
             r = client.get("/")
+            output = r.get_data(as_text=True)
+            assert "/test_user_href" in output
+            assert "test_user_menu_link" in output
 
-        output = r.get_data(as_text=True)
-        assert "/test_user_href" in output
-        assert "test_user_menu_link" in output
-
-        menu_item = get_user_page_menu_bar()[0]
-        assert menu_item.title == "test_user_menu_link"
-        assert menu_item.route == "/test_user_href"
+        with app.test_request_context():
+            menu_item = get_user_page_menu_bar()[0]
+            assert menu_item.title == "test_user_menu_link"
+            assert menu_item.route == "/test_user_href"
     destroy_ctfd(app)
 
 
