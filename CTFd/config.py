@@ -178,6 +178,8 @@ class ServerConfig(object):
 
     TEMPLATES_AUTO_RELOAD: bool = empty_str_cast(config_ini["optional"]["TEMPLATES_AUTO_RELOAD"], default=True)
 
+    THEME_FALLBACK: bool = empty_str_cast(config_ini["optional"]["THEME_FALLBACK"], default=False)
+
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = empty_str_cast(config_ini["optional"]["SQLALCHEMY_TRACK_MODIFICATIONS"], default=False)
 
     SWAGGER_UI: bool = empty_str_cast(config_ini["optional"]["SWAGGER_UI"], default=False)

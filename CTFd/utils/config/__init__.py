@@ -4,7 +4,7 @@ import time
 from flask import current_app as app
 
 from CTFd.constants.themes import DEFAULT_THEME
-from CTFd.utils import get_config
+from CTFd.utils import get_app_config, get_config
 from CTFd.utils.modes import TEAMS_MODE, USERS_MODE
 
 
@@ -34,13 +34,9 @@ def ctf_theme():
     return theme if theme else ""
 
 
-def ctf_theme_fallback():
-    return bool(get_config("ctf_theme_fallback"))
-
-
 def ctf_theme_candidates():
     yield ctf_theme()
-    if ctf_theme_fallback():
+    if bool(get_app_config("THEME_FALLBACK")):
         yield DEFAULT_THEME
 
 
