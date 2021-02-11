@@ -151,7 +151,6 @@ def get_user_page_menu_bar():
             route = p.route
         else:
             route = url_for("views.static_html", route=p.route)
-            print(route)
         pages.append(Menu(title=p.title, route=route))
     return pages
 
