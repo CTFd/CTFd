@@ -16,6 +16,13 @@
 				<p>
 					In order to participate you must either join or create a team.
 				</p>
+				<span>
+					<b>Team Size</b><br>
+					Minimum: 1 member<br>
+					{% if Configs.team_size %}
+					Maximum: {{ Configs.team_size }} member{{ Configs.team_size | pluralize }}<br>
+					{% endif %}
+				</span>
 			</div>
 		</div>
 		{% if integrations.mlc() %}
