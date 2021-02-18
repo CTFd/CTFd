@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 from flask import request
 from jinja2.sandbox import SecurityError
 from werkzeug.test import Client
 
-from CTFd.utils import get_config
+from CTFd.config import TestingConfig
+from CTFd.utils import get_config, set_config
 from tests.helpers import create_ctfd, destroy_ctfd, gen_user, login_as_user
 
 
@@ -142,3 +145,34 @@ def test_that_request_path_hijacking_works_properly():
         with test_app.test_request_context("/challenges"):
             assert request.path == "/challenges"
     destroy_ctfd(app)
+
+
+def test_theme_fallback_config():
+    """Test that the `THEME_FALLBACK` config properly falls themes back to the core theme"""
+    app = create_ctfd()
+    # Make an empty theme
+    try:
+        os.mkdir(os.path.join(app.root_path, "themes", "foo"))
+    except OSError:
+        pass
+
+    # Without theme fallback, missing themes should disappear
+    with app.app_context():
+        set_config("ctf_theme", "foo")
+        assert app.config["THEME_FALLBACK"] == False
+        with app.test_client() as client:
+            r = client.get("/")
+            assert r.status_code == 404
+    destroy_ctfd(app)
+
+    class ThemeFallbackConfig(TestingConfig):
+        THEME_FALLBACK = True
+
+    app = create_ctfd(config=ThemeFallbackConfig)
+    with app.app_context():
+        set_config("ctf_theme", "foo")
+        assert app.config["THEME_FALLBACK"] == True
+    destroy_ctfd(app)
+
+    # Remove empty theme
+    os.rmdir(os.path.join(app.root_path, "themes", "foo"))
