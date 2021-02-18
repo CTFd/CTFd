@@ -8,7 +8,7 @@ from CTFd.utils.modes import get_model
 
 
 @cache.memoize(timeout=60)
-def get_standings(count=None, admin=False, fields=[]):
+def get_standings(count=None, admin=False, fields=[], raw_query=False):
     """
     Get standings as a list of tuples containing account_id, name, and score e.g. [(account_id, team_name, score)].
 
@@ -108,16 +108,22 @@ def get_standings(count=None, admin=False, fields=[]):
     """
     Only select a certain amount of users if asked.
     """
-    if count is None:
-        standings = standings_query.all()
+    if count:
+        standings = standings_query.limit(count)
     else:
-        standings = standings_query.limit(count).all()
+        standings = standings_query
 
-    return standings
+    """
+    Return the raw query if requested
+    """
+    if raw_query:
+        return standings
+
+    return standings.all()
 
 
 @cache.memoize(timeout=60)
-def get_team_standings(count=None, admin=False, fields=[]):
+def get_team_standings(count=None, admin=False, fields=[], raw_query=False):
     scores = (
         db.session.query(
             Solves.team_id.label("team_id"),
@@ -188,16 +194,19 @@ def get_team_standings(count=None, admin=False, fields=[]):
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
         )
 
-    if count is None:
-        standings = standings_query.all()
+    if count:
+        standings = standings_query.limit(count)
     else:
-        standings = standings_query.limit(count).all()
+        standings = standings_query
 
-    return standings
+    if raw_query:
+        return standings
+
+    return standings.all()
 
 
 @cache.memoize(timeout=60)
-def get_user_standings(count=None, admin=False, fields=[]):
+def get_user_standings(count=None, admin=False, fields=[], raw_query=False):
     scores = (
         db.session.query(
             Solves.user_id.label("user_id"),
@@ -267,9 +276,12 @@ def get_user_standings(count=None, admin=False, fields=[]):
             .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
         )
 
-    if count is None:
-        standings = standings_query.all()
+    if count:
+        standings = standings_query.limit(count)
     else:
-        standings = standings_query.limit(count).all()
+        standings = standings_query
 
-    return standings
+    if raw_query:
+        return standings
+
+    return standings.all()
