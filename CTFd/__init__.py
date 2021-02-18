@@ -272,7 +272,7 @@ def create_app(config="CTFd.config.Config"):
         app.register_blueprint(admin)
 
         for code in {403, 404, 500, 502}:
-            app.register_error_handler(404, render_error)
+            app.register_error_handler(code, render_error)
 
         init_logs(app)
         init_events(app)
