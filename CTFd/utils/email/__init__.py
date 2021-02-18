@@ -34,7 +34,8 @@ DEFAULT_PASSWORD_RESET_BODY = (
 DEFAULT_PASSWORD_CHANGE_ALERT_SUBJECT = "Password Change Confirmation for {ctf_name}"
 DEFAULT_PASSWORD_CHANGE_ALERT_BODY = (
     "Your password for {ctf_name} has been changed.\n\n"
-    "If you didn't request a password change you can reset your password here: {url}"
+    "If you didn't request a password change you can reset your password here:\n{url}\n\n"
+    "If the link is not clickable, try copying and pasting it into your browser."
 )
 
 
