@@ -182,9 +182,10 @@ def test_verify_email(mock_smtp):
 
         # This is currently not actually validated
         msg = (
-            "Please click the following link to confirm"
-            " your email address for CTFd:"
-            " http://localhost/confirm/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U"
+            "Welcome to CTFd!\n\n"
+            "Click the following link to confirm and activate your account:\n"
+            "http://localhost/confirm/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U\n\n"
+            "If the link is not clickable, try copying and pasting it into your browser."
         )
 
         ctf_name = get_config("ctf_name")
