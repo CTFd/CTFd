@@ -132,7 +132,7 @@ class ChallengeList(Resource):
                 .order_by(Challenges.value)
                 .all()
             )
-            solve_ids = set([challenge.id for challenge in challenges])
+            solve_ids = {challenge.id for challenge in challenges}
         else:
             challenges = (
                 Challenges.query.filter(
@@ -151,7 +151,7 @@ class ChallengeList(Resource):
                     .order_by(Solves.challenge_id.asc())
                     .all()
                 )
-                solve_ids = set([value for value, in solve_ids])
+                solve_ids = {value for value, in solve_ids}
 
                 # TODO: Convert this into a re-useable decorator
                 if is_admin():
@@ -305,7 +305,7 @@ class Challenge(Resource):
                 else:
                     # We need to handle the case where a user is viewing challenges anonymously
                     solve_ids = []
-                solve_ids = set([value for value, in solve_ids])
+                solve_ids = {value for value, in solve_ids}
                 prereqs = set(requirements)
                 if solve_ids >= prereqs or is_admin():
                     pass
@@ -345,14 +345,12 @@ class Challenge(Resource):
                 if config.is_teams_mode() and team is None:
                     abort(403)
 
-            unlocked_hints = set(
-                [
-                    u.target
-                    for u in HintUnlocks.query.filter_by(
-                        type="hints", account_id=user.account_id
-                    )
-                ]
-            )
+            unlocked_hints = {
+                u.target
+                for u in HintUnlocks.query.filter_by(
+                    type="hints", account_id=user.account_id
+                )
+            }
             files = []
             for f in chal.files:
                 token = {
@@ -532,7 +530,7 @@ class ChallengeAttempt(Resource):
                 .order_by(Solves.challenge_id.asc())
                 .all()
             )
-            solve_ids = set([solve_id for solve_id, in solve_ids])
+            solve_ids = {solve_id for solve_id, in solve_ids}
             prereqs = set(requirements)
             if solve_ids >= prereqs:
                 pass

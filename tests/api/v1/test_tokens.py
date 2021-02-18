@@ -49,13 +49,13 @@ def test_api_tag_list_get():
             r = client.get("/api/v1/tokens", json="")
             assert r.status_code == 200
             resp = r.get_json()
-            len(resp["data"]) == 1
+            assert len(resp["data"]) == 1
 
         with login_as_user(app, name="user2") as client:
             r = client.get("/api/v1/tokens", json="")
             assert r.status_code == 200
             resp = r.get_json()
-            len(resp["data"]) == 2
+            assert len(resp["data"]) == 2
     destroy_ctfd(app)
 
 
