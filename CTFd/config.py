@@ -55,7 +55,7 @@ def gen_secret_key():
     try:
         with open(".ctfd_secret_key", "rb") as secret:
             key = secret.read()
-    except (OSError, IOError):
+    except OSError:
         key = None
 
     if not key:
@@ -66,7 +66,7 @@ def gen_secret_key():
             with open(".ctfd_secret_key", "wb") as secret:
                 secret.write(key)
                 secret.flush()
-        except (OSError, IOError):
+        except OSError:
             pass
     return key
 

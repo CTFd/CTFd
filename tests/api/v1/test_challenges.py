@@ -439,7 +439,7 @@ def test_api_challenge_attempt_post_private():
         challenge_id = gen_challenge(app.db).id
         gen_flag(app.db, challenge_id)
         with login_as_user(app) as client:
-            for i in range(10):
+            for _ in range(10):
                 gen_fail(app.db, user_id=2, challenge_id=challenge_id)
             r = client.post(
                 "/api/v1/challenges/attempt",
@@ -480,7 +480,7 @@ def test_api_challenge_attempt_post_private():
         challenge_id = gen_challenge(app.db).id
         gen_flag(app.db, challenge_id)
         with login_as_user(app) as client:
-            for i in range(10):
+            for _ in range(10):
                 gen_fail(app.db, user_id=2, team_id=team_id, challenge_id=challenge_id)
             r = client.post(
                 "/api/v1/challenges/attempt",

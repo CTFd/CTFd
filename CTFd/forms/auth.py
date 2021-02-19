@@ -32,7 +32,7 @@ class LoginForm(BaseForm):
 
 
 class ConfirmForm(BaseForm):
-    submit = SubmitField("Resend")
+    submit = SubmitField("Resend Confirmation Email")
 
 
 class ResetPasswordRequestForm(BaseForm):

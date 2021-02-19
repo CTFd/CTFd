@@ -308,7 +308,7 @@ def test_api_user_patch_admin():
                 },
             )
             assert r.status_code == 200
-            user_data = r.get_json()["data"][0]
+            user_data = r.get_json()["data"]
             assert user_data["country"] == "US"
             assert user_data["verified"] is True
     destroy_ctfd(app)

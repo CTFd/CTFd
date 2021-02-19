@@ -61,7 +61,7 @@ def statistics():
     )
 
     solve_data = {}
-    for chal, count, name in solves:
+    for _chal, count, name in solves:
         solve_data[name] = count
 
     most_solved = None

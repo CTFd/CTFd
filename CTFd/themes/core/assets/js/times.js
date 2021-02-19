@@ -6,7 +6,9 @@ dayjs.extend(advancedFormat);
 
 export default () => {
   $("[data-time]").each((i, elem) => {
-    let time = $(elem).data("time");
-    elem.innerText = dayjs(time).format("MMMM Do, h:mm:ss A");
+    let $elem = $(elem);
+    let time = $elem.data("time");
+    let format = $elem.data("time-format") || "MMMM Do, h:mm:ss A";
+    elem.innerText = dayjs(time).format(format);
   });
 };
