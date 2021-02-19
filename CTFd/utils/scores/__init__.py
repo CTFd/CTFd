@@ -251,6 +251,7 @@ def get_user_standings(count=None, admin=False, fields=None):
                 Users.id.label("user_id"),
                 Users.oauth_id.label("oauth_id"),
                 Users.name.label("name"),
+                Users.team_id.label("team_id"),
                 Users.hidden,
                 Users.banned,
                 sumscores.columns.score,
