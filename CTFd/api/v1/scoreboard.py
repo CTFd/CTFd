@@ -4,7 +4,7 @@ from flask_restx import Namespace, Resource
 from sqlalchemy import select
 
 from CTFd.cache import cache, make_cache_key
-from CTFd.models import db, Awards, Solves, Users
+from CTFd.models import Awards, Solves, Users, db
 from CTFd.utils import get_config
 from CTFd.utils.dates import isoformat, unix_time_to_utc
 from CTFd.utils.decorators.visibility import (
