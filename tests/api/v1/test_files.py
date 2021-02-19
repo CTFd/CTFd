@@ -68,9 +68,10 @@ def test_api_files_post_admin():
             r = client.post(
                 "/api/v1/files",
                 content_type="multipart/form-data",
-                data=dict(
-                    file=(BytesIO(b"test file content"), "test.txt"), nonce=nonce
-                ),
+                data={
+                    "file": (BytesIO(b"test file content"), "test.txt"),
+                    "nonce": nonce,
+                },
             )
             assert r.status_code == 200
             f = Files.query.filter_by(id=1).first()

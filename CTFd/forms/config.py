@@ -33,8 +33,15 @@ class AccountSettingsForm(BaseForm):
         "Account Email Whitelist",
         description="Comma-seperated email domains which users can register under (e.g. ctfd.io, gmail.com, yahoo.com)",
     )
+    team_creation = SelectField(
+        "Team Creation",
+        description="Control whether users can create their own teams (Teams mode only)",
+        choices=[("true", "Enabled"), ("false", "Disabled")],
+        default="true",
+    )
     team_size = IntegerField(
-        widget=NumberInput(min=0), description="Amount of users per team"
+        widget=NumberInput(min=0),
+        description="Amount of users per team (Teams mode only)",
     )
     verify_emails = SelectField(
         "Verify Emails",

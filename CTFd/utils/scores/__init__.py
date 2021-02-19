@@ -8,7 +8,7 @@ from CTFd.utils.modes import get_model
 
 
 @cache.memoize(timeout=60)
-def get_standings(count=None, admin=False, fields=[]):
+def get_standings(count=None, admin=False, fields=None):
     """
     Get standings as a list of tuples containing account_id, name, and score e.g. [(account_id, team_name, score)].
 
@@ -17,6 +17,8 @@ def get_standings(count=None, admin=False, fields=[]):
 
     Challenges & Awards with a value of zero are filtered out of the calculations to avoid incorrect tie breaks.
     """
+    if fields is None:
+        fields = []
     Model = get_model()
 
     scores = (
@@ -117,7 +119,9 @@ def get_standings(count=None, admin=False, fields=[]):
 
 
 @cache.memoize(timeout=60)
-def get_team_standings(count=None, admin=False, fields=[]):
+def get_team_standings(count=None, admin=False, fields=None):
+    if fields is None:
+        fields = []
     scores = (
         db.session.query(
             Solves.team_id.label("team_id"),
@@ -197,7 +201,9 @@ def get_team_standings(count=None, admin=False, fields=[]):
 
 
 @cache.memoize(timeout=60)
-def get_user_standings(count=None, admin=False, fields=[]):
+def get_user_standings(count=None, admin=False, fields=None):
+    if fields is None:
+        fields = []
     scores = (
         db.session.query(
             Solves.user_id.label("user_id"),

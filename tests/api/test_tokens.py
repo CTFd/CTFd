@@ -11,7 +11,7 @@ def test_generate_user_token():
     with app.app_context():
         user = gen_user(app.db)
         token = generate_user_token(user, expiration=None)
-        token.user_id == user.id
+        assert token.user_id == user.id
         assert token.expiration > datetime.datetime.utcnow()
         assert Tokens.query.count() == 1
     destroy_ctfd(app)

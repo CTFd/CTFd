@@ -68,7 +68,7 @@ def export_ctf():
     upload_folder = os.path.join(
         os.path.normpath(app.root_path), app.config.get("UPLOAD_FOLDER")
     )
-    for root, dirs, files in os.walk(upload_folder):
+    for root, _dirs, files in os.walk(upload_folder):
         for file in files:
             parent_dir = os.path.basename(root)
             backup_zip.write(

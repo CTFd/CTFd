@@ -164,7 +164,7 @@ def config():
     clear_config()
 
     configs = Configs.query.all()
-    configs = dict([(c.key, get_config(c.key)) for c in configs])
+    configs = {c.key: get_config(c.key) for c in configs}
 
     themes = ctf_config.get_themes()
     themes.remove(get_config("ctf_theme"))

@@ -14,11 +14,11 @@ def test_ratelimit_on_auth():
                     "password": "wrong_password",
                     "nonce": sess.get("nonce"),
                 }
-            for x in range(10):
+            for _ in range(10):
                 r = client.post("/login", data=data)
                 assert r.status_code == 200
 
-            for x in range(5):
+            for _ in range(5):
                 r = client.post("/login", data=data)
                 assert r.status_code == 429
     destroy_ctfd(app)

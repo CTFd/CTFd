@@ -6,11 +6,13 @@ from sqlalchemy.orm.properties import ColumnProperty
 
 
 def sqlalchemy_to_pydantic(
-    db_model: Type, *, exclude: Container[str] = []
+    db_model: Type, *, exclude: Container[str] = None
 ) -> Type[BaseModel]:
     """
     Mostly copied from https://github.com/tiangolo/pydantic-sqlalchemy
     """
+    if exclude is None:
+        exclude = []
     mapper = inspect(db_model)
     fields = {}
     for attr in mapper.attrs:
