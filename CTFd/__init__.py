@@ -258,7 +258,7 @@ def create_app(config="CTFd.config.Config"):
         from CTFd.admin import admin
         from CTFd.api import api
         from CTFd.events import events
-        from CTFd.errors import page_not_found, forbidden, general_error, gateway_error
+        from CTFd.errors import render_error
 
         app.register_blueprint(views)
         app.register_blueprint(teams)
@@ -271,10 +271,8 @@ def create_app(config="CTFd.config.Config"):
 
         app.register_blueprint(admin)
 
-        app.register_error_handler(404, page_not_found)
-        app.register_error_handler(403, forbidden)
-        app.register_error_handler(500, general_error)
-        app.register_error_handler(502, gateway_error)
+        for code in {403, 404, 500, 502}:
+            app.register_error_handler(code, render_error)
 
         init_logs(app)
         init_events(app)
