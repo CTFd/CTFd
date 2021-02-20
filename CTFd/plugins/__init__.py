@@ -4,7 +4,7 @@ import os
 from collections import namedtuple
 
 from flask import current_app as app
-from flask import send_file, send_from_directory
+from flask import send_file, send_from_directory, url_for
 
 from CTFd.utils.config.pages import get_pages
 from CTFd.utils.decorators import admins_only as admins_only_wrapper
@@ -145,7 +145,14 @@ def get_user_page_menu_bar():
 
     :return: Returns a list of Menu namedtuples. They have name, and route attributes.
     """
-    return get_pages() + app.plugin_menu_bar
+    pages = []
+    for p in get_pages() + app.plugin_menu_bar:
+        if p.route.startswith("http"):
+            route = p.route
+        else:
+            route = url_for("views.static_html", route=p.route)
+        pages.append(Menu(title=p.title, route=route))
+    return pages
 
 
 def bypass_csrf_protection(f):

@@ -35,7 +35,7 @@ class JSONSerializer(object):
         return result
 
     def close(self):
-        for path, result in self.buckets.items():
+        for _path, result in self.buckets.items():
             result = self.wrap(result)
 
             # Certain databases (MariaDB) store JSON as LONGTEXT.

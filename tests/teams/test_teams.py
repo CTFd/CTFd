@@ -179,3 +179,31 @@ def test_team_size_limit():
             resp = r.get_data(as_text=True)
             assert len(Teams.query.filter_by(id=team_id).first().members) == 2
     destroy_ctfd(app)
+
+
+def test_team_creation_disable():
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        with login_as_user(app) as client:
+            # Team creation page should be available
+            r = client.get("/teams/new")
+            assert r.status_code == 200
+
+            # Disable team creation in config
+            set_config("team_creation", False)
+
+            # Can't access the public team creation page
+            r = client.get("/teams/new")
+            assert r.status_code == 403
+
+            # User should be blocked from creating teams as well
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "team_name",
+                    "password": "password",
+                    "nonce": sess.get("nonce"),
+                }
+            r = client.post("/teams/new", data=data)
+            assert r.status_code == 403
+    destroy_ctfd(app)

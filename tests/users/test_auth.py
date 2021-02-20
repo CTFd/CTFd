@@ -303,7 +303,7 @@ def test_user_can_confirm_email(mock_smtp):
         client = login_as_user(app, name="user1", password="password")
 
         r = client.get("http://localhost/confirm")
-        assert "Need to resend the confirmation email?" in r.get_data(as_text=True)
+        assert "We've sent a confirmation email" in r.get_data(as_text=True)
 
         # smtp send message function was called
         mock_smtp.return_value.send_message.assert_called()
@@ -365,9 +365,10 @@ def test_user_can_reset_password(mock_smtp):
 
             # Build the email
             msg = (
-                "Did you initiate a password reset? If you didn't initiate this request you can ignore this email. "
+                "Did you initiate a password reset on CTFd? If you didn't initiate this request you can ignore this email. "
                 "\n\nClick the following link to reset your password:\n"
-                "http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U"
+                "http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U\n\n"
+                "If the link is not clickable, try copying and pasting it into your browser."
             )
             ctf_name = get_config("ctf_name")
 

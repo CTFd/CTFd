@@ -152,7 +152,7 @@ class ScoreboardDetail(Resource):
                 solves_mapper[team_id], key=lambda k: k["date"]
             )
 
-        for i, team in enumerate(team_ids):
+        for i, _team in enumerate(team_ids):
             response[i + 1] = {
                 "id": standings[i].account_id,
                 "name": standings[i].name,

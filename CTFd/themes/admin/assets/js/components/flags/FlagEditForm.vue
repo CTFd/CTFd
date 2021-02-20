@@ -74,7 +74,7 @@ export default {
             this.editForm = template.render(this.flag);
 
             // TODO: See https://github.com/CTFd/CTFd/issues/1779
-            if (this.createForm.includes("<script")) {
+            if (this.editForm.includes("<script")) {
               setTimeout(() => {
                 $(`<div>` + this.editForm + `</div>`)
                   .find("script")

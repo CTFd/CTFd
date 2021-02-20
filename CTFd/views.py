@@ -14,6 +14,7 @@ from CTFd.constants.config import (
     RegistrationVisibilityTypes,
     ScoreVisibilityTypes,
 )
+from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import (
     Admins,
     Files,
@@ -85,7 +86,7 @@ def setup():
                 f = upload_file(file=ctf_small_icon)
                 set_config("ctf_small_icon", f.location)
 
-            theme = request.form.get("ctf_theme", "core")
+            theme = request.form.get("ctf_theme", DEFAULT_THEME)
             set_config("ctf_theme", theme)
             theme_color = request.form.get("theme_color")
             theme_header = get_config("theme_header")
@@ -449,8 +450,12 @@ def themes(theme, path):
     :param path:
     :return:
     """
-    filename = safe_join(app.root_path, "themes", theme, "static", path)
-    if os.path.isfile(filename):
-        return send_file(filename)
-    else:
-        abort(404)
+    for cand_path in (
+        safe_join(app.root_path, "themes", cand_theme, "static", path)
+        # The `theme` value passed in may not be the configured one, e.g. for
+        # admin pages, so we check that first
+        for cand_theme in (theme, *config.ctf_theme_candidates())
+    ):
+        if os.path.isfile(cand_path):
+            return send_file(cand_path)
+    abort(404)
