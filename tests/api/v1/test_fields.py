@@ -163,7 +163,7 @@ def test_api_self_fields_permissions():
             with client.session_transaction() as sess:
                 data = {
                     "name": "user",
-                    "email": "user@ctfd.io",
+                    "email": "user@examplectf.com",
                     "password": "password",
                     "nonce": sess.get("nonce"),
                     "fields[1]": "CustomValue1",

@@ -14,16 +14,16 @@ def test_admin_user_ip_search():
     """Can an admin search user IPs"""
     app = create_ctfd()
     with app.app_context():
-        u1 = gen_user(app.db, name="user1", email="user1@ctfd.io")
+        u1 = gen_user(app.db, name="user1", email="user1@examplectf.com")
         gen_tracking(app.db, user_id=u1.id, ip="1.1.1.1")
 
-        u2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
+        u2 = gen_user(app.db, name="user2", email="user2@examplectf.com")
         gen_tracking(app.db, user_id=u2.id, ip="2.2.2.2")
 
-        u3 = gen_user(app.db, name="user3", email="user3@ctfd.io")
+        u3 = gen_user(app.db, name="user3", email="user3@examplectf.com")
         gen_tracking(app.db, user_id=u3.id, ip="3.3.3.3")
 
-        u4 = gen_user(app.db, name="user4", email="user4@ctfd.io")
+        u4 = gen_user(app.db, name="user4", email="user4@examplectf.com")
         gen_tracking(app.db, user_id=u4.id, ip="3.3.3.3")
         gen_tracking(app.db, user_id=u4.id, ip="4.4.4.4")
 

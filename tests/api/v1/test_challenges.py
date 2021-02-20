@@ -99,7 +99,7 @@ def test_api_challenges_get_verified_emails():
         gen_user(
             app.db,
             name="user_name",
-            email="verified_user@ctfd.io",
+            email="verified_user@examplectf.com",
             password="password",
             verified=True,
         )
@@ -294,7 +294,7 @@ def test_api_challenge_get_verified_emails():
         gen_user(
             app.db,
             name="user_name",
-            email="verified_user@ctfd.io",
+            email="verified_user@examplectf.com",
             password="password",
             verified=True,
         )
@@ -558,8 +558,8 @@ def test_api_challenge_get_solves_ctf_frozen():
     """Test users can only see challenge solves that happened before freeze time"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user1", email="user1@examplectf.com")
+        register_user(app, name="user2", email="user2@examplectf.com")
 
         # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
         set_config("freeze", "1507262400")
@@ -657,7 +657,7 @@ def test_api_challenge_get_solves_verified_emails():
         gen_user(
             app.db,
             name="user_name",
-            email="verified_user@ctfd.io",
+            email="verified_user@examplectf.com",
             password="password",
             verified=True,
         )

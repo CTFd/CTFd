@@ -36,7 +36,7 @@ def test_accessing_hidden_teams():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         register_user(app)
-        register_user(app, name="visible_user", email="visible_user@ctfd.io")
+        register_user(app, name="visible_user", email="visible_user@examplectf.com")
         with login_as_user(app, name="visible_user") as client:
             user = Users.query.filter_by(id=2).first()
             team = gen_team(app.db, name="visible_team", hidden=True)

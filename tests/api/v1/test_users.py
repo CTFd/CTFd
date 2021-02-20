@@ -144,7 +144,11 @@ def test_api_users_post_admin_duplicate_information():
             # Duplicate email
             r = client.post(
                 "/api/v1/users",
-                json={"name": "user2", "email": "user@ctfd.io", "password": "password"},
+                json={
+                    "name": "user2",
+                    "email": "user@examplectf.com",
+                    "password": "password",
+                },
             )
             resp = r.get_json()
             assert r.status_code == 400
@@ -155,7 +159,11 @@ def test_api_users_post_admin_duplicate_information():
             # Duplicate user
             r = client.post(
                 "/api/v1/users",
-                json={"name": "user", "email": "user2@ctfd.io", "password": "password"},
+                json={
+                    "name": "user",
+                    "email": "user2@examplectf.com",
+                    "password": "password",
+                },
             )
             resp = r.get_json()
             assert r.status_code == 400
@@ -169,13 +177,21 @@ def test_api_users_patch_admin_duplicate_information():
     """Can an admin modify a user with duplicate information"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        register_user(
+            app, name="user1", email="user1@examplectf.com", password="password"
+        )
+        register_user(
+            app, name="user2", email="user2@examplectf.com", password="password"
+        )
         with login_as_user(app, "admin") as client:
             # Duplicate name
             r = client.patch(
                 "/api/v1/users/1",
-                json={"name": "user2", "email": "user@ctfd.io", "password": "password"},
+                json={
+                    "name": "user2",
+                    "email": "user@examplectf.com",
+                    "password": "password",
+                },
             )
             resp = r.get_json()
             assert r.status_code == 400
@@ -185,7 +201,11 @@ def test_api_users_patch_admin_duplicate_information():
             # Duplicate email
             r = client.patch(
                 "/api/v1/users/1",
-                json={"name": "user", "email": "user2@ctfd.io", "password": "password"},
+                json={
+                    "name": "user",
+                    "email": "user2@examplectf.com",
+                    "password": "password",
+                },
             )
             resp = r.get_json()
             assert r.status_code == 400
@@ -199,13 +219,21 @@ def test_api_users_patch_duplicate_information():
     """Can a user modify their information to another user's"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        register_user(
+            app, name="user1", email="user1@examplectf.com", password="password"
+        )
+        register_user(
+            app, name="user2", email="user2@examplectf.com", password="password"
+        )
         with login_as_user(app, "user1") as client:
             # Duplicate email
             r = client.patch(
                 "/api/v1/users/me",
-                json={"name": "user1", "email": "user2@ctfd.io", "confirm": "password"},
+                json={
+                    "name": "user1",
+                    "email": "user2@examplectf.com",
+                    "confirm": "password",
+                },
             )
             resp = r.get_json()
             assert r.status_code == 400
@@ -215,7 +243,11 @@ def test_api_users_patch_duplicate_information():
             # Duplicate user
             r = client.patch(
                 "/api/v1/users/me",
-                json={"name": "user2", "email": "user1@ctfd.io", "confirm": "password"},
+                json={
+                    "name": "user2",
+                    "email": "user1@examplectf.com",
+                    "confirm": "password",
+                },
             )
             resp = r.get_json()
             assert r.status_code == 400
@@ -301,7 +333,7 @@ def test_api_user_patch_admin():
                 "/api/v1/users/2",
                 json={
                     "name": "user",
-                    "email": "user@ctfd.io",
+                    "email": "user@examplectf.com",
                     "password": "password",
                     "country": "US",
                     "verified": True,
@@ -381,7 +413,7 @@ def test_api_user_patch_me_logged_in():
                 "/api/v1/users/me",
                 json={
                     "name": "user",
-                    "email": "user@ctfd.io",
+                    "email": "user@examplectf.com",
                     "password": "password",
                     "confirm": "password",
                     "country": "US",
@@ -401,7 +433,7 @@ def test_api_admin_user_patch_me_logged_in():
                 "/api/v1/users/me",
                 json={
                     "name": "user",
-                    "email": "user@ctfd.io",
+                    "email": "user@examplectf.com",
                     "password": "password",
                     "confirm": "password",
                     "country": "US",
@@ -412,7 +444,7 @@ def test_api_admin_user_patch_me_logged_in():
 
             user = Users.query.filter_by(id=1).first()
             assert user.name == "user"
-            assert user.email == "user@ctfd.io"
+            assert user.email == "user@examplectf.com"
     destroy_ctfd(app)
 
 
@@ -571,8 +603,8 @@ def test_api_user_get_solves_after_freze_time():
     """Can a user get /api/v1/users/<user_id>/solves after freeze time"""
     app = create_ctfd(user_mode="users")
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user1", email="user1@examplectf.com")
+        register_user(app, name="user2", email="user2@examplectf.com")
 
         # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
         set_config("freeze", "1507262400")
@@ -646,8 +678,8 @@ def test_api_user_get_fails_after_freze_time():
     """Can a user get /api/v1/users/<user_id>/fails after freeze time"""
     app = create_ctfd(user_mode="users")
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user1", email="user1@examplectf.com")
+        register_user(app, name="user2", email="user2@examplectf.com")
 
         # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
         set_config("freeze", "1507262400")
@@ -718,8 +750,8 @@ def test_api_user_get_awards_after_freze_time():
     """Can a user get /api/v1/users/<user_id>/awards after freeze time"""
     app = create_ctfd(user_mode="users")
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user1", email="user1@examplectf.com")
+        register_user(app, name="user2", email="user2@examplectf.com")
 
         # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
         set_config("freeze", "1507262400")
@@ -757,8 +789,10 @@ def test_api_accessing_hidden_users():
     """Hidden users should not be visible to normal users, only to admins"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="visible_user", email="visible_user@ctfd.io")
-        register_user(app, name="hidden_user", email="hidden_user@ctfd.io")  # ID 3
+        register_user(app, name="visible_user", email="visible_user@examplectf.com")
+        register_user(
+            app, name="hidden_user", email="hidden_user@examplectf.com"
+        )  # ID 3
         user = Users.query.filter_by(name="hidden_user").first()
         user.hidden = True
         app.db.session.commit()
@@ -788,8 +822,10 @@ def test_api_accessing_banned_users():
     """Banned users should not be visible to normal users, only to admins"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="visible_user", email="visible_user@ctfd.io")
-        register_user(app, name="banned_user", email="banned_user@ctfd.io")  # ID 3
+        register_user(app, name="visible_user", email="visible_user@examplectf.com")
+        register_user(
+            app, name="banned_user", email="banned_user@examplectf.com"
+        )  # ID 3
         user = Users.query.filter_by(name="banned_user").first()
         user.banned = True
         app.db.session.commit()
@@ -866,8 +902,8 @@ def test_api_user_get_schema():
     """Can a user get /api/v1/users/<user_id> doesn't return unnecessary data"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")  # ID 2
-        register_user(app, name="user2", email="user2@ctfd.io")  # ID 3
+        register_user(app, name="user1", email="user1@examplectf.com")  # ID 2
+        register_user(app, name="user2", email="user2@examplectf.com")  # ID 3
 
         with app.test_client() as client:
             r = client.get("/api/v1/users/3")

@@ -12,14 +12,14 @@ from tests.helpers import (
 
 
 def setup_app(app):
-    user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")
-    team1 = gen_team(app.db, name="team1", email="team1@ctfd.io")
+    user1 = gen_user(app.db, name="user1", email="user1@examplectf.com")
+    team1 = gen_team(app.db, name="team1", email="team1@examplectf.com")
     user1.team_id = team1.id
     team1.members.append(user1)
     team1.hidden = True
 
-    user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
-    team2 = gen_team(app.db, name="team2", email="team2@ctfd.io")
+    user2 = gen_user(app.db, name="user2", email="user2@examplectf.com")
+    team2 = gen_team(app.db, name="team2", email="team2@examplectf.com")
     user2.team_id = team2.id
     team2.members.append(user2)
 

@@ -30,7 +30,9 @@ def test_base64encode():
         base64encode('"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4')
         == "InRlc3RAbWFpbGluYXRvci5jb20iLkRHeGVvQS5sQ3NzVTNNMlF1QmZvaE8tRnRkZ0RRTEtiVTQ"
     )
-    assert base64encode("user+user@ctfd.io") == "dXNlcit1c2VyQGN0ZmQuaW8"
+    assert (
+        base64encode("user+user@examplectf.com") == "dXNlcit1c2VyQGV4YW1wbGVjdGYuY29t"
+    )
     assert base64encode("😆") == "8J-Yhg"
 
 
@@ -43,5 +45,7 @@ def test_base64decode():
         )
         == '"test@mailinator.com".DGxeoA.lCssU3M2QuBfohO-FtdgDQLKbU4'
     )
-    assert base64decode("dXNlcit1c2VyQGN0ZmQuaW8") == "user+user@ctfd.io"
+    assert (
+        base64decode("dXNlcit1c2VyQGV4YW1wbGVjdGYuY29t") == "user+user@examplectf.com"
+    )
     assert base64decode("8J-Yhg") == "😆"

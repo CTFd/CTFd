@@ -123,7 +123,7 @@ def test_users_dont_prevent_other_users_from_unlocking_hints():
         chal = gen_challenge(app.db)
         gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
         register_user(app)
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user2", email="user2@examplectf.com")
 
         # Give users points with an award
         gen_award(app.db, user_id=2)

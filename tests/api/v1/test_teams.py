@@ -134,10 +134,10 @@ def test_api_teams_post_admin_duplicate():
             r = client.post(
                 "/api/v1/teams",
                 json={
-                    "website": "https://ctfd.io",
+                    "website": "https://examplectf.com",
                     "name": "team1",
                     "country": "TW",
-                    "email": "team1@ctfd.io",
+                    "email": "team1@examplectf.com",
                     "affiliation": "team",
                     "password": "password",
                 },
@@ -152,10 +152,10 @@ def test_api_teams_post_admin_duplicate():
             r = client.post(
                 "/api/v1/teams",
                 json={
-                    "website": "https://ctfd.io",
+                    "website": "https://examplectf.com",
                     "name": "new_team",
                     "country": "TW",
-                    "email": "team@ctfd.io",
+                    "email": "team@examplectf.com",
                     "affiliation": "team",
                     "password": "password",
                 },
@@ -244,7 +244,7 @@ def test_api_team_patch_admin():
                 "/api/v1/teams/1",
                 json={
                     "name": "team_name",
-                    "email": "team@ctfd.io",
+                    "email": "team@examplectf.com",
                     "password": "password",
                     "affiliation": "changed",
                 },
@@ -328,8 +328,8 @@ def test_api_team_patch_me_logged_in_user():
     """Can a user patch /api/v1/teams/me if logged in as a regular user"""
     app = create_ctfd(user_mode="teams")
     with app.app_context():
-        user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
+        user1 = gen_user(app.db, name="user1", email="user1@examplectf.com")
+        user2 = gen_user(app.db, name="user2", email="user2@examplectf.com")
         team = gen_team(app.db)
         team.members.append(user1)
         team.members.append(user2)
@@ -441,7 +441,9 @@ def test_api_team_get_solves_after_freze_time():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         register_user(app)
-        team = gen_team(app.db, name="team1", email="team1@ctfd.io", member_count=1)
+        team = gen_team(
+            app.db, name="team1", email="team1@examplectf.com", member_count=1
+        )
 
         team_member = team.members[0]
         tm_name = team_member.name
@@ -521,7 +523,9 @@ def test_api_team_get_fails_after_freze_time():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         register_user(app)
-        team = gen_team(app.db, name="team1", email="team1@ctfd.io", member_count=1)
+        team = gen_team(
+            app.db, name="team1", email="team1@examplectf.com", member_count=1
+        )
 
         team_member = team.members[0]
         tm_name = team_member.name
@@ -598,7 +602,9 @@ def test_api_team_get_awards_after_freze_time():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         register_user(app)
-        team = gen_team(app.db, name="team1", email="team1@ctfd.io", member_count=1)
+        team = gen_team(
+            app.db, name="team1", email="team1@examplectf.com", member_count=1
+        )
 
         team_member = team.members[0]
         tm_name = team_member.name
@@ -634,9 +640,9 @@ def test_api_team_patch_password():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         user1 = gen_user(
-            app.db, name="user1", email="user1@ctfd.io", password="captain"
+            app.db, name="user1", email="user1@examplectf.com", password="captain"
         )  # ID 2
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")  # ID 3
+        user2 = gen_user(app.db, name="user2", email="user2@examplectf.com")  # ID 3
         team = gen_team(app.db)
         team.members.append(user1)
         team.members.append(user2)
@@ -704,7 +710,7 @@ def test_api_team_captain_disbanding():
         team.members.append(user)
         user.team_id = team.id
         team.captain_id = 2
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
+        user2 = gen_user(app.db, name="user2", email="user2@examplectf.com")
         team.members.append(user2)
         app.db.session.commit()
         with login_as_user(app, name="user2") as client:
@@ -754,7 +760,7 @@ def test_api_team_captain_disbanding_only_inactive_teams():
         team.members.append(user)
         user.team_id = team.id
         team.captain_id = 2
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")
+        user2 = gen_user(app.db, name="user2", email="user2@examplectf.com")
         team.members.append(user2)
         app.db.session.commit()
 
@@ -775,8 +781,8 @@ def test_api_team_captain_disbanding_only_inactive_teams():
                 },
             }
 
-        user = gen_user(app.db, name="user3", email="user3@ctfd.io")
-        team = gen_team(app.db, name="team2", email="team2@ctfd.io")
+        user = gen_user(app.db, name="user3", email="user3@examplectf.com")
+        team = gen_team(app.db, name="team2", email="team2@examplectf.com")
         print(user.id)
         team.members.append(user)
         user.team_id = team.id
@@ -795,12 +801,12 @@ def test_api_accessing_hidden_banned_users():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         register_user(app)
-        register_user(app, name="user2", email="user2@ctfd.io")
-        register_user(app, name="visible_user", email="visible_user@ctfd.io")
+        register_user(app, name="user2", email="user2@examplectf.com")
+        register_user(app, name="visible_user", email="visible_user@examplectf.com")
 
         user = Users.query.filter_by(id=2).first()
         team = gen_team(
-            app.db, name="hidden_team", email="hidden_team@ctfd.io", hidden=True
+            app.db, name="hidden_team", email="hidden_team@examplectf.com", hidden=True
         )
         team.members.append(user)
         user.team_id = team.id
@@ -808,7 +814,7 @@ def test_api_accessing_hidden_banned_users():
 
         user = Users.query.filter_by(id=3).first()
         team = gen_team(
-            app.db, name="banned_team", email="banned_team@ctfd.io", banned=True
+            app.db, name="banned_team", email="banned_team@examplectf.com", banned=True
         )
         team.members.append(user)
         user.team_id = team.id
@@ -865,7 +871,7 @@ def test_api_user_without_team_challenge_interaction():
             )
 
         # Create a user with a team
-        user = gen_user(app.db, email="user_name@ctfd.io")
+        user = gen_user(app.db, email="user_name@examplectf.com")
         team = gen_team(app.db)
         team.members.append(user)
         user.team_id = team.id
