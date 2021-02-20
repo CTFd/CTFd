@@ -6,6 +6,7 @@ from distutils.version import StrictVersion
 
 import jinja2
 from flask import Flask, Request
+from flask.helpers import safe_join
 from flask_migrate import upgrade
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
@@ -13,7 +14,9 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import cached_property
 
 from CTFd import utils
+from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.plugins import init_plugins
+from CTFd.utils.config import ctf_theme_candidates
 from CTFd.utils.crypto import sha256
 from CTFd.utils.initialization import (
     init_events,
@@ -114,10 +117,18 @@ class ThemeLoader(FileSystemLoader):
             template = "/".join(["admin", "templates", template])
             return super(ThemeLoader, self).get_source(environment, template)
 
-        # Load regular theme data
-        theme = str(utils.get_config("ctf_theme"))
-        template = "/".join([theme, "templates", template])
-        return super(ThemeLoader, self).get_source(environment, template)
+        # Load regular theme data with potential fallbacks
+        first_cand, *others = ctf_theme_candidates()
+        for cand_theme in (first_cand, *others):
+            tpl_path = safe_join(cand_theme, "templates", template)
+            try:
+                return super(ThemeLoader, self).get_source(environment, tpl_path)
+            except jinja2.exceptions.TemplateNotFound:
+                pass
+        else:
+            # If we found no matching templates then raise an exception for the
+            # first one we intended to try
+            raise jinja2.exceptions.TemplateNotFound(first_cand)
 
 
 def confirm_upgrade():
@@ -240,7 +251,7 @@ def create_app(config="CTFd.config.Config"):
             utils.set_config("ctf_version", __version__)
 
         if not utils.get_config("ctf_theme"):
-            utils.set_config("ctf_theme", "core")
+            utils.set_config("ctf_theme", DEFAULT_THEME)
 
         update_check(force=True)
 
