@@ -55,7 +55,7 @@ def test_oauth_configured_flow():
 
         # Users should be able to register now
         assert Users.query.count() == 2
-        user = Users.query.filter_by(email="user@ctfd.io").first()
+        user = Users.query.filter_by(email="user@examplectf.com").first()
         assert user.oauth_id == 1337
         assert user.team_id == 1
 

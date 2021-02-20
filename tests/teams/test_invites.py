@@ -11,7 +11,7 @@ from tests.helpers import create_ctfd, destroy_ctfd, gen_team, gen_user, login_a
 def test_team_invite_codes():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
-        team1 = gen_team(app.db, name="team1", email="team1@ctfd.io")
+        team1 = gen_team(app.db, name="team1", email="team1@examplectf.com")
         with freeze_time("2017-10-7 00:00:00"):
             invite_code = team1.get_invite_code()
             team = Teams.load_invite_code(invite_code)
@@ -45,7 +45,7 @@ def test_team_invite_codes():
 def test_api_user_facing_invite_tokens():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
-        team1 = gen_team(app.db, name="team1", email="team1@ctfd.io")
+        team1 = gen_team(app.db, name="team1", email="team1@examplectf.com")
         user = team1.captain
         with login_as_user(app, name=user.name) as captain:
             r = captain.post("/api/v1/teams/me/members", json="")
@@ -67,7 +67,7 @@ def test_api_user_facing_invite_tokens():
 
         # Test team size limits
         set_config("team_size", 1)
-        new_user2 = gen_user(app.db, name="new_user2", email="new_user2@ctfd.io")
+        new_user2 = gen_user(app.db, name="new_user2", email="new_user2@examplectf.com")
         with login_as_user(app, name=new_user2.name) as user:
             url = f"/teams/invite?code={invite_code}"
             user.get(url)

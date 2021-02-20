@@ -39,21 +39,21 @@ def test_register_duplicate_username():
         register_user(
             app,
             name="user1",
-            email="user1@ctfd.io",
+            email="user1@examplectf.com",
             password="password",
             raise_for_error=False,
         )
         register_user(
             app,
             name="user1",
-            email="user2@ctfd.io",
+            email="user2@examplectf.com",
             password="password",
             raise_for_error=False,
         )
         register_user(
             app,
             name="admin  ",
-            email="admin2@ctfd.io",
+            email="admin2@examplectf.com",
             password="password",
             raise_for_error=False,
         )
@@ -69,14 +69,14 @@ def test_register_duplicate_email():
         register_user(
             app,
             name="user1",
-            email="user1@ctfd.io",
+            email="user1@examplectf.com",
             password="password",
             raise_for_error=False,
         )
         register_user(
             app,
             name="user2",
-            email="user1@ctfd.io",
+            email="user1@examplectf.com",
             password="password",
             raise_for_error=False,
         )
@@ -144,7 +144,7 @@ def test_user_login_with_email():
     app = create_ctfd()
     with app.app_context():
         register_user(app)
-        client = login_as_user(app, name="user@ctfd.io", password="password")
+        client = login_as_user(app, name="user@examplectf.com", password="password")
         r = client.get("/profile")
         assert (
             r.location != "http://localhost/login"

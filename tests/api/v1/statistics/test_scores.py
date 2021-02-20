@@ -22,7 +22,7 @@ def test_api_statistics_score_distribution():
 
         # Add user data
         register_user(app)
-        user = Users.query.filter_by(email="user@ctfd.io").first()
+        user = Users.query.filter_by(email="user@examplectf.com").first()
         simulate_user_activity(app.db, user=user)
 
         # Test again

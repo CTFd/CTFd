@@ -19,7 +19,7 @@ def test_hint_team_unlock():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
-        second_user = gen_user(app.db, name="user", email="second@ctfd.io")
+        second_user = gen_user(app.db, name="user", email="second@examplectf.com")
         team = gen_team(app.db)
         user.team_id = team.id
         second_user.team_id = team.id
@@ -75,7 +75,7 @@ def test_hint_team_unlocking_without_points():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
-        second_user = gen_user(app.db, name="user", email="second@ctfd.io")
+        second_user = gen_user(app.db, name="user", email="second@examplectf.com")
         team = gen_team(app.db)
         user.team_id = team.id
         second_user.team_id = team.id
@@ -106,8 +106,8 @@ def test_teams_dont_prevent_other_teams_from_unlocking_hints():
         chal = gen_challenge(app.db)
         gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
 
-        team1 = gen_team(app.db, name="team1", email="team1@ctfd.io")
-        team2 = gen_team(app.db, name="team2", email="team2@ctfd.io")
+        team1 = gen_team(app.db, name="team1", email="team1@examplectf.com")
+        team2 = gen_team(app.db, name="team2", email="team2@examplectf.com")
 
         # Give users points with an award
         gen_award(app.db, user_id=team1.captain_id)

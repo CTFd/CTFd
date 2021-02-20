@@ -60,13 +60,13 @@ def test_import_ctf():
             base_user = "user"
             for x in range(10):
                 user = base_user + str(x)
-                user_email = user + "@ctfd.io"
+                user_email = user + "@examplectf.com"
                 gen_user(app.db, name=user, email=user_email)
 
             base_team = "team"
             for x in range(5):
                 team = base_team + str(x)
-                team_email = team + "@ctfd.io"
+                team_email = team + "@examplectf.com"
                 gen_team(app.db, name=team, email=team_email)
 
             for x in range(9):

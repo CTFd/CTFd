@@ -7,6 +7,8 @@ from CTFd.utils import get_app_config, get_config
 
 def sendmail(addr, text, subject):
     ctf_name = get_config("ctf_name")
+    print(get_config("mailfrom_addr"))
+    print(get_app_config("MAILFROM_ADDR"))
     mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
     mailfrom_addr = formataddr((ctf_name, mailfrom_addr))
 
