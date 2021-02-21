@@ -3,7 +3,9 @@ from typing import List
 
 from flask import abort, render_template, request, url_for
 from flask_restx import Namespace, Resource
-from sqlalchemy.sql import and_
+from sqlalchemy import func as sa_func
+from sqlalchemy import types as sa_types
+from sqlalchemy.sql import and_, cast, false, true
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -75,6 +77,44 @@ challenges_namespace.schema_model(
 )
 
 
+def _build_solves_query(extra_filters=tuple(), admin_view=False):
+    # This can return None (unauth) if visibility is set to public
+    user = get_current_user()
+    # We only set a condition for matching user solves if there is a user and
+    # they have an account ID (user mode or in a team in teams mode)
+    if user is not None and user.account_id is not None:
+        user_solved_cond = Solves.account_id == user.account_id
+    else:
+        user_solved_cond = false()
+    # We have to filter solves to exclude any made after the current freeze
+    # time unless we're in an admin view as determined by the caller.
+    freeze = get_config("freeze")
+    if freeze and not admin_view:
+        freeze_cond = Solves.date < unix_time_to_utc(freeze)
+    else:
+        freeze_cond = true()
+    # Finally, we never count solves made by hidden or banned users/teams, even
+    # if we are an admin. This is to match the challenge detail API.
+    AccountModel = get_model()
+    exclude_solves_cond = and_(
+        AccountModel.banned == false(), AccountModel.hidden == false(),
+    )
+    # This query counts the number of solves per challenge, as well as the sum
+    # of correct solves made by the current user per the condition above (which
+    # should probably only be 0 or 1!)
+    solves_q = (
+        db.session.query(
+            Solves.challenge_id,
+            sa_func.count(Solves.challenge_id),
+            sa_func.sum(cast(user_solved_cond, sa_types.Integer)),
+        )
+        .join(AccountModel)
+        .filter(*extra_filters, freeze_cond, exclude_solves_cond)
+        .group_by(Solves.challenge_id)
+    )
+    return solves_q
+
+
 @challenges_namespace.route("")
 class ChallengeList(Resource):
     @check_challenge_visibility
@@ -121,55 +161,51 @@ class ChallengeList(Resource):
         field = str(query_args.pop("field", None))
         filters = build_model_filters(model=Challenges, query=q, field=field)
 
-        # This can return None (unauth) if visibility is set to public
-        user = get_current_user()
+        # Admins get a shortcut to see all challenges despite pre-requisites
+        admin_view = is_admin() and request.args.get("view") == "admin"
 
-        # Admins can request to see everything
-        if is_admin() and request.args.get("view") == "admin":
-            challenges = (
-                Challenges.query.filter_by(**query_args)
-                .filter(*filters)
-                .order_by(Challenges.value)
-                .all()
-            )
-            solve_ids = {challenge.id for challenge in challenges}
+        solve_counts, user_solves = dict(), set()
+        if scores_visible() and accounts_visible():
+            solve_count_dfl = 0
+            # Build a query for to show challenge solve information. We only
+            # give an admin view if the request argument has been provided.
+            #
+            # NOTE: This is different behaviour to the challenge detail
+            # endpoint which only needs the current user to be an admin rather
+            # than also also having to provide `view=admin` as a query arg.
+            solves_q = _build_solves_query(admin_view=admin_view)
+            # Aggregate the query results into the hashes defined at the top of
+            # this block for later use
+            for chal_id, solve_count, solved_by_user in solves_q:
+                solve_counts[chal_id] = solve_count
+                if solved_by_user:
+                    user_solves.add(chal_id)
         else:
-            challenges = (
-                Challenges.query.filter(
-                    and_(Challenges.state != "hidden", Challenges.state != "locked")
-                )
-                .filter_by(**query_args)
-                .filter(*filters)
-                .order_by(Challenges.value)
-                .all()
+            # This is necessary to match the challenge detail API which returns
+            # `None` for the solve count if visiblity checks fail
+            solve_count_dfl = None
+
+        # Build the query for the challenges which may be listed
+        chal_q = Challenges.query
+        # Admins can see hidden and locked challenges in the admin view
+        if not admin_view:
+            chal_q = chal_q.filter(
+                and_(Challenges.state != "hidden", Challenges.state != "locked")
             )
+        chal_q = (
+            chal_q.filter_by(**query_args).filter(*filters).order_by(Challenges.value)
+        )
 
-            if user:
-                solve_ids = (
-                    Solves.query.with_entities(Solves.challenge_id)
-                    .filter_by(account_id=user.account_id)
-                    .order_by(Solves.challenge_id.asc())
-                    .all()
-                )
-                solve_ids = {value for value, in solve_ids}
-
-                # TODO: Convert this into a re-useable decorator
-                if is_admin():
-                    pass
-                else:
-                    if config.is_teams_mode() and get_current_team() is None:
-                        abort(403)
-            else:
-                solve_ids = set()
-
+        # Iterate through the list of challenges, adding to the object which
+        # will be JSONified back to the client
         response = []
         tag_schema = TagSchema(view="user", many=True)
-        for challenge in challenges:
+        for challenge in chal_q:
             if challenge.requirements:
                 requirements = challenge.requirements.get("prerequisites", [])
                 anonymize = challenge.requirements.get("anonymize")
                 prereqs = set(requirements)
-                if solve_ids >= prereqs:
+                if user_solves >= prereqs:
                     pass
                 else:
                     if anonymize:
@@ -179,6 +215,8 @@ class ChallengeList(Resource):
                                 "type": "hidden",
                                 "name": "???",
                                 "value": 0,
+                                "solves": None,
+                                "solved_by_me": False,
                                 "category": "???",
                                 "tags": [],
                                 "template": "",
@@ -201,6 +239,8 @@ class ChallengeList(Resource):
                     "type": challenge_type.name,
                     "name": challenge.name,
                     "value": challenge.value,
+                    "solves": solve_counts.get(challenge.id, solve_count_dfl),
+                    "solved_by_me": challenge.id in user_solves,
                     "category": challenge.category,
                     "tags": tag_schema.dump(challenge.tags).data,
                     "template": challenge_type.templates["view"],
@@ -318,6 +358,8 @@ class Challenge(Resource):
                                 "type": "hidden",
                                 "name": "???",
                                 "value": 0,
+                                "solves": None,
+                                "solved_by_me": False,
                                 "category": "???",
                                 "tags": [],
                                 "template": "",
@@ -374,25 +416,19 @@ class Challenge(Resource):
 
         response = chal_class.read(challenge=chal)
 
-        Model = get_model()
-
         if scores_visible() is True and accounts_visible() is True:
-            solves = Solves.query.join(Model, Solves.account_id == Model.id).filter(
-                Solves.challenge_id == chal.id,
-                Model.banned == False,
-                Model.hidden == False,
+            solves_q = _build_solves_query(
+                admin_view=is_admin(), extra_filters=(Solves.challenge_id == chal.id,)
             )
-
-            # Only show solves that happened before freeze time if configured
-            freeze = get_config("freeze")
-            if not is_admin() and freeze:
-                solves = solves.filter(Solves.date < unix_time_to_utc(freeze))
-
-            solves = solves.count()
-            response["solves"] = solves
+            # If there are no solves for this challenge ID then we have 0 rows
+            maybe_row = solves_q.first()
+            if maybe_row:
+                _, solve_count, solved_by_user = maybe_row
+                solved_by_user = bool(solved_by_user)
+            else:
+                solve_count, solved_by_user = 0, False
         else:
-            response["solves"] = None
-            solves = None
+            solve_count, solved_by_user = None, False
 
         if authed():
             # Get current attempts for the user
@@ -402,6 +438,8 @@ class Challenge(Resource):
         else:
             attempts = 0
 
+        response["solves"] = solve_count
+        response["solved_by_me"] = solved_by_user
         response["attempts"] = attempts
         response["files"] = files
         response["tags"] = tags
@@ -409,7 +447,8 @@ class Challenge(Resource):
 
         response["view"] = render_template(
             chal_class.templates["view"].lstrip("/"),
-            solves=solves,
+            solves=solve_count,
+            solved_by_me=solved_by_user,
             files=files,
             tags=tags,
             hints=[Hints(**h) for h in hints],
