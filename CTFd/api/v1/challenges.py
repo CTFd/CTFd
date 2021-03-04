@@ -84,7 +84,7 @@ challenges_namespace.schema_model(
 )
 
 
-def _build_solves_query(extra_filters=tuple(), admin_view=False):
+def _build_solves_query(extra_filters=(), admin_view=False):
     # This can return None (unauth) if visibility is set to public
     user = get_current_user()
     # We only set a condition for matching user solves if there is a user and
@@ -181,7 +181,7 @@ class ChallengeList(Resource):
         # Admins get a shortcut to see all challenges despite pre-requisites
         admin_view = is_admin() and request.args.get("view") == "admin"
 
-        solve_counts, user_solves = dict(), set()
+        solve_counts, user_solves = {}, set()
         # Build a query for to show challenge solve information. We only
         # give an admin view if the request argument has been provided.
         #
