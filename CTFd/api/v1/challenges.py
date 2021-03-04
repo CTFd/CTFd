@@ -182,22 +182,24 @@ class ChallengeList(Resource):
         admin_view = is_admin() and request.args.get("view") == "admin"
 
         solve_counts, user_solves = dict(), set()
+        # Build a query for to show challenge solve information. We only
+        # give an admin view if the request argument has been provided.
+        #
+        # NOTE: This is different behaviour to the challenge detail
+        # endpoint which only needs the current user to be an admin rather
+        # than also also having to provide `view=admin` as a query arg.
+        solves_q = _build_solves_query(admin_view=admin_view)
+        # Aggregate the query results into the hashes defined at the top of
+        # this block for later use
+        for chal_id, solve_count, solved_by_user in solves_q:
+            solve_counts[chal_id] = solve_count
+            if solved_by_user:
+                user_solves.add(chal_id)
         if scores_visible() and accounts_visible():
             solve_count_dfl = 0
-            # Build a query for to show challenge solve information. We only
-            # give an admin view if the request argument has been provided.
-            #
-            # NOTE: This is different behaviour to the challenge detail
-            # endpoint which only needs the current user to be an admin rather
-            # than also also having to provide `view=admin` as a query arg.
-            solves_q = _build_solves_query(admin_view=admin_view)
-            # Aggregate the query results into the hashes defined at the top of
-            # this block for later use
-            for chal_id, solve_count, solved_by_user in solves_q:
-                solve_counts[chal_id] = solve_count
-                if solved_by_user:
-                    user_solves.add(chal_id)
         else:
+            # Empty out the solves_count if we're hiding scores/accounts
+            solve_counts = {}
             # This is necessary to match the challenge detail API which returns
             # `None` for the solve count if visiblity checks fail
             solve_count_dfl = None
@@ -433,19 +435,20 @@ class Challenge(Resource):
 
         response = chal_class.read(challenge=chal)
 
-        if scores_visible() is True and accounts_visible() is True:
-            solves_q = _build_solves_query(
-                admin_view=is_admin(), extra_filters=(Solves.challenge_id == chal.id,)
-            )
-            # If there are no solves for this challenge ID then we have 0 rows
-            maybe_row = solves_q.first()
-            if maybe_row:
-                _, solve_count, solved_by_user = maybe_row
-                solved_by_user = bool(solved_by_user)
-            else:
-                solve_count, solved_by_user = 0, False
+        solves_q = _build_solves_query(
+            admin_view=is_admin(), extra_filters=(Solves.challenge_id == chal.id,)
+        )
+        # If there are no solves for this challenge ID then we have 0 rows
+        maybe_row = solves_q.first()
+        if maybe_row:
+            _, solve_count, solved_by_user = maybe_row
+            solved_by_user = bool(solved_by_user)
         else:
-            solve_count, solved_by_user = None, False
+            solve_count, solved_by_user = 0, False
+
+        # Hide solve counts if we are hiding solves/accounts
+        if scores_visible() is False or accounts_visible() is False:
+            solve_count = None
 
         if authed():
             # Get current attempts for the user

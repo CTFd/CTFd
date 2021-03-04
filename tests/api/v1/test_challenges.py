@@ -315,13 +315,6 @@ def test_api_challenges_get_solve_info_account_visibility():
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] == 1
         assert chal_data["solved_by_me"] is False
-
-        # With the hidden setting nobody should see the solve
-        set_config("account_visibility", "hidden")
-        r = admin_client.get("/api/v1/challenges")
-        assert r.status_code == 200
-        chal_data = r.get_json()["data"].pop()
-        assert chal_data["solves"] is None
     destroy_ctfd(app)
 
 
@@ -709,12 +702,13 @@ def test_api_challenge_get_solve_info_account_visibility():
         assert chal_data["solves"] == 1
         assert chal_data["solved_by_me"] is False
 
-        # With the hidden setting nobody should see the solve
+        # With the hidden setting admins can still see the solve
+        # because the challenge detail endpoint doesn't have an admin specific view
         set_config("account_visibility", "hidden")
         r = admin_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
-        assert chal_data["solves"] is None
+        assert chal_data["solves"] == 1
     destroy_ctfd(app)
 
 
