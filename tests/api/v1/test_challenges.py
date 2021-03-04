@@ -210,38 +210,52 @@ def test_api_challenges_get_solve_info_score_visibility():
     app = create_ctfd()
     with app.app_context(), app.test_client() as pub_client:
         set_config("challenge_visibility", "public")
+
         # Generate a challenge, user and solve to test the API with
         chal_id = gen_challenge(app.db).id
         register_user(app)
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
+
         #  With the public setting any unauthed user should see the solve
         set_config("score_visibility", "public")
         r = pub_client.get("/api/v1/challenges")
         assert r.status_code == 200
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] == False
+
         # With the private setting only an authed user should see the solve
         set_config("score_visibility", "private")
+        # Test public user
         r = pub_client.get("/api/v1/challenges")
         assert r.status_code == 200
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] is None
+        assert chal_data["solved_by_me"] is False
+        # Test authed user
         user_client = login_as_user(app)
         r = user_client.get("/api/v1/challenges")
         assert r.status_code == 200
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is True
+
         # With the admins setting only admins should see the solve
         set_config("score_visibility", "admins")
+        # Test authed user
         r = user_client.get("/api/v1/challenges")
         assert r.status_code == 200
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] is None
+        assert chal_data["solved_by_me"] is True
+        # Test admin
         admin_client = login_as_user(app, "admin", "password")
         r = admin_client.get("/api/v1/challenges")
         assert r.status_code == 200
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is False
+
         # With the hidden setting nobody should see the solve
         set_config("score_visibility", "hidden")
         r = admin_client.get("/api/v1/challenges")
@@ -256,38 +270,52 @@ def test_api_challenges_get_solve_info_account_visibility():
     app = create_ctfd()
     with app.app_context(), app.test_client() as pub_client:
         set_config("challenge_visibility", "public")
+
         # Generate a challenge, user and solve to test the API with
         chal_id = gen_challenge(app.db).id
         register_user(app)
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
+
         #  With the public setting any unauthed user should see the solve
         set_config("account_visibility", "public")
         r = pub_client.get("/api/v1/challenges")
         assert r.status_code == 200
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is False
+
         # With the private setting only an authed user should see the solve
         set_config("account_visibility", "private")
+        # Test public user
         r = pub_client.get("/api/v1/challenges")
         assert r.status_code == 200
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] is None
+        assert chal_data["solved_by_me"] is False
+        # Test user
         user_client = login_as_user(app)
         r = user_client.get("/api/v1/challenges")
         assert r.status_code == 200
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is True
+
         # With the admins setting only admins should see the solve
         set_config("account_visibility", "admins")
+        # Test user
         r = user_client.get("/api/v1/challenges")
         assert r.status_code == 200
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] is None
+        assert chal_data["solved_by_me"] is True
+        # Test admin user
         admin_client = login_as_user(app, "admin", "password")
         r = admin_client.get("/api/v1/challenges")
         assert r.status_code == 200
         chal_data = r.get_json()["data"].pop()
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is False
+
         # With the hidden setting nobody should see the solve
         set_config("account_visibility", "hidden")
         r = admin_client.get("/api/v1/challenges")
@@ -352,10 +380,22 @@ def test_api_challenges_get_solve_count_banned_user():
     with app.app_context():
         set_config("challenge_visibility", "public")
         chal_id = gen_challenge(app.db).id
+
         # Create a banned user and generate a solve for the challenge
         register_user(app)
-        Users.query.get(2).banned = True
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
+
+        # Confirm that the solve is there
+        with app.test_client() as client:
+            r = client.get("/api/v1/challenges")
+            assert r.status_code == 200
+            chal_data = r.get_json()["data"].pop()
+            assert chal_data["solves"] == 1
+
+        # Ban the user
+        Users.query.get(2).banned = True
+        app.db.session.commit()
+
         with app.test_client() as client:
             # Confirm solve count is `0` despite the banned user having solved
             r = client.get("/api/v1/challenges")
@@ -568,34 +608,47 @@ def test_api_challenge_get_solve_info_score_visibility():
         chal_uri = "/api/v1/challenges/{}".format(chal_id)
         register_user(app)
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
+
         #  With the public setting any unauthed user should see the solve
         set_config("score_visibility", "public")
         r = pub_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is False
+
         # With the private setting only an authed user should see the solve
         set_config("score_visibility", "private")
+        # Test public user
         r = pub_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
         assert chal_data["solves"] is None
+        assert chal_data["solved_by_me"] is False
+        # Test user
         user_client = login_as_user(app)
         r = user_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is True
+
         # With the admins setting only admins should see the solve
         set_config("score_visibility", "admins")
+        # Test user
         r = user_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
         assert chal_data["solves"] is None
+        assert chal_data["solved_by_me"] is True
+        # Test admin user
         admin_client = login_as_user(app, "admin", "password")
         r = admin_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is False
+
         # With the hidden setting nobody should see the solve
         set_config("score_visibility", "hidden")
         r = admin_client.get(chal_uri)
@@ -615,34 +668,47 @@ def test_api_challenge_get_solve_info_account_visibility():
         chal_uri = "/api/v1/challenges/{}".format(chal_id)
         register_user(app)
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
+
         #  With the public setting any unauthed user should see the solve
         set_config("account_visibility", "public")
         r = pub_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is False
+
         # With the private setting only an authed user should see the solve
         set_config("account_visibility", "private")
+        # Test public user
         r = pub_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
         assert chal_data["solves"] is None
+        assert chal_data["solved_by_me"] is False
+        # Test user
         user_client = login_as_user(app)
         r = user_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is True
+
         # With the admins setting only admins should see the solve
         set_config("account_visibility", "admins")
+        # Test user
         r = user_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
         assert chal_data["solves"] is None
+        assert chal_data["solved_by_me"] is True
+        # Test admin user
         admin_client = login_as_user(app, "admin", "password")
         r = admin_client.get(chal_uri)
         assert r.status_code == 200
         chal_data = r.get_json()["data"]
         assert chal_data["solves"] == 1
+        assert chal_data["solved_by_me"] is False
+
         # With the hidden setting nobody should see the solve
         set_config("account_visibility", "hidden")
         r = admin_client.get(chal_uri)
@@ -688,6 +754,7 @@ def test_api_challenge_get_solve_count_frozen():
     app = create_ctfd()
     with app.app_context(), app.test_client() as client:
         set_config("challenge_visibility", "public")
+        # Friday, October 6, 2017 4:00:00 AM
         set_config("freeze", "1507262400")
         chal_id = gen_challenge(app.db).id
         chal_uri = "/api/v1/challenges/{}".format(chal_id)
@@ -741,12 +808,24 @@ def test_api_challenge_get_solve_count_banned_user():
         set_config("challenge_visibility", "public")
         chal_id = gen_challenge(app.db).id
         chal_uri = "/api/v1/challenges/{}".format(chal_id)
-        # Create a banned user and generate a solve for the challenge
+
+        # Create a user and generate a solve for the challenge
         register_user(app)
-        Users.query.get(2).banned = True
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
+
+        # Confirm that the solve is there
         with app.test_client() as client:
-            # Confirm solve count is `0` despite the banned user having solved
+            r = client.get(chal_uri)
+            assert r.status_code == 200
+            chal_data = r.get_json()["data"]
+            assert chal_data["solves"] == 1
+
+        # Ban the user
+        Users.query.get(2).banned = True
+        app.db.session.commit()
+
+        # Confirm solve count is `0` despite the banned user having solved
+        with app.test_client() as client:
             r = client.get(chal_uri)
             assert r.status_code == 200
             chal_data = r.get_json()["data"]
