@@ -860,7 +860,7 @@ def test_api_user_without_team_challenge_interaction():
         gen_flag(app.db, 1)
 
         with login_as_user(app) as client:
-            assert client.get("/api/v1/challenges").status_code == 200
+            assert client.get("/api/v1/challenges").status_code == 403
             assert client.get("/api/v1/challenges/1").status_code == 403
             assert (
                 client.post(

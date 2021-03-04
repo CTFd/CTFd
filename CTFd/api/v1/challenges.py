@@ -50,7 +50,14 @@ from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.logging import log
 from CTFd.utils.modes import generate_account_url, get_model
 from CTFd.utils.security.signing import serialize
-from CTFd.utils.user import authed, get_current_team, get_current_user, is_admin
+from CTFd.utils.user import (
+    authed,
+    get_current_team,
+    get_current_team_attrs,
+    get_current_user,
+    get_current_user_attrs,
+    is_admin,
+)
 
 challenges_namespace = Namespace(
     "challenges", description="Endpoint to retrieve Challenges"
@@ -156,6 +163,16 @@ class ChallengeList(Resource):
         location="query",
     )
     def get(self, query_args):
+        # Require a team if in teams mode
+        # TODO: Convert this into a re-useable decorator
+        # TODO: The require_team decorator doesnt work because of no admin passthru
+        if get_current_user_attrs():
+            if is_admin():
+                pass
+            else:
+                if config.is_teams_mode() and get_current_team_attrs() is None:
+                    abort(403)
+
         # Build filtering queries
         q = query_args.pop("q", None)
         field = str(query_args.pop("field", None))
