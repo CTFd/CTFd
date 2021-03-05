@@ -65,7 +65,7 @@ def create_ctfd(
     ctf_name="CTFd",
     ctf_description="CTF description",
     name="admin",
-    email="admin@ctfd.io",
+    email="admin@examplectf.com",
     password="password",
     user_mode="users",
     setup=True,
@@ -105,7 +105,7 @@ def setup_ctfd(
     ctf_name="CTFd",
     ctf_description="CTF description",
     name="admin",
-    email="admin@ctfd.io",
+    email="admin@examplectf.com",
     password="password",
     user_mode="users",
 ):
@@ -134,7 +134,11 @@ def destroy_ctfd(app):
 
 
 def register_user(
-    app, name="user", email="user@ctfd.io", password="password", raise_for_error=True
+    app,
+    name="user",
+    email="user@examplectf.com",
+    password="password",
+    raise_for_error=True,
 ):
     with app.app_context():
         with app.test_client() as client:
@@ -185,7 +189,7 @@ def login_with_mlc(
     app,
     name="user",
     scope="profile%20team",
-    email="user@ctfd.io",
+    email="user@examplectf.com",
     oauth_id=1337,
     team_name="TestTeam",
     team_oauth_id=1234,
@@ -315,7 +319,9 @@ def gen_flag(db, challenge_id, content="flag", type="static", data=None, **kwarg
     return flag
 
 
-def gen_user(db, name="user_name", email="user@ctfd.io", password="password", **kwargs):
+def gen_user(
+    db, name="user_name", email="user@examplectf.com", password="password", **kwargs
+):
     user = Users(name=name, email=email, password=password, **kwargs)
     db.session.add(user)
     db.session.commit()
@@ -325,7 +331,7 @@ def gen_user(db, name="user_name", email="user@ctfd.io", password="password", **
 def gen_team(
     db,
     name="team_name",
-    email="team@ctfd.io",
+    email="team@examplectf.com",
     password="password",
     member_count=4,
     **kwargs
@@ -333,7 +339,7 @@ def gen_team(
     team = Teams(name=name, email=email, password=password, **kwargs)
     for i in range(member_count):
         name = "user-{}-{}".format(random_string(), str(i))
-        user = gen_user(db, name=name, email=name + "@ctfd.io", team_id=team.id)
+        user = gen_user(db, name=name, email=name + "@examplectf.com", team_id=team.id)
         if i == 0:
             team.captain_id = user.id
         team.members.append(user)

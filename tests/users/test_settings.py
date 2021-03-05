@@ -15,11 +15,11 @@ def test_user_set_profile():
 
         data = {
             "name": "user",
-            "email": "user@ctfd.io",
+            "email": "user@examplectf.com",
             "confirm": "",
             "password": "",
             "affiliation": "affiliation_test",
-            "website": "https://ctfd.io",
+            "website": "https://examplectf.com",
             "country": "US",
         }
 
@@ -38,7 +38,7 @@ def test_user_set_profile():
 
         data = {
             "name": "user",
-            "email": "user@ctfd.io",
+            "email": "user@examplectf.com",
             "confirm": "",
             "password": "",
             "affiliation": "",
@@ -65,7 +65,7 @@ def test_user_can_change_password():
 
         data = {
             "name": "user",
-            "email": "user@ctfd.io",
+            "email": "user@examplectf.com",
             "confirm": "",
             "password": "new_password",
             "affiliation": "",

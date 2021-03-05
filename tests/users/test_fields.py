@@ -62,7 +62,7 @@ def test_fields_required_on_register():
                 with client.session_transaction() as sess:
                     data = {
                         "name": "user",
-                        "email": "user@ctfd.io",
+                        "email": "user@examplectf.com",
                         "password": "password",
                         "nonce": sess.get("nonce"),
                     }
@@ -73,7 +73,7 @@ def test_fields_required_on_register():
                 with client.session_transaction() as sess:
                     data = {
                         "name": "user",
-                        "email": "user@ctfd.io",
+                        "email": "user@examplectf.com",
                         "password": "password",
                         "fields[1]": "custom_field_value",
                         "nonce": sess.get("nonce"),
@@ -178,7 +178,7 @@ def test_boolean_checkbox_field():
             with client.session_transaction() as sess:
                 data = {
                     "name": "user",
-                    "email": "user@ctfd.io",
+                    "email": "user@examplectf.com",
                     "password": "password",
                     "nonce": sess.get("nonce"),
                     "fields[1]": "y",

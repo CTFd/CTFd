@@ -109,7 +109,7 @@ def test_sendmail_with_mailgun_from_config_file(fake_post_request):
         assert kwargs["data"] == {
             "to": ["user@user.com"],
             "text": "this is a test",
-            "from": "CTFd <noreply@ctfd.io>",
+            "from": "CTFd <noreply@examplectf.com>",
             "subject": "Message from CTFd",
         }
 
@@ -149,7 +149,7 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
         assert kwargs["data"] == {
             "to": ["user@user.com"],
             "text": "this is a test",
-            "from": "CTFd <noreply@ctfd.io>",
+            "from": "CTFd <noreply@examplectf.com>",
             "subject": "Message from CTFd",
         }
 

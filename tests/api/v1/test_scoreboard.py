@@ -20,7 +20,7 @@ def test_scoreboard_is_cached():
     app = create_ctfd()
     with app.app_context():
         # create user1
-        register_user(app, name="user1", email="user1@ctfd.io")
+        register_user(app, name="user1", email="user1@examplectf.com")
 
         # create challenge
         chal = gen_challenge(app.db, value=100)

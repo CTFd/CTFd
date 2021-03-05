@@ -131,7 +131,7 @@ class ServerConfig(object):
 
     # === EMAIL ===
     MAILFROM_ADDR: str = config_ini["email"]["MAILFROM_ADDR"] \
-        or "noreply@ctfd.io"
+        or "noreply@examplectf.com"
 
     MAIL_SERVER: str = empty_str_cast(config_ini["email"]["MAIL_SERVER"])
 

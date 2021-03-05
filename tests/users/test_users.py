@@ -15,9 +15,15 @@ def test_accessing_hidden_users():
     """Hidden users should not give any data from /users or /api/v1/users"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="visible_user", email="visible_user@ctfd.io")  # ID 2
-        register_user(app, name="hidden_user", email="hidden_user@ctfd.io")  # ID 3
-        register_user(app, name="banned_user", email="banned_user@ctfd.io")  # ID 4
+        register_user(
+            app, name="visible_user", email="visible_user@examplectf.com"
+        )  # ID 2
+        register_user(
+            app, name="hidden_user", email="hidden_user@examplectf.com"
+        )  # ID 3
+        register_user(
+            app, name="banned_user", email="banned_user@examplectf.com"
+        )  # ID 4
         user = Users.query.filter_by(name="hidden_user").first()
         user.hidden = True
         app.db.session.commit()

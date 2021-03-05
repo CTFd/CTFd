@@ -32,7 +32,7 @@ def test_ctfd_setup_verification():
                     "ctf_name": "CTFd",
                     "ctf_description": "CTF description",
                     "name": "test",
-                    "email": "test@ctfd.io",
+                    "email": "test@examplectf.com",
                     "password": "",
                     "user_mode": "users",
                     "nonce": sess.get("nonce"),
@@ -40,7 +40,7 @@ def test_ctfd_setup_verification():
             r = client.post("/setup", data=data)
             assert "longer password" in r.get_data(as_text=True)
 
-            gen_user(app.db, name="test", email="test@ctfd.io")
+            gen_user(app.db, name="test", email="test@examplectf.com")
 
             data["password"] = "password"
             r = client.post("/setup", data=data)
@@ -49,7 +49,7 @@ def test_ctfd_setup_verification():
             assert "name is already taken" in resp
 
             data["name"] = "admin"
-            data["email"] = "admin@ctfd.io"
+            data["email"] = "admin@examplectf.com"
             r = client.post("/setup", data=data)
             assert r.status_code == 302
             assert r.location == "http://localhost/"

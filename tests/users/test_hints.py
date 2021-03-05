@@ -22,7 +22,7 @@ def test_user_cannot_unlock_hint():
     app = create_ctfd()
     with app.app_context():
         with app.test_client():
-            register_user(app, name="user1", email="user1@ctfd.io")
+            register_user(app, name="user1", email="user1@examplectf.com")
 
             chal = gen_challenge(app.db, value=100)
             chal_id = chal.id
@@ -47,7 +47,7 @@ def test_user_can_unlock_hint():
     app = create_ctfd()
     with app.app_context():
         with app.test_client():
-            register_user(app, name="user1", email="user1@ctfd.io")
+            register_user(app, name="user1", email="user1@examplectf.com")
 
             chal = gen_challenge(app.db, value=100)
             chal_id = chal.id

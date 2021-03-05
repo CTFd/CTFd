@@ -94,8 +94,8 @@ def test_api_admin_can_change_captain():
     """Can admins/captains change captains for teams"""
     app = create_ctfd(user_mode="teams")
     with app.app_context():
-        user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")  # ID 2
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")  # ID 3
+        user1 = gen_user(app.db, name="user1", email="user1@examplectf.com")  # ID 2
+        user2 = gen_user(app.db, name="user2", email="user2@examplectf.com")  # ID 3
         team = gen_team(app.db)
         team.members.append(user1)
         team.members.append(user2)
@@ -128,8 +128,8 @@ def test_api_users_can_change_captain_on_self_team():
     """Can admins/captains change captains for their own team"""
     app = create_ctfd(user_mode="teams")
     with app.app_context():
-        user1 = gen_user(app.db, name="user1", email="user1@ctfd.io")  # ID 2
-        user2 = gen_user(app.db, name="user2", email="user2@ctfd.io")  # ID 3
+        user1 = gen_user(app.db, name="user1", email="user1@examplectf.com")  # ID 2
+        user2 = gen_user(app.db, name="user2", email="user2@examplectf.com")  # ID 3
         team = gen_team(app.db)
         team.members.append(user1)
         team.members.append(user2)

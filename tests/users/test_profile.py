@@ -13,25 +13,25 @@ def test_email_cannot_be_changed_without_password():
         register_user(app)
         client = login_as_user(app)
 
-        data = {"name": "user", "email": "user2@ctfd.io"}
+        data = {"name": "user", "email": "user2@examplectf.com"}
 
         r = client.patch("/api/v1/users/me", json=data)
         assert r.status_code == 400
         user = Users.query.filter_by(id=2).first()
-        assert user.email == "user@ctfd.io"
+        assert user.email == "user@examplectf.com"
 
-        data = {"name": "user", "email": "user2@ctfd.io", "confirm": "asdf"}
+        data = {"name": "user", "email": "user2@examplectf.com", "confirm": "asdf"}
 
         r = client.patch("/api/v1/users/me", json=data)
         assert r.status_code == 400
         user = Users.query.filter_by(id=2).first()
-        assert user.email == "user@ctfd.io"
+        assert user.email == "user@examplectf.com"
 
-        data = {"name": "user", "email": "user2@ctfd.io", "confirm": "password"}
+        data = {"name": "user", "email": "user2@examplectf.com", "confirm": "password"}
 
         r = client.patch("/api/v1/users/me", json=data)
         assert r.status_code == 200
         user = Users.query.filter_by(id=2).first()
-        assert user.email == "user2@ctfd.io"
+        assert user.email == "user2@examplectf.com"
         assert verify_password(plaintext="password", ciphertext=user.password)
     destroy_ctfd(app)

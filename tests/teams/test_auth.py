@@ -72,8 +72,8 @@ def test_teams_join_when_already_on_team():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         gen_user(app.db, name="user")
-        gen_team(app.db, email="team1@ctfd.io", name="team1")
-        gen_team(app.db, email="team2@ctfd.io", name="team2")
+        gen_team(app.db, email="team1@examplectf.com", name="team1")
+        gen_team(app.db, email="team2@examplectf.com", name="team2")
         with login_as_user(app) as client:
             r = client.get("/teams/join")
             assert r.status_code == 200
