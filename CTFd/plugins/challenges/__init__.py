@@ -41,6 +41,16 @@ class BaseChallenge(object):
         return challenge
 
     @classmethod
+    def is_visible(cls, challenge):
+        """
+        This method is used to determine if a challenge will be shown to users.
+
+        :param challenge:
+        :return: bool
+        """
+        return True
+
+    @classmethod
     def read(cls, challenge):
         """
         This method is in used to access the data of a challenge in a format processable by the front end.
