@@ -41,7 +41,7 @@ class ScoreboardList(Resource):
                         Users.hidden,
                         Users.banned,
                     ]
-                ).where(Users.team_id)
+                ).where(Users.team_id.isnot(None))
             )
             users = r.fetchall()
             membership = defaultdict(dict)
