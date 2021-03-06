@@ -141,7 +141,7 @@ def reset_password(data=None):
             clear_user_session(user_id=user.id)
             log(
                 "logins",
-                format="[{date}] {ip} -  successful password reset for {name}",
+                format="[{date}] {ip} - successful password reset for {name}",
                 name=user.name,
             )
             db.session.close()
@@ -362,7 +362,7 @@ def login():
                 session.regenerate()
 
                 login_user(user)
-                log("logins", "[{date}] {ip} - {name} logged in")
+                log("logins", "[{date}] {ip} - {name} logged in", name=user.name)
 
                 db.session.close()
                 if request.args.get("next") and validators.is_safe_url(
@@ -373,7 +373,7 @@ def login():
 
             else:
                 # This user exists but the password is wrong
-                log("logins", "[{date}] {ip} - submitted invalid password for {name}")
+                log("logins", "[{date}] {ip} - submitted invalid password for {name}", name=user.name)
                 errors.append("Your username or password is incorrect")
                 db.session.close()
                 return render_template("login.html", errors=errors)
