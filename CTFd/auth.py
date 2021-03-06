@@ -373,7 +373,11 @@ def login():
 
             else:
                 # This user exists but the password is wrong
-                log("logins", "[{date}] {ip} - submitted invalid password for {name}", name=user.name)
+                log(
+                    "logins",
+                    "[{date}] {ip} - submitted invalid password for {name}",
+                    name=user.name,
+                )
                 errors.append("Your username or password is incorrect")
                 db.session.close()
                 return render_template("login.html", errors=errors)
