@@ -92,7 +92,7 @@ def test_that_ctfd_can_be_deployed_in_subdir():
                     "ctf_name": "CTFd",
                     "ctf_description": "CTF description",
                     "name": "admin",
-                    "email": "admin@ctfd.io",
+                    "email": "admin@examplectf.com",
                     "password": "password",
                     "user_mode": "users",
                     "nonce": sess.get("nonce"),

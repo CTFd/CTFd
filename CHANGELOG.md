@@ -1,3 +1,93 @@
+# 3.2.1 / 2020-12-09
+
+- Fixed an issue where Users could not unlock Hints
+
+# 3.2.0 / 2020-12-07
+
+**General**
+
+- Add Team invites.
+  - Team invites are links containing a token that allow a user to join a team without knowing the team password
+  - Captains can generate invite tokens for their teams
+  - Admins can generate Team invite links as well
+- Improved Team handling
+  - Prevent team joining while already on a team
+  - Return 403 instead of 200 for team join/create errors
+  - Allow team captains whose teams haven't done anything to disband their team
+- Allow for uploading navbar logo, favicon, and index page banner during initial setup
+- Fixed issue in teams mode where a user couldn't unlock a hint despite their team having enough points
+  - The fix for this is essentially to allow the user's points to go negative
+- Imports have been made more stable
+  - This is primarily done by killing MySQL processes that are locking metadta
+  - This is a subpar approach but it seems to be the only solution to avoid a metadata lock in MySQL. This approach did not appear to be needed under Postgres or SQLite
+
+**API**
+
+- Addition of `POST /api/v1/teams/me/members` to generate invite tokens for teams
+- Fixed an issue in `POST /api/v1/awards` where CTFd would 500 when a user could not be found by the provided `user_id`
+- `POST /api/v1/unlocks` in teams mode now uses the team's score to determine if a user can purchase a hint
+  - Properly check for existing unlocks in teams mode in `POST /api/v1/unlocks`
+- `/api/v1/notifications` and `/api/v1/notifications/[notification_id]` now have an html parameter which specifies the rendered content of the notification content
+
+**Themes**
+
+- Add Team Invite icon and Disband Team icon to teams/private.html
+- Add teams/invite.html file to handle team joining with invites
+- Added syntax highlighting to challenge descriptions, pages, hints, notifications, comments, and markdown editors
+  - This is done with `highlight.js` which has been added to `package.json`
+- Fix notifications to properly fix/support Markdown and HTML notifications
+  - Notifications SQL Model now has an html propery
+  - Notifications API schemas now has an html field
+- Removed MomentJS (see https://momentjs.com/docs/#/-project-status/) in favor of dayjs
+  - dayjs is mostly API compatible with MomentJS. The only major changes were:
+    - dayjs always uses browser local time so you don't need to call `.local()`
+    - dayjs segments out some MomentJS functionality into plugins which need to be imported in before using those features
+- Fixed issue in `challenge.html` where the current attempt count would have a typo
+- Fixed issue in `challenge.html` where the max attempts for a challenge would not show if it was set to 1
+- Edit donut charts to have easier to read legends and labels
+- Make data zoom bars thinner and more transparent
+- Add logo, banner, and favicon settings to the setup.html
+
+**Plugins**
+
+- The `auth.register` (`/register`) endpoint now accepts a `?next=` parameter to define where to redirect to after registration
+- There is now a `registered_only` decorator to redirect users to `auth.register` (`/register`) instead of `auth.login` (`/login`)
+- Don't run `db.create_all()` as much during plugin upgrade or during imports
+  - By avoiding this we can let alembic and migrations do more of the table creation work but this means that plugins specifically opt into `app.db.create_all()` and will not implicitly get it through `upgrade()`.
+  - This means plugins that run `upgrade()` without a migrations folder (no idea who would do this really) will need to upgrade their code.
+- The plugin `upgrade()` function now accepts a `lower` parameter which specifies what lower revision should be used to start from.
+  - This is used to support plugin migrations during import so that we can import data directly at the point that the import was taken from
+  - `lower="current"` means to use the current revision and `lower=None` would mean to use the absolute base revision (e.g. plugin's first installation)
+  - By default this doesn't change `upgrade()` behavior
+
+**Admin Panel**
+
+- Add Favicon uploading to the Admin Panel
+- Move Logo uploading to the Theme tab in the Admin Panel
+- The challenge left side bar tabs have been rewritten into VueJS components.
+  - This fixes a number of issues with the consistency of what data is deleted/edited in the challenge editor
+  - This also prevents having to refresh the page in most challenge editing situations
+- Fixed a possible bug where the update available alert wouldn't go away on server restart
+- Examples for regex flags are now provided
+- Wrong submissions has been renamed to Incorrect Submissions
+- Graphs in the Admin Statistics page will now scroll with mouse wheel to improve browsing large datasets
+- Fixed an issue where Users/Teams could be created with a null password
+
+**Deployment**
+
+- A restart policy set to `always` has been added to nginx in docker-compose
+- Rename `requirements.txt` to `requirements.in` and generate `requirements.txt` using `pip-tools` under Python 3.6
+- `UPLOAD_PROVIDER` no longer has a default `filesystem` set in config.ini. Instead it is defaulted through `config.py`
+
+**Miscellaneous**
+
+- The `psycopg2` dependency in development.txt has been removed in favor of `psycopg2-binary` which was updated to 2.8.6
+- The `moto` dependency in development.txt has been updated to 1.3.16
+- Add `pip-tools` to `development.txt`
+- Add `import_ctf` and `export_ctf` commands to `manage.py` and deprecate `import.py` and `export.py`
+- Override the `MAIL_SERVER` config with the `TESTING_MAIL_SERVER` envvar during tests
+- `ping` events in the notification event handler have been fixed to not send duplicates
+
 # 3.1.1 / 2020-09-22
 
 **General**

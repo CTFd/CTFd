@@ -45,7 +45,7 @@ def test_user_score_is_correct():
     app = create_ctfd()
     with app.app_context():
         # create user1
-        register_user(app, name="user1", email="user1@ctfd.io")
+        register_user(app, name="user1", email="user1@examplectf.com")
 
         # create challenge
         chal = gen_challenge(app.db, value=100)
@@ -61,7 +61,7 @@ def test_user_score_is_correct():
         assert user1.place == "1st"
 
         # create user2
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user2", email="user2@examplectf.com")
 
         # user2 solves the challenge
         gen_solve(app.db, 3, challenge_id=chal_id)
@@ -84,8 +84,8 @@ def test_top_10():
     """Make sure top10 returns correct information"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io")
-        register_user(app, name="user2", email="user2@ctfd.io")
+        register_user(app, name="user1", email="user1@examplectf.com")
+        register_user(app, name="user2", email="user2@examplectf.com")
         register_user(app)
 
         chal1 = gen_challenge(app.db)
@@ -159,9 +159,13 @@ def test_scoring_logic():
     with app.app_context():
         admin = login_as_user(app, name="admin", password="password")
 
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(
+            app, name="user1", email="user1@examplectf.com", password="password"
+        )
         client1 = login_as_user(app, name="user1", password="password")
-        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        register_user(
+            app, name="user2", email="user2@examplectf.com", password="password"
+        )
         client2 = login_as_user(app, name="user2", password="password")
 
         chal1 = gen_challenge(app.db)
@@ -214,9 +218,13 @@ def test_scoring_logic_with_zero_point_challenges():
     with app.app_context():
         admin = login_as_user(app, name="admin", password="password")
 
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
+        register_user(
+            app, name="user1", email="user1@examplectf.com", password="password"
+        )
         client1 = login_as_user(app, name="user1", password="password")
-        register_user(app, name="user2", email="user2@ctfd.io", password="password")
+        register_user(
+            app, name="user2", email="user2@examplectf.com", password="password"
+        )
         client2 = login_as_user(app, name="user2", password="password")
 
         chal1 = gen_challenge(app.db)
@@ -281,9 +289,15 @@ def test_scoring_logic_with_zero_point_challenges():
 def test_hidden_users_should_not_influence_scores():
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="user1", email="user1@ctfd.io", password="password")
-        register_user(app, name="user2", email="user2@ctfd.io", password="password")
-        register_user(app, name="user3", email="user3@ctfd.io", password="password")
+        register_user(
+            app, name="user1", email="user1@examplectf.com", password="password"
+        )
+        register_user(
+            app, name="user2", email="user2@examplectf.com", password="password"
+        )
+        register_user(
+            app, name="user3", email="user3@examplectf.com", password="password"
+        )
 
         user = Users.query.filter_by(name="user3").first()
         user.hidden = True

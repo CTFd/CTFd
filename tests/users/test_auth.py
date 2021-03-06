@@ -39,21 +39,21 @@ def test_register_duplicate_username():
         register_user(
             app,
             name="user1",
-            email="user1@ctfd.io",
+            email="user1@examplectf.com",
             password="password",
             raise_for_error=False,
         )
         register_user(
             app,
             name="user1",
-            email="user2@ctfd.io",
+            email="user2@examplectf.com",
             password="password",
             raise_for_error=False,
         )
         register_user(
             app,
             name="admin  ",
-            email="admin2@ctfd.io",
+            email="admin2@examplectf.com",
             password="password",
             raise_for_error=False,
         )
@@ -69,14 +69,14 @@ def test_register_duplicate_email():
         register_user(
             app,
             name="user1",
-            email="user1@ctfd.io",
+            email="user1@examplectf.com",
             password="password",
             raise_for_error=False,
         )
         register_user(
             app,
             name="user2",
-            email="user1@ctfd.io",
+            email="user1@examplectf.com",
             password="password",
             raise_for_error=False,
         )
@@ -144,7 +144,7 @@ def test_user_login_with_email():
     app = create_ctfd()
     with app.app_context():
         register_user(app)
-        client = login_as_user(app, name="user@ctfd.io", password="password")
+        client = login_as_user(app, name="user@examplectf.com", password="password")
         r = client.get("/profile")
         assert (
             r.location != "http://localhost/login"
@@ -303,7 +303,7 @@ def test_user_can_confirm_email(mock_smtp):
         client = login_as_user(app, name="user1", password="password")
 
         r = client.get("http://localhost/confirm")
-        assert "Need to resend the confirmation email?" in r.get_data(as_text=True)
+        assert "We've sent a confirmation email" in r.get_data(as_text=True)
 
         # smtp send message function was called
         mock_smtp.return_value.send_message.assert_called()
@@ -365,9 +365,10 @@ def test_user_can_reset_password(mock_smtp):
 
             # Build the email
             msg = (
-                "Did you initiate a password reset? If you didn't initiate this request you can ignore this email. "
+                "Did you initiate a password reset on CTFd? If you didn't initiate this request you can ignore this email. "
                 "\n\nClick the following link to reset your password:\n"
-                "http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U"
+                "http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U\n\n"
+                "If the link is not clickable, try copying and pasting it into your browser."
             )
             ctf_name = get_config("ctf_name")
 

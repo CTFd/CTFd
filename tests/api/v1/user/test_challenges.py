@@ -106,7 +106,7 @@ def test_api_challenge_list_verified_emails():
         gen_user(
             app.db,
             name="user_name",
-            email="verified_user@ctfd.io",
+            email="verified_user@examplectf.com",
             password="password",
             verified=True,
         )
@@ -209,7 +209,7 @@ def test_api_challenge_verified_emails():
         gen_user(
             app.db,
             name="user_name",
-            email="verified_user@ctfd.io",
+            email="verified_user@examplectf.com",
             password="password",
             verified=True,
         )
@@ -333,7 +333,7 @@ def test_api_challenge_solves_verified_emails():
         gen_user(
             app.db,
             name="user_name",
-            email="verified_user@ctfd.io",
+            email="verified_user@examplectf.com",
             password="password",
             verified=True,
         )

@@ -1,4 +1,5 @@
-from marshmallow import pre_load
+from marshmallow import pre_load, validate
+from marshmallow_sqlalchemy import field_for
 
 from CTFd.models import Pages, ma
 from CTFd.utils import string_types
@@ -9,6 +10,42 @@ class PageSchema(ma.ModelSchema):
         model = Pages
         include_fk = True
         dump_only = ("id",)
+
+    title = field_for(
+        Pages,
+        "title",
+        validate=[
+            validate.Length(
+                min=0, max=80, error="Page could not be saved. Your title is too long.",
+            )
+        ],
+    )
+
+    route = field_for(
+        Pages,
+        "route",
+        allow_none=True,
+        validate=[
+            validate.Length(
+                min=0,
+                max=128,
+                error="Page could not be saved. Your route is too long.",
+            )
+        ],
+    )
+
+    content = field_for(
+        Pages,
+        "content",
+        allow_none=True,
+        validate=[
+            validate.Length(
+                min=0,
+                max=65535,
+                error="Page could not be saved. Your content is too long.",
+            )
+        ],
+    )
 
     @pre_load
     def validate_route(self, data):

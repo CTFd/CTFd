@@ -7,16 +7,19 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         default-mysql-client \
-        python-dev \
+        python3-dev \
         libffi-dev \
         libssl-dev \
-        git\
+        git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . /opt/CTFd
+COPY requirements.txt /opt/CTFd/
 
 RUN pip install -r requirements.txt --no-cache-dir
+
+COPY . /opt/CTFd
+
 # hadolint ignore=SC2086
 RUN for d in CTFd/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \

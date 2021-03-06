@@ -53,7 +53,7 @@ from CTFd.utils.security.signing import (
     serialize,
     unserialize,
 )
-from CTFd.utils.uploads import get_uploader
+from CTFd.utils.uploads import get_uploader, upload_file
 from CTFd.utils.user import authed, get_current_user, is_admin
 
 views = Blueprint("views", __name__)
@@ -75,6 +75,16 @@ def setup():
             set_config("user_mode", user_mode)
 
             # Style
+            ctf_logo = request.files.get("ctf_logo")
+            if ctf_logo:
+                f = upload_file(file=ctf_logo)
+                set_config("ctf_logo", f.location)
+
+            ctf_small_icon = request.files.get("ctf_small_icon")
+            if ctf_small_icon:
+                f = upload_file(file=ctf_small_icon)
+                set_config("ctf_small_icon", f.location)
+
             theme = request.form.get("ctf_theme", "core")
             set_config("ctf_theme", theme)
             theme_color = request.form.get("theme_color")
@@ -141,11 +151,20 @@ def setup():
                 name=name, email=email, password=password, type="admin", hidden=True
             )
 
-            # Index page
+            # Create an empty index page
+            page = Pages(title=None, route="index", content="", draft=False)
 
-            index = """<div class="row">
+            # Upload banner
+            default_ctf_banner_location = url_for("views.themes", path="img/logo.png")
+            ctf_banner = request.files.get("ctf_banner")
+            if ctf_banner:
+                f = upload_file(file=ctf_banner, page_id=page.id)
+                default_ctf_banner_location = url_for("views.files", path=f.location)
+
+            # Splice in our banner
+            index = f"""<div class="row">
     <div class="col-md-6 offset-md-3">
-        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="themes/core/static/img/logo.png" />
+        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="{default_ctf_banner_location}" />
         <h3 class="text-center">
             <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
             <p>Follow us on social media:</p>
@@ -159,8 +178,7 @@ def setup():
         </h4>
     </div>
 </div>"""
-
-            page = Pages(title=None, route="index", content=index, draft=False)
+            page.content = index
 
             # Visibility
             set_config(

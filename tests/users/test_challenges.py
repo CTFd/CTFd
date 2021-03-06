@@ -76,7 +76,7 @@ def test_viewing_challenge():
 #         # Generate 5 users
 #         for c in range(1, 6):
 #             name = "user{}".format(c)
-#             email = "user{}@ctfd.io".format(c)
+#             email = "user{}@examplectf.com".format(c)
 #             register_user(app, name=name, email=email, password="password")
 #
 #         # Generate 5 challenges

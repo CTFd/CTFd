@@ -5,7 +5,7 @@ import $ from "jquery";
 import CTFd from "core/CTFd";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
-import { ezToast } from "core/ezq";
+import { ezAlert, ezToast } from "core/ezq";
 import Vue from "vue/dist/vue.esm.browser";
 import CommentBox from "../components/comments/CommentBox.vue";
 
@@ -35,6 +35,22 @@ function submit_form() {
       return response.json();
     })
     .then(function(response) {
+      // Show errors reported by API
+      if (response.success === false) {
+        let body = "";
+        for (const k in response.errors) {
+          body += response.errors[k].join("\n");
+          body += "\n";
+        }
+
+        ezAlert({
+          title: "Error",
+          body: body,
+          button: "OK"
+        });
+        return;
+      }
+
       if (method === "PATCH" && response.success) {
         ezToast({
           title: "Saved",

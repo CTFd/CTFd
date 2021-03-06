@@ -23,7 +23,7 @@ def current(plugin_name=None):
     return get_config(plugin_name + "_alembic_version")
 
 
-def upgrade(plugin_name=None, revision=None):
+def upgrade(plugin_name=None, revision=None, lower="current"):
     database_url = current_app.config.get("SQLALCHEMY_DATABASE_URI")
     if database_url.startswith("sqlite"):
         current_app.db.create_all()
@@ -40,8 +40,6 @@ def upgrade(plugin_name=None, revision=None):
     # Check if the plugin has migraitons
     migrations_path = os.path.join(current_app.plugins_dir, plugin_name, "migrations")
     if os.path.isdir(migrations_path) is False:
-        # Create any tables that the plugin may have
-        current_app.db.create_all()
         return
 
     engine = create_engine(database_url, poolclass=pool.NullPool)
@@ -55,8 +53,11 @@ def upgrade(plugin_name=None, revision=None):
     config.set_main_option("version_locations", migrations_path)
     script = ScriptDirectory.from_config(config)
 
-    # get current revision for plugin
-    lower = get_config(plugin_name + "_alembic_version")
+    # Choose base revision for plugin upgrade
+    # "current" points to the current plugin version stored in config
+    # None represents the absolute base layer (e.g. first installation)
+    if lower == "current":
+        lower = get_config(plugin_name + "_alembic_version")
 
     # Do we upgrade to head or to a specific revision
     if revision is None:

@@ -18,11 +18,12 @@ def test_new_fields_show_on_pages():
 
         gen_field(app.db)
 
-        with login_as_user(app) as client:
+        with app.test_client() as client:
             r = client.get("/register")
             assert "CustomField" in r.get_data(as_text=True)
             assert "CustomFieldDescription" in r.get_data(as_text=True)
 
+        with login_as_user(app) as client:
             r = client.get("/settings")
             assert "CustomField" in r.get_data(as_text=True)
             assert "CustomFieldDescription" in r.get_data(as_text=True)
@@ -61,7 +62,7 @@ def test_fields_required_on_register():
                 with client.session_transaction() as sess:
                     data = {
                         "name": "user",
-                        "email": "user@ctfd.io",
+                        "email": "user@examplectf.com",
                         "password": "password",
                         "nonce": sess.get("nonce"),
                     }
@@ -72,7 +73,7 @@ def test_fields_required_on_register():
                 with client.session_transaction() as sess:
                     data = {
                         "name": "user",
-                        "email": "user@ctfd.io",
+                        "email": "user@examplectf.com",
                         "password": "password",
                         "fields[1]": "custom_field_value",
                         "nonce": sess.get("nonce"),
@@ -101,7 +102,7 @@ def test_fields_properties():
             app.db, name="CustomField4", required=False, public=False, editable=False
         )
 
-        with login_as_user(app) as client:
+        with app.test_client() as client:
             r = client.get("/register")
             resp = r.get_data(as_text=True)
             assert "CustomField1" in resp
@@ -109,6 +110,7 @@ def test_fields_properties():
             assert "CustomField3" in resp
             assert "CustomField4" in resp
 
+        with login_as_user(app) as client:
             r = client.get("/settings")
             resp = r.get_data(as_text=True)
             assert "CustomField1" in resp
@@ -176,7 +178,7 @@ def test_boolean_checkbox_field():
             with client.session_transaction() as sess:
                 data = {
                     "name": "user",
-                    "email": "user@ctfd.io",
+                    "email": "user@examplectf.com",
                     "password": "password",
                     "nonce": sess.get("nonce"),
                     "fields[1]": "y",

@@ -107,7 +107,9 @@ class UnlockList(Resource):
         Model = get_class_by_tablename(req["type"])
         target = Model.query.filter_by(id=req["target"]).first_or_404()
 
-        if target.cost > user.score:
+        # We should use the team's score if in teams mode
+        # user.account gives the appropriate account based on team mode
+        if target.cost > user.account.score:
             return (
                 {
                     "success": False,
@@ -124,7 +126,13 @@ class UnlockList(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        existing = Unlocks.query.filter_by(**req).first()
+        # Search for an existing unlock that matches the target and type
+        # And matches either the requesting user id or the requesting team id
+        existing = Unlocks.query.filter(
+            Unlocks.target == req["target"],
+            Unlocks.type == req["type"],
+            Unlocks.account_id == user.account_id,
+        ).first()
         if existing:
             return (
                 {

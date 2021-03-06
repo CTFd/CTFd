@@ -233,16 +233,18 @@ class UserPublic(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        db.session.commit()
-
+        # This generates the response first before actually changing the type
+        # This avoids an error during User type changes where we change
+        # the polymorphic identity resulting in an ObjectDeletedError
+        # https://github.com/CTFd/CTFd/issues/1794
         response = schema.dump(response.data)
-
+        db.session.commit()
         db.session.close()
 
         clear_user_session(user_id=user_id)
         clear_standings()
 
-        return {"success": True, "data": response}
+        return {"success": True, "data": response.data}
 
     @admins_only
     @users_namespace.doc(
@@ -250,6 +252,13 @@ class UserPublic(Resource):
         responses={200: ("Success", "APISimpleSuccessResponse")},
     )
     def delete(self, user_id):
+        # Admins should not be able to delete themselves
+        if user_id == session["id"]:
+            return (
+                {"success": False, "errors": {"id": "You cannot delete yourself"}},
+                400,
+            )
+
         Notifications.query.filter_by(user_id=user_id).delete()
         Awards.query.filter_by(user_id=user_id).delete()
         Unlocks.query.filter_by(user_id=user_id).delete()

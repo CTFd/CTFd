@@ -1,42 +1,4 @@
 <div role="tabpanel" class="tab-pane config-section active" id="appearance">
-	<form id="logo-upload" class="form-upload" method="POST" enctype="multipart/form-data">
-		<div class="form-group">
-			<label for="ctf_logo">
-				Logo
-				<small class="form-text text-muted">
-					Logo to use for the website instead of a CTF name.
-				</small>
-			</label>
-
-			{% if ctf_logo %}
-				<div class="d-block py-3">
-					<img id="ctf_logo_preview" class="img-responsive ctf_logo"
-						 src="{{ url_for('views.files', path=ctf_logo) }}"
-						 height="25">
-					<button type="button" id="remove-logo" class="btn-sm btn-danger">
-						Remove Logo
-					</button>
-				</div>
-			{% endif %}
-
-			<div class="row">
-				<div class="col-md-9">
-					<input class="form-control-file" id="ctf_logo_file" name='file' type='file'
-						   placeholder="CTF Logo">
-				</div>
-				<div class="col-md-3">
-					<div class="form-group">
-						<div class="d-inline-block float-right">
-							<button type="submit" class="btn-sm btn-primary float-right">Upload</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</form>
-
-	<hr>
-
 	<form method="POST" autocomplete="off" class="w-100">
 		<div class="form-group">
 			<label for="ctf_name">

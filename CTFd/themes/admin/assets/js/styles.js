@@ -4,6 +4,7 @@ import $ from "jquery";
 import EasyMDE from "easymde";
 import Vue from "vue/dist/vue.esm.browser";
 import MediaLibrary from "./components/files/MediaLibrary.vue";
+import hljs from "highlight.js";
 
 export function showMediaLibrary(editor) {
   const mediaModal = Vue.extend(MediaLibrary);
@@ -30,46 +31,54 @@ export function showMediaLibrary(editor) {
   $("#media-modal").modal();
 }
 
+export function bindMarkdownEditor(elem) {
+  if (elem.hasOwnProperty("mde") === false) {
+    let mde = new EasyMDE({
+      autoDownloadFontAwesome: false,
+      toolbar: [
+        "bold",
+        "italic",
+        "heading",
+        "|",
+        "quote",
+        "unordered-list",
+        "ordered-list",
+        "|",
+        "link",
+        "image",
+        {
+          name: "media",
+          action: editor => {
+            showMediaLibrary(editor);
+          },
+          className: "fas fa-file-upload",
+          title: "Media Library"
+        },
+        "|",
+        "preview",
+        "guide"
+      ],
+      element: elem,
+      initialValue: $(elem).val(),
+      forceSync: true,
+      minHeight: "200px",
+      renderingConfig: {
+        codeSyntaxHighlighting: true,
+        hljs: hljs
+      }
+    });
+    elem.mde = mde;
+    elem.codemirror = mde.codemirror;
+    $(elem).on("change keyup paste", function() {
+      mde.codemirror.getDoc().setValue($(elem).val());
+      mde.codemirror.refresh();
+    });
+  }
+}
+
 export function bindMarkdownEditors() {
   $("textarea.markdown").each(function(_i, e) {
-    if (e.hasOwnProperty("mde") === false) {
-      let mde = new EasyMDE({
-        autoDownloadFontAwesome: false,
-        toolbar: [
-          "bold",
-          "italic",
-          "heading",
-          "|",
-          "quote",
-          "unordered-list",
-          "ordered-list",
-          "|",
-          "link",
-          "image",
-          {
-            name: "media",
-            action: editor => {
-              showMediaLibrary(editor);
-            },
-            className: "fas fa-file-upload",
-            title: "Media Library"
-          },
-          "|",
-          "preview",
-          "guide"
-        ],
-        element: this,
-        initialValue: $(this).val(),
-        forceSync: true,
-        minHeight: "200px"
-      });
-      this.mde = mde;
-      this.codemirror = mde.codemirror;
-      $(this).on("change keyup paste", function() {
-        mde.codemirror.getDoc().setValue($(this).val());
-        mde.codemirror.refresh();
-      });
-    }
+    bindMarkdownEditor(e);
   });
 }
 
@@ -145,5 +154,10 @@ export default () => {
     bindMarkdownEditors();
     makeSortableTables();
     $('[data-toggle="tooltip"]').tooltip();
+
+    // Syntax highlighting
+    document.querySelectorAll("pre code").forEach(block => {
+      hljs.highlightBlock(block);
+    });
   });
 };

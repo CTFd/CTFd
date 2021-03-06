@@ -51,7 +51,7 @@ def test_reset():
 
         for x in range(10):
             user = base_user + str(x)
-            user_email = user + "@ctfd.io"
+            user_email = user + "@examplectf.com"
             user_obj = gen_user(app.db, name=user, email=user_email)
             gen_award(app.db, user_id=user_obj.id)
             gen_solve(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
@@ -153,10 +153,12 @@ def test_reset_team_mode():
 
         for x in range(10):
             user = base_user + str(x)
-            user_email = user + "@ctfd.io"
+            user_email = user + "@examplectf.com"
             user_obj = gen_user(app.db, name=user, email=user_email)
             team_obj = gen_team(
-                app.db, name=base_team + str(x), email=base_team + str(x) + "@ctfd.io"
+                app.db,
+                name=base_team + str(x),
+                email=base_team + str(x) + "@examplectf.com",
             )
             team_obj.members.append(user_obj)
             team_obj.captain_id = user_obj.id
