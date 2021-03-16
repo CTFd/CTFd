@@ -397,6 +397,47 @@ def test_hidden_challenge_is_unsolveable():
     destroy_ctfd(app)
 
 
+def test_invalid_requirements_are_rejected():
+    """Test that invalid requirements JSON blobs are rejected by the API"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        gen_challenge(app.db)
+        with login_as_user(app, "admin") as client:
+            # Test None/null values
+            r = client.patch(
+                "/api/v1/challenges/1", json={"requirements": {"prerequisites": [None]}}
+            )
+            assert r.status_code == 400
+            assert r.get_json() == {
+                "success": False,
+                "errors": {
+                    "requirements": [
+                        "Challenge requirements cannot have a null prerequisite"
+                    ]
+                },
+            }
+            # Test empty strings
+            r = client.patch(
+                "/api/v1/challenges/1", json={"requirements": {"prerequisites": [""]}}
+            )
+            assert r.status_code == 400
+            assert r.get_json() == {
+                "success": False,
+                "errors": {
+                    "requirements": [
+                        "Challenge requirements cannot have a null prerequisite"
+                    ]
+                },
+            }
+            # Test a valid integer
+            r = client.patch(
+                "/api/v1/challenges/1", json={"requirements": {"prerequisites": [2]}}
+            )
+            assert r.status_code == 200
+    destroy_ctfd(app)
+
+
 def test_challenge_with_requirements_is_unsolveable():
     """Test that a challenge with a requirement is unsolveable without first solving the requirement"""
     app = create_ctfd()
