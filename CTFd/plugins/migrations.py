@@ -73,6 +73,9 @@ def upgrade(plugin_name=None, revision=None, lower="current"):
         for r in revs:
             with context.begin_transaction():
                 r.module.upgrade(op=op)
+            # Set revision that succeeded so we don't need
+            # to start from the beginning on failure
+            set_config(plugin_name + "_alembic_version", r.revision)
     finally:
         conn.close()
 
