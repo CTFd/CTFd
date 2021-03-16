@@ -1,4 +1,4 @@
-@import "~bootstrap/dist/css/bootstrap.css";
+@import "~bootstrap/scss/bootstrap.scss";
 @import "~highlight.js/styles/github.css";
 @import "includes/jumbotron.css";
 @import "includes/sticky-footer.css";
@@ -29,6 +29,11 @@ table > thead > tr > td {
   /* Remove border line from thead of all tables */
   /* It can overlap with other element styles */
   border-top: none !important;
+}
+
+blockquote {
+  border-left: 4px solid $secondary;
+  padding-left: 15px;
 }
 
 .table thead th {
