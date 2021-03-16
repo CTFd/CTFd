@@ -88,7 +88,7 @@
 								<input type="checkbox" class="form-check-input" value="{{ team.id }}" data-team-id="{{ team.id }}">&nbsp;
 							</div>
 						</td>
-						<td class="team-id text-center value="{{ team.id }}">{{ team.id }}</td>
+						<td class="team-id text-center" value="{{ team.id }}">{{ team.id }}</td>
 						<td class="team-name" value="{{ team.name }}">
 							<a href="{{ url_for('admin.teams_detail', team_id=team.id) }}">
 								{{ team.name | truncate(32) }}
