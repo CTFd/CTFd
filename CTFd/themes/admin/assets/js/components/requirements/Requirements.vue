@@ -43,7 +43,12 @@
         </select>
       </div>
       <div class="form-group">
-        <button class="btn btn-success float-right">Add Prerequisite</button>
+        <button
+          class="btn btn-success float-right"
+          :disabled="!selectedRequirement"
+        >
+          Add Prerequisite
+        </button>
       </div>
     </form>
   </div>
@@ -123,6 +128,10 @@ export default {
         ? this.requirements.prerequisites
         : [];
 
+      if (!this.selectedRequirement) {
+        return;
+      }
+
       newRequirements.push(this.selectedRequirement);
       this.requirements["prerequisites"] = newRequirements;
 
@@ -144,6 +153,7 @@ export default {
         })
         .then(data => {
           if (data.success) {
+            this.selectedRequirement = null;
             this.loadRequirements();
           }
         });
