@@ -3,6 +3,7 @@ from flask import url_for
 from CTFd.models import Teams, Users
 from CTFd.utils import get_config
 
+# TODO: Replace these constants with the UserModeTypes enum
 USERS_MODE = "users"
 TEAMS_MODE = "teams"
 
