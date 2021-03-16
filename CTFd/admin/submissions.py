@@ -33,17 +33,7 @@ def submissions_listing(submission_type):
     Model = get_model()
 
     submissions = (
-        Submissions.query.add_columns(
-            Submissions.id,
-            Submissions.type,
-            Submissions.challenge_id,
-            Submissions.provided,
-            Submissions.account_id,
-            Submissions.date,
-            Challenges.name.label("challenge_name"),
-            Model.name.label("account_name"),
-        )
-        .filter_by(**filters_by)
+        Submissions.query.filter_by(**filters_by)
         .filter(*filters)
         .join(Challenges)
         .join(Model)
