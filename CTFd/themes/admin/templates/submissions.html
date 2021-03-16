@@ -70,7 +70,7 @@
 						{% if mode == UserModeTypes.TEAMS %}
 						<th class="sort-col"><b>User</b></th>
 						{% endif %}
-						<th class="sort-col"><b>{{ mode | capitalize }}</b></th>
+						<th class="sort-col"><b>{{ get_mode_as_word(capitalize=True) }}</b></th>
 						<th class="sort-col"><b>Challenge</b></th>
 						<th class="sort-col"><b>Type</b></th>
 						<th class="sort-col"><b>Provided</b></th>
