@@ -14,6 +14,12 @@ class ConfigTypes(str, RawEnum):
 
 
 @JinjaEnum
+class UserModeTypes(str, RawEnum):
+    USERS = "users"
+    TEAMS = "teams"
+
+
+@JinjaEnum
 class ChallengeVisibilityTypes(str, RawEnum):
     PUBLIC = "public"
     PRIVATE = "private"
