@@ -13,10 +13,10 @@ from jinja2.sandbox import SandboxedEnvironment
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import cached_property
 
+import CTFd.utils.config
 from CTFd import utils
-from CTFd.constants.themes import DEFAULT_THEME
+from CTFd.constants.themes import ADMIN_THEME, DEFAULT_THEME
 from CTFd.plugins import init_plugins
-from CTFd.utils.config import ctf_theme_candidates
 from CTFd.utils.crypto import sha256
 from CTFd.utils.initialization import (
     init_events,
@@ -100,35 +100,35 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
 
 
 class ThemeLoader(FileSystemLoader):
-    """Custom FileSystemLoader that switches themes based on the configuration value"""
+    """Custom FileSystemLoader that is aware of theme structure and config.
+    """
 
-    def __init__(self, searchpath, encoding="utf-8", followlinks=False):
+    DEFAULT_THEMES_PATH = os.path.join(os.path.dirname(__file__), "themes")
+    _ADMIN_THEME_PREFIX = ADMIN_THEME + "/"
+
+    def __init__(
+        self,
+        searchpath=DEFAULT_THEMES_PATH,
+        theme_name=None,
+        encoding="utf-8",
+        followlinks=False,
+    ):
         super(ThemeLoader, self).__init__(searchpath, encoding, followlinks)
-        self.overriden_templates = {}
+        self.theme_name = theme_name
 
     def get_source(self, environment, template):
-        # Check if the template has been overriden
-        if template in self.overriden_templates:
-            return self.overriden_templates[template], template, lambda: True
-
-        # Check if the template requested is for the admin panel
-        if template.startswith("admin/"):
-            template = template[6:]  # Strip out admin/
-            template = "/".join(["admin", "templates", template])
-            return super(ThemeLoader, self).get_source(environment, template)
-
-        # Load regular theme data with potential fallbacks
-        first_cand, *others = ctf_theme_candidates()
-        for cand_theme in (first_cand, *others):
-            tpl_path = safe_join(cand_theme, "templates", template)
-            try:
-                return super(ThemeLoader, self).get_source(environment, tpl_path)
-            except jinja2.exceptions.TemplateNotFound:
-                pass
-        else:
-            # If we found no matching templates then raise an exception for the
-            # first one we intended to try
-            raise jinja2.exceptions.TemplateNotFound(first_cand)
+        # Refuse to load `admin/*` from a loader not for the admin theme
+        # Because there is a single template loader, themes can essentially
+        # provide files for other themes. This could end up causing issues if
+        # an admin theme references a file that doesn't exist that a malicious
+        # theme provides.
+        if template.startswith(self._ADMIN_THEME_PREFIX):
+            if self.theme_name != ADMIN_THEME:
+                raise jinja2.TemplateNotFound(template)
+            template = template[len(self._ADMIN_THEME_PREFIX) :]
+        theme_name = self.theme_name or str(utils.get_config("ctf_theme"))
+        template = safe_join(theme_name, "templates", template)
+        return super(ThemeLoader, self).get_source(environment, template)
 
 
 def confirm_upgrade():
@@ -155,19 +155,34 @@ def create_app(config="CTFd.config.Config"):
     with app.app_context():
         app.config.from_object(config)
 
-        app.theme_loader = ThemeLoader(
-            os.path.join(app.root_path, "themes"), followlinks=True
+        loaders = []
+        # We provide a `DictLoader` which may be used to override templates
+        app.overridden_templates = {}
+        loaders.append(jinja2.DictLoader(app.overridden_templates))
+        # A `ThemeLoader` with no `theme_name` will load from the current theme
+        loaders.append(ThemeLoader())
+        # If `THEME_FALLBACK` is set and true, we add another loader which will
+        # load from the `DEFAULT_THEME` - this mirrors the order implemented by
+        # `config.ctf_theme_candidates()`
+        if bool(app.config.get("THEME_FALLBACK")):
+            loaders.append(ThemeLoader(theme_name=DEFAULT_THEME))
+        # All themes including admin can be accessed by prefixing their name
+        prefix_loader_dict = {ADMIN_THEME: ThemeLoader(theme_name=ADMIN_THEME)}
+        for theme_name in CTFd.utils.config.get_themes():
+            prefix_loader_dict[theme_name] = ThemeLoader(theme_name=theme_name)
+        loaders.append(jinja2.PrefixLoader(prefix_loader_dict))
+        # Plugin templates are also accessed via prefix but we just point a
+        # normal `FileSystemLoader` at the plugin tree rather than validating
+        # each plugin here (that happens later in `init_plugins()`). We
+        # deliberately don't add this to `prefix_loader_dict` defined above
+        # because to do so would break template loading from a theme called
+        # `prefix` (even though that'd be weird).
+        plugin_loader = jinja2.FileSystemLoader(
+            searchpath=os.path.join(app.root_path, "plugins"), followlinks=True
         )
-        # Weird nested solution for accessing plugin templates
-        app.plugin_loader = jinja2.PrefixLoader(
-            {
-                "plugins": jinja2.FileSystemLoader(
-                    searchpath=os.path.join(app.root_path, "plugins"), followlinks=True
-                )
-            }
-        )
-        # Load from themes first but fallback to loading from the plugin folder
-        app.jinja_loader = jinja2.ChoiceLoader([app.theme_loader, app.plugin_loader])
+        loaders.append(jinja2.PrefixLoader({"plugins": plugin_loader}))
+        # Use a choice loader to find the first match from our list of loaders
+        app.jinja_loader = jinja2.ChoiceLoader(loaders)
 
         from CTFd.models import (  # noqa: F401
             db,

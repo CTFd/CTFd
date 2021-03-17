@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 
-from flask import request
+import pytest
+from flask import render_template, render_template_string, request
 from jinja2.exceptions import TemplateNotFound
 from jinja2.sandbox import SecurityError
 from werkzeug.test import Client
@@ -188,3 +190,34 @@ def test_theme_fallback_config():
 
     # Remove empty theme
     os.rmdir(os.path.join(app.root_path, "themes", "foo"))
+
+
+def test_theme_template_loading_by_prefix():
+    """Test that we can load theme files by their folder prefix"""
+    app = create_ctfd()
+    with app.test_request_context():
+        tpl1 = render_template_string("{% extends 'core/page.html' %}", content="test")
+        tpl2 = render_template("page.html", content="test")
+        assert tpl1 == tpl2
+
+
+def test_theme_template_disallow_loading_admin_templates():
+    """Test that admin files in a theme will not be loaded"""
+    app = create_ctfd()
+    with app.app_context():
+        try:
+            # Make an empty malicious theme
+            filename = os.path.join(
+                app.root_path, "themes", "foo", "admin", "malicious.html"
+            )
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            with open(filename, "w") as f:
+                f.write("malicious")
+
+            with pytest.raises(TemplateNotFound):
+                render_template_string("{% include 'admin/malicious.html' %}")
+        finally:
+            # Remove empty theme
+            shutil.rmtree(
+                os.path.join(app.root_path, "themes", "foo"), ignore_errors=True
+            )

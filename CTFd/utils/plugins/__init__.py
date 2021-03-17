@@ -38,7 +38,7 @@ def get_registered_admin_stylesheets():
 
 
 def override_template(template, html):
-    app.theme_loader.overriden_templates[template] = html
+    app.overridden_templates[template] = html
 
 
 def get_configurable_plugins():
