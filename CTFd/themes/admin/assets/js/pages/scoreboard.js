@@ -43,10 +43,10 @@ function toggleSelectedAccounts(selectedAccounts, action) {
     hidden: action === "hidden" ? true : false
   };
   const reqs = [];
-  for (var accId of selectedAccounts.accounts) {
+  for (let accId of selectedAccounts.accounts) {
     reqs.push(api_func[CTFd.config.userMode](accId, params));
   }
-  for (var accId of selectedAccounts.users) {
+  for (let accId of selectedAccounts.users) {
     reqs.push(api_func["users"](accId, params));
   }
   Promise.all(reqs).then(_responses => {
