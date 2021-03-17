@@ -118,6 +118,10 @@ class ThemeLoader(FileSystemLoader):
 
     def get_source(self, environment, template):
         # Refuse to load `admin/*` from a loader not for the admin theme
+        # Because there is a single template loader, themes can essentially
+        # provide files for other themes. This could end up causing issues if
+        # an admin theme references a file that doesn't exist that a malicious
+        # theme provides.
         if template.startswith(self._ADMIN_THEME_PREFIX):
             if self.theme_name != ADMIN_THEME:
                 raise jinja2.TemplateNotFound(template)
