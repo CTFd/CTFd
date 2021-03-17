@@ -57,6 +57,7 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12">
+			{% set mode = Configs.user_mode %}
 			<table id="teamsboard" class="table table-striped border">
 				<thead>
 					<tr>
@@ -66,6 +67,9 @@
 							</div>
 						</th>
 						<th class="text-center sort-col"><b>ID</b></th>
+						{% if mode == UserModeTypes.TEAMS %}
+						<th class="sort-col"><b>User</b></th>
+						{% endif %}
 						<th class="sort-col"><b>{{ get_mode_as_word(capitalize=True) }}</b></th>
 						<th class="sort-col"><b>Challenge</b></th>
 						<th class="sort-col"><b>Type</b></th>
@@ -84,14 +88,21 @@
 						<td class="text-center" id="{{ sub.id }}">
 							{{ sub.id }}
 						</td>
+						{% if mode == UserModeTypes.TEAMS %}
+						<td>
+							<a href="{{ url_for('admin.users_detail', user_id=sub.user_id) }}">
+								{{ sub.user.name }}
+							</a>
+						</td>
+						{% endif %}
 						<td class="team" id="{{ sub.account_id }}">
 							<a href="{{ generate_account_url(sub.account_id, admin=True) }}">
-								{{ sub.account_name }}
+								{{ sub.account.name }}
 							</a>
 						</td>
 						<td class="chal" id="{{ sub.challenge_id }}">
 							<a href="{{ url_for('admin.challenges_detail', challenge_id=sub.challenge_id) }}">
-								{{ sub.challenge_name }}
+								{{ sub.challenge.name }}
 							</a>
 						</td>
 						<td>

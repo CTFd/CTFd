@@ -81,6 +81,7 @@ def confirm(data=None):
             log(
                 "registrations",
                 format="[{date}] {ip} - {name} initiated a confirmation email resend",
+                name=user.name,
             )
             return render_template(
                 "confirm.html", infos=[f"Confirmation email sent to {user.email}!"]
@@ -140,7 +141,7 @@ def reset_password(data=None):
             clear_user_session(user_id=user.id)
             log(
                 "logins",
-                format="[{date}] {ip} -  successful password reset for {name}",
+                format="[{date}] {ip} - successful password reset for {name}",
                 name=user.name,
             )
             db.session.close()
@@ -323,6 +324,8 @@ def register():
                     log(
                         "registrations",
                         format="[{date}] {ip} - {name} registered (UNCONFIRMED) with {email}",
+                        name=user.name,
+                        email=user.email,
                     )
                     email.verify_email_address(user.email)
                     db.session.close()
@@ -333,7 +336,12 @@ def register():
                     ):  # We want to notify the user that they have registered.
                         email.successful_registration_notification(user.email)
 
-        log("registrations", "[{date}] {ip} - {name} registered with {email}")
+        log(
+            "registrations",
+            format="[{date}] {ip} - {name} registered with {email}",
+            name=user.name,
+            email=user.email,
+        )
         db.session.close()
 
         if is_teams_mode():
@@ -362,7 +370,7 @@ def login():
                 session.regenerate()
 
                 login_user(user)
-                log("logins", "[{date}] {ip} - {name} logged in")
+                log("logins", "[{date}] {ip} - {name} logged in", name=user.name)
 
                 db.session.close()
                 if request.args.get("next") and validators.is_safe_url(
@@ -373,7 +381,11 @@ def login():
 
             else:
                 # This user exists but the password is wrong
-                log("logins", "[{date}] {ip} - submitted invalid password for {name}")
+                log(
+                    "logins",
+                    "[{date}] {ip} - submitted invalid password for {name}",
+                    name=user.name,
+                )
                 errors.append("Your username or password is incorrect")
                 db.session.close()
                 return render_template("login.html", errors=errors)
