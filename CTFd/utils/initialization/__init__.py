@@ -43,12 +43,85 @@ from CTFd.utils.user import (
 )
 
 
+def env_init_template_filters(env):
+    env.filters["markdown"] = markdown
+    env.filters["unix_time"] = unix_time
+    env.filters["unix_time_millis"] = unix_time_millis
+    env.filters["isoformat"] = isoformat
+    env.filters["pluralize"] = pluralize
+
+
 def init_template_filters(app):
     app.jinja_env.filters["markdown"] = markdown
     app.jinja_env.filters["unix_time"] = unix_time
     app.jinja_env.filters["unix_time_millis"] = unix_time_millis
     app.jinja_env.filters["isoformat"] = isoformat
     app.jinja_env.filters["pluralize"] = pluralize
+
+
+def env_init_template_globals(env):
+    from CTFd.constants import JINJA_ENUMS
+    from CTFd.constants.config import Configs
+    from CTFd.constants.plugins import Plugins
+    from CTFd.constants.sessions import Session
+    from CTFd.constants.static import Static
+    from CTFd.constants.users import User
+    from CTFd.constants.teams import Team
+    from CTFd.forms import Forms
+    from CTFd.utils.config.visibility import (
+        accounts_visible,
+        challenges_visible,
+        registration_visible,
+        scores_visible,
+    )
+    from CTFd.utils.countries import get_countries, lookup_country_code
+    from CTFd.utils.countries.geoip import lookup_ip_address
+
+    env.globals.update(config=config)
+    env.globals.update(get_pages=get_pages)
+    env.globals.update(can_send_mail=can_send_mail)
+    env.globals.update(get_ctf_name=ctf_name)
+    env.globals.update(get_ctf_logo=ctf_logo)
+    env.globals.update(get_ctf_theme=ctf_theme)
+    env.globals.update(get_configurable_plugins=get_configurable_plugins)
+    env.globals.update(get_registered_scripts=get_registered_scripts)
+    env.globals.update(get_registered_stylesheets=get_registered_stylesheets)
+    env.globals.update(get_registered_admin_scripts=get_registered_admin_scripts)
+    env.globals.update(
+        get_registered_admin_stylesheets=get_registered_admin_stylesheets
+    )
+    env.globals.update(get_config=get_config)
+    env.globals.update(generate_account_url=generate_account_url)
+    env.globals.update(get_countries=get_countries)
+    env.globals.update(lookup_country_code=lookup_country_code)
+    env.globals.update(lookup_ip_address=lookup_ip_address)
+    env.globals.update(accounts_visible=accounts_visible)
+    env.globals.update(challenges_visible=challenges_visible)
+    env.globals.update(registration_visible=registration_visible)
+    env.globals.update(scores_visible=scores_visible)
+    env.globals.update(get_mode_as_word=get_mode_as_word)
+    env.globals.update(integrations=integrations)
+    env.globals.update(authed=authed)
+    env.globals.update(is_admin=is_admin)
+    env.globals.update(get_current_user_attrs=get_current_user_attrs)
+    env.globals.update(get_current_team_attrs=get_current_team_attrs)
+    env.globals.update(get_ip=get_ip)
+    env.globals.update(Configs=Configs)
+    env.globals.update(Plugins=Plugins)
+    env.globals.update(Session=Session)
+    env.globals.update(Static=Static)
+    env.globals.update(Forms=Forms)
+    env.globals.update(User=User)
+    env.globals.update(Team=Team)
+
+    # Add in JinjaEnums
+    # The reason this exists is that on double import, JinjaEnums are not reinitialized
+    # Thus, if you try to create two jinja envs (e.g. during testing), sometimes
+    # an Enum will not be available to Jinja.
+    # Instead we can just directly grab them from the persisted global dictionary.
+    for k, v in JINJA_ENUMS.items():
+        # .update() can't be used here because it would use the literal value k
+        env.globals[k] = v
 
 
 def init_template_globals(app):
