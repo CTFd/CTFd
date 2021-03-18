@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.utils import set_config
 from CTFd.utils.scores import get_standings
 from tests.helpers import (
     create_ctfd,
@@ -10,6 +11,7 @@ from tests.helpers import (
     gen_team,
     gen_user,
     login_as_user,
+    register_user,
 )
 
 
@@ -37,4 +39,27 @@ def test_challenge_team_submit():
         standings = get_standings()
         assert standings[0][2] == "team_name"
         assert standings[0][3] == 100
+    destroy_ctfd(app)
+
+
+def test_anonymous_users_view_public_challenges_without_team():
+    """Test that if challenges are public, users without team can still view them"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        gen_challenge(app.db)
+        with app.test_client() as client:
+            r = client.get("/challenges")
+            assert r.status_code == 302
+            assert r.location.startswith("http://localhost/login")
+
+        set_config("challenge_visibility", "public")
+        with app.test_client() as client:
+            r = client.get("/challenges")
+            assert r.status_code == 200
+
+        with login_as_user(app) as client:
+            r = client.get("/challenges")
+            assert r.status_code == 302
+            assert r.location.startswith("http://localhost/team")
     destroy_ctfd(app)
