@@ -11,7 +11,7 @@ from tests.helpers import (
     gen_team,
     gen_user,
     login_as_user,
-    register_user
+    register_user,
 )
 
 
