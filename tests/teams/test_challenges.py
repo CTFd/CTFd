@@ -11,6 +11,7 @@ from tests.helpers import (
     gen_team,
     gen_user,
     login_as_user,
+    register_user
 )
 
 
@@ -45,6 +46,7 @@ def test_anonymous_users_view_public_challenges_without_team():
     """Test that if challenges are public, users without team can still view them"""
     app = create_ctfd(user_mode="teams")
     with app.app_context():
+        register_user(app)
         gen_challenge(app.db)
         with app.test_client() as client:
             r = client.get("/challenges")
@@ -55,4 +57,9 @@ def test_anonymous_users_view_public_challenges_without_team():
         with app.test_client() as client:
             r = client.get("/challenges")
             assert r.status_code == 200
+
+        with login_as_user(app) as client:
+            r = client.get("/challenges")
+            assert r.status_code == 302
+            assert r.location.startswith("http://localhost/team")
     destroy_ctfd(app)
