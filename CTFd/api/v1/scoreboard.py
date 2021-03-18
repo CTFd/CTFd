@@ -1,10 +1,10 @@
 from collections import defaultdict
 
 from flask_restx import Namespace, Resource
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select
 
 from CTFd.cache import cache, make_cache_key
-from CTFd.models import Awards, Solves, Teams
+from CTFd.models import Awards, Solves, Users, db
 from CTFd.utils import get_config
 from CTFd.utils.dates import isoformat, unix_time_to_utc
 from CTFd.utils.decorators.visibility import (
@@ -31,25 +31,33 @@ class ScoreboardList(Resource):
         account_type = get_mode_as_word()
 
         if mode == TEAMS_MODE:
-            team_ids = []
-            for team in standings:
-                team_ids.append(team.account_id)
-
-            # Get team objects with members explicitly loaded in
-            teams = (
-                Teams.query.options(joinedload(Teams.members))
-                .filter(Teams.id.in_(team_ids))
-                .all()
+            r = db.session.execute(
+                select(
+                    [
+                        Users.id,
+                        Users.name,
+                        Users.oauth_id,
+                        Users.team_id,
+                        Users.hidden,
+                        Users.banned,
+                    ]
+                ).where(Users.team_id.isnot(None))
             )
-
-            # Sort according to team_ids order
-            teams = [next(t for t in teams if t.id == id) for id in team_ids]
+            users = r.fetchall()
+            membership = defaultdict(dict)
+            for u in users:
+                if u.hidden is False and u.banned is False:
+                    membership[u.team_id][u.id] = {
+                        "id": u.id,
+                        "oauth_id": u.oauth_id,
+                        "name": u.name,
+                        "score": 0,
+                    }
 
             # Get user_standings as a dict so that we can more quickly get member scores
             user_standings = get_user_standings()
-            users = {}
             for u in user_standings:
-                users[u.user_id] = u
+                membership[u.team_id][u.user_id]["score"] = int(u.score)
 
         for i, x in enumerate(standings):
             entry = {
@@ -63,33 +71,7 @@ class ScoreboardList(Resource):
             }
 
             if mode == TEAMS_MODE:
-                members = []
-
-                # This code looks like it would be slow
-                # but it is faster than accessing each member's score individually
-                for member in teams[i].members:
-                    user = users.get(member.id)
-                    if user:
-                        members.append(
-                            {
-                                "id": user.user_id,
-                                "oauth_id": user.oauth_id,
-                                "name": user.name,
-                                "score": int(user.score),
-                            }
-                        )
-                    else:
-                        if member.hidden is False and member.banned is False:
-                            members.append(
-                                {
-                                    "id": member.id,
-                                    "oauth_id": member.oauth_id,
-                                    "name": member.name,
-                                    "score": 0,
-                                }
-                            )
-
-                entry["members"] = members
+                entry["members"] = list(membership[x.account_id].values())
 
             response.append(entry)
         return {"success": True, "data": response}
@@ -152,7 +134,7 @@ class ScoreboardDetail(Resource):
                 solves_mapper[team_id], key=lambda k: k["date"]
             )
 
-        for i, team in enumerate(team_ids):
+        for i, _team in enumerate(team_ids):
             response[i + 1] = {
                 "id": standings[i].account_id,
                 "name": standings[i].name,

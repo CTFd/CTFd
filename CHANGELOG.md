@@ -1,3 +1,63 @@
+# 3.3.0 / UNRELEASED
+
+**General**
+
+- Don't require a team for viewing challenges if Challenge visibility is set to public
+- Add a `THEME_FALLBACK` config to help develop themes. See **Themes** section for details.
+
+**API**
+
+- Implement a faster `/api/v1/scoreboard` endpoint in Teams Mode
+- Add the `solves` item to both `/api/v1/challenges` and `/api/v1/challenges/[challenge_id]` to more easily determine how many solves a challenge has
+- Add the `solved_by_me` item to both `/api/v1/challenges` and `/api/v1/challenges/[challenge_id]` to more easily determine if the current account has solved the challenge
+- Prevent admins from deleting themselves through `DELETE /api/v1/users/[user_id]`
+- Add length checking to some sensitive fields in the Pages and Challenges schemas
+- Fix issue where `PATCH /api/v1/users[user_id]` returned a list instead of a dict
+- Fix exception that occured on demoting admins through `PATCH /api/v1/users[user_id]`
+- Add `team_id` to `GET /api/v1/users` to determine if a user is already in a team
+
+**Themes**
+
+- Add a `THEME_FALLBACK` config to help develop themes.
+  - `THEME_FALLBACK` will configure CTFd to try to find missing theme files in the default built-in `core` theme.
+  - This makes it easier to develop themes or use incomplete themes.
+- Allow for one theme to reference and inherit from another theme through approaches like `{% extends "core/page.html" %}`
+- Allow for the automatic date rendering format to be overridden by specifying a `data-time-format` attribute.
+- Add styling for the `<blockquote>` element.
+- Fix scoreboard table identifier to switch between User/Team depending on configured user mode
+- Switch to using Bootstrap's scss in `core/main.scss` to allow using Bootstrap variables
+- Consolidate Jinja error handlers into a single function and better handle issues where error templates can't be found
+
+**Plugins**
+
+- Set plugin migration version after successful migrations
+- Fix issue where Page URLs injected into the navbar were relative instead of absolute
+
+**Admin Panel**
+
+- Add User standings as well as Teams standings to the admin scoreboard when in Teams Mode
+- Add a UI for adding members to a team from the team's admin page
+- Add ability for admins to disable public team creation
+- Link directly to users who submitted something in the submissions page if the CTF is in Teams Mode
+- Fix Challenge Requirements interface in Admin Panel to not allow empty/null requirements to be added
+- Fixed an issue where config times (start, end, freeze times) could not be removed
+- Fix an exception that occurred when demoting an Admin user
+- Adds a temporary hack for re-enabling Javascript snippets in Flag editor templates. (See #1779)
+
+**Deployment**
+
+- Install `python3-dev` instead of `python-dev` in apt
+- Bump lxml to 4.6.2
+- Bump pip-compile to 5.4.0
+
+**Miscellaneous**
+
+- Cache Docker builds more by copying and installing Python dependencies before copying CTFd
+- Change the default emails slightly and rework confirmation email page to make some recommendations clearer
+- Use `examplectf.com` as testing/development domain instead of `ctfd.io`
+- Fixes issue where user's name and email would not appear in logs properly
+- Add more linting by also linting with `flake8-comprehensions` and `flake8-bugbear`
+
 # 3.2.1 / 2020-12-09
 
 - Fixed an issue where Users could not unlock Hints

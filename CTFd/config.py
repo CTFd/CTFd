@@ -55,7 +55,7 @@ def gen_secret_key():
     try:
         with open(".ctfd_secret_key", "rb") as secret:
             key = secret.read()
-    except (OSError, IOError):
+    except OSError:
         key = None
 
     if not key:
@@ -66,7 +66,7 @@ def gen_secret_key():
             with open(".ctfd_secret_key", "wb") as secret:
                 secret.write(key)
                 secret.flush()
-        except (OSError, IOError):
+        except OSError:
             pass
     return key
 
@@ -177,6 +177,8 @@ class ServerConfig(object):
     REVERSE_PROXY: bool = empty_str_cast(config_ini["optional"]["REVERSE_PROXY"], default=False)
 
     TEMPLATES_AUTO_RELOAD: bool = empty_str_cast(config_ini["optional"]["TEMPLATES_AUTO_RELOAD"], default=True)
+
+    THEME_FALLBACK: bool = empty_str_cast(config_ini["optional"]["THEME_FALLBACK"], default=False)
 
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = empty_str_cast(config_ini["optional"]["SQLALCHEMY_TRACK_MODIFICATIONS"], default=False)
 

@@ -293,7 +293,7 @@ def test_dynamic_challenge_value_isnt_affected_by_hidden_users():
         assert resp["status"] == "correct"
 
         # Make solves as hidden users. Also should not affect value
-        for i, team_id in enumerate(range(2, 26)):
+        for _, team_id in enumerate(range(2, 26)):
             name = "user{}".format(team_id)
             email = "user{}@examplectf.com".format(team_id)
             # We need to bypass rate-limiting so gen_user instead of register_user

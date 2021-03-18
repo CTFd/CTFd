@@ -316,6 +316,7 @@ class UserSchema(ma.ModelSchema):
             "id",
             "oauth_id",
             "fields",
+            "team_id",
         ],
         "self": [
             "website",
@@ -328,6 +329,7 @@ class UserSchema(ma.ModelSchema):
             "oauth_id",
             "password",
             "fields",
+            "team_id",
         ],
         "admin": [
             "website",
@@ -346,6 +348,7 @@ class UserSchema(ma.ModelSchema):
             "type",
             "verified",
             "fields",
+            "team_id",
         ],
     }
 

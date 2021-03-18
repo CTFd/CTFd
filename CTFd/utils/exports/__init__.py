@@ -15,6 +15,7 @@ from sqlalchemy.sql import sqltypes
 
 from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
+from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import db, get_class_by_tablename
 from CTFd.plugins import get_plugin_names
 from CTFd.plugins.migrations import current as plugin_current
@@ -67,7 +68,7 @@ def export_ctf():
     upload_folder = os.path.join(
         os.path.normpath(app.root_path), app.config.get("UPLOAD_FOLDER")
     )
-    for root, dirs, files in os.walk(upload_folder):
+    for root, _dirs, files in os.walk(upload_folder):
         for file in files:
             parent_dir = os.path.basename(root)
             backup_zip.write(
@@ -353,5 +354,5 @@ def import_ctf(backup, erase=True):
     cache.clear()
 
     # Set default theme in case the current instance or the import does not provide it
-    set_config("ctf_theme", "core")
+    set_config("ctf_theme", DEFAULT_THEME)
     set_config("ctf_version", CTFD_VERSION)

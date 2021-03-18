@@ -123,7 +123,7 @@ class BaseChallenge(object):
                 if get_flag_class(flag.type).compare(flag, submission):
                     return True, "Correct"
             except FlagException as e:
-                return False, e.message
+                return False, str(e)
         return False, "Incorrect"
 
     @classmethod
