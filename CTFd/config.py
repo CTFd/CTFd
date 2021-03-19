@@ -174,25 +174,25 @@ class ServerConfig(object):
         AWS_S3_ENDPOINT_URL: str = empty_str_cast(config_ini["uploads"]["AWS_S3_ENDPOINT_URL"])
 
     # === OPTIONAL ===
-    REVERSE_PROXY: bool = empty_str_cast(config_ini["optional"]["REVERSE_PROXY"], default=False)
+    REVERSE_PROXY: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["REVERSE_PROXY"], default=False))
 
-    TEMPLATES_AUTO_RELOAD: bool = empty_str_cast(config_ini["optional"]["TEMPLATES_AUTO_RELOAD"], default=True)
+    TEMPLATES_AUTO_RELOAD: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["TEMPLATES_AUTO_RELOAD"], default=True))
 
-    THEME_FALLBACK: bool = empty_str_cast(config_ini["optional"]["THEME_FALLBACK"], default=False)
+    THEME_FALLBACK: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["THEME_FALLBACK"], default=False))
 
-    SQLALCHEMY_TRACK_MODIFICATIONS: bool = empty_str_cast(config_ini["optional"]["SQLALCHEMY_TRACK_MODIFICATIONS"], default=False)
+    SQLALCHEMY_TRACK_MODIFICATIONS: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["SQLALCHEMY_TRACK_MODIFICATIONS"], default=False))
 
-    SWAGGER_UI: bool = empty_str_cast(config_ini["optional"]["SWAGGER_UI"], default=False)
+    SWAGGER_UI: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["SWAGGER_UI"], default=False))
 
     SWAGGER_UI_ENDPOINT: str = "/" if SWAGGER_UI else None
 
-    UPDATE_CHECK: bool = empty_str_cast(config_ini["optional"]["UPDATE_CHECK"], default=True)
+    UPDATE_CHECK: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["UPDATE_CHECK"], default=True))
 
     APPLICATION_ROOT: str = empty_str_cast(config_ini["optional"]["APPLICATION_ROOT"], default="/")
 
-    SERVER_SENT_EVENTS: bool = empty_str_cast(config_ini["optional"]["SERVER_SENT_EVENTS"], default=True)
+    SERVER_SENT_EVENTS: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["SERVER_SENT_EVENTS"], default=True))
 
-    HTML_SANITIZATION: bool = empty_str_cast(config_ini["optional"]["HTML_SANITIZATION"], default=False)
+    HTML_SANITIZATION: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["HTML_SANITIZATION"], default=False))
 
     if DATABASE_URL.startswith("sqlite") is False:
         SQLALCHEMY_ENGINE_OPTIONS = {

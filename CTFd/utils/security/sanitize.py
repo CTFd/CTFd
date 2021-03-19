@@ -1,56 +1,95 @@
-# Bandit complains about security issues with lxml.
-# These issues have been addressed in the past and do not apply to parsing HTML.
-from lxml.html import html5parser, tostring  # nosec B410
-from lxml.html.clean import Cleaner  # nosec B410
-from lxml.html.defs import safe_attrs  # nosec B410
+from pybluemonday import UGCPolicy
 
-cleaner = Cleaner(
-    comments=False,
-    page_structure=False,
-    embedded=False,
-    frames=False,
-    forms=False,
-    links=False,
-    meta=False,
-    style=False,
-    safe_attrs=(
-        safe_attrs
-        | {
-            "style",
-            # Allow data attributes from bootstrap elements
-            "data-toggle",
-            "data-target",
-            "data-dismiss",
-            "data-spy",
-            "data-offset",
-            "data-html",
-            "data-placement",
-            "data-parent",
-            "data-title",
-            "data-template",
-            "data-interval",
-            "data-keyboard",
-            "data-pause",
-            "data-ride",
-            "data-wrap",
-            "data-touch",
-            "data-flip",
-            "data-boundary",
-            "data-reference",
-            "data-display",
-            "data-animation",
-            "data-container",
-            "data-delay",
-            "data-selector",
-            "data-content",
-            "data-trigger",
-        }
-    ),
-    annoying_tags=False,
+# fmt: off
+SAFE_ATTRS = (
+    'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',
+    'alt', 'axis', 'border', 'cellpadding', 'cellspacing', 'char', 'charoff',
+    'charset', 'checked', 'cite', 'class', 'clear', 'cols', 'colspan',
+    'color', 'compact', 'coords', 'datetime', 'dir', 'disabled', 'enctype',
+    'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',
+    'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',
+    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',
+    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',
+    'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',
+    'type', 'usemap', 'valign', 'value', 'vspace', 'width'
 )
+# fmt: on
+
+PAGE_STRUCTURE_TAGS = {
+    "title": [],
+}
+
+META_TAGS = {
+    "meta": ["name", "content", "property"],
+}
+
+FORM_TAGS = {
+    "form": ["method", "action"],
+    "button": ["name", "type", "value", "disabled"],
+    "input": ["name", "type", "value", "placeholder"],
+    "select": ["name", "value", "placeholder"],
+    "option": ["value"],
+    "textarea": ["name", "value", "placeholder"],
+    "label": ["for"],
+}
+
+ANNOYING_TAGS = {
+    "blink": [],
+    "marquee": [],
+}
+
+
+MEDIA_TAGS = {
+    "audio": ["autoplay", "controls", "crossorigin", "loop", "muted", "preload", "src"],
+    "video": [
+        "autoplay",
+        "buffered",
+        "controls",
+        "crossorigin",
+        "loop",
+        "muted",
+        "playsinline",
+        "poster",
+        "preload",
+        "src",
+    ],
+    "source": ["src", "type"],
+    "iframe": ["width", "height", "src", "frameborder", "allow", "allowfullscreen"],
+}
+
+SANITIZER = UGCPolicy()
+
+for TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):
+    for element in TAGS:
+        SANITIZER.AllowElements(element)
+        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)
+
+# Allow safe attrs copied from lxml
+SANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()
+
+# Allow styling globally
+SANITIZER.AllowAttrs("class", "style").Globally()
+
+# Allow styling via bluemonday
+SANITIZER.AllowStyling()
+
+# Allow safe convenience functions from bluemonday
+SANITIZER.AllowStandardAttributes()
+SANITIZER.AllowStandardURLs()
+
+# Allow data atributes
+SANITIZER.AllowDataAttributes()
+
+# Allow data URI images
+SANITIZER.AllowDataURIImages()
+
+# Link security
+SANITIZER.AllowRelativeURLs(True)
+SANITIZER.RequireNoFollowOnFullyQualifiedLinks(True)
+SANITIZER.RequireNoFollowOnLinks(True)
+SANITIZER.RequireNoReferrerOnFullyQualifiedLinks(True)
+SANITIZER.RequireNoReferrerOnLinks(True)
 
 
 def sanitize_html(html):
-    html = html5parser.fragment_fromstring(html, create_parent="div")
-    html = cleaner.clean_html(tostring(html)).decode()
-    return html
+    return SANITIZER.sanitize(html)
