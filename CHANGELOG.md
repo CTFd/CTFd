@@ -46,12 +46,16 @@
 
 **Deployment**
 
+- Fix boolean configs from the `config.ini` optional section
 - Install `python3-dev` instead of `python-dev` in apt
-- Bump lxml to 4.6.2
+- Require `pybluemonday` as pip dependency
+- Remove `lxml` and `html5lib` from pip dependencies
 - Bump pip-compile to 5.4.0
 
 **Miscellaneous**
 
+- Rewrite the HTML santiziation feature (controlled by `HTML_SANITIZATION`) to use the pybluemonday library instead of lxml/html5lib
+  - Note that this feature is still in beta
 - Cache Docker builds more by copying and installing Python dependencies before copying CTFd
 - Change the default emails slightly and rework confirmation email page to make some recommendations clearer
 - Use `examplectf.com` as testing/development domain instead of `ctfd.io`
