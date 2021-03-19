@@ -1,5 +1,7 @@
 from pybluemonday import UGCPolicy
 
+# Copied from lxml:
+# https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38
 # fmt: off
 SAFE_ATTRS = (
     'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',
