@@ -5,7 +5,7 @@ from flask import abort, render_template, request, url_for
 from flask_restx import Namespace, Resource
 from sqlalchemy import func as sa_func
 from sqlalchemy import types as sa_types
-from sqlalchemy.sql import and_, cast, false, true
+from sqlalchemy.sql import and_, cast, false, or_, true
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -89,10 +89,12 @@ def _build_solves_query(extra_filters=(), admin_view=False):
     user = get_current_user()
     # We only set a condition for matching user solves if there is a user and
     # they have an account ID (user mode or in a team in teams mode)
+    AccountModel = get_model()
     if user is not None and user.account_id is not None:
         user_solved_cond = Solves.account_id == user.account_id
+        user_current_cond = AccountModel.id == user.account_id
     else:
-        user_solved_cond = false()
+        user_solved_cond = user_current_cond = false()
     # We have to filter solves to exclude any made after the current freeze
     # time unless we're in an admin view as determined by the caller.
     freeze = get_config("freeze")
@@ -100,11 +102,12 @@ def _build_solves_query(extra_filters=(), admin_view=False):
         freeze_cond = Solves.date < unix_time_to_utc(freeze)
     else:
         freeze_cond = true()
-    # Finally, we never count solves made by hidden or banned users/teams, even
-    # if we are an admin. This is to match the challenge detail API.
-    AccountModel = get_model()
+    # Finally, we never count solves made by hidden users (other than ourself)
+    # or banned users/teams, even if we are an admin. This is to match the
+    # challenge detail API.
     exclude_solves_cond = and_(
-        AccountModel.banned == false(), AccountModel.hidden == false(),
+        AccountModel.banned == false(),
+        or_(AccountModel.hidden == false(), user_current_cond),
     )
     # This query counts the number of solves per challenge, as well as the sum
     # of correct solves made by the current user per the condition above (which
