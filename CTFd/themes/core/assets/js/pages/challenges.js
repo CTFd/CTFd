@@ -11,11 +11,6 @@ import hljs from "highlight.js";
 
 dayjs.extend(relativeTime);
 
-const api_func = {
-  teams: x => CTFd.api.get_team_solves({ teamId: x }),
-  users: x => CTFd.api.get_user_solves({ userId: x })
-};
-
 CTFd._internal.challenge = {};
 let challenges = [];
 let solves = [];
@@ -232,27 +227,11 @@ function renderSubmissionResponse(response) {
 }
 
 function markSolves() {
-  return api_func[CTFd.config.userMode]("me").then(function(response) {
-    const solves = response.data;
-    for (let i = solves.length - 1; i >= 0; i--) {
-      const btn = $('button[value="' + solves[i].challenge_id + '"]');
+  challenges.map(challenge => {
+    if (challenge.solved_by_me) {
+      const btn = $(`button[value="${challenge.id}"]`);
       btn.addClass("solved-challenge");
       btn.prepend("<i class='fas fa-check corner-button-check'></i>");
-    }
-  });
-}
-
-function loadUserSolves() {
-  if (CTFd.user.id == 0) {
-    return Promise.resolve();
-  }
-
-  return api_func[CTFd.config.userMode]("me").then(function(response) {
-    const solves = response.data;
-
-    for (let i = solves.length - 1; i >= 0; i--) {
-      const chal_id = solves[i].challenge_id;
-      solves.push(chal_id);
     }
   });
 }
@@ -289,7 +268,6 @@ function loadChals() {
     $challenges_board.empty();
 
     for (let i = challenges.length - 1; i >= 0; i--) {
-      challenges[i].solves = 0;
       if ($.inArray(challenges[i].category, categories) == -1) {
         const category = challenges[i].category;
         categories.push(category);
@@ -354,15 +332,12 @@ function loadChals() {
 
     $(".challenge-button").click(function(_event) {
       loadChal(this.value);
-      getSolves(this.value);
     });
   });
 }
 
 function update() {
-  return loadUserSolves() // Load the user's solved challenge ids
-    .then(loadChals) //  Load the full list of challenges
-    .then(markSolves);
+  return loadChals().then(markSolves);
 }
 
 $(() => {
