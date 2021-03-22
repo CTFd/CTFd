@@ -24,6 +24,7 @@
 - Allow for one theme to reference and inherit from another theme through approaches like `{% extends "core/page.html" %}`
 - Allow for the automatic date rendering format to be overridden by specifying a `data-time-format` attribute.
 - Add styling for the `<blockquote>` element.
+- Change `colorHash` function to use HSL color values to avoid generating too light/dark colors
 - Fix scoreboard table identifier to switch between User/Team depending on configured user mode
 - Switch the challenges page in core to use the new API information in `/api/v1/challenges` to mark solves and display solve counts
 - Switch to using Bootstrap's scss in `core/main.scss` to allow using Bootstrap variables
