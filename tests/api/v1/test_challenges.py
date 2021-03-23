@@ -369,7 +369,8 @@ def test_api_challenges_get_solve_count_hidden_user():
             r = admin.get("/api/v1/challenges")
             assert r.status_code == 200
             chal_data = r.get_json()["data"].pop()
-            assert chal_data["solves"] == 1
+            assert chal_data["solves"] == 0
+            assert chal_data["solved_by_me"] is True
     destroy_ctfd(app)
 
 
