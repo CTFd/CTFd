@@ -101,9 +101,8 @@ def _build_solves_query(extra_filters=(), admin_view=False):
         freeze_cond = Solves.date < unix_time_to_utc(freeze)
     else:
         freeze_cond = true()
-    # Finally, we never count solves made by hidden users (other than ourself)
-    # or banned users/teams, even if we are an admin. This is to match the
-    # challenge detail API.
+    # Finally, we never count solves made by hidden or banned users/teams, even
+    # if we are an admin. This is to match the challenge detail API.
     exclude_solves_cond = and_(
         AccountModel.banned == false(), AccountModel.hidden == false(),
     )
@@ -116,7 +115,9 @@ def _build_solves_query(extra_filters=(), admin_view=False):
         .filter(*extra_filters, freeze_cond, exclude_solves_cond)
         .group_by(Solves.challenge_id)
     )
-    # Also gather the user's solve items which can be different from solve_q
+    # Also gather the user's solve items which can be different from above query
+    # Even if we are a hidden user, we should see that we have solved the challenge
+    # But as a hidden user we are not included in the count
     solve_ids = (
         Solves.query.with_entities(Solves.challenge_id).filter(user_solved_cond).all()
     )
