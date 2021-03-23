@@ -4,8 +4,7 @@ from typing import List
 from flask import abort, render_template, request, url_for
 from flask_restx import Namespace, Resource
 from sqlalchemy import func as sa_func
-from sqlalchemy import types as sa_types
-from sqlalchemy.sql import and_, cast, false, or_, true
+from sqlalchemy.sql import and_, false, true
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -121,7 +120,7 @@ def _build_solves_query(extra_filters=(), admin_view=False):
     solve_ids = (
         Solves.query.with_entities(Solves.challenge_id).filter(user_solved_cond).all()
     )
-    solve_ids = set([value for value, in solve_ids])
+    solve_ids = {value for value, in solve_ids}
     return solves_q, solve_ids
 
 
