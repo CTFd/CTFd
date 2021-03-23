@@ -166,7 +166,7 @@
 			'type': 'user',
 			'id': user.id,
 			'name': user.name,
-			'account_id': 'me' if user.id == id else user.id,
+			'account_id': 'me' if user.id == Session.id else user.id,
 		} | tojson }};
 	</script>
 	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
