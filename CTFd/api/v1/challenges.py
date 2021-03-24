@@ -4,8 +4,7 @@ from typing import List
 from flask import abort, render_template, request, url_for
 from flask_restx import Namespace, Resource
 from sqlalchemy import func as sa_func
-from sqlalchemy import types as sa_types
-from sqlalchemy.sql import and_, cast, false, true
+from sqlalchemy.sql import and_, false, true
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -85,10 +84,16 @@ challenges_namespace.schema_model(
 
 
 def _build_solves_query(extra_filters=(), admin_view=False):
+    """Returns queries and data that that are used for showing an account's solves.
+    It returns a tuple of
+        - SQLAlchemy query with (challenge_id, solve_count_for_challenge_id)
+        - Current user's solved challenge IDs
+    """
     # This can return None (unauth) if visibility is set to public
     user = get_current_user()
     # We only set a condition for matching user solves if there is a user and
     # they have an account ID (user mode or in a team in teams mode)
+    AccountModel = get_model()
     if user is not None and user.account_id is not None:
         user_solved_cond = Solves.account_id == user.account_id
     else:
@@ -102,7 +107,6 @@ def _build_solves_query(extra_filters=(), admin_view=False):
         freeze_cond = true()
     # Finally, we never count solves made by hidden or banned users/teams, even
     # if we are an admin. This is to match the challenge detail API.
-    AccountModel = get_model()
     exclude_solves_cond = and_(
         AccountModel.banned == false(), AccountModel.hidden == false(),
     )
@@ -110,16 +114,19 @@ def _build_solves_query(extra_filters=(), admin_view=False):
     # of correct solves made by the current user per the condition above (which
     # should probably only be 0 or 1!)
     solves_q = (
-        db.session.query(
-            Solves.challenge_id,
-            sa_func.count(Solves.challenge_id),
-            sa_func.sum(cast(user_solved_cond, sa_types.Integer)),
-        )
+        db.session.query(Solves.challenge_id, sa_func.count(Solves.challenge_id),)
         .join(AccountModel)
         .filter(*extra_filters, freeze_cond, exclude_solves_cond)
         .group_by(Solves.challenge_id)
     )
-    return solves_q
+    # Also gather the user's solve items which can be different from above query
+    # Even if we are a hidden user, we should see that we have solved the challenge
+    # But as a hidden user we are not included in the count
+    solve_ids = (
+        Solves.query.with_entities(Solves.challenge_id).filter(user_solved_cond).all()
+    )
+    solve_ids = {value for value, in solve_ids}
+    return solves_q, solve_ids
 
 
 @challenges_namespace.route("")
@@ -181,20 +188,18 @@ class ChallengeList(Resource):
         # Admins get a shortcut to see all challenges despite pre-requisites
         admin_view = is_admin() and request.args.get("view") == "admin"
 
-        solve_counts, user_solves = {}, set()
+        solve_counts = {}
         # Build a query for to show challenge solve information. We only
         # give an admin view if the request argument has been provided.
         #
         # NOTE: This is different behaviour to the challenge detail
         # endpoint which only needs the current user to be an admin rather
         # than also also having to provide `view=admin` as a query arg.
-        solves_q = _build_solves_query(admin_view=admin_view)
+        solves_q, user_solves = _build_solves_query(admin_view=admin_view)
         # Aggregate the query results into the hashes defined at the top of
         # this block for later use
-        for chal_id, solve_count, solved_by_user in solves_q:
+        for chal_id, solve_count in solves_q:
             solve_counts[chal_id] = solve_count
-            if solved_by_user:
-                user_solves.add(chal_id)
         if scores_visible() and accounts_visible():
             solve_count_dfl = 0
         else:
@@ -435,14 +440,14 @@ class Challenge(Resource):
 
         response = chal_class.read(challenge=chal)
 
-        solves_q = _build_solves_query(
+        solves_q, user_solves = _build_solves_query(
             admin_view=is_admin(), extra_filters=(Solves.challenge_id == chal.id,)
         )
         # If there are no solves for this challenge ID then we have 0 rows
         maybe_row = solves_q.first()
         if maybe_row:
-            _, solve_count, solved_by_user = maybe_row
-            solved_by_user = bool(solved_by_user)
+            challenge_id, solve_count = maybe_row
+            solved_by_user = challenge_id in user_solves
         else:
             solve_count, solved_by_user = 0, False
 
