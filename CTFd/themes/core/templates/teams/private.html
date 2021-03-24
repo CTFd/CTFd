@@ -375,7 +375,7 @@
 		var team_captain = {{ (user.id == team.captain_id) | tojson }};
 	</script>
 	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
-	{% if solves %}
+	{% if solves or awards %}
 		<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
 		<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 	{% endif %}
