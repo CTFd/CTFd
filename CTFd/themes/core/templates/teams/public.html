@@ -186,7 +186,7 @@
 			'type': 'team',
 			'id': team.id,
 			'name': team.name,
-			'account_id': 'me' if user is defined and user.team_id == team.id else team.id,
+			'account_id': team.id,
 		} | tojson }};
 	</script>
 	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
