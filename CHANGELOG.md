@@ -53,6 +53,7 @@
 - Install `python3-dev` instead of `python-dev` in apt
 - Require `pybluemonday` as pip dependency
 - Remove `lxml` and `html5lib` from pip dependencies
+- Bump `Jinja2` to 2.11.3
 - Bump pip-compile to 5.4.0
 
 **Miscellaneous**
