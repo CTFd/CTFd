@@ -84,6 +84,11 @@ challenges_namespace.schema_model(
 
 
 def _build_solves_query(extra_filters=(), admin_view=False):
+    """Returns queries and data that that are used for showing an account's solves.
+    It returns a tuple of
+        - SQLAlchemy query with (challenge_id, solve_count_for_challenge_id)
+        - Current user's solved challenge IDs
+    """
     # This can return None (unauth) if visibility is set to public
     user = get_current_user()
     # We only set a condition for matching user solves if there is a user and
