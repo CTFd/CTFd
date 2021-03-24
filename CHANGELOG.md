@@ -24,6 +24,8 @@
 - Allow for one theme to reference and inherit from another theme through approaches like `{% extends "core/page.html" %}`
 - Allow for the automatic date rendering format to be overridden by specifying a `data-time-format` attribute.
 - Add styling for the `<blockquote>` element.
+- Change users/private.html, users/public.html to show awards before a user gets a solve
+- Change teams/private.html, teams/public.html to show awards before a team gets a solve
 - Change `colorHash` function to use HSL color values to avoid generating too light/dark colors
 - Fix an issue where hidden users couldn't see their graphing data on their private user page (`/user`)
 - Fix scoreboard table identifier to switch between User/Team depending on configured user mode
