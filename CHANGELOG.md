@@ -15,6 +15,7 @@
 - Fix issue where `PATCH /api/v1/users[user_id]` returned a list instead of a dict
 - Fix exception that occured on demoting admins through `PATCH /api/v1/users[user_id]`
 - Add `team_id` to `GET /api/v1/users` to determine if a user is already in a team
+- Provide a more useful error message when using an expired token
 
 **Themes**
 
