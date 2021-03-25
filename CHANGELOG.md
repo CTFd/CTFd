@@ -67,6 +67,7 @@
 - Use `examplectf.com` as testing/development domain instead of `ctfd.io`
 - Fixes issue where user's name and email would not appear in logs properly
 - Add more linting by also linting with `flake8-comprehensions` and `flake8-bugbear`
+- Add `.pyc` files and `__pycache__` to `.dockerignore`
 
 # 3.2.1 / 2020-12-09
 

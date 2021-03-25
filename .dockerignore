@@ -13,3 +13,5 @@ CTFd/uploads/**/*
 .prettierignore
 .travis.yml
 node_modules
+**/*.pyc
+**/__pycache__
