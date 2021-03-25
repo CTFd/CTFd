@@ -71,7 +71,9 @@
 	<div class="container">
 		{% include "components/errors.html" %}
 
-		{% if user.solves %}
+		{% set solves = user.solves %}
+		{% set awards = user.awards %}
+		{% if solves or awards %}
 			<div class="row">
 				<div class="col-md-6 d-none d-md-block d-lg-block">
 					<div id="keys-pie-graph" class="d-flex align-items-center">
@@ -103,7 +105,7 @@
 				<div class="col-md-12">
 					<h3>Awards</h3>
 				</div>
-				{% for award in user.awards %}
+				{% for award in awards %}
 					<div class="col-md-3 col-sm-6">
 						<p class="text-center">
 							<i class="award-icon award-{{ award.icon }} fa-2x"></i>
@@ -132,7 +134,7 @@
 						</tr>
 						</thead>
 						<tbody>
-						{% for solve in user.solves %}
+						{% for solve in solves %}
 							<tr>
 								<td>
 									<a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
@@ -166,7 +168,7 @@
 			'type': 'user',
 			'id': user.id,
 			'name': user.name,
-			'account_id': 'me' if user.id == Session.id else user.id,
+			'account_id': user.id,
 		} | tojson }};
 	</script>
 	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>

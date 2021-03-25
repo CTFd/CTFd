@@ -273,7 +273,7 @@
 			</div>
 		</div>
 
-		{% if solves %}
+		{% if solves or awards %}
 			<div class="row">
 				<div class="col-md-6 d-none d-md-block d-lg-block">
 					<div id="keys-pie-graph" class="d-flex align-items-center">
@@ -370,12 +370,12 @@
 			'type': 'team',
 			'id': team.id,
 			'name': team.name,
-			'account_id': 'me' if user is defined and user.team_id == team.id else team.id,
+			'account_id': 'me',
 		} | tojson }};
 		var team_captain = {{ (user.id == team.captain_id) | tojson }};
 	</script>
 	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
-	{% if solves %}
+	{% if solves or awards %}
 		<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
 		<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 	{% endif %}
