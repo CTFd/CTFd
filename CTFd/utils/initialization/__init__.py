@@ -267,7 +267,7 @@ def init_request_processors(app):
             except UserNotFoundException:
                 abort(401)
             except UserTokenExpiredException:
-                abort(401)
+                abort(401, description="Your access token has expired")
             except Exception:
                 abort(401)
             else:
