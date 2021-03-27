@@ -2,7 +2,7 @@
 
 **General**
 
-- Fix an issue where admins couldn't see challenges which had requirements
+- Fix an issue where admins couldn't see challenges which had requirements in the add requirements interface
 
 # 3.3.0 / 2020-03-26
 
