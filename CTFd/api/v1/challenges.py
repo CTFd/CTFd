@@ -120,12 +120,20 @@ def _build_solves_query(extra_filters=(), admin_view=False):
         .group_by(Solves.challenge_id)
     )
     # Also gather the user's solve items which can be different from above query
-    # Even if we are a hidden user, we should see that we have solved the challenge
-    # But as a hidden user we are not included in the count
-    solve_ids = (
-        Solves.query.with_entities(Solves.challenge_id).filter(user_solved_cond).all()
-    )
-    solve_ids = {value for value, in solve_ids}
+    # For example, even if we are a hidden user, we should see that we have solved a challenge
+    # however as a hidden user we are not included in the count of the above query
+    if admin_view:
+        # If we're an admin we should show all challenges as solved to break through any requirements
+        challenges = Challenges.query.all()
+        solve_ids = {challenge.id for challenge in challenges}
+    else:
+        # If not an admin we calculate solves as normal
+        solve_ids = (
+            Solves.query.with_entities(Solves.challenge_id)
+            .filter(user_solved_cond)
+            .all()
+        )
+        solve_ids = {value for value, in solve_ids}
     return solves_q, solve_ids
 
 
@@ -441,7 +449,7 @@ class Challenge(Resource):
         response = chal_class.read(challenge=chal)
 
         solves_q, user_solves = _build_solves_query(
-            admin_view=is_admin(), extra_filters=(Solves.challenge_id == chal.id,)
+            extra_filters=(Solves.challenge_id == chal.id,)
         )
         # If there are no solves for this challenge ID then we have 0 rows
         maybe_row = solves_q.first()
