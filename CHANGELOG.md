@@ -1,4 +1,4 @@
-# 3.3.0 / UNRELEASED
+# 3.3.0 / 2020-03-26
 
 **General**
 
@@ -25,8 +25,8 @@
 - Allow for one theme to reference and inherit from another theme through approaches like `{% extends "core/page.html" %}`
 - Allow for the automatic date rendering format to be overridden by specifying a `data-time-format` attribute.
 - Add styling for the `<blockquote>` element.
-- Change users/private.html, users/public.html to show awards before a user gets a solve
-- Change teams/private.html, teams/public.html to show awards before a team gets a solve
+- Change `users/private.html`, `users/public.html` to show awards before a user gets a solve
+- Change `teams/private.html`, `teams/public.html` to show awards before a team gets a solve
 - Change `colorHash` function to use HSL color values to avoid generating too light/dark colors
 - Fix an issue where hidden users couldn't see their graphing data on their private user page (`/user`)
 - Fix scoreboard table identifier to switch between User/Team depending on configured user mode
@@ -57,16 +57,16 @@
 - Require `pybluemonday` as pip dependency
 - Remove `lxml` and `html5lib` from pip dependencies
 - Bump `Jinja2` to 2.11.3
-- Bump pip-compile to 5.4.0
+- Bump `pip-tools` to 5.4.0
 
 **Miscellaneous**
 
-- Rewrite the HTML santiziation feature (controlled by `HTML_SANITIZATION`) to use the pybluemonday library instead of lxml/html5lib
+- Rewrite the HTML santiziation feature (controlled by `HTML_SANITIZATION`) to use the `pybluemonday` library instead of `lxml`/`html5lib`
   - Note that this feature is still in beta
 - Cache Docker builds more by copying and installing Python dependencies before copying CTFd
 - Change the default emails slightly and rework confirmation email page to make some recommendations clearer
 - Use `examplectf.com` as testing/development domain instead of `ctfd.io`
-- Fixes issue where user's name and email would not appear in logs properly
+- Fix issue where user's name and email would not appear in logs properly
 - Add more linting by also linting with `flake8-comprehensions` and `flake8-bugbear`
 - Add `.pyc` files and `__pycache__` to `.dockerignore`
 
