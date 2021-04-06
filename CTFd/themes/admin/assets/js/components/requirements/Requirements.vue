@@ -12,7 +12,7 @@
           v-for="requirement in requirements.prerequisites"
           :key="requirement"
         >
-          <td>{{ getChallengeById(requirement).name }}</td>
+          <td>{{ getChallengeNameById(requirement) }}</td>
           <td>
             <i
               role="button"
@@ -99,8 +99,11 @@ export default {
           }
         });
     },
-    getChallengeById: function(challenge_id) {
-      return this.challenges.find(challenge => challenge.id === challenge_id);
+    getChallengeNameById: function(challenge_id) {
+      let challenge = this.challenges.find(
+        challenge => challenge.id === challenge_id
+      );
+      return challenge ? challenge.name : "";
     },
     loadRequirements: function() {
       CTFd.fetch(
