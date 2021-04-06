@@ -19,7 +19,7 @@ while True:
         print()
         break
     except:
-        print('.', end='', flush=True)
+        print(".", end="", flush=True)
         time.sleep(1)
 
 print(f"{url.host}:{url.port or 3306} is ready")
