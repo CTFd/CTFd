@@ -232,12 +232,17 @@ class ChallengeList(Resource):
         # will be JSONified back to the client
         response = []
         tag_schema = TagSchema(view="user", many=True)
+
+        # Gather all challenge IDs so that we can determine invalid challenge prereqs
+        all_challenge_ids = {
+            c.id for c in Challenges.query.with_entities(Challenges.id).all()
+        }
         for challenge in chal_q:
             if challenge.requirements:
                 requirements = challenge.requirements.get("prerequisites", [])
                 anonymize = challenge.requirements.get("anonymize")
-                prereqs = set(requirements)
-                if user_solves >= prereqs:
+                prereqs = set(requirements).intersection(all_challenge_ids)
+                if user_solves >= prereqs or admin_view:
                     pass
                 else:
                     if anonymize:
@@ -365,6 +370,10 @@ class Challenge(Resource):
         if chal.requirements:
             requirements = chal.requirements.get("prerequisites", [])
             anonymize = chal.requirements.get("anonymize")
+            # Gather all challenge IDs so that we can determine invalid challenge prereqs
+            all_challenge_ids = {
+                c.id for c in Challenges.query.with_entities(Challenges.id).all()
+            }
             if challenges_visible():
                 user = get_current_user()
                 if user:
@@ -378,7 +387,7 @@ class Challenge(Resource):
                     # We need to handle the case where a user is viewing challenges anonymously
                     solve_ids = []
                 solve_ids = {value for value, in solve_ids}
-                prereqs = set(requirements)
+                prereqs = set(requirements).intersection(all_challenge_ids)
                 if solve_ids >= prereqs or is_admin():
                     pass
                 else:
@@ -603,7 +612,11 @@ class ChallengeAttempt(Resource):
                 .all()
             )
             solve_ids = {solve_id for solve_id, in solve_ids}
-            prereqs = set(requirements)
+            # Gather all challenge IDs so that we can determine invalid challenge prereqs
+            all_challenge_ids = {
+                c.id for c in Challenges.query.with_entities(Challenges.id).all()
+            }
+            prereqs = set(requirements).intersection(all_challenge_ids)
             if solve_ids >= prereqs:
                 pass
             else:
