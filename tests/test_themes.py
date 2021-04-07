@@ -155,13 +155,13 @@ def test_theme_fallback_config():
     app = create_ctfd()
     # Make an empty theme
     try:
-        os.mkdir(os.path.join(app.root_path, "themes", "foo"))
+        os.mkdir(os.path.join(app.root_path, "themes", "foo_fallback"))
     except OSError:
         pass
 
     # Without theme fallback, missing themes should disappear
     with app.app_context():
-        set_config("ctf_theme", "foo")
+        set_config("ctf_theme", "foo_fallback")
         assert app.config["THEME_FALLBACK"] == False
         with app.test_client() as client:
             try:
@@ -169,7 +169,7 @@ def test_theme_fallback_config():
             except TemplateNotFound:
                 pass
             try:
-                r = client.get("/themes/foo/static/js/pages/main.dev.js")
+                r = client.get("/themes/foo_fallback/static/js/pages/main.dev.js")
             except TemplateNotFound:
                 pass
     destroy_ctfd(app)
@@ -179,17 +179,17 @@ def test_theme_fallback_config():
 
     app = create_ctfd(config=ThemeFallbackConfig)
     with app.app_context():
-        set_config("ctf_theme", "foo")
+        set_config("ctf_theme", "foo_fallback")
         assert app.config["THEME_FALLBACK"] == True
         with app.test_client() as client:
             r = client.get("/")
             assert r.status_code == 200
-            r = client.get("/themes/foo/static/js/pages/main.dev.js")
+            r = client.get("/themes/foo_fallback/static/js/pages/main.dev.js")
             assert r.status_code == 200
     destroy_ctfd(app)
 
     # Remove empty theme
-    os.rmdir(os.path.join(app.root_path, "themes", "foo"))
+    os.rmdir(os.path.join(app.root_path, "themes", "foo_fallback"))
 
 
 def test_theme_template_loading_by_prefix():
@@ -208,9 +208,10 @@ def test_theme_template_disallow_loading_admin_templates():
         try:
             # Make an empty malicious theme
             filename = os.path.join(
-                app.root_path, "themes", "foo", "admin", "malicious.html"
+                app.root_path, "themes", "foo_disallow", "admin", "malicious.html"
             )
             os.makedirs(os.path.dirname(filename), exist_ok=True)
+            set_config("ctf_theme", "foo_disallow")
             with open(filename, "w") as f:
                 f.write("malicious")
 
@@ -219,5 +220,6 @@ def test_theme_template_disallow_loading_admin_templates():
         finally:
             # Remove empty theme
             shutil.rmtree(
-                os.path.join(app.root_path, "themes", "foo"), ignore_errors=True
+                os.path.join(app.root_path, "themes", "foo_disallow"),
+                ignore_errors=True,
             )
