@@ -40,7 +40,6 @@ while True:
             )
         elif url.drivername.startswith("postgres"):
             postgres_ping()
-        print()
         break
     except PingError:
         print(".", end="", flush=True)
