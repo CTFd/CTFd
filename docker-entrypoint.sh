@@ -7,10 +7,18 @@ ACCESS_LOG=${ACCESS_LOG:--}
 ERROR_LOG=${ERROR_LOG:--}
 WORKER_TEMP_DIR=${WORKER_TEMP_DIR:-/dev/shm}
 
+# Check that a .ctfd_secret_key file or SECRET_KEY envvar is set
+if [ ! -f .ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
+    if [ $WORKERS -gt 1 ]; then
+        echo "[ ERROR ] You are configured to use more than 1 worker."
+        echo "[ ERROR ] To do this, you must define the SECRET_KEY environment variable or create a .ctfd_secret_key file."
+        echo "[ ERROR ] Exiting..."
+        exit 1
+    fi
+fi
+
 # Ensures that the database is available
 python ping.py
-# calling config.py ensures that a SECRET_KEY is set, complying with the following priority:
-# config.ini > environment variable > .ctfd_secret_key > auto generated .ctfd_secret_key
 
 # Initialize database
 python manage.py db upgrade
