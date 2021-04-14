@@ -15,6 +15,7 @@ class PingError(Exception):
 def mysql_ping(**kwargs):
     """this imitates `mysqladmin ping`"""
     from pymysql import Error, connect
+
     try:
         connect(**kwargs).ping()
     except Error:
