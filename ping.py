@@ -8,7 +8,7 @@ from CTFd.config import Config
 url = make_url(Config.DATABASE_URL)
 url.database = None
 
-if url.drivername.startswith('sqlite'):
+if url.drivername.startswith("sqlite"):
     exit(0)
 engine = create_engine(url)
 
