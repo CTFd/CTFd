@@ -63,7 +63,7 @@ class CTFdTestClient(FlaskClient):
         return super(CTFdTestClient, self).open(*args, **kwargs)
 
 
-class FreezeTypes(str, RawEnum):
+class FreezeTime(str, RawEnum):
     NOT_STARTED = "2017-10-3"  # Tuesday, October 3, 2017
     STARTED = "2017-10-5"  # Thursday, October 5, 2017
     ENDED = "2017-10-7"  # Saturday, October 7, 2017
