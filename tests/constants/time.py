@@ -1,7 +1,7 @@
 from CTFd.constants import RawEnum
 
 
-class FreezeTime(str, RawEnum):
+class FreezeTimes(str, RawEnum):
     NOT_STARTED = "2017-10-3"  # Tuesday, October 3, 2017
     STARTED = "2017-10-5"  # Thursday, October 5, 2017
     ENDED = "2017-10-7"  # Saturday, October 7, 2017

@@ -43,7 +43,7 @@ from CTFd.models import (
     Users,
 )
 from CTFd.utils import set_config
-from tests.constants.time import FreezeTime
+from tests.constants.time import FreezeTimes
 
 text_type = str
 binary_type = bytes
@@ -65,21 +65,27 @@ class CTFdTestClient(FlaskClient):
         return super(CTFdTestClient, self).open(*args, **kwargs)
 
 
-class CTFtime:
+class ctftime:
     @contextmanager
     def set():
+        """
+        This context manager can be used to setup start and end dates for a test CTFd
+        """
         try:
-            set_config("start", FreezeTime.START)
-            set_config("end", FreezeTime.END)
+            set_config("start", FreezeTimes.START)
+            set_config("end", FreezeTimes.END)
             yield
         finally:
-            set_config("start", 0)
-            set_config("end", 0)
+            set_config("start", None)
+            set_config("end", None)
 
     @contextmanager
     def not_started():
+        """
+        This context manager sets the current time to before the start date of the test CTFd
+        """
         try:
-            freezer = freeze_time(FreezeTime.NOT_STARTED)
+            freezer = freeze_time(FreezeTimes.NOT_STARTED)
             frozen_time = freezer.start()
             yield frozen_time
         finally:
@@ -87,8 +93,11 @@ class CTFtime:
 
     @contextmanager
     def started():
+        """
+        This context manager sets the current time to the start date of the test CTFd
+        """
         try:
-            freezer = freeze_time(FreezeTime.STARTED)
+            freezer = freeze_time(FreezeTimes.STARTED)
             frozen_time = freezer.start()
             yield frozen_time
         finally:
@@ -96,8 +105,11 @@ class CTFtime:
 
     @contextmanager
     def ended():
+        """
+        This context manager sets the current time to after the end date of the test CTFd
+        """
         try:
-            freezer = freeze_time(FreezeTime.ENDED)
+            freezer = freeze_time(FreezeTimes.ENDED)
             frozen_time = freezer.start()
             yield frozen_time
         finally:

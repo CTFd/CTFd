@@ -4,8 +4,8 @@ from CTFd.models import Solves
 from CTFd.utils import set_config
 from CTFd.utils.dates import ctf_ended, ctf_started
 from tests.helpers import (
-    CTFtime,
     create_ctfd,
+    ctftime,
     destroy_ctfd,
     gen_challenge,
     gen_flag,
@@ -119,16 +119,16 @@ def test_ctf_started():
     with app.app_context():
         assert ctf_started() is True
 
-        with CTFtime.set():
+        with ctftime.set():
 
-            with CTFtime.not_started():
+            with ctftime.not_started():
                 ctf_started()
                 assert ctf_started() is False
 
-            with CTFtime.started():
+            with ctftime.started():
                 assert ctf_started() is True
 
-            with CTFtime.ended():
+            with ctftime.ended():
                 assert ctf_started() is True
     destroy_ctfd(app)
 
@@ -140,14 +140,14 @@ def test_ctf_ended():
     app = create_ctfd()
     with app.app_context():
         assert ctf_ended() is False
-        with CTFtime.set():
+        with ctftime.set():
 
-            with CTFtime.not_started():
+            with ctftime.not_started():
                 assert ctf_ended() is False
 
-            with CTFtime.started():
+            with ctftime.started():
                 assert ctf_ended() is False
 
-            with CTFtime.ended():
+            with ctftime.ended():
                 assert ctf_ended() is True
     destroy_ctfd(app)
