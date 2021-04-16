@@ -6,7 +6,6 @@ from CTFd.utils.dates import ctf_ended, ctf_started
 from tests.helpers import (
     CTFtime,
     FreezeTypes,
-    TimeTypes,
     create_ctfd,
     destroy_ctfd,
     gen_challenge,
@@ -20,7 +19,6 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
     """Test that the ctftime function prevents users from accessing challenges before the ctf"""
     app = create_ctfd()
     with app.app_context():
-        # with CTFtime(CTFtimeTypes.PAUSED):
         set_config(
             "start", "1507089600"
         )  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
@@ -122,7 +120,7 @@ def test_ctf_started():
     with app.app_context():
         assert ctf_started() is True
 
-        with CTFtime(TimeTypes.STARTED):
+        with CTFtime():
 
             with freeze_time(FreezeTypes.NOT_STARTED):
                 ctf_started()
@@ -143,7 +141,7 @@ def test_ctf_ended():
     app = create_ctfd()
     with app.app_context():
         assert ctf_ended() is False
-        with CTFtime(TimeTypes.ENDED):
+        with CTFtime():
 
             with freeze_time(FreezeTypes.NOT_STARTED):
                 assert ctf_ended() is False
