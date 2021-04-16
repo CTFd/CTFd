@@ -15,6 +15,7 @@ from werkzeug.datastructures import Headers
 from CTFd import create_app
 from CTFd.cache import cache, clear_standings
 from CTFd.config import TestingConfig
+from CTFd.constants import RawEnum
 from CTFd.models import (
     Awards,
     ChallengeComments,
@@ -40,6 +41,7 @@ from CTFd.models import (
     UserComments,
     Users,
 )
+from CTFd.utils import set_config
 
 text_type = str
 binary_type = bytes
@@ -59,6 +61,51 @@ class CTFdTestClient(FlaskClient):
                 headers.extend(api_key_headers)
                 kwargs["headers"] = headers
         return super(CTFdTestClient, self).open(*args, **kwargs)
+
+
+class TimeTypes(str, RawEnum):
+    NOT_STARTED = "NOT_STARTED"
+    PAUSED = "PAUSED"
+    STARTED = "STARTED"
+    ENDED = "ENDED"
+
+
+class FreezeTypes(str, RawEnum):
+    NOT_STARTED = "2017-10-3"  # Tuesday, October 3, 2017
+    STARTED = "2017-10-5"  # Thursday, October 5, 2017
+    ENDED = "2017-10-7"  # Saturday, October 7, 2017
+
+
+class CTFtime:
+    def __init__(self, status):
+        self.status = status
+
+    def __enter__(self):
+
+        if self.status == TimeTypes.NOT_STARTED:
+            set_config("start", "1507089600")
+            set_config("end", "1507262400")
+
+        if self.status == TimeTypes.STARTED:
+            set_config(
+                "start", "1507089600"
+            )  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+            set_config(
+                "end", "1507262400"
+            )  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+
+        if self.status == TimeTypes.PAUSED:
+            set_config("start", "1507089600")
+            set_config("end", "1507262400")
+
+        if self.status == TimeTypes.ENDED:
+            set_config("start", "1507089600")
+            set_config("end", "1507262400")
+
+        return self
+
+    def __exit__(self, exc_type, exec_value, exec_traceback):
+        del self.status
 
 
 def create_ctfd(
