@@ -5,7 +5,6 @@ from CTFd.utils import set_config
 from CTFd.utils.dates import ctf_ended, ctf_started
 from tests.helpers import (
     CTFtime,
-    FreezeTime,
     create_ctfd,
     destroy_ctfd,
     gen_challenge,
@@ -120,16 +119,16 @@ def test_ctf_started():
     with app.app_context():
         assert ctf_started() is True
 
-        with CTFtime():
+        with CTFtime.set():
 
-            with freeze_time(FreezeTime.NOT_STARTED):
+            with CTFtime.not_started():
                 ctf_started()
                 assert ctf_started() is False
 
-            with freeze_time(FreezeTime.STARTED):
+            with CTFtime.started():
                 assert ctf_started() is True
 
-            with freeze_time(FreezeTime.ENDED):
+            with CTFtime.ended():
                 assert ctf_started() is True
     destroy_ctfd(app)
 
@@ -141,14 +140,14 @@ def test_ctf_ended():
     app = create_ctfd()
     with app.app_context():
         assert ctf_ended() is False
-        with CTFtime():
+        with CTFtime.set():
 
-            with freeze_time(FreezeTime.NOT_STARTED):
+            with CTFtime.not_started():
                 assert ctf_ended() is False
 
-            with freeze_time(FreezeTime.STARTED):
+            with CTFtime.started():
                 assert ctf_ended() is False
 
-            with freeze_time(FreezeTime.ENDED):
+            with CTFtime.ended():
                 assert ctf_ended() is True
     destroy_ctfd(app)

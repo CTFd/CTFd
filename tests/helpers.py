@@ -4,10 +4,12 @@ import random
 import string
 import uuid
 from collections import namedtuple
+from contextlib import contextmanager
 from unittest.mock import Mock, patch
 
 import requests
 from flask.testing import FlaskClient
+from freezegun import freeze_time
 from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers
@@ -15,7 +17,6 @@ from werkzeug.datastructures import Headers
 from CTFd import create_app
 from CTFd.cache import cache, clear_standings
 from CTFd.config import TestingConfig
-from CTFd.constants import RawEnum
 from CTFd.models import (
     Awards,
     ChallengeComments,
@@ -42,6 +43,7 @@ from CTFd.models import (
     Users,
 )
 from CTFd.utils import set_config
+from tests.constants.time import FreezeTime
 
 text_type = str
 binary_type = bytes
@@ -63,23 +65,43 @@ class CTFdTestClient(FlaskClient):
         return super(CTFdTestClient, self).open(*args, **kwargs)
 
 
-class FreezeTime(str, RawEnum):
-    NOT_STARTED = "2017-10-3"  # Tuesday, October 3, 2017
-    STARTED = "2017-10-5"  # Thursday, October 5, 2017
-    ENDED = "2017-10-7"  # Saturday, October 7, 2017
-
-
 class CTFtime:
-    def __enter__(self):
-        set_config(
-            "start", "1507089600"
-        )  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
-        set_config(
-            "end", "1507262400"
-        )  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+    @contextmanager
+    def set():
+        try:
+            set_config("start", FreezeTime.START)
+            set_config("end", FreezeTime.END)
+            yield
+        finally:
+            set_config("start", 0)
+            set_config("end", 0)
 
-    def __exit__(self, exc_type, exec_value, exec_traceback):
-        pass
+    @contextmanager
+    def not_started():
+        try:
+            freezer = freeze_time(FreezeTime.NOT_STARTED)
+            frozen_time = freezer.start()
+            yield frozen_time
+        finally:
+            freezer.stop()
+
+    @contextmanager
+    def started():
+        try:
+            freezer = freeze_time(FreezeTime.STARTED)
+            frozen_time = freezer.start()
+            yield frozen_time
+        finally:
+            freezer.stop()
+
+    @contextmanager
+    def ended():
+        try:
+            freezer = freeze_time(FreezeTime.ENDED)
+            frozen_time = freezer.start()
+            yield frozen_time
+        finally:
+            freezer.stop()
 
 
 def create_ctfd(
