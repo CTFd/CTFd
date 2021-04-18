@@ -197,6 +197,16 @@ def new():
             description="Team creation is currently disabled. Please join an existing team.",
         )
 
+    num_teams_limit = int(get_config("num_teams", default=0))
+    num_teams = Teams.query.filter_by(banned=False, hidden=False).count()
+    if 0 < num_teams_limit <= num_teams:
+        abort(
+            403,
+            description="Reached the maximum number of teams ({}). Please join an existing team.".format(
+                num_teams_limit
+            ),
+        )
+
     user = get_current_user_attrs()
     if user.team_id:
         errors.append("You are already in a team. You cannot join another.")

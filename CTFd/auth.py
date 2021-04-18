@@ -5,6 +5,7 @@ from flask import Blueprint
 from flask import current_app as app
 from flask import redirect, render_template, request, session, url_for
 from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
+from werkzeug.exceptions import abort
 
 from CTFd.cache import clear_team_session, clear_user_session
 from CTFd.models import Teams, UserFieldEntries, UserFields, Users, db
@@ -503,6 +504,18 @@ def oauth_redirect():
 
                 team = Teams.query.filter_by(oauth_id=team_id).first()
                 if team is None:
+                    num_teams_limit = int(get_config("num_teams", default=0))
+                    num_teams = Teams.query.filter_by(
+                        banned=False, hidden=False
+                    ).count()
+                    if 0 < num_teams_limit <= num_teams:
+                        abort(
+                            403,
+                            description="Reached the maximum number of teams ({}). Please join an existing team.".format(
+                                num_teams_limit
+                            ),
+                        )
+
                     team = Teams(name=team_name, oauth_id=team_id, captain_id=user.id)
                     db.session.add(team)
                     db.session.commit()
