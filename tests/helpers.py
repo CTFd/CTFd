@@ -67,7 +67,7 @@ class CTFdTestClient(FlaskClient):
 
 class ctftime:
     @contextmanager
-    def set():
+    def init():
         """
         This context manager can be used to setup start and end dates for a test CTFd
         """
