@@ -4,8 +4,6 @@ from CTFd.models import Solves
 from CTFd.utils import set_config
 from CTFd.utils.dates import ctf_ended, ctf_started
 from tests.helpers import (
-    CTFtime,
-    FreezeTime,
     create_ctfd,
     destroy_ctfd,
     gen_challenge,
@@ -120,17 +118,22 @@ def test_ctf_started():
     with app.app_context():
         assert ctf_started() is True
 
-        with CTFtime():
+        set_config(
+            "start", "1507089600"
+        )  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config(
+            "end", "1507262400"
+        )  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
 
-            with freeze_time(FreezeTime.NOT_STARTED):
-                ctf_started()
-                assert ctf_started() is False
+        with freeze_time("2017-10-3"):
+            ctf_started()
+            assert ctf_started() is False
 
-            with freeze_time(FreezeTime.STARTED):
-                assert ctf_started() is True
+        with freeze_time("2017-10-5"):
+            assert ctf_started() is True
 
-            with freeze_time(FreezeTime.ENDED):
-                assert ctf_started() is True
+        with freeze_time("2017-10-7"):
+            assert ctf_started() is True
     destroy_ctfd(app)
 
 
@@ -141,14 +144,20 @@ def test_ctf_ended():
     app = create_ctfd()
     with app.app_context():
         assert ctf_ended() is False
-        with CTFtime():
 
-            with freeze_time(FreezeTime.NOT_STARTED):
-                assert ctf_ended() is False
+        set_config(
+            "start", "1507089600"
+        )  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config(
+            "end", "1507262400"
+        )  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
 
-            with freeze_time(FreezeTime.STARTED):
-                assert ctf_ended() is False
+        with freeze_time("2017-10-3"):
+            assert ctf_ended() is False
 
-            with freeze_time(FreezeTime.ENDED):
-                assert ctf_ended() is True
+        with freeze_time("2017-10-5"):
+            assert ctf_ended() is False
+
+        with freeze_time("2017-10-7"):
+            assert ctf_ended() is True
     destroy_ctfd(app)
