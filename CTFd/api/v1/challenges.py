@@ -62,8 +62,11 @@ challenges_namespace = Namespace(
     "challenges", description="Endpoint to retrieve Challenges"
 )
 
-ChallengeModel = sqlalchemy_to_pydantic(Challenges, include={"solves":int,"solved_by_me":bool})
+ChallengeModel = sqlalchemy_to_pydantic(
+    Challenges, include={"solves": int, "solved_by_me": bool}
+)
 TransientChallengeModel = sqlalchemy_to_pydantic(Challenges, exclude=["id"])
+
 
 class ChallengeDetailedSuccessResponse(APIDetailedSuccessResponse):
     data: ChallengeModel
@@ -71,6 +74,7 @@ class ChallengeDetailedSuccessResponse(APIDetailedSuccessResponse):
 
 class ChallengeListSuccessResponse(APIListSuccessResponse):
     data: List[ChallengeModel]
+
 
 challenges_namespace.schema_model(
     "ChallengeDetailedSuccessResponse", ChallengeDetailedSuccessResponse.apidoc()

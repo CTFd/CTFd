@@ -1,4 +1,4 @@
-from typing import Container, Type, Dict
+from typing import Container, Dict, Type
 
 from pydantic import BaseModel, create_model
 from sqlalchemy.inspection import inspect
@@ -6,7 +6,8 @@ from sqlalchemy.orm.properties import ColumnProperty
 
 
 def sqlalchemy_to_pydantic(
-    db_model: Type, *, include: Dict[str, type] = None, exclude: Container[str] = None ) -> Type[BaseModel]:
+    db_model: Type, *, include: Dict[str, type] = None, exclude: Container[str] = None
+) -> Type[BaseModel]:
     """
     Mostly copied from https://github.com/tiangolo/pydantic-sqlalchemy
     """
