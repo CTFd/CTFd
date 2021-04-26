@@ -4,10 +4,12 @@ import random
 import string
 import uuid
 from collections import namedtuple
+from contextlib import contextmanager
 from unittest.mock import Mock, patch
 
 import requests
 from flask.testing import FlaskClient
+from freezegun import freeze_time
 from sqlalchemy.engine.url import make_url
 from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers
@@ -40,6 +42,8 @@ from CTFd.models import (
     UserComments,
     Users,
 )
+from CTFd.utils import set_config
+from tests.constants.time import FreezeTimes
 
 text_type = str
 binary_type = bytes
@@ -59,6 +63,57 @@ class CTFdTestClient(FlaskClient):
                 headers.extend(api_key_headers)
                 kwargs["headers"] = headers
         return super(CTFdTestClient, self).open(*args, **kwargs)
+
+
+class ctftime:
+    @contextmanager
+    def init():
+        """
+        This context manager can be used to setup start and end dates for a test CTFd
+        """
+        try:
+            set_config("start", FreezeTimes.START)
+            set_config("end", FreezeTimes.END)
+            yield
+        finally:
+            set_config("start", None)
+            set_config("end", None)
+
+    @contextmanager
+    def not_started():
+        """
+        This context manager sets the current time to before the start date of the test CTFd
+        """
+        try:
+            freezer = freeze_time(FreezeTimes.NOT_STARTED)
+            frozen_time = freezer.start()
+            yield frozen_time
+        finally:
+            freezer.stop()
+
+    @contextmanager
+    def started():
+        """
+        This context manager sets the current time to the start date of the test CTFd
+        """
+        try:
+            freezer = freeze_time(FreezeTimes.STARTED)
+            frozen_time = freezer.start()
+            yield frozen_time
+        finally:
+            freezer.stop()
+
+    @contextmanager
+    def ended():
+        """
+        This context manager sets the current time to after the end date of the test CTFd
+        """
+        try:
+            freezer = freeze_time(FreezeTimes.ENDED)
+            frozen_time = freezer.start()
+            yield frozen_time
+        finally:
+            freezer.stop()
 
 
 def create_ctfd(
