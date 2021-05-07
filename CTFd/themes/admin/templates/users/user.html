@@ -124,6 +124,8 @@
 			</a>
 		{% endif %}
 
+		{# TODO check if this is team mode and display in different modes based on this #}
+
 		{% if user.team_id %}
 			<h2 id="team-acc" class="text-center">
 				<a href="{{ url_for('admin.teams_detail', team_id=user.team_id) }}">

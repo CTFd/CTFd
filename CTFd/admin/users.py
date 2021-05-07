@@ -61,11 +61,13 @@ def users_detail(user_id):
     # Get user object
     user = Users.query.filter_by(id=user_id).first_or_404()
 
+
     # Get the user's solves
     solves = user.get_solves(admin=True)
 
     # Get challenges that the user is missing
     if get_config("user_mode") == TEAMS_MODE:
+        # TODO Get user's team proporties: aka place, points
         if user.team:
             all_solves = user.team.get_solves(admin=True)
         else:
@@ -90,6 +92,8 @@ def users_detail(user_id):
     # Get user properties
     score = user.get_score(admin=True)
     place = user.get_place(admin=True)
+
+    # TODO pass team score properties
 
     return render_template(
         "admin/users/user.html",
