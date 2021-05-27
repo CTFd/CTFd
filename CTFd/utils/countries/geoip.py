@@ -8,8 +8,8 @@ IP_ADDR_LOOKUP = maxminddb.open_database(
 
 
 def lookup_ip_address(addr):
-    response = IP_ADDR_LOOKUP.get(addr)
     try:
+        response = IP_ADDR_LOOKUP.get(addr)
         return response["country"]["iso_code"]
-    except KeyError:
+    except (KeyError, ValueError):
         return None
