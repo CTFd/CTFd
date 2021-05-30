@@ -38,6 +38,6 @@ def get_page(route):
     if page:
         # Convert the row into a transient ORM object so this change isn't commited accidentally
         p = Pages(**page)
-        p.content = build_html(page=p)
+        p.html = build_html(page=p)
         return p
     return None
