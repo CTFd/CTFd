@@ -6,8 +6,15 @@ from CTFd.utils import markdown
 from CTFd.utils.security.sanitize import sanitize_html
 
 
-def build_html(html, sanitize=False):
-    html = markdown(html)
+def build_html(page, sanitize=False):
+    # Process page content. Fallback to markdown
+    if page.type == "markdown":
+        html = markdown(html)
+    elif page.type == "html":
+        html = page.content
+    else:
+        html = markdown(html)
+
     if current_app.config["HTML_SANITIZATION"] is True or sanitize is True:
         html = sanitize_html(html)
     return html
@@ -31,6 +38,6 @@ def get_page(route):
     if page:
         # Convert the row into a transient ORM object so this change isn't commited accidentally
         p = Pages(**page)
-        p.content = build_html(p.content)
+        p.content = build_html(page=p)
         return p
     return None

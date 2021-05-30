@@ -54,6 +54,7 @@ class Pages(db.Model):
     title = db.Column(db.String(80))
     route = db.Column(db.String(128), unique=True)
     content = db.Column(db.Text)
+    type = db.Column(db.String(80))
     draft = db.Column(db.Boolean)
     hidden = db.Column(db.Boolean)
     auth_required = db.Column(db.Boolean)
