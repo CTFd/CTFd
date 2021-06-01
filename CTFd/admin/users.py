@@ -60,7 +60,11 @@ def users_new():
 def users_detail(user_id):
     # Get user object
     user = Users.query.filter_by(id=user_id).first_or_404()
+
+    # Team placeholder information
     team = False
+    team_score = 0
+    team_place = 0
 
     # Get the user's solves
     solves = user.get_solves(admin=True)
@@ -70,7 +74,7 @@ def users_detail(user_id):
         if user.team:
             all_solves = user.team.get_solves(admin=True)
 
-            # Get team properties if in teams mode
+            # Update team properties if in teams mode
             team = True
             team_score = user.team.get_score(admin=True)
             team_place = user.team.get_place(admin=True)
