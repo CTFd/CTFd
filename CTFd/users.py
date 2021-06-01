@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, url_for
 
-from CTFd.models import Teams, Users
+from CTFd.models import Users
 from CTFd.utils import config, get_config
 from CTFd.utils.decorators import authed_only
 from CTFd.utils.decorators.visibility import (
