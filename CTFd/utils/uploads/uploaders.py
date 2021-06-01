@@ -1,8 +1,8 @@
 import os
 import posixpath
 import string
-from shutil import copyfileobj, rmtree
 from pathlib import PurePath
+from shutil import copyfileobj, rmtree
 
 import boto3
 from flask import current_app, redirect, send_file
