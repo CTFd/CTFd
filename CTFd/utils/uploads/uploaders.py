@@ -2,6 +2,7 @@ import os
 import posixpath
 import string
 from shutil import copyfileobj, rmtree
+from pathlib import PurePath
 
 import boto3
 from flask import current_app, redirect, send_file
@@ -64,7 +65,7 @@ class FilesystemUploader(BaseUploader):
 
     def delete(self, filename):
         if os.path.exists(os.path.join(self.base_path, filename)):
-            file_path = filename.split("/")[0]
+            file_path = PurePath(filename).parts[0]
             rmtree(os.path.join(self.base_path, file_path))
             return True
         return False
