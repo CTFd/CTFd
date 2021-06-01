@@ -97,7 +97,6 @@ def users_detail(user_id):
     score = user.get_score(admin=True)
     place = user.get_place(admin=True)
 
-
     return render_template(
         "admin/users/user.html",
         solves=solves,
