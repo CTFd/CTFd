@@ -15,7 +15,7 @@
 					<td class="text-center solve-time">
 						<span data-time="{{ addr.date | isoformat }}"></span>
 					</td>
-					{# {% set country = lookup_ip_address(addr.ip) %} #}
+					{% set country = lookup_ip_address(addr.ip) %}
 					{% if country %}
 					<td class="text-center">
 						<i class="flag-{{ country.lower() }}"></i>
