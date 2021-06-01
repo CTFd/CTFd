@@ -60,16 +60,20 @@ def users_new():
 def users_detail(user_id):
     # Get user object
     user = Users.query.filter_by(id=user_id).first_or_404()
-
+    team = False
 
     # Get the user's solves
     solves = user.get_solves(admin=True)
 
     # Get challenges that the user is missing
     if get_config("user_mode") == TEAMS_MODE:
-        # TODO Get user's team proporties: aka place, points
         if user.team:
             all_solves = user.team.get_solves(admin=True)
+
+            # Get team properties if in teams mode
+            team = True
+            team_score = user.team.get_score(admin=True)
+            team_place = user.team.get_place(admin=True)
         else:
             all_solves = user.get_solves(admin=True)
     else:
@@ -93,7 +97,6 @@ def users_detail(user_id):
     score = user.get_score(admin=True)
     place = user.get_place(admin=True)
 
-    # TODO pass team score properties
 
     return render_template(
         "admin/users/user.html",
@@ -105,4 +108,7 @@ def users_detail(user_id):
         place=place,
         fails=fails,
         awards=awards,
+        team=team,
+        team_score=team_score,
+        team_place=team_place,
     )

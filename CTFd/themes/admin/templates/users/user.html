@@ -141,15 +141,27 @@
 		{% endfor %}
 
 		<h3 id="team-place" class="text-center">
+			{% if team %}
+				{{ team_place }} <small>place team</small> /
+				{{ place }} <small>place user</small>
+			{% else %}
+				{% if place %}
+					{{ place }} <small>place</small>
+				{% endif %}
+			{% endif %}
 			{% if place %}
 				{{ place }}
 				<small>place</small>
 			{% endif %}
 		</h3>
 		<h3 id="team-score" class="text-center">
-			{% if score %}
-				{{ score }}
-				<small>points</small>
+			{% if team %}
+				Team: {{ team_score }} <small>points</small> /
+				User: {{ score }} <small>points</small>
+			{% else %}
+				{% if place %}
+					{{ score }} <small>points</small>
+				{% endif %}
 			{% endif %}
 		</h3>
 		<hr class="w-50">
