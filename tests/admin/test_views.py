@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.utils.modes import TEAMS_MODE
-from CTFd.models import Users
 from flask import Flask
-from CTFd.utils import set_config
 
+from CTFd.models import Users
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -14,7 +12,6 @@ from tests.helpers import (
     gen_team,
     login_as_user,
     register_user,
-    register_team
 )
 
 
