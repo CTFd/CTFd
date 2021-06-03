@@ -6,13 +6,13 @@ import tempfile
 import zipfile
 from io import BytesIO
 
-import dataset
 from flask import current_app as app
 from flask_migrate import upgrade as migration_upgrade
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.sql import sqltypes
 
+import dataset
 from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
 from CTFd.constants.themes import DEFAULT_THEME

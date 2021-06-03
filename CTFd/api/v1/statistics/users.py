@@ -1,9 +1,9 @@
-from flask_restx import Resource
 from sqlalchemy import func
 
 from CTFd.api.v1.statistics import statistics_namespace
 from CTFd.models import Users
 from CTFd.utils.decorators import admins_only
+from flask_restx import Resource
 
 
 @statistics_namespace.route("/users")

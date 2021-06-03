@@ -1,11 +1,11 @@
 from flask import session
-from wtforms import PasswordField, SelectField, StringField
-from wtforms.fields.html5 import DateField, URLField
 
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.forms.users import attach_custom_user_fields, build_custom_user_fields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
+from wtforms import PasswordField, SelectField, StringField
+from wtforms.fields.html5 import DateField, URLField
 
 
 def SettingsForm(*args, **kwargs):

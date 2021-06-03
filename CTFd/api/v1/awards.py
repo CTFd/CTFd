@@ -1,7 +1,6 @@
 from typing import List
 
 from flask import request
-from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -13,6 +12,7 @@ from CTFd.schemas.awards import AwardSchema
 from CTFd.utils.config import is_teams_mode
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
+from flask_restx import Namespace, Resource
 
 awards_namespace = Namespace("awards", description="Endpoint to retrieve Awards")
 

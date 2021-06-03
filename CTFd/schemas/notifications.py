@@ -1,7 +1,6 @@
-from marshmallow import fields
-
 from CTFd.models import Notifications, ma
 from CTFd.utils import string_types
+from marshmallow import fields
 
 
 class NotificationSchema(ma.ModelSchema):

@@ -1,8 +1,7 @@
+from CTFd.models import Challenges, ma
 from marshmallow import validate
 from marshmallow.exceptions import ValidationError
 from marshmallow_sqlalchemy import field_for
-
-from CTFd.models import Challenges, ma
 
 
 class ChallengeRequirementsValidator(validate.Validator):

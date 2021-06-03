@@ -1,10 +1,9 @@
-from wtforms import BooleanField, SelectField, StringField, TextAreaField
-from wtforms.fields.html5 import IntegerField, URLField
-from wtforms.widgets.html5 import NumberInput
-
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.models import db
+from wtforms import BooleanField, SelectField, StringField, TextAreaField
+from wtforms.fields.html5 import IntegerField, URLField
+from wtforms.widgets.html5 import NumberInput
 
 
 class ResetInstanceForm(BaseForm):

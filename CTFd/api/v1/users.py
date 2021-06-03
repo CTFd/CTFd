@@ -1,7 +1,6 @@
 from typing import List
 
 from flask import abort, request, session
-from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -34,6 +33,7 @@ from CTFd.utils.email import sendmail, user_created_notification
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.security.auth import update_user
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
+from flask_restx import Namespace, Resource
 
 users_namespace = Namespace("users", description="Endpoint to retrieve Users")
 

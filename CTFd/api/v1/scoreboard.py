@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-from flask_restx import Namespace, Resource
 from sqlalchemy import select
 
 from CTFd.cache import cache, make_cache_key
@@ -13,6 +12,7 @@ from CTFd.utils.decorators.visibility import (
 )
 from CTFd.utils.modes import TEAMS_MODE, generate_account_url, get_mode_as_word
 from CTFd.utils.scores import get_standings, get_user_standings
+from flask_restx import Namespace, Resource
 
 scoreboard_namespace = Namespace(
     "scoreboard", description="Endpoint to retrieve scores"

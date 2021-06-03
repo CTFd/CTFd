@@ -1,9 +1,9 @@
 from enum import Enum
 
-import cmarkgfm
 from flask import current_app as app
 
 # isort:imports-firstparty
+import cmarkgfm
 from CTFd.cache import cache
 from CTFd.models import Configs, db
 

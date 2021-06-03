@@ -1,8 +1,7 @@
-from wtforms import MultipleFileField, SelectField, StringField
-from wtforms.validators import InputRequired
-
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
+from wtforms import MultipleFileField, SelectField, StringField
+from wtforms.validators import InputRequired
 
 
 class ChallengeSearchForm(BaseForm):

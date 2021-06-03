@@ -2,11 +2,11 @@ import re
 from urllib.parse import urljoin, urlparse
 
 from flask import request
-from marshmallow import ValidationError
 
 from CTFd.models import Users
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.user import get_current_user, is_admin
+from marshmallow import ValidationError
 
 EMAIL_REGEX = r"(^[^@\s]+@[^@\s]+\.[^@\s]+$)"
 

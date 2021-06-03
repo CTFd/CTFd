@@ -2,7 +2,6 @@ import datetime
 from typing import List
 
 from flask import abort, render_template, request, url_for
-from flask_restx import Namespace, Resource
 from sqlalchemy import func as sa_func
 from sqlalchemy.sql import and_, false, true
 
@@ -57,6 +56,7 @@ from CTFd.utils.user import (
     get_current_user_attrs,
     is_admin,
 )
+from flask_restx import Namespace, Resource
 
 challenges_namespace = Namespace(
     "challenges", description="Endpoint to retrieve Challenges"

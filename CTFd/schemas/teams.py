@@ -1,6 +1,3 @@
-from marshmallow import ValidationError, post_dump, pre_load, validate
-from marshmallow.fields import Nested
-from marshmallow_sqlalchemy import field_for
 from sqlalchemy.orm import load_only
 
 from CTFd.models import TeamFieldEntries, TeamFields, Teams, Users, ma
@@ -9,6 +6,9 @@ from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.user import get_current_team, get_current_user, is_admin
 from CTFd.utils.validators import validate_country_code
+from marshmallow import ValidationError, post_dump, pre_load, validate
+from marshmallow.fields import Nested
+from marshmallow_sqlalchemy import field_for
 
 
 class TeamSchema(ma.ModelSchema):

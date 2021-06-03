@@ -1,3 +1,4 @@
+from CTFd.forms import BaseForm
 from wtforms import (
     BooleanField,
     HiddenField,
@@ -6,8 +7,6 @@ from wtforms import (
     TextAreaField,
 )
 from wtforms.validators import InputRequired
-
-from CTFd.forms import BaseForm
 
 
 class PageEditForm(BaseForm):

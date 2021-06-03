@@ -1,7 +1,6 @@
 from typing import List
 
 from flask import current_app, request
-from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -11,6 +10,7 @@ from CTFd.models import Notifications, db
 from CTFd.schemas.notifications import NotificationSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
+from flask_restx import Namespace, Resource
 
 notifications_namespace = Namespace(
     "notifications", description="Endpoint to retrieve Notifications"

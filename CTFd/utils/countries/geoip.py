@@ -1,6 +1,7 @@
+from flask import current_app
+
 import geoacumen
 import maxminddb
-from flask import current_app
 
 IP_ADDR_LOOKUP = maxminddb.open_database(
     current_app.config.get("GEOIP_DATABASE_PATH", geoacumen.db_path)
