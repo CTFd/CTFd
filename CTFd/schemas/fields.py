@@ -1,5 +1,6 @@
-from CTFd.models import Fields, TeamFieldEntries, UserFieldEntries, db, ma
 from marshmallow import fields
+
+from CTFd.models import Fields, TeamFieldEntries, UserFieldEntries, db, ma
 
 
 class FieldSchema(ma.ModelSchema):

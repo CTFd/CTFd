@@ -1,12 +1,12 @@
 import datetime
 from collections import defaultdict
 
+from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property, validates
 
 from CTFd.cache import cache
-from flask_marshmallow import Marshmallow
 
 db = SQLAlchemy()
 ma = Marshmallow()

@@ -1,6 +1,7 @@
 from typing import List
 
 from flask import request
+from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -11,7 +12,6 @@ from CTFd.schemas.files import FileSchema
 from CTFd.utils import uploads
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
-from flask_restx import Namespace, Resource
 
 files_namespace = Namespace("files", description="Endpoint to retrieve Files")
 

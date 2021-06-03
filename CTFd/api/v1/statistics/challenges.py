@@ -1,3 +1,4 @@
+from flask_restx import Resource
 from sqlalchemy import func
 from sqlalchemy.sql import and_
 
@@ -5,7 +6,6 @@ from CTFd.api.v1.statistics import statistics_namespace
 from CTFd.models import Challenges, Solves, db
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.modes import get_model
-from flask_restx import Resource
 
 
 @statistics_namespace.route("/challenges/<column>")

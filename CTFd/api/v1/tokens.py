@@ -2,6 +2,7 @@ import datetime
 from typing import List
 
 from flask import request, session
+from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
@@ -10,7 +11,6 @@ from CTFd.schemas.tokens import TokenSchema
 from CTFd.utils.decorators import authed_only, require_verified_emails
 from CTFd.utils.security.auth import generate_user_token
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
-from flask_restx import Namespace, Resource
 
 tokens_namespace = Namespace("tokens", description="Endpoint to retrieve Tokens")
 

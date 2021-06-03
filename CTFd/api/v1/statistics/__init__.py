@@ -8,4 +8,5 @@ from CTFd.api.v1.statistics import scores  # noqa: F401
 from CTFd.api.v1.statistics import submissions  # noqa: F401
 from CTFd.api.v1.statistics import teams  # noqa: F401
 from CTFd.api.v1.statistics import users  # noqa: F401
+
 from flask_restx import Namespace

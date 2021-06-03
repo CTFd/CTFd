@@ -1,6 +1,7 @@
 from typing import List
 
 from flask import request
+from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -11,7 +12,6 @@ from CTFd.schemas.hints import HintSchema
 from CTFd.utils.decorators import admins_only, authed_only, during_ctf_time_only
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.user import get_current_user, is_admin
-from flask_restx import Namespace, Resource
 
 hints_namespace = Namespace("hints", description="Endpoint to retrieve Hints")
 

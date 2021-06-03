@@ -1,6 +1,7 @@
 from typing import List
 
 from flask import request, session
+from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -17,7 +18,6 @@ from CTFd.models import (
 from CTFd.schemas.comments import CommentSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
-from flask_restx import Namespace, Resource
 
 comments_namespace = Namespace("comments", description="Endpoint to retrieve Comments")
 

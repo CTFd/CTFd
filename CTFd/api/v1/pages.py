@@ -1,6 +1,7 @@
 from typing import List
 
 from flask import request
+from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -11,7 +12,6 @@ from CTFd.models import Pages, db
 from CTFd.schemas.pages import PageSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
-from flask_restx import Namespace, Resource
 
 pages_namespace = Namespace("pages", description="Endpoint to retrieve Pages")
 
