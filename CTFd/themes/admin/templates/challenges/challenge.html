@@ -26,7 +26,7 @@
 					   title="Preview Challenge"></i>
 				</a>
 				{% if challenge.state == 'visible' %}
-				<a class="no-decoration" href="{{url_for('challenges.listing')}}#{{challenge.name | safe}}-{{challenge.id}}" target="_blank">
+				<a class="no-decoration" href="{{url_for('challenges.listing')}}#{{challenge.name | urlencode}}-{{challenge.id}}" target="_blank">
 					<i class="btn-fa fas fa-link fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					   title="Link to Challenge"></i>
 				</a>
