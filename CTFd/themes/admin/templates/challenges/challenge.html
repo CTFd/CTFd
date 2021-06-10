@@ -25,6 +25,10 @@
 					<i class="btn-fa fas fa-file-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					   title="Preview Challenge"></i>
 				</a>
+				<a class="no-decoration" href="{{url_for('challenges.listing')}}#{{challenge.name}}-{{challenge.id}}" target="_blank">
+					<i class="btn-fa fas fa-link fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					   title="Link to Challenge"></i>
+				</a>
 				<a class="no-decoration" href="{{ url_for('admin.submissions_listing', submission_type='correct', field='challenge_id', q=challenge.id) }}">
 					<i class="btn-fa fas fa-tasks fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					   title="Correct Submissions"></i>
