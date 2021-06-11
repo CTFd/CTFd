@@ -41,7 +41,7 @@ maxminddb==1.5.4          # via -r requirements.in, python-geoacumen
 passlib==1.7.2            # via -r requirements.in
 pybluemonday==0.0.6       # via -r requirements.in
 pycparser==2.20           # via cffi
-pydantic==1.5.1           # via -r requirements.in
+pydantic==1.6.2           # via -r requirements.in
 pymysql==0.9.3            # via -r requirements.in
 pyrsistent==0.17.3        # via jsonschema
 python-dateutil==2.8.1    # via alembic, botocore

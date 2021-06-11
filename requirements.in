@@ -23,7 +23,7 @@ flask-marshmallow==0.10.1
 marshmallow-sqlalchemy==0.17.0
 boto3==1.13.9
 marshmallow==2.20.2
-pydantic==1.5.1
+pydantic==1.6.2
 WTForms==2.3.1
 python-geoacumen==0.0.1
 maxminddb==1.5.4
