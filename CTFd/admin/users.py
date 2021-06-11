@@ -61,11 +61,6 @@ def users_detail(user_id):
     # Get user object
     user = Users.query.filter_by(id=user_id).first_or_404()
 
-    # Team placeholder information
-    team = False
-    team_score = 0
-    team_place = 0
-
     # Get the user's solves
     solves = user.get_solves(admin=True)
 
@@ -73,11 +68,6 @@ def users_detail(user_id):
     if get_config("user_mode") == TEAMS_MODE:
         if user.team:
             all_solves = user.team.get_solves(admin=True)
-
-            # Update team properties if in teams mode
-            team = True
-            team_score = user.team.get_score(admin=True)
-            team_place = user.team.get_place(admin=True)
         else:
             all_solves = user.get_solves(admin=True)
     else:
@@ -111,7 +101,4 @@ def users_detail(user_id):
         place=place,
         fails=fails,
         awards=awards,
-        team=team,
-        team_score=team_score,
-        team_place=team_place,
     )

@@ -47,23 +47,13 @@
 
 			<div>
 				<h2 class="text-center">
-					{% if team %}
-						{{ team.place }} <small>place team</small> /
-						{{ account.place }} <small>place user</small>
-					{% else %}
-						{% if account.place %}
-							{{ account.place }} <small>place</small>
-						{% endif %}
+					{% if account.place %}
+						{{ account.place }} <small>place</small>
 					{% endif %}
 				</h2>
 				<h2 class="text-center">
-					{% if team %}
-						Team: {{ team.score }} <small>points</small> /
-						User: {{ account.score }} <small>points</small>
-					{% else %}
-						{% if account.place %}
-							{{ account.score }} <small>points</small>
-						{% endif %}
+					{% if account.place %}
+						{{ account.score }} <small>points</small>
 					{% endif %}
 				</h2>
 			</div>

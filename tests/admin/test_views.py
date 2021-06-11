@@ -3,7 +3,6 @@
 
 from flask import Flask
 
-from CTFd.models import Users
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -80,21 +79,4 @@ def test_get_admin_as_user():
         r = client.get("/admin")
         assert r.status_code == 302
         assert r.location.startswith("http://localhost/login")
-    destroy_ctfd(app)
-
-
-def test_admin_view_user_team_score():
-    app = create_ctfd(user_mode="teams")
-    with app.app_context():
-        register_user(app)
-        team = gen_team(app.db)
-        user = Users.query.filter_by(id=2).first()
-        user.team_id = team.id
-        app.db.session.commit()
-
-        with login_as_user(app, name="admin") as admin:
-            # Coverage of an admin seeing users in team mode
-            r = admin.get("/admin/users/2")
-            assert r.status_code == 200
-
     destroy_ctfd(app)
