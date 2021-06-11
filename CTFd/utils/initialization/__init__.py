@@ -67,7 +67,7 @@ def init_template_globals(app):
         scores_visible,
     )
     from CTFd.utils.countries import get_countries, lookup_country_code
-    from CTFd.utils.countries.geoip import lookup_ip_address
+    from CTFd.utils.countries.geoip import lookup_ip_address, lookup_ip_address_city
 
     app.jinja_env.globals.update(config=config)
     app.jinja_env.globals.update(get_pages=get_pages)
@@ -89,6 +89,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_countries=get_countries)
     app.jinja_env.globals.update(lookup_country_code=lookup_country_code)
     app.jinja_env.globals.update(lookup_ip_address=lookup_ip_address)
+    app.jinja_env.globals.update(lookup_ip_address_city=lookup_ip_address_city)
     app.jinja_env.globals.update(accounts_visible=accounts_visible)
     app.jinja_env.globals.update(challenges_visible=challenges_visible)
     app.jinja_env.globals.update(registration_visible=registration_visible)
