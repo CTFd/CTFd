@@ -227,7 +227,9 @@ class ChallengeList(Resource):
                 and_(Challenges.state != "hidden", Challenges.state != "locked")
             )
         chal_q = (
-            chal_q.filter_by(**query_args).filter(*filters).order_by(Challenges.value)
+            chal_q.filter_by(**query_args)
+            .filter(*filters)
+            .order_by(Challenges.value, Challenges.id)
         )
 
         # Iterate through the list of challenges, adding to the object which
