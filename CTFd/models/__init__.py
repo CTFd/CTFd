@@ -62,6 +62,7 @@ class Pages(db.Model):
 
     files = db.relationship("PageFiles", backref="page")
 
+    @property
     def html(self):
         from CTFd.utils.config.pages import build_html, build_markdown
 
