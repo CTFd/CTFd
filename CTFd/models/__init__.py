@@ -57,7 +57,7 @@ class Pages(db.Model):
     draft = db.Column(db.Boolean)
     hidden = db.Column(db.Boolean)
     auth_required = db.Column(db.Boolean)
-    format = db.Column(db.String(80))
+    format = db.Column(db.String(80), default="markdown")
     # TODO: Use hidden attribute
 
     files = db.relationship("PageFiles", backref="page")
