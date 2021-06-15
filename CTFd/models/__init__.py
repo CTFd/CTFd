@@ -39,10 +39,10 @@ class Notifications(db.Model):
 
     @property
     def html(self):
-        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.config.pages import build_markdown
         from CTFd.utils.helpers import markup
 
-        return markup(build_html(self.content))
+        return markup(build_markdown(self.content))
 
     def __init__(self, *args, **kwargs):
         super(Notifications, self).__init__(**kwargs)
@@ -54,13 +54,23 @@ class Pages(db.Model):
     title = db.Column(db.String(80))
     route = db.Column(db.String(128), unique=True)
     content = db.Column(db.Text)
-    type = db.Column(db.String(80))
     draft = db.Column(db.Boolean)
     hidden = db.Column(db.Boolean)
     auth_required = db.Column(db.Boolean)
+    format = db.Column(db.String(80))
     # TODO: Use hidden attribute
 
     files = db.relationship("PageFiles", backref="page")
+
+    def html(self):
+        from CTFd.utils.config.pages import build_html, build_markdown
+
+        if self.format == "markdown":
+            return build_markdown(self.content)
+        elif self.format == "html":
+            return build_html(self.content)
+        else:
+            return build_markdown(self.content)
 
     def __init__(self, *args, **kwargs):
         super(Pages, self).__init__(**kwargs)
@@ -106,10 +116,10 @@ class Challenges(db.Model):
 
     @property
     def html(self):
-        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.config.pages import build_markdown
         from CTFd.utils.helpers import markup
 
-        return markup(build_html(self.description))
+        return markup(build_markdown(self.description))
 
     def __init__(self, *args, **kwargs):
         super(Challenges, self).__init__(**kwargs)
@@ -145,10 +155,10 @@ class Hints(db.Model):
 
     @property
     def html(self):
-        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.config.pages import build_markdown
         from CTFd.utils.helpers import markup
 
-        return markup(build_html(self.content))
+        return markup(build_markdown(self.content))
 
     def __init__(self, *args, **kwargs):
         super(Hints, self).__init__(**kwargs)
@@ -849,10 +859,10 @@ class Comments(db.Model):
 
     @property
     def html(self):
-        from CTFd.utils.config.pages import build_html
+        from CTFd.utils.config.pages import build_markdown
         from CTFd.utils.helpers import markup
 
-        return markup(build_html(self.content, sanitize=True))
+        return markup(build_markdown(self.content, sanitize=True))
 
     __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
 

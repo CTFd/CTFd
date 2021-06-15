@@ -29,7 +29,7 @@ def pages_preview():
     data = {"content": request.form.get("content")}
     schema = PageSchema()
     page = schema.load(data)
-    return render_template("page.html", content=build_html(page.data.content))
+    return render_template("page.html", content=page.data.html)
 
 
 @admin.route("/admin/pages/<int:page_id>")
