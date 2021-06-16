@@ -175,17 +175,12 @@ def config():
 @admin.route("/admin/reset", methods=["GET", "POST"])
 @admins_only
 def reset():
-    print("reset made!")
     if request.method == "POST":
         require_setup = False
         logout = False
         next_url = url_for("admin.statistics")
 
         data = request.form
-
-        print(vars(request))
-        print(data)
-        print("We Posted to Reset")
 
         if data.get("pages"):
             _pages = Pages.query.all()
