@@ -366,6 +366,13 @@ def login():
             user = Users.query.filter_by(name=name).first()
 
         if user:
+            if user.password is None:
+                errors.append(
+                    "Your account was registered with a 3rd party authentication provider. "
+                    "Please try logging in with a configured authentication provider."
+                )
+                return render_template("login.html", errors=errors)
+
             if user and verify_password(request.form["password"], user.password):
                 session.regenerate()
 
