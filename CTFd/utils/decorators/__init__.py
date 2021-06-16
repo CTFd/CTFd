@@ -129,14 +129,18 @@ def admins_only(f):
 
     @functools.wraps(f)
     def admins_only_wrapper(*args, **kwargs):
+        print("we are checking!?")
         if is_admin():
+            print("we are admin!? For sure!")
             return f(*args, **kwargs)
         else:
+            print("we are facing the else!?")
             if request.content_type == "application/json":
                 abort(403)
             else:
                 return redirect(url_for("auth.login", next=request.full_path))
 
+    print("we are admin!")
     return admins_only_wrapper
 
 

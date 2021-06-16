@@ -283,16 +283,15 @@ function insertTimezones(target) {
   }
 }
 
-function switchMode(event) {
-  new_mode = $("#user_mode option:selected");
-  console.log(new_mode);
-  if (event.value == "user_mode") {
-    body = "Going from user mode to teams mode is loseless."
+function switchMode() {
+  new_mode = $("#user_mode option:selected").val();
+  if (new_mode == "teams") {
+    body = "Going from user mode to teams mode will not change anything, but are you sure you want to make the change?"
   } else {
-    body = "Going from teams mode to user mode is not loseless."
+    body = "Going from teams mode to user mode will remove all solves. Are you sure you want to make the change?"
   }
   ezQuery({
-    title: "Change mode",
+    title: "Change User Mode",
     body: body,
     success: function () {
       const params = {
@@ -301,7 +300,24 @@ function switchMode(event) {
       CTFd.api
         .patch_config({ configKey: "user_mode" }, params)
         .then(_response => {
-          window.location.reload();
+          var formData = new FormData();
+          // formData.append("csrfmiddlewaretoken", CTFd.config.csrfNonce);
+          formData.append("key", "value");
+          formData.append("X-CSRFToken", CTFd.config.csrfNonce);
+          console.log(`patch ${CTFd.config.csrfNonce}`)
+
+          console.log("We in here!")
+          // if (new_mode == "users") {
+            fetch("/admin/reset", {
+              method: 'POST',
+              headers: {
+                "X-CSRFToken": CTFd.config.csrfNonce,
+              },
+              credentials: "same-origin",
+              body: formData
+            })
+          // }
+          // window.location.reload();
         });
     }
   });
