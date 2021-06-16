@@ -283,6 +283,30 @@ function insertTimezones(target) {
   }
 }
 
+function switchMode(event) {
+  new_mode = $("#user_mode option:selected");
+  console.log(new_mode);
+  if (event.value == "user_mode") {
+    body = "Going from user mode to teams mode is loseless."
+  } else {
+    body = "Going from teams mode to user mode is not loseless."
+  }
+  ezQuery({
+    title: "Change mode",
+    body: body,
+    success: function () {
+      const params = {
+        value: new_mode
+      };
+      CTFd.api
+        .patch_config({ configKey: "user_mode" }, params)
+        .then(_response => {
+          window.location.reload();
+        });
+    }
+  });
+}
+
 $(() => {
   const theme_header_editor = CodeMirror.fromTextArea(
     document.getElementById("theme-header"),
@@ -376,6 +400,7 @@ $(() => {
   $(".config-section > form:not(.form-upload)").submit(updateConfigs);
   $("#logo-upload").submit(uploadLogo);
   $("#remove-logo").click(removeLogo);
+  $("#user_mode").change(switchMode);
   $("#ctf-small-icon-upload").submit(smallIconUpload);
   $("#remove-small-icon").click(removeSmallIcon);
   $("#export-button").click(exportConfig);
