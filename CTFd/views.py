@@ -29,7 +29,7 @@ from CTFd.utils import config, get_config, set_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
 from CTFd.utils.config import is_setup
-from CTFd.utils.config.pages import build_html, build_markdown, get_page
+from CTFd.utils.config.pages import build_markdown, get_page
 from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.dates import ctf_ended, ctftime, view_after_ctf
 from CTFd.utils.decorators import authed_only

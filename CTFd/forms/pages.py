@@ -25,7 +25,7 @@ class PageEditForm(BaseForm):
     content = TextAreaField("Content")
     format = SelectField(
         "Format",
-        choices=[("markdown", "Markdown"), ("html", "HTML"),],
+        choices=[("markdown", "Markdown"), ("html", "HTML")],
         default="markdown",
         validators=[InputRequired()],
         description="The markup format used to render the page",
