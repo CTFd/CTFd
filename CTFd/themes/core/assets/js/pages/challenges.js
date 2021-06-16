@@ -265,6 +265,10 @@ function loadChals() {
     const $challenges_board = $("#challenges-board");
     challenges = response.data;
 
+    if (window.BETA_sortChallenges) {
+      challenges = window.BETA_sortChallenges(challenges);
+    }
+
     $challenges_board.empty();
 
     for (let i = challenges.length - 1; i >= 0; i--) {

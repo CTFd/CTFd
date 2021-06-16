@@ -37,17 +37,17 @@ mako==1.1.3               # via alembic
 markupsafe==1.1.1         # via jinja2, mako, wtforms
 marshmallow-sqlalchemy==0.17.0  # via -r requirements.in
 marshmallow==2.20.2       # via -r requirements.in, flask-marshmallow, marshmallow-sqlalchemy
-maxminddb==1.5.4          # via -r requirements.in, python-geoacumen
+maxminddb==1.5.4          # via -r requirements.in, python-geoacumen-city
 passlib==1.7.2            # via -r requirements.in
-pybluemonday==0.0.4       # via -r requirements.in
+pybluemonday==0.0.6       # via -r requirements.in
 pycparser==2.20           # via cffi
-pydantic==1.5.1           # via -r requirements.in
+pydantic==1.6.2           # via -r requirements.in
 pymysql==0.9.3            # via -r requirements.in
 pyrsistent==0.17.3        # via jsonschema
 python-dateutil==2.8.1    # via alembic, botocore
 python-dotenv==0.13.0     # via -r requirements.in
 python-editor==1.0.4      # via alembic
-python-geoacumen==0.0.1   # via -r requirements.in
+python-geoacumen-city==0.0.1  # via -r requirements.in
 pytz==2020.4              # via flask-restx
 redis==3.5.2              # via -r requirements.in
 requests==2.23.0          # via -r requirements.in
