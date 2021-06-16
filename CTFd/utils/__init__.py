@@ -57,6 +57,8 @@ def get_config(key, default=None):
 
 
 def set_config(key, value):
+    if len(value) > 64000:
+        return "Too big"
     config = Configs.query.filter_by(key=key).first()
     if config:
         config.value = value
