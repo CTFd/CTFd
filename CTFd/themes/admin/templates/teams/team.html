@@ -258,6 +258,7 @@
 					<td class="text-center"></td>
 					<td class="text-center"><b>User Name</b></td>
 					<td class="text-center"><b>E-Mail</b></td>
+					<td class="text-center"><b>Score</b></td>
 					<td class="text-center"></td>
 				</tr>
 				</thead>
@@ -274,10 +275,13 @@
 								{{ member.name }}
 							</a>
 						</td>
-						<td class="text-center">
+						<td class="text-center" data-href="{{ url_for('admin.users_detail', user_id=member.id) }}">
 							<a href="mailto:{{ member.email }}" target="_blank">
 								{{ member.email }}
 							</a>
+						</td>
+						<td class="text-center" data-href="{{ url_for('admin.users_detail', user_id=member.id) }}">
+							{{ member.score }}
 						</td>
 						<td class="text-center">
 							<span class="delete-member cursor-pointer" member-id="{{ member.id }}"
