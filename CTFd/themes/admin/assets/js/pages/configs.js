@@ -283,46 +283,6 @@ function insertTimezones(target) {
   }
 }
 
-function switchMode() {
-  new_mode = $("#user_mode option:selected").val();
-  if (new_mode == "teams") {
-    body = "Going from user mode to teams mode will not change anything, but are you sure you want to make the change?"
-  } else {
-    body = "Going from teams mode to user mode will remove all solves. Are you sure you want to make the change?"
-  }
-  ezQuery({
-    title: "Change User Mode",
-    body: body,
-    success: function () {
-      const params = {
-        value: new_mode
-      };
-      CTFd.api
-        .patch_config({ configKey: "user_mode" }, params)
-        .then(_response => {
-          var formData = new FormData();
-          // formData.append("csrfmiddlewaretoken", CTFd.config.csrfNonce);
-          formData.append("key", "value");
-          formData.append("X-CSRFToken", CTFd.config.csrfNonce);
-          console.log(`patch ${CTFd.config.csrfNonce}`)
-
-          console.log("We in here!")
-          // if (new_mode == "users") {
-            fetch("/admin/reset", {
-              method: 'POST',
-              headers: {
-                "X-CSRFToken": CTFd.config.csrfNonce,
-              },
-              credentials: "same-origin",
-              body: formData
-            })
-          // }
-          // window.location.reload();
-        });
-    }
-  });
-}
-
 $(() => {
   const theme_header_editor = CodeMirror.fromTextArea(
     document.getElementById("theme-header"),
@@ -416,7 +376,6 @@ $(() => {
   $(".config-section > form:not(.form-upload)").submit(updateConfigs);
   $("#logo-upload").submit(uploadLogo);
   $("#remove-logo").click(removeLogo);
-  $("#user_mode").change(switchMode);
   $("#ctf-small-icon-upload").submit(smallIconUpload);
   $("#remove-small-icon").click(removeSmallIcon);
   $("#export-button").click(exportConfig);
