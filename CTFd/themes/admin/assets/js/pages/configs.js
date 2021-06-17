@@ -120,11 +120,10 @@ function updateConfigs(event) {
   });
 
   CTFd.api.patch_config_list({}, params).then(_response => {
-    window.location.reloar();
-    rs - onlyly;
+    window.location.reload();
   });
 }
-
+jj
 function switchMode() {
   let new_mode = $("#user_mode option:selected").val();
   let body = "";
