@@ -137,7 +137,7 @@ function switchMode() {
   ezQuery({
     title: "Change User Mode",
     body: body,
-    success: function () {
+    success: function() {
       const params = {
         value: new_mode
       };
