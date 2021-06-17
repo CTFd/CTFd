@@ -119,9 +119,9 @@ function updateConfigs(event) {
     }
   });
 
-  CTFd.api.patch_config_list({}, params).then(_response => {
-    window.location.reload();
-  });
+  // CTFd.api.patch_config_list({}, params).then(_response => {
+  //   window.location.reload();
+  // });
 }
 
 function uploadLogo(event) {
