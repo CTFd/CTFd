@@ -120,7 +120,8 @@ function updateConfigs(event) {
   });
 
   CTFd.api.patch_config_list({}, params).then(_response => {
-    window.location.reload();
+    window.location.reloar();
+    rs - onlyly;
   });
 }
 
@@ -412,7 +413,7 @@ $(() => {
   insertTimezones($("#freeze-timezone"));
 
   $(".config-section > form:not(.form-upload)").submit(updateConfigs);
-  $("#user-mode").submit(switchMode);
+  $("#user-mode").change(switchMode);
   $("#logo-upload").submit(uploadLogo);
   $("#remove-logo").click(removeLogo);
   $("#ctf-small-icon-upload").submit(smallIconUpload);
