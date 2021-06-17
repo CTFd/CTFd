@@ -4,7 +4,6 @@ from CTFd.admin import admin
 from CTFd.models import Pages
 from CTFd.schemas.pages import PageSchema
 from CTFd.utils import markdown
-from CTFd.utils.config.pages import build_html
 from CTFd.utils.decorators import admins_only
 
 
@@ -29,7 +28,7 @@ def pages_preview():
     data = {"content": request.form.get("content")}
     schema = PageSchema()
     page = schema.load(data)
-    return render_template("page.html", content=build_html(page.data.content))
+    return render_template("page.html", content=page.data.html)
 
 
 @admin.route("/admin/pages/<int:page_id>")
