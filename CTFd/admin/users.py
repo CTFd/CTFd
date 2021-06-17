@@ -88,8 +88,8 @@ def users_detail(user_id):
     awards = user.get_awards(admin=True)
 
     # Get user properties
-    score = user.get_score(admin=True)
-    place = user.get_place(admin=True)
+    score = user.account.get_score(admin=True)
+    place = user.account.get_place(admin=True)
 
     return render_template(
         "admin/users/user.html",
