@@ -123,7 +123,7 @@ function updateConfigs(event) {
     window.location.reload();
   });
 }
-jj
+
 function switchMode() {
   let new_mode = $("#user_mode option:selected").val();
   let body = "";
