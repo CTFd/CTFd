@@ -124,6 +124,44 @@ function updateConfigs(event) {
   });
 }
 
+function switchMode() {
+  let new_mode = $("#user_mode option:selected").val();
+  let body = "";
+  if (new_mode == "teams") {
+    body =
+      "Going from user mode to teams mode will not change anything, but are you sure you want to make the change?";
+  } else {
+    body =
+      "Going from teams mode to user mode <b style='color:red'>WILL REMOVE ALL SUBMISSION DATA</b>. Are you sure you want to make the change?";
+  }
+  ezQuery({
+    title: "Change User Mode",
+    body: body,
+    success: function () {
+      const params = {
+        value: new_mode
+      };
+      CTFd.api
+        .patch_config({ configKey: "user_mode" }, params)
+        .then(_response => {
+          let formData = new FormData();
+          formData.append("notifications", true);
+          formData.append("submissions", true);
+          formData.append("nonce", CTFd.config.csrfNonce);
+
+          if (new_mode == "users") {
+            fetch("/admin/reset", {
+              method: "POST",
+              credentials: "same-origin",
+              body: formData
+            });
+          }
+          window.location.reload();
+        });
+    }
+  });
+}
+
 function uploadLogo(event) {
   event.preventDefault();
   let form = event.target;
@@ -374,6 +412,7 @@ $(() => {
   insertTimezones($("#freeze-timezone"));
 
   $(".config-section > form:not(.form-upload)").submit(updateConfigs);
+  $("#user-mode").submit(switchMode);
   $("#logo-upload").submit(uploadLogo);
   $("#remove-logo").click(removeLogo);
   $("#ctf-small-icon-upload").submit(smallIconUpload);
