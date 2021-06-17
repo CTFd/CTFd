@@ -109,8 +109,12 @@ class ConfigList(Resource):
     )
     def patch(self):
         req = request.get_json()
+        schema = ConfigSchema()
 
         for key, value in req.items():
+            response = schema.load({"key": key, "value": value})
+            if response.errors:
+                return {"success": False, "errors": response.errors, "key": key}, 400
             set_config(key=key, value=value)
 
         clear_config()
