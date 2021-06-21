@@ -1,4 +1,5 @@
-from marshmallow import fields, validate
+from marshmallow import validate
+from marshmallow_sqlalchemy import field_for
 
 from CTFd.models import Configs, ma
 from CTFd.utils import string_types
@@ -11,8 +12,8 @@ class ConfigSchema(ma.ModelSchema):
         dump_only = ("id",)
 
     views = {"admin": ["id", "key", "value"]}
-    key = fields.Str(required=True)
-    value = fields.Str(validate=validate.Length(max=64000))
+    key = field_for(Configs, "key", required=True)
+    value = field_for(Configs, "value", validate=[validate.Length(max=64000, error="Configs max out at 64,000 characters")])
 
     def __init__(self, view=None, *args, **kwargs):
         if view:
