@@ -103,3 +103,26 @@ def test_api_config_delete_admin():
             assert r.status_code == 200
             assert get_config("ctf_name") is None
     destroy_ctfd(app)
+
+
+def test_long_values():
+    """Can a config value that is bigger than 64,000 be accepted"""
+    app = create_ctfd()
+    with app.app_context():
+        with login_as_user(app, "admin") as admin:
+            long_text = "a" * 65000
+            r = admin.post(
+                "/api/v1/configs", json={"key": "ctf_footer", "value": long_text}
+            )
+            data = r.get_json()
+            assert data["errors"]["value"][0] == "Configs max out at 64,000 characters"
+            assert r.status_code == 400
+
+            r = admin.patch(
+                "/api/v1/configs", json={"key": "ctf_theme", "value": long_text}
+            )
+            data = r.get_json()
+            assert data["errors"]["value"][0] == "Configs max out at 64,000 characters"
+            assert r.status_code == 400
+
+    destroy_ctfd(app)
