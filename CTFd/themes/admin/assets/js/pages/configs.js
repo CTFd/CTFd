@@ -129,10 +129,10 @@ function switchMode() {
   let body = "";
   if (new_mode == "teams") {
     body =
-      "Going from user mode to teams mode will not change anything, but are you sure you want to make the change?";
+      "When switching from user mode to teams mode, user submissions will be kept but users can not solve problems unless on a team.<br> <br>They will also have to solve problems again under the team for the points to go towards the teams' score.<br><br>Are you sure you want to make this change?";
   } else {
     body =
-      "Going from teams mode to user mode <b style='color:red'>WILL REMOVE ALL SUBMISSION DATA</b>. Are you sure you want to make the change?";
+      "Going from teams mode to user mode will split users from their teams. Their team solves will not be reflected as challenges solved.<br> <br> Are you sure you want to make this change?";
   }
   ezQuery({
     title: "Change User Mode",
@@ -144,18 +144,16 @@ function switchMode() {
       CTFd.api
         .patch_config({ configKey: "user_mode" }, params)
         .then(_response => {
-          let formData = new FormData();
-          formData.append("notifications", true);
-          formData.append("submissions", true);
-          formData.append("nonce", CTFd.config.csrfNonce);
-
-          if (new_mode == "users") {
-            fetch("/admin/reset", {
-              method: "POST",
-              credentials: "same-origin",
-              body: formData
-            });
-          }
+          console.log("placeholder")
+          // if (new_mode == "users") {
+          //   let formData = new FormData();
+          //   formData.append("submissions", true);
+          //   formData.append("nonce", CTFd.config.csrfNonce);
+          //   fetch("/admin/reset", {
+          //     method: "POST",
+          //     credentials: "same-origin",
+          //     body: formData
+          //   });
           window.location.reload();
         });
     }
@@ -412,7 +410,7 @@ $(() => {
   insertTimezones($("#freeze-timezone"));
 
   $(".config-section > form:not(.form-upload)").submit(updateConfigs);
-  $("#user-mode").change(switchMode);
+  $("#user_mode").change(switchMode);
   $("#logo-upload").submit(uploadLogo);
   $("#remove-logo").click(removeLogo);
   $("#ctf-small-icon-upload").submit(smallIconUpload);
