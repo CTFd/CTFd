@@ -37,6 +37,13 @@
 				<input class="form-control-file" type="file" name="backup" id="import-file" accept=".zip">
 			</div>
 			<input id="import-button" type="submit" class="btn btn-warning" value="Import">
+
+			<form method="POST" action="/admin/import/csv" enctype="multipart/form-data">
+				<input type="text" value="users" name="table">
+				<input type="text" value="{{ Session.nonce }}" name="nonce">
+				<input class="form-control-file" type="file" name="csv" accept=".csv">
+				<input type="submit" class="btn btn-warning" value="Import CSV">
+			</form>
 		</div>
 		<div role="tabpanel" class="tab-pane" id="save-csv">
 			{% with form = Forms.config.ExportCSVForm() %}
