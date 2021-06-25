@@ -510,9 +510,7 @@ def oauth_redirect():
                     if num_teams_limit and num_teams >= num_teams_limit:
                         abort(
                             403,
-                            description="Reached the maximum number of teams ({}). Please join an existing team.".format(
-                                num_teams_limit
-                            ),
+                            description=f"Reached the maximum number of teams ({num_teams_limit}). Please join an existing team.",
                         )
 
                     team = Teams(name=team_name, oauth_id=team_id, captain_id=user.id)
