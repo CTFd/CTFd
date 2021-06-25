@@ -507,7 +507,7 @@ def oauth_redirect():
                     num_teams = Teams.query.filter_by(
                         banned=False, hidden=False
                     ).count()
-                    if 0 < num_teams_limit <= num_teams:
+                    if num_teams_limit and num_teams >= num_teams_limit:
                         abort(
                             403,
                             description="Reached the maximum number of teams ({}). Please join an existing team.".format(
