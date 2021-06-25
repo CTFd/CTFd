@@ -1,11 +1,10 @@
 import base64
 
 import requests
-from flask import Blueprint
+from flask import Blueprint, abort
 from flask import current_app as app
 from flask import redirect, render_template, request, session, url_for
 from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
-from werkzeug.exceptions import abort
 
 from CTFd.cache import clear_team_session, clear_user_session
 from CTFd.models import Teams, UserFieldEntries, UserFields, Users, db
