@@ -114,7 +114,8 @@ class ConfigList(Resource):
         for key, value in req.items():
             response = schema.load({"key": key, "value": value})
             if response.errors:
-                return {"success": False, "errors": response.errors, "key": key}, 400
+                response.errors["key"] = key
+                return {"success": False, "errors": response.errors}, 400
             set_config(key=key, value=value)
 
         clear_config()

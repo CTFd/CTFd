@@ -17,7 +17,7 @@ class ConfigSchema(ma.ModelSchema):
         Configs,
         "value",
         validate=[
-            validate.Length(max=64000, error="Configs max out at 64,000 characters")
+            validate.Length(max=64000, error="Value too long. Max 64,000 characters.")
         ],
     )
 

@@ -123,9 +123,8 @@ function updateConfigs(event) {
     if (_response.success) {
       window.location.reload();
     } else {
-      let errors =
-        `Error with ${_response.key}: ` +
-        _response.errors.value.reduce((err, accum) => accum + "\n" + err, "");
+      let errors = `Error with ${_response.errors.key}:
+        ${_response.errors.value.join("/n")}`;
       ezAlert({
         title: "Error!",
         body: errors,
