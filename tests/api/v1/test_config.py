@@ -115,14 +115,14 @@ def test_long_values():
                 "/api/v1/configs", json={"key": "ctf_footer", "value": long_text}
             )
             data = r.get_json()
-            assert data["errors"]["value"][0] == "Configs max out at 64,000 characters"
+            assert data["errors"]["value"][0] == "ctf_footer config is too long"
             assert r.status_code == 400
 
             r = admin.patch(
                 "/api/v1/configs", json={"key": "ctf_theme", "value": long_text}
             )
             data = r.get_json()
-            assert data["errors"]["value"][0] == "Configs max out at 64,000 characters"
+            assert data["errors"]["value"][0] == "ctf_theme config is too long"
             assert r.status_code == 400
 
     destroy_ctfd(app)

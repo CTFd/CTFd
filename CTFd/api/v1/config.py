@@ -114,7 +114,10 @@ class ConfigList(Resource):
         for key, value in req.items():
             response = schema.load({"key": key, "value": value})
             if response.errors:
-                return {"success": False, "errors": response.errors, "key": key}, 400
+                # Inject config key into error
+                config_key = response.data["key"]
+                response.errors["value"][0] = f"{config_key} config is too long"
+                return {"success": False, "errors": response.errors}, 400
             set_config(key=key, value=value)
 
         clear_config()
