@@ -120,9 +120,9 @@ def export_ctf():
 @admin.route("/admin/import/csv", methods=["POST"])
 @admins_only
 def import_csv():
-    table = request.form["table"]
+    csv_type = request.form["csv_type"]
     # Try really hard to load data in properly no matter what nonsense Excel gave you
-    raw = request.files["csv"].stream.read()
+    raw = request.files["csv_file"].stream.read()
     try:
         csvdata = raw.decode("utf-8-sig")
     except UnicodeDecodeError:
@@ -138,7 +138,7 @@ def import_csv():
         "teams": load_teams_csv,
     }
 
-    loader = loaders[table]
+    loader = loaders[csv_type]
     reader = csv.DictReader(csvfile)
     loader(reader)
     return redirect(url_for("admin.config"))
