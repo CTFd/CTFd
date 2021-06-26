@@ -105,7 +105,7 @@ def import_ctf():
         return redirect(url_for("admin.config"))
 
 
-@admin.route("/admin/export")
+@admin.route("/admin/export", methods=["GET", "POST"])
 @admins_only
 def export_ctf():
     backup = export_ctf_util()
