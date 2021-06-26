@@ -8,3 +8,6 @@ CTFd/themes/**/vendor/
 *.svg
 *.mp3
 *.webm
+.pytest_cache
+venv*
+.venv*
