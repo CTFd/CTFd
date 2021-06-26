@@ -1,4 +1,4 @@
-from wtforms import BooleanField, SelectField, StringField, TextAreaField
+from wtforms import BooleanField, FileField, SelectField, StringField, TextAreaField
 from wtforms.fields.html5 import IntegerField, URLField
 from wtforms.widgets.html5 import NumberInput
 
@@ -81,6 +81,15 @@ class ExportCSVForm(BaseForm):
         ),
     )
     submit = SubmitField("Download CSV")
+
+
+class ImportCSVForm(BaseForm):
+    csv_type = SelectField(
+        "CSV Type",
+        choices=[("users", "Users"), ("teams", "Teams"), ("challenges", "Challenges")],
+        description="Type of CSV data",
+    )
+    csv_file = FileField("CSV File", description="CSV file contents")
 
 
 class LegalSettingsForm(BaseForm):

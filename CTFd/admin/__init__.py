@@ -43,6 +43,7 @@ from CTFd.models import (
 )
 from CTFd.utils import config as ctf_config
 from CTFd.utils import get_config, set_config
+from CTFd.utils.csv import load_challenges_csv, load_teams_csv, load_users_csv
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.exports import export_ctf as export_ctf_util
 from CTFd.utils.exports import import_ctf as import_ctf_util
@@ -114,6 +115,33 @@ def export_ctf():
     return send_file(
         backup, cache_timeout=-1, as_attachment=True, attachment_filename=full_name
     )
+
+
+@admin.route("/admin/import/csv", methods=["POST"])
+@admins_only
+def import_csv():
+    csv_type = request.form["csv_type"]
+    # Try really hard to load data in properly no matter what nonsense Excel gave you
+    raw = request.files["csv_file"].stream.read()
+    try:
+        csvdata = raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        try:
+            csvdata = raw.decode("cp1252")
+        except UnicodeDecodeError:
+            csvdata = raw.decode("latin-1")
+    csvfile = StringIO(csvdata)
+
+    loaders = {
+        "challenges": load_challenges_csv,
+        "users": load_users_csv,
+        "teams": load_teams_csv,
+    }
+
+    loader = loaders[csv_type]
+    reader = csv.DictReader(csvfile)
+    loader(reader)
+    return redirect(url_for("admin.config"))
 
 
 @admin.route("/admin/export/csv")
