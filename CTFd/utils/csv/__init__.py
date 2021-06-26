@@ -1,7 +1,6 @@
-import csv
 import json
 
-from CTFd.models import Challenges, Flags, Hints, Tags, Teams, Users, db
+from CTFd.models import Flags, Hints, Tags, Teams, Users, db
 from CTFd.plugins.challenges import CHALLENGE_CLASSES
 
 
@@ -23,7 +22,6 @@ def load_teams_csv(dict_reader):
 
 def load_challenges_csv(dict_reader):
     for line in dict_reader:
-        print(line)
         flags = line.pop("flags", None)
         tags = line.pop("tags", None)
         hints = line.pop("hints", None)

@@ -128,7 +128,7 @@ def import_csv():
     except UnicodeDecodeError:
         try:
             csvdata = raw.decode("cp1252")
-        except:
+        except UnicodeDecodeError:
             csvdata = raw.decode("latin-1")
     csvfile = StringIO(csvdata)
 

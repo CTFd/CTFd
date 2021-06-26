@@ -84,7 +84,7 @@ class ImportCSVForm(BaseForm):
         choices=[("users", "Users"), ("teams", "Teams"), ("challenges", "Challenges")],
         description="Type of CSV data",
     )
-    csv_file = FileField("CSV File", description="CSV file contents",)
+    csv_file = FileField("CSV File", description="CSV file contents")
 
 
 class LegalSettingsForm(BaseForm):
