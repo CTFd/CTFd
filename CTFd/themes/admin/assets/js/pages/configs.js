@@ -119,8 +119,17 @@ function updateConfigs(event) {
     }
   });
 
-  CTFd.api.patch_config_list({}, params).then(_response => {
-    window.location.reload();
+  CTFd.api.patch_config_list({}, params).then(function(_response) {
+    if (_response.success) {
+      window.location.reload();
+    } else {
+      let errors = _response.errors.value.join("\n");
+      ezAlert({
+        title: "Error!",
+        body: errors,
+        button: "Okay"
+      });
+    }
   });
 }
 
