@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Challenges
 from CTFd.plugins import (
     bypass_csrf_protection,
     get_admin_plugin_menu_bar,
