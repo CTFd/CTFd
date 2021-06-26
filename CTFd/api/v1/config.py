@@ -89,6 +89,9 @@ class ConfigList(Resource):
         response = schema.load(req)
 
         if response.errors:
+            # Inject config key into error
+            config_key = response.data["key"]
+            response.errors["value"][0] = f"{config_key} config is too long"
             return {"success": False, "errors": response.errors}, 400
 
         db.session.add(response.data)
@@ -109,8 +112,15 @@ class ConfigList(Resource):
     )
     def patch(self):
         req = request.get_json()
+        schema = ConfigSchema()
 
         for key, value in req.items():
+            response = schema.load({"key": key, "value": value})
+            if response.errors:
+                # Inject config key into error
+                config_key = response.data["key"]
+                response.errors["value"][0] = f"{config_key} config is too long"
+                return {"success": False, "errors": response.errors}, 400
             set_config(key=key, value=value)
 
         clear_config()
