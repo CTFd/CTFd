@@ -115,7 +115,7 @@ def test_long_values():
                 "/api/v1/configs", json={"key": "ctf_footer", "value": long_text}
             )
             data = r.get_json()
-            assert data["errors"]["value"][0] == "Config is too long"
+            assert data["errors"]["value"][0] == "ctf_footer config is too long"
 
             r = admin.patch("/api/v1/configs", json={"ctf_theme": long_text})
             data = r.get_json()

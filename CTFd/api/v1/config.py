@@ -89,6 +89,9 @@ class ConfigList(Resource):
         response = schema.load(req)
 
         if response.errors:
+            # Inject config key into error
+            config_key = response.data["key"]
+            response.errors["value"][0] = f"{config_key} config is too long"
             return {"success": False, "errors": response.errors}, 400
 
         db.session.add(response.data)
