@@ -1,7 +1,7 @@
 import json
 
 from CTFd.models import Flags, Hints, Tags, Teams, Users, db
-from CTFd.plugins.challenges import CHALLENGE_CLASSES
+from CTFd.plugins.challenges import get_chal_class
 
 
 def load_users_csv(dict_reader):
@@ -26,10 +26,12 @@ def load_challenges_csv(dict_reader):
         tags = line.pop("tags", None)
         hints = line.pop("hints", None)
         challenge_type = line.pop("type", "standard")
-        type_data = json.loads(line.pop("type_data", "{}"))
 
+        # Load in custome type_data
+        type_data = json.loads(line.pop("type_data", "{}"))
         line.update(type_data)
-        ChallengeClass = CHALLENGE_CLASSES.get(challenge_type)
+
+        ChallengeClass = get_chal_class(challenge_type)
         challenge = ChallengeClass.challenge_model(**line)
         db.session.add(challenge)
         db.session.commit()
