@@ -16,7 +16,7 @@ def test_missing_challenge_type():
             "name": "name",
             "category": "category",
             "description": "description",
-            "value": 100,
+            "initial": 100,
             "decay": 20,
             "minimum": 1,
             "state": "visible",
