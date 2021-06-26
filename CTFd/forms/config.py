@@ -44,7 +44,9 @@ class AccountSettingsForm(BaseForm):
         description="Amount of users per team (Teams mode only)",
     )
     num_teams = IntegerField(
-        widget=NumberInput(min=0), description="Max number of teams (Teams mode only)",
+        "Total Number of Teams",
+        widget=NumberInput(min=0),
+        description="Max number of teams (Teams mode only)",
     )
     verify_emails = SelectField(
         "Verify Emails",
