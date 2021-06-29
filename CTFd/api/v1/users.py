@@ -290,7 +290,10 @@ class UserPrivate(Resource):
         200,
         "Success",
         "UserDetailedSuccessResponse",
-        headers={"X-CTFd-ID": "User ID", "X-CTFd-Type": "User Type",},
+        headers={
+            "X-CTFd-ID": "User ID",
+            "X-CTFd-Type": "User Type",
+        },
     )
     def get(self):
         user = get_current_user()
@@ -300,7 +303,10 @@ class UserPrivate(Resource):
         return (
             {"success": True, "data": response},
             200,
-            {"X-CTFd-ID": user.id, "X-CTFd-Type": user.type,},
+            {
+                "X-CTFd-ID": user.id,
+                "X-CTFd-Type": user.type,
+            },
         )
 
     @authed_only
