@@ -280,19 +280,25 @@ class UserPrivate(Resource):
     @users_namespace.doc(
         description="Endpoint to get the User object for the current user",
         responses={
-            200: ("Success", "UserDetailedSuccessResponse"),
             400: (
                 "An error occured processing the provided or stored data",
                 "APISimpleErrorResponse",
             ),
         },
     )
+    @users_namespace.response(200, "Success", "UserDetailedSuccessResponse", headers={
+        "X-CTFd-ID": "User ID",
+        "X-CTFd-Type": "User Type",
+    })
     def get(self):
         user = get_current_user()
         response = UserSchema("self").dump(user).data
         response["place"] = user.place
         response["score"] = user.score
-        return {"success": True, "data": response}
+        return {"success": True, "data": response}, 200, {
+            "X-CTFd-ID": user.id,
+            "X-CTFd-Type": user.type,
+        }
 
     @authed_only
     @users_namespace.doc(
