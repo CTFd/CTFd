@@ -115,6 +115,8 @@ class ConfigList(Resource):
         schema = ConfigSchema()
 
         for key, value in req.items():
+            if isinstance(value, bool):
+                value = str(value)
             response = schema.load({"key": key, "value": value})
             if response.errors:
                 # Inject config key into error
