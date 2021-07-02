@@ -143,13 +143,13 @@ def test_config_value_types():
             assert bool(get_config("view_after_ctf")) == True
 
             # Test None can be received
-            assert get_config("mail_username") == None
+            assert get_config("mail_username") is None
             r = admin.patch("/api/v1/configs", json={"mail_username": "testusername"})
             assert r.status_code == 200
             assert get_config("mail_username") == "testusername"
             r = admin.patch("/api/v1/configs", json={"mail_username": None})
             assert r.status_code == 200
-            assert get_config("mail_username") == None
+            assert get_config("mail_username") is None
 
             # Test integers can be received
             r = admin.patch("/api/v1/configs", json={"mail_port": 12345})
@@ -163,7 +163,7 @@ def test_config_value_types():
             data = r.get_json()
             assert data["errors"]["value"][0] == "long_config_test config is too long"
             assert r.status_code == 400
-            assert get_config("long_config_test") == None
+            assert get_config("long_config_test") is None
             r = admin.patch(
                 "/api/v1/configs/config_test", json={"value": "config_value_test"}
             )
