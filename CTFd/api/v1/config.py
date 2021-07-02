@@ -163,11 +163,11 @@ class Config(Resource):
             schema = ConfigSchema()
             data["key"] = config_key
             response = schema.load(data)
-            db.session.add(response.data)
 
         if response.errors:
-            return response.errors, 400
+            return {"success": False, "errors": response.errors}, 400
 
+        db.session.add(response.data)
         db.session.commit()
 
         response = schema.dump(response.data)
