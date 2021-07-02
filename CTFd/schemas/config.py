@@ -13,6 +13,9 @@ class ConfigValueField(fields.Field):
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str):
+            # 65535 bytes is the size of a TEXT column in MySQL
+            # You may be able to exceed this in other databases
+            # but MySQL is our database of record
             if len(value) > 65535:
                 raise ValidationError(f'{data["key"]} config is too long')
             return value
@@ -28,7 +31,7 @@ class ConfigSchema(ma.ModelSchema):
 
     views = {"admin": ["id", "key", "value"]}
     key = field_for(Configs, "key", required=True)
-    value = ConfigValueField(allow_none=True)
+    value = ConfigValueField(allow_none=True, required=True)
 
     def __init__(self, view=None, *args, **kwargs):
         if view:
