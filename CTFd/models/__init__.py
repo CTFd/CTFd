@@ -122,6 +122,12 @@ class Challenges(db.Model):
 
         return markup(build_markdown(self.description))
 
+    @property
+    def plugin_class(self):
+        from CTFd.plugins.challenges import get_chal_class
+
+        return get_chal_class(self.type)
+
     def __init__(self, *args, **kwargs):
         super(Challenges, self).__init__(**kwargs)
 

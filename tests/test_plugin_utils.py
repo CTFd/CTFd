@@ -14,7 +14,13 @@ from CTFd.plugins import (
     register_plugin_script,
     register_user_page_menu_bar,
 )
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, setup_ctfd
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    gen_challenge,
+    login_as_user,
+    setup_ctfd,
+)
 
 
 def test_register_plugin_asset():
@@ -203,4 +209,18 @@ def test_bypass_csrf_protection():
             output = r.get_data(as_text=True)
             assert r.status_code == 200
             assert output == "Success"
+    destroy_ctfd(app)
+
+
+def test_challenges_model_access_plugin_class():
+    """
+    Test that the Challenges model can access its plugin class
+    """
+    app = create_ctfd()
+
+    with app.app_context():
+        from CTFd.plugins.challenges import get_chal_class
+
+        chal = gen_challenge(app.db)
+        assert chal.plugin_class == get_chal_class("standard")
     destroy_ctfd(app)

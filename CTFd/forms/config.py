@@ -1,4 +1,4 @@
-from wtforms import BooleanField, SelectField, StringField, TextAreaField
+from wtforms import BooleanField, FileField, SelectField, StringField, TextAreaField
 from wtforms.fields.html5 import IntegerField, URLField
 from wtforms.widgets.html5 import NumberInput
 
@@ -44,7 +44,9 @@ class AccountSettingsForm(BaseForm):
         description="Amount of users per team (Teams mode only)",
     )
     num_teams = IntegerField(
-        widget=NumberInput(min=0), description="Max number of teams (Teams mode only)",
+        "Total Number of Teams",
+        widget=NumberInput(min=0),
+        description="Max number of teams (Teams mode only)",
     )
     verify_emails = SelectField(
         "Verify Emails",
@@ -79,6 +81,15 @@ class ExportCSVForm(BaseForm):
         ),
     )
     submit = SubmitField("Download CSV")
+
+
+class ImportCSVForm(BaseForm):
+    csv_type = SelectField(
+        "CSV Type",
+        choices=[("users", "Users"), ("teams", "Teams"), ("challenges", "Challenges")],
+        description="Type of CSV data",
+    )
+    csv_file = FileField("CSV File", description="CSV file contents")
 
 
 class LegalSettingsForm(BaseForm):
