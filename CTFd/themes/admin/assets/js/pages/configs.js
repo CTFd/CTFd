@@ -144,16 +144,7 @@ function switchMode() {
       CTFd.api
         .patch_config({ configKey: "user_mode" }, params)
         .then(_response => {
-          console.log("placeholder")
-          // if (new_mode == "users") {
-          //   let formData = new FormData();
-          //   formData.append("submissions", true);
-          //   formData.append("nonce", CTFd.config.csrfNonce);
-          //   fetch("/admin/reset", {
-          //     method: "POST",
-          //     credentials: "same-origin",
-          //     body: formData
-          //   });
+          // No deletion
           window.location.reload();
         });
     }
