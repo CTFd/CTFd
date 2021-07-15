@@ -930,10 +930,9 @@ def test_api_user_patch_team_id():
         gen_team(app.db)
 
         with login_as_user(app) as client:
-            with client.session_transaction() as sess:
-                data = {
-                    "team_id": 1,
-                }
+            data = {
+                "team_id": 1,
+            }
             r = client.patch("/api/v1/users/me", json=data)
             data = r.get_json()
             assert data["data"]["team_id"] is None
