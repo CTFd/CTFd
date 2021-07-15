@@ -22,7 +22,7 @@ class DynamicChallenge(Challenges):
 
     def __init__(self, *args, **kwargs):
         super(DynamicChallenge, self).__init__(**kwargs)
-        self.initial = kwargs["value"]
+        self.value = kwargs["initial"]
 
 
 class DynamicValueChallenge(BaseChallenge):

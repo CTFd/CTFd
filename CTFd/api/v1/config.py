@@ -109,8 +109,12 @@ class ConfigList(Resource):
     )
     def patch(self):
         req = request.get_json()
+        schema = ConfigSchema()
 
         for key, value in req.items():
+            response = schema.load({"key": key, "value": value})
+            if response.errors:
+                return {"success": False, "errors": response.errors}, 400
             set_config(key=key, value=value)
 
         clear_config()
@@ -159,11 +163,11 @@ class Config(Resource):
             schema = ConfigSchema()
             data["key"] = config_key
             response = schema.load(data)
-            db.session.add(response.data)
 
         if response.errors:
-            return response.errors, 400
+            return {"success": False, "errors": response.errors}, 400
 
+        db.session.add(response.data)
         db.session.commit()
 
         response = schema.dump(response.data)

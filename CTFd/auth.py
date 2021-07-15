@@ -1,7 +1,7 @@
 import base64
 
 import requests
-from flask import Blueprint
+from flask import Blueprint, abort
 from flask import current_app as app
 from flask import redirect, render_template, request, session, url_for
 from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
@@ -366,6 +366,13 @@ def login():
             user = Users.query.filter_by(name=name).first()
 
         if user:
+            if user.password is None:
+                errors.append(
+                    "Your account was registered with a 3rd party authentication provider. "
+                    "Please try logging in with a configured authentication provider."
+                )
+                return render_template("login.html", errors=errors)
+
             if user and verify_password(request.form["password"], user.password):
                 session.regenerate()
 
@@ -503,6 +510,16 @@ def oauth_redirect():
 
                 team = Teams.query.filter_by(oauth_id=team_id).first()
                 if team is None:
+                    num_teams_limit = int(get_config("num_teams", default=0))
+                    num_teams = Teams.query.filter_by(
+                        banned=False, hidden=False
+                    ).count()
+                    if num_teams_limit and num_teams >= num_teams_limit:
+                        abort(
+                            403,
+                            description=f"Reached the maximum number of teams ({num_teams_limit}). Please join an existing team.",
+                        )
+
                     team = Teams(name=team_name, oauth_id=team_id, captain_id=user.id)
                     db.session.add(team)
                     db.session.commit()

@@ -103,3 +103,75 @@ def test_api_config_delete_admin():
             assert r.status_code == 200
             assert get_config("ctf_name") is None
     destroy_ctfd(app)
+
+
+def test_config_value_types():
+    """Test that we properly receive values according to schema"""
+    app = create_ctfd()
+    with app.app_context():
+        with login_as_user(app, "admin") as admin:
+            # Test new configs error out if too long
+            long_text = "a" * 65536
+            r = admin.post(
+                "/api/v1/configs", json={"key": "new_ctf_config", "value": long_text}
+            )
+            data = r.get_json()
+            assert data["errors"]["value"][0] == "new_ctf_config config is too long"
+            assert r.status_code == 400
+            r = admin.post(
+                "/api/v1/configs", json={"key": "new_ctf_config", "value": "test"}
+            )
+            assert r.status_code == 200
+            assert get_config("new_ctf_config") == "test"
+
+            # Test strings too long error out
+            r = admin.patch("/api/v1/configs", json={"ctf_footer": long_text})
+            data = r.get_json()
+            assert data["errors"]["value"][0] == "ctf_footer config is too long"
+            assert r.status_code == 400
+
+            # Test regular length strings
+            r = admin.patch(
+                "/api/v1/configs", json={"ctf_footer": "// regular length string"},
+            )
+            assert r.status_code == 200
+            assert get_config("ctf_footer") == "// regular length string"
+
+            # Test booleans can be received
+            r = admin.patch("/api/v1/configs", json={"view_after_ctf": True})
+            assert r.status_code == 200
+            assert bool(get_config("view_after_ctf")) == True
+
+            # Test None can be received
+            assert get_config("mail_username") is None
+            r = admin.patch("/api/v1/configs", json={"mail_username": "testusername"})
+            assert r.status_code == 200
+            assert get_config("mail_username") == "testusername"
+            r = admin.patch("/api/v1/configs", json={"mail_username": None})
+            assert r.status_code == 200
+            assert get_config("mail_username") is None
+
+            # Test integers can be received
+            r = admin.patch("/api/v1/configs", json={"mail_port": 12345})
+            assert r.status_code == 200
+            assert get_config("mail_port") == 12345
+
+            # Test specific config key
+            r = admin.patch(
+                "/api/v1/configs/long_config_test", json={"value": long_text}
+            )
+            data = r.get_json()
+            assert data["errors"]["value"][0] == "long_config_test config is too long"
+            assert r.status_code == 400
+            assert get_config("long_config_test") is None
+            r = admin.patch(
+                "/api/v1/configs/config_test", json={"value": "config_value_test"}
+            )
+            assert r.status_code == 200
+            assert get_config("config_test") == "config_value_test"
+            r = admin.patch(
+                "/api/v1/configs/mail_username", json={"value": "testusername"}
+            )
+            assert r.status_code == 200
+            assert get_config("mail_username") == "testusername"
+    destroy_ctfd(app)

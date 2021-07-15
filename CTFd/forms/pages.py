@@ -2,6 +2,7 @@ from wtforms import (
     BooleanField,
     HiddenField,
     MultipleFileField,
+    SelectField,
     StringField,
     TextAreaField,
 )
@@ -22,6 +23,13 @@ class PageEditForm(BaseForm):
     hidden = BooleanField("Hidden")
     auth_required = BooleanField("Authentication Required")
     content = TextAreaField("Content")
+    format = SelectField(
+        "Format",
+        choices=[("markdown", "Markdown"), ("html", "HTML")],
+        default="markdown",
+        validators=[InputRequired()],
+        description="The markup format used to render the page",
+    )
 
 
 class PageFilesUploadForm(BaseForm):

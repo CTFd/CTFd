@@ -87,9 +87,14 @@ def users_detail(user_id):
     # Get Awards
     awards = user.get_awards(admin=True)
 
-    # Get user properties
-    score = user.get_score(admin=True)
-    place = user.get_place(admin=True)
+    # Check if the user has an account (team or user)
+    # so that we don't throw an error if they dont
+    if user.account:
+        score = user.account.get_score(admin=True)
+        place = user.account.get_place(admin=True)
+    else:
+        score = None
+        place = None
 
     return render_template(
         "admin/users/user.html",
