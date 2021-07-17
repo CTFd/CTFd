@@ -4,6 +4,7 @@ from flask import Blueprint, abort
 from flask import current_app as app
 from flask import redirect, render_template, request, send_file, session, url_for
 from flask.helpers import safe_join
+from jinja2.exceptions import TemplateNotFound
 from sqlalchemy.exc import IntegrityError
 
 from CTFd.cache import cache
@@ -256,7 +257,12 @@ def setup():
                 cache.clear()
 
             return redirect(url_for("views.static_html"))
-        return render_template("setup.html", state=serialize(generate_nonce()))
+        try:
+            return render_template("setup.html", state=serialize(generate_nonce()))
+        except TemplateNotFound:
+            # Set theme to default and try again
+            set_config("ctf_theme", DEFAULT_THEME)
+            return render_template("setup.html", state=serialize(generate_nonce()))
     return redirect(url_for("views.static_html"))
 
 
