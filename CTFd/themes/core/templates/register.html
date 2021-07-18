@@ -50,16 +50,6 @@
 
 				{{ render_extra_fields(form.extra) }}
 
-				{% if Configs.registration_code %}
-				<div class="form-group">
-					<b>{{ form.registration_code.label }}</b>
-					{{ form.registration_code(class="form-control") }}
-					<small class="form-text text-muted">
-						Registration code required
-					</small>
-				</div>
-				{% endif %}
-
 				<div class="row pt-3">
 					<div class="col-md-12">
 						{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}

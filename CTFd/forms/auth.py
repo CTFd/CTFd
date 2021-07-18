@@ -2,10 +2,14 @@ from wtforms import PasswordField, StringField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
-from CTFd.constants.config import Configs
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.forms.users import attach_custom_user_fields, build_custom_user_fields
+from CTFd.forms.users import (
+    attach_custom_user_fields,
+    attach_registration_code_field,
+    build_custom_user_fields,
+    build_registration_code_field,
+)
 
 
 def RegistrationForm(*args, **kwargs):
@@ -19,16 +23,10 @@ def RegistrationForm(*args, **kwargs):
         def extra(self):
             return build_custom_user_fields(
                 self, include_entries=False, blacklisted_items=()
-            )
+            ) + build_registration_code_field(self)
 
     attach_custom_user_fields(_RegistrationForm)
-
-    if Configs.registration_code:
-        setattr(
-            _RegistrationForm,
-            f"registration_code",
-            StringField("Registration Code", validators=[InputRequired()]),
-        )
+    attach_registration_code_field(_RegistrationForm)
 
     return _RegistrationForm(*args, **kwargs)
 
