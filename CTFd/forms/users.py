@@ -104,7 +104,7 @@ def attach_registration_code_field(form_cls):
             "registration_code",
             StringField(
                 "Registration Code",
-                description="Registration code required",
+                description="Registration code required to create account",
                 validators=[InputRequired()],
             ),
         )
