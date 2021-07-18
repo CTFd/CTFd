@@ -86,7 +86,7 @@ def build_registration_code_field(form_cls):
     Add field_type so Jinja knows how to render it.
     """
     if Configs.registration_code:
-        field = getattr(form_cls, "registration_code")
+        field = getattr(form_cls, "registration_code")  # noqa B009
         field.field_type = "text"
         return [field]
     else:
@@ -99,7 +99,7 @@ def attach_registration_code_field(form_cls):
     to attach_custom_user_fields
     """
     if Configs.registration_code:
-        setattr(
+        setattr(  # noqa B010
             form_cls,
             "registration_code",
             StringField(
