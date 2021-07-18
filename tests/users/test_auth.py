@@ -423,3 +423,44 @@ def test_banned_user():
             r = client.get(route)
             assert r.status_code == 403
     destroy_ctfd(app)
+
+
+def test_registration_code_required():
+    """
+    Test that registration code configuration properly blocks logins
+    with missing and incorrect registration codes
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Set a registration code
+        set_config("registration_code", "secret-sauce")
+
+        with app.test_client() as client:
+            # Load CSRF nonce
+            r = client.get("/register")
+            resp = r.get_data(as_text=True)
+            assert "Registration Code" in resp
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user",
+                    "email": "user1@examplectf.com",
+                    "password": "password",
+                    "nonce": sess.get("nonce"),
+                }
+            # Attempt registration without password
+            r = client.post("/register", data=data)
+            resp = r.get_data(as_text=True)
+            assert "The registration code you entered was incorrect" in resp
+
+            # Attempt registration with wrong password
+            data["registration_code"] = "wrong-sauce"
+            r = client.post("/register", data=data)
+            resp = r.get_data(as_text=True)
+            assert "The registration code you entered was incorrect" in resp
+
+            # Attempt registration with right password
+            data["registration_code"] = "secret-sauce"
+            r = client.post("/register", data=data)
+            assert r.status_code == 302
+            assert r.location.startswith("http://localhost/challenges")
+    destroy_ctfd(app)
