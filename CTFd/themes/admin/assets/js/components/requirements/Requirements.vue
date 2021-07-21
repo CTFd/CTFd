@@ -1,53 +1,61 @@
 <template>
   <div>
-    <table class="table table-striped text-center">
-      <thead>
-        <tr>
-          <td><b>Requirement</b></td>
-          <td><b>Settings</b></td>
-        </tr>
-      </thead>
-      <tbody id="challenge-solves-body">
-        <tr
-          v-for="requirement in requirements.prerequisites"
-          :key="requirement"
-        >
-          <td>{{ getChallengeNameById(requirement) }}</td>
-          <td>
-            <i
-              role="button"
-              class="btn-fa fas fa-times delete-requirement"
-              :challenge-id="requirement"
-              @click="removeRequirement(requirement)"
-            ></i>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <form @submit.prevent="addRequirement">
-      <div class="form-group">
-        <select
-          class="form-control custom-select"
-          name="prerequisite"
-          v-model="selectedRequirement"
-        >
-          <option value=""> -- </option>
-          <option
-            :value="challenge.id"
+    <form @submit.prevent="updateRequirements">
+      <div class="form-group scrollbox">
+        <transition-group name="flip-list">
+          <div
+            class="form-check"
+            v-for="challenge in requiredChallenges"
+            :key="challenge.id"
+          >
+            <label class="form-check-label cursor-pointer">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                :value="challenge.id"
+                v-model="selectedRequirements"
+              />
+              {{ challenge.name }}
+            </label>
+          </div>
+          <div
+            class="form-check"
             v-for="challenge in otherChallenges"
             :key="challenge.id"
           >
-            {{ challenge.name }}
-          </option>
+            <label class="form-check-label cursor-pointer">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                :value="challenge.id"
+                v-model="selectedRequirements"
+              />
+              {{ challenge.name }}
+            </label>
+          </div>
+        </transition-group>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <b>Behavior if not unlocked</b>
+        </label>
+        <select
+          class="form-control custom-select"
+          name="anonymize"
+          v-model="selectedAnonymize"
+        >
+          <option :value="false">Hidden</option>
+          <option :value="true">Anonymized</option>
         </select>
       </div>
+
       <div class="form-group">
         <button
           class="btn btn-success float-right"
-          :disabled="!selectedRequirement"
+          :disabled="!newRequirements"
         >
-          Add Prerequisite
+          Save
         </button>
       </div>
     </form>
@@ -65,10 +73,30 @@ export default {
     return {
       challenges: [],
       requirements: {},
-      selectedRequirement: null
+      selectedRequirements: [],
+      selectedAnonymize: false
     };
   },
   computed: {
+    newRequirements: function() {
+      let currentRequirements = this.requirements.prerequisites || [];
+      let currentAnonymize = this.requirements.anonymize || false;
+      let newReqs =
+        JSON.stringify(currentRequirements.sort()) !==
+        JSON.stringify(this.selectedRequirements.sort());
+      let changedAnon = currentAnonymize !== this.selectedAnonymize;
+      return newReqs || changedAnon;
+    },
+    // Get all currently required challenges
+    requiredChallenges: function() {
+      const prerequisites = this.requirements.prerequisites || [];
+      return this.challenges.filter(challenge => {
+        return (
+          challenge.id !== this.$props.challenge_id &&
+          prerequisites.includes(challenge.id)
+        );
+      });
+    },
     // Get all challenges besides the current one and current prereqs
     otherChallenges: function() {
       const prerequisites = this.requirements.prerequisites || [];
@@ -123,52 +151,23 @@ export default {
         .then(response => {
           if (response.success) {
             this.requirements = response.data || {};
+            this.selectedRequirements = this.requirements.prerequisites || [];
+            this.selectedAnonymize = this.requirements.anonymize || false;
           }
         });
     },
-    addRequirement: function() {
-      let newRequirements = this.requirements.prerequisites
-        ? this.requirements.prerequisites
-        : [];
+    updateRequirements: function() {
+      let selectedRequirements = this.selectedRequirements;
 
-      if (!this.selectedRequirement) {
-        return;
+      const params = {
+        requirements: {
+          prerequisites: selectedRequirements
+        }
+      };
+
+      if (this.selectedAnonymize) {
+        params.requirements.anonymize = true;
       }
-
-      newRequirements.push(this.selectedRequirement);
-      this.requirements["prerequisites"] = newRequirements;
-
-      const params = {
-        requirements: this.requirements
-      };
-
-      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}`, {
-        method: "PATCH",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(params)
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
-          if (data.success) {
-            this.selectedRequirement = null;
-            this.loadRequirements();
-          }
-        });
-    },
-    removeRequirement: function(challenge_id) {
-      this.requirements.prerequisites = this.requirements.prerequisites.filter(
-        val => val !== challenge_id
-      );
-
-      const params = {
-        requirements: this.requirements
-      };
 
       CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}`, {
         method: "PATCH",
@@ -196,4 +195,41 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.flip-list-move {
+  transition: transform 0.5s ease;
+}
+
+/* https://stackoverflow.com/a/34299947 */
+/* https://dabblet.com/gist/2462915 */
+/* https://lea.verou.me/2012/04/background-attachment-local/ */
+/* magical CSS rules for scrolling indication without scrollbar */
+/* prettier-ignore */
+.scrollbox {
+	overflow: auto;
+	max-height: 40vh;
+
+	background:
+		/* Shadow covers */
+		linear-gradient(white 30%, rgba(255,255,255,0)),
+		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+
+		/* Shadows */
+		radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
+		radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+	background:
+		/* Shadow covers */
+		linear-gradient(white 30%, rgba(255,255,255,0)),
+		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+
+		/* Shadows */
+		radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
+		radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+	background-repeat: no-repeat;
+	background-color: white;
+	background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+
+	/* Opera doesn't support this in the shorthand */
+	background-attachment: local, local, scroll, scroll;
+}
+</style>
