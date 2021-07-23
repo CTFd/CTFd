@@ -1,0 +1,72 @@
+<div role="tabpanel" class="tab-pane config-section" id="usermode">
+	<form id="user-mode-form" method="POST" autocomplete="off" class="w-100 custom-config-form">
+		<div class="form-group">
+			<label for="ctf_name">
+				User Mode
+				<small class="form-text text-muted">Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)</small>
+			</label>
+
+			<div class="row pt-3">
+				<div class="col-md-6">
+					<label class="h-100 w-100">
+						<input type="radio" class="card-radio d-none" name="user_mode" value="teams" {% if user_mode == 'teams' %}checked{% endif %}>
+						<div class="card rounded-0 h-100">
+							<div class="card-body p-3">
+								<span class="card-title">
+									<div class="form-check">
+										<input class="form-check-input card-radio-clone" type="radio" style="visibility: hidden;" checked>
+										<span class="form-check-label text-center">
+											<h5>Team Mode</h5>
+										</span>
+										<ul class="p-0 small">
+											<li>Participants register accounts and form teams</li>
+											<li>If a team member solves a challenge, the entire team receives credit</li>
+											<br>
+											<li>Easier to see which team member solved a challenge</li>
+											<li>May be slightly more difficult to administer</li>
+										</ul>
+									</div>
+								</span>
+							</div>
+						</div>
+					</label>
+				</div>
+				<div class="col-md-6">
+					<label class="h-100 w-100">
+						<input type="radio" class="card-radio d-none" name="user_mode" value="users" {% if user_mode == 'users' %}checked{% endif %}>
+						<div class="card rounded-0 h-100">
+							<div class="card-body p-3">
+								<span class="card-title">
+									<div class="form-check">
+										<input class="form-check-input card-radio-clone" type="radio" style="visibility: hidden;" checked>
+										<span class="form-check-label text-center">
+											<h5>User Mode</h5>
+										</span>
+										<ul class="p-0 small">
+											<li>Participants only register an individual account</li>
+											<li>Players can share accounts to form pseudo-teams</li>
+											<br>
+											<li>Easier to organize</li>
+											<li>Difficult to attribute solutions to individual team members</li>
+										</ul>
+									</div>
+								</span>
+							</div>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="alert alert-danger text-center" role="alert">
+			<p>
+				<strong>Changing your user mode will also delete all submissions or records that a user took an action.</strong>
+				<br><small>(Submissions, Awards, Unlocks, Tracking)</small>
+			</p>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">
+			Update
+		</button>
+	</form>
+</div>
