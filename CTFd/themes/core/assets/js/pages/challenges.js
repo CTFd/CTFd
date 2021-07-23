@@ -428,3 +428,5 @@ const loadHint = id => {
     displayUnlock(id);
   });
 };
+
+window.updateChallengeBoard = update;
