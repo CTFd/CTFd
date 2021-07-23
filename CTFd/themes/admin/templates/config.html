@@ -48,6 +48,9 @@
 					<a class="nav-link rounded-0" href="#backup" role="tab" data-toggle="tab">Backup</a>
 				</li>
 				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#usermode" role="tab" data-toggle="tab">User Mode</a>
+				</li>
+				<li class="nav-item">
 					<a class="nav-link rounded-0" href="{{ url_for('admin.reset') }}" role="tab">Reset</a>
 				</li>
 			</ul>
@@ -85,6 +88,8 @@
 				{% include "admin/configs/legal.html" %}
 
 				{% include "admin/configs/backup.html" %}
+
+				{% include "admin/configs/usermode.html" %}
 			</div>
 		</div>
 	</div>
