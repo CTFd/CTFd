@@ -76,9 +76,12 @@ class AccountSettingsForm(BaseForm):
 class ExportCSVForm(BaseForm):
     table = SelectField(
         "Database Table",
-        choices=list(
-            zip(sorted(db.metadata.tables.keys()), sorted(db.metadata.tables.keys()))
-        ),
+        choices=[
+            ("users+fields", "users+fields"),
+            ("teams+fields", "teams+fields"),
+            ("scoreboard", "scoreboard"),
+        ]
+        + list(zip(db.metadata.tables.keys(), db.metadata.tables.keys())),
     )
     submit = SubmitField("Download CSV")
 
