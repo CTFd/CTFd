@@ -18,12 +18,15 @@ from CTFd.utils.config import is_teams_mode, is_users_mode
 from CTFd.utils.scores import get_standings
 
 
+def get_dumpable_tables():
+    csv_keys = list(CSV_KEYS.keys())
+    db_keys = list(db.metadata.tables.keys())
+    tables = csv_keys + db_keys
+    table_keys = list(zip(tables, tables))
+    return table_keys
+
+
 def dump_csv(name):
-    CSV_KEYS = {
-        "scoreboard": dump_scoreboard_csv,
-        "users+fields": dump_users_with_fields_csv,
-        "teams+fields": dump_teams_with_fields_csv,
-    }
     dump_func = CSV_KEYS.get(name)
     if dump_func:
         return dump_func()
@@ -279,3 +282,10 @@ def load_challenges_csv(dict_reader):
                 db.session.add(h)
                 db.session.commit()
     return True
+
+
+CSV_KEYS = {
+    "scoreboard": dump_scoreboard_csv,
+    "users+fields": dump_users_with_fields_csv,
+    "teams+fields": dump_teams_with_fields_csv,
+}
