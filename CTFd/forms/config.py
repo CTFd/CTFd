@@ -4,7 +4,6 @@ from wtforms.widgets.html5 import NumberInput
 
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.models import db
 from CTFd.utils.csv import get_dumpable_tables
 
 

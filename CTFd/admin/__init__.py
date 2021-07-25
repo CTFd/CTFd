@@ -1,7 +1,7 @@
 import csv
 import datetime
 import os
-from io import BytesIO, StringIO
+from io import StringIO
 
 from flask import Blueprint, abort
 from flask import current_app as app
