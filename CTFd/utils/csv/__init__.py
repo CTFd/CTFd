@@ -2,19 +2,28 @@ import csv
 import json
 from io import BytesIO, StringIO
 
-from CTFd.models import Flags, Hints, Tags, Teams, Users, db, get_class_by_tablename, UserFields, TeamFields
+from CTFd.models import (
+    Flags,
+    Hints,
+    Tags,
+    TeamFields,
+    Teams,
+    UserFields,
+    Users,
+    db,
+    get_class_by_tablename,
+)
 from CTFd.plugins.challenges import get_chal_class
+from CTFd.utils.config import is_teams_mode, is_users_mode
 from CTFd.utils.scores import get_standings
-from CTFd.utils.config import is_users_mode, is_teams_mode
-
-CSV_KEYS = {
-    "scoreboard": 1,
-    "users+fields": 1,
-    "teams+fields": 1,
-}
 
 
 def dump_csv(name):
+    CSV_KEYS = {
+        "scoreboard": dump_scoreboard_csv,
+        "users+fields": dump_users_with_fields_csv,
+        "teams+fields": dump_teams_with_fields_csv,
+    }
     dump_func = CSV_KEYS.get(name)
     if dump_func:
         return dump_func()
@@ -30,22 +39,82 @@ def dump_scoreboard_csv():
     writer = csv.writer(temp)
 
     standings = get_standings()
+
+    # Get all user fields in a specific order
+    user_fields = UserFields.query.all()
+    user_field_ids = [f.id for f in user_fields]
+    user_field_names = [f.name for f in user_fields]
+
     if is_teams_mode():
-        header = ["place", "team", "score", "members", "member score"]
+        team_fields = TeamFields.query.all()
+        team_field_ids = [f.id for f in team_fields]
+        team_field_names = [f.name for f in team_fields]
+
+        header = (
+            [
+                "place",
+                "team",
+                "team id",
+                "score",
+                "member name",
+                "member id",
+                "member email",
+                "member score",
+            ]
+            + user_field_names
+            + team_field_names
+        )
         writer.writerow(header)
 
         for i, standing in enumerate(standings):
             team = Teams.query.filter_by(id=standing.account_id).first()
-            writer.writerow([i + 1, team.name, standing.score, "", ""])
+
+            # Build field entries using the order of the field values
+            team_field_entries = {f.field_id: f.value for f in team.field_entries}
+            team_field_values = [
+                team_field_entries.get(f_id, "") for f_id in team_field_ids
+            ]
+            team_row = [
+                i + 1,
+                team.name,
+                team.id,
+                standing.score,
+                "",
+                "",
+            ] + team_field_values
+
+            writer.writerow(team_row)
+
             for member in team.members:
-                writer.writerow(["", "", "", member.name, member.score])
+                user_field_entries = {f.field_id: f.value for f in member.field_entries}
+                user_field_values = [
+                    user_field_entries.get(f_id, "") for f_id in user_field_ids
+                ]
+                user_row = [
+                    "",
+                    "",
+                    "",
+                    "",
+                    member.name,
+                    member.id,
+                    member.email,
+                    member.score,
+                ] + user_field_values
+                writer.writerow(user_row)
     elif is_users_mode():
-        header = ["place", "user", "score"]
+        header = ["place", "user", "score"] + user_field_names
         writer.writerow(header)
 
         for i, standing in enumerate(standings):
             user = Users.query.filter_by(id=standing.account_id).first()
-            writer.writerow([i + 1, user.name, standing.score])
+
+            # Build field entries using the order of the field values
+            user_field_entries = {f.field_id: f.value for f in user.field_entries}
+            user_field_values = [
+                user_field_entries.get(f_id, "") for f_id in user_field_ids
+            ]
+            user_row = [i + 1, user.name, standing.score] + user_field_values
+            writer.writerow(user_row)
 
     # In Python 3 send_file requires bytes
     output = BytesIO()
@@ -57,13 +126,73 @@ def dump_scoreboard_csv():
 
 
 def dump_users_with_fields_csv():
-    # TODO: Implement
-    pass
+    temp = StringIO()
+    writer = csv.writer(temp)
+
+    user_fields = UserFields.query.all()
+    user_field_ids = [f.id for f in user_fields]
+    user_field_names = [f.name for f in user_fields]
+
+    header = [column.name for column in Users.__mapper__.columns] + user_field_names
+    writer.writerow(header)
+
+    responses = Users.query.all()
+
+    for curr in responses:
+        user_field_entries = {f.field_id: f.value for f in curr.field_entries}
+        user_field_values = [
+            user_field_entries.get(f_id, "") for f_id in user_field_ids
+        ]
+        user_row = [
+            getattr(curr, column.name) for column in Users.__mapper__.columns
+        ] + user_field_values
+        writer.writerow(user_row)
+
+    temp.seek(0)
+
+    # In Python 3 send_file requires bytes
+    output = BytesIO()
+    output.write(temp.getvalue().encode("utf-8"))
+    output.seek(0)
+    temp.close()
+
+    return output
 
 
 def dump_teams_with_fields_csv():
-    # TODO: Implement
-    pass
+    temp = StringIO()
+    writer = csv.writer(temp)
+
+    team_fields = TeamFields.query.all()
+    team_field_ids = [f.id for f in team_fields]
+    team_field_names = [f.name for f in team_fields]
+
+    header = [column.name for column in Teams.__mapper__.columns] + team_field_names
+    writer.writerow(header)
+
+    responses = Teams.query.all()
+
+    for curr in responses:
+        team_field_entries = {f.field_id: f.value for f in curr.field_entries}
+        team_field_values = [
+            team_field_entries.get(f_id, "") for f_id in team_field_ids
+        ]
+
+        team_row = [
+            getattr(curr, column.name) for column in Teams.__mapper__.columns
+        ] + team_field_values
+
+        writer.writerow(team_row)
+
+    temp.seek(0)
+
+    # In Python 3 send_file requires bytes
+    output = BytesIO()
+    output.write(temp.getvalue().encode("utf-8"))
+    output.seek(0)
+    temp.close()
+
+    return output
 
 
 def dump_database_table(tablename):
