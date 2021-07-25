@@ -39,7 +39,7 @@ marshmallow-sqlalchemy==0.17.0  # via -r requirements.in
 marshmallow==2.20.2       # via -r requirements.in, flask-marshmallow, marshmallow-sqlalchemy
 maxminddb==1.5.4          # via -r requirements.in, python-geoacumen-city
 passlib==1.7.2            # via -r requirements.in
-pybluemonday==0.0.6       # via -r requirements.in
+pybluemonday==0.0.7       # via -r requirements.in
 pycparser==2.20           # via cffi
 pydantic==1.6.2           # via -r requirements.in
 pymysql==0.9.3            # via -r requirements.in
