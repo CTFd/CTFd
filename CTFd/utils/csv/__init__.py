@@ -252,8 +252,8 @@ def load_challenges_csv(dict_reader):
         hints = line.pop("hints", None)
         challenge_type = line.pop("type", "standard")
 
-        # Load in custome type_data
-        type_data = json.loads(line.pop("type_data", "{}"))
+        # Load in custom type_data
+        type_data = json.loads(line.pop("type_data", "{}") or "{}")
         line.update(type_data)
 
         ChallengeClass = get_chal_class(challenge_type)
