@@ -186,7 +186,14 @@ class TeamSchema(ma.ModelSchema):
             current_team = get_current_team()
             current_user = get_current_user()
             if current_team.captain_id == current_user.id:
-                return
+                captain = Users.query.filter_by(id=captain_id).first()
+                if captain in current_team.members:
+                    return
+                else:
+                    raise ValidationError(
+                        "Only team members can be promoted to captain",
+                        field_names=["captain_id"],
+                    )
             else:
                 raise ValidationError(
                     "Only the captain can change team captain",

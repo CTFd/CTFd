@@ -4,6 +4,12 @@
 
 - Fix an issue where admins couldn't see challenges which had requirements in the add requirements interface
 
+# 3.3.1 / 2021-07-15
+
+**Security**
+
+- Fixes an issue where users could join teams without knowing the team password or having a team invite
+
 # 3.3.0 / 2021-03-26
 
 **General**
