@@ -6,6 +6,7 @@ from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.models import TeamFieldEntries, TeamFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
+from CTFd.utils.user import get_current_team
 
 
 def build_custom_team_fields(
@@ -122,12 +123,21 @@ def TeamSettingsForm(*args, **kwargs):
 
         @property
         def extra(self):
+            fields_kwargs = _TeamSettingsForm.get_field_kwargs()
             return build_custom_team_fields(
                 self,
                 include_entries=True,
-                fields_kwargs={"editable": True},
+                fields_kwargs=fields_kwargs,
                 field_entries_kwargs={"team_id": self.obj.id},
             )
+
+        def get_field_kwargs():
+            team = get_current_team()
+            field_kwargs = {"editable": True}
+            if team.filled_all_required_fields is False:
+                # Show all fields
+                field_kwargs = {}
+            return field_kwargs
 
         def __init__(self, *args, **kwargs):
             """
@@ -138,7 +148,9 @@ def TeamSettingsForm(*args, **kwargs):
             if obj:
                 self.obj = obj
 
-    attach_custom_team_fields(_TeamSettingsForm)
+    field_kwargs = _TeamSettingsForm.get_field_kwargs()
+    attach_custom_team_fields(_TeamSettingsForm, **field_kwargs)
+
     return _TeamSettingsForm(*args, **kwargs)
 
 

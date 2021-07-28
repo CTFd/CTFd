@@ -11,8 +11,7 @@ from CTFd.utils.dates import ctf_ended, ctf_started, ctftime, view_after_ctf
 from CTFd.utils.user import (
     authed,
     get_current_team,
-    get_current_team_attrs,
-    get_current_user_attrs,
+    get_current_user,
     is_admin,
 )
 
@@ -204,23 +203,9 @@ def require_complete_profile(f):
             if is_admin():
                 return f(*args, **kwargs)
             else:
-                user = get_current_user_attrs()
-                required_user_fields = [
-                    u.id
-                    for u in UserFields.query.with_entities(UserFields.id)
-                    .filter_by(required=True)
-                    .all()
-                ]
-                submitted_user_fields = [
-                    u.field_id
-                    for u in UserFieldEntries.query.with_entities(
-                        UserFieldEntries.field_id
-                    )
-                    .filter_by(user_id=user.id)
-                    .all()
-                ]
+                user = get_current_user()
 
-                if submitted_user_fields != required_user_fields:
+                if user.filled_all_required_fields is False:
                     info_for(
                         "views.settings",
                         "Please fill out all required profile fields before continuing",
@@ -228,37 +213,18 @@ def require_complete_profile(f):
                     return redirect(url_for("views.settings"))
 
                 if is_teams_mode():
-                    team = get_current_team_attrs()
-                    required_team_fields = [
-                        u.id
-                        for u in TeamFields.query.with_entities(TeamFields.id)
-                        .filter_by(required=True)
-                        .all()
-                    ]
-                    submitted_team_fields = [
-                        u.field_id
-                        for u in TeamFieldEntries.query.with_entities(
-                            TeamFieldEntries.field_id
-                        )
-                        .filter_by(team_id=team.id)
-                        .all()
-                    ]
+                    team = get_current_team()
 
-                    if submitted_team_fields != required_team_fields:
-                        # info_for("views.settings", "Please fill out all required profile fields before continuing")
+                    if team and team.filled_all_required_fields is False:
+                        # This is an abort because it's difficult for us to flash information on the teams page
                         return abort(
                             403,
-                            description="Please fill in all required fields in your team profile",
+                            description="Please fill in all required team profile fields",
                         )
 
                 return f(*args, **kwargs)
         else:
-            if (
-                request.content_type == "application/json"
-                or request.accept_mimetypes.best == "text/event-stream"
-            ):
-                abort(403)
-            else:
-                return redirect(url_for("auth.login", next=request.full_path))
+            # Fallback to whatever behavior the route defaults to
+            return f(*args, **kwargs)
 
     return _require_complete_profile
