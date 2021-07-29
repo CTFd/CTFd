@@ -97,6 +97,7 @@ class Challenges(db.Model):
     hints = db.relationship("Hints", backref="challenge")
     flags = db.relationship("Flags", backref="challenge")
     comments = db.relationship("ChallengeComments", backref="challenge")
+    topics = db.relationship("ChallengeTopics", backref="challenge")
 
     class alt_defaultdict(defaultdict):
         """
@@ -220,6 +221,25 @@ class Tags(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Tags, self).__init__(**kwargs)
+
+
+class Topics(db.Model):
+    __tablename__ = "topics"
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(255))
+
+    def __init__(self, *args, **kwargs):
+        super(Tags, self).__init__(**kwargs)
+
+
+class ChallengeTopics(db.Model):
+    __tablename__ = "challenge_topics"
+    id = db.Column(db.Integer, primary_key=True)
+    challenge_id = db.Column(db.Integer, db.ForeignKey("challenges.id"))
+    topic_id = db.Column(db.Integer, db.ForeignKey("topics.id"))
+
+    def __init__(self, *args, **kwargs):
+        super(ChallengeTopics, self).__init__(**kwargs)
 
 
 class Files(db.Model):
