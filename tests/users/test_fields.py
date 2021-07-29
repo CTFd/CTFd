@@ -87,8 +87,6 @@ def test_fields_required_on_register():
 def test_fields_properties():
     app = create_ctfd()
     with app.app_context():
-        register_user(app)
-
         gen_field(
             app.db, name="CustomField1", required=True, public=True, editable=True
         )
@@ -109,6 +107,19 @@ def test_fields_properties():
             assert "CustomField2" in resp
             assert "CustomField3" in resp
             assert "CustomField4" in resp
+
+            # Manually register user so that we can populate the required field
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user",
+                    "email": "user@examplectf.com",
+                    "password": "password",
+                    "fields[1]": "custom_field_value",
+                    "nonce": sess.get("nonce"),
+                }
+            client.post("/register", data=data)
+            with client.session_transaction() as sess:
+                assert sess["id"]
 
         with login_as_user(app) as client:
             r = client.get("/settings")
