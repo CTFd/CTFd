@@ -214,3 +214,104 @@ def test_boolean_checkbox_field():
             assert UserFieldEntries.query.count() == 1
             assert UserFieldEntries.query.filter_by(id=1).first().value is False
     destroy_ctfd(app)
+
+
+def test_user_needs_all_required_fields():
+    app = create_ctfd()
+    with app.app_context():
+        # Manually create a user who has no fields set
+        register_user(app)
+
+        # Create the fields that we want
+        gen_field(
+            app.db, name="CustomField1", required=True, public=True, editable=True
+        )
+        gen_field(
+            app.db, name="CustomField2", required=False, public=True, editable=True
+        )
+        gen_field(
+            app.db, name="CustomField3", required=False, public=False, editable=True
+        )
+        gen_field(
+            app.db, name="CustomField4", required=False, public=False, editable=False
+        )
+
+        # We can see all fields when we try to register
+        with app.test_client() as client:
+            r = client.get("/register")
+            resp = r.get_data(as_text=True)
+            assert "CustomField1" in resp
+            assert "CustomField2" in resp
+            assert "CustomField3" in resp
+            assert "CustomField4" in resp
+
+        # When we login with our manually made user
+        # we should see all fields because we are missing a required field
+        with login_as_user(app) as client:
+            r = client.get("/settings")
+            resp = r.get_data(as_text=True)
+            assert "CustomField1" in resp
+            assert "CustomField2" in resp
+            assert "CustomField3" in resp
+            assert "CustomField4" in resp
+
+            r = client.get("/challenges")
+            assert r.status_code == 302
+            assert r.location.startswith("http://localhost/settings")
+
+            # Populate the non-required fields
+            r = client.patch(
+                "/api/v1/users/me",
+                json={
+                    "fields": [
+                        {"field_id": 2, "value": "CustomFieldEntry2"},
+                        {"field_id": 3, "value": "CustomFieldEntry3"},
+                        {"field_id": 4, "value": "CustomFieldEntry4"},
+                    ]
+                },
+            )
+            assert r.status_code == 200
+
+            # I should still be restricted from seeing challenges
+            r = client.get("/challenges")
+            assert r.status_code == 302
+            assert r.location.startswith("http://localhost/settings")
+
+            # I should still see all fields b/c I don't have a complete profile
+            r = client.get("/settings")
+            resp = r.get_data(as_text=True)
+            assert "CustomField1" in resp
+            assert "CustomField2" in resp
+            assert "CustomField3" in resp
+            assert "CustomField4" in resp
+
+            # Populate the required fields
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"fields": [{"field_id": 1, "value": "CustomFieldEntry1"},]},
+            )
+            assert r.status_code == 200
+
+            # I can now go to challenges
+            r = client.get("/challenges")
+            assert r.status_code == 200
+
+            # I should only see edittable fields
+            r = client.get("/settings")
+            resp = r.get_data(as_text=True)
+            assert "CustomField1" in resp
+            assert "CustomField2" in resp
+            assert "CustomField3" in resp
+            assert "CustomField4" not in resp
+
+            # I can't edit a non-editable field
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"fields": [{"field_id": 4, "value": "CustomFieldEntry4"},]},
+            )
+            resp = r.get_json()
+            assert resp == {
+                "success": False,
+                "errors": {"fields": ["Field 'CustomField4' cannot be editted"]},
+            }
+    destroy_ctfd(app)
