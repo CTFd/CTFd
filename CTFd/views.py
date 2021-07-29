@@ -304,6 +304,7 @@ def notifications():
 @authed_only
 def settings():
     infos = get_infos()
+    errors = get_errors()
 
     user = get_current_user()
     name = user.name
@@ -336,6 +337,7 @@ def settings():
         tokens=tokens,
         prevent_name_change=prevent_name_change,
         infos=infos,
+        errors=errors,
     )
 
 

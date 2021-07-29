@@ -259,21 +259,21 @@ class TeamSchema(ma.ModelSchema):
                 # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
                 field = TeamFields.query.filter_by(id=field_id).first_or_404()
 
+                # Get the existing field entry if one exists
+                entry = TeamFieldEntries.query.filter_by(
+                    field_id=field.id, team_id=current_team.id
+                ).first()
+
                 if field.required is True and value.strip() == "":
                     raise ValidationError(
                         f"Field '{field.name}' is required", field_names=["fields"]
                     )
 
-                if field.editable is False:
+                if field.editable is False and entry is not None:
                     raise ValidationError(
                         f"Field '{field.name}' cannot be editted",
                         field_names=["fields"],
                     )
-
-                # Get the existing field entry if one exists
-                entry = TeamFieldEntries.query.filter_by(
-                    field_id=field.id, team_id=current_team.id
-                ).first()
 
                 if entry:
                     f["id"] = entry.id

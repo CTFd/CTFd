@@ -245,21 +245,21 @@ class UserSchema(ma.ModelSchema):
                 # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
                 field = UserFields.query.filter_by(id=field_id).first_or_404()
 
+                # Get the existing field entry if one exists
+                entry = UserFieldEntries.query.filter_by(
+                    field_id=field.id, user_id=current_user.id
+                ).first()
+
                 if field.required is True and value.strip() == "":
                     raise ValidationError(
                         f"Field '{field.name}' is required", field_names=["fields"]
                     )
 
-                if field.editable is False:
+                if field.editable is False and entry is not None:
                     raise ValidationError(
                         f"Field '{field.name}' cannot be editted",
                         field_names=["fields"],
                     )
-
-                # Get the existing field entry if one exists
-                entry = UserFieldEntries.query.filter_by(
-                    field_id=field.id, user_id=current_user.id
-                ).first()
 
                 if entry:
                     f["id"] = entry.id

@@ -6,6 +6,7 @@ from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.forms.users import attach_custom_user_fields, build_custom_user_fields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
+from CTFd.utils.user import get_current_user
 
 
 def SettingsForm(*args, **kwargs):
@@ -21,14 +22,25 @@ def SettingsForm(*args, **kwargs):
 
         @property
         def extra(self):
+            fields_kwargs = _SettingsForm.get_field_kwargs()
             return build_custom_user_fields(
                 self,
                 include_entries=True,
-                fields_kwargs={"editable": True},
+                fields_kwargs=fields_kwargs,
                 field_entries_kwargs={"user_id": session["id"]},
             )
 
-    attach_custom_user_fields(_SettingsForm, editable=True)
+        @staticmethod
+        def get_field_kwargs():
+            user = get_current_user()
+            field_kwargs = {"editable": True}
+            if user.filled_all_required_fields is False:
+                # Show all fields
+                field_kwargs = {}
+            return field_kwargs
+
+    field_kwargs = _SettingsForm.get_field_kwargs()
+    attach_custom_user_fields(_SettingsForm, **field_kwargs)
 
     return _SettingsForm(*args, **kwargs)
 
