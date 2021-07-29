@@ -226,10 +226,10 @@ class Tags(db.Model):
 class Topics(db.Model):
     __tablename__ = "topics"
     id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(255))
+    value = db.Column(db.String(255), unique=True)
 
     def __init__(self, *args, **kwargs):
-        super(Tags, self).__init__(**kwargs)
+        super(Topics, self).__init__(**kwargs)
 
 
 class ChallengeTopics(db.Model):
@@ -237,6 +237,10 @@ class ChallengeTopics(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     challenge_id = db.Column(db.Integer, db.ForeignKey("challenges.id"))
     topic_id = db.Column(db.Integer, db.ForeignKey("topics.id"))
+
+    topic = db.relationship(
+        "Topics", foreign_keys="ChallengeTopics.topic_id", lazy="select"
+    )
 
     def __init__(self, *args, **kwargs):
         super(ChallengeTopics, self).__init__(**kwargs)

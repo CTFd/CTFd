@@ -8,7 +8,7 @@ from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.constants import RawEnum
 from CTFd.models import Topics, db
-from CTFd.schemas.topics import TopicSchema
+from CTFd.schemas.topics import ChallengeTopicSchema, TopicSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
 
@@ -43,11 +43,31 @@ class TopicList(Resource):
     @admins_only
     def post(self):
         req = request.get_json()
-        schema = TopicSchema()
-        response = schema.load(req, session=db.session)
+        value = req.get("value")
 
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
+        if value:
+            topic = Topics.query.filter_by(value=value).first()
+            if topic is None:
+                schema = TopicSchema()
+                response = schema.load(req, session=db.session)
+
+                if response.errors:
+                    return {"success": False, "errors": response.errors}, 400
+
+                topic = response.data
+                db.session.add(topic)
+                db.session.commit()
+        else:
+            topic_id = req.get("topic_id")
+            topic = Topics.query.filter_by(id=topic_id).first_or_404()
+
+        req["topic_id"] = topic.id
+        topic_type = req.get("type")
+        if topic_type == "challenge":
+            schema = ChallengeTopicSchema()
+            response = schema.load(req, session=db.session)
+        else:
+            return {"success": False}, 400
 
         db.session.add(response.data)
         db.session.commit()
