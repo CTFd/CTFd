@@ -369,22 +369,18 @@ class Users(db.Model):
 
     @property
     def filled_all_required_fields(self):
-        required_user_fields = set(
-            [
-                u.id
-                for u in UserFields.query.with_entities(UserFields.id)
-                .filter_by(required=True)
-                .all()
-            ]
-        )
-        submitted_user_fields = set(
-            [
-                u.field_id
-                for u in UserFieldEntries.query.with_entities(UserFieldEntries.field_id)
-                .filter_by(user_id=self.id)
-                .all()
-            ]
-        )
+        required_user_fields = {
+            u.id
+            for u in UserFields.query.with_entities(UserFields.id)
+            .filter_by(required=True)
+            .all()
+        }
+        submitted_user_fields = {
+            u.field_id
+            for u in UserFieldEntries.query.with_entities(UserFieldEntries.field_id)
+            .filter_by(user_id=self.id)
+            .all()
+        }
         return required_user_fields.issubset(submitted_user_fields)
 
     def get_fields(self, admin=False):
@@ -560,22 +556,18 @@ class Teams(db.Model):
 
     @property
     def filled_all_required_fields(self):
-        required_team_fields = set(
-            [
-                u.id
-                for u in TeamFields.query.with_entities(TeamFields.id)
-                .filter_by(required=True)
-                .all()
-            ]
-        )
-        submitted_team_fields = set(
-            [
-                u.field_id
-                for u in TeamFieldEntries.query.with_entities(TeamFieldEntries.field_id)
-                .filter_by(team_id=self.id)
-                .all()
-            ]
-        )
+        required_team_fields = {
+            u.id
+            for u in TeamFields.query.with_entities(TeamFields.id)
+            .filter_by(required=True)
+            .all()
+        }
+        submitted_team_fields = {
+            u.field_id
+            for u in TeamFieldEntries.query.with_entities(TeamFieldEntries.field_id)
+            .filter_by(team_id=self.id)
+            .all()
+        }
         return required_team_fields.issubset(submitted_team_fields)
 
     def get_fields(self, admin=False):

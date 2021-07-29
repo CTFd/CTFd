@@ -3,7 +3,6 @@ import functools
 from flask import abort, jsonify, redirect, request, url_for
 
 from CTFd.cache import cache
-from CTFd.models import TeamFieldEntries, TeamFields, UserFieldEntries, UserFields
 from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils.config import is_teams_mode

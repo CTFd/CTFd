@@ -85,6 +85,7 @@ def test_fields_required_on_register():
 
 
 def test_fields_properties():
+    """Test that users can set and edit custom fields"""
     app = create_ctfd()
     with app.app_context():
         gen_field(
@@ -217,6 +218,7 @@ def test_boolean_checkbox_field():
 
 
 def test_user_needs_all_required_fields():
+    """Test that users need to submit all required fields before viewing challenges"""
     app = create_ctfd()
     with app.app_context():
         # Manually create a user who has no fields set
@@ -288,7 +290,7 @@ def test_user_needs_all_required_fields():
             # Populate the required fields
             r = client.patch(
                 "/api/v1/users/me",
-                json={"fields": [{"field_id": 1, "value": "CustomFieldEntry1"},]},
+                json={"fields": [{"field_id": 1, "value": "CustomFieldEntry1"}]},
             )
             assert r.status_code == 200
 
@@ -307,7 +309,7 @@ def test_user_needs_all_required_fields():
             # I can't edit a non-editable field
             r = client.patch(
                 "/api/v1/users/me",
-                json={"fields": [{"field_id": 4, "value": "CustomFieldEntry4"},]},
+                json={"fields": [{"field_id": 4, "value": "CustomFieldEntry4"}]},
             )
             resp = r.get_json()
             assert resp == {
