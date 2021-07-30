@@ -8,6 +8,27 @@
 	<div class="modal fade" id="challenge-window" role="dialog">
 	</div>
 
+	<div class="modal fade" id="challenge-comments-window" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-action text-center w-100">Comments</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body clearfix">
+					<div class="row">
+						<div class="col-md-12">
+							<div id="comment-box">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="jumbotron">
 		<div class="container">
 			<h1 class="text-center">{{ challenge.name }}</h1>
@@ -29,6 +50,10 @@
 					<i class="btn-fa fas fa-tasks fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					   title="Correct Submissions"></i>
 				</a>
+				<a class="comments-challenge">
+					<i class="btn-fa fas fa-comments fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					   title="Comments"></i>
+				</a>
 				<a class="delete-challenge">
 					<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					   title="Delete Challenge"></i>
@@ -41,23 +66,20 @@
 		<div class="row">
 			<div class="col-md-6">
 				<nav class="nav nav-tabs nav-fill" id="challenge-properties" role="tablist">
-					<a class="nav-item nav-link active" data-toggle="tab" href="#comments" role="tab" >Comments</a>
+					<a class="nav-item nav-link active" data-toggle="tab" href="#files" role="tab">Files</a>
 					<a class="nav-item nav-link" data-toggle="tab" href="#flags" role="tab">Flags</a>
-					<a class="nav-item nav-link" data-toggle="tab" href="#files" role="tab">Files</a>
+					<a class="nav-item nav-link" data-toggle="tab" href="#topics" role="tab">Topics</a>
 					<a class="nav-item nav-link" data-toggle="tab" href="#tags" role="tab">Tags</a>
 					<a class="nav-item nav-link" data-toggle="tab" href="#hints" role="tab">Hints</a>
 					<a class="nav-item nav-link" data-toggle="tab" href="#requirements" role="tab">Requirements</a>
 				</nav>
 
 				<div class="tab-content" id="nav-tabContent">
-					<div class="tab-pane fade show active" id="comments" role="tabpanel">
+					<div class="tab-pane fade show active" id="files" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">
-									Comments
-								</h3>
-								<div id="comment-box">
-								</div>
+								<h3 class="text-center py-3 d-block">Files</h3>
+								{% include "admin/modals/challenges/files.html" %}
 							</div>
 						</div>
 					</div>
@@ -69,11 +91,11 @@
 							</div>
 						</div>
 					</div>
-					<div class="tab-pane fade" id="files" role="tabpanel">
+					<div class="tab-pane fade" id="topics" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">Files</h3>
-								{% include "admin/modals/challenges/files.html" %}
+								<h3 class="text-center py-3 d-block">Topics</h3>
+								{% include "admin/modals/challenges/topics.html" %}
 							</div>
 						</div>
 					</div>
