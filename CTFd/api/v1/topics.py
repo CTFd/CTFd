@@ -7,7 +7,7 @@ from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.constants import RawEnum
-from CTFd.models import Topics, db
+from CTFd.models import ChallengeTopics, Topics, db
 from CTFd.schemas.topics import ChallengeTopicSchema, TopicSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
@@ -76,6 +76,23 @@ class TopicList(Resource):
         db.session.close()
 
         return {"success": True, "data": response.data}
+
+    @admins_only
+    def delete(self):
+        topic_type = request.args.get("type")
+        target_id = int(request.args.get("target_id", 0))
+
+        if topic_type == "challenge":
+            Model = ChallengeTopics
+        else:
+            return {"success": False}, 400
+
+        topic = Model.query.filter_by(id=target_id).first_or_404()
+        db.session.delete(topic)
+        db.session.commit()
+        db.session.close()
+
+        return {"success": True}
 
 
 @topics_namespace.route("/<topic_id>")
