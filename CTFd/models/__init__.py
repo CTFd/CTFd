@@ -235,8 +235,10 @@ class Topics(db.Model):
 class ChallengeTopics(db.Model):
     __tablename__ = "challenge_topics"
     id = db.Column(db.Integer, primary_key=True)
-    challenge_id = db.Column(db.Integer, db.ForeignKey("challenges.id"))
-    topic_id = db.Column(db.Integer, db.ForeignKey("topics.id"))
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
+    )
+    topic_id = db.Column(db.Integer, db.ForeignKey("topics.id", ondelete="CASCADE"))
 
     topic = db.relationship(
         "Topics", foreign_keys="ChallengeTopics.topic_id", lazy="select"
