@@ -12,17 +12,9 @@ from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessRespon
 from CTFd.cache import clear_standings
 from CTFd.constants import RawEnum
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
-from CTFd.models import (
-    Challenges,
-    Fails,
-    Flags,
-    Hints,
-    HintUnlocks,
-    Solves,
-    Submissions,
-    Tags,
-    db,
-)
+from CTFd.models import Challenges
+from CTFd.models import ChallengeTopics as ChallengeTopicsModel
+from CTFd.models import Fails, Flags, Hints, HintUnlocks, Solves, Submissions, Tags, db
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.flags import FlagSchema
@@ -827,6 +819,26 @@ class ChallengeTags(Resource):
         for t in tags:
             response.append(
                 {"id": t.id, "challenge_id": t.challenge_id, "value": t.value}
+            )
+        return {"success": True, "data": response}
+
+
+@challenges_namespace.route("/<challenge_id>/topics")
+class ChallengeTopics(Resource):
+    @admins_only
+    def get(self, challenge_id):
+        response = []
+
+        topics = ChallengeTopicsModel.query.filter_by(challenge_id=challenge_id).all()
+
+        for t in topics:
+            response.append(
+                {
+                    "id": t.id,
+                    "challenge_id": t.challenge_id,
+                    "topic_id": t.topic_id,
+                    "value": t.topic.value,
+                }
             )
         return {"success": True, "data": response}
 

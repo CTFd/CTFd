@@ -15,6 +15,7 @@ from tests.helpers import (
     gen_solve,
     gen_tag,
     gen_team,
+    gen_topic,
     gen_user,
     login_as_user,
     register_user,
@@ -1310,6 +1311,34 @@ def test_api_challenge_get_tags_admin():
         with login_as_user(app, "admin") as client:
             r = client.get("/api/v1/challenges/1/tags")
             assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_challenge_get_topics_non_admin():
+    """Can a user get /api/v1/challenges/<challenge_id>/topics if not admin"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        gen_topic(app.db, challenge_id=1)
+        with app.test_client() as client:
+            r = client.get("/api/v1/challenges/1/topics", json="")
+            assert r.status_code == 403
+    destroy_ctfd(app)
+
+
+def test_api_challenge_get_topics_admin():
+    """Can a user get /api/v1/challenges/<challenge_id>/topics if not admin"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        gen_topic(app.db, challenge_id=1)
+        with login_as_user(app, name="admin") as client:
+            r = client.get("/api/v1/challenges/1/topics", json="")
+            assert r.status_code == 200
+            assert r.get_json() == {
+                "success": True,
+                "data": [{"id": 1, "challenge_id": 1, "topic_id": 1, "value": "topic"}],
+            }
     destroy_ctfd(app)
 
 

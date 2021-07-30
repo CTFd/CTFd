@@ -22,6 +22,7 @@ from CTFd.models import (
     ChallengeComments,
     ChallengeFiles,
     Challenges,
+    ChallengeTopics,
     Comments,
     Fails,
     Fields,
@@ -37,6 +38,7 @@ from CTFd.models import (
     TeamComments,
     Teams,
     Tokens,
+    Topics,
     Tracking,
     Unlocks,
     UserComments,
@@ -351,6 +353,17 @@ def gen_tag(db, challenge_id, value="tag_tag", **kwargs):
     db.session.add(tag)
     db.session.commit()
     return tag
+
+
+def gen_topic(db, challenge_id, value="topic", **kwargs):
+    topic = Topics(value=value, **kwargs)
+    db.session.add(topic)
+    db.session.commit()
+
+    challenge_topic = ChallengeTopics(challenge_id=challenge_id, topic_id=topic.id)
+    db.session.add(challenge_topic)
+    db.session.commit()
+    return challenge_topic
 
 
 def gen_file(db, location, challenge_id=None, page_id=None):

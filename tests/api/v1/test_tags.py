@@ -91,7 +91,7 @@ def test_api_tag_patch_admin():
 
 
 def test_api_tag_delete_admin():
-    """Can a user patch /api/v1/tags/<tag_id> if admin"""
+    """Can a user delete /api/v1/tags/<tag_id> if admin"""
     app = create_ctfd()
     with app.app_context():
         gen_challenge(app.db)
