@@ -61,7 +61,7 @@ def export_ctf(path=None):
                 shutil.copyfileobj(backup, target)
         else:
             name = ctf_name()
-            day = datetime.datetime.now().strftime("%Y-%m-%d")
+            day = datetime.datetime.now().strftime("%Y-%m-%d_%T")
             full_name = f"{name}.{day}.zip"
 
             with open(full_name, "wb") as target:

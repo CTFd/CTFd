@@ -1,0 +1,14 @@
+<div role="tabpanel" class="tab-pane config-section" id="security">
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			<label for="ctf_name">
+				Registration Code
+				<small class="form-text text-muted">Registration Code required for account registration (SSO excluded)</small>
+			</label>
+			<input class="form-control" id='registration_code' name='registration_code' type='text' placeholder="Registration Code"
+				   {% if registration_code is defined and registration_code != None %}value="{{ registration_code }}"{% endif %}>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+</div>

@@ -2,6 +2,7 @@ from wtforms import BooleanField, PasswordField, SelectField, StringField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
+from CTFd.constants.config import Configs
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.models import UserFieldEntries, UserFields
@@ -77,6 +78,36 @@ def attach_custom_user_fields(form_cls, **kwargs):
             )
 
         setattr(form_cls, f"fields[{field.id}]", input_field)
+
+
+def build_registration_code_field(form_cls):
+    """
+    Build the appropriate field so we can render it via the extra property.
+    Add field_type so Jinja knows how to render it.
+    """
+    if Configs.registration_code:
+        field = getattr(form_cls, "registration_code")  # noqa B009
+        field.field_type = "text"
+        return [field]
+    else:
+        return []
+
+
+def attach_registration_code_field(form_cls):
+    """
+    If we have a registration code required, we attach it to the form similar
+    to attach_custom_user_fields
+    """
+    if Configs.registration_code:
+        setattr(  # noqa B010
+            form_cls,
+            "registration_code",
+            StringField(
+                "Registration Code",
+                description="Registration code required to create account",
+                validators=[InputRequired()],
+            ),
+        )
 
 
 class UserSearchForm(BaseForm):
