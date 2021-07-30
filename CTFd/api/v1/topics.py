@@ -14,10 +14,39 @@ from CTFd.utils.helpers.models import build_model_filters
 
 topics_namespace = Namespace("topics", description="Endpoint to retrieve Topics")
 
+TopicModel = sqlalchemy_to_pydantic(Topics)
+
+
+class TopicDetailedSuccessResponse(APIDetailedSuccessResponse):
+    data: TopicModel
+
+
+class TopicListSuccessResponse(APIListSuccessResponse):
+    data: List[TopicModel]
+
+
+topics_namespace.schema_model(
+    "TopicDetailedSuccessResponse", TopicDetailedSuccessResponse.apidoc()
+)
+
+topics_namespace.schema_model(
+    "TopicListSuccessResponse", TopicListSuccessResponse.apidoc()
+)
+
 
 @topics_namespace.route("")
 class TopicList(Resource):
     @admins_only
+    @topics_namespace.doc(
+        description="Endpoint to list Topic objects in bulk",
+        responses={
+            200: ("Success", "TopicListSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     @validate_args(
         {
             "value": (str, None),
@@ -41,6 +70,16 @@ class TopicList(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @topics_namespace.doc(
+        description="Endpoint to create a Topic object",
+        responses={
+            200: ("Success", "TopicDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def post(self):
         req = request.get_json()
         value = req.get("value")
@@ -78,6 +117,10 @@ class TopicList(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @topics_namespace.doc(
+        description="Endpoint to delete a specific Topic object of a specific type",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
     def delete(self):
         topic_type = request.args.get("type")
         target_id = int(request.args.get("target_id", 0))
@@ -98,6 +141,16 @@ class TopicList(Resource):
 @topics_namespace.route("/<topic_id>")
 class Topic(Resource):
     @admins_only
+    @topics_namespace.doc(
+        description="Endpoint to get a specific Topic object",
+        responses={
+            200: ("Success", "TopicDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
     def get(self, topic_id):
         topic = Topics.query.filter_by(id=topic_id).first_or_404()
         response = TopicSchema().dump(topic)
@@ -108,6 +161,10 @@ class Topic(Resource):
         return {"success": True, "data": response.data}
 
     @admins_only
+    @topics_namespace.doc(
+        description="Endpoint to delete a specific Topic object",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
     def delete(self, topic_id):
         topic = Topics.query.filter_by(id=topic_id).first_or_404()
         db.session.delete(topic)
