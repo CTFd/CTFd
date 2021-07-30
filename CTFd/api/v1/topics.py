@@ -121,9 +121,12 @@ class TopicList(Resource):
         description="Endpoint to delete a specific Topic object of a specific type",
         responses={200: ("Success", "APISimpleSuccessResponse")},
     )
-    def delete(self):
-        topic_type = request.args.get("type")
-        target_id = int(request.args.get("target_id", 0))
+    @validate_args(
+        {"type": (str, None), "target_id": (int, 0)}, location="query",
+    )
+    def delete(self, query_args):
+        topic_type = query_args.get("type")
+        target_id = int(query_args.get("target_id", 0))
 
         if topic_type == "challenge":
             Model = ChallengeTopics
