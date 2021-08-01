@@ -3,7 +3,9 @@ WORKDIR /opt/CTFd
 RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads
 
 # hadolint ignore=DL3008
-RUN apt-get update \
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list  && \
+    sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list && \ 
+    apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         python3-dev \
@@ -15,14 +17,14 @@ RUN apt-get update \
 
 COPY requirements.txt /opt/CTFd/
 
-RUN pip install -r requirements.txt --no-cache-dir
+RUN pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com --no-cache-dir
 
 COPY . /opt/CTFd
 
 # hadolint ignore=SC2086
 RUN for d in CTFd/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \
-            pip install -r $d/requirements.txt --no-cache-dir; \
+            pip install -r $d/requirements.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com --no-cache-dir; \
         fi; \
     done;
 
