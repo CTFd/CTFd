@@ -32,6 +32,7 @@
 
 **Themes**
 
+- CTFd now has the `THEME_FALLBACK` option enabled by default. This allows users to provide incomplete themes. Missing theme files will be provided from the built-in core theme
 - CTFd will now pass the title of a Page over to the template when rendering
 - No longer show the token type in user settings
 - Added `window.BETA_sortChallenges` to `/challenges` so that theme code can more easily define how to sort challenges
@@ -61,6 +62,7 @@
 
 **Deployment**
 
+- The `THEME_FALLBACK` config is now set to true by default
 - Replace installation and usage of `mysqladmin` (specifically `mysqladmin ping`) with a custom Python script
 - Bump version of `pybluemonday` to 0.0.7 (fixes HTML sanitization bypasses and allows comments in HTML)
 - Bump `pydantic` from 1.5.1 to 1.6.2
