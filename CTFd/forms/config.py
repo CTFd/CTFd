@@ -56,7 +56,7 @@ class AccountSettingsForm(BaseForm):
     )
     team_disbanding = SelectField(
         "Team Disbanding",
-        description="Control whether team capatins are allowed to disband their own teams",
+        description="Control whether team captains are allowed to disband their own teams",
         choices=[
             ("inactive_only", "Enabled for Inactive Teams"),
             ("disabled", "Disabled"),
