@@ -56,6 +56,15 @@
 			{% with form = Forms.config.ImportCSVForm() %}
 			<form method="POST" action="{{ url_for('admin.import_csv') }}" enctype="multipart/form-data">
 				<div class="form-group">
+					<div class="alert alert-info" role="alert">
+						<small class="text-muted text-right">
+							<a href="https://docs.ctfd.io/docs/imports/csv/" target="_blank">
+								<i class="far fa-question-circle"></i> Instructions and CSV templates
+							</a>
+						</small>
+					</div>
+				</div>
+				<div class="form-group">
 					<b>{{ form.csv_type.label }}</b>
 					{{ form.csv_type(class="form-control custom-select") }}
 					<small class="form-text text-muted">
