@@ -14,7 +14,7 @@
 					</button>
 				</div>
 				<div class="modal-body clearfix">
-					{% with form = Forms.teams.TeamSettingsForm(obj=team) %}
+					{% with form = Forms.teams.TeamSettingsForm(obj=information.team) %}
 					{% from "macros/forms.html" import render_extra_fields %}
 					<form id="team-info-form" method="POST">
 						<div class="form-group">
@@ -85,11 +85,11 @@
 					</button>
 				</div>
 				<div class="modal-body clearfix">
-					{% with form = Forms.teams.TeamCaptainForm(captain_id=team.captain_id) %}
+					{% with form = Forms.teams.TeamCaptainForm(captain_id=information.team.captain_id) %}
 					<form id="team-captain-form" method="POST">
 						<div class="form-group">
 							{{ form.captain_id.label }}
-							{% for member in team.members %}
+							{% for member in information.team.members %}
 								{# Append members to the select choices #}
 								{% set _ = form.captain_id.choices.append((member.id, member.name)) %}
 							{% endfor %}
@@ -143,26 +143,26 @@
 
 	<div class="jumbotron">
 		<div class="container">
-			<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
-			{% if team.oauth_id %}
-				<a href="https://majorleaguecyber.org/t/{{ team.name }}">
+			<h1 id="team-id" team-id="{{ information.team.id }}">{{ information.team.name }}</h1>
+			{% if information.team.oauth_id %}
+				<a href="https://majorleaguecyber.org/t/{{ information.team.name }}">
 					<h3><span class="badge badge-primary">Official</span></h3>
 				</a>
 			{% endif %}
-			{% if team.affiliation %}
+			{% if information.team.affiliation %}
 				<h3 class="d-inline-block">
-					<span class="badge badge-primary">{{ team.affiliation }}</span>
+					<span class="badge badge-primary">{{ information.team.affiliation }}</span>
 				</h3>
 			{% endif %}
-			{% if team.country %}
+			{% if information.team.country %}
 				<h3 class="d-inline-block">
 					<span class="badge badge-primary">
-						<i class="flag-{{ team.country.lower() }}"></i>
-						{{ lookup_country_code(team.country) }}
+						<i class="flag-{{ information.team.country.lower() }}"></i>
+						{{ lookup_country_code(information.team.country) }}
 					</span>
 				</h3>
 			{% endif %}
-			{% for field in team.fields %}
+			{% for field in information.team.fields %}
 				<h3 class="d-block">
 					{{ field.name }}: {{ field.value }}
 				</h3>
@@ -172,21 +172,21 @@
 			and we don't want to leak their place in the CTF. #}
 				{# Public page hiding is done at the route level #}
 				{% if scores_visible() %}
-					{% if place %}
-						{{ place }}
+					{% if information.place %}
+						{{ information.place }}
 						<small>place</small>
 					{% endif %}
 				{% endif %}
 			</h2>
 			<h2 id="team-score" class="text-center">
-				{% if score %}
-					{{ score }}
+				{% if information.score %}
+					{{ information.score }}
 					<small>points</small>
 				{% endif %}
 			</h2>
 			<div class="pt-3">
 				<a class="edit-team">
-					{% if team.captain_id == user.id %}
+					{% if information.team.captain_id == information.user.id %}
 						<i class="btn-fa fas fa-cogs fa-2x px-2"
 						   data-toggle="tooltip"
 						   data-placement="top"
@@ -230,10 +230,10 @@
 						</a>
 					{% endif %}
 				</a>
-				{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
-					<a href="{{ team.website }}" target="_blank" style="color: inherit;" rel="noopener">
+				{% if information.team.website and (information.team.website.startswith('http://') or information.team.website.startswith('https://')) %}
+					<a href="{{ information.team.website }}" target="_blank" style="color: inherit;" rel="noopener">
 						<i class="fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
-						   title="{{ team.website }}"></i>
+						   title="{{ information.team.website }}"></i>
 					</a>
 				{% endif %}
 			</div>
@@ -255,13 +255,13 @@
 					</tr>
 					</thead>
 					<tbody>
-					{% for member in team.members %}
+					{% for member in information.team.members %}
 						<tr>
 							<td>
 								<a href="{{ url_for('users.public', user_id=member.id) }}">
 									{{ member.name }}
 								</a>
-								{% if team.captain_id == member.id %}
+								{% if information.team.captain_id == member.id %}
 									<span class="badge badge-primary ml-2">Captain</span>
 								{% endif %}
 							</td>
@@ -273,7 +273,7 @@
 			</div>
 		</div>
 
-		{% if solves or awards %}
+		{% if information.solves or information.awards %}
 			<div class="row">
 				<div class="col-md-6 d-none d-md-block d-lg-block">
 					<div id="keys-pie-graph" class="d-flex align-items-center">
@@ -301,12 +301,12 @@
 
 			<div class="clearfix"></div>
 
-			{% if awards %}
+			{% if information.awards %}
 				<div class="row">
 					<div class="col-md-12">
 						<h3>Awards</h3>
 					</div>
-					{% for award in awards %}
+					{% for award in information.awards %}
 						<div class="col-md-3 col-sm-6">
 							<p class="text-center">
 								<i class="award-icon award-{{ award.icon }} fa-2x"></i>
@@ -336,7 +336,7 @@
 						</tr>
 						</thead>
 						<tbody>
-						{% for solve in solves %}
+						{% for solve in information.solves %}
 							<tr>
 								<td>
 									<a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
@@ -368,14 +368,14 @@
 	<script>
 		var stats_data = {{ {
 			'type': 'team',
-			'id': team.id,
-			'name': team.name,
+			'id': information.team.id,
+			'name': information.team.name,
 			'account_id': 'me',
 		} | tojson }};
-		var team_captain = {{ (user.id == team.captain_id) | tojson }};
+		var team_captain = {{ (information.user.id == information.team.captain_id) | tojson }};
 	</script>
 	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
-	{% if solves or awards %}
+	{% if information.solves or information.awards %}
 		<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
 		<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 	{% endif %}
