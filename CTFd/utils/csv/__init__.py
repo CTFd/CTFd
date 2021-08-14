@@ -14,6 +14,8 @@ from CTFd.models import (
     get_class_by_tablename,
 )
 from CTFd.plugins.challenges import get_chal_class
+from CTFd.schemas.teams import TeamSchema
+from CTFd.schemas.users import UserSchema
 from CTFd.utils.config import is_teams_mode, is_users_mode
 from CTFd.utils.scores import get_standings
 
@@ -230,18 +232,32 @@ def dump_database_table(tablename):
 
 
 def load_users_csv(dict_reader):
+    schema = UserSchema()
+    errors = []
     for line in dict_reader:
-        result = Users(**line)
-        db.session.add(result)
-        db.session.commit()
+        response = schema.load(line)
+        if response.errors:
+            errors.append((line, response.errors))
+        else:
+            db.session.add(response.data)
+            db.session.commit()
+    if errors:
+        return errors
     return True
 
 
 def load_teams_csv(dict_reader):
+    schema = TeamSchema()
+    errors = []
     for line in dict_reader:
-        result = Teams(**line)
-        db.session.add(result)
-        db.session.commit()
+        response = schema.load(line)
+        if response.errors:
+            errors.append((line, response.errors))
+        else:
+            db.session.add(response.data)
+            db.session.commit()
+    if errors:
+        return errors
     return True
 
 
