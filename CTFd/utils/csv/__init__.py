@@ -267,8 +267,10 @@ def load_challenges_csv(dict_reader):
     errors = []
 
     for i, line in enumerate(dict_reader):
-        # Throw away any ID field if provided
+        # Throw away fields that we can't trust if provided
         _ = line.pop("id", None)
+        _ = line.pop("requirements", None)
+
         flags = line.pop("flags", None)
         tags = line.pop("tags", None)
         hints = line.pop("hints", None)
