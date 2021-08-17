@@ -6,6 +6,7 @@ from io import StringIO
 from flask import Blueprint, abort
 from flask import current_app as app
 from flask import (
+    jsonify,
     redirect,
     render_template,
     render_template_string,
@@ -139,8 +140,11 @@ def import_csv():
 
     loader = loaders[csv_type]
     reader = csv.DictReader(csvfile)
-    loader(reader)
-    return redirect(url_for("admin.config"))
+    success = loader(reader)
+    if success is True:
+        return redirect(url_for("admin.config"))
+    else:
+        return jsonify(success), 500
 
 
 @admin.route("/admin/export/csv")
