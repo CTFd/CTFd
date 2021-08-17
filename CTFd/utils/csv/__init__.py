@@ -238,10 +238,10 @@ def dump_database_table(tablename):
 def load_users_csv(dict_reader):
     schema = UserSchema()
     errors = []
-    for line in dict_reader:
+    for i, line in enumerate(dict_reader):
         response = schema.load(line)
         if response.errors:
-            errors.append((line, response.errors))
+            errors.append((i, response.errors))
         else:
             db.session.add(response.data)
             db.session.commit()
@@ -253,10 +253,10 @@ def load_users_csv(dict_reader):
 def load_teams_csv(dict_reader):
     schema = TeamSchema()
     errors = []
-    for line in dict_reader:
+    for i, line in enumerate(dict_reader):
         response = schema.load(line)
         if response.errors:
-            errors.append((line, response.errors))
+            errors.append((i, response.errors))
         else:
             db.session.add(response.data)
             db.session.commit()
@@ -269,7 +269,7 @@ def load_challenges_csv(dict_reader):
     schema = ChallengeSchema()
     errors = []
 
-    for line in dict_reader:
+    for i, line in enumerate(dict_reader):
         # Throw away any ID field if provided
         _ = line.pop("id", None)
         flags = line.pop("flags", None)
@@ -283,7 +283,7 @@ def load_challenges_csv(dict_reader):
 
         response = schema.load(line)
         if response.errors:
-            errors.append((line, response.errors))
+            errors.append((i + 1, response.errors))
             continue
 
         ChallengeClass = get_chal_class(challenge_type)
