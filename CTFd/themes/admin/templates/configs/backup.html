@@ -32,7 +32,10 @@
 					You should only import data that you trust!</p>
 
 				<div class="alert alert-warning" role="alert">
-					IMPORTING A CTF WILL COMPLETELY WIPE YOUR EXISTING DATA
+					<small class="text-muted text-right">
+						<i class="fas fa-exclamation pr-2"></i>
+						Importing a CTFd export will completely wipe your existing data
+					</small>
 				</div>
 			</div>
 			<div class="form-group">
@@ -42,6 +45,12 @@
 			<input id="import-button" type="submit" class="btn btn-warning" value="Import">
 		</div>
 		<div role="tabpanel" class="tab-pane" id="save-csv">
+			<div class="alert alert-warning" role="alert">
+				<small class="text-muted text-right">
+					<i class="fas fa-exclamation pr-2"></i>
+					CSVs exported from CTFd are not guaranteed to import back in via the Import CSV functionality
+				</small>
+			</div>
 			{% with form = Forms.config.ExportCSVForm() %}
 			<form method="GET" action="{{ url_for('admin.export_csv') }}">
 				<div class="form-group">
@@ -59,7 +68,7 @@
 					<div class="alert alert-info" role="alert">
 						<small class="text-muted text-right">
 							<a href="https://docs.ctfd.io/docs/imports/csv/" target="_blank">
-								<i class="far fa-question-circle"></i> Instructions and CSV templates
+								<i class="far fa-question-circle pr-2"></i> Instructions and CSV templates
 							</a>
 						</small>
 					</div>
