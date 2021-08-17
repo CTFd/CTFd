@@ -2,7 +2,10 @@ import csv
 import json
 from io import BytesIO, StringIO
 
+from flask_marshmallow import schema
+
 from CTFd.models import (
+    Challenges,
     Flags,
     Hints,
     Tags,
@@ -14,6 +17,7 @@ from CTFd.models import (
     get_class_by_tablename,
 )
 from CTFd.plugins.challenges import get_chal_class
+from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.users import UserSchema
 from CTFd.utils.config import is_teams_mode, is_users_mode
@@ -262,7 +266,12 @@ def load_teams_csv(dict_reader):
 
 
 def load_challenges_csv(dict_reader):
+    schema = ChallengeSchema()
+    errors = []
+
     for line in dict_reader:
+        # Throw away any ID field if provided
+        _ = line.pop("id", None)
         flags = line.pop("flags", None)
         tags = line.pop("tags", None)
         hints = line.pop("hints", None)
@@ -271,6 +280,11 @@ def load_challenges_csv(dict_reader):
         # Load in custom type_data
         type_data = json.loads(line.pop("type_data", "{}") or "{}")
         line.update(type_data)
+
+        response = schema.load(line)
+        if response.errors:
+            errors.append((line, response.errors))
+            continue
 
         ChallengeClass = get_chal_class(challenge_type)
         challenge = ChallengeClass.challenge_model(**line)
@@ -297,6 +311,8 @@ def load_challenges_csv(dict_reader):
                 h = Hints(challenge_id=challenge.id, content=hint,)
                 db.session.add(h)
                 db.session.commit()
+    if errors:
+        return errors
     return True
 
 
