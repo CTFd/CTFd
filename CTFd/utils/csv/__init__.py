@@ -2,10 +2,7 @@ import csv
 import json
 from io import BytesIO, StringIO
 
-from flask_marshmallow import schema
-
 from CTFd.models import (
-    Challenges,
     Flags,
     Hints,
     Tags,
