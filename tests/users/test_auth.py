@@ -464,3 +464,33 @@ def test_registration_code_required():
             assert r.status_code == 302
             assert r.location.startswith("http://localhost/challenges")
     destroy_ctfd(app)
+
+
+def test_registration_code_allows_numeric():
+    """
+    Test that registration code is allowed to be all numeric
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Set a registration code
+        set_config("registration_code", "1234567890")
+
+        with app.test_client() as client:
+            # Load CSRF nonce
+            r = client.get("/register")
+            resp = r.get_data(as_text=True)
+            assert "Registration Code" in resp
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user",
+                    "email": "user1@examplectf.com",
+                    "password": "password",
+                    "nonce": sess.get("nonce"),
+                }
+
+            # Attempt registration with numeric registration code
+            data["registration_code"] = "1234567890"
+            r = client.post("/register", data=data)
+            assert r.status_code == 302
+            assert r.location.startswith("http://localhost/challenges")
+    destroy_ctfd(app)
