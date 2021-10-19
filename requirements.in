@@ -28,4 +28,4 @@ WTForms==2.3.1
 python-geoacumen-city
 maxminddb==1.5.4
 tenacity==6.2.0
-pybluemonday==0.0.7
+pybluemonday==0.0.8
