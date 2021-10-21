@@ -35,7 +35,7 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
   - Forgot password support
 - Automatic competition starting and ending
 - Team management, hiding, and banning
-- Customize everything using the [plugin](https://docs.ctfd.io/docs/plugins/) and [theme](https://docs.ctfd.io/docs/themes/) interfaces
+- Customize everything using the [plugin](https://docs.ctfd.io/docs/plugins/overview) and [theme](https://docs.ctfd.io/docs/themes/overview) interfaces
 - Importing and Exporting of CTF data for archival
 - And a lot more...
 
@@ -54,7 +54,7 @@ Or you can use Docker Compose with the following command from the source reposit
 
 `docker-compose up`
 
-Check out the [CTFd docs](https://docs.ctfd.io/) for [deployment options](https://docs.ctfd.io/docs/deployment/) and the [Getting Started](https://docs.ctfd.io/tutorials/getting-started/) guide
+Check out the [CTFd docs](https://docs.ctfd.io/) for [deployment options](https://docs.ctfd.io/docs/deployment/installation) and the [Getting Started](https://docs.ctfd.io/tutorials/getting-started/) guide
 
 ## Live Demo
 
