@@ -402,7 +402,10 @@ def files(path):
                         abort(403)
         else:
             if not ctftime():
-                abort(403)
+                if ctf_ended() and view_after_ctf():
+                    pass
+                else:
+                    abort(403)
 
             # Allow downloads if a valid token is provided
             token = request.args.get("token", "")
