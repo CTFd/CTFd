@@ -102,7 +102,7 @@ maxminddb==1.5.4
     #   python-geoacumen-city
 passlib==1.7.2
     # via -r requirements.in
-pybluemonday==0.0.7
+pybluemonday==0.0.8
     # via -r requirements.in
 pycparser==2.20
     # via cffi
