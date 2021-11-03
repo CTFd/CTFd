@@ -629,10 +629,13 @@ class ChallengeAttempt(Resource):
                 )
             log(
                 "submissions",
-                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
-                name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
-                challenge_id=challenge_id,
+                "\"{date}\":\"{user.id}\":\"{user.name}\":\"{user.team_id}\":\"{team.name}\":"
+                "\"{challenge.id}\":\"{challenge.name}\":\"{challenge.category}\":"
+                "\"{challenge.value}\":\"{submission}\":\"{kpm}\":\"[TOO FAST]\"",
+                user=user,
+                team=team,
+                submission=request_data.get("submission", ""),
+                challenge=challenge,
                 kpm=kpm,
             )
             # Submitting too fast
@@ -677,10 +680,13 @@ class ChallengeAttempt(Resource):
 
                 log(
                     "submissions",
-                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
-                    name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
-                    challenge_id=challenge_id,
+                    "\"{date}\":\"{user.id}\":\"{user.name}\":\"{user.team_id}\":\"{team.name}\":"
+                    "\"{challenge.id}\":\"{challenge.name}\":\"{challenge.category}\":"
+                    "\"{challenge.value}\":\"{submission}\":\"{kpm}\":\"[CORRECT]\"",
+                    user=user,
+                    team=team,
+                    submission=request_data.get("submission", ""),
+                    challenge=challenge,
                     kpm=kpm,
                 )
                 return {
@@ -696,10 +702,13 @@ class ChallengeAttempt(Resource):
 
                 log(
                     "submissions",
-                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
-                    name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
-                    challenge_id=challenge_id,
+                    "\"{date}\":\"{user.id}\":\"{user.name}\":\"{user.team_id}\":\"{team.name}\":"
+                    "\"{challenge.id}\":\"{challenge.name}\":\"{challenge.category}\":"
+                    "\"{challenge.value}\":\"{submission}\":\"{kpm}\":\"[WRONG]\"",
+                    user=user,
+                    team=team,
+                    submission=request_data.get("submission", ""),
+                    challenge=challenge,
                     kpm=kpm,
                 )
 
@@ -731,10 +740,13 @@ class ChallengeAttempt(Resource):
         else:
             log(
                 "submissions",
-                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
-                name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
-                challenge_id=challenge_id,
+                "\"{date}\":\"{user.id}\":\"{user.name}\":\"{user.team_id}\":\"{team.name}\":"
+                "\"{challenge.id}\":\"{challenge.name}\":\"{challenge.category}\":"
+                "\"{challenge.value}\":\"{submission}\":\"{kpm}\":\"[ALREADY SOLVED]\"",
+                user=user,
+                team=team,
+                submission=request_data.get("submission", ""),
+                challenge=challenge,
                 kpm=kpm,
             )
             return {

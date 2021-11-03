@@ -1,6 +1,6 @@
 import logging
 import logging.handlers
-import time
+from datetime import datetime
 
 from flask import session
 
@@ -11,7 +11,7 @@ def log(logger, format, **kwargs):
     logger = logging.getLogger(logger)
     props = {
         "id": session.get("id"),
-        "date": time.strftime("%m/%d/%Y %X"),
+        "date": datetime.today().isoformat(),
         "ip": get_ip(),
     }
     props.update(kwargs)
