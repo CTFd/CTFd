@@ -26,7 +26,27 @@ from CTFd.api.v1.unlocks import unlocks_namespace
 from CTFd.api.v1.users import users_namespace
 
 api = Blueprint("api", __name__, url_prefix="/api/v1")
-CTFd_API_v1 = Api(api, version="v1", doc=current_app.config.get("SWAGGER_UI_ENDPOINT"))
+authorizations = {
+    "AccessToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Should be in format `Authorization: Token ...`",
+    },
+    "ContentType": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Content-Type",
+        "description": "Must be set to `application/json` (https://github.com/CTFd/CTFd/issues/1974)",
+    },
+}
+CTFd_API_v1 = Api(
+    api,
+    version="v1",
+    doc=current_app.config.get("SWAGGER_UI_ENDPOINT"),
+    authorizations=authorizations,
+    security=[{"AccessToken", "ContentType"}]
+)
 
 CTFd_API_v1.schema_model("APISimpleErrorResponse", APISimpleErrorResponse.schema())
 CTFd_API_v1.schema_model(
