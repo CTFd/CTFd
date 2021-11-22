@@ -55,6 +55,14 @@
 		</div>
 
 		<div class="form-group">
+			{{ form.incorrect_submissions_per_min.label }}
+			{{ form.incorrect_submissions_per_min(class="form-control", value=incorrect_submissions_per_min) }}
+			<small class="form-text text-muted">
+				{{ form.incorrect_submissions_per_min.description }}
+			</small>
+		</div>
+
+		<div class="form-group">
 			{{ form.name_changes.label }}
 			{{ form.name_changes(class="form-control custom-select") }}
 			<small class="form-text text-muted">
