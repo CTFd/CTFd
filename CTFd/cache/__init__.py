@@ -78,24 +78,44 @@ def clear_user_recent_ips(user_id):
 
 
 def clear_user_session(user_id):
-    from CTFd.utils.user import get_user_attrs
+    from CTFd.utils.user import (
+        get_user_attrs,
+        get_user_place,
+        get_user_score,
+        get_user_recent_ips,
+    )
 
     cache.delete_memoized(get_user_attrs, user_id=user_id)
+    cache.delete_memoized(get_user_place, user_id=user_id)
+    cache.delete_memoized(get_user_score, user_id=user_id)
+    cache.delete_memoized(get_user_recent_ips, user_id=user_id)
 
 
 def clear_all_user_sessions():
-    from CTFd.utils.user import get_user_attrs
+    from CTFd.utils.user import (
+        get_user_attrs,
+        get_user_place,
+        get_user_score,
+        get_user_recent_ips,
+    )
 
     cache.delete_memoized(get_user_attrs)
+    cache.delete_memoized(get_user_place)
+    cache.delete_memoized(get_user_score)
+    cache.delete_memoized(get_user_recent_ips)
 
 
 def clear_team_session(team_id):
-    from CTFd.utils.user import get_team_attrs
+    from CTFd.utils.user import get_team_attrs, get_team_place, get_team_score
 
     cache.delete_memoized(get_team_attrs, team_id=team_id)
+    cache.delete_memoized(get_team_place, team_id=team_id)
+    cache.delete_memoized(get_team_score, team_id=team_id)
 
 
 def clear_all_team_sessions():
-    from CTFd.utils.user import get_team_attrs
+    from CTFd.utils.user import get_team_attrs, get_team_place, get_team_score
 
     cache.delete_memoized(get_team_attrs)
+    cache.delete_memoized(get_team_place)
+    cache.delete_memoized(get_team_score)
