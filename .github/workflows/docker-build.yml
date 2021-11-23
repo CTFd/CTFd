@@ -1,8 +1,13 @@
 name: Docker build image on release
 
+# on:
+#   release:
+#     types: [published]
+
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - 'master'
 
 jobs:
   docker:
@@ -30,6 +35,18 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      # -
+      #   name: Build and push
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: .
+      #     platforms: linux/amd64
+      #     push: true
+      #     tags: |
+      #       ctfd/ctfd:latest
+      #       ghcr.io/ctfd/ctfd:latest
+      #       ctfd/ctfd:${{ github.event.release.tag_name }}
+      #       ghcr.io/ctfd/ctfd:${{ github.event.release.tag_name }}
       -
         name: Build and push
         uses: docker/build-push-action@v2
@@ -38,7 +55,5 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ctfd/ctfd:latest
-            ghcr.io/ctfd/ctfd:latest
-            ctfd/ctfd:${{ github.event.release.tag_name }}
-            ghcr.io/ctfd/ctfd:${{ github.event.release.tag_name }}
+            ctfd/ctfd:test-github-action
+            ghcr.io/ctfd/ctfd:test-github-action
