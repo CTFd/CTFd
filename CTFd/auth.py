@@ -197,7 +197,7 @@ def register():
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
         country = request.form.get("country")
-        registration_code = request.form.get("registration_code", "")
+        registration_code = str(request.form.get("registration_code", ""))
 
         name_len = len(name) == 0
         names = Users.query.add_columns("name", "id").filter_by(name=name).first()
@@ -214,7 +214,7 @@ def register():
         if get_config("registration_code"):
             if (
                 registration_code.lower()
-                != get_config("registration_code", default="").lower()
+                != str(get_config("registration_code", default="")).lower()
             ):
                 errors.append("The registration code you entered was incorrect")
 
