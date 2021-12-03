@@ -19,25 +19,6 @@
 			<textarea class="form-control" type="text" id="ctf_description" name="ctf_description" rows="5">{{ ctf_description }}</textarea>
 		</div>
 
-		<div class="form-group">
-			<label for="user_mode">
-				User Mode
-				<small class="form-text text-muted">User mode allows users to register as themselves
-					or choose to form teams.
-				</small>
-			</label>
-			<div data-toggle="tooltip" data-placement="bottom" title="In order to change User Mode you must reset your CTF and delete all accounts">
-				<select class="form-control custom-select" id="user_mode" name="user_mode" disabled="true" style="z-index: -1;">
-					<option value="teams" {% if user_mode == 'teams' %}selected{% endif %}>
-						Teams
-					</option>
-					<option value="users" {% if user_mode == 'users' %}selected{% endif %}>
-						Users
-					</option>
-				</select>
-			</div>
-		</div>
-
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
 	</form>
 </div>

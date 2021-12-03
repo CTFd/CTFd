@@ -17,7 +17,7 @@ flask-debugtoolbar==0.11.0
 isort==4.3.21
 flake8-isort==3.0.0
 Faker==4.1.0
-pipdeptree==0.13.2
+pipdeptree==2.2.0
 black==19.10b0
 pytest-sugar==0.9.4
 flake8-comprehensions==3.3.1

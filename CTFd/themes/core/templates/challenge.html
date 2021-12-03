@@ -38,6 +38,18 @@
 
 						<span class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</span>
 
+						<span class="challenge-connection-info">
+							{% block connection_info %}
+								{% set conn = challenge.connection_info %}
+								{% if not conn %}
+								{% elif conn.startswith("http") %}
+									{{ conn | urlize(target="_blank") }}
+								{% else %}
+									<code>{{ conn }}</code>
+								{% endif %}
+							{% endblock %}
+						</span>
+
 						<div class="challenge-hints hint-row row">
 							{% for hint in hints %}
 								<div class='col-md-12 hint-button-wrapper text-center mb-3'>

@@ -162,6 +162,27 @@ function uploadLogo(event) {
   });
 }
 
+function switchUserMode(event) {
+  event.preventDefault();
+  if (
+    confirm(
+      "Are you sure you'd like to switch user modes?\n\nAll user submissions, awards, unlocks, and tracking will be deleted!"
+    )
+  ) {
+    let formData = new FormData();
+    formData.append("submissions", true);
+    formData.append("nonce", CTFd.config.csrfNonce);
+    fetch(CTFd.config.urlRoot + "/admin/reset", {
+      method: "POST",
+      credentials: "same-origin",
+      body: formData
+    });
+    // Bind `this` so that we can reuse the updateConfigs function
+    let binded = updateConfigs.bind(this);
+    binded(event);
+  }
+}
+
 function removeLogo() {
   ezQuery({
     title: "Remove logo",
@@ -221,6 +242,77 @@ function removeSmallIcon() {
         .then(_response => {
           window.location.reload();
         });
+    }
+  });
+}
+
+function importCSV(event) {
+  event.preventDefault();
+  let csv_file = document.getElementById("import-csv-file").files[0];
+  let csv_type = document.getElementById("import-csv-type").value;
+
+  let form_data = new FormData();
+  form_data.append("csv_file", csv_file);
+  form_data.append("csv_type", csv_type);
+  form_data.append("nonce", CTFd.config.csrfNonce);
+
+  let pg = ezProgressBar({
+    width: 0,
+    title: "Upload Progress"
+  });
+
+  $.ajax({
+    url: CTFd.config.urlRoot + "/admin/import/csv",
+    type: "POST",
+    data: form_data,
+    processData: false,
+    contentType: false,
+    statusCode: {
+      500: function(resp) {
+        // Normalize errors
+        let errors = JSON.parse(resp.responseText);
+        let errorText = "";
+        errors.forEach(element => {
+          errorText += `Line ${element[0]}: ${JSON.stringify(element[1])}\n`;
+        });
+
+        // Show errors
+        alert(errorText);
+
+        // Hide progress modal if its there
+        pg = ezProgressBar({
+          target: pg,
+          width: 100
+        });
+        setTimeout(function() {
+          pg.modal("hide");
+        }, 500);
+      }
+    },
+    xhr: function() {
+      let xhr = $.ajaxSettings.xhr();
+      xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+          let width = (e.loaded / e.total) * 100;
+          pg = ezProgressBar({
+            target: pg,
+            width: width
+          });
+        }
+      };
+      return xhr;
+    },
+    success: function(_data) {
+      pg = ezProgressBar({
+        target: pg,
+        width: 100
+      });
+      setTimeout(function() {
+        pg.modal("hide");
+      }, 500);
+      setTimeout(function() {
+        window.location.reload();
+      }, 700);
     }
   });
 }
@@ -382,13 +474,17 @@ $(() => {
   insertTimezones($("#end-timezone"));
   insertTimezones($("#freeze-timezone"));
 
-  $(".config-section > form:not(.form-upload)").submit(updateConfigs);
+  $(".config-section > form:not(.form-upload, .custom-config-form)").submit(
+    updateConfigs
+  );
   $("#logo-upload").submit(uploadLogo);
+  $("#user-mode-form").submit(switchUserMode);
   $("#remove-logo").click(removeLogo);
   $("#ctf-small-icon-upload").submit(smallIconUpload);
   $("#remove-small-icon").click(removeSmallIcon);
   $("#export-button").click(exportConfig);
   $("#import-button").click(importConfig);
+  $("#import-csv-form").submit(importCSV);
   $("#config-color-update").click(function() {
     const hex_code = $("#config-color-picker").val();
     const user_css = theme_header_editor.getValue();

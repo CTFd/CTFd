@@ -85,6 +85,7 @@ class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
+    connection_info = db.Column(db.Text)
     max_attempts = db.Column(db.Integer, default=0)
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
@@ -97,6 +98,7 @@ class Challenges(db.Model):
     hints = db.relationship("Hints", backref="challenge")
     flags = db.relationship("Flags", backref="challenge")
     comments = db.relationship("ChallengeComments", backref="challenge")
+    topics = db.relationship("ChallengeTopics", backref="challenge")
 
     class alt_defaultdict(defaultdict):
         """
@@ -220,6 +222,31 @@ class Tags(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(Tags, self).__init__(**kwargs)
+
+
+class Topics(db.Model):
+    __tablename__ = "topics"
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(255), unique=True)
+
+    def __init__(self, *args, **kwargs):
+        super(Topics, self).__init__(**kwargs)
+
+
+class ChallengeTopics(db.Model):
+    __tablename__ = "challenge_topics"
+    id = db.Column(db.Integer, primary_key=True)
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
+    )
+    topic_id = db.Column(db.Integer, db.ForeignKey("topics.id", ondelete="CASCADE"))
+
+    topic = db.relationship(
+        "Topics", foreign_keys="ChallengeTopics.topic_id", lazy="select"
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(ChallengeTopics, self).__init__(**kwargs)
 
 
 class Files(db.Model):
@@ -366,6 +393,22 @@ class Users(db.Model):
             return self.get_place(admin=False)
         else:
             return None
+
+    @property
+    def filled_all_required_fields(self):
+        required_user_fields = {
+            u.id
+            for u in UserFields.query.with_entities(UserFields.id)
+            .filter_by(required=True)
+            .all()
+        }
+        submitted_user_fields = {
+            u.field_id
+            for u in UserFieldEntries.query.with_entities(UserFieldEntries.field_id)
+            .filter_by(user_id=self.id)
+            .all()
+        }
+        return required_user_fields.issubset(submitted_user_fields)
 
     def get_fields(self, admin=False):
         if admin:
@@ -537,6 +580,22 @@ class Teams(db.Model):
             return self.get_place(admin=False)
         else:
             return None
+
+    @property
+    def filled_all_required_fields(self):
+        required_team_fields = {
+            u.id
+            for u in TeamFields.query.with_entities(TeamFields.id)
+            .filter_by(required=True)
+            .all()
+        }
+        submitted_team_fields = {
+            u.field_id
+            for u in TeamFieldEntries.query.with_entities(TeamFieldEntries.field_id)
+            .filter_by(team_id=self.id)
+            .all()
+        }
+        return required_team_fields.issubset(submitted_team_fields)
 
     def get_fields(self, admin=False):
         if admin:

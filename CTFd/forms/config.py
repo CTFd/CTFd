@@ -4,7 +4,7 @@ from wtforms.widgets.html5 import NumberInput
 
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.models import db
+from CTFd.utils.csv import get_dumpable_tables
 
 
 class ResetInstanceForm(BaseForm):
@@ -56,7 +56,7 @@ class AccountSettingsForm(BaseForm):
     )
     team_disbanding = SelectField(
         "Team Disbanding",
-        description="Control whether team capatins are allowed to disband their own teams",
+        description="Control whether team captains are allowed to disband their own teams",
         choices=[
             ("inactive_only", "Enabled for Inactive Teams"),
             ("disabled", "Disabled"),
@@ -69,17 +69,17 @@ class AccountSettingsForm(BaseForm):
         choices=[("true", "Enabled"), ("false", "Disabled")],
         default="true",
     )
+    incorrect_submissions_per_min = IntegerField(
+        "Incorrect Submissions per Minute",
+        widget=NumberInput(min=1),
+        description="Amount of submissions allowed per minute for flag bruteforce protection (default: 10)",
+    )
 
     submit = SubmitField("Update")
 
 
 class ExportCSVForm(BaseForm):
-    table = SelectField(
-        "Database Table",
-        choices=list(
-            zip(sorted(db.metadata.tables.keys()), sorted(db.metadata.tables.keys()))
-        ),
-    )
+    table = SelectField("Database Table", choices=get_dumpable_tables())
     submit = SubmitField("Download CSV")
 
 

@@ -53,6 +53,7 @@ class BaseChallenge(object):
             "name": challenge.name,
             "value": challenge.value,
             "description": challenge.description,
+            "connection_info": challenge.connection_info,
             "category": challenge.category,
             "state": challenge.state,
             "max_attempts": challenge.max_attempts,

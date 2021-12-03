@@ -21,11 +21,31 @@ from CTFd.api.v1.submissions import submissions_namespace
 from CTFd.api.v1.tags import tags_namespace
 from CTFd.api.v1.teams import teams_namespace
 from CTFd.api.v1.tokens import tokens_namespace
+from CTFd.api.v1.topics import topics_namespace
 from CTFd.api.v1.unlocks import unlocks_namespace
 from CTFd.api.v1.users import users_namespace
 
 api = Blueprint("api", __name__, url_prefix="/api/v1")
-CTFd_API_v1 = Api(api, version="v1", doc=current_app.config.get("SWAGGER_UI_ENDPOINT"))
+CTFd_API_v1 = Api(
+    api,
+    version="v1",
+    doc=current_app.config.get("SWAGGER_UI_ENDPOINT"),
+    authorizations={
+        "AccessToken": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Generate access token in the settings page of your user account.",
+        },
+        "ContentType": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Content-Type",
+            "description": "Must be set to `application/json`",
+        },
+    },
+    security=["AccessToken", "ContentType"],
+)
 
 CTFd_API_v1.schema_model("APISimpleErrorResponse", APISimpleErrorResponse.schema())
 CTFd_API_v1.schema_model(
@@ -35,6 +55,7 @@ CTFd_API_v1.schema_model("APISimpleSuccessResponse", APISimpleSuccessResponse.sc
 
 CTFd_API_v1.add_namespace(challenges_namespace, "/challenges")
 CTFd_API_v1.add_namespace(tags_namespace, "/tags")
+CTFd_API_v1.add_namespace(topics_namespace, "/topics")
 CTFd_API_v1.add_namespace(awards_namespace, "/awards")
 CTFd_API_v1.add_namespace(hints_namespace, "/hints")
 CTFd_API_v1.add_namespace(flags_namespace, "/flags")

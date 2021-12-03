@@ -152,7 +152,11 @@ def test_that_request_path_hijacking_works_properly():
 
 def test_theme_fallback_config():
     """Test that the `THEME_FALLBACK` config properly falls themes back to the core theme"""
-    app = create_ctfd()
+
+    class ThemeFallbackConfig(TestingConfig):
+        THEME_FALLBACK = False
+
+    app = create_ctfd(config=ThemeFallbackConfig)
     # Make an empty theme
     try:
         os.mkdir(os.path.join(app.root_path, "themes", "foo_fallback"))
@@ -161,6 +165,7 @@ def test_theme_fallback_config():
 
     # Without theme fallback, missing themes should disappear
     with app.app_context():
+        app.config["THEME_FALLBACK"] = False
         set_config("ctf_theme", "foo_fallback")
         assert app.config["THEME_FALLBACK"] == False
         with app.test_client() as client:
@@ -174,10 +179,7 @@ def test_theme_fallback_config():
                 pass
     destroy_ctfd(app)
 
-    class ThemeFallbackConfig(TestingConfig):
-        THEME_FALLBACK = True
-
-    app = create_ctfd(config=ThemeFallbackConfig)
+    app = create_ctfd()
     with app.app_context():
         set_config("ctf_theme", "foo_fallback")
         assert app.config["THEME_FALLBACK"] == True
