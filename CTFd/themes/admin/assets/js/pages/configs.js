@@ -410,6 +410,7 @@ $(() => {
     {
       lineNumbers: true,
       lineWrapping: true,
+      readOnly: true,
       mode: { name: "javascript", json: true }
     }
   );
