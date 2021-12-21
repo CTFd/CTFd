@@ -55,9 +55,10 @@ def confirm(data=None):
         user.verified = True
         log(
             "registrations",
-            "\"{date}\":\"{ip}\":\"{user.id}\":"
-            "\"{user.name}\":\"{user.email}\":\"Email confirmation successful\"",
-            user=user,
+            "[{date}] {ip} - {user_name} successfully confirmed for {user_email}",
+            user_id=user.id,
+            user_name=user.name,
+            user_email=user.email,
         )
         db.session.commit()
         clear_user_session(user_id=user.id)
@@ -81,9 +82,10 @@ def confirm(data=None):
             email.verify_email_address(user.email)
             log(
                 "registrations",
-                "\"{date}\":\"{ip}\":\"{user.id}\":"
-                "\"{user.name}\":\"{user.email}\":\"Initiated a confirmation email resend\"",
-                user=user,
+                "[{date}] {ip} - {user_name} initiated a confirmation email resend to {user_email}",
+                user_id=user.id,
+                user_name=user.name,
+                user_email=user.email,
             )
             return render_template(
                 "confirm.html", infos=[f"Confirmation email sent to {user.email}!"]
@@ -143,9 +145,10 @@ def reset_password(data=None):
             clear_user_session(user_id=user.id)
             log(
                 "logins",
-                "\"{date}\":\"{ip}\":\"{user.id}\":"
-                "\"{user.name}\":\"{user.email}\":\"Password reset successful\"",
-                user=user,
+                "[{date}] {ip} - successful password reset for {user_name}",
+                user_id=user.id,
+                user_name=user.name,
+                user_email=user.email,
             )
             db.session.close()
             email.password_change_alert(user.email)
@@ -334,9 +337,10 @@ def register():
                 ):  # Confirming users is enabled and we can send email.
                     log(
                         "registrations",
-                        "\"{date}\":\"{ip}\":\"{user.id}\":"
-                        "\"{user.name}\":\"{user.email}\":\"Registered with unconfirmed email\"",
-                        user=user,
+                        "[{date}] {ip} - {user_name} registered with unconfirmed email {user_email}",
+                        user_id=user.id,
+                        user_name=user.name,
+                        user_email=user.email,
                     )
                     email.verify_email_address(user.email)
                     db.session.close()
@@ -349,9 +353,10 @@ def register():
 
         log(
             "registrations",
-            format="\"{date}\":\"{ip}\":\"{user.id}\":"
-            "\"{user.name}\":\"{user.email}\":\"registered\"",
-            user=user,
+            "[{date}] {ip} - {user_name} registered with {user_email}",
+            user_id=user.id,
+            user_name=user.name,
+            user_email=user.email,
         )
         db.session.close()
 
@@ -389,10 +394,11 @@ def login():
 
                 login_user(user)
                 log(
-                    "logins", 
-                    "\"{date}\":\"{ip}\":\"{user.id}\":"
-                    "\"{user.name}\":\"{user.email}\":\"Successful login\"", 
-                    user=user,
+                    "logins",
+                    "[{date}] {ip} - {user_name} logged in",
+                    user_id=user.id,
+                    user_name=user.name,
+                    user_email=user.email,
                 )
 
                 db.session.close()
@@ -406,21 +412,23 @@ def login():
                 # This user exists but the password is wrong
                 log(
                     "logins",
-                    "\"{date}\":\"{ip}\":\"{user.id}\":"
-                    "\"{user.name}\":\"{user.email}\":\"Invalid password\"",
-                    user=user,
+                    "[{date}] {ip} - submitted invalid password for {user_name}",
+                    user_id=user.id,
+                    user_name=user.name,
+                    user_email=user.email,
                 )
                 errors.append("Your username or password is incorrect")
                 db.session.close()
                 return render_template("login.html", errors=errors)
         else:
             # This user just doesn't exist
-            log(    
-                "logins", 
-                "\"{date}\":\"{ip}\":\"{user.id}\":"
-                "\"{user.name}\":\"{user.email}\":\"User does not exist",
-                user=user,
-                )
+            log(
+                "logins",
+                "[{date}] {ip} - {user_name} does not exist",
+                user_id=user.id,
+                user_name=user.name,
+                user_email=user.email,
+            )
             errors.append("Your username or password is incorrect")
             db.session.close()
             return render_template("login.html", errors=errors)
@@ -583,11 +591,13 @@ def oauth_redirect():
 @auth.route("/logout")
 def logout():
     if current_user.authed():
+        user = current_user.get_current_user()
         log(
             "logins",
-            "\"{date}\":\"{ip}\":\"{user.id}\":"
-            "\"{user.name}\":\"{user.email}\":\"Logging out\"",
-            user=current_user.get_current_user(),
+            "[{date}] {ip} - {user_name} successfully logged out",
+            user_name=user.name,
+            user_id=user.id,
+            user_email=user.email,
         )
         logout_user()
     return redirect(url_for("views.static_html"))

@@ -2,6 +2,8 @@ import datetime
 import logging
 import os
 import sys
+import json
+import json_logging
 
 from flask import abort, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
@@ -118,8 +120,54 @@ def init_template_globals(app):
         # .update() can't be used here because it would use the literal value k
         app.jinja_env.globals[k] = v
 
+def extra(**kw):
+    '''Add the required nested props layer'''
+    return {'extra': {'props': kw}}
+
+from pprint import pprint
+
+class CustomJSONLog(json_logging.JSONLogFormatter):
+    """
+    Customized logger
+    """
+
+    LOG_RECORD_BUILT_IN_ATTRS = [
+        'asctime', 'created', 'exc_info', 'exc_text', 'filename', 'args',
+        'funcName', 'id', 'levelname', 'levelno', 'lineno', 'module', 'msg',
+        'msecs', 'msecs', 'message', 'name', 'pathname', 'process',
+        'processName', 'relativeCreated', 'thread', 'threadName', 'extra',
+        # Also exclude legacy 'props'
+        'props', 'stack_info'
+    ]
+
+    EASY_SERIALIZABLE_TYPES = (str, bool, dict, float, int, list, type(None))
+
+    def format(self, record):
+
+        fields = {}
+
+        for key, value in record.__dict__.items():
+            if key not in self.LOG_RECORD_BUILT_IN_ATTRS:
+                if isinstance(value, self.EASY_SERIALIZABLE_TYPES):
+                    fields[key] = value
+                else:
+                    # try to cast it to a string representation
+                    fields[key] = repr(value)
+        if hasattr(record, 'props') and isinstance(record.props, dict):
+            fields.update(record.props)
+        
+        json_customized_log_object = ({
+            "message": record.getMessage()
+        })
+
+        json_customized_log_object.update(fields)
+
+
+        return json.dumps(json_customized_log_object)
 
 def init_logs(app):
+    json_logging.init_non_web(custom_formatter=CustomJSONLog, enable_json=True)
+
     logger_submissions = logging.getLogger("submissions")
     logger_logins = logging.getLogger("logins")
     logger_registrations = logging.getLogger("registrations")
