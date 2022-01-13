@@ -87,7 +87,7 @@ class S3Uploader(BaseUploader):
         endpoint = get_app_config("AWS_S3_ENDPOINT_URL")
         client = boto3.client(
             "s3",
-            config=Config(signature_version="v4"),
+            config=Config(signature_version="s3v4"),
             aws_access_key_id=access_key,
             aws_secret_access_key=secret_key,
             endpoint_url=endpoint,
