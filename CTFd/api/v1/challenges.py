@@ -1,4 +1,3 @@
-import datetime
 from typing import List
 
 from flask import abort, render_template, request, url_for
@@ -764,7 +763,7 @@ class ChallengeSolves(Resource):
 
         Model = get_model()
 
-        # Note that we specifically query for the Solves.account.name 
+        # Note that we specifically query for the Solves.account.name
         # attribute here because it is faster than having SQLAlchemy
         # query for the attribute directly and it's unknown what the
         # affects of changing the relationship lazy attribute would be
