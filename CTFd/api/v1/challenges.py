@@ -764,8 +764,14 @@ class ChallengeSolves(Resource):
 
         Model = get_model()
 
+        # Note that we specifically query for the Solves.account.name 
+        # attribute here because it is faster than having SQLAlchemy
+        # query for the attribute directly and it's unknown what the
+        # affects of changing the relationship lazy attribute would be
         solves = (
-            Solves.query.join(Model, Solves.account_id == Model.id)
+            Solves.query
+            .add_columns(Model.name.label("account_name"))
+            .join(Model, Solves.account_id == Model.id)
             .filter(
                 Solves.challenge_id == challenge_id,
                 Model.banned == False,
@@ -774,18 +780,12 @@ class ChallengeSolves(Resource):
             .order_by(Solves.date.asc())
         )
 
-        freeze = get_config("freeze")
-        if freeze:
-            preview = request.args.get("preview")
-            if (is_admin() is False) or (is_admin() is True and preview):
-                dt = datetime.datetime.utcfromtimestamp(freeze)
-                solves = solves.filter(Solves.date < dt)
-
         for solve in solves:
+            solve, account_name = solve
             response.append(
                 {
                     "account_id": solve.account_id,
-                    "name": solve.account.name,
+                    "name": account_name,
                     "date": isoformat(solve.date),
                     "account_url": generate_account_url(account_id=solve.account_id),
                 }
