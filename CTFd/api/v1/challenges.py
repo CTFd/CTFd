@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 from flask import abort, render_template, request, url_for
@@ -778,6 +779,13 @@ class ChallengeSolves(Resource):
             )
             .order_by(Solves.date.asc())
         )
+
+        freeze = get_config("freeze")
+        if freeze:
+            preview = request.args.get("preview")
+            if (is_admin() is False) or (is_admin() is True and preview):
+                dt = datetime.datetime.utcfromtimestamp(freeze)
+                solves = solves.filter(Solves.date < dt)
 
         for solve in solves:
             solve, account_name = solve
