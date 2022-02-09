@@ -788,6 +788,7 @@ class ChallengeSolves(Resource):
                 solves = solves.filter(Solves.date < dt)
 
         for solve in solves:
+            # Seperate out the account name and the Solve object from the SQLAlchemy tuple
             solve, account_name = solve
             response.append(
                 {
