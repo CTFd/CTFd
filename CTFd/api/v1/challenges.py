@@ -769,8 +769,7 @@ class ChallengeSolves(Resource):
         # query for the attribute directly and it's unknown what the
         # affects of changing the relationship lazy attribute would be
         solves = (
-            Solves.query
-            .add_columns(Model.name.label("account_name"))
+            Solves.query.add_columns(Model.name.label("account_name"))
             .join(Model, Solves.account_id == Model.id)
             .filter(
                 Solves.challenge_id == challenge_id,
