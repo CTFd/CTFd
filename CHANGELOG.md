@@ -1,3 +1,7 @@
+# UNRELEASED
+
+- Improved speed of the `/api/v1/challenges/[challenge_id]/solves` endpoint
+
 # 3.4.0 / 2021-08-11
 
 **General**
