@@ -35,9 +35,9 @@ class _AssetsWrapper:
             # TODO: Needs a better recursive solution
             i = self.manifest()[i]["file"]
             url = url_for("views.themes_beta", path=i)
-            html += f'<script defer src="{url}"></script>'
+            html += f'<script defer type="module" src="{url}"></script>'
         url = url_for("views.themes_beta", path=entry)
-        html += f'<script defer src="{url}"></script>'
+        html += f'<script defer type="module" src="{url}"></script>'
         return markup(html)
 
     def css(self, asset_key):
