@@ -1,7 +1,3 @@
-@import url("https://use.fontawesome.com/releases/v5.9.0/css/all.css");
-@import url("https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i|Raleway:400,400i,700,700i&subset=latin-ext");
-
-/* Handle offline font loading */
 $fa-font-path: "~@fortawesome/fontawesome-free/webfonts" !default;
 $fa-font-display: auto !default;
 @import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
