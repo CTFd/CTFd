@@ -122,7 +122,7 @@ python-dotenv==0.13.0
     # via -r requirements.in
 python-editor==1.0.4
     # via alembic
-python-geoacumen-city==0.0.1
+python-geoacumen-city==2022.2.15
     # via -r requirements.in
 pytz==2020.4
     # via flask-restx
