@@ -1,6 +1,41 @@
 # UNRELEASED
 
+**General**
+
+- Fix issue where all-numeric registration codes wouldn't work
+- Make session cookies persist in the browser after close
+- Fix an issue where a user's session isn't cleared properly after they are deleted by an admin
+- Fix issue where end time couldn't be set during setup
+
+**API**
+
 - Improved speed of the `/api/v1/challenges/[challenge_id]/solves` endpoint
+- Document API authentication and Content-Type header requirement
+- Add nested `UserSchema` and `TeamSchema` to `SubmissionSchema` for easier access to account name
+
+**Admin Panel**
+
+- Improve CSV import error reporting and validation
+- Fix non-clickable checkbox label in user creation form in Admin Panel
+- Allow submissions per minute ratelimit to be configurable in Admin Panel
+- Add a link in the Pages Editor to the [Page Variables documentation page](https://docs.ctfd.io/docs/pages/variables/)
+
+**Themes**
+
+- Replace `node-sass` with `sass` and upgrade `sass-loader`
+- Fix issue where invalid `theme_settings` can cause broken frontend
+
+**Deployment**
+
+- Serve all assets from CTFd regardless of internet availability (i.e. fonts and font-awesome)
+- Fix regression in REVERSE_PROXY to allow comma seperated integers
+- Bump flask-restx to 0.5.1
+- Bump pybluemonday to 0.0.9
+- Added support for S3 signature version 4 authentication to support alternative S3 buckets (Google Cloud Storage, DigitalOcean Spaces, etc)
+
+**Miscellaneous**
+
+- Add a Github Actions job to publish Docker images to Dockerhub and ghcr
 
 # 3.4.0 / 2021-08-11
 
