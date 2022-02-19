@@ -1,16 +1,16 @@
-# UNRELEASED
+# 3.4.1 / 2022-02-19
 
 **General**
 
-- Fix issue where all-numeric registration codes wouldn't work
 - Make session cookies persist in the browser after close
-- Fix an issue where a user's session isn't cleared properly after they are deleted by an admin
-- Fix issue where end time couldn't be set during setup
+- Fix issue where all-numeric registration codes wouldn't work
+- Fix issue where a user's session isn't cleared properly after they are deleted by an admin
+- Fix issue where CTF end time couldn't be set during setup
 
 **API**
 
 - Improved speed of the `/api/v1/challenges/[challenge_id]/solves` endpoint
-- Document API authentication and Content-Type header requirement
+- Document API authentication and `Content-Type` header requirement
 - Add nested `UserSchema` and `TeamSchema` to `SubmissionSchema` for easier access to account name
 
 **Admin Panel**
@@ -22,15 +22,15 @@
 
 **Themes**
 
-- Replace `node-sass` with `sass` and upgrade `sass-loader`
 - Fix issue where invalid `theme_settings` can cause broken frontend
+- Replace `node-sass` with `sass` and upgrade `sass-loader`
 
 **Deployment**
 
 - Serve all assets from CTFd regardless of internet availability (i.e. fonts and font-awesome)
-- Fix regression in REVERSE_PROXY to allow comma seperated integers
-- Bump flask-restx to 0.5.1
-- Bump pybluemonday to 0.0.9
+- Fix regression in `REVERSE_PROXY` to allow comma seperated integers
+- Bump `flask-restx` to 0.5.1
+- Bump `pybluemonday` to 0.0.9
 - Added support for S3 signature version 4 authentication to support alternative S3 buckets (Google Cloud Storage, DigitalOcean Spaces, etc)
 
 **Miscellaneous**
