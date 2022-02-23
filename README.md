@@ -7,12 +7,13 @@ Goal is to get a scalable-ish CTFD setup that's easy enough to spin up and prefe
 1. Tried docker / google cloud and it burst into flames immediately. Pricing doesn't include a free tier also.
 2. Looked at [this older CTFd fork](https://github.com/EivindArvesen/CTFd) that had been adapted for use on Heroku, forked current CTFd, ported most of the changes across.
 3. Improved on the deploy with redis and mysql
+4. Spent a while trying to hook it up via the deploy with Heroku button, but app.json is too limited.
 
 
 ## Steps to spin it up (free tier)
 
-1. Click here -> [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-2. Receive CTFd. That's it.
+1. Make sure you have a Heroku account and have Heroku CLI installed
+2. run deploy-heroku.sh and follow the bouncing ball. You'll need to complete a login.
 
 ## Steps to speed it up (paid tier)
 
