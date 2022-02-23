@@ -14,13 +14,15 @@ Goal is to get a scalable-ish CTFD setup that's easy enough to spin up and prefe
 
 1. Make sure you have a Heroku account and have Heroku CLI installed
 2. run deploy-heroku.sh and follow the bouncing ball. You'll need to complete a login.
+3. Probably need to wait for 10 min or so after deploy for things to settle. Seems to be a one time thing.
 
 ## Steps to speed it up (paid tier)
 
 1. Upgrade to paid dynos, let it scale them
 2. Upgrade to paid redis
 3. Upgrade to paid JawsDB Maria
-4. Don't forget to turn it all off again.
+4. Consider a CDN, Cloudflare free tier may help
+5. Don't forget to turn it all off again.
 
 # ![](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/logo.png?raw=true)
 
