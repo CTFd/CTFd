@@ -1,3 +1,25 @@
+# CTFD experiment
+
+Goal is to get a scalable-ish CTFD setup that's easy enough to spin up and preferably can ramp cost up and down.
+
+## What I did
+
+1. Tried docker / google cloud and it burst into flames immediately. Pricing doesn't include a free tier also.
+2. Looked at this older CTFd that had been adapted for use on Heroku, forked current CTFd, ported the changes across.
+
+
+## Steps to spin it up (free tier)
+
+1. [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+2. Go get your database and redis URLs from the addons and set in DATABASE_URL and REDIS_URL respectively
+
+## Steps to speed it up (paid tier)
+
+1. Upgrade to paid dynos, let it scale them
+2. Upgrade to paid redis
+3. Upgrade to paid JawsDB Maria
+4. Don't forget to turn it all off again.
+
 # ![](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/logo.png?raw=true)
 
 ![CTFd MySQL CI](https://github.com/CTFd/CTFd/workflows/CTFd%20MySQL%20CI/badge.svg?branch=master)
