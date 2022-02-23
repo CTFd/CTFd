@@ -2,7 +2,7 @@
   "name": "heroku-ctfd",
   "description": "Heroku-friendly CTFd fork",
   "scripts": {
-    "postdeploy": "sh ./post-deploy.sh"
+    "postdeploy": "./post-deploy.sh"
   },
   "env": {},
   "formation": {
@@ -15,9 +15,6 @@
     "redistogo"
   ],
   "buildpacks": [
-    {
-      "url": "heroku/python"
-    }
   ],
   "stack": "heroku-20"
 }
