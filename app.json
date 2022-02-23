@@ -1,26 +1,23 @@
 {
-    "name": "securiday-ctfd",
-    "description": "Securiday CTFd heroku app",
-    "scripts": {},
-    "env": {
-      "DATABASE_URL": "",
-      "HEROKU_POSTGRESQL_CRIMSON_URL": "",
-      "JAWSDB_MARIA_URL": "",
-      "REDIS_URL": ""
-    },
-    "formation": {
-      "web": {
-        "quantity": 1
-      }
-    },
-    "addons": [
-      "jawsdb-maria",
-      "redistogo"
-    ],
-    "buildpacks": [
-      {
-        "url": "heroku/python"
-      }
-    ],
-    "stack": "heroku-20"
-  }
+  "name": "heroku-ctfd",
+  "description": "Heroku-friendly CTFd fork",
+  "scripts": {
+    "postdeploy": "post-deploy.sh"
+  },
+  "env": {},
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "jawsdb-maria",
+    "redistogo"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "stack": "heroku-20"
+}
