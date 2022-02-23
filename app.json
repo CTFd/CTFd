@@ -2,7 +2,7 @@
   "name": "heroku-ctfd",
   "description": "Heroku-friendly CTFd fork",
   "scripts": {
-    "postdeploy": "./post-deploy.sh"
+    "postdeploy": "sh ./post-deploy.sh"
   },
   "env": {},
   "formation": {

@@ -1,11 +1,12 @@
-# CTFD experiment
+# Heroku Friendly CTFd
 
-Goal is to get a scalable-ish CTFD setup that's easy enough to spin up and preferably can ramp cost up and down.
+Goal is to get a scalable-ish CTFD setup that's easy enough to spin up and preferably can ramp cost up and down. Easy and cheap is more important to me than scalable tbh.
 
 ## What I did
 
 1. Tried docker / google cloud and it burst into flames immediately. Pricing doesn't include a free tier also.
-2. Looked at this older CTFd that had been adapted for use on Heroku, forked current CTFd, ported the changes across.
+2. Looked at [this older CTFd fork](https://github.com/EivindArvesen/CTFd) that had been adapted for use on Heroku, forked current CTFd, ported most of the changes across.
+3. Improved on the deploy with redis and mysql
 
 
 ## Steps to spin it up (free tier)
