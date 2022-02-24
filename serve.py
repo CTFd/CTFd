@@ -40,4 +40,4 @@ if args.profile:
     toolbar.init_app(app)
     print(" * Flask profiling running at http://127.0.0.1:4000/flask-profiler/")
 
-app.run(debug=True, threaded=True, host="127.0.0.1", port=args.port)
+app.run(debug=False, threaded=True, host="127.0.0.1", port=args.port)
