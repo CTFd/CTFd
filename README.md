@@ -2,6 +2,15 @@
 
 Goal is to get a scalable-ish CTFD setup that's easy enough to spin up and preferably can ramp cost up and down. Easy and cheap is more important to me than scalable tbh.
 
+## Prior reading
+
+You bloody better believe I read some articles from wiser people than me about what they've done in this situation.
+
+* https://medium.com/@sam.calamos/creating-scalable-ctf-infrastructure-on-google-cloud-platform-with-kubernetes-and-app-engine-8c0a7847a53c
+* https://www.eivindarvesen.com/blog/2019/12/23/ctfctl
+* https://medium.com/@iamalsaher/the-admin-side-of-evlzctf-2019-ccb77d45c74d
+
+
 ## What I did
 
 1. Tried docker / google cloud and it burst into flames immediately. Pricing doesn't include a free tier also.
@@ -9,6 +18,13 @@ Goal is to get a scalable-ish CTFD setup that's easy enough to spin up and prefe
 3. Improved on the deploy with redis and mysql
 4. Spent a while trying to hook it up via the deploy with Heroku button, but app.json is too limited.
 
+## What's left to do
+
+- Upgrade the deploy script into a control script 
+
+  + Tear down
+
+- Request verification from Heroku team to use autoscaling perf dynos.
 
 ## Steps to spin it up (free tier)
 

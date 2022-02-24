@@ -1,0 +1,51 @@
+#!/usr/bin/bash
+
+# Pre-requisites
+# - You've got heroku CLI installed somehow
+
+if [ "$1" == "deploy" ]; then
+
+    heroku login
+    heroku apps:create --region us
+    git push heroku main
+    APP_NAME=`git remote -v | grep 'heroku.*(fetch)$' | sed 's/.*\///' | sed 's/\.git.*//'`
+
+    heroku addons:destroy heroku-postgresql --confirm "${APP_NAME}"
+    heroku addons:create redistogo:nano
+    heroku addons:create jawsdb-maria:kitefin
+
+    echo "Sleeping for a moment"
+    sleep 15
+
+    NEW_DB_URL=`heroku config:get JAWSDB_MARIA_URL | sed 's/mysql\:\/\//mysql+pymysql\:\/\//'`
+    heroku config:set DATABASE_URL="${NEW_DB_URL}"
+
+    REDIS_URL=`heroku config:get REDISTOGO_URL`
+    heroku config:set REDIS_URL="${REDIS_URL}"
+
+    SECRET_VALUE=`cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | head -c 20; echo | openssl dgst -sha3-512 - | cut -d\  -f 2`
+    heroku config:set SECRET_KEY="${SECRET_VALUE}"
+
+    echo "\n\n\n\n\n"
+    echo "Job's done - app is at the link below. After initial deploy, let the app sit for 10 minutes or so while it shits itself. Should start working after that."
+    echo "https://${APP_NAME}.herokuapp.com"
+    echo "When you're ready to start paying for scalabiltiy, change the dyno type in the heroku panel and also consider upgrading the DB and redis addon."
+    echo "Maybe chuck it behind a CDN like cloudflare on free tier."
+
+elif [ "$1" == "upgrade" ]; then
+    heroku addons:upgrade jawsdb-maria:blacktip
+    heroku addons:upgrade redistogo:little
+    heroku dyno:scale web=5:Standard-1X
+   # heroku dyno:scale standard-1x=5
+elif [ "$1" == "downgrade" ]; then
+    heroku addons:downgrade jawsdb-maria:kitefin
+    heroku addons:downgrade redistogo:nano
+    heroku dyno:scale web=1:Free
+else
+
+  echo "usage:"
+  echo "./heroku-ctl deploy << spin up the app"
+  echo "./heroku-ctl upgrade << start paying money"
+  echo "./heroku-ctl downgrade << stop paying money"
+
+fi
