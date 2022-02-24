@@ -10,7 +10,6 @@ You bloody better believe I read some articles from wiser people than me about w
 * https://www.eivindarvesen.com/blog/2019/12/23/ctfctl
 * https://medium.com/@iamalsaher/the-admin-side-of-evlzctf-2019-ccb77d45c74d
 
-
 ## What I did
 
 1. Tried docker / google cloud and it burst into flames immediately. Pricing doesn't include a free tier also.
@@ -26,19 +25,27 @@ You bloody better believe I read some articles from wiser people than me about w
 
 - Request verification from Heroku team to use autoscaling perf dynos.
 
+- CTFd appears to use cachebusting query params on all its assets - what the fuuuuuuck mannnnnn?
+
+## Future wishlist
+
+- [This ticket](https://github.com/CTFd/CTFd/issues/1139) gives me a lot of hope about the direction of CTFd. If I had my wishlist, it would be an SPA front-end to CTFd that I can
+  throw onto surge.sh or Netlify or whatever and stick behind Cloudflare and serve up cached and completely free of charge. The flask app would become an API server effectively and
+  that would run on Heroku, with a lower overhead becuase it's not serving up pages + JS.
+
 ## Steps to spin it up (free tier)
 
 1. Make sure you have a Heroku account and have Heroku CLI installed
-2. run deploy-heroku.sh and follow the bouncing ball. You'll need to complete a login.
+2. run `./herokuctl deploy` and follow the bouncing ball. You'll need to complete a login.
 3. Probably need to wait for 10 min or so after deploy for things to settle. Seems to be a one time thing.
 
 ## Steps to speed it up (paid tier)
 
-1. Upgrade to paid dynos, let it scale them
-2. Upgrade to paid redis
-3. Upgrade to paid JawsDB Maria
-4. Consider a CDN, Cloudflare free tier may help
-5. Don't forget to turn it all off again.
+1. Run `./herkouctl upgrade` to switch to 12x standard dynos and paid Redis and MySQL.
+2. Cloudflare free tier helps if you have a domain on CF, Cloudflare business is better.
+3. You can scale up to more dynos in the heroku control panel. If you are a verified user with
+   a good payment history you can use the performance dynos and set limits for autoscaling.
+4. **Don't forget** to run `./herokuctl downgrade` do scale back down to free afterwards.
 
 # ![](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/logo.png?raw=true)
 

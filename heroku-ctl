@@ -33,10 +33,9 @@ if [ "$1" == "deploy" ]; then
     echo "Maybe chuck it behind a CDN like cloudflare on free tier."
 
 elif [ "$1" == "upgrade" ]; then
-    heroku addons:upgrade jawsdb-maria:blacktip
-    heroku addons:upgrade redistogo:little
-    heroku dyno:scale web=5:Standard-1X
-   # heroku dyno:scale standard-1x=5
+    heroku addons:upgrade jawsdb-maria:whitetip
+    heroku addons:upgrade redistogo:small
+    heroku dyno:scale web=12:Standard-1X
 elif [ "$1" == "downgrade" ]; then
     heroku addons:downgrade jawsdb-maria:kitefin
     heroku addons:downgrade redistogo:nano
@@ -44,8 +43,8 @@ elif [ "$1" == "downgrade" ]; then
 else
 
   echo "usage:"
-  echo "./heroku-ctl deploy << spin up the app"
-  echo "./heroku-ctl upgrade << start paying money"
-  echo "./heroku-ctl downgrade << stop paying money"
+  echo "./herokuctl deploy << spin up the app"
+  echo "./herokuctl upgrade << start paying money"
+  echo "./herokuctl downgrade << stop paying money"
 
 fi
