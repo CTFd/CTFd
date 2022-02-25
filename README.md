@@ -27,6 +27,10 @@ You bloody better believe I read some articles from wiser people than me about w
 
 - CTFd appears to use cachebusting query params on all its assets - what the fuuuuuuck mannnnnn?
 
+- Ghettoscale / autoscale feature
+
+- understand this fork https://gitlab.com/cybears/ctfd/-/tree/master/
+
 ## Future wishlist
 
 - [This ticket](https://github.com/CTFd/CTFd/issues/1139) gives me a lot of hope about the direction of CTFd. If I had my wishlist, it would be an SPA front-end to CTFd that I can

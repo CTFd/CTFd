@@ -32,6 +32,10 @@ if [ "$1" == "deploy" ]; then
     echo "When you're ready to start paying for scalabiltiy, change the dyno type in the heroku panel and also consider upgrading the DB and redis addon."
     echo "Maybe chuck it behind a CDN like cloudflare on free tier."
 
+    sleep 3
+    heroku apps:open -a "${APP_NAME}" 
+    heroku pipelines:create -a "${APP_NAME}" -s production "${APP_NAME}-production" 
+
 elif [ "$1" == "upgrade" ]; then
     heroku addons:upgrade jawsdb-maria:whitetip
     heroku addons:upgrade redistogo:small
@@ -40,11 +44,88 @@ elif [ "$1" == "downgrade" ]; then
     heroku addons:downgrade jawsdb-maria:kitefin
     heroku addons:downgrade redistogo:nano
     heroku dyno:scale web=1:Free
+elif [ "$1" == "autoscale" ]; then
+    heroku dyno:scale web=$2:Performance-1X
+    heroku ps:autoscale:enable --max=$3 --min=$2 --p95=$4
+elif [ "$1" == "ghettoscale" ]; then
+
+    heroku addons:downgrade jawsdb-maria:kitefin
+    heroku addons:downgrade redistogo:nano
+    heroku dyno:scale web=1:Free
+    DYNO_COUNT=0
+    SLEEP_INTERVAL=32
+
+    while :
+    do
+        echo "ghettoscale - ${DYNO_COUNT} paid dynos - getting data"
+        APP_NAME=`git remote -v | grep 'heroku.*(fetch)$' | sed 's/.*\///' | sed 's/\.git.*//'`
+        curl "https://${APP_NAME}.herokuapp.com/" > /dev/null 2> /dev/null
+        curl "https://${APP_NAME}.herokuapp.com/scoreboard" > /dev/null 2> /dev/null
+        curl "https://${APP_NAME}.herokuapp.com/users" > /dev/null 2> /dev/null
+
+        SERVICE_LIST=`heroku logs | egrep -o "service=[0-9]+ms" | sed 's/[^0-9]//g'`
+        SERVICE_COUNT=`echo "${SERVICE_LIST}" | wc -l`
+        SERVICE_AVG=`echo "${SERVICE_LIST}" | awk '{s+=$1}END{print s/NR}'`
+        echo "count: ${SERVICE_COUNT}, avg: ${SERVICE_AVG}"
+
+        # Make sure we've got some samples to work from
+        if [ "${SERVICE_COUNT}" -gt "9" ]; then
+            # Is the average more than our target average ceiling?
+            if (( $(echo "${SERVICE_AVG} 650" | awk '{print ($1 > $2)}') )); then
+                # Are we at max Dynos?
+                if [ "${DYNO_COUNT}" -lt "1" ]; then
+                    echo "scaling up to paid"
+                    ((DYNO_COUNT=DYNO_COUNT+1))
+                    heroku dyno:scale web=${DYNO_COUNT}:Standard-1X
+                    heroku addons:upgrade jawsdb-maria:blacktip
+                    heroku addons:upgrade redistogo:small
+                elif [ "${DYNO_COUNT}" -lt "25" ]; then
+                    echo "scaling up"
+                    ((DYNO_COUNT=DYNO_COUNT+1))
+                    heroku dyno:scale web=${DYNO_COUNT}:Standard-1X
+                fi
+            
+                if [ "${SLEEP_INTERVAL}" -gt "8" ]; then
+                    # adjustment - decrease the sleep interval
+                    ((SLEEP_INTERVAL=SLEEP_INTERVAL/4))
+                fi
+
+            # Is the average less than our target average floor?
+            elif (( $(echo "${SERVICE_AVG} 125" | awk '{print ($1 < $2)}') )); then
+
+
+                # Are we at max Dynos?
+                if [ "${DYNO_COUNT}" -gt "1" ]; then
+                    echo "scaling down"
+                    ((DYNO_COUNT=DYNO_COUNT-1))
+                    heroku dyno:scale web=${DYNO_COUNT}:Standard-1X
+                elif [ "${DYNO_COUNT}" -eq "1" ]; then
+                    echo "scaling down to free"
+                    ((DYNO_COUNT=DYNO_COUNT-1))
+                    heroku dyno:scale web=1:Free
+                    heroku addons:downgrade jawsdb-maria:kitefin
+                    heroku addons:downgrade redistogo:nano
+                fi
+
+                if [ "${SLEEP_INTERVAL}" -gt "16" ]; then
+                    # adjustment - decrease the sleep interval
+                    ((SLEEP_INTERVAL=SLEEP_INTERVAL/2))
+                fi
+            elif [ "${SLEEP_INTERVAL}" -lt "240" ]; then
+                # no adjustment - increase the sleep interval
+                ((SLEEP_INTERVAL=SLEEP_INTERVAL*2))
+            fi
+        fi
+
+        echo "going to sleep for ${SLEEP_INTERVAL} sec"
+        sleep ${SLEEP_INTERVAL}
+    done
 else
 
   echo "usage:"
   echo "./herokuctl deploy << spin up the app"
   echo "./herokuctl upgrade << start paying money"
   echo "./herokuctl downgrade << stop paying money"
+  echo "./herokuctl autoscale <min> <max> <p95 response time target>"
 
 fi
