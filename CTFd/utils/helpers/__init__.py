@@ -44,5 +44,5 @@ def env_asset_url_default(endpoint, values):
 @current_app.url_defaults
 def asset_cache_url_default(endpoint, values):
     """Used to cache bust per server restarts"""
-    if endpoint == "views.themes":
-        values["d"] = current_app.run_id
+    #if endpoint == "views.themes":
+        #values["d"] = current_app.run_id
