@@ -18,7 +18,8 @@ You bloody better believe I read some articles from wiser people than me about w
 4. Spent a while trying to hook it up via the deploy with Heroku button, but app.json is too limited.
 5. modified CTFd a bit around removing cache busting and some probably not needed S3 changes.
 6. Wrote a cursed control script `heroku-ctl`
-7. On my instance I threw it behind free-tier cloudflare and configured S3 for file storage.
+7. On my instance I threw it behind free-tier cloudflare and configured S3 for file storage. I also
+   hooked up automatic deploy to heroku on the main branch.
 
 ## What's left to do
 
