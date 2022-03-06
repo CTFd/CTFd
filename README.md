@@ -16,24 +16,15 @@ You bloody better believe I read some articles from wiser people than me about w
 2. Looked at [this older CTFd fork](https://github.com/EivindArvesen/CTFd) that had been adapted for use on Heroku, forked current CTFd, ported most of the changes across.
 3. Improved on the deploy with redis and mysql
 4. Spent a while trying to hook it up via the deploy with Heroku button, but app.json is too limited.
+5. modified CTFd a bit around removing cache busting and some probably not needed S3 changes.
+6. Wrote a cursed control script `heroku-ctl`
+7. On my instance I threw it behind free-tier cloudflare and configured S3 for file storage.
 
 ## What's left to do
 
-- Upgrade the deploy script into a control script 
-
-  + Tear down
-
 - Request verification from Heroku team to use autoscaling perf dynos.
 
-- CTFd appears to use cachebusting query params on all its assets - what the fuuuuuuck mannnnnn?
-
 - understand this fork https://gitlab.com/cybears/ctfd/-/tree/master/
-
-## Future wishlist
-
-- [This ticket](https://github.com/CTFd/CTFd/issues/1139) gives me a lot of hope about the direction of CTFd. If I had my wishlist, it would be an SPA front-end to CTFd that I can
-  throw onto surge.sh or Netlify or whatever and stick behind Cloudflare and serve up cached and completely free of charge. The flask app would become an API server effectively and
-  that would run on Heroku, with a lower overhead becuase it's not serving up pages + JS.
 
 ## Steps to spin it up (free tier)
 
@@ -48,6 +39,8 @@ You bloody better believe I read some articles from wiser people than me about w
 3. You can scale up to more dynos in the heroku control panel. If you are a verified user with
    a good payment history you can use the performance dynos and set limits for autoscaling.
 4. **Don't forget** to run `./herokuctl downgrade` do scale back down to free afterwards.
+5. For a laugh, try `./herokuctl ghettoscale` which will continuously poll heroku and scale you up
+   from a free-tier dyno up to something like 25x standard dynos and back down again.
 
 # ![](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/logo.png?raw=true)
 
