@@ -113,7 +113,9 @@ class S3Uploader(BaseUploader):
         md5hash = hexencode(os.urandom(16))
 
         dst = md5hash + "/" + filename
-        self.s3.upload_fileobj(file_obj, self.bucket, dst)
+        self.s3.upload_fileobj(file_obj, self.bucket, dst, ExtraArgs={
+            "ContentDisposition": "inline"
+        })
         return dst
 
     def download(self, filename):
@@ -124,7 +126,7 @@ class S3Uploader(BaseUploader):
             Params={
                 "Bucket": self.bucket,
                 "Key": key,
-                "ResponseContentDisposition": "inline; filename={}".format(
+                "ResponseContentDisposition": "attachment; filename={}".format(
                     filename
                 ),
             },
