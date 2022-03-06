@@ -69,6 +69,11 @@ class AccountSettingsForm(BaseForm):
         choices=[("true", "Enabled"), ("false", "Disabled")],
         default="true",
     )
+    incorrect_submissions_per_min = IntegerField(
+        "Incorrect Submissions per Minute",
+        widget=NumberInput(min=1),
+        description="Amount of submissions allowed per minute for flag bruteforce protection (default: 10)",
+    )
 
     submit = SubmitField("Update")
 
