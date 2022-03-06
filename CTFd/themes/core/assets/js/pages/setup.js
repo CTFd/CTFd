@@ -119,7 +119,8 @@ $(() => {
         .val();
 
       $.ajax({
-        url: "https://newsletters.ctfd.io/lists/ot889gr1sa0e1/subscribe/post-json?c=?",
+        url:
+          "https://newsletters.ctfd.io/lists/ot889gr1sa0e1/subscribe/post-json?c=?",
         data: {
           email: email,
           b_38e27f7d496889133d2214208_d7c3ed71f9: ""
