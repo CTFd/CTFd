@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div id="team-edit-modal" class="modal fade">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-action text-center w-100">Edit Team</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body clearfix">
+					{% with form = Forms.teams.TeamSettingsForm(obj=team) %}
+					{% from "macros/forms.html" import render_extra_fields %}
+					<form id="team-info-form" method="POST">
+						<div class="form-group">
+							<b>{{ form.name.label }}</b>
+							{{ form.name(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.name.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.password.label }}</b>
+							{{ form.password(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.password.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.confirm.label }}</b>
+							{{ form.confirm(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.confirm.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.website.label }}</b>
+							{{ form.website(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.website.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.affiliation.label }}</b>
+							{{ form.affiliation(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.affiliation.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.country.label }}</b>
+							{{ form.country(class="form-control custom-select") }}
+							<small class="form-text text-muted">
+								{{ form.country.description }}
+							</small>
+						</div>
+
+						<hr>
+
+						{{ render_extra_fields(form.extra) }}
+
+						<div id="results">
+
+						</div>
+						{{ form.submit(class="btn btn-primary btn-outlined float-right modal-action") }}
+					</form>
+					{% endwith %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="team-captain-modal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-action text-center w-100">Choose Captain</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body clearfix">
+					{% with form = Forms.teams.TeamCaptainForm(captain_id=team.captain_id) %}
+					<form id="team-captain-form" method="POST">
+						<div class="form-group">
+							{{ form.captain_id.label }}
+							{% for member in team.members %}
+								{# Append members to the select choices #}
+								{% set _ = form.captain_id.choices.append((member.id, member.name)) %}
+							{% endfor %}
+							{{ form.captain_id(class="form-control custom-select") }}
+						</div>
+						<div id="results">
+						</div>
+						{{ form.submit(class="btn btn-primary btn-outlined float-right modal-action") }}
+					</form>
+					{% endwith %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="team-invite-modal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-action text-center w-100">Invite Users</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body clearfix">
+					{% with form = Forms.teams.TeamInviteForm() %}
+					<form method="POST">
+						<div class="form-group">
+							<b>{{ form.link.label }}</b>
+							<div class="input-group mb-3">
+								{{ form.link(id="team-invite-link", class="form-control") }}
+								<div class="input-group-append">
+									<button id="team-invite-link-copy" class="btn btn-outline-secondary" type="button">
+										<i class="fas fa-clipboard"></i>
+									</button>
+								</div>
+							</div>
+							<small class="form-text text-muted">
+								Share this link with your team members for them to join your team
+							</small>
+							<small class="form-text text-muted">
+								Invite links can be re-used and expire after 1 day
+							</small>
+						</div>
+					</form>
+					{% endwith %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="jumbotron">
+		<div class="container">
+			<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
+			{% if team.oauth_id %}
+				<a href="https://majorleaguecyber.org/t/{{ team.name }}">
+					<h3><span class="badge badge-primary">Official</span></h3>
+				</a>
+			{% endif %}
+			{% if team.affiliation %}
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">{{ team.affiliation }}</span>
+				</h3>
+			{% endif %}
+			{% if team.country %}
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">
+						<i class="flag-{{ team.country.lower() }}"></i>
+						{{ lookup_country_code(team.country) }}
+					</span>
+				</h3>
+			{% endif %}
+			{% for field in team.fields %}
+				<h3 class="d-block">
+					{{ field.name }}: {{ field.value }}
+				</h3>
+			{% endfor %}
+			<h2 id="team-place" class="text-center">
+				{# This intentionally hides the team's place when scores are hidden because this can be their internal profile
+			and we don't want to leak their place in the CTF. #}
+				{# Public page hiding is done at the route level #}
+				{% if scores_visible() %}
+					{% if place %}
+						{{ place }}
+						<small>place</small>
+					{% endif %}
+				{% endif %}
+			</h2>
+			<h2 id="team-score" class="text-center">
+				{% if score %}
+					{{ score }}
+					<small>points</small>
+				{% endif %}
+			</h2>
+			<div class="pt-3">
+				<a class="edit-team">
+					{% if team.captain_id == user.id %}
+						<i class="btn-fa fas fa-cogs fa-2x px-2"
+						   data-toggle="tooltip"
+						   data-placement="top"
+						   title="Edit Team"></i>
+
+						<a class="edit-captain">
+							<i class="btn-fa fas fa-user-tag fa-2x px-2" data-toggle="tooltip" data-placement="top"
+							   title="Choose Captain"></i>
+						</a>
+
+						<a class="invite-members">
+							<i class="btn-fa fas fa-ticket-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+							   title="Invite Users"></i>
+						</a>
+						<a class="disband-team">
+							<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+								title="Disband Team"></i>
+						</a>
+					{% else %}
+						<i class="btn-fa fas fa-cogs fa-2x px-2 fa-disabled"
+						   data-toggle="tooltip"
+						   data-placement="top"
+						   title="Only team captains can edit team information"></i>
+						<a class="edit-captain">
+							<i class="btn-fa fas fa-user-tag fa-2x px-2 fa-disabled"
+							   data-toggle="tooltip"
+							   data-placement="top"
+							   title="Only team captains can choose a new captain"></i>
+						</a>
+						<a class="invite-members">
+							<i class="btn-fa fas fa-ticket-alt fa-2x px-2"
+								data-toggle="tooltip"
+								data-placement="top"
+								title="Only team captains can generate invite links"></i>
+						</a>
+						<a class="disband-team">
+							<i class="btn-fa fas fa-trash-alt fa-2x px-2 fa-disabled"
+								data-toggle="tooltip"
+								data-placement="top"
+								title="Only team captains can disband the team"></i>
+						</a>
+					{% endif %}
+				</a>
+				{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
+					<a href="{{ team.website }}" target="_blank" style="color: inherit;" rel="noopener">
+						<i class="fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+						   title="{{ team.website }}"></i>
+					</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		{% include "components/errors.html" %}
+
+		<br>
+
+		<div class="row min-vh-25">
+			<div class="col-md-12">
+				<h3>Members</h3>
+				<table class="table table-striped">
+					<thead>
+					<tr>
+						<td><b>User Name</b></td>
+						<td><b>Score</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for member in team.members %}
+						<tr>
+							<td>
+								<a href="{{ url_for('users.public', user_id=member.id) }}">
+									{{ member.name }}
+								</a>
+								{% if team.captain_id == member.id %}
+									<span class="badge badge-primary ml-2">Captain</span>
+								{% endif %}
+							</td>
+							<td>{{ member.score }}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		{% if solves or awards %}
+			<div class="row  challenge-charts-box">
+				<div class="col-md-6 d-none d-md-block d-lg-block challenge-charts">
+					<div id="keys-pie-graph" class="d-flex align-items-center">
+						<div class="text-center w-100">
+							<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 d-none d-md-block d-lg-block challenge-charts">
+					<div id="categories-pie-graph" class="d-flex align-items-center">
+						<div class="text-center w-100">
+							<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+						</div>
+					</div>
+				</div>
+				<br class="clearfix">
+				<div class="col-md-12 d-none d-md-block d-lg-block challenge-charts">
+					<div id="score-graph" class="w-100 d-flex align-items-center">
+						<div class="text-center w-100">
+							<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="clearfix"></div>
+
+			{% if awards %}
+				<div class="row">
+					<div class="col-md-12">
+						<h3>Awards</h3>
+					</div>
+					{% for award in awards %}
+						<div class="col-md-3 col-sm-6">
+							<p class="text-center">
+								<i class="award-icon award-{{ award.icon }} fa-2x"></i>
+								<br>
+								<strong>{{ award.name }}</strong>
+							</p>
+							{% if award.category %}<p class="text-center">{{ award.category }}</p>{% endif %}
+							{% if award.description %}<p class="text-center">{{ award.description }}</p>{% endif %}
+							<p class="text-center">{{ award.value }}</p>
+						</div>
+					{% endfor %}
+				</div>
+
+				<br>
+			{% endif %}
+
+			<div class="row">
+				<div class="col-md-12">
+					<h3>Solves</h3>
+					<table class="table table-striped">
+						<thead>
+						<tr>
+							<td><b>Challenge</b></td>
+							<td class="d-none d-md-block d-lg-block"><b>Category</b></td>
+							<td><b>Value</b></td>
+							<td><b>Time</b></td>
+						</tr>
+						</thead>
+						<tbody>
+						{% for solve in solves %}
+							<tr>
+								<td>
+									<a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+										{{ solve.challenge.name }}
+									</a>
+								</td>
+								<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
+								<td>{{ solve.challenge.value }}</td>
+								<td class="solve-time">
+									<span data-time="{{ solve.date | isoformat }}">{{ solve.date }}</span>
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% else %}
+			<div class="row min-vh-25">
+				<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">
+					No solves yet
+				</h3>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<script>
+		var stats_data = {{ {
+			'type': 'team',
+			'id': team.id,
+			'name': team.name,
+			'account_id': 'me',
+		} | tojson }};
+		var team_captain = {{ (user.id == team.captain_id) | tojson }};
+	</script>
+	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
+	{% if solves or awards %}
+		<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+		<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
+	{% endif %}
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/teams/private.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,131 @@
+ {% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Settings</h1>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-2 offset-md-1">
+			<div class="nav flex-column nav-pills" role="tablist">
+				<a class="nav-link active" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab">Profile</a>
+				<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Access Tokens</a>
+			</div>
+		</div>
+		<div class="col-md-8">
+			<div class="tab-content" id="v-pills-tabContent">
+				<div class="tab-pane fade show active" id="profile" role="tabpanel">
+					{% include "components/errors.html" %}
+
+					{% with form = Forms.self.SettingsForm(country=country) %}
+					{% from "macros/forms.html" import render_extra_fields %}
+					<form id="user-profile-form" method="post" accept-charset="utf-8" autocomplete="off" role="form"
+						class="form-horizontal">
+						<div class="form-group">
+							<b>{{ form.name.label }}</b>
+							{{ form.name(class="form-control", value=name) }}
+						</div>
+						<div class="form-group">
+							<b>{{ form.email.label }}</b>
+							{{ form.email(class="form-control", value=email) }}
+						</div>
+
+						<hr>
+
+						<div class="form-group">
+							<b>{{ form.confirm.label }}</b>
+							{{ form.confirm(class="form-control") }}
+						</div>
+						<div class="form-group">
+							<b>{{ form.password.label }}</b>
+							{{ form.password(class="form-control") }}
+						</div>
+
+						<hr>
+
+						<div class="form-group">
+							<b>{{ form.affiliation.label }}</b>
+							{{ form.affiliation(class="form-control", value=affiliation or "") }}
+						</div>
+						<div class="form-group">
+							<b>{{ form.website.label }}</b>
+							{{ form.website(class="form-control", value=website or "") }}
+						</div>
+						<div class="form-group">
+							<b>{{ form.country.label }}</b>
+							{{ form.country(class="form-control custom-select", value=country) }}
+						</div>
+
+						<hr>
+
+						{{ render_extra_fields(form.extra) }}
+
+						<div id="results" class="form-group">
+						</div>
+
+						<div class="form-group">
+							{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}
+						</div>
+					</form>
+					{% endwith %}
+				</div>
+				<div class="tab-pane fade" id="tokens" role="tabpanel">
+					{% with form = Forms.self.TokensForm() %}
+					<form method="POST" id="user-token-form">
+						<div class="form-group">
+							<b>{{ form.expiration.label }}</b>
+							{{ form.expiration(class="form-control") }}
+						</div>
+
+						<div class="form-group text-right">
+							{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
+						</div>
+					</form>
+					{% endwith %}
+
+					{% if tokens %}
+					<hr>
+					<h4 class="text-center">Active Tokens</h4>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<td class="text-center"><b>Type</b></td>
+								<td class="text-center"><b>Created</b></td>
+								<td class="text-center"><b>Expiration</b></td>
+								<td class="text-center"><b>Delete</b></td>
+							</tr>
+						</thead>
+						<tbody>
+							{% for token in tokens %}
+							<tr>
+								<td>{{ token.type }}</td>
+								<td><span data-time="{{ token.created | isoformat }}"></span></td>
+								<td><span data-time="{{ token.expiration | isoformat }}"></span></td>
+								<td class="text-center">
+									<span class="delete-token" role="button" data-token-id="{{ token.id }}">
+										<i class="btn-fa fas fa-times"></i>
+									</span>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/settings.js') }}"></script>
+{% endblock %}
