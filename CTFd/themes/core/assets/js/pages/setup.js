@@ -119,13 +119,11 @@ $(() => {
         .val();
 
       $.ajax({
-        type: "POST",
         url:
-          "https://ctfd.us15.list-manage.com/subscribe/post-json?u=6c7fa6feeced52775aec9d015&id=dd1484208e&c=?",
+          "https://newsletters.ctfd.io/lists/ot889gr1sa0e1/subscribe/post-json?c=?",
         data: {
-          EMAIL: email,
-          subscribe: "Subscribe",
-          b_6c7fa6feeced52775aec9d015_dd1484208e: ""
+          email: email,
+          b_38e27f7d496889133d2214208_d7c3ed71f9: ""
         },
         dataType: "jsonp",
         contentType: "application/json; charset=utf-8"
