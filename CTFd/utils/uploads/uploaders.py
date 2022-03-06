@@ -126,9 +126,7 @@ class S3Uploader(BaseUploader):
             Params={
                 "Bucket": self.bucket,
                 "Key": key,
-                "ResponseContentDisposition": "attachment; filename={}".format(
-                    filename
-                ),
+                "ResponseContentDisposition": "inline"
             },
         )
         return redirect(url)
