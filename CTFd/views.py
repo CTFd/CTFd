@@ -29,7 +29,7 @@ from CTFd.models import (
 from CTFd.utils import config, get_config, set_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
-from CTFd.utils.config import is_setup
+from CTFd.utils.config import is_setup, is_teams_mode
 from CTFd.utils.config.pages import build_markdown, get_page
 from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.dates import ctf_ended, ctftime, view_after_ctf
@@ -56,7 +56,7 @@ from CTFd.utils.security.signing import (
     unserialize,
 )
 from CTFd.utils.uploads import get_uploader, upload_file
-from CTFd.utils.user import authed, get_current_user, is_admin
+from CTFd.utils.user import authed, get_current_team, get_current_user, is_admin
 
 views = Blueprint("views", __name__)
 
@@ -312,6 +312,14 @@ def settings():
     website = user.website
     affiliation = user.affiliation
     country = user.country
+
+    if is_teams_mode() and get_current_team() is None:
+        team_url = url_for("teams.private")
+        infos.append(
+            markup(
+                f'In order to participate you must either <a href="{team_url}">join or create a team</a>.'
+            )
+        )
 
     tokens = UserTokens.query.filter_by(user_id=user.id).all()
 
