@@ -1,3 +1,13 @@
+# 3.4.2 / 2022-03-07
+
+**Security**
+
+- Bump cmarkgfm to 0.8.0 to resolve CVE-2022-24724
+
+**General**
+
+- Fix issue where unauthed users couldn't download challenge files after CTF end but viewing after CTF was enabled
+
 # 3.4.1 / 2022-02-19
 
 **General**
