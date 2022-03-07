@@ -1,3 +1,13 @@
+# 3.4.3 / 2022-03-07
+
+**Security**
+
+- Bump cmarkgfm to 0.8.0 to resolve CVE-2022-24724. Copied entry from 3.4.2 since 3.4.2 introduced a bug that prevented writing raw HTML.
+
+**General**
+
+- Fix issue where raw HTML would not be rendered in markdown
+
 # 3.4.2 / 2022-03-07
 
 **Security**
