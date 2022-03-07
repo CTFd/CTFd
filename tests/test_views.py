@@ -383,6 +383,19 @@ def test_user_can_access_files_with_auth_token():
                         r = admin.get(file_url)
                         assert r.status_code == 200
                         assert r.get_data(as_text=True) == "testing file load"
+
+                with freeze_time("2017-10-7"):
+                    # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+                    set_config("end", "1507262400")
+                    set_config("view_after_ctf", True)
+                    for v in ("public", "private"):
+                        set_config("challenge_visibility", v)
+
+                        # Unauthed users should be able to download if view_after_ctf
+                        client = app.test_client()
+                        r = client.get(file_url)
+                        assert r.status_code == 200
+                        assert r.get_data(as_text=True) == "testing file load"
         finally:
             rmdir(directory)
     destroy_ctfd(app)
@@ -425,6 +438,12 @@ def test_user_can_access_files_if_view_after_ctf():
                     assert r.get_data(as_text=True) != "testing file load"
 
                     set_config("view_after_ctf", True)
+                    r = client.get(file_url)
+                    assert r.status_code == 200
+                    assert r.get_data(as_text=True) == "testing file load"
+
+                    # Unauthed users should be able to download if view_after_ctf
+                    client = app.test_client()
                     r = client.get(file_url)
                     assert r.status_code == 200
                     assert r.get_data(as_text=True) == "testing file load"
