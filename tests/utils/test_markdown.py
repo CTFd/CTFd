@@ -7,6 +7,6 @@ def test_markdown():
     """
     # Allow raw HTML / potentially unsafe HTML
     assert (
-        markdown("<iframe src='https://example.com'></iframe>")
+        markdown("<iframe src='https://example.com'></iframe>").strip()
         == "<iframe src='https://example.com'></iframe>"
     )
