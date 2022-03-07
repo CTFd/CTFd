@@ -1,5 +1,3 @@
-from pytest import mark
-
 from CTFd.utils import markdown
 
 
