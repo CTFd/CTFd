@@ -69,7 +69,31 @@ class CTFdRegexFlag(BaseFlag):
         return res and res.group() == provided
 
 
-FLAG_CLASSES = {"static": CTFdStaticFlag, "regex": CTFdRegexFlag}
+class CTFdMSEFlag(BaseFlag):
+    name = "mse"
+    templates = {
+        "create": "/plugins/flags/assets/mse/create.html",
+        "update": "/plugins/flags/assets/mse/edit.html",
+    }
+
+    @staticmethod
+    def compare(chal_key_obj, provided):
+        saved = chal_key_obj.content
+        data = chal_key_obj.data
+        try:
+            provided_np = [float(x) for x in provided.split(",")]
+            saved_np = [float(x) for x in saved.split(",")]
+        except ValueError:
+            raise FlagException("Flag must be comma separated floats")
+        if len(provided_np) != len(saved_np):
+            raise FlagException("Incorrect number of values")
+        mse = 0
+        for p,s in zip(provided_np, saved_np):
+            mse += (p-s)**2
+        mse /= len(provided_np)
+        return mse < float(data)
+
+FLAG_CLASSES = {"static": CTFdStaticFlag, "regex": CTFdRegexFlag, "mse": CTFdMSEFlag}
 
 
 def get_flag_class(class_id):
