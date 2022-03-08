@@ -409,8 +409,17 @@ def files(path):
                     else:
                         abort(403)
         else:
+            # User cannot view challenges based on challenge visibility
+            # e.g. ctf requires registration but user isn't authed or
+            # ctf requires admin account but user isn't admin
             if not ctftime():
-                abort(403)
+                # It's not CTF time. The only edge case is if the CTF is ended
+                # but we have view_after_ctf enabled
+                if ctf_ended() and view_after_ctf():
+                    pass
+                else:
+                    # In all other situations we should block challenge files
+                    abort(403)
 
             # Allow downloads if a valid token is provided
             token = request.args.get("token", "")
