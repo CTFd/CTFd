@@ -86,7 +86,7 @@ class CTFdMSEFlag(BaseFlag):
         except ValueError:
             raise FlagException("Flag must be comma separated floats")
         if len(provided_np) != len(saved_np):
-            raise FlagException("Incorrect number of values")
+            raise FlagException(f"Incorrect number of values: provided {len(provided_np)}, expected {len(saved_np)}")
         mse = 0
         for p,s in zip(provided_np, saved_np):
             mse += (p-s)**2
