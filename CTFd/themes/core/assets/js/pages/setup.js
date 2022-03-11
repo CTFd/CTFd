@@ -99,6 +99,42 @@ $(() => {
     $("#config-color-picker").val("");
   });
 
+  $("#ctf_logo").on("change", function() {
+    if (this.files[0].size > 128000) {
+      if (
+        !confirm(
+          "This image file is larger than 128KB which may result in increased load times. Are you sure you'd like to use this logo?"
+        )
+      ) {
+        this.value = "";
+      }
+    }
+  });
+
+  $("#ctf_banner").on("change", function() {
+    if (this.files[0].size > 512000) {
+      if (
+        !confirm(
+          "This image file is larger than 512KB which may result in increased load times. Are you sure you'd like to use this icon?"
+        )
+      ) {
+        this.value = "";
+      }
+    }
+  });
+
+  $("#ctf_small_icon").on("change", function() {
+    if (this.files[0].size > 32000) {
+      if (
+        !confirm(
+          "This image file is larger than 32KB which may result in increased load times. Are you sure you'd like to use this icon?"
+        )
+      ) {
+        this.value = "";
+      }
+    }
+  });
+
   window.addEventListener("storage", function(event) {
     if (event.key == "integrations" && event.newValue) {
       let integration = JSON.parse(event.newValue);
