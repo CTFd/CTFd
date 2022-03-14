@@ -29,7 +29,7 @@ class _AssetsWrapper:
     def js(self, asset_key):
         asset = self.manifest()[asset_key]
         entry = asset["file"]
-        imports = asset["imports"]
+        imports = asset.get("imports", [])
         html = ""
         for i in imports:
             # TODO: Needs a better recursive solution
