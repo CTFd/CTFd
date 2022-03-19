@@ -186,6 +186,7 @@ def import_ctf(backup, erase=True):
         "db/unlocks.json",
         "db/awards.json",
         "db/tags.json",
+        "db/topics.json",
         "db/submissions.json",
         "db/solves.json",
         "db/files.json",
@@ -193,6 +194,7 @@ def import_ctf(backup, erase=True):
         "db/pages.json",
         "db/tracking.json",
         "db/config.json",
+        "db/fields.json",
     ]
 
     # We want to insert certain database tables first so we are specifying
