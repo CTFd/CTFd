@@ -498,7 +498,8 @@ class TeamPrivateSolves(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        count = len(response.data)
+        return {"success": True, "data": response.data, "meta": {"count": count}}
 
 
 @teams_namespace.route("/me/fails")
@@ -562,7 +563,8 @@ class TeamPublicSolves(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        count = len(response.data)
+        return {"success": True, "data": response.data, "meta": {"count": count}}
 
 
 @teams_namespace.route("/<team_id>/fails")
