@@ -562,7 +562,7 @@ class TeamPublicSolves(Resource):
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
-    
+
         count = len(response.data)
         return {"success": True, "data": response.data, "meta": {"count": count}}
 
