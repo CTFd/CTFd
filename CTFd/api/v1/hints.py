@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import request
+from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
@@ -119,6 +119,33 @@ class Hint(Resource):
     def get(self, hint_id):
         user = get_current_user()
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
+
+        if hint.requirements:
+            requirements = hint.requirements.get("prerequisites", [])
+
+            # Get the IDs of all hints that the user has unlocked
+            all_unlocks = HintUnlocks.query.filter_by(account_id=user.account_id).all()
+            unlock_ids = {unlock.id for unlock in all_unlocks}
+
+            # Filter out hint IDs that don't exist
+            all_hint_ids = {
+                h.id for h in Hints.query.with_entities(Hints.id).all()
+            }
+            prereqs = set(requirements).intersection(all_hint_ids)
+
+            # If the user has the necessary unlocks or is admin we should allow them to view
+            if unlock_ids >= prereqs or is_admin():
+                pass
+            else:
+                return (
+                    {
+                        "success": False,
+                        "errors": {
+                            "requirements": ["You must unlock other hints before accessing this hint"]
+                        },
+                    },
+                    400,
+                )
 
         view = "unlocked"
         if hint.cost:
