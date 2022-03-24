@@ -144,7 +144,7 @@ class Hint(Resource):
                             "requirements": ["You must unlock other hints before accessing this hint"]
                         },
                     },
-                    400,
+                    403,
                 )
 
         view = "unlocked"
