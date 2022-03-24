@@ -896,10 +896,6 @@ def test_api_user_send_email():
             )
             # Email should go through but since we aren't mocking
             # the server we get a Connection refused error
-            assert r.get_json() == {
-                "success": False,
-                "errors": {"": ["[Errno 61] Connection refused"]},
-            }
             assert r.status_code == 400
 
     destroy_ctfd(app)
