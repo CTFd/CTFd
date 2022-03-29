@@ -128,9 +128,7 @@ class Hint(Resource):
             unlock_ids = {unlock.id for unlock in all_unlocks}
 
             # Filter out hint IDs that don't exist
-            all_hint_ids = {
-                h.id for h in Hints.query.with_entities(Hints.id).all()
-            }
+            all_hint_ids = {h.id for h in Hints.query.with_entities(Hints.id).all()}
             prereqs = set(requirements).intersection(all_hint_ids)
 
             # If the user has the necessary unlocks or is admin we should allow them to view
@@ -141,7 +139,9 @@ class Hint(Resource):
                     {
                         "success": False,
                         "errors": {
-                            "requirements": ["You must unlock other hints before accessing this hint"]
+                            "requirements": [
+                                "You must unlock other hints before accessing this hint"
+                            ]
                         },
                     },
                     403,
