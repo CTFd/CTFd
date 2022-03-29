@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import abort, request
+from flask import request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
