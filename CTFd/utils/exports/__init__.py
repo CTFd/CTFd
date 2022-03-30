@@ -143,6 +143,7 @@ def import_ctf(backup, erase=True):
 
     def set_status(val):
         cache.set(key="import_status", value=val, timeout=cache_timeout)
+        print(val)
 
     set_status("started")
 
