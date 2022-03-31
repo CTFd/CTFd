@@ -174,7 +174,12 @@ def config():
     configs = {c.key: get_config(c.key) for c in configs}
 
     themes = ctf_config.get_themes()
-    themes.remove(get_config("ctf_theme"))
+
+    # Remove current theme but ignore failure
+    try:
+        themes.remove(get_config("ctf_theme"))
+    except ValueError:
+        pass
 
     return render_template("admin/config.html", themes=themes, **configs)
 
