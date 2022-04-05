@@ -420,6 +420,11 @@ const displayUnlock = id => {
 
 const loadHint = id => {
   CTFd.api.get_hint({ hintId: id }).then(response => {
+    if (!response.success) {
+      let msg = Object.values(response.errors).join("\n");
+      alert(msg);
+      return;
+    }
     if (response.data.content) {
       displayHint(response.data);
       return;

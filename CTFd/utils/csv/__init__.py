@@ -80,14 +80,12 @@ def dump_scoreboard_csv():
             team_field_values = [
                 team_field_entries.get(f_id, "") for f_id in team_field_ids
             ]
-            team_row = [
-                i + 1,
-                team.name,
-                team.id,
-                standing.score,
-                "",
-                "",
-            ] + team_field_values
+            user_field_values = len(user_field_names) * [""]
+            team_row = (
+                [i + 1, team.name, team.id, standing.score, "", "", "", ""]
+                + user_field_values
+                + team_field_values
+            )
 
             writer.writerow(team_row)
 
@@ -96,16 +94,21 @@ def dump_scoreboard_csv():
                 user_field_values = [
                     user_field_entries.get(f_id, "") for f_id in user_field_ids
                 ]
-                user_row = [
-                    "",
-                    "",
-                    "",
-                    "",
-                    member.name,
-                    member.id,
-                    member.email,
-                    member.score,
-                ] + user_field_values
+                team_field_values = len(team_field_names) * [""]
+                user_row = (
+                    [
+                        "",
+                        "",
+                        "",
+                        "",
+                        member.name,
+                        member.id,
+                        member.email,
+                        member.score,
+                    ]
+                    + user_field_values
+                    + team_field_values
+                )
                 writer.writerow(user_row)
     elif is_users_mode():
         header = ["place", "user", "score"] + user_field_names

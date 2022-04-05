@@ -49,16 +49,18 @@ class SetupForm(BaseForm):
 
     ctf_logo = FileField(
         "Logo",
-        description="Logo to use for the website instead of a CTF name. Used as the home page button.",
+        description="Logo to use for the website instead of a CTF name. Used as the home page button. Optional.",
     )
-    ctf_banner = FileField("Banner", description="Banner to use for the homepage.")
+    ctf_banner = FileField(
+        "Banner", description="Banner to use for the homepage. Optional."
+    )
     ctf_small_icon = FileField(
         "Small Icon",
-        description="favicon used in user's browsers. Only PNGs accepted. Must be 32x32px.",
+        description="favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional.",
     )
     ctf_theme = SelectField(
         "Theme",
-        description="CTFd Theme to use",
+        description="CTFd Theme to use. Can be changed later.",
         choices=list(zip(get_themes(), get_themes())),
         default=DEFAULT_THEME,
         validators=[InputRequired()],

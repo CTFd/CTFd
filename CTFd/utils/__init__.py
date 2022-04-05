@@ -1,6 +1,8 @@
+import json
 from enum import Enum
 
 import cmarkgfm
+from cmarkgfm.cmark import Options
 from flask import current_app as app
 
 # isort:imports-firstparty
@@ -14,13 +16,21 @@ binary_type = bytes
 
 def markdown(md):
     return cmarkgfm.markdown_to_html_with_extensions(
-        md, extensions=["autolink", "table", "strikethrough"]
+        md,
+        extensions=["autolink", "table", "strikethrough"],
+        options=Options.CMARK_OPT_UNSAFE,
     )
 
 
 def get_app_config(key, default=None):
     value = app.config.get(key, default)
     return value
+
+
+@cache.memoize()
+def _get_asset_json(path):
+    with open(path) as f:
+        return json.loads(f.read())
 
 
 @cache.memoize()
