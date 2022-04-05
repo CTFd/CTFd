@@ -339,12 +339,12 @@ def import_ctf(backup, erase=True):
                             )
 
     # Insert data from official tables
-    set_status(f"inserting tables")
+    set_status("inserting tables")
     insertion(first)
 
     # Create tables created by plugins
     # Run plugin migrations
-    set_status(f"inserting plugins")
+    set_status("inserting plugins")
     plugins = get_plugin_names()
     for plugin in plugins:
         set_status(f"inserting plugin {plugin}")
@@ -360,7 +360,7 @@ def import_ctf(backup, erase=True):
         plugin_upgrade(plugin_name=plugin)
 
     # Extracting files
-    set_status(f"uploading files")
+    set_status("uploading files")
     files = [f for f in backup.namelist() if f.startswith("uploads/")]
     uploader = get_uploader()
     for f in files:
