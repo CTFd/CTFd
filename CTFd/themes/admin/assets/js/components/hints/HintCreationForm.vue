@@ -25,7 +25,7 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
-                    <label class="text-muted">
+                    <label>
                       Hint<br />
                       <small>Markdown &amp; HTML are supported</small>
                     </label>
@@ -49,6 +49,31 @@
                       name="cost"
                       v-model.lazy="cost"
                     />
+                  </div>
+
+                  <div class="form-group">
+                    <label>
+                      Requirements<br />
+                      <small
+                        >Hints that must be unlocked before unlocking this
+                        hint</small
+                      >
+                    </label>
+                    <div
+                      class="form-check"
+                      v-for="hint in hints"
+                      :key="hint.id"
+                    >
+                      <label class="form-check-label cursor-pointer">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          :value="hint.id"
+                          v-model="selectedHints"
+                        />
+                        {{ hint.cost }} - {{ hint.id }}
+                      </label>
+                    </div>
                   </div>
                   <input type="hidden" id="hint-id-for-hint" name="id" />
                 </div>
@@ -74,11 +99,13 @@
 export default {
   name: "HintCreationForm",
   props: {
-    challenge_id: Number
+    challenge_id: Number,
+    hints: Array
   },
   data: function() {
     return {
-      cost: 0
+      cost: 0,
+      selectedHints: []
     };
   },
   methods: {
@@ -89,11 +116,11 @@ export default {
       return this.$refs.content.value;
     },
     submitHint: function() {
-      console.log(this.co);
       let params = {
         challenge_id: this.$props.challenge_id,
         content: this.getContent(),
-        cost: this.getCost()
+        cost: this.getCost(),
+        requirements: { prerequisites: this.selectedHints }
       };
       CTFd.fetch("/api/v1/hints", {
         method: "POST",
