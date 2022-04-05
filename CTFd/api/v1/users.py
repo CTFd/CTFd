@@ -339,7 +339,8 @@ class UserPrivateSolves(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        count = len(response.data)
+        return {"success": True, "data": response.data, "meta": {"count": count}}
 
 
 @users_namespace.route("/me/fails")
@@ -358,8 +359,8 @@ class UserPrivateFails(Resource):
             data = response.data
         else:
             data = []
-        count = len(response.data)
 
+        count = len(response.data)
         return {"success": True, "data": data, "meta": {"count": count}}
 
 
@@ -377,7 +378,8 @@ class UserPrivateAwards(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        count = len(response.data)
+        return {"success": True, "data": response.data, "meta": {"count": count}}
 
 
 @users_namespace.route("/<user_id>/solves")
@@ -399,7 +401,8 @@ class UserPublicSolves(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        count = len(response.data)
+        return {"success": True, "data": response.data, "meta": {"count": count}}
 
 
 @users_namespace.route("/<user_id>/fails")
@@ -423,8 +426,8 @@ class UserPublicFails(Resource):
             data = response.data
         else:
             data = []
-        count = len(response.data)
 
+        count = len(response.data)
         return {"success": True, "data": data, "meta": {"count": count}}
 
 
@@ -446,7 +449,8 @@ class UserPublicAwards(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        count = len(response.data)
+        return {"success": True, "data": response.data, "meta": {"count": count}}
 
 
 @users_namespace.route("/<int:user_id>/email")
