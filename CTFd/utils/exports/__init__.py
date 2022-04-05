@@ -5,8 +5,10 @@ import re
 import tempfile
 import zipfile
 from io import BytesIO
+from threading import Thread
 
 import dataset
+from flask import copy_current_request_context
 from flask import current_app as app
 from flask_migrate import upgrade as migration_upgrade
 from sqlalchemy.engine.url import make_url
@@ -83,7 +85,18 @@ def export_ctf():
 
 
 def import_ctf(backup, erase=True):
+    cache_timeout = 604800  # 604800 is 1 week in seconds
+
+    def set_error(val):
+        cache.set(key="import_error", value=val, timeout=cache_timeout)
+        print(val)
+
+    def set_status(val):
+        cache.set(key="import_status", value=val, timeout=cache_timeout)
+        print(val)
+
     if not zipfile.is_zipfile(backup):
+        set_error("zipfile.BadZipfile: zipfile is invalid")
         raise zipfile.BadZipfile
 
     backup = zipfile.ZipFile(backup)
@@ -93,15 +106,18 @@ def import_ctf(backup, erase=True):
     for f in members:
         if f.startswith("/") or ".." in f:
             # Abort on malicious zip files
+            set_error("zipfile.BadZipfile: zipfile is malicious")
             raise zipfile.BadZipfile
         info = backup.getinfo(f)
         if max_content_length:
             if info.file_size > max_content_length:
+                set_error("zipfile.LargeZipFile: zipfile is too large")
                 raise zipfile.LargeZipFile
 
     # Get list of directories in zipfile
     member_dirs = [os.path.split(m)[0] for m in members if "/" in m]
     if "db" not in member_dirs:
+        set_error("Exception: db folder is missing")
         raise Exception(
             'CTFd couldn\'t find the "db" folder in this backup. '
             "The backup may be malformed or corrupted and the import process cannot continue."
@@ -111,6 +127,7 @@ def import_ctf(backup, erase=True):
         alembic_version = json.loads(backup.open("db/alembic_version.json").read())
         alembic_version = alembic_version["results"][0]["version_num"]
     except Exception:
+        set_error("Exception: Could not determine appropriate database version")
         raise Exception(
             "Could not determine appropriate database version. This backup cannot be automatically imported."
         )
@@ -131,19 +148,17 @@ def import_ctf(backup, erase=True):
         "dab615389702",
         "e62fd69bd417",
     ):
+        set_error(
+            "Exception: The version of CTFd that this backup is from is too old to be automatically imported."
+        )
         raise Exception(
             "The version of CTFd that this backup is from is too old to be automatically imported."
         )
 
     start_time = unix_time(datetime.datetime.utcnow())
-    cache_timeout = 604800  # 604800 is 1 week in seconds
 
     cache.set(key="import_start_time", value=start_time, timeout=cache_timeout)
     cache.set(key="import_end_time", value=None, timeout=cache_timeout)
-
-    def set_status(val):
-        cache.set(key="import_status", value=val, timeout=cache_timeout)
-        print(val)
 
     set_status("started")
 
@@ -314,6 +329,9 @@ def import_ctf(backup, erase=True):
                             )
                             side_db.engine.execute(query)
                         else:
+                            set_error(
+                                f"Exception: Table name {table_name} contains quotes"
+                            )
                             raise Exception(
                                 "Table name {table_name} contains quotes".format(
                                     table_name=table_name
@@ -392,3 +410,11 @@ def import_ctf(backup, erase=True):
         value=unix_time(datetime.datetime.utcnow()),
         timeout=cache_timeout,
     )
+
+
+def background_import_ctf(backup):
+    @copy_current_request_context
+    def ctx_bridge():
+        import_ctf(backup)
+
+    Thread(target=ctx_bridge).start()
