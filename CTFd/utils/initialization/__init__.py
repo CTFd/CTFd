@@ -53,6 +53,7 @@ def init_template_filters(app):
 
 def init_template_globals(app):
     from CTFd.constants import JINJA_ENUMS
+    from CTFd.constants.assets import Assets
     from CTFd.constants.config import Configs
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
@@ -101,6 +102,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_current_user_attrs=get_current_user_attrs)
     app.jinja_env.globals.update(get_current_team_attrs=get_current_team_attrs)
     app.jinja_env.globals.update(get_ip=get_ip)
+    app.jinja_env.globals.update(Assets=Assets)
     app.jinja_env.globals.update(Configs=Configs)
     app.jinja_env.globals.update(Plugins=Plugins)
     app.jinja_env.globals.update(Session=Session)
