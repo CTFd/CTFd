@@ -205,6 +205,10 @@ def init_request_processors(app):
 
     @app.before_request
     def tracker():
+        # TODO: Maybe only limit this to when imports are in progress
+        if request.endpoint == "admin.import_ctf" and request.method == "GET":
+            return
+
         if request.endpoint == "views.themes":
             return
 

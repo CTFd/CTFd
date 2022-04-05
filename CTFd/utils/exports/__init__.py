@@ -5,7 +5,7 @@ import re
 import tempfile
 import zipfile
 from io import BytesIO
-from threading import Thread
+from multiprocessing import Process
 
 import dataset
 from flask import copy_current_request_context
@@ -417,4 +417,5 @@ def background_import_ctf(backup):
     def ctx_bridge():
         import_ctf(backup)
 
-    Thread(target=ctx_bridge).start()
+    p = Process(target=ctx_bridge)
+    p.start()
