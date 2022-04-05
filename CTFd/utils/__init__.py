@@ -81,3 +81,14 @@ def set_config(key, value):
 
     cache.delete_memoized(_get_config, key)
     return config
+
+
+def import_in_progress():
+    import_status = cache.get(key="import_status")
+    import_error = cache.get(key="import_error")
+    if import_error:
+        return False
+    elif import_status:
+        return True
+    else:
+        return False

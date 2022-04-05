@@ -22,6 +22,7 @@ from CTFd.utils.config import (
 from CTFd.utils.config.pages import get_pages
 from CTFd.utils.dates import isoformat, unix_time, unix_time_millis
 from CTFd.utils.events import EventManager, RedisEventManager
+from CTFd.utils import import_in_progress
 from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.modes import generate_account_url, get_mode_as_word
 from CTFd.utils.plugins import (
@@ -205,12 +206,14 @@ def init_request_processors(app):
 
     @app.before_request
     def tracker():
-        # TODO: Maybe only limit this to when imports are in progress
-        if request.endpoint == "admin.import_ctf" and request.method == "GET":
-            return
-
         if request.endpoint == "views.themes":
             return
+
+        if import_in_progress():
+            if request.endpoint == "admin.import_ctf":
+                return
+            else:
+                abort(403, description="Import currently in progress")
 
         if authed():
             user_ips = get_current_user_recent_ips()
