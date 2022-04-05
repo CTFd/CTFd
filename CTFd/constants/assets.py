@@ -1,9 +1,7 @@
-import json
 import os
 
 from flask import current_app, url_for
 
-from CTFd.cache import cache
 from CTFd.utils import _get_asset_json
 from CTFd.utils.config import ctf_theme
 from CTFd.utils.helpers import markup
