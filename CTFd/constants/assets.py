@@ -3,28 +3,26 @@ import os
 
 from flask import current_app, url_for
 
+from CTFd.cache import cache
+from CTFd.utils import _get_asset_json
 from CTFd.utils.config import ctf_theme
 from CTFd.utils.helpers import markup
 
 
 class _AssetsWrapper:
-    # TODO: Need caching
     def manifest(self):
         theme = ctf_theme()
         manifest = os.path.join(
             current_app.root_path, "themes", theme, "static", "manifest.json"
         )
-        with open(manifest) as f:
-            return json.loads(f.read())
+        return _get_asset_json(path=manifest)
 
-    # TODO: Need caching
     def manifest_css(self):
         theme = ctf_theme()
         manifest = os.path.join(
             current_app.root_path, "themes", theme, "static", "manifest-css.json"
         )
-        with open(manifest) as f:
-            return json.loads(f.read())
+        return _get_asset_json(path=manifest)
 
     def js(self, asset_key):
         asset = self.manifest()[asset_key]
