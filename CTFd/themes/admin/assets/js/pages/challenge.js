@@ -15,6 +15,7 @@ import TopicsList from "../components/topics/TopicsList.vue";
 import TagsList from "../components/tags/TagsList.vue";
 import ChallengeFilesList from "../components/files/ChallengeFilesList.vue";
 import HintsList from "../components/hints/HintsList.vue";
+import NextChallenge from "../components/next/NextChallenge.vue";
 import hljs from "highlight.js";
 
 const displayHint = data => {
@@ -489,6 +490,16 @@ $(() => {
     let vueContainer = document.createElement("div");
     document.querySelector("#challenge-hints").appendChild(vueContainer);
     new hintsList({
+      propsData: { challenge_id: window.CHALLENGE_ID }
+    }).$mount(vueContainer);
+  }
+
+  // Load Next component
+  if (document.querySelector("#next-add-form")) {
+    const nextChallenge = Vue.extend(NextChallenge);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#next-add-form").appendChild(vueContainer);
+    new nextChallenge({
       propsData: { challenge_id: window.CHALLENGE_ID }
     }).$mount(vueContainer);
   }
