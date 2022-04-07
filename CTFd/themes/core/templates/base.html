@@ -18,6 +18,8 @@
 			'csrfNonce': "{{ Session.nonce }}",
 			'userMode': "{{ Configs.user_mode }}",
 			'userId': {{ Session.id }},
+			'userName': "{{ User.name }}",
+			'userEmail': "{{ User.email }}",
 			'start': {{ Configs.start | tojson }},
 			'end': {{ Configs.end | tojson }},
 			'theme_settings': {{ Configs.theme_settings | tojson }}
