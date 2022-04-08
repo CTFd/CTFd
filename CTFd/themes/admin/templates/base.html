@@ -17,6 +17,8 @@
 			'csrfNonce': "{{ Session.nonce }}",
 			'userMode': "{{ get_config('user_mode') }}",
 			'userId': {{ id if (id is defined) else 0 }},
+			'userName': "{{ User.name }}",
+			'userEmail': "{{ User.email }}",
 			'start': {{ get_config("start") | tojson }},
 			'end': {{ get_config("end") | tojson }},
 		}
