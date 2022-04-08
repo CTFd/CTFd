@@ -351,16 +351,20 @@ class UserPrivateFails(Resource):
         fails = user.get_fails(admin=True)
 
         view = "user" if not is_admin() else "admin"
-        response = SubmissionSchema(view=view, many=True).dump(fails)
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
 
+        # We want to return the count purely for stats & graphs
+        # but this data isn't really needed by the end user.
+        # Only actually show fail data for admins.
         if is_admin():
+            response = SubmissionSchema(view=view, many=True).dump(fails)
+            if response.errors:
+                return {"success": False, "errors": response.errors}, 400
+
             data = response.data
         else:
             data = []
 
-        count = len(response.data)
+        count = len(fails)
         return {"success": True, "data": data, "meta": {"count": count}}
 
 
@@ -418,16 +422,20 @@ class UserPublicFails(Resource):
         fails = user.get_fails(admin=is_admin())
 
         view = "user" if not is_admin() else "admin"
-        response = SubmissionSchema(view=view, many=True).dump(fails)
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
 
+        # We want to return the count purely for stats & graphs
+        # but this data isn't really needed by the end user.
+        # Only actually show fail data for admins.
         if is_admin():
+            response = SubmissionSchema(view=view, many=True).dump(fails)
+            if response.errors:
+                return {"success": False, "errors": response.errors}, 400
+
             data = response.data
         else:
             data = []
 
-        count = len(response.data)
+        count = len(fails)
         return {"success": True, "data": data, "meta": {"count": count}}
 
 
