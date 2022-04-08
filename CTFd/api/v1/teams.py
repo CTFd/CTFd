@@ -3,6 +3,7 @@ from typing import List
 
 from flask import abort, request, session
 from flask_restx import Namespace, Resource
+from pytest import fail
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -584,17 +585,20 @@ class TeamPublicFails(Resource):
 
         view = "admin" if is_admin() else "user"
 
-        schema = SubmissionSchema(view=view, many=True)
-        response = schema.dump(fails)
-
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
-
+        # We want to return the count purely for stats & graphs
+        # but this data isn't really needed by the end user.
+        # Only actually show fail data for admins.
         if is_admin():
+            schema = SubmissionSchema(view=view, many=True)
+            response = schema.dump(fails)
+
+            if response.errors:
+                return {"success": False, "errors": response.errors}, 400
+
             data = response.data
         else:
             data = []
-        count = len(response.data)
+        count = len(fails)
 
         return {"success": True, "data": data, "meta": {"count": count}}
 
