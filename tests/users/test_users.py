@@ -61,6 +61,10 @@ def test_hidden_user_visibility():
 
             r = client.get("/users")
             response = r.get_data(as_text=True)
+            # Only search in body content
+            body_start = response.find("<body>")
+            body_end = response.find("</body>")
+            response = response[body_start:body_end]
             assert user_name not in response
 
             r = client.get("/api/v1/users")
@@ -71,6 +75,10 @@ def test_hidden_user_visibility():
 
             r = client.get("/scoreboard")
             response = r.get_data(as_text=True)
+            # Only search in body content
+            body_start = response.find("<body>")
+            body_end = response.find("</body>")
+            response = response[body_start:body_end]
             assert user_name not in response
 
             r = client.get("/api/v1/scoreboard")
@@ -85,6 +93,10 @@ def test_hidden_user_visibility():
 
             r = client.get("/users")
             response = r.get_data(as_text=True)
+            # Only search in body content
+            body_start = response.find("<body>")
+            body_end = response.find("</body>")
+            response = response[body_start:body_end]
             assert user_name in response
 
             r = client.get("/api/v1/users")
