@@ -3,7 +3,6 @@ from typing import List
 
 from flask import abort, request, session
 from flask_restx import Namespace, Resource
-from pytest import fail
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
