@@ -45,9 +45,8 @@ from CTFd.utils import config as ctf_config
 from CTFd.utils import get_config, set_config
 from CTFd.utils.csv import dump_csv, load_challenges_csv, load_teams_csv, load_users_csv
 from CTFd.utils.decorators import admins_only
+from CTFd.utils.exports import background_import_ctf
 from CTFd.utils.exports import export_ctf as export_ctf_util
-from CTFd.utils.exports import import_ctf as import_ctf_util
-from CTFd.utils.helpers import get_errors
 from CTFd.utils.security.auth import logout_user
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import is_admin
@@ -88,21 +87,25 @@ def plugin(plugin):
         return "1"
 
 
-@admin.route("/admin/import", methods=["POST"])
+@admin.route("/admin/import", methods=["GET", "POST"])
 @admins_only
 def import_ctf():
-    backup = request.files["backup"]
-    errors = get_errors()
-    try:
-        import_ctf_util(backup)
-    except Exception as e:
-        print(e)
-        errors.append(repr(e))
-
-    if errors:
-        return errors[0], 500
-    else:
-        return redirect(url_for("admin.config"))
+    if request.method == "GET":
+        start_time = cache.get("import_start_time")
+        end_time = cache.get("import_end_time")
+        import_status = cache.get("import_status")
+        import_error = cache.get("import_error")
+        return render_template(
+            "admin/import.html",
+            start_time=start_time,
+            end_time=end_time,
+            import_status=import_status,
+            import_error=import_error,
+        )
+    elif request.method == "POST":
+        backup = request.files["backup"]
+        background_import_ctf(backup)
+        return redirect(url_for("admin.import_ctf"))
 
 
 @admin.route("/admin/export", methods=["GET", "POST"])
