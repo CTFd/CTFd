@@ -10,7 +10,7 @@ from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from CTFd.cache import clear_user_recent_ips
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import Tracking, db
-from CTFd.utils import config, get_config, markdown
+from CTFd.utils import config, get_config, import_in_progress, markdown
 from CTFd.utils.config import (
     can_send_mail,
     ctf_logo,
@@ -207,6 +207,12 @@ def init_request_processors(app):
     def tracker():
         if request.endpoint == "views.themes":
             return
+
+        if import_in_progress():
+            if request.endpoint == "admin.import_ctf":
+                return
+            else:
+                abort(403, description="Import currently in progress")
 
         if authed():
             user_ips = get_current_user_recent_ips()
