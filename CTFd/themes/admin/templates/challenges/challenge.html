@@ -66,12 +66,13 @@
 		<div class="row">
 			<div class="col-md-6">
 				<nav class="nav nav-tabs nav-fill" id="challenge-properties" role="tablist">
-					<a class="nav-item nav-link active" data-toggle="tab" href="#files" role="tab">Files</a>
-					<a class="nav-item nav-link" data-toggle="tab" href="#flags" role="tab">Flags</a>
-					<a class="nav-item nav-link" data-toggle="tab" href="#topics" role="tab">Topics</a>
-					<a class="nav-item nav-link" data-toggle="tab" href="#tags" role="tab">Tags</a>
-					<a class="nav-item nav-link" data-toggle="tab" href="#hints" role="tab">Hints</a>
-					<a class="nav-item nav-link" data-toggle="tab" href="#requirements" role="tab">Requirements</a>
+					<a class="nav-item nav-link small active" data-toggle="tab" href="#files" role="tab">Files</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#flags" role="tab">Flags</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#topics" role="tab">Topics</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#tags" role="tab">Tags</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#hints" role="tab">Hints</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#requirements" role="tab">Requirements</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#next" role="tab">Next</a>
 				</nav>
 
 				<div class="tab-content" id="nav-tabContent">
@@ -120,6 +121,14 @@
 							<div class="col-md-12">
 								<h3 class="text-center py-3 d-block">Requirements</h3>
 								{% include "admin/modals/challenges/requirements.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="next" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Next Challenge</h3>
+								{% include "admin/modals/challenges/next.html" %}
 							</div>
 						</div>
 					</div>
