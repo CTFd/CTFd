@@ -27,7 +27,7 @@ services:
         internal:
 
   nginx:
-    image: nginx:1.17
+    image: nginx:stable
     restart: always
     volumes:
       - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
