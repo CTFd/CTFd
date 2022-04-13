@@ -2,7 +2,7 @@ import os
 
 from flask import current_app, url_for
 
-from CTFd.utils import _get_asset_json
+from CTFd.utils import get_asset_json
 from CTFd.utils.config import ctf_theme
 from CTFd.utils.helpers import markup
 
@@ -13,14 +13,14 @@ class _AssetsWrapper:
         manifest = os.path.join(
             current_app.root_path, "themes", theme, "static", "manifest.json"
         )
-        return _get_asset_json(path=manifest)
+        return get_asset_json(path=manifest)
 
     def manifest_css(self):
         theme = ctf_theme()
         manifest = os.path.join(
             current_app.root_path, "themes", theme, "static", "manifest-css.json"
         )
-        return _get_asset_json(path=manifest)
+        return get_asset_json(path=manifest)
 
     def js(self, asset_key):
         asset = self.manifest()[asset_key]

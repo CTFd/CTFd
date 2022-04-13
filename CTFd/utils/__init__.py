@@ -33,6 +33,13 @@ def _get_asset_json(path):
         return json.loads(f.read())
 
 
+def get_asset_json(path):
+    # Ignore caching if we are in debug mode
+    if app.debug:
+        return _get_asset_json.__wrapped__(path)
+    return _get_asset_json(path)
+
+
 @cache.memoize()
 def _get_config(key):
     config = db.session.execute(
