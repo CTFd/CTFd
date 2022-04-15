@@ -39,9 +39,9 @@ def test_previewing_page_with_format_works():
                 "content": "# content_testing",
                 "format": "markdown",
                 "nonce": sess.get("nonce"),
-                "draft": True,
-                "hidden": True,
-                "auth_required": True,
+                "draft": "y",
+                "hidden": "y",
+                "auth_required": "y",
             }
 
         r = client.post("/admin/pages/preview", data=data)
@@ -56,9 +56,9 @@ def test_previewing_page_with_format_works():
                 "content": "<test>content_testing</test>",
                 "format": "html",
                 "nonce": sess.get("nonce"),
-                "draft": True,
-                "hidden": True,
-                "auth_required": True,
+                "draft": "y",
+                "hidden": "y",
+                "auth_required": "y",
             }
 
         r = client.post("/admin/pages/preview", data=data)
