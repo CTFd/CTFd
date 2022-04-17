@@ -21,19 +21,18 @@
 			<p>
 				<b>Import Error:</b> {{ import_error }}
 			</p>
+			<div class="alert alert-danger" role="alert">
+				An error occurred during the import. Please try again. 
+			</div>
 			{% else %}
 			<p>
 				<b>Current Status:</b> {{ import_status }}
 			</p>
-			{% endif %}
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-6 offset-md-3">
 			<div class="alert alert-secondary" role="alert">
 				Page will redirect upon completion. Refresh page to get latest status.<br>
 				Page will automatically refresh every 5 seconds.
 			</div>
+			{% endif %}
 		</div>
 	</div>
 </div>
