@@ -28,23 +28,32 @@
 			{% endif %}
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			<div class="alert alert-secondary" role="alert">
+				Page will redirect upon completion. Refresh page to get latest status.<br>
+				Page will automatically refresh every 5 seconds.
+			</div>
+		</div>
+	</div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
+	// Reload every 5 seconds to poll import status
+	setTimeout(function(){
+		window.location.reload();
+	}, 5000);
+	
 	let start_time = "{{ start_time | tojson }}";
 	let end_time = "{{ end_time | tojson }}";
 	let start = document.getElementById("start-time");
 	start.innerText = new Date(parseInt(start_time) * 1000);
-	let end = document.getElementById("end-time");
-	end.innerText = new Date(parseInt(end_time) * 1000);
 	
-	// Reload every 5 seconds to poll import status
-	if (!end_time) {
-		setTimeout(function(){
-			window.location.reload();
-		}, 5000);
+	if (end_time !== "null") {
+		let end = document.getElementById("end-time");
+		end.innerText = new Date(parseInt(end_time) * 1000);
 	}
 </script>
 {% endblock %}

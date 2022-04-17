@@ -1,6 +1,8 @@
 import datetime
 import shutil
 
+from pathlib import Path
+
 from flask_migrate import MigrateCommand
 from flask_script import Manager
 
@@ -71,9 +73,13 @@ def export_ctf(path=None):
 
 
 @manager.command
-def import_ctf(path):
+def import_ctf(path, delete_import_on_finish=False):
     with app.app_context():
         import_ctf_util(path)
+
+    if delete_import_on_finish:
+        print(f"Deleting {path}")
+        Path(path).unlink()
 
 
 if __name__ == "__main__":

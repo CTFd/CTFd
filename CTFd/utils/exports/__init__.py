@@ -2,13 +2,15 @@ import datetime
 import json
 import os
 import re
+import subprocess
+import sys
 import tempfile
 import zipfile
+from importlib.resources import path
 from io import BytesIO
-from multiprocessing import Process
+from pathlib import Path
 
 import dataset
-from flask import copy_current_request_context
 from flask import current_app as app
 from flask_migrate import upgrade as migration_upgrade
 from sqlalchemy.engine.url import make_url
@@ -258,7 +260,7 @@ def import_ctf(backup, erase=True):
                     table = side_db[table_name]
 
                     saved = json.loads(data)
-                    count = saved["count"]
+                    count = len(saved["results"])
                     for i, entry in enumerate(saved["results"]):
                         set_status(f"inserting {member} {i}/{count}")
                         # This is a hack to get SQLite to properly accept datetime values from dataset
@@ -413,9 +415,11 @@ def import_ctf(backup, erase=True):
 
 
 def background_import_ctf(backup):
-    @copy_current_request_context
-    def ctx_bridge():
-        import_ctf(backup)
-
-    p = Process(target=ctx_bridge)
-    p.start()
+    # The manage.py script will delete the backup for us
+    f = tempfile.NamedTemporaryFile(delete=False)
+    backup.save(f.name)
+    python = sys.executable  # Get path of Python interpreter
+    manage_py = Path(app.root_path).parent / "manage.py"  # Path to manage.py
+    subprocess.Popen(
+        [python, manage_py, "import_ctf", "--delete_import_on_finish", f.name]
+    )
