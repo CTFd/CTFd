@@ -2,13 +2,14 @@ import datetime
 import json
 import os
 import re
+import subprocess  # nosec B404
+import sys
 import tempfile
 import zipfile
 from io import BytesIO
-from multiprocessing import Process
+from pathlib import Path
 
 import dataset
-from flask import copy_current_request_context
 from flask import current_app as app
 from flask_migrate import upgrade as migration_upgrade
 from sqlalchemy.engine.url import make_url
@@ -24,6 +25,7 @@ from CTFd.plugins.migrations import current as plugin_current
 from CTFd.plugins.migrations import upgrade as plugin_upgrade
 from CTFd.utils import get_app_config, set_config, string_types
 from CTFd.utils.dates import unix_time
+from CTFd.utils.exports.databases import is_database_mariadb
 from CTFd.utils.exports.freeze import freeze_export
 from CTFd.utils.migrations import (
     create_database,
@@ -95,6 +97,10 @@ def import_ctf(backup, erase=True):
         cache.set(key="import_status", value=val, timeout=cache_timeout)
         print(val)
 
+    # Reset import cache keys and don't print these values
+    cache.set(key="import_error", value=None, timeout=cache_timeout)
+    cache.set(key="import_status", value=None, timeout=cache_timeout)
+
     if not zipfile.is_zipfile(backup):
         set_error("zipfile.BadZipfile: zipfile is invalid")
         raise zipfile.BadZipfile
@@ -165,6 +171,7 @@ def import_ctf(backup, erase=True):
     sqlite = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("sqlite")
     postgres = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("postgres")
     mysql = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("mysql")
+    mariadb = is_database_mariadb()
 
     if erase:
         set_status("erasing")
@@ -258,7 +265,7 @@ def import_ctf(backup, erase=True):
                     table = side_db[table_name]
 
                     saved = json.loads(data)
-                    count = saved["count"]
+                    count = len(saved["results"])
                     for i, entry in enumerate(saved["results"]):
                         set_status(f"inserting {member} {i}/{count}")
                         # This is a hack to get SQLite to properly accept datetime values from dataset
@@ -305,6 +312,23 @@ def import_ctf(backup, erase=True):
                             requirements = entry.get("requirements")
                             if requirements and isinstance(requirements, string_types):
                                 entry["requirements"] = json.loads(requirements)
+
+                        # From v3.1.0 to v3.5.0 FieldEntries could have been varying levels of JSON'ified strings.
+                        # For example "\"test\"" vs "test". This results in issues with importing backups between
+                        # databases. Specifically between MySQL and MariaDB. Because CTFd standardizes against MySQL
+                        # we need to have an edge case here.
+                        if member == "db/field_entries.json":
+                            value = entry.get("value")
+                            if value:
+                                try:
+                                    # Attempt to convert anything to its original Python value
+                                    entry["value"] = str(json.loads(value))
+                                except (json.JSONDecodeError, TypeError):
+                                    pass
+                                finally:
+                                    # Dump the value into JSON if its mariadb or skip the conversion if not mariadb
+                                    if mariadb:
+                                        entry["value"] = json.dumps(entry["value"])
 
                         try:
                             table.insert(entry)
@@ -413,9 +437,11 @@ def import_ctf(backup, erase=True):
 
 
 def background_import_ctf(backup):
-    @copy_current_request_context
-    def ctx_bridge():
-        import_ctf(backup)
-
-    p = Process(target=ctx_bridge)
-    p.start()
+    # The manage.py script will delete the backup for us
+    f = tempfile.NamedTemporaryFile(delete=False)
+    backup.save(f.name)
+    python = sys.executable  # Get path of Python interpreter
+    manage_py = Path(app.root_path).parent / "manage.py"  # Path to manage.py
+    subprocess.Popen(  # nosec B603
+        [python, manage_py, "import_ctf", "--delete_import_on_finish", f.name]
+    )
