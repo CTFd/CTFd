@@ -4,6 +4,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from CTFd.utils import string_types
+from CTFd.utils.exports.databases import is_database_mariadb
 
 
 class JSONEncoder(json.JSONEncoder):
@@ -35,6 +36,7 @@ class JSONSerializer(object):
         return result
 
     def close(self):
+        mariadb = is_database_mariadb()
         for _path, result in self.buckets.items():
             result = self.wrap(result)
 
@@ -42,6 +44,7 @@ class JSONSerializer(object):
             # Before emitting a file we should standardize to valid JSON (i.e. a dict)
             # See Issue #973
             for i, r in enumerate(result["results"]):
+                # Handle JSON used in tables that use requirements
                 data = r.get("requirements")
                 if data:
                     try:
@@ -49,6 +52,23 @@ class JSONSerializer(object):
                             result["results"][i]["requirements"] = json.loads(data)
                     except ValueError:
                         pass
+
+                # Handle JSON used in FieldEntries table
+                if mariadb:
+                    if sorted(r.keys()) == [
+                        "field_id",
+                        "id",
+                        "team_id",
+                        "type",
+                        "user_id",
+                        "value",
+                    ]:
+                        value = r.get("value")
+                        if value:
+                            try:
+                                result["results"][i]["value"] = json.loads(value)
+                            except ValueError:
+                                pass
 
             data = json.dumps(result, cls=JSONEncoder, separators=(",", ":"))
             self.fileobj.write(data.encode("utf-8"))
