@@ -2,11 +2,10 @@ import datetime
 import json
 import os
 import re
-import subprocess
+import subprocess  # nosec B404
 import sys
 import tempfile
 import zipfile
-from importlib.resources import path
 from io import BytesIO
 from pathlib import Path
 
@@ -420,6 +419,6 @@ def background_import_ctf(backup):
     backup.save(f.name)
     python = sys.executable  # Get path of Python interpreter
     manage_py = Path(app.root_path).parent / "manage.py"  # Path to manage.py
-    subprocess.Popen(
+    subprocess.Popen(  # nosec B603
         [python, manage_py, "import_ctf", "--delete_import_on_finish", f.name]
     )
