@@ -1,5 +1,6 @@
-from CTFd.models import db
 from sqlalchemy.exc import OperationalError
+
+from CTFd.models import db
 
 
 def is_database_mariadb():
