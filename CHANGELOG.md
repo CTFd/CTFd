@@ -1,3 +1,57 @@
+# UNRELEASED
+
+**General**
+
+- Add a next challenge recommendation to challenges
+- Added size checking and recommendation for images uploaded during setup
+- Add support for only viewing hints after unlocking another hint
+
+**Admin Panel**
+
+- Fix issue where custom field entries for Users and Teams would be misaligned in the scoreboard CSV export
+- Show admins the email server error message when email sending fails
+- Fix minor issue where current theme cannot be found in list of themes
+- Add progress tracking to backup/export importing
+- Make imports happen in the background so that we can see status
+- Add `GET /admin/import` to see status of import
+- Disable the public interface during imports
+- Fix page preview so that it accounts for the provided format
+
+**API**
+
+- Add `count` meta field to the following endpoints:
+  - `/api/v1/users/me/solves`
+  - `/api/v1/users/me/fails`
+  - `/api/v1/users/me/awards`
+  - `/api/v1/users/[user_id]/solves`
+  - `/api/v1/users/[user_id]/fails`
+  - `/api/v1/users/[user_id]/awards`
+  - `/api/v1/teams/[team_id]/solves`
+  - TODO: Add more of this for the teams endpoints
+- Improve speed of `/api/v1/teams/me/fails`
+- Improve speed of `/api/v1/teams/[team_id]/fails`
+- Improve speed of `/api/v1/users/me/fails`
+- Improve speed of `/api/v1/users/[user_id]/fails`
+
+**Deployment**
+
+- Prevent any possible usage of an already existing session ID by checking for duplicates during during ID generation
+- No longer install `python3-dev` in Dockerfile
+- docker-compose.yml now uses `nginx:stable` as the image for nginx
+
+**Themes**
+
+- Create the `core-beta` theme and begin documenting the creation of themes using Vite
+- Add `userName` and `userEmail` to the CTFd init object in `base.html` for easier integration with other JavaScript code
+- Adds the `Assets` constant to access front end assets from Jinja templates
+- Adds a `views.themes_beta` route to avoid the `.dev`/`.min` extension being added automatically to frontend asset urls
+
+**Miscellaneous**
+
+- Fix double logging in `log()` function
+- Add `--delete_import_on_finish` to `python manage.py import_ctf`
+- Fix issue where `field_entries` table could not be imported when moving between MySQL and MariaDB
+
 # 3.4.3 / 2022-03-07
 
 **Security**
