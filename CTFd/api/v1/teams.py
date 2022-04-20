@@ -544,7 +544,8 @@ class TeamPrivateAwards(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        count = len(response.data)
+        return {"success": True, "data": response.data, "meta": {"count": count}}
 
 
 @teams_namespace.route("/<team_id>/solves")
@@ -620,4 +621,5 @@ class TeamPublicAwards(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
+        count = len(response.data)
+        return {"success": True, "data": response.data, "meta": {"count": count}}
