@@ -36,6 +36,7 @@
 
 **Deployment**
 
+- Use Python 3.9 as the default Python version
 - Prevent any possible usage of an already existing session ID by checking for duplicates during during ID generation
 - No longer install `python3-dev` in Dockerfile
 - docker-compose.yml now uses `nginx:stable` as the image for nginx
