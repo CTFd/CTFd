@@ -23,11 +23,12 @@
   - `/api/v1/users/me/solves`
   - `/api/v1/users/me/fails`
   - `/api/v1/users/me/awards`
+  - `/api/v1/teams/me/awards`
   - `/api/v1/users/[user_id]/solves`
   - `/api/v1/users/[user_id]/fails`
   - `/api/v1/users/[user_id]/awards`
   - `/api/v1/teams/[team_id]/solves`
-  - TODO: Add more of this for the teams endpoints
+  - `/api/v1/teams/[team_id]/awards`
 - Improve speed of `/api/v1/teams/me/fails`
 - Improve speed of `/api/v1/teams/[team_id]/fails`
 - Improve speed of `/api/v1/users/me/fails`
