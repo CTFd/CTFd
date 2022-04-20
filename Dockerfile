@@ -1,4 +1,4 @@
-FROM python:3.7-slim-buster
+FROM python:3.9-slim-buster
 WORKDIR /opt/CTFd
 RUN mkdir -p /opt/CTFd /var/log/CTFd /var/uploads
 
