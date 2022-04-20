@@ -437,9 +437,18 @@ def import_ctf(backup, erase=True):
 
 
 def background_import_ctf(backup):
+    # Empty out import status trackers
+    cache.set("import_start_time", value=None)
+    cache.set("import_end_time", value=None)
+    cache.set("import_status", value=None)
+    cache.set("import_error", value=None)
+
     # The manage.py script will delete the backup for us
     f = tempfile.NamedTemporaryFile(delete=False)
+
+    # Store the backup file in our tempfile
     backup.save(f.name)
+
     python = sys.executable  # Get path of Python interpreter
     manage_py = Path(app.root_path).parent / "manage.py"  # Path to manage.py
     subprocess.Popen(  # nosec B603
