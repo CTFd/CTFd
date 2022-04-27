@@ -53,7 +53,7 @@ class _ConfigsWrapper:
 
     @property
     def ctf_name(self):
-        return get_config("ctf_name", default="CTFd")
+        return get_config("ctf_name", default="COMS W4181")
 
     @property
     def ctf_small_icon(self):
