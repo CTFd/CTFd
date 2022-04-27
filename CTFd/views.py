@@ -168,11 +168,11 @@ def setup():
     <div class="col-md-6 offset-md-3">
         <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="{default_ctf_banner_location}" />
         <h3 class="text-center">
-            <p>A cool platform to learn security the practical way!</p>
+            <p>Welcome to the CS@CU practicall secuirty framework!</p>
         </h3>
         <br>
         <h4 class="text-center">
-			The platform aims to show how a practical component of the Security I course could be set up in a gamified way.
+            If you are an admin, you can go to <b>Admin Panel > Pages > All Pages</b> > index to edit this page
         </h4>
       	<h4 class="text-center">
 			Please <a href="login">Login</a> or <a href="register">Register</a> to access the material
