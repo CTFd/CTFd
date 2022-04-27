@@ -171,12 +171,13 @@ def setup():
             <p>Welcome to the CS@CU practicall secuirty framework!</p>
         </h3>
         <br>
-        <h4 class="text-center">
-            If you are an admin, you can go to <b>Admin Panel > Pages > All Pages</b> > index to edit this page
-        </h4>
       	<h4 class="text-center">
 			Please <a href="login">Login</a> or <a href="register">Register</a> to access the material
         </h4>
+        <br>
+        <p class="text-center">
+            If you are an admin, you can go to <br><b>Admin Panel > Pages > All Pages > index</b><br>to edit this page
+        </p>
     </div>
 </div>"""
             page.content = index

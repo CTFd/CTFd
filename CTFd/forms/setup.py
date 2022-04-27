@@ -18,15 +18,15 @@ from CTFd.utils.config import get_themes
 
 class SetupForm(BaseForm):
     ctf_name = StringField(
-        "Event Name", description="The name of your CTF event/workshop"
+        "Event Name", description="Course or Event for which this framework is used"
     )
     ctf_description = TextAreaField(
-        "Event Description", description="Description for the CTF"
+        "Event Description", description="Description for the Course or Event"
     )
     user_mode = RadioField(
         "User Mode",
         choices=[("teams", "Team Mode"), ("users", "User Mode")],
-        default="teams",
+        default="users",
         description="Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)",
         validators=[InputRequired()],
     )
@@ -60,7 +60,7 @@ class SetupForm(BaseForm):
     )
     ctf_theme = SelectField(
         "Theme",
-        description="CTFd Theme to use. Can be changed later.",
+        description="Theme to use. Can be changed later.",
         choices=list(zip(get_themes(), get_themes())),
         default=DEFAULT_THEME,
         validators=[InputRequired()],
@@ -71,9 +71,9 @@ class SetupForm(BaseForm):
     )
 
     start = StringField(
-        "Start Time", description="Time when your CTF is scheduled to start. Optional."
+        "Start Time", description="Time when the Event is scheduled to start. Optional."
     )
     end = StringField(
-        "End Time", description="Time when your CTF is scheduled to end. Optional."
+        "End Time", description="Time when the Event is scheduled to end. Optional."
     )
     submit = SubmitField("Finish")
