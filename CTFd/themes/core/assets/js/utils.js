@@ -312,7 +312,7 @@ export function getScript(src) {
 }
 
 export function createHtmlNode(html) {
-  const template = document.createElement('template');
+  const template = document.createElement("template");
   template.innerHTML = html.trim();
   return template.content.firstChild;
 }

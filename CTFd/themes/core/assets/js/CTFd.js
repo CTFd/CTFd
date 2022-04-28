@@ -1,5 +1,5 @@
 import $ from "jquery";
-import dayjs from "dayjs"
+import dayjs from "dayjs";
 import MarkdownIt from "markdown-it";
 
 import "./patch";
@@ -60,7 +60,7 @@ const _functions = {
       htmlEntities
     }
   }
-}
+};
 
 const CTFd = {
   init,
