@@ -70,7 +70,6 @@ const CTFd = {
   api,
   lib,
   _internal,
-  _functions,
   plugin
 };
 
