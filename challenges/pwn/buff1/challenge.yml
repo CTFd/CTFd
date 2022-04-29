@@ -1,0 +1,19 @@
+name: "AAAAAAAAAAAAAAAA"
+category: Beginner
+description: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+
+  By Tristan (@trab on discord)
+author: Tristan
+type: dynamic
+value: 0
+extra:
+  initial: 1000
+  decay: 300
+  minimum: 100
+connection_info: nc pwn.utctf.live 5000
+flags:
+  - utflag{you_expected_the_flag_to_be_screaming_but_it_was_me_dio98054042}
+files:
+  - build/AAAAAAAAAAAAAAAA
+state: hidden
