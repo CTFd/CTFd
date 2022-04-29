@@ -1,10 +1,13 @@
+import $ from "jquery";
+import dayjs from "dayjs";
+import MarkdownIt from "markdown-it";
+
+import "./patch";
 import fetch from "./fetch";
 import config from "./config";
 import { API } from "./api";
-import "./patch";
-import MarkdownIt from "markdown-it";
-import $ from "jquery";
 import ezq from "./ezq";
+import { getScript, htmlEntities, createHtmlNode } from "./utils";
 
 const api = new API("/");
 const user = {};
@@ -14,7 +17,8 @@ const ui = {
 };
 const lib = {
   $,
-  markdown
+  markdown,
+  dayjs
 };
 
 let initialized = false;
@@ -46,12 +50,23 @@ function markdown(config) {
   return md;
 }
 
+const utils = {
+  ajax: {
+    getScript
+  },
+  html: {
+    createHtmlNode,
+    htmlEntities
+  }
+};
+
 const CTFd = {
   init,
   config,
   fetch,
   user,
   ui,
+  utils,
   api,
   lib,
   _internal,
