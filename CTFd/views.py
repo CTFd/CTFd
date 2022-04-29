@@ -168,7 +168,7 @@ def setup():
     <div class="col-md-6 offset-md-3">
         <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="{default_ctf_banner_location}" />
         <h3 class="text-center">
-            <p>Welcome to the CS@CU practicall secuirty framework!</p>
+            <p>Welcome to the CS@CU practical secuirty framework!</p>
         </h3>
         <br>
       	<h4 class="text-center">
