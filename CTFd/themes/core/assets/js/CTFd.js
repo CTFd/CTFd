@@ -50,15 +50,13 @@ function markdown(config) {
   return md;
 }
 
-const _functions = {
-  utils: {
-    ajax: {
-      getScript
-    },
-    html: {
-      createHtmlNode,
-      htmlEntities
-    }
+const utils = {
+  ajax: {
+    getScript
+  },
+  html: {
+    createHtmlNode,
+    htmlEntities
   }
 };
 
@@ -68,6 +66,7 @@ const CTFd = {
   fetch,
   user,
   ui,
+  utils,
   api,
   lib,
   _internal,
