@@ -41,6 +41,11 @@
 - No longer install `python3-dev` in Dockerfile
 - docker-compose.yml now uses `nginx:stable` as the image for nginx
 
+**Plugins**
+
+- `CTFd._internal.challenge.render` and `CTFd._internal.challenge.renderer` in `view.js` Challenge type files have been deprecated. Instead Challenge plugins should refer to the `challenge.html` data provided by the API.
+  - Essentially CTFd is moving to having markdown & HTML rendered by the server.
+
 **Themes**
 
 - Create the `core-beta` theme and begin documenting the creation of themes using Vite
