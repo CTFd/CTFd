@@ -125,7 +125,7 @@ class Hint(Resource):
 
             # Get the IDs of all hints that the user has unlocked
             all_unlocks = HintUnlocks.query.filter_by(account_id=user.account_id).all()
-            unlock_ids = {unlock.id for unlock in all_unlocks}
+            unlock_ids = {unlock.target for unlock in all_unlocks}
 
             # Get the IDs of all free hints
             free_hints = Hints.query.filter_by(cost=0).all()
