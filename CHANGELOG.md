@@ -50,6 +50,7 @@
 
 - Create the `core-beta` theme and begin documenting the creation of themes using Vite
 - Add `userName` and `userEmail` to the CTFd init object in `base.html` for easier integration with other JavaScript code
+- Add `teamId` and `teamName` to the CTFd init object in `base.html` for easier integration with other JavaScript code
 - Adds the `Assets` constant to access front end assets from Jinja templates
 - Adds a `views.themes_beta` route to avoid the `.dev`/`.min` extension being added automatically to frontend asset urls
 
