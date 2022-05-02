@@ -127,6 +127,13 @@ class Hint(Resource):
             all_unlocks = HintUnlocks.query.filter_by(account_id=user.account_id).all()
             unlock_ids = {unlock.id for unlock in all_unlocks}
 
+            # Get the IDs of all free hints
+            free_hints = Hints.query.filter_by(cost=0).all()
+            free_ids = {h.id for h in free_hints}
+
+            # Add free hints to unlocked IDs
+            unlock_ids.update(free_ids)
+
             # Filter out hint IDs that don't exist
             all_hint_ids = {h.id for h in Hints.query.with_entities(Hints.id).all()}
             prereqs = set(requirements).intersection(all_hint_ids)
