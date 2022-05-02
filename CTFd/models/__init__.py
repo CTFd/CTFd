@@ -422,7 +422,7 @@ class Users(db.Model):
     def get_solves(self, admin=False):
         from CTFd.utils import get_config
 
-        solves = Solves.query.filter_by(user_id=self.id)
+        solves = Solves.query.filter_by(user_id=self.id).order_by(Solves.date.desc())
         freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
