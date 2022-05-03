@@ -20,6 +20,8 @@
 			'userId': {{ Session.id }},
 			'userName': "{{ User.name }}",
 			'userEmail': "{{ User.email }}",
+			'teamId': {{ Team.id | tojson }}, 
+			'teamName': "{{ Team.name }}",
 			'start': {{ Configs.start | tojson }},
 			'end': {{ Configs.end | tojson }},
 			'theme_settings': {{ Configs.theme_settings | tojson }}
