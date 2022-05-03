@@ -3,18 +3,18 @@
 **General**
 
 - Add a next challenge recommendation to challenges
-- Added size checking and recommendation for images uploaded during setup
 - Add support for only viewing hints after unlocking another hint
+- Add size checking and recommendation for images uploaded during setup
 
 **Admin Panel**
 
-- Add progress tracking to backup/export importing
 - Imports now happen in the background so that admins can watch the status of the import
-- Add `GET /admin/import` to see status of import
-- Disable the public interface during imports
+  - Add progress tracking to backup/export importing
+  - Add `GET /admin/import` to see status of import
+  - The public user facing portion of CTFd is now disabled during imports
 - Fix issue where custom field entries for Users and Teams would be misaligned in the scoreboard CSV export
 - Show admins the email server error message when email sending fails
-- Fix issue where current theme cannot be found in list of themes
+- Fix issue where the current theme cannot be found in list of themes
 - Fix page preview so that it accounts for the provided format
 
 **API**
