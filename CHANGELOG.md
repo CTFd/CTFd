@@ -1,4 +1,4 @@
-# UNRELEASED
+# 3.5.0 / UNRELEASED
 
 **General**
 
@@ -8,18 +8,18 @@
 
 **Admin Panel**
 
-- Fix issue where custom field entries for Users and Teams would be misaligned in the scoreboard CSV export
-- Show admins the email server error message when email sending fails
-- Fix minor issue where current theme cannot be found in list of themes
 - Add progress tracking to backup/export importing
-- Make imports happen in the background so that we can see status
+- Imports now happen in the background so that admins can watch the status of the import
 - Add `GET /admin/import` to see status of import
 - Disable the public interface during imports
+- Fix issue where custom field entries for Users and Teams would be misaligned in the scoreboard CSV export
+- Show admins the email server error message when email sending fails
+- Fix issue where current theme cannot be found in list of themes
 - Fix page preview so that it accounts for the provided format
 
 **API**
 
-- Add `count` meta field to the following endpoints:
+- Add the `count` meta field to the following endpoints:
   - `/api/v1/users/me/solves`
   - `/api/v1/users/me/fails`
   - `/api/v1/users/me/awards`
@@ -37,18 +37,17 @@
 **Deployment**
 
 - Use Python 3.9 as the default Python version
-- Prevent any possible usage of an already existing session ID by checking for duplicates during during ID generation
+- Prevent any possible usage of an already existing session ID by checking for duplicates during during session ID generation
 - No longer install `python3-dev` in Dockerfile
 - docker-compose.yml now uses `nginx:stable` as the image for nginx
 
 **Plugins**
 
-- `CTFd._internal.challenge.render` and `CTFd._internal.challenge.renderer` in `view.js` Challenge type files have been deprecated. Instead Challenge plugins should refer to the `challenge.html` data provided by the API.
-  - Essentially CTFd is moving to having markdown & HTML rendered by the server.
+- `CTFd._internal.challenge.render` and `CTFd._internal.challenge.renderer` in the `view.js` Challenge type file has been deprecated. Instead Challenge plugins should refer to the `challenge.html` attribute provided by the API. Essentially CTFd is moving to having markdown & HTML rendered by the server instead of rendering on the client.
 
 **Themes**
 
-- Create the `core-beta` theme and begin documenting the creation of themes using Vite
+- Create the [`core-beta` theme](https://github.com/CTFd/core-beta) and begin documenting the creation of themes using Vite
 - Add `userName` and `userEmail` to the CTFd init object in `base.html` for easier integration with other JavaScript code
 - Add `teamId` and `teamName` to the CTFd init object in `base.html` for easier integration with other JavaScript code
 - Adds the `Assets` constant to access front end assets from Jinja templates
