@@ -53,7 +53,7 @@ def test_previewing_page_with_format_works():
             data = {
                 "title": "title",
                 "route": "route",
-                "content": "<test>content_testing</test>",
+                "content": "<h1>content_testing</h1>",
                 "format": "html",
                 "nonce": sess.get("nonce"),
                 "draft": "y",
@@ -64,6 +64,6 @@ def test_previewing_page_with_format_works():
         r = client.post("/admin/pages/preview", data=data)
         assert r.status_code == 200
         resp = r.get_data(as_text=True)
-        assert "<test>content_testing</test>" in resp
+        assert "<h1>content_testing</h1>" in resp
 
     destroy_ctfd(app)
