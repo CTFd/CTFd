@@ -69,6 +69,10 @@ def test_hidden_teams_visibility():
 
             r = client.get("/teams")
             response = r.get_data(as_text=True)
+            # Only search in body content
+            body_start = response.find("<body>")
+            body_end = response.find("</body>")
+            response = response[body_start:body_end]
             assert team_name not in response
 
             r = client.get("/api/v1/teams")
@@ -79,6 +83,10 @@ def test_hidden_teams_visibility():
 
             r = client.get("/scoreboard")
             response = r.get_data(as_text=True)
+            # Only search in body content
+            body_start = response.find("<body>")
+            body_end = response.find("</body>")
+            response = response[body_start:body_end]
             assert team_name not in response
 
             r = client.get("/api/v1/scoreboard")
