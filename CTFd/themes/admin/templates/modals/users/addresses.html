@@ -13,7 +13,7 @@
 			{% for addr in addrs %}
 				<tr>
 					<td class="text-center">
-						<a href="{{ url_for('admin.view') }}/users?field=ip&q={{ addr.ip }}">
+						<a href="{{ url_for('admin.users_listing', field = 'ip', q = addr.ip) }}">
 							{{ addr.ip }}
 						</a>
 					</td>
