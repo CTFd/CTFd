@@ -9,7 +9,7 @@ int main() {
   char x = 0;
   char buffer[100];
   gets(buffer);
-  if(x == 0x42) {
+  if(x == 0x43) { // Hmmm... What is this?
     get_flag();
   }
   return 0;

@@ -6,8 +6,8 @@ services:
     build:
       context: .
       args: 
-        FLAG: "prac-sec{th15_I5_a_t3sT_fL@g}"
-        USER: "buff1"
+        FLAG: "prac-sec{w0w-U-F0unD-m3}"
+        USER: "basic"
     ports:
-      - "5000:9000"
+      - "5001:9001"
     read_only: true
