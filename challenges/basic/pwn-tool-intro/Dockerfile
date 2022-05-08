@@ -18,7 +18,7 @@ RUN useradd -m $USER
 
 RUN echo "$FLAG" > /home/$USER/flag.txt
 RUN chown root:root /home/$USER/flag.txt
-RUN chmod 777 /home/$USER/flag.txt
+RUN chmod 644 /home/$USER/flag.txt
 
 
 
