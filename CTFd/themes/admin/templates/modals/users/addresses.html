@@ -12,7 +12,11 @@
 			<tbody>
 			{% for addr in addrs %}
 				<tr>
-					<td class="text-center">{{ addr.ip }}</td>
+					<td class="text-center">
+						<a href="{{ url_for('admin.users_listing', field='ip', q=addr.ip) }}">
+							{{ addr.ip }}
+						</a>
+					</td>
 					<td class="text-center solve-time">
 						<span data-time="{{ addr.date | isoformat }}"></span>
 					</td>
