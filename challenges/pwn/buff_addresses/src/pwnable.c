@@ -17,8 +17,8 @@ void win() {
 void vuln(){
 	char buf[BUFSIZE];
 	gets(buf);
-	printf("The address of win() is =%p\n", &win);
-	printf("JUMP! JUMP! JUMP! %p\n", __builtin_return_address(0));
+	printf("The address of win() is %x\n", (unsigned int)&win);
+	printf("JUMP! JUMP! JUMP! %x\n", (unsigned int)__builtin_return_address(0));
 }
 
 int main(int argc, char **argv){
