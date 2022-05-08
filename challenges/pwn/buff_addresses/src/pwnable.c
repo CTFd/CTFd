@@ -9,7 +9,7 @@
 
 void win() {
 	char buf[FLAGSIZE];
-	FILE *f = fopen("flag.txt","r");
+	FILE *f = fopen("/home/buffAddy/flag.txt","r");
 	// Reading flag file
 	printf(buf);
 }
