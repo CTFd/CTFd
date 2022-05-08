@@ -18,7 +18,7 @@ void vuln(){
 	char buf[BUFSIZE];
 	gets(buf);
 
-	printf("JUMP! JUMP! JUMP! 0x%x\n", _builtin_return_address(0));
+	printf("JUMP! JUMP! JUMP! %p\n", __builtin_return_address(0));
 }
 
 int main(int argc, char **argv){
