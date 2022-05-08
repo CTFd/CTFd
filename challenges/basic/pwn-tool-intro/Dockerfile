@@ -16,9 +16,41 @@ RUN apt-get install sudo
 
 RUN useradd -m $USER
 
-RUN echo "$FLAG" > /home/$USER/flag.txt
-RUN chown root:root /home/$USER/flag.txt
-RUN chmod 644 /home/$USER/flag.txt
+RUN mkdir /home/asdf
+RUN mkdir /home/lib
+RUN mkdir /home/user
+RUN mkdir /home/abc
+RUN mkdir /home/asdf/lib
+RUN mkdir /home/asdf/flag
+RUN mkdir /home/asdf/right_here
+RUN mkdir /home/asdf/maybe_here
+RUN mkdir /home/asdf/here
+RUN mkdir /home/asdf/lib/flag/right_here
+RUN mkdir /home/asdf/lib/flag/not_here
+RUN mkdir /home/asdf/lib/flag/oops
+RUN mkdir /home/asdf/lib/flag/hmm
+RUN mkdir /home/asdf/lib/flag/maybe_here
+RUN mkdir /home/asdf/lib/flag/hmm/is_it_here
+RUN mkdir /libs
+RUN mkdir /libs/lib32
+RUN mkdir /libs/lib64
+RUN mkdir /libs/lib
+RUN mkdir /libs/lib64/autoconf
+RUN mkdir /libs/lib64/conf
+RUN mkdir /libs/lib64/sh
+RUN mkdir /libs/lib64/autoconf/lib
+RUN mkdir /home/user/looks_promising
+RUN mkdir /home/asdf/are_you_tired
+RUN mkdir /home/abc/1dont
+RUN mkdir /home/abc/2do
+RUN mkdir /home/abc/3this
+RUN mkdir /home/abc/4manually
+RUN mkdir /home/asdf/flag/find
+RUN mkdir /home/asdf/flag/here
+
+RUN echo "$FLAG" > /libs/lib64/autoconf/lib/flag.txt
+RUN chown root:root /libs/lib64/autoconf/lib/flag.txt
+RUN chmod 644 /libs/lib64/autoconf/lib/flag.txt
 
 
 
