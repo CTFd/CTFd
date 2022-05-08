@@ -16,6 +16,16 @@ RUN apt-get install sudo
 
 RUN useradd -m $USER
 
+RUN mkdir /home/basic/flag
+RUN mkdir /home/basic/right_here
+RUN mkdir /home/basic/lib
+RUN mkdir /home/basic/lib/flag
+RUN mkdir /home/basic/lib/flag/righthere
+RUN mkdir /home/basic/lib/flag/nothere
+RUN mkdir /home/basic/lib/flag/oops
+RUN mkdir /home/basic/hello
+RUN mkdir /home/basic/hackerstuff
+RUN mkdir /home/basic/maybehere
 RUN mkdir /home/asdf
 RUN mkdir /home/lib
 RUN mkdir /home/user
