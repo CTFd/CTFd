@@ -16,6 +16,8 @@
 - Show admins the email server error message when email sending fails
 - Fix issue where the current theme cannot be found in list of themes
 - Fix page preview so that it accounts for the provided format
+- Add links from User/Team Profile IP addresses to a User IP address search page
+- Add city geolocation to Team Profile IP addresses
 
 **API**
 
