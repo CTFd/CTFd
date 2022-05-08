@@ -7,7 +7,7 @@ void get_flag();
 
 int main() {
     char buf[100];
-    printf("You know the drill");
+    printf("Gimme some data");
     gets(buf);
     return 0;
 }

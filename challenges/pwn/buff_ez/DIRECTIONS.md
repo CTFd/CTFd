@@ -12,3 +12,5 @@ If you paid attention in class, you should be able to do this buffer overflow pr
 
 
 **Tip:** pwn-tools has some cool **interactive** functionality
+
+We also give you the binary, see what you can get out of it using `pwn.ELF(filename)`

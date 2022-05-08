@@ -11,4 +11,7 @@ Hmm... This one is slightly trickier
 
 You are also given the binary, so take a look at the labels inside it, can you find `get_flag()`'s address?
 
-**Tip:** pwn-tools has some cool **interactive** functionality, also take a look at how `pwn.cyclic()` could be used here. Shhhh... You didn't hear it here, but big-endian vs little-endian may be important.
+**Tips:** 
+- pwn-tools has some cool **interactive** functionality
+- take a look at how `pwn.cyclic()` could be used here
+- Shhhh... You didn't hear it here, but big-endian vs little-endian may be important
