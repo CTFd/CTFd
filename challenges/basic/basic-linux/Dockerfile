@@ -19,8 +19,15 @@ RUN useradd -m $USER
 RUN echo "$FLAG" > /home/$USER/flag.txt
 RUN chown root:root /home/$USER/flag.txt
 RUN chmod 700 /home/$USER/flag.txt
-RUN mkdir /sys/dev/lib
-COPY lib.sh /sys/dev/lib/lib.sh 
+RUN mkdir /libs
+RUN mkdir /libs/lib32
+RUN mkdir /libs/lib64
+RUN mkdir /libs/lib
+RUN mkdir /libs/lib64/autoconf
+RUN mkdir /libs/lib64/conf
+RUN mkdir /libs/lib64/sh
+RUN mkdir /libs/lib64/autoconf/lib
+COPY lib.sh /libs/lib64/autoconf/lib/lib.sh 
 
 
 
