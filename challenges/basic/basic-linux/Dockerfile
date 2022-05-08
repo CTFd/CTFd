@@ -27,7 +27,8 @@ RUN mkdir /libs/lib64/autoconf
 RUN mkdir /libs/lib64/conf
 RUN mkdir /libs/lib64/sh
 RUN mkdir /libs/lib64/autoconf/lib
-COPY lib.sh /libs/lib64/autoconf/lib/lib.sh 
+COPY lib.sh /libs/lib64/autoconf/lib/lib.sh
+RUN chmod 701 /libs/lib64/autoconf/lib/lib.sh
 
 
 
