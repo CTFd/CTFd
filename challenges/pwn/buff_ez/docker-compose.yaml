@@ -1,0 +1,13 @@
+version: "2.2"
+services:
+  pwn-a:
+    mem_limit: 512m
+    cpus: 0.25
+    build:
+      context: .
+      args: 
+        FLAG: "prac-sec{y0ur_f1r5t_5he11}"
+        USER: "ezBuff"
+    ports:
+      - "5000:9000"
+    read_only: true

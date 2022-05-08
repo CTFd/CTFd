@@ -1,0 +1,13 @@
+version: "2.2"
+services:
+  pwn-a:
+    mem_limit: 512m
+    cpus: 0.25
+    build:
+      context: .
+      args: 
+        FLAG: "prac-sec{wh4t_1s_even_4n_4ddre55}"
+        USER: "buffAddy"
+    ports:
+      - "5002:9000"
+    read_only: true
