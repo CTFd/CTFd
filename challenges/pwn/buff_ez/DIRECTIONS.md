@@ -1,4 +1,4 @@
-# Buff1
+# Buff EZ
 
 ## Category: Memory Safety
 

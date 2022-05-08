@@ -1,0 +1,13 @@
+version: "2.2"
+services:
+  pwn-jump:
+    mem_limit: 512m
+    cpus: 0.25
+    build:
+      context: .
+      args: 
+        FLAG: "prac-sec{let5-d0-jump1nG-JaCK5}"
+        USER: "jumpBuff"
+    ports:
+      - "5004:9000"
+    read_only: true
