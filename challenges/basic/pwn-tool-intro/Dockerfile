@@ -25,8 +25,9 @@ RUN mkdir /home/asdf/flag
 RUN mkdir /home/asdf/right_here
 RUN mkdir /home/asdf/maybe_here
 RUN mkdir /home/asdf/here
-RUN mkdir /home/asdf/lib/flag/right_here
-RUN mkdir /home/asdf/lib/flag/not_here
+RUN mkdir /home/asdf/lib/flag
+RUN mkdir /home/asdf/lib/flag/righthere
+RUN mkdir /home/asdf/lib/flag/nothere
 RUN mkdir /home/asdf/lib/flag/oops
 RUN mkdir /home/asdf/lib/flag/hmm
 RUN mkdir /home/asdf/lib/flag/maybe_here
