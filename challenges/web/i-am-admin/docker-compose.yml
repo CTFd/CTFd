@@ -6,5 +6,5 @@ services:
     build:
       context: .
     ports:
-      - 2361:5009
+      - 2361:5000
     read_only: true
