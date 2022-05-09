@@ -1,6 +1,6 @@
 version: "2.2"
 services:
-  pwn-a:
+  buff_address:
     mem_limit: 512m
     cpus: 0.25
     build:

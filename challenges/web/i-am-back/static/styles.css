@@ -1,0 +1,43 @@
+html, body {
+    height: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+* {
+  font-family: sans-serif;
+  padding: 10px;
+  margin: 10px;
+}
+
+label {
+  align-items: flex-start;
+}
+
+input {
+  border-color: black;
+  border-radius: 10px;
+}
+
+#submitButton {
+  background-color: blue;
+  color: white;
+  border-width: 0px;
+  border-radius: 10px;
+  width: 50%;
+  font-size: 20px;
+}
+
+#submitButton:disabled {
+  background-color: lightblue;
+}
+
+#loginFail {
+  color: red;
+  background-color: rgb(243, 193, 193);
+}

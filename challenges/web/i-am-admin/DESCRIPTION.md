@@ -1,1 +1,10 @@
-HQ needs you to help them gain admin access to the Web D-EVIL-opers' site. We think the developers were a bunch of lazy bozos and just set the username and password to 'admin' but that doesn't seem to work. Can you see if we're missing anything?
+# I am Admin
+
+## Category: Web
+
+Forgot my password, and can't log in to reset it... Such is the life of the administrator. Luckily, or not, we hired high schoolers to create this login portal, heard they just started experimenting with cookies recently.
+
+Connect on port `1337`
+
+**Tips:**
+1. Burp-Suite is your friend

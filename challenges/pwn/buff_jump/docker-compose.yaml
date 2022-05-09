@@ -1,6 +1,6 @@
 version: "2.2"
 services:
-  pwn-jump:
+  buff_jump:
     mem_limit: 512m
     cpus: 0.25
     build:
