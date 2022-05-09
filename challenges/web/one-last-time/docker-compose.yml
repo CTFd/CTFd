@@ -1,0 +1,10 @@
+version: "2.2"
+services:
+  one-last-time:
+    cpus: .25
+    mem_limit: 1024m
+    build:
+      context: .
+    ports:
+      - 1339:5000
+    read_only: true

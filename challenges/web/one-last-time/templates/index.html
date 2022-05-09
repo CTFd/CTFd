@@ -5,18 +5,18 @@
   </head>
   <body>
     <div>
-      <h1>Super Duper Secure</h1>
-      <p>Bet you can't log in with credentials admin:admin</p>
+      <h1>This should be fun!</h1>
+      <p> Still admin:admin </p>
       <form method="POST">
         <label for="username">Username:</label>
         <input type="text" name="username"><br> 
 
         <label for="pwd">Password:</label>    
         <input type="password" name="pwd"><br>
-        <input type="submit" id="submitButton" value="Log In" disabled>
+        <input type="submit" id="submitButton" value="Log In">
       </form>
       {% if loginFailed %}
-        <div id="loginFail">Hahahaha, NOPE </div>
+        <div id="loginFail">Try admin:admin</div>
       {% endif %}
     </div>
   </body>
