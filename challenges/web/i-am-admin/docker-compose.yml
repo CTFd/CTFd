@@ -1,0 +1,10 @@
+version: "2.2"
+services:
+  web-beginner-admin-login1:
+    cpus: .25
+    mem_limit: 1024m
+    build:
+      context: .
+    ports:
+      - 2361:5009
+    read_only: true

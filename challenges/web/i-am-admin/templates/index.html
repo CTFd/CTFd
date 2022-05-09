@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>Log in as Admin</title>
+  </head>
+  <body>
+    <div>
+      <h1>Hello Admin! Please log into this super legit website</h1>
+      <form method="POST">
+        <label for="username">Username:</label>
+        <input type="text" name="username"><br> 
+
+        <label for="pwd">Password:</label>    
+        <input type="password" name="pwd"><br>
+        <input type="submit" id="submitButton" value="Log In">
+      </form>
+      {% if loginFailed %}
+        <div id="loginFail">WRONG!</div>
+      {% endif %}
+    </div>
+  </body>
+</html>
