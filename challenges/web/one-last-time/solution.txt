@@ -1,0 +1,1 @@
+isAdmin is checked by the form now, send it in a POST request set to True
