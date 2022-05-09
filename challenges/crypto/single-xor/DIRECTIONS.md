@@ -1,4 +1,4 @@
-# To XOR or not to XOR
+# Single XOR
 
 ## Category: Cryptography
 
