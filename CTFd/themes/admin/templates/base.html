@@ -112,17 +112,6 @@
 	</nav>
 
 	<main role="main">
-		{% if get_config('version_latest') %}
-		<div class="container-fluid bg-warning text-center py-3">
-			<div class="row">
-				<div class="col-md-12">
-					<a class="btn btn-warning" href="{{ get_config('version_latest') }}">
-						A new CTFd version is available!
-					</a>
-				</div>
-			</div>
-		</div>
-		{% endif %}
 		{% block content %}
 		{% endblock %}
 	</main>
