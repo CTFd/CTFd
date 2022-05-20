@@ -150,7 +150,9 @@ def require_team(f):
                     abort(403)
                 else:
                     return redirect(url_for("teams.private", next=request.full_path))
-        return f(*args, **kwargs)
+            return f(*args, **kwargs)
+        else:
+            abort(404)
 
     return require_team_wrapper
 
