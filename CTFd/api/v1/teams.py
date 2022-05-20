@@ -17,7 +17,8 @@ from CTFd.schemas.awards import AwardSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.teams import TeamSchema
 from CTFd.utils import get_config
-from CTFd.utils.decorators import admins_only, authed_only, require_team, require_team_mode
+from CTFd.utils.decorators import admins_only, authed_only, require_team
+from CTFd.utils.decorators.modes import require_team_mode
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
     check_score_visibility,
