@@ -21,7 +21,7 @@ url.database = None
 
 # Wait for the database server to be available
 engine = create_engine(url)
-print(f"Waiting for {url} to be ready")
+print(f"Waiting for {url.host} to be ready")
 while True:
     try:
         engine.raw_connection()
@@ -30,5 +30,5 @@ while True:
         print(".", end="", flush=True)
         time.sleep(1)
 
-print(f"{url} is ready")
+print(f"{url.host} is ready")
 time.sleep(1)
