@@ -26,6 +26,7 @@ from CTFd.models import (
     UserTokens,
     db,
 )
+from CTFd.utils.health import check_database, check_config
 from CTFd.utils import config, get_config, set_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
@@ -504,3 +505,12 @@ def themes_beta(theme, path):
         if os.path.isfile(cand_path):
             return send_file(cand_path)
     abort(404)
+
+
+@views.route("/healthcheck")
+def healthcheck():
+    if check_database() is False:
+        return "ERR", 500
+    if check_config() is False:
+        return "ERR", 500
+    return "OK", 200
