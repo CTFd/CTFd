@@ -26,7 +26,6 @@ from CTFd.models import (
     UserTokens,
     db,
 )
-from CTFd.utils.health import check_database, check_config
 from CTFd.utils import config, get_config, set_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
@@ -45,6 +44,7 @@ from CTFd.utils.email import (
     DEFAULT_VERIFICATION_EMAIL_BODY,
     DEFAULT_VERIFICATION_EMAIL_SUBJECT,
 )
+from CTFd.utils.health import check_config, check_database
 from CTFd.utils.helpers import get_errors, get_infos, markup
 from CTFd.utils.modes import USERS_MODE
 from CTFd.utils.security.auth import login_user

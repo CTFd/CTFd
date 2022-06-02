@@ -1,8 +1,9 @@
 from time import monotonic_ns
 
-from CTFd.cache import cache, timed_lru_cache
-from sqlalchemy_utils import database_exists
 from flask import current_app
+from sqlalchemy_utils import database_exists
+
+from CTFd.cache import cache, timed_lru_cache
 
 
 @timed_lru_cache(timeout=30)

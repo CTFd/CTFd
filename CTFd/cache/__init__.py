@@ -1,5 +1,5 @@
 from functools import lru_cache, wraps
-import time
+from time import monotonic_ns
 
 from flask import request
 from flask_caching import Cache, make_template_fragment_key
@@ -22,13 +22,13 @@ def timed_lru_cache(timeout: int = 300, maxsize: int = 64, typed: bool = False):
     def wrapper_cache(func):
         func = lru_cache(maxsize=maxsize, typed=typed)(func)
         func.delta = timeout * 10 ** 9
-        func.expiration = time.monotonic_ns() + func.delta
+        func.expiration = monotonic_ns() + func.delta
 
         @wraps(func)
         def wrapped_func(*args, **kwargs):
-            if time.monotonic_ns() >= func.expiration:
+            if monotonic_ns() >= func.expiration:
                 func.cache_clear()
-                func.expiration = time.monotonic_ns() + func.delta
+                func.expiration = monotonic_ns() + func.delta
             return func(*args, **kwargs)
 
         wrapped_func.cache_info = func.cache_info
