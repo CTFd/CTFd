@@ -12,7 +12,7 @@ aniso8601==8.0.0
     # via flask-restx
 attrs==20.3.0
     # via jsonschema
-bcrypt==3.1.7
+bcrypt==3.2.2
     # via -r requirements.in
 boto3==1.13.9
     # via -r requirements.in
@@ -27,7 +27,7 @@ cffi==1.15.0
     #   bcrypt
     #   cmarkgfm
     #   pybluemonday
-chardet==3.0.4
+charset-normalizer==2.0.12
     # via requests
 click==7.1.2
     # via flask
@@ -60,11 +60,11 @@ flask-sqlalchemy==2.4.3
     # via
     #   -r requirements.in
     #   flask-migrate
-gevent==20.9.0
+gevent==21.12.0
     # via -r requirements.in
-greenlet==0.4.17
+greenlet==1.1.2
     # via gevent
-gunicorn==20.0.4
+gunicorn==20.1.0
     # via -r requirements.in
 idna==2.10
     # via requests
@@ -100,7 +100,7 @@ maxminddb==1.5.4
     # via
     #   -r requirements.in
     #   python-geoacumen-city
-passlib==1.7.2
+passlib==1.7.4
     # via -r requirements.in
 pybluemonday==0.0.9
     # via -r requirements.in
@@ -120,19 +120,18 @@ python-dotenv==0.13.0
     # via -r requirements.in
 python-editor==1.0.4
     # via alembic
-python-geoacumen-city==2022.2.15
+python-geoacumen-city==2022.5.15
     # via -r requirements.in
 pytz==2020.4
     # via flask-restx
 redis==3.5.2
     # via -r requirements.in
-requests==2.23.0
+requests==2.27.1
     # via -r requirements.in
 s3transfer==0.3.3
     # via boto3
 six==1.15.0
     # via
-    #   bcrypt
     #   flask-marshmallow
     #   flask-restx
     #   jsonschema
