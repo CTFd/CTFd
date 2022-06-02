@@ -15,7 +15,7 @@ def timed_lru_cache(timeout: int = 300, maxsize: int = 64, typed: bool = False):
     seconds (int): Timeout in seconds to clear the WHOLE cache, default = 5 minutes
     maxsize (int): Maximum Size of the Cache
     typed (bool): Same value of different type will be a different entry
-    
+
     Implmentation from https://gist.github.com/Morreski/c1d08a3afa4040815eafd3891e16b945?permalink_comment_id=3437689#gistcomment-3437689
     """
 
