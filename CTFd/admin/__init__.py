@@ -27,6 +27,7 @@ from CTFd.admin import submissions  # noqa: F401
 from CTFd.admin import teams  # noqa: F401
 from CTFd.admin import users  # noqa: F401
 from CTFd.cache import cache, clear_config, clear_pages, clear_standings
+from CTFd.config import Config
 from CTFd.models import (
     Awards,
     Challenges,
@@ -175,6 +176,7 @@ def config():
 
     configs = Configs.query.all()
     configs = {c.key: get_config(c.key) for c in configs}
+    configs['using_sqlite'] = Config.DATABASE_URL.startswith("sqlite")
 
     themes = ctf_config.get_themes()
 
