@@ -10,7 +10,7 @@ from CTFd.utils.decorators import (
 )
 from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils.helpers import get_errors, get_infos
-from CTFd.utils.user import authed, is_admin, get_current_team
+from CTFd.utils.user import authed, get_current_team,  is_admin
 
 challenges = Blueprint("challenges", __name__)
 
@@ -37,7 +37,7 @@ def listing():
         Configs.challenge_visibility == ChallengeVisibilityTypes.ADMINS
         and is_admin() is True
     ):
-        infos.append(f"Challenges are set to Admins Only mode")
+        infos.append("Challenges are set to Admins Only mode")
     
     if ctf_started() is False:
         errors.append(f"{Configs.ctf_name} has not started yet")
