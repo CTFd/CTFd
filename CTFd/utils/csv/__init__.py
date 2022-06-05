@@ -111,7 +111,7 @@ def dump_scoreboard_csv():
                 )
                 writer.writerow(user_row)
     elif is_users_mode():
-        header = ["place", "user", "score"] + user_field_names
+        header = ["place", "user name", "user id", "user email", "score"] + user_field_names
         writer.writerow(header)
 
         for i, standing in enumerate(standings):
@@ -122,7 +122,7 @@ def dump_scoreboard_csv():
             user_field_values = [
                 user_field_entries.get(f_id, "") for f_id in user_field_ids
             ]
-            user_row = [i + 1, user.name, standing.score] + user_field_values
+            user_row = [i + 1, user.name, user.id, user.email, standing.score] + user_field_values
             writer.writerow(user_row)
 
     # In Python 3 send_file requires bytes
