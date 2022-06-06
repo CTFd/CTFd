@@ -54,7 +54,9 @@ def ctf_ended():
 
 
 def view_after_ctf():
-    return get_config("view_after_ctf")
+    if get_config("post_ctf_visibility") == 'Enabled':
+        return True
+    return False
 
 
 def unix_time(dt):
