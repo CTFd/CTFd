@@ -92,6 +92,13 @@
 		<div class="form-group">
 			<div class="form-check">
 				<label>
+					<input id="view_after_ctf" name="view_after_ctf" type="checkbox"
+						   {% if view_after_ctf %}checked{% endif %}>
+					Allow challenges to be viewed (no submissions are recorded) after the CTF End Time.
+				</label>
+			</div>
+			<div class="form-check">
+				<label>
 					<input id="paused" name="paused" type="checkbox" {% if paused %}checked{% endif %}>
 					Pause CTF<br>
 					<small>
