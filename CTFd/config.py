@@ -4,6 +4,13 @@ from distutils.util import strtobool
 from typing import Union
 
 
+class BadDatabaseType(Exception):
+    """
+    Raised when trying to perform an operation such as an import
+    with a database type which is disallowed for such operation.
+    """
+
+
 class EnvInterpolation(configparser.BasicInterpolation):
     """Interpolation which expands environment variables in values."""
 
