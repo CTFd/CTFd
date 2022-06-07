@@ -82,7 +82,7 @@ def import_ctf(path, delete_import_on_finish=False):
             import_ctf_util(path)
         except:
             from CTFd.utils.dates import unix_time
-            
+
             set_import_error(f"Exception: Failure")
             set_import_end_time(value=unix_time(datetime.datetime.utcnow()))
 
