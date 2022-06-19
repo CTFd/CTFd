@@ -99,13 +99,13 @@ def set_import_status(value, timeout=604800, skip_print=False):
 
 
 def set_import_start_time(value, timeout=604800, skip_print=False):
-    cache.set(key="import_status", value=value, timeout=timeout)
+    cache.set(key="import_start_time", value=value, timeout=timeout)
     if not skip_print:
         print(value)
 
 
 def set_import_end_time(value, timeout=604800, skip_print=False):
-    cache.set(key="import_status", value=value, timeout=timeout)
+    cache.set(key="import_end_time", value=value, timeout=timeout)
     if not skip_print:
         print(value)
 
@@ -448,10 +448,10 @@ def import_ctf(backup, erase=True):
 
 def background_import_ctf(backup):
     # Empty out import status trackers
-    cache.set("import_start_time", value=None)
-    cache.set("import_end_time", value=None)
-    cache.set("import_status", value=None)
-    cache.set("import_error", value=None)
+    set_import_start_time(value=None, skip_print=True)
+    set_import_end_time(value=None, skip_print=True)
+    set_import_status(value=None, skip_print=True)
+    set_import_error(value=None, skip_print=True)
 
     # The manage.py script will delete the backup for us
     f = tempfile.NamedTemporaryFile(delete=False)

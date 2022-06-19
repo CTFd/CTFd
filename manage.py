@@ -80,10 +80,10 @@ def import_ctf(path, delete_import_on_finish=False):
     with app.app_context():
         try:
             import_ctf_util(path)
-        except:
+        except Exception as e:
             from CTFd.utils.dates import unix_time
 
-            set_import_error(f"Exception: Failure")
+            set_import_error(f"Import Failure: " + str(e))
             set_import_end_time(value=unix_time(datetime.datetime.utcnow()))
 
     if delete_import_on_finish:
