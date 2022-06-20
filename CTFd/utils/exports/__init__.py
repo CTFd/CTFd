@@ -116,7 +116,7 @@ def import_ctf(backup, erase=True):
     set_import_error(value=None, skip_print=True)
     set_import_status(value=None, skip_print=True)
 
-    if Config.DATABASE_URL.startswith("sqlite"):
+    if Config.SQLALCHEMY_DATABASE_URI.startswith("sqlite"):
         set_import_error(
             "Exception: Importing not currently supported for SQLite databases. See Github issue #1988."
         )
