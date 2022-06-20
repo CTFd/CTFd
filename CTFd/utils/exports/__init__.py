@@ -87,27 +87,41 @@ def export_ctf():
     return backup
 
 
+def set_import_error(value, timeout=604800, skip_print=False):
+    cache.set(key="import_error", value=value, timeout=timeout)
+    if not skip_print:
+        print(value)
+
+
+def set_import_status(value, timeout=604800, skip_print=False):
+    cache.set(key="import_status", value=value, timeout=timeout)
+    if not skip_print:
+        print(value)
+
+
+def set_import_start_time(value, timeout=604800, skip_print=False):
+    cache.set(key="import_start_time", value=value, timeout=timeout)
+    if not skip_print:
+        print(value)
+
+
+def set_import_end_time(value, timeout=604800, skip_print=False):
+    cache.set(key="import_end_time", value=value, timeout=timeout)
+    if not skip_print:
+        print(value)
+
+
 def import_ctf(backup, erase=True):
-    cache_timeout = 604800  # 604800 is 1 week in seconds
-
-    def set_error(val):
-        cache.set(key="import_error", value=val, timeout=cache_timeout)
-        print(val)
-
-    def set_status(val):
-        cache.set(key="import_status", value=val, timeout=cache_timeout)
-        print(val)
-
     # Reset import cache keys and don't print these values
-    cache.set(key="import_error", value=None, timeout=cache_timeout)
-    cache.set(key="import_status", value=None, timeout=cache_timeout)
+    set_import_error(value=None, skip_print=True)
+    set_import_status(value=None, skip_print=True)
 
     if Config.DATABASE_URL.startswith("sqlite"):
         set_error("config.BadDatabaseType: Importing disallowed for SQLite databases")
         raise BadDatabaseType
 
     if not zipfile.is_zipfile(backup):
-        set_error("zipfile.BadZipfile: zipfile is invalid")
+        set_import_error("zipfile.BadZipfile: zipfile is invalid")
         raise zipfile.BadZipfile
 
     backup = zipfile.ZipFile(backup)
@@ -117,18 +131,18 @@ def import_ctf(backup, erase=True):
     for f in members:
         if f.startswith("/") or ".." in f:
             # Abort on malicious zip files
-            set_error("zipfile.BadZipfile: zipfile is malicious")
+            set_import_error("zipfile.BadZipfile: zipfile is malicious")
             raise zipfile.BadZipfile
         info = backup.getinfo(f)
         if max_content_length:
             if info.file_size > max_content_length:
-                set_error("zipfile.LargeZipFile: zipfile is too large")
+                set_import_error("zipfile.LargeZipFile: zipfile is too large")
                 raise zipfile.LargeZipFile
 
     # Get list of directories in zipfile
     member_dirs = [os.path.split(m)[0] for m in members if "/" in m]
     if "db" not in member_dirs:
-        set_error("Exception: db folder is missing")
+        set_import_error("Exception: db folder is missing")
         raise Exception(
             'CTFd couldn\'t find the "db" folder in this backup. '
             "The backup may be malformed or corrupted and the import process cannot continue."
@@ -138,7 +152,7 @@ def import_ctf(backup, erase=True):
         alembic_version = json.loads(backup.open("db/alembic_version.json").read())
         alembic_version = alembic_version["results"][0]["version_num"]
     except Exception:
-        set_error("Exception: Could not determine appropriate database version")
+        set_import_error("Exception: Could not determine appropriate database version")
         raise Exception(
             "Could not determine appropriate database version. This backup cannot be automatically imported."
         )
@@ -159,7 +173,7 @@ def import_ctf(backup, erase=True):
         "dab615389702",
         "e62fd69bd417",
     ):
-        set_error(
+        set_import_error(
             "Exception: The version of CTFd that this backup is from is too old to be automatically imported."
         )
         raise Exception(
@@ -168,10 +182,10 @@ def import_ctf(backup, erase=True):
 
     start_time = unix_time(datetime.datetime.utcnow())
 
-    cache.set(key="import_start_time", value=start_time, timeout=cache_timeout)
-    cache.set(key="import_end_time", value=None, timeout=cache_timeout)
+    set_import_start_time(value=start_time, skip_print=True)
+    set_import_end_time(value=None, skip_print=True)
 
-    set_status("started")
+    set_import_status("started")
 
     sqlite = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("sqlite")
     postgres = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("postgres")
@@ -179,7 +193,7 @@ def import_ctf(backup, erase=True):
     mariadb = is_database_mariadb()
 
     if erase:
-        set_status("erasing")
+        set_import_status("erasing")
         # Clear out existing connections to release any locks
         db.session.close()
         db.engine.dispose()
@@ -206,12 +220,12 @@ def import_ctf(backup, erase=True):
         create_database()
         # We explicitly do not want to upgrade or stamp here.
         # The import will have this information.
-        set_status("erased")
+        set_import_status("erased")
 
     side_db = dataset.connect(get_app_config("SQLALCHEMY_DATABASE_URI"))
 
     try:
-        set_status("disabling foreign key checks")
+        set_import_status("disabling foreign key checks")
         if postgres:
             side_db.query("SET session_replication_role=replica;")
         else:
@@ -256,7 +270,7 @@ def import_ctf(backup, erase=True):
     # insertion between official database tables and plugin tables
     def insertion(table_filenames):
         for member in table_filenames:
-            set_status(f"inserting {member}")
+            set_import_status(f"inserting {member}")
             if member.startswith("db/"):
                 table_name = member[3:-5]
 
@@ -272,7 +286,7 @@ def import_ctf(backup, erase=True):
                     saved = json.loads(data)
                     count = len(saved["results"])
                     for i, entry in enumerate(saved["results"]):
-                        set_status(f"inserting {member} {i}/{count}")
+                        set_import_status(f"inserting {member} {i}/{count}")
                         # This is a hack to get SQLite to properly accept datetime values from dataset
                         # See Issue #246
                         if sqlite:
@@ -358,7 +372,7 @@ def import_ctf(backup, erase=True):
                             )
                             side_db.engine.execute(query)
                         else:
-                            set_error(
+                            set_import_error(
                                 f"Exception: Table name {table_name} contains quotes"
                             )
                             raise Exception(
@@ -368,15 +382,15 @@ def import_ctf(backup, erase=True):
                             )
 
     # Insert data from official tables
-    set_status("inserting tables")
+    set_import_status("inserting tables")
     insertion(first)
 
     # Create tables created by plugins
     # Run plugin migrations
-    set_status("inserting plugins")
+    set_import_status("inserting plugins")
     plugins = get_plugin_names()
     for plugin in plugins:
-        set_status(f"inserting plugin {plugin}")
+        set_import_status(f"inserting plugin {plugin}")
         revision = plugin_current(plugin_name=plugin)
         plugin_upgrade(plugin_name=plugin, revision=revision, lower=None)
 
@@ -389,7 +403,7 @@ def import_ctf(backup, erase=True):
         plugin_upgrade(plugin_name=plugin)
 
     # Extracting files
-    set_status("uploading files")
+    set_import_status("uploading files")
     files = [f for f in backup.namelist() if f.startswith("uploads/")]
     uploader = get_uploader()
     for f in files:
@@ -405,7 +419,7 @@ def import_ctf(backup, erase=True):
         uploader.store(fileobj=source, filename=filename)
 
     # Alembic sqlite support is lacking so we should just create_all anyway
-    set_status("running head migrations")
+    set_import_status("running head migrations")
     if sqlite:
         app.db.create_all()
         stamp_latest_revision()
@@ -416,7 +430,7 @@ def import_ctf(backup, erase=True):
         app.db.create_all()
 
     try:
-        set_status("reenabling foreign key checks")
+        set_import_status("reenabling foreign key checks")
         if postgres:
             side_db.query("SET session_replication_role=DEFAULT;")
         else:
@@ -425,7 +439,7 @@ def import_ctf(backup, erase=True):
         print("Failed to enable foreign key checks. Continuing.")
 
     # Invalidate all cached data
-    set_status("clearing caches")
+    set_import_status("clearing caches")
     cache.clear()
 
     # Set default theme in case the current instance or the import does not provide it
@@ -433,20 +447,16 @@ def import_ctf(backup, erase=True):
     set_config("ctf_version", CTFD_VERSION)
 
     # Set config variables to mark import completed
-    cache.set(key="import_start_time", value=start_time, timeout=cache_timeout)
-    cache.set(
-        key="import_end_time",
-        value=unix_time(datetime.datetime.utcnow()),
-        timeout=cache_timeout,
-    )
+    set_import_start_time(value=start_time, skip_print=True)
+    set_import_end_time(value=unix_time(datetime.datetime.utcnow()), skip_print=True)
 
 
 def background_import_ctf(backup):
     # Empty out import status trackers
-    cache.set("import_start_time", value=None)
-    cache.set("import_end_time", value=None)
-    cache.set("import_status", value=None)
-    cache.set("import_error", value=None)
+    set_import_start_time(value=None, skip_print=True)
+    set_import_end_time(value=None, skip_print=True)
+    set_import_status(value=None, skip_print=True)
+    set_import_error(value=None, skip_print=True)
 
     # The manage.py script will delete the backup for us
     f = tempfile.NamedTemporaryFile(delete=False)

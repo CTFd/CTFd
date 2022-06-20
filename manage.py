@@ -1,6 +1,5 @@
 import datetime
 import shutil
-
 from pathlib import Path
 
 from flask_migrate import MigrateCommand
@@ -12,6 +11,10 @@ from CTFd.utils import set_config as set_config_util
 from CTFd.utils.config import ctf_name
 from CTFd.utils.exports import export_ctf as export_ctf_util
 from CTFd.utils.exports import import_ctf as import_ctf_util
+from CTFd.utils.exports import (
+    set_import_end_time,
+    set_import_error,
+)
 
 app = create_app()
 
@@ -75,7 +78,13 @@ def export_ctf(path=None):
 @manager.command
 def import_ctf(path, delete_import_on_finish=False):
     with app.app_context():
-        import_ctf_util(path)
+        try:
+            import_ctf_util(path)
+        except Exception as e:
+            from CTFd.utils.dates import unix_time
+
+            set_import_error(f"Import Failure: " + str(e))
+            set_import_end_time(value=unix_time(datetime.datetime.utcnow()))
 
     if delete_import_on_finish:
         print(f"Deleting {path}")
