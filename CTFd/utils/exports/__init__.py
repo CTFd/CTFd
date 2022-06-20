@@ -18,7 +18,7 @@ from sqlalchemy.sql import sqltypes
 
 from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
-from CTFd.config import BadDatabaseType, Config
+from CTFd.config import Config
 from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import db, get_class_by_tablename
 from CTFd.plugins import get_plugin_names
@@ -117,8 +117,10 @@ def import_ctf(backup, erase=True):
     set_import_status(value=None, skip_print=True)
 
     if Config.DATABASE_URL.startswith("sqlite"):
-        set_error("config.BadDatabaseType: Importing disallowed for SQLite databases")
-        raise BadDatabaseType
+        set_import_error("Exception: Importing disallowed for SQLite databases")
+        raise Exception(
+            "Importing not currently supported for SQLite databases. See Github issue #1988."
+        )
 
     if not zipfile.is_zipfile(backup):
         set_import_error("zipfile.BadZipfile: zipfile is invalid")
