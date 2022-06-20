@@ -31,12 +31,6 @@
 					CTFd instance and all your data will be replaced by the imported data.
 					You should only import data that you trust!</p>
 
-			{% if using_sqlite %}
-				<div class="alert alert-danger" role="alert">
-					Importing is disallowed when using SQLite databases
-				</div>
-			</div>
-			{% else %}
 				<div class="alert alert-warning" role="alert">
 					<small class="text-muted text-right">
 						<i class="fas fa-exclamation pr-2"></i>
@@ -49,7 +43,6 @@
 				<input class="form-control-file" type="file" name="backup" id="import-file" accept=".zip">
 			</div>
 			<input id="import-button" type="submit" class="btn btn-warning" value="Import">
-			{% endif %}
 		</div>
 		<div role="tabpanel" class="tab-pane" id="save-csv">
 			<div class="alert alert-warning" role="alert">
