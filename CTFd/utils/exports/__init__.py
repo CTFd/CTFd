@@ -117,7 +117,9 @@ def import_ctf(backup, erase=True):
     set_import_status(value=None, skip_print=True)
 
     if Config.DATABASE_URL.startswith("sqlite"):
-        set_import_error("Exception: Importing not currently supported for SQLite databases. See Github issue #1988.")
+        set_import_error(
+            "Exception: Importing not currently supported for SQLite databases. See Github issue #1988."
+        )
         raise Exception(
             "Importing not currently supported for SQLite databases. See Github issue #1988."
         )
