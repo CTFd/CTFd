@@ -18,7 +18,6 @@ from sqlalchemy.sql import sqltypes
 
 from CTFd import __version__ as CTFD_VERSION
 from CTFd.cache import cache
-from CTFd.config import Config
 from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import db, get_class_by_tablename
 from CTFd.plugins import get_plugin_names
