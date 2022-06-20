@@ -115,6 +115,14 @@ def import_ctf(backup, erase=True):
     set_import_error(value=None, skip_print=True)
     set_import_status(value=None, skip_print=True)
 
+    if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
+        set_import_error(
+            "Exception: Importing not currently supported for SQLite databases. See Github issue #1988."
+        )
+        raise Exception(
+            "Importing not currently supported for SQLite databases. See Github issue #1988."
+        )
+
     if not zipfile.is_zipfile(backup):
         set_import_error("zipfile.BadZipfile: zipfile is invalid")
         raise zipfile.BadZipfile
