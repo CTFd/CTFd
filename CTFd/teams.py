@@ -278,7 +278,14 @@ def new():
         if errors:
             return render_template("teams/new_team.html", errors=errors), 403
 
-        team = Teams(name=teamname, password=passphrase, captain_id=user.id)
+        # Hide the created team if the creator is an admin
+        hidden = False
+        if user.type == "admin":
+            hidden = True
+
+        team = Teams(
+            name=teamname, password=passphrase, captain_id=user.id, hidden=hidden
+        )
 
         if website:
             team.website = website
