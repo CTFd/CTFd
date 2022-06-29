@@ -278,7 +278,7 @@ def new():
         if errors:
             return render_template("teams/new_team.html", errors=errors), 403
 
-        team = Teams(name=teamname, password=passphrase, captain_id=user.id)
+        team = Teams(name=teamname, password=passphrase, captain_id=user.id, hidden=user.type=='admin')
 
         if website:
             team.website = website
