@@ -283,7 +283,9 @@ def new():
         if user.type == "admin":
             hidden = True
 
-        team = Teams(name=teamname, password=passphrase, captain_id=user.id, hidden=hidden)
+        team = Teams(
+            name=teamname, password=passphrase, captain_id=user.id, hidden=hidden
+        )
 
         if website:
             team.website = website
