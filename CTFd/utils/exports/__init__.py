@@ -341,7 +341,7 @@ def import_ctf(backup, erase=True):
                         # we need to have an edge case here.
                         if member == "db/field_entries.json":
                             value = entry.get("value")
-                            if value:
+                            if value is not None:
                                 try:
                                     # Attempt to convert anything to its original Python value
                                     entry["value"] = str(json.loads(value))
