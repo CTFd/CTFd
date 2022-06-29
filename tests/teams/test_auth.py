@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Users, db
+from CTFd.models import Teams, Users, db
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -209,4 +209,37 @@ def test_teams_new_post_when_already_on_team():
             assert r.status_code == 403
             user = Users.query.filter_by(name="user").first()
             assert user.team.name == "team1"
+    destroy_ctfd(app)
+
+
+def test_teams_from_admin_hidden():
+    """Test that teams created by admins in /teams/new are hidden by default"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        gen_user(app.db, name="user")
+        with login_as_user(app) as client:
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "team_user",
+                    "password": "password",
+                    "nonce": sess.get("nonce"),
+                }
+            r = client.post("/teams/new", data=data)
+            assert r.status_code == 302
+
+            team = Teams.query.filter_by(name="team_user").first()
+            assert team.hidden == False
+
+        with login_as_user(app, "admin") as client:
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "team_admin",
+                    "password": "password",
+                    "nonce": sess.get("nonce"),
+                }
+            r = client.post("/teams/new", data=data)
+            assert r.status_code == 302
+
+            team = Teams.query.filter_by(name="team_admin").first()
+            assert team.hidden == True
     destroy_ctfd(app)
