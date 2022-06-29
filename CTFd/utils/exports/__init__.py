@@ -13,7 +13,7 @@ import dataset
 from flask import current_app as app
 from flask_migrate import upgrade as migration_upgrade
 from sqlalchemy.engine.url import make_url
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import IntegrityError, ProgrammingError
 from sqlalchemy.sql import sqltypes
 
 from CTFd import __version__ as CTFD_VERSION
@@ -341,7 +341,7 @@ def import_ctf(backup, erase=True):
                         # we need to have an edge case here.
                         if member == "db/field_entries.json":
                             value = entry.get("value")
-                            if value:
+                            if value is not None:
                                 try:
                                     # Attempt to convert anything to its original Python value
                                     entry["value"] = str(json.loads(value))
@@ -362,6 +362,16 @@ def import_ctf(backup, erase=True):
                             if requirements and isinstance(requirements, dict):
                                 entry["requirements"] = json.dumps(requirements)
                             table.insert(entry)
+                        except IntegrityError:
+                            # Catch odd situation where for some reason config keys are reinserted before import completes
+                            if member == "db/config.json":
+                                config_id = int(entry["id"])
+                                side_db.query(
+                                    f"DELETE FROM config WHERE id={config_id}"
+                                )
+                                table.insert(entry)
+                            else:
+                                raise
 
                         db.session.commit()
                     if postgres:
