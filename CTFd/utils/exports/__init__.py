@@ -366,7 +366,7 @@ def import_ctf(backup, erase=True):
                             # Catch odd situation where for some reason config keys are reinserted before import completes
                             if member == "db/config.json":
                                 config_id = int(entry["id"])
-                                side_db.query(
+                                side_db.query(  # nosec B608
                                     f"DELETE FROM config WHERE id={config_id}"
                                 )
                                 table.insert(entry)
