@@ -250,10 +250,13 @@ class UserSchema(ma.ModelSchema):
                     field_id=field.id, user_id=current_user.id
                 ).first()
 
-                if field.required is True and value.strip() == "":
-                    raise ValidationError(
-                        f"Field '{field.name}' is required", field_names=["fields"]
-                    )
+                if field.required is True:
+                    if isinstance(value, str):
+                        if value.strip() == "":
+                            raise ValidationError(
+                                f"Field '{field.name}' is required",
+                                field_names=["fields"],
+                            )
 
                 if field.editable is False and entry is not None:
                     raise ValidationError(
