@@ -10,7 +10,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				{% with form = Forms.notifications.NotificationForm() %}
-				<form method="POST" id="notifications_form">
+				<form method="POST" id="notifications_form" autocomplete="off">
 					<div class="form-group">
 						<b>{{ form.title.label }}</b>
 						{{ form.title(class="form-control") }}
