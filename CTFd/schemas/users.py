@@ -255,7 +255,7 @@ class UserSchema(ma.ModelSchema):
                         if value.strip() == "":
                             raise ValidationError(
                                 f"Field '{field.name}' is required",
-                                field_names=["fields"]
+                                field_names=["fields"],
                             )
 
                 if field.editable is False and entry is not None:
