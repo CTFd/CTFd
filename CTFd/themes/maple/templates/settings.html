@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+<div class="rpgui-container framed" style="width: max(800px, 80%);max-height: 70%; overflow-y: scroll;overflow-x:hidden">
+		<h1>Settings</h1>
+	<div class="row">
+		<div class="col-md-2 offset-md-1">
+			<div class="nav flex-column nav-pills" role="tablist">
+				<a class="active" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab"><button class="rpgui-button">Profile</button></a>
+				<a id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab"><button class="rpgui-button">Tokens</button></a>
+			</div>
+		</div>
+		<div class="col-md-8">
+			<div class="tab-content" id="v-pills-tabContent">
+				<div class="tab-pane fade show active" id="profile" role="tabpanel">
+					{% include "components/errors.html" %}
+
+					{% with form = Forms.self.SettingsForm(country=country) %}
+					{% from "macros/forms.html" import render_extra_fields %}
+					<form id="user-profile-form" method="post" accept-charset="utf-8" autocomplete="off" role="form"
+						class="form-horizontal">
+						<div class="form-group">
+							<b>{{ form.name.label }}</b>
+							{{ form.name(value=name) }}
+						</div>
+						<div class="form-group">
+							<b>{{ form.email.label }}</b>
+							{{ form.email(value=email) }}
+						</div>
+
+						<hr>
+
+						<div class="form-group">
+							<b>{{ form.confirm.label }}</b>
+							{{ form.confirm() }}
+						</div>
+						<div class="form-group">
+							<b>{{ form.password.label }}</b>
+							{{ form.password() }}
+						</div>
+
+						<hr>
+
+						<div class="form-group">
+							<b>{{ form.affiliation.label }}</b>
+							{{ form.affiliation( value=affiliation or "") }}
+						</div>
+						<div class="form-group">
+							<b>{{ form.website.label }}</b>
+							{{ form.website(value=website or "") }}
+						</div>
+						<div class="bootstrap-off">
+							<b>{{ form.country.label }}</b>
+							{{ form.country(class="rpgui-list", size=3) }}
+								<p style="font-size: 10px;margin-top: 5px" class="text-muted">{{ form.country.description }}</p>
+						</div>
+
+						<hr>
+
+						{{ render_extra_fields(form.extra) }}
+
+						<div id="results" class="form-group">
+						</div>
+
+						<div class="form-group">
+                            <button class="rpgui-button" id="_submit" name="_submit" type="submit">Update</button>
+						</div>
+					</form>
+					{% endwith %}
+                    <hr />
+                    <div id="tokens">
+					{% with form = Forms.self.TokensForm() %}
+					<form method="POST" id="user-token-form">
+						<div class="form-group">
+							<b>{{ form.expiration.label }}</b>
+							{{ form.expiration() }}
+						</div>
+
+						<div class="form-group text-right">
+                            <button class="rpgui-button" id="_submit" name="_submit" type="submit">update</button>
+						</div>
+					</form>
+					{% endwith %}
+
+					{% if tokens %}
+					<hr>
+					<h4 class="text-center">Active Tokens</h4>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<td class="text-center"><b>Created</b></td>
+								<td class="text-center"><b>Expiration</b></td>
+								<td class="text-center"><b>Delete</b></td>
+							</tr>
+						</thead>
+						<tbody>
+							{% for token in tokens %}
+							<tr>
+								<td><span data-time="{{ token.created | isoformat }}"></span></td>
+								<td><span data-time="{{ token.expiration | isoformat }}"></span></td>
+								<td class="text-center">
+									<span class="delete-token" role="button" data-token-id="{{ token.id }}">
+									<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:24px;height:24px;color:white;display:inline-block;cursor: pointer"> <path d="M5 5h2v2H5V5zm4 4H7V7h2v2zm2 2H9V9h2v2zm2 0h-2v2H9v2H7v2H5v2h2v-2h2v-2h2v-2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm2-2v2h-2V9h2zm2-2v2h-2V7h2zm0 0V5h2v2h-2z" fill="currentColor"/> </svg></span>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					{% endif %}
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/settings.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+<style>
+.card-radio:checked + .card {
+	background-color: transparent !important;
+	border-color: #a3d39c;
+	box-shadow: 0 0 0 0.1rem #a3d39c;
+	transition: background-color 0.3s, border-color 0.3s;
+}
+.card-radio:checked + .card .card-radio-clone{
+	visibility: visible !important;
+}
+.card:hover {
+	cursor: pointer;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Setup</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="col-md-8 offset-md-2">
+			{% include "components/errors.html" %}
+
+			{% with form = Forms.setup.SetupForm() %}
+			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal" id="setup-form" enctype="multipart/form-data">
+				<ul class="nav nav-pills nav-fill mb-4">
+					<li class="nav-item">
+						<a class="nav-link active" data-toggle="pill" href="#general">General</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="pill" href="#mode">Mode</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="pill" href="#administration">Administration</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="pill" href="#style">Style</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="pill" href="#datetime">Date &amp; Time</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="pill" href="#integrations">Integrations</a>
+					</li>
+				</ul>
+
+				<div class="tab-content">
+					<div class="tab-pane fade show active" id="general" role="tabpanel">
+						<div class="form-group">
+							<b>{{ form.ctf_name.label }}</b>
+							{{ form.ctf_name(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_name.description }}
+							</small>
+						</div>
+
+						<div class="form-group">
+							<b>{{ form.ctf_description.label }}</b>
+							{{ form.ctf_description(class="form-control", rows="5") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_description.description }}
+							</small>
+						</div>
+
+						<div class="text-right">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#mode">
+								Next
+							</button>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="mode" role="tabpanel">
+						<div class="form-group">
+							<b>{{ form.user_mode.label }}</b>
+							<small class="form-text text-muted">
+								{{ form.user_mode.description }}
+							</small>
+
+							<div class="row pt-3">
+							{% for radio in form.user_mode %}
+								<label class="w-50 p-1">
+									{{ radio(class="card-radio d-none") }}
+									<div class="card rounded-0 h-100">
+										<div class="card-body p-3">
+											<span class="card-title">
+												<div class="form-check">
+													<input class="form-check-input card-radio-clone" type="radio" style="visibility: hidden;" checked>
+													<span class="form-check-label text-center">
+														<h5>{{ radio.label }}</h5>
+													</span>
+													{% if radio.data == "teams" %}
+													<ul class="p-0 small">
+														<li>Participants register accounts and form teams</li>
+														<li>If a team member solves a challenge, the entire team receives credit</li>
+														<br>
+														<li>Easier to see which team member solved a challenge</li>
+														<li>May be slightly more difficult to administer</li>
+													</ul>
+													{% elif radio.data == "users" %}
+													<ul class="p-0 small">
+														<li>Participants only register an individual account</li>
+														<li>Players can share accounts to form pseudo-teams</li>
+														<br>
+														<li>Easier to organize</li>
+														<li>Difficult to attribute solutions to individual team members</li>
+													</ul>
+													{% endif %}
+												</div>
+											</span>
+										</div>
+									</div>
+								</label>
+							{% endfor %}
+							</div>
+						</div>
+
+						<div class="text-right">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#administration">
+								Next
+							</button>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="administration" role="tabpanel">
+						<div class="form-group">
+							<b>{{ form.name.label }}</b>
+							{{ form.name(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.name.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.email.label }}</b>
+							{{ form.email(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.email.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.password.label }}</b>
+							{{ form.password(class="form-control") }}
+							<small class="form-text text-muted">
+								{{ form.password.description }}
+							</small>
+						</div>
+
+						<div class="form-check">
+							<label class="form-check-label">
+								<input class="form-check-input" type="checkbox" value="" id="newsletter-checkbox" checked>
+								Subscribe email address to the CTFd LLC Newsletter for news and updates
+							</label>
+						</div>
+
+						<div class="text-right">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#style">
+								Next
+							</button>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="style" role="tabpanel">
+						<div class="form-group">
+							<b>{{ form.ctf_logo.label }}</b>
+							{{ form.ctf_logo(class="form-control-file", accept="image/*") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_logo.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.ctf_banner.label }}</b>
+							{{ form.ctf_banner(class="form-control-file", accept="image/*") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_banner.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.ctf_small_icon.label }}</b>
+							{{ form.ctf_small_icon(class="form-control-file", accept=".png") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_small_icon.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.ctf_theme.label }}</b>
+							{{ form.ctf_theme(class="form-control custom-select") }}
+							<small class="form-text text-muted">
+								{{ form.ctf_theme.description }}
+							</small>
+						</div>
+						<div class="form-group">
+							<b>{{ form.theme_color.label }}</b>
+							<br>
+							<div class="d-inline-block">
+								{{ form.theme_color(id="config-color-input") }}
+								<div class="btn-group">
+									<input type="color" id="config-color-picker" class="pr-1" style="width: 100px; height: 30px;" value="">
+								</div>
+								<div class="btn-group">
+									<button type="button" id="config-color-reset">Reset</button>
+								</div>
+							</div>
+							<small class="form-text text-muted">
+								{{ form.theme_color.description }}
+							</small>
+						</div>
+						<div class="text-right">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#datetime">
+								Next
+							</button>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="datetime" role="tabpanel">
+						<div class="form-group">
+							<b>{{ form.start.label }}</b>
+							<div class="row">
+								<div class="col-md-4">
+									<label>Date</label>
+									<input class="form-control" id="start-date" type="date" placeholder="yyyy-mm-dd" data-preview="#start"/>
+								</div>
+								<div class="col-md-4">
+									<label>Time</label>
+									<input class="form-control" id="start-time" type="time" placeholder="hh:mm" data-preview="#start"/>
+								</div>
+								<div class="col-md-4">
+									<label>UTC Preview</label>
+									{{ form.start(class="form-control", id="start-preview", readonly=True) }}
+								</div>
+							</div>
+							<small class="form-text text-muted">
+								{{ form.start.description }}
+							</small>
+						</div>
+
+						<div class="form-group">
+							<b>{{ form.end.label }}</b>
+							<div class="row">
+								<div class="col-md-4">
+									<label>Date</label>
+									<input class="form-control" id="end-date" type="date" placeholder="yyyy-mm-dd" data-preview="#end"/>
+								</div>
+								<div class="col-md-4">
+									<label>Time</label>
+									<input class="form-control" id="end-time" type="time" placeholder="hh:mm" data-preview="#end"/>
+								</div>
+								<div class="col-md-4">
+									<label>UTC Preview</label>
+									{{ form.end(class="form-control", id="end-preview", readonly=True) }}
+								</div>
+							</div>
+							<small class="form-text text-muted">
+								{{ form.end.description }}
+							</small>
+						</div>
+
+						<div class="text-right">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#integrations">
+								Next
+							</button>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="integrations" role="tabpanel">
+						<div class="form-group">
+							<h4>MajorLeagueCyber Integration</h4>
+							<p>
+							MajorLeagueCyber (MLC) is a cyber security event tracker written and maintained by the developers of CTFd.
+							Set up MLC integration to:
+							<ul>
+								<li>display your event on the MLC website and mailing list</li>
+								<li>share and track participant statistics</li>
+								<li>provide live updates in team Slack or Discord groups</li>
+								<li>archive challenges, team participation &amp; more</li>
+							</ul>
+							</p>
+							<button type="button" id="integration-mlc" class="btn btn-primary btn-block">
+								Setup
+							</button>
+						</div>
+
+						<br>
+						<hr>
+						<br>
+
+						<div class="submit-row text-right">
+							{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
+						</div>
+					</div>
+				</div>
+
+				{{ form.nonce() }}
+			</form>
+			{% endwith %}
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+	var STATE = {{ state | tojson }};
+</script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/setup.js') }}"></script>
+{% endblock %}

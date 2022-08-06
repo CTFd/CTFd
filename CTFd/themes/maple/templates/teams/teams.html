@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+<div class="rpgui-container framed" style="width: max(800px, 80%);max-height: 70%; overflow-y: scroll;overflow-x:hidden">
+    <h1>Teams</h1>
+	<div class="row">
+		<div class="col-md-12">
+			{% if q and field %}
+			<h2 class="text-center">
+				Searching for teams with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>
+			</h2>
+			<h3 class="text-muted text-center pb-3">
+				Page {{ teams.page }} of {{ teams.total }} results
+			</h3>
+			{% endif %}
+
+			{% with form = Forms.teams.PublicTeamSearchForm(field=field, q=q) %}
+            <div class="w-100">
+                <form method="GET" class="d-flex align-items-center" style="margin: 0 auto">
+                    <div style="width: 20%; margin-right: 10px">
+                        {{ form.field(class="rpgui-dropdown") }}
+                    </div>
+                    {{ form.q(style="width: 60%; height: 45px;flex-grow: 1;", placeholder="Search for matching teams") }}
+                    <div style="display: block; margin-left: 20px; margin-right: 15px;">
+                        <button type="submit" class="rpgui-button golden">
+                            <!--<i class="fas fa-search" aria-hidden="true"></i>-->
+                            <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"style="height: 36px; width: 36px; padding-top: 12px;color:white"> <path d="M6 2h8v2H6V2zM4 6V4h2v2H4zm0 8H2V6h2v8zm2 2H4v-2h2v2zm8 0v2H6v-2h8zm2-2h-2v2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm0-8h2v8h-2V6zm0 0V4h-2v2h2z" fill="currentColor" /> </svg></button>
+                    </div>
+                </form>
+            </div>
+			{% endwith %}
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row" style="width: 100%">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<td><b>Team</b></td>
+						<td><b>Website</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Affiliation</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Country</b></td>
+					</tr>
+				</thead>
+				<tbody>
+				{% for team in teams.items %}
+					<tr>
+						<td>
+						{% if scores_visible() %}
+							<a href="{{ url_for('teams.public', team_id=team.id) }}">{{ team.name | truncate(50) }}</a>
+						{% else %}
+							<span>{{ team.name | truncate(50) }}</span>
+						{% endif %}
+						{% if team.oauth_id %}
+							<a href="https://majorleaguecyber.org/t/{{ team.name }}">
+								<span class="badge badge-primary">Official</span>
+							</a>
+						{% endif %}
+						</td>
+						<td class="text-center" style="width: 10px;">
+							{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
+								<a href="{{ team.website }}" target="_blank" rel="noopener">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:24px;height:24px;color:white;display:inline-block" title="{{ team.website }}"
+data-toggle="tooltip" data-placement="top"
+                    > <path d="M21 11V3h-8v2h4v2h-2v2h-2v2h-2v2H9v2h2v-2h2v-2h2V9h2V7h2v4h2zM11 5H3v16h16v-8h-2v6H5V7h6V5z" fill="currentColor"/></svg>
+								</a>
+							{% endif %}
+						</td>
+						<td class="d-none d-md-table-cell d-lg-table-cell">
+							{% if team.affiliation %}
+								{% if team.affiliation | length > 50 %}
+								<span data-toggle="tooltip" data-placement="top" title="{{ team.affiliation }}">
+									{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
+								</span>
+								{% else %}
+								<span>
+									{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
+								</span>
+								{% endif %}
+							{% endif %}
+						</td>
+						<td class="d-none d-md-table-cell d-lg-table-cell text-center">
+							<span>
+								{% if team.country %}
+									<i class="flag-{{ team.country.lower() }}"></i>
+									{{ lookup_country_code(team.country) }}
+								{% endif %}
+							</span>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+	</div>
+	{% if teams.pages > 1 %}
+	<div class="row">
+		<div class="col-md-12">
+			<div class="text-center">Page
+				<br>
+				{% if teams.page != 1 %}
+				<a href="{{ prev_page }}">&lt;&lt;&lt;</a>
+				{% endif %}
+				<select class="page-select">
+					{% for page in range(1, teams.pages + 1) %}
+					<option {% if teams.page == page %}selected{% endif %}>{{ page }}</option>
+					{% endfor %}
+				</select>
+				{% if teams.next_num %}
+				<a href="{{ next_page }}">&gt;&gt;&gt;</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

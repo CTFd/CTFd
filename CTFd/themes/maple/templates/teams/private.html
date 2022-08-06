@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div id="team-edit-modal" class="modal fade">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content rpgui-container framed-golden" style="width: fit-content; height: 90%;overflow-y:scroll">
+				<div class="modal-header">
+					<h1 class="modal-action text-center w-100">Edit Team</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body clearfix">
+					{% with form = Forms.teams.TeamSettingsForm(obj=team) %}
+					{% from "macros/forms.html" import render_extra_fields %}
+					<form id="team-info-form" method="POST">
+						<div class="form-group">
+							<b>{{ form.name.label }}</b>
+							{{ form.name() }}
+								<p style="font-size: 10px" class="text-muted">{{ form.name.description }}</p>
+						</div>
+						<div class="form-group">
+							<b>{{ form.password.label }}</b>
+							{{ form.password() }}
+								<p style="font-size: 10px" class="text-muted">{{ form.password.description }}</p>
+						</div>
+						<div class="form-group">
+							<b>{{ form.confirm.label }}</b>
+							{{ form.confirm() }}
+								<p style="font-size: 10px" class="text-muted">{{ form.confirm.description }}</p>
+						</div>
+						<div class="form-group">
+							<b>{{ form.website.label }}</b>
+							{{ form.website() }}
+								<p style="font-size: 10px" class="text-muted">{{ form.website.description }}</p>
+						</div>
+						<div class="form-group">
+							<b>{{ form.affiliation.label }}</b>
+							{{ form.affiliation() }}
+								<p style="font-size: 10px" class="text-muted">{{ form.affiliation.description }}</p>
+						</div>
+						<div class="bootstrap-off">
+							<b>{{ form.country.label }}</b>
+							{{ form.country(class="rpgui-list", size=3) }}
+								<p style="font-size: 10px;margin-top: 5px" class="text-muted">{{ form.country.description }}</p>
+						</div>
+
+						<hr>
+
+						{{ render_extra_fields(form.extra) }}
+
+						<div id="results">
+
+						</div>
+                        <div class="d-flex justify-content-center">
+                            <button class="rpgui-button" id="_submit" name="_submit" type="submit" value="Submit">Submit</button>
+                        </div>
+					</form>
+					{% endwith %}
+				</div>
+			</div>
+		</div>
+	</div>
+     
+	<div id="team-captain-modal" class="modal fade">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content rpgui-container framed-golden" style="width: fit-content">
+				<div class="modal-header">
+					<h1 class="modal-action text-center w-100">Choose Captain</h1>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+                {% if team.members|length > 1 %}
+				<div class="modal-body clearfix">
+					{% with form = Forms.teams.TeamCaptainForm(captain_id=team.captain_id) %}
+					<form id="team-captain-form" method="POST">
+						<div class="bootstrap-off">
+							{{ form.captain_id.label }}
+							{% for member in team.members %}
+								{# Append members to the select choices #}
+								{% set _ = form.captain_id.choices.append((member.id, member.name)) %}
+							{% endfor %}
+							{{ form.captain_id(class="rpgui-list", size=3) }}
+						</div>
+						<div id="results">
+						</div>
+<div class="d-flex justify-content-center">
+                            <button class="rpgui-button" id="_submit" name="_submit" type="submit" value="Submit">Submit</button>
+                        </div>
+					</form>
+					{% endwith %}
+				</div>
+                {%else%}
+                <p class="rpgui-center">No other members to choose from.</p>
+                {%endif%}
+			</div>
+		</div>
+	</div>
+
+	<div id="team-invite-modal" class="modal fade">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content rpgui-container framed-golden" style="width: fit-content;">
+				<div class="modal-header">
+					<h1 class="modal-action text-center w-100">Invite Users</h1>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body clearfix">
+					{% with form = Forms.teams.TeamInviteForm() %}
+					<form method="POST">
+						<div class="form-group" >
+							<b>{{ form.link.label }}</b>
+							<div class="d-flex align-items-center"
+                                >
+								{{ form.link(id="team-invite-link", style="flex-grow: 1;height: 50px") }}
+								<div class="input-group-append">
+									<button id="team-invite-link-copy" class="rpgui-button" type="button">
+									<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="height: 24px;width:24px;color: white;"> <path d="M4 2h11v2H6v13H4V2zm4 4h12v16H8V6zm2 2v12h8V8h-8z" fill="currentColor"/> </svg></button>
+								</div>
+							</div>
+							<p class="text-muted mt-2" style="font-size: 10px;max-width: 500px">
+								Share this link with your team members for them to join your team. Invite links can be re-used and expire after one day.
+							</p>
+						</div>
+					</form>
+					{% endwith %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+<div class="d-flex justify-content-center"><div class="rpgui-container framed" style="width: max(800px, 80%);max-height: 70%; overflow-y: scroll;overflow-x:hidden">
+			<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
+			{% if team.oauth_id %}
+				<a href="https://majorleaguecyber.org/t/{{ team.name }}">
+					<h3><span class="badge badge-primary">Official</span></h3>
+				</a>
+			{% endif %}
+			{% if team.affiliation %}
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">{{ team.affiliation }}</span>
+				</h3>
+			{% endif %}
+			{% if team.country %}
+				<h3 class="d-inline-block">
+					<span class="badge badge-primary">
+						<i class="flag-{{ team.country.lower() }}"></i>
+						{{ lookup_country_code(team.country) }}
+					</span>
+				</h3>
+			{% endif %}
+			{% for field in team.fields %}
+				<h3 class="d-block">
+					{{ field.name }}: {{ field.value }}
+				</h3>
+			{% endfor %}
+			<h2 id="team-place" class="text-center">
+				{# This intentionally hides the team's place when scores are hidden because this can be their internal profile
+			and we don't want to leak their place in the CTF. #}
+				{# Public page hiding is done at the route level #}
+				{% if scores_visible() %}
+					{% if place %}
+						{{ place }}
+						<small>place</small>
+					{% endif %}
+				{% endif %}
+			</h2>
+			<h2 id="team-score" class="text-center">
+				{% if score %}
+					{{ score }}
+					<small>points</small>
+				{% endif %}
+			</h2>
+			<div class="pt-3 rpgui-center">
+					{% if team.captain_id == user.id %}
+				<a class="edit-team">
+                    <button class="rpgui-button">Edit team</button>
+
+						<a class="edit-captain">
+                    <button class="rpgui-button">Choose captain</button>
+						</a>
+
+						<a class="invite-members">
+						                    <button class="rpgui-button">Invite members</button>
+</a>
+						<a class="disband-team">
+						                    <button class="rpgui-button">Disband team</button>
+</a>
+				</a>
+					{% endif %}
+				{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
+					<a href="{{ team.website }}" target="_blank" style="color: inherit;" rel="noopener">
+						                    <button class="rpgui-button">See website</button>
+					</a>
+				{% endif %}
+			</div>
+
+		{% include "components/errors.html" %}
+
+		<br>
+
+		<div class="row min-vh-25">
+			<div class="col-md-12">
+				<h3>Members</h3>
+				<table class="table table-striped">
+					<thead>
+					<tr>
+						<td><b>User Name</b></td>
+						<td><b>Score</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for member in team.members %}
+						<tr>
+							<td>
+								<a href="{{ url_for('users.public', user_id=member.id) }}">
+									{{ member.name }}
+								</a>
+								{% if team.captain_id == member.id %}
+									<span class="badge badge-primary ml-2">Captain</span>
+								{% endif %}
+							</td>
+							<td>{{ member.score }}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		{% if solves or awards %}
+			<div class="row">
+				<div class="col-md-6 d-none d-md-block d-lg-block">
+					<div id="keys-pie-graph" class="d-flex align-items-center">
+						<div class="text-center w-100">
+<i class="fas fa-spin fa-3x fa-fw spinner"> 
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="height: 24px;width:24px;color: white;"> <path d="M4 2h11v2H6v13H4V2zm4 4h12v16H8V6zm2 2v12h8V8h-8z" fill="currentColor"/> </svg>
+                            </i>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 d-none d-md-block d-lg-block">
+					<div id="categories-pie-graph" class="d-flex align-items-center">
+						<div class="text-center w-100">
+<i class="fas fa-spin fa-3x fa-fw spinner"> 
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="height: 24px;width:24px;color: white;"> <path d="M4 2h11v2H6v13H4V2zm4 4h12v16H8V6zm2 2v12h8V8h-8z" fill="currentColor"/> </svg>
+                            </i>
+						</div>
+					</div>
+				</div>
+				<br class="clearfix">
+				<div class="col-md-12 d-none d-md-block d-lg-block">
+					<div id="score-graph" class="w-100 d-flex align-items-center">
+						<div class="text-center w-100">
+							<i class="fas fa-spin fa-3x fa-fw spinner"> 
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="height: 24px;width:24px;color: white;"> <path d="M4 2h11v2H6v13H4V2zm4 4h12v16H8V6zm2 2v12h8V8h-8z" fill="currentColor"/> </svg>
+                            </i>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="clearfix"></div>
+
+			{% if awards %}
+				<div class="row">
+					<div class="col-md-12">
+						<h3>Awards</h3>
+					</div>
+					{% for award in awards %}
+						<div class="col-md-3 col-sm-6">
+							<p class="text-center">
+								<i class="award-icon award-{{ award.icon }} fa-2x"></i>
+								<br>
+								<strong>{{ award.name }}</strong>
+							</p>
+							{% if award.category %}<p class="text-center">{{ award.category }}</p>{% endif %}
+							{% if award.description %}<p class="text-center">{{ award.description }}</p>{% endif %}
+							<p class="text-center">{{ award.value }}</p>
+						</div>
+					{% endfor %}
+				</div>
+
+				<br>
+			{% endif %}
+
+			<div class="row">
+				<div class="col-md-12">
+					<h3>Solves</h3>
+					<table class="table table-striped">
+						<thead>
+						<tr>
+							<td><b>Challenge</b></td>
+							<td class="d-none d-md-block d-lg-block"><b>Category</b></td>
+							<td><b>Value</b></td>
+							<td><b>Time</b></td>
+						</tr>
+						</thead>
+						<tbody>
+						{% for solve in solves %}
+							<tr>
+								<td>
+									<a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+										{{ solve.challenge.name }}
+									</a>
+								</td>
+								<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
+								<td>{{ solve.challenge.value }}</td>
+								<td class="solve-time">
+									<span data-time="{{ solve.date | isoformat }}">{{ solve.date }}</span>
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% else %}
+			<div class="row min-vh-25">
+				<h3 class="opacity-50 text-center w-100 justify-content-center align-self-center">
+					No solves yet
+				</h3>
+			</div>
+		{% endif %}
+	
+		</div>
+{% endblock %}
+
+{% block scripts %}
+	<script>
+		var stats_data = {{ {
+			'type': 'team',
+			'id': team.id,
+			'name': team.name,
+			'account_id': 'me',
+		} | tojson }};
+		var team_captain = {{ (user.id == team.captain_id) | tojson }};
+	</script>
+	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
+	{% if solves or awards %}
+		<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+		<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
+	{% endif %}
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/teams/private.js') }}"></script>
+{% endblock %}

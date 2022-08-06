@@ -1,0 +1,162 @@
+<div class="modal-dialog" role="document">
+			<div class="modal-content rpgui-container framed-golden" style="max-width: fit-content">
+		<div class="modal-body">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<ul class="nav nav-tabs">
+				<li class="nav-item">
+					<a class="active" href="#challenge"><button class="rpgui-button">Challenge</button></a>
+				</li>
+				{% block solves %}
+					<li class="nav-item">
+						<a class="challenge-solves" href="#solves">
+                            <button class="rpgui-button">
+                                {% if solves != None %}
+                                {{ solves }} {% if solves > 1 %}Solves{% else %}Solves{% endif %}
+                                {% endif %}
+                            </button>
+						</a>
+					</li>
+				{% endblock %}
+			</ul>
+            <hr style="margin-top: 0"/>
+			<div role="tabpanel">
+				<div class="tab-content">
+					<div role="tabpanel" class="tab-pane fade show active" id="challenge">
+						<h2 class='challenge-name text-center pt-1'>
+							{{ challenge.name }}
+						</h2>
+						<h3 class="challenge-value text-center">
+							{{ challenge.value }}
+						</h3>
+
+						<div class="challenge-tags text-center">
+							{% block tags %}
+								{% for tag in tags %}
+									<span class='badge badge-info challenge-tag'>{{ tag }}</span>
+								{% endfor %}
+							{% endblock %}
+						</div>
+
+						<p class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</p>
+
+						<p class="challenge-connection-info">
+							{% block connection_info %}
+								{% set conn = challenge.connection_info %}
+								{% if not conn %}
+								{% elif conn.startswith("http") %}
+									{{ conn | urlize(target="_blank") }}
+								{% else %}
+									<code>{{ conn }}</code>
+								{% endif %}
+							{% endblock %}
+						</p>
+
+						<div class="challenge-hints hint-row row">
+							{% for hint in hints %}
+								<div class='col-md-12 hint-button-wrapper text-center mb-3'>
+									<a class="btn btn-info btn-hint btn-block load-hint" href="javascript:;" data-hint-id="{{ hint.id }}">
+										{% if hint.content %}
+											<small>
+												View Hint
+											</small>
+										{% else %}
+											{% if hint.cost %}
+												<small>
+													Unlock Hint for {{ hint.cost }} points
+												</small>
+											{% else %}
+												<small>
+													View Hint
+												</small>
+											{% endif %}
+										{% endif %}
+									</a>
+								</div>
+							{% endfor %}
+						</div>
+
+						<div class="row challenge-files text-center pb-3">
+							{% for file in files %}
+								<div class='col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block'>
+									<a class='mb-1 d-inline-block px-2 w-100 text-truncate'
+									   href='{{ file }}'>
+                                        <button class="rpgui-button">
+                                            <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 24px;height:24px;color:white;display:inline-block"> <path d="M10 4h6v2h-6V4zM8 8V6h2v2H8zm-4 2V8h4v2H4zm-2 2v-2h2v2H2zm0 6H0v-6h2v6zm0 0h5v2H2v-2zM18 8h-2V6h2v2zm4 4h-4V8h2v2h2v2zm0 6v-6h2v6h-2zm0 0v2h-5v-2h5zm-11 2h2v-2h2v-2h2v-2h-4V9h-2v5H7v2h2v2h2v2z" fill="currentColor"/> </svg>
+                                            <small>
+                                                {% set segments = file.split('/') %}
+                                                {% set file = segments | last %}
+                                                {% set token = file.split('?') | last %}
+                                                {% if token %}
+                                                {{ file | replace("?" + token, "") }}
+                                                {% else %}
+                                                {{ file }}
+                                                {% endif %}
+                                            </small>
+                                        </button>
+									</a>
+								</div>
+							{% endfor %}
+						</div>
+
+						{% if max_attempts > 0 %}
+						<div class="row text-center">
+							<div class="col-md-12">
+								<p>
+									{{ attempts }}/{{ max_attempts }} attempt{{ max_attempts|pluralize }}
+								</p>
+							</div>
+						</div>
+						{% endif %}
+
+						<div class="d-flex w-100 align-items-center">
+							<div style="flex-grow:1">
+								{% block input %}
+									<input  type="hidden" value="{{ challenge.id }}" id="challenge-id">
+									<input type="text" name="answer" placeholder="Flag" style="height: 50px"/>
+                                    <p id="challenge-input" style="height:0"></p>
+								{% endblock %}
+							</div>
+							<div>
+								{% block submit %}
+								<button id="challenge-submit" class="rpgui-button" type="submit" style="margin-left: 10px; color: black">
+									Submit
+								</button>
+								{% endblock %}
+							</div>
+						</div>
+
+						<div class="row notification-row">
+							<div class="col-md-12">
+								<div id="result-notification" class="alert alert-dismissable text-center w-100"
+									 role="alert" style="display: none;">
+									<strong id="result-message"></strong>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div role="tabpanel" class="tab-pane fade" id="solves">
+						<div class="row">
+							<div class="col-md-12">
+								<table class="table table-striped text-center">
+									<thead>
+									<tr>
+										<td><b>Name</b>
+										</td>
+										<td><b>Date</b>
+										</td>
+									</tr>
+									</thead>
+									<tbody id="challenge-solves-names">
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

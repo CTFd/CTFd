@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center"><div class="rpgui-container framed" style="width: max(600px, 60%)">
+			<h1>Team</h1>
+		<div class="row">
+			<div class="col-md-6 offset-md-3 text-center">
+				<p>Welcome to {{ Configs.ctf_name }}!</p>
+				<p>
+					In order to participate you must either join or create a team.
+				</p>
+			</div>
+		</div>
+		{% if integrations.mlc() %}
+		<div class="row">
+			<div class="col-md-6 offset-md-3 text-center">
+				<a href="{{ url_for('auth.oauth_login') }}"><button class="rpgui-button">Play with Official Team</button></a>
+			</div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-md-3 offset-md-3 text-center">
+				<a href="{{ url_for('teams.join') }}"><button class="rpgui-button">Join Unofficial Team</button></a>
+			</div>
+			<div class="col-md-3 text-center">
+				<a href="{{ url_for('teams.new') }}"><button class="rpgui-button">Create Unofficial Team</button></a>
+			</div>
+		</div>
+		{% else %}
+		<div class="row mb-3">
+			<div class="col-md-3 offset-md-3 text-center">
+				<a href="{{ url_for('teams.join') }}"><button class="rpgui-button">Join Team</button></a>
+			</div>
+			<div class="col-md-3 text-center">
+				<a href="{{ url_for('teams.new') }}"><button class="rpgui-button">Create Team</button></a>
+			</div>
+		</div>
+		{% endif %}
+    </div></div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

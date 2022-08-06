@@ -117,9 +117,7 @@ def setup():
 
             name_len = len(name) == 0
             names = Users.query.add_columns("name", "id").filter_by(name=name).first()
-            emails = (
-                Users.query.add_columns("email", "id").filter_by(email=email).first()
-            )
+            emails = Users.query.add_columns("email", "id").filter_by(email=email).first()
             pass_short = len(password) == 0
             pass_long = len(password) > 128
             valid_email = validators.validate_email(request.form["email"])
@@ -150,9 +148,7 @@ def setup():
                     state=serialize(generate_nonce()),
                 )
 
-            admin = Admins(
-                name=name, email=email, password=password, type="admin", hidden=True
-            )
+            admin = Admins(name=name, email=email, password=password, type="admin", hidden=True)
 
             # Create an empty index page
             page = Pages(title=None, route="index", content="", draft=False)
@@ -165,31 +161,233 @@ def setup():
                 default_ctf_banner_location = url_for("views.files", path=f.location)
 
             # Splice in our banner
-            index = f"""<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="{default_ctf_banner_location}" />
-        <h3 class="text-center">
-            <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
-            <p>Follow us on social media:</p>
-            <a href="https://twitter.com/ctfdio"><i class="fab fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
-            <a href="https://facebook.com/ctfdio"><i class="fab fa-facebook fa-2x" aria-hidden="true"></i></a>&nbsp;
-            <a href="https://github.com/ctfd"><i class="fab fa-github fa-2x" aria-hidden="true"></i></a>
-        </h3>
-        <br>
-        <h4 class="text-center">
-            <a href="admin">Click here</a> to login and setup your CTF
-        </h4>
+            index = """<div class="container">
+      <div class="section">
+        <div class="wrapper">
+          <div
+            class="rpgui-container framed block"
+            style="margin-left: 2.5%"
+            id="first-block"
+          >
+            <h1 style="font-size: 40px">Maple CTF 2022</h1>
+            <div id="countdown">
+              <button
+                class="rpgui-button golden"
+                style="pointer-events: none; min-width: 10px"
+                id="days"
+              >
+                <p>--</p>
+              </button>
+              <p style="display: inline">&nbsp;D&nbsp;</p>
+              <button
+                class="rpgui-button golden"
+                style="pointer-events: none; min-width: 10px"
+                id="hours"
+              >
+                <p>--</p>
+              </button>
+              <p style="display: inline">&nbsp;H&nbsp;</p>
+              <button
+                class="rpgui-button golden"
+                style="pointer-events: none; min-width: 10px"
+                id="minutes"
+              >
+                <p>--</p>
+              </button>
+              <p style="display: inline">&nbsp;M&nbsp;</p>
+              <button
+                class="rpgui-button golden"
+                style="pointer-events: none; min-width: 10px"
+                id="secs"
+              >
+                <p>--</p>
+              </button>
+              <p style="display: inline">&nbsp;S&nbsp;</p>
+            </div>
+            <p id="mobile-countdown">5PM PDT August 26th - August 28th</p>
+            <p>Hosted by <a href="https://maplebacon.org/">Maple Bacon</a>.</p>
+            <p>→ → → keep scrolling! → → →</p>
+            <div>
+              <a href="https://ctf.maplebacon.org/login">
+                <button class="rpgui-button">Sign up</button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="wrapper">
+          <div class="rpgui-container framed block">
+            <h1 style="font-size: 40px">Prizes</h1>
+            <p>First place: 2000 USD</p>
+            <p>Second place: 1000 USD</p>
+            <p>Third place: 500 USD</p>
+            <p><em>Writeup prizes: TBD</em></p>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="wrapper">
+          <div class="rpgui-container framed block">
+            <h1 style="font-size: 40px">What is a CTF?</h1>
+            <p style="white-space: normal">
+              Capture The Flag competitions or “CTFs” for short are competitions
+              in which players attempt to solve computer security related
+              problems in the form of challenges with present vulnerabilities in
+              order to obtain a secret piece of text known as the “flag” and
+              turn it in for points. It’s a great way to gain a wide breadth of
+              knowledge in all things related to computer systems, while also
+              achieving a sense of accomplishment and competition along the way.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="wrapper">
+          <div class="rpgui-container framed block">
+            <h1 style="font-size: 40px">FAQ</h1>
+            <p><em>How should I get started?</em></p>
+            <p style="white-space: normal">
+              <a
+                href="https://picoctf.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >picoCTF</a
+              >
+              is an excellent beginner CTF, as it contains many different types
+              of problems, with more gradually unlocking as you become more
+              proficient in different categories.
+            </p>
+            <p style="white-space: normal">
+              <em>What category should I focus on?</em>
+            </p>
+            <p style="white-space: normal">
+              Whichever one your heart desires! We don’t enforce any policy that
+              would dictate what category you should develop skills in. Some
+              people may find they like cryptography over binary exploits, or
+              reverse engineering over web application security. We encourage
+              everyone to explore and learn what they like, wether that be one
+              or two specific categories, or an overall understanding of all
+              categories.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="wrapper">
+          <div class="rpgui-container framed block" style="margin-right: 3%">
+            <h1 style="font-size: 40px">About Us</h1>
+            <p style="white-space: normal">
+              Maple Bacon is the CTF team at the
+              <a href="ubc.ca" target="_blank" rel="noopener noreferrer"
+                >University of British Columbia</a
+              >. Our team was initially formed by
+              <a
+                href="https://www.robertxiao.ca/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Robert Xiao</a
+              >
+              in February 2019 shortly after he took his position in the CS
+              department. Our worldwide ranking and history can be found on
+              <a
+                href="https://ctftime.org/team/73723"
+                target="_blank"
+                rel="noopener noreferrer"
+                >ctftime.org</a
+              >.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
-</div>"""
+    <img src="assets/images/maplechan.png" id="maple-chan" />
+  <script src="assets/js/hscroll.js"></script>
+  <script>
+    var blocks = document.getElementsByClassName("section");
+    var container = document.getElementsByClassName("container");
+    var hs = new HorizontalScroll.default({
+      blocks: blocks,
+      container: container,
+      springEffect: 0.8,
+    });
+
+    const maple = document.getElementById("maple-chan");
+
+    document.addEventListener("mousewheel", function (event) {
+      if (event.wheelDelta >= 0) {
+        maple.style.transform = "translateX(-50%) scaleX(-1)";
+      } else {
+        maple.style.transform = "translateX(-50%) scaleX(1)";
+      }
+      maple.style.animation = "MoveUpDown 0.5s step-end infinite";
+      setTimeout(() => {
+        maple.style.animation = "";
+      }, 1000);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (
+        e.key === "Down" ||
+        e.key === "ArrowDown" ||
+        e.key === "Right" ||
+        e.key === "ArrowRight"
+      ) {
+        maple.style.transform = "translateX(-50%) scaleX(1)";
+      } else if (
+        e.key === "Up" ||
+        e.key === "ArrowUp" ||
+        e.key === "Left" ||
+        e.key === "ArrowLeft"
+      ) {
+        maple.style.transform = "translateX(-50%) scaleX(-1)";
+      }
+      maple.style.animation = "MoveUpDown 0.5s step-end infinite";
+      setTimeout(() => {
+        maple.style.animation = "";
+      }, 1000);
+    });
+
+    var START_DATE = new Date(1661558400 * 1000);
+    var x = setInterval(function () {
+      var now = new Date().getTime();
+
+      var distance = START_DATE - now;
+
+      var days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(
+        2,
+        "0"
+      );
+      var hours = String(
+        Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      ).padStart(2, "0");
+      var minutes = String(
+        Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+      ).padStart(2, "0");
+      var seconds = String(
+        Math.floor((distance % (1000 * 60)) / 1000)
+      ).padStart(2, "0");
+
+      document.getElementById("days").innerHTML = `<p>${days}</p>`;
+      document.getElementById("hours").innerHTML = `<p>${hours}</p>`;
+      document.getElementById("minutes").innerHTML = `<p>${minutes}</p>`;
+      document.getElementById("secs").innerHTML = `<p>${seconds}</p>`;
+
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("#mobile-countdown").innerHTML =
+          "Currently running, until 5PM PDT August 28th!";
+        document.getElementById("#countdown").style.display = "none";
+      }
+    }, 1000);
+  </script>
+  <script src="http://ronenness.github.io/RPGUI/rpgui/rpgui.min.js"></script>
+    """
             page.content = index
 
             # Visibility
-            set_config(
-                ConfigTypes.CHALLENGE_VISIBILITY, ChallengeVisibilityTypes.PRIVATE
-            )
-            set_config(
-                ConfigTypes.REGISTRATION_VISIBILITY, RegistrationVisibilityTypes.PUBLIC
-            )
+            set_config(ConfigTypes.CHALLENGE_VISIBILITY, ChallengeVisibilityTypes.PRIVATE)
+            set_config(ConfigTypes.REGISTRATION_VISIBILITY, RegistrationVisibilityTypes.PUBLIC)
             set_config(ConfigTypes.SCORE_VISIBILITY, ScoreVisibilityTypes.PUBLIC)
             set_config(ConfigTypes.ACCOUNT_VISIBILITY, AccountVisibilityTypes.PUBLIC)
 
@@ -217,9 +415,7 @@ def setup():
                 DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
             )
 
-            set_config(
-                "user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT
-            )
+            set_config("user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT)
             set_config("user_creation_email_body", DEFAULT_USER_CREATION_EMAIL_BODY)
 
             set_config("password_reset_subject", DEFAULT_PASSWORD_RESET_SUBJECT)
@@ -316,11 +512,7 @@ def settings():
 
     if is_teams_mode() and get_current_team() is None:
         team_url = url_for("teams.private")
-        infos.append(
-            markup(
-                f'In order to participate you must either <a href="{team_url}">join or create a team</a>.'
-            )
-        )
+        infos.append(markup(f'In order to participate you must either <a href="{team_url}">join or create a team</a>.'))
 
     tokens = UserTokens.query.filter_by(user_id=user.id).all()
 
@@ -433,10 +625,7 @@ def files(path):
                 team = Teams.query.filter_by(id=team_id).first()
 
                 # Check user is admin if challenge_visibility is admins only
-                if (
-                    get_config(ConfigTypes.CHALLENGE_VISIBILITY) == "admins"
-                    and user.type != "admin"
-                ):
+                if get_config(ConfigTypes.CHALLENGE_VISIBILITY) == "admins" and user.type != "admin":
                     abort(403)
 
                 # Check that the user exists and isn't banned

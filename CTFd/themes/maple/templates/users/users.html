@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center"><div class="rpgui-container framed" style="width: max(800px, 80%)">
+			<h1>Users</h1>
+		<div class="row">
+			<div class="col-md-12">
+				{% if q and field %}
+				<h5 class="text-muted text-center">
+					Searching for users with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>
+				</h5>
+				<h6 class="text-muted text-center pb-3">
+					Page {{ users.page }} of {{ users.total }} results
+				</h6>
+				{% endif %}
+
+				{% with form = Forms.users.PublicUserSearchForm(field=field, q=q) %}
+                <form method="GET" class="d-flex align-items-center" style="margin: 0 auto">
+                    <div style="width: 20%; margin-right: 10px">
+                        {{ form.field(class="rpgui-dropdown") }}
+                    </div>
+						{{ form.q(style="width: 60%; height: 45px;flex-grow: 1;",  placeholder="Search for matching users") }}
+<div style="display: block; margin-left: 20px; margin-right: 15px;">
+                        <button type="submit" class="rpgui-button golden">
+                            <!--<i class="fas fa-search" aria-hidden="true"></i>-->
+                            <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"style="height: 36px; width: 36px; padding-top: 12px"> <path d="M6 2h8v2H6V2zM4 6V4h2v2H4zm0 8H2V6h2v8zm2 2H4v-2h2v2zm8 0v2H6v-2h8zm2-2h-2v2h2v2h2v2h2v2h2v-2h-2v-2h-2v-2h-2v-2zm0-8h2v8h-2V6zm0 0V4h-2v2h2z" fill="currentColor" /> </svg></button>
+                    </div>
+				</form>
+				{% endwith %}
+			</div>
+		</div>
+
+		<hr>
+
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-striped">
+					<thead>
+					<tr>
+						<td><b>User</b></td>
+						<td><b>Website</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Affiliation</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Country</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for user in users.items %}
+						<tr>
+							<td>
+								{% if scores_visible() %}
+									<a href="{{ url_for('users.public', user_id=user.id) }}">
+										{{ user.name | truncate(50) }}
+									</a>
+								{% else %}
+									<span>{{ user.name | truncate(50) }}</span>
+								{% endif %}
+								{% if user.oauth_id %}
+									<a href="https://majorleaguecyber.org/u/{{ user.name }}">
+										<span class="badge badge-primary">Official</span>
+									</a>
+								{% endif %}
+							</td>
+							<td class="text-center" style="width: 10px;">
+								{% if user.website and (user.website.startswith('http://') or user.website.startswith('https://')) %}
+									<a href="{{ user.website }}" target="_blank" rel="noopener">
+										<i class="fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+										   title="{{ user.website }}"></i>
+									</a>
+								{% endif %}
+							</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">
+								{% if user.affiliation %}
+									{% if user.affiliation | length > 50 %}
+										<span data-toggle="tooltip" data-placement="top" title="{{ user.affiliation }}">
+									{% if user.affiliation %}{{ user.affiliation | truncate(50) }}{% endif %}
+								</span>
+									{% else %}
+										<span>
+									{% if user.affiliation %}{{ user.affiliation | truncate(50) }}{% endif %}
+								</span>
+									{% endif %}
+								{% endif %}
+							</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">
+								<span>
+									{% if user.country %}
+										<i class="flag-{{ user.country.lower() }}"></i>
+										{{ lookup_country_code(user.country) }}
+									{% endif %}
+								</span>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		{% if users.pages > 1 %}
+			<div class="row">
+				<div class="col-md-12">
+					<div class="text-center">Page
+						<br>
+						{% if users.page != 1 %}
+						<a href="{{ prev_page }}">&lt;&lt;&lt;</a>
+						{% endif %}
+						<select class="page-select">
+							{% for page in range(1, users.pages + 1) %}
+							<option {% if users.page == page %}selected{% endif %}>{{ page }}</option>
+							{% endfor %}
+						</select>
+						{% if users.next_num %}
+						<a href="{{ next_page }}">&gt;&gt;&gt;</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		{% endif %}
+    </div></div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

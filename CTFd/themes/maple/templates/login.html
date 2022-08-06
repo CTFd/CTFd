@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="rpgui-container framed" style="width: max(800px, 80%)">
+		<h1>Login</h1>
+		<div class="col-md-6 offset-md-3">
+			{% include "components/errors.html" %}
+
+			{% if integrations.mlc() %}
+			<a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('auth.oauth_login') }}">
+				Login with Major League Cyber
+			</a>
+
+			<hr>
+			{% endif %}
+
+			{% with form = Forms.auth.LoginForm() %}
+			<form method="post" accept-charset="utf-8" autocomplete="off">
+				<div class="form-group">
+					<b>{{ form.name.label }}</b>
+					{{ form.name( value=name) }}
+				</div>
+				<div class="form-group">
+					<b>{{ form.password.label }}</b>
+					{{ form.password( value=password) }}
+				</div>
+				<div class="row pt-3">
+					<div class="col-md-6">
+						<a class="float-left align-text-to-button" href="{{ url_for('auth.reset_password') }}">
+							Forgot your password?
+						</a>
+					</div>
+					<div class="col-md-6">
+                        <div class="float-right">
+                            <button class="rpgui-button" id="_submit" name="_submit" type="submit">Log in</button>
+                        </div>
+					</div>
+				</div>
+				{{ form.nonce() }}
+			</form>
+			{% endwith %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+

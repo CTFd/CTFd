@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center"><div class="rpgui-container framed" style="width: max(600px, 60%)">
+			<h1>Create Team</h1>
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				{% include "components/errors.html" %}
+
+				{% with form = Forms.teams.TeamRegisterForm() %}
+				{% from "macros/forms.html" import render_extra_fields %}
+				<form method="POST">
+					<div class="form-group">
+						<b>{{ form.name.label }}</b>
+						{{ form.name() }}
+					</div>
+					<div class="form-group">
+						<b>{{ form.password.label }}</b>
+						{{ form.password() }}
+					</div>
+
+					{{ render_extra_fields(form.extra) }}
+
+					<div class="row">
+						<div class="col-md-12">
+							<p>After creating your team, share the team name and password with your teammates so they can join your team.</p>
+                            <div class="rpgui-center">
+                                <button class="rpgui-button" id="_submit" name="_submit" type="submit">Create</button>
+                            </div>
+						</div>
+					</div>
+					{{ form.nonce() }}
+				</form>
+				{% endwith %}
+			</div>
+		</div>
+    </div></div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

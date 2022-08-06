@@ -1,12 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<div class="jumbotron">
-		<div class="container">
-			<h1>Notifications</h1>
-		</div>
-	</div>
-	<div class="container">
+	<div class="rpgui-container framed">
+        <h1>Notifications</h1>
 		{% if not notifications %}
 		<h2 class="text-center">There are no notifications yet</h2>
 		{% endif %}

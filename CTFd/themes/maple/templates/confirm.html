@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="rpgui-container framed" style="width: max(800px, 80%)">
+			<h1>Confirm Email</h1>
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				{% include "components/errors.html" %}
+
+				<h2 class="text-center">
+					We've sent a confirmation email to your email address.
+				</h2>
+
+				<br>
+
+                <p class="text-center">
+                Please click the link in that email to confirm your account.
+                </p>
+
+				<br>
+
+                <p class="text-center">
+                If the email doesn’t arrive, check your spam folder or
+                contact an administrator to manually verify your account.
+                </p>
+
+				<hr>
+
+				{% with form = Forms.auth.ConfirmForm() %}
+				<form method="POST" action="{{ url_for('auth.confirm') }}">
+					<div class="row">
+						<div class="col-md-6">
+                            <button class="rpgui-button" id="_submit" name="_submit" type="submit">Confirm</button>
+						</div>
+						<div class="col-md-6">
+                            <a href="{{ url_for('views.settings') }}"><button class="rpgui-button">
+                                    Change Email
+                                </button></a>
+						</div>
+						{{ form.nonce() }}
+					</div>
+				</form>
+				{% endwith %}
+			</div>
+		</div>
+    </div></div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
