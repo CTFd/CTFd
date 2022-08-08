@@ -54,11 +54,19 @@ def get_configurable_plugins():
             path = os.path.join(plugins_path, dir, "config.json")
             with open(path) as f:
                 plugin_json_data = json.loads(f.read())
-                p = Plugin(
-                    name=plugin_json_data.get("name"),
-                    route=plugin_json_data.get("route"),
-                )
-                plugins.append(p)
+                if type(plugin_json_data) is list:
+                    for plugin_json in plugin_json_data:
+                        p = Plugin(
+                            name=plugin_json.get("name"),
+                            route=plugin_json.get("route"),
+                        )
+                        plugins.append(p)
+                else:
+                    p = Plugin(
+                        name=plugin_json_data.get("name"),
+                        route=plugin_json_data.get("route"),
+                    )
+                    plugins.append(p)
         elif os.path.isfile(os.path.join(plugins_path, dir, "config.html")):
             p = Plugin(name=dir, route="/admin/plugins/{}".format(dir))
             plugins.append(p)
