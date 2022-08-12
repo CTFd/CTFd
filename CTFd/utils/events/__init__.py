@@ -40,7 +40,7 @@ class EventManager(object):
     def __init__(self):
         self.clients = {}
 
-    def publish(self, data, type=None, id=id, channel="ctf"):
+    def publish(self, data, type=None, id=None, channel="ctf"):
         event = ServerSentEvent(data, type=type, id=id)
         message = event.to_dict()
         for client in list(self.clients.values()):
