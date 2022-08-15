@@ -40,8 +40,8 @@ class EventManager(object):
     def __init__(self):
         self.clients = {}
 
-    def publish(self, data, type=None, channel="ctf"):
-        event = ServerSentEvent(data, type=type)
+    def publish(self, data, type=None, id=None, channel="ctf"):
+        event = ServerSentEvent(data, type=type, id=id)
         message = event.to_dict()
         for client in list(self.clients.values()):
             client[channel].put(message)
@@ -56,14 +56,14 @@ class EventManager(object):
         try:
             # Immediately yield a ping event to force Response headers to be set
             # or else some reverse proxies will incorrectly buffer SSE
-            yield ServerSentEvent(data="", type="ping")
+            yield ServerSentEvent(data="ping", type="ping")
             while True:
                 try:
                     with Timeout(5):
                         message = q[channel].get()
                         yield ServerSentEvent(**message)
                 except Timeout:
-                    yield ServerSentEvent(data="", type="ping")
+                    yield ServerSentEvent(data="ping", type="ping")
         finally:
             del self.clients[id(q)]
             del q
@@ -75,8 +75,8 @@ class RedisEventManager(EventManager):
         self.client = cache.cache._write_client
         self.clients = {}
 
-    def publish(self, data, type=None, channel="ctf"):
-        event = ServerSentEvent(data, type=type)
+    def publish(self, data, type=None, id=None, channel="ctf"):
+        event = ServerSentEvent(data, type=type, id=id)
         message = json.dumps(event.to_dict())
         return self.client.publish(message=message, channel=channel)
 
@@ -107,14 +107,14 @@ class RedisEventManager(EventManager):
         try:
             # Immediately yield a ping event to force Response headers to be set
             # or else some reverse proxies will incorrectly buffer SSE
-            yield ServerSentEvent(data="", type="ping")
+            yield ServerSentEvent(data="ping", type="ping")
             while True:
                 try:
                     with Timeout(5):
                         message = q[channel].get()
                         yield ServerSentEvent(**message)
                 except Timeout:
-                    yield ServerSentEvent(data="", type="ping")
+                    yield ServerSentEvent(data="ping", type="ping")
         finally:
             del self.clients[id(q)]
             del q

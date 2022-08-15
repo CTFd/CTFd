@@ -36,7 +36,7 @@ def test_event_manager_subscription():
         events = event_manager.subscribe()
         message = next(events)
         assert isinstance(message, ServerSentEvent)
-        assert message.to_dict() == {"data": "", "type": "ping"}
+        assert message.to_dict() == {"data": "ping", "type": "ping"}
         assert message.__str__().startswith("event:ping")
         assert len(event_manager.clients) == 1
 
@@ -146,7 +146,7 @@ def test_redis_event_manager_subscription():
                 events = event_manager.subscribe()
                 message = next(events)
                 assert isinstance(message, ServerSentEvent)
-                assert message.to_dict() == {"data": "", "type": "ping"}
+                assert message.to_dict() == {"data": "ping", "type": "ping"}
                 assert message.__str__().startswith("event:ping")
 
                 message = next(events)
