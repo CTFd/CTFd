@@ -21,9 +21,8 @@ def current(plugin_name=None):
         plugin_name = os.path.basename(os.path.dirname(caller_path))
 
     # Specifically bypass the cached config so that we always get the database value
-    try:
-        version = _get_config.__wrapped__(plugin_name + "_alembic_version")
-    except KeyError:
+    version = _get_config.__wrapped__(plugin_name + "_alembic_version")
+    if version == KeyError:
         version = None
     return version
 
