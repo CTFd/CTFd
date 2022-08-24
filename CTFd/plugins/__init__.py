@@ -202,6 +202,8 @@ def init_plugins(app):
             module = importlib.import_module(module, package="CTFd.plugins")
             module.load(app)
             print(" * Loaded module, %s" % module)
+    else:
+        print("SAFE_MODE is enabled. Skipping plugin loading.")
 
     app.jinja_env.globals.update(get_admin_plugin_menu_bar=get_admin_plugin_menu_bar)
     app.jinja_env.globals.update(get_user_page_menu_bar=get_user_page_menu_bar)
