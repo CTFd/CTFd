@@ -453,7 +453,7 @@ $(() => {
       switch (ctrl.prop("type")) {
         case "radio":
         case "checkbox":
-          ctrl.each(function () {
+          ctrl.each(function() {
             $(this).attr("checked", value);
             $(this).attr("value", value);
           });
