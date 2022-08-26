@@ -6,9 +6,29 @@ from alembic.migration import MigrationContext
 from alembic.operations import Operations
 from alembic.script import ScriptDirectory
 from flask import current_app
-from sqlalchemy import create_engine, pool
+from sqlalchemy import create_engine
+from sqlalchemy import inspect as SQLAInspect
+from sqlalchemy import pool
 
 from CTFd.utils import _get_config, set_config
+
+
+def get_all_tables(op):
+    """
+    Function to list all the tables in the database from a migration
+    """
+    inspector = SQLAInspect(op.get_bind())
+    tables = inspector.get_table_names()
+    return tables
+
+
+def get_columns_for_table(op, table_name):
+    """
+    Function to list the columns in a table from a migration
+    """
+    inspector = SQLAInspect(op.get_bind())
+    columns = inspector.get_columns(table_name)
+    return columns
 
 
 def current(plugin_name=None):
