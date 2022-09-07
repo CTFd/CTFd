@@ -18,10 +18,10 @@
 			'csrfNonce': "{{ Session.nonce }}",
 			'userMode': "{{ Configs.user_mode }}",
 			'userId': {{ Session.id }},
-			'userName': "{{ User.name }}",
-			'userEmail': "{{ User.email }}",
+			'userName': {{ User.name | tojson }},
+			'userEmail': {{ User.email | tojson }},
 			'teamId': {{ Team.id | tojson }}, 
-			'teamName': "{{ Team.name }}",
+			'teamName': {{ Team.name | tojson }},
 			'start': {{ Configs.start | tojson }},
 			'end': {{ Configs.end | tojson }},
 			'theme_settings': {{ Configs.theme_settings | tojson }}
