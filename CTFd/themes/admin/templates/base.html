@@ -15,12 +15,14 @@
 		var init = {
 			'urlRoot': "{{ request.script_root }}",
 			'csrfNonce': "{{ Session.nonce }}",
-			'userMode': "{{ get_config('user_mode') }}",
-			'userId': {{ id if (id is defined) else 0 }},
-			'userName': "{{ User.name }}",
-			'userEmail': "{{ User.email }}",
-			'start': {{ get_config("start") | tojson }},
-			'end': {{ get_config("end") | tojson }},
+			'userMode': "{{ Configs.user_mode }}",
+			'userId': {{ Session.id }},
+			'userName': {{ User.name | tojson }},
+			'userEmail': {{ User.email | tojson }},
+			'teamId': {{ Team.id | tojson }}, 
+			'teamName': {{ Team.name | tojson }},
+			'start': {{ Configs.start | tojson }},
+			'end': {{ Configs.end | tojson }}
 		}
 	</script>
 	{% block stylesheets %} {% endblock %}
