@@ -11,6 +11,11 @@ jobs:
       contents: read
       packages: write
     steps:
+      - name: Set repo name lowercase
+        id: repo
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: ${{ github.repository }}
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up QEMU
@@ -35,7 +40,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:latest
-            ${{ github.repository }}:${{ github.event.release.tag_name }}
-            ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
+            ${{ steps.repo.outputs.lowercase }}:latest
+            ghcr.io/${{ steps.repo.outputs.lowercase }}:latest
+            ${{ steps.repo.outputs.lowercase }}:${{ github.event.release.tag_name }}
+            ghcr.io/${{ steps.repo.outputs.lowercase }}:${{ github.event.release.tag_name }}
