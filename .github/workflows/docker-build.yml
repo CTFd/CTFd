@@ -35,7 +35,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ctfd/ctfd:latest
-            ghcr.io/ctfd/ctfd:latest
-            ctfd/ctfd:${{ github.event.release.tag_name }}
-            ghcr.io/ctfd/ctfd:${{ github.event.release.tag_name }}
+            ${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:latest
+            ${{ github.repository }}:${{ github.event.release.tag_name }}
+            ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}
