@@ -1,0 +1,3 @@
+[submodule "CTFd/themes/csaw"]
+	path = CTFd/themes/csaw
+	url = git@github.com:osirislab/CSAW-CTFd-Themes.git
