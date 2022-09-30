@@ -174,6 +174,8 @@ class ServerConfig(object):
 
         AWS_S3_ENDPOINT_URL: str = empty_str_cast(config_ini["uploads"]["AWS_S3_ENDPOINT_URL"])
 
+        AWS_S3_REGION: str = empty_str_cast(config_ini["uploads"]["AWS_S3_REGION"])
+
     # === OPTIONAL ===
     REVERSE_PROXY: Union[str, bool] = empty_str_cast(config_ini["optional"]["REVERSE_PROXY"], default=False)
 

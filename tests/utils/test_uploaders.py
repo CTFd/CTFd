@@ -10,8 +10,10 @@ from tests.helpers import create_ctfd, destroy_ctfd
 
 @mock_s3
 def test_s3_uploader():
-    conn = boto3.resource("s3", region_name="us-east-1")
-    conn.create_bucket(Bucket="bucket")
+    conn = boto3.resource("s3", region_name="test-region")
+    conn.create_bucket(
+        Bucket="bucket", CreateBucketConfiguration={"LocationConstraint": "test-region"}
+    )
 
     app = create_ctfd()
     with app.app_context():
@@ -19,6 +21,7 @@ def test_s3_uploader():
         app.config["AWS_ACCESS_KEY_ID"] = "AKIAIOSFODNN7EXAMPLE"
         app.config["AWS_SECRET_ACCESS_KEY"] = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
         app.config["AWS_S3_BUCKET"] = "bucket"
+        app.config["AWS_S3_REGION"] = "test-region"
 
         uploader = S3Uploader()
 
@@ -34,8 +37,10 @@ def test_s3_uploader():
 
 @mock_s3
 def test_s3_sync():
-    conn = boto3.resource("s3", region_name="us-east-1")
-    conn.create_bucket(Bucket="bucket")
+    conn = boto3.resource("s3", region_name="test-region")
+    conn.create_bucket(
+        Bucket="bucket", CreateBucketConfiguration={"LocationConstraint": "test-region"}
+    )
 
     app = create_ctfd()
     with app.app_context():
@@ -43,6 +48,7 @@ def test_s3_sync():
         app.config["AWS_ACCESS_KEY_ID"] = "AKIAIOSFODNN7EXAMPLE"
         app.config["AWS_SECRET_ACCESS_KEY"] = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
         app.config["AWS_S3_BUCKET"] = "bucket"
+        app.config["AWS_S3_REGION"] = "test-region"
 
         uploader = S3Uploader()
         uploader.sync()
