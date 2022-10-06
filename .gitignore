@@ -80,6 +80,8 @@ node_modules/
 # Flask Profiler files
 flask_profiler.sql
 
-# CTFd themes static files
-CTFd/themes/core/static/
-CTFd/themes/admin/static/
+# CTFd themes static css/js files
+CTFd/themes/core/static/css/
+CTFd/themes/core/static/js/
+CTFd/themes/admin/static/css/
+CTFd/themes/admin/static/js/
