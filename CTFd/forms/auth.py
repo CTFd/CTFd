@@ -14,7 +14,7 @@ from CTFd.forms.users import (
 
 def RegistrationForm(*args, **kwargs):
     class _RegistrationForm(BaseForm):
-        name = StringField("User Name", validators=[InputRequired()])
+        name = StringField("User Name", validators=[InputRequired()], render_kw={"autofocus": True})
         email = EmailField("Email", validators=[InputRequired()])
         password = PasswordField("Password", validators=[InputRequired()])
         submit = SubmitField("Submit")
@@ -32,7 +32,7 @@ def RegistrationForm(*args, **kwargs):
 
 
 class LoginForm(BaseForm):
-    name = StringField("User Name or Email", validators=[InputRequired()])
+    name = StringField("User Name or Email", validators=[InputRequired()], render_kw={"autofocus": True})
     password = PasswordField("Password", validators=[InputRequired()])
     submit = SubmitField("Submit")
 
@@ -42,10 +42,10 @@ class ConfirmForm(BaseForm):
 
 
 class ResetPasswordRequestForm(BaseForm):
-    email = EmailField("Email", validators=[InputRequired()])
+    email = EmailField("Email", validators=[InputRequired()], render_kw={"autofocus": True})
     submit = SubmitField("Submit")
 
 
 class ResetPasswordForm(BaseForm):
-    password = PasswordField("Password", validators=[InputRequired()])
+    password = PasswordField("Password", validators=[InputRequired()], render_kw={"autofocus": True})
     submit = SubmitField("Submit")
