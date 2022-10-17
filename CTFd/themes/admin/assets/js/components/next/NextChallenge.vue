@@ -47,7 +47,11 @@ export default {
   },
   computed: {
     updateAvailable: function() {
-      return this.selected_id != this.challenge.next_id;
+      if (this.challenge) {
+        return this.selected_id != this.challenge.next_id;
+      } else {
+        return false;
+      }
     },
     // Get all challenges besides the current one and current next
     otherChallenges: function() {
