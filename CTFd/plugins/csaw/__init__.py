@@ -38,7 +38,10 @@ def view_settings():
     country = user.country
     app.logger.info(user.__dict__)
 
-    tokens = UserTokens.query.filter_by(user_id=user.id).all()
+    verified_admin = is_admin()
+    tokens = None
+    if (verified_admin):
+        tokens = UserTokens.query.filter_by(user_id=user.id).all()
 
     prevent_name_change = get_config("prevent_name_change")
 
@@ -55,6 +58,7 @@ def view_settings():
     return render_template(
         "settings.html",
         csaw_team_members=json.dumps([{'name': 'Alex Aaron', 'email': 'aa@alexaroncontact.com', 'school': 'Arizona State University'}]),
+        verified_admin=verified_admin,
         name=name,
         email=email,
         website=website,
