@@ -1,29 +1,22 @@
 import json
 from flask import render_template
 from flask import current_app as app
-from flask import redirect, render_template, request, send_file, session, url_for
+from flask import render_template, url_for
 
 from CTFd.models import (
-    Admins,
-    Files,
-    Notifications,
-    Pages,
-    Teams,
-    Users,
     UserTokens,
-    db,
 )
 
-from CTFd.utils.user import authed, get_current_team, get_current_user, is_admin
+from CTFd.utils.user import get_current_user, is_admin
 
-from CTFd import utils
 from CTFd.utils.decorators import authed_only
-from CTFd.utils import config, get_config, set_config
+from CTFd.utils import get_config
 from CTFd.utils.helpers import get_errors, get_infos, markup
 
 
 def load(app):
-    app.view_functions['views.settings'] = view_settings
+    app.view_functions["views.settings"] = view_settings
+
 
 @authed_only
 def view_settings():
@@ -40,7 +33,7 @@ def view_settings():
 
     verified_admin = is_admin()
     tokens = None
-    if (verified_admin):
+    if verified_admin:
         tokens = UserTokens.query.filter_by(user_id=user.id).all()
 
     prevent_name_change = get_config("prevent_name_change")
@@ -55,9 +48,19 @@ def view_settings():
             )
         )
 
+    csaw_team_members = json.dumps(
+        [
+            {
+                "name": "Alex Aaron",
+                "email": "aa@alexaroncontact.com",
+                "school": "Arizona State University",
+            }
+        ]
+    )
+
     return render_template(
         "settings.html",
-        csaw_team_members=json.dumps([{'name': 'Alex Aaron', 'email': 'aa@alexaroncontact.com', 'school': 'Arizona State University'}]),
+        csaw_team_members=csaw_team_members,
         verified_admin=verified_admin,
         name=name,
         email=email,
