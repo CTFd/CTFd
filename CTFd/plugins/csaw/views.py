@@ -6,7 +6,6 @@ from flask import render_template, url_for
 from CTFd.models import (
     UserTokens,
 )
-from CTFd.plugins.csaw.utils.members import get_members
 
 from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.decorators import authed_only
