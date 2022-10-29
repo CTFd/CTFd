@@ -63,9 +63,9 @@ class Region(Resource):
 
 @csaw_namespace.route("/country_region_update")
 class CountryRegioUpdate(Resource):
-    def patch(self):
+    def post(self):
         try:
             req = request.get_json()
-            ...
+            return {"success": True, "data": ""}
         except:
-            ...
+            return {"success": False, "data": ""}

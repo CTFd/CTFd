@@ -8,7 +8,7 @@ from CTFd.models import (
 )
 
 from CTFd.utils.user import get_current_user, is_admin
-from CTFd.utils.decorators import authed_only
+from CTFd.utils.decorators import admins_only, authed_only
 from CTFd.utils import get_config
 from CTFd.utils.helpers import get_errors, get_infos, markup
 
@@ -58,3 +58,8 @@ def view_settings():
         infos=infos,
         errors=errors,
     )
+
+
+@admins_only
+def view_manage_regions():
+    return render_template("manage_regions.html")
