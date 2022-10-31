@@ -1,4 +1,5 @@
-from typing import Dict, List, OrderedDict
+from lib2to3.pytree import Base
+from typing import Dict, List, OrderedDict, Tuple, TypedDict
 from CTFd.models import Users, db
 from CTFd.utils.countries import COUNTRIES_DICT, lookup_country_code
 
@@ -30,7 +31,7 @@ class CSAWMembers(db.Model):
         return result
 
     @classmethod
-    def fromdict(cls, d):
+    def fromdict(cls, d: Dict):
         member = cls()
 
         member.sub_id = d.sub_id
@@ -40,6 +41,17 @@ class CSAWMembers(db.Model):
         member.school = d.school
 
         return member
+
+
+class DictCSAWRegionsWithName(TypedDict):
+    country: str
+    region: str
+    country_name: str
+
+
+class DictCSAWRegions(TypedDict):
+    country: str
+    region: str
 
 
 class CSAWRegions(db.Model):
@@ -52,15 +64,16 @@ class CSAWRegions(db.Model):
     def country_name(self) -> str:
         return lookup_country_code(self.country)
 
-    def asdict(self) -> Dict:
+    def asdict(self) -> DictCSAWRegions:
         result = {
             "country": self.country,
             "region": self.region,
+            "country_name": self.country_name,
         }
         return result
 
     @classmethod
-    def fromdict(cls, d):
+    def fromdict(cls, d: DictCSAWRegions):
         region = cls()
 
         region.country = d.country
@@ -81,13 +94,13 @@ def get_region(country: str) -> str:
     return region
 
 
-def get_country_region_dict() -> OrderedDict:
+def get_country_region_list() -> List[DictCSAWRegionsWithName]:
     query_obj = CSAWRegions.query.all()
-    result = OrderedDict([(q.country, q.region) for q in query_obj])
+    result = [q.asdict() for q in query_obj]
     return result
 
 
-def update_country_region(country: str, region: str):
+def updated_country_region(country: str, region: str) -> CSAWRegions:
     # wrong country
     if country not in COUNTRIES_DICT:
         raise ValueError(f"Country {country} does not exist")
@@ -95,9 +108,10 @@ def update_country_region(country: str, region: str):
     try:
         # existing country
         query_obj = CSAWRegions.query.get(country)
+        query_obj.region = region
     except:
         # new country
-        query_obj = CSAWRegions()
-        query_obj.country = country
+        new_region_dict = DictCSAWRegions(country=country, region=region)
+        query_obj = CSAWRegions.fromdict(new_region_dict)
 
-    query_obj.region = region
+    return query_obj
