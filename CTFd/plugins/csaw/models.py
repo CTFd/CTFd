@@ -34,11 +34,11 @@ class CSAWMembers(db.Model):
     def fromdict(cls, d: Dict):
         member = cls()
 
-        member.sub_id = d.sub_id
-        member.user_id = d.user_id
-        member.name = d.name
-        member.email = d.email
-        member.school = d.school
+        member.sub_id = d["sub_id"]
+        member.user_id = d["user_id"]
+        member.name = d["name"]
+        member.email = d["email"]
+        member.school = d["school"]
 
         return member
 
@@ -76,8 +76,8 @@ class CSAWRegions(db.Model):
     def fromdict(cls, d: DictCSAWRegions):
         region = cls()
 
-        region.country = d.country
-        region.region = d.region
+        region.country = d["country"]
+        region.region = d["region"]
 
         return region
 

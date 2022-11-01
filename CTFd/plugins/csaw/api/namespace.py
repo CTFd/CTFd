@@ -1,5 +1,7 @@
 from asyncio.log import logger
 import json
+from sys import exc_info
+import traceback
 from typing import List
 
 import pydantic
@@ -91,5 +93,5 @@ class CountryRegioUpdate(Resource):
             db.session.close()
             return {"success": True, "data": json.dumps(req)}
         except Exception as e:
-            app.logger.error(e)
+            app.logger.error(e, exc_info=True)
             return {"success": False, "data": ""}
