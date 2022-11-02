@@ -94,7 +94,7 @@ def get_standings(count=None, admin=False, fields=None):
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
-                sumscores.columns.id.desc(),
+                sumscores.columns.id.asc(),
             )
         )
     else:
@@ -111,7 +111,7 @@ def get_standings(count=None, admin=False, fields=None):
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
-                sumscores.columns.id.desc(),
+                sumscores.columns.id.asc(),
             )
         )
 
@@ -186,7 +186,7 @@ def get_team_standings(count=None, admin=False, fields=None):
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
-                sumscores.columns.id.desc(),
+                sumscores.columns.id.asc(),
             )
         )
     else:
@@ -204,7 +204,7 @@ def get_team_standings(count=None, admin=False, fields=None):
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
-                sumscores.columns.id.desc(),
+                sumscores.columns.id.asc(),
             )
         )
 
@@ -277,7 +277,7 @@ def get_user_standings(count=None, admin=False, fields=None):
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
-                sumscores.columns.id.desc(),
+                sumscores.columns.id.asc(),
             )
         )
     else:
@@ -295,7 +295,7 @@ def get_user_standings(count=None, admin=False, fields=None):
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
-                sumscores.columns.id.desc(),
+                sumscores.columns.id.asc(),
             )
         )
 
