@@ -6,6 +6,7 @@ Create Date: 2022-11-01 23:27:44.620893
 
 """
 from alembic import op
+from sqlalchemy.dialects import mysql
 
 
 # revision identifiers, used by Alembic.
@@ -23,8 +24,10 @@ def upgrade():
         conn = op.get_bind()
         columns = conn.execute(get_columns).fetchall()
         for table_name, column_name in columns:
-            conn.execute(
-                f"ALTER TABLE `{table_name}` MODIFY `{column_name}` DATETIME(6);"
+            op.alter_column(
+                table_name=table_name,
+                column_name=column_name,
+                type_=mysql.DATETIME(fsp=6),
             )
 
 
@@ -36,4 +39,8 @@ def downgrade():
         conn = op.get_bind()
         columns = conn.execute(get_columns).fetchall()
         for table_name, column_name in columns:
-            conn.execute(f"ALTER TABLE `{table_name}` MODIFY `{column_name}` DATETIME;")
+            op.alter_column(
+                table_name=table_name,
+                column_name=column_name,
+                type_=mysql.DATETIME(fsp=0),
+            )
