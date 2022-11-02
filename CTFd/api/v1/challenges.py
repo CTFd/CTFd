@@ -38,6 +38,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.humanize.i18n import i
 from CTFd.utils.logging import log
 from CTFd.utils.modes import generate_account_url, get_model
 from CTFd.utils.security.signing import serialize
@@ -358,10 +359,7 @@ class Challenge(Resource):
         try:
             chal_class = get_chal_class(chal.type)
         except KeyError:
-            abort(
-                500,
-                f"The underlying challenge type ({chal.type}) is not installed. This challenge can not be loaded.",
-            )
+            abort(500, i("challenges.type.not_installed", chal.type))
 
         if chal.requirements:
             requirements = chal.requirements.get("prerequisites", [])
@@ -574,7 +572,7 @@ class ChallengeAttempt(Resource):
                     "success": True,
                     "data": {
                         "status": "paused",
-                        "message": "{} is paused".format(config.ctf_name()),
+                        "message": i('api.challenges.attempt.game_paused', config.ctf_name()),
                     },
                 },
                 403,
@@ -619,6 +617,19 @@ class ChallengeAttempt(Resource):
                 abort(403)
 
         chal_class = get_chal_class(challenge.type)
+        try:
+            chal_class = get_chal_class(challenge.type)
+        except KeyError:
+            return (
+                {
+                    "success": False,
+                    "data": {
+                        "status": "invalid_challenge",
+                        "message": i("challenges.type.not_installed", challenge.type),
+                    },
+                },
+                500,
+            )
 
         # Anti-bruteforce / submitting Flags too quickly
         kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
@@ -642,7 +653,7 @@ class ChallengeAttempt(Resource):
                     "success": True,
                     "data": {
                         "status": "ratelimited",
-                        "message": "You're submitting flags too fast. Slow down.",
+                        "message": i("api.v1.challenges.attempt.ratelimited"),
                     },
                 },
                 429,
@@ -662,7 +673,7 @@ class ChallengeAttempt(Resource):
                         "success": True,
                         "data": {
                             "status": "incorrect",
-                            "message": "You have 0 tries remaining",
+                            "message": i('api.v1.challenge.attempts_left', 0),
                         },
                     },
                     403,
@@ -707,9 +718,6 @@ class ChallengeAttempt(Resource):
                 if max_tries:
                     # Off by one since fails has changed since it was gotten
                     attempts_left = max_tries - fails - 1
-                    tries_str = "tries"
-                    if attempts_left == 1:
-                        tries_str = "try"
                     # Add a punctuation mark if there isn't one
                     if message[-1] not in "!().;?[]{}":
                         message = message + "."
@@ -717,8 +725,9 @@ class ChallengeAttempt(Resource):
                         "success": True,
                         "data": {
                             "status": "incorrect",
-                            "message": "{} You have {} {} remaining.".format(
-                                message, attempts_left, tries_str
+                            "message": "{} {}".format(
+                                message,
+                                i('api.v1.challenge.attempts_left', attempts_left)
                             ),
                         },
                     }
@@ -742,7 +751,7 @@ class ChallengeAttempt(Resource):
                 "success": True,
                 "data": {
                     "status": "already_solved",
-                    "message": "You already solved this",
+                    "message": i('api.v1.challenge.already_solved'),
                 },
             }
 
