@@ -12,3 +12,7 @@ class TeamTokenExpiredException(Exception):
 
 class TeamTokenInvalidException(Exception):
     pass
+
+
+class InvalidLanguageException(Exception):
+    pass
