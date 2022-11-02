@@ -18,6 +18,7 @@ from CTFd.utils.decorators import (
     require_verified_emails,
 )
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.humanize.i18n import i
 from CTFd.utils.user import get_current_user
 
 unlocks_namespace = Namespace("unlocks", description="Endpoint to retrieve Unlocks")
@@ -114,7 +115,7 @@ class UnlockList(Resource):
                 {
                     "success": False,
                     "errors": {
-                        "score": "You do not have enough points to unlock this hint"
+                        "score": i("api.v1.unlocks.insufficient_points"),
                     },
                 },
                 400,
@@ -137,7 +138,7 @@ class UnlockList(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"target": "You've already unlocked this this target"},
+                    "errors": {"target": i("api.v1.unlocks.already_unlocked")},
                 },
                 400,
             )

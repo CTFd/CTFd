@@ -13,6 +13,7 @@ from CTFd.schemas.awards import AwardSchema
 from CTFd.utils.config import is_teams_mode
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.humanize.i18n import i
 
 awards_namespace = Namespace("awards", description="Endpoint to retrieve Awards")
 
@@ -111,9 +112,7 @@ class AwardList(Resource):
                         {
                             "success": False,
                             "errors": {
-                                "team_id": [
-                                    "User doesn't have a team to associate award with"
-                                ]
+                                "team_id": [i("api.v1.awards.user.not_team_member")]
                             },
                         },
                         400,

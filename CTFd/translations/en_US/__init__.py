@@ -10,11 +10,29 @@ def attempts_left(attempts):
 
 
 api_v1 = {
+    "awards.user.not_team_member": "User doesn't have a team to associate award with",
     "challenges.type.not_installed": lambda type: "The underlying challenge type ({}) is not installed. This challenge can not be loaded.".format(type),
     "challenges.attempt.game_paused": lambda name: "{} is paused".format(name),
     "challenges.attempt.ratelimited": "You're submitting flags too fast. Slow down.",
     "challenges.attempt.attempts_left": attempts_left,
     "challenges.attempt.already_solved": "You already solved this",
+    "hints.view.unmet_prerequisites": "You must unlock other hints before accessing this hint",
+    "teams.edit.not_captain": "Only team captains can edit team information",
+    "teams.delete.disabled": "Team disbanding is currently disabled",
+    "teams.delete.not_captain": "Only team captains can disband their team",
+    "teams.delete.participated": (
+        "You cannot disband your team as it has participated in the event. "
+        "Please contact an admin to disband your team or remove a member."
+    ),
+    "teams.member.invite.not_captain": "Only team captains can generate invite codes",
+    "teams.member.join.conflict": "User has already joined a team",
+    "teams.member.delete.not_member": "User is not part of this team",
+    "unlocks.insufficient_points": "You do not have enough points to unlock this hint",
+    "unlocks.already_unlocked": "You've already unlocked this this target", # TODO: typo?
+    "users.edit.no_self_ban": "You cannot ban yourself",
+    "users.delete.no_self_delete": "You cannot delete yourself",
+    "users.email.not_configured": "Email settings not configured",
+    "users.email.text_empty": "Email text cannot be empty",
 }
 
 translations = {

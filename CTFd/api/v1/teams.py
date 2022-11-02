@@ -24,6 +24,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.humanize.i18n import i
 from CTFd.utils.user import get_current_team, get_current_user_type, is_admin
 
 teams_namespace = Namespace("teams", description="Endpoint to retrieve Teams")
@@ -295,7 +296,7 @@ class TeamPrivate(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"": ["Only team captains can edit team information"]},
+                    "errors": {"": [i("api.v1.teams.edit.not_captain")]},
                 },
                 403,
             )
@@ -326,7 +327,7 @@ class TeamPrivate(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"": ["Team disbanding is currently disabled"]},
+                    "errors": {"": [i("api.v1.teams.delete.disabled")]},
                 },
                 403,
             )
@@ -336,7 +337,7 @@ class TeamPrivate(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"": ["Only team captains can disband their team"]},
+                    "errors": {"": [i("api.v1.teams.delete.not_captain")]},
                 },
                 403,
             )
@@ -357,10 +358,7 @@ class TeamPrivate(Resource):
                 {
                     "success": False,
                     "errors": {
-                        "": [
-                            "You cannot disband your team as it has participated in the event. "
-                            "Please contact an admin to disband your team or remove a member."
-                        ]
+                        "": [i("api.v1.teams.delete.participated")]
                     },
                 },
                 403,
@@ -393,7 +391,7 @@ class TeamPrivateMembers(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"": ["Only team captains can generate invite codes"]},
+                    "errors": {"": [i("api.v1.teams.member.invite.not_captain")]},
                 },
                 403,
             )
@@ -443,7 +441,7 @@ class TeamMembers(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"id": ["User has already joined a team"]},
+                    "errors": {"id": [i("api.v1.teams.member.join.conflict")]},
                 },
                 400,
             )
@@ -478,7 +476,9 @@ class TeamMembers(Resource):
             db.session.commit()
         else:
             return (
-                {"success": False, "errors": {"id": ["User is not part of this team"]}},
+                {"success": False, "errors": {
+                    "id": [i("api.v1.teams.member.delete.not_member")]
+                }},
                 400,
             )
 
