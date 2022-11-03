@@ -50,7 +50,6 @@ class CountryRegionList(Resource):
     def get(self):
         try:
             data = get_country_region_list()
-            data = json.dumps(data)
             app.logger.info(data)
             return {"success": True, "data": data}
         except Exception as e:
@@ -91,7 +90,7 @@ class CountryRegioUpdate(Resource):
             db.session.add_all(updated_models)
             db.session.commit()
             db.session.close()
-            return {"success": True, "data": json.dumps(req)}
+            return {"success": True, "data": req}
         except Exception as e:
             app.logger.error(e, exc_info=True)
             return {"success": False, "data": ""}
