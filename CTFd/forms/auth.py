@@ -10,16 +10,17 @@ from CTFd.forms.users import (
     build_custom_user_fields,
     build_registration_code_field,
 )
+from CTFd.utils.humanize.i18n import _
 
 
 def RegistrationForm(*args, **kwargs):
     class _RegistrationForm(BaseForm):
         name = StringField(
-            "User Name", validators=[InputRequired()], render_kw={"autofocus": True}
+            _("forms.auth.username"), validators=[InputRequired()], render_kw={"autofocus": True}
         )
-        email = EmailField("Email", validators=[InputRequired()])
-        password = PasswordField("Password", validators=[InputRequired()])
-        submit = SubmitField("Submit")
+        email = EmailField(_("forms.auth.email"), validators=[InputRequired()])
+        password = PasswordField(_("forms.auth.password"), validators=[InputRequired()])
+        submit = SubmitField(_("forms.submit"))
 
         @property
         def extra(self):
@@ -35,27 +36,27 @@ def RegistrationForm(*args, **kwargs):
 
 class LoginForm(BaseForm):
     name = StringField(
-        "User Name or Email",
+        _("forms.auth.username_or_email"),
         validators=[InputRequired()],
         render_kw={"autofocus": True},
     )
-    password = PasswordField("Password", validators=[InputRequired()])
-    submit = SubmitField("Submit")
+    password = PasswordField(_("forms.auth.password"), validators=[InputRequired()])
+    submit = SubmitField(_("forms.submit"))
 
 
 class ConfirmForm(BaseForm):
-    submit = SubmitField("Resend Confirmation Email")
+    submit = SubmitField(_("forms.auth.resend_confirm_email"))
 
 
 class ResetPasswordRequestForm(BaseForm):
     email = EmailField(
         "Email", validators=[InputRequired()], render_kw={"autofocus": True}
     )
-    submit = SubmitField("Submit")
+    submit = SubmitField(_("forms.submit"))
 
 
 class ResetPasswordForm(BaseForm):
     password = PasswordField(
         "Password", validators=[InputRequired()], render_kw={"autofocus": True}
     )
-    submit = SubmitField("Submit")
+    submit = SubmitField(_("forms.submit"))

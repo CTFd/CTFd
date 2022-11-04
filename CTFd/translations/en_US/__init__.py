@@ -36,7 +36,22 @@ api_v1 = {
 }
 
 translations = {
-
+    "challenges.name": "Name",
+    "challenges.id": "ID",
+    "challenges.category": "Category",
+    "challenges.type": "Type",
+    "constants.config.invalid_theme_settings": "invalid theme_settings",
+    "forms.parameter": "Parameter",
+    "forms.search": "Search",
+    "forms.submit": "Submit",
+    "forms.upload": "Upload",
+    "forms.auth.username": "User Name",
+    "forms.auth.username_or_email": "User Name or Email",
+    "forms.auth.email": "Email",
+    "forms.auth.password": "Password",
+    "forms.auth.resend_confirm_email": "Resend Confirmation Email",
+    "forms.challenge_files.files": "Upload Files",
+    "forms.challenge_files.files.desc": "Attach multiple files using Control+Click or Cmd+Click.",
 }
 translations.update({
     "api.v1." + k: v

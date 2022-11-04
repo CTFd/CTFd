@@ -4,6 +4,7 @@ from flask import url_for
 
 from CTFd.constants import JinjaEnum, RawEnum
 from CTFd.utils import get_config
+from CTFd.utils.humanize.i18n import _
 
 
 class ConfigTypes(str, RawEnum):
@@ -79,7 +80,7 @@ class _ConfigsWrapper:
         try:
             return json.loads(get_config("theme_settings", default="null"))
         except json.JSONDecodeError:
-            return {"error": "invalid theme_settings"}
+            return {"error": _("constants.config.invalid_theme_settings")}
 
     @property
     def tos_or_privacy(self):
