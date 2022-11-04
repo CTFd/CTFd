@@ -32,7 +32,7 @@ from CTFd.utils.decorators.visibility import (
 )
 from CTFd.utils.email import sendmail, user_created_notification
 from CTFd.utils.helpers.models import build_model_filters
-from CTFd.utils.humanize.i18n import i
+from CTFd.utils.humanize.i18n import _
 from CTFd.utils.security.auth import update_user
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
 
@@ -224,7 +224,7 @@ class UserPublic(Resource):
             data.get("banned") is True or data.get("banned") == "true"
         ):
             return (
-                {"success": False, "errors": {"id": i("api.v1.users.edit.no_self_ban")}},
+                {"success": False, "errors": {"id": _("api.v1.users.edit.no_self_ban")}},
                 400,
             )
 
@@ -256,7 +256,7 @@ class UserPublic(Resource):
         if user_id == session["id"]:
             return (
                 {"success": False, "errors": {
-                    "id": i("api.v1.users.delete.no_self_delete")
+                    "id": _("api.v1.users.delete.no_self_delete")
                 }},
                 400,
             )
@@ -480,13 +480,13 @@ class UserEmails(Resource):
 
         if get_mail_provider() is None:
             return (
-                {"success": False, "errors": {"": [i("api.v1.email.not_configured")]}},
+                {"success": False, "errors": {"": [_("api.v1.email.not_configured")]}},
                 400,
             )
 
         if not text:
             return (
-                {"success": False, "errors": {"text": [i("api.v1.email.text_empty")]}},
+                {"success": False, "errors": {"text": [_("api.v1.email.text_empty")]}},
                 400,
             )
 

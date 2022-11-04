@@ -24,7 +24,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.helpers.models import build_model_filters
-from CTFd.utils.humanize.i18n import i
+from CTFd.utils.humanize.i18n import _
 from CTFd.utils.user import get_current_team, get_current_user_type, is_admin
 
 teams_namespace = Namespace("teams", description="Endpoint to retrieve Teams")
@@ -296,7 +296,7 @@ class TeamPrivate(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"": [i("api.v1.teams.edit.not_captain")]},
+                    "errors": {"": [_("api.v1.teams.edit.not_captain")]},
                 },
                 403,
             )
@@ -327,7 +327,7 @@ class TeamPrivate(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"": [i("api.v1.teams.delete.disabled")]},
+                    "errors": {"": [_("api.v1.teams.delete.disabled")]},
                 },
                 403,
             )
@@ -337,7 +337,7 @@ class TeamPrivate(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"": [i("api.v1.teams.delete.not_captain")]},
+                    "errors": {"": [_("api.v1.teams.delete.not_captain")]},
                 },
                 403,
             )
@@ -358,7 +358,7 @@ class TeamPrivate(Resource):
                 {
                     "success": False,
                     "errors": {
-                        "": [i("api.v1.teams.delete.participated")]
+                        "": [_("api.v1.teams.delete.participated")]
                     },
                 },
                 403,
@@ -391,7 +391,7 @@ class TeamPrivateMembers(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"": [i("api.v1.teams.member.invite.not_captain")]},
+                    "errors": {"": [_("api.v1.teams.member.invite.not_captain")]},
                 },
                 403,
             )
@@ -441,7 +441,7 @@ class TeamMembers(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"id": [i("api.v1.teams.member.join.conflict")]},
+                    "errors": {"id": [_("api.v1.teams.member.join.conflict")]},
                 },
                 400,
             )
@@ -477,7 +477,7 @@ class TeamMembers(Resource):
         else:
             return (
                 {"success": False, "errors": {
-                    "id": [i("api.v1.teams.member.delete.not_member")]
+                    "id": [_("api.v1.teams.member.delete.not_member")]
                 }},
                 400,
             )

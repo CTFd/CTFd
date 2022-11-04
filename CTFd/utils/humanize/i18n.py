@@ -3,7 +3,7 @@ from CTFd.utils.config import get_config
 from CTFd.translations import translations
 
 
-def i(key, *args):
+def _(key, *args):
     '''
     translation function for backend
     to add new languages or contribute to existing ones,

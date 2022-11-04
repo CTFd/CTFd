@@ -11,7 +11,7 @@ from CTFd.models import Hints, HintUnlocks, db
 from CTFd.schemas.hints import HintSchema
 from CTFd.utils.decorators import admins_only, authed_only, during_ctf_time_only
 from CTFd.utils.helpers.models import build_model_filters
-from CTFd.utils.humanize.i18n import i
+from CTFd.utils.humanize.i18n import _
 from CTFd.utils.user import get_current_user, is_admin
 
 hints_namespace = Namespace("hints", description="Endpoint to retrieve Hints")
@@ -147,7 +147,7 @@ class Hint(Resource):
                     {
                         "success": False,
                         "errors": {
-                            "requirements": [i('api.v1.hints.view.unmet_prerequisites')]
+                            "requirements": [_('api.v1.hints.view.unmet_prerequisites')]
                         },
                     },
                     403,

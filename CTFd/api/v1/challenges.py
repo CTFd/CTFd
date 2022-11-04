@@ -38,7 +38,7 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.helpers.models import build_model_filters
-from CTFd.utils.humanize.i18n import i
+from CTFd.utils.humanize.i18n import _
 from CTFd.utils.logging import log
 from CTFd.utils.modes import generate_account_url, get_model
 from CTFd.utils.security.signing import serialize
@@ -359,7 +359,7 @@ class Challenge(Resource):
         try:
             chal_class = get_chal_class(chal.type)
         except KeyError:
-            abort(500, i("challenges.type.not_installed", chal.type))
+            abort(500, _("challenges.type.not_installed", chal.type))
 
         if chal.requirements:
             requirements = chal.requirements.get("prerequisites", [])
@@ -572,7 +572,7 @@ class ChallengeAttempt(Resource):
                     "success": True,
                     "data": {
                         "status": "paused",
-                        "message": i('api.challenges.attempt.game_paused', config.ctf_name()),
+                        "message": _('api.challenges.attempt.game_paused', config.ctf_name()),
                     },
                 },
                 403,
@@ -625,7 +625,7 @@ class ChallengeAttempt(Resource):
                     "success": False,
                     "data": {
                         "status": "invalid_challenge",
-                        "message": i("challenges.type.not_installed", challenge.type),
+                        "message": _("challenges.type.not_installed", challenge.type),
                     },
                 },
                 500,
@@ -653,7 +653,7 @@ class ChallengeAttempt(Resource):
                     "success": True,
                     "data": {
                         "status": "ratelimited",
-                        "message": i("api.v1.challenges.attempt.ratelimited"),
+                        "message": _("api.v1.challenges.attempt.ratelimited"),
                     },
                 },
                 429,
@@ -673,7 +673,7 @@ class ChallengeAttempt(Resource):
                         "success": True,
                         "data": {
                             "status": "incorrect",
-                            "message": i('api.v1.challenge.attempts_left', 0),
+                            "message": _('api.v1.challenge.attempts_left', 0),
                         },
                     },
                     403,
@@ -727,7 +727,7 @@ class ChallengeAttempt(Resource):
                             "status": "incorrect",
                             "message": "{} {}".format(
                                 message,
-                                i('api.v1.challenge.attempts_left', attempts_left)
+                                _('api.v1.challenge.attempts_left', attempts_left)
                             ),
                         },
                     }
@@ -751,7 +751,7 @@ class ChallengeAttempt(Resource):
                 "success": True,
                 "data": {
                     "status": "already_solved",
-                    "message": i('api.v1.challenge.already_solved'),
+                    "message": _('api.v1.challenge.already_solved'),
                 },
             }
 
