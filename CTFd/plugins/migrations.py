@@ -22,12 +22,14 @@ def get_all_tables(op):
     return tables
 
 
-def get_columns_for_table(op, table_name):
+def get_columns_for_table(op, table_name, names_only=False):
     """
     Function to list the columns in a table from a migration
     """
     inspector = SQLAInspect(op.get_bind())
     columns = inspector.get_columns(table_name)
+    if names_only is True:
+        columns = [c["name"] for c in columns]
     return columns
 
 
