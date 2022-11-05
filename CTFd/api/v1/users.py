@@ -480,13 +480,13 @@ class UserEmails(Resource):
 
         if get_mail_provider() is None:
             return (
-                {"success": False, "errors": {"": [_("api.v1.email.not_configured")]}},
+                {"success": False, "errors": {"": [_("api.v1.users.email.not_configured")]}},
                 400,
             )
 
         if not text:
             return (
-                {"success": False, "errors": {"text": [_("api.v1.email.text_empty")]}},
+                {"success": False, "errors": {"text": [_("api.v1.users.email.text_empty")]}},
                 400,
             )
 

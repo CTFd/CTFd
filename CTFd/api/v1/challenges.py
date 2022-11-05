@@ -359,7 +359,7 @@ class Challenge(Resource):
         try:
             chal_class = get_chal_class(chal.type)
         except KeyError:
-            abort(500, _("challenges.type.not_installed", chal.type))
+            abort(500, _("api.v1.challenges.type.not_installed", chal.type))
 
         if chal.requirements:
             requirements = chal.requirements.get("prerequisites", [])
@@ -572,7 +572,7 @@ class ChallengeAttempt(Resource):
                     "success": True,
                     "data": {
                         "status": "paused",
-                        "message": _('api.challenges.attempt.game_paused', config.ctf_name()),
+                        "message": _('api.v1.challenges.attempt.game_paused', config.ctf_name()),
                     },
                 },
                 403,
@@ -625,7 +625,7 @@ class ChallengeAttempt(Resource):
                     "success": False,
                     "data": {
                         "status": "invalid_challenge",
-                        "message": _("challenges.type.not_installed", challenge.type),
+                        "message": _("api.v1.challenges.type.not_installed", challenge.type),
                     },
                 },
                 500,
@@ -673,7 +673,7 @@ class ChallengeAttempt(Resource):
                         "success": True,
                         "data": {
                             "status": "incorrect",
-                            "message": _('api.v1.challenge.attempts_left', 0),
+                            "message": _('api.v1.challenges.attempt.attempts_left', 0),
                         },
                     },
                     403,
