@@ -3,38 +3,38 @@
 <form id="team-info-edit-form" method="POST">
 	<div class="form-group">
 		{{ form.name.label }}
-		{{ form.name(class="form-control") }}
+		{{ form.name(class="form-control", autocomplete="off") }}
 	</div>
 	<div class="form-group">
 		{{ form.email.label }}
-		{{ form.email(class="form-control") }}
+		{{ form.email(class="form-control", autocomplete="off") }}
 	</div>
 	<div class="form-group">
 		{{ form.password.label }}
-		{{ form.password(class="form-control") }}
+		{{ form.password(class="form-control", autocomplete="off") }}
 	</div>
 	<div class="form-group">
 		{{ form.website.label }}
-		{{ form.website(class="form-control") }}
+		{{ form.website(class="form-control", autocomplete="off") }}
 	</div>
 	<div class="form-group">
 		{{ form.affiliation.label }}
-		{{ form.affiliation(class="form-control") }}
+		{{ form.affiliation(class="form-control", autocomplete="off") }}
 	</div>
 	<div class="form-group">
 		{{ form.country.label }}
-		{{ form.country(class="form-control custom-select") }}
+		{{ form.country(class="form-control custom-select", autocomplete="off") }}
 	</div>
 
 	{{ render_extra_fields(form.extra) }}
 
 	<div class="form-group">
 		<div class="form-check form-check-inline">
-			{{ form.hidden(class="form-check-input") }}
+			{{ form.hidden(class="form-check-input", autocomplete="off") }}
 			{{ form.hidden.label(class="form-check-label") }}
 		</div>
 		<div class="form-check form-check-inline">
-			{{ form.banned(class="form-check-input") }}
+			{{ form.banned(class="form-check-input", autocomplete="off") }}
 			{{ form.banned.label(class="form-check-label") }}
 		</div>
 	</div>
