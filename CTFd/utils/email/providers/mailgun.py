@@ -29,7 +29,7 @@ class MailgunEmailProvider(EmailProvider):
                     "subject": subject,
                     "text": text,
                 },
-                timeout=3.0,
+                timeout=1.0,
             )
         except requests.RequestException as e:
             return (
