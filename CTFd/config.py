@@ -154,6 +154,8 @@ class ServerConfig(object):
 
     MAILGUN_BASE_URL: str = empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
 
+    MAIL_PROVIDER: str = empty_str_cast(config_ini["email"].get("MAIL_PROVIDER"))
+
     # === LOGS ===
     LOG_FOLDER: str = empty_str_cast(config_ini["logs"]["LOG_FOLDER"]) \
         or os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")

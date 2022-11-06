@@ -60,6 +60,9 @@ def can_send_mail():
 
 
 def get_mail_provider():
+    mail_provider = app.config.get("MAIL_PROVIDER")
+    if mail_provider:
+        return mail_provider
     if get_config("mail_server") and get_config("mail_port"):
         return "smtp"
     if get_config("mailgun_api_key") and get_config("mailgun_base_url"):
