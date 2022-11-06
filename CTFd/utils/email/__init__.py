@@ -2,9 +2,12 @@ from flask import url_for
 
 from CTFd.utils import get_config
 from CTFd.utils.config import get_mail_provider
-from CTFd.utils.email import mailgun, smtp
+from CTFd.utils.email.providers.mailgun import MailgunEmailProvider
+from CTFd.utils.email.providers.smtp import SMTPEmailProvider
 from CTFd.utils.formatters import safe_format
 from CTFd.utils.security.signing import serialize
+
+PROVIDERS = {"smtp": SMTPEmailProvider, "mailgun": MailgunEmailProvider}
 
 DEFAULT_VERIFICATION_EMAIL_SUBJECT = "Confirm your account for {ctf_name}"
 DEFAULT_VERIFICATION_EMAIL_BODY = (
@@ -42,11 +45,10 @@ DEFAULT_PASSWORD_CHANGE_ALERT_BODY = (
 def sendmail(addr, text, subject="Message from {ctf_name}"):
     subject = safe_format(subject, ctf_name=get_config("ctf_name"))
     provider = get_mail_provider()
-    if provider == "smtp":
-        return smtp.sendmail(addr, text, subject)
-    if provider == "mailgun":
-        return mailgun.sendmail(addr, text, subject)
-    return False, "No mail settings configured"
+    EmailProvider = PROVIDERS.get(provider)
+    if EmailProvider is None:
+        return False, "No mail settings configured"
+    return EmailProvider.sendmail(addr, text, subject)
 
 
 def password_change_alert(email):
