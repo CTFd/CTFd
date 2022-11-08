@@ -9,6 +9,10 @@ from CTFd.utils.decorators import admins_only
 def load(app):
     app.view_functions["views.settings"] = view_settings
 
+    @app.route("/")
+    def csaw_index():
+        return render_template("index.html")
+
     @app.route("/manage/regions", methods=["GET", "POST"])
     @admins_only
     def csaw_view_manage_regions():
