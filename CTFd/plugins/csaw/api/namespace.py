@@ -18,6 +18,8 @@ from CTFd.plugins.csaw.models import (
     CSAWRegions,
     get_country_region_list,
     get_members,
+    get_all_members,
+    update_members,
     get_region,
     updated_country_region,
 )
@@ -33,16 +35,51 @@ class Members(Resource):
     def get(self):
         user = get_current_user()
         app.logger.info(user)
-        members = get_members(user)
+        members = get_members(user.id)
         data = [m.asdict() for m in members]
-        data = json.dumps(data)
 
         return {"success": True, "data": data}
 
-    # TODO
     @authed_only
-    def patch(self):
+    def post(self):
         ...
+
+
+class CSAWMemberSchema(pydantic.BaseModel):
+    sub_id: int
+    user_id: int
+    name: str
+    email: str
+    school: str
+
+
+@csaw_namespace.route("/manage/members")
+class ManageMembers(Resource):
+    @admins_only
+    def get(self):
+        members = get_all_members()
+        data = [m.asdict() for m in members]
+
+        return {"success": True, "data": data}
+
+    @admins_only
+    def post(self):
+        try:
+            req = request.get_json()
+            member_list = pydantic.parse_obj_as(List[CSAWMemberSchema], req)
+
+            updated_models = []
+            for d in member_list:
+                _model = update_members(d.sub_id, d.user_id, d.name, d.email, d.school)
+                updated_models.append(_model)
+
+            db.session.add_all(updated_models)
+            db.session.commit()
+            db.session.close()
+            return {"success": True, "data": req}
+        except Exception as e:
+            app.logger.error(e, exc_info=True)
+            return {"success": False, "data": ""}
 
 
 @csaw_namespace.route("/country_region_list")
@@ -50,7 +87,6 @@ class CountryRegionList(Resource):
     def get(self):
         try:
             data = get_country_region_list()
-            app.logger.info(data)
             return {"success": True, "data": data}
         except Exception as e:
             app.logger.error(e)

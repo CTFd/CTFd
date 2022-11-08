@@ -1,4 +1,3 @@
-from lib2to3.pytree import Base
 from typing import Dict, List, OrderedDict, Tuple, TypedDict
 from CTFd.models import Users, db
 from CTFd.utils.countries import COUNTRIES_DICT, lookup_country_code
@@ -82,10 +81,39 @@ class CSAWRegions(db.Model):
         return region
 
 
-def get_members(user: Users) -> List[CSAWMembers]:
-    members = CSAWMembers.query.filter_by(user_id=user.id).order_by(CSAWMembers.sub_id)
+def get_members(user_id) -> List[CSAWMembers]:
+    members = CSAWMembers.query.filter_by(user_id=user_id).order_by(CSAWMembers.sub_id)
     result = members.all()
     return result
+
+
+def get_all_members() -> List[CSAWMembers]:
+    return CSAWMembers.query.all()
+
+
+def update_members(
+    sub_id: int, user_id: int, name: str, email: str, school: str
+) -> CSAWMembers:
+    # raise error if no user exists
+    user = Users.query.get(user_id)
+    try:
+        # modify
+        query_obj = CSAWMembers.query.get({"sub_id": sub_id, "user_id": user_id})
+        query_obj.name = name
+        query_obj.email = email
+        query_obj.school = school
+    except:
+        # create a new obj
+        new_member_dict = {
+            "sub_id": sub_id,
+            "user_id": user_id,
+            "name": name,
+            "email": email,
+            "school": school,
+        }
+        query_obj = CSAWMembers.fromdict(new_member_dict)
+
+    return query_obj
 
 
 def get_region(country: str) -> str:
