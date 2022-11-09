@@ -53,6 +53,9 @@ class DynamicValueChallenge(BaseChallenge):
         f = DECAY_FUNCTIONS.get(challenge.function, logarithmic)
         value = f(challenge)
 
+        if value > challenge.initial:
+            value = challenge.initial
+
         challenge.value = value
         db.session.commit()
         return challenge
