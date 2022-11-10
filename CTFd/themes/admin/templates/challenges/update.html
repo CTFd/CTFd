@@ -34,6 +34,16 @@
 	</div>
 	{% endblock %}
 
+	{% block author %}
+	<div class="form-group">
+		<label>
+			Author<br>
+			<small class="form-text text-muted">Challenge Author</small>
+		</label>
+		<input type="text" class="form-control chal-name" name="author" value="{{ challenge.author }}">
+	</div>
+	{% endblock %}
+
 	{% block connection_info %}
 	<div class="form-group">
 		<label>

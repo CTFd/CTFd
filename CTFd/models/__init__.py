@@ -112,6 +112,7 @@ class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
+    author = db.Column(db.String(80))
     connection_info = db.Column(db.Text)
     next_id = db.Column(db.Integer, db.ForeignKey("challenges.id", ondelete="SET NULL"))
     max_attempts = db.Column(db.Integer, default=0)
