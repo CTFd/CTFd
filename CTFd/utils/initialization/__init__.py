@@ -192,12 +192,18 @@ def init_request_processors(app):
 
     @app.before_request
     def needs_setup():
+        if import_in_progress():
+            if request.endpoint == "admin.import_ctf":
+                return
+            else:
+                return "Import currently in progress", 403
         if is_setup() is False:
             if request.endpoint in (
                 "views.setup",
                 "views.integrations",
                 "views.themes",
                 "views.files",
+                "views.healthcheck",
             ):
                 return
             else:
@@ -212,7 +218,7 @@ def init_request_processors(app):
             if request.endpoint == "admin.import_ctf":
                 return
             else:
-                abort(403, description="Import currently in progress")
+                return "Import currently in progress", 403
 
         if authed():
             user_ips = get_current_user_recent_ips()

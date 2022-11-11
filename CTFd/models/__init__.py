@@ -3,6 +3,7 @@ from collections import defaultdict
 
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property, validates
 
@@ -23,6 +24,16 @@ def get_class_by_tablename(tablename):
         if hasattr(c, "__tablename__") and c.__tablename__ == tablename:
             return c
     return None
+
+
+@compiles(db.DateTime, "mysql")
+def compile_datetime_mysql(_type, _compiler, **kw):
+    """
+    This decorator makes the default db.DateTime class always enable fsp to enable millisecond precision
+    https://dev.mysql.com/doc/refman/5.7/en/fractional-seconds.html
+    https://docs.sqlalchemy.org/en/14/core/custom_types.html#overriding-type-compilation
+    """
+    return "DATETIME(6)"
 
 
 class Notifications(db.Model):

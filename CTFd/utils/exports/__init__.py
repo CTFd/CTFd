@@ -30,6 +30,7 @@ from CTFd.utils.exports.freeze import freeze_export
 from CTFd.utils.migrations import (
     create_database,
     drop_database,
+    get_available_revisions,
     get_current_revision,
     stamp_latest_revision,
 )
@@ -194,6 +195,15 @@ def import_ctf(backup, erase=True):
     postgres = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("postgres")
     mysql = get_app_config("SQLALCHEMY_DATABASE_URI").startswith("mysql")
     mariadb = is_database_mariadb()
+
+    # Only import if we can actually make it to the target migration
+    if sqlite is False and alembic_version not in get_available_revisions():
+        set_import_error(
+            "Exception: The target migration in this backup is not available in this version of CTFd."
+        )
+        raise Exception(
+            "The target migration in this backup is not available in this version of CTFd."
+        )
 
     if erase:
         set_import_status("erasing")
