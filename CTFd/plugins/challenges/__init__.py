@@ -12,6 +12,7 @@ from CTFd.models import (
 )
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.flags import FlagException, get_flag_class
+from CTFd.utils.humanize.i18n import _
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_ip
 
@@ -123,10 +124,10 @@ class BaseChallenge(object):
         for flag in flags:
             try:
                 if get_flag_class(flag.type).compare(flag, submission):
-                    return True, "Correct"
+                    return True, _("plugins.challenges.correct")
             except FlagException as e:
                 return False, str(e)
-        return False, "Incorrect"
+        return False, _("plugins.challenges.incorrect")
 
     @classmethod
     def solve(cls, user, team, challenge, request):

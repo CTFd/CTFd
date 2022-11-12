@@ -64,6 +64,8 @@ translations = {
     "forms.awards.icon.code": "Code",
     "forms.awards.icon.cowboy": "Cowboy",
     "forms.awards.icon.angry": "Angry",
+    "plugins.challenges.correct": "Correct",
+    "plugins.challenges.incorrect": "Incorrect",
 }
 translations.update({
     "api.v1." + k: v

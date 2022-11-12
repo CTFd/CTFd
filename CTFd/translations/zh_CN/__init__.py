@@ -55,6 +55,8 @@ translations = {
     "forms.awards.icon.code": "代码",
     "forms.awards.icon.cowboy": "牛仔",
     "forms.awards.icon.angry": "生气",
+    "plugins.challenges.correct": "答案正确",
+    "plugins.challenges.incorrect": "答案错误",
 }
 translations.update({
     "api.v1." + k: v
