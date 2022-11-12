@@ -6,6 +6,7 @@ from collections import namedtuple
 from flask import current_app as app
 from flask import send_file, send_from_directory, url_for
 
+from CTFd.exceptions import PluginDependencyException
 from CTFd.utils.config.pages import get_pages
 from CTFd.utils.decorators import admins_only as admins_only_wrapper
 from CTFd.utils.plugins import override_template as utils_override_template
@@ -179,9 +180,41 @@ def get_plugin_names():
     return plugins
 
 
-def get_plugin_module_by_name(plugin):
+def get_plugin_module(plugin_name):
     # intensionally raise IndexError if plugin is not loaded
-    return app.plugin_module[plugin]
+    return app.plugin_module[plugin_name]
+
+
+def _load_plugins(app):
+    unmet_deps = {}
+    attempt_reload = True
+    while attempt_reload:
+        attempt_reload = False
+        for plugin in get_plugin_names():
+            if get_plugin_module(plugin):
+                continue
+            module = "." + plugin
+            module = importlib.import_module(module, package="CTFd.plugins")
+            try:
+                module.load(app)
+                for p in unmet_deps.keys():
+                    if plugin in unmet_deps[p]:
+                        unmet_deps[p].remove(plugin)
+                    if not unmet_deps[p]:
+                        print(f" ! Dependency fulfilled for {p}")
+                        attempt_reload = True
+                if plugin in unmet_deps:
+                    unmet_deps.pop(plugin)
+                app.plugin_module[plugin] = module
+                print(f" * Loaded module, {module}")
+            except PluginDependencyException as e:
+                unmet_deps[plugin] = set()
+                for deps in e.dependencies:
+                    if not get_plugin_module(deps):
+                        unmet_deps[plugin].add(deps)
+                        print(f" ! Module {module} requires module {deps} to be loaded")
+                if not unmet_deps[plugin]:
+                    print(f' ! Invalid dependencies for module {module}')
 
 
 def init_plugins(app):
@@ -203,12 +236,7 @@ def init_plugins(app):
     app.plugin_module = {}
 
     if app.config.get("SAFE_MODE", False) is False:
-        for plugin in get_plugin_names():
-            module = "." + plugin
-            module = importlib.import_module(module, package="CTFd.plugins")
-            module.load(app)
-            app.plugin_module[plugin] = module
-            print(" * Loaded module, %s" % module)
+        _load_plugins(app)
     else:
         print("SAFE_MODE is enabled. Skipping plugin loading.")
 
