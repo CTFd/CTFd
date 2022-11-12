@@ -179,6 +179,11 @@ def get_plugin_names():
     return plugins
 
 
+def get_plugin_module_by_name(plugin):
+    # intensionally raise IndexError if plugin is not loaded
+    return app.plugin_module[plugin]
+
+
 def init_plugins(app):
     """
     Searches for the load function in modules in the CTFd/plugins folder. This function is called with the current CTFd
@@ -195,12 +200,14 @@ def init_plugins(app):
     app.admin_plugin_menu_bar = []
     app.plugin_menu_bar = []
     app.plugins_dir = os.path.dirname(__file__)
+    app.plugin_module = {}
 
     if app.config.get("SAFE_MODE", False) is False:
         for plugin in get_plugin_names():
             module = "." + plugin
             module = importlib.import_module(module, package="CTFd.plugins")
             module.load(app)
+            app.plugin_module[plugin] = module
             print(" * Loaded module, %s" % module)
     else:
         print("SAFE_MODE is enabled. Skipping plugin loading.")
