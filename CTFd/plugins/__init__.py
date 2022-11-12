@@ -181,7 +181,7 @@ def get_plugin_names():
 
 
 def get_plugin_module(plugin_name):
-    # intensionally raise IndexError if plugin is not loaded
+    # intensionally raise KeyError if plugin is not loaded
     return app.plugin_module[plugin_name]
 
 
@@ -191,7 +191,7 @@ def _load_plugins(app):
     while attempt_reload:
         attempt_reload = False
         for plugin in get_plugin_names():
-            if get_plugin_module(plugin):
+            if plugin in app.plugin_module:
                 continue
             module = "." + plugin
             module = importlib.import_module(module, package="CTFd.plugins")
