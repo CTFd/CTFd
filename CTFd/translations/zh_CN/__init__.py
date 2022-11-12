@@ -43,6 +43,18 @@ translations = {
     "forms.auth.resend_confirm_email": "重新发送确认邮件",
     "forms.challenge_files.files": "文件",
     "forms.challenge_files.files.desc": "使用Ctrl+单击或Command+单击来选择多个文件",
+    "forms.awards.icon.none": "无",
+    "forms.awards.icon.shield": "盾牌",
+    "forms.awards.icon.bug": "缺陷",
+    "forms.awards.icon.crown": "皇冠",
+    "forms.awards.icon.crosshairs": "十字",
+    "forms.awards.icon.ban": "Ban",
+    "forms.awards.icon.lightning": "闪电",
+    "forms.awards.icon.skull": "头骨",
+    "forms.awards.icon.brain": "大脑",
+    "forms.awards.icon.code": "代码",
+    "forms.awards.icon.cowboy": "牛仔",
+    "forms.awards.icon.angry": "生气",
 }
 translations.update({
     "api.v1." + k: v

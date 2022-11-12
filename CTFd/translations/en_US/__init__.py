@@ -52,6 +52,18 @@ translations = {
     "forms.auth.resend_confirm_email": "Resend Confirmation Email",
     "forms.challenge_files.files": "Upload Files",
     "forms.challenge_files.files.desc": "Attach multiple files using Control+Click or Cmd+Click.",
+    "forms.awards.icon.none": "None",
+    "forms.awards.icon.shield": "Shield",
+    "forms.awards.icon.bug": "Bug",
+    "forms.awards.icon.crown": "Crown",
+    "forms.awards.icon.crosshairs": "Crosshairs",
+    "forms.awards.icon.ban": "Ban",
+    "forms.awards.icon.lightning": "Lightning",
+    "forms.awards.icon.skull": "Skull",
+    "forms.awards.icon.brain": "Brain",
+    "forms.awards.icon.code": "Code",
+    "forms.awards.icon.cowboy": "Cowboy",
+    "forms.awards.icon.angry": "Angry",
 }
 translations.update({
     "api.v1." + k: v
