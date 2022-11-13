@@ -213,7 +213,7 @@ class ServerConfig(object):
 
     # === I18N ===
     I18N_DIR: str = empty_str_cast(config_ini["i18n"]["I18N_DIR"], default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "translations"))
-    I18N_DEFAULT_LANG: str = empty_str_cast(config_ini["i18n"]["I18N_DEFAULT_LANG"], default="en_US")
+    I18N_DEFAULT_LOCALE: str = empty_str_cast(config_ini["i18n"]["I18N_DEFAULT_LOCALE"], default="en_US")
 # fmt: on
 
 
