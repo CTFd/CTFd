@@ -1,4 +1,5 @@
-from tests.helpers import create_ctfd, destroy_ctfd, setup_ctfd
+from CTFd.exceptions import PluginDependencyException
+from tests.helpers import create_ctfd
 
 
 def test_plugin_load():
@@ -11,3 +12,7 @@ def test_plugin_dependency():
     """Test that plugin dependency works"""
     app = create_ctfd(setup=False, enable_plugins=True)
     assert app.plugin_1_loaded
+
+
+def test_plugin_bad_dependency():
+    assert PluginDependencyException('bad').dependencies == []

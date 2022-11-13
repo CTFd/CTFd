@@ -1,9 +1,9 @@
 import glob
+import os
+import sys
+from collections import namedtuple
 from importlib import import_module
 from importlib.metadata import entry_points
-import os
-from collections import namedtuple
-import sys
 
 from flask import current_app as app
 from flask import send_file, send_from_directory, url_for
