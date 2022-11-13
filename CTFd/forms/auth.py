@@ -16,7 +16,9 @@ from CTFd.utils.humanize.i18n import _
 def RegistrationForm(*args, **kwargs):
     class _RegistrationForm(BaseForm):
         name = StringField(
-            _("forms.auth.username"), validators=[InputRequired()], render_kw={"autofocus": True}
+            _("forms.auth.username"),
+            validators=[InputRequired()],
+            render_kw={"autofocus": True},
         )
         email = EmailField(_("forms.auth.email"), validators=[InputRequired()])
         password = PasswordField(_("forms.auth.password"), validators=[InputRequired()])

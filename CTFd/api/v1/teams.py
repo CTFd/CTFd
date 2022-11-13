@@ -357,9 +357,7 @@ class TeamPrivate(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {
-                        "": [_("api.v1.teams.delete.participated")]
-                    },
+                    "errors": {"": [_("api.v1.teams.delete.participated")]},
                 },
                 403,
             )
@@ -476,9 +474,10 @@ class TeamMembers(Resource):
             db.session.commit()
         else:
             return (
-                {"success": False, "errors": {
-                    "id": [_("api.v1.teams.member.delete.not_member")]
-                }},
+                {
+                    "success": False,
+                    "errors": {"id": [_("api.v1.teams.member.delete.not_member")]},
+                },
                 400,
             )
 

@@ -224,7 +224,10 @@ class UserPublic(Resource):
             data.get("banned") is True or data.get("banned") == "true"
         ):
             return (
-                {"success": False, "errors": {"id": _("api.v1.users.edit.no_self_ban")}},
+                {
+                    "success": False,
+                    "errors": {"id": _("api.v1.users.edit.no_self_ban")},
+                },
                 400,
             )
 
@@ -255,9 +258,10 @@ class UserPublic(Resource):
         # Admins should not be able to delete themselves
         if user_id == session["id"]:
             return (
-                {"success": False, "errors": {
-                    "id": _("api.v1.users.delete.no_self_delete")
-                }},
+                {
+                    "success": False,
+                    "errors": {"id": _("api.v1.users.delete.no_self_delete")},
+                },
                 400,
             )
 
@@ -480,13 +484,19 @@ class UserEmails(Resource):
 
         if get_mail_provider() is None:
             return (
-                {"success": False, "errors": {"": [_("api.v1.users.email.not_configured")]}},
+                {
+                    "success": False,
+                    "errors": {"": [_("api.v1.users.email.not_configured")]},
+                },
                 400,
             )
 
         if not text:
             return (
-                {"success": False, "errors": {"text": [_("api.v1.users.email.text_empty")]}},
+                {
+                    "success": False,
+                    "errors": {"text": [_("api.v1.users.email.text_empty")]},
+                },
                 400,
             )
 

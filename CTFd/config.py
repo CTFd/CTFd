@@ -210,6 +210,10 @@ class ServerConfig(object):
     # === OAUTH ===
     OAUTH_CLIENT_ID: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
     OAUTH_CLIENT_SECRET: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_SECRET"])
+
+    # === I18N ===
+    I18N_DIR: str = empty_str_cast(config_ini["i18n"]["I18N_DIR"], default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "translations"))
+    I18N_DEFAULT_LANG: str = empty_str_cast(config_ini["i18n"]["I18N_DEFAULT_LANG"], default="en_US")
 # fmt: on
 
 

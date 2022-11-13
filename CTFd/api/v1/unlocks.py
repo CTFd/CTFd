@@ -114,9 +114,7 @@ class UnlockList(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {
-                        "score": _("api.v1.unlocks.insufficient_points"),
-                    },
+                    "errors": {"score": _("api.v1.unlocks.insufficient_points"),},
                 },
                 400,
             )

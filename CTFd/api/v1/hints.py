@@ -147,7 +147,7 @@ class Hint(Resource):
                     {
                         "success": False,
                         "errors": {
-                            "requirements": [_('api.v1.hints.view.unmet_prerequisites')]
+                            "requirements": [_("api.v1.hints.view.unmet_prerequisites")]
                         },
                     },
                     403,

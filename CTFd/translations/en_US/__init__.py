@@ -1,17 +1,16 @@
 # todo: split into modules and merge the dicts
 
+
 def attempts_left(attempts):
     tries_str = "tries"
     if attempts == 1:
         tries_str = "try"
-    return "You have {} {} remaining".format(
-        attempts, tries_str
-    )
+    return "You have {} {} remaining".format(attempts, tries_str)
 
 
 api_v1 = {
     "awards.user.not_team_member": "User doesn't have a team to associate award with",
-    "challenges.type.not_installed": lambda type: "The underlying challenge type ({}) is not installed. This challenge can not be loaded.".format(type),
+    "challenges.type.not_installed": lambda type: f"The underlying challenge type ({type}) is not installed. This challenge can not be loaded.",
     "challenges.attempt.game_paused": lambda name: "{} is paused".format(name),
     "challenges.attempt.ratelimited": "You're submitting flags too fast. Slow down.",
     "challenges.attempt.attempts_left": attempts_left,
@@ -28,7 +27,7 @@ api_v1 = {
     "teams.member.join.conflict": "User has already joined a team",
     "teams.member.delete.not_member": "User is not part of this team",
     "unlocks.insufficient_points": "You do not have enough points to unlock this hint",
-    "unlocks.already_unlocked": "You've already unlocked this this target", # TODO: typo?
+    "unlocks.already_unlocked": "You've already unlocked this this target",  # TODO: typo?
     "users.edit.no_self_ban": "You cannot ban yourself",
     "users.delete.no_self_delete": "You cannot delete yourself",
     "users.email.not_configured": "Email settings not configured",
@@ -67,7 +66,4 @@ translations = {
     "plugins.challenges.correct": "Correct",
     "plugins.challenges.incorrect": "Incorrect",
 }
-translations.update({
-    "api.v1." + k: v
-    for k, v in api_v1.items()
-})
+translations.update({"api.v1." + k: v for k, v in api_v1.items()})

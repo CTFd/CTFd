@@ -567,12 +567,13 @@ class ChallengeAttempt(Resource):
                 }
 
         if ctf_paused():
+            ctf_name = config.ctf_name()
             return (
                 {
                     "success": True,
                     "data": {
                         "status": "paused",
-                        "message": _('api.v1.challenges.attempt.game_paused', config.ctf_name()),
+                        "message": _("api.v1.challenges.attempt.game_paused", ctf_name),
                     },
                 },
                 403,
@@ -625,7 +626,9 @@ class ChallengeAttempt(Resource):
                     "success": False,
                     "data": {
                         "status": "invalid_challenge",
-                        "message": _("api.v1.challenges.type.not_installed", challenge.type),
+                        "message": _(
+                            "api.v1.challenges.type.not_installed", challenge.type
+                        ),
                     },
                 },
                 500,
@@ -673,7 +676,7 @@ class ChallengeAttempt(Resource):
                         "success": True,
                         "data": {
                             "status": "incorrect",
-                            "message": _('api.v1.challenges.attempt.attempts_left', 0),
+                            "message": _("api.v1.challenges.attempt.attempts_left", 0),
                         },
                     },
                     403,
@@ -727,7 +730,7 @@ class ChallengeAttempt(Resource):
                             "status": "incorrect",
                             "message": "{} {}".format(
                                 message,
-                                _('api.v1.challenge.attempts_left', attempts_left)
+                                _("api.v1.challenge.attempts_left", attempts_left),
                             ),
                         },
                     }
@@ -751,7 +754,7 @@ class ChallengeAttempt(Resource):
                 "success": True,
                 "data": {
                     "status": "already_solved",
-                    "message": _('api.v1.challenge.already_solved'),
+                    "message": _("api.v1.challenge.already_solved"),
                 },
             }
 

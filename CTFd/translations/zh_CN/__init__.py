@@ -2,19 +2,16 @@
 
 api_v1 = {
     "awards.user.not_team_member": "用户没有加入任何队伍，不可获得奖励",
-    "challenges.type.not_installed": lambda type: "没有安装提供题目类型<{}>的插件，无法加载题目。".format(type),
-    "challenges.attempt.game_paused": lambda name: "{}已暂停".format(name),
+    "challenges.type.not_installed": lambda type: f"没有安装提供题目类型<{type}>的插件，无法加载题目。",
+    "challenges.attempt.game_paused": lambda name: f"{name}已暂停",
     "challenges.attempt.ratelimited": "提交频率过高，请稍后再试。",
-    "challenges.attempt.attempts_left": lambda attempts: "还剩{}次机会".format(attempts),
+    "challenges.attempt.attempts_left": lambda attempts: f"还剩{attempts}次机会",
     "challenges.attempt.already_solved": "你已经解出该题目",
     "hints.view.unmet_prerequisites": "前置提示未解锁，无法解锁该提示",
     "teams.edit.not_captain": "只有队长可以编辑队伍信息",
     "teams.delete.disabled": "队伍解散功能已被禁用",
     "teams.delete.not_captain": "只有队长可以解散队伍",
-    "teams.delete.participated": (
-        "当前队伍无法解散，因为这支队伍已经参加了比赛。"
-        "如果仍需解散队伍或移除队员，请联系管理员。"
-    ),
+    "teams.delete.participated": ("当前队伍无法解散，因为这支队伍已经参加了比赛。" "如果仍需解散队伍或移除队员，请联系管理员。"),
     "teams.member.invite.not_captain": "只有队长可以生成邀请码",
     "teams.member.join.conflict": "用户已经加入了一个队伍",
     "teams.member.delete.not_member": "此用户不在队伍中",
@@ -58,7 +55,4 @@ translations = {
     "plugins.challenges.correct": "答案正确",
     "plugins.challenges.incorrect": "答案错误",
 }
-translations.update({
-    "api.v1." + k: v
-    for k, v in api_v1.items()
-})
+translations.update({"api.v1." + k: v for k, v in api_v1.items()})
