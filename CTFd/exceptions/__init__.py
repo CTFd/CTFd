@@ -17,9 +17,8 @@ class TeamTokenInvalidException(Exception):
 class PluginDependencyException(Exception):
     def __init__(self, dependencies: list, *args):
         super().__init__(*args)
-        if (
-            isinstance(dependencies, list)
-            and all((isinstance(d, str) for d in dependencies))
+        if isinstance(dependencies, list) and all(
+            (isinstance(d, str) for d in dependencies)
         ):
             self.dependencies = dependencies
         else:

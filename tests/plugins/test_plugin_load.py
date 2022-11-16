@@ -15,4 +15,4 @@ def test_plugin_dependency():
 
 
 def test_plugin_bad_dependency():
-    assert PluginDependencyException('bad').dependencies == []
+    assert PluginDependencyException("bad").dependencies == []

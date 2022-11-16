@@ -184,9 +184,9 @@ def get_plugin_names():
 
 def get_external_plugins():
     if sys.version_info >= (3, 10):
-        external_plugins = entry_points(group='CTFd.plugins')
+        external_plugins = entry_points(group="CTFd.plugins")
     else:
-        external_plugins = entry_points().get('CTFd.plugins', [])
+        external_plugins = entry_points().get("CTFd.plugins", [])
     return list(external_plugins)
 
 
@@ -225,7 +225,7 @@ def _load_plugins(app):
                         print(f" ! Plugin {name} requires plugin {deps} to be loaded")
                         attempt_reload = True
                 if not unmet_deps[name]:
-                    print(f' ! Invalid dependencies for plugin {name}')
+                    print(f" ! Invalid dependencies for plugin {name}")
 
 
 def init_plugins(app):
