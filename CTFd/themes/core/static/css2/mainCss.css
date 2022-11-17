@@ -1,0 +1,62 @@
+/*메인 화면 css*/
+body {
+
+    margin: 0;
+    overflow: hidden !important;
+
+}
+
+main {
+    display: inline;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.header {
+    top: 42%;
+}
+
+.header-content {
+    padding: 50px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.description {
+    color: gray;
+    padding-top: 50px;
+}
+
+
+.strong2 {
+    font-weight: bolder;
+    font-family: "Hahmlet-Bold", "RalewayOffline", "sans-serif";
+    font-size: 80px;
+    background: linear-gradient(to right,
+            hsl(327deg 40% 84%),
+            hsl(114deg 65% 82%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+}
+
+.small2 {
+
+    font-family: "RalewayOffline", sans-serif;
+    font-size: 30px;
+    background: linear-gradient(to right,
+            hsl(98 100% 62%),
+            hsl(204 100% 59%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+}
+
+.bg-dark {
+    background-color: transparent;
+    !important;
+}

@@ -165,22 +165,31 @@ def setup():
                 default_ctf_banner_location = url_for("views.files", path=f.location)
 
             # Splice in our banner
-            index = f"""<div class="row">
-    <div class="col-md-6 offset-md-3">
-        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="{default_ctf_banner_location}" />
-        <h3 class="text-center">
-            <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
-            <p>Follow us on social media:</p>
-            <a href="https://twitter.com/ctfdio"><i class="fab fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
-            <a href="https://facebook.com/ctfdio"><i class="fab fa-facebook fa-2x" aria-hidden="true"></i></a>&nbsp;
-            <a href="https://github.com/ctfd"><i class="fab fa-github fa-2x" aria-hidden="true"></i></a>
-        </h3>
-        <br>
-        <h4 class="text-center">
-            <a href="admin">Click here</a> to login and setup your CTF
-        </h4>
+            index = f"""
+<link rel="stylesheet" href="themes/core/static/css2/mainCss.css">
+<script src="themes/core/static/js2/TweenMax.min.js"></script>
+<script src="themes/core/static/js2/three.min.js"></script>
+<script src="themes/core/static/js2/mainAni.js"></script>
+
+
+<div class="container">
+	<div class="container-fluid fixed-top header disable-selection">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col">
+                        <h1 style="font-family: "Hahmlet-Bold","RalewayOffline",sans-serif";>
+                      <strong class="strong2">실전형 사이버 교육실습체계</strong></h1>
+                    <p class="small2" style="color: white;position: absolute;left: 13%;">– Navy Practical Cyber Education Practice System –</p>  
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
     </div>
-</div>"""
+</div>
+</div>
+"""
             page.content = index
 
             # Visibility
