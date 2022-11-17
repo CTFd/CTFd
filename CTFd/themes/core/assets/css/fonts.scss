@@ -7,3 +7,10 @@ $fa-font-display: auto !default;
 
 @import "~typeface-lato/index.css";
 @import "~typeface-raleway/index.css";
+
+@font-face {
+    font-family: 'Hahmlet-Bold';
+    src: url('#{$fa-font-path}/Hahmlet-Bold.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}

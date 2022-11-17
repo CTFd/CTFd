@@ -10,12 +10,12 @@
 html,
 body,
 .container {
-  font-family: "Lato", "LatoOffline", sans-serif;
+  font-family: "Hahmlet-Bold", "LatoOffline", sans-serif;
 }
 
 h1,
 h2 {
-  font-family: "Raleway", "RalewayOffline", sans-serif;
+  font-family: "Raleway", " RalewayOffline", sans-serif;
   font-weight: 500;
   letter-spacing: 2px;
 }
@@ -25,7 +25,7 @@ a {
   text-decoration: none;
 }
 
-table > thead > tr > td {
+table>thead>tr>td {
   /* Remove border line from thead of all tables */
   /* It can overlap with other element styles */
   border-top: none !important;
