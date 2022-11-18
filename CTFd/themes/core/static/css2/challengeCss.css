@@ -1,0 +1,167 @@
+* {
+    box-sizing: border-box;
+}
+
+input,
+button,
+textarea {
+    font-family: inherit;
+    -webkit-appearance: none;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    background: #181818;
+    font-family: 'Montserrat';
+    overflow: hidden;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: normal;
+    font-weight: normal;
+    user-select: none;
+    -webkit-appearance: none;
+    outline: none;
+    border-radius: 0;
+    background: none;
+    border: none;
+}
+
+main {
+    display: block;
+    justify-content: center;
+    height: 100%;
+    min-height: 100%;
+    width: 100%;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.plate {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 0;
+    text-align: center;
+    color: white;
+    letter-spacing: 4px;
+    font-size: 0.6em;
+    line-height: 2.5;
+}
+
+a {
+    text-underline: none;
+    -webkit-appearance: none;
+}
+
+.social {
+    padding-top: 1rem;
+
+    svg {
+        height: 1.25rem;
+        margin: 0 0.5rem;
+        fill: rgba(255, 255, 255, 0.3);
+        transition: all 0.2s ease;
+
+        &:hover {
+            fill: white;
+        }
+    }
+
+    a {
+        vertical-align: middle;
+        display: inline-block;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.7s ease 0.15s;
+    }
+
+    &__twitter {
+        transform: translateX(-10px);
+    }
+
+    &__codepen {
+        transform: translateX(10px);
+    }
+
+    &.active {
+        opacity: 1;
+
+        a {
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+        }
+    }
+}
+
+.mouse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+    padding: 1rem 0;
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.3);
+    width: 100%;
+    letter-spacing: 6px;
+    font-size: 0.45em;
+    line-height: 2.5;
+    text-transform: uppercase;
+    transition: all 0.5s ease;
+    opacity: 0;
+    transform: translateY(-15px);
+
+    &.active {
+        transform: none;
+        opacity: 1;
+    }
+}
+
+.text-animation {
+    opacity: 0;
+
+    &.active {
+        opacity: 1;
+    }
+
+    .letter {
+        opacity: 0;
+        transition: color 0.5s ease, opacity 0.3s ease;
+        transform-origin: bottom;
+        color: white;
+
+        &.active {
+            color: rgba(255, 255, 255, 0.3);
+            opacity: 1;
+            transform: none;
+            animation: color 5s ease infinite 3s;
+        }
+    }
+}
+
+@keyframes color {
+    0% {
+        color: rgba(255, 255, 255, 1);
+    }
+
+    20% {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    100% {
+        color: rgba(255, 255, 255, 0.3);
+    }
+}
