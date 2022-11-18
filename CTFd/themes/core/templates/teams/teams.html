@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Teams</h1>
+		<h1>팀</h1>
 	</div>
 </div>
 <div class="container">
@@ -53,50 +53,52 @@
 					</tr>
 				</thead>
 				<tbody>
-				{% for team in teams.items %}
+					{% for team in teams.items %}
 					<tr>
 						<td>
-						{% if scores_visible() %}
+							{% if scores_visible() %}
 							<a href="{{ url_for('teams.public', team_id=team.id) }}">{{ team.name | truncate(50) }}</a>
-						{% else %}
+							{% else %}
 							<span>{{ team.name | truncate(50) }}</span>
-						{% endif %}
-						{% if team.oauth_id %}
+							{% endif %}
+							{% if team.oauth_id %}
 							<a href="https://majorleaguecyber.org/t/{{ team.name }}">
 								<span class="badge badge-primary">Official</span>
 							</a>
-						{% endif %}
+							{% endif %}
 						</td>
 						<td class="text-center" style="width: 10px;">
-							{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
-								<a href="{{ team.website }}" target="_blank" rel="noopener">
-									<i class="fas fa-external-link-alt" data-toggle="tooltip" data-placement="top" title="{{ team.website }}"></i>
-								</a>
+							{% if team.website and (team.website.startswith('http://') or
+							team.website.startswith('https://')) %}
+							<a href="{{ team.website }}" target="_blank" rel="noopener">
+								<i class="fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+									title="{{ team.website }}"></i>
+							</a>
 							{% endif %}
 						</td>
 						<td class="d-none d-md-table-cell d-lg-table-cell">
 							{% if team.affiliation %}
-								{% if team.affiliation | length > 50 %}
-								<span data-toggle="tooltip" data-placement="top" title="{{ team.affiliation }}">
-									{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
-								</span>
-								{% else %}
-								<span>
-									{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
-								</span>
-								{% endif %}
+							{% if team.affiliation | length > 50 %}
+							<span data-toggle="tooltip" data-placement="top" title="{{ team.affiliation }}">
+								{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
+							</span>
+							{% else %}
+							<span>
+								{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
+							</span>
+							{% endif %}
 							{% endif %}
 						</td>
 						<td class="d-none d-md-table-cell d-lg-table-cell text-center">
 							<span>
 								{% if team.country %}
-									<i class="flag-{{ team.country.lower() }}"></i>
-									{{ lookup_country_code(team.country) }}
+								<i class="flag-{{ team.country.lower() }}"></i>
+								{{ lookup_country_code(team.country) }}
 								{% endif %}
 							</span>
 						</td>
 					</tr>
-				{% endfor %}
+					{% endfor %}
 				</tbody>
 			</table>
 		</div>
@@ -111,7 +113,7 @@
 				{% endif %}
 				<select class="page-select">
 					{% for page in range(1, teams.pages + 1) %}
-					<option {% if teams.page == page %}selected{% endif %}>{{ page }}</option>
+					<option {% if teams.page==page %}selected{% endif %}>{{ page }}</option>
 					{% endfor %}
 				</select>
 				{% if teams.next_num %}

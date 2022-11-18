@@ -3,7 +3,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Scoreboard</h1>
+		<h1>스코어보드</h1>
 	</div>
 </div>
 <div class="container">
@@ -28,7 +28,7 @@
 					</tr>
 				</thead>
 				<tbody>
-				{% for standing in standings %}
+					{% for standing in standings %}
 					<tr>
 						<th scope="row" class="text-center">{{ loop.index }}</th>
 						<td>
@@ -36,21 +36,21 @@
 								{{ standing.name | truncate(50) }}
 
 								{% if standing.oauth_id %}
-									{% if Configs.user_mode == 'teams' %}
-									<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
-										<span class="badge badge-primary">Official</span>
-									</a>
-									{% elif Configs.user_mode == 'users' %}
-									<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
-										<span class="badge badge-primary">Official</span>
-									</a>
-									{% endif %}
+								{% if Configs.user_mode == 'teams' %}
+								<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
+									<span class="badge badge-primary">Official</span>
+								</a>
+								{% elif Configs.user_mode == 'users' %}
+								<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
+									<span class="badge badge-primary">Official</span>
+								</a>
+								{% endif %}
 								{% endif %}
 							</a>
 						</td>
 						<td>{{ standing.score }}</td>
 					</tr>
-				{% endfor %}
+					{% endfor %}
 				</tbody>
 			</table>
 		</div>
@@ -61,9 +61,9 @@
 {% endblock %}
 
 {% block scripts %}
-	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
+<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', path='js/pages/scoreboard.js') }}"></script>
+<script defer src="{{ url_for('views.themes', path='js/pages/scoreboard.js') }}"></script>
 {% endblock %}

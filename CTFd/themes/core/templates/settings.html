@@ -6,15 +6,17 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Settings</h1>
+		<h1>환경설정</h1>
 	</div>
 </div>
 <div class="container">
 	<div class="row">
 		<div class="col-md-2 offset-md-1">
 			<div class="nav flex-column nav-pills" role="tablist">
-				<a class="nav-link active" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab">Profile</a>
-				<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Access Tokens</a>
+				<a class="nav-link active" id="settings-profile-tab" data-toggle="pill" href="#profile"
+					role="tab">Profile</a>
+				<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Access
+					Tokens</a>
 			</div>
 		</div>
 		<div class="col-md-8">
@@ -125,5 +127,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', path='js/pages/settings.js') }}"></script>
+<script defer src="{{ url_for('views.themes', path='js/pages/settings.js') }}"></script>
 {% endblock %}

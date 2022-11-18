@@ -3,7 +3,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Scoreboard</h1>
+		<h1>스코어보드</h1>
 	</div>
 </div>
 <div class="container">
@@ -11,7 +11,8 @@
 		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" id="scoreboard-edit-button" data-toggle="tooltip" title="Hide/Unhide Accounts">
+					<button type="button" class="btn btn-outline-secondary" id="scoreboard-edit-button"
+						data-toggle="tooltip" title="Hide/Unhide Accounts">
 						<i class="btn-fa fas fa-eye"></i>
 					</button>
 				</div>
@@ -59,5 +60,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/scoreboard.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/scoreboard.js') }}"></script>
 {% endblock %}

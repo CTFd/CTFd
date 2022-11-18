@@ -7,7 +7,7 @@
 
 <div class="jumbotron">
 	<div class="container">
-		<h1>{% if type %}{{ type|title }} {% endif %}Submissions</h1>
+		<h1>{% if type %}{{ type|title }} {% endif %}서브미션</h1>
 	</div>
 </div>
 
@@ -63,7 +63,8 @@
 					<tr>
 						<th class="border-right" data-checkbox>
 							<div class="form-check text-center">
-								<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
+								<input type="checkbox" class="form-check-input" autocomplete="off"
+									data-checkbox-all>&nbsp;
 							</div>
 						</th>
 						<th class="text-center sort-col"><b>ID</b></th>
@@ -82,7 +83,8 @@
 					<tr>
 						<td class="border-right" data-checkbox>
 							<div class="form-check text-center">
-								<input type="checkbox" class="form-check-input" value="{{ sub.id }}" data-submission-id="{{ sub.id }}" autocomplete="off">&nbsp;
+								<input type="checkbox" class="form-check-input" value="{{ sub.id }}"
+									data-submission-id="{{ sub.id }}" autocomplete="off">&nbsp;
 							</div>
 						</td>
 						<td class="text-center" id="{{ sub.id }}">
@@ -122,15 +124,15 @@
 			<div class="text-center">Page
 				<br>
 				{% if submissions.page != 1 %}
-					<a href="{{ prev_page }}">&lt;&lt;&lt;</a>
+				<a href="{{ prev_page }}">&lt;&lt;&lt;</a>
 				{% endif %}
 				<select class="page-select">
 					{% for page in range(1, submissions.pages + 1) %}
-					<option {% if submissions.page == page %}selected{% endif %}>{{ page }}</option>
+					<option {% if submissions.page==page %}selected{% endif %}>{{ page }}</option>
 					{% endfor %}
 				</select>
 				{% if submissions.next_num %}
-					<a href="{{ next_page }}">&gt;&gt;&gt;</a>
+				<a href="{{ next_page }}">&gt;&gt;&gt;</a>
 				{% endif %}
 			</div>
 			{% endif %}
@@ -143,5 +145,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/submissions.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/submissions.js') }}"></script>
 {% endblock %}

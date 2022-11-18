@@ -3,7 +3,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Statistics</h1>
+		<h1>통계</h1>
 	</div>
 </div>
 <div class="container">
@@ -18,7 +18,7 @@
 			<h5><b>{{ total_points }}</b> total possible points</h5>
 			<h5><b>{{ challenge_count }}</b> challenges</h5>
 			{% if most_solved %}
-				<h5><b>{{ most_solved }}</b> has the most solves with <br>{{ solve_data[most_solved] }} solves</h5>
+			<h5><b>{{ most_solved }}</b> has the most solves with <br>{{ solve_data[most_solved] }} solves</h5>
 			{% endif %}
 			{% if least_solved %}
 			<h5><b>{{ least_solved }}</b> has the least solves with <br>{{ solve_data[least_solved] }} solves</h5>
@@ -85,10 +85,10 @@
 {% endblock %}
 
 {% block scripts %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/echarts.bundle.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/graphs.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/echarts.bundle.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/graphs.js') }}"></script>
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/statistics.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/statistics.js') }}"></script>
 {% endblock %}

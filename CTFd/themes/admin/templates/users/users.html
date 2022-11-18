@@ -6,7 +6,7 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Users
+		<h1>유저
 			<span class="create-team" role="button" data-toggle="tooltip" title="Create User">
 				<a href="{{ url_for('admin.users_new') }}" style="color: inherit;">
 					<i class="btn-fa fas fa-plus-circle"></i>
@@ -53,10 +53,12 @@
 		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Users" id="users-edit-button">
+					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Users"
+						id="users-edit-button">
 						<i class="btn-fa fas fa-pencil-alt"></i>
 					</button>
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Users" id="users-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Users"
+						id="users-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -88,7 +90,8 @@
 					<tr name="{{ user.id }}" data-href="{{ url_for('admin.users_detail', user_id=user.id) }}">
 						<td class="border-right" data-checkbox>
 							<div class="form-check text-center">
-								<input type="checkbox" class="form-check-input" value="{{ user.id }}" data-user-id="{{ user.id }}">&nbsp;
+								<input type="checkbox" class="form-check-input" value="{{ user.id }}"
+									data-user-id="{{ user.id }}">&nbsp;
 							</div>
 						</td>
 						<td class="team-id text-center" value="{{ user.id }}">{{ user.id }}</td>
@@ -97,51 +100,52 @@
 								{{ user.name | truncate(32) }}
 							</a>
 							{% if user.oauth_id %}
-								<a href="https://majorleaguecyber.org/u/{{ user.name }}">
-									<span class="badge badge-primary">Official</span>
-								</a>
+							<a href="https://majorleaguecyber.org/u/{{ user.name }}">
+								<span class="badge badge-primary">Official</span>
+							</a>
 							{% endif %}
 							{% if user.website %}
-								<a href="{{ user.website }}" target="_blank" class="badge badge-info" rel="noopener">
-									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
-									   title="{{ user.website }}" aria-hidden="true"></i>
-								</a>
+							<a href="{{ user.website }}" target="_blank" class="badge badge-info" rel="noopener">
+								<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+									title="{{ user.website }}" aria-hidden="true"></i>
+							</a>
 							{% endif %}
 							{% if user.affiliation %}
-								<span class="d-block text-muted"><small>{{ user.affiliation | truncate(20) }}</small></span>
+							<span class="d-block text-muted"><small>{{ user.affiliation | truncate(20) }}</small></span>
 							{% endif %}
 						</td>
 						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ user.email }}">
 							{% if user.email %}
-								<a href="mailto:{{ user.email }}" target="_blank">{{ user.email | truncate(32) }}</a>
+							<a href="mailto:{{ user.email }}" target="_blank">{{ user.email | truncate(32) }}</a>
 							{% endif %}
 						</td>
 						<td class="team-country text-center" value="{{ user.country if user.country is not none }}">
 							<span>
 								{% if user.country %}
-									<i class="flag-{{ user.country.lower() }}"></i>
-									<small>{{ lookup_country_code(user.country) }}</small>
+								<i class="flag-{{ user.country.lower() }}"></i>
+								<small>{{ lookup_country_code(user.country) }}</small>
 								{% endif %}
 							</span>
 						</td>
 						<td class="team-admin d-md-table-cell d-lg-table-cell text-center" value="{{ user.type }}">
 							{% if user.type == 'admin' %}
-								<span class="badge badge-primary">admin</span>
+							<span class="badge badge-primary">admin</span>
 							{% endif %}
 						</td>
-						<td class="team-verified d-md-table-cell d-lg-table-cell text-center" value="{{ user.verified }}">
+						<td class="team-verified d-md-table-cell d-lg-table-cell text-center"
+							value="{{ user.verified }}">
 							{% if user.verified %}
-								<span class="badge badge-success">verified</span>
+							<span class="badge badge-success">verified</span>
 							{% endif %}
 						</td>
 						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ user.hidden }}">
 							{% if user.hidden %}
-								<span class="badge badge-danger">hidden</span>
+							<span class="badge badge-danger">hidden</span>
 							{% endif %}
 						</td>
 						<td class="team-banned d-md-table-cell d-lg-table-cell text-center" value="{{ user.banned }}">
 							{% if user.banned %}
-								<span class="badge badge-danger">banned</span>
+							<span class="badge badge-danger">banned</span>
 							{% endif %}
 						</td>
 					</tr>
@@ -156,7 +160,7 @@
 				{% endif %}
 				<select class="page-select">
 					{% for page in range(1, users.pages + 1) %}
-					<option {% if users.page == page %}selected{% endif %}>{{ page }}</option>
+					<option {% if users.page==page %}selected{% endif %}>{{ page }}</option>
 					{% endfor %}
 				</select>
 				{% if users.next_num %}
@@ -173,5 +177,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/users.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/users.js') }}"></script>
 {% endblock %}
