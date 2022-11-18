@@ -9,6 +9,10 @@ textarea {
     -webkit-appearance: none;
 }
 
+h1 {
+    font-family: "Hahmlet-Bold", "RalewayOffline", "sans-serif";
+}
+
 html,
 body {
     height: 100%;
