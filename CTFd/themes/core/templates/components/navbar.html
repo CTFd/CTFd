@@ -18,10 +18,14 @@
         width: 100%;
         transition: 1s;
     }
+
+    .navbar-dark .navbar-nav .nav-link {
+        color: white;
+    }
 </style>
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" style="
-padding: 0rem 0rem;">
+<nav class="navbar navbar-expand-md navbar-dark fixed-top" style="
+padding: 0rem 0rem; font-size:20px">
     <div class="container navEffect">
         <a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">
             {% if Configs.ctf_logo %}
