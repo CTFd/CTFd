@@ -4,6 +4,86 @@
 <link rel="stylesheet" href="{{ url_for('views.themes', path='css/challenge-board.css') }}">
 <link rel="stylesheet" href="themes/core/static/css2/challengeCss.css">
 <script src="themes/core/static/js2/challengeAni.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+<style>
+	.modal-content {
+		left: 0%;
+		width: 2000px;
+	}
+
+	.modal-body {
+		width: 70%;
+		left: 14%;
+		font-size: 20px;
+		font-family: "Hahmlet-Bold", "LatoOffline", sans-serif;
+	}
+
+	.modal-title {
+		font-size: 40px;
+		font-family: 'Hahmlet-Bold';
+		color: rgb(101, 101, 223);
+		width: 100%;
+		text-align: center;
+	}
+
+	.challenge-desc {
+		margin-top: 0;
+		margin-bottom: 1rem;
+		background: white;
+		border-radius: 5px;
+		color: #0e0e0e;
+		padding-left: 10px;
+		display: block;
+	}
+
+	.challenge-custom {
+    background-color: #6d82c5;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    /* margin-left: 20%; */
+    padding-left: 21px;
+    padding-top: 5px;
+    color: white;
+    padding-bottom: 6px;
+    font-size: 19px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    background-image: url(themes/core/static/img/search.png);
+    background-size: 27px;
+    background-repeat: no-repeat;
+    background-position: 40% 60%;
+}
+
+	.btn-dark {
+		background-color: #dee2e6;
+		border-color: #343a40;
+		color: black;
+		border-radius: 10px !important;
+	}
+
+	.solved-challenge {
+		background-color: #5af5ad !important;
+		opacity: 1;
+		border: none;
+	}
+
+	.btn-dark:hover {
+		color: #fff;
+		background-color: #7f8489;
+		border-color: #1d2124;
+	}
+	.solved-challenge {
+    background-color: #5af5ad !important;
+    opacity: 1;
+    border: none;
+    background-image: url(themes/core/static/img/complete.png),url(themes/core/static/img/boat.png);
+    background-size: 117px, 39px;
+    background-repeat: no-repeat;
+    background-position: -16% -43%, 85% 60%;
+}
+</style>
 {% endblock %}
 
 {% block content %}
