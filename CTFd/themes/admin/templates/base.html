@@ -25,7 +25,29 @@
 			'end': {{ Configs.end | tojson }}
 		}
 	</script>
-	{% block stylesheets %} {% endblock %}
+	{% block stylesheets %} 
+<style>
+		.navEffect a {
+	
+			padding: 14px 16px;
+	
+		}
+	
+		.navEffect a::before {
+			content: '';
+			width: 0%;
+			height: 3px;
+			display: block;
+			background-color: #fff;
+			margin-bottom: 10px;
+		}
+	
+		.navEffect a:hover::before {
+			width: 100%;
+			transition: 1s;
+		}
+	</style>
+	{% endblock %}
 	{% for stylesheet in get_registered_admin_stylesheets() %}
 		{% if stylesheet.startswith('http') %}
 			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
@@ -38,8 +60,9 @@
 </head>
 
 <body>
-	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-		<div class="container">
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top" style="
+padding: 0rem 0rem; font-size:20px">
+    <div class="container navEffect">
 			<a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">CTFd</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
 					aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation">
