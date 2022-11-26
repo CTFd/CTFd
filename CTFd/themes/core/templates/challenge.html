@@ -1,6 +1,6 @@
 <div class="modal-dialog" role="document">
 	<div class="modal-content" style="
-    left: 0%;
+    left: -45%;
     width: 2104px;
     border-radius: 96px!important;
     padding: 60px;
@@ -31,7 +31,8 @@
 			<div role="tabpanel">
 				<div class="tab-content">
 					<div role="tabpanel" class="tab-pane fade show active" id="challenge">
-						<div style="background: #e9ecef;color: #5668a3;border-radius: 20px;border-top-left-radius: 0px;padding-bottom: 15px;background-image: url(&quot;themes/core/static/img/anchor.png&quot;),url(&quot;themes/core/static/img/boat.png&quot;);background-size: 77px, 73px;background-repeat: no-repeat;background-position: 91% 60%, 10% 60%;">
+						<div
+							style="background: #e9ecef;color: #5668a3;border-radius: 20px;border-top-left-radius: 0px;padding-bottom: 15px;background-image: url(&quot;themes/core/static/img/anchor.png&quot;),url(&quot;themes/core/static/img/boat.png&quot;);background-size: 77px, 73px;background-repeat: no-repeat;background-position: 91% 60%, 10% 60%;">
 							<h2 class='challenge-name text-center pt-3'>
 								{{ challenge.name }}
 							</h2>
@@ -50,23 +51,28 @@
 						<div class="row submit-row" style="
 						margin-top: 50px;
 					">
-							<div style="width: 22%;font-size: 1.125rem;font-weight: 700;text-align: center;margin: 14px 0;margin-left: 23px;"><i class="fas fa-flag"></i>
+							<div
+								style="width: 22%;font-size: 1.125rem;font-weight: 700;text-align: center;margin: 14px 0;margin-left: 23px;">
+								<i class="fas fa-flag"></i>
 								Flag를 입력하세요
 							</div>
 							<div class="col-md-6 form-group">
-								
+
 								<input id="challenge-id" class="challenge-id" type="hidden" value="1">
-								<input id="challenge-input" class="challenge-input form-control" type="text" name="answer" placeholder="Flag" style="width: 122%;border-radius: 20px;">
-								
+								<input id="challenge-input" class="challenge-input form-control" type="text"
+									name="answer" placeholder="Flag" style="width: 122%;border-radius: 20px;">
+
 							</div>
 							<div class="col-md-2 form-group key-submit" style="
 							margin-left: 59px;
 						">
-								
-								<button id="challenge-submit" class="challenge-submit btn btn-md btn-outline-secondary float-right" type="submit" style="border-radius: 20px;/* margin-left: 43px; */">
+
+								<button id="challenge-submit"
+									class="challenge-submit btn btn-md btn-outline-secondary float-right" type="submit"
+									style="border-radius: 20px;/* margin-left: 43px; */">
 									제출하기
 								</button>
-								
+
 							</div>
 						</div>
 
@@ -78,7 +84,7 @@
 							<div class="challenge-custom"> 문제 설명</div>
 							<hr>
 							<span class="challenge-desc"
-							style="font-size: 15px;font-weight: 900 !important;border-radius: 20px;padding: 20px;background-image: url(themes/core/static/img/sailor.png);background-size: 104px;background-repeat: no-repeat;background-position: 91% 60%;">
+								style="font-size: 15px;font-weight: 900 !important;border-radius: 20px;padding: 20px;background-image: url(themes/core/static/img/sailor.png);background-size: 104px;background-repeat: no-repeat;background-position: 91% 60%;">
 								{% block description %}{{ challenge.html }}{% endblock %}</span>
 
 							<span class="challenge-connection-info">
@@ -137,7 +143,7 @@
 										">
 
 
-										
+
 
 										{% if hint.content %}
 										<small>

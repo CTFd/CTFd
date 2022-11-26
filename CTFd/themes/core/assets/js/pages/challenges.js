@@ -83,16 +83,16 @@ const displayChal = chal => {
       }
     }
 
-    $(".challenge-solves").click(function(_event) {
+    $(".challenge-solves").click(function (_event) {
       getSolves($("#challenge-id").val());
     });
-    $(".nav-tabs a").click(function(event) {
+    $(".nav-tabs a").click(function (event) {
       event.preventDefault();
       $(this).tab("show");
     });
 
     // Handle modal toggling
-    $("#challenge-window").on("hide.bs.modal", function(_event) {
+    $("#challenge-window").on("hide.bs.modal", function (_event) {
       $("#challenge-input").removeClass("wrong");
       $("#challenge-input").removeClass("correct");
       $("#incorrect-key").slideUp();
@@ -101,11 +101,11 @@ const displayChal = chal => {
       $("#too-fast").slideUp();
     });
 
-    $(".load-hint").on("click", function(_event) {
+    $(".load-hint").on("click", function (_event) {
       loadHint($(this).data("hint-id"));
     });
 
-    $("#challenge-submit").click(function(event) {
+    $("#challenge-submit").click(function (event) {
       event.preventDefault();
       $("#challenge-submit").addClass("disabled-button");
       $("#challenge-submit").prop("disabled", true);
@@ -126,7 +126,7 @@ const displayChal = chal => {
 
     $("#challenge-window")
       .find("pre code")
-      .each(function(_idx) {
+      .each(function (_idx) {
         hljs.highlightBlock(this);
       });
 
@@ -148,9 +148,9 @@ function renderSubmissionResponse(response) {
 
   const next_btn = $(
     `<div class='col-md-12 pb-3'><button class='btn btn-info w-100'>Next Challenge</button></div>`
-  ).click(function() {
+  ).click(function () {
     $("#challenge-window").modal("toggle");
-    setTimeout(function() {
+    setTimeout(function () {
       loadChal(CTFd._internal.challenge.data.next_id);
     }, 500);
   });
@@ -172,7 +172,7 @@ function renderSubmissionResponse(response) {
 
     answer_input.removeClass("correct");
     answer_input.addClass("wrong");
-    setTimeout(function() {
+    setTimeout(function () {
       answer_input.removeClass("wrong");
     }, 3000);
   } else if (result.status === "correct") {
@@ -194,8 +194,8 @@ function renderSubmissionResponse(response) {
             .text()
             .split(" ")[0]
         ) +
-          1 +
-          " Solves"
+        1 +
+        " Solves"
       );
     }
 
@@ -232,11 +232,11 @@ function renderSubmissionResponse(response) {
     result_notification.slideDown();
 
     answer_input.addClass("too-fast");
-    setTimeout(function() {
+    setTimeout(function () {
       answer_input.removeClass("too-fast");
     }, 3000);
   }
-  setTimeout(function() {
+  setTimeout(function () {
     $(".alert").slideUp();
     $("#challenge-submit").removeClass("disabled-button");
     $("#challenge-submit").prop("disabled", false);
@@ -277,7 +277,7 @@ function getSolves(id) {
 }
 
 function loadChals() {
-  return CTFd.api.get_challenge_list().then(function(response) {
+  return CTFd.api.get_challenge_list().then(function (response) {
     const categories = [];
     const $challenges_board = $("#challenges-board");
     challenges = response.data;
@@ -296,13 +296,13 @@ function loadChals() {
         const categoryid = category.replace(/ /g, "-").hashCode();
         const categoryrow = $(
           "" +
-            '<div id="{0}-row" class="pt-5">'.format(categoryid) +
-            '<div class="category-header col-md-12 mb-3">' +
-            "</div>" +
-            '<div class="category-challenges col-md-12">' +
-            '<div class="challenges-row col-md-12"></div>' +
-            "</div>" +
-            "</div>"
+          '<div id="{0}-row" class="pt-5">'.format(categoryid) +
+          '<div class="category-header col-md-12 mb-3" style="color:white">' +
+          "</div>" +
+          '<div class="category-challenges col-md-12">' +
+          '<div class="challenges-row col-md-12"></div>' +
+          "</div>" +
+          "</div>"
         );
         categoryrow
           .find(".category-header")
@@ -351,7 +351,7 @@ function loadChals() {
         .append(chalwrap);
     }
 
-    $(".challenge-button").click(function(_event) {
+    $(".challenge-button").click(function (_event) {
       loadChal(this.value);
     });
   });
@@ -368,27 +368,27 @@ $(() => {
     }
   });
 
-  $("#challenge-input").keyup(function(event) {
+  $("#challenge-input").keyup(function (event) {
     if (event.keyCode == 13) {
       $("#challenge-submit").click();
     }
   });
 
-  $(".nav-tabs a").click(function(event) {
+  $(".nav-tabs a").click(function (event) {
     event.preventDefault();
     $(this).tab("show");
   });
 
-  $("#challenge-window").on("hidden.bs.modal", function(_event) {
+  $("#challenge-window").on("hidden.bs.modal", function (_event) {
     $(".nav-tabs a:first").tab("show");
     history.replaceState("", window.document.title, window.location.pathname);
   });
 
-  $(".challenge-solves").click(function(_event) {
+  $(".challenge-solves").click(function (_event) {
     getSolves($("#challenge-id").val());
   });
 
-  $("#challenge-window").on("hide.bs.modal", function(_event) {
+  $("#challenge-window").on("hide.bs.modal", function (_event) {
     $("#challenge-input").removeClass("wrong");
     $("#challenge-input").removeClass("correct");
     $("#incorrect-key").slideUp();
