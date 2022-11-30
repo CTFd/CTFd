@@ -1,12 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="jumbotron">
+<style>
+	html {
+		height: 100%;
+
+	}
+
+	body {
+		width: 100%;
+		margin: 0;
+		background-image: radial-gradient(ellipse farthest-corner at center top, hsl(300deg 100% 15%) 0%, hsla(231, 90%, 1%, 1) 100%) !important;
+	}
+
+	h1 {
+		font-family: "Hahmlet-Bold", "RalewayOffline", "sans-serif";
+	}
+</style>
+
+<div width="100%" ;height="100%">
+	<canvas id="canv" style="position: fixed;"></canvas>
+</div>
+<div class="jumbotron" style="background:transparent">
 	<div class="container">
 		<h1>공지사항</h1>
 	</div>
 </div>
-<div class="container">
+<div class="container"
+	style="background:white; position:relative;border-radius: 50px; padding-top:30px; height:400px; opacity: 0.9;">
 	{% if not notifications %}
 	<h2 class="text-center">There are no notifications yet</h2>
 	{% endif %}
@@ -26,4 +47,5 @@
 
 {% block entrypoint %}
 <script defer src="{{ url_for('views.themes', path='js/pages/notifications.js') }}"></script>
+<script defer src="themes/core/static/js2/background.js"></script>
 {% endblock %}
