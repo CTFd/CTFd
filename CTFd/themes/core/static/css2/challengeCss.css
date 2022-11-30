@@ -21,7 +21,6 @@ body {
 body {
     background: #181818;
     font-family: 'Montserrat';
-    overflow: hidden;
 }
 
 * {
@@ -47,7 +46,7 @@ main {
 }
 
 canvas {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
 }
