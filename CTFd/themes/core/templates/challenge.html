@@ -87,31 +87,33 @@
 								style="font-size: 15px;font-weight: 900 !important;border-radius: 20px;padding: 20px;background-image: url(themes/core/static/img/sailor.png);background-size: 104px;background-repeat: no-repeat;background-position: 91% 60%;">
 								{% block description %}{{ challenge.html }}{% endblock %}</span>
 
-							<div class="challenge-custom"
-								style="font-size: 15px;padding-left: 0px;padding-top: 9px;width: 100px;height: 40px;background: gray;">
-								문제 파일</div>
-							<span class="challenge-connection-info">
-								{% block connection_info %}
-								{% set conn = challenge.connection_info %}
-								{% if not conn %}
-								{% elif conn.startswith("http") %}
-								{{ conn | urlize(target="_blank") }}
-								{% else %}
-								<code>{{ conn }}</code>
-								{% endif %}
-								{% endblock %}
-							</span>
+							<div>
+								<div class="challenge-custom-2"
+									style="font-size: 17px;padding-left: 0px;float:left;padding-top: 9px;width: 100px;height: 40px;">
+									접속 정보</div>
+								<span class="challenge-connection-info" style="padding-left: 20px;">
+									{% block connection_info %}
+									{% set conn = challenge.connection_info %}
+									{% if not conn %}
+									{% elif conn.startswith("http") %}
+									{{ conn | urlize(target="_blank") }}
+									{% else %}
+									<code>{{ conn }}</code>
+									{% endif %}
+									{% endblock %}
+								</span>
+							</div>
 							<hr>
 							<div class="row challenge-files text-center pb-3" style="margin: 1px;">
 
-								<div class="challenge-custom"
-									style="font-size: 15px;padding-left: 0px;padding-top: 9px;width: 100px;height: 40px;background: gray;">
+								<div class="challenge-custom-2"
+									style="font-size: 17px;padding-left: 0px;padding-top: 9px;width: 100px;height: 40px;">
 									문제 파일</div>
 								{% for file in files %}
 								<div class='col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block'>
 									<a class='btn btn-info btn-file mb-1 d-inline-block px-2 w-100 text-truncate'
 										href='{{ file }}' style="
-										background: #4f897e !important;
+										background: #2f4022 !important;
 										border-radius: 10px;
 									">
 										<i class="fas fa-download"></i>
@@ -150,7 +152,7 @@
 
 										{% if hint.content %}
 										<small>
-											풀이 보기
+											힌트 보기
 										</small>
 										{% else %}
 										{% if hint.cost %}
@@ -159,7 +161,7 @@
 										</small>
 										{% else %}
 										<small>
-											풀이 보기
+											힌트 보기
 										</small>
 										{% endif %}
 										{% endif %}
