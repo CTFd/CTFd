@@ -2,16 +2,16 @@
 	<div class="modal-content" style="
     left: -45%;
     width: 2104px;
-    border-radius: 96px!important;
-    padding: 60px;
+    border-radius: 40px!important;
+    padding: 40px;
     ">
 		<div class=" modal-body" style="
 		width: 93%;
 		left: 3%;
 		font-size: 20px;
-		font-family: 'Hahmlet-Bold'"">
+		font-family: 'Hahmlet-Bold'">
 			<button type=" button" class="close" data-dismiss="modal" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
+				<span aria-hidden="true">&times;</span>
 			</button>
 			<ul class="nav nav-tabs">
 				<li class="nav-item">
@@ -52,11 +52,11 @@
 						margin-top: 50px;
 					">
 							<div
-								style="width: 22%;font-size: 1.125rem;font-weight: 700;text-align: center;margin: 14px 0;margin-left: 23px;">
+								style="font-size: 1.125rem;font-weight: 700;text-align: center;margin: 14px 0;margin-left: 23px;">
 								<i class="fas fa-flag"></i>
 								Flag를 입력하세요
 							</div>
-							<div class="col-md-6 form-group">
+							<div class="col-md-5 form-group">
 
 								<input id="challenge-id" class="challenge-id" type="hidden" value="1">
 								<input id="challenge-input" class="challenge-input form-control" type="text"
@@ -87,6 +87,9 @@
 								style="font-size: 15px;font-weight: 900 !important;border-radius: 20px;padding: 20px;background-image: url(themes/core/static/img/sailor.png);background-size: 104px;background-repeat: no-repeat;background-position: 91% 60%;">
 								{% block description %}{{ challenge.html }}{% endblock %}</span>
 
+							<div class="challenge-custom"
+								style="font-size: 15px;padding-left: 0px;padding-top: 9px;width: 100px;height: 40px;background: gray;">
+								문제 파일</div>
 							<span class="challenge-connection-info">
 								{% block connection_info %}
 								{% set conn = challenge.connection_info %}
