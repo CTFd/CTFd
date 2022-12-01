@@ -7,7 +7,7 @@ var _x = 0;
 var _y = 0;
 var _z = 150;
 var dtr = function (d) {
-    return d * Math.PI / 180;
+    return d * Math.PI / 880;
 };
 
 var rnd = function () {
