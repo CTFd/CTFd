@@ -1,10 +1,51 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/challenge-board.css') }}">
+<style>
+	html {
+		height: 100%;
+		background-image: radial-gradient(ellipse farthest-corner at center top, hsla(230, 100%, 15%, 1) 0%, hsla(231, 90%, 1%, 1) 100%) !important;
+	}
+
+	body {
+		width: 100%;
+		margin: 0;
+
+		background-image: radial-gradient(ellipse farthest-corner at center top, hsla(230, 100%, 15%, 1) 0%, hsla(231, 90%, 1%, 1) 100%) !important;
+	}
+
+	h1 {
+		font-family: "Hahmlet-Bold", "RalewayOffline", "sans-serif";
+	}
+
+	.navEffect a {
+
+		padding: 14px 16px;
+
+	}
+
+	.navEffect a::before {
+		content: '';
+		width: 0%;
+		height: 3px;
+		display: block;
+		background-color: #fff;
+		margin-bottom: 10px;
+	}
+
+	.navEffect a:hover::before {
+		width: 100%;
+		transition: 1s;
+	}
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="jumbotron">
+<div width="100%" ;height="100%">
+	<canvas id="canv" style="position: fixed;"></canvas>
+</div>
+<div class="jumbotron" style="background:transparent;color:#fff">
 	<div class="container">
 		<h1>Create Challenge</h1>
 	</div>
@@ -65,7 +106,8 @@
 					</div>
 					<input id="challenge_id" type="hidden" name="challenge_id">
 					<div class="form-group">
-						<button class="btn btn-primary float-right create-challenge-submit" type="submit">Finish</button>
+						<button class="btn btn-primary float-right create-challenge-submit"
+							type="submit">Finish</button>
 					</div>
 				</form>
 			</div>
@@ -73,7 +115,9 @@
 	</div>
 </div>
 
-<div class="container-fluid">
+<div class="container-fluid"
+	style="background:white;position:relative;border-radius: 30px;padding-top: 45px;padding-bottom: 45px;opacity: 0.95;">
+
 	<div class="row">
 		<div class="col-md-3 offset-md-1">
 			<h5 class="text-center pb-3">
@@ -82,12 +126,14 @@
 			<div id="create-chals-select">
 				{% for type in types %}
 				<label class="w-100">
-					<input type="radio" name="type" class="card-radio d-none" value="{{ type }}" {% if type == "standard" %}checked{% endif %}/>
+					<input type="radio" name="type" class="card-radio d-none" value="{{ type }}" {% if type=="standard"
+						%}checked{% endif %} />
 					<div class="card rounded-0">
 						<div class="card-body">
 							<span class="card-title">
 								<div class="form-check">
-									<input class="form-check-input card-radio-clone" type="radio" style="visibility: hidden;" checked>
+									<input class="form-check-input card-radio-clone" type="radio"
+										style="visibility: hidden;" checked>
 									<span class="form-check-label">{{ type }}</span>
 								</div>
 							</span>
@@ -110,5 +156,7 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/challenge.js') }}"></script>
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/challenge.js') }}"></script>
+<script defer src="../../themes/core/static/js2/background.js"></script>
+
 {% endblock %}

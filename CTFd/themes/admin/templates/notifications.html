@@ -1,12 +1,34 @@
 {% extends "admin/base.html" %}
 
 {% block content %}
-<div class="jumbotron">
+<style>
+	html {
+		height: 100%;
+		background-image: radial-gradient(ellipse farthest-corner at center top, hsla(230, 100%, 15%, 1) 0%, hsla(231, 90%, 1%, 1) 100%) !important;
+	}
+
+	body {
+		width: 100%;
+		margin: 0;
+
+		background-image: radial-gradient(ellipse farthest-corner at center top, hsla(230, 100%, 15%, 1) 0%, hsla(231, 90%, 1%, 1) 100%) !important;
+	}
+
+	h1 {
+		font-family: "Hahmlet-Bold", "RalewayOffline", "sans-serif";
+	}
+</style>
+
+<div width="100%" ;height="100%">
+	<canvas id="canv" style="position: fixed;"></canvas>
+</div>
+<div class="jumbotron" style="background:transparent;color:#fff">
 	<div class="container">
 		<h1>공지사항</h1>
 	</div>
 </div>
-<div class="container">
+<div class="container"
+	style="background:white;position:relative;border-radius: 30px;padding-top: 45px;padding-bottom: 45px;opacity: 0.95;">
 	<div class="row">
 		<div class="col-md-12">
 			{% with form = Forms.notifications.NotificationForm() %}
@@ -95,4 +117,5 @@
 
 {% block entrypoint %}
 <script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/notifications.js') }}"></script>
+<script defer src="../themes/core/static/js2/background.js"></script>
 {% endblock %}
