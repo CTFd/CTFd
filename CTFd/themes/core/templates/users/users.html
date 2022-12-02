@@ -4,6 +4,12 @@
 <link rel="stylesheet" href="{{ url_for('views.themes', path='css/challenge-board.css') }}">
 <link rel="stylesheet" href="themes/core/static/css2/challengeCss.css">
 <script src="themes/core/static/js2/challengeAni.js"></script>
+<style>
+	body {
+		background: #093838;
+		font-family: 'Montserrat';
+	}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -59,7 +65,8 @@
 
 
 
-<div class="container" style="background: white;padding-top: 10px;">
+<div class="container"
+	style="background:white;position:relative;border-radius: 50px;padding-top: 45px;padding-bottom: 45px;opacity: 0.95;">
 	<div class="row">
 		<div class="col-md-12">
 			{% if q and field %}
