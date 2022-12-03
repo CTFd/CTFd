@@ -1,13 +1,51 @@
 import datetime
+from collections import namedtuple
 
 from sqlalchemy import func as sa_func
 from sqlalchemy.sql import and_, false, true
 
 from CTFd.cache import cache
-from CTFd.models import Solves, Users, db
+from CTFd.models import Challenges, Solves, Users, db
+from CTFd.schemas.tags import TagSchema
 from CTFd.utils import get_config
 from CTFd.utils.dates import isoformat, unix_time_to_utc
+from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modes import generate_account_url, get_model
+
+Challenge = namedtuple(
+    "Challenge", ["id", "type", "name", "value", "category", "tags", "requirements"]
+)
+
+
+@cache.memoize(timeout=60)
+def get_all_challenges(admin=False, field=None, q=None, **query_args):
+    filters = build_model_filters(model=Challenges, query=q, field=field)
+    chal_q = Challenges.query
+    # Admins can see hidden and locked challenges in the admin view
+    if admin is False:
+        chal_q = chal_q.filter(
+            and_(Challenges.state != "hidden", Challenges.state != "locked")
+        )
+    chal_q = (
+        chal_q.filter_by(**query_args)
+        .filter(*filters)
+        .order_by(Challenges.value, Challenges.id)
+    )
+    tag_schema = TagSchema(view="user", many=True)
+
+    results = []
+    for c in chal_q:
+        ct = Challenge(
+            id=c.id,
+            type=c.type,
+            name=c.name,
+            value=c.value,
+            category=c.category,
+            requirements=c.requirements,
+            tags=tag_schema.dump(c.tags).data,
+        )
+        results.append(ct)
+    return results
 
 
 @cache.memoize(timeout=60)

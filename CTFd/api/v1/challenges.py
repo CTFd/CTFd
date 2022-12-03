@@ -21,6 +21,7 @@ from CTFd.schemas.tags import TagSchema
 from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils.challenges import (
+    get_all_challenges,
     get_solve_counts_for_challenges,
     get_solve_ids_for_user_id,
     get_solves_for_challenge_id,
@@ -159,18 +160,7 @@ class ChallengeList(Resource):
             # `None` for the solve count if visiblity checks fail
             solve_count_dfl = None
 
-        # Build the query for the challenges which may be listed
-        chal_q = Challenges.query
-        # Admins can see hidden and locked challenges in the admin view
-        if admin_view is False:
-            chal_q = chal_q.filter(
-                and_(Challenges.state != "hidden", Challenges.state != "locked")
-            )
-        chal_q = (
-            chal_q.filter_by(**query_args)
-            .filter(*filters)
-            .order_by(Challenges.value, Challenges.id)
-        )
+        chal_q = get_all_challenges(admin=admin_view, field=field, q=q, **query_args)
 
         # Iterate through the list of challenges, adding to the object which
         # will be JSONified back to the client
@@ -256,6 +246,9 @@ class ChallengeList(Resource):
         challenge_class = get_chal_class(challenge_type)
         challenge = challenge_class.create(request)
         response = challenge_class.read(challenge)
+
+        clear_challenges()
+
         return {"success": True, "data": response}
 
 
