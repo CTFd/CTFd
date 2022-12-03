@@ -336,6 +336,7 @@ def gen_challenge(
     )
     db.session.add(chal)
     db.session.commit()
+    clear_challenges()
     return chal
 
 
