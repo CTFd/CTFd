@@ -134,7 +134,6 @@ class ChallengeList(Resource):
         # Build filtering queries
         q = query_args.pop("q", None)
         field = str(query_args.pop("field", None))
-        filters = build_model_filters(model=Challenges, query=q, field=field)
 
         # Admins get a shortcut to see all challenges despite pre-requisites
         admin_view = is_admin() and request.args.get("view") == "admin"
