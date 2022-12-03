@@ -41,7 +41,6 @@ from CTFd.utils.decorators.visibility import (
     check_challenge_visibility,
     check_score_visibility,
 )
-from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.logging import log
 from CTFd.utils.security.signing import serialize
 from CTFd.utils.user import (
