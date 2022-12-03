@@ -1,10 +1,8 @@
-import datetime
 from typing import List
 
 from flask import abort, render_template, request, url_for
 from flask_restx import Namespace, Resource
-from sqlalchemy import func as sa_func
-from sqlalchemy.sql import and_, false, true
+from sqlalchemy.sql import and_
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -32,7 +30,7 @@ from CTFd.utils.config.visibility import (
     challenges_visible,
     scores_visible,
 )
-from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime, isoformat, unix_time_to_utc
+from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime
 from CTFd.utils.decorators import (
     admins_only,
     during_ctf_time_only,
@@ -44,7 +42,6 @@ from CTFd.utils.decorators.visibility import (
 )
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.logging import log
-from CTFd.utils.modes import generate_account_url, get_model
 from CTFd.utils.security.signing import serialize
 from CTFd.utils.user import (
     authed,
