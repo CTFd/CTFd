@@ -9,7 +9,7 @@ from sqlalchemy.sql import and_, false, true
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
-from CTFd.cache import clear_standings
+from CTFd.cache import clear_challenges, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
 from CTFd.models import Challenges
@@ -22,6 +22,11 @@ from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
+from CTFd.utils.challenges import (
+    get_solve_counts_for_challenges,
+    get_solve_ids_for_user_id,
+    get_solves_for_challenge_id,
+)
 from CTFd.utils.config.visibility import (
     accounts_visible,
     challenges_visible,
@@ -75,60 +80,6 @@ challenges_namespace.schema_model(
 challenges_namespace.schema_model(
     "ChallengeListSuccessResponse", ChallengeListSuccessResponse.apidoc()
 )
-
-
-def _build_solves_query(extra_filters=(), admin_view=False):
-    """Returns queries and data that that are used for showing an account's solves.
-    It returns a tuple of
-        - SQLAlchemy query with (challenge_id, solve_count_for_challenge_id)
-        - Current user's solved challenge IDs
-    """
-    # This can return None (unauth) if visibility is set to public
-    user = get_current_user()
-    # We only set a condition for matching user solves if there is a user and
-    # they have an account ID (user mode or in a team in teams mode)
-    AccountModel = get_model()
-    if user is not None and user.account_id is not None:
-        user_solved_cond = Solves.account_id == user.account_id
-    else:
-        user_solved_cond = false()
-    # We have to filter solves to exclude any made after the current freeze
-    # time unless we're in an admin view as determined by the caller.
-    freeze = get_config("freeze")
-    if freeze and not admin_view:
-        freeze_cond = Solves.date < unix_time_to_utc(freeze)
-    else:
-        freeze_cond = true()
-    # Finally, we never count solves made by hidden or banned users/teams, even
-    # if we are an admin. This is to match the challenge detail API.
-    exclude_solves_cond = and_(
-        AccountModel.banned == false(), AccountModel.hidden == false(),
-    )
-    # This query counts the number of solves per challenge, as well as the sum
-    # of correct solves made by the current user per the condition above (which
-    # should probably only be 0 or 1!)
-    solves_q = (
-        db.session.query(Solves.challenge_id, sa_func.count(Solves.challenge_id),)
-        .join(AccountModel)
-        .filter(*extra_filters, freeze_cond, exclude_solves_cond)
-        .group_by(Solves.challenge_id)
-    )
-    # Also gather the user's solve items which can be different from above query
-    # For example, even if we are a hidden user, we should see that we have solved a challenge
-    # however as a hidden user we are not included in the count of the above query
-    if admin_view:
-        # If we're an admin we should show all challenges as solved to break through any requirements
-        challenges = Challenges.query.all()
-        solve_ids = {challenge.id for challenge in challenges}
-    else:
-        # If not an admin we calculate solves as normal
-        solve_ids = (
-            Solves.query.with_entities(Solves.challenge_id)
-            .filter(user_solved_cond)
-            .all()
-        )
-        solve_ids = {value for value, in solve_ids}
-    return solves_q, solve_ids
 
 
 @challenges_namespace.route("")
@@ -190,18 +141,18 @@ class ChallengeList(Resource):
         # Admins get a shortcut to see all challenges despite pre-requisites
         admin_view = is_admin() and request.args.get("view") == "admin"
 
-        solve_counts = {}
-        # Build a query for to show challenge solve information. We only
-        # give an admin view if the request argument has been provided.
-        #
-        # NOTE: This is different behaviour to the challenge detail
-        # endpoint which only needs the current user to be an admin rather
-        # than also also having to provide `view=admin` as a query arg.
-        solves_q, user_solves = _build_solves_query(admin_view=admin_view)
+        # Get a cached mapping of challenge_id to solve_count
+        solve_counts = get_solve_counts_for_challenges(admin=admin_view)
+
+        # Get list of solve_ids for current user
+        if authed():
+            user = get_current_user()
+            user_solves = get_solve_ids_for_user_id(user_id=user.id)
+        else:
+            user_solves = set()
+
         # Aggregate the query results into the hashes defined at the top of
         # this block for later use
-        for chal_id, solve_count in solves_q:
-            solve_counts[chal_id] = solve_count
         if scores_visible() and accounts_visible():
             solve_count_dfl = 0
         else:
@@ -453,13 +404,17 @@ class Challenge(Resource):
 
         response = chal_class.read(challenge=chal)
 
-        solves_q, user_solves = _build_solves_query(
-            extra_filters=(Solves.challenge_id == chal.id,)
-        )
-        # If there are no solves for this challenge ID then we have 0 rows
-        maybe_row = solves_q.first()
-        if maybe_row:
-            challenge_id, solve_count = maybe_row
+        # Get list of solve_ids for current user
+        if authed():
+            user = get_current_user()
+            user_solves = get_solve_ids_for_user_id(user_id=user.id)
+        else:
+            user_solves = []
+
+        solves_count = get_solve_counts_for_challenges(challenge_id=chal.id)
+        if solves_count:
+            challenge_id = chal.id
+            solve_count = solves_count.get(chal.id)
             solved_by_user = challenge_id in user_solves
         else:
             solve_count, solved_by_user = 0, False
@@ -522,6 +477,10 @@ class Challenge(Resource):
         challenge_class = get_chal_class(challenge.type)
         challenge = challenge_class.update(challenge, request)
         response = challenge_class.read(challenge)
+
+        clear_standings()
+        clear_challenges()
+
         return {"success": True, "data": response}
 
     @admins_only
@@ -533,6 +492,9 @@ class Challenge(Resource):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         chal_class = get_chal_class(challenge.type)
         chal_class.delete(challenge)
+
+        clear_standings()
+        clear_challenges()
 
         return {"success": True}
 
@@ -675,6 +637,7 @@ class ChallengeAttempt(Resource):
                         user=user, team=team, challenge=challenge, request=request
                     )
                     clear_standings()
+                    clear_challenges()
 
                 log(
                     "submissions",
@@ -694,6 +657,7 @@ class ChallengeAttempt(Resource):
                         user=user, team=team, challenge=challenge, request=request
                     )
                     clear_standings()
+                    clear_challenges()
 
                 log(
                     "submissions",
@@ -762,41 +726,15 @@ class ChallengeSolves(Resource):
         if challenge.state == "hidden" and is_admin() is False:
             abort(404)
 
-        Model = get_model()
-
-        # Note that we specifically query for the Solves.account.name
-        # attribute here because it is faster than having SQLAlchemy
-        # query for the attribute directly and it's unknown what the
-        # affects of changing the relationship lazy attribute would be
-        solves = (
-            Solves.query.add_columns(Model.name.label("account_name"))
-            .join(Model, Solves.account_id == Model.id)
-            .filter(
-                Solves.challenge_id == challenge_id,
-                Model.banned == False,
-                Model.hidden == False,
-            )
-            .order_by(Solves.date.asc())
-        )
-
         freeze = get_config("freeze")
         if freeze:
             preview = request.args.get("preview")
             if (is_admin() is False) or (is_admin() is True and preview):
-                dt = datetime.datetime.utcfromtimestamp(freeze)
-                solves = solves.filter(Solves.date < dt)
+                freeze = True
+            elif is_admin() is True:
+                freeze = False
 
-        for solve in solves:
-            # Seperate out the account name and the Solve object from the SQLAlchemy tuple
-            solve, account_name = solve
-            response.append(
-                {
-                    "account_id": solve.account_id,
-                    "name": account_name,
-                    "date": isoformat(solve.date),
-                    "account_url": generate_account_url(account_id=solve.account_id),
-                }
-            )
+        response = get_solves_for_challenge_id(challenge_id=challenge_id, freeze=freeze)
 
         return {"success": True, "data": response}
 

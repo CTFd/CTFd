@@ -10,7 +10,12 @@ from CTFd.api.v1.schemas import (
     APIDetailedSuccessResponse,
     PaginatedAPIListSuccessResponse,
 )
-from CTFd.cache import clear_standings, clear_team_session, clear_user_session
+from CTFd.cache import (
+    clear_challenges,
+    clear_standings,
+    clear_team_session,
+    clear_user_session,
+)
 from CTFd.constants import RawEnum
 from CTFd.models import Awards, Submissions, Teams, Unlocks, Users, db
 from CTFd.schemas.awards import AwardSchema
@@ -155,6 +160,7 @@ class TeamList(Resource):
         db.session.close()
 
         clear_standings()
+        clear_challenges()
 
         return {"success": True, "data": response.data}
 
@@ -220,6 +226,7 @@ class TeamPublic(Resource):
 
         clear_team_session(team_id=team.id)
         clear_standings()
+        clear_challenges()
 
         db.session.close()
 
@@ -243,6 +250,7 @@ class TeamPublic(Resource):
 
         clear_team_session(team_id=team_id)
         clear_standings()
+        clear_challenges()
 
         db.session.close()
 
@@ -375,6 +383,7 @@ class TeamPrivate(Resource):
 
         clear_team_session(team_id=team.id)
         clear_standings()
+        clear_challenges()
 
         db.session.close()
 
