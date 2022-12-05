@@ -15,7 +15,7 @@ from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers
 
 from CTFd import create_app
-from CTFd.cache import cache, clear_standings
+from CTFd.cache import cache, clear_challenges, clear_standings
 from CTFd.config import TestingConfig
 from CTFd.models import (
     Awards,
@@ -336,6 +336,7 @@ def gen_challenge(
     )
     db.session.add(chal)
     db.session.commit()
+    clear_challenges()
     return chal
 
 
@@ -455,6 +456,7 @@ def gen_solve(
     db.session.add(solve)
     db.session.commit()
     clear_standings()
+    clear_challenges()
     return solve
 
 
