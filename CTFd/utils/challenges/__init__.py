@@ -51,6 +51,10 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
 @cache.memoize(timeout=60)
 def get_solves_for_challenge_id(challenge_id, freeze=False):
     Model = get_model()
+    # Note that we specifically query for the Solves.account.name
+    # attribute here because it is faster than having SQLAlchemy
+    # query for the attribute directly and it's unknown what the
+    # affects of changing the relationship lazy attribute would be
     solves = (
         Solves.query.add_columns(Model.name.label("account_name"))
         .join(Model, Solves.account_id == Model.id)
