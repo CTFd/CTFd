@@ -230,9 +230,9 @@ def do_request(docker, url, headers=None, method='GET'):
     try:
         if tls:
             if (method == 'GET'):
-                r = requests.get(url=f"%s{url}" % URL_TEMPLATE, cert=get_client_cert(docker), verify=False, headers=headers)
+                r = requests.get(url=f"%s{url}" % URL_TEMPLATE, cert=(docker.client_cert, docker.client_key), verify=False, headers=headers)
             elif (method == 'DELETE'):
-                r = requests.delete(url=f"%s{url}" % URL_TEMPLATE, cert=get_client_cert(docker), verify=False, headers=headers)
+                r = requests.delete(url=f"%s{url}" % URL_TEMPLATE, cert=(docker.client_cert, docker.client_key), verify=False, headers=headers)
         else:
             if (method == 'GET'):
                 r = requests.get(url=f"%s{url}" % URL_TEMPLATE, headers=headers)
@@ -242,19 +242,6 @@ def do_request(docker, url, headers=None, method='GET'):
         print(traceback.print_exc())
         r = []
     return r
-
-
-def get_client_cert(docker):
-    try:
-        ca = docker.ca_cert
-        client = docker.client_cert
-        ckey = docker.client_key
-        CERT = (client, ckey)
-    except:
-        print(traceback.print_exc())
-        CERT = None
-    return CERT
-
 
 # For the Docker Config Page. Gets the Current Repositories available on the Docker Server.
 def get_repositories(docker, tags=False, repos=False):
@@ -317,10 +304,10 @@ def create_container(docker, image, team, portbl):
     headers = {'Content-Type': "application/json"}
     data = json.dumps({"Image": image, "ExposedPorts": ports, "HostConfig": {"PortBindings": bindings}})
     if tls:
-        r = requests.post(url="%s/containers/create?name=%s" % (URL_TEMPLATE, container_name), cert=get_client_cert(docker),
+        r = requests.post(url="%s/containers/create?name=%s" % (URL_TEMPLATE, container_name), cert=(docker.client_cert, docker.client_key),
                       verify=False, data=data, headers=headers)
         result = r.json()
-        s = requests.post(url="%s/containers/%s/start" % (URL_TEMPLATE, result['Id']), cert=get_client_cert(docker), verify=False,
+        s = requests.post(url="%s/containers/%s/start" % (URL_TEMPLATE, result['Id']), cert=(docker.client_cert, docker.client_key), verify=False,
                           headers=headers)
     else:
         r = requests.post(url="%s/containers/create?name=%s" % (URL_TEMPLATE, container_name),
