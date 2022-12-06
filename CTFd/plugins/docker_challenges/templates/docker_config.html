@@ -1,0 +1,100 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>Docker Config</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% for error in errors %}
+            <div class="alert alert-danger alert-dismissable" role="alert">
+                <span class="sr-only">Error:</span>
+                {{ error }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            {% endfor %}
+            <form method="post" accept-charset="utf-8" autocomplete="off" role="form" name='docker_config' class="form-horizontal" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="hostname-input">
+                        Hostname
+                    </label>
+                    {% if config.hostname %}
+                    <input class="form-control" type="text" name="hostname" id="hostname-input" placeholder="Ex: 10.10.10.10:2376" value='{{ config.hostname }}'/>
+                    {% else %}
+                    <input class="form-control" type="text" name="hostname" id="hostname-input" placeholder="Ex: 10.10.10.10:2376" />
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <p>TLS Enabled?</p>
+                    <input type="radio" name="tls_enabled" id="tls-radiobox-no" value="False" onclick="enable_file_form(!this.checked)" {% if not config.tls_enabled %}checked{% endif %} />
+                    <label for="tls-radiobox-no">No</label>
+                    <input type="radio" name="tls_enabled" id="tls-radiobox-yes" value="True" onclick="enable_file_form(this.checked)"{% if config.tls_enabled %}checked{% endif %} />
+                    <label for="tls-radiobox-yes">Yes</label>
+                </div>
+                <div class="form-group">
+                    <label for="ca-file">
+                        CA Cert {% if config.ca_cert %} (Uploaded. Adding a new file will overwrite.) {% endif %}
+                    </label>
+                    <input class="form-control" type="file" name="ca_cert" id="ca_file" {% if not config.tls_enabled %} disabled {% endif %} {% if config.tls_enabled and not config.ca_cert %} required {% endif %} />
+                </div>
+                <div class="form-group">
+                    <label for="client-file">
+                        Client Cert {% if config.client_cert %} (Uploaded. Adding a new file will overwrite.) {% endif %}
+                    </label>
+                    <input class="form-control" type="file" name="client_cert" id="client_file" {% if not config.tls_enabled %} disabled {% endif %} {% if config.tls_enabled and not config.client_cert %} required {% endif %} />
+                </div>
+                <div class="form-group">
+                    <label for="key-file">
+                        Client Key {% if config.client_key %} (Uploaded. Adding a new file will overwrite.) {% endif %}
+                    </label>
+                    <input class="form-control" type="file" name="client_key" id="key_file" {% if not config.tls_enabled %} disabled {% endif %} {% if config.tls_enabled and not config.client_key %} required {% endif %} />
+                </div>
+                <div class="form-group">
+                    <label for="repo-ms">
+                        Repositories
+                    </label>
+                    <select id='repositories' name="repositories" class='form-control' size='10' multiple>
+                        {% if form.repositories.choices[0][0] == "ERROR" %}
+                            <option value='False' disabled>{{ form.repositories.choices[0][1] }}</option>
+                        {% elif form.repositories %}
+                            {% for key,value in form.repositories.choices %}
+                                {% if key in repos %}
+                                <option value='{{ key }}' selected>{{ value }}</option>
+                                {% else %}
+                                <option value='{{ key }}'>{{ value }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <option value='False' disabled>Connect Docker API First</option>
+                        {% endif %}
+                    </select>
+                </div>
+                {{ form.nonce() }}
+                <div class="col-md-13 text-center">
+                    <button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined">
+                        Submit
+                    </button>
+                </div>
+        </div>
+        <input type="hidden" name="id" value="1">
+        </form>
+    </div>
+</div>
+{% endblock content %}
+{% block scripts %}
+<script>
+
+function enable_file_form(status) {
+    status=!status; 
+    document.docker_config.ca_file.disabled = status;
+    document.docker_config.client_file.disabled = status;
+    document.docker_config.key_file.disabled = status;
+    document.docker_config.ca_file.required = !status;
+    document.docker_config.client_file.required = !status;
+    document.docker_config.key_file.required = !status;
+}
+
+</script>
+{% endblock scripts %}

@@ -1,0 +1,26 @@
+{% extends "challenge.html" %}
+{% block description %}
+<script>
+    var DOCKER_CONTAINER = '{{ challenge.docker_image | safe }}';
+    (function() {
+        get_docker_status(DOCKER_CONTAINER);
+    })();
+</script>
+{{ challenge.html }}
+<div class='mb-3 text-center' id='docker_container'>
+    <span>
+        <a onclick="start_container('{{ challenge.docker_image | safe }}');" class='btn btn-dark'>
+            <small style='color:white;'><i class="fas fa-play"></i> Start Docker Instance</small>
+        </a>
+    </span>
+</div>
+{% endblock %}
+{% block input %}
+<input id="challenge-id" class="challenge-id" type="hidden" value="{{ challenge.id }}">
+<input id="challenge-input" class="challenge-input" type="text" name="answer" placeholder="Flag" />
+{% endblock %}
+{% block submit %}
+<button id="challenge-submit" class="challenge-submit" type="submit">
+    Submit
+</button>
+{% endblock %}

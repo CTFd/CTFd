@@ -1,0 +1,10 @@
+[
+	{
+	    "name": "Docker Config",
+	    "route": "/admin/docker_config"
+	},
+	{
+	    "name": "Docker Status",
+	    "route": "/admin/docker_status"
+	}
+]

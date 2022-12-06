@@ -1,0 +1,191 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>Docker Status</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% for error in errors %}
+            <div class="alert alert-danger alert-dismissable" role="alert">
+                <span class="sr-only">Error:</span>
+                {{ error }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            {% endfor %}
+            {% if dockers %}
+            <table id='dockers' class="table table-striped">
+                <thead>
+                    <tr>
+                        <th width="10px" class="text-center" style="cursor: pointer;" onclick="sortTable(0)">ID</th>
+                        <th class="text-left" style="cursor: pointer;" onclick="sortTable(1)">{% if dockers[0].team_id %}Team{% else %}User{% endif %}</th>
+                        <th class="text-left" style="cursor: pointer;" onclick="sortTable(2)">Docker Image</th>
+                        <th class="text-left" style="cursor: pointer;" onclick="sortTable(3)">Instance ID</th>
+                        <th class="text-left">Revoke</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for docker in dockers %}
+                    <tr id='tr_{{docker.instance_id}}' name='{{docker.id}}'>
+                        <td class='text-center' value='{{docker.id}}'>{{docker.id}}</td>
+                        {% if docker.team_id %}
+                        <td class='text-center' value='{{docker.team_id | safe }}'>{{docker.team_id | safe }}</td>
+                        {% else %}
+                        <td class='text-center' value='{{docker.team_id | safe }}'>{{docker.user_id | safe }}</td>
+                        {% endif %}
+                        <td class='text-center' value='{{docker.docker_image}}'>{{docker.docker_image}}</td>
+                        <td class='text-center' value='{{docker.instance_id | truncate(15)}}'>{{docker.instance_id | truncate(15)}}</td>
+                        <td class='text-center'><a id="delete_{{docker.instance_id}}" style="cursor: pointer;" class="fas fa-trash" onclick="check_nuke_container('{{docker.instance_id}}', false)"></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class='text-center'>
+                <button type="button" class="btn btn-danger" onclick="check_nuke_container(null, true)">Nuke All Containers</button>
+            </div>
+            {% else %}
+            <h3 class='text-center'> No Docker Containers Active</h3>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block scripts %}
+<script>
+function sortTable(n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("dockers");
+    switching = true;
+    dir = "asc";
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+        } else {
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+}
+</script>
+<script>
+function check_nuke_container(instance, all) {
+    ezq({
+        title: "Attention!",
+        body: "Are You Sure You want to do this?",
+        success: function() { nuke_container(instance, all) },
+    });
+}
+
+function nuke_container(instance, all) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            if (all == true) {
+                window.location = '{{ script_root }}/admin/docker_status'
+            }
+            else {
+                document.getElementById("tr_" + instance).style.display = "none";
+            }
+        } else if (this.readyState == 4 && this.status != 200) {
+            ezal({
+                title: "Attention!",
+                body: "Error when Deleting Docker Container",
+                button: "Got it!",
+            });
+        }
+    };
+    xhttp.open("GET", "/api/v1/nuke?container=" + instance + "&all=" + all, true);
+    xhttp.send();
+}
+</script>
+<script>
+var modal =
+    '<div class="modal fade" tabindex="-1" role="dialog">' +
+    '  <div class="modal-dialog" role="document">' +
+    '    <div class="modal-content">' +
+    '      <div class="modal-header">' +
+    '        <h5 class="modal-title">{0}</h5>' +
+    '        <button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
+    '          <span aria-hidden="true">&times;</span>' +
+    "        </button>" +
+    "      </div>" +
+    '      <div class="modal-body">' +
+    "        <p>{1}</p>" +
+    "      </div>" +
+    '      <div class="modal-footer">' +
+    "      </div>" +
+    "    </div>" +
+    "  </div>" +
+    "</div>";
+
+function ezq(args) {
+    var res = modal.format(args.title, args.body);
+    var obj = $(res);
+    var deny =
+        '<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>';
+    var confirm = $(
+        '<button type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>'
+    );
+
+    obj.find(".modal-footer").append(deny);
+    obj.find(".modal-footer").append(confirm);
+
+    $("main").append(obj);
+
+    $(obj).on("hidden.bs.modal", function(e) {
+        $(this).modal("dispose");
+    });
+
+    $(confirm).click(function() {
+        args.success();
+    });
+
+    obj.modal("show");
+
+    return obj;
+}
+
+function ezal(args) {
+    var res = modal.format(args.title, args.body);
+    var obj = $(res);
+    var button = '<button type="button" class="btn btn-primary" data-dismiss="modal">{0}</button>'.format(
+        args.button
+    );
+
+    obj.find(".modal-footer").append(button);
+    $("main").append(obj);
+
+    obj.modal("show");
+
+    $(obj).on("hidden.bs.modal", function(e) {
+        $(this).modal("dispose");
+    });
+
+    return obj;
+}
+</script>
+{% endblock scripts %}
