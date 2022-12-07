@@ -1,11 +1,13 @@
 from CTFd.models import Solves
 from CTFd.utils.dates import ctf_ended, ctf_started
+from CTFd.utils.modes import TEAMS_MODE
 from tests.helpers import (
     create_ctfd,
     ctftime,
     destroy_ctfd,
     gen_challenge,
     gen_flag,
+    gen_team,
     login_as_user,
     register_user,
 )
@@ -33,6 +35,43 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
                 assert r.status_code == 403
             solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
             assert solve_count == 0
+    destroy_ctfd(app)
+
+
+def test_ctftime_redirects_to_teams_page_in_teams_mode_before_ctf():
+    """
+    Test that the ctftime function redirects users to the team creation page in teams mode before the ctf if the user
+    has no team yet.
+    """
+    app = create_ctfd(user_mode=TEAMS_MODE)
+    with app.app_context():
+        with ctftime.init():
+            register_user(app)
+            chal = gen_challenge(app.db)
+            gen_flag(app.db, challenge_id=chal.id, content=u"flag")
+
+            with ctftime.not_started():
+                client = login_as_user(app)
+                r = client.get("/challenges")
+                assert r.status_code == 302
+
+            gen_team(app.db, name="test", password="password")
+            with login_as_user(app) as client:
+                r = client.get("/teams/join")
+                assert r.status_code == 200
+                with client.session_transaction() as sess:
+                    data = {
+                        "name": "test",
+                        "password": "password",
+                        "nonce": sess.get("nonce"),
+                    }
+                r = client.post("/teams/join", data=data)
+                assert r.status_code == 302
+
+            with ctftime.not_started():
+                client = login_as_user(app)
+                r = client.get("/challenges")
+                assert r.status_code == 403
     destroy_ctfd(app)
 
 

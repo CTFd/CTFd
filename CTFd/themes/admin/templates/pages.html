@@ -35,7 +35,7 @@
 				<tr>
 					<th class="border-right" data-checkbox>
 						<div class="form-check text-center">
-							<input type="checkbox" class="form-check-input" id="scoreboard-bulk-select" data-checkbox-all>&nbsp;
+							<input type="checkbox" class="form-check-input" id="pages-bulk-select" autocomplete="off" data-checkbox-all>&nbsp;
 						</div>
 					</th>
 					<th class="sort-col text-center"><b>Title</b></th>
@@ -50,7 +50,7 @@
 					<tr data-href="{{ url_for('admin.pages_detail', page_id=page.id) }}">
 						<td class="border-right" data-checkbox>
 							<div class="form-check text-center">
-								<input type="checkbox" class="form-check-input" value="{{ page.id }}" data-page-id="{{ page.id }}">&nbsp;
+								<input type="checkbox" class="form-check-input" value="{{ page.id }}" data-page-id="{{ page.id }}" autocomplete="off">&nbsp;
 							</div>
 						</td>
 						<td class="page-title">

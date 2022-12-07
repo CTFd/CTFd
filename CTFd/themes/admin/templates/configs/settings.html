@@ -22,6 +22,26 @@
 
 		<div class="form-group">
 			<label>
+				Account Visibility<br>
+				<small class="form-text text-muted">
+					Control whether accounts (users &amp; teams) are shown to everyone, only to authenticated users, or only to admins
+				</small>
+			</label>
+			<select class="form-control custom-select" name="account_visibility">
+				<option value="public" {% if account_visibility == 'public' %}selected{% endif %}>
+					Public
+				</option>
+				<option value="private" {% if account_visibility == 'private' %}selected{% endif %}>
+					Private
+				</option>
+				<option value="admins" {% if account_visibility == 'admins' %}selected{% endif %}>
+					Admins Only
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
 				Score Visibility<br>
 				<small class="form-text text-muted">
 					Control whether solves/score are shown to the public, to logged in users, hidden to all non-admins, or only shown to admins
@@ -42,30 +62,9 @@
 				</option>
 			</select>
 			<small class="form-text text-muted">
-				This setting should generally be the same as Account Visibility to avoid conflicts.
-			</small>
-		</div>
-
-		<div class="form-group">
-			<label>
-				Account Visibility<br>
-				<small class="form-text text-muted">
-					Control whether accounts (users &amp; teams) are shown to everyone, only to authenticated users, or only to admins
-				</small>
-			</label>
-			<select class="form-control custom-select" name="account_visibility">
-				<option value="public" {% if account_visibility == 'public' %}selected{% endif %}>
-					Public
-				</option>
-				<option value="private" {% if account_visibility == 'private' %}selected{% endif %}>
-					Private
-				</option>
-				<option value="admins" {% if account_visibility == 'admins' %}selected{% endif %}>
-					Admins Only
-				</option>
-			</select>
-			<small class="form-text text-muted">
-				This setting should generally be the same as Score Visibility to avoid conflicts.
+				Score Visibility is a subset of Account Visibility. 
+				This means that if accounts are visible to a user then score visibility will control whether they can see the score of that user. 
+				If accounts are not visibile then score visibility has no effect.
 			</small>
 		</div>
 

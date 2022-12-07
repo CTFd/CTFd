@@ -26,7 +26,13 @@ from CTFd.admin import statistics  # noqa: F401
 from CTFd.admin import submissions  # noqa: F401
 from CTFd.admin import teams  # noqa: F401
 from CTFd.admin import users  # noqa: F401
-from CTFd.cache import cache, clear_config, clear_pages, clear_standings
+from CTFd.cache import (
+    cache,
+    clear_challenges,
+    clear_config,
+    clear_pages,
+    clear_standings,
+)
 from CTFd.models import (
     Awards,
     Challenges,
@@ -238,6 +244,7 @@ def reset():
 
         clear_pages()
         clear_standings()
+        clear_challenges()
         clear_config()
 
         if logout is True:

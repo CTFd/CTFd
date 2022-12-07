@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import current_app, request
+from flask import current_app, make_response, request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
@@ -60,6 +60,7 @@ class NotificantionList(Resource):
                 RawEnum("NotificationFields", {"title": "title", "content": "content"}),
                 None,
             ),
+            "since_id": (int, None),
         },
         location="query",
     )
@@ -67,6 +68,10 @@ class NotificantionList(Resource):
         q = query_args.pop("q", None)
         field = str(query_args.pop("field", None))
         filters = build_model_filters(model=Notifications, query=q, field=field)
+
+        since_id = query_args.pop("since_id", None)
+        if since_id:
+            filters.append((Notifications.id > since_id))
 
         notifications = (
             Notifications.query.filter_by(**query_args).filter(*filters).all()
@@ -76,6 +81,41 @@ class NotificantionList(Resource):
         if result.errors:
             return {"success": False, "errors": result.errors}, 400
         return {"success": True, "data": result.data}
+
+    @notifications_namespace.doc(
+        description="Endpoint to get statistics for notification objects in bulk",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
+    @validate_args(
+        {
+            "title": (str, None),
+            "content": (str, None),
+            "user_id": (int, None),
+            "team_id": (int, None),
+            "q": (str, None),
+            "field": (
+                RawEnum("NotificationFields", {"title": "title", "content": "content"}),
+                None,
+            ),
+            "since_id": (int, None),
+        },
+        location="query",
+    )
+    def head(self, query_args):
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        filters = build_model_filters(model=Notifications, query=q, field=field)
+
+        since_id = query_args.pop("since_id", None)
+        if since_id:
+            filters.append((Notifications.id > since_id))
+
+        notification_count = (
+            Notifications.query.filter_by(**query_args).filter(*filters).count()
+        )
+        response = make_response()
+        response.headers["Result-Count"] = notification_count
+        return response
 
     @admins_only
     @notifications_namespace.doc(

@@ -9,7 +9,7 @@ from CTFd.api.v1.schemas import (
     APIDetailedSuccessResponse,
     PaginatedAPIListSuccessResponse,
 )
-from CTFd.cache import clear_standings, clear_user_session
+from CTFd.cache import clear_challenges, clear_standings, clear_user_session
 from CTFd.constants import RawEnum
 from CTFd.models import (
     Awards,
@@ -165,6 +165,7 @@ class UserList(Resource):
             user_created_notification(addr=email, name=name, password=password)
 
         clear_standings()
+        clear_challenges()
 
         response = schema.dump(response.data)
 
@@ -242,6 +243,7 @@ class UserPublic(Resource):
 
         clear_user_session(user_id=user_id)
         clear_standings()
+        clear_challenges()
 
         return {"success": True, "data": response.data}
 
@@ -270,6 +272,7 @@ class UserPublic(Resource):
 
         clear_user_session(user_id=user_id)
         clear_standings()
+        clear_challenges()
 
         return {"success": True}
 
@@ -322,6 +325,7 @@ class UserPrivate(Resource):
         db.session.close()
 
         clear_standings()
+        clear_challenges()
 
         return {"success": True, "data": response.data}
 

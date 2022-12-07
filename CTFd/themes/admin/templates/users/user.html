@@ -218,7 +218,7 @@
 						<tr>
 							<th class="border-right" data-checkbox>
 								<div class="form-check text-center">
-									<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+									<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 								</div>
 							</th>
 							<th class="sort-col text-center"><b>Challenge</b></th>
@@ -233,7 +233,8 @@
 						<tr class="chal-solve" data-href="{{ url_for("admin.challenges_detail", challenge_id=solve.challenge_id) }}">
 							<td class="border-right" data-checkbox>
 								<div class="form-check text-center">
-									<input type="checkbox" class="form-check-input" value="{{ solve.id }}" data-submission-id="{{ solve.id }}"
+									<input type="checkbox" class="form-check-input" value="{{ solve.id }}" autocomplete="off" 
+									data-submission-id="{{ solve.id }}"
 									data-submission-type="{{ solve.type }}"
 									data-submission-challenge="{{ solve.challenge.name }}">&nbsp;
 								</div>
@@ -277,7 +278,7 @@
 							<tr>
 								<th class="border-right" data-checkbox>
 									<div class="form-check text-center">
-										<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+										<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 									</div>
 								</th>
 								<th class="sort-col text-center"><b>Challenge</b></th>
@@ -290,7 +291,8 @@
 							<tr class="chal-wrong" data-href="{{ url_for("admin.challenges_detail", challenge_id=fail.challenge_id) }}">
 								<td class="border-right" data-checkbox>
 									<div class="form-check text-center">
-										<input type="checkbox" class="form-check-input" value="{{ fail.id }}" data-submission-id="{{ fail.id }}"
+										<input type="checkbox" class="form-check-input" value="{{ fail.id }}" autocomplete="off"
+										data-submission-id="{{ fail.id }}"
 										data-submission-type="{{ fail.type }}"
 										data-submission-challenge="{{ fail.challenge.name }}">&nbsp;
 									</div>
@@ -334,7 +336,7 @@
 							<tr>
 								<th class="border-right" data-checkbox>
 									<div class="form-check text-center">
-										<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+										<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 									</div>
 								</th>
 								<th class="sort-col text-center"><b>Name</b></th>
@@ -350,7 +352,7 @@
 							<tr class="award-row">
 								<td class="border-right" data-checkbox>
 									<div class="form-check text-center">
-										<input type="checkbox" class="form-check-input" value="{{ award.id }}" data-award-id="{{ award.id }}" data-award-name="{{ award.name }}">&nbsp;
+										<input type="checkbox" class="form-check-input" value="{{ award.id }}" autocomplete="off" data-award-id="{{ award.id }}" data-award-name="{{ award.name }}">&nbsp;
 									</div>
 								</td>
 								<td class="text-center chal" id="{{ award.id }}">{{ award.name }}</td>
@@ -389,7 +391,7 @@
 						<tr>
 							<th class="border-right" data-checkbox>
 								<div class="form-check text-center">
-									<input type="checkbox" class="form-check-input" data-checkbox-all>&nbsp;
+									<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 								</div>
 							</th>
 							<th class="sort-col text-center"><b>Challenge</b></th>
@@ -402,7 +404,7 @@
 						<tr class="chal-solve" data-href="{{ url_for("admin.challenges_detail", challenge_id=challenge.id) }}">
 							<td class="border-right" data-checkbox>
 								<div class="form-check text-center">
-									<input type="checkbox" class="form-check-input" value="{{ challenge.id }}" data-missing-challenge-id="{{ challenge.id }}"
+									<input type="checkbox" class="form-check-input" value="{{ challenge.id }}" autocomplete="off" data-missing-challenge-id="{{ challenge.id }}"
 									data-missing-challenge-name="{{ challenge.name }}">&nbsp;
 								</div>
 							</td>

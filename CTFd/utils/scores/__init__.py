@@ -91,7 +91,11 @@ def get_standings(count=None, admin=False, fields=None):
                 *fields,
             )
             .join(sumscores, Model.id == sumscores.columns.account_id)
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+            .order_by(
+                sumscores.columns.score.desc(),
+                sumscores.columns.date.asc(),
+                sumscores.columns.id.asc(),
+            )
         )
     else:
         standings_query = (
@@ -104,7 +108,11 @@ def get_standings(count=None, admin=False, fields=None):
             )
             .join(sumscores, Model.id == sumscores.columns.account_id)
             .filter(Model.banned == False, Model.hidden == False)
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+            .order_by(
+                sumscores.columns.score.desc(),
+                sumscores.columns.date.asc(),
+                sumscores.columns.id.asc(),
+            )
         )
 
     """
@@ -175,7 +183,11 @@ def get_team_standings(count=None, admin=False, fields=None):
                 *fields,
             )
             .join(sumscores, Teams.id == sumscores.columns.team_id)
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+            .order_by(
+                sumscores.columns.score.desc(),
+                sumscores.columns.date.asc(),
+                sumscores.columns.id.asc(),
+            )
         )
     else:
         standings_query = (
@@ -189,7 +201,11 @@ def get_team_standings(count=None, admin=False, fields=None):
             .join(sumscores, Teams.id == sumscores.columns.team_id)
             .filter(Teams.banned == False)
             .filter(Teams.hidden == False)
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+            .order_by(
+                sumscores.columns.score.desc(),
+                sumscores.columns.date.asc(),
+                sumscores.columns.id.asc(),
+            )
         )
 
     if count is None:
@@ -258,7 +274,11 @@ def get_user_standings(count=None, admin=False, fields=None):
                 *fields,
             )
             .join(sumscores, Users.id == sumscores.columns.user_id)
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+            .order_by(
+                sumscores.columns.score.desc(),
+                sumscores.columns.date.asc(),
+                sumscores.columns.id.asc(),
+            )
         )
     else:
         standings_query = (
@@ -272,7 +292,11 @@ def get_user_standings(count=None, admin=False, fields=None):
             )
             .join(sumscores, Users.id == sumscores.columns.user_id)
             .filter(Users.banned == False, Users.hidden == False)
-            .order_by(sumscores.columns.score.desc(), sumscores.columns.id)
+            .order_by(
+                sumscores.columns.score.desc(),
+                sumscores.columns.date.asc(),
+                sumscores.columns.id.asc(),
+            )
         )
 
     if count is None:

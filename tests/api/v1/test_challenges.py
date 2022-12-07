@@ -394,8 +394,9 @@ def test_api_challenges_get_solve_count_banned_user():
             assert chal_data["solves"] == 1
 
         # Ban the user
-        Users.query.get(2).banned = True
-        app.db.session.commit()
+        with login_as_user(app, name="admin") as client:
+            r = client.patch("/api/v1/users/2", json={"banned": True})
+        assert Users.query.get(2).banned == True
 
         with app.test_client() as client:
             # Confirm solve count is `0` despite the banned user having solved
@@ -823,8 +824,9 @@ def test_api_challenge_get_solve_count_banned_user():
             assert chal_data["solves"] == 1
 
         # Ban the user
-        Users.query.get(2).banned = True
-        app.db.session.commit()
+        with login_as_user(app, name="admin") as client:
+            r = client.patch("/api/v1/users/2", json={"banned": True})
+        assert Users.query.get(2).banned == True
 
         # Confirm solve count is `0` despite the banned user having solved
         with app.test_client() as client:

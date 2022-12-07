@@ -154,6 +154,8 @@ class ServerConfig(object):
 
     MAILGUN_BASE_URL: str = empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
 
+    MAIL_PROVIDER: str = empty_str_cast(config_ini["email"].get("MAIL_PROVIDER"))
+
     # === LOGS ===
     LOG_FOLDER: str = empty_str_cast(config_ini["logs"]["LOG_FOLDER"]) \
         or os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
@@ -173,6 +175,8 @@ class ServerConfig(object):
         AWS_S3_BUCKET: str = empty_str_cast(config_ini["uploads"]["AWS_S3_BUCKET"])
 
         AWS_S3_ENDPOINT_URL: str = empty_str_cast(config_ini["uploads"]["AWS_S3_ENDPOINT_URL"])
+
+        AWS_S3_REGION: str = empty_str_cast(config_ini["uploads"]["AWS_S3_REGION"])
 
     # === OPTIONAL ===
     REVERSE_PROXY: Union[str, bool] = empty_str_cast(config_ini["optional"]["REVERSE_PROXY"], default=False)
@@ -194,6 +198,8 @@ class ServerConfig(object):
     SERVER_SENT_EVENTS: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["SERVER_SENT_EVENTS"], default=True))
 
     HTML_SANITIZATION: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["HTML_SANITIZATION"], default=False))
+
+    SAFE_MODE: bool = process_boolean_str(empty_str_cast(config_ini["optional"].get("SAFE_MODE", False), default=False))
 
     if DATABASE_URL.startswith("sqlite") is False:
         SQLALCHEMY_ENGINE_OPTIONS = {

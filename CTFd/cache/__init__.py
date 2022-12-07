@@ -98,6 +98,18 @@ def clear_standings():
     cache.delete(make_template_fragment_key(CacheKeys.PUBLIC_SCOREBOARD_TABLE))
 
 
+def clear_challenges():
+    from CTFd.utils.challenges import get_all_challenges
+    from CTFd.utils.challenges import get_solves_for_challenge_id
+    from CTFd.utils.challenges import get_solve_ids_for_user_id
+    from CTFd.utils.challenges import get_solve_counts_for_challenges
+
+    cache.delete_memoized(get_all_challenges)
+    cache.delete_memoized(get_solves_for_challenge_id)
+    cache.delete_memoized(get_solve_ids_for_user_id)
+    cache.delete_memoized(get_solve_counts_for_challenges)
+
+
 def clear_pages():
     from CTFd.utils.config.pages import get_page, get_pages
 
