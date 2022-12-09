@@ -684,28 +684,6 @@ class ChallengeAttempt(Resource):
             status, message = chal_class.attempt(challenge, request)
             if status:  # The challenge plugin says the input is right
                 if ctftime() or current_user.is_admin():
-
-                    # send discord webhook
-                    # @TODO replace static url with a global variable containing the site url in config.py
-                    user_url = "https://ctf.sigpwny.com/users/" + str(user.id)
-                    challenge_url = "https://ctf.sigpwny.com/challenges#" + quote(challenge.name)
-
-                    description = ":white_check_mark: [{0}]({1}) solved [{2}]({3}) ({4})".format(
-                        user.name,
-                        user_url,
-                        challenge.name,
-                        challenge_url,
-                        challenge.value
-                    )
-
-                    embeds = [{
-                        "description": description,
-                        "color": 10553667,
-                        "timestamp": datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%SZ')
-                    }]
-
-                    send_discord_webhook(embeds)
-
                     chal_class.solve(
                         user=user, team=team, challenge=challenge, request=request
                     )
