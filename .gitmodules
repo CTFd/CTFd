@@ -1,0 +1,3 @@
+[submodule "CTFd/plugins/CTFd-Discord-Integration"]
+	path = CTFd/plugins/CTFd-Discord-Integration
+	url = git@github.com:sigpwny/CTFd-Discord-Integration.git

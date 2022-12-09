@@ -1,0 +1,33 @@
+/* Table styles
+-------------------------------------------------- */
+
+// Center text in tables, after the first cell
+// Override with text-center on cells
+.table tr > td:not(:first-of-type) {
+  text-align: center !important;
+}
+
+// Vertically center text in cells
+.table td,
+th {
+  vertical-align: middle !important;
+}
+
+// Add some default spacing
+.table > tbody > tr > td {
+  padding: 0.8rem 1rem !important;
+}
+
+// Remove border line from thead of all tables
+.table > tbody {
+  border-top: none !important;
+}
+
+// Add some padding from the edge of table
+.table > thead > tr > td:first-of-type {
+  padding-left: 1rem !important;
+}
+
+.table > thead > th {
+  white-space: nowrap;
+}
