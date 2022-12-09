@@ -84,3 +84,4 @@ flask_profiler.sql
 # Stuff
 id_rsa
 *.pem
+.env

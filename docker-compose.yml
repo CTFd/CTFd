@@ -16,7 +16,10 @@ services:
       - ACCESS_LOG=-
       - ERROR_LOG=-
       - REVERSE_PROXY=true
-      - SECRET_KEY=2245680a-d63d-498e-b99a-07f122fcf55b
+      - DISCORD_WEBHOOK_LIMIT=0
+      - DISCORD_WEBHOOK_MESSAGE="':white_check_mark:' \[{user}](https://ctf.sigpwny.com/users/{user_id}) solved \[{challenge}](https://ctf.sigpwny.com/challenges#{challenge_slug})"
+      - DISCORD_WEBHOOK_URL="${DISCORD_WEBHOOK_URL}
+      - SECRET_KEY="${SECRET_KEY}"
     volumes:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads

@@ -1,3 +1,7 @@
+# Sigpwny Note
+
+Do not push sensitive config variables! Use a `.env` file in the root of the folder instead. See `.env.example`
+
 # ![](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/logo.png?raw=true)
 
 ![CTFd MySQL CI](https://github.com/CTFd/CTFd/workflows/CTFd%20MySQL%20CI/badge.svg?branch=master)
