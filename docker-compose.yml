@@ -18,8 +18,8 @@ services:
       - REVERSE_PROXY=true
       - DISCORD_WEBHOOK_LIMIT=0
       - DISCORD_WEBHOOK_MESSAGE="':white_check_mark:' \[{user}](https://ctf.sigpwny.com/users/{user_id}) solved \[{challenge}](https://ctf.sigpwny.com/challenges#{challenge_slug})"
-      - DISCORD_WEBHOOK_URL="${DISCORD_WEBHOOK_URL}
-      - SECRET_KEY="${SECRET_KEY}"
+    env_file:
+      - .env
     volumes:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
