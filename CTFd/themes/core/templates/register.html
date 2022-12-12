@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block stylesheets %}
+<link rel="stylesheet" href="themes/core/static/css2/login_register.css">
 {% endblock %}
 
 {% block content %}
@@ -11,7 +12,7 @@
 </div>
 <div class="container">
 	<div class="row">
-		<div class="col-md-6 offset-md-3">
+		<div class="col-md-6 offset-md-3 register-box">
 			{% include "components/errors.html" %}
 
 			{% if integrations.mlc() %}
@@ -24,7 +25,7 @@
 
 			{% with form = Forms.auth.RegistrationForm() %}
 			{% from "macros/forms.html" import render_extra_fields %}
-			<form method="post" accept-charset="utf-8" autocomplete="off" role="form">
+			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" style="color:white">
 				<div class="form-group">
 					<b>{{ form.name.label }}</b>
 					{{ form.name(class="form-control", value=name) }}
@@ -51,8 +52,14 @@
 				{{ render_extra_fields(form.extra) }}
 
 				<div class="row pt-3">
-					<div class="col-md-12">
-						{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}
+					<div class="col-md-12" style="left:60%">
+						<a id="sub_hover">
+							<span></span>
+							<span></span>
+							<span></span>
+							<span></span>
+							{{ form.submit(class="btn btn-md btn-primary btn-outlined float-right") }}
+						</a>
 					</div>
 				</div>
 
