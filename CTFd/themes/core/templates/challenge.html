@@ -58,13 +58,13 @@
 							</div>
 							<div class="col-md-5 form-group">
 
-								<input id="challenge-id" class="challenge-id" type="hidden" value="1">
+								<input id="challenge-id" class="challenge-id" type="hidden" value="{{ challenge.id }}">
 								<input id="challenge-input" class="challenge-input form-control" type="text"
-									name="answer" placeholder="Flag" style="width: 122%;border-radius: 20px;">
+									name="answer" placeholder="Flag" style="width: 137%;border-radius: 20px;">
 
 							</div>
 							<div class="col-md-2 form-group key-submit" style="
-							margin-left: 59px;
+							margin-left: 93px;
 						">
 
 								<button id="challenge-submit"
@@ -84,7 +84,7 @@
 							<div class="challenge-custom"> 문제 설명</div>
 							<hr>
 							<span class="challenge-desc"
-								style="font-size: 15px;font-weight: 900 !important;border-radius: 20px;padding: 20px;background-image: url(themes/core/static/img/sailor.png);background-size: 104px;background-repeat: no-repeat;background-position: 91% 60%;">
+								style="font-size: 15px;font-weight: 900 !important;border-radius: 20px;padding: 20px;background-size: 104px;background-repeat: no-repeat;background-position: 91% 60%;">
 								{% block description %}{{ challenge.html }}{% endblock %}</span>
 
 							<div>
