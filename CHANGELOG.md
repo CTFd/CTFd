@@ -26,7 +26,7 @@
 **API**
 
 - Improve response time of `/api/v1/challenges` and `/api/v1/challenges/[challenge_id]/solves` by caching the solve count data for users and challenges
-- Add `HEAD /api/v1/notifications` to get a count of notifications that have happened. 
+- Add `HEAD /api/v1/notifications` to get a count of notifications that have happened.
   - This also includes a `since_id` parameter to allow for a notification cursor.
   - Unread notification count can now be tracked by themes that track which notifications a user has read
 - Add `since_id` to `GET /api/v1/notifications` to get Notifications that have happened since a specific ID
