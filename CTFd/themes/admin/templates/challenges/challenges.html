@@ -65,7 +65,7 @@
 	</div>
 
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-12 table-responsive">
 			<div>
 				<table id="challenges" class="table table-striped border">
 					<thead>
@@ -77,10 +77,10 @@
 						</td>
 						<th class="sort-col text-center"><b>ID</b></th>
 						<th class="sort-col"><b>Name</b></th>
-						<th class="d-none d-md-table-cell d-lg-table-cell sort-col"><b>Category</b></th>
-						<th class="d-none d-md-table-cell d-lg-table-cell sort-col text-center"><b>Value</b></th>
-						<th class="d-none d-md-table-cell d-lg-table-cell sort-col text-center"><b>Type</b></th>
-						<th class="d-none d-md-table-cell d-lg-table-cell sort-col text-center"><b>State</b></th>
+						<th class="sort-col"><b>Category</b></th>
+						<th class="sort-col text-center"><b>Value</b></th>
+						<th class="sort-col text-center"><b>Type</b></th>
+						<th class="sort-col text-center"><b>State</b></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -93,10 +93,10 @@
 							</td>
 							<td class="text-center">{{ challenge.id }}</td>
 							<td><a href="{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}">{{ challenge.name }}</a></td>
-							<td class="d-none d-md-table-cell d-lg-table-cell">{{ challenge.category }}</td>
-							<td class="d-none d-md-table-cell d-lg-table-cell text-center">{{ challenge.value }}</td>
-							<td class="d-none d-md-table-cell d-lg-table-cell text-center">{{ challenge.type }}</td>
-							<td class="d-none d-md-table-cell d-lg-table-cell text-center">
+							<td>{{ challenge.category }}</td>
+							<td class="text-center">{{ challenge.value }}</td>
+							<td class="text-center">{{ challenge.type }}</td>
+							<td class="text-center">
 								{% set badge_state = 'badge-danger' if challenge.state == 'hidden' else 'badge-success' %}
 								<span class="badge {{ badge_state }}">{{ challenge.state }}</span>
 							</td>
