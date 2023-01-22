@@ -37,7 +37,7 @@
   - See https://github.com/CTFd/CTFd/issues/2131
 - Added `/healthcheck` endpoint to check if CTFd is ready
 - There are now ARM Docker images for OSS CTFd
-- Bump dependencies for passlib, bcrypt, requests, gunicorn, gevent, python-geoacumen-city
+- Bump dependencies for passlib, bcrypt, requests, gunicorn, gevent, python-geoacumen-city, cmarkgfm
 - Properly load `SAFE_MODE` config from environment variable
 - The `AWS_S3_REGION` config has been added to allow specifying an S3 region. The default is `us-east-1`
 - Add individual DATABASE config keys as an alternative to `DATABASE_URL`
