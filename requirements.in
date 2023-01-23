@@ -14,7 +14,7 @@ requests==2.28.1
 PyMySQL==0.9.3
 gunicorn==20.1.0
 dataset==1.3.1
-cmarkgfm==0.8.0
+cmarkgfm==2022.10.27
 redis==3.5.2
 gevent==22.10.2
 python-dotenv==0.13.0
@@ -25,7 +25,7 @@ boto3==1.13.9
 marshmallow==2.20.2
 pydantic==1.6.2
 WTForms==2.3.1
-python-geoacumen-city==2022.11.15
+python-geoacumen-city==2023.1.15
 maxminddb==1.5.4
 tenacity==6.2.0
 pybluemonday==0.0.9
