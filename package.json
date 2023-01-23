@@ -41,7 +41,7 @@
     "highlight.js": "^10.4.1",
     "howler": "~2.1.2",
     "jquery": "~3.5.1",
-    "markdown-it": "~10.0.0",
+    "markdown-it": "~12.3.2",
     "mini-css-extract-plugin": "~0.7.0",
     "nunjucks": "~3.2.0",
     "optimize-css-assets-webpack-plugin": "~5.0.1",
