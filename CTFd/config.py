@@ -103,8 +103,25 @@ class ServerConfig(object):
 
     REDIS_URL: str = empty_str_cast(config_ini["server"]["REDIS_URL"])
 
+    REDIS_HOST: str = empty_str_cast(config_ini["server"]["REDIS_HOST"])
+    REDIS_PROTOCOL: str = empty_str_cast(config_ini["server"]["REDIS_PROTOCOL"]) or "redis"
+    REDIS_USER: str = empty_str_cast(config_ini["server"]["REDIS_USER"])
+    REDIS_PASSWORD: str = empty_str_cast(config_ini["server"]["REDIS_PASSWORD"])
+    REDIS_PORT: int = empty_str_cast(config_ini["server"]["REDIS_PORT"]) or 6379
+    REDIS_DB: int = empty_str_cast(config_ini["server"]["REDIS_DB"]) or 0
+
+    if REDIS_URL or REDIS_HOST is None:
+        CACHE_REDIS_URL = REDIS_URL
+    else:
+        # construct URL from individual variables
+        CACHE_REDIS_URL = f"{REDIS_PROTOCOL}://"
+        if REDIS_USER:
+            CACHE_REDIS_URL += REDIS_USER
+        if REDIS_PASSWORD:
+            CACHE_REDIS_URL += f":{REDIS_PASSWORD}"
+        CACHE_REDIS_URL += f"@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
-    CACHE_REDIS_URL = REDIS_URL
     if CACHE_REDIS_URL:
         CACHE_TYPE: str = "redis"
     else:
