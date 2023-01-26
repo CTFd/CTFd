@@ -1,0 +1,31 @@
+{
+  "name": "CTFd",
+  "description": "CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.",
+  "repository": "https://github.com/EivindArvesen/CTFd",
+  "logo": "https://github.com/EivindArvesen/CTFd/raw/master/CTFd/themes/core/static/img/logo.png?raw=true",
+  "env": {
+    "DATABASE_URL": {
+      "description": "MUST BE EMPTY ON HEROKU;URL for database",
+      "required": false,
+      "value": ""
+    },
+    "HEROKU_POSTGRESQL_CRIMSON_URL": {
+      "description": "MUST BE EMPTY ON HEROKU;URL for database",
+      "required": false,
+      "value": ""
+    }
+  },
+  "environments": {
+    "test": {
+      "env": {
+        "ON_HEROKU": "False",
+        "DATABASE_URL": "sqlite://"
+      },
+      "scripts": {
+        "test-setup": "pip install -r development.txt",
+        "test" : "pep8 --ignore E501,E712 CTFd/ tests/",
+        "test" : "nosetests -d"
+      }
+    }
+  }
+}

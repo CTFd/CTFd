@@ -29,3 +29,4 @@ python-geoacumen-city==2023.1.15
 maxminddb==1.5.4
 tenacity==6.2.0
 pybluemonday==0.0.9
+psycopg2-binary==2.9.5
