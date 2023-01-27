@@ -12,6 +12,7 @@ from CTFd.constants.config import (
     AccountVisibilityTypes,
     ChallengeVisibilityTypes,
     ConfigTypes,
+    PostCTFVisibilityTypes,
     RegistrationVisibilityTypes,
     ScoreVisibilityTypes,
 )
@@ -192,6 +193,7 @@ def setup():
             )
             set_config(ConfigTypes.SCORE_VISIBILITY, ScoreVisibilityTypes.PUBLIC)
             set_config(ConfigTypes.ACCOUNT_VISIBILITY, AccountVisibilityTypes.PUBLIC)
+            set_config(ConfigTypes.POST_CTF_VISIBILITY, PostCTFVisibilityTypes.DISABLED)
 
             # Verify emails
             set_config("verify_emails", None)

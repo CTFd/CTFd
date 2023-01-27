@@ -11,6 +11,7 @@ class ConfigTypes(str, RawEnum):
     SCORE_VISIBILITY = "score_visibility"
     ACCOUNT_VISIBILITY = "account_visibility"
     REGISTRATION_VISIBILITY = "registration_visibility"
+    POST_CTF_VISIBILITY = "post_ctf_visibility"
 
 
 @JinjaEnum
@@ -45,6 +46,12 @@ class AccountVisibilityTypes(str, RawEnum):
 class RegistrationVisibilityTypes(str, RawEnum):
     PUBLIC = "public"
     PRIVATE = "private"
+
+
+@JinjaEnum
+class PostCTFVisibilityTypes(str, RawEnum):
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class _ConfigsWrapper:

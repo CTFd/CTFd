@@ -89,6 +89,23 @@
 		</div>
 
 		<div class="form-group">
+			<label>
+				Post-CTF End Visibility<br>
+				<small class="form-text text-muted">
+					Control whether users can view challenges (no submissions are recorded) after the CTF End Time.
+				</small>
+			</label>
+			<select class="form-control custom-select" name="post_ctf_visibility">
+				<option value="Enabled" {% if post_ctf_visibility == 'Enabled' %}selected{% endif %}>
+					Enabled
+				</option>
+				<option value="Disabled" {% if post_ctf_visibility == 'Disabled' %}selected{% endif %}>
+					Disabled
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
 			<div class="form-check">
 				<label>
 					<input id="paused" name="paused" type="checkbox" {% if paused %}checked{% endif %}>
