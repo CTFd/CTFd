@@ -89,13 +89,16 @@
 		</div>
 
 		<div class="form-group">
-			<div class="form-check">
+			<label>
+				Pause<br>
+				<small class="form-text text-muted">
+					Prevent users from submitting answers until unpaused. Challenges can still be viewed.
+				</small>
+			</label>
+			<div class="form-check pl-0">
 				<label>
 					<input id="paused" name="paused" type="checkbox" {% if paused %}checked{% endif %}>
 					Pause CTF<br>
-					<small>
-						Prevent users from submitting answers until unpaused. Challenges can still be viewed.
-					</small>
 				</label>
 			</div>
 		</div>
