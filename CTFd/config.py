@@ -3,6 +3,8 @@ import os
 from distutils.util import strtobool
 from typing import Union
 
+from sqlalchemy.engine.url import URL
+
 
 class EnvInterpolation(configparser.BasicInterpolation):
     """Interpolation which expands environment variables in values."""
@@ -83,13 +85,43 @@ class ServerConfig(object):
     SECRET_KEY: str = empty_str_cast(config_ini["server"]["SECRET_KEY"]) \
         or gen_secret_key()
 
-    DATABASE_URL: str = empty_str_cast(config_ini["server"]["DATABASE_URL"]) \
-        or f"sqlite:///{os.path.dirname(os.path.abspath(__file__))}/ctfd.db"
+    DATABASE_URL: str = empty_str_cast(config_ini["server"]["DATABASE_URL"])
+    if not DATABASE_URL:
+        if empty_str_cast(config_ini["server"]["DATABASE_HOST"]) is not None:
+            # construct URL from individual variables
+            DATABASE_URL = str(URL(
+                drivername=empty_str_cast(config_ini["server"]["DATABASE_PROTOCOL"]) or "mysql+pymysql",
+                username=empty_str_cast(config_ini["server"]["DATABASE_USER"]) or "ctfd",
+                password=empty_str_cast(config_ini["server"]["DATABASE_PASSWORD"]),
+                host=empty_str_cast(config_ini["server"]["DATABASE_HOST"]),
+                port=empty_str_cast(config_ini["server"]["DATABASE_PORT"]),
+                database=empty_str_cast(config_ini["server"]["DATABASE_NAME"]) or "ctfd",
+            ))
+        else:
+            # default to local SQLite DB
+            DATABASE_URL = f"sqlite:///{os.path.dirname(os.path.abspath(__file__))}/ctfd.db"
 
     REDIS_URL: str = empty_str_cast(config_ini["server"]["REDIS_URL"])
 
+    REDIS_HOST: str = empty_str_cast(config_ini["server"]["REDIS_HOST"])
+    REDIS_PROTOCOL: str = empty_str_cast(config_ini["server"]["REDIS_PROTOCOL"]) or "redis"
+    REDIS_USER: str = empty_str_cast(config_ini["server"]["REDIS_USER"])
+    REDIS_PASSWORD: str = empty_str_cast(config_ini["server"]["REDIS_PASSWORD"])
+    REDIS_PORT: int = empty_str_cast(config_ini["server"]["REDIS_PORT"]) or 6379
+    REDIS_DB: int = empty_str_cast(config_ini["server"]["REDIS_DB"]) or 0
+
+    if REDIS_URL or REDIS_HOST is None:
+        CACHE_REDIS_URL = REDIS_URL
+    else:
+        # construct URL from individual variables
+        CACHE_REDIS_URL = f"{REDIS_PROTOCOL}://"
+        if REDIS_USER:
+            CACHE_REDIS_URL += REDIS_USER
+        if REDIS_PASSWORD:
+            CACHE_REDIS_URL += f":{REDIS_PASSWORD}"
+        CACHE_REDIS_URL += f"@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
-    CACHE_REDIS_URL = REDIS_URL
     if CACHE_REDIS_URL:
         CACHE_TYPE: str = "redis"
     else:

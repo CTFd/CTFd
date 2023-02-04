@@ -433,7 +433,7 @@ class Users(db.Model):
     def get_solves(self, admin=False):
         from CTFd.utils import get_config
 
-        solves = Solves.query.filter_by(user_id=self.id)
+        solves = Solves.query.filter_by(user_id=self.id).order_by(Solves.date.desc())
         freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
@@ -443,7 +443,7 @@ class Users(db.Model):
     def get_fails(self, admin=False):
         from CTFd.utils import get_config
 
-        fails = Fails.query.filter_by(user_id=self.id)
+        fails = Fails.query.filter_by(user_id=self.id).order_by(Fails.date.desc())
         freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
@@ -453,7 +453,7 @@ class Users(db.Model):
     def get_awards(self, admin=False):
         from CTFd.utils import get_config
 
-        awards = Awards.query.filter_by(user_id=self.id)
+        awards = Awards.query.filter_by(user_id=self.id).order_by(Awards.date.desc())
         freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
@@ -679,7 +679,7 @@ class Teams(db.Model):
         member_ids = [member.id for member in self.members]
 
         solves = Solves.query.filter(Solves.user_id.in_(member_ids)).order_by(
-            Solves.date.asc()
+            Solves.date.desc()
         )
 
         freeze = get_config("freeze")
@@ -695,7 +695,7 @@ class Teams(db.Model):
         member_ids = [member.id for member in self.members]
 
         fails = Fails.query.filter(Fails.user_id.in_(member_ids)).order_by(
-            Fails.date.asc()
+            Fails.date.desc()
         )
 
         freeze = get_config("freeze")
@@ -711,7 +711,7 @@ class Teams(db.Model):
         member_ids = [member.id for member in self.members]
 
         awards = Awards.query.filter(Awards.user_id.in_(member_ids)).order_by(
-            Awards.date.asc()
+            Awards.date.desc()
         )
 
         freeze = get_config("freeze")

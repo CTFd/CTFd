@@ -20,7 +20,7 @@ botocore==1.16.26
     # via
     #   boto3
     #   s3transfer
-certifi==2020.11.8
+certifi==2022.12.7
     # via requests
 cffi==1.15.0
     # via
@@ -30,7 +30,7 @@ charset-normalizer==2.0.12
     # via requests
 click==7.1.2
     # via flask
-cmarkgfm==0.8.0
+cmarkgfm==2022.10.27
     # via -r requirements.in
 dataset==1.3.1
     # via -r requirements.in
@@ -119,7 +119,7 @@ python-dotenv==0.13.0
     # via -r requirements.in
 python-editor==1.0.4
     # via alembic
-python-geoacumen-city==2022.11.15
+python-geoacumen-city==2023.1.15
     # via -r requirements.in
 pytz==2020.4
     # via flask-restx

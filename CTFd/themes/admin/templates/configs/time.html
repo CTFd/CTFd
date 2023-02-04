@@ -119,12 +119,17 @@
 							   max="59" type='number'>
 					</div>
 
-					<div class="form-check">
-						<label>
-							<input id="view_after_ctf" name="view_after_ctf" type="checkbox"
-								   {% if view_after_ctf %}checked{% endif %}>
-							Allow challenges to be viewed (no submissions are recorded) after the CTF End Time.
-						</label>
+					<div class="form-group col-md-12">
+						<div class="form-check pl-0">
+							<label>
+								<input id="view_after_ctf" name="view_after_ctf" type="checkbox" {% if view_after_ctf %}checked{% endif %}>
+								View After CTF
+								<small class="form-text text-muted">
+									Allows challenges to be viewed after the End Time, however no new submissions will be recorded.<br>
+									For participants to be able to submit after End Time but not alter the scoreboard, configure Freeze Time to be your End Time.
+								</small>
+							</label>
+						</div>
 					</div>
 
 					<div class="form-group col-md-12">
