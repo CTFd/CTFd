@@ -40,10 +40,10 @@ CTFd._internal.challenge.submit = function(preview) {
     })
 };
 
-function get_docker_status(container) {
+function get_docker_status(container,challenge_id) {
     $.get("/api/v1/docker_status", function(result) {
         $.each(result['data'], function(i, item) {
-            if (item.docker_image == container) {
+            if (item.challenge_id == challenge_id && item.docker_image == container)  {
                 var ports = String(item.ports).split(',');
                 var data = '';
                 $.each(ports, function(x, port) {
@@ -63,7 +63,7 @@ function get_docker_status(container) {
                     $("#" + String(item.instance_id).substring(0,10) + "_revert_container").html('Next Revert Available in ' + minutes + ':' + seconds);
                     if (distance < 0) {
                         clearInterval(x);
-                        $("#" + String(item.instance_id).substring(0,10) + "_revert_container").html('<a onclick="start_container(\'' + item.docker_image + '\');" class=\'btn btn-dark\'><small style=\'color:white;\'><i class="fas fa-redo"></i> Revert</small></a>');
+                        $("#" + String(item.instance_id).substring(0,10) + "_revert_container").html('<a onclick="start_container(\'' + container + '\',\'' + challenge_id + '\');" class=\'btn btn-dark\'><small style=\'color:white;\'><i class="fas fa-redo"></i> Revert</small></a>');
                     }
                 }, 1000);
                 return false;
@@ -72,10 +72,10 @@ function get_docker_status(container) {
     });
 };
 
-function start_container(container) {
+function start_container(container, challenge_id) {
     $('#docker_container').html('<div class="text-center"><i class="fas fa-circle-notch fa-spin fa-1x"></i></div>');
-    $.get("/api/v1/container", { 'name': container }, function(result) {
-            get_docker_status(container);
+    $.get("/api/v1/container", { 'id': challenge_id }, function(result) {
+            get_docker_status(container, challenge_id);
         })
         .fail(function(jqxhr, settings, ex) {
             ezal({
@@ -83,7 +83,7 @@ function start_container(container) {
                 body: "You can only revert a container once per 5 minutes! Please be patient.",
                 button: "Got it!"
             });
-            $(get_docker_status(container));
+            $(get_docker_status(container, challenge_id));
         });
 }
 

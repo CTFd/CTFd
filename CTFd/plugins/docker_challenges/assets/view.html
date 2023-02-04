@@ -3,13 +3,13 @@
 <script>
     var DOCKER_CONTAINER = '{{ challenge.docker_image | safe }}';
     (function() {
-        get_docker_status(DOCKER_CONTAINER);
+        get_docker_status(DOCKER_CONTAINER,'{{ challenge.id | safe }}');
     })();
 </script>
 {{ challenge.html }}
 <div class='mb-3 text-center' id='docker_container'>
     <span>
-        <a onclick="start_container('{{ challenge.docker_image | safe }}');" class='btn btn-dark'>
+        <a onclick="start_container('{{ challenge.docker_image | safe }}','{{ challenge.id | safe }}');" class='btn btn-dark'>
             <small style='color:white;'><i class="fas fa-play"></i> Start Docker Instance</small>
         </a>
     </span>
