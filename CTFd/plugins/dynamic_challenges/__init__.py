@@ -69,6 +69,11 @@ class DynamicValueChallenge(BaseChallenge):
             # We subtract -1 to allow the first solver to get max point value
             solve_count -= 1
 
+        # Handle situations where admins have entered a 0 decay
+        # This is invalid as it can cause a division by zero
+        if challenge.decay == 0:
+            challenge.decay = 1
+
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division
         value = (
