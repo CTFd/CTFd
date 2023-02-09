@@ -77,7 +77,7 @@ class ScoreboardList(Resource):
         return {"success": True, "data": response}
 
 
-@scoreboard_namespace.route("/top/<count>")
+@scoreboard_namespace.route("/top/<int:count>")
 @scoreboard_namespace.param("count", "How many top teams to return")
 class ScoreboardDetail(Resource):
     @check_account_visibility
