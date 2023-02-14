@@ -91,6 +91,3 @@ And the challenge will spin up on the port that is described in `docker-compose.
 2. Development of feature to allow students to upload their code and writeup directly on the website
 3. Tying in [ctfcli](https://github.com/CTFd/ctfcli) for automated challenge publishing onto the website.
 4. Implementation of dynamic flags tied to students, that will allow anti-cheating. (System where if two students submit the same flag, you know they cheated.)
-
-## Demo
-The demo for this project can be found [here](https://youtu.be/EvnthINztJk)
