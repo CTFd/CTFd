@@ -1,6 +1,8 @@
+import datetime
 import os
 import posixpath
 import string
+import time
 from pathlib import PurePath
 from shutil import copyfileobj, rmtree
 
@@ -8,6 +10,7 @@ import boto3
 from botocore.client import Config
 from flask import current_app, redirect, send_file
 from flask.helpers import safe_join
+from freezegun import freeze_time
 from werkzeug.utils import secure_filename
 
 from CTFd.utils import get_app_config
@@ -119,18 +122,25 @@ class S3Uploader(BaseUploader):
         return dst
 
     def download(self, filename):
+        # S3 URLs by default are valid for one hour.
+        # We round the timestamp down to the previous hour and generate the link at that time
+        current_timestamp = int(time.time())
+        truncated_timestamp = current_timestamp - (current_timestamp % 3600)
         key = filename
         filename = filename.split("/").pop()
-        url = self.s3.generate_presigned_url(
-            "get_object",
-            Params={
-                "Bucket": self.bucket,
-                "Key": key,
-                "ResponseContentDisposition": "attachment; filename={}".format(
-                    filename
-                ),
-            },
-        )
+        with freeze_time(datetime.datetime.fromtimestamp(truncated_timestamp)):
+            url = self.s3.generate_presigned_url(
+                "get_object",
+                Params={
+                    "Bucket": self.bucket,
+                    "Key": key,
+                    "ResponseContentDisposition": "attachment; filename={}".format(
+                        filename
+                    ),
+                    "ResponseCacheControl": "max-age=3600",
+                },
+                ExpiresIn=3600,
+            )
         return redirect(url)
 
     def delete(self, filename):
