@@ -209,6 +209,14 @@ class ServerConfig(object):
         AWS_S3_ENDPOINT_URL: str = empty_str_cast(config_ini["uploads"]["AWS_S3_ENDPOINT_URL"])
 
         AWS_S3_REGION: str = empty_str_cast(config_ini["uploads"]["AWS_S3_REGION"])
+    elif UPLOAD_PROVIDER == "azure":
+        AZURE_STORAGE_ACCOUNT_NAME: str = empty_str_cast(config_ini["uploads"]["AZURE_STORAGE_ACCOUNT_NAME"])
+
+        AZURE_STORAGE_ACCESS_KEY: str = empty_str_cast(config_ini["uploads"]["AZURE_STORAGE_ACCESS_KEY"])
+
+        AZURE_STORAGE_CONTAINER: str = empty_str_cast(config_ini["uploads"]["AZURE_STORAGE_CONTAINER"])
+
+        AZURE_STORAGE_ENDPOINT: str = empty_str_cast(config_ini["uploads"]["AZURE_STORAGE_ENDPOINT"])
 
     # === OPTIONAL ===
     REVERSE_PROXY: Union[str, bool] = empty_str_cast(config_ini["optional"]["REVERSE_PROXY"], default=False)

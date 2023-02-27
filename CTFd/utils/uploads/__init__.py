@@ -2,9 +2,9 @@ import shutil
 
 from CTFd.models import ChallengeFiles, Files, PageFiles, db
 from CTFd.utils import get_app_config
-from CTFd.utils.uploads.uploaders import FilesystemUploader, S3Uploader
+from CTFd.utils.uploads.uploaders import FilesystemUploader, S3Uploader, AzureBlobStorageAdapter
 
-UPLOADERS = {"filesystem": FilesystemUploader, "s3": S3Uploader}
+UPLOADERS = {"filesystem": FilesystemUploader, "s3": S3Uploader, "azure": AzureBlobStorageAdapter}
 
 
 def get_uploader():

@@ -12,6 +12,8 @@ aniso8601==8.0.0
     # via flask-restx
 attrs==20.3.0
     # via jsonschema
+azure-storage-blob==12.15.0
+    # via -r requirements.in
 bcrypt==4.0.1
     # via -r requirements.in
 boto3==1.13.9

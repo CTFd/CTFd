@@ -1,4 +1,3 @@
-import datetime
 import os
 import posixpath
 import string
@@ -6,6 +5,8 @@ import time
 from pathlib import PurePath
 from shutil import copyfileobj, rmtree
 
+from datetime import datetime, timedelta # For setting the token validity duration
+from azure.storage.blob import BlobServiceClient, BlobSasPermissions, generate_blob_sas
 import boto3
 from botocore.client import Config
 from flask import current_app, redirect, send_file
@@ -128,7 +129,7 @@ class S3Uploader(BaseUploader):
         truncated_timestamp = current_timestamp - (current_timestamp % 3600)
         key = filename
         filename = filename.split("/").pop()
-        with freeze_time(datetime.datetime.fromtimestamp(truncated_timestamp)):
+        with freeze_time(datetime.fromtimestamp(truncated_timestamp)):
             url = self.s3.generate_presigned_url(
                 "get_object",
                 Params={
@@ -162,3 +163,84 @@ class S3Uploader(BaseUploader):
                     os.makedirs(directory)
 
                 self.s3.download_file(self.bucket, s3_object, local_path)
+
+
+class AzureBlobStorageAdapter(BaseUploader):
+    """
+    Azure Blob is the Microsoft equivalent to Amazon’s S3-based object storage services. 
+    Within that, a “blob” is like a bucket as the framework for retention of objects.
+    You can upload, download, list, move and carry out other commands in Azure Blobs using Azure Storage client library.
+    Azure Storage Client library are available for multiple languages that include .Net, Java, Node.js, Python, PHP and Ruby.
+    """
+    def __init__(self):
+        super(BaseUploader, self).__init__()
+        self.azure = self._get_blob_connection()
+        self.container = get_app_config("AZURE_STORAGE_CONTAINER")
+
+    def _get_blob_connection(self):
+        account_name = get_app_config("AZURE_STORAGE_ACCOUNT_NAME")
+        account_key = get_app_config("AZURE_STORAGE_ACCESS_KEY")
+        self.endpoint = get_app_config("AZURE_STORAGE_ENDPOINT", "https://{}.blob.core.windows.net".format(account_name))
+        client = BlobServiceClient(
+            account_url= self.endpoint,
+            credential={"account_name": account_name,
+                         "account_key": account_key}
+        )
+        return client
+
+    def _clean_filename(self, c):
+        if c in string.ascii_letters + string.digits + "-" + "_" + ".":
+            return True
+
+    def store(self, fileobj, filename):
+        blob_client = self.azure.get_blob_client(container=self.container, blob=filename)
+        blob_client.upload_blob(fileobj)
+        return filename
+
+    def upload(self, file_obj, filename):
+        filename = filter(
+            self._clean_filename, secure_filename(filename).replace(" ", "_")
+        )
+        filename = "".join(filename)
+        if len(filename) <= 0:
+            return False
+
+        md5hash = hexencode(os.urandom(16))
+
+        destination = md5hash + "/" + filename
+        blob_client = self.azure.get_blob_client(container=self.container, blob=destination)
+        blob_client.upload_blob(file_obj)
+        return destination
+
+    def download(self, filename):
+        blob_sas_token = generate_blob_sas(
+            account_name = self.azure.account_name,
+            account_key = self.azure.credential.account_key,
+            container_name = self.container,
+            blob_name = filename,
+            permission= BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        url = self.endpoint + '/'+ self.container +'/'+ filename +'?'+ blob_sas_token
+        return redirect(url)
+
+    def delete(self, filename):
+        md5hash = filename.split("/").pop(0)
+        container_client = self.azure.get_container_client(container=self.container)
+        blobs = container_client.list_blobs(name_starts_with=md5hash)
+        for blob in blobs:
+            container_client.delete_blob(blob.name)
+        return True
+
+    def sync(self):
+        local_folder = current_app.config.get("UPLOAD_FOLDER")
+        container_client = self.azure.get_container_client(container=self.container)
+        blobs_list = container_client.list_blobs()
+        for blob in blobs_list:
+            if blob.name.endswith("/") is False:
+                local_path = os.path.join(local_folder, blob.name)
+                directory = os.path.dirname(local_path)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                with open(local_path, "wb") as file:
+                    file.write(container_client.download_blob(blob.name).readall())
