@@ -3,7 +3,7 @@ from collections import defaultdict
 from flask_restx import Namespace, Resource
 from sqlalchemy import select
 
-from CTFd.cache import cache, make_cache_key
+from CTFd.cache import cache, make_cache_key, make_cache_key_with_args
 from CTFd.models import Awards, Solves, Users, db
 from CTFd.utils import get_config
 from CTFd.utils.dates import isoformat, unix_time_to_utc
@@ -82,7 +82,7 @@ class ScoreboardList(Resource):
 class ScoreboardDetail(Resource):
     @check_account_visibility
     @check_score_visibility
-    @cache.cached(timeout=60, key_prefix=make_cache_key, query_string=True)
+    @cache.cached(timeout=60, key_prefix=make_cache_key_with_args)
     def get(self, count):
         response = {}
 
