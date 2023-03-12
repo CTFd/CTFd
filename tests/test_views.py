@@ -451,3 +451,19 @@ def test_user_can_access_files_if_view_after_ctf():
             rmdir(directory)
 
     destroy_ctfd(app)
+
+
+def test_robots_txt():
+    """Does the robots.txt page work"""
+    app = create_ctfd()
+    with app.app_context():
+        with app.test_client() as client:
+            r = client.get("/robots.txt")
+            assert r.status_code == 200
+            assert r.get_data(as_text=True) == "User-agent: *\nDisallow: /admin\n"
+        set_config("robots_txt", "testing")
+        with app.test_client() as client:
+            r = client.get("/robots.txt")
+            assert r.status_code == 200
+            assert r.get_data(as_text=True) == "testing"
+    destroy_ctfd(app)
