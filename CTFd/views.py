@@ -526,7 +526,7 @@ def healthcheck():
 
 @views.route("/robots.txt")
 def robots():
-    text = get_config("robots_txt", """User-Agent: *\nDisallow: /\n""")
+    text = get_config("robots_txt", "User-agent: *\nDisallow: /admin\n")
     r = make_response(text, 200)
     r.mimetype = "text/plain"
     return r
