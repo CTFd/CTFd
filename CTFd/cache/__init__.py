@@ -51,6 +51,7 @@ def make_cache_key(path=None, key_prefix="view/%s"):
     cache_key = key_prefix % path
     return cache_key
 
+
 def make_cache_key_with_args(path=None, key_prefix="view/%s", view_args=None):
     """
     This function ensures that view arguments are taken into account when generating a cache key
