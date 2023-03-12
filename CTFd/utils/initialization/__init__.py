@@ -204,6 +204,7 @@ def init_request_processors(app):
                 "views.themes",
                 "views.files",
                 "views.healthcheck",
+                "views.robots",
             ):
                 return
             else:
