@@ -29,6 +29,8 @@ from CTFd.utils.migrations import create_database, migrations, stamp_latest_revi
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 
+from flask_babel import Babel
+
 __version__ = "3.5.1"
 __channel__ = "oss"
 
@@ -207,6 +209,10 @@ def create_app(config="CTFd.config.Config"):
 
         # Register Flask-Migrate
         migrations.init_app(app, db)
+
+        babel = Babel()
+        app.config['BABEL_DEFAULT_LOCALE'] = 'de'
+        babel.init_app(app)
 
         # Alembic sqlite support is lacking so we should just create_all anyway
         if url.drivername.startswith("sqlite"):

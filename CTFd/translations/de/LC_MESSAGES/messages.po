@@ -1,0 +1,68 @@
+# German translations for PROJECT.
+# Copyright (C) 2023 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-03-24 03:21-0400\n"
+"PO-Revision-Date: 2023-03-24 03:23-0400\n"
+"Last-Translator: \n"
+"Language-Team: de <LL@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.12.1\n"
+"X-Generator: Poedit 3.2.2\n"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:34
+msgid "Users"
+msgstr "Benutzer"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:41
+msgid "Teams"
+msgstr "Mannschaften"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:50
+msgid "Scoreboard"
+msgstr "Anzeigetafel"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:57
+msgid "Challenges"
+msgstr "Herausforderungen"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:80
+msgid "Admin Panel"
+msgstr "Administrationsmenü"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:97
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:110
+msgid "Team"
+msgstr "Mannschaft"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:123
+msgid "Profile"
+msgstr "Profil"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:135
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:147
+msgid "Logout"
+msgstr "Ausloggen"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:165
+msgid "Register"
+msgstr "Registrieren"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:178
+msgid "Login"
+msgstr "Anmeldung"
