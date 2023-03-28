@@ -1,4 +1,4 @@
-from time import monotonic_ns
+from time import time
 
 from flask import current_app
 from sqlalchemy_utils import database_exists
@@ -13,6 +13,7 @@ def check_database():
 
 @timed_lru_cache(timeout=30)
 def check_config():
-    value = monotonic_ns()
-    cache.set("healthcheck", value)
-    return cache.get("healthcheck") == value
+    key = "healthcheck"
+    value = round(time() / 5) * 5
+    cache.set(key, value)
+    return cache.get(key) == value
