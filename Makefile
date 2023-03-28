@@ -41,4 +41,4 @@ translations-update:
 	pybabel update -i messages.pot -d CTFd/translations
 
 translations-compile:
-	pybabel compile -d CTFd/translations
+	pybabel compile -f -d CTFd/translations

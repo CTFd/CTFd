@@ -11,6 +11,8 @@ from CTFd.forms.users import (
     build_registration_code_field,
 )
 
+from flask_babel import lazy_gettext as _l
+
 
 def RegistrationForm(*args, **kwargs):
     class _RegistrationForm(BaseForm):
@@ -35,12 +37,15 @@ def RegistrationForm(*args, **kwargs):
 
 class LoginForm(BaseForm):
     name = StringField(
-        "User Name or Email",
+        _l("User Name or Email"),
         validators=[InputRequired()],
         render_kw={"autofocus": True},
     )
-    password = PasswordField("Password", validators=[InputRequired()])
-    submit = SubmitField("Submit")
+    password = PasswordField(
+        _l("Password"), 
+        validators=[InputRequired()]
+    )
+    submit = SubmitField(_l("Submit"))
 
 
 class ConfirmForm(BaseForm):
