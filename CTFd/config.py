@@ -263,4 +263,4 @@ class TestingConfig(ServerConfig):
 # Actually initialize ServerConfig to allow us to add more attributes on
 Config = ServerConfig()
 for k, v in config_ini.items("extra"):
-    setattr(Config, k, process_string_var(v))
+    setattr(Config, k, v)
