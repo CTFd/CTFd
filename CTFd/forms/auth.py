@@ -1,3 +1,4 @@
+from flask_babel import lazy_gettext as _l
 from wtforms import PasswordField, StringField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
@@ -11,17 +12,15 @@ from CTFd.forms.users import (
     build_registration_code_field,
 )
 
-from flask_babel import lazy_gettext as _l
-
 
 def RegistrationForm(*args, **kwargs):
     class _RegistrationForm(BaseForm):
         name = StringField(
-            "User Name", validators=[InputRequired()], render_kw={"autofocus": True}
+            _l("User Name"), validators=[InputRequired()], render_kw={"autofocus": True}
         )
-        email = EmailField("Email", validators=[InputRequired()])
-        password = PasswordField("Password", validators=[InputRequired()])
-        submit = SubmitField("Submit")
+        email = EmailField(_l("Email"), validators=[InputRequired()])
+        password = PasswordField(_l("Password"), validators=[InputRequired()])
+        submit = SubmitField(_l("Submit"))
 
         @property
         def extra(self):
@@ -41,26 +40,23 @@ class LoginForm(BaseForm):
         validators=[InputRequired()],
         render_kw={"autofocus": True},
     )
-    password = PasswordField(
-        _l("Password"), 
-        validators=[InputRequired()]
-    )
+    password = PasswordField(_l("Password"), validators=[InputRequired()])
     submit = SubmitField(_l("Submit"))
 
 
 class ConfirmForm(BaseForm):
-    submit = SubmitField("Resend Confirmation Email")
+    submit = SubmitField(_l("Resend Confirmation Email"))
 
 
 class ResetPasswordRequestForm(BaseForm):
     email = EmailField(
-        "Email", validators=[InputRequired()], render_kw={"autofocus": True}
+        _l("Email"), validators=[InputRequired()], render_kw={"autofocus": True}
     )
-    submit = SubmitField("Submit")
+    submit = SubmitField(_l("Submit"))
 
 
 class ResetPasswordForm(BaseForm):
     password = PasswordField(
-        "Password", validators=[InputRequired()], render_kw={"autofocus": True}
+        _l("Password"), validators=[InputRequired()], render_kw={"autofocus": True}
     )
-    submit = SubmitField("Submit")
+    submit = SubmitField(_l("Submit"))
