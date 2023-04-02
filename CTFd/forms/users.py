@@ -1,3 +1,4 @@
+from flask_babel import lazy_gettext as _l
 from wtforms import BooleanField, PasswordField, SelectField, StringField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
@@ -130,17 +131,17 @@ class UserSearchForm(BaseForm):
 
 class PublicUserSearchForm(BaseForm):
     field = SelectField(
-        "Search Field",
+        _l("Search Field"),
         choices=[
-            ("name", "Name"),
-            ("affiliation", "Affiliation"),
-            ("website", "Website"),
+            ("name", _l("Name")),
+            ("affiliation", _l("Affiliation")),
+            ("website", _l("Website")),
         ],
         default="name",
         validators=[InputRequired()],
     )
-    q = StringField("Parameter", validators=[InputRequired()])
-    submit = SubmitField("Search")
+    q = StringField(_l("Parameter"), validators=[InputRequired()])
+    submit = SubmitField(_l("Search"))
 
 
 class UserBaseForm(BaseForm):
