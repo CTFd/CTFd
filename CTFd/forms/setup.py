@@ -28,7 +28,9 @@ class SetupForm(BaseForm):
         _l("User Mode"),
         choices=[("teams", _l("Team Mode")), ("users", _l("User Mode"))],
         default="teams",
-        description=_l("Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"),
+        description=_l(
+            "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
+        ),
         validators=[InputRequired()],
     )
 
@@ -50,14 +52,18 @@ class SetupForm(BaseForm):
 
     ctf_logo = FileField(
         _l("Logo"),
-        description=_l("Logo to use for the website instead of a CTF name. Used as the home page button. Optional."),
+        description=_l(
+            "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
+        ),
     )
     ctf_banner = FileField(
         _l("Banner"), description=_l("Banner to use for the homepage. Optional.")
     )
     ctf_small_icon = FileField(
         _l("Small Icon"),
-        description=_l("favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."),
+        description=_l(
+            "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
+        ),
     )
     ctf_theme = SelectField(
         _l("Theme"),
@@ -68,13 +74,17 @@ class SetupForm(BaseForm):
     )
     theme_color = HiddenField(
         _l("Theme Color"),
-        description=_l("Color used by theme to control aesthetics. Requires theme support. Optional."),
+        description=_l(
+            "Color used by theme to control aesthetics. Requires theme support. Optional."
+        ),
     )
 
     start = StringField(
-        _l("Start Time"), description=_l("Time when your CTF is scheduled to start. Optional.")
+        _l("Start Time"),
+        description=_l("Time when your CTF is scheduled to start. Optional."),
     )
     end = StringField(
-        _l("End Time"), description=_l("Time when your CTF is scheduled to end. Optional.")
+        _l("End Time"),
+        description=_l("Time when your CTF is scheduled to end. Optional."),
     )
     submit = SubmitField(_l("Finish"))

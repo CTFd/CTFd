@@ -6,6 +6,7 @@ from flask import current_app as app
 from flask import redirect, request, session, url_for
 
 from CTFd.cache import cache
+from CTFd.constants.languages import Languages
 from CTFd.constants.teams import TeamAttrs
 from CTFd.constants.users import UserAttrs
 from CTFd.models import Fails, Teams, Tracking, Users, db
@@ -165,6 +166,11 @@ def get_ip(req=None):
     else:
         remote_addr = req.remote_addr
     return remote_addr
+
+
+def get_locale():
+    languages = Languages.values()
+    return request.accept_languages.best_match(languages)
 
 
 def get_current_user_recent_ips():

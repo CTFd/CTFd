@@ -7,6 +7,7 @@ from distutils.version import StrictVersion
 import jinja2
 from flask import Flask, Request
 from flask.helpers import safe_join
+from flask_babel import Babel
 from flask_migrate import upgrade
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
@@ -28,8 +29,7 @@ from CTFd.utils.initialization import (
 from CTFd.utils.migrations import create_database, migrations, stamp_latest_revision
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
-
-from flask_babel import Babel
+from CTFd.utils.user import get_locale
 
 __version__ = "3.5.1"
 __channel__ = "oss"
@@ -211,7 +211,7 @@ def create_app(config="CTFd.config.Config"):
         migrations.init_app(app, db)
 
         babel = Babel()
-        app.config['BABEL_DEFAULT_LOCALE'] = 'de'
+        babel.locale_selector_func = get_locale
         babel.init_app(app)
 
         # Alembic sqlite support is lacking so we should just create_all anyway
