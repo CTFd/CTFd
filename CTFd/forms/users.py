@@ -140,7 +140,11 @@ class PublicUserSearchForm(BaseForm):
         default="name",
         validators=[InputRequired()],
     )
-    q = StringField(_l("Parameter"), validators=[InputRequired()])
+    q = StringField(
+        _l("Parameter"),
+        description=_l("Search for matching users"),
+        validators=[InputRequired()],
+    )
     submit = SubmitField(_l("Search"))
 
 
