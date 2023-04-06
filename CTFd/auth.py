@@ -1,4 +1,4 @@
-import base64
+import base64 # noqa: I001
 
 import requests
 from flask import Blueprint, abort
