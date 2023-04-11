@@ -12,6 +12,10 @@ format:
 	prettier --write '**/*.md'
 
 test:
+	python -m build tests/plugins/test_plugins/plugin_1
+	pip install --force-reinstall tests/plugins/test_plugins/plugin_1/dist/*.whl
+	python -m build tests/plugins/test_plugins/plugin_2
+	pip install --force-reinstall tests/plugins/test_plugins/plugin_2/dist/*.whl
 	pytest -rf --cov=CTFd --cov-context=test --cov-report=xml \
 		--ignore-glob="**/node_modules/" \
 		--ignore=node_modules/ \

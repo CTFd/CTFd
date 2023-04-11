@@ -1,11 +1,14 @@
 import glob
-import importlib
 import os
+import sys
 from collections import namedtuple
+from importlib import import_module
+from importlib.metadata import entry_points
 
 from flask import current_app as app
 from flask import send_file, send_from_directory, url_for
 
+from CTFd.exceptions import PluginDependencyException
 from CTFd.utils.config.pages import get_pages
 from CTFd.utils.decorators import admins_only as admins_only_wrapper
 from CTFd.utils.plugins import override_template as utils_override_template
@@ -179,6 +182,52 @@ def get_plugin_names():
     return plugins
 
 
+def get_external_plugins():
+    if sys.version_info >= (3, 10):
+        external_plugins = entry_points(group="CTFd.plugins")
+    else:
+        external_plugins = entry_points().get("CTFd.plugins", [])
+    return list(external_plugins)
+
+
+def _load_plugins(app):
+    unmet_deps = {}
+    attempt_reload = True
+    plugins = get_plugin_names() + get_external_plugins()
+    while attempt_reload:
+        attempt_reload = False
+        for plugin in plugins:
+            name = plugin if isinstance(plugin, str) else plugin.module
+            if name in app.plugins_loaded:
+                continue
+            try:
+                if isinstance(plugin, str):
+                    module = "." + plugin
+                    module = import_module(module, package="CTFd.plugins")
+                    module.load(app)
+                else:
+                    load_func = plugin.load()
+                    load_func(app)
+                for p in unmet_deps.keys():
+                    if name in unmet_deps[p]:
+                        unmet_deps[p].remove(name)
+                    if not unmet_deps[p]:
+                        print(f" + Dependency fulfilled for plugin {p}")
+                        attempt_reload = True
+                if name in unmet_deps:
+                    unmet_deps.pop(name)
+                app.plugins_loaded.add(name)
+            except PluginDependencyException as e:
+                unmet_deps[name] = set()
+                for deps in e.dependencies:
+                    if deps not in app.plugins_loaded:
+                        unmet_deps[name].add(deps)
+                        print(f" ! Plugin {name} requires plugin {deps} to be loaded")
+                        attempt_reload = True
+                if not unmet_deps[name]:
+                    print(f" ! Invalid dependencies for plugin {name}")
+
+
 def init_plugins(app):
     """
     Searches for the load function in modules in the CTFd/plugins folder. This function is called with the current CTFd
@@ -195,13 +244,10 @@ def init_plugins(app):
     app.admin_plugin_menu_bar = []
     app.plugin_menu_bar = []
     app.plugins_dir = os.path.dirname(__file__)
+    app.plugins_loaded = set()
 
     if app.config.get("SAFE_MODE", False) is False:
-        for plugin in get_plugin_names():
-            module = "." + plugin
-            module = importlib.import_module(module, package="CTFd.plugins")
-            module.load(app)
-            print(" * Loaded module, %s" % module)
+        _load_plugins(app)
     else:
         print("SAFE_MODE is enabled. Skipping plugin loading.")
 

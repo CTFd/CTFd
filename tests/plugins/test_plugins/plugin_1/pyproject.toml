@@ -1,0 +1,6 @@
+[project]
+name = "ctfd_testplugin1"
+version = "0.0.1"
+
+[project.entry-points."CTFd.plugins"]
+load = "ctfd_plugin_1:test_load"
