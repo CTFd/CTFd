@@ -1,4 +1,4 @@
-from __future__ import with_statement
+from __future__ import with_statement  # noqa: I001
 
 import logging
 from logging.config import fileConfig

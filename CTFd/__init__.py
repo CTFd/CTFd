@@ -185,15 +185,15 @@ def create_app(config="CTFd.config.Config"):
         app.jinja_loader = jinja2.ChoiceLoader(loaders)
 
         from CTFd.models import (  # noqa: F401
-            db,
-            Teams,
-            Solves,
             Challenges,
             Fails,
-            Flags,
-            Tags,
             Files,
+            Flags,
+            Solves,
+            Tags,
+            Teams,
             Tracking,
+            db,
         )
 
         url = create_database()
@@ -214,8 +214,8 @@ def create_app(config="CTFd.config.Config"):
             # db.create_all call because tests use the in-memory SQLite
             # database (each connection, including db creation, is a new db).
             # https://docs.sqlalchemy.org/en/13/dialects/sqlite.html#foreign-key-support
-            from sqlalchemy.engine import Engine
             from sqlalchemy import event
+            from sqlalchemy.engine import Engine
 
             @event.listens_for(Engine, "connect")
             def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -275,16 +275,16 @@ def create_app(config="CTFd.config.Config"):
         init_template_globals(app)
 
         # Importing here allows tests to use sensible names (e.g. api instead of api_bp)
-        from CTFd.views import views
-        from CTFd.teams import teams
-        from CTFd.users import users
-        from CTFd.challenges import challenges
-        from CTFd.scoreboard import scoreboard
-        from CTFd.auth import auth
         from CTFd.admin import admin
         from CTFd.api import api
-        from CTFd.events import events
+        from CTFd.auth import auth
+        from CTFd.challenges import challenges
         from CTFd.errors import render_error
+        from CTFd.events import events
+        from CTFd.scoreboard import scoreboard
+        from CTFd.teams import teams
+        from CTFd.users import users
+        from CTFd.views import views
 
         app.register_blueprint(views)
         app.register_blueprint(teams)
