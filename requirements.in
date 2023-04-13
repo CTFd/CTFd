@@ -1,5 +1,5 @@
 Flask==1.1.2
-Werkzeug==1.0.1
+Werkzeug==2.2.3
 Jinja2==2.11.3
 Flask-SQLAlchemy==2.4.3
 Flask-Caching==1.8.0
