@@ -150,9 +150,7 @@ class UserSchema(ma.ModelSchema):
                     )
                 if check_email_is_whitelisted(email) is False:
                     raise ValidationError(
-                        "Only email addresses under {domains} may register".format(
-                            domains=get_config("domain_whitelist")
-                        ),
+                        "Email address is not from an allowed domain",
                         field_names=["email"],
                     )
                 if get_config("verify_emails"):
