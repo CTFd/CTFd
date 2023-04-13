@@ -1,7 +1,7 @@
-import csv
+import csv  # noqa: I001
 import datetime
-import os
 from io import StringIO
+import os
 
 from flask import Blueprint, abort
 from flask import current_app as app
@@ -18,14 +18,14 @@ from flask import (
 admin = Blueprint("admin", __name__)
 
 # isort:imports-firstparty
-from CTFd.admin import challenges  # noqa: F401
-from CTFd.admin import notifications  # noqa: F401
-from CTFd.admin import pages  # noqa: F401
-from CTFd.admin import scoreboard  # noqa: F401
-from CTFd.admin import statistics  # noqa: F401
-from CTFd.admin import submissions  # noqa: F401
-from CTFd.admin import teams  # noqa: F401
-from CTFd.admin import users  # noqa: F401
+from CTFd.admin import challenges  # noqa: F401,I001
+from CTFd.admin import notifications  # noqa: F401,I001
+from CTFd.admin import pages  # noqa: F401,I001
+from CTFd.admin import scoreboard  # noqa: F401,I001
+from CTFd.admin import statistics  # noqa: F401,I001
+from CTFd.admin import submissions  # noqa: F401,I001
+from CTFd.admin import teams  # noqa: F401,I001
+from CTFd.admin import users  # noqa: F401,I001
 from CTFd.cache import (
     cache,
     clear_challenges,

@@ -1,4 +1,4 @@
-import inspect
+import inspect  # noqa: I001
 import os
 
 from alembic.config import Config
