@@ -5,7 +5,7 @@ Revises: ef87d69ec29a
 Create Date: 2021-07-30 03:50:54.219124
 
 """
-from alembic import op
+from alembic import op  # noqa: I001
 import sqlalchemy as sa
 
 

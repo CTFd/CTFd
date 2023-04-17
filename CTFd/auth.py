@@ -1,4 +1,4 @@
-import base64
+import base64  # noqa: I001
 
 import requests
 from flask import Blueprint, abort
@@ -265,11 +265,7 @@ def register():
         if not valid_email:
             errors.append("Please enter a valid email address")
         if email.check_email_is_whitelisted(email_address) is False:
-            errors.append(
-                "Only email addresses under {domains} may register".format(
-                    domains=get_config("domain_whitelist")
-                )
-            )
+            errors.append("Your email address is not from an allowed domain")
         if names:
             errors.append("That user name is already taken")
         if team_name_email_check is True:
