@@ -1,4 +1,4 @@
-import datetime
+import datetime  # noqa: I001
 import re
 
 from flask import abort

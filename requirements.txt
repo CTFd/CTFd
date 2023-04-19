@@ -10,6 +10,8 @@ alembic==1.4.3
     #   flask-migrate
 aniso8601==8.0.0
     # via flask-restx
+async-timeout==4.0.2
+    # via redis
 attrs==20.3.0
     # via jsonschema
 babel==2.12.1
@@ -109,7 +111,7 @@ maxminddb==1.5.4
     #   python-geoacumen-city
 passlib==1.7.4
     # via -r requirements.in
-pybluemonday==0.0.9
+pybluemonday==0.0.10
     # via -r requirements.in
 pycparser==2.20
     # via cffi

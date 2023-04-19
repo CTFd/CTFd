@@ -24,7 +24,7 @@ def test_RawEnum():
 
 
 def test_JSEnum():
-    from CTFd.constants import JS_ENUMS
+    from CTFd.constants import JS_ENUMS  # noqa: I001
     import json
 
     @JSEnum
