@@ -1,7 +1,7 @@
 import csv  # noqa: I001
 import datetime
-from io import StringIO
 import os
+from io import StringIO
 
 from flask import Blueprint, abort
 from flask import current_app as app
