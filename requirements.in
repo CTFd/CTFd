@@ -6,7 +6,7 @@ Flask-Caching==1.8.0
 Flask-Migrate==2.5.3
 Flask-Script==2.0.6
 SQLAlchemy==1.3.17
-SQLAlchemy-Utils==0.36.6
+SQLAlchemy-Utils==0.36.5
 passlib==1.7.4
 bcrypt==4.0.1
 itsdangerous==1.1.0
