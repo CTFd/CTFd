@@ -103,7 +103,7 @@ def TeamSettingsForm(*args, **kwargs):
             "New Team Password", description="Set a new team join password"
         )
         confirm = PasswordField(
-            "Confirm Password",
+            "Confirm Current Team Password",
             description="Provide your current team password (or your password) to update your team's password",
         )
         affiliation = StringField(
