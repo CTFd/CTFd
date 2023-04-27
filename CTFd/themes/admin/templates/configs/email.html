@@ -133,6 +133,9 @@
 		<h5>Email Server</h5>
 		<small class="form-text text-muted">
 			Change the email server used by CTFd to send email
+			<a class="float-right" href="https://docs.ctfd.io/docs/settings/emails#email-server" target="_blank">
+				<i class="far fa-question-circle pr-2"></i>
+			</a>
 		</small>
 		<ul class="nav nav-tabs my-3" role="tablist">
 			<li class="nav-item active">
@@ -221,13 +224,13 @@
 				<div class="form-check">
 					<label>
 						<input id="mail_ssl" name="mail_ssl" type="checkbox" {% if mail_ssl %}checked{% endif %}>
-						SSL
+						TLS/SSL
 					</label>
 				</div>
 				<div class="form-check">
 					<label>
 						<input id="mail_tls" name="mail_tls" type="checkbox" {% if mail_tls %}checked{% endif %}>
-						TLS
+						STARTTLS
 					</label>
 				</div>
 			</div>

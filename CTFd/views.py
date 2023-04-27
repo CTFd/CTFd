@@ -1,8 +1,16 @@
-import os
+import os  # noqa: I001
 
 from flask import Blueprint, abort
 from flask import current_app as app
-from flask import redirect, render_template, request, send_file, session, url_for
+from flask import (
+    make_response,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    session,
+    url_for,
+)
 from flask.helpers import safe_join
 from jinja2.exceptions import TemplateNotFound
 from sqlalchemy.exc import IntegrityError
@@ -514,3 +522,11 @@ def healthcheck():
     if check_config() is False:
         return "ERR", 500
     return "OK", 200
+
+
+@views.route("/robots.txt")
+def robots():
+    text = get_config("robots_txt", "User-agent: *\nDisallow: /admin\n")
+    r = make_response(text, 200)
+    r.mimetype = "text/plain"
+    return r

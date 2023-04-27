@@ -52,7 +52,7 @@ def init_template_filters(app):
 
 
 def init_template_globals(app):
-    from CTFd.constants import JINJA_ENUMS
+    from CTFd.constants import JINJA_ENUMS  # noqa: I001
     from CTFd.constants.assets import Assets
     from CTFd.constants.config import Configs
     from CTFd.constants.plugins import Plugins
@@ -204,6 +204,7 @@ def init_request_processors(app):
                 "views.themes",
                 "views.files",
                 "views.healthcheck",
+                "views.robots",
             ):
                 return
             else:
