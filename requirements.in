@@ -6,7 +6,7 @@ Flask-Caching==1.8.0
 Flask-Migrate==2.5.3
 Flask-Script==2.0.6
 SQLAlchemy==1.3.17
-SQLAlchemy-Utils==0.36.5
+SQLAlchemy-Utils==0.41.0
 passlib==1.7.4
 bcrypt==4.0.1
 itsdangerous==1.1.0
@@ -25,7 +25,7 @@ boto3==1.13.9
 marshmallow==2.20.2
 pydantic==1.6.2
 WTForms==2.3.1
-python-geoacumen-city==2023.1.15
+python-geoacumen-city==2023.4.15
 maxminddb==1.5.4
 tenacity==6.2.0
 pybluemonday==0.0.10
