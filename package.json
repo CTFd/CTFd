@@ -43,7 +43,7 @@
     "jquery": "~3.5.1",
     "markdown-it": "~10.0.0",
     "mini-css-extract-plugin": "~0.7.0",
-    "nunjucks": "~3.2.0",
+    "nunjucks": "~3.2.4",
     "optimize-css-assets-webpack-plugin": "~5.0.1",
     "popper.js": "^1.15.0",
     "prettier": "1.17.0",
