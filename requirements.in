@@ -30,3 +30,4 @@ maxminddb==1.5.4
 tenacity==6.2.0
 pybluemonday==0.0.11
 freezegun==1.2.2
+azure-storage-blob==12.15.0
