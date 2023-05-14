@@ -104,7 +104,7 @@ def TeamSettingsForm(*args, **kwargs):
             _l("New Team Password"), description=_l("Set a new team join password")
         )
         confirm = PasswordField(
-            _l("Confirm Password"),
+            _l("Confirm Current Team Password"),
             description=_l(
                 "Provide your current team password (or your password) to update your team's password"
             ),

@@ -1,3 +1,28 @@
+# 3.5.2 / 2023-05-01
+
+**General**
+
+- Generate cachable S3 URLs by rounding time down to the previous hour to generate a consistent URL
+- Change email whitelist error message to not include the list of allowed domains
+- Clean up the language for confirming the password on team password change
+- Fix issue where dynamic challenges break if the decay is 0 and prevent users from adding a decay limit of 0 to dynamic value challenges
+
+**Admin Panel**
+
+- Adds support for admins to control `robots.txt`
+- Clean up the aesthetics for the 'Pause CTF' and 'View After CTF' configs
+- Replaced TLS and SSL checkbox text to match the defaults used by Mozilla Thunderbird to eliminate confusion when configuring SMTP
+
+**Deployment**
+
+- Slim down Docker image by removing several dependencies not needed for production usage
+  - The image size has been reduced from 648MB to 398MB
+- In the Docker image run CTFd in a virtual environment located at `/opt/venv`
+- Add freezegun to application dependencies
+- Bump dependencies for pybluemonday, redis, SQLAlchemy-Utils, python-geoacumen-city
+- Fix race conditions on cache healthcheck
+- Fix situations where numeric config items in config.ini could cause CTFd to not start
+
 # 3.5.1 / 2023-01-23
 
 **General**
