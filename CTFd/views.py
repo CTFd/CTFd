@@ -316,11 +316,6 @@ def settings():
     errors = get_errors()
 
     user = get_current_user()
-    name = user.name
-    email = user.email
-    website = user.website
-    affiliation = user.affiliation
-    country = user.country
 
     if is_teams_mode() and get_current_team() is None:
         team_url = url_for("teams.private")
@@ -346,11 +341,12 @@ def settings():
 
     return render_template(
         "settings.html",
-        name=name,
-        email=email,
-        website=website,
-        affiliation=affiliation,
-        country=country,
+        name=user.name,
+        email=user.email,
+        language=user.language,
+        website=user.website,
+        affiliation=user.affiliation,
+        country=user.country,
         tokens=tokens,
         prevent_name_change=prevent_name_change,
         infos=infos,

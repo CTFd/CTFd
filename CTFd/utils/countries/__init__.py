@@ -263,6 +263,7 @@ COUNTRIES_LIST = [
 COUNTRIES_DICT = OrderedDict(COUNTRIES_LIST)
 
 # List of countries suitable for use in forms
+# TODO: CTFd 4.0 Move SELECT_COUNTRIES_LIST into constants
 SELECT_COUNTRIES_LIST = [("", "")] + COUNTRIES_LIST
 
 

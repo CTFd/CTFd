@@ -3,6 +3,7 @@ from flask_babel import lazy_gettext as _l
 from wtforms import PasswordField, SelectField, StringField
 from wtforms.fields.html5 import DateField, URLField
 
+from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.forms.users import attach_custom_user_fields, build_custom_user_fields
@@ -14,6 +15,7 @@ def SettingsForm(*args, **kwargs):
     class _SettingsForm(BaseForm):
         name = StringField(_l("User Name"))
         email = StringField(_l("Email"))
+        language = SelectField(_l("Language"), choices=SELECT_LANGUAGE_LIST)
         password = PasswordField(_l("Password"))
         confirm = PasswordField(_l("Current Password"))
         affiliation = StringField(_l("Affiliation"))
