@@ -57,7 +57,7 @@ flask-restx==0.5.1
     # via -r requirements.in
 flask-script==2.0.6
     # via -r requirements.in
-flask-sqlalchemy==2.4.3
+flask-sqlalchemy==2.5.1
     # via
     #   -r requirements.in
     #   flask-migrate
@@ -141,7 +141,7 @@ six==1.15.0
     #   jsonschema
     #   python-dateutil
     #   tenacity
-sqlalchemy==1.3.17
+sqlalchemy==1.4.48
     # via
     #   -r requirements.in
     #   alembic

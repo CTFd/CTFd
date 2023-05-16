@@ -15,10 +15,6 @@ url = make_url(Config.DATABASE_URL)
 if url.drivername.startswith("sqlite"):
     exit(0)
 
-# Null out the database so raw_connection doesnt error if it doesnt exist
-# CTFd will create the database if it doesnt exist
-url.database = None
-
 # Wait for the database server to be available
 engine = create_engine(url)
 print(f"Waiting for {url.host} to be ready")

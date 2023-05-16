@@ -124,9 +124,9 @@ def setup():
             password = request.form["password"]
 
             name_len = len(name) == 0
-            names = Users.query.add_columns("name", "id").filter_by(name=name).first()
+            names = Users.query.add_columns(Users.name, Users.id).filter_by(name=name).first()
             emails = (
-                Users.query.add_columns("email", "id").filter_by(email=email).first()
+                Users.query.add_columns(Users.email, Users.id).filter_by(email=email).first()
             )
             pass_short = len(password) == 0
             pass_long = len(password) > 128

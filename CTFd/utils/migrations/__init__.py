@@ -20,7 +20,7 @@ def create_database():
         url.drivername = "postgresql"
 
     if url.drivername.startswith("mysql"):
-        url.query["charset"] = "utf8mb4"
+        url = url.update_query_string("charset=utf8mb4")
 
     # Creates database if the database database does not exist
     if not database_exists_util(url):
