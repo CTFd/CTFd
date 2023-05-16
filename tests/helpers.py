@@ -2,7 +2,6 @@ import datetime
 import gc
 import random
 import string
-import uuid
 from collections import namedtuple
 from contextlib import contextmanager
 from unittest.mock import Mock, patch
