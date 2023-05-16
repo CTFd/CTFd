@@ -17,7 +17,7 @@ migrations = Migrate()
 def create_database():
     url = make_url(app.config["SQLALCHEMY_DATABASE_URI"])
     if url.drivername == "postgres":
-        url.drivername = "postgresql"
+        url = url.set(drivername="postgresql")
 
     if url.drivername.startswith("mysql"):
         url = url.update_query_string("charset=utf8mb4")
@@ -34,7 +34,7 @@ def create_database():
 def drop_database():
     url = make_url(app.config["SQLALCHEMY_DATABASE_URI"])
     if url.drivername == "postgres":
-        url.drivername = "postgresql"
+        url = url.set(drivername="postgresql")
     drop_database_util(url)
 
 
