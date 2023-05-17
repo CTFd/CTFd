@@ -4,6 +4,7 @@ from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
 from CTFd.constants.config import Configs
+from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.models import UserFieldEntries, UserFields
@@ -151,6 +152,7 @@ class PublicUserSearchForm(BaseForm):
 class UserBaseForm(BaseForm):
     name = StringField("User Name", validators=[InputRequired()])
     email = EmailField("Email", validators=[InputRequired()])
+    language = SelectField(_l("Language"), choices=SELECT_LANGUAGE_LIST)
     password = PasswordField("Password")
     website = StringField("Website")
     affiliation = StringField("Affiliation")
