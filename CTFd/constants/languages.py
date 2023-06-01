@@ -14,5 +14,5 @@ LANGUAGE_NAMES = {
 }
 
 SELECT_LANGUAGE_LIST = [("", "")] + [
-    (str(l), LANGUAGE_NAMES.get(str(l))) for l in Languages
+    (str(lang), LANGUAGE_NAMES.get(str(lang))) for lang in Languages
 ]
