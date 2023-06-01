@@ -30,3 +30,15 @@ serve:
 
 shell:
 	python manage.py shell
+
+translations-init:
+	pybabel init -i messages.pot -d CTFd/translations -l de
+
+translations-extract:
+	pybabel extract -F babel.cfg -k lazy_gettext -k _l -o messages.pot .
+
+translations-update:
+	pybabel update --ignore-obsolete -i messages.pot -d CTFd/translations
+
+translations-compile:
+	pybabel compile -f -d CTFd/translations
