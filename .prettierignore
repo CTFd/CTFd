@@ -1,4 +1,5 @@
 CTFd/themes/**/vendor/
+CTFd/themes/core-beta/**/*
 *.html
 *.njk
 *.png
