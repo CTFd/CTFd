@@ -1,0 +1,29 @@
+/* Jumbotron styles
+-------------------------------------------------- */
+
+// Move down content because we have a fixed navbar that is 3.5rem tall
+main {
+  padding-top: 3.5rem;
+}
+
+.jumbotron {
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+
+  background-color: var(--bs-dark);
+  color: var(--bs-white);
+}
+
+@media (min-width: 576px) {
+  .jumbotron {
+    padding: 4rem 2rem;
+  }
+}
+
+// @media (min-width: 768px) {
+//   .jumbotron {
+//     // I kind of like this, but it could be discussed
+//     clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+//   }
+// }
