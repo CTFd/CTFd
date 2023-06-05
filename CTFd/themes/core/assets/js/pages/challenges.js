@@ -86,6 +86,9 @@ const displayChal = chal => {
     $(".challenge-solves").click(function(_event) {
       getSolves($("#challenge-id").val());
     });
+    $(".challenge-submissions").click(function(_event) {
+      getSubmissions($("#challenge-id").val());
+    });
     $(".nav-tabs a").click(function(event) {
       event.preventDefault();
       $(this).tab("show");
@@ -276,6 +279,41 @@ function getSolves(id) {
   });
 }
 
+function getSubmissions(id) {
+  return CTFd.api
+    .get_challenge_submissions({ challengeId: id })
+    .then(response => {
+      const data = response.data;
+      const box = $("#challenge-submissions-names");
+      box.empty();
+      for (let i = 0; i < data.length; i++) {
+        const user_name = data[i].user_name;
+        const provided = data[i].provided;
+        const date = dayjs(data[i].date).fromNow();
+        const type = data[i].type;
+        const user_url = data[i].user_url;
+        let tableline =
+          '<tr title="{5}"><td>{2}</td><td><i class="fas {4}" title="{3}"></i></td></tr>';
+        if (box.attr("ref") == "teams") {
+          tableline =
+            '<tr title="{5}"><td><a href="{0}">{1}</td><td>{2}</td><td><i class="fas {4}" title="{3}"></i></td></tr>';
+        }
+        box.append(
+          tableline.format(
+            user_url,
+            htmlEntities(user_name),
+            htmlEntities(provided),
+            type,
+            type === "incorrect"
+              ? "fa-times text-danger"
+              : "fa-check text-success",
+            date
+          )
+        );
+      }
+    });
+}
+
 function loadChals() {
   return CTFd.api.get_challenge_list().then(function(response) {
     const categories = [];
@@ -386,6 +424,10 @@ $(() => {
 
   $(".challenge-solves").click(function(_event) {
     getSolves($("#challenge-id").val());
+  });
+
+  $(".challenge-submissions").click(function(_event) {
+    getSubmissions($("#challenge-id").val());
   });
 
   $("#challenge-window").on("hide.bs.modal", function(_event) {

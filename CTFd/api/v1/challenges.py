@@ -25,6 +25,7 @@ from CTFd.utils.challenges import (
     get_solve_counts_for_challenges,
     get_solve_ids_for_user_id,
     get_solves_for_challenge_id,
+    get_submissions_for_user_id_for_challenge_id,
 )
 from CTFd.utils.config.visibility import (
     accounts_visible,
@@ -34,6 +35,7 @@ from CTFd.utils.config.visibility import (
 from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime
 from CTFd.utils.decorators import (
     admins_only,
+    authed_only,
     during_ctf_time_only,
     require_verified_emails,
 )
@@ -723,6 +725,37 @@ class ChallengeSolves(Resource):
                 freeze = False
 
         response = get_solves_for_challenge_id(challenge_id=challenge_id, freeze=freeze)
+
+        return {"success": True, "data": response}
+
+
+@challenges_namespace.route("/<challenge_id>/submissions")
+class ChallengeSubmissions(Resource):
+    @authed_only
+    @check_challenge_visibility
+    @during_ctf_time_only
+    @require_verified_emails
+    def get(self, challenge_id):
+        response = []
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+
+        # TODO: Need a generic challenge visibility call.
+        # However, it should be stated that a submission on a gated challenge is not considered private.
+        if challenge.state == "hidden" and is_admin() is False:
+            abort(404)
+
+        freeze = get_config("freeze")
+        if freeze:
+            preview = request.args.get("preview")
+            if (is_admin() is False) or (is_admin() is True and preview):
+                freeze = True
+            elif is_admin() is True:
+                freeze = False
+
+        user = get_current_user()
+        response = get_submissions_for_user_id_for_challenge_id(
+            challenge_id=challenge_id, user_id=user.id
+        )
 
         return {"success": True, "data": response}
 

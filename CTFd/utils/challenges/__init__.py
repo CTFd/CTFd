@@ -1,11 +1,12 @@
 import datetime
 from collections import namedtuple
 
+from flask import url_for
 from sqlalchemy import func as sa_func
 from sqlalchemy.sql import and_, false, true
 
 from CTFd.cache import cache
-from CTFd.models import Challenges, Solves, Users, db
+from CTFd.models import Challenges, Solves, Submissions, Users, db
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils import get_config
 from CTFd.utils.dates import isoformat, unix_time_to_utc
@@ -81,6 +82,36 @@ def get_solves_for_challenge_id(challenge_id, freeze=False):
                 "name": account_name,
                 "date": isoformat(solve.date),
                 "account_url": generate_account_url(account_id=solve.account_id),
+            }
+        )
+    return results
+
+
+@cache.memoize(timeout=60)
+def get_submissions_for_user_id_for_challenge_id(user_id, challenge_id):
+    # Note that we specifically query for the Solves.account.name
+    # attribute here because it is faster than having SQLAlchemy
+    # query for the attribute directly and it's unknown what the
+    # affects of changing the relationship lazy attribute would be
+    user = Users.query.filter_by(id=user_id).first()
+    submissions = (
+        Submissions.query.join(Users)
+        .filter(
+            Submissions.challenge_id == challenge_id,
+            Submissions.account_id == user.account_id,
+        )
+        .order_by(Submissions.date.desc())
+    )
+    results = []
+
+    for submission in submissions:
+        results.append(
+            {
+                "provided": submission.provided,
+                "date": isoformat(submission.date),
+                "type": submission.type,
+                "user_name": submission.user.name,
+                "user_url": url_for("users.public", user_id=submission.user.id),
             }
         )
     return results

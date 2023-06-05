@@ -690,6 +690,55 @@ let API = (function() {
   /**
    *
    * @method
+   * @name API#get_challenge_submissions
+   * @param {object} parameters - method options and parameters
+   * @param {string} parameters.id - A Challenge ID
+   * @param {string} parameters.challengeId -
+   */
+  API.prototype.get_challenge_submissions = function(parameters) {
+    if (parameters === undefined) {
+      parameters = {};
+    }
+    let deferred = Q.defer();
+    let domain = this.domain,
+      path = "/challenges/{challenge_id}/submissions";
+    let body = {},
+      queryParameters = {},
+      headers = {},
+      form = {};
+
+    headers["Accept"] = ["application/json"];
+    headers["Content-Type"] = ["application/json"];
+
+    if (parameters["id"] !== undefined) {
+      queryParameters["id"] = parameters["id"];
+    }
+
+    path = path.replace("{challenge_id}", parameters["challengeId"]);
+
+    if (parameters["challengeId"] === undefined) {
+      deferred.reject(new Error("Missing required  parameter: challengeId"));
+      return deferred.promise;
+    }
+
+    queryParameters = mergeQueryParams(parameters, queryParameters);
+
+    this.request(
+      "GET",
+      domain + path,
+      parameters,
+      body,
+      headers,
+      queryParameters,
+      form,
+      deferred
+    );
+
+    return deferred.promise;
+  };
+  /**
+   *
+   * @method
    * @name API#get_challenge_tags
    * @param {object} parameters - method options and parameters
    * @param {string} parameters.id - A Challenge ID

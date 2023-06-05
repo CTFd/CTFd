@@ -17,6 +17,17 @@
 						</a>
 					</li>
 				{% endblock %}
+				{% block submissions %}
+					<li class="nav-item">
+						<a class="nav-link challenge-submissions" href="#submissions">
+                            {% if Configs.user_mode == 'teams' %}
+                                My team submissions
+                            {% else %}
+                                My submissions
+                            {% endif %}
+						</a>
+					</li>
+				{% endblock %}
 			</ul>
 			<div role="tabpanel">
 				<div class="tab-content">
@@ -144,6 +155,30 @@
 									</tr>
 									</thead>
 									<tbody id="challenge-solves-names">
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div role="tabpanel" class="tab-pane fade" id="submissions">
+						<div class="row">
+							<div class="col-md-12">
+								<table class="table table-striped text-center">
+									<thead>
+									<tr>
+                                        {% if Configs.user_mode == 'teams' %}
+                                            <td>
+                                                <b>Name</b>
+                                            </td>
+                                        {% endif %}
+										<td>
+                                            <b>Flag</b>
+										</td>
+										<td></td>
+									</tr>
+									</thead>
+									<tbody id="challenge-submissions-names" ref="{{ Configs.user_mode }}">
 									</tbody>
 								</table>
 							</div>

@@ -101,11 +101,13 @@ def clear_standings():
 def clear_challenges():
     from CTFd.utils.challenges import get_all_challenges  # noqa: I001
     from CTFd.utils.challenges import get_solves_for_challenge_id
+    from CTFd.utils.challenges import get_submissions_for_user_id_for_challenge_id
     from CTFd.utils.challenges import get_solve_ids_for_user_id
     from CTFd.utils.challenges import get_solve_counts_for_challenges
 
     cache.delete_memoized(get_all_challenges)
     cache.delete_memoized(get_solves_for_challenge_id)
+    cache.delete_memoized(get_submissions_for_user_id_for_challenge_id)
     cache.delete_memoized(get_solve_ids_for_user_id)
     cache.delete_memoized(get_solve_counts_for_challenges)
 

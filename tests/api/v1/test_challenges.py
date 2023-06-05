@@ -1272,6 +1272,247 @@ def test_api_challenge_solves_returns_correct_data():
     destroy_ctfd(app)
 
 
+def test_api_challenge_get_submissions_visibility_public():
+    """A public user should not get /api/v1/challenges/<challenge_id>/submissions if challenge_visibility is private/public"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        with app.test_client() as client:
+            set_config("challenge_visibility", "public")
+            r = client.get("/api/v1/challenges/1/submissions", json="")
+            assert r.status_code == 403
+            set_config("challenge_visibility", "private")
+            r = client.get("/api/v1/challenges/1/submissions", json="")
+            assert r.status_code == 403
+    destroy_ctfd(app)
+
+
+def test_api_challenge_get_submissions_ctftime_public():
+    """A public user should not get /api/v1/challenges/<challenge_id>/submissions if ctftime is over"""
+    app = create_ctfd()
+    with app.app_context(), freeze_time("2017-10-7"):
+        set_config("challenge_visibility", "public")
+        gen_challenge(app.db)
+        with app.test_client() as client:
+            r = client.get("/api/v1/challenges/1/submissions")
+            assert r.status_code == 302
+            set_config(
+                "start", "1507089600"
+            )  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+            set_config(
+                "end", "1507262400"
+            )  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+            r = client.get("/api/v1/challenges/1/submissions", json="")
+            assert r.status_code == 403
+    destroy_ctfd(app)
+
+
+def test_api_challenge_get_submissions_visibility_private():
+    """Can a private user get /api/v1/challenges/<challenge_id>/submissions if challenge_visibility is private/public"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get("/api/v1/challenges/1/submissions")
+        assert r.status_code == 200
+        set_config("challenge_visibility", "public")
+        r = client.get("/api/v1/challenges/1/submissions")
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_challenge_get_submissions_ctftime_private():
+    """Can a private user get /api/v1/challenges/<challenge_id>/submissions if ctftime is over"""
+    app = create_ctfd()
+    with app.app_context(), freeze_time("2017-10-7"):
+        gen_challenge(app.db)
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get("/api/v1/challenges/1/submissions")
+        assert r.status_code == 200
+        set_config(
+            "start", "1507089600"
+        )  # Wednesday, October 4, 2017 12:00:00 AM GMT-04:00 DST
+        set_config(
+            "end", "1507262400"
+        )  # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+        r = client.get("/api/v1/challenges/1/submissions")
+        assert r.status_code == 403
+    destroy_ctfd(app)
+
+
+def test_api_challenge_get_submissions_verified_emails():
+    """Can a verified email get /api/v1/challenges/<challenge_id>/submissions"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config("verify_emails", True)
+        gen_challenge(app.db)
+        gen_user(
+            app.db,
+            name="user_name",
+            email="verified_user@examplectf.com",
+            password="password",
+            verified=True,
+        )
+        register_user(app)
+        client = login_as_user(app)
+        registered_client = login_as_user(app, "user_name", "password")
+        r = client.get("/api/v1/challenges/1/submissions", json="")
+        assert r.status_code == 403
+        r = registered_client.get("/api/v1/challenges/1/submissions")
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_challenges_get_submissions_challenge_visibility():
+    """Can a user get /api/v1/challenges/<challenge_id>/submissions if score_visibility is public/private/admin"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config("challenge_visibility", "public")
+        gen_challenge(app.db)
+        with app.test_client() as client:
+            r = client.get("/api/v1/challenges/1/submissions")
+            assert r.status_code == 302
+        set_config("challenge_visibility", "private")
+        register_user(app)
+        private_client = login_as_user(app)
+        r = private_client.get("/api/v1/challenges/1/submissions")
+        assert r.status_code == 200
+        set_config("challenge_visibility", "admins")
+        admin = login_as_user(app, "admin", "password")
+        r = admin.get("/api/v1/challenges/1/submissions")
+        assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_challenge_get_submissions_404():
+    """Will a bad <challenge_id> at /api/v1/challenges/<challenge_id>/submissions 404"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get("/api/v1/challenges/1/submissions")
+        assert r.status_code == 404
+    destroy_ctfd(app)
+
+
+def test_api_challenge_submissions_returns_correct_data_for_correct_flag():
+    """Test that /api/v1/<challenge_id>/submissions returns expected data for correct submissions"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        gen_solve(app.db, user_id=2, challenge_id=chal.id)
+        r = client.get("/api/v1/challenges/1/submissions")
+        resp = r.get_json()["data"]
+        solve = resp[0]
+        assert r.status_code == 200
+        assert solve.get("user_name") == "user"
+        assert solve.get("provided") == "rightkey"
+        assert solve.get("date") is not None
+        assert solve.get("type") == "correct"
+        assert solve.get("user_url") == "/users/2"
+    destroy_ctfd(app)
+
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        team = gen_team(app.db)
+        user = Users.query.filter_by(id=2).first()
+        user.team_id = team.id
+        app.db.session.commit()
+        chal = gen_challenge(app.db)
+        gen_solve(app.db, user_id=2, team_id=1, challenge_id=chal.id)
+        r = client.get("/api/v1/challenges/1/submissions")
+        resp = r.get_json()["data"]
+        solve = resp[0]
+        assert r.status_code == 200
+        assert solve.get("user_name") == "user"
+        assert solve.get("provided") == "rightkey"
+        assert solve.get("date") is not None
+        assert solve.get("type") == "correct"
+        assert solve.get("user_url") == "/users/2"
+    destroy_ctfd(app)
+
+    app = create_ctfd(application_root="/ctf")
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        gen_solve(app.db, user_id=2, challenge_id=chal.id)
+        r = client.get("/api/v1/challenges/1/submissions")
+        resp = r.get_json()["data"]
+        solve = resp[0]
+        assert r.status_code == 200
+        assert solve.get("user_name") == "user"
+        assert solve.get("provided") == "rightkey"
+        assert solve.get("date") is not None
+        assert solve.get("type") == "correct"
+        assert solve.get("user_url") == "/ctf/users/2"
+    destroy_ctfd(app)
+
+
+def test_api_challenge_submissions_returns_correct_data_for_incorrect_flag():
+    """Test that /api/v1/<challenge_id>/submissions returns expected data for incorrect submissions"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        gen_fail(app.db, user_id=2, challenge_id=chal.id)
+        r = client.get("/api/v1/challenges/1/submissions")
+        resp = r.get_json()["data"]
+        solve = resp[0]
+        assert r.status_code == 200
+        assert solve.get("user_name") == "user"
+        assert solve.get("provided") == "wrongkey"
+        assert solve.get("date") is not None
+        assert solve.get("type") == "incorrect"
+        assert solve.get("user_url") == "/users/2"
+    destroy_ctfd(app)
+
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        team = gen_team(app.db)
+        user = Users.query.filter_by(id=2).first()
+        user.team_id = team.id
+        app.db.session.commit()
+        chal = gen_challenge(app.db)
+        gen_fail(app.db, user_id=2, team_id=1, challenge_id=chal.id)
+        r = client.get("/api/v1/challenges/1/submissions")
+        resp = r.get_json()["data"]
+        solve = resp[0]
+        assert r.status_code == 200
+        assert solve.get("user_name") == "user"
+        assert solve.get("provided") == "wrongkey"
+        assert solve.get("date") is not None
+        assert solve.get("type") == "incorrect"
+        assert solve.get("user_url") == "/users/2"
+    destroy_ctfd(app)
+
+    app = create_ctfd(application_root="/ctf")
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        gen_fail(app.db, user_id=2, challenge_id=chal.id)
+        r = client.get("/api/v1/challenges/1/submissions")
+        resp = r.get_json()["data"]
+        solve = resp[0]
+        assert r.status_code == 200
+        assert solve.get("user_name") == "user"
+        assert solve.get("provided") == "wrongkey"
+        assert solve.get("date") is not None
+        assert solve.get("type") == "incorrect"
+        assert solve.get("user_url") == "/ctf/users/2"
+    destroy_ctfd(app)
+
+
 def test_api_challenge_get_files_non_admin():
     """Can a user get /api/v1/challenges/<challenge_id>/files if not admin"""
     app = create_ctfd()
