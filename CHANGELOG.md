@@ -1,4 +1,4 @@
-# 3.5.3 / UNRELEASED
+# 3.5.3 / 2023-06-07
 
 **Deployment**
 
