@@ -5,7 +5,8 @@ from flask import abort
 from flask import current_app as app
 from flask import redirect, request, session, url_for
 
-from CTFd.cache import cache
+from CTFd.cache import cache, clear_user_session
+from CTFd.constants.languages import Languages
 from CTFd.constants.teams import TeamAttrs
 from CTFd.constants.users import UserAttrs
 from CTFd.models import Fails, Teams, Tracking, Users, db
@@ -36,7 +37,11 @@ def get_current_user():
 
 def get_current_user_attrs():
     if authed():
-        return get_user_attrs(user_id=session["id"])
+        try:
+            return get_user_attrs(user_id=session["id"])
+        except TypeError:
+            clear_user_session(user_id=session["id"])
+            return get_user_attrs(user_id=session["id"])
     else:
         return None
 
@@ -94,7 +99,11 @@ def get_current_team():
 
 def get_current_team_attrs():
     if authed():
-        user = get_user_attrs(user_id=session["id"])
+        try:
+            user = get_user_attrs(user_id=session["id"])
+        except TypeError:
+            clear_user_session(user_id=session["id"])
+            user = get_user_attrs(user_id=session["id"])
         if user and user.team_id:
             return get_team_attrs(team_id=user.team_id)
     return None
@@ -165,6 +174,15 @@ def get_ip(req=None):
     else:
         remote_addr = req.remote_addr
     return remote_addr
+
+
+def get_locale():
+    if authed():
+        user = get_current_user_attrs()
+        if user.language:
+            return user.language
+    languages = Languages.values()
+    return request.accept_languages.best_match(languages)
 
 
 def get_current_user_recent_ips():
