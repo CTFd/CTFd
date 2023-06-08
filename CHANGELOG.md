@@ -1,3 +1,10 @@
+# 3.5.3 / 2023-06-08
+
+**Deployment**
+
+- Fixed permissions error in Dockerfile
+- Bump dependencies for pybluemonday
+
 # 3.5.2 / 2023-05-01
 
 **General**
