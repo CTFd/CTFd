@@ -8,6 +8,8 @@ from CTFd.models import Challenges, Solves, db
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, BaseChallenge
 from CTFd.plugins.migrations import upgrade
+from CTFd.utils import get_config
+from CTFd.utils.dates import unix_time_to_utc
 from CTFd.utils.modes import get_model
 
 
@@ -52,16 +54,21 @@ class DynamicValueChallenge(BaseChallenge):
     @classmethod
     def calculate_value(cls, challenge):
         Model = get_model()
-
-        solve_count = (
+            
+        solves = (
             Solves.query.join(Model, Solves.account_id == Model.id)
             .filter(
                 Solves.challenge_id == challenge.id,
                 Model.hidden == False,
                 Model.banned == False,
             )
-            .count()
         )
+        
+        # We only want to keep solves before freeze time to calculate the value of the challenge
+        freeze = get_config("freeze")
+        if freeze:
+            solves = solves.filter(Solves.date < unix_time_to_utc(freeze))
+        solve_count = solves.count()
 
         # If the solve count is 0 we shouldn't manipulate the solve count to
         # let the math update back to normal
