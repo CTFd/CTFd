@@ -54,7 +54,7 @@ class DynamicValueChallenge(BaseChallenge):
     @classmethod
     def calculate_value(cls, challenge):
         Model = get_model()
-            
+
         solves = (
             Solves.query.join(Model, Solves.account_id == Model.id)
             .filter(
@@ -63,7 +63,7 @@ class DynamicValueChallenge(BaseChallenge):
                 Model.banned == False,
             )
         )
-        
+
         # We only want to keep solves before freeze time to calculate the value of the challenge
         freeze = get_config("freeze")
         if freeze:
