@@ -62,7 +62,7 @@ flask-marshmallow==0.10.1
     # via -r requirements.in
 flask-migrate==4.0.4
     # via -r requirements.in
-flask-restx==0.5.1
+flask-restx==1.1.0
     # via -r requirements.in
 flask-script==2.0.6
     # via -r requirements.in
@@ -121,7 +121,7 @@ pybluemonday==0.0.11
     # via -r requirements.in
 pycparser==2.20
     # via cffi
-pydantic==1.6.2
+pydantic==1.10.9
     # via -r requirements.in
 pymysql==1.0.3
     # via -r requirements.in
@@ -146,7 +146,6 @@ s3transfer==0.3.3
 six==1.15.0
     # via
     #   flask-marshmallow
-    #   flask-restx
     #   jsonschema
     #   python-dateutil
 sqlalchemy==2.0.16
@@ -164,6 +163,7 @@ tenacity==8.2.2
 typing-extensions==4.6.3
     # via
     #   alembic
+    #   pydantic
     #   sqlalchemy
 urllib3==1.25.11
     # via
@@ -173,7 +173,7 @@ werkzeug==2.3.6
     # via
     #   flask
     #   flask-restx
-wtforms==2.3.1
+wtforms==3.0.1
     # via -r requirements.in
 zipp==3.15.0
     # via importlib-metadata
