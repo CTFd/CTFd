@@ -6,8 +6,10 @@ from sqlalchemy.sql import and_, false, true
 
 from CTFd.cache import cache
 from CTFd.models import Challenges, Solves, Users, db
+from CTFd.plugins.dynamic_challenges import DynamicValueChallenge
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils import get_config
+from CTFd.cache import clear_challenges, clear_standings
 from CTFd.utils.dates import isoformat, unix_time_to_utc
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modes import generate_account_url, get_model
@@ -124,3 +126,12 @@ def get_solve_counts_for_challenges(challenge_id=None, admin=False):
     for chal_id, solve_count in solves_q:
         solve_counts[chal_id] = solve_count
     return solve_counts
+
+
+def update_all_challenges_value():
+    chal_q = Challenges.query
+    for chal in chal_q:
+        if chal.type == "dynamic":
+            DynamicValueChallenge.calculate_value(chal)
+    clear_standings()
+    clear_challenges()
