@@ -211,6 +211,14 @@ def register():
         valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
 
+        num_users_limit = int(get_config("num_users", default=0))
+        num_users = Users.query.filter_by(banned=False, hidden=False).count()
+        if num_users_limit and num_users >= num_users_limit:
+            abort(
+                403,
+                description=f"Reached the maximum number of users ({num_users_limit}).",
+            )
+
         if get_config("registration_code"):
             if (
                 registration_code.lower()
@@ -490,6 +498,15 @@ def oauth_redirect():
 
             user = Users.query.filter_by(email=user_email).first()
             if user is None:
+                # Respect the user count limit
+                num_users_limit = int(get_config("num_users", default=0))
+                num_users = Users.query.filter_by(banned=False, hidden=False).count()
+                if num_users_limit and num_users >= num_users_limit:
+                    abort(
+                        403,
+                        description=f"Reached the maximum number of users ({num_users_limit}).",
+                    )
+
                 # Check if we are allowing registration before creating users
                 if registration_visible() or mlc_registration():
                     user = Users(

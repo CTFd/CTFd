@@ -47,6 +47,14 @@
 		</div>
 
 		<div class="form-group">
+			{{ form.num_users.label }}
+			{{ form.num_users(class="form-control", value=num_users) }}
+			<small class="form-text text-muted">
+				{{ form.num_users.description }}
+			</small>
+		</div>
+
+		<div class="form-group">
 			{{ form.team_disbanding.label }}
 			{{ form.team_disbanding(class="form-control", value=team_disbanding) }}
 			<small class="form-text text-muted">
