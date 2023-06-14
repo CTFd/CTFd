@@ -1,7 +1,7 @@
 from flask import session
 from flask_babel import lazy_gettext as _l
 from wtforms import PasswordField, SelectField, StringField
-from wtforms.fields.html5 import DateField, URLField
+from wtforms.fields import DateField, URLField
 
 from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm

@@ -1,6 +1,6 @@
 from flask_babel import lazy_gettext as _l
 from wtforms import BooleanField, PasswordField, SelectField, StringField
-from wtforms.fields.html5 import EmailField, URLField
+from wtforms.fields import EmailField, URLField
 from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
