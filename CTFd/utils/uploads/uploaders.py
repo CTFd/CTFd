@@ -94,10 +94,7 @@ class S3Uploader(BaseUploader):
         client = boto3.client(
             "s3",
             config=Config(
-                signature_version="s3v4",
-                s3={
-                    "addressing_style": addressing_style,
-                }
+                signature_version="s3v4", s3={"addressing_style": addressing_style}
             ),
             aws_access_key_id=access_key,
             aws_secret_access_key=secret_key,
