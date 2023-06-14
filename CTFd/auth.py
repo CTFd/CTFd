@@ -189,6 +189,14 @@ def register():
     if current_user.authed():
         return redirect(url_for("challenges.listing"))
 
+    num_users_limit = int(get_config("num_users", default=0))
+    num_users = Users.query.filter_by(banned=False, hidden=False).count()
+    if num_users_limit and num_users >= num_users_limit:
+        abort(
+            403,
+            description=f"Reached the maximum number of users ({num_users_limit}).",
+        )
+
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         email_address = request.form.get("email", "").strip().lower()
@@ -210,14 +218,6 @@ def register():
         pass_long = len(password) > 128
         valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
-
-        num_users_limit = int(get_config("num_users", default=0))
-        num_users = Users.query.filter_by(banned=False, hidden=False).count()
-        if num_users_limit and num_users >= num_users_limit:
-            abort(
-                403,
-                description=f"Reached the maximum number of users ({num_users_limit}).",
-            )
 
         if get_config("registration_code"):
             if (
