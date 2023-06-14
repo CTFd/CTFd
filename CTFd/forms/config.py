@@ -48,6 +48,9 @@ class AccountSettingsForm(BaseForm):
         widget=NumberInput(min=0),
         description="Max number of teams (Teams mode only)",
     )
+    num_users = IntegerField(
+        widget=NumberInput(min=0), description="Max number of users",
+    )
     verify_emails = SelectField(
         "Verify Emails",
         description="Control whether users must confirm their email addresses before playing",
