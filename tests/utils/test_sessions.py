@@ -1,6 +1,5 @@
+from unittest.mock import Mock, patch
 from uuid import UUID
-
-from mock import Mock, patch
 
 from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
