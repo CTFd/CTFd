@@ -60,7 +60,7 @@ flask-marshmallow==0.10.1
     # via -r requirements.in
 flask-migrate==2.5.3
     # via -r requirements.in
-flask-restx==0.5.1
+flask-restx==1.1.0
     # via -r requirements.in
 flask-script==2.0.6
     # via -r requirements.in
@@ -147,7 +147,6 @@ s3transfer==0.3.3
 six==1.15.0
     # via
     #   flask-marshmallow
-    #   flask-restx
     #   jsonschema
     #   python-dateutil
     #   tenacity

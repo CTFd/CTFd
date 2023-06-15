@@ -15,7 +15,7 @@ cmarkgfm==2022.10.27
 redis==4.5.5
 gevent==22.10.2
 python-dotenv==0.13.0
-flask-restx==0.5.1
+flask-restx==1.1.0
 flask-marshmallow==0.10.1
 marshmallow-sqlalchemy==0.17.0
 boto3==1.13.9
