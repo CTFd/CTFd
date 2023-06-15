@@ -86,16 +86,23 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
             theme = str(utils.get_config("ctf_theme"))
             cache_name = theme + "/" + name
 
-        # Rest of this code is copied from Jinja
-        # https://github.com/pallets/jinja/blob/master/src/jinja2/environment.py#L802-L815
+        # Rest of this code roughly copied from Jinja
+        # https://github.com/pallets/jinja/blob/b08cd4bc64bb980df86ed2876978ae5735572280/src/jinja2/environment.py#L956-L973
         cache_key = (weakref.ref(self.loader), cache_name)
         if self.cache is not None:
             template = self.cache.get(cache_key)
             if template is not None and (
                 not self.auto_reload or template.is_up_to_date
             ):
+                # template.globals is a ChainMap, modifying it will only
+                # affect the template, not the environment globals.
+                if globals:
+                    template.globals.update(globals)
+
                 return template
-        template = self.loader.load(self, name, globals)
+
+        template = self.loader.load(self, name, self.make_globals(globals))
+
         if self.cache is not None:
             self.cache[cache_key] = template
         return template
