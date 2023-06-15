@@ -1,5 +1,5 @@
 Flask==2.0.3
-Flask-SQLAlchemy==2.4.3
+Flask-SQLAlchemy==2.5.1
 Flask-Caching==1.8.0
 Flask-Migrate==2.5.3
 Flask-Script==2.0.6
