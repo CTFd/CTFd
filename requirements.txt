@@ -71,7 +71,9 @@ freezegun==1.2.2
 gevent==22.10.2
     # via -r requirements.in
 greenlet==2.0.1
-    # via gevent
+    # via
+    #   gevent
+    #   sqlalchemy
 gunicorn==20.1.0
     # via -r requirements.in
 idna==2.10
@@ -147,7 +149,7 @@ six==1.15.0
     #   jsonschema
     #   python-dateutil
     #   tenacity
-sqlalchemy==1.3.17
+sqlalchemy==1.4.48
     # via
     #   -r requirements.in
     #   alembic
@@ -155,7 +157,7 @@ sqlalchemy==1.3.17
     #   flask-sqlalchemy
     #   marshmallow-sqlalchemy
     #   sqlalchemy-utils
-sqlalchemy-utils==0.41.0
+sqlalchemy-utils==0.41.1
     # via -r requirements.in
 tenacity==6.2.0
     # via -r requirements.in
