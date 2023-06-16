@@ -17,3 +17,4 @@ Faker==4.1.0
 pipdeptree==2.2.0
 black==22.3.0
 pytest-sugar==0.9.7
+click==8.1.3
