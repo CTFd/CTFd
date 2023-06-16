@@ -6,13 +6,12 @@ from distutils.version import StrictVersion
 
 import jinja2
 from flask import Flask, Request
-from flask.helpers import safe_join
 from flask_babel import Babel
 from flask_migrate import upgrade
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from werkzeug.middleware.proxy_fix import ProxyFix
-from werkzeug.utils import cached_property
+from werkzeug.utils import safe_join
 
 import CTFd.utils.config
 from CTFd import utils
@@ -36,16 +35,14 @@ __channel__ = "oss"
 
 
 class CTFdRequest(Request):
-    @cached_property
-    def path(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         """
         Hijack the original Flask request path because it does not account for subdirectory deployments in an intuitive
         manner. We append script_root so that the path always points to the full path as seen in the browser.
         e.g. /subdirectory/path/route vs /path/route
-
-        :return: string
         """
-        return self.script_root + super(CTFdRequest, self).path
+        self.path = self.script_root + self.path
 
 
 class CTFdFlask(Flask):
@@ -109,8 +106,7 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
 
 
 class ThemeLoader(FileSystemLoader):
-    """Custom FileSystemLoader that is aware of theme structure and config.
-    """
+    """Custom FileSystemLoader that is aware of theme structure and config."""
 
     DEFAULT_THEMES_PATH = os.path.join(os.path.dirname(__file__), "themes")
     _ADMIN_THEME_PREFIX = ADMIN_THEME + "/"

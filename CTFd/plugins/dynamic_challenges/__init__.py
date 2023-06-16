@@ -28,11 +28,13 @@ class DynamicChallenge(Challenges):
 class DynamicValueChallenge(BaseChallenge):
     id = "dynamic"  # Unique identifier used to register challenges
     name = "dynamic"  # Name of a challenge type
-    templates = {  # Handlebars templates used for each aspect of challenge editing & viewing
-        "create": "/plugins/dynamic_challenges/assets/create.html",
-        "update": "/plugins/dynamic_challenges/assets/update.html",
-        "view": "/plugins/dynamic_challenges/assets/view.html",
-    }
+    templates = (
+        {  # Handlebars templates used for each aspect of challenge editing & viewing
+            "create": "/plugins/dynamic_challenges/assets/create.html",
+            "update": "/plugins/dynamic_challenges/assets/update.html",
+            "view": "/plugins/dynamic_challenges/assets/view.html",
+        }
+    )
     scripts = {  # Scripts that are loaded when a template is loaded
         "create": "/plugins/dynamic_challenges/assets/create.js",
         "update": "/plugins/dynamic_challenges/assets/update.js",
@@ -77,8 +79,8 @@ class DynamicValueChallenge(BaseChallenge):
         # It is important that this calculation takes into account floats.
         # Hence this file uses from __future__ import division
         value = (
-            ((challenge.minimum - challenge.initial) / (challenge.decay ** 2))
-            * (solve_count ** 2)
+            ((challenge.minimum - challenge.initial) / (challenge.decay**2))
+            * (solve_count**2)
         ) + challenge.initial
 
         value = math.ceil(value)

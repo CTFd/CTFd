@@ -152,15 +152,15 @@ def is_verified():
 
 
 def get_ip(req=None):
-    """ Returns the IP address of the currently in scope request. The approach is to define a list of trusted proxies
-     (in this case the local network), and only trust the most recently defined untrusted IP address.
-     Taken from http://stackoverflow.com/a/22936947/4285524 but the generator there makes no sense.
-     The trusted_proxies regexes is taken from Ruby on Rails.
+    """Returns the IP address of the currently in scope request. The approach is to define a list of trusted proxies
+    (in this case the local network), and only trust the most recently defined untrusted IP address.
+    Taken from http://stackoverflow.com/a/22936947/4285524 but the generator there makes no sense.
+    The trusted_proxies regexes is taken from Ruby on Rails.
 
-     This has issues if the clients are also on the local network so you can remove proxies from config.py.
+    This has issues if the clients are also on the local network so you can remove proxies from config.py.
 
-     CTFd does not use IP address for anything besides cursory tracking of teams and it is ill-advised to do much
-     more than that if you do not know what you're doing.
+    CTFd does not use IP address for anything besides cursory tracking of teams and it is ill-advised to do much
+    more than that if you do not know what you're doing.
     """
     if req is None:
         req = request
