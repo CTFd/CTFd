@@ -492,7 +492,7 @@ def themes(theme, path):
         # admin pages, so we check that first
         for cand_theme in (theme, *config.ctf_theme_candidates())
     ):
-        if os.path.isfile(cand_path):
+        if cand_path is not None and os.path.isfile(cand_path):
             return send_file(cand_path)
     abort(404)
 
@@ -512,7 +512,7 @@ def themes_beta(theme, path):
         # admin pages, so we check that first
         for cand_theme in (theme, *config.ctf_theme_candidates())
     ):
-        if os.path.isfile(cand_path):
+        if cand_path is not None and os.path.isfile(cand_path):
             return send_file(cand_path)
     abort(404)
 
