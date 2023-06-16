@@ -1,5 +1,5 @@
 -r requirements.txt
-pip-tools==6.13.0
+pip-tools==5.4.0
 pytest==7.3.1
 pytest-randomly==3.12.0
 coverage==7.2.3
