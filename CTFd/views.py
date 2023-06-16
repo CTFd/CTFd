@@ -11,9 +11,9 @@ from flask import (
     session,
     url_for,
 )
-from flask.helpers import safe_join
 from jinja2.exceptions import TemplateNotFound
 from sqlalchemy.exc import IntegrityError
+from werkzeug.utils import safe_join
 
 from CTFd.cache import cache
 from CTFd.constants.config import (
