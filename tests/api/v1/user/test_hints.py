@@ -3,6 +3,7 @@
 
 from freezegun import freeze_time
 
+from CTFd.models import Hints
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
@@ -180,3 +181,90 @@ def test_api_hint_admin_access():
         r_admin = admin.delete("/api/v1/hints/1", json="")
         assert r_admin.status_code == 200
     destroy_ctfd(app)
+
+
+def test_api_hints_accessible_public():
+    """Test that hints with no cost and no prerequsites can be viewed publicy"""
+    app = create_ctfd()
+    with app.app_context():
+        # Set challenges to be visible publicly
+        set_config("challenge_visibility", "public")
+
+        register_user(app)
+        chal = gen_challenge(app.db)
+        gen_hint(
+            app.db, chal.id, content="This is a free hint", cost=0, type="standard"
+        )
+        gen_hint(
+            app.db, chal.id, content="This is a private hint", cost=1, type="standard"
+        )
+        gen_hint(
+            app.db, chal.id, content="This is a private hint", cost=1, type="standard"
+        )
+        hint = Hints.query.filter_by(id=3).first()
+        hint.requirements = {"prerequisites": [2]}
+        app.db.session.commit()
+
+        with app.test_client() as non_logged_in_user:
+            r = non_logged_in_user.get("/api/v1/hints/1")
+            hint = r.get_json()["data"]
+            assert hint["content"] == "This is a free hint"
+
+            r = non_logged_in_user.get("/api/v1/hints/2")
+            assert r.status_code == 403
+            errors = r.get_json()["errors"]
+            assert errors == {"cost": ["You must login to unlock this hint"]}
+
+            r = non_logged_in_user.get("/api/v1/hints/3")
+            assert r.status_code == 403
+            errors = r.get_json()["errors"]
+            assert errors == {"cost": ["You must login to unlock this hint"]}
+
+            r = non_logged_in_user.post(
+                "/api/v1/unlocks", json={"target": 2, "type": "hints"}
+            )
+            assert r.status_code == 403
+
+        # Set challenges to be visible to only authed
+        set_config("challenge_visibility", "private")
+
+        # Free hints no longer visible to unauthed
+        with app.test_client() as non_logged_in_user:
+            r = non_logged_in_user.get("/api/v1/hints/1", json="")
+            assert r.status_code == 403
+
+        # Verify existing hint behavior for authed users
+        with login_as_user(app) as client:
+            r = client.get("/api/v1/hints/1")
+            hint = r.get_json()["data"]
+            assert hint["content"] == "This is a free hint"
+
+            r = client.get("/api/v1/hints/2")
+            assert r.status_code == 200
+            assert "content" not in r.get_json()["data"]
+
+            r = client.get("/api/v1/hints/3")
+            assert r.status_code == 403
+
+            gen_award(app.db, 2)
+
+            # Haven't unlocked the prereq hint
+            r = client.get("/api/v1/hints/3")
+            assert r.status_code == 403
+
+            # Unlock the prereq
+            r = client.post("/api/v1/unlocks", json={"target": 2, "type": "hints"})
+            assert r.status_code == 200
+            r = client.get("/api/v1/hints/2")
+            assert r.status_code == 200
+
+            # Attempt to unlock again but dont have the points
+            r = client.get("/api/v1/hints/3")
+            assert r.status_code == 200
+            assert "content" not in r.get_json()["data"]
+
+            r = client.post("/api/v1/unlocks", json={"target": 3, "type": "hints"})
+            assert r.status_code == 200
+            r = client.get("/api/v1/hints/3")
+            assert r.status_code == 200
+            assert "content" in r.get_json()["data"]
