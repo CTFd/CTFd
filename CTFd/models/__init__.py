@@ -182,6 +182,12 @@ class Hints(db.Model):
 
         return markup(build_markdown(self.content))
 
+    @property
+    def prerequisites(self):
+        if self.requirements:
+            return self.requirements.get("prerequisites", [])
+        return []
+
     def __init__(self, *args, **kwargs):
         super(Hints, self).__init__(**kwargs)
 
