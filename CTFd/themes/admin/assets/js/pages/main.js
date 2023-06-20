@@ -1,5 +1,4 @@
 import CTFd from "core/CTFd";
-import Alpine from "alpinejs";
 import $ from "jquery";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
@@ -14,7 +13,6 @@ dayjs.extend(advancedFormat);
 
 CTFd.init(window.init);
 window.CTFd = CTFd;
-window.Alpine = Alpine;
 window.helpers = helpers;
 window.$ = $;
 window.dayjs = dayjs;
