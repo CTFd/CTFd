@@ -57,7 +57,7 @@
 						<i class="btn-fa fas fa-flag"></i>
 					</button>
 					{% endif %}
-					<button type="button" class="btn btn-outline-danger" id="submission-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete selected submissions" id="submission-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -118,14 +118,17 @@
 							{{ sub.type }}
 						</td>
 						<td class="flag" id="{{ sub.id }}">
+							<button class="btn btn-link p-0 float-left copy-flag" type="button">
+								<i class="fas fa-clipboard"></i>
+							</button>
 							{% if request.args.get('full') %}
-							<pre class="mb-0">{{ sub.provided }}</pre>
+								<pre class="mb-0 pl-2" title="{{ sub.provided }}">{{ sub.provided }}</pre>
 							{% else %}
-							<pre class="mb-0 float-left" title="{{ sub.provided }}">{{ sub.provided | truncate(50, True) }}</pre>
+								<pre class="mb-0 pl-2 float-left" title="{{ sub.provided }}">{{ sub.provided | truncate(45, True) }}</pre>
 								{% if sub.provided | length > 50 %}
-								<button class="btn btn-link p-0 pl-1 float-left show-flag">
-									<i class="fas fa-eye"></i>
-								</button>
+									<button class="btn btn-link p-0 pl-1 float-left show-flag">
+										<i class="fas fa-eye"></i>
+									</button>
 								{% endif %}
 							{% endif %}
 						</td>
