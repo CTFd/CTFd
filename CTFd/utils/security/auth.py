@@ -34,13 +34,15 @@ def logout_user():
     session.clear()
 
 
-def generate_user_token(user, expiration=None):
+def generate_user_token(user, expiration=None, description=None):
     temp_token = True
     while temp_token is not None:
-        value = hexencode(os.urandom(32))
+        value = "ctfd_" + hexencode(os.urandom(32))
         temp_token = UserTokens.query.filter_by(value=value).first()
 
-    token = UserTokens(user_id=user.id, expiration=expiration, value=value)
+    token = UserTokens(
+        user_id=user.id, expiration=expiration, description=description, value=value
+    )
     db.session.add(token)
     db.session.commit()
     return token
