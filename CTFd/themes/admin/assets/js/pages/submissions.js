@@ -61,7 +61,37 @@ function deleteSelectedSubmissions(_event) {
   });
 }
 
+function showFlagsToggle(event) {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has("full")) {
+    urlParams.delete("full");
+  } else {
+    urlParams.set("full", "true");
+  }
+  window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+}
+
+function showFlag(event) {
+  let target = $(event.currentTarget);
+  let eye = target.find("i");
+  let flag = target.parent().find("pre");
+  if (!flag.hasClass("full-flag")) {
+    flag.text(flag.attr("title"));
+    flag.addClass("full-flag");
+    eye.addClass("fa-eye-slash");
+    eye.removeClass("fa-eye");
+  } else {
+    flag.text(flag.attr("title").substring(0, 47) + "...");
+    flag.removeClass("full-flag");
+    eye.addClass("fa-eye");
+    eye.removeClass("fa-eye-slash");
+  }
+}
+
 $(() => {
+  $("#show-full-flags-button").click(showFlagsToggle);
+  $("#show-short-flags-button").click(showFlagsToggle);
+  $(".show-flag").click(showFlag);
   $(".delete-correct-submission").click(deleteCorrectSubmission);
   $("#submission-delete-button").click(deleteSelectedSubmissions);
 });
