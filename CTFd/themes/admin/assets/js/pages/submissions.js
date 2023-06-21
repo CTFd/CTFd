@@ -61,7 +61,7 @@ function deleteSelectedSubmissions(_event) {
   });
 }
 
-function showFlagsToggle(event) {
+function showFlagsToggle(_event) {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has("full")) {
     urlParams.delete("full");
