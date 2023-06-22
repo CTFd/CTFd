@@ -108,7 +108,7 @@
 							<tr>
 								<td><span data-time="{{ token.created | isoformat }}"></span></td>
 								<td><span data-time="{{ token.expiration | isoformat }}"></span></td>
-								<td><{{ token.description }}"></td>
+								<td><span>{{ token.description | default('', true) }}</span></td>
 								<td class="text-center">
 									<span class="delete-token" role="button" data-token-id="{{ token.id }}">
 										<i class="btn-fa fas fa-times"></i>
