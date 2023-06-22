@@ -259,13 +259,7 @@ $(() => {
 
             // Inject challenge data into the plugin
             challenge.data = response.data;
-
-            $("#challenge-window").empty();
-
-            // Call preRender function in plugin
             challenge.preRender();
-
-            $("#challenge-window").append(challenge_data.view);
 
             $("#challenge-window #challenge-input").addClass("form-control");
             $("#challenge-window #challenge-submit").addClass(
