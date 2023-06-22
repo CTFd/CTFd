@@ -1,6 +1,6 @@
 from flask import session
 from flask_babel import lazy_gettext as _l
-from wtforms import PasswordField, SelectField, StringField
+from wtforms import PasswordField, SelectField, StringField, TextAreaField
 from wtforms.fields.html5 import DateField, URLField
 
 from CTFd.constants.languages import SELECT_LANGUAGE_LIST
@@ -50,4 +50,5 @@ def SettingsForm(*args, **kwargs):
 
 class TokensForm(BaseForm):
     expiration = DateField(_l("Expiration"))
+    description = TextAreaField("Usage Description")
     submit = SubmitField(_l("Generate"))
