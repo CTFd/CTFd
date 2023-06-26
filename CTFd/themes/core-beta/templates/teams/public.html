@@ -82,7 +82,7 @@
         <table class="table table-striped">
           <thead>
           <tr>
-            <td><b>{% trans %}User Name{% trans %}</b></td>
+            <td><b>{% trans %}User Name{% endtrans %}</b></td>
             <td><b>{% trans %}Score{% endtrans %}</b></td>
           </tr>
           </thead>
@@ -169,15 +169,15 @@
       <div class="row" x-data="TeamGraphs">
         <div class="col-md-6 d-none d-md-block d-lg-block py-4">
           <div class="progress">
-            <div 
-              class="progress-bar" 
-              role="progressbar" 
-              :style="{ width: `${getSolvePercentage()}%`, 'background-color': 'rgb(0, 209, 64)' }" 
+            <div
+              class="progress-bar"
+              role="progressbar"
+              :style="{ width: `${getSolvePercentage()}%`, 'background-color': 'rgb(0, 209, 64)' }"
             >
             </div>
-            <div 
-              class="progress-bar" 
-              role="progressbar" 
+            <div
+              class="progress-bar"
+              role="progressbar"
               :style="{ width: `${getFailPercentage()}%`, 'background-color': 'rgb(207, 38, 0)' }"
             >
             </div>
@@ -198,9 +198,9 @@
         <div class="col-md-6 d-none d-md-block d-lg-block py-4">
           <div class="progress">
             <template x-for="category in getCategoryBreakdown()" :key="category.name">
-              <div 
-                class="progress-bar" 
-                role="progressbar" 
+              <div
+                class="progress-bar"
+                role="progressbar"
                 :style="{ width: `${category.percent}%`, 'background-color': category.color }"
               >
               </div>

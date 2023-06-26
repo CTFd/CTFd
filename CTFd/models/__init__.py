@@ -917,6 +917,7 @@ class Tokens(db.Model):
         db.DateTime,
         default=lambda: datetime.datetime.utcnow() + datetime.timedelta(days=30),
     )
+    description = db.Column(db.Text)
     value = db.Column(db.String(128), unique=True)
 
     user = db.relationship("Users", foreign_keys="Tokens.user_id", lazy="select")
