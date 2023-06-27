@@ -6,6 +6,9 @@
     </script>
     {% if "beta" in Configs.ctf_theme %}
         {{ Assets.js("assets/js/challenges.js") }}
+        <script type="module">
+            CTFd.pages.challenge.displayChallenge(CHALLENGE_ID);
+        </script>
     {% else %}
         {# TODO: Remove this in CTFd 4.0 when old themes have been deprecated #}
         <script type="module">
