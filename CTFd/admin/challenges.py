@@ -106,7 +106,9 @@ def challenges_preview(challenge_id):
         attempts=0,
         challenge=challenge,
     )
-    return render_template("admin/challenges/preview.html", content=content)
+    return render_template(
+        "admin/challenges/preview.html", content=content, challenge=challenge
+    )
 
 
 @admin.route("/admin/challenges/new")

@@ -1,6 +1,9 @@
 {% extends "page.html" %}
 
 {% block scripts %}
+    <script>
+        var CHALLENGE_ID = {{ challenge.id }};
+    </script>
     {% if "beta" in Configs.ctf_theme %}
         {{ Assets.js("assets/js/challenges.js") }}
     {% else %}
@@ -127,7 +130,7 @@
 
             CTFd._internal.challenge = {};
             $.get(
-                CTFd.config.urlRoot + "/api/v1/challenges/1",
+                CTFd.config.urlRoot + "/api/v1/challenges/" + window.CHALLENGE_ID,
                 function (response) {
                     // Preview should not show any solves
                     var challenge_data = response.data;
