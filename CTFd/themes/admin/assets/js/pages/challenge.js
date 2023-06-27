@@ -17,7 +17,6 @@ import ChallengeFilesList from "../components/files/ChallengeFilesList.vue";
 import HintsList from "../components/hints/HintsList.vue";
 import NextChallenge from "../components/next/NextChallenge.vue";
 
-
 function loadChalTemplate(challenge) {
   CTFd._internal.challenge = {};
   $.getScript(CTFd.config.urlRoot + challenge.scripts.view, function() {
@@ -140,8 +139,12 @@ function handleChallengeOptions(event) {
 
 $(() => {
   $(".preview-challenge").click(function(_e) {
-    let url = `${CTFd.config.urlRoot}/admin/challenges/preview/${window.CHALLENGE_ID}`;
-    $("#challenge-window").html(`<iframe src="${url}" height="100%" width="100%" frameBorder=0></iframe>`);
+    let url = `${CTFd.config.urlRoot}/admin/challenges/preview/${
+      window.CHALLENGE_ID
+    }`;
+    $("#challenge-window").html(
+      `<iframe src="${url}" height="100%" width="100%" frameBorder=0></iframe>`
+    );
     $("#challenge-modal").modal();
   });
 

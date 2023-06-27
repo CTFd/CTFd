@@ -3,7 +3,10 @@ from flask import abort, render_template, request, url_for
 from CTFd.admin import admin
 from CTFd.models import Challenges, Flags, Solves
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
+from CTFd.schemas.tags import TagSchema
 from CTFd.utils.decorators import admins_only
+from CTFd.utils.security.signing import serialize
+from CTFd.utils.user import get_current_team, get_current_user
 
 
 @admin.route("/admin/challenges")
@@ -71,13 +74,6 @@ def challenges_detail(challenge_id):
     )
 
 
-from CTFd.utils.security.signing import serialize
-from CTFd.utils.user import (
-    get_current_team,
-    get_current_user,
-)
-from CTFd.schemas.tags import TagSchema
-
 @admin.route("/admin/challenges/preview/<int:challenge_id>")
 @admins_only
 def challenges_preview(challenge_id):
@@ -93,9 +89,7 @@ def challenges_preview(challenge_id):
             "team_id": team.id if team else None,
             "file_id": f.id,
         }
-        files.append(
-            url_for("views.files", path=f.location, token=serialize(token))
-        )
+        files.append(url_for("views.files", path=f.location, token=serialize(token)))
 
     tags = [
         tag["value"] for tag in TagSchema("user", many=True).dump(challenge.tags).data
