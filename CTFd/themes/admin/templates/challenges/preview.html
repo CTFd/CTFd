@@ -1,23 +1,13 @@
 {% extends "page.html" %}
 
-{% block content %}
-{{ super() }}
-<h4 style="text-align: center">
-    Preview may be slightly different from the user-facing implementation
-</h4>
-{% endblock %}
-
 {% block scripts %}
     {% if "beta" in Configs.ctf_theme %}
         {{ Assets.js("assets/js/challenges.js") }}
     {% else %}
+        {# TODO: Remove this in CTFd 4.0 when old themes have been deprecated #}
         <script type="module">
             const displayHint = data => {
-                ezAlert({
-                    title: "Hint",
-                    body: data.html,
-                    button: "Got it!"
-                });
+                alert(data.html);
             };
 
             const loadHint = id => {
@@ -26,7 +16,6 @@
                         displayHint(response.data);
                         return;
                     }
-                    // displayUnlock(id);
                 });
             };
 
