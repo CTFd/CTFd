@@ -181,6 +181,12 @@ class Hints(db.Model):
 
         return markup(build_markdown(self.content))
 
+    @property
+    def prerequisites(self):
+        if self.requirements:
+            return self.requirements.get("prerequisites", [])
+        return []
+
     def __init__(self, *args, **kwargs):
         super(Hints, self).__init__(**kwargs)
 
@@ -910,6 +916,7 @@ class Tokens(db.Model):
         db.DateTime,
         default=lambda: datetime.datetime.utcnow() + datetime.timedelta(days=30),
     )
+    description = db.Column(db.Text)
     value = db.Column(db.String(128), unique=True)
 
     user = db.relationship("Users", foreign_keys="Tokens.user_id", lazy="select")

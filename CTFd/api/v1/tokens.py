@@ -85,11 +85,14 @@ class TokenList(Resource):
     def post(self):
         req = request.get_json()
         expiration = req.get("expiration")
+        description = req.get("description")
         if expiration:
             expiration = datetime.datetime.strptime(expiration, "%Y-%m-%d")
 
         user = get_current_user()
-        token = generate_user_token(user, expiration=expiration)
+        token = generate_user_token(
+            user, expiration=expiration, description=description
+        )
 
         # Explicitly use admin view so that user's can see the value of their token
         schema = TokenSchema(view="admin")

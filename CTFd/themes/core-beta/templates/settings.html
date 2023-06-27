@@ -164,6 +164,11 @@
                   {{ form.expiration(class="form-control") }}
                 </div>
 
+                <div class="mb-3">
+                  <b>{{ form.description.label(class="form-label") }}</b>
+                  {{ form.description(class="form-control", rows="3") }}
+                </div>
+
                 <div class="row">
                   <div class="col">
                     {{ form.submit(class="btn btn-block btn-primary float-end px-4") }}
@@ -218,6 +223,7 @@
                   <tr>
                     <td class="text-center"><b>{% trans %}Created{% endtrans %}</b></td>
                     <td><b>{% trans %}Expiration{% endtrans %}</b></td>
+                    <td><b>{% trans %}Description{% endtrans %}</b></td>
                     <td><b>{% trans %}Delete{% endtrans %}</b></td>
                   </tr>
                   </thead>
@@ -229,6 +235,9 @@
                       </td>
                       <td>
                         <span data-time="{{ token.expiration | isoformat }}"></span>
+                      </td>
+                      <td>
+                        <span>{{ token.description | default('', true) }}</span>
                       </td>
                       <td class="text-center">
                         <span

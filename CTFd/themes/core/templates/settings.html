@@ -81,7 +81,10 @@
 							<b>{{ form.expiration.label }}</b>
 							{{ form.expiration(class="form-control") }}
 						</div>
-
+						<div class="form-group">
+							<b>{{ form.description.label }}</b>
+							{{ form.description(class="form-control", rows="3") }}
+						</div>
 						<div class="form-group text-right">
 							{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
 						</div>
@@ -96,6 +99,7 @@
 							<tr>
 								<td class="text-center"><b>Created</b></td>
 								<td class="text-center"><b>Expiration</b></td>
+								<td class="text-center"><b>Description</b></td>
 								<td class="text-center"><b>Delete</b></td>
 							</tr>
 						</thead>
@@ -104,6 +108,7 @@
 							<tr>
 								<td><span data-time="{{ token.created | isoformat }}"></span></td>
 								<td><span data-time="{{ token.expiration | isoformat }}"></span></td>
+								<td><span>{{ token.description | default('', true) }}</span></td>
 								<td class="text-center">
 									<span class="delete-token" role="button" data-token-id="{{ token.id }}">
 										<i class="btn-fa fas fa-times"></i>
