@@ -7,18 +7,7 @@ ACCESS_LOG=${ACCESS_LOG:--}
 ERROR_LOG=${ERROR_LOG:--}
 WORKER_TEMP_DIR=${WORKER_TEMP_DIR:-/dev/shm}
 SECRET_KEY=${SECRET_KEY:-}
-CHECK_DB=${CHECK_DB:-true}
-
-while [[ $# -gt 0 ]]
-do
-  case "$1" in
-    "--no-check-db") CHECK_DB=false;;
-    *)
-      echo "Unknown flag: $1"
-      exit 1
-  esac
-  shift
-done
+SKIP_DB_PING=${SKIP_DB_PING:-false}
 
 # Check that a .ctfd_secret_key file or SECRET_KEY envvar is set
 if [ ! -f .ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
@@ -30,8 +19,8 @@ if [ ! -f .ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
     fi
 fi
 
-if [[ "$CHECK_DB" = "true" ]]
-then
+# Skip db ping if SKIP_DB_PING is set to a value other than false or empty string
+if [[ "$SKIP_DB_PING" == "false" ]]; then
   # Ensures that the database is available
   python ping.py
 fi
