@@ -15,7 +15,7 @@ class DynamicChallenge(Challenges):
     initial = db.Column(db.Integer, default=0)
     minimum = db.Column(db.Integer, default=0)
     decay = db.Column(db.Integer, default=0)
-    func = db.Column(db.String(32), default="linear")
+    func = db.Column(db.String(32), default="logarithmic")
 
     def __init__(self, *args, **kwargs):
         super(DynamicChallenge, self).__init__(**kwargs)
