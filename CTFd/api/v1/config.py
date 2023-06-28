@@ -14,6 +14,7 @@ from CTFd.schemas.fields import FieldSchema
 from CTFd.utils import set_config
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.challenges import update_all_challenges_value
 
 configs_namespace = Namespace("configs", description="Endpoint to retrieve Configs")
 
@@ -117,6 +118,8 @@ class ConfigList(Resource):
             if response.errors:
                 return {"success": False, "errors": response.errors}, 400
             set_config(key=key, value=value)
+            if key == "freeze":
+                update_all_challenges_value()
 
         clear_config()
         clear_standings()
@@ -174,6 +177,9 @@ class Config(Resource):
 
         response = schema.dump(response.data)
         db.session.close()
+        
+        if config_key == "freeze":
+            update_all_challenges_value()
 
         clear_config()
         clear_standings()
