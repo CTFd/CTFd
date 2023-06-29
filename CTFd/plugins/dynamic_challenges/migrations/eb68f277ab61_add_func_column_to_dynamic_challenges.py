@@ -16,11 +16,11 @@ depends_on = None
 
 def upgrade(op=None):
     op.add_column(
-        "dynamic_challenge", sa.Column("func", sa.String(length=32), nullable=True)
+        "dynamic_challenge", sa.Column("function", sa.String(length=32), nullable=True)
     )
     conn = op.get_bind()
-    conn.execute("UPDATE dynamic_challenge SET func = 'logarithmic' WHERE func IS NULL")
+    conn.execute("UPDATE dynamic_challenge SET function = 'logarithmic' WHERE function IS NULL")
 
 
 def downgrade(op=None):
-    op.drop_column("dynamic_challenge", "func")
+    op.drop_column("dynamic_challenge", "function")

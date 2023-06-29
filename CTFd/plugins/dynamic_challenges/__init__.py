@@ -15,7 +15,7 @@ class DynamicChallenge(Challenges):
     initial = db.Column(db.Integer, default=0)
     minimum = db.Column(db.Integer, default=0)
     decay = db.Column(db.Integer, default=0)
-    func = db.Column(db.String(32), default="logarithmic")
+    function = db.Column(db.String(32), default="logarithmic")
 
     def __init__(self, *args, **kwargs):
         super(DynamicChallenge, self).__init__(**kwargs)
@@ -48,8 +48,8 @@ class DynamicValueChallenge(BaseChallenge):
 
     @classmethod
     def calculate_value(cls, challenge):
-        func = DECAY_FUNCTIONS.get(challenge.func, logarithmic)
-        value = func(challenge)
+        f = DECAY_FUNCTIONS.get(challenge.function, logarithmic)
+        value = f(challenge)
 
         challenge.value = value
         db.session.commit()
