@@ -349,3 +349,54 @@ def test_dynamic_challenges_reset():
         assert DynamicChallenge.query.count() == 0
 
     destroy_ctfd(app)
+
+
+def test_dynamic_challenge_linear_loses_value_properly():
+    app = create_ctfd(enable_plugins=True)
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app, name="admin", password="password")
+
+        challenge_data = {
+            "name": "name",
+            "category": "category",
+            "description": "description",
+            "function": "linear",
+            "initial": 100,
+            "decay": 5,
+            "minimum": 1,
+            "state": "visible",
+            "type": "dynamic",
+        }
+
+        r = client.post("/api/v1/challenges", json=challenge_data)
+        assert r.get_json().get("data")["id"] == 1
+
+        gen_flag(app.db, challenge_id=1, content="flag")
+
+        for i, team_id in enumerate(range(2, 26)):
+            name = "user{}".format(team_id)
+            email = "user{}@examplectf.com".format(team_id)
+            # We need to bypass rate-limiting so gen_user instead of register_user
+            user = gen_user(app.db, name=name, email=email)
+            user_id = user.id
+
+            with app.test_client() as client:
+                # We need to bypass rate-limiting so creating a fake user instead of logging in
+                with client.session_transaction() as sess:
+                    sess["id"] = user_id
+                    sess["nonce"] = "fake-nonce"
+                    sess["hash"] = hmac(user.password)
+
+                data = {"submission": "flag", "challenge_id": 1}
+                r = client.post("/api/v1/challenges/attempt", json=data)
+                resp = r.get_json()["data"]
+                assert resp["status"] == "correct"
+
+                chal = DynamicChallenge.query.filter_by(id=1).first()
+
+                if i >= 20:
+                    assert chal.value == chal.minimum
+                else:
+                    assert chal.value == (chal.initial - (i * 5))
+    destroy_ctfd(app)
