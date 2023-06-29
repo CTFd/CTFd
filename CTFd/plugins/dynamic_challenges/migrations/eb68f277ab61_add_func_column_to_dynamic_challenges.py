@@ -20,7 +20,7 @@ def upgrade(op=None):
     )
     conn = op.get_bind()
     conn.execute(
-        "UPDATE `dynamic_challenge` SET `func` = 'logarithmic' WHERE `func` IS NULL"
+        "UPDATE dynamic_challenge SET func = 'logarithmic' WHERE func IS NULL"
     )
 
 
