@@ -19,7 +19,9 @@ def upgrade(op=None):
         "dynamic_challenge", sa.Column("function", sa.String(length=32), nullable=True)
     )
     conn = op.get_bind()
-    conn.execute("UPDATE dynamic_challenge SET function = 'logarithmic' WHERE function IS NULL")
+    conn.execute(
+        "UPDATE dynamic_challenge SET function = 'logarithmic' WHERE function IS NULL"
+    )
 
 
 def downgrade(op=None):
