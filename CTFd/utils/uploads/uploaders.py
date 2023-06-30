@@ -146,9 +146,9 @@ class S3Uploader(BaseUploader):
                 ExpiresIn=3600,
             )
 
-        edge_url = get_app_config("AWS_S3_REPLACEMENT_URL")
-        if edge_url:
-            url = url.replace(urlparse(url).netloc, urlparse(edge_url).netloc)
+        custom_domain = get_app_config("AWS_S3_CUSTOM_DOMAIN")
+        if custom_domain:
+            url = urlparse(url)._replace(netloc=custom_domain).geturl()
 
         return redirect(url)
 
