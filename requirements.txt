@@ -16,6 +16,8 @@ attrs==20.3.0
     # via jsonschema
 babel==2.12.1
     # via flask-babel
+banal==1.0.6
+    # via dataset
 bcrypt==4.0.1
     # via -r requirements.in
 boto3==1.13.9
@@ -41,7 +43,7 @@ cmarkgfm==2022.10.27
     # via -r requirements.in
 cryptography==40.0.2
     # via pymysql
-dataset==1.3.1
+dataset==1.5.2
     # via -r requirements.in
 docutils==0.15.2
     # via botocore
