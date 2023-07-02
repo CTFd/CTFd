@@ -84,6 +84,7 @@ def export_ctf():
 
     backup_zip.close()
     backup.seek(0)
+    db.close()
     return backup
 
 

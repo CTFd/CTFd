@@ -69,14 +69,14 @@ def test_update_check_ignores_downgrades(fake_post_request):
         fake_response = Mock()
         fake_post_request.return_value = fake_response
         fake_response.json = lambda: {
-            u"resource": {
-                u"html_url": u"https://github.com/CTFd/CTFd/releases/tag/0.0.1",
-                u"download_url": u"https://api.github.com/repos/CTFd/CTFd/zipball/0.0.1",
-                u"published_at": u"Wed, 25 Oct 2017 19:39:42 -0000",
-                u"tag": u"0.0.1",
-                u"prerelease": False,
-                u"id": 6,
-                u"latest": True,
+            "resource": {
+                "html_url": "https://github.com/CTFd/CTFd/releases/tag/0.0.1",
+                "download_url": "https://api.github.com/repos/CTFd/CTFd/zipball/0.0.1",
+                "published_at": "Wed, 25 Oct 2017 19:39:42 -0000",
+                "tag": "0.0.1",
+                "prerelease": False,
+                "id": 6,
+                "latest": True,
             }
         }
         update_check()
@@ -85,18 +85,18 @@ def test_update_check_ignores_downgrades(fake_post_request):
         fake_response = Mock()
         fake_post_request.return_value = fake_response
         fake_response.json = lambda: {
-            u"resource": {
-                u"html_url": u"https://github.com/CTFd/CTFd/releases/tag/{}".format(
+            "resource": {
+                "html_url": "https://github.com/CTFd/CTFd/releases/tag/{}".format(
                     app.VERSION
                 ),
-                u"download_url": u"https://api.github.com/repos/CTFd/CTFd/zipball/{}".format(
+                "download_url": "https://api.github.com/repos/CTFd/CTFd/zipball/{}".format(
                     app.VERSION
                 ),
-                u"published_at": u"Wed, 25 Oct 2017 19:39:42 -0000",
-                u"tag": u"{}".format(app.VERSION),
-                u"prerelease": False,
-                u"id": 6,
-                u"latest": True,
+                "published_at": "Wed, 25 Oct 2017 19:39:42 -0000",
+                "tag": "{}".format(app.VERSION),
+                "prerelease": False,
+                "id": 6,
+                "latest": True,
             }
         }
         update_check()

@@ -208,9 +208,11 @@ def register():
         registration_code = str(request.form.get("registration_code", ""))
 
         name_len = len(name) == 0
-        names = Users.query.add_columns("name", "id").filter_by(name=name).first()
+        names = (
+            Users.query.add_columns(Users.name, Users.id).filter_by(name=name).first()
+        )
         emails = (
-            Users.query.add_columns("email", "id")
+            Users.query.add_columns(Users.email, Users.id)
             .filter_by(email=email_address)
             .first()
         )

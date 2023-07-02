@@ -21,7 +21,7 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
             register_user(app)
             chal = gen_challenge(app.db)
             chal_id = chal.id
-            gen_flag(app.db, challenge_id=chal.id, content=u"flag")
+            gen_flag(app.db, challenge_id=chal.id, content="flag")
 
             with ctftime.not_started():
                 client = login_as_user(app)
@@ -48,7 +48,7 @@ def test_ctftime_redirects_to_teams_page_in_teams_mode_before_ctf():
         with ctftime.init():
             register_user(app)
             chal = gen_challenge(app.db)
-            gen_flag(app.db, challenge_id=chal.id, content=u"flag")
+            gen_flag(app.db, challenge_id=chal.id, content="flag")
 
             with ctftime.not_started():
                 client = login_as_user(app)
@@ -83,7 +83,7 @@ def test_ctftime_allows_accessing_challenges_during_ctf():
             register_user(app)
             chal = gen_challenge(app.db)
             chal_id = chal.id
-            gen_flag(app.db, challenge_id=chal.id, content=u"flag")
+            gen_flag(app.db, challenge_id=chal.id, content="flag")
 
             with ctftime.started():
                 client = login_as_user(app)
@@ -112,7 +112,7 @@ def test_ctftime_prevents_accessing_challenges_after_ctf():
             register_user(app)
             chal = gen_challenge(app.db)
             chal_id = chal.id
-            gen_flag(app.db, challenge_id=chal.id, content=u"flag")
+            gen_flag(app.db, challenge_id=chal.id, content="flag")
 
             with ctftime.ended():
                 client = login_as_user(app)
