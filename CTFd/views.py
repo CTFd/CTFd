@@ -11,9 +11,9 @@ from flask import (
     session,
     url_for,
 )
+from flask.helpers import safe_join
 from jinja2.exceptions import TemplateNotFound
 from sqlalchemy.exc import IntegrityError
-from werkzeug.utils import safe_join
 
 from CTFd.cache import cache
 from CTFd.constants.config import (
@@ -492,7 +492,7 @@ def themes(theme, path):
         # admin pages, so we check that first
         for cand_theme in (theme, *config.ctf_theme_candidates())
     ):
-        if cand_path is not None and os.path.isfile(cand_path):
+        if os.path.isfile(cand_path):
             return send_file(cand_path)
     abort(404)
 
@@ -512,7 +512,7 @@ def themes_beta(theme, path):
         # admin pages, so we check that first
         for cand_theme in (theme, *config.ctf_theme_candidates())
     ):
-        if cand_path is not None and os.path.isfile(cand_path):
+        if os.path.isfile(cand_path):
             return send_file(cand_path)
     abort(404)
 
