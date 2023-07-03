@@ -12,7 +12,6 @@ from flask_migrate import upgrade
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from werkzeug.middleware.proxy_fix import ProxyFix
-from werkzeug.utils import cached_property
 
 import CTFd.utils.config
 from CTFd import utils
@@ -36,16 +35,14 @@ __channel__ = "oss"
 
 
 class CTFdRequest(Request):
-    @cached_property
-    def path(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         """
         Hijack the original Flask request path because it does not account for subdirectory deployments in an intuitive
         manner. We append script_root so that the path always points to the full path as seen in the browser.
         e.g. /subdirectory/path/route vs /path/route
-
-        :return: string
         """
-        return self.script_root + super(CTFdRequest, self).path
+        self.path = self.script_root + self.path
 
 
 class CTFdFlask(Flask):
@@ -86,24 +83,30 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
             theme = str(utils.get_config("ctf_theme"))
             cache_name = theme + "/" + name
 
-        # Rest of this code is copied from Jinja
-        # https://github.com/pallets/jinja/blob/master/src/jinja2/environment.py#L802-L815
+        # Rest of this code roughly copied from Jinja
+        # https://github.com/pallets/jinja/blob/b08cd4bc64bb980df86ed2876978ae5735572280/src/jinja2/environment.py#L956-L973
         cache_key = (weakref.ref(self.loader), cache_name)
         if self.cache is not None:
             template = self.cache.get(cache_key)
             if template is not None and (
                 not self.auto_reload or template.is_up_to_date
             ):
+                # template.globals is a ChainMap, modifying it will only
+                # affect the template, not the environment globals.
+                if globals:
+                    template.globals.update(globals)
+
                 return template
-        template = self.loader.load(self, name, globals)
+
+        template = self.loader.load(self, name, self.make_globals(globals))
+
         if self.cache is not None:
             self.cache[cache_key] = template
         return template
 
 
 class ThemeLoader(FileSystemLoader):
-    """Custom FileSystemLoader that is aware of theme structure and config.
-    """
+    """Custom FileSystemLoader that is aware of theme structure and config."""
 
     DEFAULT_THEMES_PATH = os.path.join(os.path.dirname(__file__), "themes")
     _ADMIN_THEME_PREFIX = ADMIN_THEME + "/"

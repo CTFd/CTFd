@@ -5,7 +5,24 @@
 {% endblock %}
 
 {% block content %}
-	<div class="modal fade" id="challenge-window" role="dialog">
+	<div class="modal fade" id="challenge-modal" role="dialog">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="text-center w-100 p-0 m-0">Challenge Preview</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="challenge-window" style="height: 80vh;">
+				</div>
+				<div class="text-center">
+					<h5>
+						Preview may be slightly different from the user-facing interface
+					</h5>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="modal fade" id="challenge-comments-window" role="dialog">

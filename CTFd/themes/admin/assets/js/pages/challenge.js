@@ -16,111 +16,6 @@ import TagsList from "../components/tags/TagsList.vue";
 import ChallengeFilesList from "../components/files/ChallengeFilesList.vue";
 import HintsList from "../components/hints/HintsList.vue";
 import NextChallenge from "../components/next/NextChallenge.vue";
-import hljs from "highlight.js";
-
-const displayHint = data => {
-  ezAlert({
-    title: "Hint",
-    body: data.html,
-    button: "Got it!"
-  });
-};
-
-const loadHint = id => {
-  CTFd.api.get_hint({ hintId: id, preview: true }).then(response => {
-    if (response.data.content) {
-      displayHint(response.data);
-      return;
-    }
-    // displayUnlock(id);
-  });
-};
-
-function renderSubmissionResponse(response, cb) {
-  var result = response.data;
-
-  var result_message = $("#result-message");
-  var result_notification = $("#result-notification");
-  var answer_input = $("#submission-input");
-  result_notification.removeClass();
-  result_message.text(result.message);
-
-  if (result.status === "authentication_required") {
-    window.location =
-      CTFd.config.urlRoot +
-      "/login?next=" +
-      CTFd.config.urlRoot +
-      window.location.pathname +
-      window.location.hash;
-    return;
-  } else if (result.status === "incorrect") {
-    // Incorrect key
-    result_notification.addClass(
-      "alert alert-danger alert-dismissable text-center"
-    );
-    result_notification.slideDown();
-
-    answer_input.removeClass("correct");
-    answer_input.addClass("wrong");
-    setTimeout(function() {
-      answer_input.removeClass("wrong");
-    }, 3000);
-  } else if (result.status === "correct") {
-    // Challenge Solved
-    result_notification.addClass(
-      "alert alert-success alert-dismissable text-center"
-    );
-    result_notification.slideDown();
-
-    $(".challenge-solves").text(
-      parseInt(
-        $(".challenge-solves")
-          .text()
-          .split(" ")[0]
-      ) +
-        1 +
-        " Solves"
-    );
-
-    answer_input.val("");
-    answer_input.removeClass("wrong");
-    answer_input.addClass("correct");
-  } else if (result.status === "already_solved") {
-    // Challenge already solved
-    result_notification.addClass(
-      "alert alert-info alert-dismissable text-center"
-    );
-    result_notification.slideDown();
-
-    answer_input.addClass("correct");
-  } else if (result.status === "paused") {
-    // CTF is paused
-    result_notification.addClass(
-      "alert alert-warning alert-dismissable text-center"
-    );
-    result_notification.slideDown();
-  } else if (result.status === "ratelimited") {
-    // Keys per minute too high
-    result_notification.addClass(
-      "alert alert-warning alert-dismissable text-center"
-    );
-    result_notification.slideDown();
-
-    answer_input.addClass("too-fast");
-    setTimeout(function() {
-      answer_input.removeClass("too-fast");
-    }, 3000);
-  }
-  setTimeout(function() {
-    $(".alert").slideUp();
-    $("#challenge-submit").removeClass("disabled-button");
-    $("#challenge-submit").prop("disabled", false);
-  }, 3000);
-
-  if (cb) {
-    cb(result);
-  }
-}
 
 function loadChalTemplate(challenge) {
   CTFd._internal.challenge = {};
@@ -244,87 +139,13 @@ function handleChallengeOptions(event) {
 
 $(() => {
   $(".preview-challenge").click(function(_e) {
-    CTFd._internal.challenge = {};
-    $.get(
-      CTFd.config.urlRoot + "/api/v1/challenges/" + window.CHALLENGE_ID,
-      function(response) {
-        // Preview should not show any solves
-        var challenge_data = response.data;
-        challenge_data["solves"] = null;
-
-        $.getScript(
-          CTFd.config.urlRoot + challenge_data.type_data.scripts.view,
-          function() {
-            const challenge = CTFd._internal.challenge;
-
-            // Inject challenge data into the plugin
-            challenge.data = response.data;
-
-            $("#challenge-window").empty();
-
-            // Call preRender function in plugin
-            challenge.preRender();
-
-            $("#challenge-window").append(challenge_data.view);
-
-            $("#challenge-window #challenge-input").addClass("form-control");
-            $("#challenge-window #challenge-submit").addClass(
-              "btn btn-md btn-outline-secondary float-right"
-            );
-
-            $(".challenge-solves").hide();
-            $(".nav-tabs a").click(function(e) {
-              e.preventDefault();
-              $(this).tab("show");
-            });
-
-            // Handle modal toggling
-            $("#challenge-window").on("hide.bs.modal", function(_event) {
-              $("#challenge-input").removeClass("wrong");
-              $("#challenge-input").removeClass("correct");
-              $("#incorrect-key").slideUp();
-              $("#correct-key").slideUp();
-              $("#already-solved").slideUp();
-              $("#too-fast").slideUp();
-            });
-
-            $(".load-hint").on("click", function(_event) {
-              loadHint($(this).data("hint-id"));
-            });
-
-            $("#challenge-submit").click(function(e) {
-              e.preventDefault();
-              $("#challenge-submit").addClass("disabled-button");
-              $("#challenge-submit").prop("disabled", true);
-              CTFd._internal.challenge
-                .submit(true)
-                .then(renderSubmissionResponse);
-              // Preview passed as true
-            });
-
-            $("#challenge-input").keyup(function(event) {
-              if (event.keyCode == 13) {
-                $("#challenge-submit").click();
-              }
-            });
-
-            challenge.postRender();
-
-            $("#challenge-window")
-              .find("pre code")
-              .each(function(_idx) {
-                hljs.highlightBlock(this);
-              });
-
-            window.location.replace(
-              window.location.href.split("#")[0] + "#preview"
-            );
-
-            $("#challenge-window").modal();
-          }
-        );
-      }
+    let url = `${CTFd.config.urlRoot}/admin/challenges/preview/${
+      window.CHALLENGE_ID
+    }`;
+    $("#challenge-window").html(
+      `<iframe src="${url}" height="100%" width="100%" frameBorder=0></iframe>`
     );
+    $("#challenge-modal").modal();
   });
 
   $(".comments-challenge").click(function(_event) {

@@ -111,10 +111,14 @@ def get_solve_counts_for_challenges(challenge_id=None, admin=False):
     else:
         freeze_cond = true()
     exclude_solves_cond = and_(
-        AccountModel.banned == false(), AccountModel.hidden == false(),
+        AccountModel.banned == false(),
+        AccountModel.hidden == false(),
     )
     solves_q = (
-        db.session.query(Solves.challenge_id, sa_func.count(Solves.challenge_id),)
+        db.session.query(
+            Solves.challenge_id,
+            sa_func.count(Solves.challenge_id),
+        )
         .join(AccountModel)
         .filter(*challenge_id_filter, freeze_cond, exclude_solves_cond)
         .group_by(Solves.challenge_id)
