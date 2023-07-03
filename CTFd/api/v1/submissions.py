@@ -11,7 +11,7 @@ from CTFd.api.v1.schemas import (
 )
 from CTFd.cache import clear_challenges, clear_standings
 from CTFd.constants import RawEnum
-from CTFd.models import Submissions, db, Solves
+from CTFd.models import Solves, Submissions, db
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
