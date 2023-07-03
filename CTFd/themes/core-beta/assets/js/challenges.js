@@ -200,11 +200,9 @@ Alpine.data("ChallengeBoard", () => ({
   },
 
   getChallenges(category) {
-    let challenges = this.challenges;
-
-    if (category) {
-      challenges = this.challenges.filter(challenge => challenge.category === category);
-    }
+    const challenges = this.challenges.filter(
+      challenge => challenge.category === category
+    );
 
     try {
       const f = CTFd.config.themeSettings.challenge_order;
