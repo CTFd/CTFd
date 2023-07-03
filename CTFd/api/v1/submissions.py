@@ -199,6 +199,7 @@ class Submission(Resource):
                 date=submission.date,
             )
             db.session.add(solve)
+            submission.type = "discard"
             db.session.commit()
             submission = solve
 

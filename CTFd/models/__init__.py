@@ -849,8 +849,8 @@ class Fails(Submissions):
     __mapper_args__ = {"polymorphic_identity": "incorrect"}
 
 
-class Invalids(Submissions):
-    __mapper_args__ = {"polymorphic_identity": "invalid"}
+class Discards(Submissions):
+    __mapper_args__ = {"polymorphic_identity": "discard"}
 
 
 class Unlocks(db.Model):

@@ -48,6 +48,11 @@
 		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
+					{% if type == "incorrect" %}
+					<button type="button" class="btn btn-outline-success" data-toggle="tooltip" title="Mark submissions correct" id="correct-flags-button">
+						<i class="btn-fa fas fa-check"></i>
+					</button>
+					{% endif %}
 					{% if request.args.get("full") %}
 					<button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Show truncated flags" id="show-short-flags-button">
 						<i class="btn-fa far fa-flag"></i>
