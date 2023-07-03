@@ -201,6 +201,11 @@ class Submission(Resource):
             db.session.add(solve)
             submission.type = "discard"
             db.session.commit()
+
+            # Delete standings cache
+            clear_standings()
+            clear_challenges()
+
             submission = solve
 
         schema = SubmissionSchema()
