@@ -21,6 +21,7 @@ from CTFd.models import Awards, Submissions, Teams, Unlocks, Users, db
 from CTFd.schemas.awards import AwardSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.teams import TeamSchema
+from CTFd.schemas.users import UserSchema
 from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only, authed_only, require_team
 from CTFd.utils.decorators.modes import require_team_mode
@@ -417,7 +418,6 @@ class TeamPrivateMembers(Resource):
 class TeamMembers(Resource):
     method_decorators = [require_team_mode]
 
-    @admins_only
     def get(self, team_id):
         team = Teams.query.filter_by(id=team_id).first_or_404()
 
@@ -428,7 +428,15 @@ class TeamMembers(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        members = response.data.get("members")
+        member_ids = response.data.get("members")
+        members = []
+        for member_id in member_ids:
+            user = Users.query.filter_by(id=member_id).first_or_404()
+            dumped_user = UserSchema(view=view).dump(user)._asdict()["data"]
+            solves = SubmissionSchema(view=view, many=True).dump(user.get_solves(admin=is_admin()))._asdict()["data"]
+            user_points = sum([s["challenge"].get("value",0) for s in solves])
+            dumped_user["value"] = user_points
+            members.append(dumped_user)
 
         return {"success": True, "data": members}
 
