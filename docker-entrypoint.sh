@@ -26,7 +26,7 @@ if [[ "$SKIP_DB_PING" == "false" ]]; then
 fi
 
 # Initialize database
-python manage.py db upgrade
+flask db upgrade
 
 # Start CTFd
 echo "Starting CTFd"
