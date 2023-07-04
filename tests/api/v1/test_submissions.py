@@ -102,7 +102,7 @@ def test_api_submission_patch_correct():
     app = create_ctfd()
     with app.app_context():
         register_user(app)
-        gen_challenge(app)
+        gen_challenge(app.db)
         gen_fail(app.db, challenge_id=1, user_id=2)
         assert Solves.query.count() == 0
         with login_as_user(app, "admin") as client:
