@@ -1,5 +1,6 @@
 from typing import List
 
+from flask import request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
@@ -10,7 +11,7 @@ from CTFd.api.v1.schemas import (
 )
 from CTFd.cache import clear_challenges, clear_standings
 from CTFd.constants import RawEnum
-from CTFd.models import Submissions, db
+from CTFd.models import Solves, Submissions, db
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
@@ -152,7 +153,7 @@ class SubmissionsList(Resource):
 class Submission(Resource):
     @admins_only
     @submissions_namespace.doc(
-        description="Endpoint to get submission objects in bulk",
+        description="Endpoint to get a submission object",
         responses={
             200: ("Success", "SubmissionDetailedSuccessResponse"),
             400: (
@@ -173,7 +174,51 @@ class Submission(Resource):
 
     @admins_only
     @submissions_namespace.doc(
-        description="Endpoint to get submission objects in bulk",
+        description="Endpoint to edit a submission object",
+        responses={
+            200: ("Success", "SubmissionDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
+    def patch(self, submission_id):
+        submission = Submissions.query.filter_by(id=submission_id).first_or_404()
+
+        req = request.get_json()
+        submission_type = req.get("type")
+
+        if submission_type == "correct":
+            solve = Solves(
+                user_id=submission.user_id,
+                challenge_id=submission.challenge_id,
+                team_id=submission.team_id,
+                ip=submission.ip,
+                provided=submission.provided,
+                date=submission.date,
+            )
+            db.session.add(solve)
+            submission.type = "discard"
+            db.session.commit()
+
+            # Delete standings cache
+            clear_standings()
+            clear_challenges()
+
+            submission = solve
+
+        schema = SubmissionSchema()
+        response = schema.dump(submission)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+
+    @admins_only
+    @submissions_namespace.doc(
+        description="Endpoint to delete a submission object",
         responses={
             200: ("Success", "APISimpleSuccessResponse"),
             400: (

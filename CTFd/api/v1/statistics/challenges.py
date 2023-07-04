@@ -80,7 +80,12 @@ class ChallengeSolvePercentages(Resource):
     @admins_only
     def get(self):
         challenges = (
-            Challenges.query.add_columns("id", "name", "state", "max_attempts")
+            Challenges.query.add_columns(
+                Challenges.id,
+                Challenges.name,
+                Challenges.state,
+                Challenges.max_attempts,
+            )
             .order_by(Challenges.value)
             .all()
         )
