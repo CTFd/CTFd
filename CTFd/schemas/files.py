@@ -1,12 +1,15 @@
-from CTFd.models import Files, ma
+from CTFd.models import Files
+from CTFd.schemas import ma
+
 from CTFd.utils import string_types
 
 
-class FileSchema(ma.ModelSchema):
+class FileSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Files
         include_fk = True
         dump_only = ("id", "type", "location")
+        load_instance = True
 
     def __init__(self, view=None, *args, **kwargs):
         if view:

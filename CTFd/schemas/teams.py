@@ -3,7 +3,8 @@ from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 from sqlalchemy.orm import load_only
 
-from CTFd.models import TeamFieldEntries, TeamFields, Teams, Users, ma
+from CTFd.models import TeamFieldEntries, TeamFields, Teams, Users
+from CTFd.schemas import ma
 from CTFd.schemas.fields import TeamFieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
@@ -11,12 +12,13 @@ from CTFd.utils.user import get_current_team, get_current_user, is_admin
 from CTFd.utils.validators import validate_country_code
 
 
-class TeamSchema(ma.ModelSchema):
+class TeamSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Teams
         include_fk = True
         dump_only = ("id", "oauth_id", "created", "members")
         load_only = ("password",)
+        load_instance = True
 
     name = field_for(
         Teams,
@@ -31,7 +33,7 @@ class TeamSchema(ma.ModelSchema):
         Teams,
         "email",
         allow_none=False,
-        validate=validate.Email("Emails must be a properly formatted email address"),
+        validate=validate.Email(error="Emails must be a properly formatted email address"),
     )
     password = field_for(Teams, "password", required=True, allow_none=False)
     website = field_for(

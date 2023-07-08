@@ -1,7 +1,5 @@
 import datetime
 from collections import defaultdict
-
-from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -10,8 +8,6 @@ from sqlalchemy.orm import column_property, validates
 from CTFd.cache import cache
 
 db = SQLAlchemy()
-ma = Marshmallow()
-
 
 def get_class_by_tablename(tablename):
     """Return class reference mapped to table.

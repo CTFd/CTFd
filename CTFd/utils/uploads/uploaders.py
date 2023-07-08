@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 import boto3
 from botocore.client import Config
 from flask import current_app, redirect, send_file
-from flask.helpers import safe_join
+from werkzeug.security import safe_join
 from freezegun import freeze_time
 from werkzeug.utils import secure_filename
 

@@ -1,12 +1,15 @@
-from CTFd.models import Hints, ma
+from CTFd.models import Hints
+from CTFd.schemas import ma
+
 from CTFd.utils import string_types
 
 
-class HintSchema(ma.ModelSchema):
+class HintSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Hints
         include_fk = True
         dump_only = ("id", "type", "html")
+        load_instance = True
 
     views = {
         "locked": ["id", "type", "challenge", "challenge_id", "cost"],

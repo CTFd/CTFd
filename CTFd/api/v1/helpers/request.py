@@ -34,9 +34,9 @@ def validate_args(spec, location):
     def decorator(func):
         # Inject parameters information into the Flask-Restx apidoc attribute.
         # Not really a good solution. See https://github.com/CTFd/CTFd/issues/1504
-        apidoc = getattr(func, "__apidoc__", {"params": {}})
-        apidoc["params"].update(props)
-        func.__apidoc__ = apidoc
+        # apidoc = getattr(func, "__apidoc__", {"params": {}})
+        # apidoc["params"].update(props)
+        # func.__apidoc__ = apidoc
 
         @wraps(func)
         def wrapper(*args, **kwargs):

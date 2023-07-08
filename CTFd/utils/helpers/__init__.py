@@ -40,7 +40,7 @@ def env_asset_url_default(endpoint, values):
         static_asset = path.endswith(".js") or path.endswith(".css")
         direct_access = ".dev" in path or ".min" in path
         if static_asset and not direct_access:
-            env = values.get("env", current_app.env)
+            env = values.get("env", os.environ["FLASK_ENV"])
             mode = ".dev" if env == "development" else ".min"
             base, ext = os.path.splitext(path)
             values["path"] = base + mode + ext

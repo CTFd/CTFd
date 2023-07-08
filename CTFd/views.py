@@ -10,10 +10,12 @@ from flask import (
     send_file,
     session,
     url_for,
+    render_template_string
 )
-from flask.helpers import safe_join
+from werkzeug.security import safe_join
 from jinja2.exceptions import TemplateNotFound
 from sqlalchemy.exc import IntegrityError
+from apiflask.ui_templates import swagger_ui_template
 
 from CTFd.cache import cache
 from CTFd.constants.config import (
@@ -359,6 +361,15 @@ def settings():
         errors=errors,
     )
 
+@views.route("/docs")
+def docs():
+    return render_template_string(
+        swagger_ui_template,
+        title='CTFd API Documentation',
+        version='v0.0.1',
+        oauth2_redirect_path=None,
+        config=app.config
+    )
 
 @views.route("/", defaults={"route": "index"})
 @views.route("/<path:route>")

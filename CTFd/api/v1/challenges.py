@@ -1,12 +1,12 @@
-from typing import List  # noqa: I001
+from typing import List, Optional  # noqa: I001
 
 from flask import abort, render_template, request, url_for
-from flask_restx import Namespace, Resource
 from sqlalchemy.sql import and_
+from apiflask import APIBlueprint as Blueprint
+from apiflask.views import MethodView
+from marshmallow import Schema, fields
 
 from CTFd.api.v1.helpers.request import validate_args
-from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
-from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.cache import clear_challenges, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
@@ -52,47 +52,38 @@ from CTFd.utils.user import (
     is_admin,
 )
 
-challenges_namespace = Namespace(
-    "challenges", description="Endpoint to retrieve Challenges"
-)
-
-ChallengeModel = sqlalchemy_to_pydantic(
-    Challenges, include={"solves": int, "solved_by_me": bool}
-)
-TransientChallengeModel = sqlalchemy_to_pydantic(Challenges, exclude=["id"])
+challenges_blueprint = Blueprint("api", __name__, "challenges", url_prefix="/challenges")
+# description="Endpoint to retrieve Challenges"
 
 
-class ChallengeDetailedSuccessResponse(APIDetailedSuccessResponse):
-    data: ChallengeModel
+# include={"solves": int, "solved_by_me": bool}
+ChallengeModel = ChallengeSchema
 
 
-class ChallengeListSuccessResponse(APIListSuccessResponse):
-    data: List[ChallengeModel]
+class ChallengeDetailedSuccessResponse(Schema):
+    success: bool = fields.Bool(default=True)
+    data = fields.Nested(ChallengeModel)
 
 
-challenges_namespace.schema_model(
-    "ChallengeDetailedSuccessResponse", ChallengeDetailedSuccessResponse.apidoc()
-)
-
-challenges_namespace.schema_model(
-    "ChallengeListSuccessResponse", ChallengeListSuccessResponse.apidoc()
-)
+class ChallengeListSuccessResponse(Schema):
+    success: bool = fields.Bool(default=True)
+    data = fields.List(fields.Nested(ChallengeModel))
 
 
-@challenges_namespace.route("")
-class ChallengeList(Resource):
+class APISimpleErrorResponse(Schema):
+    success: bool = fields.Bool(default=False)
+    errors: Optional[List[str]] = fields.List(fields.String())
+
+
+@challenges_blueprint.route("")
+class ChallengeList(MethodView):
     @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
-    @challenges_namespace.doc(
-        description="Endpoint to get Challenge objects in bulk",
-        responses={
-            200: ("Success", "ChallengeListSuccessResponse"),
-            400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
-            ),
-        },
+    @challenges_blueprint.output(ChallengeListSuccessResponse, 200, description="Success")
+    @challenges_blueprint.output(APISimpleErrorResponse, 400, description="An error occured processing your request")
+    @challenges_blueprint.doc(
+        description="Endpoint to get Challenge objects in bulk"
     )
     @validate_args(
         {
@@ -221,37 +212,36 @@ class ChallengeList(Resource):
         return {"success": True, "data": response}
 
     @admins_only
-    @challenges_namespace.doc(
-        description="Endpoint to create a Challenge object",
-        responses={
-            200: ("Success", "ChallengeDetailedSuccessResponse"),
-            400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
-            ),
-        },
-    )
-    def post(self):
-        data = request.form or request.get_json()
+    @challenges_blueprint.doc(description="Endpoint to create a Challenge object")
+    @challenges_blueprint.input(ChallengeSchema, location="json_or_form")
+    @challenges_blueprint.output(ChallengeDetailedSuccessResponse, 200, description="Success")
+    @challenges_blueprint.output(APISimpleErrorResponse, 400, description="An error occured processing the provided or stored data")
+    def post(self, data):
+        # data = request.form or request.get_json()
 
         # Load data through schema for validation but not for insertion
-        schema = ChallengeSchema()
-        response = schema.load(data)
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
+        # https://github.com/marshmallow-code/flask-marshmallow/issues/34#issuecomment-676510293
+        # Validation already happened, and transformed to ChallengeSchema
+        # schema = ChallengeSchema()
+        # response = schema.load(data)
 
-        challenge_type = data["type"]
-        challenge_class = get_chal_class(challenge_type)
-        challenge = challenge_class.create(request)
-        response = challenge_class.read(challenge)
+        # if response.errors:
+        #     return {"success": False, "errors": response.errors}, 400
 
+        # challenge_type = data.type
+        # challenge_class = get_chal_class(challenge_type)
+        db.session.add(data)
+        db.session.commit()
+        # challenge = challenge_class.create(request)
+        # response = challenge_class.read(challenge)
+        response = ChallengeSchema().dump(data)
         clear_challenges()
 
         return {"success": True, "data": response}
 
 
-@challenges_namespace.route("/types")
-class ChallengeTypes(Resource):
+@challenges_blueprint.route("/types")
+class ChallengeTypes(MethodView):
     @admins_only
     def get(self):
         response = {}
@@ -270,12 +260,12 @@ class ChallengeTypes(Resource):
         return {"success": True, "data": response}
 
 
-@challenges_namespace.route("/<challenge_id>")
-class Challenge(Resource):
+@challenges_blueprint.route("/<challenge_id>")
+class Challenge(MethodView):
     @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
-    @challenges_namespace.doc(
+    @challenges_blueprint.doc(
         description="Endpoint to get a specific Challenge object",
         responses={
             200: ("Success", "ChallengeDetailedSuccessResponse"),
@@ -442,7 +432,7 @@ class Challenge(Resource):
         return {"success": True, "data": response}
 
     @admins_only
-    @challenges_namespace.doc(
+    @challenges_blueprint.doc(
         description="Endpoint to edit a specific Challenge object",
         responses={
             200: ("Success", "ChallengeDetailedSuccessResponse"),
@@ -472,7 +462,7 @@ class Challenge(Resource):
         return {"success": True, "data": response}
 
     @admins_only
-    @challenges_namespace.doc(
+    @challenges_blueprint.doc(
         description="Endpoint to delete a specific Challenge object",
         responses={200: ("Success", "APISimpleSuccessResponse")},
     )
@@ -487,8 +477,8 @@ class Challenge(Resource):
         return {"success": True}
 
 
-@challenges_namespace.route("/attempt")
-class ChallengeAttempt(Resource):
+@challenges_blueprint.route("/attempt")
+class ChallengeAttempt(MethodView):
     @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
@@ -699,8 +689,8 @@ class ChallengeAttempt(Resource):
             }
 
 
-@challenges_namespace.route("/<challenge_id>/solves")
-class ChallengeSolves(Resource):
+@challenges_blueprint.route("/<challenge_id>/solves")
+class ChallengeSolves(MethodView):
     @check_challenge_visibility
     @check_score_visibility
     @during_ctf_time_only
@@ -727,8 +717,8 @@ class ChallengeSolves(Resource):
         return {"success": True, "data": response}
 
 
-@challenges_namespace.route("/<challenge_id>/files")
-class ChallengeFiles(Resource):
+@challenges_blueprint.route("/<challenge_id>/files")
+class ChallengeFiles(MethodView):
     @admins_only
     def get(self, challenge_id):
         response = []
@@ -742,8 +732,8 @@ class ChallengeFiles(Resource):
         return {"success": True, "data": response}
 
 
-@challenges_namespace.route("/<challenge_id>/tags")
-class ChallengeTags(Resource):
+@challenges_blueprint.route("/<challenge_id>/tags")
+class ChallengeTags(MethodView):
     @admins_only
     def get(self, challenge_id):
         response = []
@@ -757,8 +747,8 @@ class ChallengeTags(Resource):
         return {"success": True, "data": response}
 
 
-@challenges_namespace.route("/<challenge_id>/topics")
-class ChallengeTopics(Resource):
+@challenges_blueprint.route("/<challenge_id>/topics")
+class ChallengeTopics(MethodView):
     @admins_only
     def get(self, challenge_id):
         response = []
@@ -777,8 +767,8 @@ class ChallengeTopics(Resource):
         return {"success": True, "data": response}
 
 
-@challenges_namespace.route("/<challenge_id>/hints")
-class ChallengeHints(Resource):
+@challenges_blueprint.route("/<challenge_id>/hints")
+class ChallengeHints(MethodView):
     @admins_only
     def get(self, challenge_id):
         hints = Hints.query.filter_by(challenge_id=challenge_id).all()
@@ -791,8 +781,8 @@ class ChallengeHints(Resource):
         return {"success": True, "data": response.data}
 
 
-@challenges_namespace.route("/<challenge_id>/flags")
-class ChallengeFlags(Resource):
+@challenges_blueprint.route("/<challenge_id>/flags")
+class ChallengeFlags(MethodView):
     @admins_only
     def get(self, challenge_id):
         flags = Flags.query.filter_by(challenge_id=challenge_id).all()
@@ -805,8 +795,8 @@ class ChallengeFlags(Resource):
         return {"success": True, "data": response.data}
 
 
-@challenges_namespace.route("/<challenge_id>/requirements")
-class ChallengeRequirements(Resource):
+@challenges_blueprint.route("/<challenge_id>/requirements")
+class ChallengeRequirements(MethodView):
     @admins_only
     def get(self, challenge_id):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
