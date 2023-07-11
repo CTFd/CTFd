@@ -1,7 +1,7 @@
 """Add func column to dynamic_challenges
 
 Revision ID: eb68f277ab61
-Revises: 9e6f6578ca84
+Revises: b37fb68807ea
 Create Date: 2023-06-28 17:37:48.244827
 
 """
