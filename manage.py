@@ -2,8 +2,8 @@ import datetime
 import shutil
 from pathlib import Path
 
-from flask_migrate import MigrateCommand
-from flask_script import Manager
+import click
+from flask.cli import FlaskGroup
 
 from CTFd import create_app
 from CTFd.utils import get_config as get_config_util
@@ -11,15 +11,11 @@ from CTFd.utils import set_config as set_config_util
 from CTFd.utils.config import ctf_name
 from CTFd.utils.exports import export_ctf as export_ctf_util
 from CTFd.utils.exports import import_ctf as import_ctf_util
-from CTFd.utils.exports import (
-    set_import_end_time,
-    set_import_error,
-)
+from CTFd.utils.exports import set_import_end_time, set_import_error
 
 app = create_app()
 
-manager = Manager(app)
-manager.add_command("db", MigrateCommand)
+cli = FlaskGroup(app)
 
 
 def jsenums():
@@ -36,27 +32,31 @@ def jsenums():
 
 BUILD_COMMANDS = {"jsenums": jsenums}
 
-
-@manager.command
+@cli.command("get_config")
+@click.argument("key")
 def get_config(key):
     with app.app_context():
         print(get_config_util(key))
 
 
-@manager.command
+@cli.command("set_config")
+@click.argument("key")
+@click.argument("value")
 def set_config(key, value):
     with app.app_context():
         print(set_config_util(key, value).value)
 
 
-@manager.command
+@cli.command("build")
+@click.argument("cmd")
 def build(cmd):
     with app.app_context():
         cmd = BUILD_COMMANDS.get(cmd)
         cmd()
 
 
-@manager.command
+@cli.command("export_ctf")
+@click.argument("path")
 def export_ctf(path=None):
     with app.app_context():
         backup = export_ctf_util()
@@ -75,7 +75,9 @@ def export_ctf(path=None):
             print(f"Exported {full_name}")
 
 
-@manager.command
+@cli.command("import_ctf")
+@click.argument("path", type=click.Path(exists=True))
+@click.option('--delete_import_on_finish', default=False, is_flag=True, help="Delete import file when import is finished")
 def import_ctf(path, delete_import_on_finish=False):
     with app.app_context():
         try:
@@ -92,4 +94,4 @@ def import_ctf(path, delete_import_on_finish=False):
 
 
 if __name__ == "__main__":
-    manager.run()
+    cli()
