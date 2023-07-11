@@ -16,9 +16,10 @@ _cli = Blueprint("cli", __name__)
 
 
 def jsenums():
-    from CTFd.constants import JS_ENUMS
     import json
     import os
+
+    from CTFd.constants import JS_ENUMS
 
     path = os.path.join(current_app.root_path, "themes/core/assets/js/constants.js")
 
@@ -83,7 +84,7 @@ def import_ctf(path, delete_import_on_finish=False):
     except Exception as e:
         from CTFd.utils.dates import unix_time
 
-        set_import_error(f"Import Failure: " + str(e))
+        set_import_error("Import Failure: " + str(e))
         set_import_end_time(value=unix_time(datetime.datetime.utcnow()))
 
     if delete_import_on_finish:
