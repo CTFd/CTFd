@@ -19,6 +19,7 @@ from CTFd.constants.themes import ADMIN_THEME, DEFAULT_THEME
 from CTFd.plugins import init_plugins
 from CTFd.utils.crypto import sha256
 from CTFd.utils.initialization import (
+    init_cli,
     init_events,
     init_logs,
     init_request_processors,
@@ -312,5 +313,6 @@ def create_app(config="CTFd.config.Config"):
         init_logs(app)
         init_events(app)
         init_plugins(app)
+        init_cli(app)
 
         return app
