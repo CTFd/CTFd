@@ -52,8 +52,8 @@ def build(cmd):
 
 
 @_cli.cli.command("export_ctf")
-@click.argument("path")
-def export_ctf(path=None):
+@click.argument("path", default="")
+def export_ctf(path):
     backup = export_ctf_util()
 
     if path:
