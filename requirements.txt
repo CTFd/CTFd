@@ -10,8 +10,6 @@ alembic==1.4.3
     #   flask-migrate
 aniso8601==8.0.0
     # via flask-restx
-async-timeout==4.0.2
-    # via redis
 attrs==20.3.0
     # via jsonschema
 babel==2.12.1
@@ -41,7 +39,7 @@ click==7.1.2
     # via flask
 cmarkgfm==2022.10.27
     # via -r requirements.in
-cryptography==40.0.2
+cryptography==41.0.0
     # via pymysql
 dataset==1.5.2
     # via -r requirements.in
