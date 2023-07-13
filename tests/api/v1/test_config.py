@@ -132,7 +132,8 @@ def test_config_value_types():
 
             # Test regular length strings
             r = admin.patch(
-                "/api/v1/configs", json={"ctf_footer": "// regular length string"},
+                "/api/v1/configs",
+                json={"ctf_footer": "// regular length string"},
             )
             assert r.status_code == 200
             assert get_config("ctf_footer") == "// regular length string"

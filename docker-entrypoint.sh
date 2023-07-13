@@ -7,6 +7,7 @@ ACCESS_LOG=${ACCESS_LOG:--}
 ERROR_LOG=${ERROR_LOG:--}
 WORKER_TEMP_DIR=${WORKER_TEMP_DIR:-/dev/shm}
 SECRET_KEY=${SECRET_KEY:-}
+SKIP_DB_PING=${SKIP_DB_PING:-false}
 
 # Check that a .ctfd_secret_key file or SECRET_KEY envvar is set
 if [ ! -f .ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
@@ -18,11 +19,14 @@ if [ ! -f .ctfd_secret_key ] && [ -z "$SECRET_KEY" ]; then
     fi
 fi
 
-# Ensures that the database is available
-python ping.py
+# Skip db ping if SKIP_DB_PING is set to a value other than false or empty string
+if [[ "$SKIP_DB_PING" == "false" ]]; then
+  # Ensures that the database is available
+  python ping.py
+fi
 
 # Initialize database
-python manage.py db upgrade
+flask db upgrade
 
 # Start CTFd
 echo "Starting CTFd"

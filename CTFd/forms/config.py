@@ -48,6 +48,10 @@ class AccountSettingsForm(BaseForm):
         widget=NumberInput(min=0),
         description="Max number of teams (Teams mode only)",
     )
+    num_users = IntegerField(
+        widget=NumberInput(min=0),
+        description="Max number of users",
+    )
     verify_emails = SelectField(
         "Verify Emails",
         description="Control whether users must confirm their email addresses before playing",
@@ -98,13 +102,15 @@ class LegalSettingsForm(BaseForm):
         description="External URL to a Terms of Service document hosted elsewhere",
     )
     tos_text = TextAreaField(
-        "Terms of Service", description="Text shown on the Terms of Service page",
+        "Terms of Service",
+        description="Text shown on the Terms of Service page",
     )
     privacy_url = URLField(
         "Privacy Policy URL",
         description="External URL to a Privacy Policy document hosted elsewhere",
     )
     privacy_text = TextAreaField(
-        "Privacy Policy", description="Text shown on the Privacy Policy page",
+        "Privacy Policy",
+        description="Text shown on the Privacy Policy page",
     )
     submit = SubmitField("Update")

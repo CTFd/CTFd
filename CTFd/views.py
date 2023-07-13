@@ -1,4 +1,4 @@
-import os
+import os  # noqa: I001
 
 from flask import Blueprint, abort
 from flask import current_app as app
@@ -124,9 +124,15 @@ def setup():
             password = request.form["password"]
 
             name_len = len(name) == 0
-            names = Users.query.add_columns("name", "id").filter_by(name=name).first()
+            names = (
+                Users.query.add_columns(Users.name, Users.id)
+                .filter_by(name=name)
+                .first()
+            )
             emails = (
-                Users.query.add_columns("email", "id").filter_by(email=email).first()
+                Users.query.add_columns(Users.email, Users.id)
+                .filter_by(email=email)
+                .first()
             )
             pass_short = len(password) == 0
             pass_long = len(password) > 128
@@ -316,11 +322,6 @@ def settings():
     errors = get_errors()
 
     user = get_current_user()
-    name = user.name
-    email = user.email
-    website = user.website
-    affiliation = user.affiliation
-    country = user.country
 
     if is_teams_mode() and get_current_team() is None:
         team_url = url_for("teams.private")
@@ -346,11 +347,12 @@ def settings():
 
     return render_template(
         "settings.html",
-        name=name,
-        email=email,
-        website=website,
-        affiliation=affiliation,
-        country=country,
+        name=user.name,
+        email=user.email,
+        language=user.language,
+        website=user.website,
+        affiliation=user.affiliation,
+        country=user.country,
         tokens=tokens,
         prevent_name_change=prevent_name_change,
         infos=infos,

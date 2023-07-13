@@ -48,7 +48,21 @@
 		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-danger" id="submission-delete-button">
+					{% if type == "incorrect" %}
+					<button type="button" class="btn btn-outline-success" data-toggle="tooltip" title="Mark submissions correct" id="correct-flags-button">
+						<i class="btn-fa fas fa-check"></i>
+					</button>
+					{% endif %}
+					{% if request.args.get("full") %}
+					<button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Show truncated flags" id="show-short-flags-button">
+						<i class="btn-fa far fa-flag"></i>
+					</button>
+					{% else %}
+					<button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Show full flags" id="show-full-flags-button">
+						<i class="btn-fa fas fa-flag"></i>
+					</button>
+					{% endif %}
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete selected submissions" id="submission-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -109,7 +123,19 @@
 							{{ sub.type }}
 						</td>
 						<td class="flag" id="{{ sub.id }}">
-							<pre class="mb-0">{{ sub.provided }}</pre>
+							<button class="btn btn-link p-0 float-left copy-flag" type="button">
+								<i class="fas fa-clipboard"></i>
+							</button>
+							{% if request.args.get('full') %}
+								<pre class="mb-0 pl-2" title="{{ sub.provided }}">{{ sub.provided }}</pre>
+							{% else %}
+								<pre class="mb-0 pl-2 float-left" title="{{ sub.provided }}">{{ sub.provided | truncate(45, True) }}</pre>
+								{% if sub.provided | length > 50 %}
+									<button class="btn btn-link p-0 pl-1 float-left show-flag">
+										<i class="fas fa-eye"></i>
+									</button>
+								{% endif %}
+							{% endif %}
 						</td>
 						<td class="text-center solve-time">
 							<span data-time="{{ sub.date | isoformat }}"></span>

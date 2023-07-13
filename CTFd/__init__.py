@@ -7,11 +7,11 @@ from distutils.version import StrictVersion
 import jinja2
 from flask import Flask, Request
 from flask.helpers import safe_join
+from flask_babel import Babel
 from flask_migrate import upgrade
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from werkzeug.middleware.proxy_fix import ProxyFix
-from werkzeug.utils import cached_property
 
 import CTFd.utils.config
 from CTFd import utils
@@ -19,6 +19,7 @@ from CTFd.constants.themes import ADMIN_THEME, DEFAULT_THEME
 from CTFd.plugins import init_plugins
 from CTFd.utils.crypto import sha256
 from CTFd.utils.initialization import (
+    init_cli,
     init_events,
     init_logs,
     init_request_processors,
@@ -28,22 +29,21 @@ from CTFd.utils.initialization import (
 from CTFd.utils.migrations import create_database, migrations, stamp_latest_revision
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
+from CTFd.utils.user import get_locale
 
-__version__ = "3.5.1"
+__version__ = "3.5.3"
 __channel__ = "oss"
 
 
 class CTFdRequest(Request):
-    @cached_property
-    def path(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         """
         Hijack the original Flask request path because it does not account for subdirectory deployments in an intuitive
         manner. We append script_root so that the path always points to the full path as seen in the browser.
         e.g. /subdirectory/path/route vs /path/route
-
-        :return: string
         """
-        return self.script_root + super(CTFdRequest, self).path
+        self.path = self.script_root + self.path
 
 
 class CTFdFlask(Flask):
@@ -84,24 +84,30 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
             theme = str(utils.get_config("ctf_theme"))
             cache_name = theme + "/" + name
 
-        # Rest of this code is copied from Jinja
-        # https://github.com/pallets/jinja/blob/master/src/jinja2/environment.py#L802-L815
+        # Rest of this code roughly copied from Jinja
+        # https://github.com/pallets/jinja/blob/b08cd4bc64bb980df86ed2876978ae5735572280/src/jinja2/environment.py#L956-L973
         cache_key = (weakref.ref(self.loader), cache_name)
         if self.cache is not None:
             template = self.cache.get(cache_key)
             if template is not None and (
                 not self.auto_reload or template.is_up_to_date
             ):
+                # template.globals is a ChainMap, modifying it will only
+                # affect the template, not the environment globals.
+                if globals:
+                    template.globals.update(globals)
+
                 return template
-        template = self.loader.load(self, name, globals)
+
+        template = self.loader.load(self, name, self.make_globals(globals))
+
         if self.cache is not None:
             self.cache[cache_key] = template
         return template
 
 
 class ThemeLoader(FileSystemLoader):
-    """Custom FileSystemLoader that is aware of theme structure and config.
-    """
+    """Custom FileSystemLoader that is aware of theme structure and config."""
 
     DEFAULT_THEMES_PATH = os.path.join(os.path.dirname(__file__), "themes")
     _ADMIN_THEME_PREFIX = ADMIN_THEME + "/"
@@ -185,15 +191,15 @@ def create_app(config="CTFd.config.Config"):
         app.jinja_loader = jinja2.ChoiceLoader(loaders)
 
         from CTFd.models import (  # noqa: F401
-            db,
-            Teams,
-            Solves,
             Challenges,
             Fails,
-            Flags,
-            Tags,
             Files,
+            Flags,
+            Solves,
+            Tags,
+            Teams,
             Tracking,
+            db,
         )
 
         url = create_database()
@@ -208,14 +214,18 @@ def create_app(config="CTFd.config.Config"):
         # Register Flask-Migrate
         migrations.init_app(app, db)
 
+        babel = Babel()
+        babel.locale_selector_func = get_locale
+        babel.init_app(app)
+
         # Alembic sqlite support is lacking so we should just create_all anyway
         if url.drivername.startswith("sqlite"):
             # Enable foreign keys for SQLite. This must be before the
             # db.create_all call because tests use the in-memory SQLite
             # database (each connection, including db creation, is a new db).
             # https://docs.sqlalchemy.org/en/13/dialects/sqlite.html#foreign-key-support
-            from sqlalchemy.engine import Engine
             from sqlalchemy import event
+            from sqlalchemy.engine import Engine
 
             @event.listens_for(Engine, "connect")
             def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -275,16 +285,16 @@ def create_app(config="CTFd.config.Config"):
         init_template_globals(app)
 
         # Importing here allows tests to use sensible names (e.g. api instead of api_bp)
-        from CTFd.views import views
-        from CTFd.teams import teams
-        from CTFd.users import users
-        from CTFd.challenges import challenges
-        from CTFd.scoreboard import scoreboard
-        from CTFd.auth import auth
         from CTFd.admin import admin
         from CTFd.api import api
-        from CTFd.events import events
+        from CTFd.auth import auth
+        from CTFd.challenges import challenges
         from CTFd.errors import render_error
+        from CTFd.events import events
+        from CTFd.scoreboard import scoreboard
+        from CTFd.teams import teams
+        from CTFd.users import users
+        from CTFd.views import views
 
         app.register_blueprint(views)
         app.register_blueprint(teams)
@@ -303,5 +313,6 @@ def create_app(config="CTFd.config.Config"):
         init_logs(app)
         init_events(app)
         init_plugins(app)
+        init_cli(app)
 
         return app

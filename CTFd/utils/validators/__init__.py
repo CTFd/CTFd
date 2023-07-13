@@ -4,6 +4,7 @@ from urllib.parse import urljoin, urlparse
 from flask import request
 from marshmallow import ValidationError
 
+from CTFd.constants.languages import LANGUAGE_NAMES
 from CTFd.models import Users
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.user import get_current_user, is_admin
@@ -39,3 +40,10 @@ def validate_country_code(country_code):
         return
     if lookup_country_code(country_code) is None:
         raise ValidationError("Invalid Country")
+
+
+def validate_language(language):
+    if language.strip() == "":
+        return
+    if LANGUAGE_NAMES.get(language) is None:
+        raise ValidationError("Invalid Language")

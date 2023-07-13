@@ -1,4 +1,4 @@
-from typing import List
+from typing import List  # noqa: I001
 
 from flask import abort, render_template, request, url_for
 from flask_restx import Namespace, Resource

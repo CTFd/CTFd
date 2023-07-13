@@ -210,6 +210,10 @@ class ServerConfig(object):
 
         AWS_S3_REGION: str = empty_str_cast(config_ini["uploads"]["AWS_S3_REGION"])
 
+        AWS_S3_CUSTOM_DOMAIN: str = empty_str_cast(config_ini["uploads"].get("AWS_S3_CUSTOM_DOMAIN", ""))
+
+        AWS_S3_ADDRESSING_STYLE: str = empty_str_cast(config_ini["uploads"].get("AWS_S3_ADDRESSING_STYLE", ""), default="auto")
+
     # === OPTIONAL ===
     REVERSE_PROXY: Union[str, bool] = empty_str_cast(config_ini["optional"]["REVERSE_PROXY"], default=False)
 

@@ -9,7 +9,7 @@ from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.email import check_email_is_whitelisted
 from CTFd.utils.user import get_current_user, is_admin
-from CTFd.utils.validators import validate_country_code
+from CTFd.utils.validators import validate_country_code, validate_language
 
 
 class UserSchema(ma.ModelSchema):
@@ -50,6 +50,7 @@ class UserSchema(ma.ModelSchema):
             else True
         ],
     )
+    language = field_for(Users, "language", validate=[validate_language])
     country = field_for(Users, "country", validate=[validate_country_code])
     password = field_for(Users, "password", required=True, allow_none=False)
     fields = Nested(
@@ -150,9 +151,7 @@ class UserSchema(ma.ModelSchema):
                     )
                 if check_email_is_whitelisted(email) is False:
                     raise ValidationError(
-                        "Only email addresses under {domains} may register".format(
-                            domains=get_config("domain_whitelist")
-                        ),
+                        "Email address is not from an allowed domain",
                         field_names=["email"],
                     )
                 if get_config("verify_emails"):
@@ -325,6 +324,7 @@ class UserSchema(ma.ModelSchema):
             "website",
             "name",
             "email",
+            "language",
             "country",
             "affiliation",
             "bracket",
@@ -341,6 +341,7 @@ class UserSchema(ma.ModelSchema):
             "country",
             "banned",
             "email",
+            "language",
             "affiliation",
             "secret",
             "bracket",

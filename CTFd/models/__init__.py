@@ -15,12 +15,13 @@ ma = Marshmallow()
 
 def get_class_by_tablename(tablename):
     """Return class reference mapped to table.
-    https://stackoverflow.com/a/23754464
+    https://stackoverflow.com/a/66666783
 
     :param tablename: String with name of table.
     :return: Class reference or None.
     """
-    for c in db.Model._decl_class_registry.values():
+    for m in db.Model.registry.mappers:
+        c = m.class_
         if hasattr(c, "__tablename__") and c.__tablename__ == tablename:
             return c
     return None
@@ -181,6 +182,12 @@ class Hints(db.Model):
 
         return markup(build_markdown(self.content))
 
+    @property
+    def prerequisites(self):
+        if self.requirements:
+            return self.requirements.get("prerequisites", [])
+        return []
+
     def __init__(self, *args, **kwargs):
         super(Hints, self).__init__(**kwargs)
 
@@ -336,6 +343,7 @@ class Users(db.Model):
     hidden = db.Column(db.Boolean, default=False)
     banned = db.Column(db.Boolean, default=False)
     verified = db.Column(db.Boolean, default=False)
+    language = db.Column(db.String(32), nullable=True, default=None)
 
     # Relationship for Teams
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
@@ -501,7 +509,7 @@ class Users(db.Model):
         to no imports within the CTFd application as importing from the
         application itself will result in a circular import.
         """
-        from CTFd.utils.scores import get_user_standings
+        from CTFd.utils.scores import get_user_standings  # noqa: I001
         from CTFd.utils.humanize.numbers import ordinalize
 
         standings = get_user_standings(admin=admin)
@@ -618,7 +626,7 @@ class Teams(db.Model):
         ]
 
     def get_invite_code(self):
-        from flask import current_app
+        from flask import current_app  # noqa: I001
         from CTFd.utils.security.signing import serialize, hmac
 
         secret_key = current_app.config["SECRET_KEY"]
@@ -637,7 +645,7 @@ class Teams(db.Model):
 
     @classmethod
     def load_invite_code(cls, code):
-        from flask import current_app
+        from flask import current_app  # noqa: I001
         from CTFd.utils.security.signing import (
             unserialize,
             hmac,
@@ -736,7 +744,7 @@ class Teams(db.Model):
         to no imports within the CTFd application as importing from the
         application itself will result in a circular import.
         """
-        from CTFd.utils.scores import get_team_standings
+        from CTFd.utils.scores import get_team_standings  # noqa: I001
         from CTFd.utils.humanize.numbers import ordinalize
 
         standings = get_team_standings(admin=admin)
@@ -841,6 +849,10 @@ class Fails(Submissions):
     __mapper_args__ = {"polymorphic_identity": "incorrect"}
 
 
+class Discards(Submissions):
+    __mapper_args__ = {"polymorphic_identity": "discard"}
+
+
 class Unlocks(db.Model):
     __tablename__ = "unlocks"
     id = db.Column(db.Integer, primary_key=True)
@@ -909,6 +921,7 @@ class Tokens(db.Model):
         db.DateTime,
         default=lambda: datetime.datetime.utcnow() + datetime.timedelta(days=30),
     )
+    description = db.Column(db.Text)
     value = db.Column(db.String(128), unique=True)
 
     user = db.relationship("Users", foreign_keys="Tokens.user_id", lazy="select")

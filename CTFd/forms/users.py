@@ -1,8 +1,10 @@
+from flask_babel import lazy_gettext as _l
 from wtforms import BooleanField, PasswordField, SelectField, StringField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
 from CTFd.constants.config import Configs
+from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.models import UserFieldEntries, UserFields
@@ -130,22 +132,27 @@ class UserSearchForm(BaseForm):
 
 class PublicUserSearchForm(BaseForm):
     field = SelectField(
-        "Search Field",
+        _l("Search Field"),
         choices=[
-            ("name", "Name"),
-            ("affiliation", "Affiliation"),
-            ("website", "Website"),
+            ("name", _l("Name")),
+            ("affiliation", _l("Affiliation")),
+            ("website", _l("Website")),
         ],
         default="name",
         validators=[InputRequired()],
     )
-    q = StringField("Parameter", validators=[InputRequired()])
-    submit = SubmitField("Search")
+    q = StringField(
+        _l("Parameter"),
+        description=_l("Search for matching users"),
+        validators=[InputRequired()],
+    )
+    submit = SubmitField(_l("Search"))
 
 
 class UserBaseForm(BaseForm):
     name = StringField("User Name", validators=[InputRequired()])
     email = EmailField("Email", validators=[InputRequired()])
+    language = SelectField(_l("Language"), choices=SELECT_LANGUAGE_LIST)
     password = PasswordField("Password")
     website = StringField("Website")
     affiliation = StringField("Affiliation")
