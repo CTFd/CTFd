@@ -7,6 +7,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const RemoveStrictPlugin = require('remove-strict-webpack-plugin')
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const fs = require('fs');
 
 const roots = {
   'themes/core': {
