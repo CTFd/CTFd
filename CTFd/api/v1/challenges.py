@@ -287,11 +287,7 @@ class Challenge(Resource):
     )
     def get(self, challenge_id):
         if is_admin():
-            chal = Challenges.query.filter(Challenges.id == challenge_id).first_or_404()
-        elif is_author():
-            user = get_current_user()
-            chal = Challenges.query.filter(
-                and_(Challenges.id == challenge_id, Challenges.author_id == user.id)).first_or_404()    
+            chal = Challenges.query.filter(Challenges.id == challenge_id).first_or_404()   
         else:
             chal = Challenges.query.filter(
                 Challenges.id == challenge_id,
