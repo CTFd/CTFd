@@ -7,6 +7,7 @@ from apiflask.views import MethodView
 from marshmallow import Schema, fields
 
 from CTFd.api.v1.helpers.request import validate_args
+from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse, APISimpleErrorResponse, APISimpleSuccessResponse, APIStatusMessageResponse, StatusMessageSchema
 from CTFd.cache import clear_challenges, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
@@ -57,22 +58,17 @@ challenges_blueprint = Blueprint("api", __name__, "challenges", url_prefix="/cha
 
 
 # include={"solves": int, "solved_by_me": bool}
-ChallengeModel = ChallengeSchema
 
-
-class ChallengeDetailedSuccessResponse(Schema):
+class ChallengeDetailedSuccessResponse(APIDetailedSuccessResponse):
     success: bool = fields.Bool(default=True)
-    data = fields.Nested(ChallengeModel)
+    data = fields.Nested(ChallengeSchema)
 
 
-class ChallengeListSuccessResponse(Schema):
+class ChallengeListSuccessResponse(APIListSuccessResponse):
     success: bool = fields.Bool(default=True)
-    data = fields.List(fields.Nested(ChallengeModel))
+    data = fields.List(fields.Nested(ChallengeSchema))
 
 
-class APISimpleErrorResponse(Schema):
-    success: bool = fields.Bool(default=False)
-    errors: Optional[List[str]] = fields.List(fields.String())
 
 
 @challenges_blueprint.route("")
@@ -217,23 +213,8 @@ class ChallengeList(MethodView):
     @challenges_blueprint.output(ChallengeDetailedSuccessResponse, 200, description="Success")
     @challenges_blueprint.output(APISimpleErrorResponse, 400, description="An error occured processing the provided or stored data")
     def post(self, data):
-        # data = request.form or request.get_json()
-
-        # Load data through schema for validation but not for insertion
-        # https://github.com/marshmallow-code/flask-marshmallow/issues/34#issuecomment-676510293
-        # Validation already happened, and transformed to ChallengeSchema
-        # schema = ChallengeSchema()
-        # response = schema.load(data)
-
-        # if response.errors:
-        #     return {"success": False, "errors": response.errors}, 400
-
-        # challenge_type = data.type
-        # challenge_class = get_chal_class(challenge_type)
         db.session.add(data)
         db.session.commit()
-        # challenge = challenge_class.create(request)
-        # response = challenge_class.read(challenge)
         response = ChallengeSchema().dump(data)
         clear_challenges()
 
@@ -260,21 +241,14 @@ class ChallengeTypes(MethodView):
         return {"success": True, "data": response}
 
 
-@challenges_blueprint.route("/<challenge_id>")
+@challenges_blueprint.route("/<int:challenge_id>")
 class Challenge(MethodView):
     @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
-    @challenges_blueprint.doc(
-        description="Endpoint to get a specific Challenge object",
-        responses={
-            200: ("Success", "ChallengeDetailedSuccessResponse"),
-            400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
-            ),
-        },
-    )
+    @challenges_blueprint.doc(description="Endpoint to get a specific Challenge object")
+    @challenges_blueprint.output(ChallengeDetailedSuccessResponse, 200, description="Success")
+    @challenges_blueprint.output(APISimpleErrorResponse, 400, description="An error occured processing the provided or stored data")
     def get(self, challenge_id):
         if is_admin():
             chal = Challenges.query.filter(Challenges.id == challenge_id).first_or_404()
@@ -432,24 +406,11 @@ class Challenge(MethodView):
         return {"success": True, "data": response}
 
     @admins_only
-    @challenges_blueprint.doc(
-        description="Endpoint to edit a specific Challenge object",
-        responses={
-            200: ("Success", "ChallengeDetailedSuccessResponse"),
-            400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
-            ),
-        },
-    )
-    def patch(self, challenge_id):
-        data = request.get_json()
-
-        # Load data through schema for validation but not for insertion
-        schema = ChallengeSchema()
-        response = schema.load(data)
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
+    @challenges_blueprint.doc(description="Endpoint to edit a specific Challenge object")
+    @challenges_blueprint.input(ChallengeSchema, location="json_or_form")
+    @challenges_blueprint.output(ChallengeDetailedSuccessResponse, 200, description="Success")
+    @challenges_blueprint.output(APISimpleErrorResponse, 400, description="An error occured processing the provided or stored data")
+    def patch(self, challenge_id, data):
 
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         challenge_class = get_chal_class(challenge.type)
@@ -466,6 +427,7 @@ class Challenge(MethodView):
         description="Endpoint to delete a specific Challenge object",
         responses={200: ("Success", "APISimpleSuccessResponse")},
     )
+    @challenges_blueprint.output(APISimpleSuccessResponse, 200, description="Success")
     def delete(self, challenge_id):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         chal_class = get_chal_class(challenge.type)
@@ -477,21 +439,27 @@ class Challenge(MethodView):
         return {"success": True}
 
 
+class ChallengeAttemptRequestSchema(BaseModel):
+    challenge_id = fields.Integer(required=True)
+    submission = fields.String(required=True)
+
 @challenges_blueprint.route("/attempt")
 class ChallengeAttempt(MethodView):
     @check_challenge_visibility
     @during_ctf_time_only
     @require_verified_emails
-    def post(self):
+    @challenges_blueprint.doc(responses={
+        404: 'Not found',
+        403: 'Forbidden'
+    }, description="Attempt a specified challenge")
+    @challenges_blueprint.input(ChallengeAttemptRequestSchema, location="json_or_form")
+    @challenges_blueprint.output(403, model=APIStatusMessageResponse)
+    @challenges_blueprint.output(200, model=APIStatusMessageResponse)
+    def post(self, request_data):
         if authed() is False:
             return {"success": True, "data": {"status": "authentication_required"}}, 403
 
-        if request.content_type != "application/json":
-            request_data = request.form
-        else:
-            request_data = request.get_json()
-
-        challenge_id = request_data.get("challenge_id")
+        challenge_id = request_data.challenge_id
 
         if current_user.is_admin():
             preview = request.args.get("preview", False)
@@ -562,7 +530,7 @@ class ChallengeAttempt(MethodView):
 
         # Anti-bruteforce / submitting Flags too quickly
         kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
-        kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
+        kpm_limit = int(get_config("infcorrect_submissions_per_min", default=10))
         if kpm > kpm_limit:
             if ctftime():
                 chal_class.fail(
@@ -572,7 +540,7 @@ class ChallengeAttempt(MethodView):
                 "submissions",
                 "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
                 name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
+                submission=request_data.submission.encode("utf-8"),
                 challenge_id=challenge_id,
                 kpm=kpm,
             )
@@ -621,7 +589,7 @@ class ChallengeAttempt(MethodView):
                     "submissions",
                     "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
                     name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
+                    submission=request_data.submission.encode("utf-8"),
                     challenge_id=challenge_id,
                     kpm=kpm,
                 )
@@ -641,7 +609,7 @@ class ChallengeAttempt(MethodView):
                     "submissions",
                     "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
                     name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
+                    submission=request_data.submission.encode("utf-8"),
                     challenge_id=challenge_id,
                     kpm=kpm,
                 )
@@ -676,7 +644,7 @@ class ChallengeAttempt(MethodView):
                 "submissions",
                 "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
                 name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
+                submission=request_data.submission.encode("utf-8"),
                 challenge_id=challenge_id,
                 kpm=kpm,
             )

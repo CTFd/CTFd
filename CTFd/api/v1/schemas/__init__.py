@@ -1,105 +1,39 @@
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel
-
-
-class APISimpleSuccessResponse(BaseModel):
-    success: bool = True
+from marshmallow import Schema, fields
+class APISimpleSuccessResponse(Schema):
+    success: bool = fields.Bool(default=True)
 
 
 class APIDetailedSuccessResponse(APISimpleSuccessResponse):
-    data: Optional[Any]
-
-    @classmethod
-    def apidoc(cls):
-        """
-        Helper to inline references from the generated schema
-        """
-        schema = cls.schema()
-
-        try:
-            key = schema["properties"]["data"]["$ref"]
-            ref = key.split("/").pop()
-            definition = schema["definitions"][ref]
-            schema["properties"]["data"] = definition
-            del schema["definitions"][ref]
-            if bool(schema["definitions"]) is False:
-                del schema["definitions"]
-        except KeyError:
-            pass
-
-        return schema
+    data: Optional[Any] = fields.Raw()
 
 
 class APIListSuccessResponse(APIDetailedSuccessResponse):
-    data: Optional[List[Any]]
+    data: Optional[List[Any]] = fields.List(fields.Raw())
 
-    @classmethod
-    def apidoc(cls):
-        """
-        Helper to inline references from the generated schema
-        """
-        schema = cls.schema()
 
-        try:
-            key = schema["properties"]["data"]["items"]["$ref"]
-            ref = key.split("/").pop()
-            definition = schema["definitions"][ref]
-            schema["properties"]["data"]["items"] = definition
-            del schema["definitions"][ref]
-            if bool(schema["definitions"]) is False:
-                del schema["definitions"]
-        except KeyError:
-            pass
+class PaginationMetadataSchema(Schema):
+    page: int = fields.Int()
+    next: int = fields.Int()
+    prev: int = fields.Int()
+    pages: int = fields.Int()
+    per_page: int = fields.Int()
+    total: int = fields.Int()
 
-        return schema
-
+class PaginationSchema(Schema):
+    pagination: PaginationMetadataSchema = fields.Nested(PaginationMetadataSchema)
 
 class PaginatedAPIListSuccessResponse(APIListSuccessResponse):
-    meta: Dict[str, Any]
+    meta: Dict[str, Any] = PaginationSchema
 
-    @classmethod
-    def apidoc(cls):
-        """
-        Helper to inline references from the generated schema
-        """
-        schema = cls.schema()
+class APISimpleErrorResponse(Schema):
+    success: bool = fields.Bool(default=False)
+    errors: Optional[List[str]] = fields.List(fields.String())
 
-        schema["properties"]["meta"] = {
-            "title": "Meta",
-            "type": "object",
-            "properties": {
-                "pagination": {
-                    "title": "Pagination",
-                    "type": "object",
-                    "properties": {
-                        "page": {"title": "Page", "type": "integer"},
-                        "next": {"title": "Next", "type": "integer"},
-                        "prev": {"title": "Prev", "type": "integer"},
-                        "pages": {"title": "Pages", "type": "integer"},
-                        "per_page": {"title": "Per Page", "type": "integer"},
-                        "total": {"title": "Total", "type": "integer"},
-                    },
-                    "required": ["page", "next", "prev", "pages", "per_page", "total"],
-                }
-            },
-            "required": ["pagination"],
-        }
+class StatusMessageSchema(Schema):
+    status: str = fields.String()
+    message: Optional[str] = fields.String()
 
-        try:
-            key = schema["properties"]["data"]["items"]["$ref"]
-            ref = key.split("/").pop()
-            definition = schema["definitions"][ref]
-            schema["properties"]["data"]["items"] = definition
-            del schema["definitions"][ref]
-            if bool(schema["definitions"]) is False:
-                del schema["definitions"]
-        except KeyError:
-            pass
-
-        return schema
-
-
-class APISimpleErrorResponse(BaseModel):
-    success: bool = False
-    errors: Optional[List[str]]
+class APIStatusMessageResponse(APISimpleSuccessResponse):
+    data = fields.Nested(StatusMessageSchema)

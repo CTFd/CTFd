@@ -1,6 +1,6 @@
 from marshmallow import validate
 from marshmallow.exceptions import ValidationError
-from marshmallow_sqlalchemy import field_for
+from marshmallow_sqlalchemy import field_for, auto_field
 
 from CTFd.models import Challenges
 from CTFd.schemas import ma
@@ -28,10 +28,9 @@ class ChallengeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Challenges
         include_fk = True
-        # dump_only = ("id",)
         load_instance = True
 
-    id = field_for(Challenges, "id", dump_only=True)
+    id = auto_field(dump_only=True)
     name = field_for(
         Challenges,
         "name",
