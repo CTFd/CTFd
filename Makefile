@@ -32,6 +32,7 @@ shell:
 	python manage.py shell
 
 translations-init:
+	# make translations-init lang=af
 	pybabel init -i messages.pot -d CTFd/translations -l $(lang)
 
 translations-extract:
