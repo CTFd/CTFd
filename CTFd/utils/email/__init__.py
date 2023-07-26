@@ -149,4 +149,8 @@ def check_email_is_whitelisted(email_address):
             elif domain == allowed_domain:
                 return True
 
-    return False
+        # whitelist is specified but the email doesn't match any domains
+        return False
+
+    # whitelist is not specified - allow all emails
+    return True
