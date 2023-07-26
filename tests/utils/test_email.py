@@ -6,10 +6,10 @@ from freezegun import freeze_time
 
 from CTFd.utils import get_config, set_config
 from CTFd.utils.email import (
+    check_email_is_whitelisted,
     sendmail,
     successful_registration_notification,
     verify_email_address,
-    check_email_is_whitelisted
 )
 from tests.helpers import create_ctfd, destroy_ctfd
 
@@ -248,23 +248,22 @@ def test_email_whitelist():
         set_config("domain_whitelist", "example.com, uni.acme.com, *.edu, *.edu.de")
 
         test_cases = [
-            ('john.doe@example.com', True),
-            ('john.doe@uni.acme.com', True),
-            ('john.doe@uni.edu', True),
-            ('john.doe@cs.uni.edu', True),
-            ('john.doe@mail.cs.uni.edu', True),
-            ('john.doe@uni.edu.de', True),
-            ('john.doe@cs.uni.edu.de', True),
-            ('john.doe@mail.cs.uni.edu.de', True),
-
-            ('john.doe@gmail.com', False),
-            ('john.doe@example1.com', False),
-            ('john.doe@1example.com', False),
-            ('john.doe@ext.example.com', False),
-            ('john.doe@cs.acme.com', False),
-            ('john.doe@edu.com', False),
-            ('john.doe@mail.uni.acme.com', False),
-            ('john.doe@edu', False),
+            ("john.doe@example.com", True),
+            ("john.doe@uni.acme.com", True),
+            ("john.doe@uni.edu", True),
+            ("john.doe@cs.uni.edu", True),
+            ("john.doe@mail.cs.uni.edu", True),
+            ("john.doe@uni.edu.de", True),
+            ("john.doe@cs.uni.edu.de", True),
+            ("john.doe@mail.cs.uni.edu.de", True),
+            ("john.doe@gmail.com", False),
+            ("john.doe@example1.com", False),
+            ("john.doe@1example.com", False),
+            ("john.doe@ext.example.com", False),
+            ("john.doe@cs.acme.com", False),
+            ("john.doe@edu.com", False),
+            ("john.doe@mail.uni.acme.com", False),
+            ("john.doe@edu", False),
         ]
 
         for case in test_cases:
