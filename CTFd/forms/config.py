@@ -31,7 +31,7 @@ class ResetInstanceForm(BaseForm):
 class AccountSettingsForm(BaseForm):
     domain_whitelist = StringField(
         "Account Email Whitelist",
-        description="Comma-seperated email domains which users can register under (e.g. ctfd.io, *.example.com, *.edu)",
+        description="Comma-seperated email domains which users can register under (e.g. ctfd.io, example.com, *.example.com)",
     )
     team_creation = SelectField(
         "Team Creation",
