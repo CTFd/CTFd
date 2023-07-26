@@ -305,7 +305,6 @@ def test_email_whitelist():
             ("john.doe@uni.edu.de", True),
             ("john.doe@cs.uni.edu.de", True),
             ("john.doe@mail.cs.uni.edu.de", True),
-
             ("john.doe@gmail.com", False),
             ("john.doe@ample.com", False),
             ("john.doe@example1.com", False),
