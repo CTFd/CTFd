@@ -139,6 +139,14 @@ def check_email_is_whitelisted(email_address):
     domain_whitelist = get_config("domain_whitelist")
     if domain_whitelist:
         domain_whitelist = [d.strip() for d in domain_whitelist.split(",")]
-        if domain not in domain_whitelist:
-            return False
-    return True
+
+        for allowed_domain in domain_whitelist:
+            if allowed_domain.startswith("*"):
+                # Handle wildcard domain case
+                suffix = allowed_domain[1:]  # Remove the "*" prefix
+                if domain.endswith(suffix):
+                    return True
+            elif domain == allowed_domain:
+                return True
+
+    return False
