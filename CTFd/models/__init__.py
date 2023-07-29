@@ -349,7 +349,10 @@ class Users(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
     field_entries = db.relationship(
-        "UserFieldEntries", foreign_keys="UserFieldEntries.user_id", lazy="joined"
+        "UserFieldEntries",
+        foreign_keys="UserFieldEntries.user_id",
+        lazy="joined",
+        back_populates="user",
     )
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -558,7 +561,10 @@ class Teams(db.Model):
     captain = db.relationship("Users", foreign_keys=[captain_id])
 
     field_entries = db.relationship(
-        "TeamFieldEntries", foreign_keys="TeamFieldEntries.team_id", lazy="joined"
+        "TeamFieldEntries",
+        foreign_keys="TeamFieldEntries.team_id",
+        lazy="joined",
+        back_populates="team",
     )
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -1027,10 +1033,14 @@ class FieldEntries(db.Model):
 class UserFieldEntries(FieldEntries):
     __mapper_args__ = {"polymorphic_identity": "user"}
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
-    user = db.relationship("Users", foreign_keys="UserFieldEntries.user_id")
+    user = db.relationship(
+        "Users", foreign_keys="UserFieldEntries.user_id", back_populates="field_entries"
+    )
 
 
 class TeamFieldEntries(FieldEntries):
     __mapper_args__ = {"polymorphic_identity": "team"}
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
-    team = db.relationship("Teams", foreign_keys="TeamFieldEntries.team_id")
+    team = db.relationship(
+        "Teams", foreign_keys="TeamFieldEntries.team_id", back_populates="field_entries"
+    )
