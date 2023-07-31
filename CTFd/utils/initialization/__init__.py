@@ -276,7 +276,8 @@ def init_request_processors(app):
     @app.before_request
     def tokens():
         token = request.headers.get("Authorization")
-        if token and request.content_type == "application/json":
+        if token and (request.mimetype == "application/json" or
+                      request.mimetype == "multipart/form-data"):
             try:
                 token_type, token = token.split(" ", 1)
                 user = lookup_user_token(token)
