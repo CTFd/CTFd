@@ -1,12 +1,15 @@
-from CTFd.models import ChallengeTopics, Topics, ma
+from CTFd.models import ChallengeTopics, Topics
+from CTFd.schemas import ma
+
 from CTFd.utils import string_types
 
 
-class TopicSchema(ma.ModelSchema):
+class TopicSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Topics
         include_fk = True
         dump_only = ("id",)
+        load_instance = True
 
     views = {"admin": ["id", "value"]}
 
@@ -20,7 +23,7 @@ class TopicSchema(ma.ModelSchema):
         super(TopicSchema, self).__init__(*args, **kwargs)
 
 
-class ChallengeTopicSchema(ma.ModelSchema):
+class ChallengeTopicSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ChallengeTopics
         include_fk = True

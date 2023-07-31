@@ -1,13 +1,15 @@
 from marshmallow import fields
 
-from CTFd.models import Submissions, ma
+from CTFd.models import Submissions
+from CTFd.schemas import ma
+
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.users import UserSchema
 from CTFd.utils import string_types
 
 
-class SubmissionSchema(ma.ModelSchema):
+class SubmissionSchema(ma.SQLAlchemyAutoSchema):
     challenge = fields.Nested(ChallengeSchema, only=["id", "name", "category", "value"])
     user = fields.Nested(UserSchema, only=["id", "name"])
     team = fields.Nested(TeamSchema, only=["id", "name"])
@@ -16,6 +18,7 @@ class SubmissionSchema(ma.ModelSchema):
         model = Submissions
         include_fk = True
         dump_only = ("id",)
+        load_instance = True
 
     views = {
         "admin": [

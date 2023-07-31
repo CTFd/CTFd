@@ -1,12 +1,15 @@
-from CTFd.models import Unlocks, ma
+from CTFd.models import Unlocks
+from CTFd.schemas import ma
+
 from CTFd.utils import string_types
 
 
-class UnlockSchema(ma.ModelSchema):
+class UnlockSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Unlocks
         include_fk = True
         dump_only = ("id", "date")
+        load_instance = True
 
     views = {
         "admin": ["user_id", "target", "team_id", "date", "type", "id"],

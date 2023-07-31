@@ -2,7 +2,9 @@ from marshmallow import fields
 from marshmallow.exceptions import ValidationError
 from marshmallow_sqlalchemy import field_for
 
-from CTFd.models import Configs, ma
+from CTFd.models import Configs
+from CTFd.schemas import ma
+
 from CTFd.utils import string_types
 
 
@@ -23,11 +25,12 @@ class ConfigValueField(fields.Field):
             return value
 
 
-class ConfigSchema(ma.ModelSchema):
+class ConfigSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Configs
         include_fk = True
         dump_only = ("id",)
+        load_instance = True
 
     views = {"admin": ["id", "key", "value"]}
     key = field_for(Configs, "key", required=True)

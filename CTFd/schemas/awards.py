@@ -1,12 +1,15 @@
-from CTFd.models import Awards, ma
+from CTFd.models import Awards
+from CTFd.schemas import ma
+
 from CTFd.utils import string_types
 
 
-class AwardSchema(ma.ModelSchema):
+class AwardSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Awards
         include_fk = True
         dump_only = ("id", "date")
+        load_instance = True
 
     views = {
         "admin": [

@@ -1,14 +1,17 @@
 from marshmallow import fields
 
-from CTFd.models import Notifications, ma
+from CTFd.models import Notifications
+from CTFd.schemas import ma
+
 from CTFd.utils import string_types
 
 
-class NotificationSchema(ma.ModelSchema):
+class NotificationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Notifications
         include_fk = True
         dump_only = ("id", "date", "html")
+        load_instance = True
 
     # Used to force the schema to include the html property from the model
     html = fields.Str()

@@ -1,9 +1,9 @@
 from marshmallow import validate
 from marshmallow.exceptions import ValidationError
-from marshmallow_sqlalchemy import field_for
+from marshmallow_sqlalchemy import field_for, auto_field
 
-from CTFd.models import Challenges, ma
-
+from CTFd.models import Challenges
+from CTFd.schemas import ma
 
 class ChallengeRequirementsValidator(validate.Validator):
     default_message = "Error parsing challenge requirements"
@@ -24,12 +24,13 @@ class ChallengeRequirementsValidator(validate.Validator):
         return value
 
 
-class ChallengeSchema(ma.ModelSchema):
+class ChallengeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Challenges
         include_fk = True
-        dump_only = ("id",)
+        load_instance = True
 
+    id = auto_field(dump_only=True)
     name = field_for(
         Challenges,
         "name",

@@ -1,12 +1,15 @@
-from CTFd.models import Tokens, ma
+from CTFd.models import Tokens
+from CTFd.schemas import ma
+
 from CTFd.utils import string_types
 
 
-class TokenSchema(ma.ModelSchema):
+class TokenSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Tokens
         include_fk = True
         dump_only = ("id", "expiration", "type")
+        load_instance = True
 
     views = {
         "admin": [

@@ -3,10 +3,11 @@ import os
 import sys
 import weakref
 from distutils.version import StrictVersion
+from apiflask import APIFlask
 
 import jinja2
-from flask import Flask, Request
-from flask.helpers import safe_join
+from flask import Request
+from werkzeug.security import safe_join
 from flask_babel import Babel
 from flask_migrate import upgrade
 from jinja2 import FileSystemLoader
@@ -46,7 +47,7 @@ class CTFdRequest(Request):
         self.path = self.script_root + self.path
 
 
-class CTFdFlask(Flask):
+class CTFdFlask(APIFlask):
     def __init__(self, *args, **kwargs):
         """Overriden Jinja constructor setting a custom jinja_environment"""
         self.jinja_environment = SandboxedBaseEnvironment
@@ -58,7 +59,7 @@ class CTFdFlask(Flask):
 
         # Create generally unique run identifier
         self.run_id = sha256(str(self.start_time))[0:8]
-        Flask.__init__(self, *args, **kwargs)
+        APIFlask.__init__(self, *args, **kwargs)
 
     def create_jinja_environment(self):
         """Overridden jinja environment constructor"""
@@ -157,7 +158,11 @@ def run_upgrade():
 
 
 def create_app(config="CTFd.config.Config"):
-    app = CTFdFlask(__name__)
+    app = CTFdFlask(__name__, docs_path=None)
+    app.config['SWAGGER_UI_CSS'] = 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.11.1/swagger-ui.min.css'
+    app.config['SWAGGER_UI_BUNDLE_JS'] = 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.11.1/swagger-ui-bundle.min.js'
+    app.config['SWAGGER_UI_STANDALONE_PRESET_JS'] = 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.11.1/swagger-ui-standalone-preset.min.js'
+
     with app.app_context():
         app.config.from_object(config)
 
@@ -190,17 +195,7 @@ def create_app(config="CTFd.config.Config"):
         # Use a choice loader to find the first match from our list of loaders
         app.jinja_loader = jinja2.ChoiceLoader(loaders)
 
-        from CTFd.models import (  # noqa: F401
-            Challenges,
-            Fails,
-            Files,
-            Flags,
-            Solves,
-            Tags,
-            Teams,
-            Tracking,
-            db,
-        )
+        from CTFd.models import db
 
         url = create_database()
 
@@ -240,13 +235,15 @@ def create_app(config="CTFd.config.Config"):
             # Allows migrations to happen properly
             upgrade()
 
-        from CTFd.models import ma
 
-        ma.init_app(app)
-
+        
         app.db = db
         app.VERSION = __version__
         app.CHANNEL = __channel__
+
+        # In order to integrate with Flask-SQLAlchemy, this extension must be initialized *after* flask_sqlalchemy.SQLAlchemy.
+        # https://github.com/marshmallow-code/flask-marshmallow/issues/74
+        from CTFd.schemas import ma
 
         from CTFd.cache import cache
 

@@ -3,7 +3,9 @@ from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 from sqlalchemy.orm import load_only
 
-from CTFd.models import UserFieldEntries, UserFields, Users, ma
+from CTFd.models import UserFieldEntries, UserFields, Users
+from CTFd.schemas import ma
+
 from CTFd.schemas.fields import UserFieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
@@ -12,12 +14,13 @@ from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.validators import validate_country_code, validate_language
 
 
-class UserSchema(ma.ModelSchema):
+class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Users
         include_fk = True
         dump_only = ("id", "oauth_id", "created", "team_id")
         load_only = ("password",)
+        load_instance = True
 
     name = field_for(
         Users,
@@ -33,7 +36,7 @@ class UserSchema(ma.ModelSchema):
         "email",
         allow_none=False,
         validate=[
-            validate.Email("Emails must be a properly formatted email address"),
+            validate.Email(error="Emails must be a properly formatted email address"),
             validate.Length(min=1, max=128, error="Emails must not be empty"),
         ],
     )

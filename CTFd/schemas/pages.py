@@ -1,15 +1,18 @@
 from marshmallow import pre_load, validate
 from marshmallow_sqlalchemy import field_for
 
-from CTFd.models import Pages, ma
+from CTFd.models import Pages
+from CTFd.schemas import ma
+
 from CTFd.utils import string_types
 
 
-class PageSchema(ma.ModelSchema):
+class PageSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Pages
         include_fk = True
         dump_only = ("id",)
+        load_instance = True
 
     title = field_for(
         Pages,

@@ -1,12 +1,15 @@
-from CTFd.models import Tags, ma
+from CTFd.models import Tags
+from CTFd.schemas import ma
+
 from CTFd.utils import string_types
 
 
-class TagSchema(ma.ModelSchema):
+class TagSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Tags
         include_fk = True
         dump_only = ("id",)
+        load_instance = True
 
     views = {"admin": ["id", "challenge", "value"], "user": ["value"]}
 

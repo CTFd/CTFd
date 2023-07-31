@@ -4,7 +4,8 @@
 #
 #    ./scripts/pip-compile.sh
 #
-alembic==1.4.3
+alembic==1.11.1
+APIFlask==1.3.1
     # via
     #   dataset
     #   flask-migrate
@@ -37,7 +38,7 @@ cffi==1.15.0
     #   pybluemonday
 charset-normalizer==2.0.12
     # via requests
-click==7.1.2
+click==8.1.4
     # via flask
 cmarkgfm==2022.10.27
     # via -r requirements.in
@@ -47,7 +48,7 @@ dataset==1.5.2
     # via -r requirements.in
 docutils==0.15.2
     # via botocore
-flask==2.0.3
+Flask==2.3.2
     # via
     #   -r requirements.in
     #   flask-babel
@@ -61,7 +62,7 @@ flask-babel==2.0.0
     # via -r requirements.in
 flask-caching==2.0.2
     # via -r requirements.in
-flask-marshmallow==0.10.1
+flask-marshmallow==0.15.0
     # via -r requirements.in
 flask-migrate==2.5.3
     # via -r requirements.in
@@ -69,7 +70,7 @@ flask-restx==1.1.0
     # via -r requirements.in
 flask-script==2.0.6
     # via -r requirements.in
-flask-sqlalchemy==2.5.1
+Flask-SQLAlchemy==3.0.5
     # via
     #   -r requirements.in
     #   flask-migrate
@@ -104,12 +105,12 @@ markupsafe==2.1.3
     #   jinja2
     #   mako
     #   wtforms
-marshmallow==2.20.2
+marshmallow==3.19.0
     # via
     #   -r requirements.in
     #   flask-marshmallow
     #   marshmallow-sqlalchemy
-marshmallow-sqlalchemy==0.17.0
+marshmallow-sqlalchemy==0.29.0
     # via -r requirements.in
 maxminddb==1.5.4
     # via
@@ -170,7 +171,7 @@ urllib3==1.25.11
     # via
     #   botocore
     #   requests
-werkzeug==2.1.2
+Werkzeug==2.3.6
     # via
     #   -r requirements.in
     #   flask
