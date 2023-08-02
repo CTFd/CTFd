@@ -14,6 +14,7 @@ from CTFd.utils.decorators.visibility import (
 from CTFd.utils.helpers import get_errors, get_infos
 from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.user import get_current_user, get_current_user_attrs
+from CTFd.utils.validators import ValidationError
 
 teams = Blueprint("teams", __name__)
 
@@ -226,6 +227,7 @@ def new():
 
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
+        country = request.form.get("country")
 
         user = get_current_user()
 
@@ -270,10 +272,21 @@ def new():
         else:
             valid_affiliation = True
 
+        if country:
+            try:
+                validators.validate_country_code(country)
+                valid_country = True
+            except ValidationError:
+                valid_country = False
+        else:
+            valid_country = True
+
         if valid_website is False:
             errors.append("Websites must be a proper URL starting with http or https")
         if valid_affiliation is False:
             errors.append("Please provide a shorter affiliation")
+        if valid_country is False:
+            errors.append("Invalid country")
 
         if errors:
             return render_template("teams/new_team.html", errors=errors), 403
@@ -291,6 +304,8 @@ def new():
             team.website = website
         if affiliation:
             team.affiliation = affiliation
+        if country:
+            team.country = country
 
         db.session.add(team)
         db.session.commit()
