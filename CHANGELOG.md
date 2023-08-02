@@ -2,7 +2,7 @@
 
 **General**
 
-- Translations support for Spanish, Polish, German, Chinese. 
+- Translations support for Spanish, Polish, German, Chinese
   - If you wish to fix or maintain a language translation please join at CTFd's public [POEditor page](https://poeditor.com/join/project/p5jhdcrlm7).
 - Add a total user registration limit option
 - Dynamic value challenges can now choose between linear and logarithmic decay functions
@@ -22,20 +22,20 @@
 - Add new config `AWS_S3_ADDRESSING_STYLE`: Support for selecting the S3 addressing style. It defaults to "auto" as when it's not set, but can also be set to **virtual** and **path**. See https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-bucket-intro.html#access-bucket-console-ex.
 - Add new config `AWS_S3_CUSTOM_DOMAIN`: Domain that replaces the default one in presigned download URLs.
 - Flask and Werkzeug have been upgraded to v2. Other dependencies have been updated for compatability.
+- SQLAlchemy has been updated to v1.4.
 - The `flask` cli tool is now offered as an alternative to the `manage.py` script.
+- gzip compression is now enabled in the provided nginx configuration
 
 **API**
 
 - Free hints are now visible by unauthenticated users if challenges are visible by unauthenticated users
-- Add a description field for API tokens 
+- Add a description field for API tokens
 - API tokens now start with a `ctfd_` prefix to make them easier to identify
-
-**Plugins**
 
 **Themes**
 
-- Core-beta is now provided in all CTFd instances 
-- Core-beta is the default theme during setup
+- core-beta is now provided in all CTFd instances
+- core-beta is the default theme during setup
 
 # 3.5.3 / 2023-06-08
 
