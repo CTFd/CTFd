@@ -249,14 +249,6 @@ def new():
                 errors.append("Please provide all required fields")
                 break
 
-            # Handle special casing of existing profile fields
-            if field.name.lower() == "affiliation":
-                affiliation = value
-                break
-            elif field.name.lower() == "website":
-                website = value
-                break
-
             if field.field_type == "boolean":
                 entries[field_id] = bool(value)
             else:
