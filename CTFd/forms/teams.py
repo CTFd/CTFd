@@ -15,7 +15,7 @@ def build_custom_team_fields(
     include_entries=False,
     fields_kwargs=None,
     field_entries_kwargs=None,
-    blacklisted_items=("affiliation", "website"),
+    blacklisted_items=(),
 ):
     if fields_kwargs is None:
         fields_kwargs = {}

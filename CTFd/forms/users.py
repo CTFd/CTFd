@@ -16,7 +16,7 @@ def build_custom_user_fields(
     include_entries=False,
     fields_kwargs=None,
     field_entries_kwargs=None,
-    blacklisted_items=("affiliation", "website"),
+    blacklisted_items=(),
 ):
     """
     Function used to reinject values back into forms for accessing by themes
