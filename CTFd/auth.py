@@ -242,7 +242,10 @@ def register():
 
             # Handle special casing of existing profile fields
             # We still want to assign the field entries in case the fields are required
-            # TODO (CTFd 4.0): Consider converting affiliation & website into custom fields
+            # TODO (CTFd 4.0): Consider converting affiliation & website into custom fields. 
+            # There is also the issue of keeping the custom field and affiliation/website
+            # in sync if the custom field is required. Custom fields are an overall better 
+            # solution.
             if field.name.lower() == "affiliation":
                 affiliation = value
             elif field.name.lower() == "website":
