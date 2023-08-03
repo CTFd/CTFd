@@ -241,12 +241,12 @@ def register():
                 break
 
             # Handle special casing of existing profile fields
+            # We still want to assign the field entries in case the fields are required
+            # TODO (CTFd 4.0): Consider converting affiliation & website into custom fields
             if field.name.lower() == "affiliation":
                 affiliation = value
-                break
             elif field.name.lower() == "website":
                 website = value
-                break
 
             if field.field_type == "boolean":
                 entries[field_id] = bool(value)
