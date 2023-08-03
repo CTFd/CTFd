@@ -240,17 +240,6 @@ def register():
                 errors.append("Please provide all required fields")
                 break
 
-            # Handle special casing of existing profile fields
-            # We still want to assign the field entries in case the fields are required
-            # TODO (CTFd 4.0): Consider converting affiliation & website into custom fields. 
-            # There is also the issue of keeping the custom field and affiliation/website
-            # in sync if the custom field is required. Custom fields are an overall better 
-            # solution.
-            if field.name.lower() == "affiliation":
-                affiliation = value
-            elif field.name.lower() == "website":
-                website = value
-
             if field.field_type == "boolean":
                 entries[field_id] = bool(value)
             else:
