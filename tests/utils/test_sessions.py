@@ -1,5 +1,6 @@
-from unittest.mock import Mock, patch
 from uuid import UUID
+
+from mock import Mock, patch
 
 from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
@@ -39,7 +40,7 @@ def test_session_invalidation_on_admin_password_change():
             r = user.get("/settings")
             # User's password was changed
             # They should be logged out
-            assert r.location.startswith("/login")
+            assert r.location.startswith("http://localhost/login")
             assert r.status_code == 302
     destroy_ctfd(app)
 

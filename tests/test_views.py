@@ -83,7 +83,7 @@ def test_page_requiring_auth():
         with app.test_client() as client:
             r = client.get("/this-is-a-route")
             assert r.status_code == 302
-            assert r.location == "/login?next=%2Fthis-is-a-route%3F"
+            assert r.location == "http://localhost/login?next=%2Fthis-is-a-route%3F"
 
         register_user(app)
         client = login_as_user(app)
@@ -388,13 +388,6 @@ def test_user_can_access_files_with_auth_token():
                     # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
                     set_config("end", "1507262400")
                     set_config("view_after_ctf", True)
-
-                    # Get file_url under current time
-                    with login_as_user(app) as user:
-                        req = user.get("/api/v1/challenges/1")
-                        data = req.get_json()
-                        file_url = data["data"]["files"][0]
-
                     for v in ("public", "private"):
                         set_config("challenge_visibility", v)
 
@@ -431,13 +424,12 @@ def test_user_can_access_files_if_view_after_ctf():
 
             register_user(app)
             with login_as_user(app) as client:
-                # After ctf end
-                # Get file_url during freeze time
-                with freeze_time("2017-10-7"):
-                    req = client.get("/api/v1/challenges/1")
-                    data = req.get_json()
-                    file_url = data["data"]["files"][0]
+                req = client.get("/api/v1/challenges/1")
+                data = req.get_json()
+                file_url = data["data"]["files"][0]
 
+                # After ctf end
+                with freeze_time("2017-10-7"):
                     # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
                     set_config("end", "1507262400")
 
@@ -451,8 +443,8 @@ def test_user_can_access_files_if_view_after_ctf():
                     assert r.get_data(as_text=True) == "testing file load"
 
                     # Unauthed users should be able to download if view_after_ctf
-                    unauth_client = app.test_client()
-                    r = unauth_client.get(file_url)
+                    client = app.test_client()
+                    r = client.get(file_url)
                     assert r.status_code == 200
                     assert r.get_data(as_text=True) == "testing file load"
         finally:

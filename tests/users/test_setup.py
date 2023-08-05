@@ -11,7 +11,7 @@ def test_ctfd_setup_redirect():
         with app.test_client() as client:
             r = client.get("/users")
             assert r.status_code == 302
-            assert r.location == "/setup"
+            assert r.location == "http://localhost/setup"
 
             # Files in /themes load properly
             r = client.get("/themes/core/static/css/main.dev.css")
@@ -52,5 +52,5 @@ def test_ctfd_setup_verification():
             data["email"] = "admin@examplectf.com"
             r = client.post("/setup", data=data)
             assert r.status_code == 302
-            assert r.location == "/"
+            assert r.location == "http://localhost/"
     destroy_ctfd(app)

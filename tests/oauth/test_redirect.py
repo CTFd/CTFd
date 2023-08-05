@@ -18,7 +18,7 @@ def test_oauth_not_configured():
     with app.app_context():
         with app.test_client() as client:
             r = client.get("/oauth", follow_redirects=False)
-            assert r.location == "/login"
+            assert r.location == "http://localhost/login"
             r = client.get(r.location)
             resp = r.get_data(as_text=True)
             assert "OAuth Settings not configured" in resp
