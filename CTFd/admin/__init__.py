@@ -166,8 +166,8 @@ def export_csv():
     return send_file(
         output,
         as_attachment=True,
-        cache_timeout=-1,
-        attachment_filename="{name}-{table}.csv".format(
+        max_age=-1,
+        download_name="{name}-{table}.csv".format(
             name=ctf_config.ctf_name(), table=table
         ),
     )
