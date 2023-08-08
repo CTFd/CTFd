@@ -176,7 +176,7 @@ msgstr "Theme Farbe"
 msgid ""
 "Color used by theme to control aesthetics. Requires theme support. Optional."
 msgstr ""
-"Vom Theme verwendete Farbe für Steuerungsästhetiken. Erfordert Theme-"
+"Vom Thema verwendete Farbe zur Steuerung der Ästhetik. Erfordert Theme-"
 "Unterstützung. Optional."
 
 #: CTFd/forms/setup.py:83
@@ -620,7 +620,7 @@ msgstr ""
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
 msgid "Play with Official Team"
-msgstr "Mit offizieller Team spielen"
+msgstr "Mit offiziellem Team spielen"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
 msgid "Join Unofficial Team"
