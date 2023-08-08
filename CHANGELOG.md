@@ -7,6 +7,8 @@
 - Add a total user registration limit option
 - Dynamic value challenges can now choose between linear and logarithmic decay functions
 - Free hints are now visible by unauthenticated users if challenges are visible by unauthenticated users
+- Fix issue where a custom field named affiliation or website prevented registration
+  - No longer special case "Affiliation" or "Website" as custom field titles. Previously custom fields with those titles would set the user's affiliation or website but this behavior has been removed.
 
 **Admin Panel**
 
@@ -26,7 +28,7 @@
   - Support selecting the [S3 addressing style](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-bucket-intro.html#access-bucket-console-ex). It defaults to "auto" as when it's not set, but can also be set to `virtual` or `path`
 - Add new config `AWS_S3_CUSTOM_DOMAIN` which specifies a domain that replaces the default one in presigned download URLs
   - Required for certain S3 implementations
-- Flask and Werkzeug have been upgraded to v2. Other dependencies have been updated for compatability.
+- Flask and Werkzeug have been upgraded to v2.0.3. Other dependencies have been updated for compatability.
 - SQLAlchemy has been updated to v1.4.
 - The `flask` cli tool is now offered as an alternative to the `manage.py` script.
 - gzip compression is now enabled in the provided nginx configuration
