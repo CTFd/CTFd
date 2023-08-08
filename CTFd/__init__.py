@@ -6,12 +6,12 @@ from distutils.version import StrictVersion
 
 import jinja2
 from flask import Flask, Request
-from flask.helpers import safe_join
 from flask_babel import Babel
 from flask_migrate import upgrade
 from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.utils import safe_join
 
 import CTFd.utils.config
 from CTFd import utils
