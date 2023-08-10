@@ -152,7 +152,7 @@ class VisibilitySettingsForm(BaseForm):
             (ScoreVisibilityTypes.HIDDEN, "Hidden"),
             (ScoreVisibilityTypes.ADMINS, "Admins Only"),
         ],
-        default=AccountVisibilityTypes.PUBLIC,
+        default=ScoreVisibilityTypes.PUBLIC,
     )
     registration_visibility = SelectField(
         "Registration Visibility",
