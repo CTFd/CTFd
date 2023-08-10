@@ -85,6 +85,31 @@ def setup():
             set_config("ctf_description", ctf_description)
             set_config("user_mode", user_mode)
 
+            # Settings
+            challenge_visibility = ChallengeVisibilityTypes(
+                request.form.get(
+                    "challenge_visibility", default=ChallengeVisibilityTypes.PRIVATE
+                )
+            )
+            account_visibility = AccountVisibilityTypes(
+                request.form.get(
+                    "account_visibility", default=AccountVisibilityTypes.PUBLIC
+                )
+            )
+            score_visibility = ScoreVisibilityTypes(
+                request.form.get(
+                    "score_visibility", default=ScoreVisibilityTypes.PUBLIC
+                )
+            )
+            registration_visibility = RegistrationVisibilityTypes(
+                request.form.get(
+                    "registration_visibility",
+                    default=RegistrationVisibilityTypes.PUBLIC,
+                )
+            )
+            verify_emails = request.form.get("verify_emails")
+            team_size = request.form.get("team_size")
+
             # Style
             ctf_logo = request.files.get("ctf_logo")
             if ctf_logo:
@@ -198,17 +223,16 @@ def setup():
             page.content = index
 
             # Visibility
-            set_config(
-                ConfigTypes.CHALLENGE_VISIBILITY, ChallengeVisibilityTypes.PRIVATE
-            )
-            set_config(
-                ConfigTypes.REGISTRATION_VISIBILITY, RegistrationVisibilityTypes.PUBLIC
-            )
-            set_config(ConfigTypes.SCORE_VISIBILITY, ScoreVisibilityTypes.PUBLIC)
-            set_config(ConfigTypes.ACCOUNT_VISIBILITY, AccountVisibilityTypes.PUBLIC)
+            set_config(ConfigTypes.CHALLENGE_VISIBILITY, challenge_visibility)
+            set_config(ConfigTypes.REGISTRATION_VISIBILITY, registration_visibility)
+            set_config(ConfigTypes.SCORE_VISIBILITY, score_visibility)
+            set_config(ConfigTypes.ACCOUNT_VISIBILITY, account_visibility)
 
             # Verify emails
-            set_config("verify_emails", None)
+            set_config("verify_emails", verify_emails)
+
+            # Team Size
+            set_config("team_size", team_size)
 
             set_config("mail_server", None)
             set_config("mail_port", None)
