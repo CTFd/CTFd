@@ -7,7 +7,8 @@ Create Date: 2023-06-28 17:37:48.244827
 """
 import sqlalchemy as sa
 
-# revision identifiers, used by Alembic.
+from CTFd.plugins.migrations import get_columns_for_table
+
 revision = "eb68f277ab61"
 down_revision = "b37fb68807ea"
 branch_labels = None
@@ -15,20 +16,29 @@ depends_on = None
 
 
 def upgrade(op=None):
-    op.add_column(
-        "dynamic_challenge", sa.Column("function", sa.String(length=32), nullable=True)
+    columns = get_columns_for_table(
+        op=op, table_name="dynamic_challenge", names_only=True
     )
-    conn = op.get_bind()
-    url = str(conn.engine.url)
-    if url.startswith("postgres"):
-        conn.execute(
-            "UPDATE dynamic_challenge SET function = 'logarithmic' WHERE function IS NULL"
+    if "function" not in columns:
+        op.add_column(
+            "dynamic_challenge",
+            sa.Column("function", sa.String(length=32), nullable=True),
         )
-    else:
-        conn.execute(
-            "UPDATE dynamic_challenge SET `function` = 'logarithmic' WHERE `function` IS NULL"
-        )
+        conn = op.get_bind()
+        url = str(conn.engine.url)
+        if url.startswith("postgres"):
+            conn.execute(
+                "UPDATE dynamic_challenge SET function = 'logarithmic' WHERE function IS NULL"
+            )
+        else:
+            conn.execute(
+                "UPDATE dynamic_challenge SET `function` = 'logarithmic' WHERE `function` IS NULL"
+            )
 
 
 def downgrade(op=None):
-    op.drop_column("dynamic_challenge", "function")
+    columns = get_columns_for_table(
+        op=op, table_name="dynamic_challenge", names_only=True
+    )
+    if "function" in columns:
+        op.drop_column("dynamic_challenge", "function")
