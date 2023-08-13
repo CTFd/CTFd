@@ -297,6 +297,8 @@ def setup():
 
             return redirect(url_for("views.static_html"))
         try:
+            if bool(get_config("ctf_theme")) is False:
+                set_config("ctf_theme", "core-beta")
             return render_template("setup.html", state=serialize(generate_nonce()))
         except TemplateNotFound:
             # Set theme to default and try again
