@@ -202,7 +202,7 @@ Alpine.data("ChallengeBoard", () => ({
   getChallenges(category) {
     let challenges = this.challenges;
 
-    if (category) {
+    if (category !== null) {
       challenges = this.challenges.filter(challenge => challenge.category === category);
     }
 
