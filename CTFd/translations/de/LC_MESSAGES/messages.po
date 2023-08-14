@@ -9,9 +9,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: CTFd/forms/auth.py:19 CTFd/forms/self.py:16
-#, fuzzy
 msgid "User Name"
-msgstr "Benutzer"
+msgstr "Benutzername"
 
 #: CTFd/forms/auth.py:21 CTFd/forms/auth.py:53 CTFd/forms/self.py:17
 #: CTFd/forms/teams.py:203
@@ -20,9 +19,8 @@ msgstr "E-Mail"
 
 #: CTFd/forms/auth.py:22 CTFd/forms/auth.py:43 CTFd/forms/auth.py:60
 #: CTFd/forms/self.py:19 CTFd/forms/teams.py:204
-#, fuzzy
 msgid "Password"
-msgstr "Passwort zurücksetzen"
+msgstr "Passwort"
 
 #: CTFd/forms/auth.py:23 CTFd/forms/auth.py:44 CTFd/forms/auth.py:55
 #: CTFd/forms/auth.py:62 CTFd/forms/self.py:24 CTFd/forms/teams.py:127
@@ -31,9 +29,8 @@ msgid "Submit"
 msgstr "Einreichen"
 
 #: CTFd/forms/auth.py:39
-#, fuzzy
 msgid "User Name or Email"
-msgstr "Ihr Benutzername auf der Website"
+msgstr "Benutzername oder E-Mail-Adresse"
 
 #: CTFd/forms/auth.py:48
 msgid "Resend Confirmation Email"
@@ -44,9 +41,8 @@ msgid "Language"
 msgstr "Sprache"
 
 #: CTFd/forms/self.py:20
-#, fuzzy
 msgid "Current Password"
-msgstr "Passwort zurücksetzen"
+msgstr "Aktuelles Passwort"
 
 #: CTFd/forms/self.py:21 CTFd/forms/teams.py:113 CTFd/forms/teams.py:191
 #: CTFd/forms/teams.py:206 CTFd/forms/users.py:137
@@ -70,17 +66,15 @@ msgstr "Land"
 
 #: CTFd/forms/self.py:52 CTFd/themes/core-beta/templates/settings.html:220
 msgid "Expiration"
-msgstr "Ablauf"
+msgstr "Ablaufdatum"
 
 #: CTFd/forms/self.py:53
-#, fuzzy
 msgid "Generate"
-msgstr "Allgemein"
+msgstr "Erzeugen"
 
 #: CTFd/forms/setup.py:22
-#, fuzzy
 msgid "Event Name"
-msgstr "Benutzer"
+msgstr "Name des Events"
 
 #: CTFd/forms/setup.py:22
 msgid "The name of your CTF event/workshop"
@@ -88,67 +82,59 @@ msgstr "Der Name Ihrer CTF-Veranstaltung/Ihres Workshops"
 
 #: CTFd/forms/setup.py:25
 msgid "Event Description"
-msgstr "Ereignis Beschreibung"
+msgstr "Event-Beschreibung"
 
 #: CTFd/forms/setup.py:25
 msgid "Description for the CTF"
-msgstr "Beschreibung für die CTF"
+msgstr "Beschreibung für den CTF-Event"
 
 #: CTFd/forms/setup.py:28 CTFd/forms/setup.py:29
-#, fuzzy
 msgid "User Mode"
-msgstr "Benutzer"
+msgstr "Benutzer-Modus"
 
 #: CTFd/forms/setup.py:29
-#, fuzzy
 msgid "Team Mode"
-msgstr "Mannschaft"
+msgstr "Team-Modus"
 
 #: CTFd/forms/setup.py:31
 msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
 msgstr "Legt fest, ob sich die Benutzer in Teams zusammenschließen (Team-Modus) oder alleine spielen (Benutzer-Modus)"
 
 #: CTFd/forms/setup.py:38
-#, fuzzy
 msgid "Admin Username"
-msgstr "Benutzer"
+msgstr "Benutzername des Administrators"
 
 #: CTFd/forms/setup.py:39
-#, fuzzy
 msgid "Your username for the administration account"
-msgstr "Ihr Benutzername auf der Website"
+msgstr "Ihr Benutzername für den Administrator-Account"
 
 #: CTFd/forms/setup.py:43
-#, fuzzy
 msgid "Admin Email"
-msgstr "Administrationsmenü"
+msgstr "E-Mail-Adresse des Administrators"
 
 #: CTFd/forms/setup.py:44
 msgid "Your email address for the administration account"
 msgstr "Ihre E-Mail-Adresse für das Administrationskonto"
 
 #: CTFd/forms/setup.py:48
-#, fuzzy
 msgid "Admin Password"
-msgstr "Passwort zurücksetzen"
+msgstr "Administrator-Passwort"
 
 #: CTFd/forms/setup.py:49
 msgid "Your password for the administration account"
 msgstr "Ihr Passwort für das Administrationskonto"
 
 #: CTFd/forms/setup.py:54
-#, fuzzy
 msgid "Logo"
-msgstr "Ausloggen"
+msgstr "Logo"
 
 #: CTFd/forms/setup.py:55
 msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
 msgstr "Logo zur Verwendung für die Website anstelle des CTF-Namens. Wird als Schaltfläche auf der Startseite verwendet. Optional."
 
 #: CTFd/forms/setup.py:60
-#, fuzzy
 msgid "Banner"
-msgstr "Verboten"
+msgstr "Banner"
 
 #: CTFd/forms/setup.py:60
 msgid "Banner to use for the homepage. Optional."
@@ -156,24 +142,23 @@ msgstr "Banner, das für die Homepage verwendet werden soll. Optional."
 
 #: CTFd/forms/setup.py:63
 msgid "Small Icon"
-msgstr "Kleine Ikone"
+msgstr "Kleines Icon"
 
 #: CTFd/forms/setup.py:64
 msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
 msgstr "Favicon, das in den Browsern der Benutzer verwendet wird. Nur PNGs werden akzeptiert. Muss 32x32px groß sein. Optional."
 
 #: CTFd/forms/setup.py:69
-#, fuzzy
 msgid "Theme"
-msgstr "Zeit"
+msgstr "Theme"
 
 #: CTFd/forms/setup.py:70
 msgid "CTFd Theme to use. Can be changed later."
-msgstr "CTFd Theme zu verwenden. Kann später geändert werden."
+msgstr "CTFd-Theme, das verwendet werden soll. Kann später geändert werden."
 
 #: CTFd/forms/setup.py:76
 msgid "Theme Color"
-msgstr "Thema Farbe"
+msgstr "Theme-Farbe"
 
 #: CTFd/forms/setup.py:77
 msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
@@ -188,9 +173,8 @@ msgid "Time when your CTF is scheduled to start. Optional."
 msgstr "Uhrzeit, zu der Ihre CTF beginnen soll. Optional."
 
 #: CTFd/forms/setup.py:87
-#, fuzzy
 msgid "End Time"
-msgstr "Zeit"
+msgstr "Endzeit"
 
 #: CTFd/forms/setup.py:88
 msgid "Time when your CTF is scheduled to end. Optional."
@@ -198,46 +182,40 @@ msgstr "Uhrzeit, zu der die CTF enden soll. Optional."
 
 #: CTFd/forms/setup.py:90
 msgid "Finish"
-msgstr "Oberfläche"
+msgstr "Fertigstellen"
 
 #: CTFd/forms/teams.py:76 CTFd/forms/teams.py:83 CTFd/forms/teams.py:100
 #: CTFd/forms/teams.py:202
-#, fuzzy
 msgid "Team Name"
-msgstr "Mannschaft"
+msgstr "Team-Name"
 
 #: CTFd/forms/teams.py:77 CTFd/forms/teams.py:84
-#, fuzzy
 msgid "Team Password"
-msgstr "Passwort zurücksetzen"
+msgstr "Team-Passwort"
 
 #: CTFd/forms/teams.py:78 CTFd/forms/teams.py:258
-#, fuzzy
 msgid "Join"
-msgstr "Anmeldung"
+msgstr "Beitreten"
 
 #: CTFd/forms/teams.py:85
-#, fuzzy
 msgid "Create"
-msgstr "Erstellt"
+msgstr "Erstellen"
 
 #: CTFd/forms/teams.py:101
 msgid "Your team's public name shown to other competitors"
-msgstr "Der öffentliche Name Ihres Teams wird für andere Teilnehmer angezeigt"
+msgstr "Der öffentliche Name Ihres Teams, wie er für andere Teilnehmer angezeigt wird"
 
 #: CTFd/forms/teams.py:104
-#, fuzzy
 msgid "New Team Password"
-msgstr "Passwort zurücksetzen"
+msgstr "Neues Team-Passwort"
 
 #: CTFd/forms/teams.py:104
 msgid "Set a new team join password"
-msgstr "Ein neues Passwort für den Beitritt zu einem Team festlegen"
+msgstr "Neues Team-Passwort setzen"
 
 #: CTFd/forms/teams.py:107
-#, fuzzy
 msgid "Confirm Current Team Password"
-msgstr "Passwort zurücksetzen"
+msgstr "Team-Passwort bestätigen"
 
 #: CTFd/forms/teams.py:108
 msgid "Provide your current team password (or your password) to update your team's password"
@@ -245,19 +223,19 @@ msgstr "Geben Sie Ihr aktuelles Team-Passwort (oder Ihr Passwort) ein, um das Pa
 
 #: CTFd/forms/teams.py:114
 msgid "Your team's affiliation publicly shown to other competitors"
-msgstr "Die Zugehörigkeit Ihres Teams wird für andere Wettbewerber öffentlich angezeigt"
+msgstr "Die öffentlich angezeigte Zugehörigkeit Ihres Teams"
 
 #: CTFd/forms/teams.py:120
 msgid "Your team's website publicly shown to other competitors"
-msgstr "Die Website Ihres Teams wird öffentlich für andere Wettbewerber angezeigt"
+msgstr "Die öffentlich angezeigte Website Ihres Teams"
 
 #: CTFd/forms/teams.py:125
 msgid "Your team's country publicly shown to other competitors"
-msgstr "Das Land Ihres Teams wird öffentlich für andere Teilnehmer angezeigt"
+msgstr "Das öffentlich angezeigte Land Ihres Teams"
 
 #: CTFd/forms/teams.py:165
 msgid "Team Captain"
-msgstr "Mannschaftskapitän"
+msgstr "Teamkapitän"
 
 #: CTFd/forms/teams.py:188 CTFd/forms/users.py:134
 msgid "Search Field"
@@ -273,43 +251,40 @@ msgid "Parameter"
 msgstr "Parameter"
 
 #: CTFd/forms/teams.py:198 CTFd/forms/users.py:148
-#, fuzzy
 msgid "Search"
-msgstr "Benutzer"
+msgstr "Suchen"
 
 #: CTFd/forms/teams.py:208
-#, fuzzy
 msgid "Hidden"
-msgstr "Verboten"
+msgstr "Versteckt"
 
 #: CTFd/forms/teams.py:209
 msgid "Banned"
-msgstr "Verboten"
+msgstr "Ausgeschlossen"
 
 #: CTFd/forms/teams.py:254
-#, fuzzy
 msgid "Invite Link"
-msgstr "Tipp ansehen"
+msgstr "Einladungslink"
 
 #: CTFd/forms/users.py:145
 msgid "Search for matching users"
-msgstr "Suche nach passenden Benutzern"
+msgstr "Nach passenden Benutzern suchen"
 
 #: CTFd/themes/core-beta/templates/base.html:49
 msgid "Powered by CTFd"
-msgstr "Angetrieben von CTFd"
+msgstr "Powered by CTFd"
 
 #: CTFd/themes/core-beta/templates/challenge.html:11
 #: CTFd/themes/core-beta/templates/users/private.html:114
 #: CTFd/themes/core-beta/templates/users/public.html:113
 msgid "Challenge"
-msgstr "Herausforderung"
+msgstr "Challenge"
 
 #: CTFd/themes/core-beta/templates/challenge.html:19
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
-msgstr[0] "%(num)d Lösen"
-msgstr[1] ""
+msgstr[0] "%(num)d Lösung"
+msgstr[1] "%(num)d Lösungen"
 
 #: CTFd/themes/core-beta/templates/challenge.html:73
 msgid "View Hint"
@@ -317,27 +292,26 @@ msgstr "Hinweis anzeigen"
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
-msgstr "Flagge"
+msgstr "Flag"
 
 #: CTFd/themes/core-beta/templates/challenge.html:167
 msgid "Next Challenge"
-msgstr "Nächste Herausforderung"
+msgstr "Nächste Challenge"
 
 #: CTFd/themes/core-beta/templates/challenge.html:186
 #: CTFd/themes/core-beta/templates/setup.html:237
 #: CTFd/themes/core-beta/templates/setup.html:258
-#, fuzzy
 msgid "Date"
-msgstr "Erstellt"
+msgstr "Datum"
 
 #: CTFd/themes/core-beta/templates/challenges.html:7
 #: CTFd/themes/core-beta/templates/components/navbar.html:57
 msgid "Challenges"
-msgstr "Herausforderungen"
+msgstr "Challenges"
 
 #: CTFd/themes/core-beta/templates/confirm.html:7
 msgid "Confirm"
-msgstr "Bestätigen Sie"
+msgstr "Bestätigen"
 
 #: CTFd/themes/core-beta/templates/confirm.html:18
 msgid "We've sent a confirmation email to your email address."
@@ -345,7 +319,7 @@ msgstr "Wir haben eine Bestätigungs-E-Mail an Ihre E-Mail-Adresse geschickt."
 
 #: CTFd/themes/core-beta/templates/confirm.html:24
 msgid "Please click the link in that email to confirm your account."
-msgstr "Bitte klicken Sie auf den Link in dieser E-Mail, um Ihr Konto zu bestätigen."
+msgstr "Bitte klicken Sie auf den Link in der E-Mail, um Ihr Konto zu bestätigen."
 
 #: CTFd/themes/core-beta/templates/confirm.html:30
 msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
@@ -357,13 +331,12 @@ msgstr "E-Mail Adresse ändern"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:178
 #: CTFd/themes/core-beta/templates/login.html:7
-#, fuzzy
 msgid "Login"
-msgstr "Ausloggen"
+msgstr "Anmelden"
 
 #: CTFd/themes/core-beta/templates/login.html:40
 msgid "Forgot your password?"
-msgstr "Haben Sie Ihr Passwort vergessen?"
+msgstr "Passwort vergessen?"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:97
 #: CTFd/themes/core-beta/templates/notifications.html:7
@@ -377,23 +350,21 @@ msgstr "Es liegen noch keine Benachrichtigungen vor"
 #: CTFd/themes/core-beta/templates/components/navbar.html:165
 #: CTFd/themes/core-beta/templates/register.html:7
 msgid "Register"
-msgstr "Register"
+msgstr "Registrierung"
 
 #: CTFd/themes/core-beta/templates/register.html:35
-#, fuzzy
 msgid "Your username on the site"
 msgstr "Ihr Benutzername auf der Website"
 
 #: CTFd/themes/core-beta/templates/register.html:43
 msgid "Never shown to the public"
-msgstr "Nie der Öffentlichkeit gezeigt"
+msgstr "Nie öffentlich angezeigt"
 
 #: CTFd/themes/core-beta/templates/register.html:51
 msgid "Password used to log into your account"
 msgstr "Passwort, mit dem Sie sich bei Ihrem Konto anmelden"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
-#, fuzzy
 msgid "Reset Password"
 msgstr "Passwort zurücksetzen"
 
@@ -428,13 +399,12 @@ msgid "Error:"
 msgstr "Fehler:"
 
 #: CTFd/themes/core-beta/templates/settings.html:129
-#, fuzzy
 msgid "API Key Generated"
-msgstr "Allgemein"
+msgstr "Erzeugter API-Key"
 
 #: CTFd/themes/core-beta/templates/settings.html:137
 msgid "Please copy your API Key, it won't be shown again!"
-msgstr "Bitte kopieren Sie Ihren API-Schlüssel, er wird nicht mehr angezeigt!"
+msgstr "Bitte kopieren Sie Ihren API-Key, er wird nicht mehr angezeigt!"
 
 #: CTFd/themes/core-beta/templates/settings.html:178
 msgid "Active Tokens"
@@ -449,7 +419,6 @@ msgid "Are you sure you want to delete this token?"
 msgstr "Sind Sie sicher, dass Sie dieses Token löschen wollen?"
 
 #: CTFd/themes/core-beta/templates/settings.html:219
-#, fuzzy
 msgid "Created"
 msgstr "Erstellt"
 
@@ -462,19 +431,16 @@ msgid "Setup"
 msgstr "Einrichtung"
 
 #: CTFd/themes/core-beta/templates/setup.html:44
-#, fuzzy
 msgid "General"
 msgstr "Allgemein"
 
 #: CTFd/themes/core-beta/templates/setup.html:47
-#, fuzzy
 msgid "Mode"
-msgstr "Benutzer"
+msgstr "Modus"
 
 #: CTFd/themes/core-beta/templates/setup.html:50
-#, fuzzy
 msgid "Administration"
-msgstr "Zugehörigkeit"
+msgstr "Administration"
 
 #: CTFd/themes/core-beta/templates/setup.html:53
 msgid "Style"
@@ -485,9 +451,8 @@ msgid "Date &amp; Time"
 msgstr "Datum &amp; Uhrzeit"
 
 #: CTFd/themes/core-beta/templates/setup.html:59
-#, fuzzy
 msgid "Integrations"
-msgstr "Ablauf"
+msgstr "Integrationen"
 
 #: CTFd/themes/core-beta/templates/setup.html:108
 msgid "Participants register accounts and form teams"
@@ -495,15 +460,15 @@ msgstr "Teilnehmer registrieren Konten und bilden Teams"
 
 #: CTFd/themes/core-beta/templates/setup.html:109
 msgid "If a team member solves a challenge, the entire team receives credit"
-msgstr "Wenn ein Teammitglied eine Aufgabe löst, erhält das gesamte Team eine Anerkennung."
+msgstr "Wenn ein Teammitglied eine Challenge löst, wird dies dem gesamten Team zugeschrieben"
 
 #: CTFd/themes/core-beta/templates/setup.html:111
 msgid "Easier to see which team member solved a challenge"
-msgstr "Leichter zu erkennen, welches Teammitglied eine Aufgabe gelöst hat"
+msgstr "Leichter zu erkennen, welches Teammitglied eine Challenge gelöst hat"
 
 #: CTFd/themes/core-beta/templates/setup.html:112
 msgid "May be slightly more difficult to administer"
-msgstr "Kann etwas schwieriger zu verabreichen sein"
+msgstr "Kann etwas schwieriger zu verwalten sein"
 
 #: CTFd/themes/core-beta/templates/setup.html:116
 msgid "Participants only register an individual account"
@@ -529,7 +494,6 @@ msgstr "Abonnieren Sie den Newsletter der CTFd LLC für Neuigkeiten und Updates"
 #: CTFd/themes/core-beta/templates/setup.html:262
 #: CTFd/themes/core-beta/templates/users/private.html:117
 #: CTFd/themes/core-beta/templates/users/public.html:116
-#, fuzzy
 msgid "Time"
 msgstr "Zeit"
 
@@ -539,39 +503,33 @@ msgstr "UTC-Vorschau"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:34
 #: CTFd/themes/core-beta/templates/users/users.html:6
-#, fuzzy
 msgid "Users"
 msgstr "Benutzer"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:41
 #: CTFd/themes/core-beta/templates/teams/teams.html:6
-#, fuzzy
 msgid "Teams"
-msgstr "Mannschaft"
+msgstr "Teams"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:50
 msgid "Scoreboard"
-msgstr "Anzeiger"
+msgstr "Punktebrett"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:80
-#, fuzzy
 msgid "Admin Panel"
 msgstr "Administrationsmenü"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:110
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
 #: CTFd/themes/core-beta/templates/teams/teams.html:49
-#, fuzzy
 msgid "Team"
-msgstr "Mannschaft"
+msgstr "Team"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:147
-#, fuzzy
 msgid "Logout"
 msgstr "Ausloggen"
 
 #: CTFd/themes/core-beta/templates/errors/403.html:9
-#, fuzzy
 msgid "Forbidden"
 msgstr "Verboten"
 
@@ -581,7 +539,7 @@ msgstr "Datei nicht gefunden"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:12
 msgid "Sorry about that"
-msgstr "Das tut mir leid."
+msgstr "Es tut uns leid"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:11
 msgid "Too many requests"
@@ -589,23 +547,22 @@ msgstr "Zu viele Anfragen"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:12
 msgid "Please slow down!"
-msgstr "Bitte langsamer fahren!"
+msgstr "Bitte langsamer!"
 
 #: CTFd/themes/core-beta/templates/errors/502.html:11
 msgid "Bad Gateway"
-msgstr "Schlechtes Tor"
+msgstr "Bad Gateway"
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
 msgid "(Optional)"
-msgstr "(fakultativ)"
+msgstr "(Optional)"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:6
 #: CTFd/themes/core-beta/templates/teams/join_team.html:6
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:36
-#, fuzzy
 msgid "Join Team"
-msgstr "Mannschaft"
+msgstr "Einem Team beitreten"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:15
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:12
@@ -618,9 +575,8 @@ msgstr "Klicken Sie auf die Schaltfläche unten, um dem Team beizutreten!"
 
 #: CTFd/themes/core-beta/templates/teams/new_team.html:6
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:39
-#, fuzzy
 msgid "Create Team"
-msgstr "Erstellt"
+msgstr "Team erstellen"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
 msgid "In order to participate you must either join or create a team."
@@ -628,11 +584,11 @@ msgstr "Um teilnehmen zu können, müssen Sie entweder einem Team beitreten oder
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
 msgid "Play with Official Team"
-msgstr "Mit offizieller Mannschaft spielen"
+msgstr "Mit offiziellem Team spielen"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
 msgid "Join Unofficial Team"
-msgstr "Dem inoffiziellen Team beitreten"
+msgstr "Einem inoffiziellen Team beitreten"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
 msgid "Create Unofficial Team"
@@ -656,7 +612,7 @@ msgstr "Auszeichnungen"
 
 #: CTFd/themes/core-beta/templates/users/private.html:110
 msgid "Solves"
-msgstr "Löst"
+msgstr "Lösungen"
 
 #: CTFd/themes/core-beta/templates/users/private.html:115
 #: CTFd/themes/core-beta/templates/users/public.html:114
@@ -674,21 +630,18 @@ msgid "No solves yet"
 msgstr "Noch keine Lösungen"
 
 #: CTFd/themes/core-beta/templates/users/users.html:46
-#, fuzzy
 msgid "User"
 msgstr "Benutzer"
 
 #: CTFd/utils/modes/__init__.py:35
-#, fuzzy
 msgid "user"
 msgid_plural "users"
 msgstr[0] "Benutzer"
-msgstr[1] ""
+msgstr[1] "Benutzer"
 
 #: CTFd/utils/modes/__init__.py:37
-#, fuzzy
 msgid "team"
 msgid_plural "teams"
-msgstr[0] "Mannschaft"
-msgstr[1] ""
+msgstr[0] "Team"
+msgstr[1] "Teams"
 

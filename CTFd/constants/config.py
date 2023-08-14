@@ -45,6 +45,7 @@ class AccountVisibilityTypes(str, RawEnum):
 class RegistrationVisibilityTypes(str, RawEnum):
     PUBLIC = "public"
     PRIVATE = "private"
+    MLC = "mlc"
 
 
 class _ConfigsWrapper:
