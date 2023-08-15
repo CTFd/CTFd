@@ -102,18 +102,17 @@ Alpine.data("SetupForm", () => ({
   },
 
   mlcSetup() {
-    let q = document.querySelector;
     let r = CTFd.config.urlRoot;
     let params = {
-      name: q("#ctf_name").value,
+      name: document.querySelector("#ctf_name").value,
       type: "jeopardy",
-      description: q("#ctf_description").value,
-      user_mode: q("#user_mode").value,
+      description: document.querySelector("#ctf_description").value,
+      user_mode: document.querySelector("[name=user_mode]:checked").value,
       event_url: window.location.origin + r,
       redirect_url: window.location.origin + r + "/redirect",
       integration_setup_url: window.location.origin + r + "/setup/integrations",
-      start: q("#start-preview").value,
-      end: q("#end-preview").value,
+      start: document.querySelector("#start-preview").value,
+      end: document.querySelector("#end-preview").value,
       platform: "CTFd",
       state: window.STATE,
     };
