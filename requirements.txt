@@ -123,7 +123,7 @@ pycparser==2.20
     # via cffi
 pydantic==1.6.2
     # via -r requirements.in
-pymysql[rsa]==0.9.3
+pymysql[rsa]==1.0.2
     # via -r requirements.in
 pyrsistent==0.17.3
     # via jsonschema
