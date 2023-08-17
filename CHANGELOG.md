@@ -1,4 +1,4 @@
-# 3.6.0 / UNRELEASED
+# 3.6.0 / 2023-08-21
 
 **General**
 
@@ -30,6 +30,7 @@
   - Required for certain S3 implementations
 - Flask and Werkzeug have been upgraded to v2.0.3. Other dependencies have been updated for compatability.
 - SQLAlchemy has been updated to v1.4.
+- PyMySQL has been upgraded to v1.0.2.
 - The `flask` cli tool is now offered as an alternative to the `manage.py` script.
 - gzip compression is now enabled in the provided nginx configuration
 
