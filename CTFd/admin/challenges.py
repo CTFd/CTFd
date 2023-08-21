@@ -3,7 +3,10 @@ from flask import abort, render_template, request, url_for
 from CTFd.admin import admin
 from CTFd.models import Challenges, Flags, Solves
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
+from CTFd.schemas.tags import TagSchema
 from CTFd.utils.decorators import admins_only
+from CTFd.utils.security.signing import serialize
+from CTFd.utils.user import get_current_team, get_current_user
 
 
 @admin.route("/admin/challenges")
@@ -68,6 +71,43 @@ def challenges_detail(challenge_id):
         challenges=challenges,
         solves=solves,
         flags=flags,
+    )
+
+
+@admin.route("/admin/challenges/preview/<int:challenge_id>")
+@admins_only
+def challenges_preview(challenge_id):
+    challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+    chal_class = get_chal_class(challenge.type)
+    user = get_current_user()
+    team = get_current_team()
+
+    files = []
+    for f in challenge.files:
+        token = {
+            "user_id": user.id,
+            "team_id": team.id if team else None,
+            "file_id": f.id,
+        }
+        files.append(url_for("views.files", path=f.location, token=serialize(token)))
+
+    tags = [
+        tag["value"] for tag in TagSchema("user", many=True).dump(challenge.tags).data
+    ]
+
+    content = render_template(
+        chal_class.templates["view"].lstrip("/"),
+        solves=None,
+        solved_by_me=False,
+        files=files,
+        tags=tags,
+        hints=challenge.hints,
+        max_attempts=challenge.max_attempts,
+        attempts=0,
+        challenge=challenge,
+    )
+    return render_template(
+        "admin/challenges/preview.html", content=content, challenge=challenge
     )
 
 

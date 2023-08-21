@@ -2,6 +2,12 @@ from wtforms import BooleanField, FileField, SelectField, StringField, TextAreaF
 from wtforms.fields.html5 import IntegerField, URLField
 from wtforms.widgets.html5 import NumberInput
 
+from CTFd.constants.config import (
+    AccountVisibilityTypes,
+    ChallengeVisibilityTypes,
+    RegistrationVisibilityTypes,
+    ScoreVisibilityTypes,
+)
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.utils.csv import get_dumpable_tables
@@ -31,7 +37,7 @@ class ResetInstanceForm(BaseForm):
 class AccountSettingsForm(BaseForm):
     domain_whitelist = StringField(
         "Account Email Whitelist",
-        description="Comma-seperated email domains which users can register under (e.g. ctfd.io, gmail.com, yahoo.com)",
+        description="Comma-seperated email domains which users can register under (e.g. ctfd.io, example.com, *.example.com)",
     )
     team_creation = SelectField(
         "Team Creation",
@@ -47,6 +53,10 @@ class AccountSettingsForm(BaseForm):
         "Total Number of Teams",
         widget=NumberInput(min=0),
         description="Max number of teams (Teams mode only)",
+    )
+    num_users = IntegerField(
+        widget=NumberInput(min=0),
+        description="Max number of users",
     )
     verify_emails = SelectField(
         "Verify Emails",
@@ -98,13 +108,59 @@ class LegalSettingsForm(BaseForm):
         description="External URL to a Terms of Service document hosted elsewhere",
     )
     tos_text = TextAreaField(
-        "Terms of Service", description="Text shown on the Terms of Service page",
+        "Terms of Service",
+        description="Text shown on the Terms of Service page",
     )
     privacy_url = URLField(
         "Privacy Policy URL",
         description="External URL to a Privacy Policy document hosted elsewhere",
     )
     privacy_text = TextAreaField(
-        "Privacy Policy", description="Text shown on the Privacy Policy page",
+        "Privacy Policy",
+        description="Text shown on the Privacy Policy page",
     )
     submit = SubmitField("Update")
+
+
+class VisibilitySettingsForm(BaseForm):
+    challenge_visibility = SelectField(
+        "Challenge Visibility",
+        description="Control whether users must be logged in to see challenges",
+        choices=[
+            (ChallengeVisibilityTypes.PUBLIC, "Public"),
+            (ChallengeVisibilityTypes.PRIVATE, "Private"),
+            (ChallengeVisibilityTypes.ADMINS, "Admins Only"),
+        ],
+        default=ChallengeVisibilityTypes.PRIVATE,
+    )
+    account_visibility = SelectField(
+        "Account Visibility",
+        description="Control whether accounts (users & teams) are shown to everyone, only to authenticated users, or only to admins",
+        choices=[
+            (AccountVisibilityTypes.PUBLIC, "Public"),
+            (AccountVisibilityTypes.PRIVATE, "Private"),
+            (AccountVisibilityTypes.ADMINS, "Admins Only"),
+        ],
+        default=AccountVisibilityTypes.PUBLIC,
+    )
+    score_visibility = SelectField(
+        "Score Visibility",
+        description="Control whether solves/score are shown to the public, to logged in users, hidden to all non-admins, or only shown to admins",
+        choices=[
+            (ScoreVisibilityTypes.PUBLIC, "Public"),
+            (ScoreVisibilityTypes.PRIVATE, "Private"),
+            (ScoreVisibilityTypes.HIDDEN, "Hidden"),
+            (ScoreVisibilityTypes.ADMINS, "Admins Only"),
+        ],
+        default=ScoreVisibilityTypes.PUBLIC,
+    )
+    registration_visibility = SelectField(
+        "Registration Visibility",
+        description="Control whether registration is enabled for everyone or disabled",
+        choices=[
+            (RegistrationVisibilityTypes.PUBLIC, "Public"),
+            (RegistrationVisibilityTypes.PRIVATE, "Private"),
+            (RegistrationVisibilityTypes.MLC, "MajorLeagueCyber Only"),
+        ],
+        default=RegistrationVisibilityTypes.PUBLIC,
+    )

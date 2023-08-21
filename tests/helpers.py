@@ -138,7 +138,7 @@ def create_ctfd(
     config.APPLICATION_ROOT = application_root
     url = make_url(config.SQLALCHEMY_DATABASE_URI)
     if url.database:
-        url.database = str(uuid.uuid4())
+        url = url.set(database=str(uuid.uuid4()))
     config.SQLALCHEMY_DATABASE_URI = str(url)
 
     app = create_app(config)

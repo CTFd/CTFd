@@ -43,6 +43,12 @@ from CTFd.utils.user import (
 )
 
 
+def init_cli(app):
+    from CTFd.cli import _cli
+
+    app.register_blueprint(_cli, cli_group=None)
+
+
 def init_template_filters(app):
     app.jinja_env.filters["markdown"] = markdown
     app.jinja_env.filters["unix_time"] = unix_time

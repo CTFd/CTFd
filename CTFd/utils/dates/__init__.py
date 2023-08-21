@@ -5,7 +5,7 @@ from CTFd.utils import get_config
 
 
 def ctftime():
-    """ Checks whether it's CTF time or not. """
+    """Checks whether it's CTF time or not."""
 
     start = get_config("start")
     end = get_config("end")

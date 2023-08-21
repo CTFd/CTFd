@@ -17,7 +17,7 @@ if url.drivername.startswith("sqlite"):
 
 # Null out the database so raw_connection doesnt error if it doesnt exist
 # CTFd will create the database if it doesnt exist
-url.database = None
+url = url._replace(database=None)
 
 # Wait for the database server to be available
 engine = create_engine(url)

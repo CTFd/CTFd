@@ -9,7 +9,8 @@ from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessRespon
 from CTFd.constants import RawEnum
 from CTFd.models import Hints, HintUnlocks, db
 from CTFd.schemas.hints import HintSchema
-from CTFd.utils.decorators import admins_only, authed_only, during_ctf_time_only
+from CTFd.utils.decorators import admins_only, during_ctf_time_only
+from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.user import get_current_user, is_admin
 
@@ -105,7 +106,7 @@ class HintList(Resource):
 @hints_namespace.route("/<hint_id>")
 class Hint(Resource):
     @during_ctf_time_only
-    @authed_only
+    @check_challenge_visibility
     @hints_namespace.doc(
         description="Endpoint to get a specific Hint object",
         responses={
@@ -117,11 +118,23 @@ class Hint(Resource):
         },
     )
     def get(self, hint_id):
-        user = get_current_user()
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
+        user = get_current_user()
 
-        if hint.requirements:
-            requirements = hint.requirements.get("prerequisites", [])
+        # We allow public accessing of hints if challenges are visible and there is no cost or prerequisites
+        # If there is a cost or a prereq we should block the user from seeing the hint
+        if user is None:
+            if hint.cost or hint.prerequisites:
+                return (
+                    {
+                        "success": False,
+                        "errors": {"cost": ["You must login to unlock this hint"]},
+                    },
+                    403,
+                )
+
+        if hint.prerequisites:
+            requirements = hint.prerequisites
 
             # Get the IDs of all hints that the user has unlocked
             all_unlocks = HintUnlocks.query.filter_by(account_id=user.account_id).all()

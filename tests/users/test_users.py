@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from CTFd.models import Users
+from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -106,4 +107,45 @@ def test_hidden_user_visibility():
             r = client.get("/api/v1/scoreboard")
             response = r.get_data(as_text=True)
             assert user_name in response
+    destroy_ctfd(app)
+
+
+def test_num_users_limit():
+    """Only num_users users can be created"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config("num_users", 1)
+
+        register_user(app)
+        with app.test_client() as client:
+            r = client.get("/register")
+            assert r.status_code == 403
+
+            # team should be blocked from creation
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user",
+                    "email": "user@examplectf.com",
+                    "password": "password",
+                    "nonce": sess.get("nonce"),
+                }
+            r = client.post("/register", data=data)
+            resp = r.get_data(as_text=True)
+            # This number is 2 to account for the admin and the registered user
+            assert Users.query.count() == 2
+            assert "Reached the maximum number of users" in resp
+
+            # Can the team be created after the num has been bumped
+            set_config("num_users", 2)
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user1",
+                    "email": "user1@examplectf.com",
+                    "password": "password",
+                    "nonce": sess.get("nonce"),
+                }
+            r = client.post("/register", data=data)
+            resp = r.get_data(as_text=True)
+            assert r.status_code == 302
+            assert Users.query.count() == 3
     destroy_ctfd(app)

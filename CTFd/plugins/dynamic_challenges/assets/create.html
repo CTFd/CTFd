@@ -16,16 +16,36 @@
 		</small>
 	</label>
 	<input type="number" class="form-control" name="initial" placeholder="Enter value" required>
-
 </div>
 
 <div class="form-group">
-	<label for="value">Decay Limit<br>
+	<label for="value">Decay Function<br>
 		<small class="form-text text-muted">
-			The amount of solves before the challenge reaches its minimum value
+			<span>How the dynamic value will be calculated based on the Decay value</span>
+			<ul>
+				<li>Linear: Calculated as <code>Initial - (Decay * SolveCount)</code></li>
+				<li>Logarithmic: Calculated as <code>(((Minimum - Initial) / (Decay^2)) * (SolveCount^2)) + Initial</code></li>
+			</ul>
 		</small>
 	</label>
-	<input type="number" class="form-control" name="decay" min="1" placeholder="Enter decay limit" required>
+	<select name="function" class="custom-select">
+		<option value="linear">Linear</option>
+		<option value="logarithmic">Logarithmic</option>
+	</select>
+</div>
+
+<div class="form-group">
+	<label for="value">Decay<br>
+		<small class="form-text text-muted">
+			<span>The decay value is used differently depending on the above Decay Function</span>
+			<ul>
+				<li>Linear: The amount of points deducted per solve. Equal deduction per solve.</li>
+				<li>Logarithmic: The amount of solves before the challenge reaches its minimum value. Earlier solves will lose less
+					points. Later solves will lose more points</li>
+			</ul>
+		</small>
+	</label>
+	<input type="number" class="form-control" name="decay" min="1" placeholder="Enter Decay value" required>
 </div>
 
 <div class="form-group">

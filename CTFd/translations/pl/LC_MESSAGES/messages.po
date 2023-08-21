@@ -1,24 +1,12 @@
-# Polish translations for PROJECT.
-# Copyright (C) 2023 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-05-17 01:38-0400\n"
-"PO-Revision-Date: 2023-05-17 01:52-0400\n"
-"Last-Translator: \n"
-"Language-Team: pl <LL@li.org>\n"
-"Language: pl\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2);\n"
-"Generated-By: Babel 2.12.1\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: CTFd\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: CTFd/forms/auth.py:19 CTFd/forms/self.py:16
 msgid "User Name"
@@ -109,12 +97,8 @@ msgid "Team Mode"
 msgstr "Tryb zespołowy"
 
 #: CTFd/forms/setup.py:31
-msgid ""
-"Controls whether users join together in teams to play (Team Mode) or play as "
-"themselves (User Mode)"
-msgstr ""
-"Kontroluje czy użytkownicy grają razem w zespołach (Tryb zespołowy) czy "
-"samodzielnie (Tryb indywidualny)"
+msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
+msgstr "Kontroluje czy użytkownicy grają razem w zespołach (Tryb zespołowy) czy samodzielnie (Tryb indywidualny)"
 
 #: CTFd/forms/setup.py:38
 msgid "Admin Username"
@@ -145,12 +129,8 @@ msgid "Logo"
 msgstr "Logo"
 
 #: CTFd/forms/setup.py:55
-msgid ""
-"Logo to use for the website instead of a CTF name. Used as the home page "
-"button. Optional."
-msgstr ""
-"Logo do wyświetlania na stronie, zamiast nazwy CTFa. Funkcjonuje jako "
-"przycisk strony głównej. Opcjonalne."
+msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
+msgstr "Logo do wyświetlania na stronie, zamiast nazwy CTFa. Funkcjonuje jako przycisk strony głównej. Opcjonalne."
 
 #: CTFd/forms/setup.py:60
 msgid "Banner"
@@ -165,12 +145,8 @@ msgid "Small Icon"
 msgstr "Mała Ikona"
 
 #: CTFd/forms/setup.py:64
-msgid ""
-"favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. "
-"Optional."
-msgstr ""
-"favikona używana w przeglądace. Tylko pliki PNG. Musi mieć wymiary 32x32 "
-"piksele. Opcjonalna."
+msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
+msgstr "favikona używana w przeglądace. Tylko pliki PNG. Musi mieć wymiary 32x32 piksele. Opcjonalna."
 
 #: CTFd/forms/setup.py:69
 msgid "Theme"
@@ -185,11 +161,8 @@ msgid "Theme Color"
 msgstr "Kolor motywu"
 
 #: CTFd/forms/setup.py:77
-msgid ""
-"Color used by theme to control aesthetics. Requires theme support. Optional."
-msgstr ""
-"Kolor używany przez motyw do zmiany estetyki. Wymaga wsparcia ze strony "
-"motywu. Opcjonalny."
+msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
+msgstr "Kolor używany przez motyw do zmiany estetyki. Wymaga wsparcia ze strony motywu. Opcjonalny."
 
 #: CTFd/forms/setup.py:83
 msgid "Start Time"
@@ -245,9 +218,7 @@ msgid "Confirm Current Team Password"
 msgstr "Potwierdź aktualne hasło zespołu"
 
 #: CTFd/forms/teams.py:108
-msgid ""
-"Provide your current team password (or your password) to update your team's "
-"password"
+msgid "Provide your current team password (or your password) to update your team's password"
 msgstr "Podaj obecne hasło zespołu (lub swoje hasło) aby zmienić hasło zespołu"
 
 #: CTFd/forms/teams.py:114
@@ -310,12 +281,12 @@ msgid "Challenge"
 msgstr "Wyzwanie"
 
 #: CTFd/themes/core-beta/templates/challenge.html:19
-#, python-format
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
 msgstr[0] "%(num)d Rozwiąż"
 msgstr[1] "%(num)d Rozwiązania"
 msgstr[2] "%(num)d Rozwiązań"
+msgstr[3] ""
 
 #: CTFd/themes/core-beta/templates/challenge.html:73
 msgid "View Hint"
@@ -353,12 +324,8 @@ msgid "Please click the link in that email to confirm your account."
 msgstr "Kliknij link w tym e-mailu, aby potwierdzić swoje konto."
 
 #: CTFd/themes/core-beta/templates/confirm.html:30
-msgid ""
-"If the email doesn’t arrive, check your spam folder or contact an "
-"administrator to manually verify your account."
-msgstr ""
-"Jeśli wiadomość e-mail nie dotrze, sprawdź folder ze spamem lub skontaktuj "
-"się z administratorem, aby ręcznie zweryfikować konto."
+msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
+msgstr "Jeśli wiadomość e-mail nie dotrze, sprawdź folder ze spamem lub skontaktuj się z administratorem, aby ręcznie zweryfikować konto."
 
 #: CTFd/themes/core-beta/templates/confirm.html:43
 msgid "Change Email Address"
@@ -404,12 +371,8 @@ msgid "Reset Password"
 msgstr "Zresetuj hasło"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:21
-msgid ""
-"You can now reset the password for your account and log in. Please enter in "
-"a new password below."
-msgstr ""
-"Możesz teraz zresetować hasło do swojego konta i zalogować się. Wprowadź "
-"nowe hasło poniżej."
+msgid "You can now reset the password for your account and log in. Please enter in a new password below."
+msgstr "Możesz teraz zresetować hasło do swojego konta i zalogować się. Wprowadź nowe hasło poniżej."
 
 #: CTFd/themes/core-beta/templates/reset_password.html:44
 msgid "Please provide the email address associated with your account below."
@@ -527,9 +490,7 @@ msgstr "Trudno przypisać rozwiązania poszczególnym członkom zespołu"
 
 #: CTFd/themes/core-beta/templates/setup.html:164
 msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
-msgstr ""
-"Subskrybuj adres e-mail biuletynu CTFd LLC, aby otrzymywać wiadomości i "
-"aktualizacje"
+msgstr "Subskrybuj adres e-mail biuletynu CTFd LLC, aby otrzymywać wiadomości i aktualizacje"
 
 #: CTFd/themes/core-beta/templates/setup.html:241
 #: CTFd/themes/core-beta/templates/setup.html:262
@@ -680,6 +641,7 @@ msgid_plural "users"
 msgstr[0] "użytkownik"
 msgstr[1] "użytkowników"
 msgstr[2] "użytkowników"
+msgstr[3] ""
 
 #: CTFd/utils/modes/__init__.py:37
 msgid "team"
@@ -687,3 +649,5 @@ msgid_plural "teams"
 msgstr[0] "zespół"
 msgstr[1] "drużyny"
 msgstr[2] "drużyn"
+msgstr[3] ""
+

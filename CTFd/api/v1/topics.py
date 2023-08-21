@@ -51,7 +51,10 @@ class TopicList(Resource):
         {
             "value": (str, None),
             "q": (str, None),
-            "field": (RawEnum("TopicFields", {"value": "value"}), None,),
+            "field": (
+                RawEnum("TopicFields", {"value": "value"}),
+                None,
+            ),
         },
         location="query",
     )
@@ -122,7 +125,8 @@ class TopicList(Resource):
         responses={200: ("Success", "APISimpleSuccessResponse")},
     )
     @validate_args(
-        {"type": (str, None), "target_id": (int, 0)}, location="query",
+        {"type": (str, None), "target_id": (int, 0)},
+        location="query",
     )
     def delete(self, query_args):
         topic_type = query_args.get("type")

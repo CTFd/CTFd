@@ -9,8 +9,16 @@ class TokenSchema(ma.ModelSchema):
         dump_only = ("id", "expiration", "type")
 
     views = {
-        "admin": ["id", "type", "user_id", "created", "expiration", "value"],
-        "user": ["id", "type", "created", "expiration"],
+        "admin": [
+            "id",
+            "type",
+            "user_id",
+            "created",
+            "expiration",
+            "description",
+            "value",
+        ],
+        "user": ["id", "type", "created", "expiration", "description"],
     }
 
     def __init__(self, view=None, *args, **kwargs):

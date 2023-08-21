@@ -5,13 +5,13 @@ import string
 import time
 from pathlib import PurePath
 from shutil import copyfileobj, rmtree
+from urllib.parse import urlparse
 
 import boto3
 from botocore.client import Config
 from flask import current_app, redirect, send_file
-from flask.helpers import safe_join
 from freezegun import freeze_time
-from werkzeug.utils import secure_filename
+from werkzeug.utils import safe_join, secure_filename
 
 from CTFd.utils import get_app_config
 from CTFd.utils.encoding import hexencode
@@ -89,9 +89,12 @@ class S3Uploader(BaseUploader):
         secret_key = get_app_config("AWS_SECRET_ACCESS_KEY")
         endpoint = get_app_config("AWS_S3_ENDPOINT_URL")
         region = get_app_config("AWS_S3_REGION")
+        addressing_style = get_app_config("AWS_S3_ADDRESSING_STYLE")
         client = boto3.client(
             "s3",
-            config=Config(signature_version="s3v4"),
+            config=Config(
+                signature_version="s3v4", s3={"addressing_style": addressing_style}
+            ),
             aws_access_key_id=access_key,
             aws_secret_access_key=secret_key,
             endpoint_url=endpoint,
@@ -141,6 +144,11 @@ class S3Uploader(BaseUploader):
                 },
                 ExpiresIn=3600,
             )
+
+        custom_domain = get_app_config("AWS_S3_CUSTOM_DOMAIN")
+        if custom_domain:
+            url = urlparse(url)._replace(netloc=custom_domain).geturl()
+
         return redirect(url)
 
     def delete(self, filename):

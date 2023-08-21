@@ -15,12 +15,13 @@ ma = Marshmallow()
 
 def get_class_by_tablename(tablename):
     """Return class reference mapped to table.
-    https://stackoverflow.com/a/23754464
+    https://stackoverflow.com/a/66666783
 
     :param tablename: String with name of table.
     :return: Class reference or None.
     """
-    for c in db.Model._decl_class_registry.values():
+    for m in db.Model.registry.mappers:
+        c = m.class_
         if hasattr(c, "__tablename__") and c.__tablename__ == tablename:
             return c
     return None
@@ -180,6 +181,12 @@ class Hints(db.Model):
         from CTFd.utils.helpers import markup
 
         return markup(build_markdown(self.content))
+
+    @property
+    def prerequisites(self):
+        if self.requirements:
+            return self.requirements.get("prerequisites", [])
+        return []
 
     def __init__(self, *args, **kwargs):
         super(Hints, self).__init__(**kwargs)
@@ -342,7 +349,10 @@ class Users(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
     field_entries = db.relationship(
-        "UserFieldEntries", foreign_keys="UserFieldEntries.user_id", lazy="joined"
+        "UserFieldEntries",
+        foreign_keys="UserFieldEntries.user_id",
+        lazy="joined",
+        back_populates="user",
     )
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -551,7 +561,10 @@ class Teams(db.Model):
     captain = db.relationship("Users", foreign_keys=[captain_id])
 
     field_entries = db.relationship(
-        "TeamFieldEntries", foreign_keys="TeamFieldEntries.team_id", lazy="joined"
+        "TeamFieldEntries",
+        foreign_keys="TeamFieldEntries.team_id",
+        lazy="joined",
+        back_populates="team",
     )
 
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -842,6 +855,10 @@ class Fails(Submissions):
     __mapper_args__ = {"polymorphic_identity": "incorrect"}
 
 
+class Discards(Submissions):
+    __mapper_args__ = {"polymorphic_identity": "discard"}
+
+
 class Unlocks(db.Model):
     __tablename__ = "unlocks"
     id = db.Column(db.Integer, primary_key=True)
@@ -910,6 +927,7 @@ class Tokens(db.Model):
         db.DateTime,
         default=lambda: datetime.datetime.utcnow() + datetime.timedelta(days=30),
     )
+    description = db.Column(db.Text)
     value = db.Column(db.String(128), unique=True)
 
     user = db.relationship("Users", foreign_keys="Tokens.user_id", lazy="select")
@@ -1015,10 +1033,14 @@ class FieldEntries(db.Model):
 class UserFieldEntries(FieldEntries):
     __mapper_args__ = {"polymorphic_identity": "user"}
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
-    user = db.relationship("Users", foreign_keys="UserFieldEntries.user_id")
+    user = db.relationship(
+        "Users", foreign_keys="UserFieldEntries.user_id", back_populates="field_entries"
+    )
 
 
 class TeamFieldEntries(FieldEntries):
     __mapper_args__ = {"polymorphic_identity": "team"}
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
-    team = db.relationship("Teams", foreign_keys="TeamFieldEntries.team_id")
+    team = db.relationship(
+        "Teams", foreign_keys="TeamFieldEntries.team_id", back_populates="field_entries"
+    )
