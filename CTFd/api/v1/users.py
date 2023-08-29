@@ -87,6 +87,7 @@ class UserList(Resource):
                         "country": "country",
                         "bracket": "bracket",
                         "affiliation": "affiliation",
+                        "email": "email",
                     },
                 ),
                 None,
@@ -97,6 +98,14 @@ class UserList(Resource):
     def get(self, query_args):
         q = query_args.pop("q", None)
         field = str(query_args.pop("field", None))
+
+        if field == "email":
+            if is_admin() is False:
+                return {
+                    "success": False,
+                    "errors": {"field": "Emails can only be queried by admins"},
+                }, 400
+
         filters = build_model_filters(model=Users, query=q, field=field)
 
         if is_admin() and request.args.get("view") == "admin":
