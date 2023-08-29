@@ -101,7 +101,7 @@ class TeamList(Resource):
                 return {
                     "success": False,
                     "errors": {"field": "Emails can only be queried by admins"},
-                }
+                }, 400
 
         filters = build_model_filters(model=Teams, query=q, field=field)
 

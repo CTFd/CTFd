@@ -104,7 +104,7 @@ class UserList(Resource):
                 return {
                     "success": False,
                     "errors": {"field": "Emails can only be queried by admins"},
-                }
+                }, 400
 
         filters = build_model_filters(model=Users, query=q, field=field)
 

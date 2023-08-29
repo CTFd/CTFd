@@ -35,3 +35,19 @@ def test_api_modify_user_type():
             assert user_data["name"] == "user"
             assert user_data["type"] == "user"
     destroy_ctfd(app)
+
+
+def test_api_can_query_by_user_emails():
+    """Can an admin user query /api/v1/users using a user's email address"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app, name="testuser", email="user@findme.com")
+        with login_as_user(app, "testuser") as client:
+            r = client.get("/api/v1/users?field=email&q=findme", json=True)
+            assert r.status_code == 400
+            assert r.get_json()["errors"].get("field")
+        with login_as_user(app, "admin") as client:
+            r = client.get("/api/v1/users?field=email&q=findme", json=True)
+            assert r.status_code == 200
+            assert r.get_json()["data"][0]["id"] == 2
+    destroy_ctfd(app)
