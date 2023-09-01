@@ -286,6 +286,9 @@ class Challenge(Resource):
         },
     )
     def get(self, challenge_id):
+        from CTFd.constants.config import SolutionVisibilityTypes, ConfigTypes
+        solution_visible = get_config(ConfigTypes.SOLUTION_VISIBILITY) == SolutionVisibilityTypes.PUBLISH
+
         if is_admin():
             chal = Challenges.query.filter(Challenges.id == challenge_id).first_or_404()
         else:
@@ -411,6 +414,10 @@ class Challenge(Resource):
         if scores_visible() is False or accounts_visible() is False:
             solve_count = None
 
+        # Hide solution if it is empty or marked as hidden
+        if solution_visible and (not chal.solution or chal.solution == "" or chal.solution_state == "hidden"):
+            solution_visible = False
+
         if authed():
             # Get current attempts for the user
             attempts = Submissions.query.filter_by(
@@ -436,6 +443,7 @@ class Challenge(Resource):
             max_attempts=chal.max_attempts,
             attempts=attempts,
             challenge=chal,
+            solution_visible=solution_visible,
         )
 
         db.session.close()

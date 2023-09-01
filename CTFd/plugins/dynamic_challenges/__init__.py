@@ -74,9 +74,11 @@ class DynamicValueChallenge(BaseChallenge):
             "decay": challenge.decay,
             "minimum": challenge.minimum,
             "description": challenge.description,
+            "solution": challenge.solution,
             "connection_info": challenge.connection_info,
             "category": challenge.category,
             "state": challenge.state,
+            "solution_state": challenge.solution_state,
             "max_attempts": challenge.max_attempts,
             "type": challenge.type,
             "type_data": {

@@ -105,6 +105,8 @@ class Challenges(db.Model):
     type = db.Column(db.String(80))
     state = db.Column(db.String(80), nullable=False, default="visible")
     requirements = db.Column(db.JSON)
+    solution = db.Column(db.Text)
+    solution_state = db.Column(db.String(80), nullable=False, default="visible")
 
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
@@ -136,6 +138,13 @@ class Challenges(db.Model):
         from CTFd.utils.helpers import markup
 
         return markup(build_markdown(self.description))
+
+    @property
+    def solution_html(self):
+        from CTFd.utils.config.pages import build_markdown
+        from CTFd.utils.helpers import markup
+
+        return markup(build_markdown(self.solution))
 
     @property
     def plugin_class(self):

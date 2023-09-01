@@ -21,6 +21,16 @@
               </a>
             </li>
           {% endblock %}
+          
+          {% if solution_visible %}
+            {% block solution %}
+               <li class="nav-item">
+                 <a class="nav-link" data-bs-target="#solution" @click="showSolution()">
+                   {% trans %}Solution{% endtrans %}
+                 </a>
+               </li>
+            {% endblock %}
+          {% endif %}
         </ul>
       </div>
 
@@ -201,6 +211,11 @@
               </div>
             </div>
           </div>
+          {% if solution_visible %}
+            <div role="tabpanel" class="tab-pane fade" id="solution">
+              <span class="challenge-desc">{% block chall_sol %}{{ challenge.solution_html }}{% endblock %}</span>
+            </div>
+          {% endif %}         
         </div>
       </div>
     </div>

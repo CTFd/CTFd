@@ -33,9 +33,7 @@ function bulkEditChallenges(_event) {
     return $(this).data("challenge-id");
   });
 
-  ezAlert({
-    title: "Edit Challenges",
-    body: $(`
+  let body = `
     <form id="challenges-bulk-edit">
       <div class="form-group">
         <label>Category</label>
@@ -53,8 +51,23 @@ function bulkEditChallenges(_event) {
           <option value="hidden">Hidden</option>
         </select>
       </div>
+      `
+  if (document.getElementById("solution_state"))
+    body += `<div class="form-group">
+        <label>Solution</label>
+        <select name="solution_state" data-initial="">
+          <option value="">--</option>
+          <option value="visible">Visible</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+      `
+  body += `
     </form>
-    `),
+    `
+  ezAlert({
+    title: "Edit Challenges",
+    body: $(body),
     button: "Submit",
     success: function() {
       let data = $("#challenges-bulk-edit").serializeJSON(true);

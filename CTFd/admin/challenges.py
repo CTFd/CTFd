@@ -7,7 +7,7 @@ from CTFd.schemas.tags import TagSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.security.signing import serialize
 from CTFd.utils.user import get_current_team, get_current_user
-
+from CTFd.utils.config.visibility import solutions_visible
 
 @admin.route("/admin/challenges")
 @admins_only
@@ -15,7 +15,8 @@ def challenges_listing():
     q = request.args.get("q")
     field = request.args.get("field")
     filters = []
-
+    solution_visible = solutions_visible()
+    
     if q:
         # The field exists as an exposed column
         if Challenges.__mapper__.has_property(field):
@@ -31,12 +32,15 @@ def challenges_listing():
         total=total,
         q=q,
         field=field,
+        solution_visible=solution_visible,
     )
 
 
 @admin.route("/admin/challenges/<int:challenge_id>")
 @admins_only
 def challenges_detail(challenge_id):
+    solution_visible = solutions_visible()
+
     challenges = dict(
         Challenges.query.with_entities(Challenges.id, Challenges.name).all()
     )
@@ -57,7 +61,7 @@ def challenges_detail(challenge_id):
         )
 
     update_j2 = render_template(
-        challenge_class.templates["update"].lstrip("/"), challenge=challenge
+        challenge_class.templates["update"].lstrip("/"), challenge=challenge, solution_visible=solution_visible,
     )
 
     update_script = url_for(

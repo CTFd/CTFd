@@ -11,6 +11,7 @@ class ConfigTypes(str, RawEnum):
     SCORE_VISIBILITY = "score_visibility"
     ACCOUNT_VISIBILITY = "account_visibility"
     REGISTRATION_VISIBILITY = "registration_visibility"
+    SOLUTION_VISIBILITY = "solution_visibility"
 
 
 @JinjaEnum
@@ -24,6 +25,13 @@ class ChallengeVisibilityTypes(str, RawEnum):
     PUBLIC = "public"
     PRIVATE = "private"
     ADMINS = "admins"
+
+
+@JinjaEnum
+class SolutionVisibilityTypes(str, RawEnum):
+    PUBLISH = "publish"
+    ADMINS = "admins"
+    NONE = "none"
 
 
 @JinjaEnum

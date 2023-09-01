@@ -67,6 +67,19 @@ class ChallengeSchema(ma.ModelSchema):
         ],
     )
 
+    description = field_for(
+        Challenges,
+        "solution",
+        allow_none=True,
+        validate=[
+            validate.Length(
+                min=0,
+                max=65535,
+                error="Challenge could not be saved. Challenge solution too long",
+            )
+        ],
+    )
+
     requirements = field_for(
         Challenges,
         "requirements",

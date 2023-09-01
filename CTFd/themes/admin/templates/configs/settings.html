@@ -47,6 +47,26 @@
 
 		<div class="form-group">
 			<label>
+				Solution Visibility<br>
+				<small class="form-text text-muted">
+					Control whether the challenges have solutions and if they are visible
+				</small>
+			</label>
+			<select class="form-control custom-select" name="solution_visibility">
+				<option value="publish" {% if solution_visibility == 'publish' %}selected{% endif %}>
+					Publish
+				</option>
+				<option value="admins" {% if solution_visibility == 'admins' %}selected{% endif %}>
+					Admins Only
+				</option>
+				<option value="none" {% if solution_visibility == 'none' %}selected{% endif %}>
+					None
+				</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>
 				Pause<br>
 				<small class="form-text text-muted">
 					Prevent users from submitting answers until unpaused. Challenges can still be viewed.
