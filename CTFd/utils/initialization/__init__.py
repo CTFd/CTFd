@@ -282,14 +282,14 @@ def init_request_processors(app):
     @app.before_request
     def tokens():
         token = request.headers.get("Authorization")
-        rule_to_endpoint = {r.rule: r.endpoint for r in app.url_map.iter_rules()}
-        is_valid_multipart_files_upload = (
-            request.method == "POST"
-            and request.endpoint == rule_to_endpoint["/api/v1/files"]
-            and request.mimetype == "multipart/form-data"
-        )
         if token and (
-            request.mimetype == "application/json" or is_valid_multipart_files_upload
+            request.mimetype == "application/json"
+            # Specially allow multipart/form-data for file uploads
+            or (
+                request.endpoint == "api.files_files_list"
+                and request.method == "POST"
+                and request.mimetype == "multipart/form-data"
+            )
         ):
             try:
                 token_type, token = token.split(" ", 1)
