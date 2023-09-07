@@ -1,7 +1,9 @@
 import datetime
+import os
+from io import BytesIO
 
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
-from CTFd.models import Tokens
+from CTFd.models import Files, Tokens, Users
 from CTFd.utils.security.auth import generate_user_token, lookup_user_token
 from tests.helpers import create_ctfd, destroy_ctfd, gen_token, gen_user
 
@@ -75,4 +77,29 @@ def test_user_token_access():
             resp = r.get_json()
             assert resp["data"]["email"] == "user1@examplectf.com"
             assert resp["data"]["name"] == "user1"
+    destroy_ctfd(app)
+
+
+def test_token_api_file_upload():
+    """Test that tokens can upload files with multipart/form-data content type"""
+    app = create_ctfd()
+    with app.app_context():
+        admin = Users.query.filter_by(id=1).first()
+        token = generate_user_token(admin, expiration=None)
+        with app.test_client() as client:
+            headers = {"Authorization": "token " + token.value}
+            r = client.post(
+                "/api/v1/files",
+                headers=headers,
+                content_type="multipart/form-data",
+                data={
+                    "file": (BytesIO(b"test file content"), "test.txt"),
+                },
+            )
+            assert r.status_code == 200
+            f = Files.query.filter_by(id=1).first()
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"] + "/" + f.location)
+            with open(filepath) as f:
+                assert f.read() == "test file content"
+            os.remove(filepath)
     destroy_ctfd(app)
