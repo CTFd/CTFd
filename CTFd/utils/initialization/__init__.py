@@ -282,7 +282,15 @@ def init_request_processors(app):
     @app.before_request
     def tokens():
         token = request.headers.get("Authorization")
-        if token and request.content_type == "application/json":
+        if token and (
+            request.mimetype == "application/json"
+            # Specially allow multipart/form-data for file uploads
+            or (
+                request.endpoint == "api.files_files_list"
+                and request.method == "POST"
+                and request.mimetype == "multipart/form-data"
+            )
+        ):
             try:
                 token_type, token = token.split(" ", 1)
                 user = lookup_user_token(token)
