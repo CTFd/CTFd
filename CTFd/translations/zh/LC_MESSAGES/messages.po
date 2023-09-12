@@ -66,7 +66,7 @@ msgstr "国家"
 
 #: CTFd/forms/self.py:52 CTFd/themes/core-beta/templates/settings.html:220
 msgid "Expiration"
-msgstr "到期日"
+msgstr "到期时间"
 
 #: CTFd/forms/self.py:53
 msgid "Generate"
@@ -98,7 +98,7 @@ msgstr "团队模式"
 
 #: CTFd/forms/setup.py:31
 msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
-msgstr "控制用户是组队游戏（团队模式）还是自己玩（用户模式）"
+msgstr "控制用户是组队（团队模式）还是个人（个人模式）"
 
 #: CTFd/forms/setup.py:38
 msgid "Admin Username"
@@ -130,15 +130,15 @@ msgstr "徽标"
 
 #: CTFd/forms/setup.py:55
 msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
-msgstr "用于网站的标志，而不是CTF名称。用作主页按钮。可选。"
+msgstr "可选项。用作主页按钮的徽章标志。而不是CTF的名称。"
 
 #: CTFd/forms/setup.py:60
 msgid "Banner"
-msgstr "横幅"
+msgstr "背景图"
 
 #: CTFd/forms/setup.py:60
 msgid "Banner to use for the homepage. Optional."
-msgstr "用于主页的横幅。可选。"
+msgstr "用于主页的背景图。可选项。"
 
 #: CTFd/forms/setup.py:63
 msgid "Small Icon"
@@ -203,7 +203,7 @@ msgstr "创建"
 
 #: CTFd/forms/teams.py:101
 msgid "Your team's public name shown to other competitors"
-msgstr "您的团队的公开名称显示给其他竞争对手"
+msgstr "公开您的团队名称给其他队伍"
 
 #: CTFd/forms/teams.py:104
 msgid "New Team Password"
@@ -256,11 +256,11 @@ msgstr "搜索"
 
 #: CTFd/forms/teams.py:208
 msgid "Hidden"
-msgstr "隐藏式"
+msgstr "隐藏"
 
 #: CTFd/forms/teams.py:209
 msgid "Banned"
-msgstr "禁用"
+msgstr "封禁"
 
 #: CTFd/forms/teams.py:254
 msgid "Invite Link"
@@ -280,10 +280,11 @@ msgstr "由CTFd提供"
 msgid "Challenge"
 msgstr "挑战"
 
+#. n个解出
 #: CTFd/themes/core-beta/templates/challenge.html:19
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
-msgstr[0] "求解"
+msgstr[0] "个解出"
 
 #: CTFd/themes/core-beta/templates/challenge.html:73
 msgid "View Hint"
@@ -291,7 +292,7 @@ msgstr "查看提示"
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
-msgstr "旗帜"
+msgstr "Flag"
 
 #: CTFd/themes/core-beta/templates/challenge.html:167
 msgid "Next Challenge"
@@ -357,7 +358,7 @@ msgstr "您在网站上的用户名"
 
 #: CTFd/themes/core-beta/templates/register.html:43
 msgid "Never shown to the public"
-msgstr "从未向公众展示"
+msgstr "不对外公开"
 
 #: CTFd/themes/core-beta/templates/register.html:51
 msgid "Password used to log into your account"
@@ -383,7 +384,7 @@ msgstr "设置"
 #: CTFd/themes/core-beta/templates/components/navbar.html:123
 #: CTFd/themes/core-beta/templates/settings.html:21
 msgid "Profile"
-msgstr "公司简介"
+msgstr "个人信息"
 
 #: CTFd/themes/core-beta/templates/settings.html:26
 msgid "Access Tokens"
@@ -407,15 +408,15 @@ msgstr "请复制您的API Key，它将不会再次显示！"
 
 #: CTFd/themes/core-beta/templates/settings.html:178
 msgid "Active Tokens"
-msgstr "活动代币"
+msgstr "已激活的密钥"
 
 #: CTFd/themes/core-beta/templates/settings.html:190
 msgid "Delete Token"
-msgstr "删除令牌"
+msgstr "删除密钥"
 
 #: CTFd/themes/core-beta/templates/settings.html:199
 msgid "Are you sure you want to delete this token?"
-msgstr "您确定要删除此令牌吗？"
+msgstr "您确定要删除此密钥吗？"
 
 #: CTFd/themes/core-beta/templates/settings.html:219
 msgid "Created"
@@ -475,7 +476,7 @@ msgstr "参与者只能注册一个个人账户"
 
 #: CTFd/themes/core-beta/templates/setup.html:117
 msgid "Players can share accounts to form pseudo-teams"
-msgstr "玩家可以共享账号组成伪团队"
+msgstr "玩家可以共享账号组成团队"
 
 #: CTFd/themes/core-beta/templates/setup.html:119
 msgid "Easier to organize"
@@ -512,7 +513,7 @@ msgstr "团队"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:50
 msgid "Scoreboard"
-msgstr "记分牌"
+msgstr "记分板"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:80
 msgid "Admin Panel"
@@ -542,20 +543,20 @@ msgstr "对不起"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:11
 msgid "Too many requests"
-msgstr "要求过多"
+msgstr "请求次数过多"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:12
 msgid "Please slow down!"
-msgstr "请慢行！"
+msgstr "请减慢您的请求速度！"
 
 #: CTFd/themes/core-beta/templates/errors/502.html:11
 msgid "Bad Gateway"
-msgstr "不良网关"
+msgstr "错误网关"
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
 msgid "(Optional)"
-msgstr "可选"
+msgstr "（可选）"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:6
 #: CTFd/themes/core-beta/templates/teams/join_team.html:6
@@ -566,7 +567,7 @@ msgstr "加入团队"
 #: CTFd/themes/core-beta/templates/teams/invite.html:15
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:12
 msgid "Welcome to"
-msgstr "欢迎光临"
+msgstr "欢迎来到"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:19
 msgid "Click the button below to join the team!"
@@ -626,7 +627,7 @@ msgstr "价值"
 #: CTFd/themes/core-beta/templates/users/private.html:203
 #: CTFd/themes/core-beta/templates/users/public.html:204
 msgid "No solves yet"
-msgstr "尚无解决方案"
+msgstr "暂无已解出题目"
 
 #: CTFd/themes/core-beta/templates/users/users.html:46
 msgid "User"
