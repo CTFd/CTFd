@@ -66,14 +66,12 @@ class SMTPEmailProvider(EmailProvider):
 
 
 def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=None):
-    # Apparently this is no longer the right way of configuring TLS communications for SMTP. It's required to create a default SSL context to use TLS.
-    #if SSL is None:
-    smtp = smtplib.SMTP(host, port, timeout=3)
-    #else:
-    #    smtp = smtplib.SMTP_SSL(host, port, timeout=3)
+    if SSL is None:
+        smtp = smtplib.SMTP(host, port, timeout=3)
+    else:
+        smtp = smtplib.SMTP_SSL(host, port, timeout=3)
 
     if TLS:
-        #StartTLS normally with SMTP function.
         smtp.starttls()
 
     if auth:
