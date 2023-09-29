@@ -246,6 +246,10 @@ class ServerConfig(object):
     # === OAUTH ===
     OAUTH_CLIENT_ID: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
     OAUTH_CLIENT_SECRET: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_SECRET"])
+
+    # === EXTRA ===
+    # Since the configurations in section "[extra]" will be loaded later, it is not necessary to declare them here.
+    # However, if you want to have some processing or checking on the value, you can still declare it here just like other configurations.
 # fmt: on
 
 
@@ -267,4 +271,8 @@ class TestingConfig(ServerConfig):
 # Actually initialize ServerConfig to allow us to add more attributes on
 Config = ServerConfig()
 for k, v in config_ini.items("extra"):
+    # We should only add the values that are not yet loaded in ServerConfig.
+    if hasattr(Config, k):
+        continue
+
     setattr(Config, k, v)
