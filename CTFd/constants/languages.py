@@ -26,7 +26,7 @@ LANGUAGE_NAMES = {
     "fr": "Français",
     "ko": "한국어",
     "ru": "русский язык",
-    "pt_BR": "Português do Brasil"
+    "pt_BR": "Português do Brasil",
 }
 
 SELECT_LANGUAGE_LIST = [("", "")] + [
