@@ -5,650 +5,649 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: CTFd\n"
-"Language: pl\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: CTFd/forms/auth.py:19 CTFd/forms/self.py:16
 msgid "User Name"
-msgstr "Nazwa użytkownika"
+msgstr "Имя Пользователя"
 
 #: CTFd/forms/auth.py:21 CTFd/forms/auth.py:53 CTFd/forms/self.py:17
 #: CTFd/forms/teams.py:203
 msgid "Email"
-msgstr "Email"
+msgstr "Почта"
 
 #: CTFd/forms/auth.py:22 CTFd/forms/auth.py:43 CTFd/forms/auth.py:60
 #: CTFd/forms/self.py:19 CTFd/forms/teams.py:204
 msgid "Password"
-msgstr "Hasło"
+msgstr "Пароль"
 
 #: CTFd/forms/auth.py:23 CTFd/forms/auth.py:44 CTFd/forms/auth.py:55
 #: CTFd/forms/auth.py:62 CTFd/forms/self.py:24 CTFd/forms/teams.py:127
 #: CTFd/forms/teams.py:210 CTFd/themes/core-beta/templates/challenge.html:147
 msgid "Submit"
-msgstr "Wyślij"
+msgstr "Войти"
 
 #: CTFd/forms/auth.py:39
 msgid "User Name or Email"
-msgstr "Nazwa użytkownika lub adres email"
+msgstr "Имя Пользователя или Почта"
 
 #: CTFd/forms/auth.py:48
 msgid "Resend Confirmation Email"
-msgstr "Ponownie wyślij email z potwierdzeniem"
+msgstr "Повторно отправить Письмо Подтверждения"
 
 #: CTFd/forms/self.py:18
 msgid "Language"
-msgstr "Język"
+msgstr "Язык"
 
 #: CTFd/forms/self.py:20
 msgid "Current Password"
-msgstr "Obecne hasło"
+msgstr "Текущий Пароль"
 
 #: CTFd/forms/self.py:21 CTFd/forms/teams.py:113 CTFd/forms/teams.py:191
 #: CTFd/forms/teams.py:206 CTFd/forms/users.py:137
 #: CTFd/themes/core-beta/templates/teams/teams.html:51
 #: CTFd/themes/core-beta/templates/users/users.html:48
 msgid "Affiliation"
-msgstr "Afiliacja"
+msgstr "Организация"
 
 #: CTFd/forms/self.py:22 CTFd/forms/teams.py:119 CTFd/forms/teams.py:192
 #: CTFd/forms/teams.py:205 CTFd/forms/users.py:138
 #: CTFd/themes/core-beta/templates/teams/teams.html:50
 #: CTFd/themes/core-beta/templates/users/users.html:47
 msgid "Website"
-msgstr "Strona internetowa"
+msgstr "Сайт"
 
 #: CTFd/forms/self.py:23 CTFd/forms/teams.py:123 CTFd/forms/teams.py:207
 #: CTFd/themes/core-beta/templates/teams/teams.html:52
 #: CTFd/themes/core-beta/templates/users/users.html:49
 msgid "Country"
-msgstr "Państwo"
+msgstr "Страна"
 
 #: CTFd/forms/self.py:52 CTFd/themes/core-beta/templates/settings.html:220
 msgid "Expiration"
-msgstr "Data wygaśnięcia"
+msgstr "Истечение"
 
 #: CTFd/forms/self.py:53
 msgid "Generate"
-msgstr "Wygeneruj"
+msgstr "Сгенерировать"
 
 #: CTFd/forms/setup.py:22
 msgid "Event Name"
-msgstr "Nazwa wydarzenia"
+msgstr "Названия События"
 
 #: CTFd/forms/setup.py:22
 msgid "The name of your CTF event/workshop"
-msgstr "Nazwa wydarzenia / warsztatów"
+msgstr "Название вашего CTF события/мастерской"
 
 #: CTFd/forms/setup.py:25
 msgid "Event Description"
-msgstr "Opis wydarzenia"
+msgstr "Описание События"
 
 #: CTFd/forms/setup.py:25
 msgid "Description for the CTF"
-msgstr "Opis CTFa"
+msgstr "Описание для CTF"
 
 #: CTFd/forms/setup.py:28 CTFd/forms/setup.py:29
 msgid "User Mode"
-msgstr "Tryb indywidualny"
+msgstr "Пользовательский Режим"
 
 #: CTFd/forms/setup.py:29
 msgid "Team Mode"
-msgstr "Tryb zespołowy"
+msgstr "Командный Режим"
 
 #: CTFd/forms/setup.py:31
 msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
-msgstr "Ustawienie odpowiadające za to, czy użytkownicy grają razem w zespołach (Tryb zespołowy) czy samodzielnie (Tryb indywidualny)"
+msgstr "Управляет тем, объединяются ли пользователи в команды для игры (Командный Режим) или играют сами по себе (Пользовательский Режим)"
 
 #: CTFd/forms/setup.py:38
 msgid "Admin Username"
-msgstr "Nazwa administratora"
+msgstr "Имя Администратора"
 
 #: CTFd/forms/setup.py:39
 msgid "Your username for the administration account"
-msgstr "Twoja nazwa użytkownika dla konta administratora"
+msgstr "Ваше имя пользователя для учетной записи администратора"
 
 #: CTFd/forms/setup.py:43
 msgid "Admin Email"
-msgstr "Adres email administratora"
+msgstr "Почта Администратора"
 
 #: CTFd/forms/setup.py:44
 msgid "Your email address for the administration account"
-msgstr "Twój adres email dla konta administratora"
+msgstr "Ваша почта для учетной записи администратора"
 
 #: CTFd/forms/setup.py:48
 msgid "Admin Password"
-msgstr "Hasło administratora"
+msgstr "Пароль Администратора"
 
 #: CTFd/forms/setup.py:49
 msgid "Your password for the administration account"
-msgstr "Twoje hasło dla konta administratora"
+msgstr "Ваш пароль для учетной записи администратора"
 
 #: CTFd/forms/setup.py:54
 msgid "Logo"
-msgstr "Logo"
+msgstr "Логотип"
 
 #: CTFd/forms/setup.py:55
 msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
-msgstr "Logo do wyświetlania na stronie, zamiast nazwy CTFa. Funkcjonuje jako przycisk strony głównej. Opcjonalne."
+msgstr "Логотип для использования на сайте вместо названия CTF. Используется в качестве кнопки главной страницы. Необязательно."
 
 #: CTFd/forms/setup.py:60
 msgid "Banner"
-msgstr "Baner"
+msgstr "Баннер"
 
 #: CTFd/forms/setup.py:60
 msgid "Banner to use for the homepage. Optional."
-msgstr "Baner na stronę główną. Opcjonalny."
+msgstr "Баннер для использования на главной странице. Необязательно."
 
 #: CTFd/forms/setup.py:63
 msgid "Small Icon"
-msgstr "Mała ikona"
+msgstr "Маленькая иконка"
 
 #: CTFd/forms/setup.py:64
 msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
-msgstr "favicon używana w przeglądarce. Tylko pliki PNG. Musi mieć wymiary 32x32 piksele. Opcjonalna."
+msgstr "favicon, используемый в браузерах пользователей. Принимаются только PNG-изображения. Должно быть 32x32 пикселя. Необязательно."
 
 #: CTFd/forms/setup.py:69
 msgid "Theme"
-msgstr "Motyw"
+msgstr "Тема"
 
 #: CTFd/forms/setup.py:70
 msgid "CTFd Theme to use. Can be changed later."
-msgstr "Motyw CTFd. Może być zmieniony później."
+msgstr "Используемая тема CTFd. Может быть изменена позже."
 
 #: CTFd/forms/setup.py:76
 msgid "Theme Color"
-msgstr "Kolor motywu"
+msgstr "Цвет Темы"
 
 #: CTFd/forms/setup.py:77
 msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
-msgstr "Kolor używany przez motyw do zmiany estetyki. Wymaga wsparcia motywu. Opcjonalny."
+msgstr "Цвет, используемый темой для управления внешнего вида. Требуется поддержка темой. Необязательно."
 
 #: CTFd/forms/setup.py:83
 msgid "Start Time"
-msgstr "Czas rozpoczęcia"
+msgstr "Время Начала"
 
 #: CTFd/forms/setup.py:84
 msgid "Time when your CTF is scheduled to start. Optional."
-msgstr "Czas rozpoczęcia CTFa. Opcjonalny."
+msgstr "Время, когда запланировано начало вашего CTF. Необязательно."
 
 #: CTFd/forms/setup.py:87
 msgid "End Time"
-msgstr "Czas zakończenia"
+msgstr "Время Окончания"
 
 #: CTFd/forms/setup.py:88
 msgid "Time when your CTF is scheduled to end. Optional."
-msgstr "Czas zakończenia CTFa. Opcjonalny."
+msgstr "Время, когда запланировано окончание вашего CTF. Необязательно."
 
 #: CTFd/forms/setup.py:90
 msgid "Finish"
-msgstr "Zakończ"
+msgstr "Закончить"
 
 #: CTFd/forms/teams.py:76 CTFd/forms/teams.py:83 CTFd/forms/teams.py:100
 #: CTFd/forms/teams.py:202
 msgid "Team Name"
-msgstr "Nazwa zespołu"
+msgstr "Название Команды"
 
 #: CTFd/forms/teams.py:77 CTFd/forms/teams.py:84
 msgid "Team Password"
-msgstr "Hasło zespołu"
+msgstr "Пароль Команды"
 
 #: CTFd/forms/teams.py:78 CTFd/forms/teams.py:258
 msgid "Join"
-msgstr "Dołącz"
+msgstr "Присоединиться"
 
 #: CTFd/forms/teams.py:85
 msgid "Create"
-msgstr "Utwórz"
+msgstr "Создать"
 
 #: CTFd/forms/teams.py:101
 msgid "Your team's public name shown to other competitors"
-msgstr "Nazwa Twojego zespołu, wyświetlana innym uczestnikom"
+msgstr "Публичное название вашей команды, отображаемое другим участникам"
 
 #: CTFd/forms/teams.py:104
 msgid "New Team Password"
-msgstr "Nowe hasło zespołu"
+msgstr "Новый Пароль Команды"
 
 #: CTFd/forms/teams.py:104
 msgid "Set a new team join password"
-msgstr "Ustaw nowe hasło zespołu"
+msgstr "Введите новый пароль для вступления в команду"
 
 #: CTFd/forms/teams.py:107
 msgid "Confirm Current Team Password"
-msgstr "Potwierdź aktualne hasło zespołu"
+msgstr "Подтвердить Текущий Пароль Команды"
 
 #: CTFd/forms/teams.py:108
 msgid "Provide your current team password (or your password) to update your team's password"
-msgstr "Podaj obecne hasło zespołu (lub swoje hasło) aby zmienić hasło zespołu"
+msgstr "Укажите свой текущий пароль команды (или ваш личный пароль), чтобы обновить пароль вашей команды"
 
 #: CTFd/forms/teams.py:114
 msgid "Your team's affiliation publicly shown to other competitors"
-msgstr "Afiliacja Twojego zespołu, wyświetlana innym uczestnikom"
+msgstr "Организация вашей команды, публично отображаемая другим участникам"
 
 #: CTFd/forms/teams.py:120
 msgid "Your team's website publicly shown to other competitors"
-msgstr "Strona internetowa Twojego zespołu, wyświetlana innym uczestnikom"
+msgstr "Сайт вашей команды, публично отображаемая другим участникам"
 
 #: CTFd/forms/teams.py:125
 msgid "Your team's country publicly shown to other competitors"
-msgstr "Państwo Twojego zespołu, wyświetlane innym uczestnikom"
+msgstr "Страна вашей команды, публично отображаемая другим участникам"
 
 #: CTFd/forms/teams.py:165
 msgid "Team Captain"
-msgstr "Kapitan zespołu"
+msgstr "Капитан Команды"
 
 #: CTFd/forms/teams.py:188 CTFd/forms/users.py:134
 msgid "Search Field"
-msgstr "Pole wyszukiwania"
+msgstr "Поле Поиска"
 
 #: CTFd/forms/teams.py:190 CTFd/forms/users.py:136
 #: CTFd/themes/core-beta/templates/challenge.html:183
 msgid "Name"
-msgstr "Nazwa"
+msgstr "Имя"
 
 #: CTFd/forms/teams.py:197 CTFd/forms/users.py:144
 msgid "Parameter"
-msgstr "Parametr"
+msgstr "Параметр"
 
 #: CTFd/forms/teams.py:198 CTFd/forms/users.py:148
 msgid "Search"
-msgstr "Szukaj"
+msgstr "Поиск"
 
 #: CTFd/forms/teams.py:208
 msgid "Hidden"
-msgstr "Ukryty"
+msgstr "Скрыт"
 
 #: CTFd/forms/teams.py:209
 msgid "Banned"
-msgstr "Zablokowany"
+msgstr "Забанен"
 
 #: CTFd/forms/teams.py:254
 msgid "Invite Link"
-msgstr "Link zaproszenia"
+msgstr "Пригласительная Ссылка"
 
 #: CTFd/forms/users.py:145
 msgid "Search for matching users"
-msgstr "Szukaj użytkownika"
+msgstr "Поиск совпадающих пользователей"
 
 #: CTFd/themes/core-beta/templates/base.html:49
 msgid "Powered by CTFd"
-msgstr "Obsługiwane przez CTFd"
+msgstr "Разработано CTFd"
 
-#. I've changed challenge from the literal 'wyzwanie' to be 'zadanie' which more literally translates to task. The context for 'zadanie' in polish is much broader than 'wyzwanie', and often sounds better e.g. rozwiązać wyzwanie / rozwiązać zadanie
 #: CTFd/themes/core-beta/templates/challenge.html:11
 #: CTFd/themes/core-beta/templates/users/private.html:114
 #: CTFd/themes/core-beta/templates/users/public.html:113
 msgid "Challenge"
-msgstr "Zadanie"
+msgstr "Задание"
 
 #: CTFd/themes/core-beta/templates/challenge.html:19
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
-msgstr[0] "%(num)d rozwiązanie"
-msgstr[1] "%(num)d rozwiązania"
-msgstr[2] "%(num)d rozwiązań"
-msgstr[3] "%(num)d rozwiązania"
+msgstr[0] "%(num)d Решение"
+msgstr[1] "%(num)d Решений"
+msgstr[2] "%(num)d Решений"
+msgstr[3] "%(num)d Решений"
 
 #: CTFd/themes/core-beta/templates/challenge.html:73
 msgid "View Hint"
-msgstr "Wyświetl podpowiedź"
+msgstr "Показать Подсказку"
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
-msgstr "Flaga"
+msgstr "Флаг"
 
 #: CTFd/themes/core-beta/templates/challenge.html:167
 msgid "Next Challenge"
-msgstr "Następne zadanie"
+msgstr "Следующее Задание"
 
 #: CTFd/themes/core-beta/templates/challenge.html:186
 #: CTFd/themes/core-beta/templates/setup.html:237
 #: CTFd/themes/core-beta/templates/setup.html:258
 msgid "Date"
-msgstr "Data"
+msgstr "Дата"
 
 #: CTFd/themes/core-beta/templates/challenges.html:7
 #: CTFd/themes/core-beta/templates/components/navbar.html:57
 msgid "Challenges"
-msgstr "Zadania"
+msgstr "Задания"
 
 #: CTFd/themes/core-beta/templates/confirm.html:7
 msgid "Confirm"
-msgstr "Potwierdź"
+msgstr "Подтвердить"
 
 #: CTFd/themes/core-beta/templates/confirm.html:18
 msgid "We've sent a confirmation email to your email address."
-msgstr "Wysłaliśmy wiadomość email z linkiem potwierdzającym na Twój adres email."
+msgstr "Мы отправили электронное письмо с подтверждением на ваш адрес электронной почты."
 
 #: CTFd/themes/core-beta/templates/confirm.html:24
 msgid "Please click the link in that email to confirm your account."
-msgstr "Kliknij link otrzymany w emailu, aby potwierdzić swoje konto."
+msgstr "Пожалуйста, перейдите по ссылке в этом электронном письме, чтобы подтвердить свою учетную запись."
 
 #: CTFd/themes/core-beta/templates/confirm.html:30
 msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
-msgstr "Jeśli wiadomość email nie dotrze, sprawdź folder SPAM lub skontaktuj się z administratorem, aby zweryfikować konto."
+msgstr "Если электронное письмо не пришло, проверьте папку со спамом или обратитесь к администратору, чтобы вручную подтвердить свою учетную запись."
 
 #: CTFd/themes/core-beta/templates/confirm.html:43
 msgid "Change Email Address"
-msgstr "Zmień adres email"
+msgstr "Изменить Адрес Электронной Почты"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:178
 #: CTFd/themes/core-beta/templates/login.html:7
 msgid "Login"
-msgstr "Zaloguj się"
+msgstr "Вход"
 
 #: CTFd/themes/core-beta/templates/login.html:40
 msgid "Forgot your password?"
-msgstr "Zapomniałeś hasła?"
+msgstr "Забыли свой пароль?"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:97
 #: CTFd/themes/core-beta/templates/notifications.html:7
 msgid "Notifications"
-msgstr "Powiadomienia"
+msgstr "Уведомления"
 
 #: CTFd/themes/core-beta/templates/notifications.html:14
 msgid "There are no notifications yet"
-msgstr "Nie ma jeszcze żadnych powiadomień"
+msgstr "Уведомлений пока нет"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:165
 #: CTFd/themes/core-beta/templates/register.html:7
 msgid "Register"
-msgstr "Rejestracja"
+msgstr "Регистрация"
 
 #: CTFd/themes/core-beta/templates/register.html:35
 msgid "Your username on the site"
-msgstr "Twoja nazwa użytkownika na stronie"
+msgstr "Ваше имя пользователя на сайте"
 
 #: CTFd/themes/core-beta/templates/register.html:43
 msgid "Never shown to the public"
-msgstr "Nigdy nie wyświetlany publicznie"
+msgstr "Никогда не показывать публично"
 
 #: CTFd/themes/core-beta/templates/register.html:51
 msgid "Password used to log into your account"
-msgstr "Hasło używane do logowania się na Twoje konto"
+msgstr "Пароль, используемый для входа в вашу учетную запись"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
-msgstr "Zresetuj hasło"
+msgstr "Сбросить Пароль"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:21
 msgid "You can now reset the password for your account and log in. Please enter in a new password below."
-msgstr "Możesz teraz zresetować hasło do swojego konta i zalogować się. Wprowadź nowe hasło poniżej."
+msgstr "Теперь вы можете сбросить пароль для своей учетной записи и войти в систему. Пожалуйста, введите новый пароль ниже."
 
 #: CTFd/themes/core-beta/templates/reset_password.html:44
 msgid "Please provide the email address associated with your account below."
-msgstr "Podaj poniżej adres email powiązany z Twoim kontem."
+msgstr "Пожалуйста, укажите ниже адрес электронной почты, связанный с вашей учетной записью."
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:135
 #: CTFd/themes/core-beta/templates/settings.html:8
 msgid "Settings"
-msgstr "Ustawienia"
+msgstr "Настройки"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:123
 #: CTFd/themes/core-beta/templates/settings.html:21
 msgid "Profile"
-msgstr "Profil"
+msgstr "Профиль"
 
 #: CTFd/themes/core-beta/templates/settings.html:26
 msgid "Access Tokens"
-msgstr "Tokeny dostępu"
+msgstr "Токен Доступа"
 
 #: CTFd/themes/core-beta/templates/settings.html:95
 msgid "Your profile has been updated"
-msgstr "Twój profil został zaktualizowany"
+msgstr "Ваш профиль был обновлен"
 
 #: CTFd/themes/core-beta/templates/settings.html:103
 msgid "Error:"
-msgstr "Błąd:"
+msgstr "Ошибка:"
 
 #: CTFd/themes/core-beta/templates/settings.html:129
 msgid "API Key Generated"
-msgstr "Klucz API został wygenerowany"
+msgstr "Ключ API Сгенерирован"
 
 #: CTFd/themes/core-beta/templates/settings.html:137
 msgid "Please copy your API Key, it won't be shown again!"
-msgstr "Skopiuj swój klucz API, nie będzie on wyświetlony ponownie!"
+msgstr "Пожалуйста, скопируйте свой Ключ API, он больше не будет показан!"
 
 #: CTFd/themes/core-beta/templates/settings.html:178
 msgid "Active Tokens"
-msgstr "Aktywne tokeny"
+msgstr "Активные Токены"
 
 #: CTFd/themes/core-beta/templates/settings.html:190
 msgid "Delete Token"
-msgstr "Usuń token"
+msgstr "Удалить Токен"
 
 #: CTFd/themes/core-beta/templates/settings.html:199
 msgid "Are you sure you want to delete this token?"
-msgstr "Czy na pewno chcesz usunąć ten token?"
+msgstr "Вы уверены, что хотите удалить этот токен?"
 
 #: CTFd/themes/core-beta/templates/settings.html:219
 msgid "Created"
-msgstr "Data utworzenia"
+msgstr "Создано"
 
 #: CTFd/themes/core-beta/templates/settings.html:221
 msgid "Delete"
-msgstr "Usuń"
+msgstr "Удалить"
 
 #: CTFd/themes/core-beta/templates/setup.html:24
 msgid "Setup"
-msgstr "Konfiguracja"
+msgstr "Настройка"
 
 #: CTFd/themes/core-beta/templates/setup.html:44
 msgid "General"
-msgstr "Ogólne"
+msgstr "Общее"
 
 #: CTFd/themes/core-beta/templates/setup.html:47
 msgid "Mode"
-msgstr "Tryb"
+msgstr "Режим"
 
 #: CTFd/themes/core-beta/templates/setup.html:50
 msgid "Administration"
-msgstr "Konto Administratora"
+msgstr "Администрирование"
 
 #: CTFd/themes/core-beta/templates/setup.html:53
 msgid "Style"
-msgstr "Wygląd"
+msgstr "Стиль"
 
 #: CTFd/themes/core-beta/templates/setup.html:56
 msgid "Date &amp; Time"
-msgstr "Data &amp; Czas"
+msgstr "Дата &amp; Время"
 
 #: CTFd/themes/core-beta/templates/setup.html:59
 msgid "Integrations"
-msgstr "Integracje"
+msgstr "Интеграции"
 
 #: CTFd/themes/core-beta/templates/setup.html:108
 msgid "Participants register accounts and form teams"
-msgstr "Uczestnicy rejestrują indywidualne konta i tworzą zespoły"
+msgstr "Участники регистрируют учетные записи и формируют команды"
 
 #: CTFd/themes/core-beta/templates/setup.html:109
 msgid "If a team member solves a challenge, the entire team receives credit"
-msgstr "Jeśli członek zespołu rozwiąże zadanie, cały zespół otrzymuje punkty"
+msgstr "Если член команды решает задачу, она засчитывается всей команде"
 
 #: CTFd/themes/core-beta/templates/setup.html:111
 msgid "Easier to see which team member solved a challenge"
-msgstr "Łatwiej zobaczyć, który członek zespołu rozwiązał zadanie"
+msgstr "Легче увидеть, кто из членов команды решил задачу"
 
 #: CTFd/themes/core-beta/templates/setup.html:112
 msgid "May be slightly more difficult to administer"
-msgstr "Może być nieco trudniejszy w administracji"
+msgstr "Может быть немного сложнее в администрировании"
 
 #: CTFd/themes/core-beta/templates/setup.html:116
 msgid "Participants only register an individual account"
-msgstr "Uczestnicy rejestrują się indywidualnie"
+msgstr "Участники регистрируют только индивидуальную учетную запись"
 
 #: CTFd/themes/core-beta/templates/setup.html:117
 msgid "Players can share accounts to form pseudo-teams"
-msgstr "Uczestnicy mogą współdzielić konta, tworząc pseudo-zespoły"
+msgstr "Игроки могут обмениваться учетными записями для формирования псевдокоманды"
 
 #: CTFd/themes/core-beta/templates/setup.html:119
 msgid "Easier to organize"
-msgstr "Łatwiejszy w organizacji"
+msgstr "Легче организовать"
 
 #: CTFd/themes/core-beta/templates/setup.html:120
 msgid "Difficult to attribute solutions to individual team members"
-msgstr "Trudniej przypisać rozwiązania konkretnym członkom zespołu"
+msgstr "Трудно приписать решения отдельным членам команды"
 
 #: CTFd/themes/core-beta/templates/setup.html:164
 msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
-msgstr "Zasubskrybuj newsletter CTFd LLC, aby otrzymywać wiadomości i aktualizacje"
+msgstr "Подпишитесь по адресу электронной почты на рассылку новостей CTFd LLC для получения обновлений"
 
 #: CTFd/themes/core-beta/templates/setup.html:241
 #: CTFd/themes/core-beta/templates/setup.html:262
 #: CTFd/themes/core-beta/templates/users/private.html:117
 #: CTFd/themes/core-beta/templates/users/public.html:116
 msgid "Time"
-msgstr "Czas"
+msgstr "Время"
 
 #: CTFd/themes/core-beta/templates/setup.html:266
 msgid "UTC Preview"
-msgstr "Podgląd czasu UTC"
+msgstr "Просмотр UTC"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:34
 #: CTFd/themes/core-beta/templates/users/users.html:6
 msgid "Users"
-msgstr "Użytkownicy"
+msgstr "Пользователи"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:41
 #: CTFd/themes/core-beta/templates/teams/teams.html:6
 msgid "Teams"
-msgstr "Zespoły"
+msgstr "Команды"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:50
 msgid "Scoreboard"
-msgstr "Tablica wyników"
+msgstr "Рейтинг"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:80
 msgid "Admin Panel"
-msgstr "Panel administratora"
+msgstr "Панель Администратора"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:110
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
 #: CTFd/themes/core-beta/templates/teams/teams.html:49
 msgid "Team"
-msgstr "Zespół"
+msgstr "Команда"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:147
 msgid "Logout"
-msgstr "Wyloguj"
+msgstr "Выйти"
 
 #: CTFd/themes/core-beta/templates/errors/403.html:9
 msgid "Forbidden"
-msgstr "Brak dostępu"
+msgstr "Доступ Запрещен"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:11
 msgid "File not found"
-msgstr "Strona nie istnieje"
+msgstr "Файл не найден"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:12
 msgid "Sorry about that"
-msgstr "Przepraszamy"
+msgstr "Сожалею об этом"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:11
 msgid "Too many requests"
-msgstr "Za dużo zapytań do serwera"
+msgstr "Слишком много запросов"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:12
 msgid "Please slow down!"
-msgstr "Zwolnij proszę!"
+msgstr "Пожалуйста, помедленнее!"
 
 #: CTFd/themes/core-beta/templates/errors/502.html:11
 msgid "Bad Gateway"
-msgstr "Błąd serwera - Bad Gateway"
+msgstr "Bad Gateway"
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
 msgid "(Optional)"
-msgstr "(Opcjonalnie)"
+msgstr "(Опционально)"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:6
 #: CTFd/themes/core-beta/templates/teams/join_team.html:6
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:36
 msgid "Join Team"
-msgstr "Dołącz do drużyny"
+msgstr "Присоединиться к Команде"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:15
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:12
 msgid "Welcome to"
-msgstr "Witamy na"
+msgstr "Добро пожаловать на"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:19
 msgid "Click the button below to join the team!"
-msgstr "Kliknij przycisk poniżej, aby dołączyć do zespołu!"
+msgstr "Нажмите на кнопку ниже, чтобы присоединиться к команде!"
 
 #: CTFd/themes/core-beta/templates/teams/new_team.html:6
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:39
 msgid "Create Team"
-msgstr "Utwórz zespół"
+msgstr "Создать Команду"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
 msgid "In order to participate you must either join or create a team."
-msgstr "Aby wziąć udział, musisz dołączyć do zespołu lub go utworzyć."
+msgstr "Чтобы принять участие, вы должны либо присоединиться, либо создать команду."
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
 msgid "Play with Official Team"
-msgstr "Graj z oficjalną drużyną"
+msgstr "Играйте с Официальной Командой"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
 msgid "Join Unofficial Team"
-msgstr "Dołącz do nieoficjalnego zespołu"
+msgstr "Присоединиться к Неофициальной Команде"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
 msgid "Create Unofficial Team"
-msgstr "Utwórz nieoficjalny zespół"
+msgstr "Создать Неофициальную Команду"
 
 #: CTFd/themes/core-beta/templates/teams/teams.html:124
 #: CTFd/themes/core-beta/templates/users/users.html:114
 msgid "Page"
-msgstr "Strona"
+msgstr "Страница"
 
 #: CTFd/themes/core-beta/templates/users/private.html:21
 #: CTFd/themes/core-beta/templates/users/public.html:21
 #: CTFd/themes/core-beta/templates/users/users.html:66
 msgid "Official"
-msgstr "Oficjalne konto"
+msgstr "Официально"
 
 #: CTFd/themes/core-beta/templates/users/private.html:88
 #: CTFd/themes/core-beta/templates/users/public.html:88
 msgid "Awards"
-msgstr "Nagrody"
+msgstr "Награды"
 
 #: CTFd/themes/core-beta/templates/users/private.html:110
 msgid "Solves"
-msgstr "Rozwiązania"
+msgstr "Решения"
 
 #: CTFd/themes/core-beta/templates/users/private.html:115
 #: CTFd/themes/core-beta/templates/users/public.html:114
 msgid "Category"
-msgstr "Kategoria"
+msgstr "Категория"
 
 #: CTFd/themes/core-beta/templates/users/private.html:116
 #: CTFd/themes/core-beta/templates/users/public.html:115
 msgid "Value"
-msgstr "Wartość"
+msgstr "Значение"
 
 #: CTFd/themes/core-beta/templates/users/private.html:203
 #: CTFd/themes/core-beta/templates/users/public.html:204
 msgid "No solves yet"
-msgstr "Brak rozwiązań"
+msgstr "Нет решений еще"
 
 #: CTFd/themes/core-beta/templates/users/users.html:46
 msgid "User"
-msgstr "Użytkownik"
+msgstr "Пользователь"
 
 #: CTFd/utils/modes/__init__.py:35
 msgid "user"
 msgid_plural "users"
-msgstr[0] "użytkownik"
-msgstr[1] "użytkowników"
-msgstr[2] "użytkowników"
-msgstr[3] "użytkownika"
+msgstr[0] "пользователь"
+msgstr[1] "пользователей"
+msgstr[2] "пользователей"
+msgstr[3] "пользователей"
 
 #: CTFd/utils/modes/__init__.py:37
 msgid "team"
 msgid_plural "teams"
-msgstr[0] "zespół"
-msgstr[1] "zespoły"
-msgstr[2] "zespołów"
-msgstr[3] "zespołu"
+msgstr[0] "команда"
+msgstr[1] "команды"
+msgstr[2] "команды"
+msgstr[3] "команды"
 
