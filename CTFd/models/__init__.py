@@ -25,9 +25,13 @@ def get_class_by_tablename(tablename):
         c = m.class_
         if hasattr(c, "__tablename__") and c.__tablename__ == tablename:
             classes.append(c)
+
+    # We didn't find this class
+    if len(classes) == 0:
+        return None
     # This is a class where we have only one possible candidate.
     # It's either a top level class or a polymorphic class with a specific hardcoded table name
-    if len(classes) == 1:
+    elif len(classes) == 1:
         return classes[0]
     # In this case we are dealing with a polymorphic table where all of the tables have the same table name.
     # However for us to identify the parent class we can look for the class that defines the polymorphic_on arg
@@ -39,7 +43,6 @@ def get_class_by_tablename(tablename):
                 and mapper_args.get("polymorphic_on") is not None
             ):
                 return c
-    return None
 
 
 @compiles(db.DateTime, "mysql")
