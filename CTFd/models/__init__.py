@@ -20,10 +20,25 @@ def get_class_by_tablename(tablename):
     :param tablename: String with name of table.
     :return: Class reference or None.
     """
+    classes = []
     for m in db.Model.registry.mappers:
         c = m.class_
         if hasattr(c, "__tablename__") and c.__tablename__ == tablename:
-            return c
+            classes.append(c)
+    # This is a class where we have only one possible candidate.
+    # It's either a top level class or a polymorphic class with a specific hardcoded table name
+    if len(classes) == 1:
+        return classes[0]
+    # In this case we are dealing with a polymorphic table where all of the tables have the same table name.
+    # However for us to identify the parent class we can look for the class that defines the polymorphic_on arg
+    else:
+        for c in classes:
+            mapper_args = dict(c.__mapper_args__)
+            if (
+                mapper_args.get("polymorphic_identity")
+                and mapper_args.get("polymorphic_on") is not None
+            ):
+                return c
     return None
 
 
