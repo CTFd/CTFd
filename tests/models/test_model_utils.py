@@ -11,7 +11,7 @@ from tests.helpers import create_ctfd, destroy_ctfd
 
 def test_get_class_by_tablename():
     """
-    Test that get_class_by_tablename() works against
+    Test that get_class_by_tablename() returns the correct table
     """
     app = create_ctfd()
     with app.app_context():
