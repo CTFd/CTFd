@@ -38,10 +38,7 @@ def get_class_by_tablename(tablename):
     else:
         for c in classes:
             mapper_args = dict(c.__mapper_args__)
-            if (
-                mapper_args.get("polymorphic_identity")
-                and mapper_args.get("polymorphic_on") is not None
-            ):
+            if mapper_args.get("polymorphic_on") is not None:
                 return c
 
 
