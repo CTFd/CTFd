@@ -286,15 +286,13 @@ def dump_database_table(tablename):
     temp = StringIO()
     writer = csv.writer(temp)
 
-    header = [column.name for column in model.__mapper__.columns]
+    header = model.__mapper__.column_attrs.keys()
     writer.writerow(header)
 
     responses = model.query.all()
 
     for curr in responses:
-        writer.writerow(
-            [getattr(curr, column.name) for column in model.__mapper__.columns]
-        )
+        writer.writerow([getattr(curr, column) for column in header])
 
     temp.seek(0)
 
