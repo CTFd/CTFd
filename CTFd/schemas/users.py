@@ -171,14 +171,16 @@ class UserSchema(ma.ModelSchema):
                     "Please confirm your current password", field_names=["confirm"]
                 )
 
+            if target_user.password is None:
+                raise ValidationError(
+                    "Previous password could not be verified",
+                    field_names=["confirm"],
+                )
+
             if password and confirm:
-                # If the user doesn't have a ciphertext set we should still allow them to set their password
-                if target_user.password is None:
-                    test = True
-                else:
-                    test = verify_password(
-                        plaintext=confirm, ciphertext=target_user.password
-                    )
+                test = verify_password(
+                    plaintext=confirm, ciphertext=target_user.password
+                )
                 if test is True:
                     return data
                 else:
