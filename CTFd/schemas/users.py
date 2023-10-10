@@ -172,9 +172,13 @@ class UserSchema(ma.ModelSchema):
                 )
 
             if password and confirm:
-                test = verify_password(
-                    plaintext=confirm, ciphertext=target_user.password
-                )
+                # If the user doesn't have a ciphertext set we should still allow them to set their password
+                if target_user.password is None:
+                    test = True
+                else:
+                    test = verify_password(
+                        plaintext=confirm, ciphertext=target_user.password
+                    )
                 if test is True:
                     return data
                 else:
