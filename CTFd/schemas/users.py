@@ -172,10 +172,10 @@ class UserSchema(ma.ModelSchema):
                 )
 
             if target_user.password is None:
-                raise ValidationError(
-                    "Previous password could not be verified",
-                    field_names=["confirm"],
-                )
+                # Prevent password from being set but allow other data through
+                data.pop("password", None)
+                data.pop("confirm", None)
+                return
 
             if password and confirm:
                 test = verify_password(
