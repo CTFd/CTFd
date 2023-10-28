@@ -18,6 +18,9 @@ def build_model_filters(model, query, field, extra_columns=None):
         else:
             if field in extra_columns:
                 column = extra_columns[field]
-                _filter = column.op("=")(query)
+                if type(column.type) == sqlalchemy.sql.sqltypes.Integer:
+                    _filter = column.op("=")(query)
+                else:
+                    _filter = column.like(f"%{query}%")
                 filters.append(_filter)
     return filters
