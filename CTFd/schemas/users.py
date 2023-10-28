@@ -171,6 +171,12 @@ class UserSchema(ma.ModelSchema):
                     "Please confirm your current password", field_names=["confirm"]
                 )
 
+            if target_user.password is None:
+                # Prevent password from being set but allow other data through
+                data.pop("password", None)
+                data.pop("confirm", None)
+                return
+
             if password and confirm:
                 test = verify_password(
                     plaintext=confirm, ciphertext=target_user.password
