@@ -14,10 +14,10 @@
 	"extensions": [
 		"cstrap.flask-snippets",
 		"vscode-icons-team.vscode-icons",
-//		"ms-azuretools.vscode-docker",
-//		"ms-kubernetes-tools.vscode-kubernetes-tools",
+		"ms-azuretools.vscode-docker",
+		"ms-kubernetes-tools.vscode-kubernetes-tools",
 		"ms-python.python",
-//		"2gua.rainbow-brackets",
+		"2gua.rainbow-brackets",
 		"esbenp.prettier-vscode",
 		"rvest.vs-code-prettier-eslint",
 		"eamodio.gitlens",
