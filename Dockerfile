@@ -28,6 +28,11 @@ RUN pip install --no-cache-dir -r requirements.txt \
 FROM python:3.9-slim-buster as release
 WORKDIR /opt/CTFd
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        git
+
 # hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -38,13 +43,15 @@ RUN apt-get update \
 
 COPY --chown=1001:1001 . /opt/CTFd
 
+RUN pip install -r development.txt --no-cache-dir
+
 RUN useradd \
     --no-log-init \
     --shell /bin/bash \
     -u 1001 \
     ctfd \
-    && mkdir -p /var/log/CTFd /var/uploads \
-    && chown -R 1001:1001 /var/log/CTFd /var/uploads /opt/CTFd \
+    && mkdir -p /var/log/CTFd /var/uploads /home/ctfd\
+    && chown -R 1001:1001 /var/log/CTFd /var/uploads /opt/CTFd /home/ctfd\
     && chmod +x /opt/CTFd/docker-entrypoint.sh
 
 COPY --chown=1001:1001 --from=build /opt/venv /opt/venv
