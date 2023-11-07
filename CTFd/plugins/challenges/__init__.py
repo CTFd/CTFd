@@ -120,6 +120,10 @@ class BaseChallenge(object):
         data = request.form or request.get_json()
         submission = data["submission"].strip()
         flags = Flags.query.filter_by(challenge_id=challenge.id).all()
+
+        if submission.strip() == "":
+            return False, "Flag cannot be blank strings"
+
         for flag in flags:
             try:
                 if get_flag_class(flag.type).compare(flag, submission):
