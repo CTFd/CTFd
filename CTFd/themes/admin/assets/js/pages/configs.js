@@ -12,7 +12,7 @@ import $ from "jquery";
 import { ezQuery, ezProgressBar, ezAlert } from "core/ezq";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
-import Vue from "vue/dist/vue.esm.browser";
+import Vue from "@vue/compat";
 import FieldList from "../components/configs/fields/FieldList.vue";
 
 dayjs.extend(advancedFormat);

@@ -3611,4 +3611,5 @@ let API = (function() {
 })();
 
 // eslint-disable-next-line no-undef
-exports.API = API;
+// exports.API = API;
+export default API;

@@ -2,7 +2,7 @@ import "bootstrap/dist/js/bootstrap.bundle";
 import { makeSortableTables } from "core/utils";
 import $ from "jquery";
 import EasyMDE from "easymde";
-import Vue from "vue/dist/vue.esm.browser";
+import Vue from "@vue/compat";
 import MediaLibrary from "./components/files/MediaLibrary.vue";
 import hljs from "highlight.js";
 

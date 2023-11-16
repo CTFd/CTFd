@@ -1,5 +1,5 @@
 import Q from "q";
-import { API } from "./api";
+import API from "./api";
 
 function mergeQueryParams(parameters, queryParameters) {
   return { ...parameters, ...queryParameters };

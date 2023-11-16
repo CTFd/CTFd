@@ -4,7 +4,7 @@ import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
 import { ezQuery, ezBadge } from "core/ezq";
 import { createGraph, updateGraph } from "core/graphs";
-import Vue from "vue/dist/vue.esm.browser";
+import Vue from "@vue/compat";
 import CommentBox from "../components/comments/CommentBox.vue";
 
 function createUser(event) {

@@ -6,7 +6,7 @@ import CTFd from "core/CTFd";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
 import { ezAlert, ezToast } from "core/ezq";
-import Vue from "vue/dist/vue.esm.browser";
+import Vue from "@vue/compat";
 import CommentBox from "../components/comments/CommentBox.vue";
 
 function submit_form() {

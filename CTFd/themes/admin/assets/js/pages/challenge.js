@@ -7,7 +7,7 @@ import { htmlEntities } from "core/utils";
 import { ezQuery, ezAlert, ezToast } from "core/ezq";
 import { default as helpers } from "core/helpers";
 import { bindMarkdownEditors } from "../styles";
-import Vue from "vue/dist/vue.esm.browser";
+import Vue from "@vue/compat";
 import CommentBox from "../components/comments/CommentBox.vue";
 import FlagList from "../components/flags/FlagList.vue";
 import Requirements from "../components/requirements/Requirements.vue";

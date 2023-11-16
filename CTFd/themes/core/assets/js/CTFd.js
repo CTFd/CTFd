@@ -5,7 +5,7 @@ import MarkdownIt from "markdown-it";
 import "./patch";
 import fetch from "./fetch";
 import config from "./config";
-import { API } from "./api";
+import API from "./api";
 import ezq from "./ezq";
 import { getScript, htmlEntities, createHtmlNode } from "./utils";
 

@@ -33,7 +33,7 @@
                       href="javascript:void(0)"
                       @click="
                         selectFile(file);
-                        return false;
+                        // return false;
                       "
                     >
                       <i
