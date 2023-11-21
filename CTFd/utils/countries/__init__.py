@@ -224,7 +224,7 @@ COUNTRIES_LIST = [
     ("SE", "Sweden"),
     ("CH", "Switzerland"),
     ("SY", "Syria"),
-    ("TW", "Taiwan, China"),
+    ("TW", "Taiwan"),
     ("TJ", "Tajikistan"),
     ("TZ", "Tanzania"),
     ("TH", "Thailand"),
