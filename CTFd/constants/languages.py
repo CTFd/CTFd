@@ -7,8 +7,8 @@ class Languages(str, RawEnum):
     POLISH = "pl"
     SPANISH = "es"
     ARABIC = "ar"
-    CHINESE = "zh_CN"
-    TAIWANESE = "zh_TW"
+    CHINESE_SIMPLIFIED = "zh_CN"
+    CHINESE_TRADITIONAL = "zh_TW"
     FRENCH = "fr"
     KOREAN = "ko"
     RUSSIAN = "ru"
@@ -21,8 +21,8 @@ LANGUAGE_NAMES = {
     "pl": "Polski",
     "es": "Español",
     "ar": "اَلْعَرَبِيَّةُ",
-    "zh_CN": "中文",
-    "zh_TW": "國語",
+    "zh_CN": "简体中文",
+    "zh_TW": "繁體中文(中國台灣)",
     "fr": "Français",
     "ko": "한국어",
     "ru": "русский язык",
