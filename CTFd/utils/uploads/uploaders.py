@@ -83,6 +83,7 @@ class S3Uploader(BaseUploader):
         super(BaseUploader, self).__init__()
         self.s3 = self._get_s3_connection()
         self.bucket = get_app_config("AWS_S3_BUCKET")
+        self.s3_prefix: str = get_app_config("AWS_S3_CUSTOM_PREFIX")
 
     def _get_s3_connection(self):
         access_key = get_app_config("AWS_ACCESS_KEY_ID")
@@ -121,7 +122,10 @@ class S3Uploader(BaseUploader):
         md5hash = hexencode(os.urandom(16))
 
         dst = md5hash + "/" + filename
-        self.s3.upload_fileobj(file_obj, self.bucket, dst)
+        s3_dst = dst
+        if self.s3_prefix:
+            s3_dst = self.s3_prefix + dst
+        self.s3.upload_fileobj(file_obj, self.bucket, s3_dst)
         return dst
 
     def download(self, filename):
@@ -129,6 +133,8 @@ class S3Uploader(BaseUploader):
         # We round the timestamp down to the previous hour and generate the link at that time
         current_timestamp = int(time.time())
         truncated_timestamp = current_timestamp - (current_timestamp % 3600)
+        if self.s3_prefix:
+            filename = self.s3_prefix + filename
         key = filename
         filename = filename.split("/").pop()
         with freeze_time(datetime.datetime.fromtimestamp(truncated_timestamp)):
@@ -158,13 +164,21 @@ class S3Uploader(BaseUploader):
     def sync(self):
         local_folder = current_app.config.get("UPLOAD_FOLDER")
         # If the bucket is empty then Contents will not be in the response
-        bucket_list = self.s3.list_objects(Bucket=self.bucket).get("Contents", [])
+        if self.s3_prefix:
+            bucket_list = self.s3.list_objects(
+                Bucket=self.bucket, Prefix=self.s3_prefix
+            ).get("Contents", [])
+        else:
+            bucket_list = self.s3.list_objects(Bucket=self.bucket).get("Contents", [])
 
         for s3_key in bucket_list:
             s3_object = s3_key["Key"]
             # We don't want to download any directories
             if s3_object.endswith("/") is False:
-                local_path = os.path.join(local_folder, s3_object)
+                local_s3_object = s3_object
+                if self.s3_prefix:
+                    local_s3_object = local_s3_object.replace(self.s3_prefix, "", 1)
+                local_path = os.path.join(local_folder, local_s3_object)
                 directory = os.path.dirname(local_path)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
