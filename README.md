@@ -83,6 +83,19 @@ OAUTH_CLIENT_ID = None
 OAUTH_CLIENT_SECRET = None
 ```
 
+## OAuth - KeyCloak
+
+To integrate with any other OAuth provider, such as KeyCloak, edit `CTFd/config.ini` and set:
+```python
+OAUTH_NAME = MyAuth
+OAUTH_CLIENT_ID = None
+OAUTH_CLIENT_SECRET = None
+OAUTH_TOKEN_ENDPOINT = https://oauth.local/realms/<yourrealm>/protocol/openid-connect/token
+OAUTH_API_ENDPOINT = https://oauth.local/realms/<yourrealm>/protocol/openid-connect/userinfo
+OAUTH_API_ENDPOINT = https://oauth.local/realms/<yourrealm>/protocol/openid-connect/userinfo
+```
+You will have to add a mapper for `id` in your client scope, and ensure `openid` is added as client scope.
+
 ## Credits
 
 - Logo by [Laura Barbera](http://www.laurabb.com/)

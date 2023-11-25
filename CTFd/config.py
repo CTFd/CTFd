@@ -246,6 +246,11 @@ class ServerConfig(object):
     # === OAUTH ===
     OAUTH_CLIENT_ID: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
     OAUTH_CLIENT_SECRET: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_SECRET"])
+
+    OAUTH_NAME: str = empty_str_cast(config_ini["oauth"]["OAUTH_NAME"])
+    OAUTH_AUTHORIZATION_ENDPOINT: str = empty_str_cast(config_ini["oauth"]["OAUTH_AUTHORIZATION_ENDPOINT"])
+    OAUTH_TOKEN_ENDPOINT: str = empty_str_cast(config_ini["oauth"]["OAUTH_TOKEN_ENDPOINT"])
+    OAUTH_API_ENDPOINT: str = empty_str_cast(config_ini["oauth"]["OAUTH_API_ENDPOINT"])
 # fmt: on
 
 

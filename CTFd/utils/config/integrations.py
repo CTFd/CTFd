@@ -8,6 +8,8 @@ def mlc():
     )
     return admin_config or main_config
 
+def name():
+    return get_app_config("OAUTH_NAME") or get_config("oauth_name") or "Major League Cyber"
 
 def mlc_registration():
     v = get_config("registration_visibility")
