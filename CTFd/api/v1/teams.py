@@ -290,8 +290,11 @@ class TeamPrivate(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
+        # A team can always calculate their score regardless of any setting because they can simply sum all of their challenges
+        # Therefore a team requesting their private data should be able to get their own current score
+        # However place is not something that a team can ascertain on their own so it is always gated behind freeze time
         response.data["place"] = team.place
-        response.data["score"] = team.score
+        response.data["score"] = team.get_score(admin=True)
         return {"success": True, "data": response.data}
 
     @authed_only
