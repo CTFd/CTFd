@@ -29,10 +29,11 @@ BASE_TEMPLATE = """
 </div>
 """
 
+
 def get_logo():
     uploader = get_uploader()
     logo = get_config("ctf_logo")
-    return (pathlib.Path(uploader.base_path) / logo).open("rb")
+    return uploader.get(logo, mode="rb")
 
 
 @social.route("/share/assets/<type>/<int:id>/<path>")
@@ -146,4 +147,10 @@ def share(type, id, mac):
         solve_count_word=str(solve_count)
         + pluralize(solves_count, " solve", " solves"),
     )
-    return render_template("page.html", content=content, title=title)
+    asset_url = url_for("social.assets", type="solves", id=id, path=mac + ".png")
+    meta = f"""
+<meta property="og:title" content="{title}" />
+<meta property="og:description" content="{ctf_description}" />
+<meta property="og:image" content="{asset_url}" />
+"""
+    return render_template("page.html", meta=meta, content=content, title=title)
