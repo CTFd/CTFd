@@ -334,7 +334,7 @@ def private():
     awards = team.get_awards()
 
     place = team.place
-    score = team.score
+    score = team.get_score(admin=True)
 
     if config.is_scoreboard_frozen():
         infos.append("Scoreboard has been frozen")
