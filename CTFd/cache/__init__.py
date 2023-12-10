@@ -52,6 +52,22 @@ def make_cache_key(path=None, key_prefix="view/%s"):
     return cache_key
 
 
+def make_cache_key_with_args(path=None, key_prefix="view/%s", view_args=None):
+    """
+    This function ensures that view arguments are taken into account when generating a cache key
+    :param path:
+    :param key_prefix:
+    :return:
+    """
+    if path is None:
+        path = request.endpoint
+    if view_args is None:
+        view_args = request.view_args
+    for k, v in view_args.items():
+        path += f'_{k}_{v}'
+    return make_cache_key(path, key_prefix)
+
+
 def clear_config():
     from CTFd.utils import _get_config, get_app_config
 
@@ -91,7 +107,7 @@ def clear_standings():
 
     # Clear out HTTP request responses
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardList.endpoint))
-    cache.delete(make_cache_key(path=api.name + "." + ScoreboardDetail.endpoint))
+    cache.delete(make_cache_key_with_args(path=api.name + "." + ScoreboardDetail.endpoint, view_args={"count": 10}))
     cache.delete_memoized(ScoreboardList.get)
 
     # Clear out scoreboard templates
