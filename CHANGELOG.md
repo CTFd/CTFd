@@ -15,7 +15,7 @@
 - Add `email` as a `field` to query to `/api/v1/users` and `/api/v1/teams` to allow searching via email address for Admins
 - Accept multipart/form-data with token auth for file upload to `/api/v1/files`
 - Always allow a user/team to see their own score when querying their own self endpoints regardless of Score Visibility
-  - A user can always calculate their score regardless of any setting because they can simply sum all of their challenges
+  - The rationale for this is that a user can always calculate their score regardless of any setting because they can simply sum all of their challenges
 
 **Admin Panel**
 
@@ -23,7 +23,7 @@
 
 **Themes**
 
-- When using core-beta, `meta` tags can now be inserted into pages from render_template calls
+- When using core-beta, `meta` tags can now be inserted into pages from `render_template()` calls
 
 **Deployment**
 
