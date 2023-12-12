@@ -1,3 +1,35 @@
+# 3.6.1 / 2023-12-12
+
+**Security**
+
+- Fix an issue where users could bypass Score Visibility and see a user's score/place when not allowed by Admins
+
+**General**
+
+- Add Slovak, Japanese, Brazillian Portugese translations
+- Update Chinese translation
+- Fix Dynamic challenges not showing the Next Challenge
+
+**API**
+
+- Add `email` as a `field` to query to `/api/v1/users` and `/api/v1/teams` to allow searching via email address for Admins
+- Accept multipart/form-data with token auth for file upload to `/api/v1/files`
+- Always allow a user/team to see their own score when querying their own self endpoints regardless of Score Visibility
+  - The rationale for this is that a user can always calculate their score regardless of any setting because they can simply sum all of their challenges
+
+**Admin Panel**
+
+- Fix an issue where polymorphic tables (i.e. solves) could not be CSV exported correctly
+
+**Themes**
+
+- When using core-beta, `meta` tags can now be inserted into pages from `render_template()` calls
+
+**Deployment**
+
+- Fix an issue where S3 uploads would not work if the server's timezone was not set to UTC
+- Update gevent dependency to `23.9.1`
+
 # 3.6.0 / 2023-08-21
 
 **General**
