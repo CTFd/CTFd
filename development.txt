@@ -14,3 +14,4 @@ flask-debugtoolbar==0.11.0
 Faker==4.1.0
 pipdeptree==2.2.0
 pytest-sugar==0.9.7
+dennis==1.1.0

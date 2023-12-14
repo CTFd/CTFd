@@ -43,3 +43,6 @@ translations-update:
 
 translations-compile:
 	pybabel compile -f -d CTFd/translations
+
+translations-lint:
+	dennis-cmd lint CTFd/translations
