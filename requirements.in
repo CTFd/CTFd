@@ -14,7 +14,7 @@ gunicorn==20.1.0
 dataset==1.5.2
 cmarkgfm==2022.10.27
 redis==4.5.5
-gevent==22.10.2
+gevent==23.9.1
 python-dotenv==0.13.0
 flask-restx==1.1.0
 flask-marshmallow==0.10.1
