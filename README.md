@@ -1,88 +1,94 @@
-# ![](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/logo.png?raw=true)
+![image](https://github.com/dDanissimo/emsch-CTFd/assets/56019205/db217886-746f-4da7-8ec9-56c74854ee67)
 
-![CTFd MySQL CI](https://github.com/CTFd/CTFd/workflows/CTFd%20MySQL%20CI/badge.svg?branch=master)
-![Linting](https://github.com/CTFd/CTFd/workflows/Linting/badge.svg?branch=master)
-[![MajorLeagueCyber Discourse](https://img.shields.io/discourse/status?server=https%3A%2F%2Fcommunity.majorleaguecyber.org%2F)](https://community.majorleaguecyber.org/)
-[![Documentation Status](https://api.netlify.com/api/v1/badges/6d10883a-77bb-45c1-a003-22ce1284190e/deploy-status)](https://docs.ctfd.io)
+## Проектная работа по дисциплине "Алгоритмизация и Программирование"
+### Название: "Платформа для размещения практических CTF-задач в рамках образовательного курса для школьников по основам ИБ."
+### Выполнил: Иванькин Даниил, студент группы БИБ232 ОП "Информационная безопасность".
 
-## What is CTFd?
+#### _В основу данного проекта лёг фреймворк CTFd, данный проект является форком исходного продукта. С информацией о фреймворке вы можете ознакомиться ниже:_
 
-CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.
+* Репозиторий: https://github.com/CTFd/CTFd
+* Полный README CTFd: https://github.com/CTFd/CTFd/blob/master/README.md
+* Документация (Gitbook): https://docs.ctfd.io/
+* [Docs: Getting Started](https://docs.ctfd.io/tutorials/getting-started/)
+* [Docs: Deployment options](https://docs.ctfd.io/docs/deployment/installation)
 
-![CTFd is a CTF in a can.](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/scoreboard.png?raw=true)
+## Функционал
 
-## Features
+1. Доменное имя с зарегистрированным SSL-сертификатом на этот домен (возможен доступ к ресурсу по HTTPS).
 
-- Create your own challenges, categories, hints, and flags from the Admin Interface
-  - Dynamic Scoring Challenges
-  - Unlockable challenge support
-  - Challenge plugin architecture to create your own custom challenges
-  - Static & Regex based flags
-    - Custom flag plugins
-  - Unlockable hints
-  - File uploads to the server or an Amazon S3-compatible backend
-  - Limit challenge attempts & hide challenges
-  - Automatic bruteforce protection
-- Individual and Team based competitions
-  - Have users play on their own or form teams to play together
-- Scoreboard with automatic tie resolution
-  - Hide Scores from the public
-  - Freeze Scores at a specific time
-- Scoregraphs comparing the top 10 teams and team progress graphs
-- Markdown content management system
-- SMTP + Mailgun email support
-  - Email confirmation support
-  - Forgot password support
-- Automatic competition starting and ending
-- Team management, hiding, and banning
-- Customize everything using the [plugin](https://docs.ctfd.io/docs/plugins/overview) and [theme](https://docs.ctfd.io/docs/themes/overview) interfaces
-- Importing and Exporting of CTF data for archival
-- And a lot more...
+2. Возможность деплоя в публичную Сеть посредством размещения сервиса на выделенном приватном сервере на DIgitalOcean.
 
-## Install
+3. Фреймворк: Python + Flask + mariaDB/mySQL + redis + jinja2 + werkzeug.
 
-1. Install dependencies: `pip install -r requirements.txt`
-   1. You can also use the `prepare.sh` script to install system dependencies using apt.
-2. Modify [CTFd/config.ini](https://github.com/CTFd/CTFd/blob/master/CTFd/config.ini) to your liking.
-3. Use `python serve.py` or `flask run` in a terminal to drop into debug mode.
+4. Docker для сборки и автоматического деплоя по 80 порту инстанса веб-приложения с возможностью логирования активности на сервисе.
 
-You can use the auto-generated Docker images with the following command:
+5. Веб-сервер NGINX (обёрнут под Docker) — работает в качестве reverse proxy, перенаправляя весь HTTP-трафик на HTTPS за счёт HTTP-редиректа на порт 443.
 
-`docker run -p 8000:8000 -it ctfd/ctfd`
+6. Система аутентификации и авторизации пользователей (login/register-форма).
 
-Or you can use Docker Compose with the following command from the source repository:
+7. Почтовый сервер на Mailgun для подтверждения регистрации пользователей с relay-узлом на сервере, где хостится приложение (прописан в конфигах фреймворка).
 
-`docker-compose up`
+8. Возможность добавлять на сервис задания, их описание, исходные файлы, количество баллов, подсказки к решению (за штраф к баллам при их использовании).
 
-Check out the [CTFd docs](https://docs.ctfd.io/) for [deployment options](https://docs.ctfd.io/docs/deployment/installation) and the [Getting Started](https://docs.ctfd.io/tutorials/getting-started/) guide
+9. Система уведомлений для всех пользователей.
 
-## Live Demo
+10. Разграничение пользователей на пользователей и администраторов.
 
-https://demo.ctfd.io/
+11. Учёт статистики по пользователям и решённым задачкам.
 
-## Support
+12. Рейтинговая таблица.
 
-To get basic support, you can join the [MajorLeagueCyber Community](https://community.majorleaguecyber.org/): [![MajorLeagueCyber Discourse](https://img.shields.io/discourse/status?server=https%3A%2F%2Fcommunity.majorleaguecyber.org%2F)](https://community.majorleaguecyber.org/)
+13. Возможность отсматривать успешные или неуспешные попытки сдать задание, а также их точное время.
 
-If you prefer commercial support or have a special project, feel free to [contact us](https://ctfd.io/contact/).
+14. Возможность автоматической санитизации HTML-страниц на сервере.
 
-## Managed Hosting
+15. Возможность создавать резервные копии содержимого БД и пользовательского контента на сайте.
 
-Looking to use CTFd but don't want to deal with managing infrastructure? Check out [the CTFd website](https://ctfd.io/) for managed CTFd deployments.
+16. Возможность выбора режима - для соревнований (регистрация по командам) или индивидуального решения (в рамках проекта используется по умолчанию последнее).
 
-## MajorLeagueCyber
+17. Размещённые тестовые задания.
 
-CTFd is heavily integrated with [MajorLeagueCyber](https://majorleaguecyber.org/). MajorLeagueCyber (MLC) is a CTF stats tracker that provides event scheduling, team tracking, and single sign on for events.
+## Установка проекта
+### Необходимые зависимости: Python 3.0+, Docker (опционально)
 
-By registering your CTF event with MajorLeagueCyber users can automatically login, track their individual and team scores, submit writeups, and get notifications of important events.
+> (HTTPS) git clone --depth=1 https://github.com/dDanissimo/emsch-CTFd
 
-To integrate with MajorLeagueCyber, simply register an account, create an event, and install the client ID and client secret in the relevant portion in `CTFd/config.py` or in the admin panel:
+> (SSH) git clone --depth=1 git@github.com:dDanissimo/emsch-CTFd.git
 
-```python
-OAUTH_CLIENT_ID = None
-OAUTH_CLIENT_SECRET = None
+### Способ 1: Bare Python
+1. Установите необходимые зависимости в Python:
 ```
+python3 -m pip install -r requirements.txt
+```
+> или
 
+```pip3 install -r requirements.txt```
+
+> (если pip записан в переменной PATH)
+
+
+2. Если вы запускаете проект нативным образом через Python, обновите https://github.com/ddanissimo/emsch-CTFd/blob/master/CTFd/config.ini под ваши нужды.
+```
+NB! Значение SECRET_KEY, согласно документации, должно быть пустой строкой.
+В случае отсутствия заданного параметра SECRET_KEY, CTFd создаёт файл .ctfd_secret_key,
+занесённый в .gitignore, который содержит значение SECRET_KEY. Из документации к фреймворку:
+
+# The secret value used to create sessions and sign strings. This should be set to a random string. In the
+# interest of ease, CTFd will automatically create a secret key file for you. If you wish to add this secret key
+# to your instance you should hard code this value to a random static value.
+```
+### Способ 2: Docker
+1. Сделать pull пре-собранного образа CTFd с Docker Hub:
+```docker run -p 8000:8000 -it ctfd/ctfd```
+2. Собрать Docker-image из склонированного репозитория (выполнить в корневой директории проекта):
+
+```docker-compose up``` (для v1 branch docker/compose)
+
+```docker compose up``` (для v2 branch docker/compose)
+
+## Demo
+
+https://emsch.ddanissimo.ru/
 ## Credits
 
 - Logo by [Laura Barbera](http://www.laurabb.com/)
