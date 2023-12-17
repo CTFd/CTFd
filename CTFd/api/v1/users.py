@@ -302,8 +302,13 @@ class UserPrivate(Resource):
     def get(self):
         user = get_current_user()
         response = UserSchema("self").dump(user).data
+
+        # A user can always calculate their score regardless of any setting because they can simply sum all of their challenges
+        # Therefore a user requesting their private data should be able to get their own current score
+        # However place is not something that a user can ascertain on their own so it is always gated behind freeze time
         response["place"] = user.place
-        response["score"] = user.score
+        response["score"] = user.get_score(admin=True)
+
         return {"success": True, "data": response}
 
     @authed_only
