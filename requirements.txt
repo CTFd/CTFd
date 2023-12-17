@@ -115,6 +115,9 @@ maxminddb==1.5.4
     # via
     #   -r requirements.in
     #   python-geoacumen-city
+
+moto==4.2.8
+
 passlib==1.7.4
     # via -r requirements.in
 pybluemonday==0.0.12
@@ -127,6 +130,9 @@ pymysql[rsa]==1.0.2
     # via -r requirements.in
 pyrsistent==0.17.3
     # via jsonschema
+
+pytest==7.4.3
+
 python-dateutil==2.8.1
     # via
     #   alembic
