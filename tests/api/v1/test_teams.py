@@ -642,7 +642,8 @@ def test_api_team_patch_password():
         user1 = gen_user(
             app.db, name="user1", email="user1@examplectf.com", password="captain"
         )  # ID 2
-        user2 = gen_user(app.db, name="user2", email="user2@examplectf.com")  # ID 3
+        user2 = gen_user(app.db, name="user2",
+                         email="user2@examplectf.com")  # ID 3
         team = gen_team(app.db)
         team.members.append(user1)
         team.members.append(user2)
@@ -664,7 +665,8 @@ def test_api_team_patch_password():
 
             team = Teams.query.filter_by(id=1).first()
             assert (
-                verify_password(plaintext="new_password", ciphertext=team.password)
+                verify_password(plaintext="new_password",
+                                ciphertext=team.password)
                 is False
             )
 
@@ -672,11 +674,13 @@ def test_api_team_patch_password():
             # Test that invalid passwords aren't accepted
             r = client.patch(
                 "/api/v1/teams/me",
-                json={"confirm": "incorrect_password", "password": "new_password"},
+                json={"confirm": "incorrect_password",
+                      "password": "new_password"},
             )
             assert r.status_code == 400
             assert (
-                verify_password(plaintext="new_password", ciphertext=team.password)
+                verify_password(plaintext="new_password",
+                                ciphertext=team.password)
                 is False
             )
 
@@ -687,7 +691,8 @@ def test_api_team_patch_password():
             )
             assert r.status_code == 200
             team = Teams.query.filter_by(id=1).first()
-            assert verify_password(plaintext="new_password", ciphertext=team.password)
+            assert verify_password(
+                plaintext="new_password", ciphertext=team.password)
 
             # Test that the captain's password is also accepted
             r = client.patch(
@@ -802,7 +807,8 @@ def test_api_accessing_hidden_banned_users():
     with app.app_context():
         register_user(app)
         register_user(app, name="user2", email="user2@examplectf.com")
-        register_user(app, name="visible_user", email="visible_user@examplectf.com")
+        register_user(app, name="visible_user",
+                      email="visible_user@examplectf.com")
 
         user = Users.query.filter_by(id=2).first()
         team = gen_team(
@@ -836,7 +842,8 @@ def test_api_accessing_hidden_banned_users():
 
         with login_as_user(app, name="admin") as client:
             # Admins see hidden teams in lists
-            list_users = client.get("/api/v1/teams?view=admin").get_json()["data"]
+            list_users = client.get(
+                "/api/v1/teams?view=admin").get_json()["data"]
             assert len(list_users) == 2
 
             assert client.get("/api/v1/teams/1").status_code == 200

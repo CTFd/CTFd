@@ -10,7 +10,8 @@ class MailgunEmailProvider(EmailProvider):
     @staticmethod
     def sendmail(addr, text, subject):
         ctf_name = get_config("ctf_name")
-        mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
+        mailfrom_addr = get_config(
+            "mailfrom_addr") or get_app_config("MAILFROM_ADDR")
         mailfrom_addr = formataddr((ctf_name, mailfrom_addr))
 
         mailgun_base_url = get_config("mailgun_base_url") or get_app_config(

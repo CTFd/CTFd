@@ -61,8 +61,10 @@ class Notifications(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
-    user = db.relationship("Users", foreign_keys="Notifications.user_id", lazy="select")
-    team = db.relationship("Teams", foreign_keys="Notifications.team_id", lazy="select")
+    user = db.relationship(
+        "Users", foreign_keys="Notifications.user_id", lazy="select")
+    team = db.relationship(
+        "Teams", foreign_keys="Notifications.team_id", lazy="select")
 
     @property
     def html(self):
@@ -113,7 +115,8 @@ class Challenges(db.Model):
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
     connection_info = db.Column(db.Text)
-    next_id = db.Column(db.Integer, db.ForeignKey("challenges.id", ondelete="SET NULL"))
+    next_id = db.Column(db.Integer, db.ForeignKey(
+        "challenges.id", ondelete="SET NULL"))
     max_attempts = db.Column(db.Integer, default=0)
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
@@ -176,7 +179,8 @@ class Hints(db.Model):
     cost = db.Column(db.Integer, default=0)
     requirements = db.Column(db.JSON)
 
-    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+    __mapper_args__ = {
+        "polymorphic_identity": "standard", "polymorphic_on": type}
 
     @property
     def name(self):
@@ -213,8 +217,10 @@ class Hints(db.Model):
 class Awards(db.Model):
     __tablename__ = "awards"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
-    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"))
+    team_id = db.Column(db.Integer, db.ForeignKey(
+        "teams.id", ondelete="CASCADE"))
     type = db.Column(db.String(80), default="standard")
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
@@ -224,10 +230,13 @@ class Awards(db.Model):
     icon = db.Column(db.Text)
     requirements = db.Column(db.JSON)
 
-    user = db.relationship("Users", foreign_keys="Awards.user_id", lazy="select")
-    team = db.relationship("Teams", foreign_keys="Awards.team_id", lazy="select")
+    user = db.relationship(
+        "Users", foreign_keys="Awards.user_id", lazy="select")
+    team = db.relationship(
+        "Teams", foreign_keys="Awards.team_id", lazy="select")
 
-    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+    __mapper_args__ = {
+        "polymorphic_identity": "standard", "polymorphic_on": type}
 
     @hybrid_property
     def account_id(self):
@@ -273,7 +282,8 @@ class ChallengeTopics(db.Model):
     challenge_id = db.Column(
         db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
     )
-    topic_id = db.Column(db.Integer, db.ForeignKey("topics.id", ondelete="CASCADE"))
+    topic_id = db.Column(db.Integer, db.ForeignKey(
+        "topics.id", ondelete="CASCADE"))
 
     topic = db.relationship(
         "Topics", foreign_keys="ChallengeTopics.topic_id", lazy="select"
@@ -289,7 +299,8 @@ class Files(db.Model):
     type = db.Column(db.String(80), default="standard")
     location = db.Column(db.Text)
 
-    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+    __mapper_args__ = {
+        "polymorphic_identity": "standard", "polymorphic_on": type}
 
     def __init__(self, *args, **kwargs):
         super(Files, self).__init__(**kwargs)
@@ -464,7 +475,8 @@ class Users(db.Model):
     def get_solves(self, admin=False):
         from CTFd.utils import get_config
 
-        solves = Solves.query.filter_by(user_id=self.id).order_by(Solves.date.desc())
+        solves = Solves.query.filter_by(
+            user_id=self.id).order_by(Solves.date.desc())
         freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
@@ -474,7 +486,8 @@ class Users(db.Model):
     def get_fails(self, admin=False):
         from CTFd.utils import get_config
 
-        fails = Fails.query.filter_by(user_id=self.id).order_by(Fails.date.desc())
+        fails = Fails.query.filter_by(
+            user_id=self.id).order_by(Fails.date.desc())
         freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
@@ -484,7 +497,8 @@ class Users(db.Model):
     def get_awards(self, admin=False):
         from CTFd.utils import get_config
 
-        awards = Awards.query.filter_by(user_id=self.id).order_by(Awards.date.desc())
+        awards = Awards.query.filter_by(
+            user_id=self.id).order_by(Awards.date.desc())
         freeze = get_config("freeze")
         if freeze and admin is False:
             dt = datetime.datetime.utcfromtimestamp(freeze)
@@ -577,7 +591,8 @@ class Teams(db.Model):
     banned = db.Column(db.Boolean, default=False)
 
     # Relationship for Users
-    captain_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
+    captain_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="SET NULL"))
     captain = db.relationship("Users", foreign_keys=[captain_id])
 
     field_entries = db.relationship(
@@ -707,7 +722,8 @@ class Teams(db.Model):
         verification_secret = secret_key + team_password_key
 
         # Verify the team verficiation code
-        verified = hmac(str(team.id), secret=verification_secret) == invite_object["v"]
+        verified = hmac(
+            str(team.id), secret=verification_secret) == invite_object["v"]
         if verified is False:
             raise TeamTokenInvalidException
         return team
@@ -796,16 +812,20 @@ class Submissions(db.Model):
     challenge_id = db.Column(
         db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
     )
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
-    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"))
+    team_id = db.Column(db.Integer, db.ForeignKey(
+        "teams.id", ondelete="CASCADE"))
     ip = db.Column(db.String(46))
     provided = db.Column(db.Text)
     type = db.Column(db.String(32))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     # Relationships
-    user = db.relationship("Users", foreign_keys="Submissions.user_id", lazy="select")
-    team = db.relationship("Teams", foreign_keys="Submissions.team_id", lazy="select")
+    user = db.relationship(
+        "Users", foreign_keys="Submissions.user_id", lazy="select")
+    team = db.relationship(
+        "Teams", foreign_keys="Submissions.team_id", lazy="select")
     challenge = db.relationship(
         "Challenges", foreign_keys="Submissions.challenge_id", lazy="select"
     )
@@ -855,7 +875,8 @@ class Solves(Submissions):
         None, db.ForeignKey("submissions.id", ondelete="CASCADE"), primary_key=True
     )
     challenge_id = column_property(
-        db.Column(db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")),
+        db.Column(db.Integer, db.ForeignKey(
+            "challenges.id", ondelete="CASCADE")),
         Submissions.challenge_id,
     )
     user_id = column_property(
@@ -867,8 +888,10 @@ class Solves(Submissions):
         Submissions.team_id,
     )
 
-    user = db.relationship("Users", foreign_keys="Solves.user_id", lazy="select")
-    team = db.relationship("Teams", foreign_keys="Solves.team_id", lazy="select")
+    user = db.relationship(
+        "Users", foreign_keys="Solves.user_id", lazy="select")
+    team = db.relationship(
+        "Teams", foreign_keys="Solves.team_id", lazy="select")
     challenge = db.relationship(
         "Challenges", foreign_keys="Solves.challenge_id", lazy="select"
     )
@@ -887,8 +910,10 @@ class Discards(Submissions):
 class Unlocks(db.Model):
     __tablename__ = "unlocks"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
-    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"))
+    team_id = db.Column(db.Integer, db.ForeignKey(
+        "teams.id", ondelete="CASCADE"))
     target = db.Column(db.Integer)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     type = db.Column(db.String(32))
@@ -918,10 +943,12 @@ class Tracking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(32))
     ip = db.Column(db.String(46))
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    user = db.relationship("Users", foreign_keys="Tracking.user_id", lazy="select")
+    user = db.relationship(
+        "Users", foreign_keys="Tracking.user_id", lazy="select")
 
     __mapper_args__ = {"polymorphic_on": type}
 
@@ -946,7 +973,8 @@ class Tokens(db.Model):
     __tablename__ = "tokens"
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(32))
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"))
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     expiration = db.Column(
         db.DateTime,
@@ -955,7 +983,8 @@ class Tokens(db.Model):
     description = db.Column(db.Text)
     value = db.Column(db.String(128), unique=True)
 
-    user = db.relationship("Users", foreign_keys="Tokens.user_id", lazy="select")
+    user = db.relationship(
+        "Users", foreign_keys="Tokens.user_id", lazy="select")
 
     __mapper_args__ = {"polymorphic_on": type}
 
@@ -976,8 +1005,10 @@ class Comments(db.Model):
     type = db.Column(db.String(80), default="standard")
     content = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    author_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
-    author = db.relationship("Users", foreign_keys="Comments.author_id", lazy="select")
+    author_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"))
+    author = db.relationship(
+        "Users", foreign_keys="Comments.author_id", lazy="select")
 
     @property
     def html(self):
@@ -986,7 +1017,8 @@ class Comments(db.Model):
 
         return markup(build_markdown(self.content, sanitize=True))
 
-    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+    __mapper_args__ = {
+        "polymorphic_identity": "standard", "polymorphic_on": type}
 
 
 class ChallengeComments(Comments):
@@ -998,17 +1030,20 @@ class ChallengeComments(Comments):
 
 class UserComments(Comments):
     __mapper_args__ = {"polymorphic_identity": "user"}
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"))
 
 
 class TeamComments(Comments):
     __mapper_args__ = {"polymorphic_identity": "team"}
-    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+    team_id = db.Column(db.Integer, db.ForeignKey(
+        "teams.id", ondelete="CASCADE"))
 
 
 class PageComments(Comments):
     __mapper_args__ = {"polymorphic_identity": "page"}
-    page_id = db.Column(db.Integer, db.ForeignKey("pages.id", ondelete="CASCADE"))
+    page_id = db.Column(db.Integer, db.ForeignKey(
+        "pages.id", ondelete="CASCADE"))
 
 
 class Fields(db.Model):
@@ -1022,7 +1057,8 @@ class Fields(db.Model):
     public = db.Column(db.Boolean, default=False)
     editable = db.Column(db.Boolean, default=False)
 
-    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+    __mapper_args__ = {
+        "polymorphic_identity": "standard", "polymorphic_on": type}
 
 
 class UserFields(Fields):
@@ -1038,13 +1074,15 @@ class FieldEntries(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(80), default="standard")
     value = db.Column(db.JSON)
-    field_id = db.Column(db.Integer, db.ForeignKey("fields.id", ondelete="CASCADE"))
+    field_id = db.Column(db.Integer, db.ForeignKey(
+        "fields.id", ondelete="CASCADE"))
 
     field = db.relationship(
         "Fields", foreign_keys="FieldEntries.field_id", lazy="joined"
     )
 
-    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+    __mapper_args__ = {
+        "polymorphic_identity": "standard", "polymorphic_on": type}
 
     @hybrid_property
     def name(self):
@@ -1057,7 +1095,8 @@ class FieldEntries(db.Model):
 
 class UserFieldEntries(FieldEntries):
     __mapper_args__ = {"polymorphic_identity": "user"}
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="CASCADE"))
     user = db.relationship(
         "Users", foreign_keys="UserFieldEntries.user_id", back_populates="field_entries"
     )
@@ -1065,7 +1104,8 @@ class UserFieldEntries(FieldEntries):
 
 class TeamFieldEntries(FieldEntries):
     __mapper_args__ = {"polymorphic_identity": "team"}
-    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+    team_id = db.Column(db.Integer, db.ForeignKey(
+        "teams.id", ondelete="CASCADE"))
     team = db.relationship(
         "Teams", foreign_keys="TeamFieldEntries.team_id", back_populates="field_entries"
     )

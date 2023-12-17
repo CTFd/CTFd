@@ -227,27 +227,32 @@ def test_partial_field_update():
             assert r.status_code == 200
             assert UserFieldEntries.query.count() == 2
             assert (
-                UserFieldEntries.query.filter_by(field_id=1, user_id=2).first().value
+                UserFieldEntries.query.filter_by(
+                    field_id=1, user_id=2).first().value
                 == "CustomValue1"
             )
             assert (
-                UserFieldEntries.query.filter_by(field_id=2, user_id=2).first().value
+                UserFieldEntries.query.filter_by(
+                    field_id=2, user_id=2).first().value
                 == "NewCustomValue2"
             )
 
         with login_as_user(app, name="admin") as admin:
             r = admin.patch(
                 "/api/v1/users/2",
-                json={"fields": [{"field_id": 2, "value": "AdminNewCustomValue2"}]},
+                json={"fields": [
+                    {"field_id": 2, "value": "AdminNewCustomValue2"}]},
             )
             assert r.status_code == 200
             assert UserFieldEntries.query.count() == 2
             assert (
-                UserFieldEntries.query.filter_by(field_id=1, user_id=2).first().value
+                UserFieldEntries.query.filter_by(
+                    field_id=1, user_id=2).first().value
                 == "CustomValue1"
             )
             assert (
-                UserFieldEntries.query.filter_by(field_id=2, user_id=2).first().value
+                UserFieldEntries.query.filter_by(
+                    field_id=2, user_id=2).first().value
                 == "AdminNewCustomValue2"
             )
 
@@ -269,13 +274,16 @@ def test_api_team_self_fields_permissions():
         gen_field(
             app.db, name="CustomField1", type="team", public=False, editable=False
         )
-        gen_field(app.db, name="CustomField2", type="team", public=True, editable=True)
+        gen_field(app.db, name="CustomField2",
+                  type="team", public=True, editable=True)
 
         app.db.session.add(
-            TeamFieldEntries(type="team", value="CustomValue1", team_id=1, field_id=1)
+            TeamFieldEntries(type="team", value="CustomValue1",
+                             team_id=1, field_id=1)
         )
         app.db.session.add(
-            TeamFieldEntries(type="team", value="CustomValue2", team_id=1, field_id=2)
+            TeamFieldEntries(type="team", value="CustomValue2",
+                             team_id=1, field_id=2)
         )
         app.db.session.commit()
 
@@ -315,10 +323,12 @@ def test_api_team_self_fields_permissions():
             }
             assert r.status_code == 400
             assert (
-                TeamFieldEntries.query.filter_by(id=1).first().value == "CustomValue1"
+                TeamFieldEntries.query.filter_by(
+                    id=1).first().value == "CustomValue1"
             )
             assert (
-                TeamFieldEntries.query.filter_by(id=2).first().value == "CustomValue2"
+                TeamFieldEntries.query.filter_by(
+                    id=2).first().value == "CustomValue2"
             )
 
             # After making the field public the user should see both fields
@@ -389,27 +399,32 @@ def test_team_partial_field_update():
             assert r.status_code == 200
             assert TeamFieldEntries.query.count() == 2
             assert (
-                TeamFieldEntries.query.filter_by(field_id=1, team_id=1).first().value
+                TeamFieldEntries.query.filter_by(
+                    field_id=1, team_id=1).first().value
                 == "CustomValue1"
             )
             assert (
-                TeamFieldEntries.query.filter_by(field_id=2, team_id=1).first().value
+                TeamFieldEntries.query.filter_by(
+                    field_id=2, team_id=1).first().value
                 == "NewCustomValue2"
             )
 
         with login_as_user(app, name="admin") as admin:
             r = admin.patch(
                 "/api/v1/teams/1",
-                json={"fields": [{"field_id": 2, "value": "AdminNewCustomValue2"}]},
+                json={"fields": [
+                    {"field_id": 2, "value": "AdminNewCustomValue2"}]},
             )
             assert r.status_code == 200
             assert TeamFieldEntries.query.count() == 2
             assert (
-                TeamFieldEntries.query.filter_by(field_id=1, team_id=1).first().value
+                TeamFieldEntries.query.filter_by(
+                    field_id=1, team_id=1).first().value
                 == "CustomValue1"
             )
             assert (
-                TeamFieldEntries.query.filter_by(field_id=2, team_id=1).first().value
+                TeamFieldEntries.query.filter_by(
+                    field_id=2, team_id=1).first().value
                 == "AdminNewCustomValue2"
             )
 

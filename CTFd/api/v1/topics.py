@@ -12,7 +12,8 @@ from CTFd.schemas.topics import ChallengeTopicSchema, TopicSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
 
-topics_namespace = Namespace("topics", description="Endpoint to retrieve Topics")
+topics_namespace = Namespace(
+    "topics", description="Endpoint to retrieve Topics")
 
 TopicModel = sqlalchemy_to_pydantic(Topics)
 

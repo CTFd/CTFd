@@ -57,6 +57,7 @@ def get_available_revisions():
     directory = Path(os.path.dirname(app.root_path), "migrations", "versions")
     for f in directory.glob("*.py"):
         with f.open() as migration:
-            revision = re.search(r'revision = "(.*?)"', migration.read()).group(1)
+            revision = re.search(r'revision = "(.*?)"',
+                                 migration.read()).group(1)
             revisions.append(revision)
     return revisions

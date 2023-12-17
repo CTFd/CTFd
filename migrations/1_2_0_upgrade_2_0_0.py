@@ -230,7 +230,8 @@ if __name__ == "__main__":
     new_conn["config"].insert(
         {"key": "registration_visibility", "value": registration_visibility}
     )
-    new_conn["config"].insert({"key": "score_visibility", "value": score_visibility})
+    new_conn["config"].insert(
+        {"key": "score_visibility", "value": score_visibility})
     new_conn["config"].insert(
         {"key": "account_visibility", "value": account_visibility}
     )
@@ -266,7 +267,8 @@ if __name__ == "__main__":
         "For example you can use the following commands if you know that the PRIMARY KEY for the table is `id`:"
     )
     for table in manual:
-        print("\t", "ALTER TABLE `{table}` ADD PRIMARY KEY(id)".format(table=table))
+        print("\t", "ALTER TABLE `{table}` ADD PRIMARY KEY(id)".format(
+            table=table))
 
     print(
         "The following tables were not created because they were empty and must be manually recreated (e.g. app.db.create_all()"

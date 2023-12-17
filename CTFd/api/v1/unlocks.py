@@ -20,7 +20,8 @@ from CTFd.utils.decorators import (
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.user import get_current_user
 
-unlocks_namespace = Namespace("unlocks", description="Endpoint to retrieve Unlocks")
+unlocks_namespace = Namespace(
+    "unlocks", description="Endpoint to retrieve Unlocks")
 
 UnlockModel = sqlalchemy_to_pydantic(Unlocks)
 TransientUnlockModel = sqlalchemy_to_pydantic(Unlocks, exclude=["id"])

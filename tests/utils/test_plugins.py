@@ -48,7 +48,8 @@ def test_register_plugin_stylesheet():
     app = create_ctfd()
     with app.app_context():
         register_plugin_script("/fake/stylesheet/path.css")
-        register_plugin_script("http://examplectf.com/fake/stylesheet/path.css")
+        register_plugin_script(
+            "http://examplectf.com/fake/stylesheet/path.css")
         with app.test_client() as client:
             r = client.get("/")
             output = r.get_data(as_text=True)

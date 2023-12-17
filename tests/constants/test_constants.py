@@ -33,7 +33,8 @@ def test_JSEnum():
         GREEN = "green"
         BLUE = "blue"
 
-    assert JS_ENUMS["Colors"] == {"RED": "red", "GREEN": "green", "BLUE": "blue"}
+    assert JS_ENUMS["Colors"] == {
+        "RED": "red", "GREEN": "green", "BLUE": "blue"}
     assert json.dumps(JS_ENUMS)
 
 

@@ -33,7 +33,8 @@ def upgrade():
         sa.ForeignKeyConstraint(
             ["challenge_id"], ["challenges.id"], ondelete="CASCADE"
         ),
-        sa.ForeignKeyConstraint(["topic_id"], ["topics.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(
+            ["topic_id"], ["topics.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###

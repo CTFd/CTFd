@@ -44,7 +44,8 @@ challenge1,category1,description1,100,"flag1,flag2,flag3","tag1,tag2,tag3","hint
                 "nonce": sess.get("nonce"),
             }
 
-        client.post("/admin/import/csv", data=data, content_type="multipart/form-data")
+        client.post("/admin/import/csv", data=data,
+                    content_type="multipart/form-data")
         assert Users.query.count() == 3
         user = Users.query.filter_by(id=2).first()
         assert user.name == "user1"
@@ -61,7 +62,8 @@ challenge1,category1,description1,100,"flag1,flag2,flag3","tag1,tag2,tag3","hint
                 "csv_file": (io.BytesIO(TEAMS_CSV), "users.csv"),
                 "nonce": sess.get("nonce"),
             }
-        client.post("/admin/import/csv", data=data, content_type="multipart/form-data")
+        client.post("/admin/import/csv", data=data,
+                    content_type="multipart/form-data")
         assert Teams.query.count() == 2
         team = Teams.query.filter_by(id=1).first()
         assert team.name == "team1"
@@ -79,7 +81,8 @@ challenge1,category1,description1,100,"flag1,flag2,flag3","tag1,tag2,tag3","hint
                 "nonce": sess.get("nonce"),
             }
 
-        client.post("/admin/import/csv", data=data, content_type="multipart/form-data")
+        client.post("/admin/import/csv", data=data,
+                    content_type="multipart/form-data")
         assert Challenges.query.count() == 1
         challenge = Challenges.query.filter_by(id=1).first()
         assert challenge.name == "challenge1"

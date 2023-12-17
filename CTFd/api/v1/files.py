@@ -54,7 +54,8 @@ class FilesList(Resource):
             "location": (str, None),
             "q": (str, None),
             "field": (
-                RawEnum("FileFields", {"type": "type", "location": "location"}),
+                RawEnum("FileFields", {"type": "type",
+                        "location": "location"}),
                 None,
             ),
         },

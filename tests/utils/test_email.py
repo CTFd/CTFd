@@ -26,7 +26,8 @@ def test_sendmail_with_smtp_from_config_file(mock_smtp):
         app.config["MAIL_PASSWORD"] = "password"
 
         ctf_name = get_config("ctf_name")
-        from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = get_config(
+            "mailfrom_addr") or app.config.get("MAILFROM_ADDR")
         from_addr = "{} <{}>".format(ctf_name, from_addr)
 
         to_addr = "user@user.com"
@@ -62,7 +63,8 @@ def test_sendmail_with_smtp_from_db_config(mock_smtp):
         set_config("mail_password", "password")
 
         ctf_name = get_config("ctf_name")
-        from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = get_config(
+            "mailfrom_addr") or app.config.get("MAILFROM_ADDR")
         from_addr = "{} <{}>".format(ctf_name, from_addr)
 
         to_addr = "user@user.com"
@@ -130,7 +132,8 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
 
         # db values should take precedence over file values
         set_config("mailgun_api_key", "key-1234567890-db-config")
-        set_config("mailgun_base_url", "https://api.mailgun.net/v3/db.faked.com")
+        set_config("mailgun_base_url",
+                   "https://api.mailgun.net/v3/db.faked.com")
 
         to_addr = "user@user.com"
         msg = "this is a test"
@@ -173,7 +176,8 @@ def test_verify_email(mock_smtp):
         set_config("verify_emails", True)
 
         ctf_name = get_config("ctf_name")
-        from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = get_config(
+            "mailfrom_addr") or app.config.get("MAILFROM_ADDR")
         from_addr = "{} <{}>".format(ctf_name, from_addr)
 
         to_addr = "user@user.com"
@@ -218,7 +222,8 @@ def test_successful_registration_email(mock_smtp):
         set_config("verify_emails", True)
 
         ctf_name = get_config("ctf_name")
-        from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+        from_addr = get_config(
+            "mailfrom_addr") or app.config.get("MAILFROM_ADDR")
         from_addr = "{} <{}>".format(ctf_name, from_addr)
 
         to_addr = "user@user.com"
@@ -294,7 +299,8 @@ def test_email_whitelist():
             email, expected = case
             assert check_email_is_whitelisted(email) is expected
 
-        set_config("domain_whitelist", "example.com, uni.acme.com, *.edu, *.edu.de")
+        set_config("domain_whitelist",
+                   "example.com, uni.acme.com, *.edu, *.edu.de")
 
         test_cases_multiple_combined_domains = [
             ("john.doe@example.com", True),

@@ -7,5 +7,6 @@ def safe_format(fmt, **kwargs):
     Looks for interpolation placeholders like {target} or {{ target }}
     """
     return re.sub(
-        r"\{?\{([^{}]*)\}\}?", lambda m: kwargs.get(m.group(1).strip(), m.group(0)), fmt
+        r"\{?\{([^{}]*)\}\}?", lambda m: kwargs.get(m.group(1).strip(),
+                                                    m.group(0)), fmt
     )

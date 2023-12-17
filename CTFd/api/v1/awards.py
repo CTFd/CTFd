@@ -14,7 +14,8 @@ from CTFd.utils.config import is_teams_mode
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
 
-awards_namespace = Namespace("awards", description="Endpoint to retrieve Awards")
+awards_namespace = Namespace(
+    "awards", description="Endpoint to retrieve Awards")
 
 AwardModel = sqlalchemy_to_pydantic(Awards)
 

@@ -38,4 +38,5 @@ class PageFilesUploadForm(BaseForm):
         description="Attach multiple files using Control+Click or Cmd+Click.",
         validators=[InputRequired()],
     )
-    type = HiddenField("Page Type", default="page", validators=[InputRequired()])
+    type = HiddenField("Page Type", default="page",
+                       validators=[InputRequired()])

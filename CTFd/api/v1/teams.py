@@ -322,7 +322,8 @@ class TeamPrivate(Resource):
 
         data = request.get_json()
 
-        response = TeamSchema(view="self", instance=team, partial=True).load(data)
+        response = TeamSchema(view="self", instance=team,
+                              partial=True).load(data)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
@@ -341,7 +342,8 @@ class TeamPrivate(Resource):
         responses={200: ("Success", "APISimpleSuccessResponse")},
     )
     def delete(self):
-        team_disbanding = get_config("team_disbanding", default="inactive_only")
+        team_disbanding = get_config(
+            "team_disbanding", default="inactive_only")
         if team_disbanding == "disabled":
             return (
                 {
@@ -499,7 +501,8 @@ class TeamMembers(Resource):
             db.session.commit()
         else:
             return (
-                {"success": False, "errors": {"id": ["User is not part of this team"]}},
+                {"success": False, "errors": {
+                    "id": ["User is not part of this team"]}},
                 400,
             )
 

@@ -67,7 +67,8 @@ def test_api_hint_locked():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
+        gen_hint(app.db, chal.id, content="This is a hint",
+                 cost=1, type="standard")
         register_user(app)
         client = login_as_user(app)
         r = client.get("/api/v1/hints/1")
@@ -82,7 +83,8 @@ def test_api_hint_unlocked():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
+        gen_hint(app.db, chal.id, content="This is a hint",
+                 cost=1, type="standard")
         register_user(app)
         # Give user points with an award
         gen_award(app.db, 2)
@@ -101,7 +103,8 @@ def test_api_hint_double_unlock():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
+        gen_hint(app.db, chal.id, content="This is a hint",
+                 cost=1, type="standard")
         register_user(app)
         # Give user points with an award
         gen_award(app.db, 2)
@@ -122,7 +125,8 @@ def test_users_dont_prevent_other_users_from_unlocking_hints():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
+        gen_hint(app.db, chal.id, content="This is a hint",
+                 cost=1, type="standard")
         register_user(app)
         register_user(app, name="user2", email="user2@examplectf.com")
 
@@ -134,7 +138,8 @@ def test_users_dont_prevent_other_users_from_unlocking_hints():
         with login_as_user(app) as client:
             r = client.get("/api/v1/hints/1")
             assert r.status_code == 200
-            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            r = client.post("/api/v1/unlocks",
+                            json={"target": 1, "type": "hints"})
             assert r.status_code == 200
             r = client.get("/api/v1/hints/1")
             assert r.status_code == 200
@@ -143,7 +148,8 @@ def test_users_dont_prevent_other_users_from_unlocking_hints():
         with login_as_user(app, name="user2") as client:
             r = client.get("/api/v1/hints/1")
             assert r.status_code == 200
-            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            r = client.post("/api/v1/unlocks",
+                            json={"target": 1, "type": "hints"})
             assert r.status_code == 200
             r = client.get("/api/v1/hints/1")
             assert r.status_code == 200
@@ -168,7 +174,8 @@ def test_api_hint_admin_access():
     app = create_ctfd()
     with app.app_context():
         chal = gen_challenge(app.db)
-        gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
+        gen_hint(app.db, chal.id, content="This is a hint",
+                 cost=1, type="standard")
         admin = login_as_user(app, "admin")
         register_user(app)
         client = login_as_user(app)
@@ -253,7 +260,8 @@ def test_api_hints_accessible_public():
             assert r.status_code == 403
 
             # Unlock the prereq
-            r = client.post("/api/v1/unlocks", json={"target": 2, "type": "hints"})
+            r = client.post("/api/v1/unlocks",
+                            json={"target": 2, "type": "hints"})
             assert r.status_code == 200
             r = client.get("/api/v1/hints/2")
             assert r.status_code == 200
@@ -263,7 +271,8 @@ def test_api_hints_accessible_public():
             assert r.status_code == 200
             assert "content" not in r.get_json()["data"]
 
-            r = client.post("/api/v1/unlocks", json={"target": 3, "type": "hints"})
+            r = client.post("/api/v1/unlocks",
+                            json={"target": 3, "type": "hints"})
             assert r.status_code == 200
             r = client.get("/api/v1/hints/3")
             assert r.status_code == 200

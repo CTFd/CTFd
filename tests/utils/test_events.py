@@ -182,7 +182,8 @@ def test_redis_event_manager_publish():
             }
 
             event_manager = RedisEventManager()
-            event_manager.publish(data=saved_data, type="notification", channel="ctf")
+            event_manager.publish(
+                data=saved_data, type="notification", channel="ctf")
         destroy_ctfd(app)
 
 

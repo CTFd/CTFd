@@ -58,7 +58,8 @@ def test_api_tags_post_admin():
     with app.app_context():
         gen_challenge(app.db)
         with login_as_user(app, name="admin") as client:
-            r = client.post("/api/v1/tags", json={"value": "tag", "challenge": 1})
+            r = client.post(
+                "/api/v1/tags", json={"value": "tag", "challenge": 1})
             assert r.status_code == 200
     destroy_ctfd(app)
 

@@ -36,7 +36,8 @@ def test_new_fields_show_on_pages():
 
             r = client.patch(
                 "/api/v1/teams/me",
-                json={"fields": [{"field_id": 1, "value": "CustomFieldEntry"}]},
+                json={"fields": [
+                    {"field_id": 1, "value": "CustomFieldEntry"}]},
             )
             resp = r.get_json()
             assert resp["success"] is True
@@ -78,7 +79,8 @@ def test_team_fields_required_on_creation():
                         "nonce": sess.get("nonce"),
                     }
                 r = client.post("/teams/new", data=data)
-                assert "Please provide all required fields" in r.get_data(as_text=True)
+                assert "Please provide all required fields" in r.get_data(
+                    as_text=True)
                 assert Teams.query.count() == 0
 
                 with client.session_transaction() as sess:
@@ -253,7 +255,8 @@ def test_teams_boolean_checkbox_field():
             )
             assert r.status_code == 200
             assert TeamFieldEntries.query.count() == 1
-            assert TeamFieldEntries.query.filter_by(id=1).first().value is False
+            assert TeamFieldEntries.query.filter_by(
+                id=1).first().value is False
     destroy_ctfd(app)
 
 
@@ -344,7 +347,8 @@ def test_team_needs_all_required_fields():
             # Set required fields
             r = client.patch(
                 "/api/v1/teams/me",
-                json={"fields": [{"field_id": 1, "value": "CustomFieldEntry1"}]},
+                json={"fields": [
+                    {"field_id": 1, "value": "CustomFieldEntry1"}]},
             )
             assert r.status_code == 200
 
@@ -355,7 +359,8 @@ def test_team_needs_all_required_fields():
             # Attempts to edit a non-edittable field to field after completing profile
             r = client.patch(
                 "/api/v1/teams/me",
-                json={"fields": [{"field_id": 4, "value": "CustomFieldEntry4"}]},
+                json={"fields": [
+                    {"field_id": 4, "value": "CustomFieldEntry4"}]},
             )
             resp = r.get_json()
             assert resp == {

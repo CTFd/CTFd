@@ -124,7 +124,8 @@ def test_api_topics_delete_target_admin():
         gen_challenge(app.db)
         gen_topic(app.db, challenge_id=1)
         with login_as_user(app, "admin") as client:
-            r = client.delete("/api/v1/topics?type=challenge&target_id=1", json="")
+            r = client.delete(
+                "/api/v1/topics?type=challenge&target_id=1", json="")
             assert r.status_code == 200
             resp = r.get_json()
             assert resp.get("data") is None

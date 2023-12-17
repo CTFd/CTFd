@@ -70,13 +70,15 @@ def test_api_tag_detail_get():
             r = client.get("/api/v1/tokens/1", json="")
             assert r.status_code == 200
             resp = r.get_json()
-            assert sorted(resp["data"].keys()) == sorted(TokenSchema().views["user"])
+            assert sorted(resp["data"].keys()) == sorted(
+                TokenSchema().views["user"])
 
         with login_as_user(app, "admin") as client:
             r = client.get("/api/v1/tokens/1", json="")
             assert r.status_code == 200
             resp = r.get_json()
-            assert sorted(resp["data"].keys()) == sorted(TokenSchema().views["admin"])
+            assert sorted(resp["data"].keys()) == sorted(
+                TokenSchema().views["admin"])
 
         gen_user(app.db, name="user2", email="user2@examplectf.com")
         with login_as_user(app, "user2") as client:
@@ -114,7 +116,8 @@ def test_api_token_delete():
         token = generate_user_token(first_user)
         token_id = token.id
         # Second user
-        second_user = gen_user(app.db, name="user2", email="user2@examplectf.com")
+        second_user = gen_user(app.db, name="user2",
+                               email="user2@examplectf.com")
         username2 = second_user.name
         with login_as_user(app, username2) as client:
             r = client.delete("/api/v1/tokens/" + str(token_id), json="")

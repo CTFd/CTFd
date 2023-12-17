@@ -72,7 +72,8 @@ def private():
 def public(user_id):
     infos = get_infos()
     errors = get_errors()
-    user = Users.query.filter_by(id=user_id, banned=False, hidden=False).first_or_404()
+    user = Users.query.filter_by(
+        id=user_id, banned=False, hidden=False).first_or_404()
 
     if config.is_scoreboard_frozen():
         infos.append("Scoreboard has been frozen")

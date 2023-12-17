@@ -59,7 +59,8 @@ def test_team_standings():
 
         team_standings = get_team_standings()
 
-        first_team = Teams.query.filter_by(id=team_standings[0].team_id).first_or_404()
+        first_team = Teams.query.filter_by(
+            id=team_standings[0].team_id).first_or_404()
 
         assert first_team.name == "team2"
         assert first_team.score == 100
@@ -85,7 +86,8 @@ def test_admin_team_standings():
 
         team_standings = get_team_standings(admin=True)
 
-        first_team = Teams.query.filter_by(id=team_standings[0].team_id).first_or_404()
+        first_team = Teams.query.filter_by(
+            id=team_standings[0].team_id).first_or_404()
 
         assert first_team.name == "team1"
         assert first_team.score == 100

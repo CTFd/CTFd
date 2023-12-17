@@ -495,13 +495,15 @@ class UserEmails(Resource):
 
         if get_mail_provider() is None:
             return (
-                {"success": False, "errors": {"": ["Email settings not configured"]}},
+                {"success": False, "errors": {
+                    "": ["Email settings not configured"]}},
                 400,
             )
 
         if not text:
             return (
-                {"success": False, "errors": {"text": ["Email text cannot be empty"]}},
+                {"success": False, "errors": {
+                    "text": ["Email text cannot be empty"]}},
                 400,
             )
 

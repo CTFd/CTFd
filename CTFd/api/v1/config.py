@@ -15,7 +15,8 @@ from CTFd.utils import set_config
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
 
-configs_namespace = Namespace("configs", description="Endpoint to retrieve Configs")
+configs_namespace = Namespace(
+    "configs", description="Endpoint to retrieve Configs")
 
 ConfigModel = sqlalchemy_to_pydantic(Configs)
 

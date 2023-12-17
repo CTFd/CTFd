@@ -20,7 +20,8 @@ class ServerSentEvent(object):
             data = self.data
         else:
             data = json.dumps(self.data)
-        lines = ["data:{value}".format(value=line) for line in data.splitlines()]
+        lines = ["data:{value}".format(value=line)
+                 for line in data.splitlines()]
         if self.type:
             lines.insert(0, "event:{value}".format(value=self.type))
         if self.id:

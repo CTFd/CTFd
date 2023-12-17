@@ -220,7 +220,8 @@ def register_team(app, name="team", password="password", raise_for_error=True):
         with app.test_client() as client:
             client.get("/team")
             with client.session_transaction() as sess:
-                data = {"name": name, "password": password, "nonce": sess.get("nonce")}
+                data = {"name": name, "password": password,
+                        "nonce": sess.get("nonce")}
             r = client.post("/teams/new", data=data)
             if raise_for_error:
                 assert r.status_code == 302
@@ -232,7 +233,8 @@ def login_as_user(app, name="user", password="password", raise_for_error=True):
         with app.test_client() as client:
             client.get("/login")
             with client.session_transaction() as sess:
-                data = {"name": name, "password": password, "nonce": sess.get("nonce")}
+                data = {"name": name, "password": password,
+                        "nonce": sess.get("nonce")}
             client.post("/login", data=data)
             if raise_for_error:
                 with client.session_transaction() as sess:
@@ -272,7 +274,8 @@ def login_with_mlc(
         fake_post_response = Mock()
         fake_post_request.return_value = fake_post_response
         fake_post_response.status_code = 200
-        fake_post_response.json = lambda: {"access_token": "fake_mlc_access_token"}
+        fake_post_response.json = lambda: {
+            "access_token": "fake_mlc_access_token"}
 
         fake_get_response = Mock()
         fake_get_request.return_value = fake_get_response
@@ -361,7 +364,8 @@ def gen_topic(db, challenge_id, value="topic", **kwargs):
     db.session.add(topic)
     db.session.commit()
 
-    challenge_topic = ChallengeTopics(challenge_id=challenge_id, topic_id=topic.id)
+    challenge_topic = ChallengeTopics(
+        challenge_id=challenge_id, topic_id=topic.id)
     db.session.add(challenge_topic)
     db.session.commit()
     return challenge_topic
@@ -380,7 +384,8 @@ def gen_file(db, location, challenge_id=None, page_id=None):
 
 
 def gen_flag(db, challenge_id, content="flag", type="static", data=None, **kwargs):
-    flag = Flags(challenge_id=challenge_id, content=content, type=type, **kwargs)
+    flag = Flags(challenge_id=challenge_id,
+                 content=content, type=type, **kwargs)
     if data:
         flag.data = data
     db.session.add(flag)
@@ -408,7 +413,8 @@ def gen_team(
     team = Teams(name=name, email=email, password=password, **kwargs)
     for i in range(member_count):
         name = "user-{}-{}".format(random_string(), str(i))
-        user = gen_user(db, name=name, email=name + "@examplectf.com", team_id=team.id)
+        user = gen_user(db, name=name, email=name +
+                        "@examplectf.com", team_id=team.id)
         if i == 0:
             team.captain_id = user.id
         team.members.append(user)
@@ -429,7 +435,8 @@ def gen_hint(
 
 
 def gen_unlock(db, user_id, team_id=None, target=None, type="hints"):
-    unlock = Unlocks(user_id=user_id, team_id=team_id, target=target, type=type)
+    unlock = Unlocks(user_id=user_id, team_id=team_id,
+                     target=target, type=type)
     db.session.add(unlock)
     db.session.commit()
     return unlock
@@ -570,4 +577,5 @@ def simulate_user_activity(db, user):
         gen_fail(db, user_id=user.id, challenge_id=challenge.id)
 
     gen_unlock(db, user_id=user.id, target=hint.id, type="hints")
-    gen_solve(db, user_id=user.id, challenge_id=challenge.id, provided=flag.content)
+    gen_solve(db, user_id=user.id, challenge_id=challenge.id,
+              provided=flag.content)

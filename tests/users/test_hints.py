@@ -175,7 +175,8 @@ def test_unlocking_hints_with_cost_before_ctf():
             assert r.status_code == 403
             assert r.get_json().get("data") is None
 
-            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            r = client.post("/api/v1/unlocks",
+                            json={"target": 1, "type": "hints"})
             assert r.status_code == 403
             assert r.get_json().get("data") is None
 
@@ -214,7 +215,8 @@ def test_unlocking_hints_with_cost_during_ended_ctf():
             assert r.get_json().get("data") is None
             assert r.status_code == 403
 
-            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            r = client.post("/api/v1/unlocks",
+                            json={"target": 1, "type": "hints"})
             assert r.status_code == 403
             assert r.get_json()
 

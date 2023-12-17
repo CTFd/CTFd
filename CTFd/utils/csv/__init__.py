@@ -76,7 +76,8 @@ def dump_scoreboard_csv():
             team = Teams.query.filter_by(id=standing.account_id).first()
 
             # Build field entries using the order of the field values
-            team_field_entries = {f.field_id: f.value for f in team.field_entries}
+            team_field_entries = {
+                f.field_id: f.value for f in team.field_entries}
             team_field_values = [
                 team_field_entries.get(f_id, "") for f_id in team_field_ids
             ]
@@ -90,7 +91,8 @@ def dump_scoreboard_csv():
             writer.writerow(team_row)
 
             for member in team.members:
-                user_field_entries = {f.field_id: f.value for f in member.field_entries}
+                user_field_entries = {
+                    f.field_id: f.value for f in member.field_entries}
                 user_field_values = [
                     user_field_entries.get(f_id, "") for f_id in user_field_ids
                 ]
@@ -124,7 +126,8 @@ def dump_scoreboard_csv():
             user = Users.query.filter_by(id=standing.account_id).first()
 
             # Build field entries using the order of the field values
-            user_field_entries = {f.field_id: f.value for f in user.field_entries}
+            user_field_entries = {
+                f.field_id: f.value for f in user.field_entries}
             user_field_values = [
                 user_field_entries.get(f_id, "") for f_id in user_field_ids
             ]
@@ -154,7 +157,8 @@ def dump_users_with_fields_csv():
     user_field_ids = [f.id for f in user_fields]
     user_field_names = [f.name for f in user_fields]
 
-    header = [column.name for column in Users.__mapper__.columns] + user_field_names
+    header = [column.name for column in Users.__mapper__.columns] + \
+        user_field_names
     writer.writerow(header)
 
     responses = Users.query.all()
@@ -188,7 +192,8 @@ def dump_teams_with_fields_csv():
     team_field_ids = [f.id for f in team_fields]
     team_field_names = [f.name for f in team_fields]
 
-    header = [column.name for column in Teams.__mapper__.columns] + team_field_names
+    header = [column.name for column in Teams.__mapper__.columns] + \
+        team_field_names
     writer.writerow(header)
 
     responses = Teams.query.all()
@@ -256,7 +261,8 @@ def dump_teams_with_members_fields_csv():
         for member in curr.members:
             padding = [""] * len(team_row)
 
-            user_field_entries = {f.field_id: f.value for f in member.field_entries}
+            user_field_entries = {
+                f.field_id: f.value for f in member.field_entries}
             user_field_values = [
                 user_field_entries.get(f_id, "") for f_id in user_field_ids
             ]

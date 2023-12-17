@@ -21,7 +21,8 @@ def jsenums():
 
     from CTFd.constants import JS_ENUMS
 
-    path = os.path.join(current_app.root_path, "themes/core/assets/js/constants.js")
+    path = os.path.join(current_app.root_path,
+                        "themes/core/assets/js/constants.js")
 
     with open(path, "w+") as f:
         for k, v in JS_ENUMS.items():

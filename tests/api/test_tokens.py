@@ -98,7 +98,8 @@ def test_token_api_file_upload():
             )
             assert r.status_code == 200
             f = Files.query.filter_by(id=1).first()
-            filepath = os.path.join(app.config["UPLOAD_FOLDER"] + "/" + f.location)
+            filepath = os.path.join(
+                app.config["UPLOAD_FOLDER"] + "/" + f.location)
             with open(filepath) as f:
                 assert f.read() == "test file content"
             os.remove(filepath)

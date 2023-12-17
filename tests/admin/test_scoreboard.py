@@ -45,7 +45,8 @@ def test_admins_can_see_scores_with_hidden_scores():
         # Admins can see the scoreboard
         r = admin.get("/scoreboard")
         assert r.status_code != 403
-        assert "Scores are not currently visible to users" in r.get_data(as_text=True)
+        assert "Scores are not currently visible to users" in r.get_data(
+            as_text=True)
 
         # Admins can see the scoreboard
         r = admin.get("/api/v1/scoreboard", json="")

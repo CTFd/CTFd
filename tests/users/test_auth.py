@@ -144,7 +144,8 @@ def test_user_login_with_email():
     app = create_ctfd()
     with app.app_context():
         register_user(app)
-        client = login_as_user(app, name="user@examplectf.com", password="password")
+        client = login_as_user(
+            app, name="user@examplectf.com", password="password")
         r = client.get("/profile")
         assert (
             r.location != "http://localhost/login"
@@ -318,7 +319,8 @@ def test_user_can_confirm_email(mock_smtp):
                 r.location == "http://localhost/confirm"
             )  # We got redirected to /confirm
 
-            r = client.get("http://localhost/confirm/" + serialize("user@user.com"))
+            r = client.get("http://localhost/confirm/" +
+                           serialize("user@user.com"))
             assert r.location == "http://localhost/challenges"
 
             # The team is now verified
@@ -358,7 +360,8 @@ def test_user_can_reset_password(mock_smtp):
             client.post("/reset_password", data=data)
 
             ctf_name = get_config("ctf_name")
-            from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
+            from_addr = get_config(
+                "mailfrom_addr") or app.config.get("MAILFROM_ADDR")
             from_addr = "{} <{}>".format(ctf_name, from_addr)
 
             to_addr = "user@user.com"

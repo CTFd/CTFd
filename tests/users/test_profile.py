@@ -27,7 +27,8 @@ def test_email_cannot_be_changed_without_password():
         user = Users.query.filter_by(id=2).first()
         assert user.email == "user@examplectf.com"
 
-        data = {"name": "user", "email": "user2@examplectf.com", "confirm": "password"}
+        data = {"name": "user", "email": "user2@examplectf.com",
+                "confirm": "password"}
 
         r = client.patch("/api/v1/users/me", json=data)
         assert r.status_code == 200

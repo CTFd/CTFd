@@ -54,8 +54,10 @@ def test_reset():
             user_email = user + "@examplectf.com"
             user_obj = gen_user(app.db, name=user, email=user_email)
             gen_award(app.db, user_id=user_obj.id)
-            gen_solve(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
-            gen_fail(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
+            gen_solve(app.db, user_id=user_obj.id,
+                      challenge_id=random.randint(1, 10))
+            gen_fail(app.db, user_id=user_obj.id,
+                     challenge_id=random.randint(1, 10))
             gen_tracking(app.db, user_id=user_obj.id)
 
         # Add PageFiles
@@ -164,8 +166,10 @@ def test_reset_team_mode():
             team_obj.captain_id = user_obj.id
             app.db.session.commit()
             gen_award(app.db, user_id=user_obj.id)
-            gen_solve(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
-            gen_fail(app.db, user_id=user_obj.id, challenge_id=random.randint(1, 10))
+            gen_solve(app.db, user_id=user_obj.id,
+                      challenge_id=random.randint(1, 10))
+            gen_fail(app.db, user_id=user_obj.id,
+                     challenge_id=random.randint(1, 10))
             gen_tracking(app.db, user_id=user_obj.id)
 
         # Add PageFiles

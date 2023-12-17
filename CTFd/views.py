@@ -197,11 +197,13 @@ def setup():
             page = Pages(title=None, route="index", content="", draft=False)
 
             # Upload banner
-            default_ctf_banner_location = url_for("views.themes", path="img/logo.png")
+            default_ctf_banner_location = url_for(
+                "views.themes", path="img/logo.png")
             ctf_banner = request.files.get("ctf_banner")
             if ctf_banner:
                 f = upload_file(file=ctf_banner, page_id=page.id)
-                default_ctf_banner_location = url_for("views.files", path=f.location)
+                default_ctf_banner_location = url_for(
+                    "views.files", path=f.location)
 
             # Splice in our banner
             index = f"""<div class="row">
@@ -224,7 +226,8 @@ def setup():
 
             # Visibility
             set_config(ConfigTypes.CHALLENGE_VISIBILITY, challenge_visibility)
-            set_config(ConfigTypes.REGISTRATION_VISIBILITY, registration_visibility)
+            set_config(ConfigTypes.REGISTRATION_VISIBILITY,
+                       registration_visibility)
             set_config(ConfigTypes.SCORE_VISIBILITY, score_visibility)
             set_config(ConfigTypes.ACCOUNT_VISIBILITY, account_visibility)
 
@@ -243,8 +246,10 @@ def setup():
             set_config("mail_useauth", None)
 
             # Set up default emails
-            set_config("verification_email_subject", DEFAULT_VERIFICATION_EMAIL_SUBJECT)
-            set_config("verification_email_body", DEFAULT_VERIFICATION_EMAIL_BODY)
+            set_config("verification_email_subject",
+                       DEFAULT_VERIFICATION_EMAIL_SUBJECT)
+            set_config("verification_email_body",
+                       DEFAULT_VERIFICATION_EMAIL_BODY)
 
             set_config(
                 "successful_registration_email_subject",
@@ -258,9 +263,11 @@ def setup():
             set_config(
                 "user_creation_email_subject", DEFAULT_USER_CREATION_EMAIL_SUBJECT
             )
-            set_config("user_creation_email_body", DEFAULT_USER_CREATION_EMAIL_BODY)
+            set_config("user_creation_email_body",
+                       DEFAULT_USER_CREATION_EMAIL_BODY)
 
-            set_config("password_reset_subject", DEFAULT_PASSWORD_RESET_SUBJECT)
+            set_config("password_reset_subject",
+                       DEFAULT_PASSWORD_RESET_SUBJECT)
             set_config("password_reset_body", DEFAULT_PASSWORD_RESET_BODY)
 
             set_config(

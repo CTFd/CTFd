@@ -137,7 +137,8 @@ class Hint(Resource):
             requirements = hint.prerequisites
 
             # Get the IDs of all hints that the user has unlocked
-            all_unlocks = HintUnlocks.query.filter_by(account_id=user.account_id).all()
+            all_unlocks = HintUnlocks.query.filter_by(
+                account_id=user.account_id).all()
             unlock_ids = {unlock.target for unlock in all_unlocks}
 
             # Get the IDs of all free hints
@@ -148,7 +149,8 @@ class Hint(Resource):
             unlock_ids.update(free_ids)
 
             # Filter out hint IDs that don't exist
-            all_hint_ids = {h.id for h in Hints.query.with_entities(Hints.id).all()}
+            all_hint_ids = {
+                h.id for h in Hints.query.with_entities(Hints.id).all()}
             prereqs = set(requirements).intersection(all_hint_ids)
 
             # If the user has the necessary unlocks or is admin we should allow them to view
@@ -203,7 +205,8 @@ class Hint(Resource):
         req = request.get_json()
 
         schema = HintSchema(view="admin")
-        response = schema.load(req, instance=hint, partial=True, session=db.session)
+        response = schema.load(
+            req, instance=hint, partial=True, session=db.session)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400

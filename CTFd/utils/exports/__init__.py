@@ -154,10 +154,12 @@ def import_ctf(backup, erase=True):
         )
 
     try:
-        alembic_version = json.loads(backup.open("db/alembic_version.json").read())
+        alembic_version = json.loads(
+            backup.open("db/alembic_version.json").read())
         alembic_version = alembic_version["results"][0]["version_num"]
     except Exception:
-        set_import_error("Exception: Could not determine appropriate database version")
+        set_import_error(
+            "Exception: Could not determine appropriate database version")
         raise Exception(
             "Could not determine appropriate database version. This backup cannot be automatically imported."
         )
@@ -344,7 +346,8 @@ def import_ctf(backup, erase=True):
                         ):
                             requirements = entry.get("requirements")
                             if requirements and isinstance(requirements, string_types):
-                                entry["requirements"] = json.loads(requirements)
+                                entry["requirements"] = json.loads(
+                                    requirements)
 
                         # From v3.1.0 to v3.5.0 FieldEntries could have been varying levels of JSON'ified strings.
                         # For example "\"test\"" vs "test". This results in issues with importing backups between
@@ -361,7 +364,8 @@ def import_ctf(backup, erase=True):
                                 finally:
                                     # Dump the value into JSON if its mariadb or skip the conversion if not mariadb
                                     if mariadb:
-                                        entry["value"] = json.dumps(entry["value"])
+                                        entry["value"] = json.dumps(
+                                            entry["value"])
 
                         try:
                             table.insert(entry)
@@ -371,7 +375,8 @@ def import_ctf(backup, erase=True):
                             # See Issue #973
                             requirements = entry.get("requirements")
                             if requirements and isinstance(requirements, dict):
-                                entry["requirements"] = json.dumps(requirements)
+                                entry["requirements"] = json.dumps(
+                                    requirements)
                             table.insert(entry)
                         except IntegrityError:
                             # Catch odd situation where for some reason config keys are reinserted before import completes
@@ -438,7 +443,8 @@ def import_ctf(backup, erase=True):
         ):  # just an empty uploads directory (e.g. uploads/) or any directory
             continue
 
-        filename = filename[1]  # Get the second entry in the list (the actual filename)
+        # Get the second entry in the list (the actual filename)
+        filename = filename[1]
         source = backup.open(f)
         uploader.store(fileobj=source, filename=filename)
 
@@ -472,7 +478,8 @@ def import_ctf(backup, erase=True):
 
     # Set config variables to mark import completed
     set_import_start_time(value=start_time, skip_print=True)
-    set_import_end_time(value=unix_time(datetime.datetime.utcnow()), skip_print=True)
+    set_import_end_time(value=unix_time(
+        datetime.datetime.utcnow()), skip_print=True)
 
 
 def background_import_ctf(backup):

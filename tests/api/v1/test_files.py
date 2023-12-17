@@ -75,7 +75,8 @@ def test_api_files_post_admin():
             )
             assert r.status_code == 200
             f = Files.query.filter_by(id=1).first()
-            os.remove(os.path.join(app.config["UPLOAD_FOLDER"] + "/" + f.location))
+            os.remove(os.path.join(
+                app.config["UPLOAD_FOLDER"] + "/" + f.location))
     destroy_ctfd(app)
 
 

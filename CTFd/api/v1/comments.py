@@ -19,7 +19,8 @@ from CTFd.schemas.comments import CommentSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
 
-comments_namespace = Namespace("comments", description="Endpoint to retrieve Comments")
+comments_namespace = Namespace(
+    "comments", description="Endpoint to retrieve Comments")
 
 
 CommentModel = sqlalchemy_to_pydantic(Comments)

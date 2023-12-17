@@ -1,7 +1,9 @@
+from CTFd import create_app
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--port", help="Port for debug server to listen on", default=4000)
+parser.add_argument(
+    "--port", help="Port for debug server to listen on", default=4000)
 parser.add_argument(
     "--profile", help="Enable flask_profiler profiling", action="store_true"
 )
@@ -18,7 +20,6 @@ if args.disable_gevent:
     monkey.patch_all()
 
 # Import not at top of file to allow gevent to monkey patch uninterrupted
-from CTFd import create_app
 
 app = create_app()
 

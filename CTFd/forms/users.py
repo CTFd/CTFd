@@ -193,7 +193,8 @@ def UserEditForm(*args, **kwargs):
 
 def UserCreateForm(*args, **kwargs):
     class _UserCreateForm(UserBaseForm):
-        notify = BooleanField("Email account credentials to user", default=True)
+        notify = BooleanField(
+            "Email account credentials to user", default=True)
 
         @property
         def extra(self):

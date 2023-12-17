@@ -25,7 +25,8 @@ class UserSchema(ma.ModelSchema):
         required=True,
         allow_none=False,
         validate=[
-            validate.Length(min=1, max=128, error="User names must not be empty")
+            validate.Length(
+                min=1, max=128, error="User names must not be empty")
         ],
     )
     email = field_for(
@@ -33,7 +34,8 @@ class UserSchema(ma.ModelSchema):
         "email",
         allow_none=False,
         validate=[
-            validate.Email("Emails must be a properly formatted email address"),
+            validate.Email(
+                "Emails must be a properly formatted email address"),
             validate.Length(min=1, max=128, error="Emails must not be empty"),
         ],
     )
@@ -219,7 +221,8 @@ class UserSchema(ma.ModelSchema):
                     field_id = f.get("field_id")
 
                     # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
-                    field = UserFields.query.filter_by(id=field_id).first_or_404()
+                    field = UserFields.query.filter_by(
+                        id=field_id).first_or_404()
 
                     # Get the existing field entry if one exists
                     entry = UserFieldEntries.query.filter_by(

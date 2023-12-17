@@ -82,9 +82,11 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_ctf_name=ctf_name)
     app.jinja_env.globals.update(get_ctf_logo=ctf_logo)
     app.jinja_env.globals.update(get_ctf_theme=ctf_theme)
-    app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
+    app.jinja_env.globals.update(
+        get_configurable_plugins=get_configurable_plugins)
     app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
-    app.jinja_env.globals.update(get_registered_stylesheets=get_registered_stylesheets)
+    app.jinja_env.globals.update(
+        get_registered_stylesheets=get_registered_stylesheets)
     app.jinja_env.globals.update(
         get_registered_admin_scripts=get_registered_admin_scripts
     )
@@ -333,4 +335,5 @@ def init_request_processors(app):
                     application_root + request.script_root + request.full_path
                 )
 
-        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {application_root: app})
+        app.wsgi_app = DispatcherMiddleware(
+            app.wsgi_app, {application_root: app})

@@ -1,3 +1,33 @@
+from CTFd.utils.user import is_admin
+from CTFd.utils.uploads import delete_file
+from CTFd.utils.security.auth import logout_user
+from CTFd.utils.exports import export_ctf as export_ctf_util
+from CTFd.utils.exports import background_import_ctf
+from CTFd.utils.decorators import admins_only
+from CTFd.utils.csv import dump_csv, load_challenges_csv, load_teams_csv, load_users_csv
+from CTFd.utils import get_app_config, get_config, set_config
+from CTFd.utils import config as ctf_config
+from CTFd.models import (
+    Awards,
+    Challenges,
+    Configs,
+    Notifications,
+    Pages,
+    Solves,
+    Submissions,
+    Teams,
+    Tracking,
+    Unlocks,
+    Users,
+    db,
+)
+from CTFd.cache import (
+    cache,
+    clear_challenges,
+    clear_config,
+    clear_pages,
+    clear_standings,
+)
 import csv  # noqa: I001
 import datetime
 import os
@@ -26,36 +56,6 @@ from CTFd.admin import statistics  # noqa: F401,I001
 from CTFd.admin import submissions  # noqa: F401,I001
 from CTFd.admin import teams  # noqa: F401,I001
 from CTFd.admin import users  # noqa: F401,I001
-from CTFd.cache import (
-    cache,
-    clear_challenges,
-    clear_config,
-    clear_pages,
-    clear_standings,
-)
-from CTFd.models import (
-    Awards,
-    Challenges,
-    Configs,
-    Notifications,
-    Pages,
-    Solves,
-    Submissions,
-    Teams,
-    Tracking,
-    Unlocks,
-    Users,
-    db,
-)
-from CTFd.utils import config as ctf_config
-from CTFd.utils import get_app_config, get_config, set_config
-from CTFd.utils.csv import dump_csv, load_challenges_csv, load_teams_csv, load_users_csv
-from CTFd.utils.decorators import admins_only
-from CTFd.utils.exports import background_import_ctf
-from CTFd.utils.exports import export_ctf as export_ctf_util
-from CTFd.utils.security.auth import logout_user
-from CTFd.utils.uploads import delete_file
-from CTFd.utils.user import is_admin
 
 
 @admin.route("/admin", methods=["GET"])

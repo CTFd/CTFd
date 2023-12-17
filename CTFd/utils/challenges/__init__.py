@@ -13,7 +13,8 @@ from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modes import generate_account_url, get_model
 
 Challenge = namedtuple(
-    "Challenge", ["id", "type", "name", "value", "category", "tags", "requirements"]
+    "Challenge", ["id", "type", "name", "value",
+                  "category", "tags", "requirements"]
 )
 
 

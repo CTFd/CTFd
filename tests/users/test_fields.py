@@ -30,7 +30,8 @@ def test_new_fields_show_on_pages():
 
             r = client.patch(
                 "/api/v1/users/me",
-                json={"fields": [{"field_id": 1, "value": "CustomFieldEntry"}]},
+                json={"fields": [
+                    {"field_id": 1, "value": "CustomFieldEntry"}]},
             )
             resp = r.get_json()
             assert resp["success"] is True
@@ -178,7 +179,8 @@ def test_fields_properties():
 def test_boolean_checkbox_field():
     app = create_ctfd()
     with app.app_context():
-        gen_field(app.db, name="CustomField1", field_type="boolean", required=False)
+        gen_field(app.db, name="CustomField1",
+                  field_type="boolean", required=False)
 
         with app.test_client() as client:
             r = client.get("/register")
@@ -213,7 +215,8 @@ def test_boolean_checkbox_field():
             )
             assert r.status_code == 200
             assert UserFieldEntries.query.count() == 1
-            assert UserFieldEntries.query.filter_by(id=1).first().value is False
+            assert UserFieldEntries.query.filter_by(
+                id=1).first().value is False
     destroy_ctfd(app)
 
 
@@ -290,7 +293,8 @@ def test_user_needs_all_required_fields():
             # Populate the required fields
             r = client.patch(
                 "/api/v1/users/me",
-                json={"fields": [{"field_id": 1, "value": "CustomFieldEntry1"}]},
+                json={"fields": [
+                    {"field_id": 1, "value": "CustomFieldEntry1"}]},
             )
             assert r.status_code == 200
 
@@ -309,7 +313,8 @@ def test_user_needs_all_required_fields():
             # I can't edit a non-editable field
             r = client.patch(
                 "/api/v1/users/me",
-                json={"fields": [{"field_id": 4, "value": "CustomFieldEntry4"}]},
+                json={"fields": [
+                    {"field_id": 4, "value": "CustomFieldEntry4"}]},
             )
             resp = r.get_json()
             assert resp == {

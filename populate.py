@@ -26,8 +26,10 @@ fake = Faker()
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--mode", help="Set user mode", default="teams")
-parser.add_argument("--users", help="Amount of users to generate", default=50, type=int)
-parser.add_argument("--teams", help="Amount of teams to generate", default=10, type=int)
+parser.add_argument(
+    "--users", help="Amount of users to generate", default=50, type=int)
+parser.add_argument(
+    "--teams", help="Amount of teams to generate", default=10, type=int)
 parser.add_argument(
     "--challenges", help="Amount of challenges to generate", default=20, type=int
 )
@@ -190,7 +192,8 @@ if __name__ == "__main__":
             if name not in used:
                 used.append(name)
                 try:
-                    user = Users(name=name, email=gen_email(), password="password")
+                    user = Users(name=name, email=gen_email(),
+                                 password="password")
                     user.verified = True
                     if random_chance():
                         user.affiliation = gen_affiliation()
@@ -310,7 +313,8 @@ if __name__ == "__main__":
                 )
                 new_base = random_date(
                     base_time,
-                    base_time + datetime.timedelta(minutes=random.randint(30, 60)),
+                    base_time +
+                    datetime.timedelta(minutes=random.randint(30, 60)),
                 )
                 award.date = new_base
                 base_time = new_base
@@ -339,7 +343,8 @@ if __name__ == "__main__":
 
                     new_base = random_date(
                         base_time,
-                        base_time + datetime.timedelta(minutes=random.randint(30, 60)),
+                        base_time +
+                        datetime.timedelta(minutes=random.randint(30, 60)),
                     )
                     wrong.date = new_base
                     base_time = new_base

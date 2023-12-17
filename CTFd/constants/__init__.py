@@ -48,7 +48,8 @@ def JSEnum(cls):
     if cls.__name__ not in JS_ENUMS:
         JS_ENUMS[cls.__name__] = dict(cls.__members__)
     else:
-        raise KeyError("{} was already defined as a JSEnum".format(cls.__name__))
+        raise KeyError(
+            "{} was already defined as a JSEnum".format(cls.__name__))
     return cls
 
 
@@ -62,5 +63,6 @@ def JinjaEnum(cls):
         current_app.jinja_env.globals[cls.__name__] = cls
         JINJA_ENUMS[cls.__name__] = cls
     else:
-        raise KeyError("{} was already defined as a JinjaEnum".format(cls.__name__))
+        raise KeyError(
+            "{} was already defined as a JinjaEnum".format(cls.__name__))
     return cls

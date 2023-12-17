@@ -53,7 +53,8 @@ def sendmail(addr, text, subject="Message from {ctf_name}"):
 
 def password_change_alert(email):
     text = safe_format(
-        get_config("password_change_alert_body") or DEFAULT_PASSWORD_CHANGE_ALERT_BODY,
+        get_config(
+            "password_change_alert_body") or DEFAULT_PASSWORD_CHANGE_ALERT_BODY,
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
         url=url_for("auth.reset_password", _external=True),
@@ -72,7 +73,8 @@ def forgot_password(email):
         get_config("password_reset_body") or DEFAULT_PASSWORD_RESET_BODY,
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
-        url=url_for("auth.reset_password", data=serialize(email), _external=True),
+        url=url_for("auth.reset_password",
+                    data=serialize(email), _external=True),
     )
 
     subject = safe_format(
@@ -93,7 +95,8 @@ def verify_email_address(addr):
     )
 
     subject = safe_format(
-        get_config("verification_email_subject") or DEFAULT_VERIFICATION_EMAIL_SUBJECT,
+        get_config(
+            "verification_email_subject") or DEFAULT_VERIFICATION_EMAIL_SUBJECT,
         ctf_name=get_config("ctf_name"),
     )
     return sendmail(addr=addr, text=text, subject=subject)
@@ -118,7 +121,8 @@ def successful_registration_notification(addr):
 
 def user_created_notification(addr, name, password):
     text = safe_format(
-        get_config("user_creation_email_body") or DEFAULT_USER_CREATION_EMAIL_BODY,
+        get_config(
+            "user_creation_email_body") or DEFAULT_USER_CREATION_EMAIL_BODY,
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
         url=url_for("views.static_html", _external=True),

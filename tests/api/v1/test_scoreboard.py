@@ -36,7 +36,8 @@ def test_scoreboard_is_cached():
         with login_as_user(app, "user1") as client:
             # No cached data
             assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
-            assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
+            assert app.cache.get(
+                "view/api.scoreboard_scoreboard_detail") is None
 
             # Load and check cached data
             client.get("/api/v1/scoreboard")
@@ -46,18 +47,22 @@ def test_scoreboard_is_cached():
 
             # Check scoreboard page
             assert (
-                app.cache.get(make_template_fragment_key("public_scoreboard_table"))
+                app.cache.get(make_template_fragment_key(
+                    "public_scoreboard_table"))
                 is None
             )
             client.get("/scoreboard")
-            assert app.cache.get(make_template_fragment_key("public_scoreboard_table"))
+            assert app.cache.get(
+                make_template_fragment_key("public_scoreboard_table"))
 
             # Empty standings and check that the cached data is gone
             clear_standings()
             assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
-            assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
+            assert app.cache.get(
+                "view/api.scoreboard_scoreboard_detail") is None
             assert (
-                app.cache.get(make_template_fragment_key("public_scoreboard_table"))
+                app.cache.get(make_template_fragment_key(
+                    "public_scoreboard_table"))
                 is None
             )
     destroy_ctfd(app)

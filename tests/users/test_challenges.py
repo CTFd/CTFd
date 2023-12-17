@@ -148,7 +148,8 @@ def test_submitting_correct_static_case_insensitive_flag():
         register_user(app)
         client = login_as_user(app)
         chal = gen_challenge(app.db)
-        gen_flag(app.db, challenge_id=chal.id, content="flag", data="case_insensitive")
+        gen_flag(app.db, challenge_id=chal.id,
+                 content="flag", data="case_insensitive")
         data = {"submission": "FLAG", "challenge_id": chal.id}
         r = client.post("/api/v1/challenges/attempt", json=data)
         assert r.status_code == 200
@@ -299,7 +300,8 @@ def test_challenge_kpm_limit():
 
         resp = r.get_json()["data"]
         assert resp.get("status") == "ratelimited"
-        assert resp.get("message") == "You're submitting flags too fast. Slow down."
+        assert resp.get(
+            "message") == "You're submitting flags too fast. Slow down."
 
         solves = Solves.query.count()
         assert solves == 0

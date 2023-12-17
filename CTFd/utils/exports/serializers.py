@@ -49,7 +49,8 @@ class JSONSerializer(object):
                 if data:
                     try:
                         if isinstance(data, string_types):
-                            result["results"][i]["requirements"] = json.loads(data)
+                            result["results"][i]["requirements"] = json.loads(
+                                data)
                     except ValueError:
                         pass
 
@@ -66,7 +67,8 @@ class JSONSerializer(object):
                         value = r.get("value")
                         if value:
                             try:
-                                result["results"][i]["value"] = json.loads(value)
+                                result["results"][i]["value"] = json.loads(
+                                    value)
                             except ValueError:
                                 pass
 

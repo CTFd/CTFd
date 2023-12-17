@@ -218,7 +218,8 @@ def upgrade():
         sa.ForeignKeyConstraint(
             ["challenge_id"], ["challenges.id"], ondelete="CASCADE"
         ),
-        sa.ForeignKeyConstraint(["id"], ["submissions.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(
+            ["id"], ["submissions.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["team_id"], ["teams.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),

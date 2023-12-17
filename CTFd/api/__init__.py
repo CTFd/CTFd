@@ -47,11 +47,13 @@ CTFd_API_v1 = Api(
     security=["AccessToken", "ContentType"],
 )
 
-CTFd_API_v1.schema_model("APISimpleErrorResponse", APISimpleErrorResponse.schema())
+CTFd_API_v1.schema_model("APISimpleErrorResponse",
+                         APISimpleErrorResponse.schema())
 CTFd_API_v1.schema_model(
     "APIDetailedSuccessResponse", APIDetailedSuccessResponse.schema()
 )
-CTFd_API_v1.schema_model("APISimpleSuccessResponse", APISimpleSuccessResponse.schema())
+CTFd_API_v1.schema_model("APISimpleSuccessResponse",
+                         APISimpleSuccessResponse.schema())
 
 CTFd_API_v1.add_namespace(challenges_namespace, "/challenges")
 CTFd_API_v1.add_namespace(tags_namespace, "/tags")

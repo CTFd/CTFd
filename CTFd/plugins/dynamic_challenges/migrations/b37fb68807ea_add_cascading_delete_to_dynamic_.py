@@ -53,6 +53,7 @@ def downgrade(op=None):
         print(str(e))
 
     try:
-        op.create_foreign_key(None, "dynamic_challenge", "challenges", ["id"], ["id"])
+        op.create_foreign_key(None, "dynamic_challenge",
+                              "challenges", ["id"], ["id"])
     except sqlalchemy.exc.InternalError as e:
         print(str(e))

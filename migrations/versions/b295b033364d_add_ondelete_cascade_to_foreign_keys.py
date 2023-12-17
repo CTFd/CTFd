@@ -125,7 +125,8 @@ def upgrade():
             ondelete="CASCADE",
         )
 
-        op.drop_constraint("files_challenge_id_fkey", "files", type_="foreignkey")
+        op.drop_constraint("files_challenge_id_fkey",
+                           "files", type_="foreignkey")
         op.create_foreign_key(
             "files_challenge_id_fkey",
             "files",
@@ -135,7 +136,8 @@ def upgrade():
             ondelete="CASCADE",
         )
 
-        op.drop_constraint("flags_challenge_id_fkey", "flags", type_="foreignkey")
+        op.drop_constraint("flags_challenge_id_fkey",
+                           "flags", type_="foreignkey")
         op.create_foreign_key(
             "flags_challenge_id_fkey",
             "flags",
@@ -145,7 +147,8 @@ def upgrade():
             ondelete="CASCADE",
         )
 
-        op.drop_constraint("hints_challenge_id_fkey", "hints", type_="foreignkey")
+        op.drop_constraint("hints_challenge_id_fkey",
+                           "hints", type_="foreignkey")
         op.create_foreign_key(
             "hints_challenge_id_fkey",
             "hints",
@@ -155,7 +158,8 @@ def upgrade():
             ondelete="CASCADE",
         )
 
-        op.drop_constraint("tags_challenge_id_fkey", "tags", type_="foreignkey")
+        op.drop_constraint("tags_challenge_id_fkey",
+                           "tags", type_="foreignkey")
         op.create_foreign_key(
             "tags_challenge_id_fkey",
             "tags",
@@ -175,7 +179,8 @@ def upgrade():
             ondelete="SET NULL",
         )
 
-        op.drop_constraint("tracking_user_id_fkey", "tracking", type_="foreignkey")
+        op.drop_constraint("tracking_user_id_fkey",
+                           "tracking", type_="foreignkey")
         op.create_foreign_key(
             "tracking_user_id_fkey",
             "tracking",
@@ -185,8 +190,10 @@ def upgrade():
             ondelete="CASCADE",
         )
 
-        op.drop_constraint("unlocks_team_id_fkey", "unlocks", type_="foreignkey")
-        op.drop_constraint("unlocks_user_id_fkey", "unlocks", type_="foreignkey")
+        op.drop_constraint("unlocks_team_id_fkey",
+                           "unlocks", type_="foreignkey")
+        op.drop_constraint("unlocks_user_id_fkey",
+                           "unlocks", type_="foreignkey")
         op.create_foreign_key(
             "unlocks_team_id_fkey",
             "unlocks",
@@ -211,8 +218,10 @@ def downgrade():
     if url.startswith("mysql"):
         op.drop_constraint("unlocks_ibfk_1", "unlocks", type_="foreignkey")
         op.drop_constraint("unlocks_ibfk_2", "unlocks", type_="foreignkey")
-        op.create_foreign_key("unlocks_ibfk_1", "unlocks", "teams", ["team_id"], ["id"])
-        op.create_foreign_key("unlocks_ibfk_2", "unlocks", "users", ["user_id"], ["id"])
+        op.create_foreign_key("unlocks_ibfk_1", "unlocks",
+                              "teams", ["team_id"], ["id"])
+        op.create_foreign_key("unlocks_ibfk_2", "unlocks",
+                              "users", ["user_id"], ["id"])
 
         op.drop_constraint("tracking_ibfk_1", "tracking", type_="foreignkey")
         op.create_foreign_key(
@@ -246,11 +255,15 @@ def downgrade():
 
         op.drop_constraint("awards_ibfk_1", "awards", type_="foreignkey")
         op.drop_constraint("awards_ibfk_2", "awards", type_="foreignkey")
-        op.create_foreign_key("awards_ibfk_1", "awards", "teams", ["team_id"], ["id"])
-        op.create_foreign_key("awards_ibfk_2", "awards", "users", ["user_id"], ["id"])
+        op.create_foreign_key("awards_ibfk_1", "awards",
+                              "teams", ["team_id"], ["id"])
+        op.create_foreign_key("awards_ibfk_2", "awards",
+                              "users", ["user_id"], ["id"])
     elif url.startswith("postgres"):
-        op.drop_constraint("unlocks_team_id_fkey", "unlocks", type_="foreignkey")
-        op.drop_constraint("unlocks_user_id_fkey", "unlocks", type_="foreignkey")
+        op.drop_constraint("unlocks_team_id_fkey",
+                           "unlocks", type_="foreignkey")
+        op.drop_constraint("unlocks_user_id_fkey",
+                           "unlocks", type_="foreignkey")
         op.create_foreign_key(
             "unlocks_team_id_fkey", "unlocks", "teams", ["team_id"], ["id"]
         )
@@ -258,7 +271,8 @@ def downgrade():
             "unlocks_user_id_fkey", "unlocks", "users", ["user_id"], ["id"]
         )
 
-        op.drop_constraint("tracking_user_id_fkey", "tracking", type_="foreignkey")
+        op.drop_constraint("tracking_user_id_fkey",
+                           "tracking", type_="foreignkey")
         op.create_foreign_key(
             "tracking_user_id_fkey", "tracking", "users", ["user_id"], ["id"]
         )
@@ -268,24 +282,32 @@ def downgrade():
             "team_captain_id", "teams", "users", ["captain_id"], ["id"]
         )
 
-        op.drop_constraint("tags_challenge_id_fkey", "tags", type_="foreignkey")
+        op.drop_constraint("tags_challenge_id_fkey",
+                           "tags", type_="foreignkey")
         op.create_foreign_key(
-            "tags_challenge_id_fkey", "tags", "challenges", ["challenge_id"], ["id"]
+            "tags_challenge_id_fkey", "tags", "challenges", [
+                "challenge_id"], ["id"]
         )
 
-        op.drop_constraint("hints_challenge_id_fkey", "hints", type_="foreignkey")
+        op.drop_constraint("hints_challenge_id_fkey",
+                           "hints", type_="foreignkey")
         op.create_foreign_key(
-            "hints_challenge_id_fkey", "hints", "challenges", ["challenge_id"], ["id"]
+            "hints_challenge_id_fkey", "hints", "challenges", [
+                "challenge_id"], ["id"]
         )
 
-        op.drop_constraint("flags_challenge_id_fkey", "flags", type_="foreignkey")
+        op.drop_constraint("flags_challenge_id_fkey",
+                           "flags", type_="foreignkey")
         op.create_foreign_key(
-            "flags_challenge_id_fkey", "flags", "challenges", ["challenge_id"], ["id"]
+            "flags_challenge_id_fkey", "flags", "challenges", [
+                "challenge_id"], ["id"]
         )
 
-        op.drop_constraint("files_challenge_id_fkey", "files", type_="foreignkey")
+        op.drop_constraint("files_challenge_id_fkey",
+                           "files", type_="foreignkey")
         op.create_foreign_key(
-            "files_challenge_id_fkey", "files", "challenges", ["challenge_id"], ["id"]
+            "files_challenge_id_fkey", "files", "challenges", [
+                "challenge_id"], ["id"]
         )
 
         op.drop_constraint("awards_team_id_fkey", "awards", type_="foreignkey")

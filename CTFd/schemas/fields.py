@@ -20,7 +20,8 @@ class UserFieldEntriesSchema(ma.ModelSchema):
         dump_only = ("user_id", "name", "description", "type")
 
     name = fields.Nested(FieldSchema, only=("name"), attribute="field")
-    description = fields.Nested(FieldSchema, only=("description"), attribute="field")
+    description = fields.Nested(
+        FieldSchema, only=("description"), attribute="field")
     type = fields.Nested(FieldSchema, only=("field_type"), attribute="field")
 
 
@@ -34,5 +35,6 @@ class TeamFieldEntriesSchema(ma.ModelSchema):
         dump_only = ("team_id", "name", "description", "type")
 
     name = fields.Nested(FieldSchema, only=("name"), attribute="field")
-    description = fields.Nested(FieldSchema, only=("description"), attribute="field")
+    description = fields.Nested(
+        FieldSchema, only=("description"), attribute="field")
     type = fields.Nested(FieldSchema, only=("field_type"), attribute="field")

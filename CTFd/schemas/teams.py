@@ -24,14 +24,16 @@ class TeamSchema(ma.ModelSchema):
         required=True,
         allow_none=False,
         validate=[
-            validate.Length(min=1, max=128, error="Team names must not be empty")
+            validate.Length(
+                min=1, max=128, error="Team names must not be empty")
         ],
     )
     email = field_for(
         Teams,
         "email",
         allow_none=False,
-        validate=validate.Email("Emails must be a properly formatted email address"),
+        validate=validate.Email(
+            "Emails must be a properly formatted email address"),
     )
     password = field_for(Teams, "password", required=True, allow_none=False)
     website = field_for(
@@ -181,7 +183,8 @@ class TeamSchema(ma.ModelSchema):
             if captain in target_team.members:
                 return
             else:
-                raise ValidationError("Invalid Captain ID", field_names=["captain_id"])
+                raise ValidationError(
+                    "Invalid Captain ID", field_names=["captain_id"])
         else:
             current_team = get_current_team()
             current_user = get_current_user()
@@ -228,7 +231,8 @@ class TeamSchema(ma.ModelSchema):
                     field_id = f.get("field_id")
 
                     # # Check that we have an existing field for this. May be unnecessary b/c the foriegn key should enforce
-                    field = TeamFields.query.filter_by(id=field_id).first_or_404()
+                    field = TeamFields.query.filter_by(
+                        id=field_id).first_or_404()
 
                     # Get the existing field entry if one exists
                     entry = TeamFieldEntries.query.filter_by(

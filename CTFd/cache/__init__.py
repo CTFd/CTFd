@@ -91,7 +91,8 @@ def clear_standings():
 
     # Clear out HTTP request responses
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardList.endpoint))
-    cache.delete(make_cache_key(path=api.name + "." + ScoreboardDetail.endpoint))
+    cache.delete(make_cache_key(path=api.name +
+                 "." + ScoreboardDetail.endpoint))
     cache.delete_memoized(ScoreboardList.get)
 
     # Clear out scoreboard templates

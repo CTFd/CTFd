@@ -29,7 +29,8 @@ tags_namespace.schema_model(
     "TagDetailedSuccessResponse", TagDetailedSuccessResponse.apidoc()
 )
 
-tags_namespace.schema_model("TagListSuccessResponse", TagListSuccessResponse.apidoc())
+tags_namespace.schema_model(
+    "TagListSuccessResponse", TagListSuccessResponse.apidoc())
 
 
 @tags_namespace.route("")
@@ -52,7 +53,8 @@ class TagList(Resource):
             "q": (str, None),
             "field": (
                 RawEnum(
-                    "TagFields", {"challenge_id": "challenge_id", "value": "value"}
+                    "TagFields", {
+                        "challenge_id": "challenge_id", "value": "value"}
                 ),
                 None,
             ),

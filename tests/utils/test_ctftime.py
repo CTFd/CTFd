@@ -30,10 +30,12 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
 
                 with client.session_transaction() as sess:
                     data = {"key": "flag", "nonce": sess.get("nonce")}
-                r = client.get("/api/v1/challenges/{}".format(chal_id), data=data)
+                r = client.get(
+                    "/api/v1/challenges/{}".format(chal_id), data=data)
                 data = r.get_data(as_text=True)
                 assert r.status_code == 403
-            solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
+            solve_count = app.db.session.query(
+                app.db.func.count(Solves.id)).first()[0]
             assert solve_count == 0
     destroy_ctfd(app)
 
@@ -98,7 +100,8 @@ def test_ctftime_allows_accessing_challenges_during_ctf():
                     }
                 r = client.post("/api/v1/challenges/attempt", data=data)
                 assert r.status_code == 200
-            solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
+            solve_count = app.db.session.query(
+                app.db.func.count(Solves.id)).first()[0]
             assert solve_count == 1
     destroy_ctfd(app)
 
@@ -127,7 +130,8 @@ def test_ctftime_prevents_accessing_challenges_after_ctf():
                     }
                 r = client.post("/api/v1/challenges/attempt", data=data)
                 assert r.status_code == 403
-            solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
+            solve_count = app.db.session.query(
+                app.db.func.count(Solves.id)).first()[0]
             assert solve_count == 0
     destroy_ctfd(app)
 

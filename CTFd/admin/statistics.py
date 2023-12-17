@@ -32,7 +32,8 @@ def statistics():
     challenge_count = Challenges.query.count()
 
     total_points = (
-        Challenges.query.with_entities(db.func.sum(Challenges.value).label("sum"))
+        Challenges.query.with_entities(
+            db.func.sum(Challenges.value).label("sum"))
         .filter_by(state="visible")
         .first()
         .sum
@@ -42,7 +43,8 @@ def statistics():
 
     solves_sub = (
         db.session.query(
-            Solves.challenge_id, db.func.count(Solves.challenge_id).label("solves_cnt")
+            Solves.challenge_id, db.func.count(
+                Solves.challenge_id).label("solves_cnt")
         )
         .join(Model, Solves.account_id == Model.id)
         .filter(Model.banned == False, Model.hidden == False)

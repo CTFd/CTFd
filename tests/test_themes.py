@@ -36,7 +36,8 @@ def test_themes_cant_access_configpy_attributes():
     with app.app_context():
         assert app.config["SECRET_KEY"] == "AAAAAAAAAAAAAAAAAAAA"
         assert (
-            app.jinja_env.from_string("{{ get_config('SECRET_KEY') }}").render()
+            app.jinja_env.from_string(
+                "{{ get_config('SECRET_KEY') }}").render()
             != app.config["SECRET_KEY"]
         )
     destroy_ctfd(app)
@@ -66,14 +67,16 @@ def test_theme_header():
         with login_as_user(app, "admin") as admin:
             css_value = """.test{}"""
             css_value2 = """.test2{}"""
-            r = admin.patch("/api/v1/configs", json={"theme_header": css_value})
+            r = admin.patch("/api/v1/configs",
+                            json={"theme_header": css_value})
             assert r.status_code == 200
             assert get_config("theme_header") == css_value
 
             r = admin.get("/")
             assert css_value in r.get_data(as_text=True)
 
-            r = admin.patch("/api/v1/configs", json={"theme_header": css_value2})
+            r = admin.patch("/api/v1/configs",
+                            json={"theme_header": css_value2})
             r = admin.get("/")
             assert css_value2 in r.get_data(as_text=True)
     destroy_ctfd(app)
@@ -174,7 +177,8 @@ def test_theme_fallback_config():
             except TemplateNotFound:
                 pass
             try:
-                r = client.get("/themes/foo_fallback/static/js/pages/main.dev.js")
+                r = client.get(
+                    "/themes/foo_fallback/static/js/pages/main.dev.js")
             except TemplateNotFound:
                 pass
     destroy_ctfd(app)
@@ -198,7 +202,8 @@ def test_theme_template_loading_by_prefix():
     """Test that we can load theme files by their folder prefix"""
     app = create_ctfd()
     with app.test_request_context():
-        tpl1 = render_template_string("{% extends 'core/page.html' %}", content="test")
+        tpl1 = render_template_string(
+            "{% extends 'core/page.html' %}", content="test")
         tpl2 = render_template("page.html", content="test")
         assert tpl1 == tpl2
 

@@ -158,7 +158,8 @@ class ChallengeList(Resource):
             # `None` for the solve count if visiblity checks fail
             solve_count_dfl = None
 
-        chal_q = get_all_challenges(admin=admin_view, field=field, q=q, **query_args)
+        chal_q = get_all_challenges(
+            admin=admin_view, field=field, q=q, **query_args)
 
         # Iterate through the list of challenges, adding to the object which
         # will be JSONified back to the client
@@ -287,11 +288,13 @@ class Challenge(Resource):
     )
     def get(self, challenge_id):
         if is_admin():
-            chal = Challenges.query.filter(Challenges.id == challenge_id).first_or_404()
+            chal = Challenges.query.filter(
+                Challenges.id == challenge_id).first_or_404()
         else:
             chal = Challenges.query.filter(
                 Challenges.id == challenge_id,
-                and_(Challenges.state != "hidden", Challenges.state != "locked"),
+                and_(Challenges.state != "hidden",
+                     Challenges.state != "locked"),
             ).first_or_404()
 
         try:
@@ -377,10 +380,12 @@ class Challenge(Resource):
                     "file_id": f.id,
                 }
                 files.append(
-                    url_for("views.files", path=f.location, token=serialize(token))
+                    url_for("views.files", path=f.location,
+                            token=serialize(token))
                 )
         else:
-            files = [url_for("views.files", path=f.location) for f in chal.files]
+            files = [url_for("views.files", path=f.location)
+                     for f in chal.files]
 
         for hint in Hints.query.filter_by(challenge_id=chal.id).all():
             if hint.id in unlocked_hints or ctf_ended():
@@ -506,7 +511,8 @@ class ChallengeAttempt(Resource):
         if current_user.is_admin():
             preview = request.args.get("preview", False)
             if preview:
-                challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+                challenge = Challenges.query.filter_by(
+                    id=challenge_id).first_or_404()
                 chal_class = get_chal_class(challenge.type)
                 status, message = chal_class.attempt(challenge, request)
 
@@ -572,7 +578,8 @@ class ChallengeAttempt(Resource):
 
         # Anti-bruteforce / submitting Flags too quickly
         kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
-        kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
+        kpm_limit = int(get_config(
+            "incorrect_submissions_per_min", default=10))
         if kpm > kpm_limit:
             if ctftime():
                 chal_class.fail(
@@ -631,7 +638,8 @@ class ChallengeAttempt(Resource):
                     "submissions",
                     "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
                     name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
+                    submission=request_data.get(
+                        "submission", "").encode("utf-8"),
                     challenge_id=challenge_id,
                     kpm=kpm,
                 )
@@ -651,7 +659,8 @@ class ChallengeAttempt(Resource):
                     "submissions",
                     "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
                     name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
+                    submission=request_data.get(
+                        "submission", "").encode("utf-8"),
                     challenge_id=challenge_id,
                     kpm=kpm,
                 )
@@ -722,7 +731,8 @@ class ChallengeSolves(Resource):
             elif is_admin() is True:
                 freeze = False
 
-        response = get_solves_for_challenge_id(challenge_id=challenge_id, freeze=freeze)
+        response = get_solves_for_challenge_id(
+            challenge_id=challenge_id, freeze=freeze)
 
         return {"success": True, "data": response}
 
@@ -738,7 +748,8 @@ class ChallengeFiles(Resource):
         ).all()
 
         for f in challenge_files:
-            response.append({"id": f.id, "type": f.type, "location": f.location})
+            response.append(
+                {"id": f.id, "type": f.type, "location": f.location})
         return {"success": True, "data": response}
 
 
@@ -763,7 +774,8 @@ class ChallengeTopics(Resource):
     def get(self, challenge_id):
         response = []
 
-        topics = ChallengeTopicsModel.query.filter_by(challenge_id=challenge_id).all()
+        topics = ChallengeTopicsModel.query.filter_by(
+            challenge_id=challenge_id).all()
 
         for t in topics:
             response.append(

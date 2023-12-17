@@ -81,7 +81,8 @@ class TeamJoinForm(BaseForm):
 def TeamRegisterForm(*args, **kwargs):
     class _TeamRegisterForm(BaseForm):
         name = StringField(_l("Team Name"), validators=[InputRequired()])
-        password = PasswordField(_l("Team Password"), validators=[InputRequired()])
+        password = PasswordField(
+            _l("Team Password"), validators=[InputRequired()])
         submit = SubmitField(_l("Create"))
 
         @property
@@ -98,7 +99,8 @@ def TeamSettingsForm(*args, **kwargs):
     class _TeamSettingsForm(BaseForm):
         name = StringField(
             _l("Team Name"),
-            description=_l("Your team's public name shown to other competitors"),
+            description=_l(
+                "Your team's public name shown to other competitors"),
         )
         password = PasswordField(
             _l("New Team Password"), description=_l("Set a new team join password")
@@ -117,12 +119,14 @@ def TeamSettingsForm(*args, **kwargs):
         )
         website = URLField(
             _l("Website"),
-            description=_l("Your team's website publicly shown to other competitors"),
+            description=_l(
+                "Your team's website publicly shown to other competitors"),
         )
         country = SelectField(
             _l("Country"),
             choices=SELECT_COUNTRIES_LIST,
-            description=_l("Your team's country publicly shown to other competitors"),
+            description=_l(
+                "Your team's country publicly shown to other competitors"),
         )
         submit = SubmitField(_l("Submit"))
 

@@ -64,7 +64,8 @@ def upgrade(plugin_name=None, revision=None, lower="current"):
         plugin_name = os.path.basename(os.path.dirname(caller_path))
 
     # Check if the plugin has migraitons
-    migrations_path = os.path.join(current_app.plugins_dir, plugin_name, "migrations")
+    migrations_path = os.path.join(
+        current_app.plugins_dir, plugin_name, "migrations")
     if os.path.isdir(migrations_path) is False:
         return
 

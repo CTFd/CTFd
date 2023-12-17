@@ -23,7 +23,8 @@ class UserPropertyCounts(Resource):
         if column in Users.__table__.columns.keys():
             prop = getattr(Users, column)
             data = (
-                Users.query.with_entities(prop, func.count(prop)).group_by(prop).all()
+                Users.query.with_entities(
+                    prop, func.count(prop)).group_by(prop).all()
             )
             return {"success": True, "data": dict(data)}
         else:

@@ -1,4 +1,5 @@
 from __future__ import with_statement  # noqa: I001
+from flask import current_app
 
 import logging
 from logging.config import fileConfig
@@ -21,7 +22,6 @@ logger = logging.getLogger("alembic.env")
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from flask import current_app
 
 config.set_main_option(
     "sqlalchemy.url",
@@ -48,7 +48,8 @@ def run_migrations_offline():
 
     """
     url = config.get_main_option("sqlalchemy.url")
-    context.configure(url=url, target_metadata=target_metadata, literal_binds=True)
+    context.configure(
+        url=url, target_metadata=target_metadata, literal_binds=True)
 
     with context.begin_transaction():
         context.run_migrations()

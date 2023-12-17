@@ -60,7 +60,8 @@ def build_markdown(md, sanitize=False):
 @cache.memoize()
 def get_pages():
     db_pages = Pages.query.filter(
-        Pages.route != "index", Pages.draft.isnot(True), Pages.hidden.isnot(True)
+        Pages.route != "index", Pages.draft.isnot(
+            True), Pages.hidden.isnot(True)
     ).all()
     return db_pages
 

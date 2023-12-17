@@ -81,7 +81,8 @@ def invite():
         if team_size_limit:
             infos.append(
                 "Teams are limited to {limit} member{plural}".format(
-                    limit=team_size_limit, plural=pluralize(number=team_size_limit)
+                    limit=team_size_limit, plural=pluralize(
+                        number=team_size_limit)
                 )
             )
 
@@ -152,7 +153,8 @@ def join():
 
         if errors:
             return (
-                render_template("teams/join_team.html", infos=infos, errors=errors),
+                render_template("teams/join_team.html",
+                                infos=infos, errors=errors),
                 403,
             )
 
@@ -274,7 +276,8 @@ def new():
             valid_country = True
 
         if valid_website is False:
-            errors.append("Websites must be a proper URL starting with http or https")
+            errors.append(
+                "Websites must be a proper URL starting with http or https")
         if valid_affiliation is False:
             errors.append("Please provide a shorter affiliation")
         if valid_country is False:
@@ -303,7 +306,8 @@ def new():
         db.session.commit()
 
         for field_id, value in entries.items():
-            entry = TeamFieldEntries(field_id=field_id, value=value, team_id=team.id)
+            entry = TeamFieldEntries(
+                field_id=field_id, value=value, team_id=team.id)
             db.session.add(entry)
         db.session.commit()
 
@@ -360,7 +364,8 @@ def private():
 def public(team_id):
     infos = get_infos()
     errors = get_errors()
-    team = Teams.query.filter_by(id=team_id, banned=False, hidden=False).first_or_404()
+    team = Teams.query.filter_by(
+        id=team_id, banned=False, hidden=False).first_or_404()
     solves = team.get_solves()
     awards = team.get_awards()
 

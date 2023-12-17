@@ -16,7 +16,8 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column("users", sa.Column("language", sa.String(length=32), nullable=True))
+    op.add_column("users", sa.Column(
+        "language", sa.String(length=32), nullable=True))
 
 
 def downgrade():

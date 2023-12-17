@@ -11,15 +11,18 @@ class SMTPEmailProvider(EmailProvider):
     @staticmethod
     def sendmail(addr, text, subject):
         ctf_name = get_config("ctf_name")
-        mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
+        mailfrom_addr = get_config(
+            "mailfrom_addr") or get_app_config("MAILFROM_ADDR")
         mailfrom_addr = formataddr((ctf_name, mailfrom_addr))
 
         data = {
             "host": get_config("mail_server") or get_app_config("MAIL_SERVER"),
             "port": int(get_config("mail_port") or get_app_config("MAIL_PORT")),
         }
-        username = get_config("mail_username") or get_app_config("MAIL_USERNAME")
-        password = get_config("mail_password") or get_app_config("MAIL_PASSWORD")
+        username = get_config(
+            "mail_username") or get_app_config("MAIL_USERNAME")
+        password = get_config(
+            "mail_password") or get_app_config("MAIL_PASSWORD")
         TLS = get_config("mail_tls") or get_app_config("MAIL_TLS")
         SSL = get_config("mail_ssl") or get_app_config("MAIL_SSL")
         auth = get_config("mail_useauth") or get_app_config("MAIL_USEAUTH")

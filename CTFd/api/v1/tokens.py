@@ -12,7 +12,8 @@ from CTFd.utils.decorators import authed_only, require_verified_emails
 from CTFd.utils.security.auth import generate_user_token
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
 
-tokens_namespace = Namespace("tokens", description="Endpoint to retrieve Tokens")
+tokens_namespace = Namespace(
+    "tokens", description="Endpoint to retrieve Tokens")
 
 TokenModel = sqlalchemy_to_pydantic(Tokens)
 ValuelessTokenModel = sqlalchemy_to_pydantic(Tokens, exclude=["value"])
@@ -147,7 +148,8 @@ class TokenDetail(Resource):
             token = Tokens.query.filter_by(id=token_id).first_or_404()
         else:
             user = get_current_user()
-            token = Tokens.query.filter_by(id=token_id, user_id=user.id).first_or_404()
+            token = Tokens.query.filter_by(
+                id=token_id, user_id=user.id).first_or_404()
         db.session.delete(token)
         db.session.commit()
         db.session.close()

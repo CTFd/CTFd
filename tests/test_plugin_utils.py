@@ -98,7 +98,8 @@ def test_register_plugin_stylesheet():
     app = create_ctfd()
     with app.app_context():
         register_plugin_script("/fake/stylesheet/path.css")
-        register_plugin_script("http://examplectf.com/fake/stylesheet/path.css")
+        register_plugin_script(
+            "http://examplectf.com/fake/stylesheet/path.css")
         with app.test_client() as client:
             r = client.get("/")
             output = r.get_data(as_text=True)
@@ -112,7 +113,8 @@ def test_register_admin_plugin_script():
     app = create_ctfd()
     with app.app_context():
         register_admin_plugin_script("/fake/script/path.js")
-        register_admin_plugin_script("http://examplectf.com/fake/script/path.js")
+        register_admin_plugin_script(
+            "http://examplectf.com/fake/script/path.js")
         with login_as_user(app, name="admin") as client:
             r = client.get("/admin/statistics")
             output = r.get_data(as_text=True)

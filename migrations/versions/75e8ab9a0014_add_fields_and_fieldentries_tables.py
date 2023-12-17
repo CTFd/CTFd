@@ -38,7 +38,8 @@ def upgrade():
         sa.Column("field_id", sa.Integer(), nullable=True),
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("team_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(["field_id"], ["fields.id"], ondelete="CASCADE"),
+        sa.ForeignKeyConstraint(
+            ["field_id"], ["fields.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["team_id"], ["teams.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),

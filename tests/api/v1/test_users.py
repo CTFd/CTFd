@@ -91,7 +91,8 @@ def test_api_users_post_admin():
             # Create user
             r = client.post(
                 "/api/v1/users",
-                json={"name": "user", "email": "user@user.com", "password": "password"},
+                json={"name": "user", "email": "user@user.com",
+                      "password": "password"},
             )
             assert r.status_code == 200
 
@@ -559,7 +560,8 @@ def test_api_user_change_email_under_whitelist():
 
             r = client.patch(
                 "/api/v1/users/me",
-                json={"email": "new_email@whitelisted.com", "confirm": "password"},
+                json={"email": "new_email@whitelisted.com",
+                      "confirm": "password"},
             )
             assert r.status_code == 200
             resp = r.get_json()
@@ -790,7 +792,8 @@ def test_api_accessing_hidden_users():
     """Hidden users should not be visible to normal users, only to admins"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="visible_user", email="visible_user@examplectf.com")
+        register_user(app, name="visible_user",
+                      email="visible_user@examplectf.com")
         register_user(
             app, name="hidden_user", email="hidden_user@examplectf.com"
         )  # ID 3
@@ -809,7 +812,8 @@ def test_api_accessing_hidden_users():
 
         with login_as_user(app, name="admin") as client:
             # Admins see the user in lists
-            list_users = client.get("/api/v1/users?view=admin").get_json()["data"]
+            list_users = client.get(
+                "/api/v1/users?view=admin").get_json()["data"]
             assert len(list_users) == 3
 
             assert client.get("/api/v1/users/3").status_code == 200
@@ -823,7 +827,8 @@ def test_api_accessing_banned_users():
     """Banned users should not be visible to normal users, only to admins"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="visible_user", email="visible_user@examplectf.com")
+        register_user(app, name="visible_user",
+                      email="visible_user@examplectf.com")
         register_user(
             app, name="banned_user", email="banned_user@examplectf.com"
         )  # ID 3
@@ -842,7 +847,8 @@ def test_api_accessing_banned_users():
 
         with login_as_user(app, name="admin") as client:
             # Admins see the user in lists
-            list_users = client.get("/api/v1/users?view=admin").get_json()["data"]
+            list_users = client.get(
+                "/api/v1/users?view=admin").get_json()["data"]
             assert len(list_users) == 3
 
             assert client.get("/api/v1/users/3").status_code == 200

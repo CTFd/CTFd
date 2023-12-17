@@ -31,7 +31,8 @@ class ChallengeSolveStatistics(Resource):
     def get(self):
         chals = (
             Challenges.query.filter(
-                and_(Challenges.state != "hidden", Challenges.state != "locked")
+                and_(Challenges.state != "hidden",
+                     Challenges.state != "locked")
             )
             .order_by(Challenges.value)
             .all()
@@ -41,7 +42,8 @@ class ChallengeSolveStatistics(Resource):
 
         solves_sub = (
             db.session.query(
-                Solves.challenge_id, db.func.count(Solves.challenge_id).label("solves")
+                Solves.challenge_id, db.func.count(
+                    Solves.challenge_id).label("solves")
             )
             .join(Model, Solves.account_id == Model.id)
             .filter(Model.banned == False, Model.hidden == False)
@@ -121,5 +123,6 @@ class ChallengeSolvePercentages(Resource):
                 {"id": challenge.id, "name": challenge.name, "percentage": percentage}
             )
 
-        response = sorted(percentage_data, key=lambda x: x["percentage"], reverse=True)
+        response = sorted(
+            percentage_data, key=lambda x: x["percentage"], reverse=True)
         return {"success": True, "data": response}

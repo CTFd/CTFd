@@ -89,7 +89,8 @@ def challenges_preview(challenge_id):
             "team_id": team.id if team else None,
             "file_id": f.id,
         }
-        files.append(url_for("views.files", path=f.location, token=serialize(token)))
+        files.append(
+            url_for("views.files", path=f.location, token=serialize(token)))
 
     tags = [
         tag["value"] for tag in TagSchema("user", many=True).dump(challenge.tags).data

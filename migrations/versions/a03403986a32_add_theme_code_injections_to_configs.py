@@ -18,7 +18,8 @@ branch_labels = None
 depends_on = None
 
 configs_table = table(
-    "config", column("id", db.Integer), column("key", db.Text), column("value", db.Text)
+    "config", column("id", db.Integer), column(
+        "key", db.Text), column("value", db.Text)
 )
 
 

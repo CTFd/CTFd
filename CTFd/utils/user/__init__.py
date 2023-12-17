@@ -27,7 +27,8 @@ def get_current_user():
                 if request.content_type == "application/json":
                     error = 401
                 else:
-                    error = redirect(url_for("auth.login", next=request.full_path))
+                    error = redirect(
+                        url_for("auth.login", next=request.full_path))
                 abort(error)
 
         return user

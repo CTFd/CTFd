@@ -63,11 +63,13 @@ def test_api_user_facing_invite_tokens():
             r = user.post(url, data=data)
             assert r.status_code == 302
             assert r.location.endswith("/challenges")
-        assert Users.query.filter_by(id=new_user.id).first().team_id == team1.id
+        assert Users.query.filter_by(
+            id=new_user.id).first().team_id == team1.id
 
         # Test team size limits
         set_config("team_size", 1)
-        new_user2 = gen_user(app.db, name="new_user2", email="new_user2@examplectf.com")
+        new_user2 = gen_user(app.db, name="new_user2",
+                             email="new_user2@examplectf.com")
         with login_as_user(app, name=new_user2.name) as user:
             url = f"/teams/invite?code={invite_code}"
             user.get(url)
@@ -77,5 +79,6 @@ def test_api_user_facing_invite_tokens():
                 }
             r = user.post(url, data=data)
             assert r.status_code == 403
-            assert "has already reached the team size limit" in r.get_data(as_text=True)
+            assert "has already reached the team size limit" in r.get_data(
+                as_text=True)
     destroy_ctfd(app)

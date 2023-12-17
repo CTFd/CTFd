@@ -163,7 +163,8 @@ class Submission(Resource):
         },
     )
     def get(self, submission_id):
-        submission = Submissions.query.filter_by(id=submission_id).first_or_404()
+        submission = Submissions.query.filter_by(
+            id=submission_id).first_or_404()
         schema = SubmissionSchema()
         response = schema.dump(submission)
 
@@ -184,7 +185,8 @@ class Submission(Resource):
         },
     )
     def patch(self, submission_id):
-        submission = Submissions.query.filter_by(id=submission_id).first_or_404()
+        submission = Submissions.query.filter_by(
+            id=submission_id).first_or_404()
 
         req = request.get_json()
         submission_type = req.get("type")
@@ -228,7 +230,8 @@ class Submission(Resource):
         },
     )
     def delete(self, submission_id):
-        submission = Submissions.query.filter_by(id=submission_id).first_or_404()
+        submission = Submissions.query.filter_by(
+            id=submission_id).first_or_404()
         db.session.delete(submission)
         db.session.commit()
         db.session.close()

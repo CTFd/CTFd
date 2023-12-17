@@ -17,7 +17,8 @@ notifications_namespace = Namespace(
 )
 
 NotificationModel = sqlalchemy_to_pydantic(Notifications)
-TransientNotificationModel = sqlalchemy_to_pydantic(Notifications, exclude=["id"])
+TransientNotificationModel = sqlalchemy_to_pydantic(
+    Notifications, exclude=["id"])
 
 
 class NotificationDetailedSuccessResponse(APIDetailedSuccessResponse):
@@ -57,7 +58,8 @@ class NotificantionList(Resource):
             "team_id": (int, None),
             "q": (str, None),
             "field": (
-                RawEnum("NotificationFields", {"title": "title", "content": "content"}),
+                RawEnum("NotificationFields", {
+                        "title": "title", "content": "content"}),
                 None,
             ),
             "since_id": (int, None),
@@ -67,7 +69,8 @@ class NotificantionList(Resource):
     def get(self, query_args):
         q = query_args.pop("q", None)
         field = str(query_args.pop("field", None))
-        filters = build_model_filters(model=Notifications, query=q, field=field)
+        filters = build_model_filters(
+            model=Notifications, query=q, field=field)
 
         since_id = query_args.pop("since_id", None)
         if since_id:
@@ -94,7 +97,8 @@ class NotificantionList(Resource):
             "team_id": (int, None),
             "q": (str, None),
             "field": (
-                RawEnum("NotificationFields", {"title": "title", "content": "content"}),
+                RawEnum("NotificationFields", {
+                        "title": "title", "content": "content"}),
                 None,
             ),
             "since_id": (int, None),
@@ -104,14 +108,16 @@ class NotificantionList(Resource):
     def head(self, query_args):
         q = query_args.pop("q", None)
         field = str(query_args.pop("field", None))
-        filters = build_model_filters(model=Notifications, query=q, field=field)
+        filters = build_model_filters(
+            model=Notifications, query=q, field=field)
 
         since_id = query_args.pop("since_id", None)
         if since_id:
             filters.append((Notifications.id > since_id))
 
         notification_count = (
-            Notifications.query.filter_by(**query_args).filter(*filters).count()
+            Notifications.query.filter_by(
+                **query_args).filter(*filters).count()
         )
         response = make_response()
         response.headers["Result-Count"] = notification_count
@@ -148,7 +154,8 @@ class NotificantionList(Resource):
         response.data["type"] = notif_type
         response.data["sound"] = notif_sound
 
-        current_app.events_manager.publish(data=response.data, type="notification")
+        current_app.events_manager.publish(
+            data=response.data, type="notification")
 
         return {"success": True, "data": response.data}
 
@@ -167,7 +174,8 @@ class Notification(Resource):
         },
     )
     def get(self, notification_id):
-        notif = Notifications.query.filter_by(id=notification_id).first_or_404()
+        notif = Notifications.query.filter_by(
+            id=notification_id).first_or_404()
         schema = NotificationSchema()
         response = schema.dump(notif)
         if response.errors:
@@ -181,7 +189,8 @@ class Notification(Resource):
         responses={200: ("Success", "APISimpleSuccessResponse")},
     )
     def delete(self, notification_id):
-        notif = Notifications.query.filter_by(id=notification_id).first_or_404()
+        notif = Notifications.query.filter_by(
+            id=notification_id).first_or_404()
         db.session.delete(notif)
         db.session.commit()
         db.session.close()

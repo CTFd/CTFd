@@ -20,7 +20,8 @@ def test_challenge_team_submit():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
-        second_user = gen_user(app.db, name="user", email="second@examplectf.com")
+        second_user = gen_user(app.db, name="user",
+                               email="second@examplectf.com")
         team = gen_team(app.db)
         user.team_id = team.id
         second_user.team_id = team.id

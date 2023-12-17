@@ -57,7 +57,8 @@ class FlagList(Resource):
             "q": (str, None),
             "field": (
                 RawEnum(
-                    "FlagFields", {"type": "type", "content": "content", "data": "data"}
+                    "FlagFields", {"type": "type",
+                                   "content": "content", "data": "data"}
                 ),
                 None,
             ),
@@ -112,7 +113,8 @@ class FlagTypes(Resource):
     def get(self, type_name):
         if type_name:
             flag_class = get_flag_class(type_name)
-            response = {"name": flag_class.name, "templates": flag_class.templates}
+            response = {"name": flag_class.name,
+                        "templates": flag_class.templates}
             return {"success": True, "data": response}
         else:
             response = {}
@@ -180,7 +182,8 @@ class Flag(Resource):
         schema = FlagSchema()
         req = request.get_json()
 
-        response = schema.load(req, session=db.session, instance=flag, partial=True)
+        response = schema.load(req, session=db.session,
+                               instance=flag, partial=True)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400

@@ -106,7 +106,8 @@ def test_api_flag_patch_admin():
         with login_as_user(app, "admin") as client:
             r = client.patch(
                 "/api/v1/flags/1",
-                json={"content": "flag_edit", "data": "", "type": "static", "id": "1"},
+                json={"content": "flag_edit", "data": "",
+                      "type": "static", "id": "1"},
             )
             assert r.status_code == 200
             assert r.get_json()["data"]["content"] == "flag_edit"

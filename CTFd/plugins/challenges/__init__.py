@@ -216,4 +216,5 @@ CHALLENGE_CLASSES = {"standard": CTFdStandardChallenge}
 
 
 def load(app):
-    register_plugin_assets_directory(app, base_path="/plugins/challenges/assets/")
+    register_plugin_assets_directory(
+        app, base_path="/plugins/challenges/assets/")

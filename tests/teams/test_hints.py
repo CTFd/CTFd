@@ -19,7 +19,8 @@ def test_hint_team_unlock():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
-        second_user = gen_user(app.db, name="user", email="second@examplectf.com")
+        second_user = gen_user(app.db, name="user",
+                               email="second@examplectf.com")
         team = gen_team(app.db)
         user.team_id = team.id
         second_user.team_id = team.id
@@ -75,7 +76,8 @@ def test_hint_team_unlocking_without_points():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         user = gen_user(app.db)
-        second_user = gen_user(app.db, name="user", email="second@examplectf.com")
+        second_user = gen_user(app.db, name="user",
+                               email="second@examplectf.com")
         team = gen_team(app.db)
         user.team_id = team.id
         second_user.team_id = team.id
@@ -90,7 +92,8 @@ def test_hint_team_unlocking_without_points():
             assert r.get_json()["data"].get("content") is None
 
             # Attempt to unlock the hint
-            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            r = client.post("/api/v1/unlocks",
+                            json={"target": 1, "type": "hints"})
             assert r.status_code == 400
             assert (
                 r.get_json()["errors"]["score"]
@@ -104,7 +107,8 @@ def test_teams_dont_prevent_other_teams_from_unlocking_hints():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         chal = gen_challenge(app.db)
-        gen_hint(app.db, chal.id, content="This is a hint", cost=1, type="standard")
+        gen_hint(app.db, chal.id, content="This is a hint",
+                 cost=1, type="standard")
 
         team1 = gen_team(app.db, name="team1", email="team1@examplectf.com")
         team2 = gen_team(app.db, name="team2", email="team2@examplectf.com")
@@ -122,7 +126,8 @@ def test_teams_dont_prevent_other_teams_from_unlocking_hints():
         with login_as_user(app, name=captain1) as client:
             r = client.get("/api/v1/hints/1")
             assert r.status_code == 200
-            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            r = client.post("/api/v1/unlocks",
+                            json={"target": 1, "type": "hints"})
             assert r.status_code == 200
             r = client.get("/api/v1/hints/1")
             assert r.status_code == 200
@@ -131,7 +136,8 @@ def test_teams_dont_prevent_other_teams_from_unlocking_hints():
         with login_as_user(app, name=captain2) as client:
             r = client.get("/api/v1/hints/1")
             assert r.status_code == 200
-            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+            r = client.post("/api/v1/unlocks",
+                            json={"target": 1, "type": "hints"})
             assert r.status_code == 200
             r = client.get("/api/v1/hints/1")
             assert r.status_code == 200

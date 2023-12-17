@@ -56,7 +56,8 @@ def test_api_configs_post_admin():
     app = create_ctfd()
     with app.app_context():
         with login_as_user(app, "admin") as admin:
-            r = admin.post("/api/v1/configs", json={"value": "9.9.9", "key": "test"})
+            r = admin.post("/api/v1/configs",
+                           json={"value": "9.9.9", "key": "test"})
             assert r.status_code == 200
             assert get_config("test") == "9.9.9"
     destroy_ctfd(app)
@@ -67,7 +68,8 @@ def test_api_configs_patch_admin():
     app = create_ctfd()
     with app.app_context():
         with login_as_user(app, "admin") as admin:
-            r = admin.patch("/api/v1/configs", json={"ctf_name": "Changed_Name"})
+            r = admin.patch("/api/v1/configs",
+                            json={"ctf_name": "Changed_Name"})
             assert r.status_code == 200
             assert get_config("ctf_name") == "Changed_Name"
     destroy_ctfd(app)
@@ -88,7 +90,8 @@ def test_api_config_patch_admin():
     app = create_ctfd()
     with app.app_context():
         with login_as_user(app, "admin") as admin:
-            r = admin.patch("/api/v1/configs/ctf_name", json={"value": "Changed_Name"})
+            r = admin.patch("/api/v1/configs/ctf_name",
+                            json={"value": "Changed_Name"})
             assert r.status_code == 200
             assert get_config("ctf_name") == "Changed_Name"
     destroy_ctfd(app)
@@ -145,7 +148,8 @@ def test_config_value_types():
 
             # Test None can be received
             assert get_config("mail_username") is None
-            r = admin.patch("/api/v1/configs", json={"mail_username": "testusername"})
+            r = admin.patch("/api/v1/configs",
+                            json={"mail_username": "testusername"})
             assert r.status_code == 200
             assert get_config("mail_username") == "testusername"
             r = admin.patch("/api/v1/configs", json={"mail_username": None})

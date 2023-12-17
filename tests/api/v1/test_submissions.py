@@ -167,8 +167,10 @@ def test_api_submission_patch_correct_scoreboard_teams():
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         # Create 2 test teams each with only 1 user
-        gen_team(app.db, name="team1", email="team1@examplectf.com", member_count=1)
-        gen_team(app.db, name="team2", email="team2@examplectf.com", member_count=1)
+        gen_team(app.db, name="team1",
+                 email="team1@examplectf.com", member_count=1)
+        gen_team(app.db, name="team2",
+                 email="team2@examplectf.com", member_count=1)
 
         # Create 2 test challenges
         gen_challenge(app.db, name="chal1")

@@ -67,7 +67,8 @@ def test_deleting_challenge_clears_cache_solves():
 
             solves = get_solves_for_challenge_id(1)
             solve_counts = get_solve_counts_for_challenges()
-            solves_req = client.get("/api/v1/challenges/1/solves").get_json()["data"]
+            solves_req = client.get(
+                "/api/v1/challenges/1/solves").get_json()["data"]
             assert len(solves_req) == 1
             assert len(solves) == 1
             assert solve_counts[1] == 1
@@ -107,7 +108,8 @@ def test_deleting_solve_clears_cache():
 
             solves = get_solves_for_challenge_id(1)
             solve_counts = get_solve_counts_for_challenges()
-            solves_req = client.get("/api/v1/challenges/1/solves").get_json()["data"]
+            solves_req = client.get(
+                "/api/v1/challenges/1/solves").get_json()["data"]
             assert len(solves_req) == 1
             assert len(solves) == 1
             assert solve_counts[1] == 1
@@ -121,7 +123,8 @@ def test_deleting_solve_clears_cache():
 
             solve_counts = get_solve_counts_for_challenges()
             solves = get_solves_for_challenge_id(1)
-            solves_req = client.get("/api/v1/challenges/1/solves").get_json()["data"]
+            solves_req = client.get(
+                "/api/v1/challenges/1/solves").get_json()["data"]
             assert len(solves_req) == 0
             assert len(solves) == 0
             assert solve_counts.get(1) is None
