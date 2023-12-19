@@ -16,6 +16,10 @@ services:
       - ACCESS_LOG=-
       - ERROR_LOG=-
       - REVERSE_PROXY=true
+      - DATADOG_API_URL
+      - DATADOG_API_USERNAME
+      - DATADOG_API_PASSWORD
+
     volumes:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
