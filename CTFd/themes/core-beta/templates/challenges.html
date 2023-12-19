@@ -34,6 +34,15 @@
         </div>
       </div>
 
+      <div class="pt-2 alert alert-primary">
+        <h3>You will need some credentials on the way. Here, take these:</h3>
+        {% for field in team.fields %}
+          <h5 class="d-block">
+            {{ field.name }}: {{ field.value }}
+          </h5>
+        {% endfor %}
+      </div>
+
       <div x-show="loaded">
         <template x-for="(category, idx) in getCategories()" :key="idx">
           <div class="pt-5">
