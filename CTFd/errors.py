@@ -5,8 +5,8 @@ from werkzeug.exceptions import InternalServerError
 
 def render_error(error):
     if (
-        isinstance(error, InternalServerError)
-        and error.description == InternalServerError.description
+            isinstance(error, InternalServerError)
+            and error.description == InternalServerError.description
     ):
         error.description = "An Internal Server Error has occurred"
     try:

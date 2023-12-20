@@ -43,8 +43,8 @@ class FilesList(Resource):
         responses={
             200: ("Success", "FileListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -54,9 +54,9 @@ class FilesList(Resource):
             "location": (str, None),
             "q": (str, None),
             "field": (
-                RawEnum("FileFields", {"type": "type",
-                        "location": "location"}),
-                None,
+                    RawEnum("FileFields", {"type": "type",
+                                           "location": "location"}),
+                    None,
             ),
         },
         location="query",
@@ -81,8 +81,8 @@ class FilesList(Resource):
         responses={
             200: ("Success", "FileDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -114,8 +114,8 @@ class FilesDetail(Resource):
         responses={
             200: ("Success", "FileDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

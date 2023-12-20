@@ -65,8 +65,8 @@ def require_verified_emails(f):
         if get_config("verify_emails"):
             if current_user.authed():
                 if (
-                    current_user.is_admin() is False
-                    and current_user.is_verified() is False
+                        current_user.is_admin() is False
+                        and current_user.is_verified() is False
                 ):  # User is not confirmed
                     if request.content_type == "application/json":
                         abort(403)
@@ -90,8 +90,8 @@ def authed_only(f):
             return f(*args, **kwargs)
         else:
             if (
-                request.content_type == "application/json"
-                or request.accept_mimetypes.best == "text/event-stream"
+                    request.content_type == "application/json"
+                    or request.accept_mimetypes.best == "text/event-stream"
             ):
                 abort(403)
             else:
@@ -113,8 +113,8 @@ def registered_only(f):
             return f(*args, **kwargs)
         else:
             if (
-                request.content_type == "application/json"
-                or request.accept_mimetypes.best == "text/event-stream"
+                    request.content_type == "application/json"
+                    or request.accept_mimetypes.best == "text/event-stream"
             ):
                 abort(403)
             else:
@@ -170,13 +170,13 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
 
             if request.method == method:
                 if (
-                    current and int(current) > limit - 1
+                        current and int(current) > limit - 1
                 ):  # -1 in order to align expected limit with the real value
                     resp = jsonify(
                         {
                             "code": 429,
                             "message": "Too many requests. Limit is %s requests in %s seconds"
-                            % (limit, interval),
+                                       % (limit, interval),
                         }
                     )
                     resp.status_code = 429

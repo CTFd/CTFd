@@ -166,19 +166,19 @@ def import_ctf(backup, erase=True):
 
     # Check if the alembic version is from CTFd 1.x
     if alembic_version in (
-        "1ec4a28fe0ff",
-        "2539d8b5082e",
-        "7e9efd084c5a",
-        "87733981ca0e",
-        "a4e30c94c360",
-        "c12d2a1b0926",
-        "c7225db614c1",
-        "cb3cfcc47e2f",
-        "cbf5620f8e15",
-        "d5a224bf5862",
-        "d6514ec92738",
-        "dab615389702",
-        "e62fd69bd417",
+            "1ec4a28fe0ff",
+            "2539d8b5082e",
+            "7e9efd084c5a",
+            "87733981ca0e",
+            "a4e30c94c360",
+            "c12d2a1b0926",
+            "c7225db614c1",
+            "cb3cfcc47e2f",
+            "cbf5620f8e15",
+            "d5a224bf5862",
+            "d6514ec92738",
+            "dab615389702",
+            "e62fd69bd417",
     ):
         set_import_error(
             "Exception: The version of CTFd that this backup is from is too old to be automatically imported."
@@ -224,9 +224,9 @@ def import_ctf(backup, erase=True):
             processes = r.fetchall()
             for proc in processes:
                 if (
-                    proc.Command == "Sleep"
-                    and proc.User == url.username
-                    and proc.db == url.database
+                        proc.Command == "Sleep"
+                        and proc.User == url.username
+                        and proc.db == url.database
                 ):
                     proc_id = proc.Id
                     db.session.execute(f"KILL {proc_id}")
@@ -312,8 +312,8 @@ def import_ctf(backup, erase=True):
                                     # We only want to apply this hack to columns that are expecting a datetime object
                                     try:
                                         is_dt_column = (
-                                            type(getattr(direct_table, k).type)
-                                            == sqltypes.DateTime
+                                                type(getattr(direct_table, k).type)
+                                                == sqltypes.DateTime
                                         )
                                     except AttributeError:
                                         is_dt_column = False
@@ -340,9 +340,9 @@ def import_ctf(backup, erase=True):
                         # From v2.0.0 to v2.1.0 requirements could have been a string or JSON because of a SQLAlchemy issue
                         # This is a hack to ensure we can still accept older exports. See #867
                         if member in (
-                            "db/challenges.json",
-                            "db/hints.json",
-                            "db/awards.json",
+                                "db/challenges.json",
+                                "db/hints.json",
+                                "db/awards.json",
                         ):
                             requirements = entry.get("requirements")
                             if requirements and isinstance(requirements, string_types):
@@ -396,7 +396,8 @@ def import_ctf(backup, erase=True):
                         # officially supported, no major work will go into this functionality.
                         # https://stackoverflow.com/a/37972960
                         if '"' not in table_name and "'" not in table_name:
-                            query = "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM \"{table_name}\"".format(  # nosec
+                            query = "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM \"{table_name}\"".format(
+                                # nosec
                                 table_name=table_name
                             )
                             side_db.engine.execute(query)
@@ -439,7 +440,7 @@ def import_ctf(backup, erase=True):
         filename = f.split(os.sep, 1)
 
         if (
-            len(filename) < 2 or os.path.basename(filename[1]) == ""
+                len(filename) < 2 or os.path.basename(filename[1]) == ""
         ):  # just an empty uploads directory (e.g. uploads/) or any directory
             continue
 

@@ -43,8 +43,8 @@ class FlagList(Resource):
         responses={
             200: ("Success", "FlagListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -56,11 +56,11 @@ class FlagList(Resource):
             "data": (str, None),
             "q": (str, None),
             "field": (
-                RawEnum(
-                    "FlagFields", {"type": "type",
-                                   "content": "content", "data": "data"}
-                ),
-                None,
+                    RawEnum(
+                        "FlagFields", {"type": "type",
+                                       "content": "content", "data": "data"}
+                    ),
+                    None,
             ),
         },
         location="query",
@@ -84,8 +84,8 @@ class FlagList(Resource):
         responses={
             200: ("Success", "FlagDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -135,8 +135,8 @@ class Flag(Resource):
         responses={
             200: ("Success", "FlagDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -172,8 +172,8 @@ class Flag(Resource):
         responses={
             200: ("Success", "FlagDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

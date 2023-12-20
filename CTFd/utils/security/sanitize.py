@@ -40,7 +40,6 @@ ANNOYING_TAGS = {
     "marquee": [],
 }
 
-
 MEDIA_TAGS = {
     "audio": ["autoplay", "controls", "crossorigin", "loop", "muted", "preload", "src"],
     "video": [

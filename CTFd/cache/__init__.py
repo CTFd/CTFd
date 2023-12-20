@@ -21,7 +21,7 @@ def timed_lru_cache(timeout: int = 300, maxsize: int = 64, typed: bool = False):
 
     def wrapper_cache(func):
         func = lru_cache(maxsize=maxsize, typed=typed)(func)
-        func.delta = timeout * 10**9
+        func.delta = timeout * 10 ** 9
         func.expiration = monotonic_ns() + func.delta
 
         @wraps(func)
@@ -92,7 +92,7 @@ def clear_standings():
     # Clear out HTTP request responses
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardList.endpoint))
     cache.delete(make_cache_key(path=api.name +
-                 "." + ScoreboardDetail.endpoint))
+                                     "." + ScoreboardDetail.endpoint))
     cache.delete_memoized(ScoreboardList.get)
 
     # Clear out scoreboard templates

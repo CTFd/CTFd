@@ -90,7 +90,7 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
         if self.cache is not None:
             template = self.cache.get(cache_key)
             if template is not None and (
-                not self.auto_reload or template.is_up_to_date
+                    not self.auto_reload or template.is_up_to_date
             ):
                 # template.globals is a ChainMap, modifying it will only
                 # affect the template, not the environment globals.
@@ -113,11 +113,11 @@ class ThemeLoader(FileSystemLoader):
     _ADMIN_THEME_PREFIX = ADMIN_THEME + "/"
 
     def __init__(
-        self,
-        searchpath=DEFAULT_THEMES_PATH,
-        theme_name=None,
-        encoding="utf-8",
-        followlinks=False,
+            self,
+            searchpath=DEFAULT_THEMES_PATH,
+            theme_name=None,
+            encoding="utf-8",
+            followlinks=False,
     ):
         super(ThemeLoader, self).__init__(searchpath, encoding, followlinks)
         self.theme_name = theme_name

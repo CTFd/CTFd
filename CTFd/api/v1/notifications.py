@@ -45,8 +45,8 @@ class NotificantionList(Resource):
         responses={
             200: ("Success", "NotificationListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -58,9 +58,9 @@ class NotificantionList(Resource):
             "team_id": (int, None),
             "q": (str, None),
             "field": (
-                RawEnum("NotificationFields", {
+                    RawEnum("NotificationFields", {
                         "title": "title", "content": "content"}),
-                None,
+                    None,
             ),
             "since_id": (int, None),
         },
@@ -97,9 +97,9 @@ class NotificantionList(Resource):
             "team_id": (int, None),
             "q": (str, None),
             "field": (
-                RawEnum("NotificationFields", {
+                    RawEnum("NotificationFields", {
                         "title": "title", "content": "content"}),
-                None,
+                    None,
             ),
             "since_id": (int, None),
         },
@@ -129,8 +129,8 @@ class NotificantionList(Resource):
         responses={
             200: ("Success", "NotificationDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -168,8 +168,8 @@ class Notification(Resource):
         responses={
             200: ("Success", "NotificationDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

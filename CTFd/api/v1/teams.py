@@ -64,8 +64,8 @@ class TeamList(Resource):
         responses={
             200: ("Success", "TeamListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -76,18 +76,18 @@ class TeamList(Resource):
             "bracket": (str, None),
             "q": (str, None),
             "field": (
-                RawEnum(
-                    "TeamFields",
-                    {
-                        "name": "name",
-                        "website": "website",
-                        "country": "country",
-                        "bracket": "bracket",
-                        "affiliation": "affiliation",
-                        "email": "email",
-                    },
-                ),
-                None,
+                    RawEnum(
+                        "TeamFields",
+                        {
+                            "name": "name",
+                            "website": "website",
+                            "country": "country",
+                            "bracket": "bracket",
+                            "affiliation": "affiliation",
+                            "email": "email",
+                        },
+                    ),
+                    None,
             ),
         },
         location="query",
@@ -147,8 +147,8 @@ class TeamList(Resource):
         responses={
             200: ("Success", "TeamDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -185,8 +185,8 @@ class TeamPublic(Resource):
         responses={
             200: ("Success", "TeamDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -214,8 +214,8 @@ class TeamPublic(Resource):
         responses={
             200: ("Success", "TeamDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -278,8 +278,8 @@ class TeamPrivate(Resource):
         responses={
             200: ("Success", "TeamDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -304,8 +304,8 @@ class TeamPrivate(Resource):
         responses={
             200: ("Success", "TeamDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

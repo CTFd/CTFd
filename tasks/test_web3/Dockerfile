@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y gcc libsqlite3-dev
 
 # ^ добавить поддержку sqlite v
 
-RUN pip install Flask pysqlite3 dotenv
+RUN pip install Flask pysqlite3 python-dotenv
 
 EXPOSE 5002
 

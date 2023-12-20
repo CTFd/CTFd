@@ -43,8 +43,8 @@ class TopicList(Resource):
         responses={
             200: ("Success", "TopicListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -53,8 +53,8 @@ class TopicList(Resource):
             "value": (str, None),
             "q": (str, None),
             "field": (
-                RawEnum("TopicFields", {"value": "value"}),
-                None,
+                    RawEnum("TopicFields", {"value": "value"}),
+                    None,
             ),
         },
         location="query",
@@ -79,8 +79,8 @@ class TopicList(Resource):
         responses={
             200: ("Success", "TopicDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -154,8 +154,8 @@ class Topic(Resource):
         responses={
             200: ("Success", "TopicDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

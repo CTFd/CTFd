@@ -12,11 +12,11 @@ from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
 
 def build_custom_user_fields(
-    form_cls,
-    include_entries=False,
-    fields_kwargs=None,
-    field_entries_kwargs=None,
-    blacklisted_items=(),
+        form_cls,
+        include_entries=False,
+        fields_kwargs=None,
+        field_entries_kwargs=None,
+        blacklisted_items=(),
 ):
     """
     Function used to reinject values back into forms for accessing by themes

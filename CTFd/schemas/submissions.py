@@ -9,7 +9,7 @@ from CTFd.utils import string_types
 
 class SubmissionSchema(ma.ModelSchema):
     challenge = fields.Nested(ChallengeSchema, only=[
-                              "id", "name", "category", "value"])
+        "id", "name", "category", "value"])
     user = fields.Nested(UserSchema, only=["id", "name"])
     team = fields.Nested(TeamSchema, only=["id", "name"])
 

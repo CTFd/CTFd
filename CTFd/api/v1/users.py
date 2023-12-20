@@ -37,7 +37,6 @@ from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
 
 users_namespace = Namespace("users", description="Endpoint to retrieve Users")
 
-
 UserModel = sqlalchemy_to_pydantic(Users)
 TransientUserModel = sqlalchemy_to_pydantic(Users, exclude=["id"])
 
@@ -67,8 +66,8 @@ class UserList(Resource):
         responses={
             200: ("Success", "UserListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -79,18 +78,18 @@ class UserList(Resource):
             "bracket": (str, None),
             "q": (str, None),
             "field": (
-                RawEnum(
-                    "UserFields",
-                    {
-                        "name": "name",
-                        "website": "website",
-                        "country": "country",
-                        "bracket": "bracket",
-                        "affiliation": "affiliation",
-                        "email": "email",
-                    },
-                ),
-                None,
+                    RawEnum(
+                        "UserFields",
+                        {
+                            "name": "name",
+                            "website": "website",
+                            "country": "country",
+                            "bracket": "bracket",
+                            "affiliation": "affiliation",
+                            "email": "email",
+                        },
+                    ),
+                    None,
             ),
         },
         location="query",
@@ -147,8 +146,8 @@ class UserList(Resource):
         responses={
             200: ("Success", "UserDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
         params={
@@ -190,8 +189,8 @@ class UserPublic(Resource):
         responses={
             200: ("Success", "UserDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -218,8 +217,8 @@ class UserPublic(Resource):
         responses={
             200: ("Success", "UserDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -230,7 +229,7 @@ class UserPublic(Resource):
 
         # Admins should not be able to ban themselves
         if data["id"] == session["id"] and (
-            data.get("banned") is True or data.get("banned") == "true"
+                data.get("banned") is True or data.get("banned") == "true"
         ):
             return (
                 {"success": False, "errors": {"id": "You cannot ban yourself"}},
@@ -294,8 +293,8 @@ class UserPrivate(Resource):
         responses={
             200: ("Success", "UserDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -317,8 +316,8 @@ class UserPrivate(Resource):
         responses={
             200: ("Success", "UserDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

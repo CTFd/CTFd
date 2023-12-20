@@ -194,7 +194,7 @@ def init_request_processors(app):
     @app.url_defaults
     def inject_theme(endpoint, values):
         if "theme" not in values and app.url_map.is_endpoint_expecting(
-            endpoint, "theme"
+                endpoint, "theme"
         ):
             values["theme"] = ctf_theme()
 
@@ -207,12 +207,12 @@ def init_request_processors(app):
                 return "Import currently in progress", 403
         if is_setup() is False:
             if request.endpoint in (
-                "views.setup",
-                "views.integrations",
-                "views.themes",
-                "views.files",
-                "views.healthcheck",
-                "views.robots",
+                    "views.setup",
+                    "views.integrations",
+                    "views.themes",
+                    "views.files",
+                    "views.healthcheck",
+                    "views.robots",
             ):
                 return
             else:
@@ -285,13 +285,13 @@ def init_request_processors(app):
     def tokens():
         token = request.headers.get("Authorization")
         if token and (
-            request.mimetype == "application/json"
-            # Specially allow multipart/form-data for file uploads
-            or (
-                request.endpoint == "api.files_files_list"
-                and request.method == "POST"
-                and request.mimetype == "multipart/form-data"
-            )
+                request.mimetype == "application/json"
+                # Specially allow multipart/form-data for file uploads
+                or (
+                        request.endpoint == "api.files_files_list"
+                        and request.method == "POST"
+                        and request.mimetype == "multipart/form-data"
+                )
         ):
             try:
                 token_type, token = token.split(" ", 1)

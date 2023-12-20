@@ -41,8 +41,8 @@ class TagList(Resource):
         responses={
             200: ("Success", "TagListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -52,11 +52,11 @@ class TagList(Resource):
             "value": (str, None),
             "q": (str, None),
             "field": (
-                RawEnum(
-                    "TagFields", {
-                        "challenge_id": "challenge_id", "value": "value"}
-                ),
-                None,
+                    RawEnum(
+                        "TagFields", {
+                            "challenge_id": "challenge_id", "value": "value"}
+                    ),
+                    None,
             ),
         },
         location="query",
@@ -81,8 +81,8 @@ class TagList(Resource):
         responses={
             200: ("Success", "TagDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -112,8 +112,8 @@ class Tag(Resource):
         responses={
             200: ("Success", "TagDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -133,8 +133,8 @@ class Tag(Resource):
         responses={
             200: ("Success", "TagDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

@@ -52,8 +52,8 @@ class UnlockList(Resource):
         responses={
             200: ("Success", "UnlockListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -65,8 +65,8 @@ class UnlockList(Resource):
             "type": (str, None),
             "q": (str, None),
             "field": (
-                RawEnum("UnlockFields", {"target": "target", "type": "type"}),
-                None,
+                    RawEnum("UnlockFields", {"target": "target", "type": "type"}),
+                    None,
             ),
         },
         location="query",
@@ -93,8 +93,8 @@ class UnlockList(Resource):
         responses={
             200: ("Success", "UnlockDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

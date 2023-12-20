@@ -57,18 +57,18 @@ def dump_scoreboard_csv():
         team_field_names = [f.name for f in team_fields]
 
         header = (
-            [
-                "place",
-                "team",
-                "team id",
-                "score",
-                "member name",
-                "member id",
-                "member email",
-                "member score",
-            ]
-            + user_field_names
-            + team_field_names
+                [
+                    "place",
+                    "team",
+                    "team id",
+                    "score",
+                    "member name",
+                    "member id",
+                    "member email",
+                    "member score",
+                ]
+                + user_field_names
+                + team_field_names
         )
         writer.writerow(header)
 
@@ -83,9 +83,9 @@ def dump_scoreboard_csv():
             ]
             user_field_values = len(user_field_names) * [""]
             team_row = (
-                [i + 1, team.name, team.id, standing.score, "", "", "", ""]
-                + user_field_values
-                + team_field_values
+                    [i + 1, team.name, team.id, standing.score, "", "", "", ""]
+                    + user_field_values
+                    + team_field_values
             )
 
             writer.writerow(team_row)
@@ -98,28 +98,28 @@ def dump_scoreboard_csv():
                 ]
                 team_field_values = len(team_field_names) * [""]
                 user_row = (
-                    [
-                        "",
-                        "",
-                        "",
-                        "",
-                        member.name,
-                        member.id,
-                        member.email,
-                        member.score,
-                    ]
-                    + user_field_values
-                    + team_field_values
+                        [
+                            "",
+                            "",
+                            "",
+                            "",
+                            member.name,
+                            member.id,
+                            member.email,
+                            member.score,
+                        ]
+                        + user_field_values
+                        + team_field_values
                 )
                 writer.writerow(user_row)
     elif is_users_mode():
         header = [
-            "place",
-            "user name",
-            "user id",
-            "user email",
-            "score",
-        ] + user_field_names
+                     "place",
+                     "user name",
+                     "user id",
+                     "user email",
+                     "score",
+                 ] + user_field_names
         writer.writerow(header)
 
         for i, standing in enumerate(standings):
@@ -132,12 +132,12 @@ def dump_scoreboard_csv():
                 user_field_entries.get(f_id, "") for f_id in user_field_ids
             ]
             user_row = [
-                i + 1,
-                user.name,
-                user.id,
-                user.email,
-                standing.score,
-            ] + user_field_values
+                           i + 1,
+                           user.name,
+                           user.id,
+                           user.email,
+                           standing.score,
+                       ] + user_field_values
             writer.writerow(user_row)
 
     # In Python 3 send_file requires bytes
@@ -158,7 +158,7 @@ def dump_users_with_fields_csv():
     user_field_names = [f.name for f in user_fields]
 
     header = [column.name for column in Users.__mapper__.columns] + \
-        user_field_names
+             user_field_names
     writer.writerow(header)
 
     responses = Users.query.all()
@@ -169,8 +169,8 @@ def dump_users_with_fields_csv():
             user_field_entries.get(f_id, "") for f_id in user_field_ids
         ]
         user_row = [
-            getattr(curr, column.name) for column in Users.__mapper__.columns
-        ] + user_field_values
+                       getattr(curr, column.name) for column in Users.__mapper__.columns
+                   ] + user_field_values
         writer.writerow(user_row)
 
     temp.seek(0)
@@ -193,7 +193,7 @@ def dump_teams_with_fields_csv():
     team_field_names = [f.name for f in team_fields]
 
     header = [column.name for column in Teams.__mapper__.columns] + \
-        team_field_names
+             team_field_names
     writer.writerow(header)
 
     responses = Teams.query.all()
@@ -205,8 +205,8 @@ def dump_teams_with_fields_csv():
         ]
 
         team_row = [
-            getattr(curr, column.name) for column in Teams.__mapper__.columns
-        ] + team_field_values
+                       getattr(curr, column.name) for column in Teams.__mapper__.columns
+                   ] + team_field_values
 
         writer.writerow(team_row)
 
@@ -234,13 +234,13 @@ def dump_teams_with_members_fields_csv():
     user_field_names = [f.name for f in user_fields]
 
     user_header = [
-        f"member_{column.name}" for column in Users.__mapper__.columns
-    ] + user_field_names
+                      f"member_{column.name}" for column in Users.__mapper__.columns
+                  ] + user_field_names
 
     header = (
-        [column.name for column in Teams.__mapper__.columns]
-        + team_field_names
-        + user_header
+            [column.name for column in Teams.__mapper__.columns]
+            + team_field_names
+            + user_header
     )
     writer.writerow(header)
 
@@ -253,8 +253,8 @@ def dump_teams_with_members_fields_csv():
         ]
 
         team_row = [
-            getattr(curr, column.name) for column in Teams.__mapper__.columns
-        ] + team_field_values
+                       getattr(curr, column.name) for column in Teams.__mapper__.columns
+                   ] + team_field_values
 
         writer.writerow(team_row)
 
@@ -267,8 +267,8 @@ def dump_teams_with_members_fields_csv():
                 user_field_entries.get(f_id, "") for f_id in user_field_ids
             ]
             user_row = [
-                getattr(member, column.name) for column in Users.__mapper__.columns
-            ] + user_field_values
+                           getattr(member, column.name) for column in Users.__mapper__.columns
+                       ] + user_field_values
             writer.writerow(padding + user_row)
 
     temp.seek(0)

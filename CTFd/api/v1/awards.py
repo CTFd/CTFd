@@ -45,8 +45,8 @@ class AwardList(Resource):
         responses={
             200: ("Success", "AwardListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -60,16 +60,16 @@ class AwardList(Resource):
             "icon": (int, None),
             "q": (str, None),
             "field": (
-                RawEnum(
-                    "AwardFields",
-                    {
-                        "name": "name",
-                        "description": "description",
-                        "category": "category",
-                        "icon": "icon",
-                    },
-                ),
-                None,
+                    RawEnum(
+                        "AwardFields",
+                        {
+                            "name": "name",
+                            "description": "description",
+                            "category": "category",
+                            "icon": "icon",
+                        },
+                    ),
+                    None,
             ),
         },
         location="query",
@@ -94,8 +94,8 @@ class AwardList(Resource):
         responses={
             200: ("Success", "AwardListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -148,8 +148,8 @@ class Award(Resource):
         responses={
             200: ("Success", "AwardDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

@@ -224,8 +224,8 @@ def register():
 
         if get_config("registration_code"):
             if (
-                registration_code.lower()
-                != str(get_config("registration_code", default="")).lower()
+                    registration_code.lower()
+                    != str(get_config("registration_code", default="")).lower()
             ):
                 errors.append(
                     "The registration code you entered was incorrect")
@@ -323,12 +323,12 @@ def register():
                 login_user(user)
 
                 if request.args.get("next") and validators.is_safe_url(
-                    request.args.get("next")
+                        request.args.get("next")
                 ):
                     return redirect(request.args.get("next"))
 
                 if config.can_send_mail() and get_config(
-                    "verify_emails"
+                        "verify_emails"
                 ):  # Confirming users is enabled and we can send email.
                     log(
                         "registrations",
@@ -341,7 +341,7 @@ def register():
                     return redirect(url_for("auth.confirm"))
                 else:  # Don't care about confirming users
                     if (
-                        config.can_send_mail()
+                            config.can_send_mail()
                     ):  # We want to notify the user that they have registered.
                         email.successful_registration_notification(user.email)
 
@@ -391,7 +391,7 @@ def login():
 
                 db.session.close()
                 if request.args.get("next") and validators.is_safe_url(
-                    request.args.get("next")
+                        request.args.get("next")
                 ):
                     return redirect(request.args.get("next"))
                 return redirect(url_for("challenges.listing"))
@@ -421,9 +421,9 @@ def login():
 @auth.route("/oauth")
 def oauth_login():
     endpoint = (
-        get_app_config("OAUTH_AUTHORIZATION_ENDPOINT")
-        or get_config("oauth_authorization_endpoint")
-        or "https://auth.majorleaguecyber.org/oauth/authorize"
+            get_app_config("OAUTH_AUTHORIZATION_ENDPOINT")
+            or get_config("oauth_authorization_endpoint")
+            or "https://auth.majorleaguecyber.org/oauth/authorize"
     )
 
     if get_config("user_mode") == "teams":
@@ -438,7 +438,7 @@ def oauth_login():
         error_for(
             endpoint="auth.login",
             message="OAuth Settings not configured. "
-            "Ask your CTF administrator to configure MajorLeagueCyber integration.",
+                    "Ask your CTF administrator to configure MajorLeagueCyber integration.",
         )
         return redirect(url_for("auth.login"))
 
@@ -461,9 +461,9 @@ def oauth_redirect():
 
     if oauth_code:
         url = (
-            get_app_config("OAUTH_TOKEN_ENDPOINT")
-            or get_config("oauth_token_endpoint")
-            or "https://auth.majorleaguecyber.org/oauth/token"
+                get_app_config("OAUTH_TOKEN_ENDPOINT")
+                or get_config("oauth_token_endpoint")
+                or "https://auth.majorleaguecyber.org/oauth/token"
         )
 
         client_id = get_app_config(
@@ -483,9 +483,9 @@ def oauth_redirect():
         if token_request.status_code == requests.codes.ok:
             token = token_request.json()["access_token"]
             user_url = (
-                get_app_config("OAUTH_API_ENDPOINT")
-                or get_config("oauth_api_endpoint")
-                or "https://api.majorleaguecyber.org/user"
+                    get_app_config("OAUTH_API_ENDPOINT")
+                    or get_config("oauth_api_endpoint")
+                    or "https://api.majorleaguecyber.org/user"
             )
 
             headers = {

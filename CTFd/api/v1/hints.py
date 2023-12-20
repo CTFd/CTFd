@@ -44,8 +44,8 @@ class HintList(Resource):
         responses={
             200: ("Success", "HintListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -57,8 +57,8 @@ class HintList(Resource):
             "cost": (int, None),
             "q": (str, None),
             "field": (
-                RawEnum("HintFields", {"type": "type", "content": "content"}),
-                None,
+                    RawEnum("HintFields", {"type": "type", "content": "content"}),
+                    None,
             ),
         },
         location="query",
@@ -82,8 +82,8 @@ class HintList(Resource):
         responses={
             200: ("Success", "HintDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -112,8 +112,8 @@ class Hint(Resource):
         responses={
             200: ("Success", "HintDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -195,8 +195,8 @@ class Hint(Resource):
         responses={
             200: ("Success", "HintDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

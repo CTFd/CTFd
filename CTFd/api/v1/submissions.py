@@ -49,8 +49,8 @@ class SubmissionsList(Resource):
         responses={
             200: ("Success", "SubmissionListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -64,18 +64,18 @@ class SubmissionsList(Resource):
             "type": (str, None),
             "q": (str, None),
             "field": (
-                RawEnum(
-                    "SubmissionFields",
-                    {
-                        "challenge_id": "challenge_id",
-                        "user_id": "user_id",
-                        "team_id": "team_id",
-                        "ip": "ip",
-                        "provided": "provided",
-                        "type": "type",
-                    },
-                ),
-                None,
+                    RawEnum(
+                        "SubmissionFields",
+                        {
+                            "challenge_id": "challenge_id",
+                            "user_id": "user_id",
+                            "team_id": "team_id",
+                            "ip": "ip",
+                            "provided": "provided",
+                            "type": "type",
+                        },
+                    ),
+                    None,
             ),
         },
         location="query",
@@ -120,8 +120,8 @@ class SubmissionsList(Resource):
         responses={
             200: ("Success", "SubmissionListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -157,8 +157,8 @@ class Submission(Resource):
         responses={
             200: ("Success", "SubmissionDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -179,8 +179,8 @@ class Submission(Resource):
         responses={
             200: ("Success", "SubmissionDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -224,8 +224,8 @@ class Submission(Resource):
         responses={
             200: ("Success", "APISimpleSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

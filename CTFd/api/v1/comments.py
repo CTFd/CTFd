@@ -22,7 +22,6 @@ from CTFd.utils.helpers.models import build_model_filters
 comments_namespace = Namespace(
     "comments", description="Endpoint to retrieve Comments")
 
-
 CommentModel = sqlalchemy_to_pydantic(Comments)
 
 
@@ -66,8 +65,8 @@ class CommentList(Resource):
         responses={
             200: ("Success", "CommentListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -121,8 +120,8 @@ class CommentList(Resource):
         responses={
             200: ("Success", "CommentDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )

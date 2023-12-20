@@ -11,11 +11,11 @@ from CTFd.utils.user import get_current_team
 
 
 def build_custom_team_fields(
-    form_cls,
-    include_entries=False,
-    fields_kwargs=None,
-    field_entries_kwargs=None,
-    blacklisted_items=(),
+        form_cls,
+        include_entries=False,
+        fields_kwargs=None,
+        field_entries_kwargs=None,
+        blacklisted_items=(),
 ):
     if fields_kwargs is None:
         fields_kwargs = {}

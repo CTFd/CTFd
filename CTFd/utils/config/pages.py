@@ -37,9 +37,9 @@ def format_variables(content):
 def build_html(html, sanitize=False):
     html = format_variables(html)
     if (
-        current_app.config["HTML_SANITIZATION"] is True
-        or bool(get_config("html_sanitization")) is True
-        or sanitize is True
+            current_app.config["HTML_SANITIZATION"] is True
+            or bool(get_config("html_sanitization")) is True
+            or sanitize is True
     ):
         html = sanitize_html(html)
     return html
@@ -49,9 +49,9 @@ def build_markdown(md, sanitize=False):
     html = markdown(md)
     html = format_variables(html)
     if (
-        current_app.config["HTML_SANITIZATION"] is True
-        or bool(get_config("html_sanitization")) is True
-        or sanitize is True
+            current_app.config["HTML_SANITIZATION"] is True
+            or bool(get_config("html_sanitization")) is True
+            or sanitize is True
     ):
         html = sanitize_html(html)
     return html

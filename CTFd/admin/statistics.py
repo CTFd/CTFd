@@ -32,12 +32,12 @@ def statistics():
     challenge_count = Challenges.query.count()
 
     total_points = (
-        Challenges.query.with_entities(
-            db.func.sum(Challenges.value).label("sum"))
-        .filter_by(state="visible")
-        .first()
-        .sum
-    ) or 0
+                       Challenges.query.with_entities(
+                           db.func.sum(Challenges.value).label("sum"))
+                       .filter_by(state="visible")
+                       .first()
+                       .sum
+                   ) or 0
 
     ip_count = Tracking.query.with_entities(Tracking.ip).distinct().count()
 

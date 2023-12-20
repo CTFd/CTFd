@@ -475,8 +475,8 @@ def files(path):
 
                 # Check user is admin if challenge_visibility is admins only
                 if (
-                    get_config(ConfigTypes.CHALLENGE_VISIBILITY) == "admins"
-                    and user.type != "admin"
+                        get_config(ConfigTypes.CHALLENGE_VISIBILITY) == "admins"
+                        and user.type != "admin"
                 ):
                     abort(403)
 
@@ -518,10 +518,10 @@ def themes(theme, path):
     :return:
     """
     for cand_path in (
-        safe_join(app.root_path, "themes", cand_theme, "static", path)
-        # The `theme` value passed in may not be the configured one, e.g. for
-        # admin pages, so we check that first
-        for cand_theme in (theme, *config.ctf_theme_candidates())
+            safe_join(app.root_path, "themes", cand_theme, "static", path)
+            # The `theme` value passed in may not be the configured one, e.g. for
+            # admin pages, so we check that first
+            for cand_theme in (theme, *config.ctf_theme_candidates())
     ):
         # Handle werkzeug behavior of returning None on malicious paths
         if cand_path is None:
@@ -541,10 +541,10 @@ def themes_beta(theme, path):
     route will be removed.
     """
     for cand_path in (
-        safe_join(app.root_path, "themes", cand_theme, "static", path)
-        # The `theme` value passed in may not be the configured one, e.g. for
-        # admin pages, so we check that first
-        for cand_theme in (theme, *config.ctf_theme_candidates())
+            safe_join(app.root_path, "themes", cand_theme, "static", path)
+            # The `theme` value passed in may not be the configured one, e.g. for
+            # admin pages, so we check that first
+            for cand_theme in (theme, *config.ctf_theme_candidates())
     ):
         # Handle werkzeug behavior of returning None on malicious paths
         if cand_path is None:

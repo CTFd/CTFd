@@ -15,7 +15,6 @@ from CTFd.utils.helpers.models import build_model_filters
 
 pages_namespace = Namespace("pages", description="Endpoint to retrieve Pages")
 
-
 PageModel = sqlalchemy_to_pydantic(Pages)
 TransientPageModel = sqlalchemy_to_pydantic(Pages, exclude=["id"])
 
@@ -48,8 +47,8 @@ class PageList(Resource):
         responses={
             200: ("Success", "PageListSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -63,11 +62,11 @@ class PageList(Resource):
             "auth_required": (bool, None),
             "q": (str, None),
             "field": (
-                RawEnum(
-                    "PageFields",
-                    {"title": "title", "route": "route", "content": "content"},
-                ),
-                None,
+                    RawEnum(
+                        "PageFields",
+                        {"title": "title", "route": "route", "content": "content"},
+                    ),
+                    None,
             ),
         },
         location="query",
@@ -91,8 +90,8 @@ class PageList(Resource):
         responses={
             200: ("Success", "PageDetailedSuccessResponse"),
             400: (
-                "An error occured processing the provided or stored data",
-                "APISimpleErrorResponse",
+                    "An error occured processing the provided or stored data",
+                    "APISimpleErrorResponse",
             ),
         },
     )
@@ -122,8 +121,8 @@ class PageList(Resource):
     responses={
         200: ("Success", "PageDetailedSuccessResponse"),
         400: (
-            "An error occured processing the provided or stored data",
-            "APISimpleErrorResponse",
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
         ),
     },
 )
