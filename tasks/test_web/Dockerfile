@@ -4,10 +4,10 @@ WORKDIR /app
 
 COPY . /app
 
-# Install any needed packages specified in requirements.txt
+# Установка зависимостей в контейнер
 RUN pip install Flask
 
-# Make port 80 available to the world outside this container
+# Открыть порт для приложения
 EXPOSE 5000
 
 # Run app.py when the container launches

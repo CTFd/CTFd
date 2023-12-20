@@ -83,3 +83,4 @@ flask_profiler.sql
 
 .env
 conf/nginx/*.pem
+flag.txt
