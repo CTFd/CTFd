@@ -6,7 +6,7 @@ services:
     user: root
     restart: always
     ports:
-      - "8000:8000"
+      - "0.0.0.0:8000:8000"
     environment:
       - UPLOAD_FOLDER=${UPLOAD_FOLDER}
       - DATABASE_URL=${DATABASE_URL}
@@ -61,6 +61,43 @@ services:
     - .data/redis:/data
     networks:
         internal:
+  
+  web1:
+    build:
+      context: ./tasks/test_web
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./tasks/test_web:/app
+    ports:
+      - "0.0.0.0:5000:5000"
+    depends_on:
+      - db
+      - cache
+  web2:
+    build:
+      context: ./tasks/test_web2
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./tasks/test_web2:/app
+    ports:
+      - "0.0.0.0:5001:5001"
+    depends_on:
+      - db
+      - cache
+  web3:
+    build:
+      context: ./tasks/test_web3
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./tasks/test_web3:/app
+    ports:
+      - "0.0.0.0:5002:5002"
+    depends_on:
+      - db
+      - cache
 
 networks:
     default:
