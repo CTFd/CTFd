@@ -23,6 +23,13 @@ BASE_TEMPLATE = """
             <h4 class="text-center">{challenge_name} has {solve_count_word}</h4>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h6 class="text-center">
+                Want to try? Register at <a href="{register_url}">{register_url}</a>
+            </h6>
+        </div>
+    </div>
 </div>
 """
 
@@ -79,7 +86,11 @@ class SolveSocialShare(object):
         ctf_name = get_config("ctf_name", "")
         ctf_description = get_config("ctf_description", "")
         ctf_banner = get_config("ctf_banner")
-        ctf_banner_url = url_for("views.files", path=ctf_banner)
+        if ctf_banner:
+            ctf_banner_url = url_for("views.files", path=ctf_banner)
+        else:
+            ctf_banner_url = ""
+        register_url = url_for("auth.register", _external=True)
 
         template = get_config("social_share_solve_template", BASE_TEMPLATE)
         title = f"{user_name} has solved {challenge_name}"
@@ -88,6 +99,7 @@ class SolveSocialShare(object):
             ctf_name=ctf_name,
             ctf_banner_url=ctf_banner_url,
             ctf_description=ctf_description,
+            register_url=register_url,
             challenge_name=challenge_name,
             user_name=user_name,
             team_name=team_name,
