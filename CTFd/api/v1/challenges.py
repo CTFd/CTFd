@@ -41,8 +41,10 @@ from CTFd.utils.decorators.visibility import (
     check_challenge_visibility,
     check_score_visibility,
 )
+from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.logging import log
 from CTFd.utils.security.signing import serialize
+from CTFd.utils.social import get_social_share
 from CTFd.utils.user import (
     authed,
     get_current_team,
@@ -494,7 +496,14 @@ class ChallengeAttempt(Resource):
     @require_verified_emails
     def post(self):
         if authed() is False:
-            return {"success": True, "data": {"status": "authentication_required"}}, 403
+            return {
+                "success": True,
+                "data": {
+                    "status": "authentication_required",
+                    "message": None,
+                    "share_url": None,
+                },
+            }, 403
 
         if request.content_type != "application/json":
             request_data = request.form
@@ -502,6 +511,12 @@ class ChallengeAttempt(Resource):
             request_data = request.get_json()
 
         challenge_id = request_data.get("challenge_id")
+
+        user = get_current_user()
+        team = get_current_team()
+
+        SolveShare = get_social_share(type="solves")
+        share = SolveShare(user_id=user.id, challenge_id=challenge_id)
 
         if current_user.is_admin():
             preview = request.args.get("preview", False)
@@ -515,6 +530,7 @@ class ChallengeAttempt(Resource):
                     "data": {
                         "status": "correct" if status else "incorrect",
                         "message": message,
+                        "share_url": share.url,
                     },
                 }
 
@@ -525,13 +541,11 @@ class ChallengeAttempt(Resource):
                     "data": {
                         "status": "paused",
                         "message": "{} is paused".format(config.ctf_name()),
+                        "share_url": None,
                     },
                 },
                 403,
             )
-
-        user = get_current_user()
-        team = get_current_team()
 
         # TODO: Convert this into a re-useable decorator
         if config.is_teams_mode() and team is None:
@@ -593,6 +607,7 @@ class ChallengeAttempt(Resource):
                     "data": {
                         "status": "ratelimited",
                         "message": "You're submitting flags too fast. Slow down.",
+                        "share_url": None,
                     },
                 },
                 429,
@@ -613,6 +628,7 @@ class ChallengeAttempt(Resource):
                         "data": {
                             "status": "incorrect",
                             "message": "You have 0 tries remaining",
+                            "share_url": None,
                         },
                     },
                     403,
@@ -637,7 +653,11 @@ class ChallengeAttempt(Resource):
                 )
                 return {
                     "success": True,
-                    "data": {"status": "correct", "message": message},
+                    "data": {
+                        "status": "correct",
+                        "message": message,
+                        "share_url": share.url,
+                    },
                 }
             else:  # The challenge plugin says the input is wrong
                 if ctftime() or current_user.is_admin():
@@ -659,9 +679,9 @@ class ChallengeAttempt(Resource):
                 if max_tries:
                     # Off by one since fails has changed since it was gotten
                     attempts_left = max_tries - fails - 1
-                    tries_str = "tries"
-                    if attempts_left == 1:
-                        tries_str = "try"
+                    tries_str = pluralize(
+                        attempts_left, singular="try", pluralize="tries"
+                    )
                     # Add a punctuation mark if there isn't one
                     if message[-1] not in "!().;?[]{}":
                         message = message + "."
@@ -672,12 +692,17 @@ class ChallengeAttempt(Resource):
                             "message": "{} You have {} {} remaining.".format(
                                 message, attempts_left, tries_str
                             ),
+                            "share_url": None,
                         },
                     }
                 else:
                     return {
                         "success": True,
-                        "data": {"status": "incorrect", "message": message},
+                        "data": {
+                            "status": "incorrect",
+                            "message": message,
+                            "share_url": None,
+                        },
                     }
 
         # Challenge already solved
@@ -695,6 +720,7 @@ class ChallengeAttempt(Resource):
                 "data": {
                     "status": "already_solved",
                     "message": "You already solved this",
+                    "share_url": share.url,
                 },
             }
 
