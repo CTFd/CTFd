@@ -4,7 +4,7 @@ import tempfile
 from flask import render_template, request, send_from_directory, url_for
 from PIL import Image, ImageDraw, ImageFont
 
-from CTFd.models import Solves
+from CTFd.models import Solves, Users
 from CTFd.utils import get_config
 from CTFd.utils.config import is_teams_mode
 from CTFd.utils.formatters import safe_format
@@ -18,7 +18,7 @@ BASE_TEMPLATE = """
         <div class="col-md-6 offset-md-3">
             <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="{ctf_banner_url}">
             <h3 class="text-center">{ctf_name}</h3>
-            <h3 class="text-center">{user_name} has solved {challenge_name}</h3>
+            <h3 class="text-center">{account_name} has solved {challenge_name}</h3>
             <br>
             <h4 class="text-center">{challenge_name} has {solve_count_word}</h4>
         </div>
@@ -67,9 +67,10 @@ class SolveSocialShare(object):
     def content(self):
         from CTFd.utils.challenges import get_solve_counts_for_challenges
 
+        user = Users.query.filter_by(id=self.user_id).first()
         solve = Solves.query.filter_by(
-            user_id=self.user_id, challenge_id=self.challenge_id
-        ).first_or_404()
+            account_id=user.account_id, challenge_id=self.challenge_id
+        ).first()
         challenge = solve.challenge
 
         # Challenge information
@@ -80,7 +81,8 @@ class SolveSocialShare(object):
 
         # Account information
         user_name = solve.user.name
-        team_name = solve.team.name if is_teams_mode() else None
+        team_name = solve.team.name
+        account_name = team_name if is_teams_mode() else user_name
 
         # Instance information
         ctf_name = get_config("ctf_name", "")
@@ -93,7 +95,7 @@ class SolveSocialShare(object):
         register_url = url_for("auth.register", _external=True)
 
         template = get_config("social_share_solve_template", BASE_TEMPLATE)
-        title = f"{user_name} has solved {challenge_name}"
+        title = f"{account_name} has solved {challenge_name}"
         content = safe_format(
             template,
             ctf_name=ctf_name,
@@ -133,9 +135,10 @@ class SolveSocialShare(object):
         HEIGHT = 360
         BG_COLOR = "#ffffff"
 
+        user = Users.query.filter_by(id=self.user_id).first()
         solve = Solves.query.filter_by(
-            user_id=self.user_id, challenge_id=self.challenge_id
-        ).first_or_404()
+            account_id=user.account_id, challenge_id=self.challenge_id
+        ).first()
         challenge = solve.challenge
 
         # Challenge information
@@ -149,8 +152,7 @@ class SolveSocialShare(object):
         )
 
         # Account information
-        user_name = solve.user.name
-        team_name = solve.team.name if is_teams_mode() else None
+        account_name = solve.team.name if is_teams_mode() else solve.user.name
 
         # init image
         img = Image.new("RGBA", (WIDTH, HEIGHT), color=BG_COLOR)
@@ -161,8 +163,8 @@ class SolveSocialShare(object):
 
         # fmt: off
         # Draw user name
-        _, _, w, h1 = draw.textbbox((0, 0), user_name, font=font_lg)
-        draw.text(((WIDTH-w)/2, 15), user_name, font=font_lg, fill=(0,0,0,255))
+        _, _, w, h1 = draw.textbbox((0, 0), account_name, font=font_lg)
+        draw.text(((WIDTH-w)/2, 15), account_name, font=font_lg, fill=(0,0,0,255))
 
         # Draw user sub text
         _, _, w, h = draw.textbbox((0, 0), "has solved", font=font_md)
