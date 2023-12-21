@@ -103,6 +103,7 @@ class SolveSocialShare(object):
             ctf_description=ctf_description,
             register_url=register_url,
             challenge_name=challenge_name,
+            account_name=account_name,
             user_name=user_name,
             team_name=team_name,
             solve_count=solve_count,
