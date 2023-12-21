@@ -76,8 +76,8 @@ class SolveSocialShare(object):
         team_name = solve.team.name if is_teams_mode() else None
 
         # Instance information
-        ctf_name = get_config("ctf_name")
-        ctf_description = get_config("ctf_description")
+        ctf_name = get_config("ctf_name", "")
+        ctf_description = get_config("ctf_description", "")
         ctf_banner = get_config("ctf_banner")
         ctf_banner_url = url_for("views.files", path=ctf_banner)
 
@@ -101,6 +101,7 @@ class SolveSocialShare(object):
             path=self.mac + ".png",
             user_id=self.user_id,
             challenge_id=self.challenge_id,
+            _external=True,
         )
         meta = (
             f'<meta property="og:title" content="{title}" />'
@@ -110,6 +111,8 @@ class SolveSocialShare(object):
         return render_template("page.html", meta=meta, content=content, title=title)
 
     def asset(self, path):
+        from CTFd.utils.challenges import get_solve_counts_for_challenges
+
         target = pathlib.Path(tempfile.gettempdir()) / path
         if target.exists():
             return send_from_directory(tempfile.gettempdir(), path)

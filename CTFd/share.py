@@ -1,13 +1,13 @@
 from flask import Blueprint, abort, request
 
-from CTFd.utils.social import SOCIAL_SHARES
+from CTFd.utils.social import get_social_share
 
 social = Blueprint("social", __name__)
 
 
 @social.route("/share/<type>/assets/<path>")
 def assets(type, path):
-    SocialShare = SOCIAL_SHARES.get(type)
+    SocialShare = get_social_share(type)
     if SocialShare is None:
         abort(404)
 
@@ -17,7 +17,7 @@ def assets(type, path):
 
 @social.route("/share/<type>")
 def share(type):
-    SocialShare = SOCIAL_SHARES.get(type)
+    SocialShare = get_social_share(type)
     if SocialShare is None:
         abort(404)
 
