@@ -4,7 +4,7 @@ import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
 import { ezAlert, ezQuery, ezBadge } from "core/ezq";
 import { createGraph, updateGraph } from "core/graphs";
-import Vue from "@vue/compat";
+import Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
 import UserAddForm from "../components/teams/UserAddForm.vue";
 import { copyToClipboard } from "../../../../core/assets/js/utils";

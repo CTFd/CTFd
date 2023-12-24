@@ -3,7 +3,7 @@ import "core/utils";
 import $ from "jquery";
 import CTFd from "core/CTFd";
 import { ezAlert } from "core/ezq";
-import Vue from "@vue/compat";
+import Vue from "vue";
 import Notification from "../components/notifications/Notification.vue";
 
 const notificationCard = Vue.extend(Notification);

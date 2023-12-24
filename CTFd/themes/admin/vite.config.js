@@ -10,6 +10,7 @@ export default defineConfig({
     alias: {
       "~": resolve(__dirname, "./node_modules/"),
       "core": resolve(__dirname, "../core/assets/js/"),
+      "vue": '@vue/compat',
     },
   },
   build: {
