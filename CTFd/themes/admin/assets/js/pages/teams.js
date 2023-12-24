@@ -1,6 +1,7 @@
 import "./main";
 import CTFd from "core/CTFd";
 import $ from "jquery";
+import "../compat";
 import { ezAlert, ezQuery } from "core/ezq";
 
 function deleteSelectedTeams(_event) {

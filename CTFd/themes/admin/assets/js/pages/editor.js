@@ -3,6 +3,7 @@ import { showMediaLibrary } from "../styles";
 import "core/utils";
 import $ from "jquery";
 import CTFd from "core/CTFd";
+import "../compat";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
 import { ezAlert, ezToast } from "core/ezq";

@@ -1,4 +1,5 @@
 import $ from "jquery";
+import "../compat";
 import { ezToast, ezQuery } from "core/ezq";
 import { htmlEntities } from "core/utils";
 import CTFd from "core/CTFd";

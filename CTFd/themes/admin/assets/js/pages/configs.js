@@ -9,6 +9,7 @@ import timezones from "../timezones";
 import CTFd from "core/CTFd";
 import { default as helpers } from "core/helpers";
 import $ from "jquery";
+import "../compat";
 import { ezQuery, ezProgressBar, ezAlert } from "core/ezq";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";

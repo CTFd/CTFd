@@ -1,6 +1,7 @@
 import "./main";
 import "core/utils";
 import $ from "jquery";
+import "../compat";
 import "bootstrap/js/dist/tab";
 import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";

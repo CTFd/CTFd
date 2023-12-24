@@ -1,6 +1,7 @@
 import "./main";
 import CTFd from "core/CTFd";
 import $ from "jquery";
+import "../compat";
 import { ezAlert } from "core/ezq";
 
 const api_func = {

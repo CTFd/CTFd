@@ -1,6 +1,7 @@
 import CTFd from "core/CTFd";
 import nunjucks from "nunjucks";
 import $ from "jquery";
+import "../compat";
 
 window.challenge = new Object();
 

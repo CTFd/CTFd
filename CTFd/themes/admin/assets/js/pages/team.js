@@ -1,5 +1,6 @@
 import "./main";
 import $ from "jquery";
+import "../compat";
 import CTFd from "core/CTFd";
 import { htmlEntities } from "core/utils";
 import { ezAlert, ezQuery, ezBadge } from "core/ezq";

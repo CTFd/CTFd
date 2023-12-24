@@ -1,5 +1,6 @@
 import "./main";
 import "core/utils";
+import "../compat";
 import $ from "jquery";
 import CTFd from "core/CTFd";
 import { ezAlert } from "core/ezq";
