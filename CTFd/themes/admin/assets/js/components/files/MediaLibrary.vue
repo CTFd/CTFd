@@ -32,7 +32,7 @@
                     <a
                       href="javascript:void(0)"
                       @click="
-                        selectFile(file);
+                        selectFile(file)
                         // return false;
                       "
                     >
