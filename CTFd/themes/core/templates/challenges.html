@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/challenge-board.css') }}">
+	{{ Assets.css("assets/css/challenge-board.scss", theme="admin") }}
 {% endblock %}
 
 {% block content %}

@@ -32,16 +32,20 @@ class _AssetsWrapper:
         html += f'<script defer type="module" src="{url}"></script>'
         return markup(html)
 
-    def css(self, asset_key):
-        asset = self.manifest()[asset_key]
+    def css(self, asset_key, theme=None):
+        if theme is None:
+            theme = ctf_theme()
+        asset = self.manifest(theme=theme)[asset_key]
         entry = asset["file"]
-        url = url_for("views.themes_beta", path=entry)
+        url = url_for("views.themes_beta", theme=theme, path=entry)
         return markup(f'<link rel="stylesheet" href="{url}">')
 
-    def file(self, asset_key):
-        asset = self.manifest()[asset_key]
+    def file(self, asset_key, theme=None):
+        if theme is None:
+            theme = ctf_theme()
+        asset = self.manifest(theme=theme)[asset_key]
         entry = asset["file"]
-        return url_for("views.themes_beta", path=entry)
+        return url_for("views.themes_beta", theme=theme, path=entry)
 
 
 Assets = _AssetsWrapper()

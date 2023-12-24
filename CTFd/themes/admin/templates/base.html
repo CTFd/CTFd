@@ -9,8 +9,8 @@
 	<link rel="icon" href="{{ url_for('views.themes', theme='core', path='img/favicon.ico') }}" type="image/x-icon">
 	<link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/fonts.css') }}">
 	<link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/main.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/admin.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/codemirror.css') }}">
+	{{ Assets.css("assets/css/admin.scss", theme="admin") }}
+	{{ Assets.css("assets/css/codemirror.scss", theme="admin") }}
 	<script type="text/javascript">
 		var init = {
 			'urlRoot': "{{ request.script_root }}",
