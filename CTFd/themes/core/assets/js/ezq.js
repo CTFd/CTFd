@@ -1,4 +1,5 @@
 import "bootstrap/js/dist/modal";
+import "bootstrap/js/dist/toast";
 import $ from "jquery";
 import hljs from "highlight.js";
 
