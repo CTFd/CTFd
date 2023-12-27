@@ -1,5 +1,4 @@
 import "./main";
-import "core/utils";
 import "bootstrap/js/dist/tab";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";

@@ -8,7 +8,7 @@
     ]
   },
   "assets/js/pages/challenge.js": {
-    "file": "assets/pages/challenge.536c52d8.js",
+    "file": "assets/pages/challenge.d6a700c1.js",
     "src": "assets/js/pages/challenge.js",
     "isEntry": true,
     "imports": [
@@ -216,14 +216,14 @@
     "src": "assets/css/admin.scss",
     "isEntry": true
   },
-  "assets/css/challenge-board.scss": {
-    "file": "assets/challenge-board.44e07e05.css",
-    "src": "assets/css/challenge-board.scss",
-    "isEntry": true
-  },
   "assets/css/codemirror.scss": {
     "file": "assets/codemirror.9d5e95a5.css",
     "src": "assets/css/codemirror.scss",
+    "isEntry": true
+  },
+  "assets/css/challenge-board.scss": {
+    "file": "assets/challenge-board.44e07e05.css",
+    "src": "assets/css/challenge-board.scss",
     "isEntry": true
   },
   "assets/css/fonts.scss": {

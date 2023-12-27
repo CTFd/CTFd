@@ -1,5 +1,4 @@
 import "./main";
-import "core/utils";
 import $ from "jquery";
 import "../compat/json";
 import "bootstrap/js/dist/tab";
@@ -156,9 +155,9 @@ $(() => {
   $(".delete-challenge").click(function(_e) {
     ezQuery({
       title: "Delete Challenge",
-      body: "Are you sure you want to delete {0}".format(
-        "<strong>" + htmlEntities(window.CHALLENGE_NAME) + "</strong>"
-      ),
+      body: `Are you sure you want to delete <strong>${htmlEntities(
+        window.CHALLENGE_NAME
+      )}</strong>`,
       success: function() {
         CTFd.fetch("/api/v1/challenges/" + window.CHALLENGE_ID, {
           method: "DELETE"

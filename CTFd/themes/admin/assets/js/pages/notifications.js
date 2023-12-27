@@ -1,5 +1,4 @@
 import "./main";
-import "core/utils";
 import "../compat/json";
 import $ from "jquery";
 import CTFd from "core/CTFd";

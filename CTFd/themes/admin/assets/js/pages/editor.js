@@ -1,6 +1,5 @@
 import "./main";
 import { showMediaLibrary } from "../styles";
-import "core/utils";
 import $ from "jquery";
 import CTFd from "core/CTFd";
 import "../compat/json";
