@@ -131,7 +131,7 @@ class S3Uploader(BaseUploader):
         truncated_timestamp = current_timestamp - (current_timestamp % 3600)
         key = filename
         filename = filename.split("/").pop()
-        with freeze_time(datetime.datetime.fromtimestamp(truncated_timestamp)):
+        with freeze_time(datetime.datetime.utcfromtimestamp(truncated_timestamp)):
             url = self.s3.generate_presigned_url(
                 "get_object",
                 Params={
