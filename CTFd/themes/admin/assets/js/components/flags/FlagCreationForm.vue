@@ -59,7 +59,7 @@
 import $ from "jquery";
 import CTFd from "core/CTFd";
 import nunjucks from "nunjucks";
-import "../../compat";
+import "../../compat/json";
 
 export default {
   name: "FlagCreationForm",

@@ -3,10 +3,10 @@ import { showMediaLibrary } from "../styles";
 import "core/utils";
 import $ from "jquery";
 import CTFd from "core/CTFd";
-import "../compat";
+import "../compat/json";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
-import { ezAlert, ezToast } from "core/ezq";
+import { ezAlert, ezToast } from "../compat/ezq";
 import Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
 

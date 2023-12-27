@@ -119,7 +119,7 @@
 
 <script>
 import CTFd from "core/CTFd";
-import { default as helpers } from "core/helpers";
+import { default as helpers } from "../../compat/helpers";
 import dayjs from "dayjs";
 import hljs from "highlight.js";
 export default {

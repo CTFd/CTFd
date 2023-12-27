@@ -101,7 +101,7 @@
 
 <script>
 import CTFd from "core/CTFd";
-import { ezToast } from "core/ezq";
+import { ezToast } from "../../../compat/ezq";
 
 export default {
   props: {

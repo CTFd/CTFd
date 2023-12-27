@@ -191,8 +191,8 @@
 
 <script>
 import CTFd from "core/CTFd";
-import { ezQuery, ezToast } from "core/ezq";
-import { default as helpers } from "core/helpers";
+import { ezQuery, ezToast } from "../../compat/ezq";
+import { default as helpers } from "../../compat/helpers";
 
 function get_page_files() {
   return CTFd.fetch("/api/v1/files?type=page", {

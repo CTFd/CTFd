@@ -56,8 +56,8 @@
 </template>
 
 <script>
-import { ezQuery } from "core/ezq";
-import { default as helpers } from "core/helpers";
+import { ezQuery } from "../../compat/ezq";
+import { default as helpers } from "../../compat/helpers";
 import CTFd from "core/CTFd";
 
 export default {

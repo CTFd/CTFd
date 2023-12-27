@@ -1,7 +1,7 @@
 import $ from "jquery";
-import "../compat";
-import { ezToast, ezQuery } from "core/ezq";
-import { htmlEntities } from "core/utils";
+import "../compat/json";
+import { ezToast, ezQuery } from "../compat/ezq";
+import { htmlEntities } from "../compat/html";
 import CTFd from "core/CTFd";
 import nunjucks from "nunjucks";
 

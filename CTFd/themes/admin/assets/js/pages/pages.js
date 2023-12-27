@@ -1,7 +1,7 @@
 import "./main";
 import CTFd from "core/CTFd";
 import $ from "jquery";
-import { ezQuery } from "core/ezq";
+import { ezQuery } from "../compat/ezq";
 
 function deleteSelectedUsers(_event) {
   let pageIDs = $("input[data-page-id]:checked").map(function() {

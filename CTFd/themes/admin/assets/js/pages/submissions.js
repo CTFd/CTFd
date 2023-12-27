@@ -1,8 +1,8 @@
 import "./main";
 import CTFd from "core/CTFd";
 import $ from "jquery";
-import { htmlEntities } from "core/utils";
-import { ezQuery } from "core/ezq";
+import { htmlEntities } from "../compat/html";
+import { ezQuery } from "../compat/ezq";
 
 function deleteCorrectSubmission(_event) {
   const key_id = $(this).data("submission-id");

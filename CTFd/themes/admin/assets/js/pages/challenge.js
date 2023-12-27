@@ -1,12 +1,12 @@
 import "./main";
 import "core/utils";
 import $ from "jquery";
-import "../compat";
+import "../compat/json";
 import "bootstrap/js/dist/tab";
 import CTFd from "core/CTFd";
-import { htmlEntities } from "core/utils";
-import { ezQuery, ezAlert, ezToast } from "core/ezq";
-import { default as helpers } from "core/helpers";
+import { htmlEntities } from "../compat/html";
+import { ezQuery, ezAlert, ezToast } from "../compat/ezq";
+import { default as helpers } from "../compat/helpers";
 import { bindMarkdownEditors } from "../styles";
 import Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";

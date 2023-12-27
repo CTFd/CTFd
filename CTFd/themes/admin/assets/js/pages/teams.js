@@ -1,8 +1,8 @@
 import "./main";
 import CTFd from "core/CTFd";
 import $ from "jquery";
-import "../compat";
-import { ezAlert, ezQuery } from "core/ezq";
+import "../compat/json";
+import { ezAlert, ezQuery } from "../compat/ezq";
 
 function deleteSelectedTeams(_event) {
   let teamIDs = $("input[data-team-id]:checked").map(function() {

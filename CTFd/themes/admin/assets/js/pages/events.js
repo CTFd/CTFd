@@ -1,5 +1,5 @@
 import $ from "jquery";
-import events from "core/events";
+import events from "../compat/events";
 import CTFd from "core/CTFd";
 
 $(() => {
