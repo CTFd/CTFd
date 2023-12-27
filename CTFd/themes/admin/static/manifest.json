@@ -211,14 +211,14 @@
     "file": "assets/CommentBox.86797dec.css",
     "src": "CommentBox.css"
   },
-  "assets/css/challenge-board.scss": {
-    "file": "assets/challenge-board.44e07e05.css",
-    "src": "assets/css/challenge-board.scss",
-    "isEntry": true
-  },
   "assets/css/admin.scss": {
     "file": "assets/admin.749a93f2.css",
     "src": "assets/css/admin.scss",
+    "isEntry": true
+  },
+  "assets/css/challenge-board.scss": {
+    "file": "assets/challenge-board.44e07e05.css",
+    "src": "assets/css/challenge-board.scss",
     "isEntry": true
   },
   "assets/css/codemirror.scss": {
@@ -229,6 +229,11 @@
   "assets/css/fonts.scss": {
     "file": "assets/fonts.ffb05726.css",
     "src": "assets/css/fonts.scss",
+    "isEntry": true
+  },
+  "assets/css/main.scss": {
+    "file": "assets/main.088f55c6.css",
+    "src": "assets/css/main.scss",
     "isEntry": true
   }
 }
