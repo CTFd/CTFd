@@ -1,0 +1,1 @@
+import{$ as t,u as r}from"./main.e0de097f.js";import"../echarts.e8baadb1.js";function s(e){e.preventDefault(),r({title:"Reset CTF?",body:"Are you sure you want to reset your CTFd instance?",success:function(){t("#reset-ctf-form").off("submit").submit()}})}t(()=>{t("#reset-ctf-form").submit(s)});

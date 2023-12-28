@@ -1,6 +1,6 @@
 {
   "assets/js/pages/main.js": {
-    "file": "assets/pages/main.5493e530.js",
+    "file": "assets/pages/main.e0de097f.js",
     "src": "assets/js/pages/main.js",
     "isEntry": true,
     "imports": [
@@ -8,14 +8,14 @@
     ]
   },
   "assets/js/pages/challenge.js": {
-    "file": "assets/pages/challenge.d6a700c1.js",
+    "file": "assets/pages/challenge.d4d42caf.js",
     "src": "assets/js/pages/challenge.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_json.a18d5a4f.js",
-      "_tab.1a005c69.js",
-      "_CommentBox.990104d0.js",
+      "_json.78cfb0c2.js",
+      "_tab.8541f2dd.js",
+      "_CommentBox.bb85739a.js",
       "_echarts.e8baadb1.js"
     ],
     "css": [
@@ -23,51 +23,51 @@
     ]
   },
   "assets/js/pages/challenges.js": {
-    "file": "assets/pages/challenges.5a53f3ac.js",
+    "file": "assets/pages/challenges.b9def74c.js",
     "src": "assets/js/pages/challenges.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_json.a18d5a4f.js",
+      "_json.78cfb0c2.js",
       "_echarts.e8baadb1.js"
     ]
   },
   "assets/js/pages/configs.js": {
-    "file": "assets/pages/configs.e49ef7b4.js",
+    "file": "assets/pages/configs.e6f62575.js",
     "src": "assets/js/pages/configs.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_tab.1a005c69.js",
+      "_tab.8541f2dd.js",
       "_echarts.e8baadb1.js",
-      "_json.a18d5a4f.js",
+      "_json.78cfb0c2.js",
       "_htmlmixed.7d6e4601.js"
     ]
   },
   "assets/js/pages/notifications.js": {
-    "file": "assets/pages/notifications.06ab47d6.js",
+    "file": "assets/pages/notifications.857b7625.js",
     "src": "assets/js/pages/notifications.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_json.a18d5a4f.js",
+      "_json.78cfb0c2.js",
       "_echarts.e8baadb1.js"
     ]
   },
   "assets/js/pages/editor.js": {
-    "file": "assets/pages/editor.8e212cb2.js",
+    "file": "assets/pages/editor.ea284fe5.js",
     "src": "assets/js/pages/editor.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_json.a18d5a4f.js",
+      "_json.78cfb0c2.js",
       "_htmlmixed.7d6e4601.js",
-      "_CommentBox.990104d0.js",
+      "_CommentBox.bb85739a.js",
       "_echarts.e8baadb1.js"
     ]
   },
   "assets/js/pages/pages.js": {
-    "file": "assets/pages/pages.f91b2f50.js",
+    "file": "assets/pages/pages.c471d9ba.js",
     "src": "assets/js/pages/pages.js",
     "isEntry": true,
     "imports": [
@@ -76,7 +76,7 @@
     ]
   },
   "assets/js/pages/reset.js": {
-    "file": "assets/pages/reset.f84a22f3.js",
+    "file": "assets/pages/reset.68b8ca2b.js",
     "src": "assets/js/pages/reset.js",
     "isEntry": true,
     "imports": [
@@ -85,17 +85,17 @@
     ]
   },
   "assets/js/pages/scoreboard.js": {
-    "file": "assets/pages/scoreboard.98e9e905.js",
+    "file": "assets/pages/scoreboard.b8e2e1d7.js",
     "src": "assets/js/pages/scoreboard.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_json.a18d5a4f.js",
+      "_json.78cfb0c2.js",
       "_echarts.e8baadb1.js"
     ]
   },
   "assets/js/pages/statistics.js": {
-    "file": "assets/pages/statistics.0623cade.js",
+    "file": "assets/pages/statistics.648ca67d.js",
     "src": "assets/js/pages/statistics.js",
     "isEntry": true,
     "imports": [
@@ -105,7 +105,7 @@
     ]
   },
   "assets/js/pages/submissions.js": {
-    "file": "assets/pages/submissions.06a8443c.js",
+    "file": "assets/pages/submissions.7f7b046e.js",
     "src": "assets/js/pages/submissions.js",
     "isEntry": true,
     "imports": [
@@ -114,69 +114,69 @@
     ]
   },
   "assets/js/pages/team.js": {
-    "file": "assets/pages/team.f7ce25cb.js",
+    "file": "assets/pages/team.01f6d021.js",
     "src": "assets/js/pages/team.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_json.a18d5a4f.js",
-      "_graphs.7ef13afe.js",
-      "_CommentBox.990104d0.js",
+      "_json.78cfb0c2.js",
+      "_graphs.ea401612.js",
+      "_CommentBox.bb85739a.js",
       "_echarts.e8baadb1.js",
       "_echarts-en.common.13902b37.js"
     ]
   },
   "assets/js/pages/teams.js": {
-    "file": "assets/pages/teams.ac50769b.js",
+    "file": "assets/pages/teams.b7109870.js",
     "src": "assets/js/pages/teams.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_json.a18d5a4f.js",
+      "_json.78cfb0c2.js",
       "_echarts.e8baadb1.js"
     ]
   },
   "assets/js/pages/user.js": {
-    "file": "assets/pages/user.3e63b07f.js",
+    "file": "assets/pages/user.77ef973d.js",
     "src": "assets/js/pages/user.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_json.a18d5a4f.js",
-      "_graphs.7ef13afe.js",
-      "_CommentBox.990104d0.js",
+      "_json.78cfb0c2.js",
+      "_graphs.ea401612.js",
+      "_CommentBox.bb85739a.js",
       "_echarts.e8baadb1.js",
       "_echarts-en.common.13902b37.js"
     ]
   },
   "assets/js/pages/users.js": {
-    "file": "assets/pages/users.9150aef8.js",
+    "file": "assets/pages/users.46535b1e.js",
     "src": "assets/js/pages/users.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_json.a18d5a4f.js",
+      "_json.78cfb0c2.js",
       "_echarts.e8baadb1.js"
     ]
   },
   "_echarts.e8baadb1.js": {
     "file": "assets/echarts.e8baadb1.js"
   },
-  "_json.a18d5a4f.js": {
-    "file": "assets/json.a18d5a4f.js",
+  "_json.78cfb0c2.js": {
+    "file": "assets/json.78cfb0c2.js",
     "imports": [
       "assets/js/pages/main.js"
     ]
   },
-  "_tab.1a005c69.js": {
-    "file": "assets/tab.1a005c69.js",
+  "_tab.8541f2dd.js": {
+    "file": "assets/tab.8541f2dd.js",
     "imports": [
       "_echarts.e8baadb1.js",
       "assets/js/pages/main.js"
     ]
   },
-  "_CommentBox.990104d0.js": {
-    "file": "assets/CommentBox.990104d0.js",
+  "_CommentBox.bb85739a.js": {
+    "file": "assets/CommentBox.bb85739a.js",
     "imports": [
       "assets/js/pages/main.js"
     ],
@@ -196,8 +196,8 @@
       "_echarts.e8baadb1.js"
     ]
   },
-  "_graphs.7ef13afe.js": {
-    "file": "assets/graphs.7ef13afe.js",
+  "_graphs.ea401612.js": {
+    "file": "assets/graphs.ea401612.js",
     "imports": [
       "assets/js/pages/main.js",
       "_echarts-en.common.13902b37.js"

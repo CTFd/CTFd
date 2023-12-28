@@ -15,8 +15,8 @@ export default root => {
   const wc = new WindowController();
   const howl = new Howl({
     src: [
-      root + "/themes/core/static/sounds/notification.webm",
-      root + "/themes/core/static/sounds/notification.mp3"
+      root + "/themes/admin/static/sounds/notification.webm",
+      root + "/themes/admin/static/sounds/notification.mp3"
     ]
   });
 

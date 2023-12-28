@@ -38,8 +38,12 @@ export default defineConfig({
               dest: "static/webfonts"
             },
             {
-              src: "./assets/img/**",
+              src: "./node_modules/@ctfdio/ctfd-js/assets/images/**",
               dest: "static/img"
+            },
+            {
+              src: "./node_modules/@ctfdio/ctfd-js/assets/sounds/**",
+              dest: "static/sounds"
             }
           ],
           hook: "writeBundle"
