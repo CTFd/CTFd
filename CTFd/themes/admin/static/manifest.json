@@ -216,14 +216,14 @@
     "src": "assets/css/admin.scss",
     "isEntry": true
   },
-  "assets/css/codemirror.scss": {
-    "file": "assets/codemirror.9d5e95a5.css",
-    "src": "assets/css/codemirror.scss",
-    "isEntry": true
-  },
   "assets/css/challenge-board.scss": {
     "file": "assets/challenge-board.44e07e05.css",
     "src": "assets/css/challenge-board.scss",
+    "isEntry": true
+  },
+  "assets/css/codemirror.scss": {
+    "file": "assets/codemirror.9d5e95a5.css",
+    "src": "assets/css/codemirror.scss",
     "isEntry": true
   },
   "assets/css/fonts.scss": {

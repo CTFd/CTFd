@@ -4,14 +4,19 @@
 
 @include Lato.faces(
   $subsets: all,
-  $weights: (400, 700),
+  $weights: (
+    400,
+    700
+  ),
   $styles: all,
   $directory: "../webfonts"
 );
 
 @include Raleway.faces(
   $subsets: all,
-  $weights: (500),
+  $weights: (
+    500
+  ),
   $styles: all,
   $directory: "../webfonts"
 );
