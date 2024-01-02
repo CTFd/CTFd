@@ -44,8 +44,8 @@ def get_logo():
 
 class SolveSocialShare(object):
     def __init__(self, user_id=None, challenge_id=None):
-        self.user_id = user_id or request.args.get("user_id")
-        self.challenge_id = challenge_id or request.args.get("challenge_id")
+        self.user_id = user_id or request.json.get("user_id")
+        self.challenge_id = challenge_id or request.json.get("challenge_id")
         self.type = "solves"
 
     @property
@@ -195,7 +195,7 @@ class SolveSocialShare(object):
         return send_from_directory(tempfile.gettempdir(), path)
 
 
-SOCIAL_SHARES = {"solves": SolveSocialShare}
+SOCIAL_SHARES = {"solve": SolveSocialShare}
 
 
 def get_social_share(type):
