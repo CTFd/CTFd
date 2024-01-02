@@ -679,11 +679,7 @@ class ChallengeAttempt(Resource):
                 else:
                     return {
                         "success": True,
-                        "data": {
-                            "status": "incorrect",
-                            "message": message,
-                            "share_url": None,
-                        },
+                        "data": {"status": "incorrect", "message": message},
                     }
 
         # Challenge already solved
@@ -701,7 +697,6 @@ class ChallengeAttempt(Resource):
                 "data": {
                     "status": "already_solved",
                     "message": "You already solved this",
-                    "share_url": share.url,
                 },
             }
 
