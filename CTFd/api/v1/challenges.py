@@ -44,7 +44,6 @@ from CTFd.utils.decorators.visibility import (
 from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.logging import log
 from CTFd.utils.security.signing import serialize
-from CTFd.utils.social import get_social_share
 from CTFd.utils.user import (
     authed,
     get_current_team,
