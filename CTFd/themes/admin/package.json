@@ -21,6 +21,7 @@
     "@fontsource/raleway": "^5.0.16",
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@vue/compat": "^3.3.8",
+    "alpinejs": "^3.13.3",
     "bootstrap": "~4.3.1",
     "codemirror": "~5.58.2",
     "easymde": "^2.18.0",
