@@ -71,9 +71,9 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
-import { ezQuery } from "core/ezq";
-import { htmlEntities } from "core/utils";
+import CTFd from "../../compat/CTFd";
+import { ezQuery } from "../../compat/ezq";
+import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 
 export default {
   name: "UserAddForm",

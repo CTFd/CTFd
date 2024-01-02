@@ -22,7 +22,7 @@
         maxlength="80"
         type="text"
         class="form-control"
-        v-model.lazy="tagValue"
+        v-model="tagValue"
         @keyup.enter="addTag()"
       />
     </div>
@@ -30,8 +30,7 @@
 </template>
 
 <script>
-import $ from "jquery";
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 
 export default {
   props: {
@@ -63,16 +62,18 @@ export default {
         });
     },
     addTag: function() {
-      const params = {
-        value: this.tagValue,
-        challenge: this.$props.challenge_id
-      };
-      CTFd.api.post_tag_list({}, params).then(response => {
-        if (response.success) {
-          this.tagValue = "";
-          this.loadTags();
-        }
-      });
+      if (this.tagValue) {
+        const params = {
+          value: this.tagValue,
+          challenge: this.$props.challenge_id
+        };
+        CTFd.api.post_tag_list({}, params).then(response => {
+          if (response.success) {
+            this.tagValue = "";
+            this.loadTags();
+          }
+        });
+      }
     },
     deleteTag: function(tag_id) {
       CTFd.api.delete_tag({ tagId: tag_id }).then(response => {

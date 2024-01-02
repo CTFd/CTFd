@@ -33,8 +33,9 @@
 
 <script>
 import $ from "jquery";
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 import nunjucks from "nunjucks";
+import "../../compat/json";
 
 export default {
   name: "FlagEditForm",

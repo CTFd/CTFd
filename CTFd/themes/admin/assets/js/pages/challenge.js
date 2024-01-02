@@ -1,13 +1,13 @@
 import "./main";
-import "core/utils";
 import $ from "jquery";
+import "../compat/json";
 import "bootstrap/js/dist/tab";
-import CTFd from "core/CTFd";
-import { htmlEntities } from "core/utils";
-import { ezQuery, ezAlert, ezToast } from "core/ezq";
-import { default as helpers } from "core/helpers";
+import CTFd from "../compat/CTFd";
+import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
+import { ezQuery, ezAlert, ezToast } from "../compat/ezq";
+import { default as helpers } from "../compat/helpers";
 import { bindMarkdownEditors } from "../styles";
-import Vue from "vue/dist/vue.esm.browser";
+import Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
 import FlagList from "../components/flags/FlagList.vue";
 import Requirements from "../components/requirements/Requirements.vue";
@@ -155,9 +155,9 @@ $(() => {
   $(".delete-challenge").click(function(_e) {
     ezQuery({
       title: "Delete Challenge",
-      body: "Are you sure you want to delete {0}".format(
-        "<strong>" + htmlEntities(window.CHALLENGE_NAME) + "</strong>"
-      ),
+      body: `Are you sure you want to delete <strong>${htmlEntities(
+        window.CHALLENGE_NAME
+      )}</strong>`,
       success: function() {
         CTFd.fetch("/api/v1/challenges/" + window.CHALLENGE_ID, {
           method: "DELETE"

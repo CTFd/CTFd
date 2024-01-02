@@ -1,7 +1,8 @@
 import "./main";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import $ from "jquery";
-import { ezAlert, ezQuery } from "core/ezq";
+import "../compat/json";
+import { ezAlert, ezQuery } from "../compat/ezq";
 
 function deleteSelectedChallenges(_event) {
   let challengeIDs = $("input[data-challenge-id]:checked").map(function() {

@@ -1,13 +1,13 @@
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import $ from "jquery";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import nunjucks from "nunjucks";
 import { Howl } from "howler";
-import events from "core/events";
-import times from "core/times";
+import events from "../compat/events";
+import times from "../compat/times";
 import styles from "../styles";
-import { default as helpers } from "core/helpers";
+import { default as helpers } from "../compat/helpers";
 
 dayjs.extend(advancedFormat);
 

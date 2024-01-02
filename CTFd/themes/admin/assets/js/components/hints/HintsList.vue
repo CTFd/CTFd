@@ -59,8 +59,8 @@
 </template>
 
 <script>
-import { ezQuery } from "core/ezq";
-import CTFd from "core/CTFd";
+import { ezQuery } from "../../compat/ezq";
+import CTFd from "../../compat/CTFd";
 import HintCreationForm from "./HintCreationForm.vue";
 import HintEditForm from "./HintEditForm.vue";
 

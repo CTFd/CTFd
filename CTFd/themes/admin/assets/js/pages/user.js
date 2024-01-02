@@ -1,10 +1,11 @@
 import "./main";
 import $ from "jquery";
-import CTFd from "core/CTFd";
-import { htmlEntities } from "core/utils";
-import { ezQuery, ezBadge } from "core/ezq";
-import { createGraph, updateGraph } from "core/graphs";
-import Vue from "vue/dist/vue.esm.browser";
+import "../compat/json";
+import CTFd from "../compat/CTFd";
+import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
+import { ezQuery, ezBadge } from "../compat/ezq";
+import { createGraph, updateGraph } from "../compat/graphs";
+import Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
 
 function createUser(event) {

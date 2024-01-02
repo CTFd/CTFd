@@ -32,8 +32,8 @@
                     <a
                       href="javascript:void(0)"
                       @click="
-                        selectFile(file);
-                        return false;
+                        selectFile(file)
+                        // return false;
                       "
                     >
                       <i
@@ -190,9 +190,8 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
-import { ezQuery, ezToast } from "core/ezq";
-import { default as helpers } from "core/helpers";
+import CTFd from "../../compat/CTFd";
+import { default as helpers } from "../../compat/helpers";
 
 function get_page_files() {
   return CTFd.fetch("/api/v1/files?type=page", {

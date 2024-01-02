@@ -22,10 +22,8 @@
 {% endblock %}
 
 {% block scripts %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/echarts.bundle.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/graphs.js') }}"></script>
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/user.js') }}"></script>
+	{{ Assets.js("assets/js/pages/user.js", theme="admin") }}
 {% endblock %}
