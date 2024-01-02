@@ -44,15 +44,21 @@ def get_logo():
 
 class SolveSocialShare(object):
     def __init__(self, user_id=None, challenge_id=None):
-        self.user_id = user_id or request.json.get("user_id")
-        self.challenge_id = challenge_id or request.json.get("challenge_id")
-        self.type = "solves"
+        self.user_id = (
+            user_id or request.args.get("user_id") or request.json.get("user_id")
+        )
+        self.challenge_id = (
+            challenge_id
+            or request.args.get("challenge_id")
+            or request.json.get("challenge_id")
+        )
+        self.type = "solve"
 
     @property
     def url(self):
         return url_for(
             "social.share",
-            type="solves",
+            type=self.type,
             user_id=self.user_id,
             challenge_id=self.challenge_id,
             mac=self.mac,
@@ -112,7 +118,7 @@ class SolveSocialShare(object):
         )
         asset_url = url_for(
             "social.assets",
-            type="solves",
+            type=self.type,
             path=self.mac + ".png",
             user_id=self.user_id,
             challenge_id=self.challenge_id,

@@ -12,6 +12,9 @@ def assets(type, path):
         abort(404)
 
     s = SocialShare()
+    if path != s.mac + ".png":
+        abort(404)
+
     return s.asset(path)
 
 
@@ -23,6 +26,6 @@ def share(type):
 
     s = SocialShare()
     if request.args.get("mac") != s.mac:
-        abort(403)
+        abort(404)
 
     return s.content
