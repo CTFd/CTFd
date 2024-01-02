@@ -1,8 +1,8 @@
 import "./main";
 import $ from "jquery";
 import "../compat/json";
-import CTFd from "core/CTFd";
-import { htmlEntities } from "../compat/html";
+import CTFd from "../compat/CTFd";
+import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 import { ezQuery, ezBadge } from "../compat/ezq";
 import { createGraph, updateGraph } from "../compat/graphs";
 import Vue from "vue";

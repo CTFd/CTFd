@@ -1,4 +1,4 @@
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import $ from "jquery";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";

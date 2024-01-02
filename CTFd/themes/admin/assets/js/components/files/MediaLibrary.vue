@@ -190,8 +190,7 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
-import { ezQuery, ezToast } from "../../compat/ezq";
+import CTFd from "../../compat/CTFd";
 import { default as helpers } from "../../compat/helpers";
 
 function get_page_files() {

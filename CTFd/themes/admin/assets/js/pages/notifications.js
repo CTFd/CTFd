@@ -1,7 +1,7 @@
 import "./main";
 import "../compat/json";
 import $ from "jquery";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import { ezAlert } from "../compat/ezq";
 import Vue from "vue";
 import Notification from "../components/notifications/Notification.vue";

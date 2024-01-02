@@ -1,5 +1,5 @@
 import "./main";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import $ from "jquery";
 import { ezQuery } from "../compat/ezq";
 

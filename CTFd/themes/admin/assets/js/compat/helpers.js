@@ -1,7 +1,7 @@
 import $ from "jquery";
 import jQuery from "jquery";
 import { default as ezq } from "./ezq";
-import { htmlEntities } from "./html";
+import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 import { colorHash } from "./styles";
 import { copyToClipboard } from "./ui";
 

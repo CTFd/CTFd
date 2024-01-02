@@ -1,5 +1,5 @@
 import $ from "jquery";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 
 export function deleteTag(_event) {
   const $elem = $(this);

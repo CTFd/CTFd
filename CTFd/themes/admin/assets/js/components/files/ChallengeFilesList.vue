@@ -58,7 +58,7 @@
 <script>
 import { ezQuery } from "../../compat/ezq";
 import { default as helpers } from "../../compat/helpers";
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 
 export default {
   props: {

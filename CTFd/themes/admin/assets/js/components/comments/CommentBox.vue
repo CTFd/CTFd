@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 import { default as helpers } from "../../compat/helpers";
 import dayjs from "dayjs";
 import hljs from "highlight.js";

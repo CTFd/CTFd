@@ -60,7 +60,7 @@
 
 <script>
 import { ezQuery } from "../../compat/ezq";
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 import HintCreationForm from "./HintCreationForm.vue";
 import HintEditForm from "./HintEditForm.vue";
 

@@ -1,5 +1,5 @@
 import "./main";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import $ from "jquery";
 import echarts from "echarts/dist/echarts-en.common";
 import { colorHash } from "../compat/styles";

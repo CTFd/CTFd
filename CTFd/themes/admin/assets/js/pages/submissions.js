@@ -1,7 +1,7 @@
 import "./main";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import $ from "jquery";
-import { htmlEntities } from "../compat/html";
+import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 import { ezQuery } from "../compat/ezq";
 
 function deleteCorrectSubmission(_event) {

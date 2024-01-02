@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
+import CTFd from "../../../compat/CTFd";
 import { ezToast } from "../../../compat/ezq";
 
 export default {

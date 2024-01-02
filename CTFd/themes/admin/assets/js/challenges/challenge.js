@@ -1,8 +1,8 @@
 import $ from "jquery";
 import "../compat/json";
 import { ezToast, ezQuery } from "../compat/ezq";
-import { htmlEntities } from "../compat/html";
-import CTFd from "core/CTFd";
+import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
+import CTFd from "../compat/CTFd";
 import nunjucks from "nunjucks";
 
 function renderSubmissionResponse(response, cb) {

@@ -5,7 +5,7 @@ import advancedFormat from "dayjs/plugin/advancedFormat";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import timezones from "../timezones";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import { default as helpers } from "../compat/helpers";
 import $ from "jquery";
 import "../compat/json";

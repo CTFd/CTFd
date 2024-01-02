@@ -1,7 +1,7 @@
 import "./main";
 import { showMediaLibrary } from "../styles";
 import $ from "jquery";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import "../compat/json";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
