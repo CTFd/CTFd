@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 from CTFd.models import Solves, Users
 from CTFd.utils import get_config
 from CTFd.utils.config import is_teams_mode
-from CTFd.utils.formatters import safe_format
+from CTFd.utils.formatters import safe_html_format
 from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.security.signing import hmac
 from CTFd.utils.uploads import get_uploader
@@ -95,8 +95,8 @@ class SolveSocialShare(object):
         register_url = url_for("auth.register", _external=True)
 
         template = get_config("social_share_solve_template", BASE_TEMPLATE)
-        title = f"{account_name} has solved {challenge_name}"
-        content = safe_format(
+
+        content = safe_html_format(
             template,
             ctf_name=ctf_name,
             ctf_description=ctf_description,
@@ -118,9 +118,20 @@ class SolveSocialShare(object):
             _external=True,
         )
         meta = (
-            f'<meta property="og:title" content="{title}" />'
-            f'<meta property="og:description" content="{ctf_description}" />'
-            f'<meta property="og:image" content="{asset_url}" />'
+            '<meta property="og:title" content="{title}" />'
+            '<meta property="og:description" content="{ctf_description}" />'
+            '<meta property="og:image" content="{asset_url}" />'
+        )
+        title = safe_html_format(
+            "{account_name} has solved {challenge_name}",
+            account_name=account_name,
+            challenge_name=challenge_name,
+        )
+        meta = safe_html_format(
+            meta,
+            title=title,
+            ctf_description=ctf_description,
+            asset_url=asset_url,
         )
         return render_template("page.html", meta=meta, content=content, title=title)
 
