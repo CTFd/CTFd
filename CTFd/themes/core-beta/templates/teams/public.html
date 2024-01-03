@@ -27,14 +27,6 @@
       {% endif %}
 
       <div class="pt-2">
-        {% for field in team.fields %}
-          <h3 class="d-block">
-            {{ field.name }}: {{ field.value }}
-          </h3>
-        {% endfor %}
-      </div>
-
-      <div class="pt-2">
         {% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
           <a href="{{ team.website }}" target="_blank" style="color: inherit;" rel="noopener">
             <i
