@@ -102,6 +102,16 @@ class ImportCSVForm(BaseForm):
     csv_file = FileField("CSV File", description="CSV file contents")
 
 
+class SocialSettingsForm(BaseForm):
+    social_shares = SelectField(
+        "Social Shares",
+        description="Enable or Disable social sharing links for challenge solves",
+        choices=[("true", "Enabled"), ("false", "Disabled")],
+        default="true",
+    )
+    submit = SubmitField("Update")
+
+
 class LegalSettingsForm(BaseForm):
     tos_url = URLField(
         "Terms of Service URL",

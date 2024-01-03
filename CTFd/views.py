@@ -202,6 +202,7 @@ def setup():
             if ctf_banner:
                 f = upload_file(file=ctf_banner, page_id=page.id)
                 default_ctf_banner_location = url_for("views.files", path=f.location)
+                set_config("ctf_banner", f.location)
 
             # Splice in our banner
             index = f"""<div class="row">

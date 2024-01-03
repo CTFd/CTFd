@@ -117,6 +117,8 @@ maxminddb==1.5.4
     #   python-geoacumen-city
 passlib==1.7.4
     # via -r requirements.in
+pillow==10.1.0
+    # via -r requirements.in
 pybluemonday==0.0.12
     # via -r requirements.in
 pycparser==2.20
