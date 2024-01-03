@@ -159,7 +159,7 @@ class SolveSocialShare(object):
         draw = ImageDraw.Draw(img)
         font_lg = ImageFont.truetype("Arial Bold.ttf", 40)
         font_md = ImageFont.truetype("Arial Bold.ttf", 25)
-        font_sm = ImageFont.truetype("Arial Bold.ttf", 15)
+        _font_sm = ImageFont.truetype("Arial Bold.ttf", 15)
 
         # fmt: off
         # Draw user name
