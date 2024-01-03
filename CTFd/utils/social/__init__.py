@@ -16,7 +16,6 @@ BASE_TEMPLATE = """
 <div class="container">
     <div class="row">
         <div class="col-md-6 offset-md-3">
-            <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="{ctf_banner_url}">
             <h3 class="text-center">{ctf_name}</h3>
             <h3 class="text-center">{account_name} has solved {challenge_name}</h3>
             <br>
@@ -93,11 +92,6 @@ class SolveSocialShare(object):
         # Instance information
         ctf_name = get_config("ctf_name", "")
         ctf_description = get_config("ctf_description", "")
-        ctf_banner = get_config("ctf_banner")
-        if ctf_banner:
-            ctf_banner_url = url_for("views.files", path=ctf_banner)
-        else:
-            ctf_banner_url = ""
         register_url = url_for("auth.register", _external=True)
 
         template = get_config("social_share_solve_template", BASE_TEMPLATE)
@@ -105,7 +99,6 @@ class SolveSocialShare(object):
         content = safe_format(
             template,
             ctf_name=ctf_name,
-            ctf_banner_url=ctf_banner_url,
             ctf_description=ctf_description,
             register_url=register_url,
             challenge_name=challenge_name,
