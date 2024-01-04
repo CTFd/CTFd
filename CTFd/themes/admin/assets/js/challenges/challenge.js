@@ -1,5 +1,6 @@
 import $ from "jquery";
 import "../compat/json";
+import "../compat/format";
 import { ezToast, ezQuery } from "../compat/ezq";
 import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 import CTFd from "../compat/CTFd";

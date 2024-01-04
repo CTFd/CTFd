@@ -1,6 +1,7 @@
 import "./main";
 import $ from "jquery";
 import "../compat/json";
+import "../compat/format";
 import CTFd from "../compat/CTFd";
 import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 import { ezQuery, ezBadge } from "../compat/ezq";

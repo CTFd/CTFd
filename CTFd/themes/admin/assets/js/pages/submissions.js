@@ -3,6 +3,7 @@ import CTFd from "../compat/CTFd";
 import $ from "jquery";
 import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 import { ezQuery } from "../compat/ezq";
+import "../compat/format";
 
 function deleteCorrectSubmission(_event) {
   const key_id = $(this).data("submission-id");

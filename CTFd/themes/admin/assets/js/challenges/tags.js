@@ -1,4 +1,5 @@
 import $ from "jquery";
+import "../compat/format";
 import CTFd from "../compat/CTFd";
 
 export function deleteTag(_event) {
