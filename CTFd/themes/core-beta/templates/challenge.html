@@ -162,10 +162,33 @@
                       }" role="alert"
                   >
                     <strong x-text="response.data.message"></strong>
-                    <div x-show="(response.data.status == 'correct' || response.data.status == 'already_solved') && getNextId()">
-                      <button @click="nextChallenge()" class="btn btn-info mt-3">
-                        {% trans %}Next Challenge{% endtrans %}
-                      </button>
+                    <div x-show="(response.data.status == 'correct' || response.data.status == 'already_solved')">
+                      <div x-show="getNextId()">
+                        <button @click="nextChallenge()" class="btn btn-info mt-3">
+                          {% trans %}Next Challenge{% endtrans %}
+                        </button>
+                      </div>
+                      {% if Configs.social_shares != false %}
+                      <div>
+                        <button x-show="!share_url" @click="getShareUrl()" class="btn btn-sm btn-outline-info mt-3">
+                          {% trans %}Share{% endtrans %}
+                        </button>
+                        <div class="btn-group mt-3" role="group" x-show="share_url">
+                          <button type="button" class="btn btn-sm btn-outline-secondary" @click="copyShareUrl()" data-bs-toggle="tooltip" data-bs-title="Copied!">
+                            <i class="fa-solid fa-copy"></i>
+                          </button>
+                          <a :href="'https://twitter.com/intent/tweet?url=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm btn-outline-secondary" target="_blank">
+                            <i class="fa-brands fa-twitter"></i>
+                          </a>
+                          <a :href="'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm btn-outline-secondary" target="_blank">
+                            <i class="fa-brands fa-facebook-f"></i>
+                          </a>
+                          <a :href="'http://www.linkedin.com/shareArticle?url=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm btn-outline-secondary" target="_blank">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                          </a>
+                        </div>
+                        {% endif %}
+                      </div>
                     </div>
                   </div>
                 </template>
