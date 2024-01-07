@@ -90,10 +90,25 @@ class FilesList(Resource):
         # challenge_id
         # page_id
 
+        # Handle situation where users attempt to upload multiple files with a single location
+        if len(files) > 1 and request.form.get("location"):
+            return {
+                "success": False,
+                "errors": {
+                    "location": ["Location cannot be specified with multiple files"]
+                },
+            }, 400
+
         objs = []
         for f in files:
             # uploads.upload_file(file=f, chalid=req.get('challenge'))
-            obj = uploads.upload_file(file=f, **request.form.to_dict())
+            try:
+                obj = uploads.upload_file(file=f, **request.form.to_dict())
+            except ValueError as e:
+                return {
+                    "success": False,
+                    "errors": {"location": [str(e)]},
+                }, 400
             objs.append(obj)
 
         schema = FileSchema(many=True)
