@@ -200,3 +200,43 @@ def test_api_file_custom_location():
                 )
                 assert r.status_code == 400
     destroy_ctfd(app)
+
+
+def test_api_file_overwrite_by_location():
+    """
+    Test file overwriting with a specific location
+    """
+    app = create_ctfd()
+    with app.app_context():
+        with login_as_user(app, name="admin") as client:
+            with client.session_transaction() as sess:
+                nonce = sess.get("nonce")
+            r = client.post(
+                "/api/v1/files",
+                content_type="multipart/form-data",
+                data={
+                    "file": (BytesIO(b"test file content"), "test.txt"),
+                    "location": "testing/asdf.txt",
+                    "nonce": nonce,
+                },
+            )
+            assert r.status_code == 200
+            f = Files.query.filter_by(id=1).first()
+            r = client.get("/files/" + f.location)
+            assert r.get_data(as_text=True) == "test file content"
+
+            r = client.post(
+                "/api/v1/files",
+                content_type="multipart/form-data",
+                data={
+                    "file": (BytesIO(b"testing new uploaded file content"), "test.txt"),
+                    "location": "testing/asdf.txt",
+                    "nonce": nonce,
+                },
+            )
+            assert r.status_code == 200
+            f = Files.query.filter_by(id=1).first()
+            r = client.get("/files/" + f.location)
+            assert f.sha1sum == "0ee7eb85ac0b8d8ae03f3080589157cde553b13f"
+            assert r.get_data(as_text=True) == "testing new uploaded file content"
+    destroy_ctfd(app)
