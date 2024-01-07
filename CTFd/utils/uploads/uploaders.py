@@ -54,13 +54,20 @@ class FilesystemUploader(BaseUploader):
 
         return filename
 
-    def upload(self, file_obj, filename):
+    def upload(self, file_obj, filename, path=None):
         if len(filename) == 0:
             raise Exception("Empty filenames cannot be used")
 
+        # Sanitize directory name
+        if path:
+            path = secure_filename(path) or hexencode(os.urandom(16))
+            path = path.replace(".", "")
+        else:
+            path = hexencode(os.urandom(16))
+
+        # Sanitize file name
         filename = secure_filename(filename)
-        md5hash = hexencode(os.urandom(16))
-        file_path = posixpath.join(md5hash, filename)
+        file_path = posixpath.join(path, filename)
 
         return self.store(file_obj, file_path)
 
@@ -110,7 +117,17 @@ class S3Uploader(BaseUploader):
         self.s3.upload_fileobj(fileobj, self.bucket, filename)
         return filename
 
-    def upload(self, file_obj, filename):
+    def upload(self, file_obj, filename, path=None):
+        # Sanitize directory name
+        if path:
+            path = secure_filename(path) or hexencode(os.urandom(16))
+            path = path.replace(".", "")
+            # Sanitize path
+            path = filter(self._clean_filename, secure_filename(path).replace(" ", "_"))
+        else:
+            path = hexencode(os.urandom(16))
+
+        # Sanitize file name
         filename = filter(
             self._clean_filename, secure_filename(filename).replace(" ", "_")
         )
@@ -118,9 +135,7 @@ class S3Uploader(BaseUploader):
         if len(filename) <= 0:
             return False
 
-        md5hash = hexencode(os.urandom(16))
-
-        dst = md5hash + "/" + filename
+        dst = path + "/" + filename
         self.s3.upload_fileobj(file_obj, self.bucket, dst)
         return dst
 
