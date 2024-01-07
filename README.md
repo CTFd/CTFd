@@ -83,6 +83,34 @@ OAUTH_CLIENT_ID = None
 OAUTH_CLIENT_SECRET = None
 ```
 
+## Development
+
+Please note: CTFd provides limited technical support for self-hosted open-source users. If you choose to modify CTFd, please refer to the [MajorLeagueCyber Community](https://community.majorleaguecyber.org/) for technical assistance.
+
+### Performing SQLAlchemy Database Migrations
+You may choose to edit CTFd's [database models](https://github.com/CTFd/CTFd/blob/master/CTFd/models/__init__.py). For MySQL, this requires performing a migration.[^1]
+
+To perform a basic SQLAlchemy migration:
+
+1. Make changes to the models file to reflect your desired database schema
+2. Generate the flask migration as normal
+```
+docker-compose exec ctfd flask db migrate -m "<message>"
+```
+3. Upgrade the schema locally
+```
+docker-compose exec ctfd flask db upgrade
+```
+
+Stop here if you are migrating CTFd's models. If you are migrating a plugin's database models, continue:
+
+4. Move the generated migration file to the appropriate `CTFd/plugins/<your-plugin>/migrations/` folder
+5. Adjust the `down_revision` hash to match the prior revision file's `revision` hash
+6. Add `op` to the parameters of the migration functions. For example, change `upgrade()` to `upgrade(op)`.
+
+[^1]: If you use SQLite, you don’t need to perform a migration. SQLite is easier because it builds from the model classes without migrations. You only need to add the migration if you’re using MySQL. You can change which DB you use in the [docker-compose.yml](https://github.com/CTFd/CTFd/blob/master/docker-compose.yml#L12) file; If you run without specifying a `DATABASE_URL`, it will default to SQLite.
+
+
 ## Credits
 
 - Logo by [Laura Barbera](http://www.laurabb.com/)
