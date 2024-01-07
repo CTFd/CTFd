@@ -75,6 +75,7 @@ def test_api_files_post_admin():
             )
             assert r.status_code == 200
             f = Files.query.filter_by(id=1).first()
+            assert f.sha1sum == "9032bbc224ed8b39183cb93b9a7447727ce67f9d"
             os.remove(os.path.join(app.config["UPLOAD_FOLDER"] + "/" + f.location))
     destroy_ctfd(app)
 
