@@ -122,6 +122,8 @@ class S3Uploader(BaseUploader):
         if path:
             path = secure_filename(path) or hexencode(os.urandom(16))
             path = path.replace(".", "")
+            # Sanitize path
+            path = filter(self._clean_filename, secure_filename(path).replace(" ", "_"))
         else:
             path = hexencode(os.urandom(16))
 
