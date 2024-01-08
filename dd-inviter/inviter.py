@@ -1,7 +1,7 @@
 import time, os
 import requests, json 
 
-SLEEP_INTERVAL = 5 # how long does our script sleep in between iterations. For production use, it should be like 60 seconds or so
+SLEEP_INTERVAL = 60 # how long does our script sleep in between iterations. For production use, it should be like 60 seconds or so
 INVITATION_TIME_MINUTES = 5 # how many minutes (!) before the event starts should we start inviting the users?
 INVITATION_CUTOFF_MINUTES = 15 # how many minutes after we started the event should we stop inviting new users?
 CTFD_HOST = "http://ctfd" # we default to the container name for our standard deployment
@@ -151,7 +151,8 @@ def invite_user(dd_api_key, dd_app_key, email, role_id):
     })
 
     response = r.json()
-    if r.status_code == 200:
+    print("user " + email + " created with code: " + str(r.status_code))
+    if r.status_code == 200 or r.status_code == 201:
         invitation_request = requests.post("https://api.datadoghq.com/api/v2/user_invitations", headers=headers, json={
     "data": [
         {
@@ -167,9 +168,9 @@ def invite_user(dd_api_key, dd_app_key, email, role_id):
         }
     ]
     })
-        print(invitation_request.json())
+        #print(invitation_request.json())
     
-    return r.status_code==200 or r.status_code==404
+    return r.status_code==200 or r.status_code==409
 
 def invite_users():
     global sent_invitations
