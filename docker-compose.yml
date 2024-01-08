@@ -67,7 +67,7 @@ services:
     restart: always
     environment: 
       - CTFD_TOKEN=
-      - CTFD_HOST=https://dryrun.ddctf.com
+      - CTFD_HOST=
     depends_on: 
       - ctfd
     networks: 
