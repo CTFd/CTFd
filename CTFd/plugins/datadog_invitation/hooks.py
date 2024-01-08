@@ -9,5 +9,7 @@ def on_users_create(mapper, conn, user):
     DatadogInvitationController.create_user(user.email, user.name) # Read CTFd.models.Users!
 
 def load_hooks():
-    logging.debug("registering hook on after_insert")
-    listen(Users, "after_update", on_users_create)
+    #logging.debug("registering hook on after_insert")
+    #listen(Users, "after_update", on_users_create)
+    logging.debug("registering hook on ctf starting")
+    listen()
