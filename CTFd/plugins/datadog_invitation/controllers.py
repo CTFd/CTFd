@@ -5,6 +5,7 @@ from requests.auth import HTTPBasicAuth
 import functools
 from CTFd.models import Configs, db
 from CTFd.utils.user import get_current_team
+from pprint import pprint
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -20,21 +21,38 @@ class DatadogInvitationController:
             return
 
         logging.debug("User {} belongs to team {}".format("", team))
+        logging.debug("Determining the 'ctfplayer' role")
+
+        pprint(team)
+
+        
+        creds = HTTPBasicAuth(team.fields['dd_api_key'], team.fields['dd_app_key'])
+        roles_response = requests.get("https://api.datadoghq.com/api/v2/roles", auth=creds, verify=False)
+        roles = roles_response.json()
+        
+        role_id = ""
+        for role in roles['data']:
+            rolename = role['attributes']['name']
+            if rolename == 'ctfplayer' or rolename == 'Dash2023PartnerTechChallenge':
+                role_id = role['id']
+
+
+
+        jsondata = {}
         data = {}
-        data['account_id'] = team.name # the name of the team
-        data['account_name'] = team.name # same, name of the team
-        data['user_email'] = email # is this the email address field?
-        data['user_id'] = email
-        data['partner_program'] = "Sales and Services Partners"
-        data['partner_type'] = "Managed Services Partners"
-        data['partner_tier'] = "Basic"
-        
-        # we get our credentials and the url from the env variables
-        creds = HTTPBasicAuth(os.getenv('DATADOG_API_USERNAME'), os.getenv('DATADOG_API_PASSWORD'))
-        request_url = os.getenv('DATADOG_API_URL')
-        
-        verify_response = requests.post(request_url, json=data, auth=creds, verify=False)
-        logging.debug("Inviting user to org through Datadog API at: {}".format(request_url))
+        data['type'] = 'users'
+        data['attributes'] = {}
+        data['attributes']['name'] = email
+        data['attributes']['email'] = email
+        data['relationships']['roles'] = {}
+        data['relationships']['roles']['data'] = []
+        data['relationships']['roles']['data'][0] = {}
+        data['relationships']['roles']['data'][0]['id'] = role_id
+        data['relationships']['roles']['data'][0]['type'] = 'roles'
+        jsondata['data'] = data
+
+        invitation_request = requests.post("https://api.datadoghq.com/api/v2/users", json=jsondata, auth=creds, verify=False)
+        logging.debug("Invitation response: {}".format(invitation_request.json))
         
         bad_request = False
         if not verify_response.ok:
