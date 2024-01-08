@@ -168,7 +168,7 @@ def invite_user(dd_api_key, dd_app_key, email, role_id):
         }
     ]
     })
-        #print(invitation_request.json())
+    print(invitation_request.json())
     
     return r.status_code==200 or r.status_code==409
 
