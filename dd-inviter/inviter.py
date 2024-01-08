@@ -24,10 +24,6 @@ if os.getenv('DD_ROLE') is not None:
 
 do_invite = False
 sent_invitations = [
-    "charlie.wells@datadoghq.com",
-    "kate.yoak@datadoghq.com",
-    "george.morgan@datadoghq.com",
-    "rafael.icibaci@datadoghq.com"
 ]
 
 # this method checks if the CTF is starting
