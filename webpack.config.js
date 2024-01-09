@@ -7,6 +7,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const RemoveStrictPlugin = require('remove-strict-webpack-plugin')
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const fs = require('fs');
 
 const roots = {
   'themes/core': {
@@ -53,6 +54,8 @@ const roots = {
     }
   },
 }
+
+const comment_core_min_js = 'core.min.js File';
 
 function getJSConfig(root, type, entries, mode) {
   const out = {}
@@ -184,6 +187,33 @@ function getJSConfig(root, type, entries, mode) {
         ],
         safe: true,
       }),
+      // Fix to avoid empty file generation of core.min.js until fix by guncorn > 20.1.0v
+      // https://github.com/CTFd/CTFd/issues/2257
+      {
+        apply: (compiler) => {
+          compiler.hooks.afterEmit.tap('AddCommentPlugin', (compilation) => {
+            const outputFile = path.join(compiler.options.output.path, 'core.min.js');
+            fs.readFile(outputFile, 'utf8', (err, data) => {
+              if (err) {
+                console.error(err);
+                return;
+              }
+              
+              if (data.trim() === '') {
+                // File is empty, add the comment
+                const updatedData = `/* ${comment_core_min_js} */`;
+  
+                fs.writeFile(outputFile, updatedData, 'utf8', (err) => {
+                  if (err) {
+                    console.error(err);
+                    return;
+                  }
+                });
+              }
+            });
+          });
+        },
+      },
     ],
     resolve: {
       extensions: ['.js'],
