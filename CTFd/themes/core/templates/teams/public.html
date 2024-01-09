@@ -75,14 +75,16 @@
 					</thead>
 					<tbody>
 					{% for member in team.members %}
-						<tr>
-							<td>
-								<a href="{{ url_for('users.public', user_id=member.id) }}">
-									{{ member.name }}
-								</a>
-							</td>
-							<td>{{ member.score }}</td>
-						</tr>
+						{% if member.hidden != 1 and member.banned != 1 %}
+							<tr>
+								<td>
+									<a href="{{ url_for('users.public', user_id=member.id) }}">
+										{{ member.name }}
+									</a>
+								</td>
+								<td>{{ member.score }}</td>
+							</tr>
+						{% endif %}
 					{% endfor %}
 					</tbody>
 				</table>
