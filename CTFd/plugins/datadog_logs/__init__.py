@@ -9,6 +9,7 @@ from CTFd.utils.dates import ctftime
 from CTFd.utils.user import get_current_team, get_current_user
 from flask import Flask, render_template, request
 import requests
+from CTFd.utils.logging import log
 
 
 def load(app: Flask):
@@ -49,7 +50,8 @@ def load(app: Flask):
                 "points": hint.cost*-1,
                 "msg": "Player " + user.name + " just traded " + str(hint.cost) + " points for a hint on challenge " + challenge.name
             }
-            print(payload)
+
+            print(json.dumps(payload))
             log_to_dd(payload, app.config["DD_API_KEY"])
 
             return result
@@ -86,7 +88,8 @@ def load(app: Flask):
                     "points": 0,
                     "msg": "Team '" + team.name + "' provided an incorrect answer for challenge '" + challenge.name + "'"
                 }
-                print(payload)
+                print(json.dumps(payload))
+
                 log_to_dd(payload, app.config["DD_API_KEY"])
             elif result.json['data']['status'] == "correct": # there is also already_solve so we need to be precise
                 num_solves = get_solvers_count_for_challenge(challenge)
@@ -108,7 +111,7 @@ def load(app: Flask):
                     "points": challenge.value,
                     "msg": "Team '" + team.name + "' is the " + position + " to solve challenge '" + challenge.name + "'"
                 }
-                print(payload)
+                print(json.dumps(payload))
                 log_to_dd(payload, app.config["DD_API_KEY"])
 
             return result
