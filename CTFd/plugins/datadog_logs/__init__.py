@@ -68,7 +68,7 @@ def load(app: Flask):
             user = get_current_user()
             team = get_current_team()
 
-            print(result.json)
+            #print(result.json)
 
             if result is None or result.json is None or result.json['data'] is None: 
                 return result # nothing we can do
@@ -199,6 +199,7 @@ def get_solvers_for_challenge(challenge: Challenges) -> Solves:
 
 
 def log_to_dd(data: dict, apikey: str) -> None:
+    return # disable posting for now
     try:
         url = 'https://api.datadoghq.com/api/v2/logs'
         headers = {
