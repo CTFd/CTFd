@@ -16,7 +16,6 @@ services:
       - ACCESS_LOG=-
       - ERROR_LOG=-
       - REVERSE_PROXY=true
-      - DD_API_KEY
     volumes:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
@@ -62,17 +61,17 @@ services:
         internal:
         default:
   
-#  ddinviter: 
-#    build: dd-inviter 
-#    user: root
-#    restart: always
-#    environment: 
-#      - CTFD_TOKEN=
-#    depends_on: 
-#      - ctfd
-#    networks: 
-#      default: 
-#      internal:
+  ddinviter: 
+    build: dd-inviter 
+    user: root
+    restart: always
+    environment: 
+      - CTFD_TOKEN=
+    depends_on: 
+      - ctfd
+    networks: 
+      default: 
+      internal:
 
 networks:
     default:
