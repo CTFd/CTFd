@@ -1,0 +1,4 @@
+{
+    "name": "Datadog logs plugin",
+    "route": "/admin/datadog-logs"
+}
