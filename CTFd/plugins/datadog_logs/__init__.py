@@ -38,21 +38,8 @@ def load(app: Flask):
             hint = get_hint_by_id(result.json['data']['target'])
             challenge = get_challenge_by_id(hint.challenge_id)
             
-            payload = {
-                "source": "ctfd",
-                "event": ctfd_config.ctf_name,
-                "type": "hint",
-                "success": result.json['success'], 
-                "challenge": challenge.name,
-                "category": challenge.category,
-                "team": "" if team is None else team.name,
-                "user": user.name,
-                "points": hint.cost*-1,
-                "msg": "Player " + user.name + " just traded " + str(hint.cost) + " points for a hint on challenge " + challenge.name
-            }
-
-            print(json.dumps(payload))
-            log_to_dd(payload, app.config["DD_API_KEY"])
+            message = "source=ctfd, event=" + ctfd_config.ctf_name() + ",type=hint,success="+str(result.json['success'])+",challenge="+challenge.name+",category="+challenge.category+",team="+team.name+",user="+user.name+"points="+str(hint.cost*-1)+",msg=Player " + user.name + " just traded " + str(hint.cost) + " points for a hint on challenge " + challenge.name
+            log("submissions", message)
 
             return result
         
@@ -76,43 +63,14 @@ def load(app: Flask):
                 return result # nothing we can do
             
             if result.json['data']['status'] == "incorrect": 
-                payload = {
-                    "source": "ctfd",
-                    "event": ctfd_config.ctf_name.__name__,
-                    "type": "challenge",
-                    "status": "incorrect", 
-                    "challenge": challenge.name,
-                    "category": challenge.category,
-                    "team": "" if team is None else team.name,
-                    "user": user.name,
-                    "points": 0,
-                    "msg": "Team '" + team.name + "' provided an incorrect answer for challenge '" + challenge.name + "'"
-                }
-                print(json.dumps(payload))
+                message = "source=ctfd, event=" + ctfd_config.ctf_name() + ",type=challenge,status=incorrect,challenge="+challenge.name+",category="+challenge.category+",team="+team.name+",user="+user.name+"points=0,msg=Team '" + team.name + "' provided an incorrect answer for challenge '" + challenge.name + "'"
+                log("submissions", message)
 
-                log_to_dd(payload, app.config["DD_API_KEY"])
             elif result.json['data']['status'] == "correct": # there is also already_solve so we need to be precise
                 num_solves = get_solvers_count_for_challenge(challenge)
-                position = ""
-                if num_solves == 0: 
-                    position = str(num_solves) + "st"
-                else: 
-                    position = str(num_solves) + "th"
 
-                payload = {
-                    "source": "ctfd",
-                    "event": ctfd_config.ctf_name.__name__,
-                    "type": "challenge",
-                    "status": "correct", 
-                    "challenge": challenge.name,
-                    "category": challenge.category,
-                    "team": "" if team is None else team.name,
-                    "user": user.name,
-                    "points": challenge.value,
-                    "msg": "Team '" + team.name + "' is the " + position + " to solve challenge '" + challenge.name + "'"
-                }
-                print(json.dumps(payload))
-                log_to_dd(payload, app.config["DD_API_KEY"])
+                message = "source=ctfd, event=" + ctfd_config.ctf_name() + ",type=challenge,status=correct,challenge="+challenge.name+",category="+challenge.category+",team="+team.name+",user="+user.name+"points="+str(challenge.value)+",msg=Team '" + team.name + "' is the " + str(num_solves) + " to solve challenge '" + challenge.name + "'"
+                log("submissions", message)
 
             return result
 
