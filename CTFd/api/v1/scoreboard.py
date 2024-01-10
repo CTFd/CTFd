@@ -52,6 +52,8 @@ class ScoreboardList(Resource):
                         "oauth_id": u.oauth_id,
                         "name": u.name,
                         "score": 0,
+                        "bracket_id": u.bracket_id,
+                        "bracket_name": u.bracket_name,
                     }
 
             # Get user_standings as a dict so that we can more quickly get member scores
@@ -68,6 +70,8 @@ class ScoreboardList(Resource):
                 "oauth_id": x.oauth_id,
                 "name": x.name,
                 "score": int(x.score),
+                "bracket_id": x.bracket_id,
+                "bracket_name": x.bracket_name,
             }
 
             if mode == TEAMS_MODE:

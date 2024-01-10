@@ -25,6 +25,7 @@ from CTFd.api.v1.tokens import tokens_namespace
 from CTFd.api.v1.topics import topics_namespace
 from CTFd.api.v1.unlocks import unlocks_namespace
 from CTFd.api.v1.users import users_namespace
+from CTFd.api.v1.brackets import brackets_namespace
 
 api = Blueprint("api", __name__, url_prefix="/api/v1")
 CTFd_API_v1 = Api(
@@ -73,3 +74,4 @@ CTFd_API_v1.add_namespace(unlocks_namespace, "/unlocks")
 CTFd_API_v1.add_namespace(tokens_namespace, "/tokens")
 CTFd_API_v1.add_namespace(comments_namespace, "/comments")
 CTFd_API_v1.add_namespace(shares_namespace, "/shares")
+CTFd_API_v1.add_namespace(brackets_namespace, "/brackets")

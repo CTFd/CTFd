@@ -355,7 +355,7 @@ class Users(db.Model):
     website = db.Column(db.String(128))
     affiliation = db.Column(db.String(128))
     country = db.Column(db.String(32))
-    bracket = db.Column(db.String(32))
+    bracket_id = db.Column(db.Integer, db.ForeignKey("brackets.id", ondelete="SET NULL"))
     hidden = db.Column(db.Boolean, default=False)
     banned = db.Column(db.Boolean, default=False)
     verified = db.Column(db.Boolean, default=False)
@@ -1070,3 +1070,12 @@ class TeamFieldEntries(FieldEntries):
     team = db.relationship(
         "Teams", foreign_keys="TeamFieldEntries.team_id", back_populates="field_entries"
     )
+
+
+class Brackets(db.Model):
+    __tablename__ = "brackets"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    description = db.Column(db.Text)
+    for_users = db.Column(db.Boolean)
+    for_teams = db.Column(db.Boolean)
