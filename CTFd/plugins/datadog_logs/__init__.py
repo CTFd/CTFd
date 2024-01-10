@@ -38,7 +38,7 @@ def load(app: Flask):
             hint = get_hint_by_id(result.json['data']['target'])
             challenge = get_challenge_by_id(hint.challenge_id)
             
-            message = "source=ctfd, event=" + ctfd_config.ctf_name() + ",type=hint,success="+str(result.json['success'])+",challenge="+challenge.name+",category="+challenge.category+",team="+team.name+",user="+user.name+"points="+str(hint.cost*-1)+",msg=Player " + user.name + " just traded " + str(hint.cost) + " points for a hint on challenge " + challenge.name
+            message = "source=ctfd, event=" + ctfd_config.ctf_name() + ",type=hint,success="+str(result.json['success'])+",challenge="+challenge.name+",category='"+challenge.category+"',team="+team.name+",user="+user.name+",points="+str(hint.cost*-1)+",msg=Player " + user.name + " just traded " + str(hint.cost) + " points for a hint on challenge " + challenge.name
             log("submissions", message)
 
             return result
