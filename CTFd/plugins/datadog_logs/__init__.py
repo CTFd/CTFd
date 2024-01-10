@@ -133,8 +133,7 @@ def set_default_plugin_config(app: Flask):
     
 
 def is_plugin_configured(app: Flask) -> bool:
-    return app.config["DD_API_KEY"] != ""
-
+    return True
 
 def validate_url(url: str) -> bool:
     try:
