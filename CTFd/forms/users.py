@@ -201,7 +201,7 @@ def UserEditForm(*args, **kwargs):
                 include_entries=True,
                 fields_kwargs=None,
                 field_entries_kwargs={"user_id": self.obj.id},
-            )
+            ) + build_user_bracket_field(self, value=self.obj.bracket_id)
 
         def __init__(self, *args, **kwargs):
             """
@@ -213,6 +213,7 @@ def UserEditForm(*args, **kwargs):
                 self.obj = obj
 
     attach_custom_user_fields(_UserEditForm)
+    attach_user_bracket_field(_UserEditForm)
 
     return _UserEditForm(*args, **kwargs)
 
@@ -223,8 +224,11 @@ def UserCreateForm(*args, **kwargs):
 
         @property
         def extra(self):
-            return build_custom_user_fields(self, include_entries=False)
+            return build_custom_user_fields(
+                self, include_entries=False
+            ) + build_user_bracket_field(self)
 
     attach_custom_user_fields(_UserCreateForm)
+    attach_user_bracket_field(_UserCreateForm)
 
     return _UserCreateForm(*args, **kwargs)
