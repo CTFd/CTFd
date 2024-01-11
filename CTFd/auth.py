@@ -268,7 +268,7 @@ def register():
         if bracket_id:
             valid_bracket = bool(Brackets.query.filter_by(id=bracket_id).first())
         else:
-            if Brackets.query.count():
+            if Brackets.query.filter_by(for_users=True).count():
                 valid_bracket = False
             else:
                 valid_bracket = True
