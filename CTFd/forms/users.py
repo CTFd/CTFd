@@ -112,10 +112,11 @@ def attach_registration_code_field(form_cls):
         )
 
 
-def build_user_bracket_field(form_cls):
+def build_user_bracket_field(form_cls, value=None):
     field = getattr(form_cls, "bracket_id")  # noqa B009
     if field:
         field.field_type = "select"
+        field.process_data(value)
         return [field]
     else:
         return []
@@ -124,7 +125,7 @@ def build_user_bracket_field(form_cls):
 def attach_user_bracket_field(form_cls):
     brackets = Brackets.query.filter_by(for_users=True).all()
     if brackets:
-        choices = [
+        choices = [("", "")] + [
             (bracket.id, f"{bracket.name} - {bracket.description}")
             for bracket in brackets
         ]
