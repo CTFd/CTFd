@@ -454,7 +454,9 @@ class Users(db.Model):
             .filter_by(user_id=self.id)
             .all()
         }
-        return required_user_fields.issubset(submitted_user_fields)
+        # Require that users select a bracket
+        missing_bracket = Brackets.query.count() and self.bracket_id is not None
+        return required_user_fields.issubset(submitted_user_fields) and missing_bracket
 
     def get_fields(self, admin=False):
         if admin:
