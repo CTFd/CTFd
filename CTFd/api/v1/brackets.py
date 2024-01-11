@@ -4,7 +4,7 @@ from flask_restx import Namespace, Resource
 from CTFd.models import Brackets, db
 from CTFd.schemas.brackets import BracketSchema
 from CTFd.utils import get_config
-from CTFd.utils.decorators import authed_only, admins_only
+from CTFd.utils.decorators import admins_only, authed_only
 from CTFd.utils.social import get_social_share
 from CTFd.utils.user import get_current_user_attrs
 
@@ -20,7 +20,7 @@ class BracketList(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
         return {"success": True, "data": response.data}
-    
+
     @admins_only
     def post(self):
         req = request.get_json()
@@ -37,7 +37,7 @@ class BracketList(Resource):
         db.session.close()
 
         return {"success": True, "data": response.data}
-    
+
 
 @brackets_namespace.route("/<int:bracket_id>")
 class Bracket(Resource):
@@ -67,4 +67,3 @@ class Bracket(Resource):
         db.session.close()
 
         return {"success": True}
-        

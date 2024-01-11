@@ -2,6 +2,7 @@ from flask import Blueprint, current_app
 from flask_restx import Api
 
 from CTFd.api.v1.awards import awards_namespace
+from CTFd.api.v1.brackets import brackets_namespace
 from CTFd.api.v1.challenges import challenges_namespace
 from CTFd.api.v1.comments import comments_namespace
 from CTFd.api.v1.config import configs_namespace
@@ -25,7 +26,6 @@ from CTFd.api.v1.tokens import tokens_namespace
 from CTFd.api.v1.topics import topics_namespace
 from CTFd.api.v1.unlocks import unlocks_namespace
 from CTFd.api.v1.users import users_namespace
-from CTFd.api.v1.brackets import brackets_namespace
 
 api = Blueprint("api", __name__, url_prefix="/api/v1")
 CTFd_API_v1 = Api(

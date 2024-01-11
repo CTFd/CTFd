@@ -7,7 +7,7 @@ from CTFd.constants.config import Configs
 from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.models import UserFieldEntries, UserFields
+from CTFd.models import Brackets, UserFieldEntries, UserFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
 
@@ -110,6 +110,31 @@ def attach_registration_code_field(form_cls):
                 validators=[InputRequired()],
             ),
         )
+
+
+def build_user_bracket_field(form_cls):
+    field = getattr(form_cls, "bracket_id")  # noqa B009
+    if field:
+        field.field_type = "select"
+        return [field]
+    else:
+        return []
+
+
+def attach_user_bracket_field(form_cls):
+    brackets = Brackets.query.filter_by(for_users=True).all()
+    if brackets:
+        choices = [
+            (bracket.id, f"{bracket.name} - {bracket.description}")
+            for bracket in brackets
+        ]
+        select_field = SelectField(
+            "Bracket",
+            description="Competition bracket for your user",
+            choices=choices,
+            validators=[InputRequired()],
+        )
+        setattr(form_cls, "bracket_id", select_field)
 
 
 class UserSearchForm(BaseForm):

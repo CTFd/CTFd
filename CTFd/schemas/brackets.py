@@ -8,4 +8,3 @@ class BracketSchema(ma.ModelSchema):
         model = Brackets
         include_fk = True
         dump_only = ("id",)
-

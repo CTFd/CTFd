@@ -355,7 +355,9 @@ class Users(db.Model):
     website = db.Column(db.String(128))
     affiliation = db.Column(db.String(128))
     country = db.Column(db.String(32))
-    bracket_id = db.Column(db.Integer, db.ForeignKey("brackets.id", ondelete="SET NULL"))
+    bracket_id = db.Column(
+        db.Integer, db.ForeignKey("brackets.id", ondelete="SET NULL")
+    )
     hidden = db.Column(db.Boolean, default=False)
     banned = db.Column(db.Boolean, default=False)
     verified = db.Column(db.Boolean, default=False)
