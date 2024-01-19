@@ -65,8 +65,8 @@ def init_template_globals(app):
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
     from CTFd.constants.static import Static
-    from CTFd.constants.users import User
     from CTFd.constants.teams import Team
+    from CTFd.constants.users import User
     from CTFd.forms import Forms
     from CTFd.utils.config.visibility import (
         accounts_visible,
