@@ -533,8 +533,8 @@ class Users(db.Model):
         to no imports within the CTFd application as importing from the
         application itself will result in a circular import.
         """
-        from CTFd.utils.scores import get_user_standings  # noqa: I001
         from CTFd.utils.humanize.numbers import ordinalize
+        from CTFd.utils.scores import get_user_standings
 
         standings = get_user_standings(admin=admin)
 
@@ -659,7 +659,8 @@ class Teams(db.Model):
 
     def get_invite_code(self):
         from flask import current_app  # noqa: I001
-        from CTFd.utils.security.signing import serialize, hmac
+
+        from CTFd.utils.security.signing import hmac, serialize
 
         secret_key = current_app.config["SECRET_KEY"]
         if isinstance(secret_key, str):
@@ -678,13 +679,14 @@ class Teams(db.Model):
     @classmethod
     def load_invite_code(cls, code):
         from flask import current_app  # noqa: I001
-        from CTFd.utils.security.signing import (
-            unserialize,
-            hmac,
-            BadTimeSignature,
-            BadSignature,
-        )
+
         from CTFd.exceptions import TeamTokenExpiredException, TeamTokenInvalidException
+        from CTFd.utils.security.signing import (
+            BadSignature,
+            BadTimeSignature,
+            hmac,
+            unserialize,
+        )
 
         secret_key = current_app.config["SECRET_KEY"]
         if isinstance(secret_key, str):
@@ -776,8 +778,8 @@ class Teams(db.Model):
         to no imports within the CTFd application as importing from the
         application itself will result in a circular import.
         """
-        from CTFd.utils.scores import get_team_standings  # noqa: I001
         from CTFd.utils.humanize.numbers import ordinalize
+        from CTFd.utils.scores import get_team_standings  # noqa: I001
 
         standings = get_team_standings(admin=admin)
 
