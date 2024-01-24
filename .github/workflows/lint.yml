@@ -42,3 +42,7 @@ jobs:
             python -m pip install docker-compose==1.26.0
             docker-compose -f docker-compose.yml config
 
+      - name: Lint translations
+        run: |
+          make translations-lint
+

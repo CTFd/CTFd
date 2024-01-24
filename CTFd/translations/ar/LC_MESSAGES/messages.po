@@ -290,9 +290,9 @@ msgid_plural "%(num)d Solves"
 msgstr[0] "لا توجد حلول"
 msgstr[1] "حل واحد"
 msgstr[2] "حلين"
-msgstr[3] "%(num) حل"
-msgstr[4] "%(num) حل"
-msgstr[5] "%(num) حل"
+msgstr[3] "%(num)d حل"
+msgstr[4] "%(num)d حل"
+msgstr[5] "%(num)d حل"
 
 #: CTFd/themes/core-beta/templates/challenge.html:73
 msgid "View Hint"

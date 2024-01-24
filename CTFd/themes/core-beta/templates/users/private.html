@@ -57,8 +57,8 @@
           {% endif %}
         </h2>
         <h2 class="text-center">
-          {% if account.place %}
-            {{ account.score }} <small>points</small>
+          {% if account %}
+            {{ account.get_score(admin=True) }} <small>points</small>
           {% endif %}
         </h2>
       </div>
