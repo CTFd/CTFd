@@ -28,33 +28,18 @@
             class="form-control"
             v-model.lazy="bracket.description"
           />
-          <small id="emailHelp" class="form-text text-muted"
-            >Bracket Description</small
-          >
+          <small class="form-text text-muted">Bracket Description</small>
         </div>
       </div>
 
       <div class="col-md-12">
-        <div class="form-check">
-          <label class="form-check-label">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              v-model.lazy="bracket.for_users"
-            />
-            For Users
-          </label>
-        </div>
-        <div class="form-check">
-          <label class="form-check-label">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              v-model.lazy="bracket.for_teams"
-            />
-            For Teams
-          </label>
-        </div>
+        <label>Bracket Type</label>
+        <select class="custom-select" v-model.lazy="bracket.type">
+          <option></option>
+          <option value="users">Users</option>
+          <option value="teams">Teams</option>
+        </select>
+        <small class="form-text text-muted">Bracket Type</small>
       </div>
     </div>
 

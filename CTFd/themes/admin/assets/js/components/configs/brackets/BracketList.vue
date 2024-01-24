@@ -58,8 +58,7 @@
           id: Math.random(),
           name: "",
           description: "",
-          for_users: false,
-          for_teams: false,
+          type: null,
         });
       },
       removeBracket: function(index) {
