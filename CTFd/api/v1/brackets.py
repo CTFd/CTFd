@@ -1,10 +1,13 @@
 from flask import abort, request
 from flask_restx import Namespace, Resource
 
+from CTFd.api.v1.helpers.request import validate_args
+from CTFd.constants import RawEnum
 from CTFd.models import Brackets, db
 from CTFd.schemas.brackets import BracketSchema
 from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only, authed_only
+from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.social import get_social_share
 from CTFd.utils.user import get_current_user_attrs
 
@@ -13,8 +16,28 @@ brackets_namespace = Namespace("brackets", description="Endpoint to retrieve Bra
 
 @brackets_namespace.route("")
 class BracketList(Resource):
-    def get(self):
-        brackets = Brackets.query.all()
+    @validate_args(
+        {
+            "name": (str, None),
+            "description": (str, None),
+            "type": (str, None),
+            "q": (str, None),
+            "field": (
+                RawEnum(
+                    "BracketFields",
+                    {"name": "name", "description": "description", "type": "type"},
+                ),
+                None,
+            ),
+        },
+        location="query",
+    )
+    def get(self, query_args):
+        q = query_args.pop("q", None)
+        field = str(query_args.pop("field", None))
+        filters = build_model_filters(model=Brackets, query=q, field=field)
+
+        brackets = Brackets.query.filter_by(**query_args).filter(*filters).all()
         schema = BracketSchema(many=True)
         response = schema.dump(brackets)
         if response.errors:

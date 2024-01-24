@@ -4,7 +4,7 @@ from flask_restx import Namespace, Resource
 from sqlalchemy import select
 
 from CTFd.cache import cache, make_cache_key
-from CTFd.models import Awards, Solves, Users, db
+from CTFd.models import Awards, Brackets, Solves, Users, db
 from CTFd.utils import get_config
 from CTFd.utils.dates import isoformat, unix_time_to_utc
 from CTFd.utils.decorators.visibility import (
@@ -40,8 +40,12 @@ class ScoreboardList(Resource):
                         Users.team_id,
                         Users.hidden,
                         Users.banned,
+                        Users.bracket_id,
+                        Brackets.name.label("bracket_name"),
                     ]
-                ).where(Users.team_id.isnot(None))
+                )
+                .where(Users.team_id.isnot(None))
+                .join(Brackets, Users.bracket_id == Brackets.id, isouter=True)
             )
             users = r.fetchall()
             membership = defaultdict(dict)

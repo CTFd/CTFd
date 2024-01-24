@@ -200,7 +200,7 @@ class UserSchema(ma.ModelSchema):
 
         current_user = get_current_user()
         if is_admin():
-            bracket = Brackets.query.filter_by(id=bracket_id).first()
+            bracket = Brackets.query.filter_by(id=bracket_id, type="users").first()
             if bracket is None:
                 ValidationError(
                     "Please provide a valid bracket id", field_names=["bracket_id"]
@@ -210,7 +210,7 @@ class UserSchema(ma.ModelSchema):
                 current_user.bracket_id == int(bracket_id)
                 or current_user.bracket_id is None
             ):
-                bracket = Brackets.query.filter_by(id=bracket_id).first()
+                bracket = Brackets.query.filter_by(id=bracket_id, type="users").first()
                 if bracket is None:
                     ValidationError(
                         "Please provide a valid bracket id", field_names=["bracket_id"]

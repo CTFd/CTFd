@@ -123,7 +123,7 @@ def build_user_bracket_field(form_cls, value=None):
 
 
 def attach_user_bracket_field(form_cls):
-    brackets = Brackets.query.filter_by(for_users=True).all()
+    brackets = Brackets.query.filter_by(type="users").all()
     if brackets:
         choices = [("", "")] + [
             (bracket.id, f"{bracket.name} - {bracket.description}")
