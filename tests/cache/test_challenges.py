@@ -61,8 +61,8 @@ def test_deleting_challenge_clears_cache_solves():
             challenge = data[0]
             assert challenge["solves"] == 1
             from CTFd.utils.challenges import (  # noqa: I001
-                get_solves_for_challenge_id,
                 get_solve_counts_for_challenges,
+                get_solves_for_challenge_id,
             )
 
             solves = get_solves_for_challenge_id(1)
@@ -101,8 +101,8 @@ def test_deleting_solve_clears_cache():
             challenge = data[0]
             assert challenge["solves"] == 1
             from CTFd.utils.challenges import (  # noqa: I001
-                get_solves_for_challenge_id,
                 get_solve_counts_for_challenges,
+                get_solves_for_challenge_id,
             )
 
             solves = get_solves_for_challenge_id(1)
