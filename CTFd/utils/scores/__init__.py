@@ -1,7 +1,7 @@
 from sqlalchemy.sql.expression import union_all
 
 from CTFd.cache import cache
-from CTFd.models import Awards, Challenges, Solves, Teams, Users, db
+from CTFd.models import Awards, Brackets, Challenges, Solves, Teams, Users, db
 from CTFd.utils import get_config
 from CTFd.utils.dates import unix_time_to_utc
 from CTFd.utils.modes import get_model
@@ -85,12 +85,15 @@ def get_standings(count=None, admin=False, fields=None):
                 Model.id.label("account_id"),
                 Model.oauth_id.label("oauth_id"),
                 Model.name.label("name"),
+                Model.bracket_id.label("bracket_id"),
+                Brackets.name.label("bracket_name"),
                 Model.hidden,
                 Model.banned,
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Model.id == sumscores.columns.account_id)
+            .join(Brackets, isouter=True)
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
@@ -103,10 +106,13 @@ def get_standings(count=None, admin=False, fields=None):
                 Model.id.label("account_id"),
                 Model.oauth_id.label("oauth_id"),
                 Model.name.label("name"),
+                Model.bracket_id.label("bracket_id"),
+                Brackets.name.label("bracket_name"),
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Model.id == sumscores.columns.account_id)
+            .join(Brackets, isouter=True)
             .filter(Model.banned == False, Model.hidden == False)
             .order_by(
                 sumscores.columns.score.desc(),

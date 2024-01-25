@@ -80,16 +80,19 @@ export default {
   },
   methods: {
     loadHints: async function() {
-      let result = await CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/hints`, {
-        method: "GET",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
+      let result = await CTFd.fetch(
+        `/api/v1/challenges/${this.$props.challenge_id}/hints`,
+        {
+          method: "GET",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          }
         }
-      })
-      let response = await result.json()
-      this.hints = response.data; 
+      );
+      let response = await result.json();
+      this.hints = response.data;
       return response.success;
     },
     addHint: function() {
@@ -102,7 +105,7 @@ export default {
       $(modal).modal();
     },
     refreshHints: function(caller) {
-      this.loadHints().then((success) => {
+      this.loadHints().then(success => {
         if (success) {
           let modal;
           switch (caller) {
@@ -117,9 +120,11 @@ export default {
               break;
             default:
               break;
-            }
+          }
         } else {
-          alert("An error occurred while updating this hint. Please try again.")
+          alert(
+            "An error occurred while updating this hint. Please try again."
+          );
         }
       });
     },
