@@ -266,12 +266,11 @@ def register():
             valid_affiliation = True
 
         if bracket_id:
-            valid_bracket = bool(Brackets.query.filter_by(id=bracket_id).first())
+            valid_bracket = Brackets.query.filter_by(
+                id=bracket_id, type="users"
+            ).first()
         else:
-            if Brackets.query.filter_by(type="users").count():
-                valid_bracket = False
-            else:
-                valid_bracket = True
+            valid_bracket = False
 
         if not valid_email:
             errors.append("Please enter a valid email address")

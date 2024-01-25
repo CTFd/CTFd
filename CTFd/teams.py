@@ -266,12 +266,11 @@ def new():
             valid_affiliation = True
 
         if bracket_id:
-            valid_bracket = bool(Brackets.query.filter_by(id=bracket_id).first())
+            valid_bracket = Brackets.query.filter_by(
+                id=bracket_id, type="teams"
+            ).first()
         else:
-            if Brackets.query.filter_by(type="teams").count():
-                valid_bracket = False
-            else:
-                valid_bracket = True
+            valid_bracket = False
 
         if country:
             try:
