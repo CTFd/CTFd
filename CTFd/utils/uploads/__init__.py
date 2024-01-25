@@ -44,10 +44,11 @@ def upload_file(*args, **kwargs):
         model = PageFiles
         model_args["page_id"] = page_id
 
+    # Hash is calculated before upload since S3 file upload closes file object
+    sha1sum = hash_file(fp=file_obj)
+
     uploader = get_uploader()
     location = uploader.upload(file_obj=file_obj, filename=filename, path=parent)
-
-    sha1sum = hash_file(fp=file_obj)
 
     model_args["location"] = location
     model_args["sha1sum"] = sha1sum
