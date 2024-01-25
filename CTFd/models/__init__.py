@@ -541,7 +541,7 @@ class Users(db.Model):
         application itself will result in a circular import.
         """
         from CTFd.utils.humanize.numbers import ordinalize
-        from CTFd.utils.scores import get_user_standings  # noqa: I001
+        from CTFd.utils.scores import get_user_standings
 
         standings = get_user_standings(admin=admin)
 
