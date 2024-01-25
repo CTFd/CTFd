@@ -135,7 +135,7 @@ def attach_user_bracket_field(form_cls):
             choices=choices,
             validators=[InputRequired()],
         )
-        setattr(form_cls, "bracket_id", select_field)
+        setattr(form_cls, "bracket_id", select_field)  # noqa B010
 
 
 class UserSearchForm(BaseForm):

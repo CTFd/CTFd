@@ -1,15 +1,12 @@
-from flask import abort, request
+from flask import request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.constants import RawEnum
 from CTFd.models import Brackets, db
 from CTFd.schemas.brackets import BracketSchema
-from CTFd.utils import get_config
-from CTFd.utils.decorators import admins_only, authed_only
+from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
-from CTFd.utils.social import get_social_share
-from CTFd.utils.user import get_current_user_attrs
 
 brackets_namespace = Namespace("brackets", description="Endpoint to retrieve Brackets")
 

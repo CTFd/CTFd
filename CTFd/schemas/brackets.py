@@ -1,5 +1,3 @@
-from marshmallow import fields
-
 from CTFd.models import Brackets, ma
 
 
