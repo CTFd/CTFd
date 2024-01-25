@@ -206,7 +206,7 @@ def register():
         affiliation = request.form.get("affiliation")
         country = request.form.get("country")
         registration_code = str(request.form.get("registration_code", ""))
-        bracket_id = request.form.get("bracket_id", "")
+        bracket_id = request.form.get("bracket_id", None)
 
         name_len = len(name) == 0
         names = (
@@ -266,11 +266,14 @@ def register():
             valid_affiliation = True
 
         if bracket_id:
-            valid_bracket = Brackets.query.filter_by(
-                id=bracket_id, type="users"
-            ).first()
+            valid_bracket = bool(
+                Brackets.query.filter_by(id=bracket_id, type="users").first()
+            )
         else:
-            valid_bracket = False
+            if Brackets.query.filter_by(type="users").count():
+                valid_bracket = False
+            else:
+                valid_bracket = True
 
         if not valid_email:
             errors.append("Please enter a valid email address")

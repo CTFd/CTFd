@@ -228,7 +228,7 @@ def new():
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
         country = request.form.get("country")
-        bracket_id = request.form.get("bracket_id", "")
+        bracket_id = request.form.get("bracket_id", None)
 
         user = get_current_user()
 
@@ -266,11 +266,14 @@ def new():
             valid_affiliation = True
 
         if bracket_id:
-            valid_bracket = Brackets.query.filter_by(
-                id=bracket_id, type="teams"
-            ).first()
+            valid_bracket = bool(
+                Brackets.query.filter_by(id=bracket_id, type="teams").first()
+            )
         else:
-            valid_bracket = False
+            if Brackets.query.filter_by(type="teams").count():
+                valid_bracket = False
+            else:
+                valid_bracket = True
 
         if country:
             try:
