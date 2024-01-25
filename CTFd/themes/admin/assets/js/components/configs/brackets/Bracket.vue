@@ -81,17 +81,17 @@ export default {
     },
     saveBracket: function() {
       let body = this.bracket;
-      let url = ""
-      let method = ""
-      let message = ""
+      let url = "";
+      let method = "";
+      let message = "";
       if (this.persisted()) {
         url = `/api/v1/brackets/${this.bracket.id}`;
         method = "PATCH";
-        message = "Bracket has been updated!"
+        message = "Bracket has been updated!";
       } else {
         url = `/api/v1/brackets`;
-        method = "POST"
-        message = "Bracket has been created!"
+        method = "POST";
+        message = "Bracket has been created!";
       }
       CTFd.fetch(url, {
         method: method,

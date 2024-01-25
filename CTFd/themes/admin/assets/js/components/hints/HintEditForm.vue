@@ -173,7 +173,7 @@ export default {
     getContent: function() {
       this._forceRefresh();
       let editor = this.$refs.content;
-      return editor.mde.codemirror.getDoc().getValue()
+      return editor.mde.codemirror.getDoc().getValue();
     },
     updateHint: function() {
       let params = {
