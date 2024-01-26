@@ -1,4 +1,4 @@
-FROM python:3.9-slim-bookworm as build
+FROM python:3.11-slim-bookworm as build
 
 WORKDIR /opt/CTFd
 
