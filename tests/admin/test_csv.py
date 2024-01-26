@@ -135,7 +135,7 @@ challenge1,category1,description1,100,"[{""type"": ""static"", ""content"": ""fl
         assert f.content == "(.*)"
         assert f.data == "case_insensitive"
 
-        f = Flags.query.filter_by(id=2).first()
+        f = Flags.query.filter_by(id=3).first()
         assert f.type == "static"
         assert f.content == "flag3"
         assert f.data is None
