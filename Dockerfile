@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir -r requirements.txt \
     done;
 
 
-FROM python:3.9-slim-bookworm as release
+FROM python:3.11-slim-bookworm as release
 WORKDIR /opt/CTFd
 
 # hadolint ignore=DL3008
