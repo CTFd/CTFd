@@ -20,7 +20,7 @@ from CTFd.utils.config import (
     is_setup,
 )
 from CTFd.utils.config.pages import get_pages
-from CTFd.utils.dates import isoformat, unix_time, unix_time_millis
+from CTFd.utils.dates import isoformat, unix_time, unix_time_millis, unix_time_to_utc
 from CTFd.utils.events import EventManager, RedisEventManager
 from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.modes import generate_account_url, get_mode_as_word
@@ -53,6 +53,7 @@ def init_template_filters(app):
     app.jinja_env.filters["markdown"] = markdown
     app.jinja_env.filters["unix_time"] = unix_time
     app.jinja_env.filters["unix_time_millis"] = unix_time_millis
+    app.jinja_env.filters["unix_time_to_utc"] = unix_time_to_utc
     app.jinja_env.filters["isoformat"] = isoformat
     app.jinja_env.filters["pluralize"] = pluralize
 
@@ -64,8 +65,8 @@ def init_template_globals(app):
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
     from CTFd.constants.static import Static
-    from CTFd.constants.users import User
     from CTFd.constants.teams import Team
+    from CTFd.constants.users import User
     from CTFd.forms import Forms
     from CTFd.utils.config.visibility import (
         accounts_visible,
