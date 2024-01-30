@@ -212,6 +212,8 @@ class ServerConfig(object):
 
         AWS_S3_CUSTOM_DOMAIN: str = empty_str_cast(config_ini["uploads"].get("AWS_S3_CUSTOM_DOMAIN", ""))
 
+        AWS_S3_CUSTOM_PREFIX: str = empty_str_cast(config_ini["uploads"].get("AWS_S3_CUSTOM_PREFIX", ""))
+
         AWS_S3_ADDRESSING_STYLE: str = empty_str_cast(config_ini["uploads"].get("AWS_S3_ADDRESSING_STYLE", ""), default="auto")
 
     # === OPTIONAL ===
