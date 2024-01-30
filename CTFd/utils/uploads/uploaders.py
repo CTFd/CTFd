@@ -54,13 +54,20 @@ class FilesystemUploader(BaseUploader):
 
         return filename
 
-    def upload(self, file_obj, filename):
+    def upload(self, file_obj, filename, path=None):
         if len(filename) == 0:
             raise Exception("Empty filenames cannot be used")
 
+        # Sanitize directory name
+        if path:
+            path = secure_filename(path) or hexencode(os.urandom(16))
+            path = path.replace(".", "")
+        else:
+            path = hexencode(os.urandom(16))
+
+        # Sanitize file name
         filename = secure_filename(filename)
-        md5hash = hexencode(os.urandom(16))
-        file_path = posixpath.join(md5hash, filename)
+        file_path = posixpath.join(path, filename)
 
         return self.store(file_obj, file_path)
 
@@ -83,6 +90,11 @@ class S3Uploader(BaseUploader):
         super(BaseUploader, self).__init__()
         self.s3 = self._get_s3_connection()
         self.bucket = get_app_config("AWS_S3_BUCKET")
+        # If the custom prefix is provided, add a slash if it's missing
+        custom_prefix = get_app_config("AWS_S3_CUSTOM_PREFIX")
+        if custom_prefix and custom_prefix.endswith("/") is False:
+            custom_prefix += "/"
+        self.s3_prefix: str = custom_prefix
 
     def _get_s3_connection(self):
         access_key = get_app_config("AWS_ACCESS_KEY_ID")
@@ -107,10 +119,23 @@ class S3Uploader(BaseUploader):
             return True
 
     def store(self, fileobj, filename):
+        if self.s3_prefix:
+            filename = self.s3_prefix + filename
         self.s3.upload_fileobj(fileobj, self.bucket, filename)
         return filename
 
-    def upload(self, file_obj, filename):
+    def upload(self, file_obj, filename, path=None):
+        # Sanitize directory name
+        if path:
+            path = secure_filename(path) or hexencode(os.urandom(16))
+            path = path.replace(".", "")
+            # Sanitize path
+            path = filter(self._clean_filename, secure_filename(path).replace(" ", "_"))
+            path = "".join(path)
+        else:
+            path = hexencode(os.urandom(16))
+
+        # Sanitize file name
         filename = filter(
             self._clean_filename, secure_filename(filename).replace(" ", "_")
         )
@@ -118,10 +143,11 @@ class S3Uploader(BaseUploader):
         if len(filename) <= 0:
             return False
 
-        md5hash = hexencode(os.urandom(16))
-
-        dst = md5hash + "/" + filename
-        self.s3.upload_fileobj(file_obj, self.bucket, dst)
+        dst = path + "/" + filename
+        s3_dst = dst
+        if self.s3_prefix:
+            s3_dst = self.s3_prefix + dst
+        self.s3.upload_fileobj(file_obj, self.bucket, s3_dst)
         return dst
 
     def download(self, filename):
@@ -129,6 +155,8 @@ class S3Uploader(BaseUploader):
         # We round the timestamp down to the previous hour and generate the link at that time
         current_timestamp = int(time.time())
         truncated_timestamp = current_timestamp - (current_timestamp % 3600)
+        if self.s3_prefix:
+            filename = self.s3_prefix + filename
         key = filename
         filename = filename.split("/").pop()
         with freeze_time(datetime.datetime.utcfromtimestamp(truncated_timestamp)):
@@ -152,19 +180,29 @@ class S3Uploader(BaseUploader):
         return redirect(url)
 
     def delete(self, filename):
+        if self.s3_prefix:
+            filename = self.s3_prefix + filename
         self.s3.delete_object(Bucket=self.bucket, Key=filename)
         return True
 
     def sync(self):
         local_folder = current_app.config.get("UPLOAD_FOLDER")
         # If the bucket is empty then Contents will not be in the response
-        bucket_list = self.s3.list_objects(Bucket=self.bucket).get("Contents", [])
+        if self.s3_prefix:
+            bucket_list = self.s3.list_objects(
+                Bucket=self.bucket, Prefix=self.s3_prefix
+            ).get("Contents", [])
+        else:
+            bucket_list = self.s3.list_objects(Bucket=self.bucket).get("Contents", [])
 
         for s3_key in bucket_list:
             s3_object = s3_key["Key"]
             # We don't want to download any directories
             if s3_object.endswith("/") is False:
-                local_path = os.path.join(local_folder, s3_object)
+                local_s3_object = s3_object
+                if self.s3_prefix:
+                    local_s3_object = local_s3_object.removeprefix(self.s3_prefix)
+                local_path = os.path.join(local_folder, local_s3_object)
                 directory = os.path.dirname(local_path)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
