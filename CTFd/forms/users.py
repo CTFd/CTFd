@@ -88,7 +88,7 @@ def build_registration_code_field(form_cls):
     Add field_type so Jinja knows how to render it.
     """
     if Configs.registration_code:
-        field = getattr(form_cls, "registration_code")  # noqa B009
+        field = getattr(form_cls, "registration_code", None)  # noqa B009
         field.field_type = "text"
         return [field]
     else:
@@ -113,7 +113,7 @@ def attach_registration_code_field(form_cls):
 
 
 def build_user_bracket_field(form_cls, value=None):
-    field = getattr(form_cls, "bracket_id")  # noqa B009
+    field = getattr(form_cls, "bracket_id", None)  # noqa B009
     if field:
         field.field_type = "select"
         field.process_data(value)

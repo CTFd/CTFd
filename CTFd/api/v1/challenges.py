@@ -660,9 +660,7 @@ class ChallengeAttempt(Resource):
                 if max_tries:
                     # Off by one since fails has changed since it was gotten
                     attempts_left = max_tries - fails - 1
-                    tries_str = pluralize(
-                        attempts_left, singular="try", pluralize="tries"
-                    )
+                    tries_str = pluralize(attempts_left, singular="try", plural="tries")
                     # Add a punctuation mark if there isn't one
                     if message[-1] not in "!().;?[]{}":
                         message = message + "."

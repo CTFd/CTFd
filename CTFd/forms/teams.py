@@ -11,7 +11,7 @@ from CTFd.utils.user import get_current_team
 
 
 def build_team_bracket_field(form_cls, value=None):
-    field = getattr(form_cls, "bracket_id")  # noqa B009
+    field = getattr(form_cls, "bracket_id", None)  # noqa B009
     if field:
         field.field_type = "select"
         field.process_data(value)
