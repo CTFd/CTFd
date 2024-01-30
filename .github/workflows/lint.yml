@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.9']
+        python-version: ['3.11']
 
     name: Linting
     steps:

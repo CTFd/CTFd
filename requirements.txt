@@ -41,7 +41,7 @@ cmarkgfm==2022.10.27
     # via -r requirements.in
 cryptography==40.0.2
     # via pymysql
-dataset==1.5.2
+dataset==1.6.2
     # via -r requirements.in
 docutils==0.15.2
     # via botocore
