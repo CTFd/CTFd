@@ -90,7 +90,11 @@ class S3Uploader(BaseUploader):
         super(BaseUploader, self).__init__()
         self.s3 = self._get_s3_connection()
         self.bucket = get_app_config("AWS_S3_BUCKET")
-        self.s3_prefix: str = get_app_config("AWS_S3_CUSTOM_PREFIX")
+        # If the custom prefix is provided, add a slash if it's missing
+        custom_prefix = get_app_config("AWS_S3_CUSTOM_PREFIX")
+        if custom_prefix and custom_prefix.endswith("/") is False:
+            custom_prefix += "/"
+        self.s3_prefix: str = custom_prefix
 
     def _get_s3_connection(self):
         access_key = get_app_config("AWS_ACCESS_KEY_ID")
@@ -125,6 +129,7 @@ class S3Uploader(BaseUploader):
             path = path.replace(".", "")
             # Sanitize path
             path = filter(self._clean_filename, secure_filename(path).replace(" ", "_"))
+            path = "".join(path)
         else:
             path = hexencode(os.urandom(16))
 
