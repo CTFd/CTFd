@@ -197,7 +197,7 @@ class S3Uploader(BaseUploader):
             if s3_object.endswith("/") is False:
                 local_s3_object = s3_object
                 if self.s3_prefix:
-                    local_s3_object = local_s3_object.replace(self.s3_prefix, "", 1)
+                    local_s3_object = local_s3_object.removeprefix(self.s3_prefix)
                 local_path = os.path.join(local_folder, local_s3_object)
                 directory = os.path.dirname(local_path)
                 if not os.path.exists(directory):
