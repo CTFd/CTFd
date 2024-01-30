@@ -119,6 +119,8 @@ class S3Uploader(BaseUploader):
             return True
 
     def store(self, fileobj, filename):
+        if self.s3_prefix:
+            filename = self.s3_prefix + filename
         self.s3.upload_fileobj(fileobj, self.bucket, filename)
         return filename
 
@@ -178,6 +180,8 @@ class S3Uploader(BaseUploader):
         return redirect(url)
 
     def delete(self, filename):
+        if self.s3_prefix:
+            filename = self.s3_prefix + filename
         self.s3.delete_object(Bucket=self.bucket, Key=filename)
         return True
 
