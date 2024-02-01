@@ -85,7 +85,7 @@ class Pages(db.Model):
     hidden = db.Column(db.Boolean)
     auth_required = db.Column(db.Boolean)
     format = db.Column(db.String(80), default="markdown")
-    # TODO: Use hidden attribute
+    link_target = db.Column(db.String(80), nullable=True)
 
     files = db.relationship("PageFiles", backref="page")
 

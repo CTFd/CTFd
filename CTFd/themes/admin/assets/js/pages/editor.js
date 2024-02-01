@@ -22,6 +22,11 @@ function submit_form() {
     method = "PATCH";
   }
 
+  // Patch link_target to be null when empty string
+  if (params["link_target"] === "") {
+    params["link_target"] = null;
+  }
+
   CTFd.fetch(target, {
     method: method,
     credentials: "same-origin",
