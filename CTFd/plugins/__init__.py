@@ -106,7 +106,7 @@ def register_admin_plugin_stylesheet(*args, **kwargs):
     utils_register_admin_plugin_stylesheet(*args, **kwargs)
 
 
-def register_admin_plugin_menu_bar(title, route):
+def register_admin_plugin_menu_bar(title, route, link_target=None):
     """
     Registers links on the Admin Panel menubar/navbar
 
@@ -114,7 +114,7 @@ def register_admin_plugin_menu_bar(title, route):
     :param route: A string that is the href used by the link
     :return:
     """
-    am = Menu(title=title, route=route)
+    am = Menu(title=title, route=route, link_target=link_target)
     app.admin_plugin_menu_bar.append(am)
 
 
