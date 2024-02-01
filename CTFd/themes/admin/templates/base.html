@@ -87,7 +87,11 @@
 							{% else %}
 								{% set route = menu.route %}
 							{% endif %}
-							<li class="nav-item"><a class="nav-link" href="{{ route }}">{{ menu.title }}</a></li>
+							<li class="nav-item">
+								<a class="nav-link" href="{{ route }}" {% if menu.link_target %}target="{{ menu.link_target }}"{% endif %}>
+									{{ menu.title }}
+								</a>
+							</li>
 						{% endfor %}
 
 						{% if plugins %}
