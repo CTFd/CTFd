@@ -194,7 +194,7 @@ def setup():
             )
 
             # Create an empty index page
-            page = Pages(title=None, route="index", content="", draft=False)
+            page = Pages(title=ctf_name, route="index", content="", draft=False)
 
             # Upload banner
             default_ctf_banner_location = url_for("views.themes", path="img/logo.png")
