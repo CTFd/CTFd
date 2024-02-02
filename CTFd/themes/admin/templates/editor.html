@@ -31,7 +31,7 @@
 					<div class="col-md-12">
 						{% set title = page.title if page is defined %}
 						<b>{{ form.title.label }}</b>
-						{{ form.title(class="form-control radius", id="route", placeholder="Title", value=title) }}
+						{{ form.title(class="form-control radius", id="route", placeholder="Title", value=title or "") }}
 						<small class="text-muted">
 							{{ form.title.description }}
 						</small>
