@@ -54,7 +54,7 @@ class BaseUploader(object):
         """
         raise NotImplementedError
 
-    def get(self, mode="rb"):
+    def open(self, mode="rb"):
         """
         Return a file pointer for an uploaded file.
         In the case of remotely hosted files, download the target file and then
@@ -110,7 +110,7 @@ class FilesystemUploader(BaseUploader):
     def sync(self):
         pass
 
-    def get(self, filename, mode="rb"):
+    def open(self, filename, mode="rb"):
         path = Path(safe_join(self.base_path, filename))
         return path.open(mode=mode)
 
@@ -239,7 +239,7 @@ class S3Uploader(BaseUploader):
 
                 self.s3.download_file(self.bucket, s3_object, local_path)
 
-    def get(self, filename, mode="rb"):
+    def open(self, filename, mode="rb"):
         local_folder = current_app.config.get("UPLOAD_FOLDER")
         local_path = os.path.join(local_folder, filename)
         self.s3.download_file(self.bucket, filename, local_path)

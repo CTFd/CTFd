@@ -38,7 +38,7 @@ def get_logo():
     logo = get_config("ctf_logo")
     if logo is None:
         return None
-    return uploader.get(logo, mode="rb")
+    return uploader.open(logo, mode="rb")
 
 
 class SolveSocialShare(object):
