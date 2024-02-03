@@ -275,6 +275,8 @@ Config = ServerConfig()
 for k, v in config_ini.items("extra"):
     # We should only add the values that are not yet loaded in ServerConfig.
     if hasattr(Config, k):
-        continue
+        raise ValueError(
+            f"Built-in Config {k} should not be defined in the [extra] section of config.ini"
+        )
 
     setattr(Config, k, v)
