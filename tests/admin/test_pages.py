@@ -1,4 +1,4 @@
-from CTFd.models import Pages, db
+from CTFd.models import Pages
 from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
@@ -75,10 +75,11 @@ def test_pages_with_link_target():
     ## TODO: Replace back to DEFAULT_THEME (aka core) in CTFd 4.0
     app = create_ctfd(ctf_theme="core-beta")
     with app.app_context():
-        db.session.add(
+        app.db.session.add(
             Pages(title="test", route="test", content="test", link_target="_blank")
         )
-        db.session.commit()
+        app.db.session.commit()
+        app.cache.clear()
         register_user(app)
         client = login_as_user(app)
         with client.session_transaction():
