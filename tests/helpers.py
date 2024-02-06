@@ -569,11 +569,12 @@ def gen_field(
     db.session.commit()
     return field
 
+
 def gen_bracket(
-        db,
-        name="players",
-        description="players who are part of the test",
-        type="users",
+    db,
+    name="players",
+    description="players who are part of the test",
+    type="users",
 ):
     bracket = Brackets(
         name=name,

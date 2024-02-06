@@ -1,5 +1,6 @@
-from tests.helpers import create_ctfd, destroy_ctfd, gen_bracket, login_as_user
 from CTFd.models import Users
+from tests.helpers import create_ctfd, destroy_ctfd, gen_bracket, login_as_user
+
 
 def test_require_bracket_on_register():
     """Require users to submit a bracket if there is a bracket configured"""
