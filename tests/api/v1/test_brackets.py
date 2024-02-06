@@ -8,7 +8,7 @@ from tests.helpers import (
 )
 
 
-def test_get_brackets_api():
+def test_brackets_get_api():
     """Test that brackets API GET endpiont is behaving propertly"""
     app = create_ctfd()
     with app.app_context():
@@ -34,7 +34,28 @@ def test_get_brackets_api():
     destroy_ctfd(app)
 
 
-def test_delete_brackets_api():
+def test_brackets_patch_api():
+    """Test that brackets API PATCH endpiont is behaving propertly"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_bracket(app.db, name="players1")
+        assert Brackets.query.count() == 1
+
+        register_user(app, bracket_id=1)
+        with login_as_user(app) as client:
+            r = client.patch("/api/v1/brackets/1", json={"name": "newplayers"})
+            assert r.status_code == 403
+            assert Brackets.query.filter_by(id=1).first().name == "players1"
+
+        with login_as_user(app, name="admin") as client:
+            r = client.patch("/api/v1/brackets/1", json={"name": "newplayers"})
+            print(r.get_json())
+            assert r.status_code == 200
+            assert Brackets.query.filter_by(id=1).first().name == "newplayers"
+    destroy_ctfd(app)
+
+
+def test_brackets_delete_api():
     """Test that brackets API DELETE endpiont is behaving propertly"""
     app = create_ctfd()
     with app.app_context():
