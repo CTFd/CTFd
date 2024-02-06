@@ -206,6 +206,7 @@ def register_user(
     name="user",
     email="user@examplectf.com",
     password="password",
+    bracket_id=None,
     raise_for_error=True,
 ):
     with app.app_context():
@@ -218,6 +219,8 @@ def register_user(
                     "password": password,
                     "nonce": sess.get("nonce"),
                 }
+            if bracket_id:
+                data["bracket_id"] = bracket_id
             client.post("/register", data=data)
             if raise_for_error:
                 with client.session_transaction() as sess:
