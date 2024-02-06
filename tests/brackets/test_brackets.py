@@ -13,12 +13,13 @@ def test_require_bracket_on_register():
                     "name": "user",
                     "email": "user@examplectf.com",
                     "password": "password",
-                    
                     "nonce": sess.get("nonce"),
                 }
             client.post("/register", data=data)
             login_as_user(app, raise_for_error=False)
+            assert Users.query.filter_by(email="user@examplectf.com").count() == 0
             data["bracket_id"] = 1
             client.post("/register", data=data)
             login_as_user(app, raise_for_error=True)
+            assert Users.query.filter_by(email="user@examplectf.com").count() == 1
     destroy_ctfd(app)

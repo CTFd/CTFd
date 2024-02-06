@@ -13,7 +13,12 @@ format:
 	prettier --write '**/*.md'
 
 test:
-	pytest -rf -s -k test_require_bracket_on_register
+	pytest -rf --cov=CTFd --cov-context=test --cov-report=xml \
+		--ignore-glob="**/node_modules/" \
+		--ignore=node_modules/ \
+		-W ignore::sqlalchemy.exc.SADeprecationWarning \
+		-W ignore::sqlalchemy.exc.SAWarning \
+		-n auto
 	bandit -r CTFd -x CTFd/uploads --skip B105,B322
 	pipdeptree
 	yarn verify
