@@ -1,4 +1,4 @@
-from CTFd.models import Brackets
+from CTFd.models import Brackets, Users
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -71,7 +71,6 @@ def test_brackets_patch_api():
 
         with login_as_user(app, name="admin") as client:
             r = client.patch("/api/v1/brackets/1", json={"name": "newplayers"})
-            print(r.get_json())
             assert r.status_code == 200
             assert Brackets.query.filter_by(id=1).first().name == "newplayers"
     destroy_ctfd(app)
@@ -95,4 +94,29 @@ def test_brackets_delete_api():
             print(r.get_json())
             assert r.status_code == 200
             assert Brackets.query.count() == 0
+    destroy_ctfd(app)
+
+
+def test_user_bracket_changing():
+    """Test that admins can change user's brackets via the API"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_bracket(app.db, name="players1")
+        gen_bracket(app.db, name="players2")
+        with app.test_client() as client:
+            client.get("/register")
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user",
+                    "email": "user@examplectf.com",
+                    "password": "password",
+                    "bracket_id": 1,
+                    "nonce": sess.get("nonce"),
+                }
+            client.post("/register", data=data)
+        with login_as_user(app, name="admin") as client:
+            assert Users.query.filter_by(id=2).first().bracket_id == 1
+            r = client.patch("/api/v1/users/2", json={"bracket_id": 2})
+            assert r.status_code == 200
+            assert Users.query.filter_by(id=2).first().bracket_id == 2
     destroy_ctfd(app)
