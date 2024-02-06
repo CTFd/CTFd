@@ -1,4 +1,10 @@
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user, gen_page
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    gen_page,
+    login_as_user,
+    register_user,
+)
 
 
 def test_previewing_pages_works():
@@ -75,7 +81,11 @@ def test_pages_with_link_target():
     app = create_ctfd(ctf_theme="core-beta")
     with app.app_context():
         gen_page(
-            app.db, title="Title", route="this-is-a-route", content="This is some HTML", link_target="_blank"
+            app.db,
+            title="Title",
+            route="this-is-a-route",
+            content="This is some HTML",
+            link_target="_blank",
         )
         register_user(app)
         client = login_as_user(app)
