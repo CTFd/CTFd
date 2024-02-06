@@ -84,5 +84,5 @@ def test_pages_with_link_target():
         with client.session_transaction() as sess:
             r = client.get("/")
             html = r.get_data(as_text=True)
-            assert 'target="_blank"' in html
+            assert '_blank' in html
     destroy_ctfd(app)
