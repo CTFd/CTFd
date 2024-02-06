@@ -34,6 +34,28 @@ def test_brackets_get_api():
     destroy_ctfd(app)
 
 
+def test_brackets_post_api():
+    """Test that brackets API POST endpiont is behaving propertly"""
+    app = create_ctfd()
+    with app.app_context():
+        data = {
+            "name": "testplayers",
+            "description": "Test players bracket",
+            "type": "users",
+        }
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.post("/api/v1/brackets", json=data)
+            assert r.status_code == 403
+            assert Brackets.query.count() == 0
+
+        with login_as_user(app, name="admin") as client:
+            r = client.post("/api/v1/brackets", json=data)
+            assert r.status_code == 200
+            assert Brackets.query.count() == 1
+    destroy_ctfd(app)
+
+
 def test_brackets_patch_api():
     """Test that brackets API PATCH endpiont is behaving propertly"""
     app = create_ctfd()
