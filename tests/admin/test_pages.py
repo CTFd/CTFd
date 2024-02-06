@@ -1,4 +1,5 @@
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user
+from CTFd.models import Pages, db
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
 def test_previewing_pages_works():
@@ -66,4 +67,23 @@ def test_previewing_page_with_format_works():
         resp = r.get_data(as_text=True)
         assert "<h1>content_testing</h1>" in resp
 
+    destroy_ctfd(app)
+
+
+def test_pages_with_link_target():
+    """Test that target=_blank links show in public interface"""
+    ## TODO: Replace back to DEFAULT_THEME (aka core) in CTFd 4.0
+    app = create_ctfd(ctf_theme="core-beta")
+    with app.app_context():
+        db.session.add(
+            Pages(title="test", route="test", content="test", link_target="_blank")
+        )
+        db.session.commit()
+        register_user(app)
+        client = login_as_user(app)
+        with client.session_transaction() as sess:
+            r = client.post("/")
+            html = r.get_data(as_text=True)
+            print(html)
+            assert "_blank" in html
     destroy_ctfd(app)

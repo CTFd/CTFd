@@ -17,6 +17,7 @@ from werkzeug.datastructures import Headers
 from CTFd import create_app
 from CTFd.cache import cache, clear_challenges, clear_standings
 from CTFd.config import TestingConfig
+from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import (
     Awards,
     ChallengeComments,
@@ -129,11 +130,15 @@ def create_ctfd(
     enable_plugins=False,
     application_root="/",
     config=TestingConfig,
+    ctf_theme=None,
 ):
     if enable_plugins:
         config.SAFE_MODE = False
     else:
         config.SAFE_MODE = True
+
+    if ctf_theme is None:
+        ctf_theme = DEFAULT_THEME
 
     config.APPLICATION_ROOT = application_root
     url = make_url(config.SQLALCHEMY_DATABASE_URI)
@@ -153,6 +158,7 @@ def create_ctfd(
             email=email,
             password=password,
             user_mode=user_mode,
+            ctf_theme=ctf_theme,
         )
     return app
 
@@ -165,7 +171,10 @@ def setup_ctfd(
     email="admin@examplectf.com",
     password="password",
     user_mode="users",
+    ctf_theme=None,
 ):
+    if ctf_theme is None:
+        ctf_theme = DEFAULT_THEME
     with app.app_context():
         with app.test_client() as client:
             client.get("/setup")  # Populate session with nonce
@@ -178,6 +187,7 @@ def setup_ctfd(
                     "password": password,
                     "user_mode": user_mode,
                     "nonce": sess.get("nonce"),
+                    "ctf_theme": ctf_theme,
                 }
             client.post("/setup", data=data)
     return app
