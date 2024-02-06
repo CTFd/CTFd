@@ -86,7 +86,7 @@ class SolveSocialShare(object):
 
         # Account information
         user_name = solve.user.name
-        team_name = solve.team.name
+        team_name = solve.team.name if solve.team else None
         account_name = team_name if is_teams_mode() else user_name
 
         # Instance information
