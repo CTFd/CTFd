@@ -20,6 +20,7 @@ from CTFd.config import TestingConfig
 from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import (
     Awards,
+    Brackets,
     ChallengeComments,
     ChallengeFiles,
     Challenges,
@@ -567,6 +568,20 @@ def gen_field(
     db.session.add(field)
     db.session.commit()
     return field
+
+def gen_bracket(
+        db,
+        name="players",
+        description="players who are part of the test",
+        type="users",
+):
+    bracket = Brackets(
+        name=name,
+        description=description,
+        type=type,
+    )
+    db.session.add(bracket)
+    db.session.commit()
 
 
 def simulate_user_activity(db, user):
