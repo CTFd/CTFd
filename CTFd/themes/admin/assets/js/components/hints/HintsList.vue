@@ -59,8 +59,8 @@
 </template>
 
 <script>
-import { ezQuery } from "core/ezq";
-import CTFd from "core/CTFd";
+import { ezQuery } from "../../compat/ezq";
+import CTFd from "../../compat/CTFd";
 import HintCreationForm from "./HintCreationForm.vue";
 import HintEditForm from "./HintEditForm.vue";
 
@@ -79,23 +79,21 @@ export default {
     };
   },
   methods: {
-    loadHints: function() {
-      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/hints`, {
-        method: "GET",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(response => {
-          if (response.success) {
-            this.hints = response.data;
+    loadHints: async function() {
+      let result = await CTFd.fetch(
+        `/api/v1/challenges/${this.$props.challenge_id}/hints`,
+        {
+          method: "GET",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
           }
-        });
+        }
+      );
+      let response = await result.json();
+      this.hints = response.data;
+      return response.success;
     },
     addHint: function() {
       let modal = this.$refs.HintCreationForm.$el;
@@ -107,21 +105,28 @@ export default {
       $(modal).modal();
     },
     refreshHints: function(caller) {
-      this.loadHints();
-      let modal;
-      switch (caller) {
-        case "HintCreationForm":
-          modal = this.$refs.HintCreationForm.$el;
-          console.log(modal);
-          $(modal).modal("hide");
-          break;
-        case "HintEditForm":
-          modal = this.$refs.HintEditForm.$el;
-          $(modal).modal("hide");
-          break;
-        default:
-          break;
-      }
+      this.loadHints().then(success => {
+        if (success) {
+          let modal;
+          switch (caller) {
+            case "HintCreationForm":
+              modal = this.$refs.HintCreationForm.$el;
+              console.log(modal);
+              $(modal).modal("hide");
+              break;
+            case "HintEditForm":
+              modal = this.$refs.HintEditForm.$el;
+              $(modal).modal("hide");
+              break;
+            default:
+              break;
+          }
+        } else {
+          alert(
+            "An error occurred while updating this hint. Please try again."
+          );
+        }
+      });
     },
     deleteHint: function(hintId) {
       ezQuery({

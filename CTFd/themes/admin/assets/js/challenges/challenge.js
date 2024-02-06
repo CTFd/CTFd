@@ -1,7 +1,9 @@
 import $ from "jquery";
-import { ezToast, ezQuery } from "core/ezq";
-import { htmlEntities } from "core/utils";
-import CTFd from "core/CTFd";
+import "../compat/json";
+import "../compat/format";
+import { ezToast, ezQuery } from "../compat/ezq";
+import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
+import CTFd from "../compat/CTFd";
 import nunjucks from "nunjucks";
 
 function renderSubmissionResponse(response, cb) {

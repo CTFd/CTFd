@@ -1,12 +1,12 @@
 import "./main";
 import { showMediaLibrary } from "../styles";
-import "core/utils";
 import $ from "jquery";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
+import "../compat/json";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
-import { ezAlert, ezToast } from "core/ezq";
-import Vue from "vue/dist/vue.esm.browser";
+import { ezAlert, ezToast } from "../compat/ezq";
+import Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
 
 function submit_form() {
@@ -20,6 +20,11 @@ function submit_form() {
   if (part !== "new") {
     target += "/" + part;
     method = "PATCH";
+  }
+
+  // Patch link_target to be null when empty string
+  if (params["link_target"] === "") {
+    params["link_target"] = null;
   }
 
   CTFd.fetch(target, {

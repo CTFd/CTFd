@@ -63,7 +63,7 @@
 
 <script>
 import $ from "jquery";
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 import FlagCreationForm from "./FlagCreationForm.vue";
 import FlagEditForm from "./FlagEditForm.vue";
 

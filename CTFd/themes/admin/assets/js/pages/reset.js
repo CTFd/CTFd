@@ -1,6 +1,6 @@
 import "./main";
 import $ from "jquery";
-import { ezQuery } from "core/ezq";
+import { ezQuery } from "../compat/ezq";
 
 function reset(event) {
   event.preventDefault();

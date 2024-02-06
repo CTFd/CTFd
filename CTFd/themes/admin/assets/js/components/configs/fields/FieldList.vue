@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
+import CTFd from "../../../compat/CTFd";
 import Field from "./Field.vue";
 
 export default {

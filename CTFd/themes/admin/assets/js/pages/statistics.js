@@ -1,9 +1,8 @@
 import "./main";
-import "core/utils";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import $ from "jquery";
 import echarts from "echarts/dist/echarts-en.common";
-import { colorHash } from "core/utils";
+import { colorHash } from "../compat/styles";
 
 const graph_configs = {
   "#solves-graph": {
@@ -292,10 +291,8 @@ const graph_configs = {
         title: "Challenge Name"
       },
       yaxis: {
-        title: "Percentage of {0} (%)".format(
-          CTFd.config.userMode.charAt(0).toUpperCase() +
-            CTFd.config.userMode.slice(1)
-        ),
+        title: `Percentage of ${CTFd.config.userMode.charAt(0).toUpperCase() +
+          CTFd.config.userMode.slice(1)} (%)`,
         range: [0, 100]
       },
       annotations: annotations
@@ -359,10 +356,8 @@ const graph_configs = {
           }
         },
         yAxis: {
-          name: "Percentage of {0} (%)".format(
-            CTFd.config.userMode.charAt(0).toUpperCase() +
-              CTFd.config.userMode.slice(1)
-          ),
+          name: `"Percentage of ${CTFd.config.userMode.charAt(0).toUpperCase() +
+            CTFd.config.userMode.slice(1)} (%)`,
           nameGap: 50,
           nameLocation: "middle",
           type: "value",
@@ -420,10 +415,8 @@ const graph_configs = {
         type: "category"
       },
       yaxis: {
-        title: "Number of {0}".format(
-          CTFd.config.userMode.charAt(0).toUpperCase() +
-            CTFd.config.userMode.slice(1)
-        )
+        title: `Number of ${CTFd.config.userMode.charAt(0).toUpperCase() +
+          CTFd.config.userMode.slice(1)}`
       },
       annotations: annotations
     }),
@@ -446,7 +439,7 @@ const graph_configs = {
 
       let start = "<0";
       keys.map(key => {
-        brackets.push("{0} - {1}".format(start, key));
+        brackets.push(`${start} - ${key}`);
         sizes.push(data[key]);
         start = key;
       });
@@ -477,10 +470,8 @@ const graph_configs = {
           data: brackets
         },
         yAxis: {
-          name: "Number of {0}".format(
-            CTFd.config.userMode.charAt(0).toUpperCase() +
-              CTFd.config.userMode.slice(1)
-          ),
+          name: `Number of ${CTFd.config.userMode.charAt(0).toUpperCase() +
+            CTFd.config.userMode.slice(1)}`,
           nameGap: 50,
           nameLocation: "middle",
           type: "value"

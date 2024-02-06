@@ -65,8 +65,8 @@ def test_hint_team_unlock():
             # We start with 100 points from the award.
             # We lose a point because we unlock successfully once
             standings = get_standings()
-            assert standings[0][2] == "team_name"
-            assert standings[0][3] == 99
+            assert standings[0].name == "team_name"
+            assert standings[0].score == 99
     destroy_ctfd(app)
 
 

@@ -37,8 +37,8 @@ def test_challenge_team_submit():
             r = second_client.post("/api/v1/challenges/attempt", json=flag)
             assert r.json["data"]["status"] == "already_solved"
         standings = get_standings()
-        assert standings[0][2] == "team_name"
-        assert standings[0][3] == 100
+        assert standings[0].name == "team_name"
+        assert standings[0].score == 100
     destroy_ctfd(app)
 
 

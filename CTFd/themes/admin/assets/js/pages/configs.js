@@ -1,19 +1,20 @@
 import "./main";
-import "core/utils";
 import "bootstrap/js/dist/tab";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import timezones from "../timezones";
-import CTFd from "core/CTFd";
-import { default as helpers } from "core/helpers";
+import CTFd from "../compat/CTFd";
+import { default as helpers } from "../compat/helpers";
 import $ from "jquery";
-import { ezQuery, ezProgressBar, ezAlert } from "core/ezq";
+import "../compat/json";
+import { ezQuery, ezProgressBar, ezAlert } from "../compat/ezq";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
-import Vue from "vue/dist/vue.esm.browser";
+import Vue from "vue";
 import FieldList from "../components/configs/fields/FieldList.vue";
+import BracketList from "../components/configs/brackets/BracketList.vue";
 
 dayjs.extend(advancedFormat);
 dayjs.extend(utc);
@@ -547,4 +548,9 @@ $(() => {
       type: "team"
     }
   }).$mount(teamVueContainer);
+
+  const bracketList = Vue.extend(BracketList);
+  let bracketListContainer = document.createElement("div");
+  document.querySelector("#brackets-list").appendChild(bracketListContainer);
+  new bracketList({}).$mount(bracketListContainer);
 });

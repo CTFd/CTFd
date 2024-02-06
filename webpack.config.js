@@ -28,30 +28,6 @@ const roots = {
       'pages/teams/private': 'assets/js/pages/teams/private.js',
     }
   },
-  'themes/admin': {
-    'css': {
-      'admin': 'assets/css/admin.scss',
-      'challenge-board': 'assets/css/challenge-board.scss',
-      'codemirror': 'assets/css/codemirror.scss',
-    },
-    'js': {
-      'pages/main': 'assets/js/pages/main.js',
-      'pages/challenge': 'assets/js/pages/challenge.js',
-      'pages/challenges': 'assets/js/pages/challenges.js',
-      'pages/configs': 'assets/js/pages/configs.js',
-      'pages/notifications': 'assets/js/pages/notifications.js',
-      'pages/editor': 'assets/js/pages/editor.js',
-      'pages/pages': 'assets/js/pages/pages.js',
-      'pages/reset': 'assets/js/pages/reset.js',
-      'pages/scoreboard': 'assets/js/pages/scoreboard.js',
-      'pages/statistics': 'assets/js/pages/statistics.js',
-      'pages/submissions': 'assets/js/pages/submissions.js',
-      'pages/team': 'assets/js/pages/team.js',
-      'pages/teams': 'assets/js/pages/teams.js',
-      'pages/user': 'assets/js/pages/user.js',
-      'pages/users': 'assets/js/pages/users.js',
-    }
-  },
 }
 
 function getJSConfig(root, type, entries, mode) {

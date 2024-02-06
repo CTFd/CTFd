@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 import { bindMarkdownEditor } from "../../styles";
 
 export default {
@@ -151,25 +151,29 @@ export default {
             this.cost = hint.cost;
             this.content = hint.content;
             this.selectedHints = hint.requirements?.prerequisites || [];
-            // Wait for Vue to update the DOM
-            this.$nextTick(() => {
-              // Wait a little longer because we need the modal to appear.
-              // Kinda nasty but not really avoidable without polling the DOM via CodeMirror
-              setTimeout(() => {
-                let editor = this.$refs.content;
-                bindMarkdownEditor(editor);
-                editor.mde.codemirror.getDoc().setValue(editor.value);
-                editor.mde.codemirror.refresh();
-              }, 100);
-            });
+            // Wait a little longer because we need the modal to appear.
+            // Kinda nasty but not really avoidable without polling the DOM via CodeMirror
+            let editor = this.$refs.content;
+            bindMarkdownEditor(editor);
+            setTimeout(() => {
+              editor.mde.codemirror.getDoc().setValue(editor.value);
+              this._forceRefresh();
+            }, 200);
           }
         });
+    },
+    _forceRefresh: function() {
+      // Temporary function while we are relying on CodeMirror + MDE
+      let editor = this.$refs.content;
+      editor.mde.codemirror.refresh();
     },
     getCost: function() {
       return this.cost || 0;
     },
     getContent: function() {
-      return this.$refs.content.value;
+      this._forceRefresh();
+      let editor = this.$refs.content;
+      return editor.mde.codemirror.getDoc().getValue();
     },
     updateHint: function() {
       let params = {

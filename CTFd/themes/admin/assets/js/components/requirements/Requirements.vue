@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 
 export default {
   props: {

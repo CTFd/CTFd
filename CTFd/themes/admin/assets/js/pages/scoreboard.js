@@ -1,7 +1,8 @@
 import "./main";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import $ from "jquery";
-import { ezAlert } from "core/ezq";
+import "../compat/json";
+import { ezAlert } from "../compat/ezq";
 
 const api_func = {
   users: (x, y) => CTFd.api.patch_user_public({ userId: x }, y),
