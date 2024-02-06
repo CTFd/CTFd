@@ -18,6 +18,7 @@ test:
 		--ignore=node_modules/ \
 		-W ignore::sqlalchemy.exc.SADeprecationWarning \
 		-W ignore::sqlalchemy.exc.SAWarning \
+		-s \
 		-n auto
 	bandit -r CTFd -x CTFd/uploads --skip B105,B322
 	pipdeptree
