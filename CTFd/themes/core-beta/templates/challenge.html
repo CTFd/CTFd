@@ -168,7 +168,7 @@
                           {% trans %}Next Challenge{% endtrans %}
                         </button>
                       </div>
-                      {% if Configs.social_shares != false %}
+                      {% if Configs.social_shares %}
                       <div>
                         <button x-show="!share_url" @click="getShareUrl()" class="btn btn-sm btn-outline-info mt-3">
                           {% trans %}Share{% endtrans %}
