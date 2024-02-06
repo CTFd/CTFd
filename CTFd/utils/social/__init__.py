@@ -1,7 +1,8 @@
+import os
 import pathlib
 import tempfile
 
-from flask import render_template, request, send_from_directory, url_for
+from flask import current_app, render_template, request, send_from_directory, url_for
 from PIL import Image, ImageDraw, ImageFont
 
 from CTFd.models import Solves, Users
@@ -168,9 +169,9 @@ class SolveSocialShare(object):
         # init image
         img = Image.new("RGBA", (WIDTH, HEIGHT), color=BG_COLOR)
         draw = ImageDraw.Draw(img)
-        font_lg = ImageFont.truetype("Arial Bold.ttf", 40)
-        font_md = ImageFont.truetype("Arial Bold.ttf", 25)
-        _font_sm = ImageFont.truetype("Arial Bold.ttf", 15)
+        font_path = os.path.join(current_app.root_path, "fonts", "OpenSans-Bold.ttf")
+        font_lg = ImageFont.truetype(font_path, 40)
+        font_md = ImageFont.truetype(font_path, 25)
 
         # fmt: off
         # Draw user name
