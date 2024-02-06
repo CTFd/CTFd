@@ -24,7 +24,9 @@
       <ul class="navbar-nav me-auto">
         {% for page in Plugins.user_menu_pages %}
           <li class="nav-item">
-            <a class="nav-link" href="{{ page.route }}">{{ page.title }}</a>
+            <a class="nav-link" href="{{ page.route }}" {% if page.link_target %}target="{{ page.link_target }}"{% endif %}>
+              {{ page.title }}
+            </a>
           </li>
         {% endfor %}
 
