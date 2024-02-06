@@ -1,5 +1,6 @@
+import re
+
 from CTFd.utils import set_config
-from flask import url_for
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -8,7 +9,6 @@ from tests.helpers import (
     login_as_user,
     register_user,
 )
-import re
 
 
 def test_share_endpoints():
@@ -47,7 +47,7 @@ def test_share_endpoints():
             assert "chal_name has 1 solve" in resp
 
             # Test downloading asset image
-            m = re.search(r'og:image(.*)', resp)
+            m = re.search(r"og:image(.*)", resp)
             # Remove extra text
             asset_url = m.group()[19:-4].replace("&amp;", "&")
             r = client.get(asset_url)
