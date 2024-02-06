@@ -17,7 +17,7 @@ from CTFd.api.v1.schemas import (
     APISimpleSuccessResponse,
 )
 from CTFd.api.v1.scoreboard import scoreboard_namespace
-from CTFd.api.v1.share import shares_namespace
+from CTFd.api.v1.shares import shares_namespace
 from CTFd.api.v1.statistics import statistics_namespace
 from CTFd.api.v1.submissions import submissions_namespace
 from CTFd.api.v1.tags import tags_namespace
