@@ -10,11 +10,11 @@ export function copyToClipboard(event, selector) {
   // Show tooltip to user
   $(event.target).tooltip({
     title: "Copied!",
-    trigger: "manual",
+    trigger: "manual"
   });
   $(event.target).tooltip("show");
 
-  setTimeout(function () {
+  setTimeout(function() {
     $(event.target).tooltip("hide");
   }, 1500);
 }

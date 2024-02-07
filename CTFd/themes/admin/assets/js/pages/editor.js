@@ -32,14 +32,14 @@ function submit_form() {
     credentials: "same-origin",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify(params),
+    body: JSON.stringify(params)
   })
-    .then(function (response) {
+    .then(function(response) {
       return response.json();
     })
-    .then(function (response) {
+    .then(function(response) {
       // Show errors reported by API
       if (response.success === false) {
         let body = "";
@@ -51,7 +51,7 @@ function submit_form() {
         ezAlert({
           title: "Error",
           body: body,
-          button: "OK",
+          button: "OK"
         });
         return;
       }
@@ -59,7 +59,7 @@ function submit_form() {
       if (method === "PATCH" && response.success) {
         ezToast({
           title: "Saved",
-          body: "Your changes have been saved",
+          body: "Your changes have been saved"
         });
       } else {
         window.location =
@@ -82,20 +82,20 @@ $(() => {
       lineNumbers: true,
       lineWrapping: true,
       mode: "htmlmixed",
-      htmlMode: true,
-    },
+      htmlMode: true
+    }
   );
 
-  $("#media-button").click(function (_e) {
+  $("#media-button").click(function(_e) {
     showMediaLibrary(window.editor);
   });
 
-  $("#save-page").click(function (e) {
+  $("#save-page").click(function(e) {
     e.preventDefault();
     submit_form();
   });
 
-  $(".preview-page").click(function () {
+  $(".preview-page").click(function() {
     preview_page();
   });
 
@@ -105,7 +105,7 @@ $(() => {
     let vueContainer = document.createElement("div");
     document.querySelector("#comment-box").appendChild(vueContainer);
     new commentBox({
-      propsData: { type: "page", id: window.PAGE_ID },
+      propsData: { type: "page", id: window.PAGE_ID }
     }).$mount(vueContainer);
   }
 });

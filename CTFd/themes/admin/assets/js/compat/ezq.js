@@ -73,7 +73,7 @@ export function ezAlert(args) {
   const button = $(buttonTpl.format(args.button));
 
   if (args.success) {
-    $(button).click(function () {
+    $(button).click(function() {
       args.success();
     });
   }
@@ -85,7 +85,7 @@ export function ezAlert(args) {
   obj.find(".modal-footer").append(button);
 
   // Syntax highlighting
-  obj.find("pre code").each(function (_idx) {
+  obj.find("pre code").each(function(_idx) {
     hljs.highlightBlock(this);
   });
 
@@ -93,7 +93,7 @@ export function ezAlert(args) {
 
   obj.modal("show");
 
-  $(obj).on("hidden.bs.modal", function () {
+  $(obj).on("hidden.bs.modal", function() {
     $(this).modal("dispose");
   });
 
@@ -104,12 +104,14 @@ export function ezToast(args) {
   const container_available = $("#ezq--notifications-toast-container").length;
   if (!container_available) {
     $("body").append(
-      $("<div/>").attr({ id: "ezq--notifications-toast-container" }).css({
-        position: "fixed",
-        bottom: "0",
-        right: "0",
-        "min-width": "20%",
-      }),
+      $("<div/>")
+        .attr({ id: "ezq--notifications-toast-container" })
+        .css({
+          position: "fixed",
+          bottom: "0",
+          right: "0",
+          "min-width": "20%"
+        })
     );
   }
 
@@ -119,7 +121,7 @@ export function ezToast(args) {
   if (args.onclose) {
     $(obj)
       .find("button[data-dismiss=toast]")
-      .click(function () {
+      .click(function() {
         args.onclose();
       });
   }
@@ -127,7 +129,7 @@ export function ezToast(args) {
   if (args.onclick) {
     let body = $(obj).find(".toast-body");
     body.addClass("cursor-pointer");
-    body.click(function () {
+    body.click(function() {
       args.onclick();
     });
   }
@@ -141,7 +143,7 @@ export function ezToast(args) {
   obj.toast({
     autohide: autohide,
     delay: delay,
-    animation: animation,
+    animation: animation
   });
   obj.toast("show");
   return obj;
@@ -164,17 +166,17 @@ export function ezQuery(args) {
   obj.find(".modal-footer").append(yes);
 
   // Syntax highlighting
-  obj.find("pre code").each(function (_idx) {
+  obj.find("pre code").each(function(_idx) {
     hljs.highlightBlock(this);
   });
 
   $("main").append(obj);
 
-  $(obj).on("hidden.bs.modal", function () {
+  $(obj).on("hidden.bs.modal", function() {
     $(this).modal("dispose");
   });
 
-  $(yes).click(function () {
+  $(yes).click(function() {
     args.success();
   });
 
@@ -204,7 +206,7 @@ export function ezProgressBar(args) {
 export function ezBadge(args) {
   const mapping = {
     success: successTpl,
-    error: errorTpl,
+    error: errorTpl
   };
 
   const tpl = mapping[args.type].format(args.body);
@@ -216,6 +218,6 @@ const ezq = {
   ezToast: ezToast,
   ezQuery: ezQuery,
   ezProgressBar: ezProgressBar,
-  ezBadge: ezBadge,
+  ezBadge: ezBadge
 };
 export default ezq;

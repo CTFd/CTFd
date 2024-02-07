@@ -4,17 +4,17 @@ import {
   WindowController,
   init_notification_counter,
   inc_notification_counter,
-  dec_notification_counter,
+  dec_notification_counter
 } from "./wc";
 
-export default (root) => {
+export default root => {
   const source = new EventSource(root + "/events");
   const wc = new WindowController();
   const howl = new Howl({
     src: [
       root + "/themes/admin/static/sounds/notification.webm",
-      root + "/themes/admin/static/sounds/notification.mp3",
-    ],
+      root + "/themes/admin/static/sounds/notification.mp3"
+    ]
   });
 
   init_notification_counter();
@@ -22,7 +22,7 @@ export default (root) => {
   function connect() {
     source.addEventListener(
       "notification",
-      function (event) {
+      function(event) {
         let data = JSON.parse(event.data);
         wc.broadcast("notification", data);
 
@@ -34,7 +34,7 @@ export default (root) => {
           howl.play();
         }
       },
-      false,
+      false
     );
   }
 
@@ -58,22 +58,22 @@ export default (root) => {
         ezToast({
           title: data.title,
           body: trimmed_content,
-          onclick: function () {
+          onclick: function() {
             ezAlert({
               title: data.title,
               body: data.html,
               button: "Got it!",
-              success: function () {
+              success: function() {
                 clicked = true;
                 dec_notification_counter();
-              },
+              }
             });
           },
-          onclose: function () {
+          onclose: function() {
             if (!clicked) {
               dec_notification_counter();
             }
-          },
+          }
         });
         break;
       }
@@ -83,9 +83,9 @@ export default (root) => {
           title: data.title,
           body: data.html,
           button: "Got it!",
-          success: function () {
+          success: function() {
             dec_notification_counter();
-          },
+          }
         });
         break;
       }
@@ -100,19 +100,19 @@ export default (root) => {
     }
   }
 
-  wc.alert = function (data) {
+  wc.alert = function(data) {
     render(data);
   };
 
-  wc.toast = function (data) {
+  wc.toast = function(data) {
     render(data);
   };
 
-  wc.background = function (data) {
+  wc.background = function(data) {
     render(data);
   };
 
-  wc.masterDidChange = function () {
+  wc.masterDidChange = function() {
     if (this.isMaster) {
       connect();
     } else {
