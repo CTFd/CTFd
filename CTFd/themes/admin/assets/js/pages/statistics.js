@@ -194,7 +194,7 @@ const graph_configs = {
       const count = [];
 
       for (let category in data) {
-        if (data.hasOwnProperty(category)) {
+        if (Object.hasOwn(data, category)) {
           categories.push(category);
           count.push(data[category]);
         }

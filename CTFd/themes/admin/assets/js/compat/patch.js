@@ -8,7 +8,7 @@ function mergeQueryParams(parameters, queryParameters) {
 function serializeQueryParams(parameters) {
   let str = [];
   for (let p in parameters) {
-    if (parameters.hasOwnProperty(p)) {
+    if (parameters.hasOwnProperty(p)) { // eslint-disable-line no-prototype-builtins
       str.push(encodeURIComponent(p) + "=" + encodeURIComponent(parameters[p]));
     }
   }

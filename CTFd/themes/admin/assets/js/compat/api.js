@@ -1,5 +1,6 @@
 import fetch from "./fetch";
 /*jshint esversion: 6 */
+// eslint-disable-next-line no-redeclare, no-unused-vars
 /*global fetch, btoa */
 import Q from "q";
 /**
@@ -23,6 +24,7 @@ let API = (function () {
   function serializeQueryParams(parameters) {
     let str = [];
     for (let p in parameters) {
+      // eslint-disable-next-line no-prototype-builtins
       if (parameters.hasOwnProperty(p)) {
         str.push(
           encodeURIComponent(p) + "=" + encodeURIComponent(parameters[p]),

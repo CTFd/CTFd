@@ -31,7 +31,7 @@ export function showMediaLibrary(editor) {
 }
 
 export function bindMarkdownEditor(elem) {
-  if (elem.hasOwnProperty("mde") === false) {
+  if (Object.hasOwn(elem, "mde") === false) {
     let mde = new EasyMDE({
       autoDownloadFontAwesome: false,
       toolbar: [
