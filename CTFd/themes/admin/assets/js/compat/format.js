@@ -1,5 +1,5 @@
 //http://stackoverflow.com/a/2648463 - wizardry!
-String.prototype.format = String.prototype.f = function() {
+String.prototype.format = String.prototype.f = function () {
   let s = this,
     i = arguments.length;
 

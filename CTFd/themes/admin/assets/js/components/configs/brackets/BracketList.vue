@@ -29,44 +29,44 @@ import Bracket from "./Bracket.vue";
 export default {
   name: "BracketList",
   components: {
-    Bracket
+    Bracket,
   },
-  data: function() {
+  data: function () {
     return {
-      brackets: []
+      brackets: [],
     };
   },
   methods: {
-    loadBrackets: function() {
+    loadBrackets: function () {
       CTFd.fetch(`/api/v1/brackets`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           this.brackets = response.data;
         });
     },
-    addBracket: function() {
+    addBracket: function () {
       this.brackets.push({
         id: Math.random(),
         name: "",
         description: "",
-        type: null
+        type: null,
       });
     },
-    removeBracket: function(index) {
+    removeBracket: function (index) {
       this.brackets.splice(index, 1);
-    }
+    },
   },
   created() {
     this.loadBrackets();
-  }
+  },
 };
 </script>

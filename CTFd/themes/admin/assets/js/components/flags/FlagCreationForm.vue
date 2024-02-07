@@ -65,17 +65,17 @@ import "../../compat/json";
 export default {
   name: "FlagCreationForm",
   props: {
-    challenge_id: Number
+    challenge_id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       types: {},
       selectedType: null,
-      createForm: ""
+      createForm: "",
     };
   },
   methods: {
-    selectType: function(event) {
+    selectType: function (event) {
       let flagType = event.target.value;
       if (this.types[flagType] === undefined) {
         this.selectedType = null;
@@ -84,7 +84,7 @@ export default {
       }
       let createFormURL = this.types[flagType]["templates"]["create"];
 
-      $.get(CTFd.config.urlRoot + createFormURL, template_data => {
+      $.get(CTFd.config.urlRoot + createFormURL, (template_data) => {
         const template = nunjucks.compile(template_data);
         this.selectedType = flagType;
         this.createForm = template.render();
@@ -94,25 +94,25 @@ export default {
           setTimeout(() => {
             $(`<div>` + this.createForm + `</div>`)
               .find("script")
-              .each(function() {
+              .each(function () {
                 eval($(this).html());
               });
           }, 100);
         }
       });
     },
-    loadTypes: function() {
+    loadTypes: function () {
       CTFd.fetch("/api/v1/flags/types", {
-        method: "GET"
+        method: "GET",
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           this.types = response.data;
         });
     },
-    submitFlag: function(event) {
+    submitFlag: function (event) {
       let form = $(event.target);
       let params = form.serializeJSON(true);
       params["challenge"] = this.$props.challenge_id;
@@ -122,21 +122,21 @@ export default {
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(params)
+        body: JSON.stringify(params),
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(_response => {
+        .then((_response) => {
           this.$emit("refreshFlags", this.$options.name);
         });
-    }
+    },
   },
   created() {
     this.loadTypes();
-  }
+  },
 };
 </script>
 
