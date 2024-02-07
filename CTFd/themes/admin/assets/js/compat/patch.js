@@ -15,7 +15,7 @@ function serializeQueryParams(parameters) {
   return str.join("&");
 }
 
-API.prototype.requestRaw = function(
+API.prototype.requestRaw = function (
   method,
   url,
   parameters,
@@ -23,7 +23,7 @@ API.prototype.requestRaw = function(
   headers,
   queryParameters,
   form,
-  deferred
+  deferred,
 ) {
   const queryParams =
     queryParameters && Object.keys(queryParameters).length
@@ -38,20 +38,20 @@ API.prototype.requestRaw = function(
   fetch(urlWithParams, {
     method,
     headers,
-    body: body
+    body: body,
   })
-    .then(response => {
+    .then((response) => {
       return response.json();
     })
-    .then(body => {
+    .then((body) => {
       deferred.resolve(body);
     })
-    .catch(error => {
+    .catch((error) => {
       deferred.reject(error);
     });
 };
 
-API.prototype.patch_user_public = function(parameters, body) {
+API.prototype.patch_user_public = function (parameters, body) {
   if (parameters === undefined) {
     parameters = {};
   }
@@ -80,13 +80,13 @@ API.prototype.patch_user_public = function(parameters, body) {
     headers,
     queryParameters,
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;
 };
 
-API.prototype.patch_user_private = function(parameters, body) {
+API.prototype.patch_user_private = function (parameters, body) {
   if (parameters === undefined) {
     parameters = {};
   }
@@ -107,12 +107,12 @@ API.prototype.patch_user_private = function(parameters, body) {
     headers,
     {},
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;
 };
-API.prototype.post_unlock_list = function(parameters, body) {
+API.prototype.post_unlock_list = function (parameters, body) {
   let deferred = Q.defer();
   let domain = this.domain,
     path = "/unlocks";
@@ -130,13 +130,13 @@ API.prototype.post_unlock_list = function(parameters, body) {
     headers,
     {},
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;
 };
 
-API.prototype.post_notification_list = function(parameters, body) {
+API.prototype.post_notification_list = function (parameters, body) {
   if (parameters === undefined) {
     parameters = {};
   }
@@ -158,13 +158,13 @@ API.prototype.post_notification_list = function(parameters, body) {
     headers,
     queryParameters,
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;
 };
 
-API.prototype.post_files_list = function(parameters, body) {
+API.prototype.post_files_list = function (parameters, body) {
   let deferred = Q.defer();
   let domain = this.domain,
     path = "/files";
@@ -183,13 +183,13 @@ API.prototype.post_files_list = function(parameters, body) {
     headers,
     queryParameters,
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;
 };
 
-API.prototype.patch_config = function(parameters, body) {
+API.prototype.patch_config = function (parameters, body) {
   if (parameters === undefined) {
     parameters = {};
   }
@@ -218,13 +218,13 @@ API.prototype.patch_config = function(parameters, body) {
     headers,
     queryParameters,
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;
 };
 
-API.prototype.patch_config_list = function(parameters, body) {
+API.prototype.patch_config_list = function (parameters, body) {
   if (parameters === undefined) {
     parameters = {};
   }
@@ -248,12 +248,12 @@ API.prototype.patch_config_list = function(parameters, body) {
     headers,
     queryParameters,
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;
 };
-API.prototype.post_tag_list = function(parameters, body) {
+API.prototype.post_tag_list = function (parameters, body) {
   if (parameters === undefined) {
     parameters = {};
   }
@@ -277,12 +277,12 @@ API.prototype.post_tag_list = function(parameters, body) {
     headers,
     queryParameters,
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;
 };
-API.prototype.patch_team_public = function(parameters, body) {
+API.prototype.patch_team_public = function (parameters, body) {
   if (parameters === undefined) {
     parameters = {};
   }
@@ -313,12 +313,12 @@ API.prototype.patch_team_public = function(parameters, body) {
     headers,
     queryParameters,
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;
 };
-API.prototype.post_challenge_attempt = function(parameters, body) {
+API.prototype.post_challenge_attempt = function (parameters, body) {
   if (parameters === undefined) {
     parameters = {};
   }
@@ -342,12 +342,12 @@ API.prototype.post_challenge_attempt = function(parameters, body) {
     headers,
     queryParameters,
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;
 };
-API.prototype.get_hint = function(parameters) {
+API.prototype.get_hint = function (parameters) {
   if (parameters === undefined) {
     parameters = {};
   }
@@ -380,7 +380,7 @@ API.prototype.get_hint = function(parameters) {
     headers,
     queryParameters,
     form,
-    deferred
+    deferred,
   );
 
   return deferred.promise;

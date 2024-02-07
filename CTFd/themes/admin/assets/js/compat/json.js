@@ -1,6 +1,6 @@
 import $ from "jquery";
 
-$.fn.serializeJSON = function(omit_nulls) {
+$.fn.serializeJSON = function (omit_nulls) {
   let params = {};
   let form = $(this);
   let values = form.serializeArray();
@@ -8,20 +8,20 @@ $.fn.serializeJSON = function(omit_nulls) {
   values = values.concat(
     form
       .find("input[type=checkbox]:checked")
-      .map(function() {
+      .map(function () {
         return { name: this.name, value: true };
       })
-      .get()
+      .get(),
   );
   values = values.concat(
     form
       .find("input[type=checkbox]:not(:checked)")
-      .map(function() {
+      .map(function () {
         return { name: this.name, value: false };
       })
-      .get()
+      .get(),
   );
-  values.map(x => {
+  values.map((x) => {
     if (omit_nulls) {
       if (x.value !== null && x.value !== "") {
         params[x.name] = x.value;

@@ -34,40 +34,40 @@ import CTFd from "../../compat/CTFd";
 
 export default {
   props: {
-    challenge_id: Number
+    challenge_id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       tags: [],
-      tagValue: ""
+      tagValue: "",
     };
   },
   methods: {
-    loadTags: function() {
+    loadTags: function () {
       CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/tags`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             this.tags = response.data;
           }
         });
     },
-    addTag: function() {
+    addTag: function () {
       if (this.tagValue) {
         const params = {
           value: this.tagValue,
-          challenge: this.$props.challenge_id
+          challenge: this.$props.challenge_id,
         };
-        CTFd.api.post_tag_list({}, params).then(response => {
+        CTFd.api.post_tag_list({}, params).then((response) => {
           if (response.success) {
             this.tagValue = "";
             this.loadTags();
@@ -75,17 +75,17 @@ export default {
         });
       }
     },
-    deleteTag: function(tag_id) {
-      CTFd.api.delete_tag({ tagId: tag_id }).then(response => {
+    deleteTag: function (tag_id) {
+      CTFd.api.delete_tag({ tagId: tag_id }).then((response) => {
         if (response.success) {
           this.loadTags();
         }
       });
-    }
+    },
   },
   created() {
     this.loadTags();
-  }
+  },
 };
 </script>
 

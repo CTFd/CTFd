@@ -67,19 +67,19 @@ import HintEditForm from "./HintEditForm.vue";
 export default {
   components: {
     HintCreationForm,
-    HintEditForm
+    HintEditForm,
   },
   props: {
-    challenge_id: Number
+    challenge_id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       hints: [],
-      editing_hint_id: null
+      editing_hint_id: null,
     };
   },
   methods: {
-    loadHints: async function() {
+    loadHints: async function () {
       let result = await CTFd.fetch(
         `/api/v1/challenges/${this.$props.challenge_id}/hints`,
         {
@@ -87,25 +87,25 @@ export default {
           credentials: "same-origin",
           headers: {
             Accept: "application/json",
-            "Content-Type": "application/json"
-          }
-        }
+            "Content-Type": "application/json",
+          },
+        },
       );
       let response = await result.json();
       this.hints = response.data;
       return response.success;
     },
-    addHint: function() {
+    addHint: function () {
       let modal = this.$refs.HintCreationForm.$el;
       $(modal).modal();
     },
-    editHint: function(hintId) {
+    editHint: function (hintId) {
       this.editing_hint_id = hintId;
       let modal = this.$refs.HintEditForm.$el;
       $(modal).modal();
     },
-    refreshHints: function(caller) {
-      this.loadHints().then(success => {
+    refreshHints: function (caller) {
+      this.loadHints().then((success) => {
         if (success) {
           let modal;
           switch (caller) {
@@ -123,34 +123,34 @@ export default {
           }
         } else {
           alert(
-            "An error occurred while updating this hint. Please try again."
+            "An error occurred while updating this hint. Please try again.",
           );
         }
       });
     },
-    deleteHint: function(hintId) {
+    deleteHint: function (hintId) {
       ezQuery({
         title: "Delete Hint",
         body: "Are you sure you want to delete this hint?",
         success: () => {
           CTFd.fetch(`/api/v1/hints/${hintId}`, {
-            method: "DELETE"
+            method: "DELETE",
           })
-            .then(response => {
+            .then((response) => {
               return response.json();
             })
-            .then(data => {
+            .then((data) => {
               if (data.success) {
                 this.loadHints();
               }
             });
-        }
+        },
       });
-    }
+    },
   },
   created() {
     this.loadHints();
-  }
+  },
 };
 </script>
 
