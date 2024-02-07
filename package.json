@@ -1,0 +1,72 @@
+{
+  "name": "ctfd",
+  "version": "3.6.1",
+  "description": "CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "webpack-cli -w --mode=development",
+    "build": "webpack-cli --mode=development; webpack-cli --mode=production",
+    "verify": "webpack-cli --mode=development --display=errors-only; webpack-cli --mode=production --display=errors-only; git diff --quiet --exit-code",
+    "clean": "rm -rf CTFd/themes/core/static/css/* CTFd/themes/core/static/js/* CTFd/themes/admin/static/css/* CTFd/themes/admin/static/js/*",
+    "lint": "eslint CTFd/themes/core/assets/ CTFd/themes/admin/assets/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CTFd/CTFd.git"
+  },
+  "author": "Kevin Chung <kchung@ctfd.io>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/CTFd/CTFd/issues"
+  },
+  "homepage": "https://github.com/CTFd/CTFd#readme",
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@fortawesome/fontawesome-free": "^5.14.0",
+    "babel-loader": "^8.1.0",
+    "bootstrap": "~4.3.1",
+    "bootstrap-multimodal": "~1.0.4",
+    "codemirror": "~5.58.2",
+    "css-loader": "^3.6.0",
+    "dayjs": "^1.11.1",
+    "easymde": "^2.10.1",
+    "echarts": "^4.8.0",
+    "eslint": "~5.12.0",
+    "event-source-polyfill": "1.0.19",
+    "file-loader": "~3.0.1",
+    "highlight.js": "^10.4.1",
+    "howler": "~2.1.2",
+    "jquery": "~3.5.1",
+    "markdown-it": "~10.0.0",
+    "mini-css-extract-plugin": "~0.7.0",
+    "nunjucks": "~3.2.0",
+    "optimize-css-assets-webpack-plugin": "~5.0.1",
+    "popper.js": "^1.15.0",
+    "prettier": "1.17.0",
+    "remove-strict-webpack-plugin": "~0.1.2",
+    "sass": "^1.43.4",
+    "sass-loader": "10.1.1",
+    "string-replace-loader": "^2.2.0",
+    "swagger-js-codegen": "~1.12.0",
+    "to-string-loader": "^1.1.5",
+    "typeface-lato": "~0.0.54",
+    "typeface-raleway": "~0.0.54",
+    "uglifyjs-webpack-plugin": "~2.1.1",
+    "vue": "^2.6.11",
+    "vue-loader": "15.9.3",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "~4.28.1",
+    "webpack-cli": "~3.2.1",
+    "webpack-fix-style-only-entries": "~0.3.0",
+    "webpack-shell-plugin": "^0.5.0",
+    "whatwg-fetch": "~3.0.0"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.11.5"
+  }
+}
