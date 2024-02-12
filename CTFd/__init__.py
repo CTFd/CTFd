@@ -1,6 +1,7 @@
 import datetime
 import os
 import sys
+import time
 import weakref
 from distutils.version import StrictVersion
 
@@ -161,6 +162,17 @@ def create_app(config="CTFd.config.Config"):
     with app.app_context():
         app.config.from_object(config)
 
+        from CTFd.cache import cache
+        from CTFd.utils import import_in_progress
+
+        cache.init_app(app)
+        app.cache = cache
+
+        # If we are importing we should pause startup until the import is finished
+        while import_in_progress():
+            print("Import currently in progress, CTFd startup paused for 5 seconds")
+            time.sleep(5)
+
         loaders = []
         # We provide a `DictLoader` which may be used to override templates
         app.overridden_templates = {}
@@ -247,11 +259,6 @@ def create_app(config="CTFd.config.Config"):
         app.db = db
         app.VERSION = __version__
         app.CHANNEL = __channel__
-
-        from CTFd.cache import cache
-
-        cache.init_app(app)
-        app.cache = cache
 
         reverse_proxy = app.config.get("REVERSE_PROXY")
         if reverse_proxy:
