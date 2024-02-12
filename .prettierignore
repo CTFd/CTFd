@@ -1,4 +1,5 @@
 CTFd/themes/**/vendor/
+CTFd/themes/core/
 CTFd/themes/core-beta/**/*
 CTFd/themes/admin/static/**/*
 *.html
