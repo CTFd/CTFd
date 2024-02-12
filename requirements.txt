@@ -18,9 +18,9 @@ banal==1.0.6
     # via dataset
 bcrypt==4.0.1
     # via -r requirements.in
-boto3==1.13.9
+boto3==1.34.39
     # via -r requirements.in
-botocore==1.16.26
+botocore==1.34.39
     # via
     #   boto3
     #   s3transfer
@@ -43,8 +43,6 @@ cryptography==40.0.2
     # via pymysql
 dataset==1.6.2
     # via -r requirements.in
-docutils==0.15.2
-    # via botocore
 flask==2.0.3
     # via
     #   -r requirements.in
@@ -146,7 +144,7 @@ redis==4.5.5
     # via -r requirements.in
 requests==2.28.1
     # via -r requirements.in
-s3transfer==0.3.3
+s3transfer==0.10.0
     # via boto3
 six==1.15.0
     # via
