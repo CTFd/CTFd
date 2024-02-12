@@ -19,7 +19,7 @@ python-dotenv==0.13.0
 flask-restx==1.1.0
 flask-marshmallow==0.10.1
 marshmallow-sqlalchemy==0.17.0
-boto3==1.13.9
+boto3==1.34.39
 marshmallow==2.20.2
 pydantic==1.6.2
 WTForms==2.3.1
