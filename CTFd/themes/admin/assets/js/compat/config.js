@@ -1,5 +1,5 @@
 export default {
   urlRoot: "",
   csrfNonce: "",
-  userMode: ""
+  userMode: "",
 };

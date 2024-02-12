@@ -25,7 +25,7 @@ export function WindowController() {
   this._pingTimeout = setTimeout(ping, 17000);
 }
 
-WindowController.prototype.destroy = function() {
+WindowController.prototype.destroy = function () {
   clearTimeout(this._pingTimeout);
   clearTimeout(this._checkTimeout);
 
@@ -35,7 +35,7 @@ WindowController.prototype.destroy = function() {
   this.broadcast("bye");
 };
 
-WindowController.prototype.handleEvent = function(event) {
+WindowController.prototype.handleEvent = function (event) {
   if (event.type === "unload") {
     this.destroy();
   } else if (event.key === "broadcast") {
@@ -51,11 +51,11 @@ WindowController.prototype.handleEvent = function(event) {
   }
 };
 
-WindowController.prototype.sendPing = function() {
+WindowController.prototype.sendPing = function () {
   this.broadcast("ping");
 };
 
-WindowController.prototype.hello = function(event) {
+WindowController.prototype.hello = function (event) {
   this.ping(event);
   if (event.id < this.id) {
     this.check();
@@ -64,16 +64,16 @@ WindowController.prototype.hello = function(event) {
   }
 };
 
-WindowController.prototype.ping = function(event) {
+WindowController.prototype.ping = function (event) {
   this.others[event.id] = +new Date();
 };
 
-WindowController.prototype.bye = function(event) {
+WindowController.prototype.bye = function (event) {
   delete this.others[event.id];
   this.check();
 };
 
-WindowController.prototype.check = function(_event) {
+WindowController.prototype.check = function (_event) {
   var now = +new Date(),
     takeMaster = true,
     id;
@@ -90,12 +90,12 @@ WindowController.prototype.check = function(_event) {
   }
 };
 
-WindowController.prototype.masterDidChange = function() {};
+WindowController.prototype.masterDidChange = function () {};
 
-WindowController.prototype.broadcast = function(type, data) {
+WindowController.prototype.broadcast = function (type, data) {
   var event = {
     id: this.id,
-    type: type
+    type: type,
   };
   for (var x in data) {
     event[x] = data[x];

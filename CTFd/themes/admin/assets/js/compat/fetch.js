@@ -8,7 +8,7 @@ export default (url, options) => {
     options = {
       method: "GET",
       credentials: "same-origin",
-      headers: {}
+      headers: {},
     };
   }
   url = config.urlRoot + url;

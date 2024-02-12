@@ -66,20 +66,20 @@ import { ezToast } from "../../../compat/ezq";
 export default {
   props: {
     index: Number,
-    initialBracket: Object
+    initialBracket: Object,
   },
-  data: function() {
+  data: function () {
     return {
-      bracket: this.initialBracket
+      bracket: this.initialBracket,
     };
   },
   methods: {
-    persisted: function() {
+    persisted: function () {
       // We're using Math.random() for unique IDs so new items have IDs < 1
       // Real items will have an ID > 1
       return this.bracket.id >= 1;
     },
-    saveBracket: function() {
+    saveBracket: function () {
       let body = this.bracket;
       let url = "";
       let method = "";
@@ -98,25 +98,25 @@ export default {
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success === true) {
             this.field = response.data;
             ezToast({
               title: "Success",
               body: message,
-              delay: 1000
+              delay: 1000,
             });
           }
         });
     },
-    deleteBracket: function() {
+    deleteBracket: function () {
       if (confirm("Are you sure you'd like to delete this bracket?")) {
         if (this.persisted()) {
           CTFd.fetch(`/api/v1/brackets/${this.bracket.id}`, {
@@ -124,13 +124,13 @@ export default {
             credentials: "same-origin",
             headers: {
               Accept: "application/json",
-              "Content-Type": "application/json"
-            }
+              "Content-Type": "application/json",
+            },
           })
-            .then(response => {
+            .then((response) => {
               return response.json();
             })
-            .then(response => {
+            .then((response) => {
               if (response.success === true) {
                 this.$emit("remove-bracket", this.index);
               }
@@ -139,7 +139,7 @@ export default {
           this.$emit("remove-bracket", this.index);
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
