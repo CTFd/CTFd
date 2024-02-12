@@ -67,8 +67,8 @@ Alpine.data("TeamGraphs", () => ({
         window.TEAM.id,
         window.TEAM.name,
         this.solves.data,
-        this.awards.data
-      )
+        this.awards.data,
+      ),
     );
   },
 }));

@@ -20,7 +20,7 @@ export default () => {
       event => {
         close.removeEventListener("click", handler);
       },
-      { once: true }
+      { once: true },
     );
 
     toast.show();

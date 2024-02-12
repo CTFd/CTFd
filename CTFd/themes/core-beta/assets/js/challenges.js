@@ -130,7 +130,7 @@ Alpine.data("Challenge", () => ({
           this.$dispatch("load-challenge", this.getNextId());
         });
       },
-      { once: true }
+      { once: true },
     );
     modal.hide();
   },
@@ -163,7 +163,7 @@ Alpine.data("Challenge", () => ({
   async submitChallenge() {
     this.response = await CTFd.pages.challenge.submitChallenge(
       this.id,
-      this.submission
+      this.submission,
     );
 
     await this.renderSubmissionResponse();
@@ -267,7 +267,7 @@ Alpine.data("ChallengeBoard", () => ({
             // Remove location hash
             history.replaceState(null, null, " ");
           },
-          { once: true }
+          { once: true },
         );
         modal.show();
         history.replaceState(null, null, `#${challenge.data.name}-${challengeId}`);

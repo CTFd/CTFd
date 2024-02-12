@@ -192,8 +192,8 @@ Alpine.data("TeamGraphs", () => ({
         CTFd.team.id,
         CTFd.team.name,
         this.solves.data,
-        this.awards.data
-      )
+        this.awards.data,
+      ),
     );
   },
 }));

@@ -16,7 +16,7 @@ export default () => {
       event => {
         CTFd._functions.events.eventRead(data.id);
       },
-      { once: true }
+      { once: true },
     );
     modal.show();
   };
