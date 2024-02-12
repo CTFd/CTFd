@@ -193,11 +193,6 @@
     "file": "assets/CommentBox.fcfcb65d.css",
     "src": "CommentBox.css"
   },
-  "assets/css/codemirror.scss": {
-    "file": "assets/codemirror.d74a88bc.css",
-    "src": "assets/css/codemirror.scss",
-    "isEntry": true
-  },
   "assets/css/admin.scss": {
     "file": "assets/admin.749a93f2.css",
     "src": "assets/css/admin.scss",
@@ -206,6 +201,11 @@
   "assets/css/challenge-board.scss": {
     "file": "assets/challenge-board.44e07e05.css",
     "src": "assets/css/challenge-board.scss",
+    "isEntry": true
+  },
+  "assets/css/codemirror.scss": {
+    "file": "assets/codemirror.d74a88bc.css",
+    "src": "assets/css/codemirror.scss",
     "isEntry": true
   },
   "assets/css/fonts.scss": {

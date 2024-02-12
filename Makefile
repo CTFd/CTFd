@@ -21,6 +21,7 @@ test:
 		-n auto
 	bandit -r CTFd -x CTFd/uploads --skip B105,B322
 	pipdeptree
+	yarn --cwd CTFd/themes/admin verify
 
 coverage:
 	coverage html --show-contexts
