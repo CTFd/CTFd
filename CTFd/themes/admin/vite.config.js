@@ -21,10 +21,10 @@ export default defineConfig({
         copy({
           targets: [
             // https://github.com/vitejs/vite/issues/1618#issuecomment-764579557
-            // {
-            //   src: "./node_modules/@fortawesome/fontawesome-free/webfonts/**/*",
-            //   dest: "static/webfonts",
-            // },
+            {
+              src: "./node_modules/@fortawesome/fontawesome-free/webfonts/**/*",
+              dest: "static/webfonts",
+            },
             {
               src: "./node_modules/@fontsource/lato/files/**/*400*-normal*",
               dest: "static/webfonts"
