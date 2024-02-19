@@ -40,7 +40,7 @@
                         v-bind:class="getIconClass(file.location)"
                         aria-hidden="true"
                       ></i>
-                      <small class="media-item-title">{{
+                      <small class="media-item-title pl-1">{{
                         file.location.split("/").pop()
                       }}</small>
                     </a>
@@ -157,18 +157,38 @@
           </div>
 
           <form id="media-library-upload" enctype="multipart/form-data">
-            <div class="form-group">
-              <label for="media-files"> Upload Files </label>
-              <input
-                type="file"
-                name="file"
-                id="media-files"
-                class="form-control-file"
-                multiple
-              />
-              <sub class="help-block">
-                Attach multiple files using Control+Click or Cmd+Click.
-              </sub>
+            <div class="form-row pt-3">
+              <div class="col">
+                <div class="form-group">
+                  <label for="media-files">Upload Files</label>
+                  <input
+                    type="file"
+                    name="file"
+                    id="media-files"
+                    class="form-control-file"
+                    multiple
+                  />
+                  <sub class="help-block">
+                    Attach multiple files using Control+Click or Cmd+Click.
+                  </sub>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label>Upload File Location</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="location"
+                    placeholder="Location"
+                  />
+                  <sub class="help-block">
+                    Route where file will be accessible (if not provided a
+                    random folder will be used). <br />
+                    Provide as <code>directory/filename.ext</code>
+                  </sub>
+                </div>
+              </div>
             </div>
             <input type="hidden" value="page" name="type" />
           </form>
