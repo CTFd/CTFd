@@ -176,9 +176,15 @@
               <div class="col">
                 <div class="form-group">
                   <label>Upload File Location</label>
-                  <input class="form-control" type="text" name="location" placeholder="Location">
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="location"
+                    placeholder="Location"
+                  />
                   <sub class="help-block">
-                    Route where file will be accessible (if not provided a random folder will be used). <br>
+                    Route where file will be accessible (if not provided a
+                    random folder will be used). <br />
                     Provide as <code>directory/filename.ext</code>
                   </sub>
                 </div>
