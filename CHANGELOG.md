@@ -3,12 +3,14 @@
 **General**
 
 - Add ability for users to generate social share links after solving a challenge
+  - After solving a challenge users can click a "share" button which can generate Twitter, Facebook, LinkedIn links
 - Add Scoreboard Brackets feature to have multiple sub-scoreboards within the main scoreboard
+  - Admins can add a bracket for users/teams which must be selected during the registration process. Within the scoreboard, accounts can be organized by bracket in addition to seeing the full list
 - Calculate a files sha1sum on upload for future local change detection purposes
 - Allow API clients (CTFd, ctfcli, etc) to control the location of an uploaded file
 - Allow challenge CSVs to contain JSON in the hints and flags columns so that admins can import more complex data
 - Fix issue where hints could not be unlocked during freeze time
-- Default index page name to CTF name
+- Use the CTF name to be the default index page name
 
 **API**
 
