@@ -20,7 +20,7 @@ BASE_TEMPLATE = """
             <h3 class="text-center">{ctf_name}</h3>
             <h3 class="text-center">{account_name} has solved {challenge_name}</h3>
             <br>
-            <h4 class="text-center">{challenge_name} has {solve_count_word}</h4>
+            <h4 class="text-center">+{challenge_value} points</h4>
         </div>
     </div>
     <div class="row">
@@ -82,6 +82,7 @@ class SolveSocialShare(object):
         # Challenge information
         challenge_id = challenge.id
         challenge_name = challenge.name
+        challenge_value = challenge.value
         solves_count = get_solve_counts_for_challenges(challenge_id=challenge_id)
         solve_count = solves_count.get(challenge_id, 0)
 
@@ -103,6 +104,7 @@ class SolveSocialShare(object):
             ctf_description=ctf_description,
             register_url=register_url,
             challenge_name=challenge_name,
+            challenge_value=challenge_value,
             account_name=account_name,
             user_name=user_name,
             team_name=team_name,
