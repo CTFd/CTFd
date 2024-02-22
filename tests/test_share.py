@@ -45,7 +45,7 @@ def test_share_endpoints():
             resp = r.get_data(as_text=True)
             assert r.status_code == 200
             assert "user has solved" in resp
-            assert "chal_name has 1 solve" in resp
+            assert "+100 points" in resp
 
             # Test downloading asset image
             m = re.search(r"og:image(.*)", resp)
