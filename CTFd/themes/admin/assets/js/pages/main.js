@@ -7,6 +7,7 @@ import nunjucks from "nunjucks";
 import { Howl } from "howler";
 import events from "../compat/events";
 import times from "../compat/times";
+import "../compat/json";
 import styles from "../styles";
 import { default as helpers } from "../compat/helpers";
 
