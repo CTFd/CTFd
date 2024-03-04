@@ -123,6 +123,11 @@ Alpine.data("CaptainMenu", () => ({
       this.$store.inviteToken = url;
       this.teamInviteModal = new Modal(document.getElementById("team-invite-modal"));
       this.teamInviteModal.show();
+    } else {
+      Object.keys(response.errors).map(error => {
+        const error_msg = response.errors[error];
+        alert(error_msg);
+      });
     }
   },
 
