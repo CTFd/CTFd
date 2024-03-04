@@ -423,7 +423,11 @@ class TeamPrivateMembers(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"": ["Please set a team password before generating an invite code"]},
+                    "errors": {
+                        "": [
+                            "Please set a team password before generating an invite code"
+                        ]
+                    },
                 },
                 403,
             )
