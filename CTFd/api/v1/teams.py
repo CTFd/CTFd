@@ -419,6 +419,15 @@ class TeamPrivateMembers(Resource):
                 403,
             )
 
+        if team.password is None:
+            return (
+                {
+                    "success": False,
+                    "errors": {"": ["Please set a team password and try again"]},
+                },
+                403,
+            )
+
         invite_code = team.get_invite_code()
         response = {"code": invite_code}
         return {"success": True, "data": response}
