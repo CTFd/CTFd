@@ -367,7 +367,9 @@ def load_challenges_csv(dict_reader):
             try:
                 # Allow for column to contain JSON for more flexible data entry
                 json_flags = json.loads(flags)
-                if isinstance(json_flags, list) and all(isinstance(f, dict) for f in json_flags):
+                if isinstance(json_flags, list) and all(
+                    isinstance(f, dict) for f in json_flags
+                ):
                     for flag in json_flags:
                         type = flag.get("type", "static")
                         content = flag.get("content", "")
@@ -408,7 +410,9 @@ def load_challenges_csv(dict_reader):
             try:
                 # Allow for column to contain JSON for more flexible data entry
                 json_hints = json.loads(hints)
-                if isinstance(json_hints, list) and all(isinstance(h, dict) for h in json_hints):
+                if isinstance(json_hints, list) and all(
+                    isinstance(h, dict) for h in json_hints
+                ):
                     for hint in json_hints:
                         content = hint.get("content", "")
                         cost = hint.get("cost", 0)
