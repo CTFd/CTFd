@@ -366,23 +366,28 @@ def load_challenges_csv(dict_reader):
         if flags:
             try:
                 # Allow for column to contain JSON for more flexible data entry
-                flags = json.loads(flags)
-                for flag in flags:
-                    type = flag.get("type", "static")
-                    content = flag.get("content", "")
-                    data = flag.get("data", None)
-                    f = Flags(
-                        challenge_id=challenge.id,
-                        type=type,
-                        content=content,
-                        data=data,
-                    )
-                    db.session.add(f)
-                    db.session.commit()
+                json_flags = json.loads(flags)
+                if isinstance(json_flags, list) and all(
+                    isinstance(f, dict) for f in json_flags
+                ):
+                    for flag in json_flags:
+                        type = flag.get("type", "static")
+                        content = flag.get("content", "")
+                        data = flag.get("data", None)
+                        f = Flags(
+                            challenge_id=challenge.id,
+                            type=type,
+                            content=content,
+                            data=data,
+                        )
+                        db.session.add(f)
+                        db.session.commit()
+                else:
+                    raise TypeError("Processing flags as strings instead of JSON")
 
-            except json.JSONDecodeError:
-                flags = [flag.strip() for flag in flags.split(",")]
-                for flag in flags:
+            except (json.JSONDecodeError, TypeError):
+                string_flags = [flag.strip() for flag in flags.split(",")]
+                for flag in string_flags:
                     f = Flags(
                         type="static",
                         challenge_id=challenge.id,
@@ -404,20 +409,25 @@ def load_challenges_csv(dict_reader):
         if hints:
             try:
                 # Allow for column to contain JSON for more flexible data entry
-                hints = json.loads(hints)
-                for hint in hints:
-                    content = hint.get("content", "")
-                    cost = hint.get("cost", 0)
-                    h = Hints(
-                        challenge_id=challenge.id,
-                        content=content,
-                        cost=cost,
-                    )
-                    db.session.add(h)
-                    db.session.commit()
-            except json.JSONDecodeError:
-                hints = [hint.strip() for hint in hints.split(",")]
-                for hint in hints:
+                json_hints = json.loads(hints)
+                if isinstance(json_hints, list) and all(
+                    isinstance(h, dict) for h in json_hints
+                ):
+                    for hint in json_hints:
+                        content = hint.get("content", "")
+                        cost = hint.get("cost", 0)
+                        h = Hints(
+                            challenge_id=challenge.id,
+                            content=content,
+                            cost=cost,
+                        )
+                        db.session.add(h)
+                        db.session.commit()
+                else:
+                    raise TypeError("Processing hints as strings instead of JSON")
+            except (json.JSONDecodeError, TypeError):
+                string_hints = [hint.strip() for hint in hints.split(",")]
+                for hint in string_hints:
                     h = Hints(
                         challenge_id=challenge.id,
                         content=hint,
