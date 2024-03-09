@@ -118,6 +118,15 @@
 	</nav>
 
 	<main role="main">
+		{% if get_config('freeze') %}
+		<div class="container-fluid bg-info text-center py-2">
+			<div class="row">
+				<div class="col-md-12 text-light">
+					Scoreboard freeze in effect
+				</div>
+			</div>
+		</div>
+		{% endif %}
 		{% if get_config('version_latest') %}
 		<div class="container-fluid bg-warning text-center py-3">
 			<div class="row">
