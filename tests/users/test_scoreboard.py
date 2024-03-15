@@ -117,6 +117,11 @@ def test_top_10():
         saved = {
             "1": {
                 "id": 2,
+                "account_url": "/users/2",
+                "name": "user1",
+                "score": 200,
+                "bracket_id": None,
+                "bracket_name": None,
                 "solves": [
                     {
                         "date": "2017-10-03T03:21:34Z",
@@ -135,10 +140,14 @@ def test_top_10():
                         "value": 100,
                     },
                 ],
-                "name": "user1",
             },
             "2": {
                 "id": 3,
+                "account_url": "/users/3",
+                "name": "user2",
+                "score": 100,
+                "bracket_id": None,
+                "bracket_name": None,
                 "solves": [
                     {
                         "date": "2017-10-03T03:21:34Z",
@@ -149,7 +158,6 @@ def test_top_10():
                         "value": 100,
                     }
                 ],
-                "name": "user2",
             },
         }
         assert saved == response
