@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from flask import request
 from flask_restx import Namespace, Resource
 from sqlalchemy import select
 
@@ -90,11 +91,14 @@ class ScoreboardList(Resource):
 class ScoreboardDetail(Resource):
     @check_account_visibility
     @check_score_visibility
-    @cache.cached(timeout=60, key_prefix=make_cache_key)
+    @cache.cached(timeout=60, key_prefix=make_cache_key, query_string=True)
     def get(self, count):
         response = {}
 
-        standings = get_standings(count=count)
+        # Optional filters
+        bracket_id = request.args.get("bracket_id")
+
+        standings = get_standings(count=count, bracket_id=bracket_id)
 
         team_ids = [team.account_id for team in standings]
 
