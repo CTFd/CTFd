@@ -142,10 +142,14 @@ class ScoreboardDetail(Resource):
                 solves_mapper[team_id], key=lambda k: k["date"]
             )
 
-        for i, _team in enumerate(team_ids):
+        for i, x in enumerate(standings):
             response[i + 1] = {
-                "id": standings[i].account_id,
-                "name": standings[i].name,
-                "solves": solves_mapper.get(standings[i].account_id, []),
+                "id": x.account_id,
+                "account_url": generate_account_url(account_id=x.account_id),
+                "name": x.name,
+                "score": int(x.score),
+                "bracket_id": x.bracket_id,
+                "bracket_name": x.bracket_name,
+                "solves": solves_mapper.get(x.account_id, []),
             }
         return {"success": True, "data": response}
