@@ -56,69 +56,69 @@
 </template>
 
 <script>
-import { ezQuery } from "core/ezq";
-import { default as helpers } from "core/helpers";
-import CTFd from "core/CTFd";
+import { ezQuery } from "../../compat/ezq";
+import { default as helpers } from "../../compat/helpers";
+import CTFd from "../../compat/CTFd";
 
 export default {
   props: {
-    challenge_id: Number
+    challenge_id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       files: [],
-      urlRoot: CTFd.config.urlRoot
+      urlRoot: CTFd.config.urlRoot,
     };
   },
   methods: {
-    loadFiles: function() {
+    loadFiles: function () {
       CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/files`, {
-        method: "GET"
+        method: "GET",
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             this.files = response.data;
           }
         });
     },
-    addFiles: function() {
+    addFiles: function () {
       let data = {
         challenge: this.$props.challenge_id,
-        type: "challenge"
+        type: "challenge",
       };
       let form = this.$refs.FileUploadForm;
-      helpers.files.upload(form, data, _response => {
+      helpers.files.upload(form, data, (_response) => {
         setTimeout(() => {
           this.loadFiles();
         }, 700);
       });
     },
-    deleteFile: function(fileId) {
+    deleteFile: function (fileId) {
       ezQuery({
         title: "Delete Files",
         body: "Are you sure you want to delete this file?",
         success: () => {
           CTFd.fetch(`/api/v1/files/${fileId}`, {
-            method: "DELETE"
+            method: "DELETE",
           })
-            .then(response => {
+            .then((response) => {
               return response.json();
             })
-            .then(response => {
+            .then((response) => {
               if (response.success) {
                 this.loadFiles();
               }
             });
-        }
+        },
       });
-    }
+    },
   },
   created() {
     this.loadFiles();
-  }
+  },
 };
 </script>
 

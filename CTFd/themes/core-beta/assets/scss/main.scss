@@ -59,14 +59,18 @@ select.form-control {
   background-color: transparent !important;
   border-color: #a3d39c;
   box-shadow: 0 0 0 0.1rem #a3d39c;
-  transition: background-color 0.3s, border-color 0.3s;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
 }
 
 .input-filled-invalid {
   background-color: transparent !important;
   border-color: #d46767;
   box-shadow: 0 0 0 0.1rem #d46767;
-  transition: background-color 0.3s, border-color 0.3s;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
 }
 
 .form-control {
@@ -81,5 +85,7 @@ select.form-control {
   background-color: transparent;
   border-color: #a3d39c;
   box-shadow: 0 0 0 0.1rem #a3d39c;
-  transition: background-color 0.3s, border-color 0.3s;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
 }

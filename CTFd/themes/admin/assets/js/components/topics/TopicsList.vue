@@ -30,7 +30,7 @@
         <li
           :class="{
             'list-group-item': true,
-            active: idx + 1 === selectedResultIdx
+            active: idx + 1 === selectedResultIdx,
           }"
           v-for="(topic, idx) in topicResults"
           :key="topic.id"
@@ -44,42 +44,42 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 
 export default {
   props: {
-    challenge_id: Number
+    challenge_id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       topics: [],
       topicValue: "",
       searchedTopic: "",
       topicResults: [],
       selectedResultIdx: 0,
-      awaitingSearch: false
+      awaitingSearch: false,
     };
   },
   methods: {
-    loadTopics: function() {
+    loadTopics: function () {
       CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/topics`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             this.topics = response.data;
           }
         });
     },
-    searchTopics: function() {
+    searchTopics: function () {
       this.selectedResultIdx = 0;
       if (this.topicValue == "") {
         this.topicResults = [];
@@ -91,19 +91,19 @@ export default {
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             this.topicResults = response.data.slice(0, 10);
           }
         });
     },
-    addTopic: function() {
+    addTopic: function () {
       let value;
       if (this.selectedResultIdx === 0) {
         value = this.topicValue;
@@ -115,37 +115,37 @@ export default {
       const params = {
         value: value,
         challenge: this.$props.challenge_id,
-        type: "challenge"
+        type: "challenge",
       };
 
       CTFd.fetch("/api/v1/topics", {
         method: "POST",
-        body: JSON.stringify(params)
+        body: JSON.stringify(params),
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             this.topicValue = "";
             this.loadTopics();
           }
         });
     },
-    deleteTopic: function(topic_id) {
+    deleteTopic: function (topic_id) {
       CTFd.fetch(`/api/v1/topics?type=challenge&target_id=${topic_id}`, {
-        method: "DELETE"
+        method: "DELETE",
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             this.loadTopics();
           }
         });
     },
-    moveCursor: function(dir) {
+    moveCursor: function (dir) {
       switch (dir) {
         case "up":
           if (this.selectedResultIdx) {
@@ -159,16 +159,16 @@ export default {
           break;
       }
     },
-    selectTopic: function(idx) {
+    selectTopic: function (idx) {
       if (idx === undefined) {
         idx = this.selectedResultIdx;
       }
       let topic = this.topicResults[idx];
       this.topicValue = topic.value;
-    }
+    },
   },
   watch: {
-    topicValue: function(val) {
+    topicValue: function (val) {
       if (this.awaitingSearch === false) {
         // 1 second delay after typing
         setTimeout(() => {
@@ -177,11 +177,11 @@ export default {
         }, 500);
       }
       this.awaitingSearch = true;
-    }
+    },
   },
   created() {
     this.loadTopics();
-  }
+  },
 };
 </script>
 

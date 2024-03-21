@@ -4,7 +4,7 @@
       type="button"
       :data-notif-id="this.id"
       class="delete-notification close position-absolute p-3"
-      style="right:0;"
+      style="right: 0"
       data-dismiss="alert"
       aria-label="Close"
       @click="deleteNotification()"
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 import dayjs from "dayjs";
 import hljs from "highlight.js";
 export default {
@@ -33,17 +33,17 @@ export default {
     title: String,
     content: String,
     html: String,
-    date: String
+    date: String,
   },
   methods: {
-    localDate: function() {
+    localDate: function () {
       return dayjs(this.date).format("MMMM Do, h:mm:ss A");
     },
-    deleteNotification: function() {
+    deleteNotification: function () {
       if (confirm("Are you sure you want to delete this notification?")) {
         CTFd.api
           .delete_notification({ notificationId: this.id })
-          .then(response => {
+          .then((response) => {
             if (response.success) {
               // Delete the current component
               // https://stackoverflow.com/a/55384005
@@ -52,12 +52,12 @@ export default {
             }
           });
       }
-    }
+    },
   },
   mounted() {
-    this.$el.querySelectorAll("pre code").forEach(block => {
+    this.$el.querySelectorAll("pre code").forEach((block) => {
       hljs.highlightBlock(block);
     });
-  }
+  },
 };
 </script>

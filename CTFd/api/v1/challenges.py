@@ -41,6 +41,7 @@ from CTFd.utils.decorators.visibility import (
     check_challenge_visibility,
     check_score_visibility,
 )
+from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.logging import log
 from CTFd.utils.security.signing import serialize
 from CTFd.utils.user import (
@@ -659,9 +660,7 @@ class ChallengeAttempt(Resource):
                 if max_tries:
                     # Off by one since fails has changed since it was gotten
                     attempts_left = max_tries - fails - 1
-                    tries_str = "tries"
-                    if attempts_left == 1:
-                        tries_str = "try"
+                    tries_str = pluralize(attempts_left, singular="try", plural="tries")
                     # Add a punctuation mark if there isn't one
                     if message[-1] not in "!().;?[]{}":
                         message = message + "."

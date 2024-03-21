@@ -55,6 +55,28 @@
         {% endif %}
       </div>
 
+    {% elif field.field_type == "select" %}
+
+      <div>
+        <b>{{ field.label(class="form-label") }}</b>
+        {% if show_optionals %}
+          {% if field.flags.required is false %}
+            <small class="ms-1 text-muted">
+              {% trans %}(Optional){% endtrans %}
+            </small>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      {{ field(class="form-control form-select") }}
+
+      {% if show_descriptions %}
+        {% if field.description %}
+          <small class="form-text text-muted">
+            {{ field.description }}
+          </small>
+        {% endif %}
+      {% endif %}
     {% endif %}
   {% endfor %}
 {%- endmacro %}

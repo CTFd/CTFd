@@ -3,7 +3,7 @@ import os
 import posixpath
 import string
 import time
-from pathlib import PurePath
+from pathlib import Path, PurePath
 from shutil import copyfileobj, rmtree
 from urllib.parse import urlparse
 
@@ -19,21 +19,47 @@ from CTFd.utils.encoding import hexencode
 
 class BaseUploader(object):
     def __init__(self):
+        """
+        Initialize the uploader with any required information
+        """
         raise NotImplementedError
 
     def store(self, fileobj, filename):
+        """
+        Directly store a file object at the specified filename
+        """
         raise NotImplementedError
 
     def upload(self, file_obj, filename):
+        """
+        Upload a file while handling any security protections or file renaming
+        """
         raise NotImplementedError
 
     def download(self, filename):
+        """
+        Generate a Flask response to download the requested file
+        """
         raise NotImplementedError
 
     def delete(self, filename):
+        """
+        Delete an uploaded file from the file store
+        """
         raise NotImplementedError
 
     def sync(self):
+        """
+        Download all remotely hosted files for the purpose of exporting
+        """
+        raise NotImplementedError
+
+    def open(self, mode="rb"):
+        """
+        Return a file pointer for an uploaded file.
+        In the case of remotely hosted files, download the target file and then
+        return the file pointer for the local copy.
+        """
         raise NotImplementedError
 
 
@@ -83,6 +109,10 @@ class FilesystemUploader(BaseUploader):
 
     def sync(self):
         pass
+
+    def open(self, filename, mode="rb"):
+        path = Path(safe_join(self.base_path, filename))
+        return path.open(mode=mode)
 
 
 class S3Uploader(BaseUploader):
@@ -208,3 +238,9 @@ class S3Uploader(BaseUploader):
                     os.makedirs(directory)
 
                 self.s3.download_file(self.bucket, s3_object, local_path)
+
+    def open(self, filename, mode="rb"):
+        local_folder = current_app.config.get("UPLOAD_FOLDER")
+        local_path = os.path.join(local_folder, filename)
+        self.s3.download_file(self.bucket, filename, local_path)
+        return Path(local_path).open(mode=mode)

@@ -1,10 +1,12 @@
 import "./main";
 import $ from "jquery";
-import CTFd from "core/CTFd";
-import { htmlEntities } from "core/utils";
-import { ezQuery, ezBadge } from "core/ezq";
-import { createGraph, updateGraph } from "core/graphs";
-import Vue from "vue/dist/vue.esm.browser";
+import "../compat/json";
+import "../compat/format";
+import CTFd from "../compat/CTFd";
+import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
+import { ezQuery, ezBadge } from "../compat/ezq";
+import { createGraph, updateGraph } from "../compat/graphs";
+import Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
 
 function createUser(event) {
@@ -37,25 +39,25 @@ function createUser(event) {
     credentials: "same-origin",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(params)
+    body: JSON.stringify(params),
   })
-    .then(function(response) {
+    .then(function (response) {
       return response.json();
     })
-    .then(function(response) {
+    .then(function (response) {
       if (response.success) {
         const user_id = response.data.id;
         window.location = CTFd.config.urlRoot + "/admin/users/" + user_id;
       } else {
         $("#user-info-create-form > #results").empty();
-        Object.keys(response.errors).forEach(function(key, _index) {
+        Object.keys(response.errors).forEach(function (key, _index) {
           $("#user-info-create-form > #results").append(
             ezBadge({
               type: "error",
-              body: response.errors[key]
-            })
+              body: response.errors[key],
+            }),
           );
           const i = $("#user-info-form").find("input[name={0}]".format(key));
           const input = $(i);
@@ -88,27 +90,27 @@ function updateUser(event) {
     credentials: "same-origin",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(params)
+    body: JSON.stringify(params),
   })
-    .then(function(response) {
+    .then(function (response) {
       return response.json();
     })
-    .then(function(response) {
+    .then(function (response) {
       if (response.success) {
         window.location.reload();
       } else {
         $("#user-info-edit-form > #results").empty();
-        Object.keys(response.errors).forEach(function(key, _index) {
+        Object.keys(response.errors).forEach(function (key, _index) {
           $("#user-info-edit-form > #results").append(
             ezBadge({
               type: "error",
-              body: response.errors[key]
-            })
+              body: response.errors[key],
+            }),
           );
           const i = $("#user-info-edit-form").find(
-            "input[name={0}]".format(key)
+            "input[name={0}]".format(key),
           );
           const input = $(i);
           input.addClass("input-filled-invalid");
@@ -123,21 +125,21 @@ function deleteUser(event) {
   ezQuery({
     title: "Delete User",
     body: "Are you sure you want to delete {0}".format(
-      "<strong>" + htmlEntities(window.USER_NAME) + "</strong>"
+      "<strong>" + htmlEntities(window.USER_NAME) + "</strong>",
     ),
-    success: function() {
+    success: function () {
       CTFd.fetch("/api/v1/users/" + window.USER_ID, {
-        method: "DELETE"
+        method: "DELETE",
       })
-        .then(function(response) {
+        .then(function (response) {
           return response.json();
         })
-        .then(function(response) {
+        .then(function (response) {
           if (response.success) {
             window.location = CTFd.config.urlRoot + "/admin/users";
           }
         });
-    }
+    },
   });
 }
 
@@ -151,24 +153,24 @@ function awardUser(event) {
     credentials: "same-origin",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(params)
+    body: JSON.stringify(params),
   })
-    .then(function(response) {
+    .then(function (response) {
       return response.json();
     })
-    .then(function(response) {
+    .then(function (response) {
       if (response.success) {
         window.location.reload();
       } else {
         $("#user-award-form > #results").empty();
-        Object.keys(response.errors).forEach(function(key, _index) {
+        Object.keys(response.errors).forEach(function (key, _index) {
           $("#user-award-form > #results").append(
             ezBadge({
               type: "error",
-              body: response.errors[key]
-            })
+              body: response.errors[key],
+            }),
           );
           const i = $("#user-award-form").find("input[name={0}]".format(key));
           const input = $(i);
@@ -187,35 +189,33 @@ function emailUser(event) {
     credentials: "same-origin",
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(params)
+    body: JSON.stringify(params),
   })
-    .then(function(response) {
+    .then(function (response) {
       return response.json();
     })
-    .then(function(response) {
+    .then(function (response) {
       if (response.success) {
         $("#user-mail-form > #results").append(
           ezBadge({
             type: "success",
-            body: "E-Mail sent successfully!"
-          })
+            body: "E-Mail sent successfully!",
+          }),
         );
-        $("#user-mail-form")
-          .find("input[type=text], textarea")
-          .val("");
+        $("#user-mail-form").find("input[type=text], textarea").val("");
       } else {
         $("#user-mail-form > #results").empty();
-        Object.keys(response.errors).forEach(function(key, _index) {
+        Object.keys(response.errors).forEach(function (key, _index) {
           $("#user-mail-form > #results").append(
             ezBadge({
               type: "error",
-              body: response.errors[key]
-            })
+              body: response.errors[key],
+            }),
           );
           var i = $("#user-mail-form").find(
-            "input[name={0}], textarea[name={0}]".format(key)
+            "input[name={0}], textarea[name={0}]".format(key),
           );
           var input = $(i);
           input.addClass("input-filled-invalid");
@@ -227,17 +227,15 @@ function emailUser(event) {
 
 function correctSubmissions(_event) {
   let submissions = $("input[data-submission-type=incorrect]:checked");
-  let submissionIDs = submissions.map(function() {
+  let submissionIDs = submissions.map(function () {
     return $(this).data("submission-id");
   });
   let target = submissionIDs.length === 1 ? "submission" : "submissions";
 
   ezQuery({
     title: "Correct Submissions",
-    body: `Are you sure you want to mark ${
-      submissionIDs.length
-    } ${target} correct?`,
-    success: function() {
+    body: `Are you sure you want to mark ${submissionIDs.length} ${target} correct?`,
+    success: function () {
       const reqs = [];
       for (var subId of submissionIDs) {
         let req = CTFd.fetch(`/api/v1/submissions/${subId}`, {
@@ -245,16 +243,16 @@ function correctSubmissions(_event) {
           credentials: "same-origin",
           headers: {
             Accept: "application/json",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ type: "correct" })
+          body: JSON.stringify({ type: "correct" }),
         });
         reqs.push(req);
       }
-      Promise.all(reqs).then(_responses => {
+      Promise.all(reqs).then((_responses) => {
         window.location.reload();
       });
-    }
+    },
   });
 }
 
@@ -277,30 +275,28 @@ function deleteSelectedSubmissions(event, target) {
       break;
   }
 
-  let submissionIDs = submissions.map(function() {
+  let submissionIDs = submissions.map(function () {
     return $(this).data("submission-id");
   });
   let target_string = submissionIDs.length === 1 ? type : type + "s";
 
   ezQuery({
     title: `Delete ${title}`,
-    body: `Are you sure you want to delete ${
-      submissionIDs.length
-    } ${target_string}?`,
-    success: function() {
+    body: `Are you sure you want to delete ${submissionIDs.length} ${target_string}?`,
+    success: function () {
       const reqs = [];
       for (var subId of submissionIDs) {
         reqs.push(CTFd.api.delete_submission({ submissionId: subId }));
       }
-      Promise.all(reqs).then(_responses => {
+      Promise.all(reqs).then((_responses) => {
         window.location.reload();
       });
-    }
+    },
   });
 }
 
 function deleteSelectedAwards(_event) {
-  let awardIDs = $("input[data-award-id]:checked").map(function() {
+  let awardIDs = $("input[data-award-id]:checked").map(function () {
     return $(this).data("award-id");
   });
   let target = awardIDs.length === 1 ? "award" : "awards";
@@ -308,7 +304,7 @@ function deleteSelectedAwards(_event) {
   ezQuery({
     title: `Delete Awards`,
     body: `Are you sure you want to delete ${awardIDs.length} ${target}?`,
-    success: function() {
+    success: function () {
       const reqs = [];
       for (var awardID of awardIDs) {
         let req = CTFd.fetch("/api/v1/awards/" + awardID, {
@@ -316,24 +312,24 @@ function deleteSelectedAwards(_event) {
           credentials: "same-origin",
           headers: {
             Accept: "application/json",
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         });
         reqs.push(req);
       }
-      Promise.all(reqs).then(_responses => {
+      Promise.all(reqs).then((_responses) => {
         window.location.reload();
       });
-    }
+    },
   });
 }
 
 function solveSelectedMissingChallenges(event) {
   event.preventDefault();
   let challengeIDs = $("input[data-missing-challenge-id]:checked").map(
-    function() {
+    function () {
       return $(this).data("missing-challenge-id");
-    }
+    },
   );
   let target = challengeIDs.length === 1 ? "challenge" : "challenges";
 
@@ -342,7 +338,7 @@ function solveSelectedMissingChallenges(event) {
     body: `Are you sure you want to mark ${
       challengeIDs.length
     } ${target} correct for ${htmlEntities(window.USER_NAME)}?`,
-    success: function() {
+    success: function () {
       const reqs = [];
       for (var challengeID of challengeIDs) {
         let params = {
@@ -350,7 +346,7 @@ function solveSelectedMissingChallenges(event) {
           user_id: window.USER_ID,
           team_id: window.TEAM_ID,
           challenge_id: challengeID,
-          type: "correct"
+          type: "correct",
         };
 
         let req = CTFd.fetch("/api/v1/submissions", {
@@ -358,30 +354,30 @@ function solveSelectedMissingChallenges(event) {
           credentials: "same-origin",
           headers: {
             Accept: "application/json",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(params)
+          body: JSON.stringify(params),
         });
         reqs.push(req);
       }
-      Promise.all(reqs).then(_responses => {
+      Promise.all(reqs).then((_responses) => {
         window.location.reload();
       });
-    }
+    },
   });
 }
 
 const api_funcs = {
   team: [
-    x => CTFd.api.get_team_solves({ teamId: x }),
-    x => CTFd.api.get_team_fails({ teamId: x }),
-    x => CTFd.api.get_team_awards({ teamId: x })
+    (x) => CTFd.api.get_team_solves({ teamId: x }),
+    (x) => CTFd.api.get_team_fails({ teamId: x }),
+    (x) => CTFd.api.get_team_awards({ teamId: x }),
   ],
   user: [
-    x => CTFd.api.get_user_solves({ userId: x }),
-    x => CTFd.api.get_user_fails({ userId: x }),
-    x => CTFd.api.get_user_awards({ userId: x })
-  ]
+    (x) => CTFd.api.get_user_solves({ userId: x }),
+    (x) => CTFd.api.get_user_fails({ userId: x }),
+    (x) => CTFd.api.get_user_awards({ userId: x }),
+  ],
 };
 
 const createGraphs = (type, id, name, account_id) => {
@@ -390,8 +386,8 @@ const createGraphs = (type, id, name, account_id) => {
   Promise.all([
     solves_func(account_id),
     fails_func(account_id),
-    awards_func(account_id)
-  ]).then(responses => {
+    awards_func(account_id),
+  ]).then((responses) => {
     createGraph(
       "score_graph",
       "#score-graph",
@@ -399,7 +395,7 @@ const createGraphs = (type, id, name, account_id) => {
       type,
       id,
       name,
-      account_id
+      account_id,
     );
     createGraph(
       "category_breakdown",
@@ -408,7 +404,7 @@ const createGraphs = (type, id, name, account_id) => {
       type,
       id,
       name,
-      account_id
+      account_id,
     );
     createGraph(
       "solve_percentages",
@@ -417,7 +413,7 @@ const createGraphs = (type, id, name, account_id) => {
       type,
       id,
       name,
-      account_id
+      account_id,
     );
   });
 };
@@ -428,8 +424,8 @@ const updateGraphs = (type, id, name, account_id) => {
   Promise.all([
     solves_func(account_id),
     fails_func(account_id),
-    awards_func(account_id)
-  ]).then(responses => {
+    awards_func(account_id),
+  ]).then((responses) => {
     updateGraph(
       "score_graph",
       "#score-graph",
@@ -437,7 +433,7 @@ const updateGraphs = (type, id, name, account_id) => {
       type,
       id,
       name,
-      account_id
+      account_id,
     );
     updateGraph(
       "category_breakdown",
@@ -446,7 +442,7 @@ const updateGraphs = (type, id, name, account_id) => {
       type,
       id,
       name,
-      account_id
+      account_id,
     );
     updateGraph(
       "solve_percentages",
@@ -455,7 +451,7 @@ const updateGraphs = (type, id, name, account_id) => {
       type,
       id,
       name,
-      account_id
+      account_id,
     );
   });
 };
@@ -463,39 +459,39 @@ const updateGraphs = (type, id, name, account_id) => {
 $(() => {
   $(".delete-user").click(deleteUser);
 
-  $(".edit-user").click(function(_event) {
+  $(".edit-user").click(function (_event) {
     $("#user-info-modal").modal("toggle");
   });
 
-  $(".award-user").click(function(_event) {
+  $(".award-user").click(function (_event) {
     $("#user-award-modal").modal("toggle");
   });
 
-  $(".email-user").click(function(_event) {
+  $(".email-user").click(function (_event) {
     $("#user-email-modal").modal("toggle");
   });
 
-  $(".addresses-user").click(function(_event) {
+  $(".addresses-user").click(function (_event) {
     $("#user-addresses-modal").modal("toggle");
   });
 
   $("#user-mail-form").submit(emailUser);
 
-  $("#solves-delete-button").click(function(e) {
+  $("#solves-delete-button").click(function (e) {
     deleteSelectedSubmissions(e, "solves");
   });
 
   $("#correct-fail-button").click(correctSubmissions);
 
-  $("#fails-delete-button").click(function(e) {
+  $("#fails-delete-button").click(function (e) {
     deleteSelectedSubmissions(e, "fails");
   });
 
-  $("#awards-delete-button").click(function(e) {
+  $("#awards-delete-button").click(function (e) {
     deleteSelectedAwards(e);
   });
 
-  $("#missing-solve-button").click(function(e) {
+  $("#missing-solve-button").click(function (e) {
     solveSelectedMissingChallenges(e);
   });
 
@@ -509,25 +505,25 @@ $(() => {
   let vueContainer = document.createElement("div");
   document.querySelector("#comment-box").appendChild(vueContainer);
   new commentBox({
-    propsData: { type: "user", id: window.USER_ID }
+    propsData: { type: "user", id: window.USER_ID },
   }).$mount(vueContainer);
 
   let type, id, name, account_id;
   ({ type, id, name, account_id } = window.stats_data);
 
   let intervalId;
-  $("#user-statistics-modal").on("shown.bs.modal", function(_e) {
+  $("#user-statistics-modal").on("shown.bs.modal", function (_e) {
     createGraphs(type, id, name, account_id);
     intervalId = setInterval(() => {
       updateGraphs(type, id, name, account_id);
     }, 300000);
   });
 
-  $("#user-statistics-modal").on("hidden.bs.modal", function(_e) {
+  $("#user-statistics-modal").on("hidden.bs.modal", function (_e) {
     clearInterval(intervalId);
   });
 
-  $(".statistics-user").click(function(_event) {
+  $(".statistics-user").click(function (_event) {
     $("#user-statistics-modal").modal("toggle");
   });
 });

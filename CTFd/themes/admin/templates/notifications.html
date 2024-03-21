@@ -91,5 +91,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/notifications.js') }}"></script>
+	{{ Assets.js("assets/js/pages/notifications.js", theme="admin") }}
 {% endblock %}

@@ -1,6 +1,7 @@
 import datetime
 import os
 import sys
+import time
 import weakref
 from distutils.version import StrictVersion
 
@@ -31,7 +32,7 @@ from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.user import get_locale
 
-__version__ = "3.6.1"
+__version__ = "3.7.0"
 __channel__ = "oss"
 
 
@@ -161,6 +162,17 @@ def create_app(config="CTFd.config.Config"):
     with app.app_context():
         app.config.from_object(config)
 
+        from CTFd.cache import cache
+        from CTFd.utils import import_in_progress
+
+        cache.init_app(app)
+        app.cache = cache
+
+        # If we are importing we should pause startup until the import is finished
+        while import_in_progress():
+            print("Import currently in progress, CTFd startup paused for 5 seconds")
+            time.sleep(5)
+
         loaders = []
         # We provide a `DictLoader` which may be used to override templates
         app.overridden_templates = {}
@@ -248,11 +260,6 @@ def create_app(config="CTFd.config.Config"):
         app.VERSION = __version__
         app.CHANNEL = __channel__
 
-        from CTFd.cache import cache
-
-        cache.init_app(app)
-        app.cache = cache
-
         reverse_proxy = app.config.get("REVERSE_PROXY")
         if reverse_proxy:
             if type(reverse_proxy) is str and "," in reverse_proxy:
@@ -292,6 +299,7 @@ def create_app(config="CTFd.config.Config"):
         from CTFd.errors import render_error
         from CTFd.events import events
         from CTFd.scoreboard import scoreboard
+        from CTFd.share import social
         from CTFd.teams import teams
         from CTFd.users import users
         from CTFd.views import views
@@ -304,6 +312,7 @@ def create_app(config="CTFd.config.Config"):
         app.register_blueprint(auth)
         app.register_blueprint(api)
         app.register_blueprint(events)
+        app.register_blueprint(social)
 
         app.register_blueprint(admin)
 

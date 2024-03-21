@@ -1,11 +1,12 @@
 import "./main";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import $ from "jquery";
-import { ezAlert } from "core/ezq";
+import "../compat/json";
+import { ezAlert } from "../compat/ezq";
 
 const api_func = {
   users: (x, y) => CTFd.api.patch_user_public({ userId: x }, y),
-  teams: (x, y) => CTFd.api.patch_team_public({ teamId: x }, y)
+  teams: (x, y) => CTFd.api.patch_team_public({ teamId: x }, y),
 };
 
 function toggleAccount() {
@@ -20,10 +21,10 @@ function toggleAccount() {
   }
 
   const params = {
-    hidden: hidden
+    hidden: hidden,
   };
 
-  api_func[CTFd.config.userMode](id, params).then(response => {
+  api_func[CTFd.config.userMode](id, params).then((response) => {
     if (response.success) {
       if (hidden) {
         $btn.data("state", "hidden");
@@ -40,7 +41,7 @@ function toggleAccount() {
 
 function toggleSelectedAccounts(selectedAccounts, action) {
   const params = {
-    hidden: action === "hidden" ? true : false
+    hidden: action === "hidden" ? true : false,
   };
   const reqs = [];
   for (let accId of selectedAccounts.accounts) {
@@ -49,7 +50,7 @@ function toggleSelectedAccounts(selectedAccounts, action) {
   for (let accId of selectedAccounts.users) {
     reqs.push(api_func["users"](accId, params));
   }
-  Promise.all(reqs).then(_responses => {
+  Promise.all(reqs).then((_responses) => {
     window.location.reload();
   });
 }
@@ -59,20 +60,20 @@ function bulkToggleAccounts(_event) {
   // Technically this could work for both tabs at the same time but that seems like
   // bad behavior. We don't want to accidentally unhide a user/team accidentally
   let accountIDs = $(".tab-pane.active input[data-account-id]:checked").map(
-    function() {
+    function () {
       return $(this).data("account-id");
-    }
+    },
   );
 
   let userIDs = $(".tab-pane.active input[data-user-id]:checked").map(
-    function() {
+    function () {
       return $(this).data("user-id");
-    }
+    },
   );
 
   let selectedUsers = {
     accounts: accountIDs,
-    users: userIDs
+    users: userIDs,
   };
 
   ezAlert({
@@ -90,11 +91,11 @@ function bulkToggleAccounts(_event) {
     </form>
     `),
     button: "Submit",
-    success: function() {
+    success: function () {
       let data = $("#scoreboard-bulk-edit").serializeJSON(true);
       let state = data.visibility;
       toggleSelectedAccounts(selectedUsers, state);
-    }
+    },
   });
 }
 

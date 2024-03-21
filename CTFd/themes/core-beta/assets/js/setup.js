@@ -44,7 +44,7 @@ Alpine.data("SetupForm", () => ({
         !confirm(
           `This image file is larger than ${
             limit / 1000
-          }KB which may result in increased load times. Are you sure you'd like to use this file?`
+          }KB which may result in increased load times. Are you sure you'd like to use this file?`,
         )
       ) {
         e.target.value = "";
@@ -90,7 +90,7 @@ Alpine.data("SetupForm", () => ({
       let time_picker = document.querySelector(`#${datetime}-time`);
       let unix_time = dayjs(
         `${date_picker.value} ${time_picker.value}`,
-        "YYYY-MM-DD HH:mm"
+        "YYYY-MM-DD HH:mm",
       ).unix();
 
       if (isNaN(unix_time)) {
@@ -123,7 +123,7 @@ Alpine.data("SetupForm", () => ({
     }
     window.open(
       "https://www.majorleaguecyber.org/events/new?" + ret.join("&"),
-      "_blank"
+      "_blank",
     );
   },
 

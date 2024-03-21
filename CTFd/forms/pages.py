@@ -30,6 +30,13 @@ class PageEditForm(BaseForm):
         validators=[InputRequired()],
         description="The markup format used to render the page",
     )
+    link_target = SelectField(
+        "Target",
+        choices=[("", "Current Page"), ("_blank", "New Tab")],
+        default="",
+        validators=[],
+        description="Context to open page in",
+    )
 
 
 class PageFilesUploadForm(BaseForm):

@@ -100,26 +100,26 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
-import { ezToast } from "core/ezq";
+import CTFd from "../../../compat/CTFd";
+import { ezToast } from "../../../compat/ezq";
 
 export default {
   props: {
     index: Number,
-    initialField: Object
+    initialField: Object,
   },
-  data: function() {
+  data: function () {
     return {
-      field: this.initialField
+      field: this.initialField,
     };
   },
   methods: {
-    persistedField: function() {
+    persistedField: function () {
       // We're using Math.random() for unique IDs so new items have IDs < 1
       // Real items will have an ID > 1
       return this.field.id >= 1;
     },
-    saveField: function() {
+    saveField: function () {
       let body = this.field;
       if (this.persistedField()) {
         CTFd.fetch(`/api/v1/configs/fields/${this.field.id}`, {
@@ -127,20 +127,20 @@ export default {
           credentials: "same-origin",
           headers: {
             Accept: "application/json",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
         })
-          .then(response => {
+          .then((response) => {
             return response.json();
           })
-          .then(response => {
+          .then((response) => {
             if (response.success === true) {
               this.field = response.data;
               ezToast({
                 title: "Success",
                 body: "Field has been updated!",
-                delay: 1000
+                delay: 1000,
               });
             }
           });
@@ -150,26 +150,26 @@ export default {
           credentials: "same-origin",
           headers: {
             Accept: "application/json",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
         })
-          .then(response => {
+          .then((response) => {
             return response.json();
           })
-          .then(response => {
+          .then((response) => {
             if (response.success === true) {
               this.field = response.data;
               ezToast({
                 title: "Success",
                 body: "Field has been created!",
-                delay: 1000
+                delay: 1000,
               });
             }
           });
       }
     },
-    deleteField: function() {
+    deleteField: function () {
       if (confirm("Are you sure you'd like to delete this field?")) {
         if (this.persistedField()) {
           CTFd.fetch(`/api/v1/configs/fields/${this.field.id}`, {
@@ -177,13 +177,13 @@ export default {
             credentials: "same-origin",
             headers: {
               Accept: "application/json",
-              "Content-Type": "application/json"
-            }
+              "Content-Type": "application/json",
+            },
           })
-            .then(response => {
+            .then((response) => {
               return response.json();
             })
-            .then(response => {
+            .then((response) => {
               if (response.success === true) {
                 this.$emit("remove-field", this.index);
               }
@@ -192,8 +192,8 @@ export default {
           this.$emit("remove-field", this.index);
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

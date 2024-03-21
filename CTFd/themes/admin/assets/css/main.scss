@@ -1,0 +1,160 @@
+@import "~/bootstrap/scss/bootstrap.scss";
+@import "includes/jumbotron.css";
+@import "includes/sticky-footer.css";
+@import "includes/award-icons.scss";
+@import "includes/flag-icons.scss";
+@import "includes/opacity.scss";
+@import "includes/min-height.scss";
+
+html,
+body,
+.container {
+  font-family: "Lato", "LatoOffline", sans-serif;
+}
+
+h1,
+h2 {
+  font-family: "Raleway", "RalewayOffline", sans-serif;
+  font-weight: 500;
+  letter-spacing: 2px;
+}
+
+a {
+  color: #337ab7;
+  text-decoration: none;
+}
+
+table > thead > tr > td {
+  /* Remove border line from thead of all tables */
+  /* It can overlap with other element styles */
+  border-top: none !important;
+}
+
+blockquote {
+  border-left: 4px solid $secondary;
+  padding-left: 15px;
+}
+
+.table thead th {
+  white-space: nowrap;
+}
+
+.fa-spin.spinner {
+  text-align: center;
+  opacity: 0.5;
+}
+
+.spinner-error {
+  padding-top: 20vh;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.jumbotron {
+  border-radius: 0;
+  text-align: center;
+}
+
+.form-control:focus {
+  background-color: transparent;
+  border-color: #a3d39c;
+  box-shadow: 0 0 0 0.1rem #a3d39c;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+}
+
+.input-filled-valid {
+  background-color: transparent !important;
+  border-color: #a3d39c;
+  box-shadow: 0 0 0 0.1rem #a3d39c;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+}
+
+.input-filled-invalid {
+  background-color: transparent !important;
+  border-color: #d46767;
+  box-shadow: 0 0 0 0.1rem #d46767;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+}
+
+.btn-outlined.btn-theme {
+  background: none;
+  color: #545454;
+  border-color: #545454;
+  border: 3px solid;
+}
+
+.btn-outlined {
+  border-radius: 0;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.btn {
+  letter-spacing: 1px;
+  text-decoration: none;
+  -moz-user-select: none;
+  border-radius: 0;
+  cursor: pointer;
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+  padding: 8px 20px;
+}
+
+.btn-info {
+  background-color: #5b7290 !important;
+  border-color: #5b7290 !important;
+}
+
+.badge-info {
+  background-color: #5b7290 !important;
+}
+
+.alert {
+  border-radius: 0 !important;
+  padding: 0.8em;
+}
+
+.btn-fa {
+  cursor: pointer;
+}
+
+.close {
+  cursor: pointer;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-help {
+  cursor: help;
+}
+
+.modal-content {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important;
+}
+
+.fa-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.badge-notification {
+  vertical-align: top;
+  margin-left: -1.5em;
+  font-size: 50%;
+}
