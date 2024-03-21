@@ -1,6 +1,6 @@
 files: [
  {
-  "source" : "CTFd/translations/**/LC_MESSAGES/messages.po",
-  "translation" : "%original_path%/messages.mo",
+  "source" : "/CTFd/translations/**/LC_MESSAGES/messages.po",
+  "translation" : "/CTFd/translations/%two_letters_code%/LC_MESSAGES/messages.mo",
  }
 ]
