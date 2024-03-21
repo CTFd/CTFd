@@ -82,7 +82,6 @@ def calculate_param_hash(params, allowed_params=None):
         )
     else:
         args_as_sorted_tuple = tuple(sorted(pair for pair in params))
-    print(args_as_sorted_tuple)
     args_hash = md5(str(args_as_sorted_tuple).encode()).hexdigest()
     return args_hash
 
@@ -131,17 +130,15 @@ def clear_standings():
     cache.delete_memoized(ScoreboardDetail.get)
 
     # Clear out scoreboard detail
-    keys = [tuple()]
+    keys = [()]  # Empty tuple to handle case with no parameters
     brackets = Brackets.query.all()
     for bracket in brackets:
         keys.append((("bracket_id", str(bracket.id)),))
     for k in keys:
-        print(k)
         cache_func = make_cache_key_with_query_string(
             query_string_hash=calculate_param_hash(params=k)
         )
         cache_key = cache_func(path=api.name + "." + ScoreboardDetail.endpoint)
-        print(cache_key)
         cache.delete(cache_key)
 
     # Clear out scoreboard templates
