@@ -4,7 +4,7 @@ from flask import request
 from flask_restx import Namespace, Resource
 from sqlalchemy import select
 
-from CTFd.cache import cache, make_cache_key
+from CTFd.cache import cache, make_cache_key, make_cache_key_with_query_string
 from CTFd.models import Awards, Brackets, Solves, Users, db
 from CTFd.utils import get_config
 from CTFd.utils.dates import isoformat, unix_time_to_utc
@@ -91,8 +91,12 @@ class ScoreboardList(Resource):
 class ScoreboardDetail(Resource):
     @check_account_visibility
     @check_score_visibility
-    @cache.cached(timeout=60, key_prefix=make_cache_key, query_string=True)
+    @cache.cached(
+        timeout=60,
+        key_prefix=make_cache_key_with_query_string(allowed_params=["bracket_id"]),
+    )
     def get(self, count):
+        print("notcached")
         response = {}
 
         # Optional filters

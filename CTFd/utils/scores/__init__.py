@@ -135,7 +135,7 @@ def get_standings(count=None, bracket_id=None, admin=False, fields=None):
 
 
 @cache.memoize(timeout=60)
-def get_team_standings(count=None, admin=False, fields=None):
+def get_team_standings(count=None, bracket_id=None, admin=False, fields=None):
     if fields is None:
         fields = []
     scores = (
@@ -216,6 +216,9 @@ def get_team_standings(count=None, admin=False, fields=None):
             )
         )
 
+    if bracket_id is not None:
+        standings_query = standings_query.filter(Teams.bracket_id == bracket_id)
+
     if count is None:
         standings = standings_query.all()
     else:
@@ -225,7 +228,7 @@ def get_team_standings(count=None, admin=False, fields=None):
 
 
 @cache.memoize(timeout=60)
-def get_user_standings(count=None, admin=False, fields=None):
+def get_user_standings(count=None, bracket_id=None, admin=False, fields=None):
     if fields is None:
         fields = []
     scores = (
@@ -306,6 +309,9 @@ def get_user_standings(count=None, admin=False, fields=None):
                 sumscores.columns.id.asc(),
             )
         )
+
+    if bracket_id is not None:
+        standings_query = standings_query.filter(Users.bracket_id == bracket_id)
 
     if count is None:
         standings = standings_query.all()
