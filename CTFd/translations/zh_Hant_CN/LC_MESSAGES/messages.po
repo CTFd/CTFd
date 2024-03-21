@@ -5,7 +5,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: CTFd\n"
-"Language: zh-CN\n"
+"Language: zh_Hant_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: CTFd/forms/auth.py:19 CTFd/forms/self.py:16
