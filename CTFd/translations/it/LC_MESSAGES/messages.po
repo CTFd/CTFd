@@ -1,12 +1,22 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: CTFd\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-10-07 03:17-0400\n"
+"PO-Revision-Date: 2024-03-21 23:53\n"
+"Last-Translator: \n"
+"Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: POEditor.com\n"
-"Project-Id-Version: CTFd\n"
-"Language: it\n"
+"Generated-By: Babel 2.12.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: CTFd\n"
+"X-Crowdin-Project-ID: 659064\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /master/messages.pot\n"
+"X-Crowdin-File-ID: 188\n"
+"Language: it_IT\n"
 
 #: CTFd/forms/auth.py:19 CTFd/forms/self.py:16
 #: CTFd/themes/core-beta/templates/teams/private.html:319
@@ -166,6 +176,10 @@ msgstr "Colore del tema"
 msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
 msgstr "Colore utilizzato dal tema per controllare l'estetica. Richiede che il tema preveda questa funzione. Opzionale."
 
+#: CTFd/forms/setup.py:91
+msgid "Verify Emails"
+msgstr "Verifica le email"
+
 #: CTFd/forms/setup.py:143
 msgid "Start Time"
 msgstr "Ora di inizio"
@@ -285,6 +299,7 @@ msgid "Challenge"
 msgstr "Sfida"
 
 #: CTFd/themes/core-beta/templates/challenge.html:19
+#, python-format
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
 msgstr[0] "%(num)d soluzione"
@@ -429,6 +444,10 @@ msgstr "Sei sicuro di voler eliminare questo token?"
 msgid "Created"
 msgstr "Creato"
 
+#: CTFd/themes/core-beta/templates/settings.html:226
+msgid "Description"
+msgstr "Descrizione"
+
 #: CTFd/themes/core-beta/templates/settings.html:227
 msgid "Delete"
 msgstr "Eliminare"
@@ -461,6 +480,15 @@ msgstr "Data &amp; Ora"
 msgid "Integrations"
 msgstr "Integrazioni"
 
+#: CTFd/themes/core-beta/templates/setup.html:86
+#: CTFd/themes/core-beta/templates/setup.html:138
+#: CTFd/themes/core-beta/templates/setup.html:202
+#: CTFd/themes/core-beta/templates/setup.html:238
+#: CTFd/themes/core-beta/templates/setup.html:296
+#: CTFd/themes/core-beta/templates/setup.html:345
+msgid "Next"
+msgstr "Successivo"
+
 #: CTFd/themes/core-beta/templates/setup.html:112
 msgid "Participants register accounts and form teams"
 msgstr "I partecipanti registrano gli account e formano squadre"
@@ -492,6 +520,14 @@ msgstr "Più facile da organizzare"
 #: CTFd/themes/core-beta/templates/setup.html:124
 msgid "Difficult to attribute solutions to individual team members"
 msgstr "Difficile attribuire le soluzioni ai singoli membri del team"
+
+#: CTFd/themes/core-beta/templates/setup.html:143
+msgid "Visibility Settings"
+msgstr "Impostazioni di visibilità"
+
+#: CTFd/themes/core-beta/templates/setup.html:146
+msgid "Control the visibility of different sections of CTFd"
+msgstr "Controlla la visibilità delle diverse sezioni di CTFd"
 
 #: CTFd/themes/core-beta/templates/setup.html:232
 msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
@@ -587,110 +623,6 @@ msgstr "Clicca il pulsante qui sotto per unirti alla squadra!"
 msgid "Create Team"
 msgstr "Crea squadra"
 
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
-msgid "In order to participate you must either join or create a team."
-msgstr "Per partecipare è necessario creare o unirsi ad una squadra."
-
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
-msgid "Play with Official Team"
-msgstr "Gioca con la squadra ufficiale"
-
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
-msgid "Join Unofficial Team"
-msgstr "Unisciti alla squadra non ufficiale"
-
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
-msgid "Create Unofficial Team"
-msgstr "Crea una squadra non ufficiale"
-
-#: CTFd/themes/core-beta/templates/teams/teams.html:124
-#: CTFd/themes/core-beta/templates/users/users.html:114
-msgid "Page"
-msgstr "Pagina"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:218
-#: CTFd/themes/core-beta/templates/teams/public.html:10
-#: CTFd/themes/core-beta/templates/users/private.html:21
-#: CTFd/themes/core-beta/templates/users/public.html:21
-#: CTFd/themes/core-beta/templates/users/users.html:66
-msgid "Official"
-msgstr "Ufficiale"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:348
-#: CTFd/themes/core-beta/templates/teams/public.html:109
-#: CTFd/themes/core-beta/templates/users/private.html:88
-#: CTFd/themes/core-beta/templates/users/public.html:88
-msgid "Awards"
-msgstr "Premi"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:371
-#: CTFd/themes/core-beta/templates/teams/public.html:137
-#: CTFd/themes/core-beta/templates/users/private.html:110
-msgid "Solves"
-msgstr "Soluzioni"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:376
-#: CTFd/themes/core-beta/templates/teams/public.html:142
-#: CTFd/themes/core-beta/templates/users/private.html:115
-#: CTFd/themes/core-beta/templates/users/public.html:114
-msgid "Category"
-msgstr "Categoria"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:377
-#: CTFd/themes/core-beta/templates/teams/public.html:143
-#: CTFd/themes/core-beta/templates/users/private.html:116
-#: CTFd/themes/core-beta/templates/users/public.html:115
-msgid "Value"
-msgstr "Valore"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:468
-#: CTFd/themes/core-beta/templates/teams/public.html:232
-#: CTFd/themes/core-beta/templates/users/private.html:203
-#: CTFd/themes/core-beta/templates/users/public.html:204
-msgid "No solves yet"
-msgstr "Nessuna soluzione per ora"
-
-#: CTFd/themes/core-beta/templates/users/users.html:46
-msgid "User"
-msgstr "Utente"
-
-#: CTFd/utils/modes/__init__.py:35
-msgid "user"
-msgid_plural "users"
-msgstr[0] "utente"
-msgstr[1] "utenti"
-
-#: CTFd/utils/modes/__init__.py:37
-msgid "team"
-msgid_plural "teams"
-msgstr[0] "squadra"
-msgstr[1] "squadre"
-
-#: CTFd/forms/setup.py:91
-msgid "Verify Emails"
-msgstr "Verifica le email"
-
-#: CTFd/themes/core-beta/templates/settings.html:226
-msgid "Description"
-msgstr "Descrizione"
-
-#: CTFd/themes/core-beta/templates/setup.html:86
-#: CTFd/themes/core-beta/templates/setup.html:138
-#: CTFd/themes/core-beta/templates/setup.html:202
-#: CTFd/themes/core-beta/templates/setup.html:238
-#: CTFd/themes/core-beta/templates/setup.html:296
-#: CTFd/themes/core-beta/templates/setup.html:345
-msgid "Next"
-msgstr "Successivo"
-
-#: CTFd/themes/core-beta/templates/setup.html:143
-msgid "Visibility Settings"
-msgstr "Impostazioni di visibilità"
-
-#: CTFd/themes/core-beta/templates/setup.html:146
-msgid "Control the visibility of different sections of CTFd"
-msgstr "Controlla la visibilità delle diverse sezioni di CTFd"
-
 #: CTFd/themes/core-beta/templates/teams/private.html:8
 msgid "Edit Team"
 msgstr "Modifica squadra"
@@ -735,6 +667,14 @@ msgstr "No"
 msgid "Yes"
 msgstr "Sì"
 
+#: CTFd/themes/core-beta/templates/teams/private.html:218
+#: CTFd/themes/core-beta/templates/teams/public.html:10
+#: CTFd/themes/core-beta/templates/users/private.html:21
+#: CTFd/themes/core-beta/templates/users/public.html:21
+#: CTFd/themes/core-beta/templates/users/users.html:66
+msgid "Official"
+msgstr "Ufficiale"
+
 #: CTFd/themes/core-beta/templates/teams/private.html:250
 msgid "place"
 msgstr "posto"
@@ -756,4 +696,75 @@ msgstr "Punteggio"
 #: CTFd/themes/core-beta/templates/teams/private.html:332
 msgid "Captain"
 msgstr "Capitano"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:348
+#: CTFd/themes/core-beta/templates/teams/public.html:109
+#: CTFd/themes/core-beta/templates/users/private.html:88
+#: CTFd/themes/core-beta/templates/users/public.html:88
+msgid "Awards"
+msgstr "Premi"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:371
+#: CTFd/themes/core-beta/templates/teams/public.html:137
+#: CTFd/themes/core-beta/templates/users/private.html:110
+msgid "Solves"
+msgstr "Soluzioni"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:376
+#: CTFd/themes/core-beta/templates/teams/public.html:142
+#: CTFd/themes/core-beta/templates/users/private.html:115
+#: CTFd/themes/core-beta/templates/users/public.html:114
+msgid "Category"
+msgstr "Categoria"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:377
+#: CTFd/themes/core-beta/templates/teams/public.html:143
+#: CTFd/themes/core-beta/templates/users/private.html:116
+#: CTFd/themes/core-beta/templates/users/public.html:115
+msgid "Value"
+msgstr "Valore"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:468
+#: CTFd/themes/core-beta/templates/teams/public.html:232
+#: CTFd/themes/core-beta/templates/users/private.html:203
+#: CTFd/themes/core-beta/templates/users/public.html:204
+msgid "No solves yet"
+msgstr "Nessuna soluzione per ora"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
+msgid "In order to participate you must either join or create a team."
+msgstr "Per partecipare è necessario creare o unirsi ad una squadra."
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
+msgid "Play with Official Team"
+msgstr "Gioca con la squadra ufficiale"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
+msgid "Join Unofficial Team"
+msgstr "Unisciti alla squadra non ufficiale"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
+msgid "Create Unofficial Team"
+msgstr "Crea una squadra non ufficiale"
+
+#: CTFd/themes/core-beta/templates/teams/teams.html:124
+#: CTFd/themes/core-beta/templates/users/users.html:114
+msgid "Page"
+msgstr "Pagina"
+
+#: CTFd/themes/core-beta/templates/users/users.html:46
+msgid "User"
+msgstr "Utente"
+
+#: CTFd/utils/modes/__init__.py:35
+msgid "user"
+msgid_plural "users"
+msgstr[0] "utente"
+msgstr[1] "utenti"
+
+#: CTFd/utils/modes/__init__.py:37
+msgid "team"
+msgid_plural "teams"
+msgstr[0] "squadra"
+msgstr[1] "squadre"
 

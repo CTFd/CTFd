@@ -1,12 +1,22 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: CTFd\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-10-07 03:17-0400\n"
+"PO-Revision-Date: 2024-03-21 23:53\n"
+"Last-Translator: \n"
+"Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: POEditor.com\n"
-"Project-Id-Version: CTFd\n"
-"Language: ja\n"
+"Generated-By: Babel 2.12.1\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: CTFd\n"
+"X-Crowdin-Project-ID: 659064\n"
+"X-Crowdin-Language: ja\n"
+"X-Crowdin-File: /master/messages.pot\n"
+"X-Crowdin-File-ID: 188\n"
+"Language: ja_JP\n"
 
 #: CTFd/forms/auth.py:19 CTFd/forms/self.py:16
 #: CTFd/themes/core-beta/templates/teams/private.html:319
@@ -27,9 +37,8 @@ msgstr "パスワード"
 #: CTFd/forms/auth.py:23 CTFd/forms/auth.py:44 CTFd/forms/auth.py:55
 #: CTFd/forms/auth.py:62 CTFd/forms/self.py:24 CTFd/forms/teams.py:127
 #: CTFd/forms/teams.py:210 CTFd/themes/core-beta/templates/challenge.html:147
-#, fuzzy
 msgid "Submit"
-msgstr "送信"
+msgstr ""
 
 #: CTFd/forms/auth.py:39
 msgid "User Name or Email"
@@ -167,6 +176,10 @@ msgstr "テーマカラー"
 msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
 msgstr "美観を制御するためにテーマごとに使用される色。テーマのサポートが必要です。（オプション）"
 
+#: CTFd/forms/setup.py:91
+msgid "Verify Emails"
+msgstr "メールの確認"
+
 #: CTFd/forms/setup.py:143
 msgid "Start Time"
 msgstr "開始時刻"
@@ -282,15 +295,14 @@ msgstr "Powered by CTFd"
 #: CTFd/themes/core-beta/templates/teams/public.html:141
 #: CTFd/themes/core-beta/templates/users/private.html:114
 #: CTFd/themes/core-beta/templates/users/public.html:113
-#, fuzzy
 msgid "Challenge"
-msgstr "課題"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/challenge.html:19
-#, fuzzy
+#, python-format
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
-msgstr[0] "正答"
+msgstr[0] ""
 
 #: CTFd/themes/core-beta/templates/challenge.html:73
 msgid "View Hint"
@@ -341,9 +353,8 @@ msgid "Login"
 msgstr "ログイン"
 
 #: CTFd/themes/core-beta/templates/login.html:40
-#, fuzzy
 msgid "Forgot your password?"
-msgstr "パスワードを忘れた場合"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:97
 #: CTFd/themes/core-beta/templates/notifications.html:7
@@ -432,6 +443,10 @@ msgstr "このトークンを削除してもよろしいですか?"
 msgid "Created"
 msgstr "作成"
 
+#: CTFd/themes/core-beta/templates/settings.html:226
+msgid "Description"
+msgstr "説明"
+
 #: CTFd/themes/core-beta/templates/settings.html:227
 msgid "Delete"
 msgstr "削除"
@@ -464,6 +479,15 @@ msgstr "日付と時刻"
 msgid "Integrations"
 msgstr "統合"
 
+#: CTFd/themes/core-beta/templates/setup.html:86
+#: CTFd/themes/core-beta/templates/setup.html:138
+#: CTFd/themes/core-beta/templates/setup.html:202
+#: CTFd/themes/core-beta/templates/setup.html:238
+#: CTFd/themes/core-beta/templates/setup.html:296
+#: CTFd/themes/core-beta/templates/setup.html:345
+msgid "Next"
+msgstr "次"
+
 #: CTFd/themes/core-beta/templates/setup.html:112
 msgid "Participants register accounts and form teams"
 msgstr "参加者はアカウントを登録し、チームを結成します"
@@ -495,6 +519,14 @@ msgstr "管理しやすくなる"
 #: CTFd/themes/core-beta/templates/setup.html:124
 msgid "Difficult to attribute solutions to individual team members"
 msgstr "チームメンバーの誰が解答したのかを特定することが難しい"
+
+#: CTFd/themes/core-beta/templates/setup.html:143
+msgid "Visibility Settings"
+msgstr "表示設定"
+
+#: CTFd/themes/core-beta/templates/setup.html:146
+msgid "Control the visibility of different sections of CTFd"
+msgstr "CTFd のさまざまなセクションの可視性を制御する"
 
 #: CTFd/themes/core-beta/templates/setup.html:232
 msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
@@ -590,109 +622,6 @@ msgstr "下のボタンをクリックしてチームに参加してください
 msgid "Create Team"
 msgstr "チームの作成"
 
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
-msgid "In order to participate you must either join or create a team."
-msgstr "参加するには、チームに参加するか、チームを作成する必要があります。"
-
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
-msgid "Play with Official Team"
-msgstr "公式チームでプレイする"
-
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
-msgid "Join Unofficial Team"
-msgstr "非公式チームに参加する"
-
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
-msgid "Create Unofficial Team"
-msgstr "非公式チームを作成する"
-
-#: CTFd/themes/core-beta/templates/teams/teams.html:124
-#: CTFd/themes/core-beta/templates/users/users.html:114
-msgid "Page"
-msgstr "ページ"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:218
-#: CTFd/themes/core-beta/templates/teams/public.html:10
-#: CTFd/themes/core-beta/templates/users/private.html:21
-#: CTFd/themes/core-beta/templates/users/public.html:21
-#: CTFd/themes/core-beta/templates/users/users.html:66
-msgid "Official"
-msgstr "公式"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:348
-#: CTFd/themes/core-beta/templates/teams/public.html:109
-#: CTFd/themes/core-beta/templates/users/private.html:88
-#: CTFd/themes/core-beta/templates/users/public.html:88
-msgid "Awards"
-msgstr "受賞歴"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:371
-#: CTFd/themes/core-beta/templates/teams/public.html:137
-#: CTFd/themes/core-beta/templates/users/private.html:110
-msgid "Solves"
-msgstr "正答"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:376
-#: CTFd/themes/core-beta/templates/teams/public.html:142
-#: CTFd/themes/core-beta/templates/users/private.html:115
-#: CTFd/themes/core-beta/templates/users/public.html:114
-msgid "Category"
-msgstr "カテゴリー"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:377
-#: CTFd/themes/core-beta/templates/teams/public.html:143
-#: CTFd/themes/core-beta/templates/users/private.html:116
-#: CTFd/themes/core-beta/templates/users/public.html:115
-#, fuzzy
-msgid "Value"
-msgstr "得点"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:468
-#: CTFd/themes/core-beta/templates/teams/public.html:232
-#: CTFd/themes/core-beta/templates/users/private.html:203
-#: CTFd/themes/core-beta/templates/users/public.html:204
-msgid "No solves yet"
-msgstr "まだ解答がありません。"
-
-#: CTFd/themes/core-beta/templates/users/users.html:46
-msgid "User"
-msgstr "ユーザー"
-
-#: CTFd/utils/modes/__init__.py:35
-msgid "user"
-msgid_plural "users"
-msgstr[0] "ユーザー"
-
-#: CTFd/utils/modes/__init__.py:37
-msgid "team"
-msgid_plural "teams"
-msgstr[0] "チーム"
-
-#: CTFd/forms/setup.py:91
-msgid "Verify Emails"
-msgstr "メールの確認"
-
-#: CTFd/themes/core-beta/templates/settings.html:226
-msgid "Description"
-msgstr "説明"
-
-#: CTFd/themes/core-beta/templates/setup.html:86
-#: CTFd/themes/core-beta/templates/setup.html:138
-#: CTFd/themes/core-beta/templates/setup.html:202
-#: CTFd/themes/core-beta/templates/setup.html:238
-#: CTFd/themes/core-beta/templates/setup.html:296
-#: CTFd/themes/core-beta/templates/setup.html:345
-msgid "Next"
-msgstr "次"
-
-#: CTFd/themes/core-beta/templates/setup.html:143
-msgid "Visibility Settings"
-msgstr "表示設定"
-
-#: CTFd/themes/core-beta/templates/setup.html:146
-msgid "Control the visibility of different sections of CTFd"
-msgstr "CTFd のさまざまなセクションの可視性を制御する"
-
 #: CTFd/themes/core-beta/templates/teams/private.html:8
 msgid "Edit Team"
 msgstr "チームの編集"
@@ -702,9 +631,8 @@ msgid "Your team's profile has been updated"
 msgstr "チームのプロフィールが更新されました"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:104
-#, fuzzy
 msgid "Choose Captain"
-msgstr "リーダーを選択してください"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/teams/private.html:127
 msgid "Your captain rights have been transferred"
@@ -738,10 +666,17 @@ msgstr "いいえ"
 msgid "Yes"
 msgstr "はい"
 
+#: CTFd/themes/core-beta/templates/teams/private.html:218
+#: CTFd/themes/core-beta/templates/teams/public.html:10
+#: CTFd/themes/core-beta/templates/users/private.html:21
+#: CTFd/themes/core-beta/templates/users/public.html:21
+#: CTFd/themes/core-beta/templates/users/users.html:66
+msgid "Official"
+msgstr "公式"
+
 #: CTFd/themes/core-beta/templates/teams/private.html:250
-#, fuzzy
 msgid "place"
-msgstr "順位"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/teams/private.html:258
 msgid "points"
@@ -758,7 +693,75 @@ msgid "Score"
 msgstr "スコア"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:332
-#, fuzzy
 msgid "Captain"
-msgstr "リーダー"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/teams/private.html:348
+#: CTFd/themes/core-beta/templates/teams/public.html:109
+#: CTFd/themes/core-beta/templates/users/private.html:88
+#: CTFd/themes/core-beta/templates/users/public.html:88
+msgid "Awards"
+msgstr "受賞歴"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:371
+#: CTFd/themes/core-beta/templates/teams/public.html:137
+#: CTFd/themes/core-beta/templates/users/private.html:110
+msgid "Solves"
+msgstr "正答"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:376
+#: CTFd/themes/core-beta/templates/teams/public.html:142
+#: CTFd/themes/core-beta/templates/users/private.html:115
+#: CTFd/themes/core-beta/templates/users/public.html:114
+msgid "Category"
+msgstr "カテゴリー"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:377
+#: CTFd/themes/core-beta/templates/teams/public.html:143
+#: CTFd/themes/core-beta/templates/users/private.html:116
+#: CTFd/themes/core-beta/templates/users/public.html:115
+msgid "Value"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/teams/private.html:468
+#: CTFd/themes/core-beta/templates/teams/public.html:232
+#: CTFd/themes/core-beta/templates/users/private.html:203
+#: CTFd/themes/core-beta/templates/users/public.html:204
+msgid "No solves yet"
+msgstr "まだ解答がありません。"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
+msgid "In order to participate you must either join or create a team."
+msgstr "参加するには、チームに参加するか、チームを作成する必要があります。"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
+msgid "Play with Official Team"
+msgstr "公式チームでプレイする"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
+msgid "Join Unofficial Team"
+msgstr "非公式チームに参加する"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
+msgid "Create Unofficial Team"
+msgstr "非公式チームを作成する"
+
+#: CTFd/themes/core-beta/templates/teams/teams.html:124
+#: CTFd/themes/core-beta/templates/users/users.html:114
+msgid "Page"
+msgstr "ページ"
+
+#: CTFd/themes/core-beta/templates/users/users.html:46
+msgid "User"
+msgstr "ユーザー"
+
+#: CTFd/utils/modes/__init__.py:35
+msgid "user"
+msgid_plural "users"
+msgstr[0] "ユーザー"
+
+#: CTFd/utils/modes/__init__.py:37
+msgid "team"
+msgid_plural "teams"
+msgstr[0] "チーム"
 
