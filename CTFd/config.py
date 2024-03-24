@@ -204,6 +204,8 @@ class ServerConfig(object):
 
         AWS_SECRET_ACCESS_KEY: str = empty_str_cast(config_ini["uploads"]["AWS_SECRET_ACCESS_KEY"])
 
+        AWS_SESSION_TOKEN: str = empty_str_cast(config_ini["uploads"]["AWS_SESSION_TOKEN"])
+
         AWS_S3_BUCKET: str = empty_str_cast(config_ini["uploads"]["AWS_S3_BUCKET"])
 
         AWS_S3_ENDPOINT_URL: str = empty_str_cast(config_ini["uploads"]["AWS_S3_ENDPOINT_URL"])
