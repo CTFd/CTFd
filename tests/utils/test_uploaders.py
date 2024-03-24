@@ -6,10 +6,11 @@ import boto3
 from botocore.exceptions import ClientError
 from moto import mock_aws
 from moto.core import set_initial_no_auth_action_count
+import pytest
 
 from CTFd.utils.uploads import S3Uploader, rmdir
 from tests.helpers import create_ctfd, destroy_ctfd
-import pytest
+
 
 @pytest.fixture(scope="function")
 def aws():
@@ -25,7 +26,7 @@ def create_s3(aws):
 
 @pytest.fixture(scope="function")
 @mock_aws
-def create_access_key_with_valid_policy():
+def create_access_key():
     user_name = "ctfd-user"
     policy_document = {
         "Version": "2012-10-17",
@@ -48,27 +49,7 @@ def create_access_key_with_valid_policy():
 
 @pytest.fixture(scope="function")
 @mock_aws
-def create_access_key_with_invalid_policy():
-    user_name = "ctfd-user"
-    policy_document = {
-        "Version": "2012-10-17",
-        "Statement": [{"Effect": "Deny", "Action": "*", "Resource": "*"}],
-    }
-    iam = boto3.client("iam", region_name="test-region")
-    iam.create_user(UserName=user_name)
-    iam.put_user_policy(
-        UserName = user_name,
-        PolicyName= "test-policy",
-        PolicyDocument = json.dumps(policy_document)
-    )
-
-    access_key = iam.create_access_key(UserName=user_name)["AccessKey"]
-
-    return access_key
-
-@pytest.fixture(scope="function")
-@mock_aws
-def create_session_token_with_valid_policy():
+def create_session_token():
     role_name = "ctfd-role"
     session_name = "ctfd-session"
     assume_role_policy_document = json.dumps({
@@ -108,12 +89,31 @@ def create_session_token_with_valid_policy():
 
     return session_token["Credentials"]
 
+@pytest.fixture(scope="function")
+@mock_aws
+def create_access_key_with_invalid_policy():
+    user_name = "ctfd-user"
+    policy_document = {
+        "Version": "2012-10-17",
+        "Statement": [{"Effect": "Deny", "Action": "*", "Resource": "*"}],
+    }
+    iam = boto3.client("iam", region_name="test-region")
+    iam.create_user(UserName=user_name)
+    iam.put_user_policy(
+        UserName = user_name,
+        PolicyName= "test-policy",
+        PolicyDocument = json.dumps(policy_document)
+    )
+
+    access_key = iam.create_access_key(UserName=user_name)["AccessKey"]
+
+    return access_key
 
 
 @set_initial_no_auth_action_count(0)
 @mock_aws
-def test_s3_uploader(create_s3, create_access_key_with_valid_policy):
-    access_key = create_access_key_with_valid_policy
+def test_s3_uploader(create_s3, create_access_key):
+    access_key = create_access_key
     bucket_name = create_s3
 
     app = create_ctfd()
@@ -137,8 +137,8 @@ def test_s3_uploader(create_s3, create_access_key_with_valid_policy):
 
 @set_initial_no_auth_action_count(0)
 @mock_aws
-def test_s3_uploader_sts(create_s3, create_access_key_with_valid_policy, create_session_token_with_valid_policy):
-    session_token = create_session_token_with_valid_policy
+def test_s3_uploader_sts(create_s3, create_access_key, create_session_token):
+    session_token = create_session_token
     bucket_name = create_s3
 
     app = create_ctfd()
@@ -163,8 +163,8 @@ def test_s3_uploader_sts(create_s3, create_access_key_with_valid_policy, create_
 
 @set_initial_no_auth_action_count(0)
 @mock_aws
-def test_s3_uploader_custom_prefix(create_s3, create_access_key_with_valid_policy):
-    access_key = create_access_key_with_valid_policy
+def test_s3_uploader_custom_prefix(create_s3, create_access_key):
+    access_key = create_access_key
     bucket_name = create_s3
 
     app = create_ctfd()
@@ -193,8 +193,8 @@ def test_s3_uploader_custom_prefix(create_s3, create_access_key_with_valid_polic
 
 @set_initial_no_auth_action_count(0)
 @mock_aws
-def test_s3_uploader_custom_prefix_sts(create_s3, create_access_key_with_valid_policy, create_session_token_with_valid_policy):
-    session_token = create_session_token_with_valid_policy
+def test_s3_uploader_custom_prefix_sts(create_s3, create_access_key, create_session_token):
+    session_token = create_session_token
     bucket_name = create_s3
 
     app = create_ctfd()
@@ -223,8 +223,8 @@ def test_s3_uploader_custom_prefix_sts(create_s3, create_access_key_with_valid_p
 
 @set_initial_no_auth_action_count(0)
 @mock_aws
-def test_s3_sync(create_s3, create_access_key_with_valid_policy):
-    access_key = create_access_key_with_valid_policy
+def test_s3_sync(create_s3, create_access_key):
+    access_key = create_access_key
     bucket_name = create_s3
 
     app = create_ctfd()
@@ -253,8 +253,8 @@ def test_s3_sync(create_s3, create_access_key_with_valid_policy):
 
 @set_initial_no_auth_action_count(0)
 @mock_aws
-def test_s3_sync_sts(create_s3, create_access_key_with_valid_policy, create_session_token_with_valid_policy):
-    session_token = create_session_token_with_valid_policy
+def test_s3_sync_sts(create_s3, create_access_key, create_session_token):
+    session_token = create_session_token
     bucket_name = create_s3
 
     app = create_ctfd()
