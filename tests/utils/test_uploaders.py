@@ -1,10 +1,10 @@
+import json
 import os
 from io import BytesIO
-import json
 
 import boto3
-from botocore.exceptions import ClientError
 import pytest
+from botocore.exceptions import ClientError
 from moto import mock_aws
 from moto.core import set_initial_no_auth_action_count
 
