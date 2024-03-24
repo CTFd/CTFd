@@ -17,12 +17,14 @@ def aws():
     with mock_aws():
         yield boto3.client("s3", region_name="test-region")
 
+
 @pytest.fixture
 def create_s3(aws):
     bucket_name = "bucket"
     boto3.client("s3").create_bucket(Bucket=bucket_name)
 
     return bucket_name
+
 
 @pytest.fixture(scope="function")
 @mock_aws
@@ -32,62 +34,65 @@ def create_access_key():
         "Version": "2012-10-17",
         "Statement": [
             {"Effect": "Allow", "Action": "s3:*", "Resource": "*"},
-            {"Effect": "Allow", "Action": "sts:GetSessionToken", "Resource": "*"}
+            {"Effect": "Allow", "Action": "sts:GetSessionToken", "Resource": "*"},
         ],
     }
     iam = boto3.client("iam", region_name="test-region")
     iam.create_user(UserName=user_name)
     iam.put_user_policy(
-        UserName = user_name,
-        PolicyName= "test-policy",
-        PolicyDocument = json.dumps(policy_document)
+        UserName=user_name,
+        PolicyName="test-policy",
+        PolicyDocument=json.dumps(policy_document),
     )
 
     access_key = iam.create_access_key(UserName=user_name)["AccessKey"]
 
     return access_key
 
+
 @pytest.fixture(scope="function")
 @mock_aws
 def create_session_token():
     role_name = "ctfd-role"
     session_name = "ctfd-session"
-    assume_role_policy_document = json.dumps({
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Principal": {"Service": "ec2.amazonaws.com"},
-                "Action": "sts:AssumeRole"
-            }
-        ]
-    })
+    assume_role_policy_document = json.dumps(
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {"Service": "ec2.amazonaws.com"},
+                    "Action": "sts:AssumeRole",
+                }
+            ],
+        }
+    )
     policy_document = {
         "Version": "2012-10-17",
         "Statement": [
             {"Effect": "Allow", "Action": "s3:*", "Resource": "*"},
-            {"Effect": "Allow", "Action": "sts:GetSessionToken", "Resource": "*"}
+            {"Effect": "Allow", "Action": "sts:GetSessionToken", "Resource": "*"},
         ],
     }
     iam = boto3.client("iam", region_name="test-region")
     role = iam.create_role(
         RoleName=role_name,
-        AssumeRolePolicyDocument=json.dumps(assume_role_policy_document)
+        AssumeRolePolicyDocument=json.dumps(assume_role_policy_document),
     )
     iam.put_role_policy(
-        RoleName = role_name,
-        PolicyName= "test-policy",
-        PolicyDocument = json.dumps(policy_document)
+        RoleName=role_name,
+        PolicyName="test-policy",
+        PolicyDocument=json.dumps(policy_document),
     )
 
-    sts = boto3.client('sts', region_name="test-region")
+    sts = boto3.client("sts", region_name="test-region")
 
     session_token = sts.assume_role(
-        RoleArn=role['Role']['Arn'],
-        RoleSessionName=session_name
+        RoleArn=role["Role"]["Arn"], RoleSessionName=session_name
     )
 
     return session_token["Credentials"]
+
 
 @pytest.fixture(scope="function")
 @mock_aws
@@ -100,9 +105,9 @@ def create_access_key_with_invalid_policy():
     iam = boto3.client("iam", region_name="test-region")
     iam.create_user(UserName=user_name)
     iam.put_user_policy(
-        UserName = user_name,
-        PolicyName= "test-policy",
-        PolicyDocument = json.dumps(policy_document)
+        UserName=user_name,
+        PolicyName="test-policy",
+        PolicyDocument=json.dumps(policy_document),
     )
 
     access_key = iam.create_access_key(UserName=user_name)["AccessKey"]
@@ -135,6 +140,7 @@ def test_s3_uploader(create_s3, create_access_key):
         assert "fake_file.txt" in uploader.download(path).location
     destroy_ctfd(app)
 
+
 @set_initial_no_auth_action_count(0)
 @mock_aws
 def test_s3_uploader_sts(create_s3, create_access_key, create_session_token):
@@ -160,6 +166,7 @@ def test_s3_uploader_sts(create_s3, create_access_key, create_session_token):
 
         assert "fake_file.txt" in uploader.download(path).location
     destroy_ctfd(app)
+
 
 @set_initial_no_auth_action_count(0)
 @mock_aws
@@ -193,7 +200,9 @@ def test_s3_uploader_custom_prefix(create_s3, create_access_key):
 
 @set_initial_no_auth_action_count(0)
 @mock_aws
-def test_s3_uploader_custom_prefix_sts(create_s3, create_access_key, create_session_token):
+def test_s3_uploader_custom_prefix_sts(
+    create_s3, create_access_key, create_session_token
+):
     session_token = create_session_token
     bucket_name = create_s3
 
@@ -220,6 +229,7 @@ def test_s3_uploader_custom_prefix_sts(create_s3, create_access_key, create_sess
         path2 = uploader.upload(fake_file2, "fake_file.txt", "path")
         assert "/prefix/path/fake_file.txt" in uploader.download(path2).location
     destroy_ctfd(app)
+
 
 @set_initial_no_auth_action_count(0)
 @mock_aws
@@ -280,6 +290,7 @@ def test_s3_sync_sts(create_s3, create_access_key, create_session_token):
         finally:
             rmdir(os.path.dirname(full_path))
     destroy_ctfd(app)
+
 
 @set_initial_no_auth_action_count(0)
 @mock_aws
