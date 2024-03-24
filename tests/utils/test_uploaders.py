@@ -4,9 +4,9 @@ import json
 
 import boto3
 from botocore.exceptions import ClientError
+import pytest
 from moto import mock_aws
 from moto.core import set_initial_no_auth_action_count
-import pytest
 
 from CTFd.utils.uploads import S3Uploader, rmdir
 from tests.helpers import create_ctfd, destroy_ctfd
