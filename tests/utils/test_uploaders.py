@@ -65,7 +65,7 @@ def test_s3_uploader_sts(create_s3):
         app.config["UPLOAD_PROVIDER"] = "s3"
         app.config["AWS_ACCESS_KEY_ID"] = "AKIAIOSFODNN7EXAMPLE"
         app.config["AWS_SECRET_ACCESS_KEY"] = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-        app.config["AWS_SESSION_TOKEN"] = "Jb3JpZ2luX2VjEJ///8BEK7MDENGEXAMPLESESSIONTOKEN"
+        app.config["AWS_SESSION_TOKEN"] = "Jb3JpZ2luX2VjEJ///8BEK7MDNESESSIONTOKEN"
         app.config["AWS_S3_BUCKET"] = bucket_name
         app.config["AWS_S3_REGION"] = "test-region"
 
