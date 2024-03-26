@@ -129,7 +129,7 @@ class S3Uploader(BaseUploader):
     def _get_s3_connection(self):
         access_key = get_app_config("AWS_ACCESS_KEY_ID")
         secret_key = get_app_config("AWS_SECRET_ACCESS_KEY")
-        session_token = get_app_config("AWS_SESSION_TOKEN")
+        session_token = os.getenv("AWS_SESSION_TOKEN")
         endpoint = get_app_config("AWS_S3_ENDPOINT_URL")
         region = get_app_config("AWS_S3_REGION")
         addressing_style = get_app_config("AWS_S3_ADDRESSING_STYLE")
