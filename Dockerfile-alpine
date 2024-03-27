@@ -1,0 +1,58 @@
+FROM python:3.9-alpine as build
+
+WORKDIR /opt/CTFd
+
+RUN apk add --no-cache \
+        gcc \
+        musl-dev \
+        openssl-dev \
+        build-base \
+        libffi-dev \
+        git \
+    && python -m venv /opt/venv
+
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY . /opt/CTFd
+
+RUN pip install --no-cache-dir -r requirements.txt \
+    && for d in CTFd/plugins/*; do \
+        if [ -f "$d/requirements.txt" ]; then \
+            pip install --no-cache-dir -r "$d/requirements.txt";\
+        fi; \
+    done;
+
+
+FROM python:3.9-alpine as release
+
+WORKDIR /opt/CTFd
+
+RUN apk add --no-cache \
+        libffi \
+        libssl1.1 \
+        bash
+
+COPY --chown=1001:1001 . /opt/CTFd
+
+RUN mkdir -p /var/log/CTFd /var/uploads \
+    && chown -R 1001:1001 /var/log/CTFd /var/uploads \
+    && chmod +x /opt/CTFd/docker-entrypoint.sh
+
+RUN adduser \
+    -D \
+    -u 1001 \
+    -g "" \
+    -H \
+    -s /bin/bash \
+    ctfd \
+    && mkdir -p /var/log/CTFd /var/uploads \
+    && chown -R 1001:1001 /var/log/CTFd /var/uploads \
+    && chmod +x /opt/CTFd/docker-entrypoint.sh
+
+
+COPY --chown=1001:1001 --from=build /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+USER 1001
+EXPOSE 8000
+ENTRYPOINT ["/opt/CTFd/docker-entrypoint.sh"]
