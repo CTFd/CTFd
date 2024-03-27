@@ -75,7 +75,7 @@
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.config') }}">Config</a></li>
 
 					{% set plugin_menu = get_admin_plugin_menu_bar() %}
-					{% set plugins = get_configurable_plugins() %}
+					{% set plugins = get_menubar_plugins() %}
 					{% if plugin_menu or plugins %}
 						<li class="nav-item">
 							<a class="nav-link d-none d-md-block d-lg-block">|</a>
