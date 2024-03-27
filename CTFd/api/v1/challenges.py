@@ -53,6 +53,8 @@ from CTFd.utils.user import (
     is_admin,
 )
 
+import json
+
 challenges_namespace = Namespace(
     "challenges", description="Endpoint to retrieve Challenges"
 )
@@ -503,6 +505,8 @@ class ChallengeAttempt(Resource):
             request_data = request.get_json()
 
         challenge_id = request_data.get("challenge_id")
+        submission = request_data.get("submission", "")
+        submission = submission.encode("uft-8") if isinstance(submission, str) else json.dumps(submission)
 
         if current_user.is_admin():
             preview = request.args.get("preview", False)
@@ -583,7 +587,7 @@ class ChallengeAttempt(Resource):
                 "submissions",
                 "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
                 name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
+                submission=submission,
                 challenge_id=challenge_id,
                 kpm=kpm,
             )
@@ -632,7 +636,7 @@ class ChallengeAttempt(Resource):
                     "submissions",
                     "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
                     name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
+                    submission=submission,
                     challenge_id=challenge_id,
                     kpm=kpm,
                 )
@@ -652,7 +656,7 @@ class ChallengeAttempt(Resource):
                     "submissions",
                     "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
                     name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
+                    submission=submission,
                     challenge_id=challenge_id,
                     kpm=kpm,
                 )
@@ -685,7 +689,7 @@ class ChallengeAttempt(Resource):
                 "submissions",
                 "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
                 name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
+                submission=submission,
                 challenge_id=challenge_id,
                 kpm=kpm,
             )
