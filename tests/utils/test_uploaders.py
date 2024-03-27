@@ -23,7 +23,6 @@ def aws(aws_credentials):
     with mock_aws():
         yield boto3.client("s3", region_name="test-region")
 
-
 @pytest.fixture
 def create_s3(aws):
     bucket_name = "bucket"

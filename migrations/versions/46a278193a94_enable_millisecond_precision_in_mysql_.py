@@ -5,7 +5,6 @@ Revises: 4d3c1b59d011
 Create Date: 2022-11-01 23:27:44.620893
 
 """
-
 from alembic import op  # noqa: I001
 from sqlalchemy.dialects import mysql
 

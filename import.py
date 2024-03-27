@@ -1,7 +1,6 @@
 """
 python import.py export.zip
 """
-
 from CTFd import create_app
 from CTFd.utils.exports import import_ctf
 

@@ -42,14 +42,12 @@ class UserSchema(ma.ModelSchema):
         "website",
         validate=[
             # This is a dirty hack to let website accept empty strings so you can remove your website
-            lambda website: (
-                validate.URL(
-                    error="Websites must be a proper URL starting with http or https",
-                    schemes={"http", "https"},
-                )(website)
-                if website
-                else True
-            )
+            lambda website: validate.URL(
+                error="Websites must be a proper URL starting with http or https",
+                schemes={"http", "https"},
+            )(website)
+            if website
+            else True
         ],
     )
     language = field_for(Users, "language", validate=[validate_language])
