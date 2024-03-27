@@ -25,8 +25,8 @@ from CTFd.utils.events import EventManager, RedisEventManager
 from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.modes import generate_account_url, get_mode_as_word
 from CTFd.utils.plugins import (
-    get_menubar_plugins,
     get_configurable_plugins,
+    get_menubar_plugins,
     get_registered_admin_scripts,
     get_registered_admin_stylesheets,
     get_registered_scripts,
