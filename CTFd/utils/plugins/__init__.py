@@ -40,6 +40,9 @@ def get_registered_admin_stylesheets():
 def override_template(template, html):
     app.overridden_templates[template] = html
 
+def get_menubar_plugins():
+    plugins = get_configurable_plugins()
+    return [plugin for plugin in plugins if plugin.route is not None]
 
 def get_configurable_plugins():
     Plugin = namedtuple("Plugin", ["name", "route"])
