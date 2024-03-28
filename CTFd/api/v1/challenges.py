@@ -506,7 +506,7 @@ class ChallengeAttempt(Resource):
 
         challenge_id = request_data.get("challenge_id")
         submission = request_data.get("submission", "")
-        submission = submission.encode("uft-8") if isinstance(submission, str) else json.dumps(submission)
+        submission = submission.encode("utf-8") if hasattr(submission, 'encode') else json.dumps(submission)
 
         if current_user.is_admin():
             preview = request.args.get("preview", False)
