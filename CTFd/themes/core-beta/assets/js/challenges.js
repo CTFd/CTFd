@@ -95,10 +95,6 @@ Alpine.data("Challenge", () => ({
     return styles;
   },
 
-  async init() {
-    highlight();
-  },
-
   async showChallenge() {
     new Tab(this.$el).show();
   },
