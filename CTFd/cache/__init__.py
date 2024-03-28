@@ -1,4 +1,5 @@
 from functools import lru_cache, wraps
+from hashlib import md5
 from time import monotonic_ns
 
 from flask import request
@@ -52,6 +53,39 @@ def make_cache_key(path=None, key_prefix="view/%s"):
     return cache_key
 
 
+def make_cache_key_with_query_string(allowed_params=None, query_string_hash=None):
+    if allowed_params is None:
+        allowed_params = []
+
+    def _make_cache_key_with_query_string(path=None, key_prefix="view/%s/%s"):
+        if path is None:
+            path = request.endpoint
+
+        if query_string_hash:
+            args_hash = query_string_hash
+        else:
+            args_hash = calculate_param_hash(
+                params=tuple(request.args.items(multi=True)),
+                allowed_params=allowed_params,
+            )
+        cache_key = key_prefix % (path, args_hash)
+        return cache_key
+
+    return _make_cache_key_with_query_string
+
+
+def calculate_param_hash(params, allowed_params=None):
+    # Copied from Flask-Caching but modified to allow only accepted parameters
+    if allowed_params:
+        args_as_sorted_tuple = tuple(
+            sorted(pair for pair in params if pair[0] in allowed_params)
+        )
+    else:
+        args_as_sorted_tuple = tuple(sorted(pair for pair in params))
+    args_hash = md5(str(args_as_sorted_tuple).encode()).hexdigest()  # nosec B303
+    return args_hash
+
+
 def clear_config():
     from CTFd.utils import _get_config, get_app_config
 
@@ -63,7 +97,7 @@ def clear_standings():
     from CTFd.api import api
     from CTFd.api.v1.scoreboard import ScoreboardDetail, ScoreboardList
     from CTFd.constants.static import CacheKeys
-    from CTFd.models import Teams, Users  # noqa: I001
+    from CTFd.models import Brackets, Teams, Users  # noqa: I001
     from CTFd.utils.scores import get_standings, get_team_standings, get_user_standings
     from CTFd.utils.user import (
         get_team_place,
@@ -93,6 +127,19 @@ def clear_standings():
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardList.endpoint))
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardDetail.endpoint))
     cache.delete_memoized(ScoreboardList.get)
+    cache.delete_memoized(ScoreboardDetail.get)
+
+    # Clear out scoreboard detail
+    keys = [()]  # Empty tuple to handle case with no parameters
+    brackets = Brackets.query.all()
+    for bracket in brackets:
+        keys.append((("bracket_id", str(bracket.id)),))
+    for k in keys:
+        cache_func = make_cache_key_with_query_string(
+            query_string_hash=calculate_param_hash(params=k)
+        )
+        cache_key = cache_func(path=api.name + "." + ScoreboardDetail.endpoint)
+        cache.delete(cache_key)
 
     # Clear out scoreboard templates
     cache.delete(make_template_fragment_key(CacheKeys.PUBLIC_SCOREBOARD_TABLE))
