@@ -184,8 +184,6 @@ def test_top_10():
                 ],
             },
         }
-        print(saved)
-        print(response)
         assert saved == response
     destroy_ctfd(app)
 
