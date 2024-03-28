@@ -165,8 +165,13 @@ def test_top_10():
         r = client.get("/api/v1/scoreboard/top/10?bracket_id=2")
         response = r.get_json()["data"]
         saved = {
-            "2": {
+            "1": {
                 "id": 3,
+                "account_url": "/users/3",
+                "name": "user2",
+                "score": 100,
+                "bracket_id": 2,
+                "bracket_name": "players2",
                 "solves": [
                     {
                         "date": "2017-10-03T03:21:34Z",
@@ -177,9 +182,10 @@ def test_top_10():
                         "value": 100,
                     }
                 ],
-                "name": "user2",
             },
         }
+        print(saved)
+        print(response)
         assert saved == response
     destroy_ctfd(app)
 
