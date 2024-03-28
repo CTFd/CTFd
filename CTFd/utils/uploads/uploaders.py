@@ -133,14 +133,20 @@ class S3Uploader(BaseUploader):
         endpoint = get_app_config("AWS_S3_ENDPOINT_URL")
         region = get_app_config("AWS_S3_REGION")
         addressing_style = get_app_config("AWS_S3_ADDRESSING_STYLE")
-        client = boto3.client(
+        session = None
+        if not (session_token):
+            session = boto3.Session(
+                aws_access_key_id=access_key,
+                aws_secret_access_key=secret_key,
+            )
+        else:
+            # Initializing the Session without arguments to automatically fetch credentials
+            session = boto3.Session()
+        client = session.client(
             "s3",
             config=Config(
                 signature_version="s3v4", s3={"addressing_style": addressing_style}
             ),
-            aws_access_key_id=access_key,
-            aws_secret_access_key=secret_key,
-            aws_session_token=session_token,
             endpoint_url=endpoint,
             region_name=region,
         )
