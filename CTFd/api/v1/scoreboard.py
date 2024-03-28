@@ -96,7 +96,6 @@ class ScoreboardDetail(Resource):
         key_prefix=make_cache_key_with_query_string(allowed_params=["bracket_id"]),
     )
     def get(self, count):
-        print("notcached")
         response = {}
 
         # Optional filters
