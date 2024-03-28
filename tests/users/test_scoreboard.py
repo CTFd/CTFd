@@ -120,8 +120,8 @@ def test_top_10():
                 "account_url": "/users/2",
                 "name": "user1",
                 "score": 200,
-                "bracket_id": None,
-                "bracket_name": None,
+                "bracket_id": 1,
+                "bracket_name": "players1",
                 "solves": [
                     {
                         "date": "2017-10-03T03:21:34Z",
@@ -146,8 +146,8 @@ def test_top_10():
                 "account_url": "/users/3",
                 "name": "user2",
                 "score": 100,
-                "bracket_id": None,
-                "bracket_name": None,
+                "bracket_id": 2,
+                "bracket_name": "players2",
                 "solves": [
                     {
                         "date": "2017-10-03T03:21:34Z",
