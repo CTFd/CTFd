@@ -1,3 +1,52 @@
+# 3.7.0 / 2024-02-26
+
+**General**
+
+- Add ability for users to generate social share links after solving a challenge
+  - After solving a challenge users can click a "share" button which can generate Twitter, Facebook, LinkedIn links
+- Add Scoreboard Brackets feature to have multiple sub-scoreboards within the main scoreboard
+  - Admins can add a bracket for users/teams which must be selected during the registration process. Within the scoreboard, accounts can be organized by bracket in addition to seeing the full list
+- Calculate a files sha1sum on upload for future local change detection purposes
+- Allow API clients (CTFd, ctfcli, etc) to control the location of an uploaded file
+- Allow challenge CSVs to contain JSON in the hints and flags columns so that admins can import more complex data
+- Fix issue where hints could not be unlocked during freeze time
+- Use the CTF name to be the default index page name
+
+**API**
+
+- Add `bracket_name` and `bracket_id` to `/api/v1/scoreboard`
+- Add `sha1sum` to `GET /api/v1/files`
+- Add `location` to `POST /api/v1/files`
+
+**Plugins**
+
+- Add ability to control the link target for a page (i.e. open in a new tab) via `register_user_page_menu_bar()`
+- Add `uploaders.open()` to open a file from an uploader
+- Adds the optional path field to the `Uploaders.upload()` method to control where files get uploaded to
+
+**Themes**
+
+- Allow customization of the `<meta>` tag & page title via template files
+- Exposes `unix_time_to_utc()` as a Jinja filter
+
+**Admin Panel**
+
+- Migrate Admin Panel from webpack to Vite
+- Adds Alpine to Admin Panel for plugins to use to add interactivity
+
+**Deployment**
+
+- Update base image to `python:3.11-slim-bookworm`
+- Added prefix option to S3 uploader under `AWS_S3_CUSTOM_PREFIX`
+  - This allows CTFd to store files under a folder of an S3 bucket
+- Raise exception if a built-in config is defined in the extra config section in config.ini
+- CTFd will wait for an import to complete before starting
+  - This tries to address issues where starting CTFd during an import can interfere with the import
+- Add Pillow version 10.1.0 as a dependency
+- Update boto3 version to 1.34.39
+- Update isort version to 5.13.2
+- Update dataset version to 1.6.2
+
 # 3.6.1 / 2023-12-12
 
 **Security**

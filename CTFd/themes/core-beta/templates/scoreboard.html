@@ -18,14 +18,16 @@
     </div>
 
     <div id="scoreboard" class="row" x-data="ScoreboardList">
-      <div class="col-md-12 py-3">
-        <nav class="nav nav-pills nav-fill">
-          <button :class="{'nav-link': true, 'active': !activeBracket}" @click="activeBracket=null">All</button>
-          <template x-for="bracket in brackets">
-            <button :class="{'nav-link': true, 'active': activeBracket == bracket.id}" x-text="bracket.name" @click="activeBracket=bracket.id"></button>
-          </template>
-        </nav>
-      </div>
+      <template x-if="brackets.length">
+        <div class="col-md-12 py-3">
+          <nav class="nav nav-pills nav-fill">
+            <button :class="{'nav-link': true, 'active': !activeBracket}" @click="activeBracket=null">All</button>
+            <template x-for="bracket in brackets">
+              <button :class="{'nav-link': true, 'active': activeBracket == bracket.id}" x-text="bracket.name" @click="activeBracket=bracket.id"></button>
+            </template>
+          </nav>
+        </div>
+      </template>
 
       <div class="col-md-12">
         <table class="table table-striped">

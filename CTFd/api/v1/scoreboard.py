@@ -1,9 +1,10 @@
 from collections import defaultdict
 
+from flask import request
 from flask_restx import Namespace, Resource
 from sqlalchemy import select
 
-from CTFd.cache import cache, make_cache_key
+from CTFd.cache import cache, make_cache_key, make_cache_key_with_query_string
 from CTFd.models import Awards, Brackets, Solves, Users, db
 from CTFd.utils import get_config
 from CTFd.utils.dates import isoformat, unix_time_to_utc
@@ -90,11 +91,17 @@ class ScoreboardList(Resource):
 class ScoreboardDetail(Resource):
     @check_account_visibility
     @check_score_visibility
-    @cache.cached(timeout=60, key_prefix=make_cache_key)
+    @cache.cached(
+        timeout=60,
+        key_prefix=make_cache_key_with_query_string(allowed_params=["bracket_id"]),
+    )
     def get(self, count):
         response = {}
 
-        standings = get_standings(count=count)
+        # Optional filters
+        bracket_id = request.args.get("bracket_id")
+
+        standings = get_standings(count=count, bracket_id=bracket_id)
 
         team_ids = [team.account_id for team in standings]
 
@@ -142,10 +149,14 @@ class ScoreboardDetail(Resource):
                 solves_mapper[team_id], key=lambda k: k["date"]
             )
 
-        for i, _team in enumerate(team_ids):
+        for i, x in enumerate(standings):
             response[i + 1] = {
-                "id": standings[i].account_id,
-                "name": standings[i].name,
-                "solves": solves_mapper.get(standings[i].account_id, []),
+                "id": x.account_id,
+                "account_url": generate_account_url(account_id=x.account_id),
+                "name": x.name,
+                "score": int(x.score),
+                "bracket_id": x.bracket_id,
+                "bracket_name": x.bracket_name,
+                "solves": solves_mapper.get(x.account_id, []),
             }
         return {"success": True, "data": response}
