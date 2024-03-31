@@ -84,7 +84,7 @@ OAUTH_CLIENT_SECRET = None
 ```
 
 ## Credits
-
+       
 - Logo by [Laura Barbera](http://www.laurabb.com/)
 - Theme by [Christopher Thompson](https://github.com/breadchris)
-- Notification Sound by [Terrence Martin](https://soundcloud.com/tj-martin-composer)
+- Notification Sound by [Terrence Martin](https://soundcloud.com/tj-martin-composer).
