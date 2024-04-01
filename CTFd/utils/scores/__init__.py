@@ -8,7 +8,7 @@ from CTFd.utils.modes import get_model
 
 
 @cache.memoize(timeout=60)
-def get_standings(count=None, admin=False, fields=None):
+def get_standings(count=None, bracket_id=None, admin=False, fields=None):
     """
     Get standings as a list of tuples containing account_id, name, and score e.g. [(account_id, team_name, score)].
 
@@ -121,9 +121,11 @@ def get_standings(count=None, admin=False, fields=None):
             )
         )
 
-    """
-    Only select a certain amount of users if asked.
-    """
+    # Filter on a bracket if asked
+    if bracket_id is not None:
+        standings_query = standings_query.filter(Model.bracket_id == bracket_id)
+
+    # Only select a certain amount of users if asked.
     if count is None:
         standings = standings_query.all()
     else:
@@ -133,7 +135,7 @@ def get_standings(count=None, admin=False, fields=None):
 
 
 @cache.memoize(timeout=60)
-def get_team_standings(count=None, admin=False, fields=None):
+def get_team_standings(count=None, bracket_id=None, admin=False, fields=None):
     if fields is None:
         fields = []
     scores = (
@@ -214,6 +216,9 @@ def get_team_standings(count=None, admin=False, fields=None):
             )
         )
 
+    if bracket_id is not None:
+        standings_query = standings_query.filter(Teams.bracket_id == bracket_id)
+
     if count is None:
         standings = standings_query.all()
     else:
@@ -223,7 +228,7 @@ def get_team_standings(count=None, admin=False, fields=None):
 
 
 @cache.memoize(timeout=60)
-def get_user_standings(count=None, admin=False, fields=None):
+def get_user_standings(count=None, bracket_id=None, admin=False, fields=None):
     if fields is None:
         fields = []
     scores = (
@@ -304,6 +309,9 @@ def get_user_standings(count=None, admin=False, fields=None):
                 sumscores.columns.id.asc(),
             )
         )
+
+    if bracket_id is not None:
+        standings_query = standings_query.filter(Users.bracket_id == bracket_id)
 
     if count is None:
         standings = standings_query.all()

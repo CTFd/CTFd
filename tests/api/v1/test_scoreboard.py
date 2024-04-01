@@ -37,12 +37,21 @@ def test_scoreboard_is_cached():
             # No cached data
             assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
             assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
+            assert (
+                app.cache.get(
+                    "view/api.scoreboard_scoreboard_detail/bcd8b0c2eb1fce714eab6cef0d771acc"
+                )
+                is None
+            )
 
             # Load and check cached data
             client.get("/api/v1/scoreboard")
             assert app.cache.get("view/api.scoreboard_scoreboard_list")
+            assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
             client.get("/api/v1/scoreboard/top/10")
-            assert app.cache.get("view/api.scoreboard_scoreboard_detail")
+            assert app.cache.get(
+                "view/api.scoreboard_scoreboard_detail/bcd8b0c2eb1fce714eab6cef0d771acc"
+            )
 
             # Check scoreboard page
             assert (
@@ -56,6 +65,12 @@ def test_scoreboard_is_cached():
             clear_standings()
             assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
             assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
+            assert (
+                app.cache.get(
+                    "view/api.scoreboard_scoreboard_detail/bcd8b0c2eb1fce714eab6cef0d771acc"
+                )
+                is None
+            )
             assert (
                 app.cache.get(make_template_fragment_key("public_scoreboard_table"))
                 is None
