@@ -24,6 +24,19 @@ msgstr "邮箱"
 msgid "Password"
 msgstr "密码"
 
+#: CTFd/forms/auth.py:26
+msgid "Group Type"
+msgstr "组别"
+
+msgid "int_undergrad"
+msgstr "校内本科生"
+
+msgid "int_master"
+msgstr "校内硕士生"
+
+msgid "ext_student"
+msgstr "外校师傅"
+
 #: CTFd/forms/auth.py:23 CTFd/forms/auth.py:44 CTFd/forms/auth.py:55
 #: CTFd/forms/auth.py:62 CTFd/forms/self.py:24 CTFd/forms/teams.py:127
 #: CTFd/forms/teams.py:210 CTFd/themes/core-beta/templates/challenge.html:147

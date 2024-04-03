@@ -151,7 +151,7 @@ def join():
         team = Teams.query.filter_by(name=teamname).first()
 
         if user.group_type != team.group_type:
-            errors.append("You must be in the same group of the team.")
+            errors.append("You need to be in the same group as the team.")
         
         if errors:
             return (

@@ -1,5 +1,5 @@
 from flask_babel import lazy_gettext as _l
-from wtforms import PasswordField, StringField
+from wtforms import PasswordField, StringField, SelectField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
@@ -13,6 +13,7 @@ from CTFd.forms.users import (
     build_registration_code_field,
     build_user_bracket_field,
 )
+from CTFd.constants.groups import GroupTypes
 
 
 def RegistrationForm(*args, **kwargs):
@@ -22,7 +23,10 @@ def RegistrationForm(*args, **kwargs):
         )
         email = EmailField(_l("Email"), validators=[InputRequired()])
         password = PasswordField(_l("Password"), validators=[InputRequired()])
-        submit = SubmitField(_l("Submit"))
+        group_type = SelectField(_l("Group Type"), choices=[
+            (_l(i), i) for i in GroupTypes
+        ])
+        submit = SubmitField(_l("Submit")) 
 
         @property
         def extra(self):

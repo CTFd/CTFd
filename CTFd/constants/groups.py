@@ -1,7 +1,7 @@
 from collections import namedtuple
 
-GroupTypes = namedtuple("GroupTypes", [
+GroupTypes = [
     "int_undergrad",
     "int_master",
     "ext_student"
-])
+]
