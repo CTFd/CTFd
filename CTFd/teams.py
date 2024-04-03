@@ -222,6 +222,7 @@ def new():
                     limit=team_size_limit, plural=plural
                 )
             )
+        infos.append("Teams will stay hidden until verified by admins.")
         return render_template("teams/new_team.html", infos=infos, errors=errors)
 
     elif request.method == "POST":
@@ -303,6 +304,8 @@ def new():
 
         # Hide the created team if the creator is an admin
         hidden = False
+        # blue-whale customization: teams should keep hidden till verified by admins
+        hidden = True
         if user.type == "admin":
             hidden = True
 
