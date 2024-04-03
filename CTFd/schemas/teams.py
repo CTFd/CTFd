@@ -365,6 +365,7 @@ class TeamSchema(ma.ModelSchema):
             "oauth_id",
             "captain_id",
             "fields",
+            "group_type",
         ],
         "self": [
             "website",
@@ -379,6 +380,7 @@ class TeamSchema(ma.ModelSchema):
             "password",
             "captain_id",
             "fields",
+            "group_type",
         ],
         "admin": [
             "website",
@@ -397,6 +399,7 @@ class TeamSchema(ma.ModelSchema):
             "password",
             "captain_id",
             "fields",
+            "group_type",
         ],
     }
 

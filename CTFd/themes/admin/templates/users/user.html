@@ -131,6 +131,17 @@
 				</a>
 			</h2>
 		{% endif %}
+		
+		<div id="extra-info" class="text-center">
+			<script>
+				document.addEventListener("DOMContentLoaded", ()=>{
+					document.getElementById("extra-info").innerText = JSON.stringify(JSON.parse(
+						document.getElementById("extra-info").innerText
+					));
+				});
+			</script>
+			{{ user.extra_info }}
+		</div>
 
 		{% for field in user.get_fields(admin=true) %}
 			<h3 class="d-block">

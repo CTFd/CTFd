@@ -185,6 +185,10 @@
 			</h3>
 		{% endif %}
 
+			<h4 class="d-inline-block">
+				{{ _(team.group_type) }}
+			</h4>
+
 		{% for field in team.get_fields(admin=true) %}
 			<h3 class="d-block">
 				{{ field.name }}: {{ field.value }}

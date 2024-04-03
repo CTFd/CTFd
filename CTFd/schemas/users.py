@@ -55,8 +55,6 @@ class UserSchema(ma.ModelSchema):
     password = field_for(Users, "password", required=True, allow_none=False)
     bracket_id = field_for(Users, "bracket_id")
 
-    group_type = field_for(Users, "group_type")
-
     fields = Nested(
         UserFieldEntriesSchema, partial=True, many=True, attribute="field_entries"
     )
@@ -395,6 +393,7 @@ class UserSchema(ma.ModelSchema):
             "fields",
             "team_id",
             "group_type",
+            "extra_info",
         ],
     }
 

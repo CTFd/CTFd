@@ -148,6 +148,7 @@ class UserSearchForm(BaseForm):
             ("affiliation", "Affiliation"),
             ("website", "Website"),
             ("ip", "IP Address"),
+            ("group_type", "Group Type"),
         ],
         default="name",
         validators=[InputRequired()],

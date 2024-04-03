@@ -85,6 +85,7 @@ class TeamList(Resource):
                         "bracket": "bracket",
                         "affiliation": "affiliation",
                         "email": "email",
+                        "group_type": "group_type"
                     },
                 ),
                 None,

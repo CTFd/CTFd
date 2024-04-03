@@ -202,6 +202,7 @@ class TeamSearchForm(BaseForm):
             ("id", "ID"),
             ("affiliation", "Affiliation"),
             ("website", "Website"),
+            ("group_type", "Group Type"),
         ],
         default="name",
         validators=[InputRequired()],
