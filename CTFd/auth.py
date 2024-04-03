@@ -1,7 +1,7 @@
 import base64  # noqa: I001
 
 import requests
-from flask import Blueprint, abort
+from flask import Blueprint, abort, json
 from flask import current_app as app
 from flask import redirect, render_template, request, session, url_for
 from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
@@ -211,6 +211,23 @@ def register():
 
         group_type = request.form.get("group_type")
 
+        def get_extra_info():
+            real_name = request.form.get("real_name", "")
+            student_id = request.form.get("student_id", "")
+            student_major = request.form.get("student_major", "")
+            student_school = request.form.get("student_school", "")
+            qq = request.form.get("qq", "")
+            return json.dumps({
+                "group": group_type,
+                "name": real_name, 
+                "id": student_id, 
+                "major": student_major, 
+                "school": student_school,
+                "qq": qq
+            })
+
+        extra_info = get_extra_info()
+
         name_len = len(name) == 0
         names = (
             Users.query.add_columns(Users.name, Users.id).filter_by(name=name).first()
@@ -305,6 +322,8 @@ def register():
 
         if group_type not in GroupTypes:
             errors.append("Invalid group")
+        if len(extra_info) > 500:
+            errors.append("You should not see this error, contact admins for help")
 
         if len(errors) > 0:
             return render_template(
@@ -321,7 +340,8 @@ def register():
                     email=email_address,
                     password=password,
                     bracket_id=bracket_id,
-                    group_type=group_type
+                    group_type=group_type,
+                    extra_info=extra_info
                 )
 
                 if website:

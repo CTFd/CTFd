@@ -10,6 +10,30 @@
   </div>
 
   <div class="container">
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const groupSelect = document.getElementById("group_type");
+        groupSelect.addEventListener("change", function () {
+          switch(groupSelect.value) {
+          case 'int_undergrad':
+          case 'int_master':
+            document.getElementById("student_id_div").style.display = "block";
+            document.getElementById("student_major_div").style.display = "block";
+            document.getElementById("student_school_div").style.display = "none";
+            document.getElementById("qq_div").style.display = "none";
+            break;
+          case 'ext_student':
+            document.getElementById("student_id_div").style.display = "none";
+            document.getElementById("student_major_div").style.display = "none";
+            document.getElementById("student_school_div").style.display = "block";
+            document.getElementById("qq_div").style.display = "block";
+            break;
+          }
+        });
+        groupSelect.selectedIndex = 0;
+        groupSelect.dispatchEvent(new Event("change"));
+      });
+    </script>
     <div class="row">
       <div class="col-md-6 offset-md-3">
         {% include "components/errors.html" %}
@@ -27,6 +51,14 @@
           {% from "macros/forms.html" import render_extra_fields %}
 
           <form method="post" accept-charset="utf-8" autocomplete="off" role="form">
+            
+            <div class="mb-3">
+              <b>{{ form.group_type.label(class="form-label") }}</b>
+              {{ form.group_type(class="form-control", value=group_type) }}
+              <small class="form-text text-muted">
+                {% trans %}Group that you are in{% endtrans %}
+              </small>
+            </div>
 
             <div class="mb-3">
               <b>{{ form.name.label(class="form-label") }}</b>
@@ -41,6 +73,8 @@
               {{ form.email(class="form-control", value=email) }}
               <small class="form-text text-muted">
                 {% trans %}Never shown to the public{% endtrans %}
+                <br>
+                {% trans %}Using your .edu address is strongly recommended{% endtrans %} 
               </small>
             </div>
 
@@ -52,12 +86,29 @@
               </small>
             </div>
 
-            <div class="mb-3">
-              <b>{{ form.group_type.label(class="form-label") }}</b>
-              {{ form.group_type(class="form-control", value=group_type) }}
-              <small class="form-text text-muted">
-                {% trans %}Group that you are in{% endtrans %}
-              </small>
+            <div class="mb-3" id="real_name_div">
+              <b>{{ form.real_name.label(class="form-label") }}</b>
+              {{ form.real_name(class="form-control", value=real_name) }}
+            </div>
+
+            <div class="mb-3" id="student_id_div">
+              <b>{{ form.student_id.label(class="form-label") }}</b>
+              {{ form.student_id(class="form-control", value=student_id) }}
+            </div>
+
+            <div class="mb-3" id="student_major_div">
+              <b>{{ form.student_major.label(class="form-label") }}</b>
+              {{ form.student_major(class="form-control", value=student_major) }}
+            </div>
+
+            <div class="mb-3" id="student_school_div">
+              <b>{{ form.student_school.label(class="form-label") }}</b>
+              {{ form.student_school(class="form-control", value=student_school) }}
+            </div>
+
+            <div class="mb-3" id="qq_div">
+              <b>{{ form.qq.label(class="form-label") }}</b>
+              {{ form.qq(class="form-control", value=qq) }}
             </div>
 
             {{ form.nonce() }}

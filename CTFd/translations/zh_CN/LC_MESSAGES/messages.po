@@ -37,6 +37,18 @@ msgstr "校内硕士生"
 msgid "ext_student"
 msgstr "外校师傅"
 
+msgid "Real Name"
+msgstr "真实名字"
+
+msgid "Student ID"
+msgstr "学号"
+
+msgid "Your Major and Grade"
+msgstr "专业-年级"
+
+msgid "Your School"
+msgstr "学校"
+
 #: CTFd/forms/auth.py:23 CTFd/forms/auth.py:44 CTFd/forms/auth.py:55
 #: CTFd/forms/auth.py:62 CTFd/forms/self.py:24 CTFd/forms/teams.py:127
 #: CTFd/forms/teams.py:210 CTFd/themes/core-beta/templates/challenge.html:147
@@ -372,6 +384,13 @@ msgstr "注册"
 #: CTFd/themes/core-beta/templates/register.html:35
 msgid "Your username on the site"
 msgstr "您在网站上的用户名"
+
+#: CTFd/themes/core-beta/templates/register.html
+msgid "Group that you are in"
+msgstr "您的组别"
+
+msgid "Using your .edu address is strongly recommended"
+msgstr "非常推荐使用您的学校邮箱(.edu邮箱)"
 
 #: CTFd/themes/core-beta/templates/register.html:43
 msgid "Never shown to the public"

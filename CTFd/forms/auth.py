@@ -24,8 +24,14 @@ def RegistrationForm(*args, **kwargs):
         email = EmailField(_l("Email"), validators=[InputRequired()])
         password = PasswordField(_l("Password"), validators=[InputRequired()])
         group_type = SelectField(_l("Group Type"), choices=[
-            (_l(i), i) for i in GroupTypes
+            (i, _l(i)) for i in GroupTypes
         ])
+        real_name = StringField(_l("Real Name"))
+        student_id = StringField(_l("Student ID"))
+        student_major = StringField(_l("Your Major and Grade"))
+        student_school = StringField(_l("Your School"))
+        qq = StringField(_l("QQ"))
+
         submit = SubmitField(_l("Submit")) 
 
         @property
