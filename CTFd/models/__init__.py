@@ -363,6 +363,10 @@ class Users(db.Model):
     verified = db.Column(db.Boolean, default=False)
     language = db.Column(db.String(32), nullable=True, default=None)
 
+    # blue-whale customization
+    group_type = db.Column(db.String(32), nullable=True, default=None)
+    extra_info = db.Column(db.String(512))
+
     # Relationship for Teams
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
@@ -585,6 +589,9 @@ class Teams(db.Model):
     )
     hidden = db.Column(db.Boolean, default=False)
     banned = db.Column(db.Boolean, default=False)
+
+    # blue-whale customization
+    group_type = db.Column(db.String(32), nullable=True, default=None)
 
     # Relationship for Users
     captain_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))

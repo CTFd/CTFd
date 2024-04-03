@@ -150,6 +150,9 @@ def join():
 
         team = Teams.query.filter_by(name=teamname).first()
 
+        if user.group_type != team.group_type:
+            errors.append("You must be in the same group of the team.")
+        
         if errors:
             return (
                 render_template("teams/join_team.html", infos=infos, errors=errors),
@@ -232,6 +235,8 @@ def new():
 
         user = get_current_user()
 
+        group_type = user.group_type
+
         existing_team = Teams.query.filter_by(name=teamname).first()
         if existing_team:
             errors.append("That team name is already taken")
@@ -307,6 +312,7 @@ def new():
             captain_id=user.id,
             hidden=hidden,
             bracket_id=bracket_id,
+            group_type=group_type
         )
 
         if website:

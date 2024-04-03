@@ -54,6 +54,9 @@ class UserSchema(ma.ModelSchema):
     country = field_for(Users, "country", validate=[validate_country_code])
     password = field_for(Users, "password", required=True, allow_none=False)
     bracket_id = field_for(Users, "bracket_id")
+
+    group_type = field_for(Users, "group_type")
+
     fields = Nested(
         UserFieldEntriesSchema, partial=True, many=True, attribute="field_entries"
     )
@@ -355,6 +358,7 @@ class UserSchema(ma.ModelSchema):
             "oauth_id",
             "fields",
             "team_id",
+            "group_type",
         ],
         "self": [
             "website",
@@ -369,6 +373,7 @@ class UserSchema(ma.ModelSchema):
             "password",
             "fields",
             "team_id",
+            "group_type",
         ],
         "admin": [
             "website",
@@ -389,6 +394,7 @@ class UserSchema(ma.ModelSchema):
             "verified",
             "fields",
             "team_id",
+            "group_type",
         ],
     }
 

@@ -52,6 +52,14 @@
               </small>
             </div>
 
+            <div class="mb-3">
+              <b>{{ form.group_type.label(class="form-label") }}</b>
+              {{ form.group_type(class="form-control", value=group_type) }}
+              <small class="form-text text-muted">
+                {% trans %}Group that you are in{% endtrans %}
+              </small>
+            </div>
+
             {{ form.nonce() }}
 
             {{ render_extra_fields(form.extra) }}

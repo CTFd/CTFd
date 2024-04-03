@@ -23,6 +23,7 @@ from CTFd.utils.modes import TEAMS_MODE
 from CTFd.utils.security.auth import login_user, logout_user
 from CTFd.utils.security.signing import unserialize
 from CTFd.utils.validators import ValidationError
+from CTFd.constants.groups import GroupTypes
 
 auth = Blueprint("auth", __name__)
 
@@ -208,6 +209,8 @@ def register():
         registration_code = str(request.form.get("registration_code", ""))
         bracket_id = request.form.get("bracket_id", None)
 
+        group_type = request.form.get("group_type")
+
         name_len = len(name) == 0
         names = (
             Users.query.add_columns(Users.name, Users.id).filter_by(name=name).first()
@@ -300,6 +303,9 @@ def register():
         if valid_bracket is False:
             errors.append("Please provide a valid bracket")
 
+        if group_type not in GroupTypes:
+            errors.append("Invalid group")
+
         if len(errors) > 0:
             return render_template(
                 "register.html",
@@ -315,6 +321,7 @@ def register():
                     email=email_address,
                     password=password,
                     bracket_id=bracket_id,
+                    group_type=group_type
                 )
 
                 if website:
