@@ -206,7 +206,9 @@ class TeamPublic(Resource):
             return {"success": False, "errors": response.errors}, 400
 
         response.data["place"] = team.place
+        response.data["ingroup_place"] = team.get_group_place(groups=[team.group_type])
         response.data["score"] = team.score
+        
         return {"success": True, "data": response.data}
 
     @admins_only
@@ -295,6 +297,7 @@ class TeamPrivate(Resource):
         # Therefore a team requesting their private data should be able to get their own current score
         # However place is not something that a team can ascertain on their own so it is always gated behind freeze time
         response.data["place"] = team.place
+        response.data["ingroup_place"] = team.get_group_place(groups=[team.group_type])
         response.data["score"] = team.get_score(admin=True)
         return {"success": True, "data": response.data}
 

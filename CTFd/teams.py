@@ -360,6 +360,8 @@ def private():
     awards = team.get_awards()
 
     place = team.place
+    ingroup_place = team.get_group_place(groups=[team.group_type])
+
     score = team.get_score(admin=True)
 
     if config.is_scoreboard_frozen():
@@ -373,6 +375,7 @@ def private():
         team=team,
         score=score,
         place=place,
+        ingroup_place=ingroup_place,
         score_frozen=config.is_scoreboard_frozen(),
         infos=infos,
         errors=errors,
@@ -391,6 +394,7 @@ def public(team_id):
     awards = team.get_awards()
 
     place = team.place
+    ingroup_place = team.get_group_place(groups=[team.group_type])
     score = team.score
 
     if errors:
@@ -406,6 +410,7 @@ def public(team_id):
         team=team,
         score=score,
         place=place,
+        ingroup_place=ingroup_place,
         score_frozen=config.is_scoreboard_frozen(),
         infos=infos,
         errors=errors,

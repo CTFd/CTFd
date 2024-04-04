@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 
 from CTFd.utils import config
 from CTFd.utils.config.visibility import scores_visible
@@ -9,6 +9,7 @@ from CTFd.utils.decorators.visibility import (
 from CTFd.utils.helpers import get_infos
 from CTFd.utils.scores import get_standings
 from CTFd.utils.user import is_admin
+from CTFd.constants.groups import GroupTypes
 
 scoreboard = Blueprint("scoreboard", __name__)
 
@@ -25,5 +26,7 @@ def listing():
     if is_admin() is True and scores_visible() is False:
         infos.append("Scores are not currently visible to users")
 
-    standings = get_standings()
-    return render_template("scoreboard.html", standings=standings, infos=infos)
+    group_type = request.args.get("group_type", "")
+    standings = get_standings(groups=[group_type])
+
+    return render_template("scoreboard.html", standings=standings, infos=infos, group_type=group_type)

@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from flask_restx import Resource
+from flask import request
 
 from CTFd.api.v1.statistics import statistics_namespace
 from CTFd.models import Challenges, db
@@ -12,6 +13,8 @@ from CTFd.utils.scores import get_standings
 class ScoresDistribution(Resource):
     @admins_only
     def get(self):
+        group_type = request.args.get("group_type")
+        
         challenge_count = Challenges.query.count() or 1
         total_points = (
             Challenges.query.with_entities(db.func.sum(Challenges.value).label("sum"))
@@ -26,7 +29,7 @@ class ScoresDistribution(Resource):
         bracket_size = total_points // challenge_count
 
         # Get standings
-        standings = get_standings(admin=True)
+        standings = get_standings(admin=True, groups=[group_type])
 
         # Iterate over standings and increment the count for each bracket for each standing within that bracket
         bottom, top = 0, bracket_size

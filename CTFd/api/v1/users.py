@@ -208,6 +208,7 @@ class UserPublic(Resource):
             return {"success": False, "errors": response.errors}, 400
 
         response.data["place"] = user.place
+        response.data["ingroup_place"] = user.get_group_place(groups=[user.group_type])
         response.data["score"] = user.score
 
         return {"success": True, "data": response.data}
@@ -307,6 +308,7 @@ class UserPrivate(Resource):
         # Therefore a user requesting their private data should be able to get their own current score
         # However place is not something that a user can ascertain on their own so it is always gated behind freeze time
         response["place"] = user.place
+        response.data["ingroup_place"] = user.get_group_place(groups=[user.group_type])
         response["score"] = user.get_score(admin=True)
 
         return {"success": True, "data": response}

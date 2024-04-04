@@ -5,10 +5,10 @@ from CTFd.models import Awards, Brackets, Challenges, Solves, Teams, Users, db
 from CTFd.utils import get_config
 from CTFd.utils.dates import unix_time_to_utc
 from CTFd.utils.modes import get_model
-
+from CTFd.constants.groups import GroupTypes
 
 @cache.memoize(timeout=60)
-def get_standings(count=None, bracket_id=None, admin=False, fields=None):
+def get_standings(count=None, bracket_id=None, admin=False, fields=None, groups=[]):
     """
     Get standings as a list of tuples containing account_id, name, and score e.g. [(account_id, team_name, score)].
 
@@ -19,6 +19,10 @@ def get_standings(count=None, bracket_id=None, admin=False, fields=None):
     """
     if fields is None:
         fields = []
+    groups = list(filter(lambda i: True if i in GroupTypes else False, groups))
+    if len(groups) == 0:
+        groups = GroupTypes
+
     Model = get_model()
 
     scores = (
@@ -89,11 +93,13 @@ def get_standings(count=None, bracket_id=None, admin=False, fields=None):
                 Brackets.name.label("bracket_name"),
                 Model.hidden,
                 Model.banned,
+                Model.group_type,
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Model.id == sumscores.columns.account_id)
             .join(Brackets, isouter=True)
+            .filter(Model.group_type.in_(groups))
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
@@ -108,12 +114,13 @@ def get_standings(count=None, bracket_id=None, admin=False, fields=None):
                 Model.name.label("name"),
                 Model.bracket_id.label("bracket_id"),
                 Brackets.name.label("bracket_name"),
+                Model.group_type,
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Model.id == sumscores.columns.account_id)
             .join(Brackets, isouter=True)
-            .filter(Model.banned == False, Model.hidden == False)
+            .filter(Model.banned == False, Model.hidden == False, Model.group_type.in_(groups))
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
@@ -135,9 +142,13 @@ def get_standings(count=None, bracket_id=None, admin=False, fields=None):
 
 
 @cache.memoize(timeout=60)
-def get_team_standings(count=None, bracket_id=None, admin=False, fields=None):
+def get_team_standings(count=None, bracket_id=None, admin=False, fields=None, groups=[]):
     if fields is None:
         fields = []
+    groups = list(filter(lambda i: True if i in GroupTypes else False, groups))
+    if len(groups) == 0:
+        groups = GroupTypes
+    
     scores = (
         db.session.query(
             Solves.team_id.label("team_id"),
@@ -187,10 +198,12 @@ def get_team_standings(count=None, bracket_id=None, admin=False, fields=None):
                 Teams.name.label("name"),
                 Teams.hidden,
                 Teams.banned,
+                Teams.group_type,
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Teams.id == sumscores.columns.team_id)
+            .filter(Teams.group_type.in_(groups))
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
@@ -203,12 +216,14 @@ def get_team_standings(count=None, bracket_id=None, admin=False, fields=None):
                 Teams.id.label("team_id"),
                 Teams.oauth_id.label("oauth_id"),
                 Teams.name.label("name"),
+                Teams.group_type,
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Teams.id == sumscores.columns.team_id)
             .filter(Teams.banned == False)
             .filter(Teams.hidden == False)
+            .filter(Teams.group_type.in_(groups))
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
@@ -228,9 +243,13 @@ def get_team_standings(count=None, bracket_id=None, admin=False, fields=None):
 
 
 @cache.memoize(timeout=60)
-def get_user_standings(count=None, bracket_id=None, admin=False, fields=None):
+def get_user_standings(count=None, bracket_id=None, admin=False, fields=None, groups=[]):
     if fields is None:
         fields = []
+    groups = list(filter(lambda i: True if i in GroupTypes else False, groups))
+    if len(groups) == 0:
+        groups = GroupTypes
+    
     scores = (
         db.session.query(
             Solves.user_id.label("user_id"),
@@ -281,10 +300,12 @@ def get_user_standings(count=None, bracket_id=None, admin=False, fields=None):
                 Users.team_id.label("team_id"),
                 Users.hidden,
                 Users.banned,
+                Users.group_type,
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Users.id == sumscores.columns.user_id)
+            .filter(Users.group_type.in_(groups))
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
@@ -298,11 +319,13 @@ def get_user_standings(count=None, bracket_id=None, admin=False, fields=None):
                 Users.oauth_id.label("oauth_id"),
                 Users.name.label("name"),
                 Users.team_id.label("team_id"),
+                Teams.group_type,
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Users.id == sumscores.columns.user_id)
             .filter(Users.banned == False, Users.hidden == False)
+            .filter(Users.group_type.in_(groups))
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),

@@ -247,7 +247,12 @@
         {% if scores_visible() %}
           {% if place %}
             {{ place }}
-            <small>{% trans %}place{% endtrans %}</small>
+            <small>place</small>
+          {% endif %}
+          {% if ingroup_place %}
+            &nbsp;|&nbsp;
+            {{ ingroup_place }}
+            <small>in group</small>
           {% endif %}
         {% endif %}
       </h2>

@@ -503,6 +503,14 @@ class Users(db.Model):
             awards = awards.filter(Awards.date < dt)
         return awards.all()
 
+    def get_group_place(self, groups=[]):
+        from CTFd.utils.config.visibility import scores_visible
+
+        if scores_visible():
+            return self.get_place(admin=False, groups=groups)
+        else:
+            return None
+
     @cache.memoize()
     def get_score(self, admin=False):
         score = db.func.sum(Challenges.value).label("score")
@@ -537,7 +545,7 @@ class Users(db.Model):
             return 0
 
     @cache.memoize()
-    def get_place(self, admin=False, numeric=False):
+    def get_place(self, groups=[], admin=False, numeric=False):
         """
         This method is generally a clone of CTFd.scoreboard.get_standings.
         The point being that models.py must be self-reliant and have little
@@ -547,7 +555,7 @@ class Users(db.Model):
         from CTFd.utils.humanize.numbers import ordinalize
         from CTFd.utils.scores import get_user_standings
 
-        standings = get_user_standings(admin=admin)
+        standings = get_user_standings(admin=admin, groups=groups)
 
         for i, user in enumerate(standings):
             if user.user_id == self.id:
@@ -695,6 +703,14 @@ class Teams(db.Model):
         }
         code = serialize(data=invite_object, secret=secret_key)
         return code
+        
+    def get_group_place(self, groups=[]):
+        from CTFd.utils.config.visibility import scores_visible
+
+        if scores_visible():
+            return self.get_place(admin=False, groups=groups)
+        else:
+            return None
 
     @classmethod
     def load_invite_code(cls, code):
@@ -791,7 +807,7 @@ class Teams(db.Model):
         return score
 
     @cache.memoize()
-    def get_place(self, admin=False, numeric=False):
+    def get_place(self, groups=[], admin=False, numeric=False):
         """
         This method is generally a clone of CTFd.scoreboard.get_standings.
         The point being that models.py must be self-reliant and have little
@@ -801,7 +817,7 @@ class Teams(db.Model):
         from CTFd.utils.humanize.numbers import ordinalize
         from CTFd.utils.scores import get_team_standings  # noqa: I001
 
-        standings = get_team_standings(admin=admin)
+        standings = get_team_standings(admin=admin, groups=groups)
 
         for i, team in enumerate(standings):
             if team.team_id == self.id:

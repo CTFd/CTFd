@@ -24,9 +24,11 @@ scoreboard_namespace = Namespace(
 class ScoreboardList(Resource):
     @check_account_visibility
     @check_score_visibility
-    @cache.cached(timeout=60, key_prefix=make_cache_key)
+    @cache.cached(timeout=60, key_prefix=make_cache_key_with_query_string(allowed_params=["group_type"]))
     def get(self):
-        standings = get_standings()
+        group_type = request.args.get("group_type")
+
+        standings = get_standings(groups=[group_type])
         response = []
         mode = get_config("user_mode")
         account_type = get_mode_as_word()
@@ -62,7 +64,7 @@ class ScoreboardList(Resource):
                     }
 
             # Get user_standings as a dict so that we can more quickly get member scores
-            user_standings = get_user_standings()
+            user_standings = get_user_standings(groups=[group_type])
             for u in user_standings:
                 membership[u.team_id][u.user_id]["score"] = int(u.score)
 
@@ -77,6 +79,7 @@ class ScoreboardList(Resource):
                 "score": int(x.score),
                 "bracket_id": x.bracket_id,
                 "bracket_name": x.bracket_name,
+                "group_type": x.group_type,
             }
 
             if mode == TEAMS_MODE:
@@ -93,15 +96,15 @@ class ScoreboardDetail(Resource):
     @check_score_visibility
     @cache.cached(
         timeout=60,
-        key_prefix=make_cache_key_with_query_string(allowed_params=["bracket_id"]),
+        key_prefix=make_cache_key_with_query_string(allowed_params=["bracket_id", "group_type"]),
     )
     def get(self, count):
         response = {}
 
         # Optional filters
         bracket_id = request.args.get("bracket_id")
-
-        standings = get_standings(count=count, bracket_id=bracket_id)
+        group_type = request.args.get("group_type")
+        standings = get_standings(count=count, bracket_id=bracket_id, groups=[group_type])
 
         team_ids = [team.account_id for team in standings]
 

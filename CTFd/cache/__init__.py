@@ -5,6 +5,8 @@ from time import monotonic_ns
 from flask import request
 from flask_caching import Cache, make_template_fragment_key
 
+from CTFd.constants.groups import GroupTypes
+
 cache = Cache()
 
 
@@ -142,7 +144,7 @@ def clear_standings():
         cache.delete(cache_key)
 
     # Clear out scoreboard templates
-    cache.delete(make_template_fragment_key(CacheKeys.PUBLIC_SCOREBOARD_TABLE))
+    cache.delete(make_template_fragment_key(CacheKeys.PUBLIC_SCOREBOARD_TABLE, GroupTypes + [""]))
 
 
 def clear_challenges():

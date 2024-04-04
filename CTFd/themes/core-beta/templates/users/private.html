@@ -55,6 +55,11 @@
           {% if account.place %}
             {{ account.place }} <small>place</small>
           {% endif %}
+
+          {% if account and account.get_group_place(groups=[account.group_type]) %}
+            &nbsp;|&nbsp;
+            {{ account.get_group_place(groups=[account.group_type]) }} <small>in group</small>
+          {% endif %}
         </h2>
         <h2 class="text-center">
           {% if account %}
