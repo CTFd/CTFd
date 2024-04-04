@@ -2,6 +2,8 @@ FROM python:3.11-slim-bookworm as build
 
 WORKDIR /opt/CTFd
 
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources
+
 # hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -28,6 +30,8 @@ COPY . /opt/CTFd
 
 FROM python:3.11-slim-bookworm as release
 WORKDIR /opt/CTFd
+
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources
 
 # hadolint ignore=DL3008
 RUN apt-get update \
