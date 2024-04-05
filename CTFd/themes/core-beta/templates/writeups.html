@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>
+            {% trans %}WriteUp Upload{% endtrans %}
+        </h1>
+    </div>
+</div>
+<div class="container">
+    <script>
+        document.addEventListener("DOMContentLoaded", ()=>{
+            submit = document.getElementById("submit");
+            submit.addEventListener("click", async (ev)=>{
+                ev.preventDefault();
+                document.getElementById("form-csrf").value = init.csrfNonce;
+                const result = await fetch("/writeups/upload", {
+                    method: "POST",
+                    body: new FormData(document.getElementById("form")),
+                    credentials: "same-origin", 
+                    headers: {
+                        "Csrf-Token": init.csrfNonce
+                    }
+                }).then(r=>r.json()).catch(err=>({success: false, message: "unexpected error"}));
+                if(result.success)
+                    alert("Successfully Uploaded!");
+                else
+                    alert("Error: " + result.errors);
+            });
+        })
+    </script>
+    <div class="row">
+        {% if not enabled %}
+        <div class="col-md-6 offset-md-3">
+            <strong style="font-size: 1.2rem">WriteUp Uploading is disabled currently</strong>
+            <br>
+            <br>
+        </div>
+        {% endif %}
+        <div class="col-md-6 offset-md-3">
+            <form method="post" accept-charset="utf-8" autocomplete="off" role="form" id="form">
+                <div class="mb-3">
+                    <b>Select the file you want to upload</b>
+                    <input class="form-control" type="file" name="file" id="file">
+                    <small class="form-text text-muted">
+                      Only .pdf or .md is allowed
+                    </small>
+                </div>
+                <input type="hidden" name="nonce" id="form-csrf">
+                <hr>
+                <div class="mb-3">
+                    <button class="btn btn-primary float-end px-4" id="submit">{% trans %}Submit{% endtrans %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ Assets.js("assets/js/page.js") }}
+{% endblock %}

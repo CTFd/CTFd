@@ -303,6 +303,7 @@ def create_app(config="CTFd.config.Config"):
         from CTFd.teams import teams
         from CTFd.users import users
         from CTFd.views import views
+        from CTFd.writeups import writeups
 
         app.register_blueprint(views)
         app.register_blueprint(teams)
@@ -313,6 +314,7 @@ def create_app(config="CTFd.config.Config"):
         app.register_blueprint(api)
         app.register_blueprint(events)
         app.register_blueprint(social)
+        app.register_blueprint(writeups)
 
         app.register_blueprint(admin)
 
