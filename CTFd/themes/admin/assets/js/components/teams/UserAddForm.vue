@@ -27,19 +27,17 @@
         class="text-center"
         v-if="
           userResults.length == 0 &&
-            this.searchedName != '' &&
-            awaitingSearch == false
+          this.searchedName != '' &&
+          awaitingSearch == false
         "
       >
-        <span class="text-muted">
-          No users found
-        </span>
+        <span class="text-muted"> No users found </span>
       </div>
       <ul class="list-group">
         <li
           :class="{
             'list-group-item': true,
-            active: idx === selectedResultIdx
+            active: idx === selectedResultIdx,
           }"
           v-for="(user, idx) in userResults"
           :key="user.id"
@@ -51,7 +49,7 @@
             :class="{
               'float-right': true,
               'text-white': idx === selectedResultIdx,
-              'text-muted': idx !== selectedResultIdx
+              'text-muted': idx !== selectedResultIdx,
             }"
           >
             already in a team
@@ -71,27 +69,27 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
-import { ezQuery } from "core/ezq";
-import { htmlEntities } from "core/utils";
+import CTFd from "../../compat/CTFd";
+import { ezQuery } from "../../compat/ezq";
+import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 
 export default {
   name: "UserAddForm",
   props: {
-    team_id: Number
+    team_id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       searchedName: "",
       awaitingSearch: false,
       emptyResults: false,
       userResults: [],
       selectedResultIdx: 0,
-      selectedUsers: []
+      selectedUsers: [],
     };
   },
   methods: {
-    searchUsers: function() {
+    searchUsers: function () {
       this.selectedResultIdx = 0;
       if (this.searchedName == "") {
         this.userResults = [];
@@ -103,19 +101,19 @@ export default {
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             this.userResults = response.data.slice(0, 10);
           }
         });
     },
-    moveCursor: function(dir) {
+    moveCursor: function (dir) {
       switch (dir) {
         case "up":
           if (this.selectedResultIdx) {
@@ -129,7 +127,7 @@ export default {
           break;
       }
     },
-    selectUser: function(idx) {
+    selectUser: function (idx) {
       if (idx === undefined) {
         idx = this.selectedResultIdx;
       }
@@ -137,7 +135,7 @@ export default {
 
       // Avoid duplicates
       const found = this.selectedUsers.some(
-        searchUser => searchUser.id === user.id
+        (searchUser) => searchUser.id === user.id,
       );
       if (found === false) {
         this.selectedUsers.push(user);
@@ -146,15 +144,15 @@ export default {
       this.userResults = [];
       this.searchedName = "";
     },
-    removeSelectedUser: function(user_id) {
+    removeSelectedUser: function (user_id) {
       this.selectedUsers = this.selectedUsers.filter(
-        user => user.id !== user_id
+        (user) => user.id !== user_id,
       );
     },
-    handleAddUsersRequest: function() {
+    handleAddUsersRequest: function () {
       let reqs = [];
 
-      this.selectedUsers.forEach(user => {
+      this.selectedUsers.forEach((user) => {
         let body = { user_id: user.id };
         reqs.push(
           CTFd.fetch(`/api/v1/teams/${this.$props.team_id}/members`, {
@@ -162,31 +160,31 @@ export default {
             credentials: "same-origin",
             headers: {
               Accept: "application/json",
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify(body)
-          })
+            body: JSON.stringify(body),
+          }),
         );
       });
 
       return Promise.all(reqs);
     },
-    handleRemoveUsersFromTeams: function() {
+    handleRemoveUsersFromTeams: function () {
       let reqs = [];
-      this.selectedUsers.forEach(user => {
+      this.selectedUsers.forEach((user) => {
         let body = { user_id: user.id };
         reqs.push(
           CTFd.fetch(`/api/v1/teams/${user.team_id}/members`, {
             method: "DELETE",
-            body: JSON.stringify(body)
-          })
+            body: JSON.stringify(body),
+          }),
         );
       });
       return Promise.all(reqs);
     },
-    addUsers: function() {
+    addUsers: function () {
       let usersInTeams = [];
-      this.selectedUsers.forEach(user => {
+      this.selectedUsers.forEach((user) => {
         if (user.team_id) {
           usersInTeams.push(user.name);
         }
@@ -197,22 +195,22 @@ export default {
           title: "Confirm Team Removal",
           body: `The following users are currently in teams:<br><br> ${users} <br><br>Are you sure you want to remove them from their current teams and add them to this one? <br><br>All of their challenge solves, attempts, awards, and unlocked hints will also be deleted!`,
           success: () => {
-            this.handleRemoveUsersFromTeams().then(_resps => {
-              this.handleAddUsersRequest().then(_resps => {
+            this.handleRemoveUsersFromTeams().then((_resps) => {
+              this.handleAddUsersRequest().then((_resps) => {
                 window.location.reload();
               });
             });
-          }
+          },
         });
       } else {
-        this.handleAddUsersRequest().then(_resps => {
+        this.handleAddUsersRequest().then((_resps) => {
           window.location.reload();
         });
       }
-    }
+    },
   },
   watch: {
-    searchedName: function(val) {
+    searchedName: function (val) {
       if (this.awaitingSearch === false) {
         // 1 second delay after typing
         setTimeout(() => {
@@ -221,8 +219,8 @@ export default {
         }, 1000);
       }
       this.awaitingSearch = true;
-    }
-  }
+    },
+  },
 };
 </script>
 

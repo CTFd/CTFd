@@ -1,0 +1,15 @@
+<div role="tabpanel" class="tab-pane config-section" id="social">
+	{% set social_shares = "true" if social_shares == True else "false" %}
+	{% with form = Forms.config.SocialSettingsForm(social_shares=social_shares) %}
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			{{ form.social_shares.label }}
+			{{ form.social_shares(class="form-control", value=social_shares) }}
+			<small class="form-text text-muted">
+				{{ form.social_shares.description }}
+			</small>
+		</div>
+		{{ form.submit(class="btn btn-md btn-primary float-right") }}
+	</form>
+	{% endwith %}
+</div>

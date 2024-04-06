@@ -17,52 +17,45 @@
       </div>
     </div>
 
-    {% cache 60, CacheKeys.PUBLIC_SCOREBOARD_TABLE %}
-      {% if standings %}
-
-        <div id="scoreboard" class="row">
-          <div class="col-md-12">
-            <table class="table table-striped">
-              <thead>
-              <tr>
-                <td style="width: 10px"><b>{% trans %}Place{% endtrans %}</b></td>
-                <td><b>{{ get_mode_as_word(capitalize=True) }}</b></td>
-                <td><b>{% trans %}Score{% endtrans %}</b></td>
-              </tr>
-              </thead>
-
-              <tbody>
-              {% for standing in standings %}
-                <tr>
-                  <th scope="row" class="text-center">{{ loop.index }}</th>
-                  <td>
-                    <a href="{{ generate_account_url(standing.account_id) }}">
-                      {{ standing.name | truncate(50) }}
-
-                      {% if standing.oauth_id %}
-                        {% if Configs.user_mode == 'teams' %}
-                          <a href="https://majorleaguecyber.org/t/{{ standing.name }}">
-                            <span class="badge bg-primary ms-2">Official</span>
-                          </a>
-                        {% elif Configs.user_mode == 'users' %}
-                          <a href="https://majorleaguecyber.org/u/{{ standing.name }}">
-                            <span class="badge bg-primary ms-2">Official</span>
-                          </a>
-                        {% endif %}
-                      {% endif %}
-                    </a>
-                  </td>
-                  <td>{{ standing.score }}</td>
-                </tr>
-              {% endfor %}
-              </tbody>
-
-            </table>
-          </div>
+    <div id="scoreboard" class="row" x-data="ScoreboardList">
+      <template x-if="brackets.length">
+        <div class="col-md-12 py-3">
+          <nav class="nav nav-pills nav-fill">
+            <button :class="{'nav-link': true, 'active': !activeBracket}" @click="activeBracket=null">All</button>
+            <template x-for="bracket in brackets">
+              <button :class="{'nav-link': true, 'active': activeBracket == bracket.id}" x-text="bracket.name" @click="activeBracket=bracket.id"></button>
+            </template>
+          </nav>
         </div>
+      </template>
 
-      {% endif %}
-    {% endcache %}
+      <div class="col-md-12">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <td style="width: 10px"><b>{% trans %}Place{% endtrans %}</b></td>
+            <td><b>{{ get_mode_as_word(capitalize=True) }}</b></td>
+            <td><b>{% trans %}Score{% endtrans %}</b></td>
+          </tr>
+          </thead>
+
+          <tbody>
+            <template x-for="(standing, index) in standings.filter(i => activeBracket ? i.bracket_id==activeBracket : true)">
+              <tr>
+                <th scope="row" class="text-center" x-text="index + 1"></th>
+                <td>
+                  <a :href="`/${CTFd.config.userMode}/${standing.account_id}`" x-text="standing.name"></a>
+                  <template x-if="standing.bracket_name">
+                    <span class="badge bg-secondary ms-2" x-text="standing.bracket_name">
+                  </template>
+                </td>
+                <td x-text="standing.score"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 {% endblock %}
 

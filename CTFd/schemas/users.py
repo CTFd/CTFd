@@ -3,7 +3,7 @@ from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 from sqlalchemy.orm import load_only
 
-from CTFd.models import UserFieldEntries, UserFields, Users, ma
+from CTFd.models import Brackets, UserFieldEntries, UserFields, Users, ma
 from CTFd.schemas.fields import UserFieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
@@ -53,6 +53,7 @@ class UserSchema(ma.ModelSchema):
     language = field_for(Users, "language", validate=[validate_language])
     country = field_for(Users, "country", validate=[validate_country_code])
     password = field_for(Users, "password", required=True, allow_none=False)
+    bracket_id = field_for(Users, "bracket_id")
     fields = Nested(
         UserFieldEntriesSchema, partial=True, many=True, attribute="field_entries"
     )
@@ -192,6 +193,35 @@ class UserSchema(ma.ModelSchema):
                 data.pop("confirm", None)
 
     @pre_load
+    def validate_bracket_id(self, data):
+        bracket_id = data.get("bracket_id")
+        if bracket_id is None:
+            return
+
+        current_user = get_current_user()
+        if is_admin():
+            bracket = Brackets.query.filter_by(id=bracket_id, type="users").first()
+            if bracket is None:
+                ValidationError(
+                    "Please provide a valid bracket id", field_names=["bracket_id"]
+                )
+        else:
+            if (
+                current_user.bracket_id == int(bracket_id)
+                or current_user.bracket_id is None
+            ):
+                bracket = Brackets.query.filter_by(id=bracket_id, type="users").first()
+                if bracket is None:
+                    ValidationError(
+                        "Please provide a valid bracket id", field_names=["bracket_id"]
+                    )
+            else:
+                raise ValidationError(
+                    "Please contact an admin to change your bracket",
+                    field_names=["bracket_id"],
+                )
+
+    @pre_load
     def validate_fields(self, data):
         """
         This validator is used to only allow users to update the field entry for their user.
@@ -320,7 +350,7 @@ class UserSchema(ma.ModelSchema):
             "name",
             "country",
             "affiliation",
-            "bracket",
+            "bracket_id",
             "id",
             "oauth_id",
             "fields",
@@ -333,7 +363,7 @@ class UserSchema(ma.ModelSchema):
             "language",
             "country",
             "affiliation",
-            "bracket",
+            "bracket_id",
             "id",
             "oauth_id",
             "password",
@@ -350,7 +380,7 @@ class UserSchema(ma.ModelSchema):
             "language",
             "affiliation",
             "secret",
-            "bracket",
+            "bracket_id",
             "hidden",
             "id",
             "oauth_id",

@@ -63,22 +63,22 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 
 export default {
   props: {
-    challenge_id: Number
+    challenge_id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       challenges: [],
       requirements: {},
       selectedRequirements: [],
-      selectedAnonymize: false
+      selectedAnonymize: false,
     };
   },
   computed: {
-    newRequirements: function() {
+    newRequirements: function () {
       let currentRequirements = this.requirements.prerequisites || [];
       let currentAnonymize = this.requirements.anonymize || false;
       let newReqs =
@@ -88,9 +88,9 @@ export default {
       return newReqs || changedAnon;
     },
     // Get all currently required challenges
-    requiredChallenges: function() {
+    requiredChallenges: function () {
       const prerequisites = this.requirements.prerequisites || [];
-      return this.challenges.filter(challenge => {
+      return this.challenges.filter((challenge) => {
         return (
           challenge.id !== this.$props.challenge_id &&
           prerequisites.includes(challenge.id)
@@ -98,42 +98,42 @@ export default {
       });
     },
     // Get all challenges besides the current one and current prereqs
-    otherChallenges: function() {
+    otherChallenges: function () {
       const prerequisites = this.requirements.prerequisites || [];
-      return this.challenges.filter(challenge => {
+      return this.challenges.filter((challenge) => {
         return (
           challenge.id !== this.$props.challenge_id &&
           !prerequisites.includes(challenge.id)
         );
       });
-    }
+    },
   },
   methods: {
-    loadChallenges: function() {
+    loadChallenges: function () {
       CTFd.fetch("/api/v1/challenges?view=admin", {
         method: "GET",
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             this.challenges = response.data;
           }
         });
     },
-    getChallengeNameById: function(challenge_id) {
+    getChallengeNameById: function (challenge_id) {
       let challenge = this.challenges.find(
-        challenge => challenge.id === challenge_id
+        (challenge) => challenge.id === challenge_id,
       );
       return challenge ? challenge.name : "";
     },
-    loadRequirements: function() {
+    loadRequirements: function () {
       CTFd.fetch(
         `/api/v1/challenges/${this.$props.challenge_id}/requirements`,
         {
@@ -141,14 +141,14 @@ export default {
           credentials: "same-origin",
           headers: {
             Accept: "application/json",
-            "Content-Type": "application/json"
-          }
-        }
+            "Content-Type": "application/json",
+          },
+        },
       )
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             this.requirements = response.data || {};
             this.selectedRequirements = this.requirements.prerequisites || [];
@@ -156,13 +156,13 @@ export default {
           }
         });
     },
-    updateRequirements: function() {
+    updateRequirements: function () {
       let selectedRequirements = this.selectedRequirements;
 
       const params = {
         requirements: {
-          prerequisites: selectedRequirements
-        }
+          prerequisites: selectedRequirements,
+        },
       };
 
       if (this.selectedAnonymize) {
@@ -174,24 +174,24 @@ export default {
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(params)
+        body: JSON.stringify(params),
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(data => {
+        .then((data) => {
           if (data.success) {
             this.loadRequirements();
           }
         });
-    }
+    },
   },
   created() {
     this.loadChallenges();
     this.loadRequirements();
-  }
+  },
 };
 </script>
 

@@ -33,18 +33,19 @@
 
 <script>
 import $ from "jquery";
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 import nunjucks from "nunjucks";
+import "../../compat/json";
 
 export default {
   name: "FlagEditForm",
   props: {
-    flag_id: Number
+    flag_id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       flag: {},
-      editForm: ""
+      editForm: "",
     };
   },
   watch: {
@@ -54,22 +55,22 @@ export default {
         if (val !== null) {
           this.loadFlag();
         }
-      }
-    }
+      },
+    },
   },
   methods: {
-    loadFlag: function() {
+    loadFlag: function () {
       CTFd.fetch(`/api/v1/flags/${this.$props.flag_id}`, {
-        method: "GET"
+        method: "GET",
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           this.flag = response.data;
           let editFormURL = this.flag["templates"]["update"];
 
-          $.get(CTFd.config.urlRoot + editFormURL, template_data => {
+          $.get(CTFd.config.urlRoot + editFormURL, (template_data) => {
             const template = nunjucks.compile(template_data);
             this.editForm = template.render(this.flag);
 
@@ -78,7 +79,7 @@ export default {
               setTimeout(() => {
                 $(`<div>` + this.editForm + `</div>`)
                   .find("script")
-                  .each(function() {
+                  .each(function () {
                     eval($(this).html());
                   });
               }, 100);
@@ -86,7 +87,7 @@ export default {
           });
         });
     },
-    updateFlag: function(event) {
+    updateFlag: function (event) {
       let form = $(event.target);
       let params = form.serializeJSON(true);
 
@@ -95,17 +96,17 @@ export default {
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(params)
+        body: JSON.stringify(params),
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           this.$emit("refreshFlags", this.$options.name);
         });
-    }
+    },
   },
   mounted() {
     if (this.flag_id) {
@@ -116,7 +117,7 @@ export default {
     if (this.flag_id) {
       this.loadFlag();
     }
-  }
+  },
 };
 </script>
 

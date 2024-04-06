@@ -161,5 +161,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/teams.js') }}"></script>
+	{{ Assets.js("assets/js/pages/teams.js", theme="admin") }}
 {% endblock %}

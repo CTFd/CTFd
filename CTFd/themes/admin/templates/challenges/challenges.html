@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/challenge-board.css') }}">
+	{{ Assets.css("assets/css/challenge-board.scss", theme="admin") }}
 {% endblock %}
 
 
@@ -114,5 +114,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/challenges.js') }}"></script>
+	{{ Assets.js("assets/js/pages/challenges.js", theme="admin") }}
 {% endblock %}

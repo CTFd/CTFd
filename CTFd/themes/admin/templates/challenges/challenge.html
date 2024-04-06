@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/challenge-board.css') }}">
+	{{ Assets.css("assets/css/challenge-board.scss", theme="admin") }}
 {% endblock %}
 
 {% block content %}
@@ -160,15 +160,15 @@
 
 {% endblock %}
 
-{% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/challenge.js') }}"></script>
-{% endblock %}
-
 {% block scripts %}
 	<script>
         var CHALLENGE_ID = {{ challenge.id }};
         var CHALLENGE_NAME = {{ challenge.name | tojson }};
 	</script>
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/echarts.bundle.js') }}"></script>
 	<script defer src="{{ request.script_root }}{{ update_script }}"></script>
+{% endblock %}
+
+
+{% block entrypoint %}
+	{{ Assets.js("assets/js/pages/challenge.js", theme="admin") }}
 {% endblock %}

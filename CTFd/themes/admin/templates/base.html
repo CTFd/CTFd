@@ -5,12 +5,12 @@
 	<title>Admin Panel</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" href="{{ url_for('views.themes', theme='core', path='img/favicon.ico') }}" type="image/x-icon">
-	<link rel="icon" href="{{ url_for('views.themes', theme='core', path='img/favicon.ico') }}" type="image/x-icon">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/fonts.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='core', path='css/main.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/admin.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', theme='admin', path='css/codemirror.css') }}">
+	<link rel="shortcut icon" href="{{ url_for('views.themes', theme='admin', path='img/favicon.ico') }}" type="image/x-icon">
+	<link rel="icon" href="{{ url_for('views.themes', theme='admin', path='img/favicon.ico') }}" type="image/x-icon">
+	{{ Assets.css("assets/css/main.scss", theme="admin") }}
+	{{ Assets.css("assets/css/fonts.scss", theme="admin") }}
+	{{ Assets.css("assets/css/admin.scss", theme="admin") }}
+	{{ Assets.css("assets/css/codemirror.scss", theme="admin") }}
 	<script type="text/javascript">
 		var init = {
 			'urlRoot': "{{ request.script_root }}",
@@ -75,7 +75,7 @@
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.config') }}">Config</a></li>
 
 					{% set plugin_menu = get_admin_plugin_menu_bar() %}
-					{% set plugins = get_configurable_plugins() %}
+					{% set plugins = get_menubar_plugins() %}
 					{% if plugin_menu or plugins %}
 						<li class="nav-item">
 							<a class="nav-link d-none d-md-block d-lg-block">|</a>
@@ -87,7 +87,11 @@
 							{% else %}
 								{% set route = menu.route %}
 							{% endif %}
-							<li class="nav-item"><a class="nav-link" href="{{ route }}">{{ menu.title }}</a></li>
+							<li class="nav-item">
+								<a class="nav-link" href="{{ route }}" {% if menu.link_target %}target="{{ menu.link_target }}"{% endif %}>
+									{{ menu.title }}
+								</a>
+							</li>
 						{% endfor %}
 
 						{% if plugins %}
@@ -142,13 +146,8 @@
 		</div>
 	</footer>
 
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/vendor.bundle.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/core.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/helpers.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/components.js') }}"></script>
-
 	{% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/main.js') }}"></script>
+		{{ Assets.js("assets/js/pages/main.js", theme="admin") }}
 	{% endblock %}
 
 	{% block scripts %} {% endblock %}

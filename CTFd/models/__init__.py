@@ -85,7 +85,7 @@ class Pages(db.Model):
     hidden = db.Column(db.Boolean)
     auth_required = db.Column(db.Boolean)
     format = db.Column(db.String(80), default="markdown")
-    # TODO: Use hidden attribute
+    link_target = db.Column(db.String(80), nullable=True)
 
     files = db.relationship("PageFiles", backref="page")
 
@@ -288,6 +288,7 @@ class Files(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(80), default="standard")
     location = db.Column(db.Text)
+    sha1sum = db.Column(db.String(40))
 
     __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
 
@@ -354,7 +355,9 @@ class Users(db.Model):
     website = db.Column(db.String(128))
     affiliation = db.Column(db.String(128))
     country = db.Column(db.String(32))
-    bracket = db.Column(db.String(32))
+    bracket_id = db.Column(
+        db.Integer, db.ForeignKey("brackets.id", ondelete="SET NULL")
+    )
     hidden = db.Column(db.Boolean, default=False)
     banned = db.Column(db.Boolean, default=False)
     verified = db.Column(db.Boolean, default=False)
@@ -451,7 +454,12 @@ class Users(db.Model):
             .filter_by(user_id=self.id)
             .all()
         }
-        return required_user_fields.issubset(submitted_user_fields)
+        # Require that users select a bracket
+        missing_bracket = (
+            Brackets.query.filter_by(type="users").count()
+            and self.bracket_id is not None
+        )
+        return required_user_fields.issubset(submitted_user_fields) and missing_bracket
 
     def get_fields(self, admin=False):
         if admin:
@@ -532,8 +540,8 @@ class Users(db.Model):
         to no imports within the CTFd application as importing from the
         application itself will result in a circular import.
         """
-        from CTFd.utils.scores import get_user_standings  # noqa: I001
         from CTFd.utils.humanize.numbers import ordinalize
+        from CTFd.utils.scores import get_user_standings
 
         standings = get_user_standings(admin=admin)
 
@@ -572,7 +580,9 @@ class Teams(db.Model):
     website = db.Column(db.String(128))
     affiliation = db.Column(db.String(128))
     country = db.Column(db.String(32))
-    bracket = db.Column(db.String(32))
+    bracket_id = db.Column(
+        db.Integer, db.ForeignKey("brackets.id", ondelete="SET NULL")
+    )
     hidden = db.Column(db.Boolean, default=False)
     banned = db.Column(db.Boolean, default=False)
 
@@ -646,7 +656,11 @@ class Teams(db.Model):
             .filter_by(team_id=self.id)
             .all()
         }
-        return required_team_fields.issubset(submitted_team_fields)
+        missing_bracket = (
+            Brackets.query.filter_by(type="teams").count()
+            and self.bracket_id is not None
+        )
+        return required_team_fields.issubset(submitted_team_fields) and missing_bracket
 
     def get_fields(self, admin=False):
         if admin:
@@ -658,7 +672,8 @@ class Teams(db.Model):
 
     def get_invite_code(self):
         from flask import current_app  # noqa: I001
-        from CTFd.utils.security.signing import serialize, hmac
+
+        from CTFd.utils.security.signing import hmac, serialize
 
         secret_key = current_app.config["SECRET_KEY"]
         if isinstance(secret_key, str):
@@ -677,13 +692,14 @@ class Teams(db.Model):
     @classmethod
     def load_invite_code(cls, code):
         from flask import current_app  # noqa: I001
-        from CTFd.utils.security.signing import (
-            unserialize,
-            hmac,
-            BadTimeSignature,
-            BadSignature,
-        )
+
         from CTFd.exceptions import TeamTokenExpiredException, TeamTokenInvalidException
+        from CTFd.utils.security.signing import (
+            BadSignature,
+            BadTimeSignature,
+            hmac,
+            unserialize,
+        )
 
         secret_key = current_app.config["SECRET_KEY"]
         if isinstance(secret_key, str):
@@ -775,8 +791,8 @@ class Teams(db.Model):
         to no imports within the CTFd application as importing from the
         application itself will result in a circular import.
         """
-        from CTFd.utils.scores import get_team_standings  # noqa: I001
         from CTFd.utils.humanize.numbers import ordinalize
+        from CTFd.utils.scores import get_team_standings  # noqa: I001
 
         standings = get_team_standings(admin=admin)
 
@@ -1069,3 +1085,11 @@ class TeamFieldEntries(FieldEntries):
     team = db.relationship(
         "Teams", foreign_keys="TeamFieldEntries.team_id", back_populates="field_entries"
     )
+
+
+class Brackets(db.Model):
+    __tablename__ = "brackets"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    description = db.Column(db.Text)
+    type = db.Column(db.String(80))

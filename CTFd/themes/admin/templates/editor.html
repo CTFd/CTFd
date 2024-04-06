@@ -28,107 +28,124 @@
 			{% with form = Forms.pages.PageEditForm(content=content, format=format) %}
 			<form id="page-edit" method="POST">
 				<div class="form-group">
-					<div class="col-md-12">
-						{% set title = page.title if page is defined %}
-						<b>{{ form.title.label }}</b>
-						{{ form.title(class="form-control radius", id="route", placeholder="Title", value=title) }}
-						<small class="text-muted">
-							{{ form.title.description }}
-						</small>
+					<div class="row">
+						<div class="col-md-12">
+							{% set title = page.title if page is defined %}
+							<b>{{ form.title.label }}</b>
+							{{ form.title(class="form-control radius", id="route", placeholder="Title", value=title or "") }}
+							<small class="text-muted">
+								{{ form.title.description }}
+							</small>
+						</div>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<div class="col-md-12">
-						{% set route = page.route if page is defined %}
-						<b>{{ form.route.label }}</b>
-						{{ form.route(class="form-control radius", placeholder="Route", value=route) }}
-						<small class="text-muted">
-							{{ form.route.description }}
-						</small>
+					<div class="row">
+						<div class="col-md-12">
+							{% set route = page.route if page is defined %}
+							<b>{{ form.route.label }}</b>
+							{{ form.route(class="form-control radius", placeholder="Route", value=route) }}
+							<small class="text-muted">
+								{{ form.route.description }}
+							</small>
+						</div>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<div class="col-md-12">
-						<b>{{ form.format.label }}</b>
-						{{ form.format(class="form-control custom-select", placeholder="Route", value=format) }}
-						<small class="text-muted">
-							{{ form.format.description }}
-						</small>
+					<div class="row">
+						<div class="col-md-6">
+							<b>{{ form.format.label }}</b>
+							{{ form.format(class="form-control custom-select", value=format) }}
+							<small class="text-muted">
+								{{ form.format.description }}
+							</small>
+						</div>
+						<div class="col-md-6">
+							<b>{{ form.link_target.label }}</b>
+							{{ form.link_target(class="form-control custom-select", placeholder="Target", value=format) }}
+							<small class="text-muted">
+								{{ form.link_target.description }}
+							</small>
+						</div>
 					</div>
 				</div>
 
+				<hr>
+
 				<div class="form-group">
-					<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-12">
 
-						<h3>Content</h3>
-						<small class="text-muted">This is the HTML content of your page</small>
+							<h3>Content</h3>
+							<small class="text-muted">This is the HTML content of your page</small>
 
-						<ul class="nav nav-tabs" role="tablist" id="content-edit">
-							<li class="nav-item" role="presentation" class="active">
-								<a class="nav-link active" href="#content-write" aria-controls="home" role="tab"
-								   data-toggle="tab">Write</a>
-							</li>
-							<li class="nav-item" role="presentation">
-								<a class="nav-link preview-page" href="#">Preview</a>
-							</li>
-						</ul>
+							<ul class="nav nav-tabs" role="tablist" id="content-edit">
+								<li class="nav-item" role="presentation" class="active">
+									<a class="nav-link active" href="#content-write" aria-controls="home" role="tab"
+									data-toggle="tab">Write</a>
+								</li>
+								<li class="nav-item" role="presentation">
+									<a class="nav-link preview-page" href="#">Preview</a>
+								</li>
+							</ul>
 
-						<div class="tab-content">
-							<div role="tabpanel" class="tab-pane active" id="content-write" style="height:600px">
-								<br>
+							<div class="tab-content">
+								<div role="tabpanel" class="tab-pane active" id="content-write" style="height:600px">
+									<br>
 
-								<div class="form-inline">
-									<div class="btn-group btn-group-sm">
-										<div class="btn-group">
-											<button type="button" class="btn btn-primary" id="media-button">
-												<i class="fas fa-camera-retro"></i>
-												Media Library
-											</button>
+									<div class="form-inline">
+										<div class="btn-group btn-group-sm">
+											<div class="btn-group">
+												<button type="button" class="btn btn-primary" id="media-button">
+													<i class="fas fa-camera-retro"></i>
+													Media Library
+												</button>
+											</div>
+										</div>
+
+										<span class="nav-link d-none d-md-block d-lg-block">|</span>
+
+										<div class="form-group pr-3">
+											{% set draft = page is defined and page.draft == True %}
+											{{ form.draft(class="form-check-input", checked=draft) }}
+											{{ form.draft.label(class="form-check-label") }}
+										</div>
+
+										<div class="form-group pr-3">
+											{% set hidden = page is defined and page.hidden == True %}
+											{{ form.hidden(class="form-check-input", checked=hidden) }}
+											{{ form.hidden.label(class="form-check-label") }}
+										</div>
+
+										<div class="form-group pr-3">
+											{% set auth_required = page is defined and page.auth_required == True %}
+											{{ form.auth_required(class="form-check-input", checked=auth_required) }}
+											{{ form.auth_required.label(class="form-check-label") }}
 										</div>
 									</div>
 
-									<span class="nav-link d-none d-md-block d-lg-block">|</span>
+									<br>
 
-									<div class="form-group pr-3">
-										{% set draft = page is defined and page.draft == True %}
-										{{ form.draft(class="form-check-input", checked=draft) }}
-										{{ form.draft.label(class="form-check-label") }}
+									<small class="form-text text-muted text-right">
+										<a href="https://docs.ctfd.io/docs/pages/variables/" target="_blank">CTFd Page variables</a>
+										<i class="far fa-question-circle pr-2"></i>
+									</small>
+
+									<div class="form-group h-100">
+										{{ form.content(id="admin-pages-editor", class="d-none") }}
 									</div>
 
-									<div class="form-group pr-3">
-										{% set hidden = page is defined and page.hidden == True %}
-										{{ form.hidden(class="form-check-input", checked=hidden) }}
-										{{ form.hidden.label(class="form-check-label") }}
-									</div>
-
-									<div class="form-group pr-3">
-										{% set auth_required = page is defined and page.auth_required == True %}
-										{{ form.auth_required(class="form-check-input", checked=auth_required) }}
-										{{ form.auth_required.label(class="form-check-label") }}
+									<div class="form-group float-right pt-3">
+										{{ form.nonce() }}
+										<button class="btn btn-primary" id="save-page">
+											Save
+										</button>
 									</div>
 								</div>
-
-								<br>
-
-								<small class="form-text text-muted text-right">
-									<a href="https://docs.ctfd.io/docs/pages/variables/" target="_blank">CTFd Page variables</a>
-									<i class="far fa-question-circle pr-2"></i>
-								</small>
-
-								<div class="form-group h-100">
-									{{ form.content(id="admin-pages-editor", class="d-none") }}
+								<div role="tabpanel" class="tab-pane content" id="content-preview">
 								</div>
-
-								<div class="form-group float-right pt-3">
-									{{ form.nonce() }}
-									<button class="btn btn-primary" id="save-page">
-										Save
-									</button>
-								</div>
-							</div>
-							<div role="tabpanel" class="tab-pane content" id="content-preview">
 							</div>
 						</div>
 					</div>
@@ -159,5 +176,5 @@ var PAGE_ID = {{ page.id if page is defined else "null"}};
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/editor.js') }}"></script>
+	{{ Assets.js("assets/js/pages/editor.js", theme="admin") }}
 {% endblock %}

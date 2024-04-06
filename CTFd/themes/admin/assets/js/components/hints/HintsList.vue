@@ -59,93 +59,98 @@
 </template>
 
 <script>
-import { ezQuery } from "core/ezq";
-import CTFd from "core/CTFd";
+import { ezQuery } from "../../compat/ezq";
+import CTFd from "../../compat/CTFd";
 import HintCreationForm from "./HintCreationForm.vue";
 import HintEditForm from "./HintEditForm.vue";
 
 export default {
   components: {
     HintCreationForm,
-    HintEditForm
+    HintEditForm,
   },
   props: {
-    challenge_id: Number
+    challenge_id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       hints: [],
-      editing_hint_id: null
+      editing_hint_id: null,
     };
   },
   methods: {
-    loadHints: function() {
-      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/hints`, {
-        method: "GET",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        }
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(response => {
-          if (response.success) {
-            this.hints = response.data;
-          }
-        });
+    loadHints: async function () {
+      let result = await CTFd.fetch(
+        `/api/v1/challenges/${this.$props.challenge_id}/hints`,
+        {
+          method: "GET",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      let response = await result.json();
+      this.hints = response.data;
+      return response.success;
     },
-    addHint: function() {
+    addHint: function () {
       let modal = this.$refs.HintCreationForm.$el;
       $(modal).modal();
     },
-    editHint: function(hintId) {
+    editHint: function (hintId) {
       this.editing_hint_id = hintId;
       let modal = this.$refs.HintEditForm.$el;
       $(modal).modal();
     },
-    refreshHints: function(caller) {
-      this.loadHints();
-      let modal;
-      switch (caller) {
-        case "HintCreationForm":
-          modal = this.$refs.HintCreationForm.$el;
-          console.log(modal);
-          $(modal).modal("hide");
-          break;
-        case "HintEditForm":
-          modal = this.$refs.HintEditForm.$el;
-          $(modal).modal("hide");
-          break;
-        default:
-          break;
-      }
+    refreshHints: function (caller) {
+      this.loadHints().then((success) => {
+        if (success) {
+          let modal;
+          switch (caller) {
+            case "HintCreationForm":
+              modal = this.$refs.HintCreationForm.$el;
+              console.log(modal);
+              $(modal).modal("hide");
+              break;
+            case "HintEditForm":
+              modal = this.$refs.HintEditForm.$el;
+              $(modal).modal("hide");
+              break;
+            default:
+              break;
+          }
+        } else {
+          alert(
+            "An error occurred while updating this hint. Please try again.",
+          );
+        }
+      });
     },
-    deleteHint: function(hintId) {
+    deleteHint: function (hintId) {
       ezQuery({
         title: "Delete Hint",
         body: "Are you sure you want to delete this hint?",
         success: () => {
           CTFd.fetch(`/api/v1/hints/${hintId}`, {
-            method: "DELETE"
+            method: "DELETE",
           })
-            .then(response => {
+            .then((response) => {
               return response.json();
             })
-            .then(data => {
+            .then((data) => {
               if (data.success) {
                 this.loadHints();
               }
             });
-        }
+        },
       });
-    }
+    },
   },
   created() {
     this.loadHints();
-  }
+  },
 };
 </script>
 

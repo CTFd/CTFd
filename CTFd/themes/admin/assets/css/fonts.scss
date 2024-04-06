@@ -1,0 +1,28 @@
+@use "sass:map";
+@use "~/@fontsource/lato/scss/mixins.scss" as Lato;
+@use "~/@fontsource/raleway/scss/mixins.scss" as Raleway;
+
+@include Lato.faces(
+  $subsets: all,
+  $weights: (
+    400,
+    700,
+  ),
+  $styles: all,
+  $directory: "../webfonts"
+);
+
+@include Raleway.faces(
+  $subsets: all,
+  $weights: (
+    500,
+  ),
+  $styles: all,
+  $directory: "../webfonts"
+);
+
+$fa-font-display: auto !default;
+@import "~/@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~/@fortawesome/fontawesome-free/scss/regular.scss";
+@import "~/@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~/@fortawesome/fontawesome-free/scss/brands.scss";

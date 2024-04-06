@@ -7,7 +7,7 @@ from CTFd.constants.config import Configs
 from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.models import UserFieldEntries, UserFields
+from CTFd.models import Brackets, UserFieldEntries, UserFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
 
@@ -88,7 +88,7 @@ def build_registration_code_field(form_cls):
     Add field_type so Jinja knows how to render it.
     """
     if Configs.registration_code:
-        field = getattr(form_cls, "registration_code")  # noqa B009
+        field = getattr(form_cls, "registration_code", None)  # noqa B009
         field.field_type = "text"
         return [field]
     else:
@@ -110,6 +110,32 @@ def attach_registration_code_field(form_cls):
                 validators=[InputRequired()],
             ),
         )
+
+
+def build_user_bracket_field(form_cls, value=None):
+    field = getattr(form_cls, "bracket_id", None)  # noqa B009
+    if field:
+        field.field_type = "select"
+        field.process_data(value)
+        return [field]
+    else:
+        return []
+
+
+def attach_user_bracket_field(form_cls):
+    brackets = Brackets.query.filter_by(type="users").all()
+    if brackets:
+        choices = [("", "")] + [
+            (bracket.id, f"{bracket.name} - {bracket.description}")
+            for bracket in brackets
+        ]
+        select_field = SelectField(
+            "Bracket",
+            description="Competition bracket for your user",
+            choices=choices,
+            validators=[InputRequired()],
+        )
+        setattr(form_cls, "bracket_id", select_field)  # noqa B010
 
 
 class UserSearchForm(BaseForm):
@@ -175,7 +201,7 @@ def UserEditForm(*args, **kwargs):
                 include_entries=True,
                 fields_kwargs=None,
                 field_entries_kwargs={"user_id": self.obj.id},
-            )
+            ) + build_user_bracket_field(self, value=self.obj.bracket_id)
 
         def __init__(self, *args, **kwargs):
             """
@@ -187,6 +213,7 @@ def UserEditForm(*args, **kwargs):
                 self.obj = obj
 
     attach_custom_user_fields(_UserEditForm)
+    attach_user_bracket_field(_UserEditForm)
 
     return _UserEditForm(*args, **kwargs)
 
@@ -197,8 +224,11 @@ def UserCreateForm(*args, **kwargs):
 
         @property
         def extra(self):
-            return build_custom_user_fields(self, include_entries=False)
+            return build_custom_user_fields(
+                self, include_entries=False
+            ) + build_user_bracket_field(self)
 
     attach_custom_user_fields(_UserCreateForm)
+    attach_user_bracket_field(_UserCreateForm)
 
     return _UserCreateForm(*args, **kwargs)
