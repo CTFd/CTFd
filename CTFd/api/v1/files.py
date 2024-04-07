@@ -115,7 +115,7 @@ class FilesList(Resource):
         response = schema.dump(objs)
 
         if response.errors:
-            return {"success": False, "errors": response.errorss}, 400
+            return {"success": False, "errors": response.errors}, 400
 
         return {"success": True, "data": response.data}
 
