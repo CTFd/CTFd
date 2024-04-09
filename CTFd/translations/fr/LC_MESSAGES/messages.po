@@ -527,11 +527,11 @@ msgstr "Équipes"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:50
 msgid "Scoreboard"
-msgstr "Tableau des scores"
+msgstr "Classement"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:80
 msgid "Admin Panel"
-msgstr "Panneau d'Administration"
+msgstr "Administration"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:110
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
@@ -627,7 +627,7 @@ msgstr "Officiel"
 #: CTFd/themes/core-beta/templates/users/private.html:88
 #: CTFd/themes/core-beta/templates/users/public.html:88
 msgid "Awards"
-msgstr "Trophés"
+msgstr "Trophées"
 
 #. Plutôt "résolution" que "solution" puisque le mot est utilisé pour indiquer le nombre de résolutions d'un challenge (nombre de fois où il a été résolu) et non le nombre de solutions (nombre de write-ups).
 #: CTFd/themes/core-beta/templates/teams/private.html:371
