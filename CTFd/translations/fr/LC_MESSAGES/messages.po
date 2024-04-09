@@ -527,11 +527,11 @@ msgstr "Équipes"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:50
 msgid "Scoreboard"
-msgstr "Tableau des scores"
+msgstr "Classement"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:80
 msgid "Admin Panel"
-msgstr "Panneau d'Administration"
+msgstr "Administration"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:110
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
