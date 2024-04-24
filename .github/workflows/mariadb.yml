@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mariadb:
-        image: mariadb:lts
+        image: mariadb:10.11
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: ctfd

@@ -37,7 +37,7 @@ services:
       - ctfd
 
   db:
-    image: mariadb:lts
+    image: mariadb:10.11
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=ctfd
