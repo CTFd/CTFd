@@ -18,15 +18,15 @@ RUN apt-get update \
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY ./requirements.txt /opt/CTFd/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt \
-    && for d in CTFd/plugins/*; do \
+COPY . /opt/CTFd
+RUN for d in CTFd/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \
             pip install --no-cache-dir -r "$d/requirements.txt";\
         fi; \
     done;
 
-COPY . /opt/CTFd
 
 FROM python:3.11-slim-bookworm as release
 WORKDIR /opt/CTFd

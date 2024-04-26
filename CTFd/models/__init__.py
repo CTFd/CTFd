@@ -300,6 +300,10 @@ class Files(db.Model):
             type=self.type, location=self.location
         )
 
+class PrivateFiles(Files):
+    __mapper_args__ = {"polymorphic_identity": "private"}
+    def __init__(self, *args, **kwargs):
+        super(ChallengeFiles, self).__init__(**kwargs)
 
 class ChallengeFiles(Files):
     __mapper_args__ = {"polymorphic_identity": "challenge"}

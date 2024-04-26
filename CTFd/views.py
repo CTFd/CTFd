@@ -495,6 +495,9 @@ def files(path):
             # The token isn't expired or broken
             except (BadTimeSignature, SignatureExpired, BadSignature):
                 abort(403)
+    elif f.type == "private":
+        if current_user.is_admin() is False:
+            abort(403)
 
     uploader = get_uploader()
     try:

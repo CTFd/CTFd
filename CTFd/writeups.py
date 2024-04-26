@@ -46,7 +46,7 @@ def upload():
     ext = check_allow_extension(file.filename)
     if ext == False:
         return {"success": False, "errors": "Bad file extension"}, 400
-    upload_file(file=file, location=f"writeups/{prefix}-a{account.id}-u{user.id}.{ext}")
+    upload_file(file=file, location=f"writeups/{prefix}-a{account.id}-u{user.id}.{ext}", type="private")
     return {"success": True, "message": "Done"}, 201
 
 
