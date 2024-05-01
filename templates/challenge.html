@@ -7,18 +7,18 @@
 
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-bs-target="#challenge" @click="showChallenge()">
+            <button class="nav-link active" data-bs-target="#challenge" @click="showChallenge()">
               {% trans %}Challenge{% endtrans %}
-            </a>
+            </button>
           </li>
 
           {% block solves %}
             <li class="nav-item">
-              <a class="nav-link challenge-solves" data-bs-target="#solves" @click="showSolves()">
+              <button class="nav-link challenge-solves" data-bs-target="#solves" @click="showSolves()">
                 {% if solves != None %}
                   {{ ngettext("%(num)d Solve", "%(num)d Solves", solves) }}
                 {% endif %}
-              </a>
+              </button>
             </li>
           {% endblock %}
         </ul>
@@ -187,8 +187,8 @@
                             <i class="fa-brands fa-linkedin-in"></i>
                           </a>
                         </div>
-                        {% endif %}
                       </div>
+                      {% endif %}
                     </div>
                   </div>
                 </template>
