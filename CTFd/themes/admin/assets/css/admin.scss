@@ -1,5 +1,21 @@
 @import "includes/sticky-footer.css";
 
+.section-title {
+  border-top: 1px solid lightgray;
+  margin: 15px 0 5px 0;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 0 0 20px;
+  color: #636c76;
+}
+
+.action-icon {
+  margin-right: 8px;
+  display: inline-block;
+  width: 1.25em;
+  text-align: center;
+}
+
 #score-graph {
   min-height: 400px;
   display: block;

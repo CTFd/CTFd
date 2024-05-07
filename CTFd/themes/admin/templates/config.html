@@ -14,64 +14,144 @@
 	<div class="row">
 		<div class="col-md-3">
 			<ul class="nav nav-pills flex-column">
+
 				<li class="nav-item">
-					<a class="nav-link rounded-0 active" href="#appearance" role="tab" data-toggle="tab">Appearance</a>
+					<a class="nav-link rounded-0 active" href="#general" role="tab" data-toggle="tab">
+						<i class="fa fa-gear action-icon"></i>General
+					</a>
+				</li>
+				<!-- Appearance -->
+				<!-- For some reason <hr> not working here, thus the awkward divs -->
+				<small class="section-title">Appearance</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 active" href="#logo" role="tab" data-toggle="tab">
+						<i class="fa fa-signature action-icon"></i>Logo
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#theme" role="tab" data-toggle="tab">Theme</a>
+					<a class="nav-link rounded-0" href="#theme" role="tab" data-toggle="tab">
+						<i class="fa fa-brush action-icon"></i>Theme
+					</a>
+				</li>
+				<!-- Access -->
+				<small class="section-title">Access</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#visibility" role="tab" data-toggle="tab">
+						<i class="fa fa-eye action-icon"></i>Visibility
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#accounts" role="tab" data-toggle="tab">Accounts</a>
+					<a class="nav-link rounded-0" href="#ctftime" role="tab" data-toggle="tab">
+						<i class="fa fa-stopwatch action-icon"></i>Start & end time
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#brackets" role="tab" data-toggle="tab">Brackets</a>
+					<a class="nav-link rounded-0" href="#pause" role="tab" data-toggle="tab">
+						<i class="fa fa-pause action-icon"></i>Pause
+					</a>
+				</li>
+
+				<!-- Users -->
+				<small class="section-title">Users</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#accounts" role="tab" data-toggle="tab">
+						<i class="fa fa-users action-icon"></i>Accounts
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#fields" role="tab" data-toggle="tab">Custom Fields</a>
+					<a class="nav-link rounded-0" href="#usermode" role="tab" data-toggle="tab">
+						<i class="fa fa-people-arrows action-icon"></i>User mode
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#mlc" role="tab" data-toggle="tab">MajorLeagueCyber</a>
+					<a class="nav-link rounded-0" href="#brackets" role="tab" data-toggle="tab">
+						<i class="fa fa-chart-line action-icon"></i>Scoreboard brackets
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#settings" role="tab" data-toggle="tab">Visibility</a>
+					<a class="nav-link rounded-0" href="#fields" role="tab" data-toggle="tab">
+						<i class="fa fa-fingerprint action-icon"></i>Custom fields
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#security" role="tab" data-toggle="tab">Security</a>
+					<a class="nav-link rounded-0" href="#registration" role="tab" data-toggle="tab">
+						<i class="fa fa-user-lock action-icon"></i>Registration code
+					</a>
+				</li>
+
+				<!-- Security -->
+				<small class="section-title">Security</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#backup" role="tab" data-toggle="tab">
+						<i class="fa fa-file-import action-icon"></i>Import & export
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#email" role="tab" data-toggle="tab">Email</a>
+					<a class="nav-link rounded-0" href="#sanitize" role="tab" data-toggle="tab">
+						<i class="fa fa-shield-halved action-icon"></i>Sanitize
+					</a>
+				</li>
+
+				<!-- Pages -->
+				<small class="section-title">Pages</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#legal" role="tab" data-toggle="tab">
+						<i class="fa fa-scale-balanced action-icon"></i>Legal
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#ctftime" role="tab" data-toggle="tab">Time</a>
+					<a class="nav-link rounded-0" href="#pages" role="tab" data-toggle="tab">
+						<i class="fa fa-robot action-icon"></i>Robots.txt
+					</a>
+				</li>
+				
+				<!-- Integrations -->
+				<small class="section-title">Integrations</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#email" role="tab" data-toggle="tab">
+						<i class="fa fa-envelope action-icon"></i>Email notifications
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#social" role="tab" data-toggle="tab">Social</a>
+					<a class="nav-link rounded-0" href="#social" role="tab" data-toggle="tab">
+						<i class="fa fa-share-nodes action-icon"></i>Social sharing
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#legal" role="tab" data-toggle="tab">Legal</a>
+					<a class="nav-link rounded-0" href="#mlc" role="tab" data-toggle="tab">
+						<i class="fa fa-network-wired action-icon"></i>MajorLeagueCyber
+					</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#backup" role="tab" data-toggle="tab">Backup</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#usermode" role="tab" data-toggle="tab">User Mode</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#pages" role="tab" data-toggle="tab">Robots.txt</a>
-				</li>
+				
+				<!-- Plugins -->
 				{% set plugins = get_configurable_plugins() %}
 				{% if plugins %}
+				<small class="section-title">Plugins</small>
 					{% for plugin in plugins %}
 						{% if plugin.config %}
 							<li class="nav-item">
-								<a class="nav-link rounded-0" href="#plugin_{{loop.index}}" role="tab" data-toggle="tab">Plugin: {{ plugin.name }}</a>
+								<a class="nav-link rounded-0" href="#plugin_{{loop.index}}" role="tab" data-toggle="tab">
+									<i class="fa fa-folder action-icon"></i>{{ plugin.name }}
+								</a>
 							</li>
 						{% endif %}
 					{% endfor %}
+				<!-- TODO: Remove else condition - for example only -->
+				{% else %}
+				<small class="section-title">Plugins</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0" href="#" role="tab" data-toggle="tab">
+						<i class="fa fa-folder action-icon"></i>Example plugin
+					</a>
+				</li>
 				{% endif %}
 
+				<!-- Reset!!! -->
+				<small class="section-title">Danger Zone</small>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="{{ url_for('admin.reset') }}" role="tab">Reset</a>
+					<a class="nav-link rounded-0" href="{{ url_for('admin.reset') }}" role="tab">
+						<i class="fa fa-trash-can action-icon"></i>Reset
+					</a>
 				</li>
 			</ul>
 		</div>
