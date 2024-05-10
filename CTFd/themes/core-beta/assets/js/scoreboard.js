@@ -7,18 +7,20 @@ window.Alpine = Alpine;
 window.CTFd = CTFd;
 
 Alpine.data("ScoreboardDetail", () => ({
-  data: null,
+  data: {},
+  show: true,
 
   async init() {
     this.data = await CTFd.pages.scoreboard.getScoreboardDetail(10);
 
     let option = getOption(CTFd.config.userMode, this.data);
     embed(this.$refs.scoregraph, option);
+    this.show = Object.keys(this.data).length > 0;
   },
 }));
 
 Alpine.data("ScoreboardList", () => ({
-  standings: null,
+  standings: [],
   brackets: [],
   activeBracket: null,
 
@@ -28,7 +30,7 @@ Alpine.data("ScoreboardList", () => ({
     });
     const body = await response.json();
     this.brackets = body["data"];
-    this.full_standings = this.standings = await CTFd.pages.scoreboard.getScoreboard();
+    this.standings = await CTFd.pages.scoreboard.getScoreboard();
   },
 }));
 

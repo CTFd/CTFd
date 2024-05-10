@@ -69,15 +69,10 @@
           {% if is_admin() %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('admin.view') }}">
-                <span
-                    class="d-block"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="bottom"
-                    title="Admin Panel"
-                >
-                    <i class="fas fa-wrench d-none d-md-block d-lg-none"></i>
+                <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Admin Panel{% endtrans %}">
+                    <i class="fas fa-wrench d-none d-md-inline d-lg-none"></i>
                 </span>
-                <span class="d-sm-block d-md-none d-lg-block">
+                <span class="d-sm-inline d-md-none d-lg-inline">
                   <i class="fas fa-wrench pe-1"></i>
                   {% trans %}Admin Panel{% endtrans %}
                 </span>
@@ -87,13 +82,10 @@
 
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('views.notifications') }}">
-              <span
-                  class="d-block" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                  title="Notifications"
-              >
-                <i class="fas fa-bell d-none d-md-block d-lg-none"></i>
+              <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Notifications{% endtrans %}">
+                <i class="fas fa-bell d-none d-md-inline d-lg-none"></i>
               </span>
-              <span class="d-sm-block d-md-none d-lg-block">
+              <span class="d-sm-inline d-md-none d-lg-inline">
                   <i class="fas fa-bell pe-1"></i>
                   <span x-data x-show="$store.unread_count > 0" x-text="$store.unread_count" class="badge rounded-pill bg-danger badge-notification"></span>
                   {% trans %}Notifications{% endtrans %}
@@ -104,10 +96,10 @@
           {% if Configs.user_mode == "teams" %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('teams.private') }}">
-                <span class="d-block" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Team">
-                  <i class="fas fa-users d-none d-md-block d-lg-none"></i>
+                <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Team{% endtrans %}">
+                  <i class="fas fa-users d-none d-md-inline d-lg-none"></i>
                 </span>
-                <span class="d-sm-block d-md-none d-lg-block">
+                <span class="d-sm-inline d-md-none d-lg-inline">
                   <i class="fas fa-users pe-1"></i>
                   {% trans %}Team{% endtrans %}
                 </span>
@@ -117,10 +109,10 @@
 
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('users.private') }}">
-              <span class="d-block" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Profile">
-                <i class="fas fa-user-circle d-none d-md-block d-lg-none"></i>
+              <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Profile{% endtrans %}">
+                <i class="fas fa-user-circle d-none d-md-inline d-lg-none"></i>
               </span>
-              <span class="d-sm-block d-md-none d-lg-block">
+              <span class="d-sm-inline d-md-none d-lg-inline">
                 <i class="fas fa-user-circle pe-1"></i>
                 {% trans %}Profile{% endtrans %}
               </span>
@@ -129,10 +121,10 @@
 
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('views.settings') }}">
-              <span class="d-block" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
-                <i class="fas fa-cogs d-none d-md-block d-lg-none"></i>
+              <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Settings{% endtrans %}">
+                <i class="fas fa-cogs d-none d-md-inline d-lg-none"></i>
               </span>
-              <span class="d-sm-block d-md-none d-lg-block">
+              <span class="d-sm-inline d-md-none d-lg-inline">
                 <i class="fas fa-cogs pe-1"></i>
                 {% trans %}Settings{% endtrans %}
               </span>
@@ -141,10 +133,10 @@
 
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('auth.logout') }}">
-              <span class="d-block" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Logout">
-                <i class="fas fa-sign-out-alt d-none d-md-block d-lg-none"></i>
+              <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Logout{% endtrans %}">
+                <i class="fas fa-sign-out-alt d-none d-md-inline d-lg-none"></i>
               </span>
-              <span class="d-sm-block d-md-none d-lg-block">
+              <span class="d-sm-inline d-md-none d-lg-inline">
                 <i class="fas fa-sign-out-alt pe-1"></i><span class="d-lg-none">
                   {% trans %}Logout{% endtrans %}
                 </span>
@@ -156,13 +148,10 @@
           {% if registration_visible() %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('auth.register') }}">
-                <span
-                    class="d-block" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Register"
-                >
-                  <i class="fas fa-user-plus d-none d-md-block d-lg-none"></i>
+                <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Register{% endtrans %}">
+                  <i class="fas fa-user-plus d-none d-md-inline d-lg-none"></i>
                 </span>
-                <span class="d-sm-block d-md-none d-lg-block">
+                <span class="d-sm-inline d-md-none d-lg-inline">
                   <i class="fas fa-user-plus pe-1"></i>
                   {% trans %}Register{% endtrans %}
                 </span>
@@ -172,10 +161,10 @@
 
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('auth.login') }}">
-              <span class="d-block" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Login">
-                <i class="fas fa-sign-in-alt d-none d-md-block d-lg-none"></i>
+              <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Login{% endtrans %}">
+                <i class="fas fa-sign-in-alt d-none d-md-inline d-lg-none"></i>
               </span>
-              <span class="d-sm-block d-md-none d-lg-block">
+              <span class="d-sm-inline d-md-none d-lg-inline">
                 <i class="fas fa-sign-in-alt pe-1"></i>
                 {% trans %}Login{% endtrans %}
               </span>
