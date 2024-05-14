@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from CTFd.models import Teams, Users
 from CTFd.utils import get_config
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, gen_team
+from tests.helpers import create_ctfd, destroy_ctfd, gen_team, login_as_user
 
 
 def test_api_configs_get_non_admin():
@@ -71,6 +71,7 @@ def test_api_configs_patch_admin():
             assert r.status_code == 200
             assert get_config("ctf_name") == "Changed_Name"
     destroy_ctfd(app)
+
 
 def test_api_config_get_admin():
     """Can a user get /api/v1/configs/<config_key> if admin"""
