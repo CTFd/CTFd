@@ -167,7 +167,7 @@ function switchUserMode(event) {
   event.preventDefault();
   if (
     confirm(
-      "Are you sure you'd like to switch user modes?\n\nAll user submissions, awards, unlocks, and tracking will be deleted!",
+      "Are you sure you'd like to switch user modes?\n\nAll user teams, submissions, awards, unlocks, and tracking will be deleted!",
     )
   ) {
     let formData = new FormData();

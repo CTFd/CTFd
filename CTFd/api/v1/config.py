@@ -6,9 +6,9 @@ from flask_restx import Namespace, Resource
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
-from CTFd.cache import clear_challenges, clear_config, clear_standings
+from CTFd.cache import clear_challenges, clear_config, clear_standings, clear_all_team_sessions
 from CTFd.constants import RawEnum
-from CTFd.models import Configs, Fields, db
+from CTFd.models import Configs, Fields, Teams, db, Users
 from CTFd.schemas.config import ConfigSchema
 from CTFd.schemas.fields import FieldSchema
 from CTFd.utils import set_config
@@ -116,6 +116,15 @@ class ConfigList(Resource):
             response = schema.load({"key": key, "value": value})
             if response.errors:
                 return {"success": False, "errors": response.errors}, 400
+
+            # Remove teams and clear cache after switching to user mode
+            if key == "user_mode" and value == "users":
+                db.session.query(Users).update({Users.team_id: None})
+                db.session.query(Teams).delete()
+                db.session.commit()
+
+                clear_all_team_sessions()
+
             set_config(key=key, value=value)
 
         clear_config()
