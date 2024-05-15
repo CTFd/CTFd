@@ -57,7 +57,7 @@
 
               <div class="mb-2">
                 <b>{{ form.country.label(clas="mb-2") }}</b>
-                {{ form.country(class="form-control form-select") }}
+                {{ form.country(class="form-select") }}
                 <small class="form-text text-muted">
                   {{ form.country.description }}
                 </small>
@@ -114,7 +114,7 @@
                   {# Append members to the select choices #}
                   {% set _ = form.captain_id.choices.append((member.id, member.name)) %}
                 {% endfor %}
-                {{ form.captain_id(class="form-control form-select mb-2") }}
+                {{ form.captain_id(class="form-select mb-2") }}
               </div>
               <div id="results">
                 <div
