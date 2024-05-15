@@ -121,15 +121,6 @@ class ConfigList(Resource):
             response = schema.load({"key": key, "value": value})
             if response.errors:
                 return {"success": False, "errors": response.errors}, 400
-
-            # Remove teams and clear cache after switching to user mode
-            if key == "user_mode" and value == "users":
-                db.session.query(Users).update({Users.team_id: None})
-                db.session.query(Teams).delete()
-                db.session.commit()
-
-                clear_all_team_sessions()
-
             set_config(key=key, value=value)
 
         clear_config()

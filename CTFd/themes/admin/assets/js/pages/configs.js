@@ -170,7 +170,8 @@ function switchUserMode(event) {
       "Are you sure you'd like to switch user modes?\n\nAll user teams, submissions, awards, unlocks, and tracking will be deleted!",
     )
   ) {
-    let formData = new FormData();
+    // Use original form to include original input
+    let formData = new FormData(event.target);
     formData.append("submissions", true);
     formData.append("nonce", CTFd.config.csrfNonce);
     fetch(CTFd.config.urlRoot + "/admin/reset", {

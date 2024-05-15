@@ -196,6 +196,15 @@ def test_teams_are_removed_after_migrating_from_team_mode_to_user_mode():
             assert r.status_code == 200
             assert get_config("user_mode") == "users"
 
+            with admin.session_transaction() as sess:
+                data = {
+                    "user_mode": "users",
+                    "submissions": "true",
+                    "nonce": sess.get("nonce"),
+                }
+            r = admin.post("/admin/reset", data=data)
+            assert r.status_code == 302
+
             assert Users.query.count() == 5
             assert Teams.query.count() == 0
 
