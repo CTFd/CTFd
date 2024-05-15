@@ -24,7 +24,7 @@
 				<!-- For some reason <hr> not working here, thus the awkward divs -->
 				<small class="section-title">Appearance</small>
 				<li class="nav-item">
-					<a class="nav-link rounded-0 active" href="#logo" role="tab" data-toggle="tab">
+					<a class="nav-link rounded-0" href="#logo" role="tab" data-toggle="tab">
 						<i class="fa fa-signature action-icon"></i>Logo
 					</a>
 				</li>
@@ -42,7 +42,7 @@
 				</li>
 				<li class="nav-item">
 					<a class="nav-link rounded-0" href="#ctftime" role="tab" data-toggle="tab">
-						<i class="fa fa-stopwatch action-icon"></i>Start & end time
+						<i class="fa fa-stopwatch action-icon"></i>Start and stop time
 					</a>
 				</li>
 				<li class="nav-item">
@@ -74,7 +74,7 @@
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#registration" role="tab" data-toggle="tab">
+					<a class="nav-link rounded-0" href="#registration_code" role="tab" data-toggle="tab">
 						<i class="fa fa-user-lock action-icon"></i>Registration code
 					</a>
 				</li>
@@ -100,7 +100,7 @@
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#pages" role="tab" data-toggle="tab">
+					<a class="nav-link rounded-0" href="#robots" role="tab" data-toggle="tab">
 						<i class="fa fa-robot action-icon"></i>Robots.txt
 					</a>
 				</li>
@@ -147,7 +147,7 @@
 				{% endif %}
 
 				<!-- Reset!!! -->
-				<small class="section-title">Danger Zone</small>
+				<small class="section-title">Danger zone</small>
 				<li class="nav-item">
 					<a class="nav-link rounded-0" href="{{ url_for('admin.reset') }}" role="tab">
 						<i class="fa fa-trash-can action-icon"></i>Reset
@@ -167,36 +167,56 @@
 			{% endfor %}
 
 			<div class="tab-content">
-				{% include "admin/configs/appearance.html" %}
+				{% include "admin/configs/general.html" %}
+
+				<!-- Appearance -->
+
+				{% include "admin/configs/logo.html" %}
 
 				{% include "admin/configs/theme.html" %}
 
+				<!-- Access -->
+
+				{% include "admin/configs/visibility.html" %}
+
+				{% include "admin/configs/time.html" %}
+
+				{% include "admin/configs/pause.html" %}
+
+				<!-- Users -->
+
 				{% include "admin/configs/accounts.html" %}
 
-				{% include "admin/configs/pages.html" %}
+				{% include "admin/configs/usermode.html" %}
 
 				{% include "admin/configs/brackets.html" %}
 
 				{% include "admin/configs/fields.html" %}
 
-				{% include "admin/configs/mlc.html" %}
+				{% include "admin/configs/registration_code.html" %}
 
-				{% include "admin/configs/settings.html" %}
-
-				{% include "admin/configs/security.html" %}
-
-				{% include "admin/configs/email.html" %}
-
-				{% include "admin/configs/time.html" %}
-
-				{% include "admin/configs/social.html" %}
-
-				{% include "admin/configs/legal.html" %}
+				<!-- Security -->
 
 				{% include "admin/configs/backup.html" %}
 
-				{% include "admin/configs/usermode.html" %}
+				{% include "admin/configs/sanitize.html" %}
 
+				<!-- Pages -->
+
+				{% include "admin/configs/legal.html" %}
+
+				{% include "admin/configs/robots.html" %}
+
+				<!-- Integrations -->
+
+				{% include "admin/configs/email.html" %}
+
+				{% include "admin/configs/social.html" %}
+
+				{% include "admin/configs/mlc.html" %}
+
+				<!-- Plugins -->
+				
 				{% if plugins %}
 					{% for plugin in plugins %}
 						{% if plugin.config %}
@@ -206,6 +226,8 @@
 						{% endif %}
 					{% endfor %}
 				{% endif %}
+				<!-- Danger zone -->
+				<!-- reset.html is top-level so no need to include -->
 			</div>
 		</div>
 	</div>

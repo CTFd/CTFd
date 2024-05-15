@@ -1,4 +1,4 @@
-<div role="tabpanel" class="tab-pane config-section active" id="appearance">
+<div role="tabpanel" class="tab-pane config-section active" id="general">
 	<form method="POST" autocomplete="off" class="w-100">
 		<div class="form-group">
 			<label for="ctf_name">
@@ -11,9 +11,10 @@
 
 		<div class="form-group">
 			<label>
-				CTF Description<br>
+				Competition Description<br>
+				<!-- TODO: Clarify WHERE this description is used. -->
 				<small class="form-text text-muted">
-					Description for the CTF
+					Description of your CTF. Available for use on your custom pages and emails as <code>{ctf_description}</code>.
 				</small>
 			</label>
 			<textarea class="form-control" type="text" id="ctf_description" name="ctf_description" rows="5">{{ ctf_description }}</textarea>

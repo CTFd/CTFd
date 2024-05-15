@@ -1,4 +1,4 @@
-<div role="tabpanel" class="tab-pane config-section" id="settings">
+<div role="tabpanel" class="tab-pane config-section" id="visibility">
 	{% 
 		with form = Forms.config.VisibilitySettingsForm(
 			challenge_visibility=challenge_visibility, 
@@ -43,21 +43,6 @@
 			<small class="form-text text-muted">
 				{{ form.registration_visibility.description }}
 			</small>
-		</div>
-
-		<div class="form-group">
-			<label>
-				Pause<br>
-				<small class="form-text text-muted">
-					Prevent users from submitting answers until unpaused. Challenges can still be viewed.
-				</small>
-			</label>
-			<div class="form-check pl-0">
-				<label>
-					<input id="paused" name="paused" type="checkbox" {% if paused %}checked{% endif %}>
-					Pause CTF<br>
-				</label>
-			</div>
 		</div>
 
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>

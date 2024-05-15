@@ -1,0 +1,71 @@
+<div role="tabpanel" class="tab-pane config-section" id="logo">
+	<form id="logo-upload" class="form-upload" method="POST" enctype="multipart/form-data">
+		<div class="form-group">
+			<label for="ctf_logo">
+				Logo
+				<small class="form-text text-muted">
+					Logo to use for the website instead of a CTF name.
+				</small>
+			</label>
+
+			{% if ctf_logo %}
+				<div class="d-block py-3">
+					<img id="ctf_logo_preview" class="img-responsive ctf_logo"
+						 src="{{ url_for('views.files', path=ctf_logo) }}"
+						 height="80">
+					<button type="button" id="remove-logo" class="btn-sm btn-danger">
+						Remove Logo
+					</button>
+				</div>
+			{% endif %}
+
+			<div class="row">
+				<div class="col-md-9">
+					<input class="form-control-file" id="ctf_logo_file" name='file' type='file' accept="image/*" placeholder="CTF Logo">
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<div class="d-inline-block float-right">
+							<button type="submit" class="btn-sm btn-primary float-right">Upload</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<form id="ctf-small-icon-upload" class="form-upload" method="POST" enctype="multipart/form-data">
+		<div class="form-group">
+			<label for="small_icon">
+				Tab Icon
+				<small class="form-text text-muted">
+					Used as the <a href='https://en.wikipedia.org/wiki/Favicon' target='_blank'>favicon</a>. Only PNGs accepted. Must be 32x32px.
+				</small>
+			</label>
+
+			{% if ctf_small_icon %}
+				<div class="d-block py-3">
+					<img id="ctf_small_icon_preview" class="img-responsive ctf_small_icon"
+						 src="{{ url_for('views.files', path=ctf_small_icon) }}"
+						 height="32">
+					<button type="button" id="remove-small-icon" class="btn-sm btn-danger">
+						Remove Icon
+					</button>
+				</div>
+			{% endif %}
+
+			<div class="row">
+				<div class="col-md-9">
+					<input class="form-control-file" id="ctf_small_icon_file" name='file' type='file' accept=".png" placeholder="Small Icon">
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<div class="d-inline-block float-right">
+							<button type="submit" class="btn-sm btn-primary float-right">Upload</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
