@@ -52,7 +52,9 @@
 					{% endif %}
 				</h2>
 				<h2 class="text-center">
-					{{ account.get_score(admin=True) }} <small>points</small>
+					{% if account %}
+						{{ account.score }} <small>points</small>
+					{% endif %}
 				</h2>
 			</div>
 
