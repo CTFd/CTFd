@@ -16,7 +16,10 @@
         <div class="form-group">
           <label>Bracket Name</label>
           <input type="text" class="form-control" v-model.lazy="bracket.name" />
-          <small class="form-text text-muted">Bracket name</small>
+          <small class="form-text text-muted"
+            >Bracket name (such as "Interns", "IT engineers", or "CS04
+            students")</small
+          >
         </div>
       </div>
 
@@ -39,7 +42,10 @@
           <option value="users">Users</option>
           <option value="teams">Teams</option>
         </select>
-        <small class="form-text text-muted">Bracket Type</small>
+        <small class="form-text text-muted"
+          >If you are using Team Mode and would like the bracket to apply to
+          entire teams instead of individuals, select Teams.</small
+        >
       </div>
     </div>
 
