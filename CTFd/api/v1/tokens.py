@@ -90,6 +90,13 @@ class TokenList(Resource):
             expiration = datetime.datetime.strptime(expiration, "%Y-%m-%d")
 
         user = get_current_user()
+
+        # Allow admins to create API tokens for users
+        if is_admin():
+            user_id = req.get("user_id")
+            if user_id is not None:
+                user = Users.query.filter_by(id=user_id).first_or_404()
+
         token = generate_user_token(
             user, expiration=expiration, description=description
         )
