@@ -521,7 +521,7 @@ def themes(theme, path):
         if cand_path is None:
             abort(404)
         if os.path.isfile(cand_path):
-            return send_file(cand_path)
+            return send_file(cand_path, max_age=3600)
     abort(404)
 
 
@@ -544,7 +544,7 @@ def themes_beta(theme, path):
         if cand_path is None:
             abort(404)
         if os.path.isfile(cand_path):
-            return send_file(cand_path)
+            return send_file(cand_path, max_age=3600)
     abort(404)
 
 
