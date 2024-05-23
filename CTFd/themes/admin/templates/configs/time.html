@@ -55,26 +55,26 @@
 
 					<!-- TODO: Better Timezone options (e.g. with UTC offset info like "UTC+1")-->
 					<div class="form-group col-md-12">
-						<label for="start-timezone">CTF Timezone:</label>
+						<label for="start-timezone">Timezone:</label>
 						<select class="form-control custom-select start-date" id="start-timezone">
 						</select>
 					</div>
 
 					<!-- TODO: Clarify via UI that user cannot touch these fields -->
 					<div class="form-group col-md-12">
-						<label for="start-local">Your Local Time:</label>
-						<input class="form-control" id='start-local' type='text' readonly disabled>
+						<label for="start-local">Local Time:</label>
+						<input class="form-control" id='start-local' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
-						<label for="start-zonetime">CTF Local Time:</label>
-						<input class="form-control" id='start-zonetime' type='text' readonly disabled>
+						<label for="start-zonetime">Timezone Time:</label>
+						<input class="form-control" id='start-zonetime' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
 						<label>UTC Timestamp:</label>
 						<input class="form-control" id='start' name='start' type='number'
-							   {% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly disabled>
+							{% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly>
 					</div>
 				</div>
 			</div>
@@ -112,7 +112,7 @@
 					</div>
 
 					<div class="form-group col-md-12">
-						<label for="end-timezone">CTF Timezone:</label>
+						<label for="end-timezone">Timezone:</label>
 						<select class="form-control custom-select end-date" id="end-timezone">
 						</select>
 					</div>
@@ -123,7 +123,7 @@
 						<div class="form-check pl-0">
 							<label>
 								<input id="view_after_ctf" name="view_after_ctf" type="checkbox" {% if view_after_ctf %}checked{% endif %}>
-								 View After CTF
+								View After CTF
 								<small class="form-text text-muted">
 									Allows challenges to be viewed after the End Time, however no new submissions will be recorded.<br>
 									For participants to be able to submit after End Time but not alter the scoreboard, configure Freeze Time to be your End Time.
@@ -133,19 +133,19 @@
 					</div>
 
 					<div class="form-group col-md-12">
-						<label for="end-local">Your Local Time:</label>
-						<input class="form-control" id='end-local' type='text' readonly disabled>
+						<label for="end-local">Local Time:</label>
+						<input class="form-control" id='end-local' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
-						<label for="end-zonetime">CTF Local Time:</label>
-						<input class="form-control" id='end-zonetime' type='text' readonly disabled>
+						<label for="end-zonetime">Timezone Time:</label>
+						<input class="form-control" id='end-zonetime' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
 						<label for="end">UTC Timestamp:</label>
 						<input class="form-control" id='end' name='end' type='number'
-							   {% if end is defined and end != None %}value="{{ end }}"{% endif %} readonly disabled>
+							{% if end is defined and end != None %}value="{{ end }}"{% endif %} readonly>
 					</div>
 				</div>
 			</div>
@@ -192,19 +192,19 @@
 
 					<!-- TODO: Clarify -->
 					<div class="form-group col-md-12">
-						<label for="freeze-local">Your Local Time:</label>
-						<input class="form-control" id='freeze-local' type='text' readonly disabled>
+						<label for="freeze-local">Local Time:</label>
+						<input class="form-control" id='freeze-local' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
-						<label for="freeze-zonetime">CTF Local Time:</label>
-						<input class="form-control" id='freeze-zonetime' type='text' readonly disabled>
+						<label for="freeze-zonetime">Timezone Time:</label>
+						<input class="form-control" id='freeze-zonetime' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
 						<label for="freeze">UTC Timestamp:</label>
 						<input class="form-control" id='freeze' name='freeze' type='number'
-							   {% if freeze is defined and freeze != None %}value="{{ freeze }}"{% endif %} readonly disabled>
+							{% if freeze is defined and freeze != None %}value="{{ freeze }}"{% endif %} readonly>
 					</div>
 				</div>
 			</div>

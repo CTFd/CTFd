@@ -16,18 +16,16 @@
 			<label>
 				Client ID
 			</label>
-			<input class="form-control" id='oauth_client_id' name='oauth_client_id' type='text'
-				   placeholder=""
-				   {% if oauth_client_id is defined and oauth_client_id != None %}value="{{ oauth_client_id }}"{% endif %}>
+			<input class="form-control" id='oauth_client_id' name='oauth_client_id' type='text' placeholder=""
+				{% if oauth_client_id is defined and oauth_client_id != None %}value="{{ oauth_client_id }}"{% endif %}>
 		</div>
 
 		<div class="form-group">
 			<label>
 				Client Secret
 			</label>
-			<input class="form-control" id='oauth_client_secret' name='oauth_client_secret' type='text'
-				   placeholder=""
-				   {% if oauth_client_secret is defined and oauth_client_secret != None %}value="{{ oauth_client_secret }}"{% endif %}>
+			<input class="form-control" id='oauth_client_secret' name='oauth_client_secret' type='text' placeholder=""
+				{% if oauth_client_secret is defined and oauth_client_secret != None %}value="{{ oauth_client_secret }}"{% endif %}>
 		</div>
 
 		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>

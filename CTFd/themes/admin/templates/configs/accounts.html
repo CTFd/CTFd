@@ -1,6 +1,6 @@
 <div role="tabpanel" class="tab-pane config-section" id="accounts">
 
-    {% set verify_emails = "true" if verify_emails == True else "false" %}
+	{% set verify_emails = "true" if verify_emails == True else "false" %}
 	{% set name_changes = "true" if name_changes == True else "false" %}
 	{% set team_creation = "false" if team_creation == False else "true" %}
 	{% with form = Forms.config.AccountSettingsForm(verify_emails=verify_emails, name_changes=name_changes, team_disbanding=team_disbanding, team_creation=team_creation) %}
