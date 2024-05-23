@@ -55,7 +55,7 @@ def register_plugin_asset(app, asset_path, admins_only=False, endpoint=None):
         endpoint = asset_path.replace("/", ".")
 
     def asset_handler():
-        return send_file(asset_path)
+        return send_file(asset_path, max_age=3600)
 
     if admins_only:
         asset_handler = admins_only_wrapper(asset_handler)
