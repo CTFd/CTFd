@@ -32,7 +32,7 @@
 			<div role="tabpanel" class="tab-pane active" id="email-server-tab">
 				<div class="form-group">
 					<label class="pt-3">
-						Sending Address<br>
+						Mail From Address<br>
 						<small class="form-text text-muted">
 							Email address used to send email
 						</small>
@@ -126,7 +126,7 @@
 						</small>
 					</label>
 					<input class="form-control" id='mailgun_base_url' name='mailgun_base_url' type='text'
-						   {% if mailgun_base_url is defined and mailgun_base_url != None %}value="{{ mailgun_base_url }}"{% endif %}>
+						{% if mailgun_base_url is defined and mailgun_base_url != None %}value="{{ mailgun_base_url }}"{% endif %}>
 				</div>
 				<div class="form-group">
 					<label>
@@ -136,7 +136,7 @@
 						</small>
 					</label>
 					<input class="form-control" id='mailgun_api_key' name='mailgun_api_key' type='text'
-						   {% if mailgun_api_key is defined and mailgun_api_key != None %}value="{{ mailgun_api_key }}"{% endif %}>
+						{% if mailgun_api_key is defined and mailgun_api_key != None %}value="{{ mailgun_api_key }}"{% endif %}>
 				</div>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="registration-email-tab">
@@ -189,7 +189,7 @@
 					<label class="pt-3">
 						New Account Details<br>
 						<small class="form-text text-muted">
-							Email sent to new users <i>manually created by an admin</i> with their initial account details
+							Email sent to new users <i>(created by an admin)</i> with their initial account details
 						</small>
 					</label>
 					<div>

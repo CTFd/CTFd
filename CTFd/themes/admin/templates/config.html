@@ -58,11 +58,6 @@
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0 py-1" href="#usermode" role="tab" data-toggle="tab">
-						<i class="fa fa-people-arrows action-icon"></i>User Mode
-					</a>
-				</li>
-				<li class="nav-item">
 					<a class="nav-link rounded-0 py-1" href="#brackets" role="tab" data-toggle="tab">
 						<i class="fa fa-chart-line action-icon"></i>Scoreboard Brackets
 					</a>
@@ -127,7 +122,7 @@
 				<!-- Plugins -->
 				{% set plugins = get_configurable_plugins() %}
 				{% if plugins %}
-				<small class="section-title">Plugins</small>
+					<small class="section-title">Plugins</small>
 					{% for plugin in plugins %}
 						{% if plugin.config %}
 							<li class="nav-item">
@@ -141,6 +136,11 @@
 
 				<!-- Reset -->
 				<small class="section-title">Danger zone</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 py-1" href="#usermode" role="tab" data-toggle="tab">
+						<i class="fa fa-people-arrows action-icon"></i>User Mode
+					</a>
+				</li>
 				<li class="nav-item">
 					<a class="nav-link rounded-0 py-1" href="{{ url_for('admin.reset') }}" role="tab">
 						<i class="fa fa-trash-can action-icon"></i>Reset
