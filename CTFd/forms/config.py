@@ -37,7 +37,7 @@ class ResetInstanceForm(BaseForm):
 class AccountSettingsForm(BaseForm):
     domain_whitelist = StringField(
         "Email Domain Allowlist",
-        description="Comma-seperated list of allowable email domains which users can register under (e.g. gmail.com, example.com, *.example.com)",
+        description="Comma-seperated list of allowable email domains which users can register under (e.g. examplectf.com, example.com, *.example.com)",
     )
     team_creation = SelectField(
         "Team Creation",
