@@ -58,16 +58,24 @@ def view_after_ctf():
 
 
 def unix_time(dt):
+    if dt is None or not isinstance(dt, datetime.datetime):
+        return None
     return int((dt - datetime.datetime(1970, 1, 1)).total_seconds())
 
 
 def unix_time_millis(dt):
+    if dt is None:
+        return None
     return unix_time(dt) * 1000
 
 
 def unix_time_to_utc(t):
+    if t is None:
+        return None
     return datetime.datetime.utcfromtimestamp(t)
 
 
 def isoformat(dt):
+    if dt is None or not isinstance(dt, datetime.datetime):
+        return None
     return dt.isoformat() + "Z"
