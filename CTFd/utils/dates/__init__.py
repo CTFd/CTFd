@@ -1,6 +1,5 @@
 import time
 from datetime import datetime as DateTime
-from datetime import timezone as TimeZone
 from typing import Union
 
 from CTFd.utils import get_config
