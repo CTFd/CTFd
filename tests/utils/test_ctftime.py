@@ -232,14 +232,8 @@ def test_isoformat():
         isoformat(DateTime(2017, 1, 1, tzinfo=TimeZone.utc))
         == "2017-01-01T00:00:00+00:00Z"
     )
-    assert (
-        isoformat(DateTime(2017, 1, 1))
-        == "2017-01-01T00:00:00Z"
-    )
-    assert (
-        isoformat(DateTime(2017, 1, 1, tzinfo=None))
-        == "2017-01-01T00:00:00Z"
-    )
+    assert isoformat(DateTime(2017, 1, 1)) == "2017-01-01T00:00:00Z"
+    assert isoformat(DateTime(2017, 1, 1, tzinfo=None)) == "2017-01-01T00:00:00Z"
     assert isoformat(None) is None
     assert isoformat("test") is None
     assert isoformat(1) is None
