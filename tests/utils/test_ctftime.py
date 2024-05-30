@@ -213,8 +213,8 @@ def test_unix_time_to_utc():
     """
     Tests that the unix_time function returns the correct value and fails gracefully for strange inputs
     """
-    assert unix_time_to_utc(0) == datetime(1970, 1, 1, tzinfo=timezone.utc)
-    assert unix_time_to_utc(1483228800) == datetime(2017, 1, 1, tzinfo=timezone.utc)
+    assert unix_time_to_utc(0) == datetime(1970, 1, 1)
+    assert unix_time_to_utc(1483228800) == datetime(2017, 1, 1)
     assert type(unix_time_to_utc(1483228800)) == datetime
     assert unix_time_to_utc(None) is None
     with pytest.raises(TypeError):

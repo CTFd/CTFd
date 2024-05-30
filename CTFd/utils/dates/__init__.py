@@ -77,7 +77,8 @@ def unix_time_to_utc(t: Union[int, float]) -> DateTime:
     if t is None:
         print("Invalid datetime object for time filter function.")
         return None
-    return DateTime.fromtimestamp(t, tz=TimeZone.utc)
+    # TODO: The utcfromtimestamp() has been deprecated
+    return DateTime.utcfromtimestamp(t)
 
 
 def isoformat(dt: DateTime) -> str:
