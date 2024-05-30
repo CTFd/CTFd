@@ -65,7 +65,7 @@ from CTFd.utils.security.signing import (
     unserialize,
 )
 from CTFd.utils.uploads import get_uploader, upload_file
-from CTFd.utils.user import authed, get_current_team, get_current_user, is_admin
+from CTFd.utils.user import authed, get_current_team, get_current_user, get_ip, is_admin
 
 views = Blueprint("views", __name__)
 
@@ -555,6 +555,23 @@ def healthcheck():
     if check_config() is False:
         return "ERR", 500
     return "OK", 200
+
+
+@views.route("/debug")
+def debug():
+    if app.config.get("SAFE_MODE") is True:
+        ip = get_ip()
+        headers = dict(request.headers)
+        # Remove Cookie item
+        headers.pop("Cookie", None)
+        resp = ""
+        resp += f"IP: {ip}\n"
+        for k, v in headers.items():
+            resp += f"{k}: {v}\n"
+        r = make_response(resp)
+        r.mimetype = "text/plain"
+        return r
+    abort(404)
 
 
 @views.route("/robots.txt")
