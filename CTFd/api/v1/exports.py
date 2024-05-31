@@ -11,7 +11,7 @@ from CTFd.utils.exports import export_ctf as export_ctf_util
 exports_namespace = Namespace("exports", description="Endpoint to retrieve Exports")
 
 
-@exports_namespace.route("")
+@exports_namespace.route("/raw")
 class ExportList(Resource):
     @admins_only
     @ratelimit(method="POST", limit=10, interval=60)
