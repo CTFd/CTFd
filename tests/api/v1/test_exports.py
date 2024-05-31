@@ -1,4 +1,3 @@
-from CTFd.models import Challenges, db
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
