@@ -1,4 +1,4 @@
-# 3.7.1 / UNRELEASED
+# 3.7.1 / 2024-05-31
 
 **Admin Panel**
 
