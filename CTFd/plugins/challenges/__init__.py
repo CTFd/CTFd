@@ -118,6 +118,8 @@ class BaseChallenge(object):
         :return: (boolean, string)
         """
         data = request.form or request.get_json()
+        if not data or not data.get("submission"):
+            return False, "No submission sent"
         submission = data["submission"].strip()
         flags = Flags.query.filter_by(challenge_id=challenge.id).all()
         for flag in flags:
@@ -140,9 +142,11 @@ class BaseChallenge(object):
         :return:
         """
         data = request.form or request.get_json()
+        if not data or not data.get("submission"):
+            return False, "No submission sent"
         submission = data["submission"].strip()
         if not user or not user.id or not challenge or not challenge.id:
-            return
+            raise Exception("User or challenge is missing")
         existing_solve = Solves.query.filter_by(
             challenge_id=challenge.id, user_id=user.id
         ).first()
@@ -175,6 +179,8 @@ class BaseChallenge(object):
         :return:
         """
         data = request.form or request.get_json()
+        if not data or not data.get("submission"):
+            return False, "No submission sent"
         submission = data["submission"].strip()
         wrong = Fails(
             user_id=user.id,
