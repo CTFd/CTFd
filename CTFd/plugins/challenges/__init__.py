@@ -145,13 +145,16 @@ class BaseChallenge(object):
         if not data or not data.get("submission"):
             return False, "No submission sent"
         submission = data["submission"].strip()
-        if not user or not user.id or not challenge or not challenge.id:
-            raise Exception("User or challenge is missing")
+
         existing_solve = Solves.query.filter_by(
-            challenge_id=challenge.id, user_id=user.id
+            user_id=user.id,
+            team_id=team.id if team else None,
+            challenge_id=challenge.id,
         ).first()
+
         if existing_solve:
             return
+
         else:
             solve = Solves(
                 user_id=user.id,
