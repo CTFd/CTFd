@@ -131,7 +131,8 @@ class BaseChallenge(object):
     @classmethod
     def solve(cls, user, team, challenge, request):
         """
-        This method is used to insert Solves into the database in order to mark a challenge as solved.
+        This method is used to insert Solves into the database in order to mark a challenge as solved. If solve has
+        already been submitted by the specified user, it will not be added again.
 
         :param team: The Team object from the database
         :param chal: The Challenge object from the database
@@ -140,15 +141,28 @@ class BaseChallenge(object):
         """
         data = request.form or request.get_json()
         submission = data["submission"].strip()
-        solve = Solves(
-            user_id=user.id,
-            team_id=team.id if team else None,
-            challenge_id=challenge.id,
-            ip=get_ip(req=request),
-            provided=submission,
-        )
-        db.session.add(solve)
-        db.session.commit()
+        if not user or not user.id or not challenge or not challenge.id:
+            return
+        existing_solve = Solves.query.filter_by(
+            challenge_id=challenge.id, user_id=user.id
+        ).first()
+        if existing_solve:
+            return
+        else:
+            solve = Solves(
+                user_id=user.id,
+                team_id=team.id if team else None,
+                challenge_id=challenge.id,
+                ip=get_ip(req=request),
+                provided=submission,
+            )
+            try:
+                db.session.add(solve)
+            except Exception as e:
+                db.session.rollback()
+                raise Exception(f"Error: {e} - {solve}")
+            else:
+                db.session.commit()
 
     @classmethod
     def fail(cls, user, team, challenge, request):
