@@ -183,7 +183,7 @@ class BaseChallenge(object):
         :return:
         """
         data = request.form or request.get_json()
-        if not data or not data.get("submission"):
+        if not data or data.get("submission") is None:
             return False, "No submission sent"
         submission = data["submission"].strip()
         wrong = Fails(
