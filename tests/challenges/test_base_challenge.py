@@ -190,7 +190,9 @@ def test_empty_solve_request():
         # No submission sent
         solve_request = FakeRequest(form={})
 
-        with pytest.raises(Exception, match="'FakeRequest' object has no attribute 'get_json'"):
+        with pytest.raises(
+            Exception, match="'FakeRequest' object has no attribute 'get_json'"
+        ):
             BaseChallenge.solve(
                 user=user, team=None, challenge=challenge, request=solve_request
             )
