@@ -23,7 +23,6 @@ def test_good_user_mode_solve():
     app = create_ctfd()
     with app.app_context():
         challenge = gen_challenge(app.db)
-        gen_flag(app.db, challenge.id)
         user = Users.query.filter_by(id=1).first()
         solve_request = FakeRequest(form={"submission": "flag"})
 
@@ -50,7 +49,6 @@ def test_good_team_mode_solve():
     app = create_ctfd()
     with app.app_context():
         challenge = gen_challenge(app.db)
-        gen_flag(app.db, challenge.id)
         user = Users.query.filter_by(id=1).first()
         team = gen_team(app.db)
         solve_request = FakeRequest(form={"submission": "flag"})
@@ -77,7 +75,6 @@ def test_duplicate_user_mode_solve():
     app = create_ctfd()
     with app.app_context():
         challenge = gen_challenge(app.db)
-        gen_flag(app.db, challenge.id)
         user = Users.query.filter_by(id=1).first()
         solve_request = FakeRequest(form={"submission": "flag"})
 
@@ -108,7 +105,6 @@ def test_duplicate_team_mode_solve():
     app = create_ctfd()
     with app.app_context():
         challenge = gen_challenge(app.db)
-        gen_flag(app.db, challenge.id)
         user = Users.query.filter_by(id=1).first()
         team = gen_team(app.db)
         solve_request = FakeRequest(form={"submission": "flag"})
@@ -132,14 +128,13 @@ def test_duplicate_team_mode_solve():
         assert Solves.query.count() == 1
 
 
-def test_bad_submission_solve():
+def test_none_submission_solve():
     """
     Test that passing malformed request to solve() does not add to Solves table
     """
     app = create_ctfd()
     with app.app_context():
         challenge = gen_challenge(app.db)
-        gen_flag(app.db, challenge.id)
         user = Users.query.filter_by(id=1).first()
         bad_solve_request = FakeRequest(form={"submission": None})
 
@@ -158,7 +153,6 @@ def test_incorrect_flag_solve():
     app = create_ctfd()
     with app.app_context():
         challenge = gen_challenge(app.db)
-        gen_flag(app.db, challenge.id)
         user = Users.query.filter_by(id=1).first()
         # Note: the solve() function does NOT validate the accuracy of flags!
         # Thus, we expect the following to be successful
@@ -188,7 +182,6 @@ def test_empty_request_solve():
     app = create_ctfd()
     with app.app_context():
         challenge = gen_challenge(app.db)
-        gen_flag(app.db, challenge.id)
         user = Users.query.filter_by(id=1).first()
         solve_request = FakeRequest(form={})
 
@@ -200,6 +193,32 @@ def test_empty_request_solve():
             )
 
         assert Solves.query.count() == 0
+
+    destroy_ctfd(app)
+
+
+def test_empty_flag_solve():
+    """
+    Test that passing an empty flag to solve() adds to Solves table
+    """
+    app = create_ctfd()
+    with app.app_context():
+        challenge = gen_challenge(app.db)
+        user = Users.query.filter_by(id=1).first()
+        empty_flag_request = FakeRequest(form={"submission": ""})
+
+        BaseChallenge.solve(
+            user=user, team=None, challenge=challenge, request=empty_flag_request
+        )
+        # There is only 1 new Solve
+        assert Solves.query.count() == 1
+        # That Solve is the one we just added
+        assert (
+            Solves.query.filter_by(
+                user_id=user.id, team_id=None, challenge_id=challenge.id
+            ).count()
+            == 1
+        )
 
     destroy_ctfd(app)
 
@@ -385,7 +404,6 @@ def test_bad_submission_fail():
     app = create_ctfd()
     with app.app_context():
         challenge = gen_challenge(app.db)
-        gen_flag(app.db, challenge.id)
         user = Users.query.filter_by(id=1).first()
         bad_fail_request = FakeRequest(form={"submission": None})
 
@@ -415,6 +433,32 @@ def test_incorrect_flag_fail():
             user=user, team=None, challenge=challenge, request=bad_fail_request
         )
         assert r is None
+        # There is only 1 new Fail
+        assert Fails.query.count() == 1
+        # That Fail is the one we just added
+        assert (
+            Fails.query.filter_by(
+                user_id=user.id, team_id=None, challenge_id=challenge.id
+            ).count()
+            == 1
+        )
+
+    destroy_ctfd(app)
+
+
+def test_empty_flag_fail():
+    """
+    Test that passing an empty flag to fail() adds to Fails table
+    """
+    app = create_ctfd()
+    with app.app_context():
+        challenge = gen_challenge(app.db)
+        user = Users.query.filter_by(id=1).first()
+        empty_flag_request = FakeRequest(form={"submission": ""})
+
+        BaseChallenge.fail(
+            user=user, team=None, challenge=challenge, request=empty_flag_request
+        )
         # There is only 1 new Fail
         assert Fails.query.count() == 1
         # That Fail is the one we just added
