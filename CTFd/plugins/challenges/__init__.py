@@ -118,7 +118,8 @@ class BaseChallenge(object):
         :return: (boolean, string)
         """
         data = request.form or request.get_json()
-        if not data or not data.get("submission"):
+        # Empty string "" is a potentially valid submission
+        if not data or data.get("submission") is None:
             return False, "No submission sent"
         submission = data["submission"].strip()
         flags = Flags.query.filter_by(challenge_id=challenge.id).all()
