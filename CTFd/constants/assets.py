@@ -8,13 +8,22 @@ from CTFd.utils.helpers import markup
 
 
 class _AssetsWrapper:
-    def manifest(self, theme=None):
+    def manifest(self, theme=None, _return_none_on_load_failure=False):
         if theme is None:
             theme = ctf_theme()
-        manifest = os.path.join(
+        file_path = os.path.join(
             current_app.root_path, "themes", theme, "static", "manifest.json"
         )
-        return get_asset_json(path=manifest)
+
+        try:
+            manifest = get_asset_json(path=file_path)
+        except FileNotFoundError as e:
+            # This check allows us to determine if we are on a legacy theme and fallback if necessary
+            if _return_none_on_load_failure:
+                manifest = None
+            else:
+                raise e
+        return manifest
 
     def js(self, asset_key, theme=None, defer=True):
         if theme is None:
