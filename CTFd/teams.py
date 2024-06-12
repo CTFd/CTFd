@@ -356,17 +356,24 @@ def private():
     if config.is_scoreboard_frozen():
         infos.append("Scoreboard has been frozen")
 
+    class teams_template_info():
+
+        def __init__(self, solves, awards, user, team, score, place, infos, errors):
+            
+            self.solves = solves
+            self.awards = awards
+            self.user = user
+            self.team = team
+            self.score = score
+            self.place = place
+            self.score_frozen = config.is_scoreboard_frozen()
+            self.infos = infos
+            self.errors = errors
+
+    information = teams_template_info(solves, awards, user, team, score, place, infos, errors)
     return render_template(
         "teams/private.html",
-        solves=solves,
-        awards=awards,
-        user=user,
-        team=team,
-        score=score,
-        place=place,
-        score_frozen=config.is_scoreboard_frozen(),
-        infos=infos,
-        errors=errors,
+        information = information
     )
 
 
