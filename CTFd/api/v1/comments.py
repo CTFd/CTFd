@@ -91,7 +91,7 @@ class CommentList(Resource):
             CommentModel.query.filter_by(**query_args)
             .filter(*filters)
             .order_by(CommentModel.id.desc())
-            .paginate(max_per_page=100)
+            .paginate(max_per_page=100, error_out=False)
         )
         schema = CommentSchema(many=True)
         response = schema.dump(comments.items)

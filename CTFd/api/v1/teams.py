@@ -109,13 +109,13 @@ class TeamList(Resource):
             teams = (
                 Teams.query.filter_by(**query_args)
                 .filter(*filters)
-                .paginate(per_page=50, max_per_page=100)
+                .paginate(per_page=50, max_per_page=100, error_out=False)
             )
         else:
             teams = (
                 Teams.query.filter_by(hidden=False, banned=False, **query_args)
                 .filter(*filters)
-                .paginate(per_page=50, max_per_page=100)
+                .paginate(per_page=50, max_per_page=100, error_out=False)
             )
 
         user_type = get_current_user_type(fallback="user")
