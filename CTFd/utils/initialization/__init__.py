@@ -10,7 +10,7 @@ from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from CTFd.cache import clear_user_recent_ips
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import Tracking, db
-from CTFd.utils import config, get_config, import_in_progress, markdown
+from CTFd.utils import config, get_app_config, get_config, import_in_progress, markdown
 from CTFd.utils.config import (
     can_send_mail,
     ctf_logo,
@@ -325,6 +325,13 @@ def init_request_processors(app):
             if request.content_type != "application/json":
                 if session["nonce"] != request.form.get("nonce"):
                     abort(403)
+
+    @app.after_request
+    def response_headers(response):
+        response.headers["Cross-Origin-Opener-Policy"] = get_app_config(
+            "CROSS_ORIGIN_OPENER_POLICY", default="same-origin-allow-popups"
+        )
+        return response
 
     application_root = app.config.get("APPLICATION_ROOT")
     if application_root != "/":
