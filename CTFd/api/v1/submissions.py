@@ -91,7 +91,7 @@ class SubmissionsList(Resource):
         submissions = (
             Submissions.query.filter_by(**args)
             .filter(*filters)
-            .paginate(max_per_page=100)
+            .paginate(max_per_page=100, error_out=False)
         )
 
         response = schema.dump(submissions.items)
