@@ -350,7 +350,7 @@ def register():
             email=user.email,
         )
 
-        if get_config("auto_teams_mode", False):
+        if get_config("auto_teams_mode", True):
             # we need to assign the user to the team with the least number of players
             teamlist = Teams.query.order_by("name") # we want to avoid custom joins so we take the clunky approach of fetching all teams
             team_size_limit = get_config("team_size", default=0) 
