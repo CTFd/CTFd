@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-07 03:17-0400\n"
-"PO-Revision-Date: 2024-04-01 05:30\n"
+"PO-Revision-Date: 2024-06-20 06:28\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,7 @@ msgstr "Gửi"
 
 #: CTFd/forms/auth.py:39
 msgid "User Name or Email"
-msgstr "Tên tài khoản hoặc mật khẩu"
+msgstr "Tên người dùng hoặc email"
 
 #: CTFd/forms/auth.py:48
 msgid "Resend Confirmation Email"
