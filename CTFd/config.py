@@ -141,6 +141,9 @@ class ServerConfig(object):
     PERMANENT_SESSION_LIFETIME: int = config_ini["security"].getint("PERMANENT_SESSION_LIFETIME") \
         or 604800
 
+    CROSS_ORIGIN_OPENER_POLICY: str = empty_str_cast(config_ini["security"].get("CROSS_ORIGIN_OPENER_POLICY")) \
+        or "same-origin-allow-popups"
+
     """
     TRUSTED_PROXIES:
     Defines a set of regular expressions used for finding a user's IP address if the CTFd instance

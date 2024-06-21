@@ -27,16 +27,15 @@
 						<sub class="text-muted text-right mb-3">* All time fields required</sub>
 					</div>
 
+					<!-- TODO: these time fields should probably be required, but needs movement of <form> -->
 					<div class="form-group col-md-2">
 						<label for="start-month">Month:</label>
-						<input class="form-control start-date" id='start-month' min="0" max="12"
-							   type='number'>
+						<input class="form-control start-date" id='start-month' min="0" max="12" type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="start-day">Day:</label>
-						<input class="form-control start-date" id='start-day' min="0" max="31"
-							   type='number'>
+						<input class="form-control start-date" id='start-day' min="0" max="31" type='number'>
 					</div>
 
 					<div class="form-group col-md-3">
@@ -46,39 +45,36 @@
 
 					<div class="form-group col-md-2">
 						<label for="start-hour">Hour:</label>
-						<input class="form-control start-date" id='start-hour' min="0" max="23"
-							   type='number'>
+						<input class="form-control start-date" id='start-hour' min="0" max="23" type='number'>
 					</div>
 
 					<div class="form-group col-md-3">
 						<label for="start-minute">Minute:</label>
-						<input class="form-control start-date" id='start-minute' min="0" max="59"
-							   type='number'>
+						<input class="form-control start-date" id='start-minute' min="0" max="59" type='number'>
 					</div>
 
+					<!-- TODO: Better Timezone options (e.g. with UTC offset info like "UTC+1")-->
 					<div class="form-group col-md-12">
 						<label for="start-timezone">Timezone:</label>
 						<select class="form-control custom-select start-date" id="start-timezone">
 						</select>
 					</div>
 
+					<!-- TODO: Clarify via UI that user cannot touch these fields -->
 					<div class="form-group col-md-12">
 						<label for="start-local">Local Time:</label>
-						<input class="form-control" id='start-local' type='text'
-							   placeholder="Start Date (Local Time)" readonly>
+						<input class="form-control" id='start-local' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
 						<label for="start-zonetime">Timezone Time:</label>
-						<input class="form-control" id='start-zonetime' type='text'
-							   placeholder="Start Date (Timezone Time)" readonly>
+						<input class="form-control" id='start-zonetime' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
 						<label>UTC Timestamp:</label>
 						<input class="form-control" id='start' name='start' type='number'
-							   placeholder="Start Date (UTC timestamp)"
-							   {% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly>
+							{% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly>
 					</div>
 				</div>
 			</div>
@@ -92,14 +88,12 @@
 
 					<div class="form-group col-md-2">
 						<label for="end-month">Month:</label>
-						<input class="form-control end-date" id='end-month' min="0" max="12"
-							   type='number'>
+						<input class="form-control end-date" id='end-month' min="0" max="12" type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="end-day">Day:</label>
-						<input class="form-control end-date" id='end-day' min="0" max="31"
-							   type='number'>
+						<input class="form-control end-date" id='end-day' min="0" max="31" type='number'>
 					</div>
 
 					<div class="form-group col-md-4">
@@ -109,15 +103,21 @@
 
 					<div class="form-group col-md-2">
 						<label for="end-hour">Hour:</label>
-						<input class="form-control end-date" id='end-hour' min="0" max="23"
-							   type='number'>
+						<input class="form-control end-date" id='end-hour' min="0" max="23" type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="end-minute">Minute:</label>
-						<input class="form-control end-date" id='end-minute' min="0"
-							   max="59" type='number'>
+						<input class="form-control end-date" id='end-minute' min="0" max="59" type='number'>
 					</div>
+
+					<div class="form-group col-md-12">
+						<label for="end-timezone">Timezone:</label>
+						<select class="form-control custom-select end-date" id="end-timezone">
+						</select>
+					</div>
+
+					<br>
 
 					<div class="form-group col-md-12">
 						<div class="form-check pl-0">
@@ -133,34 +133,26 @@
 					</div>
 
 					<div class="form-group col-md-12">
-						<label for="end-timezone">Timezone:</label>
-						<select class="form-control custom-select end-date" id="end-timezone">
-						</select>
-					</div>
-
-					<div class="form-group col-md-12">
 						<label for="end-local">Local Time:</label>
-						<input class="form-control" id='end-local' type='text'
-							   placeholder="End Date (Local Time)" readonly>
+						<input class="form-control" id='end-local' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
 						<label for="end-zonetime">Timezone Time:</label>
-						<input class="form-control" id='end-zonetime' type='text'
-							   placeholder="End Date (Timezone Time)" readonly>
+						<input class="form-control" id='end-zonetime' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
 						<label for="end">UTC Timestamp:</label>
 						<input class="form-control" id='end' name='end' type='number'
-							   placeholder="End Date (UTC timestamp)"
-							   {% if end is defined and end != None %}value="{{ end }}"{% endif %} readonly>
+							{% if end is defined and end != None %}value="{{ end }}"{% endif %} readonly>
 					</div>
 				</div>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="freeze-date">
 				<div class="row" id="freeze-date">
 					<div class="col-md-12">
+						<!-- TODO: Rephrase -->
 						<p>Freeze time specifies the timestamp that the competition will be frozen to.
 							All solves before the freeze time will be shown, but new solves won't be shown to
 							users. </p>
@@ -169,14 +161,12 @@
 
 					<div class="form-group col-md-2">
 						<label for="freeze-month">Month:</label>
-						<input class="form-control freeze-date" id='freeze-month' min="0" max="12"
-							   type='number'>
+						<input class="form-control freeze-date" id='freeze-month' min="0" max="12" type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="freeze-day">Day:</label>
-						<input class="form-control freeze-date" id='freeze-day' min="0" max="31"
-							   type='number'>
+						<input class="form-control freeze-date" id='freeze-day' min="0" max="31" type='number'>
 					</div>
 
 					<div class="form-group col-md-4">
@@ -186,39 +176,35 @@
 
 					<div class="form-group col-md-2">
 						<label for="freeze-hour">Hour:</label>
-						<input class="form-control freeze-date" id='freeze-hour' min="0" max="23"
-							   type='number'>
+						<input class="form-control freeze-date" id='freeze-hour' min="0" max="23" type='number'>
 					</div>
 
 					<div class="form-group col-md-2">
 						<label for="freeze-minute">Minute:</label>
-						<input class="form-control freeze-date" id='freeze-minute' min="0"
-							   max="59" type='number'>
+						<input class="form-control freeze-date" id='freeze-minute' min="0" max="59" type='number'>
 					</div>
 
 					<div class="form-group col-md-12">
-						<label for="freeze-timezone">Timezone:</label>
+						<label for="freeze-timezone">CTF Timezone:</label>
 						<select class="form-control custom-select freeze-date" id="freeze-timezone">
 						</select>
 					</div>
 
+					<!-- TODO: Clarify -->
 					<div class="form-group col-md-12">
 						<label for="freeze-local">Local Time:</label>
-						<input class="form-control" id='freeze-local' type='text'
-							   placeholder="Freeze Date (Local Time)" readonly>
+						<input class="form-control" id='freeze-local' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
 						<label for="freeze-zonetime">Timezone Time:</label>
-						<input class="form-control" id='freeze-zonetime' type='text'
-							   placeholder="Freeze Date (Timezone Time)" readonly>
+						<input class="form-control" id='freeze-zonetime' type='text' readonly>
 					</div>
 
 					<div class="form-group col-md-12">
 						<label for="freeze">UTC Timestamp:</label>
 						<input class="form-control" id='freeze' name='freeze' type='number'
-							   placeholder="Freeze Date (UTC timestamp)"
-							   {% if freeze is defined and freeze != None %}value="{{ freeze }}"{% endif %} readonly>
+							{% if freeze is defined and freeze != None %}value="{{ freeze }}"{% endif %} readonly>
 					</div>
 				</div>
 			</div>

@@ -22,7 +22,7 @@ def teams_listing():
     teams = (
         Teams.query.filter(*filters)
         .order_by(Teams.id.asc())
-        .paginate(page=page, per_page=50)
+        .paginate(page=page, per_page=50, error_out=False)
     )
 
     args = dict(request.args)

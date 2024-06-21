@@ -679,8 +679,10 @@ class Teams(db.Model):
         if isinstance(secret_key, str):
             secret_key = secret_key.encode("utf-8")
 
-        team_password_key = self.password.encode("utf-8")
-        verification_secret = secret_key + team_password_key
+        verification_secret = secret_key
+        if self.password:
+            team_password_key = self.password.encode("utf-8")
+            verification_secret += team_password_key
 
         invite_object = {
             "id": self.id,
@@ -719,8 +721,10 @@ class Teams(db.Model):
         team = cls.query.filter_by(id=team_id).first_or_404()
 
         # Create the team specific secret
-        team_password_key = team.password.encode("utf-8")
-        verification_secret = secret_key + team_password_key
+        verification_secret = secret_key
+        if team.password:
+            team_password_key = team.password.encode("utf-8")
+            verification_secret += team_password_key
 
         # Verify the team verficiation code
         verified = hmac(str(team.id), secret=verification_secret) == invite_object["v"]

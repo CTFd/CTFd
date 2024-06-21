@@ -533,6 +533,10 @@ $(() => {
     })
     .change();
 
+  $("#config-sidebar .nav-link").click(function () {
+    window.scrollTo(0, 0);
+  });
+
   // Insert FieldList element for users
   const fieldList = Vue.extend(FieldList);
   let userVueContainer = document.createElement("div");

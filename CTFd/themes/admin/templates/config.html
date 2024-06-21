@@ -13,65 +13,138 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-3">
-			<ul class="nav nav-pills flex-column">
+			<ul id="config-sidebar" class="nav nav-pills flex-column">
+
 				<li class="nav-item">
-					<a class="nav-link rounded-0 active" href="#appearance" role="tab" data-toggle="tab">Appearance</a>
+					<a class="nav-link rounded-0 py-1 active" href="#general" role="tab" data-toggle="tab">
+						<i class="fa fa-gear action-icon"></i>General
+					</a>
+				</li>
+				<!-- Appearance -->
+				<small class="section-title">Appearance</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 py-1" href="#logo" role="tab" data-toggle="tab">
+						<i class="fa fa-signature action-icon"></i>Logo
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#theme" role="tab" data-toggle="tab">Theme</a>
+					<a class="nav-link rounded-0 py-1" href="#theme" role="tab" data-toggle="tab">
+						<i class="fa fa-brush action-icon"></i>Theme
+					</a>
+				</li>
+				<!-- Access -->
+				<small class="section-title">Access</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 py-1" href="#visibility" role="tab" data-toggle="tab">
+						<i class="fa fa-eye action-icon"></i>Visibility
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#accounts" role="tab" data-toggle="tab">Accounts</a>
+					<a class="nav-link rounded-0 py-1" href="#ctftime" role="tab" data-toggle="tab">
+						<i class="fa fa-stopwatch action-icon"></i>Start and End Time
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#pages" role="tab" data-toggle="tab">Pages</a>
+					<a class="nav-link rounded-0 py-1" href="#pause" role="tab" data-toggle="tab">
+						<i class="fa fa-pause action-icon"></i>Pause
+					</a>
+				</li>
+
+				<!-- Users -->
+				<small class="section-title">Users</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 py-1" href="#accounts" role="tab" data-toggle="tab">
+						<i class="fa fa-users action-icon"></i>Accounts
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#brackets" role="tab" data-toggle="tab">Brackets</a>
+					<a class="nav-link rounded-0 py-1" href="#brackets" role="tab" data-toggle="tab">
+						<i class="fa fa-chart-line action-icon"></i>Scoreboard Brackets
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#fields" role="tab" data-toggle="tab">Custom Fields</a>
+					<a class="nav-link rounded-0 py-1" href="#fields" role="tab" data-toggle="tab">
+						<i class="fa fa-fingerprint action-icon"></i>Custom Fields
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#mlc" role="tab" data-toggle="tab">MajorLeagueCyber</a>
+					<a class="nav-link rounded-0 py-1" href="#registration_code" role="tab" data-toggle="tab">
+						<i class="fa fa-user-lock action-icon"></i>Registration Code
+					</a>
+				</li>
+
+				<small class="section-title">Backup</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 py-1" href="#backup" role="tab" data-toggle="tab">
+						<i class="fa fa-file-import action-icon"></i>Import & Export
+					</a>
+				</li>
+
+				<!-- Security -->
+				<small class="section-title">Security</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 py-1" href="#sanitize" role="tab" data-toggle="tab">
+						<i class="fa fa-shield-halved action-icon"></i>Sanitize
+					</a>
+				</li>
+
+				<!-- Pages -->
+				<small class="section-title">Pages</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 py-1" href="#legal" role="tab" data-toggle="tab">
+						<i class="fa fa-scale-balanced action-icon"></i>Legal
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#settings" role="tab" data-toggle="tab">Settings</a>
+					<a class="nav-link rounded-0 py-1" href="#robots" role="tab" data-toggle="tab">
+						<i class="fa fa-robot action-icon"></i>Robots.txt
+					</a>
+				</li>
+				
+				<!-- Integrations -->
+				<small class="section-title">Integrations</small>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 py-1" href="#email" role="tab" data-toggle="tab">
+						<i class="fa fa-envelope action-icon"></i>Email Notifications
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#security" role="tab" data-toggle="tab">Security</a>
+					<a class="nav-link rounded-0 py-1" href="#social" role="tab" data-toggle="tab">
+						<i class="fa fa-share-nodes action-icon"></i>Social Sharing
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#email" role="tab" data-toggle="tab">Email</a>
+					<a class="nav-link rounded-0 py-1s" href="#mlc" role="tab" data-toggle="tab">
+						<i class="fa fa-network-wired action-icon"></i>MajorLeagueCyber
+					</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#ctftime" role="tab" data-toggle="tab">Time</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#social" role="tab" data-toggle="tab">Social</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#legal" role="tab" data-toggle="tab">Legal</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#backup" role="tab" data-toggle="tab">Backup</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link rounded-0" href="#usermode" role="tab" data-toggle="tab">User Mode</a>
-				</li>
+				
+				<!-- Plugins -->
 				{% set plugins = get_configurable_plugins() %}
 				{% if plugins %}
+					<small class="section-title">Plugins</small>
 					{% for plugin in plugins %}
 						{% if plugin.config %}
 							<li class="nav-item">
-								<a class="nav-link rounded-0" href="#plugin_{{loop.index}}" role="tab" data-toggle="tab">Plugin: {{ plugin.name }}</a>
+								<a class="nav-link rounded-0 py-1" href="#plugin_{{loop.index}}" role="tab" data-toggle="tab">
+									<i class="fa fa-folder action-icon"></i>{{ plugin.name }}
+								</a>
 							</li>
 						{% endif %}
 					{% endfor %}
 				{% endif %}
 
+				<!-- Reset -->
+				<small class="section-title">Danger zone</small>
 				<li class="nav-item">
-					<a class="nav-link rounded-0" href="{{ url_for('admin.reset') }}" role="tab">Reset</a>
+					<a class="nav-link rounded-0 py-1" href="#usermode" role="tab" data-toggle="tab">
+						<i class="fa fa-people-arrows action-icon"></i>User Mode
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 py-1" href="{{ url_for('admin.reset') }}" role="tab">
+						<i class="fa fa-trash-can action-icon"></i>Reset
+					</a>
 				</li>
 			</ul>
 		</div>
@@ -87,36 +160,56 @@
 			{% endfor %}
 
 			<div class="tab-content">
-				{% include "admin/configs/appearance.html" %}
+				{% include "admin/configs/general.html" %}
+
+				<!-- Appearance -->
+
+				{% include "admin/configs/logo.html" %}
 
 				{% include "admin/configs/theme.html" %}
 
+				<!-- Access -->
+
+				{% include "admin/configs/visibility.html" %}
+
+				{% include "admin/configs/time.html" %}
+
+				{% include "admin/configs/pause.html" %}
+
+				<!-- Users -->
+
 				{% include "admin/configs/accounts.html" %}
 
-				{% include "admin/configs/pages.html" %}
+				{% include "admin/configs/usermode.html" %}
 
 				{% include "admin/configs/brackets.html" %}
 
 				{% include "admin/configs/fields.html" %}
 
-				{% include "admin/configs/mlc.html" %}
+				{% include "admin/configs/registration_code.html" %}
 
-				{% include "admin/configs/settings.html" %}
-
-				{% include "admin/configs/security.html" %}
-
-				{% include "admin/configs/email.html" %}
-
-				{% include "admin/configs/time.html" %}
-
-				{% include "admin/configs/social.html" %}
-
-				{% include "admin/configs/legal.html" %}
+				<!-- Security -->
 
 				{% include "admin/configs/backup.html" %}
 
-				{% include "admin/configs/usermode.html" %}
+				{% include "admin/configs/sanitize.html" %}
 
+				<!-- Pages -->
+
+				{% include "admin/configs/legal.html" %}
+
+				{% include "admin/configs/robots.html" %}
+
+				<!-- Integrations -->
+
+				{% include "admin/configs/email.html" %}
+
+				{% include "admin/configs/social.html" %}
+
+				{% include "admin/configs/mlc.html" %}
+
+				<!-- Plugins -->
+				
 				{% if plugins %}
 					{% for plugin in plugins %}
 						{% if plugin.config %}
@@ -126,6 +219,8 @@
 						{% endif %}
 					{% endfor %}
 				{% endif %}
+				<!-- Danger zone -->
+				<!-- reset.html is top-level so no need to include -->
 			</div>
 		</div>
 	</div>

@@ -41,7 +41,7 @@
     ]
   },
   "assets/css/admin.scss": {
-    "file": "assets/admin-css-DBFaWjBN.css",
+    "file": "assets/admin-css-BVndIpVV.css",
     "src": "assets/css/admin.scss",
     "isEntry": true
   },
@@ -87,7 +87,7 @@
     ]
   },
   "assets/js/pages/configs.js": {
-    "file": "assets/pages/configs-BsDCmTMl.js",
+    "file": "assets/pages/configs-CJmOQB5a.js",
     "src": "assets/js/pages/configs.js",
     "isEntry": true,
     "imports": [
