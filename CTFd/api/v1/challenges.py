@@ -497,7 +497,7 @@ class ChallengeAttempt(Resource):
         if authed() is False:
             return {"success": True, "data": {"status": "authentication_required"}}, 403
 
-        if "application/json" not in request.content_type.lower():
+        if not request.is_json:
             request_data = request.form
         else:
             request_data = request.get_json()
