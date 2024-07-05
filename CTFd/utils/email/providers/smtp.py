@@ -44,6 +44,7 @@ class SMTPEmailProvider(EmailProvider):
             msg["Subject"] = subject
             msg["From"] = mailfrom_addr
             msg["To"] = addr
+            msg["List-Unsubscribe"]= f"<mailto:{mailfrom_addr}?subject=unsubscribe>"
 
             # Check whether we are using an admin-defined SMTP server
             custom_smtp = bool(get_config("mail_server"))
