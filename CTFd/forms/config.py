@@ -8,6 +8,7 @@ from CTFd.constants.config import (
     RegistrationVisibilityTypes,
     ScoreVisibilityTypes,
 )
+from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.utils.csv import get_dumpable_tables
@@ -174,4 +175,12 @@ class VisibilitySettingsForm(BaseForm):
             (RegistrationVisibilityTypes.MLC, "MajorLeagueCyber Only"),
         ],
         default=RegistrationVisibilityTypes.PUBLIC,
+    )
+
+
+class LocalizationForm(BaseForm):
+    default_locale = SelectField(
+        "Default Language",
+        description="Language to use if a user does not specify a language in their account settings. By default, CTFd will auto-detect the user's preferred language.",
+        choices=SELECT_LANGUAGE_LIST,
     )
