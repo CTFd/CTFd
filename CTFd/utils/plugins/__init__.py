@@ -41,8 +41,13 @@ def override_template(template, html):
     app.overridden_templates[template] = html
 
 
+def get_menubar_plugins():
+    plugins = get_configurable_plugins()
+    return [plugin for plugin in plugins if plugin.route is not None]
+
+
 def get_configurable_plugins():
-    Plugin = namedtuple("Plugin", ["name", "route"])
+    Plugin = namedtuple("Plugin", ["name", "route", "config"])
 
     plugins_path = os.path.join(app.root_path, "plugins")
     plugin_directories = os.listdir(plugins_path)
@@ -59,16 +64,18 @@ def get_configurable_plugins():
                         p = Plugin(
                             name=plugin_json.get("name"),
                             route=plugin_json.get("route"),
+                            config=plugin_json.get("config"),
                         )
                         plugins.append(p)
                 else:
                     p = Plugin(
                         name=plugin_json_data.get("name"),
                         route=plugin_json_data.get("route"),
+                        config=plugin_json_data.get("config"),
                     )
                     plugins.append(p)
         elif os.path.isfile(os.path.join(plugins_path, dir, "config.html")):
-            p = Plugin(name=dir, route="/admin/plugins/{}".format(dir))
+            p = Plugin(name=dir, route="/admin/plugins/{}".format(dir), config=None)
             plugins.append(p)
 
     return plugins

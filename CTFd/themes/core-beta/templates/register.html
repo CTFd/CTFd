@@ -66,9 +66,11 @@
               <div class="row pt-3">
                 <div class="col-md-12 text-center">
                   <small class="text-muted text-center">
+                    {% trans trimmed privacy_link=Configs.privacy_link, tos_link=Configs.tos_link %}
                     By registering, you agree to the
-                    <a href="{{ Configs.privacy_link }}" rel="noopener" target="_blank">privacy policy</a>
-                    and <a href="{{ Configs.tos_link }}" rel="noopener" target="_blank">terms of service</a>
+                    <a href="{{ privacy_link }}" target="_blank">privacy policy</a>
+                    and <a href="{{ tos_link }}" target="_blank">terms of service</a>
+                    {% endtrans %}
                   </small>
                 </div>
               </div>

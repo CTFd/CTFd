@@ -6,7 +6,7 @@ import subprocess  # nosec B404
 import sys
 import tempfile
 import zipfile
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 
 import dataset
@@ -62,7 +62,7 @@ def export_ctf():
             "results": [{"version_num": get_current_revision()}],
             "meta": {},
         }
-        result_file = BytesIO()
+        result_file = StringIO()
         json.dump(result, result_file)
         result_file.seek(0)
         backup_zip.writestr("db/alembic_version.json", result_file.read())

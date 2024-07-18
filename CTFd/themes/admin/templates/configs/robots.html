@@ -1,10 +1,10 @@
-<div role="tabpanel" class="tab-pane config-section" id="pages">
-	<form  method="POST" enctype="multipart/form-data">
+<div role="tabpanel" class="tab-pane config-section" id="robots">
+	<form method="POST" enctype="multipart/form-data">
 		<div class="form-group">
 			<label>
 				Robots.txt
 				<small class="form-text text-muted">
-					The robots.txt file contains instructions that suggest to bots which webpages they can and cannot access
+					The <code>robots.txt</code> file contains instructions that suggest to bots which webpages they should and should not access. Not all bots respect <code>robots.txt</code>.
 				</small>
 			</label>
 			<textarea class="form-control" id="theme-footer" name="robots_txt" rows="7">{{ robots_txt or "User-agent: *\nDisallow: /admin\n" }}</textarea>

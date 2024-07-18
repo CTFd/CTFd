@@ -5,77 +5,98 @@
 	{% set team_creation = "false" if team_creation == False else "true" %}
 	{% with form = Forms.config.AccountSettingsForm(verify_emails=verify_emails, name_changes=name_changes, team_disbanding=team_disbanding, team_creation=team_creation) %}
 	<form method="POST" autocomplete="off" class="w-100">
+		<ul class="nav nav-tabs mb-3">
+			<li class="nav-item">
+				<a class="nav-link active" href="#user-accounts" aria-controls="user-accounts" role="tab" data-toggle="tab">
+					User Accounts
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#team-accounts" aria-controls="team-accounts" role="tab" data-toggle="tab">
+					Team Accounts
+				</a>
+			</li>
+		</ul>
 
-		<div class="form-group">
-			{{ form.domain_whitelist.label }}
-			{{ form.domain_whitelist(class="form-control", value=domain_whitelist or "") }}
-			<small class="form-text text-muted">
-				{{ form.domain_whitelist.description }}
-			</small>
-		</div>
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="user-accounts">
+				<div id="user-accounts">
+					<div class="form-group">
+						{{ form.domain_whitelist.label }}
+						{{ form.domain_whitelist(class="form-control", value=domain_whitelist or "") }}
+						<small class="form-text text-muted">
+							{{ form.domain_whitelist.description }}
+						</small>
+					</div>
+			
+					<div class="form-group">
+						{{ form.verify_emails.label }}
+						{{ form.verify_emails(class="form-control custom-select") }}
+						<small class="form-text text-muted">
+							{{ form.verify_emails.description }}
+						</small>
+					</div>
+			
+					<div class="form-group">
+						{{ form.num_users.label }}
+						{{ form.num_users(class="form-control", value=num_users) }}
+						<small class="form-text text-muted">
+							{{ form.num_users.description }}
+						</small>
+					</div>
+			
+					<div class="form-group">
+						{{ form.incorrect_submissions_per_min.label }}
+						{{ form.incorrect_submissions_per_min(class="form-control", value=incorrect_submissions_per_min) }}
+						<small class="form-text text-muted">
+							{{ form.incorrect_submissions_per_min.description }}
+						</small>
+					</div>
+			
+					<div class="form-group">
+						{{ form.name_changes.label }}
+						{{ form.name_changes(class="form-control custom-select") }}
+						<small class="form-text text-muted">
+							{{ form.name_changes.description }}
+						</small>
+					</div>
+				</div>
+			</div>
+			<div role="tabpanel" class="tab-pane" id="team-accounts">
+				<div id="team-accounts">
+					<div class="form-group">
+						{{ form.team_creation.label }}
+						{{ form.team_creation(class="form-control", value=team_creation) }}
+						<small class="form-text text-muted">
+							{{ form.team_creation.description }}
+						</small>
+					</div>
+			
+					<div class="form-group">
+						{{ form.team_size.label }}
+						{{ form.team_size(class="form-control", value=team_size) }}
+						<small class="form-text text-muted">
+							{{ form.team_size.description }}
+						</small>
+					</div>
+			
+					<div class="form-group">
+						{{ form.num_teams.label }}
+						{{ form.num_teams(class="form-control", value=num_teams) }}
+						<small class="form-text text-muted">
+							{{ form.num_teams.description }}
+						</small>
+					</div>
 
-		<div class="form-group">
-			{{ form.verify_emails.label }}
-			{{ form.verify_emails(class="form-control custom-select") }}
-			<small class="form-text text-muted">
-				{{ form.verify_emails.description }}
-			</small>
-		</div>
-
-		<div class="form-group">
-			{{ form.team_creation.label }}
-			{{ form.team_creation(class="form-control", value=team_creation) }}
-			<small class="form-text text-muted">
-				{{ form.team_creation.description }}
-			</small>
-		</div>
-
-		<div class="form-group">
-			{{ form.team_size.label }}
-			{{ form.team_size(class="form-control", value=team_size) }}
-			<small class="form-text text-muted">
-				{{ form.team_size.description }}
-			</small>
-		</div>
-
-		<div class="form-group">
-			{{ form.num_teams.label }}
-			{{ form.num_teams(class="form-control", value=num_teams) }}
-			<small class="form-text text-muted">
-				{{ form.num_teams.description }}
-			</small>
-		</div>
-
-		<div class="form-group">
-			{{ form.num_users.label }}
-			{{ form.num_users(class="form-control", value=num_users) }}
-			<small class="form-text text-muted">
-				{{ form.num_users.description }}
-			</small>
-		</div>
-
-		<div class="form-group">
-			{{ form.team_disbanding.label }}
-			{{ form.team_disbanding(class="form-control", value=team_disbanding) }}
-			<small class="form-text text-muted">
-				{{ form.team_disbanding.description }}
-			</small>
-		</div>
-
-		<div class="form-group">
-			{{ form.incorrect_submissions_per_min.label }}
-			{{ form.incorrect_submissions_per_min(class="form-control", value=incorrect_submissions_per_min) }}
-			<small class="form-text text-muted">
-				{{ form.incorrect_submissions_per_min.description }}
-			</small>
-		</div>
-
-		<div class="form-group">
-			{{ form.name_changes.label }}
-			{{ form.name_changes(class="form-control custom-select") }}
-			<small class="form-text text-muted">
-				{{ form.name_changes.description }}
-			</small>
+					<div class="form-group">
+						{{ form.team_disbanding.label }}
+						{{ form.team_disbanding(class="form-control", value=team_disbanding) }}
+						<small class="form-text text-muted">
+							{{ form.team_disbanding.description }}
+						</small>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		{{ form.submit(class="btn btn-md btn-primary float-right") }}
