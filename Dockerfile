@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm as build
+FROM python:3.11-slim-bookworm AS build
 
 WORKDIR /opt/CTFd
 
@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir -r requirements.txt \
     done;
 
 
-FROM python:3.11-slim-bookworm as release
+FROM python:3.11-slim-bookworm AS release
 WORKDIR /opt/CTFd
 
 # hadolint ignore=DL3008
