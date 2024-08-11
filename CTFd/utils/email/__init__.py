@@ -150,13 +150,13 @@ def user_created_notification(addr, name, password):
         name=name,
         password=password,
     )
-    text_sanitized = safe_format(
+    text_sanitized = safe_format(  # nosec B106
         get_config("user_creation_email_body") or DEFAULT_USER_CREATION_EMAIL_BODY,
         ctf_name=get_config("ctf_name"),
         ctf_description=get_config("ctf_description"),
         url=url_for("views.static_html", _external=True),
         name=name,
-        password="[censored]",  # nosec B106
+        password="[censored]",
     )
 
     subject = safe_format(
