@@ -3,7 +3,7 @@ import logging
 import logging.handlers
 import time
 
-from flask import session
+from flask import has_request_context, session
 
 from CTFd.utils.user import get_ip
 
@@ -11,10 +11,11 @@ from CTFd.utils.user import get_ip
 def log(logger, format=None, **kwargs):
     props = {
         "logger": logger,
-        "id": session.get("id"),
         "date": time.strftime("%m/%d/%Y %X"),
         "ip": get_ip(),
     }
+    if has_request_context():
+        props["id"] = session.get("id")
     props.update(kwargs)
     if format:
         msg = format.format(**props)
