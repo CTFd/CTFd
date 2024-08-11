@@ -12,10 +12,10 @@ def log(logger, format=None, **kwargs):
     props = {
         "logger": logger,
         "date": time.strftime("%m/%d/%Y %X"),
-        "ip": get_ip(),
     }
     if has_request_context():
         props["id"] = session.get("id")
+        props["ip"] = get_ip()
     props.update(kwargs)
     if format:
         msg = format.format(**props)
