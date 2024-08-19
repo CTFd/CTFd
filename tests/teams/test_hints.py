@@ -54,7 +54,7 @@ def test_hint_team_unlock():
             assert r.status_code == 400
             assert (
                 r.get_json()["errors"]["target"]
-                == "You've already unlocked this this target"
+                == "You've already unlocked this target"
             )
 
             # Assert that we see a hint

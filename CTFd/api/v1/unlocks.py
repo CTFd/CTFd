@@ -138,7 +138,7 @@ class UnlockList(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"target": "You've already unlocked this this target"},
+                    "errors": {"target": "You've already unlocked this target"},
                 },
                 400,
             )
