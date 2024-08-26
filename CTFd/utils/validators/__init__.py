@@ -23,6 +23,9 @@ def validate_url(url):
 
 
 def validate_email(email):
+    # https://github.com/django/django/blob/bc9b6251e0b54c3b5520e3c66578041cc17e4a28/django/core/validators.py#L257
+    if not email or "@" not in email or len(email) > 320:
+        return False
     return bool(re.match(EMAIL_REGEX, email))
 
 
