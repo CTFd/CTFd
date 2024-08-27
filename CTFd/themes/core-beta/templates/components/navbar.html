@@ -171,6 +171,17 @@
             </a>
           </li>
         {% endif %}
+        <li class="nav-item">
+          <button class="nav-link theme-switch" type="button">
+            <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Toggle theme{% endtrans %}">
+              <i class="fas fa-sun d-none d-md-inline"></i>
+            </span>
+            <span class="d-sm-inline d-md-none">
+              <i class="fas fa-sun pe-1"></i>
+              {% trans %}Toggle theme{% endtrans %}
+            </span>
+          </button>
+        </li>
       </ul>
     </div>
   </div>

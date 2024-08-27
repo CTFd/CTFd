@@ -1,11 +1,3 @@
-/* Handle offline font loading */
-// $fa-font-path: "../../../node_modules/@fortawesome/fontawesome-free/webfonts" !default;
-// $fa-font-display: auto !default;
-// @import "../../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss";
-// @import "../../../node_modules/@fortawesome/fontawesome-free/scss/regular.scss";
-// @import "../../../node_modules/@fortawesome/fontawesome-free/scss/solid.scss";
-// @import "../../../node_modules/@fortawesome/fontawesome-free/scss/brands.scss";
-
 @use "~/@fontsource/lato/scss/mixins" as Lato;
 @use "~/@fontsource/raleway/scss/mixins" as Raleway;
 
@@ -19,9 +11,6 @@ $fa-font-path: "../webfonts";
 @import "~/@fortawesome/fontawesome-free/scss/fontawesome.scss";
 @import "~/@fortawesome/fontawesome-free/scss/solid.scss";
 @import "~/@fortawesome/fontawesome-free/scss/brands.scss";
-
-// @import "~/@fontsource/lato/index.css";
-// @import "~/@fontsource/lato/index.css";
 
 html,
 body,
