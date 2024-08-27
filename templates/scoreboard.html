@@ -30,12 +30,12 @@
       </template>
 
       <div class="col-md-12" x-show="standings.length">
-        <table class="table table-striped">
+        <table class="table table-striped align-middle">
           <thead>
           <tr>
-            <td style="width: 10px"><b>{% trans %}Place{% endtrans %}</b></td>
-            <td><b>{{ get_mode_as_word(capitalize=True) }}</b></td>
-            <td><b>{% trans %}Score{% endtrans %}</b></td>
+            <th style="width: 10px">{% trans %}Place{% endtrans %}</th>
+            <th class="text-start ps-3">{{ get_mode_as_word(capitalize=True) }}</th>
+            <th>{% trans %}Score{% endtrans %}</th>
           </tr>
           </thead>
 
@@ -43,7 +43,7 @@
             <template x-for="(standing, index) in standings.filter(i => activeBracket ? i.bracket_id==activeBracket : true)">
               <tr>
                 <th scope="row" class="text-center" x-text="index + 1"></th>
-                <td>
+                <td class="text-start">
                   <a :href="standing.account_url" x-text="standing.name"></a>
                   <template x-if="standing.bracket_name">
                     <span class="badge bg-secondary ms-2" x-text="standing.bracket_name"></span>
