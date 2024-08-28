@@ -116,11 +116,6 @@
       "assets/js/index.js"
     ]
   },
-  "assets/js/color_mode_switcher.js": {
-    "file": "assets/color_mode_switcher.52334129.js",
-    "src": "assets/js/color_mode_switcher.js",
-    "isEntry": true
-  },
   "_echarts.128204f2.js": {
     "file": "assets/echarts.128204f2.js"
   },
