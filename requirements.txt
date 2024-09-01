@@ -122,7 +122,9 @@ pycparser==2.20
 pydantic==1.6.2
     # via -r requirements.in
 pymysql[rsa]==1.0.2
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   pymysql
 pyrsistent==0.17.3
     # via jsonschema
 python-dateutil==2.8.1
