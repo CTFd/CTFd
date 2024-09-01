@@ -33,20 +33,22 @@ class _AssetsWrapper:
         imports = asset.get("imports", [])
 
         # Add in extra attributes. Note that type="module" imples defer
-        attrs = f'type="{type}" '
+        _attrs = ""
+        if type:
+            _attrs = f'type="{type}" '
         if defer:
-            attrs += "defer "
+            _attrs += "defer "
         if extra:
-            attrs += extra
+            _attrs += extra
 
         html = ""
         for i in imports:
             # TODO: Needs a better recursive solution
             i = self.manifest(theme=theme)[i]["file"]
             url = url_for("views.themes_beta", theme=theme, path=i)
-            html += f'<script {attrs} src="{url}"></script>'
+            html += f'<script {_attrs} src="{url}"></script>'
         url = url_for("views.themes_beta", theme=theme, path=entry)
-        html += f'<script {attrs} src="{url}"></script>'
+        html += f'<script {_attrs} src="{url}"></script>'
         return markup(html)
 
     def css(self, asset_key, theme=None):
