@@ -25,22 +25,28 @@ class _AssetsWrapper:
                 raise e
         return manifest
 
-    def js(self, asset_key, theme=None, defer=True):
+    def js(self, asset_key, theme=None, type="module", defer=False, extra=""):
         if theme is None:
             theme = ctf_theme()
         asset = self.manifest(theme=theme)[asset_key]
         entry = asset["file"]
         imports = asset.get("imports", [])
-        # module type implies defer
-        extra_attr = 'type="module" ' if defer else ""
+
+        # Add in extra attributes. Note that type="module" imples defer
+        attrs = f'type="{type}" '
+        if defer:
+            attrs += "defer "
+        if extra:
+            attrs += extra
+
         html = ""
         for i in imports:
             # TODO: Needs a better recursive solution
             i = self.manifest(theme=theme)[i]["file"]
             url = url_for("views.themes_beta", theme=theme, path=i)
-            html += f'<script {extra_attr}src="{url}"></script>'
+            html += f'<script {attrs} src="{url}"></script>'
         url = url_for("views.themes_beta", theme=theme, path=entry)
-        html += f'<script {extra_attr}src="{url}"></script>'
+        html += f'<script {attrs} src="{url}"></script>'
         return markup(html)
 
     def css(self, asset_key, theme=None):
