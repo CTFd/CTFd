@@ -17,7 +17,9 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . /opt/CTFd
 
-RUN pip install uv && uv pip install --no-cache-dir -r requirements.txt \
+# hadolint ignore=DL3013
+RUN pip install --no-cache-dir uv \
+    && uv pip install --no-cache-dir -r requirements.txt \
     && for d in CTFd/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \
             uv pip install --no-cache-dir -r "$d/requirements.txt";\
