@@ -191,6 +191,8 @@ Alpine.data("TeamGraphs", () => ({
     this.failCount = this.fails.meta.count;
     this.awardCount = this.awards.meta.count;
 
+    let optionMerge = window.teamScoreGraphChartOptions;
+
     embed(
       this.$refs.scoregraph,
       getUserScoreOption(
@@ -198,6 +200,7 @@ Alpine.data("TeamGraphs", () => ({
         CTFd.team.name,
         this.solves.data,
         this.awards.data,
+        optionMerge,
       ),
     );
   },
