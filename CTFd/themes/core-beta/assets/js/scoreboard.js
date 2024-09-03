@@ -16,7 +16,9 @@ Alpine.data("ScoreboardDetail", () => ({
   async update() {
     this.data = await CTFd.pages.scoreboard.getScoreboardDetail(10);
 
-    let option = getOption(CTFd.config.userMode, this.data);
+    let optionMerge = window.scoreboardChartOptions;
+    let option = getOption(CTFd.config.userMode, this.data, optionMerge);
+
     embed(this.$refs.scoregraph, option);
     this.show = Object.keys(this.data).length > 0;
   },
