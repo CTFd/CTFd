@@ -112,6 +112,7 @@ class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
+    attribution = db.Column(db.Text)
     connection_info = db.Column(db.Text)
     next_id = db.Column(db.Integer, db.ForeignKey("challenges.id", ondelete="SET NULL"))
     max_attempts = db.Column(db.Integer, default=0)
@@ -144,6 +145,13 @@ class Challenges(db.Model):
         "polymorphic_on": type,
         "_polymorphic_map": alt_defaultdict(),
     }
+
+    @property
+    def byline(self):
+        from CTFd.utils.config.pages import build_markdown
+        from CTFd.utils.helpers import markup
+
+        return markup(build_markdown(self.attribution))
 
     @property
     def html(self):
