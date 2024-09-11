@@ -1,4 +1,5 @@
 import datetime
+import requests
 from collections import namedtuple
 
 from sqlalchemy import func as sa_func
@@ -16,6 +17,27 @@ Challenge = namedtuple(
     "Challenge", ["id", "type", "name", "value", "category", "tags", "requirements"]
 )
 
+@cache.memoize(timeout=60)
+def check_health(challenge_id, healthcheck_url):
+    if healthcheck_url is None or len(healthcheck_url) == 0:
+        return True
+    
+    try:
+        res = requests.get(healthcheck_url, params={'challenge_id': challenge_id})
+        body = res.json()
+        resp = body['ok']
+        assert type(resp) is bool
+        return resp
+    except AssertionError: # Not a boolean
+        return False
+    except TypeError: # Not a dict
+        return False
+    except KeyError: # No 'ok' key
+        return False
+    except requests.exceptions.JSONDecodeError: # Not JSON
+        return False
+    except requests.exceptions.ConnectionError: # Can't connect
+        return False
 
 @cache.memoize(timeout=60)
 def get_all_challenges(admin=False, field=None, q=None, **query_args):

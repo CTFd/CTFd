@@ -55,6 +55,8 @@ class BaseChallenge(object):
             "description": challenge.description,
             "attribution": challenge.attribution,
             "connection_info": challenge.connection_info,
+            "healthcheck_info": challenge.healthcheck_info,
+            "healthy": challenge.healthy,
             "next_id": challenge.next_id,
             "category": challenge.category,
             "state": challenge.state,

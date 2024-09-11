@@ -114,6 +114,7 @@ class Challenges(db.Model):
     description = db.Column(db.Text)
     attribution = db.Column(db.Text)
     connection_info = db.Column(db.Text)
+    healthcheck_info = db.Column(db.Text)
     next_id = db.Column(db.Integer, db.ForeignKey("challenges.id", ondelete="SET NULL"))
     max_attempts = db.Column(db.Integer, default=0)
     value = db.Column(db.Integer)
@@ -159,6 +160,11 @@ class Challenges(db.Model):
         from CTFd.utils.helpers import markup
 
         return markup(build_markdown(self.description))
+
+    @property
+    def healthy(self):
+        from CTFd.utils.challenges import check_health
+        return check_health(self.id, self.healthcheck_info)
 
     @property
     def plugin_class(self):
