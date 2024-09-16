@@ -45,6 +45,10 @@
               </div>
             {% endif %}
 
+            <small class="challenge-attribution text-center text-muted">
+              {% block attribution %}{{ challenge.byline }}{% endblock %}
+            </small>
+
             <span class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</span>
 
             {% if challenge.connection_info %}
@@ -155,6 +159,7 @@
                         'alert-success': response.data.status == 'correct',
                         'alert-info': response.data.status == 'already_solved',
                         'alert-danger': response.data.status == 'incorrect',
+                        'alert-warning': response.data.status == 'paused',
                       }" role="alert"
                   >
                     <strong x-text="response.data.message"></strong>
