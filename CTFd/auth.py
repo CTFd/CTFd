@@ -391,8 +391,14 @@ def register():
             if (
                 not user.team_id
             ):  # we did not manage to find a team for the user, we add them to the last team, regardless of whether it is full
-                user.team_id = previous_team.id
-                db.session.commit()
+                if previous_team is None:
+                    # there are no teams, we need to create one
+                    team = Teams(name="Team 1", email=email_address, password=password, captain_id=user.id)
+                    db.session.add(team)
+                    db.session.commit()
+                else:
+                    user.team_id = previous_team.id
+                    db.session.commit()
 
             db.session.close()
             return redirect(url_for("challenges.listing"))

@@ -20,12 +20,8 @@ if os.getenv("CTFD_TOKEN") is None:
     exit(256)
 CTFD_TOKEN = os.getenv("CTFD_TOKEN")
 
-print(
-    "DatadogInviter is starting up. CTFD Token: "
-    + CTFD_TOKEN
-    + " at host: "
-    + CTFD_HOST
-)
+print(f"DatadogInviter is starting up. CTFD Token: {CTFD_TOKEN} at host: {CTFD_HOST}")
+
 print("Will sleep now for 120s to give CTFd the time to start up")
 time.sleep(20)
 
@@ -42,16 +38,16 @@ def check_start_time():
     global do_invite
 
     print("Checking start time")
-    url = CTFD_HOST + "/api/v1/configs/start"
+    url =  f"{CTFD_HOST}/api/v1/configs/start"
     headers = {
         "content-type": "application/json",
-        "Authorization": "Token " + CTFD_TOKEN,
+        "Authorization": f"Token {CTFD_TOKEN}",
     }
 
     r = requests.get(url, headers=headers)
     response = r.json()
     if response is None or response["data"] is None:
-        print("Unexpected response: " + response)
+        print(f"Unexpected response: {response}")
     if response["data"]["value"] == "":
         # there is no start time configured. We do not handle invitations in this case.
         print(
@@ -64,25 +60,13 @@ def check_start_time():
     current_time = time.time()
     delta = start_time - current_time
     if delta > INVITATION_TIME_MINUTES * 60:
-        print(
-            "CTF starts in more than "
-            + str(INVITATION_TIME_MINUTES)
-            + " minutes not inviting yet."
-        )
+        print(f"CTF starts in more than {INVITATION_TIME_MINUTES} minutes not inviting yet.")
     else:
         if delta < INVITATION_CUTOFF_MINUTES * -60:
-            print(
-                "CTF started more than "
-                + str(INVITATION_CUTOFF_MINUTES)
-                + " minutes ago. Stopping invitations."
-            )
+            print(f"CTF started more than {INVITATION_CUTOFF_MINUTES} minutes ago. Stopping invitations.")
             do_invite = False
         else:
-            print(
-                "CTF starts in less than "
-                + str(INVITATION_TIME_MINUTES)
-                + " minutes. Ready to invite."
-            )
+            print(f"CTF starts in less than {INVITATION_TIME_MINUTES} minutes. Ready to invite.")
             do_invite = True
 
     return do_invite
@@ -90,10 +74,10 @@ def check_start_time():
 
 def get_teams():
     print("Fetching list of teams")
-    url = CTFD_HOST + "/api/v1/teams"
+    url = f"{CTFD_HOST}/api/v1/teams"
     headers = {
         "content-type": "application/json",
-        "Authorization": "Token " + CTFD_TOKEN,
+        "Authorization": f"Token {CTFD_TOKEN}",
     }
 
     r = requests.get(url, headers=headers)
@@ -103,10 +87,10 @@ def get_teams():
 
 
 def get_team_details(team_id):
-    url = CTFD_HOST + "/api/v1/teams/" + str(team_id)
+    url = f"{CTFD_HOST}/api/v1/teams/{str(team_id)}"
     headers = {
         "content-type": "application/json",
-        "Authorization": "Token " + CTFD_TOKEN,
+        "Authorization": f"Token {CTFD_TOKEN}",
     }
 
     r = requests.get(url, headers=headers)
@@ -121,10 +105,10 @@ def get_team_details(team_id):
 
 
 def get_team_members(team_id):
-    url = CTFD_HOST + "/api/v1/teams/" + str(team_id) + "/members"
+    url = f"{CTFD_HOST}/api/v1/teams/{team_id}/members"
     headers = {
         "content-type": "application/json",
-        "Authorization": "Token " + CTFD_TOKEN,
+        "Authorization": f"Token {CTFD_TOKEN}",
     }
 
     r = requests.get(url, headers=headers)
@@ -134,10 +118,10 @@ def get_team_members(team_id):
 
 
 def get_user_details(user_id):
-    url = CTFD_HOST + "/api/v1/users/" + str(user_id)
+    url = f"{CTFD_HOST}/api/v1/users/{user_id}"
     headers = {
         "content-type": "application/json",
-        "Authorization": "Token " + CTFD_TOKEN,
+        "Authorization": f"Token {CTFD_TOKEN}",
     }
 
     r = requests.get(url, headers=headers)
@@ -165,7 +149,7 @@ def get_role_id(dd_api_key, dd_app_key, role_name):
 
 
 def invite_user(dd_api_key, dd_app_key, email, role_id):
-    print("inviting user: " + email)
+    print(f"inviting user: {email}")
 
     url = "https://api.datadoghq.com/api/v2/users"
     headers = {
@@ -193,7 +177,7 @@ def invite_user(dd_api_key, dd_app_key, email, role_id):
     )
 
     response = r.json()
-    print("user " + email + " created with code: " + str(r.status_code))
+    print(f"user {email} created with code: {r.status_code}")
     if r.status_code == 200 or r.status_code == 201:
         invitation_request = requests.post(
             "https://api.datadoghq.com/api/v2/user_invitations",
@@ -223,18 +207,16 @@ def invite_users():
 
     # now, for every team
     for team in teams:
-        print(
-            "Checking members for team: " + team["name"] + "(" + str(team["id"]) + ")"
-        )
+        print(f"Checking members for team: {team['name']} ({team['id']})")
         details = get_team_details(team["id"])
         members = get_team_members(team["id"])
         print(details)
         role_id = get_role_id(details["apikey"], details["appkey"], ROLE_NAME)
 
         if role_id is None:
-            print("ERROR: Could not identify role id for team " + details["name"])
+            print(f"ERROR: Could not identify role id for team {details['name']}")
         else:
-            print("Role for team " + details["name"] + " is " + role_id)
+            print(f"Role for team {details['name']} is {role_id}")
         for user_id in members:
             user = get_user_details(user_id)
             # ok, we have everything we need, invite the user
@@ -244,7 +226,7 @@ def invite_users():
                 ):
                     sent_invitations.append(user["email"])
             else:
-                print("User " + user["email"] + " has already been invited")
+                print(f"User {user['email']} has already been invited")
 
 
 ## main loop
