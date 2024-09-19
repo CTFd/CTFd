@@ -352,7 +352,9 @@ def register():
 
         if get_config("auto_teams_mode", False):
             # we need to assign the user to the team with the least number of players
-            teamlist = Teams.query.order_by("name") # we want to avoid custom joins so we take the clunky approach of fetching all teams
+            teamlist = Teams.query.order_by(
+                "name"
+            )  # we want to avoid custom joins so we take the clunky approach of fetching all teams
             team_size_limit = get_config("team_size", default=0)
             user = get_current_user()
             previous_team = None
@@ -369,20 +371,24 @@ def register():
                     format="[{date}] {ip} - team {name} has {members} members, limit is {limit}",
                     name=team.name,
                     members=len(team.members),
-                    limit=team_size_limit
+                    limit=team_size_limit,
                 )
 
                 previous_team = team
-                if team_size_limit and len(team.members) <= team_size_limit: # we assign the user to the first team that is below the max members threshold
+                if (
+                    team_size_limit and len(team.members) <= team_size_limit
+                ):  # we assign the user to the first team that is below the max members threshold
                     user.team_id = team.id
                     db.session.commit()
 
                     if len(team.members) == 1:
                         team.captain_id = user.id
                         db.session.commit()
-                    break # we're done
+                    break  # we're done
 
-            if not user.team_id: # we did not manage to find a team for the user, we add them to the last team, regardless of whether it is full
+            if (
+                not user.team_id
+            ):  # we did not manage to find a team for the user, we add them to the last team, regardless of whether it is full
                 user.team_id = previous_team.id
                 db.session.commit()
 
