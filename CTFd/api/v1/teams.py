@@ -109,13 +109,13 @@ class TeamList(Resource):
             teams = (
                 Teams.query.filter_by(**query_args)
                 .filter(*filters)
-                .paginate(per_page=50, max_per_page=100)
+                .paginate(per_page=50, max_per_page=100, error_out=False)
             )
         else:
             teams = (
                 Teams.query.filter_by(hidden=False, banned=False, **query_args)
                 .filter(*filters)
-                .paginate(per_page=50, max_per_page=100)
+                .paginate(per_page=50, max_per_page=100, error_out=False)
             )
 
         user_type = get_current_user_type(fallback="user")
@@ -415,19 +415,6 @@ class TeamPrivateMembers(Resource):
                 {
                     "success": False,
                     "errors": {"": ["Only team captains can generate invite codes"]},
-                },
-                403,
-            )
-
-        if team.password is None:
-            return (
-                {
-                    "success": False,
-                    "errors": {
-                        "": [
-                            "Please set a team password before generating an invite code"
-                        ]
-                    },
                 },
                 403,
             )

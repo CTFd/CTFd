@@ -1,3 +1,77 @@
+# 3.7.3 / 2024-07-24
+
+**Security**
+
+- Fix issue where challenge solves and account names could be seen despite accounts not being visible
+
+**Admin Panel**
+
+- Add a Localization section in the Config Panel
+- Add the Default Language config in the Admin Panel to allow admins to configure a default language
+  - Previously CTFd would default to an auto-detected language specified by the user's browser. This setting allows for that default to be set by the admin instead of auto-detected.
+
+**Translations**
+
+- Fix issue where Simplified Chinese would be used instead of Traditional Chinese
+- Update the language names for Simplified Chinese and Traditional Chinese for clarity
+- Update Vietnamese translation
+- Add Catalan translation
+
+# 3.7.2 / 2024-06-18
+
+**Security**
+
+- Patches an issue where on certain browsers flags could be leaked with admin interaction on a malicious page
+
+**API**
+
+- Disable returning 404s in listing pages with pagination
+  - Instead of returning 404 these pages will now return 200
+  - For API endpoints, the response will be a 200 with an empty listing instead of a 404
+
+**Deployment**
+
+- CTFd will now add the `Cross-Origin-Opener-Policy` response header to all responses with the default value of `same-origin-allow-popups`
+- Add `CROSS_ORIGIN_OPENER_POLICY` setting to control the `Cross-Origin-Opener-Policy` header
+
+# 3.7.1 / 2024-05-31
+
+**Admin Panel**
+
+- The styling of the Config Panel has been updated to better organize different settings
+- When switching user modes via the Admin Panel, all teams will now be removed
+- Fix issues where importing CSVs comprised of JSON entries would fail
+- Add `serializeJSON` function back into the Admin Panel
+
+**API**
+
+- The `/api/v1/exports/raw` API endpoint has been added to allow for exports to be generated via the API
+- Update the ScoreboardDetail endpoint (`/api/v1/scoreboard/top/<count>`) to return account URL, score, and bracket
+- Add a query parameter to ScoreboardDetail endpoint (`/api/v1/scoreboard/top/<count>`) to filter by bracket
+- Return `function` field for DynamicValue challenges data read
+
+**General**
+
+- Add Italian and Vietnamese languages
+- Switch to Crowdin for translations
+
+**Themes**
+
+- Add `defer` parameter to `Assets.js()` to allow controlling the defer attribute of inserted `<script>` tags
+
+**Plugins**
+
+- Plugins can now define a `config` entry in `config.json` to define a template to embed into the Config Panel
+- Add the `make_cache_key_with_query_string` to allow for caching based on query string arguments
+
+**Deployment**
+
+- MariaDB version provided in docker-compose.yml has been updated to `10.11`
+- Static assets (theme files, static files) will now return a Cache-Control header with a `max-age` of 3600
+- Add the `/debug` endpoint to show CTFd debugging information
+  - Currently showing the IP address that CTFd is seeing for the request and the request headers
+  - `/debug` will only be enabled if the `SAFE_MODE` config is enabled
+
 # 3.7.0 / 2024-02-26
 
 **General**

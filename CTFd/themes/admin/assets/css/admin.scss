@@ -1,5 +1,32 @@
 @import "includes/sticky-footer.css";
 
+.section-title {
+  border-top: 1px solid lightgray;
+  margin: 15px 0 5px 0;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 0 0 20px;
+  color: #636c76;
+}
+
+// Intended for the Bootstrap navbar icons
+.action-icon {
+  margin-right: 8px;
+  display: inline-block;
+  width: 1.25em;
+  text-align: center;
+}
+
+// Custom color picker on Theme page
+input[type="color"].custom-color-picker {
+  padding: 5px;
+  margin-right: 8px;
+  border: none;
+  height: 50px;
+  width: 50px;
+  vertical-align: middle;
+}
+
 #score-graph {
   min-height: 400px;
   display: block;

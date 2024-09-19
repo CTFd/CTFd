@@ -165,12 +165,15 @@ function uploadLogo(event) {
 
 function switchUserMode(event) {
   event.preventDefault();
-  if (
-    confirm(
-      "Are you sure you'd like to switch user modes?\n\nAll user submissions, awards, unlocks, and tracking will be deleted!",
-    )
-  ) {
-    let formData = new FormData();
+  let formData = new FormData(event.target);
+  let msg =
+    "Are you sure you'd like to switch user modes?\n\nAll submissions, awards, unlocks, and tracking will be deleted!";
+  if (formData.get("user_mode") == "users") {
+    msg =
+      "Are you sure you'd like to switch user modes?\n\nAll teams, submissions, awards, unlocks, and tracking will be deleted!";
+  }
+  if (confirm(msg)) {
+    // Use original form to include original input
     formData.append("submissions", true);
     formData.append("nonce", CTFd.config.csrfNonce);
     fetch(CTFd.config.urlRoot + "/admin/reset", {
@@ -529,6 +532,10 @@ $(() => {
       $("#mail_username_password").toggle(this.checked);
     })
     .change();
+
+  $("#config-sidebar .nav-link").click(function () {
+    window.scrollTo(0, 0);
+  });
 
   // Insert FieldList element for users
   const fieldList = Vue.extend(FieldList);

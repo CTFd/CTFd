@@ -37,7 +37,7 @@ def listing():
         Teams.query.filter_by(hidden=False, banned=False)
         .filter(*filters)
         .order_by(Teams.id.asc())
-        .paginate(per_page=50)
+        .paginate(per_page=50, error_out=False)
     )
 
     args = dict(request.args)

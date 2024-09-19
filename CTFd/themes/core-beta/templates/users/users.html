@@ -11,17 +11,17 @@
       <div class="col-md-12">
         {% if q and field %}
           <h5 class="text-muted text-center">
-            Searching for users with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>
+            {% trans %}Searching for users with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>{% endtrans %}
           </h5>
           <h6 class="text-muted text-center pb-3">
-            Page {{ users.page }} of {{ users.total }} results
+            {% trans page=users.page, total=users.total %}Page {{ page }} of {{ total }} results{% endtrans %}
           </h6>
         {% endif %}
 
         {% with form = Forms.users.PublicUserSearchForm(field=field, q=q) %}
           <form method="GET" class="row justify-content-around align-items-center">
             <div class="mb-3 col-md-2">
-              {{ form.field(class="form-control form-select w-100") }}
+              {{ form.field(class="form-select w-100") }}
             </div>
             <div class="mb-3 col-md-8">
               {{ form.q(class="form-control w-100", placeholder=form.q.description) }}
@@ -40,13 +40,13 @@
 
     <div class="row">
       <div class="col-md-12">
-        <table class="table table-striped">
+        <table class="table table-striped align-middle">
           <thead>
           <tr>
-            <td><b>{% trans %}User{% endtrans %}</b></td>
-            <td><b>{% trans %}Website{% endtrans %}</b></td>
-            <td class="d-none d-md-table-cell"><b>{% trans %}Affiliation{% endtrans %}</b></td>
-            <td class="d-none d-md-table-cell"><b>{% trans %}Country{% endtrans %}</b></td>
+            <th>{% trans %}User{% endtrans %}</th>
+            <th>{% trans %}Website{% endtrans %}</th>
+            <th class="d-none d-md-table-cell">{% trans %}Affiliation{% endtrans %}</th>
+            <th class="d-none d-md-table-cell">{% trans %}Country{% endtrans %}</th>
           </tr>
           </thead>
           <tbody>

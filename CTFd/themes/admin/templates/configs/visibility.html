@@ -1,0 +1,51 @@
+<div role="tabpanel" class="tab-pane config-section" id="visibility">
+	{% 
+		with form = Forms.config.VisibilitySettingsForm(
+			challenge_visibility=challenge_visibility, 
+			account_visibility=account_visibility, 
+			score_visibility=score_visibility, 
+			registration_visibility=registration_visibility
+		) 
+	%}
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			{{ form.challenge_visibility.label }}
+			{{ form.challenge_visibility(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.challenge_visibility.description }}
+			</small>
+		</div>
+
+		<div class="form-group">
+			{{ form.account_visibility.label }}
+			{{ form.account_visibility(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.account_visibility.description }}
+			</small>
+		</div>
+
+		<div class="form-group">
+			{{ form.score_visibility.label }}
+			{{ form.score_visibility(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.score_visibility.description }}
+			</small>
+			<small class="form-text text-muted py-2">
+				Score Visibility is a subset of Account Visibility. 
+				This means that if accounts are visible to a user then score visibility will control whether they can see the score of that user. 
+				If accounts are not visibile then score visibility has no effect.
+			</small>
+		</div>
+
+		<div class="form-group">
+			{{ form.registration_visibility.label }}
+			{{ form.registration_visibility(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.registration_visibility.description }}
+			</small>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+	{% endwith %}
+</div>

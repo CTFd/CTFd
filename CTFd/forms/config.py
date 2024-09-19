@@ -8,6 +8,7 @@ from CTFd.constants.config import (
     RegistrationVisibilityTypes,
     ScoreVisibilityTypes,
 )
+from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.utils.csv import get_dumpable_tables
@@ -36,8 +37,8 @@ class ResetInstanceForm(BaseForm):
 
 class AccountSettingsForm(BaseForm):
     domain_whitelist = StringField(
-        "Account Email Whitelist",
-        description="Comma-seperated email domains which users can register under (e.g. ctfd.io, example.com, *.example.com)",
+        "Email Domain Allowlist",
+        description="Comma-seperated list of allowable email domains which users can register under (e.g. examplectf.com, example.com, *.example.com)",
     )
     team_creation = SelectField(
         "Team Creation",
@@ -47,16 +48,17 @@ class AccountSettingsForm(BaseForm):
     )
     team_size = IntegerField(
         widget=NumberInput(min=0),
-        description="Amount of users per team (Teams mode only)",
+        description="Maximum number of users per team (Teams mode only)",
     )
     num_teams = IntegerField(
-        "Total Number of Teams",
+        "Maximum Number of Teams",
         widget=NumberInput(min=0),
-        description="Max number of teams (Teams mode only)",
+        description="Maximum number of teams allowed to register with this CTF (Teams mode only)",
     )
     num_users = IntegerField(
+        "Maximum Number of Users",
         widget=NumberInput(min=0),
-        description="Max number of users",
+        description="Maximum number of user accounts allowed to register with this CTF",
     )
     verify_emails = SelectField(
         "Verify Emails",
@@ -82,7 +84,7 @@ class AccountSettingsForm(BaseForm):
     incorrect_submissions_per_min = IntegerField(
         "Incorrect Submissions per Minute",
         widget=NumberInput(min=1),
-        description="Amount of submissions allowed per minute for flag bruteforce protection (default: 10)",
+        description="Number of submissions allowed per minute for flag bruteforce protection (default: 10)",
     )
 
     submit = SubmitField("Update")
@@ -173,4 +175,12 @@ class VisibilitySettingsForm(BaseForm):
             (RegistrationVisibilityTypes.MLC, "MajorLeagueCyber Only"),
         ],
         default=RegistrationVisibilityTypes.PUBLIC,
+    )
+
+
+class LocalizationForm(BaseForm):
+    default_locale = SelectField(
+        "Default Language",
+        description="Language to use if a user does not specify a language in their account settings. By default, CTFd will auto-detect the user's preferred language.",
+        choices=SELECT_LANGUAGE_LIST,
     )

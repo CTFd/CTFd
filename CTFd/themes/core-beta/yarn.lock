@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.17.8.tgz#2817fb9d885dd8132ea0f8eb615a6388cca1c240"
   integrity sha512-BoHhDJrJXqcg+ZL16Xv39H9n+AqJ4pcDrQBGZN+wHxIysrLZ3/ECwCBUch/1zUNhnsXULcONU3Ei5Hmkfk6kiQ==
 
-"@ctfdio/ctfd-js@^0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@ctfdio/ctfd-js/-/ctfd-js-0.0.12.tgz#91143bb24ee89bc03445b688d01569237fe272b5"
-  integrity sha512-HqRkTd8dFDbDjfkHktZkAGOL6A2wggW8gAhCocoyYcmCqERw2wc2wgvejxYMS3xScDKBpEYqTEEo0kfCfRBFTQ==
+"@ctfdio/ctfd-js@^0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@ctfdio/ctfd-js/-/ctfd-js-0.0.14.tgz#11ddf2a637c2bdb7e0c49d5ed6155c63a5226006"
+  integrity sha512-UXFowK/g+myJpFR2TR65J0dFdcgNjfWdscPyA0BrmKjTlsrlVpuF7YZQU5cTBDXqcWi4+SszoWtr/cxqfA045Q==
   dependencies:
     cash-dom "^8.1.1"
     dayjs "^1.10.5"
@@ -32,10 +32,10 @@
   resolved "https://registry.yarnpkg.com/@fontsource/raleway/-/raleway-4.5.5.tgz#0540aeb025190bdc9bf59669fcffbc95d3b7dc8b"
   integrity sha512-T2zIJ/6/2x+T9+tLtw/qSiJ68ahcceDMUOU3zrzEyNGYXUvlQyU4Cv9wyTmS+TU9IFHHChjMToV6izRL9mqDqg==
 
-"@fortawesome/fontawesome-free@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-6.0.0.tgz#6f3bd8e42997c7d536a1246877ed8bcd4f005a54"
-  integrity sha512-6LB4PYBST1Rx40klypw1SmSDArjFOcfBf2LeX9Zg5EKJT2eXiyiJq+CyBYKeXyK0sXS2FsCJWSPr/luyhuvh0Q==
+"@fortawesome/fontawesome-free@6.5.1":
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-6.5.1.tgz#55cc8410abf1003b726324661ce5b0d1c10de258"
+  integrity sha512-CNy5vSwN3fsUStPRLX7fUYojyuzoEMSXPl7zSLJ8TgtRfjv24LOnOWKT2zYwaHZCJGkdyRnTmstR0P+Ah503Gw==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -230,10 +230,10 @@ bootstrap-multimodal@~1.0.4:
   resolved "https://registry.yarnpkg.com/bootstrap-multimodal/-/bootstrap-multimodal-1.0.4.tgz#d3eedc5f5e62551e2b2e130ab9e092318ddaa2c4"
   integrity sha1-0+7cX15iVR4rLhMKueCSMY3aosQ=
 
-bootstrap@^5.1.3:
-  version "5.1.3"
-  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-5.1.3.tgz#ba081b0c130f810fa70900acbc1c6d3c28fa8f34"
-  integrity sha512-fcQztozJ8jToQWXxVuEyXWW+dSo8AiXWKwiSSrKWsRB/Qt+Ewwza+JWoLKiTuQLaEPhdNAJ7+Dosc9DOIqNy7Q==
+bootstrap@^5.3.3:
+  version "5.3.3"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-5.3.3.tgz#de35e1a765c897ac940021900fcbb831602bac38"
+  integrity sha512-8HLCdWgyoMguSO9o+aH+iuZ+aht+mzW0u3HIMzVu7Srrpv7EBBxTnrFlSCskwdY1+EOFQSm7uMJhNQHkdPcmjg==
 
 brace-expansion@^1.1.7:
   version "1.1.11"

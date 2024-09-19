@@ -1,5 +1,17 @@
+from datetime import datetime as DateTime
+from datetime import timezone as TimeZone
+
+import pytest
+
 from CTFd.models import Solves
-from CTFd.utils.dates import ctf_ended, ctf_started
+from CTFd.utils.dates import (
+    ctf_ended,
+    ctf_started,
+    isoformat,
+    unix_time,
+    unix_time_millis,
+    unix_time_to_utc,
+)
 from CTFd.utils.modes import TEAMS_MODE
 from tests.helpers import (
     create_ctfd,
@@ -173,3 +185,55 @@ def test_ctf_ended():
             with ctftime.ended():
                 assert ctf_ended() is True
     destroy_ctfd(app)
+
+
+def test_unix_time():
+    """
+    Tests that the unix_time function returns the correct value and fails gracefully for strange inputs
+    """
+    assert unix_time(DateTime(2017, 1, 1)) == 1483228800
+    assert type(unix_time(DateTime(2017, 1, 1))) == int
+    assert unix_time(None) is None
+    assert unix_time("test") is None
+    assert unix_time(1) is None
+
+
+def test_unix_time_millis():
+    """
+    Tests that the unix_time function returns the correct value and fails gracefully for strange inputs
+    """
+    # Aware datetime object
+    assert unix_time_millis(DateTime(2017, 1, 1)) == 1483228800000
+    assert type(unix_time_millis(DateTime(2017, 1, 1))) == int
+    assert unix_time_millis(None) is None
+    assert unix_time_millis("test") is None
+    assert unix_time_millis(1) is None
+
+
+def test_unix_time_to_utc():
+    """
+    Tests that the unix_time function returns the correct value and fails gracefully for strange inputs
+    """
+    assert unix_time_to_utc(0) == DateTime(1970, 1, 1)
+    assert unix_time_to_utc(1483228800) == DateTime(2017, 1, 1)
+    assert type(unix_time_to_utc(1483228800)) == DateTime
+    assert unix_time_to_utc(None) is None
+    with pytest.raises(TypeError):
+        unix_time_to_utc("test")
+    with pytest.raises(TypeError):
+        unix_time_to_utc(DateTime(2017, 1, 1))
+
+
+def test_isoformat():
+    """
+    Tests that the unix_time function returns the correct value and fails gracefully for strange inputs
+    """
+    assert (
+        isoformat(DateTime(2017, 1, 1, tzinfo=TimeZone.utc))
+        == "2017-01-01T00:00:00+00:00Z"
+    )
+    assert isoformat(DateTime(2017, 1, 1)) == "2017-01-01T00:00:00Z"
+    assert isoformat(DateTime(2017, 1, 1, tzinfo=None)) == "2017-01-01T00:00:00Z"
+    assert isoformat(None) is None
+    assert isoformat("test") is None
+    assert isoformat(1) is None

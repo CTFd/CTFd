@@ -28,6 +28,8 @@ from CTFd.admin import teams  # noqa: F401,I001
 from CTFd.admin import users  # noqa: F401,I001
 from CTFd.cache import (
     cache,
+    clear_all_team_sessions,
+    clear_all_user_sessions,
     clear_challenges,
     clear_config,
     clear_pages,
@@ -240,6 +242,13 @@ def reset():
             Awards.query.delete()
             Unlocks.query.delete()
             Tracking.query.delete()
+
+        if data.get("user_mode") == "users":
+            db.session.query(Users).update({Users.team_id: None})
+            Teams.query.delete()
+
+            clear_all_user_sessions()
+            clear_all_team_sessions()
 
         if require_setup:
             set_config("setup", False)

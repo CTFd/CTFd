@@ -32,7 +32,7 @@ from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.user import get_locale
 
-__version__ = "3.7.0"
+__version__ = "3.7.3"
 __channel__ = "oss"
 
 

@@ -112,6 +112,7 @@ class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
+    attribution = db.Column(db.Text)
     connection_info = db.Column(db.Text)
     next_id = db.Column(db.Integer, db.ForeignKey("challenges.id", ondelete="SET NULL"))
     max_attempts = db.Column(db.Integer, default=0)
@@ -144,6 +145,13 @@ class Challenges(db.Model):
         "polymorphic_on": type,
         "_polymorphic_map": alt_defaultdict(),
     }
+
+    @property
+    def byline(self):
+        from CTFd.utils.config.pages import build_markdown
+        from CTFd.utils.helpers import markup
+
+        return markup(build_markdown(self.attribution))
 
     @property
     def html(self):
@@ -679,8 +687,10 @@ class Teams(db.Model):
         if isinstance(secret_key, str):
             secret_key = secret_key.encode("utf-8")
 
-        team_password_key = self.password.encode("utf-8")
-        verification_secret = secret_key + team_password_key
+        verification_secret = secret_key
+        if self.password:
+            team_password_key = self.password.encode("utf-8")
+            verification_secret += team_password_key
 
         invite_object = {
             "id": self.id,
@@ -719,8 +729,10 @@ class Teams(db.Model):
         team = cls.query.filter_by(id=team_id).first_or_404()
 
         # Create the team specific secret
-        team_password_key = team.password.encode("utf-8")
-        verification_secret = secret_key + team_password_key
+        verification_secret = secret_key
+        if team.password:
+            team_password_key = team.password.encode("utf-8")
+            verification_secret += team_password_key
 
         # Verify the team verficiation code
         verified = hmac(str(team.id), secret=verification_secret) == invite_object["v"]
