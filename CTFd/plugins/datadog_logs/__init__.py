@@ -86,21 +86,10 @@ def load(app: Flask):
 
             if result.json["data"]["status"] == "incorrect":
                 message = (
-                    "source=ctfd, event="
-                    + ctfd_config.ctf_name()
-                    + ",type=challenge,status=incorrect,challenge='"
-                    + challenge.name
-                    + "',category="
-                    + challenge.category
-                    + ",team="
-                    + team.name
-                    + ",user="
-                    + user.name
-                    + ",points=0,msg='Team "
-                    + team.name
-                    + " provided an incorrect answer for challenge "
-                    + challenge.name
-                    + "'"
+                    f"source=ctfd, event={ctfd_config.ctf_name()},type=challenge,status=incorrect,"
+                    f"challenge='{challenge.name}',category={challenge.category},team={team.name},"
+                    f"user={user.name},points=0,msg='Team {team.name} provided an incorrect answer "
+                    f"for challenge {challenge.name}'"
                 )
                 log("submissions", message)
 

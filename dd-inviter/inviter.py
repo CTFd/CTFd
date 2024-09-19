@@ -1,5 +1,7 @@
-import time, os
-import requests, json
+import os
+import time
+
+import requests
 
 SLEEP_INTERVAL = 60  # how long does our script sleep in between iterations. For production use, it should be like 60 seconds or so
 INVITATION_TIME_MINUTES = 5  # how many minutes (!) before the event starts should we start inviting the users?

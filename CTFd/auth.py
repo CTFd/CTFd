@@ -203,7 +203,7 @@ def register():
         email_address = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "").strip()
         auto_register_team = request.form.get("auto_register_team", default=False)
- 
+
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
         country = request.form.get("country")
