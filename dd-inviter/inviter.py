@@ -38,7 +38,7 @@ def check_start_time():
     global do_invite
 
     print("Checking start time")
-    url =  f"{CTFD_HOST}/api/v1/configs/start"
+    url = f"{CTFD_HOST}/api/v1/configs/start"
     headers = {
         "content-type": "application/json",
         "Authorization": f"Token {CTFD_TOKEN}",
@@ -60,13 +60,19 @@ def check_start_time():
     current_time = time.time()
     delta = start_time - current_time
     if delta > INVITATION_TIME_MINUTES * 60:
-        print(f"CTF starts in more than {INVITATION_TIME_MINUTES} minutes not inviting yet.")
+        print(
+            f"CTF starts in more than {INVITATION_TIME_MINUTES} minutes not inviting yet."
+        )
     else:
         if delta < INVITATION_CUTOFF_MINUTES * -60:
-            print(f"CTF started more than {INVITATION_CUTOFF_MINUTES} minutes ago. Stopping invitations.")
+            print(
+                f"CTF started more than {INVITATION_CUTOFF_MINUTES} minutes ago. Stopping invitations."
+            )
             do_invite = False
         else:
-            print(f"CTF starts in less than {INVITATION_TIME_MINUTES} minutes. Ready to invite.")
+            print(
+                f"CTF starts in less than {INVITATION_TIME_MINUTES} minutes. Ready to invite."
+            )
             do_invite = True
 
     return do_invite

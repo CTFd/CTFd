@@ -393,7 +393,12 @@ def register():
             ):  # we did not manage to find a team for the user, we add them to the last team, regardless of whether it is full
                 if previous_team is None:
                     # there are no teams, we need to create one
-                    team = Teams(name="Team 1", email=email_address, password=password, captain_id=user.id)
+                    team = Teams(
+                        name="Team 1",
+                        email=email_address,
+                        password=password,
+                        captain_id=user.id,
+                    )
                     db.session.add(team)
                     db.session.commit()
                 else:
