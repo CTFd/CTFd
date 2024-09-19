@@ -3,13 +3,14 @@ import os
 from functools import wraps
 from urllib.parse import urlparse
 
-from CTFd.models import Challenges, Solves, Hints, Unlocks
+import requests
+from flask import Flask, request
+
+from CTFd.models import Challenges, Hints, Solves, Unlocks
 from CTFd.utils import config as ctfd_config
 from CTFd.utils.dates import ctftime
-from CTFd.utils.user import get_current_team, get_current_user
-from flask import Flask, render_template, request
-import requests
 from CTFd.utils.logging import log
+from CTFd.utils.user import get_current_team, get_current_user
 
 
 def load(app: Flask):
@@ -168,5 +169,6 @@ def log_to_dd(data: dict, apikey: str) -> None:
         }
 
         r = requests.post(url, headers=headers, json=data)
-    except:
+        print("response from datadog: " + str(r.status_code))
+    except Exception:
         print("Failed to post payload")
