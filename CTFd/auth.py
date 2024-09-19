@@ -202,7 +202,8 @@ def register():
         name = request.form.get("name", "").strip()
         email_address = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "").strip()
-        auto_register_team = get_config("auto_register_team", default=False)
+        auto_register_team = request.form.get("auto_register_team", default=False)
+
 
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
@@ -346,9 +347,10 @@ def register():
 
         log(
             "registrations",
-            format="[{date}] {ip} - {name} registered with {email}",
+            format="[{date}] {ip} - {name} registered with {email} - auto_register_team {}",
             name=user.name,
             email=user.email,
+            auto_register_team=auto_register_team,
         )
 
         if get_config("auto_teams_mode", auto_register_team):
