@@ -346,7 +346,7 @@ def register():
 
         log(
             "registrations",
-            format="[{date}] {ip} - {name} registered with {email} - auto_register_team {}",
+            format="[{date}] {ip} - {name} registered with {email} - auto_register_team {auto_register_team}",
             name=user.name,
             email=user.email,
             auto_register_team=auto_register_team,

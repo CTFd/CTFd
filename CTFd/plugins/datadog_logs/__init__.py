@@ -40,27 +40,12 @@ def load(app: Flask):
             challenge = get_challenge_by_id(hint.challenge_id)
 
             message = (
-                "source=ctfd, event="
-                + ctfd_config.ctf_name()
-                + ",type=hint,success="
-                + str(result.json["success"])
-                + ",challenge="
-                + challenge.name
-                + ",category='"
-                + challenge.category
-                + "',team="
-                + team.name
-                + ",user="
-                + user.name
-                + ",points="
-                + str(hint.cost * -1)
-                + ",msg=Player "
-                + user.name
-                + " just traded "
-                + str(hint.cost)
-                + " points for a hint on challenge "
-                + challenge.name
+                f"source=ctfd, event={ctfd_config.ctf_name()},type=hint,success={result.json['success']},"
+                f"challenge={challenge.name},category='{challenge.category}',team={team.name},"
+                f"user={user.name},points={hint.cost * -1},"
+                f"msg=Player {user.name} just traded {hint.cost} points for a hint on challenge {challenge.name}"
             )
+
             log("submissions", message)
 
             return result
@@ -99,25 +84,10 @@ def load(app: Flask):
                 num_solves = get_solvers_count_for_challenge(challenge)
 
                 message = (
-                    "source=ctfd, event="
-                    + ctfd_config.ctf_name()
-                    + ",type=challenge,status=correct,challenge='"
-                    + challenge.name
-                    + "',category="
-                    + challenge.category
-                    + ",team="
-                    + team.name
-                    + ",user="
-                    + user.name
-                    + ",points="
-                    + str(challenge.value)
-                    + ",msg='Team "
-                    + team.name
-                    + " is the "
-                    + str(num_solves)
-                    + " to solve challenge "
-                    + challenge.name
-                    + "'"
+                    f"source=ctfd, event={ctfd_config.ctf_name()},type=challenge,status=correct,"
+                    f"challenge='{challenge.name}',category={challenge.category},team={team.name},"
+                    f"user={user.name},points={challenge.value},"
+                    f"msg='Team {team.name} is the {num_solves} to solve challenge {challenge.name}'"
                 )
                 log("submissions", message)
 
@@ -219,6 +189,6 @@ def log_to_dd(data: dict, apikey: str) -> None:
         }
 
         r = requests.post(url, headers=headers, json=data)
-        print("response from datadog: " + str(r.status_code))
+        print(f"response from datadog: {str(r.status_code)}")
     except Exception:
         print("Failed to post payload")
