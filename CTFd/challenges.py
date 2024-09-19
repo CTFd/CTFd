@@ -46,5 +46,5 @@ def listing():
         infos.append(f"{Configs.ctf_name} has ended")
 
     team = get_current_team()
-    
+
     return render_template("challenges.html", infos=infos, errors=errors, team=team)

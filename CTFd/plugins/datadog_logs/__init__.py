@@ -23,13 +23,13 @@ def load(app: Flask):
 
             if not ctftime() or not is_plugin_configured(app):
                 return result
-            
-            if result.json['success'] == False: 
+
+            if result.json['success'] == False:
                 return result
-            
+
             # too little points:
             # pts-ctfd-ctfd-1   | {'success': False, 'errors': {'score': 'You do not have enough points to unlock this hint'}}
-            
+
             # successful unlock
             # {'success': True, 'data': {'team_id': 3, 'target': 1, 'type': 'hints', 'date': '2024-01-09T16:36:10.899814+00:00', 'user_id': 1, 'id': 3}}
 
@@ -37,12 +37,12 @@ def load(app: Flask):
             team = get_current_team()
             hint = get_hint_by_id(result.json['data']['target'])
             challenge = get_challenge_by_id(hint.challenge_id)
-            
+
             message = "source=ctfd, event=" + ctfd_config.ctf_name() + ",type=hint,success="+str(result.json['success'])+",challenge="+challenge.name+",category='"+challenge.category+"',team="+team.name+",user="+user.name+",points="+str(hint.cost*-1)+",msg=Player " + user.name + " just traded " + str(hint.cost) + " points for a hint on challenge " + challenge.name
             log("submissions", message)
 
             return result
-        
+
         return wrapper
 
     def challenge_attempt_decorator(f):
@@ -59,10 +59,10 @@ def load(app: Flask):
 
             #print(result.json)
 
-            if result is None or result.json is None or result.json['data'] is None: 
+            if result is None or result.json is None or result.json['data'] is None:
                 return result # nothing we can do
-            
-            if result.json['data']['status'] == "incorrect": 
+
+            if result.json['data']['status'] == "incorrect":
                 message = "source=ctfd, event=" + ctfd_config.ctf_name() + ",type=challenge,status=incorrect,challenge='"+challenge.name+"',category="+challenge.category+",team="+team.name+",user="+user.name+",points=0,msg='Team " + team.name + " provided an incorrect answer for challenge " + challenge.name + "'"
                 log("submissions", message)
 
@@ -87,11 +87,11 @@ def load(app: Flask):
     ] = hint_trade_decorator(
         app.view_functions["api.unlocks_unlock_list"]
     )
-    
+
 
 def set_default_plugin_config(app: Flask):
     app.config["DD_API_KEY"] = os.environ.get("DD_API_KEY", "")
-    
+
 
 def is_plugin_configured(app: Flask) -> bool:
     return True
@@ -112,17 +112,17 @@ def check_submission_for_valid_flag(data: json) -> bool:
         and data.get("data").get("status") == "correct"
     )
 
-def get_challenge_by_id(challenge_id: int) -> Challenges: 
+def get_challenge_by_id(challenge_id: int) -> Challenges:
     challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
 
     return challenge
 
-def get_hint_by_id(hint_id: int) -> Hints: 
+def get_hint_by_id(hint_id: int) -> Hints:
     hint = Hints.query.filter_by(id=hint_id).first_or_404()
 
     return hint
 
-def get_unlock_by_id(unlock_id: int) -> Unlocks: 
+def get_unlock_by_id(unlock_id: int) -> Unlocks:
     unlock = Unlocks.query.filter_by(id=unlock_id).first_or_404()
 
     return unlock
@@ -163,10 +163,10 @@ def log_to_dd(data: dict, apikey: str) -> None:
     try:
         url = 'https://api.datadoghq.com/api/v2/logs'
         headers = {
-            'content-type': 'application/json', 
+            'content-type': 'application/json',
             'DD-API-KEY': apikey,
         }
 
         r = requests.post(url, headers=headers, json=data)
-    except: 
+    except:
         print("Failed to post payload")
