@@ -18,7 +18,6 @@ depends_on = None
 
 
 def upgrade():
-    # Check if the brackets table exists
     conn = op.get_bind()
     inspector = sa.inspect(conn)
 
