@@ -202,6 +202,7 @@ def register():
         name = request.form.get("name", "").strip()
         email_address = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "").strip()
+        auto_register_team = get_config("auto_register_team", default=False)
 
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
@@ -350,7 +351,7 @@ def register():
             email=user.email,
         )
 
-        if get_config("auto_teams_mode", False):
+        if get_config("auto_teams_mode", auto_register_team):
             # we need to assign the user to the team with the least number of players
             teamlist = Teams.query.order_by(
                 "name"
