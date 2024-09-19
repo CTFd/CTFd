@@ -195,7 +195,7 @@ def register_user(
     name="user",
     email="user@examplectf.com",
     password="password",
-    auto_register_team=True,
+    auto_register_team=False,
     raise_for_error=True,
 ):
     with app.app_context():
