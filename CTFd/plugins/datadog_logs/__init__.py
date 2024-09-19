@@ -141,7 +141,6 @@ def load(app: Flask):
     ] = challenge_attempt_decorator(
         app.view_functions["api.challenges_challenge_attempt"]
     )
-    
     #  /api/v1/unlocks
     app.view_functions["api.unlocks_unlock_list"] = hint_trade_decorator(
         app.view_functions["api.unlocks_unlock_list"]
