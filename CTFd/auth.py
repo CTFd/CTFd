@@ -202,6 +202,7 @@ def register():
         name = request.form.get("name", "").strip()
         email_address = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "").strip()
+        auto_register_team = request.form.get("auto_register_team", default=False)
 
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
@@ -345,15 +346,18 @@ def register():
 
         log(
             "registrations",
-            format="[{date}] {ip} - {name} registered with {email}",
+            format="[{date}] {ip} - {name} registered with {email} - auto_register_team {auto_register_team}",
             name=user.name,
             email=user.email,
+            auto_register_team=auto_register_team,
         )
 
-        if get_config("auto_teams_mode", False):
+        if get_config("auto_teams_mode", auto_register_team):
             # we need to assign the user to the team with the least number of players
-            teamlist = Teams.query.order_by("name") # we want to avoid custom joins so we take the clunky approach of fetching all teams
-            team_size_limit = get_config("team_size", default=0) 
+            teamlist = Teams.query.order_by(
+                "name"
+            )  # we want to avoid custom joins so we take the clunky approach of fetching all teams
+            team_size_limit = get_config("team_size", default=0)
             user = get_current_user()
             previous_team = None
             log(
@@ -369,22 +373,37 @@ def register():
                     format="[{date}] {ip} - team {name} has {members} members, limit is {limit}",
                     name=team.name,
                     members=len(team.members),
-                    limit=team_size_limit
+                    limit=team_size_limit,
                 )
 
                 previous_team = team
-                if team_size_limit and len(team.members) <= team_size_limit: # we assign the user to the first team that is below the max members threshold
+                if (
+                    team_size_limit and len(team.members) <= team_size_limit
+                ):  # we assign the user to the first team that is below the max members threshold
                     user.team_id = team.id
                     db.session.commit()
-    
+
                     if len(team.members) == 1:
                         team.captain_id = user.id
-                        db.session.commit()    
-                    break # we're done
-                
-            if not user.team_id: # we did not manage to find a team for the user, we add them to the last team, regardless of whether it is full
-                user.team_id = previous_team.id
-                db.session.commit()
+                        db.session.commit()
+                    break  # we're done
+
+            if (
+                not user.team_id
+            ):  # we did not manage to find a team for the user, we add them to the last team, regardless of whether it is full
+                if previous_team is None:
+                    # there are no teams, we need to create one
+                    team = Teams(
+                        name="Team 1",
+                        email=email_address,
+                        password=password,
+                        captain_id=user.id,
+                    )
+                    db.session.add(team)
+                    db.session.commit()
+                else:
+                    user.team_id = previous_team.id
+                    db.session.commit()
 
             db.session.close()
             return redirect(url_for("challenges.listing"))

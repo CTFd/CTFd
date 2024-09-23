@@ -1,25 +1,26 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import argparse
 import datetime
 import hashlib
 import random
-import argparse
+
+from faker import Faker
 
 from CTFd import create_app
-from CTFd.cache import clear_challenges, clear_config, clear_standings, clear_pages
+from CTFd.cache import clear_challenges, clear_config, clear_pages, clear_standings
 from CTFd.models import (
-    Users,
-    Teams,
-    Challenges,
-    Flags,
     Awards,
     ChallengeFiles,
+    Challenges,
     Fails,
+    Flags,
     Solves,
+    Teams,
     Tracking,
+    Users,
 )
-from faker import Faker
 
 fake = Faker()
 

@@ -73,6 +73,7 @@ services:
     networks: 
       default: 
       internal:
+    command: ["python", "-u", "/app/inviter.py"]
 
 networks:
     default:

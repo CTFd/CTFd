@@ -23,8 +23,8 @@ from CTFd import create_app
 app = create_app()
 
 if args.profile:
-    from flask_debugtoolbar import DebugToolbarExtension
     import flask_profiler
+    from flask_debugtoolbar import DebugToolbarExtension
 
     app.config["flask_profiler"] = {
         "enabled": app.config["DEBUG"],

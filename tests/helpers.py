@@ -195,6 +195,7 @@ def register_user(
     name="user",
     email="user@examplectf.com",
     password="password",
+    auto_register_team=False,
     raise_for_error=True,
 ):
     with app.app_context():
@@ -205,6 +206,7 @@ def register_user(
                     "name": name,
                     "email": email,
                     "password": password,
+                    "auto_register_team": auto_register_team,
                     "nonce": sess.get("nonce"),
                 }
             client.post("/register", data=data)

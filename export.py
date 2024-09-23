@@ -1,11 +1,10 @@
+import datetime
+import shutil
+import sys
+
 from CTFd import create_app
 from CTFd.utils import config
 from CTFd.utils.exports import export_ctf
-
-import datetime
-import sys
-import shutil
-
 
 app = create_app()
 with app.app_context():
