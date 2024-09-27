@@ -44,7 +44,7 @@ services:
       - MARIADB_DATABASE=ctfd
       - MARIADB_AUTO_UPGRADE=1
     volumes:
-      - .data/mysql:/var/lib/mysql
+      - db-data:/var/lib/mysql
     networks:
         internal:
     # This command is required to set important mariadb defaults
@@ -57,6 +57,9 @@ services:
     - .data/redis:/data
     networks:
         internal:
+
+volumes:
+  db-data:
 
 networks:
     default:
