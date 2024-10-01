@@ -72,6 +72,9 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
     def __init__(self, app, **options):
         if "loader" not in options:
             options["loader"] = app.create_global_jinja_loader()
+        if "finalize" not in options:
+            # Suppress None into empty strings
+            options["finalize"] = lambda x: x if x is not None else ""
         SandboxedEnvironment.__init__(self, **options)
         self.app = app
 
