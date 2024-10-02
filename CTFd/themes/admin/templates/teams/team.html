@@ -278,6 +278,9 @@
 							{% if team.captain_id == member.id %}
 								<span class="badge badge-primary">Captain</span>
 							{% endif %}
+							{% if member.bracket_id %}
+								<span class="badge badge-secondary">{{ member.bracket.name }}</span>
+							{% endif %}
 						</td>
 						<td class="text-left" data-href="{{ url_for('admin.users_detail', user_id=member.id) }}">
 							<a href="{{ url_for('admin.users_detail', user_id=member.id) }}">
