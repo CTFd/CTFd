@@ -38,6 +38,16 @@
         {% endif %}
       </div>
 
+      {% if user.bracket_id %}
+        <div class="pt-2">
+          <h2>
+            <span class="badge text-bg-light">
+              {{ user.bracket.name }}
+            </span>
+          </h2>
+        </div>
+      {% endif %}
+
       <div class="pt-2">
         {% for field in user.fields %}
           <h3 class="d-block">

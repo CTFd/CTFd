@@ -63,6 +63,10 @@
                   <span>{{ team.name | truncate(50) }}</span>
                 {% endif %}
 
+                {% if team.bracket_id %}
+                  <span class="badge bg-secondary ms-2">{{ team.bracket.name }}</span>
+                {% endif %}
+
                 {% if team.oauth_id %}
                   <a href="https://majorleaguecyber.org/t/{{ team.name }}">
                     <span class="badge bg-primary ms-2">Official</span>
