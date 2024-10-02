@@ -375,7 +375,7 @@ class Users(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
 
     # Relationship for Brackets
-    bracket = db.relationship("Brackets", foreign_keys=[bracket_id])
+    bracket = db.relationship("Brackets", foreign_keys=[bracket_id], lazy="joined")
 
     field_entries = db.relationship(
         "UserFieldEntries",
@@ -602,7 +602,7 @@ class Teams(db.Model):
     captain = db.relationship("Users", foreign_keys=[captain_id])
 
     # Relationship for Brackets
-    bracket = db.relationship("Brackets", foreign_keys=[bracket_id])
+    bracket = db.relationship("Brackets", foreign_keys=[bracket_id], lazy="joined")
 
     field_entries = db.relationship(
         "TeamFieldEntries",
