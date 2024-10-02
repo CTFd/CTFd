@@ -234,6 +234,16 @@
         </h3>
       {% endif %}
 
+      {% if team.bracket_id %}
+        <div class="pt-2">
+          <h2>
+            <span class="badge text-bg-light">
+              {{ team.bracket.name }}
+            </span>
+          </h2>
+        </div>
+      {% endif %}
+
       {% for field in team.fields %}
         <h3 class="d-block">
           {{ field.name }}: {{ field.value }}
@@ -328,6 +338,9 @@
                 <a href="{{ url_for('users.public', user_id=member.id) }}">
                   {{ member.name }}
                 </a>
+                {% if member.bracket_id %}
+                  <span class="badge bg-secondary ms-2">{{ member.bracket.name }}</span>
+                {% endif %}
                 {% if team.captain_id == member.id %}
                   <span class="badge bg-primary ms-2">{% trans %}Captain{% endtrans %}</span>
                 {% endif %}
