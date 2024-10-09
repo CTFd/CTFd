@@ -1,19 +1,25 @@
+import json
 import logging
 import logging.handlers
 import time
 
-from flask import session
+from flask import has_request_context, session
 
 from CTFd.utils.user import get_ip
 
 
-def log(logger, format, **kwargs):
-    logger = logging.getLogger(logger)
+def log(logger, format=None, **kwargs):
     props = {
-        "id": session.get("id"),
+        "logger": logger,
         "date": time.strftime("%m/%d/%Y %X"),
-        "ip": get_ip(),
     }
+    if has_request_context():
+        props["id"] = session.get("id")
+        props["ip"] = get_ip()
     props.update(kwargs)
-    msg = format.format(**props)
+    if format:
+        msg = format.format(**props)
+    else:
+        msg = json.dumps(props)
+    logger = logging.getLogger(logger)
     logger.info(msg)
