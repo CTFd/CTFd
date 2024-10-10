@@ -167,16 +167,14 @@ class UserSchema(ma.ModelSchema):
         if is_admin():
             pass
         else:
+            # If the user has no password set, allow them to set their password
+            if target_user.password is None:
+                return
+
             if password and (bool(confirm) is False):
                 raise ValidationError(
                     "Please confirm your current password", field_names=["confirm"]
                 )
-
-            if target_user.password is None:
-                # Prevent password from being set but allow other data through
-                data.pop("password", None)
-                data.pop("confirm", None)
-                return
 
             if password and confirm:
                 test = verify_password(
