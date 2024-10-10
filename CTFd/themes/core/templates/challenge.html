@@ -36,6 +36,10 @@
 							{% endblock %}
 						</div>
 
+						<small class="challenge-attribution text-center text-muted">
+							{% block attribution %}{{ challenge.byline }}{% endblock %}
+						  </small>
+
 						<span class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</span>
 
 						<span class="challenge-connection-info">
