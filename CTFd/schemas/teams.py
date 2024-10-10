@@ -144,6 +144,9 @@ class TeamSchema(ma.ModelSchema):
                     field_names=["captain_id"],
                 )
 
+            if current_team.password is None:
+                return
+
             if password and (bool(confirm) is False):
                 raise ValidationError(
                     "Please confirm your current password", field_names=["confirm"]
