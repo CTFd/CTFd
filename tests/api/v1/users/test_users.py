@@ -63,6 +63,7 @@ def test_api_user_can_update_password_if_none_not_if_set():
         register_user(app, name="testuser", email="user@examplectf.com")
         db.session.execute("UPDATE users SET password=NULL WHERE name='testuser'")
         user = Users.query.filter_by(name="testuser").first()
+        db.session.commit()
         assert user.password is None
 
         with app.test_client() as client:
@@ -72,6 +73,9 @@ def test_api_user_can_update_password_if_none_not_if_set():
             r = client.get("/api/v1/users/me", json=True)
             assert r.status_code == 200
 
+            # Test that user can change password
+            user = Users.query.filter_by(name="testuser").first()
+            assert user.password is None
             data = {"password": "12345", "confirm": "password"}
             r = client.patch("/api/v1/users/me", json=data)
             assert r.status_code == 200
