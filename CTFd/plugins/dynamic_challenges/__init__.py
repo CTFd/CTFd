@@ -66,28 +66,15 @@ class DynamicValueChallenge(BaseChallenge):
         :return: Challenge object, data dictionary to be returned to the user
         """
         challenge = DynamicChallenge.query.filter_by(id=challenge.id).first()
-        data = {
-            "id": challenge.id,
-            "name": challenge.name,
-            "value": challenge.value,
-            "initial": challenge.initial,
-            "decay": challenge.decay,
-            "minimum": challenge.minimum,
-            "function": challenge.function,
-            "description": challenge.description,
-            "connection_info": challenge.connection_info,
-            "next_id": challenge.next_id,
-            "category": challenge.category,
-            "state": challenge.state,
-            "max_attempts": challenge.max_attempts,
-            "type": challenge.type,
-            "type_data": {
-                "id": cls.id,
-                "name": cls.name,
-                "templates": cls.templates,
-                "scripts": cls.scripts,
-            },
-        }
+        data = super().read(challenge)
+        data.update(
+            {
+                "initial": challenge.initial,
+                "decay": challenge.decay,
+                "minimum": challenge.minimum,
+                "function": challenge.function,
+            }
+        )
         return data
 
     @classmethod
