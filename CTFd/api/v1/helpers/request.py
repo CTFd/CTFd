@@ -23,13 +23,19 @@ def validate_args(spec, location):
         spec = create_model("", **spec)
 
     schema = spec.schema()
+    defs = schema.get("definitions", {})
     props = schema.get("properties", {})
     required = schema.get("required", [])
 
-    for k in props:
+    for k, v in props.items():
+        # Resolve $ref for enums
+        if "$ref" in v:
+            definition = defs[v.pop("$ref").split("/").pop()]
+            v["enum"] = definition["enum"]
+
         if k in required:
-            props[k]["required"] = True
-        props[k]["in"] = location
+            v["required"] = True
+        v["in"] = location
 
     def decorator(func):
         # Inject parameters information into the Flask-Restx apidoc attribute.
