@@ -203,10 +203,8 @@ class UserSchema(ma.ModelSchema):
             current_user = get_current_user()
             # Users are not allowed to switch their bracket
             if bracket_id is None:
-                raise ValidationError(
-                    "Please contact an admin to change your bracket",
-                    field_names=["bracket_id"],
-                )
+                data.pop("bracket_id")
+                return
             if (
                 current_user.bracket_id == int(bracket_id)
                 or current_user.bracket_id is None

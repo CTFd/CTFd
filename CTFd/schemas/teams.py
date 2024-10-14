@@ -217,10 +217,8 @@ class TeamSchema(ma.ModelSchema):
             current_team = get_current_team()
             # Teams are not allowed to switch their bracket
             if bracket_id is None:
-                raise ValidationError(
-                    "Please contact an admin to change your bracket",
-                    field_names=["bracket_id"],
-                )
+                data.pop("bracket_id")
+                return
             if (
                 current_team.bracket_id == int(bracket_id)
                 or current_team.bracket_id is None
