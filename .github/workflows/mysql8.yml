@@ -1,5 +1,5 @@
 ---
-name: CTFd MySQL CI
+name: CTFd MySQL 8.0 CI
 
 on:
   push:
