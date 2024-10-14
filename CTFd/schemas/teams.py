@@ -217,7 +217,8 @@ class TeamSchema(ma.ModelSchema):
             current_team = get_current_team()
             # Teams are not allowed to switch their bracket
             if bracket_id is None:
-                data.pop("bracket_id")
+                # Remove bracket_id and short circuit processing
+                data.pop("bracket_id", None)
                 return
             if (
                 current_team.bracket_id == int(bracket_id)

@@ -203,7 +203,8 @@ class UserSchema(ma.ModelSchema):
             current_user = get_current_user()
             # Users are not allowed to switch their bracket
             if bracket_id is None:
-                data.pop("bracket_id")
+                # Remove bracket_id and short circuit processing
+                data.pop("bracket_id", None)
                 return
             if (
                 current_user.bracket_id == int(bracket_id)
