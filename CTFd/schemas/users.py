@@ -193,10 +193,6 @@ class UserSchema(ma.ModelSchema):
     @pre_load
     def validate_bracket_id(self, data):
         bracket_id = data.get("bracket_id")
-        if bracket_id is None:
-            return
-
-        current_user = get_current_user()
         if is_admin():
             bracket = Brackets.query.filter_by(id=bracket_id, type="users").first()
             if bracket is None:
@@ -204,6 +200,13 @@ class UserSchema(ma.ModelSchema):
                     "Please provide a valid bracket id", field_names=["bracket_id"]
                 )
         else:
+            current_user = get_current_user()
+            # Users are not allowed to switch their bracket
+            if bracket_id is None:
+                raise ValidationError(
+                    "Please contact an admin to change your bracket",
+                    field_names=["bracket_id"],
+                )
             if (
                 current_user.bracket_id == int(bracket_id)
                 or current_user.bracket_id is None
