@@ -38,11 +38,9 @@ def listing():
 
     if ctf_started() is False:
         errors.append(f"{Configs.ctf_name} has not started yet")
-
-    if ctf_paused() is True:
-        infos.append(f"{Configs.ctf_name} is paused")
-
-    if ctf_ended() is True:
+    elif ctf_ended() is True:
         infos.append(f"{Configs.ctf_name} has ended")
+    elif ctf_paused() is True:
+        infos.append(f"{Configs.ctf_name} is paused")
 
     return render_template("challenges.html", infos=infos, errors=errors)
