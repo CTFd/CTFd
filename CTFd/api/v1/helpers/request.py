@@ -6,7 +6,7 @@ from pydantic import ValidationError, create_model
 ARG_LOCATIONS = {
     "query": lambda: request.args,
     "json": lambda: request.get_json(),
-    "form": lambda: request.form,
+    "formData": lambda: request.form,
     "headers": lambda: request.headers,
     "cookies": lambda: request.cookies,
 }
