@@ -1,4 +1,4 @@
-from flask import abort, request
+from flask import request
 from flask_restx import Resource
 from sqlalchemy import func
 from sqlalchemy.sql import and_
