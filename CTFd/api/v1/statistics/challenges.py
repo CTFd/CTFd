@@ -1,3 +1,4 @@
+from flask import abort, request
 from flask_restx import Resource
 from sqlalchemy import func
 from sqlalchemy.sql import and_
@@ -12,11 +13,20 @@ from CTFd.utils.modes import get_model
 class ChallengePropertyCounts(Resource):
     @admins_only
     def get(self, column):
+        # TODO: Probably rename this function in CTFd 4.0 as it can be used to do more than just counts now
+        funcs = {
+            "count": func.count,
+            "sum": func.sum,
+        }
+        aggregate_func = funcs[request.args.get("function", "count")]
         if column in Challenges.__table__.columns.keys():
-            prop = getattr(Challenges, column)
+            c1 = getattr(Challenges, column)
+            c2 = getattr(
+                Challenges, request.args.get("target", "category"), Challenges.category
+            )
             data = (
-                Challenges.query.with_entities(prop, func.count(prop))
-                .group_by(prop)
+                Challenges.query.with_entities(c1, aggregate_func(c2))
+                .group_by(c1)
                 .all()
             )
             return {"success": True, "data": dict(data)}
