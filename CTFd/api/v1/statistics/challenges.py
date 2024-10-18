@@ -1,7 +1,8 @@
 from flask import request
 from flask_restx import Resource
-from sqlalchemy import func
+from sqlalchemy import Integer, func
 from sqlalchemy.sql import and_
+from sqlalchemy.sql.expression import cast
 
 from CTFd.api.v1.statistics import statistics_namespace
 from CTFd.models import Challenges, Solves, db
@@ -24,8 +25,9 @@ class ChallengePropertyCounts(Resource):
             c2 = getattr(
                 Challenges, request.args.get("target", "category"), Challenges.category
             )
+            # We cast this to Integer to deal with cases where SQLAlchemy will give us a Decimal instead
             data = (
-                Challenges.query.with_entities(c1, aggregate_func(c2))
+                Challenges.query.with_entities(c1, cast(aggregate_func(c2), Integer))
                 .group_by(c1)
                 .all()
             )
