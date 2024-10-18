@@ -6,7 +6,7 @@ from pydantic import ValidationError, create_model
 ARG_LOCATIONS = {
     "query": lambda: request.args,
     "json": lambda: request.get_json(),
-    "form": lambda: request.form,
+    "formData": lambda: request.form,
     "headers": lambda: request.headers,
     "cookies": lambda: request.cookies,
 }
@@ -23,19 +23,57 @@ def validate_args(spec, location):
         spec = create_model("", **spec)
 
     schema = spec.schema()
+
+    defs = schema.pop("definitions", {})
     props = schema.get("properties", {})
     required = schema.get("required", [])
 
+    # Remove all titles and resolve all $refs in properties
     for k in props:
-        if k in required:
-            props[k]["required"] = True
-        props[k]["in"] = location
+        if "title" in props[k]:
+            del props[k]["title"]
+
+        if "$ref" in props[k]:
+            definition: dict = defs[props[k].pop("$ref").split("/").pop()]
+
+            # Check if the schema is for enums, if so, we just add in the "enum" key
+            # else we add the whole schema into the properties
+            if "enum" in definition:
+                props[k]["enum"] = definition["enum"]
+            else:
+                props[k] = definition
 
     def decorator(func):
         # Inject parameters information into the Flask-Restx apidoc attribute.
         # Not really a good solution. See https://github.com/CTFd/CTFd/issues/1504
+        nonlocal location
+
         apidoc = getattr(func, "__apidoc__", {"params": {}})
-        apidoc["params"].update(props)
+
+        if location == "form":
+            location = "formData"
+
+            if any(v["type"] == "file" for v in props.values()):
+                apidoc["consumes"] = ["multipart/form-data"]
+            else:
+                apidoc["consumes"] = [
+                    "application/x-www-form-urlencoded",
+                    "multipart/form-data",
+                ]
+
+        if location == "json":
+            title = schema.get("title", "")
+            apidoc["consumes"] = ["application/json"]
+            apidoc["params"].update({title: {"in": "body", "schema": schema}})
+        else:
+            for k, v in props.items():
+                v["in"] = location
+
+                if k in required:
+                    v["required"] = True
+
+                apidoc["params"][k] = v
+
         func.__apidoc__ = apidoc
 
         @wraps(func)
