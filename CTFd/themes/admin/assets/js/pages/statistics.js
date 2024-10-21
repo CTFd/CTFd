@@ -137,7 +137,7 @@ const graph_configs = {
                 label: {
                   show: true,
                   formatter: function (data) {
-                    return `${data.name} - ${data.value} (${data.percent}%)`;
+                    return `${data.name} (${data.value})\n${data.percent.toFixed(1)}%`;
                   },
                 },
                 labelLine: {
@@ -221,10 +221,9 @@ const graph_configs = {
           },
         },
         legend: {
-          type: "scroll",
-          orient: "vertical",
-          top: "middle",
-          right: 10,
+          type: "plain",
+          orient: "horizontal",
+          top: "bottom",
           data: [],
         },
         series: [
@@ -241,7 +240,119 @@ const graph_configs = {
                 label: {
                   show: true,
                   formatter: function (data) {
-                    return `${data.percent}% (${data.value})`;
+                    return `${data.name} (${data.value})\n${data.percent.toFixed(1)}%`;
+                  },
+                },
+                labelLine: {
+                  show: true,
+                },
+              },
+              emphasis: {
+                label: {
+                  show: true,
+                  position: "center",
+                  textStyle: {
+                    fontSize: "14",
+                    fontWeight: "normal",
+                  },
+                },
+              },
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: "30",
+                fontWeight: "bold",
+              },
+            },
+            data: [],
+          },
+        ],
+      };
+
+      categories.forEach((category, index) => {
+        option.legend.data.push(category);
+        option.series[0].data.push({
+          value: count[index],
+          name: category,
+          itemStyle: { color: colorHash(category) },
+        });
+      });
+
+      return option;
+    },
+  },
+
+  "#points-pie-graph": {
+    data: () => {
+      return CTFd.fetch(
+        "/api/v1/statistics/challenges/category?function=sum&target=value",
+        {
+          method: "GET",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        },
+      ).then(function (response) {
+        return response.json();
+      });
+    },
+    format: (response) => {
+      const data = response.data;
+
+      const categories = [];
+      const count = [];
+
+      for (let category in data) {
+        if (Object.hasOwn(data, category)) {
+          categories.push(category);
+          count.push(data[category]);
+        }
+      }
+
+      for (let i = 0; i < data.length; i++) {
+        categories.push(data[i].category);
+        count.push(data[i].count);
+      }
+
+      let option = {
+        title: {
+          left: "center",
+          text: "Point Breakdown",
+        },
+        tooltip: {
+          trigger: "item",
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            dataView: { show: true, readOnly: false },
+            saveAsImage: {},
+          },
+        },
+        legend: {
+          type: "plain",
+          orient: "horizontal",
+          top: "bottom",
+          data: [],
+        },
+        series: [
+          {
+            name: "Point Breakdown",
+            type: "pie",
+            radius: ["30%", "50%"],
+            label: {
+              show: false,
+              position: "center",
+            },
+            itemStyle: {
+              normal: {
+                label: {
+                  show: true,
+                  formatter: function (data) {
+                    return `${data.name} (${data.value})\n${data.percent.toFixed(1)}%`;
                   },
                 },
                 labelLine: {

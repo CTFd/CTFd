@@ -41,7 +41,7 @@
     ]
   },
   "assets/css/admin.scss": {
-    "file": "assets/admin-css-BVndIpVV.css",
+    "file": "assets/admin-css-Bj5aeLSk.css",
     "src": "assets/css/admin.scss",
     "isEntry": true
   },
@@ -144,7 +144,7 @@
     ]
   },
   "assets/js/pages/statistics.js": {
-    "file": "assets/pages/statistics-CycEEwJ4.js",
+    "file": "assets/pages/statistics-DaniS7xQ.js",
     "src": "assets/js/pages/statistics.js",
     "isEntry": true,
     "imports": [
