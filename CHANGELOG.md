@@ -1,3 +1,52 @@
+# 3.7.4 / 2024-10-08
+
+**Security**
+
+- Validate email length to be less than 320 chars to prevent Denial of Service in email validation
+
+**General**
+
+- Add attribution field to Challenges
+
+**Admin Panel**
+
+- Display brackets in the Admin Panel
+
+**Themes**
+
+- Display brackets for users/teams on listing pages and public/private pages
+- Fix miscellaneous issues in core-beta
+- Adds dark mode to core-beta theme
+- Fix issue with long titles in challenge buttons
+- Adds `type` and `extra` arguments to `Assets.js()` and default `defer` to `False` as `type="module"` automatically implies defer
+- ECharts behavior for some graphs in core-beta can now be overriden using the following window objects `window.scoreboardChartOptions`, `window.teamScoreGraphChartOptions`, `window.userScoreGraphChartOptions`
+- Update the scoreboard score graph to reflect the current active bracket changes
+
+**Deployment**
+
+- Add `.gitattributes` to keep LF line endings on .sh files under Windows
+- Fix issues where None values are not cast to empty string
+- Bump dependencies for `pybluemonday`, `requests`, and `boto3`
+
+# 3.7.3 / 2024-07-24
+
+**Security**
+
+- Fix issue where challenge solves and account names could be seen despite accounts not being visible
+
+**Admin Panel**
+
+- Add a Localization section in the Config Panel
+- Add the Default Language config in the Admin Panel to allow admins to configure a default language
+  - Previously CTFd would default to an auto-detected language specified by the user's browser. This setting allows for that default to be set by the admin instead of auto-detected.
+
+**Translations**
+
+- Fix issue where Simplified Chinese would be used instead of Traditional Chinese
+- Update the language names for Simplified Chinese and Traditional Chinese for clarity
+- Update Vietnamese translation
+- Add Catalan translation
+
 # 3.7.2 / 2024-06-18
 
 **Security**

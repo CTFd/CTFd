@@ -1,8 +1,9 @@
 import { colorHash } from "@ctfdio/ctfd-js/ui";
-import { cumulativeSum } from "./scoreboard";
+import { cumulativeSum } from "../../math";
+import { mergeObjects } from "../../objects";
 import dayjs from "dayjs";
 
-export function getOption(id, name, solves, awards) {
+export function getOption(id, name, solves, awards, optionMerge) {
   let option = {
     title: {
       left: "center",
@@ -98,5 +99,9 @@ export function getOption(id, name, solves, awards) {
     },
     data: cumulativeSum(scores),
   });
+
+  if (optionMerge) {
+    option = mergeObjects(option, optionMerge);
+  }
   return option;
 }

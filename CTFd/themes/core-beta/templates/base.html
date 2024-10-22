@@ -14,6 +14,8 @@
 
   {{ Plugins.styles }}
 
+  {{ Assets.js("assets/js/color_mode_switcher.js", type=None) }}
+
   <script type="text/javascript">
       window.init = {
           'urlRoot': "{{ request.script_root }}",
@@ -22,7 +24,7 @@
           'userId': {{ Session.id }},
           'userName': {{ User.name | tojson }},
           'userEmail': {{ User.email | tojson }},
-          'teamId': {{ Team.id | tojson }}, 
+          'teamId': {{ Team.id | tojson }},
           'teamName': {{ Team.name | tojson }},
           'start': {{ Configs.start | tojson }},
           'end': {{ Configs.end | tojson }},

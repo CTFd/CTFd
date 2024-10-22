@@ -84,14 +84,34 @@ class FilesList(Resource):
                 "APISimpleErrorResponse",
             ),
         },
+        params={
+            "file": {
+                "in": "formData",
+                "type": "file",
+                "required": True,
+                "description": "The file to upload",
+            }
+        },
     )
-    def post(self):
+    @validate_args(
+        {
+            "challenge_id": (int, None),
+            "challenge": (int, None),
+            "page_id": (int, None),
+            "page": (int, None),
+            "type": (str, None),
+            "location": (str, None),
+        },
+        location="form",
+    )
+    def post(self, form_args):
         files = request.files.getlist("file")
+        location = form_args.get("location")
         # challenge_id
         # page_id
 
         # Handle situation where users attempt to upload multiple files with a single location
-        if len(files) > 1 and request.form.get("location"):
+        if len(files) > 1 and location:
             return {
                 "success": False,
                 "errors": {
@@ -103,7 +123,7 @@ class FilesList(Resource):
         for f in files:
             # uploads.upload_file(file=f, chalid=req.get('challenge'))
             try:
-                obj = uploads.upload_file(file=f, **request.form.to_dict())
+                obj = uploads.upload_file(file=f, **form_args)
             except ValueError as e:
                 return {
                     "success": False,

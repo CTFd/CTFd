@@ -38,6 +38,7 @@ from CTFd.utils.decorators import (
     require_verified_emails,
 )
 from CTFd.utils.decorators.visibility import (
+    check_account_visibility,
     check_challenge_visibility,
     check_score_visibility,
 )
@@ -497,7 +498,7 @@ class ChallengeAttempt(Resource):
         if authed() is False:
             return {"success": True, "data": {"status": "authentication_required"}}, 403
 
-        if request.content_type != "application/json":
+        if not request.is_json:
             request_data = request.form
         else:
             request_data = request.get_json()
@@ -701,6 +702,7 @@ class ChallengeAttempt(Resource):
 @challenges_namespace.route("/<challenge_id>/solves")
 class ChallengeSolves(Resource):
     @check_challenge_visibility
+    @check_account_visibility
     @check_score_visibility
     @during_ctf_time_only
     @require_verified_emails

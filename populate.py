@@ -134,6 +134,7 @@ if __name__ == "__main__":
             chal = Challenges(
                 name=word,
                 description=gen_sentence(),
+                attribution=f"Written by {gen_name()}",
                 value=gen_value(),
                 category=gen_category(),
             )

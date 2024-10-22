@@ -64,6 +64,8 @@ Alpine.data("UserGraphs", () => ({
     this.failCount = this.fails.meta.count;
     this.awardCount = this.awards.meta.count;
 
+    let optionMerge = window.userScoreGraphChartOptions;
+
     embed(
       this.$refs.scoregraph,
       getUserScoreOption(
@@ -71,6 +73,7 @@ Alpine.data("UserGraphs", () => ({
         CTFd.user.name,
         this.solves.data,
         this.awards.data,
+        optionMerge,
       ),
     );
   },

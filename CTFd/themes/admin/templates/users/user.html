@@ -132,6 +132,14 @@
 			</h2>
 		{% endif %}
 
+		{% if user.bracket_id %}
+			<h2>
+				<span class="badge badge-secondary">
+					{{ user.bracket.name }}
+				</span>
+			</h2>
+		{% endif %}
+
 		{% for field in user.get_fields(admin=true) %}
 			<h3 class="d-block">
 				{{ field.name }}: {{ field.value }}
