@@ -1,7 +1,7 @@
 from functools import wraps
 
 from flask import request
-from pydantic import ValidationError, create_model
+from pydantic import Extra, ValidationError, create_model
 
 ARG_LOCATIONS = {
     "query": lambda: request.args,
@@ -12,15 +12,31 @@ ARG_LOCATIONS = {
 }
 
 
-def validate_args(spec, location):
+def expects_args(spec, location, allow_extras=False, validate=False):
     """
-    A rough implementation of webargs using pydantic schemas. You can pass a
-    pydantic schema as spec or create it on the fly as follows:
+    A decorator that expects parameters to be passed into a endpoint according to the pydantic spec.
 
-    @validate_args({"name": (str, None), "id": (int, None)}, location="query")
+    :param spec: A pydantic model or a dictionary that will be used to create a pydantic model
+    :param str location: The location of the parameters to be passed. Can be one of "json", "query", "form", "headers", "cookies"
+    :param bool allow_extras: Whether to allow extra parameters to be passed
+    :param bool validate: Whether to validate the parameters before passing them to the function
+
+    :return: A decorator that will inject the parameters into the function
+
+    Example:
+
+    .. code-block:: python
+
+        @expects_args({"name": (str, None), "id": (int, None)}, location="query")
+        def my_route(query_args):
+            return {"success": True, "name": query_args["name"], "id": query_args["id"]}
+
     """
     if isinstance(spec, dict):
         spec = create_model("", **spec)
+
+    if allow_extras:
+        spec.__config__.extra = Extra.allow
 
     schema = spec.schema()
 
@@ -79,6 +95,10 @@ def validate_args(spec, location):
         @wraps(func)
         def wrapper(*args, **kwargs):
             data = ARG_LOCATIONS[location]()
+
+            if not validate:
+                return func(*args, data, **kwargs)
+
             try:
                 # Try to load data according to pydantic spec
                 loaded = spec(**data).dict(exclude_unset=True)
@@ -96,3 +116,23 @@ def validate_args(spec, location):
         return wrapper
 
     return decorator
+
+
+def validate_args(spec, location, allow_extras=False):
+    """
+    Validate and load arguments according to a pydantic spec.
+
+    :param spec: A pydantic model or a dictionary of fields.
+    :param location: A string indicating where to find the arguments. Can be one of "json", "query", "form", "headers", "cookies"
+    :param allow_extras: Whether to allow extra arguments not defined in the spec.
+    :return: A decorator that validates and loads arguments according to the spec.
+
+    Example usage:
+
+    .. code-block:: python
+
+        @validate_args({"name": (str, None), "id": (int, None)}, location="query")
+        def my_route(query_args):
+            return {"success": True, "name": query_args["name"], "id": query_args["id"]}
+    """
+    return expects_args(spec, location, allow_extras, validate=True)
