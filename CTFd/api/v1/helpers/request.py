@@ -34,6 +34,9 @@ def expects_args(spec, location, allow_extras=False, validate=False):
     """
     if isinstance(spec, dict):
         spec = create_model("", **spec)
+    else:
+        # We have to make a copy in order to not overwrite the original config
+        spec = create_model("", __base__=spec)
 
     if allow_extras:
         spec.__config__.extra = Extra.allow
