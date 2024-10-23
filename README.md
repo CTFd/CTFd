@@ -50,6 +50,14 @@ You can use the auto-generated Docker images with the following command:
 
 `docker run -p 8000:8000 -it ctfd/ctfd`
 
+You can verify a specific image using [slsa-verifier](https://github.com/slsa-framework/slsa-verifier) and the following.
+
+```
+slsa-verifier slsa-verifier verify-image "ctfd/ctfd:<tag>@sha256:<digest>" \
+    --source-uri github.com/CTFd/CTFd \
+    --source-tag <tag>
+```
+
 Or you can use Docker Compose with the following command from the source repository:
 
 `docker compose up`
