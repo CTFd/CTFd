@@ -104,6 +104,7 @@ class FilesList(Resource):
         },
         location="form",
         allow_extras=True,
+        pass_args=True,
     )
     def post(self, form_args):
         files = request.files.getlist("file")

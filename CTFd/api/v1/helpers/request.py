@@ -12,13 +12,14 @@ ARG_LOCATIONS = {
 }
 
 
-def expects_args(spec, location, allow_extras=False, validate=False):
+def expects_args(spec, location, allow_extras=False, pass_args=False, validate=False):
     """
     A decorator that expects parameters to be passed into a endpoint according to the pydantic spec.
 
     :param spec: A pydantic model or a dictionary that will be used to create a pydantic model
     :param str location: The location of the parameters to be passed. Can be one of "json", "query", "form", "headers", "cookies"
     :param bool allow_extras: Whether to allow extra parameters to be passed
+    :param bool pass_args: Whether to pass the parameters as an argument to the function
     :param bool validate: Whether to validate the parameters before passing them to the function
 
     :return: A decorator that will inject the parameters into the function
@@ -99,29 +100,33 @@ def expects_args(spec, location, allow_extras=False, validate=False):
         def wrapper(*args, **kwargs):
             data = ARG_LOCATIONS[location]()
 
-            if not validate:
-                return func(*args, data, **kwargs)
+            if validate:
+                try:
+                    # Try to load data according to pydantic spec
+                    loaded = spec(**data).dict(exclude_unset=True)
+                except ValidationError as e:
+                    # Handle reporting errors when invalid
+                    resp = {}
+                    errors = e.errors()
+                    for err in errors:
+                        loc = err["loc"][0]
+                        msg = err["msg"]
+                        resp[loc] = msg
+                    return {"success": False, "errors": resp}, 400
+            else:
+                loaded = data
 
-            try:
-                # Try to load data according to pydantic spec
-                loaded = spec(**data).dict(exclude_unset=True)
-            except ValidationError as e:
-                # Handle reporting errors when invalid
-                resp = {}
-                errors = e.errors()
-                for err in errors:
-                    loc = err["loc"][0]
-                    msg = err["msg"]
-                    resp[loc] = msg
-                return {"success": False, "errors": resp}, 400
-            return func(*args, loaded, **kwargs)
+            if pass_args:
+                return func(*args, loaded, **kwargs)
+            else:
+                return func(*args, **kwargs)
 
         return wrapper
 
     return decorator
 
 
-def validate_args(spec, location, allow_extras=False):
+def validate_args(spec, location, allow_extras=False, pass_args=True):
     """
     Validate and load arguments according to a pydantic spec.
 
@@ -138,4 +143,4 @@ def validate_args(spec, location, allow_extras=False):
         def my_route(query_args):
             return {"success": True, "name": query_args["name"], "id": query_args["id"]}
     """
-    return expects_args(spec, location, allow_extras, validate=True)
+    return expects_args(spec, location, allow_extras, pass_args, validate=True)
