@@ -40,14 +40,8 @@ CTFd_API_v1 = Api(
             "name": "Authorization",
             "description": "Generate access token in the settings page of your user account.",
         },
-        "ContentType": {
-            "type": "apiKey",
-            "in": "header",
-            "name": "Content-Type",
-            "description": "Must be set to `application/json`",
-        },
     },
-    security=["AccessToken", "ContentType"],
+    security=["AccessToken"],
 )
 
 CTFd_API_v1.schema_model("APISimpleErrorResponse", APISimpleErrorResponse.schema())
