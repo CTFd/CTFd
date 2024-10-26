@@ -112,7 +112,7 @@ export default {
         })
         .then((response) => {
           if (response.success === true) {
-            this.field = response.data;
+            this.bracket = response.data;
             ezToast({
               title: "Success",
               body: message,
