@@ -185,6 +185,10 @@ def get_locale():
         user = get_current_user_attrs()
         if user and user.language:
             return user.language
+    # Use cookie language
+    cookie_lang = request.cookies.get("language")
+    if cookie_lang and cookie_lang in Languages.values():
+        return cookie_lang
     # Use the admin's default language
     default_locale = get_config("default_locale")
     if default_locale:
