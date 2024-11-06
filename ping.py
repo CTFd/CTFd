@@ -31,7 +31,7 @@ while True:
             print("Incorrect database password")
             exit(1)
     except Exception as e:
-        print("."+e)
+        print("." + e)
         time.sleep(1)
 
 print(f"{url.host} is ready")
