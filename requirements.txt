@@ -28,8 +28,9 @@ cachelib==0.9.0
     # via flask-caching
 certifi==2022.12.7
     # via requests
-cffi==1.15.0
+cffi==1.15.1
     # via
+    #   -r requirements.in
     #   cmarkgfm
     #   cryptography
     #   pybluemonday

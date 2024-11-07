@@ -30,3 +30,6 @@ pybluemonday==0.0.14
 freezegun==1.2.2
 Flask-Babel==2.0.0
 Pillow==10.1.0
+
+# Upgrade cffi to a version shipping cp311-manylinux wheels
+cffi==1.15.1
