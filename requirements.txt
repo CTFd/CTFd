@@ -100,6 +100,7 @@ markupsafe==2.1.3
     # via
     #   jinja2
     #   mako
+    #   werkzeug
     #   wtforms
 marshmallow==2.20.2
     # via
@@ -173,7 +174,7 @@ urllib3==1.26.20
     #   -r requirements.in
     #   botocore
     #   requests
-werkzeug==2.0.3
+werkzeug==3.0.6
     # via
     #   -r requirements.in
     #   flask
