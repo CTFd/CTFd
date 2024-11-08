@@ -28,8 +28,9 @@ cachelib==0.9.0
     # via flask-caching
 certifi==2022.12.7
     # via requests
-cffi==1.15.0
+cffi==1.17.1
     # via
+    #   -r requirements.in
     #   cmarkgfm
     #   cryptography
     #   pybluemonday
@@ -37,7 +38,7 @@ charset-normalizer==2.0.12
     # via requests
 click==7.1.2
     # via flask
-cmarkgfm==2022.10.27
+cmarkgfm==2024.1.14
     # via -r requirements.in
 cryptography==40.0.2
     # via pymysql
@@ -148,8 +149,9 @@ requests==2.32.3
     # via -r requirements.in
 s3transfer==0.10.0
     # via boto3
-six==1.15.0
+six==1.16.0
     # via
+    #   -r requirements.in
     #   flask-marshmallow
     #   jsonschema
     #   python-dateutil
@@ -166,8 +168,9 @@ sqlalchemy-utils==0.41.1
     # via -r requirements.in
 tenacity==6.2.0
     # via -r requirements.in
-urllib3==1.25.11
+urllib3==1.26.20
     # via
+    #   -r requirements.in
     #   botocore
     #   requests
 werkzeug==2.0.3
