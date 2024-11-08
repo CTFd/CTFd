@@ -6,10 +6,14 @@ RUN python -m venv /opt/venv
 
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY . /opt/CTFd
+# Install CTFd requirements before copying the whole project,
+# this layer will be reused when rebuilding CTFd after a small change
+COPY ./requirements.txt /opt/CTFd
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt \
-    && for d in CTFd/plugins/*; do \
+# Install CTFd plugins requirements
+COPY . /opt/CTFd
+RUN for d in CTFd/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \
             pip install --no-cache-dir -r "$d/requirements.txt";\
         fi; \
