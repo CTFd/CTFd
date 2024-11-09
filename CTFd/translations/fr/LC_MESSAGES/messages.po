@@ -110,7 +110,7 @@ msgstr "Mode Équipe"
 
 #: CTFd/forms/setup.py:38
 msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
-msgstr "Contrôle si des utilisateurs se rejoignent pour jouer en équipe (Mode Équipe) ou jouent pour eux-mêmes (Mode Utilisateur)"
+msgstr "Définit si des utilisateurs jouent par équipe (Mode Équipe) ou jouent pour eux-mêmes (Mode Utilisateur)"
 
 #: CTFd/forms/setup.py:45
 msgid "Admin Username"
@@ -178,7 +178,7 @@ msgstr "Couleur utilisée par le thème pour contrôler l'esthétique. Requiert 
 
 #: CTFd/forms/setup.py:91
 msgid "Verify Emails"
-msgstr "Vérifier les courriels"
+msgstr "Vérifier les e-mails"
 
 #: CTFd/forms/setup.py:143
 msgid "Start Time"
@@ -219,7 +219,7 @@ msgstr "Créer"
 
 #: CTFd/forms/teams.py:101
 msgid "Your team's public name shown to other competitors"
-msgstr "Votre nom d'équipe public à montrer aux autres compétiteurs"
+msgstr "Votre nom d'équipe visible par les autres joueurs"
 
 #: CTFd/forms/teams.py:104
 msgid "New Team Password"
@@ -227,7 +227,7 @@ msgstr "Nouveau mot de passe d'équipe"
 
 #: CTFd/forms/teams.py:104
 msgid "Set a new team join password"
-msgstr "Régler un nouveau mot de passe d'équipe pour rejoindre"
+msgstr "Définir un nouveau mot de passe d'équipe"
 
 #: CTFd/forms/teams.py:107
 msgid "Confirm Current Team Password"
@@ -239,15 +239,15 @@ msgstr "Saisissez votre mot de passe d'équipe actuel (ou votre mot de passe) po
 
 #: CTFd/forms/teams.py:114
 msgid "Your team's affiliation publicly shown to other competitors"
-msgstr "L'affiliation de votre équipe visible aux autres compétiteurs"
+msgstr "L'affiliation de votre équipe visible par les autres joueurs"
 
 #: CTFd/forms/teams.py:120
 msgid "Your team's website publicly shown to other competitors"
-msgstr "Le site web de votre équipe visible aux autres compétiteurs"
+msgstr "Le site web de votre équipe visible par les autres joueurs"
 
 #: CTFd/forms/teams.py:125
 msgid "Your team's country publicly shown to other competitors"
-msgstr "Le pays de votre équipe visible aux autres compétiteurs"
+msgstr "Le pays de votre équipe visible par les autres joueurs"
 
 #: CTFd/forms/teams.py:165
 msgid "Team Captain"
@@ -351,7 +351,7 @@ msgstr "Changer l'adresse e-mail"
 #: CTFd/themes/core-beta/templates/components/navbar.html:178
 #: CTFd/themes/core-beta/templates/login.html:7
 msgid "Login"
-msgstr "S'identifier"
+msgstr "Se connecter"
 
 #: CTFd/themes/core-beta/templates/login.html:40
 msgid "Forgot your password?"
@@ -408,7 +408,7 @@ msgstr "Compte"
 
 #: CTFd/themes/core-beta/templates/settings.html:26
 msgid "Access Tokens"
-msgstr "Clé d'Accès"
+msgstr "Jetons d'Accès"
 
 #: CTFd/themes/core-beta/templates/settings.html:95
 msgid "Your profile has been updated"
@@ -434,11 +434,11 @@ msgstr "Clés actives"
 
 #: CTFd/themes/core-beta/templates/settings.html:195
 msgid "Delete Token"
-msgstr "Supprimer la clé"
+msgstr "Supprimer le jeton"
 
 #: CTFd/themes/core-beta/templates/settings.html:204
 msgid "Are you sure you want to delete this token?"
-msgstr "Confirmez-vous la suppression de cette clé ?"
+msgstr "Confirmez-vous la suppression de ce jeton ?"
 
 #: CTFd/themes/core-beta/templates/settings.html:224
 msgid "Created"
@@ -454,7 +454,7 @@ msgstr "Supprimer"
 
 #: CTFd/themes/core-beta/templates/setup.html:24
 msgid "Setup"
-msgstr "Régler"
+msgstr "Configuration"
 
 #: CTFd/themes/core-beta/templates/setup.html:44
 msgid "General"
@@ -491,15 +491,15 @@ msgstr "Suivant"
 
 #: CTFd/themes/core-beta/templates/setup.html:112
 msgid "Participants register accounts and form teams"
-msgstr "Les participants s'enregistrent et forment des équipes"
+msgstr "Les participants s'inscrivent et forment des équipes"
 
 #: CTFd/themes/core-beta/templates/setup.html:113
 msgid "If a team member solves a challenge, the entire team receives credit"
-msgstr "Si un membre de l'équipe résout un challenge, l'équipe entière reçoit le crédit"
+msgstr "Si un membre de l'équipe résout un challenge, l'équipe entière en reçoit le mérite"
 
 #: CTFd/themes/core-beta/templates/setup.html:115
 msgid "Easier to see which team member solved a challenge"
-msgstr "Plus aisé de voir quel membre de l'équipe a résolu un challenge"
+msgstr "Plus facile de voir quel membre de l'équipe a résolu un challenge"
 
 #: CTFd/themes/core-beta/templates/setup.html:116
 msgid "May be slightly more difficult to administer"
@@ -507,7 +507,7 @@ msgstr "Pourrait être un peu plus difficile à administrer"
 
 #: CTFd/themes/core-beta/templates/setup.html:120
 msgid "Participants only register an individual account"
-msgstr "Les participants n'enregistrent qu'un compte individuel"
+msgstr "Les participants s'enregistrent individuellement"
 
 #: CTFd/themes/core-beta/templates/setup.html:121
 msgid "Players can share accounts to form pseudo-teams"
@@ -519,7 +519,7 @@ msgstr "Plus facile à organiser"
 
 #: CTFd/themes/core-beta/templates/setup.html:124
 msgid "Difficult to attribute solutions to individual team members"
-msgstr "Difficile d'attribuer des solutions aux membres individuels de l'équipe"
+msgstr "Difficile d'attribuer les résolutions aux membres individuels de l'équipe"
 
 #: CTFd/themes/core-beta/templates/setup.html:143
 msgid "Visibility Settings"
@@ -527,7 +527,7 @@ msgstr "Paramètres de visibilité"
 
 #: CTFd/themes/core-beta/templates/setup.html:146
 msgid "Control the visibility of different sections of CTFd"
-msgstr "Contrôler la visibilité des différentes sections du CTFd"
+msgstr "Contrôler la visibilité des différentes sections de CTFd"
 
 #: CTFd/themes/core-beta/templates/setup.html:232
 msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
@@ -625,7 +625,7 @@ msgstr "Créer une équipe"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
 msgid "In order to participate you must either join or create a team."
-msgstr "Vous devez rejoindre ou créer une équipe pour participer."
+msgstr "Vous devez créer ou rejoindre une équipe pour participer."
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
 msgid "Play with Official Team"
@@ -707,7 +707,7 @@ msgstr[2] "équipes"
 
 #: CTFd/forms/setup.py:91
 msgid "Verify Emails"
-msgstr "Vérifier les courriels"
+msgstr "Vérifier les e-mail"
 
 #: CTFd/themes/core-beta/templates/settings.html:226
 msgid "Description"
@@ -732,7 +732,7 @@ msgstr "Contrôler la visibilité des différentes sections du CTFd"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:8
 msgid "Edit Team"
-msgstr "Équipe de rédaction"
+msgstr "Modifier l'équipe"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:76
 msgid "Your team's profile has been updated"
