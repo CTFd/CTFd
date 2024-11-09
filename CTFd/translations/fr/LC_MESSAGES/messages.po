@@ -784,7 +784,7 @@ msgstr "Officiel"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:250
 msgid "place"
-msgstr "lieu"
+msgstr "Position"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:258
 msgid "points"
