@@ -235,7 +235,12 @@ def init_request_processors(app):
             ip = get_ip()
 
             track = None
-            if ip not in user_ips:
+            if ip not in user_ips or request.method in (
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+            ):
                 track = Tracking.query.filter_by(
                     ip=get_ip(), user_id=session["id"]
                 ).first()
