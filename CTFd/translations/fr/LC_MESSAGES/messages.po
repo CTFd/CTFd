@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-07 03:17-0400\n"
-"PO-Revision-Date: 2024-11-11 09:31\n"
+"PO-Revision-Date: 2024-11-11 09:40\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -733,7 +733,7 @@ msgstr "Aucune résolution pour le moment"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
 msgid "In order to participate you must either join or create a team."
-msgstr "Vous devez rejoindre ou créer une équipe pour participer."
+msgstr "Vous devez créer ou rejoindre une équipe pour participer."
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
 msgid "Play with Official Team"
