@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-07 03:17-0400\n"
-"PO-Revision-Date: 2024-10-22 07:14\n"
+"PO-Revision-Date: 2024-11-11 09:31\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -677,7 +677,7 @@ msgstr "Officiel"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:250
 msgid "place"
-msgstr "lieu"
+msgstr "position"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:258
 msgid "points"
